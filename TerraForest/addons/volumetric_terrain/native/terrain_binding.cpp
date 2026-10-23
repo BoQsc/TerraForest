@@ -20,10 +20,11 @@
 #include <mutex>
 
 namespace terraforest {
-godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &);
+godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
 godot::Dictionary plan_regional_route(const World &,godot::Vector3,godot::Vector3,const godot::Array &);
 godot::Dictionary plan_settlement_lots(const World &,godot::Vector3,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_street_network(const World &,const godot::Array &,const godot::PackedVector3Array &);
+godot::Dictionary fit_generated_lakes(const World &,const godot::Array &);
 class TerrainCore : public godot::RefCounted {
     GDCLASS(TerrainCore, godot::RefCounted)
     BuildControl control_;
@@ -46,8 +47,9 @@ protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_regional_route","start","finish","reservations"), &TerrainCore::plan_route);
-        godot::ClassDB::bind_method(godot::D_METHOD("render_plan_map","pixels","roads","lots"), &TerrainCore::render_plan_map);
+        godot::ClassDB::bind_method(godot::D_METHOD("render_plan_map","pixels","roads","lots","water"), &TerrainCore::render_plan_map,DEFVAL(godot::PackedByteArray()));
         godot::ClassDB::bind_method(godot::D_METHOD("plan_lots","center","lots","roads","default_streets"), &TerrainCore::plan_lots);
+        godot::ClassDB::bind_method(godot::D_METHOD("fit_generated_lakes","records"), &TerrainCore::fit_lakes);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_streets","roads","junctions"), &TerrainCore::plan_streets);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
@@ -71,10 +73,11 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary fit_lakes(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);return fit_generated_lakes(world_,records);}
     godot::Dictionary plan_route(godot::Vector3 start,godot::Vector3 finish,const godot::Array &reservations){
         std::lock_guard<std::mutex> lock(mutex_);return plan_regional_route(world_,start,finish,reservations);
     }
-    godot::PackedByteArray render_plan_map(const godot::PackedByteArray &pixels,const godot::Array &roads,const godot::Array &lots){return render_generation_map(pixels,roads,lots);}
+    godot::PackedByteArray render_plan_map(const godot::PackedByteArray &pixels,const godot::Array &roads,const godot::Array &lots,const godot::PackedByteArray &water=godot::PackedByteArray()){return render_generation_map(pixels,roads,lots,water);}
     godot::Dictionary plan_lots(godot::Vector3 center,const godot::Array &lots,const godot::Array &roads,bool default_streets){
         std::lock_guard<std::mutex> lock(mutex_);return plan_settlement_lots(world_,center,lots,roads,default_streets);
     }

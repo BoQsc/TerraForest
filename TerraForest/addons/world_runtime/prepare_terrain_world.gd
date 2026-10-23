@@ -8,7 +8,8 @@ func ready_world(game:Node)->bool:
 func capture_loading_view(game:Node,name:String)->void:
  await preload("res://addons/world_runtime/world_presentation.gd").capture(game,root,output_dir.path_join("loading_"+name+".png"))
 func snapshot_signature(game:Node)->Dictionary:
- var result:Dictionary={"blocks":block_signature(game),"region":Marshalls.raw_to_base64(game.generated_region.store.capture_snapshot())}
+ var water:PackedByteArray=game.lakes.capture_snapshot()
+ var result:Dictionary={"water":preload("res://addons/world_runtime/survey_cache.gd").digest(water).hex_encode(),"blocks":block_signature(game),"region":Marshalls.raw_to_base64(game.generated_region.store.capture_snapshot())}
  for asset:String in game.structures._models:
   result[asset]=Marshalls.raw_to_base64(game.structures.model(asset).capture_snapshot())
  return result
@@ -59,8 +60,9 @@ func run()->void:
    if arg.begins_with("--world-slot="):slot=arg.trim_prefix("--world-slot=")
   if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
- game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not await ready_world(game) or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
+ if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
  game.set_physics_process(false);game._clear_motion();game.terrain.autosave_timer=-3600.0
  var map_worker:=Thread.new()
  if map_worker.start(preload("res://addons/world_runtime/survey_cache.gd").prepare.bind(seed_value,generator))!=OK:

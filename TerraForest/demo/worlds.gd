@@ -6,6 +6,7 @@ var name_field: LineEdit
 var seed_field: SpinBox
 var preset: OptionButton
 var ocean:CheckBox
+var layout_preset:OptionButton
 var gameplay: CheckBox
 var notice: Label
 var filter_field: LineEdit
@@ -60,6 +61,10 @@ func _ready() -> void:
 	ocean=CheckBox.new();ocean.text="Surrounding ocean and beaches";ocean.button_pressed=true;create.add_child(ocean)
 	ocean.tooltip_text="Applies to new terrain-fitted worlds. Existing worlds keep their saved coastline."
 	preset.item_selected.connect(func(_index:int):ocean.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
+	layout_preset=OptionButton.new();layout_preset.add_item("Two settlements with connecting road");layout_preset.add_item("One settlement with regional road");layout_preset.add_item("One standalone settlement");create.add_child(layout_preset)
+	layout_preset.tooltip_text="Changes the actual cached placement plan used by preview and generation."
+	layout_preset.item_selected.connect(func(_index:int):invalidate_preview())
+	preset.item_selected.connect(func(_index:int):layout_preset.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	heading(create,"Seed",18);seed_field=SpinBox.new();seed_field.min_value=0;seed_field.max_value=2147483647;seed_field.step=1;seed_field.value=1703;create.add_child(seed_field)
 	var explanation:=heading(create,"The seed and landscape apply only to new worlds. Saved worlds retain their generation settings. Integrated worlds are prepared and verified before play; first creation can take several minutes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	var map_column:=VBoxContainer.new();map_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create_page.add_child(map_column)
@@ -92,7 +97,7 @@ func launch_selected(create: bool) -> void:
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
 		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
-	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed)
+	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,["connected","road","settlement"][layout_preset.selected])
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):
 		preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
@@ -168,7 +173,7 @@ func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
 
 func selected_preview_key()->String:
-	return "%d/%d"%[int(seed_field.value),19 if ocean.button_pressed else 17] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+	return "%d/%d/%d"%[int(seed_field.value),19 if ocean.button_pressed else 17,layout_preset.selected] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func invalidate_preview()->void:
 	preview_view.texture=null
 	preview_status.text="Settings changed. Preview the new world plan before creating."
@@ -179,7 +184,7 @@ func start_preview()->void:
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
 	preview_key=selected_preview_key();preview_status.text="Planning terrain, settlements and roads…";preview_button.disabled=true
 	preview_worker=Thread.new()
-	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET)
+	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,layout_preset.selected==0,layout_preset.selected<2)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
 	if preview_worker==null or preview_worker.is_alive():return

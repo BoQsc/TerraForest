@@ -20,6 +20,7 @@ static func locate(core,hint:Vector3,occupied:AABB)->Dictionary:
  var reserved:Array=reservations.areas.duplicate()
  reserved.append(Rect2(Vector2(occupied.position.x,occupied.position.z),Vector2(occupied.size.x,occupied.size.z)).grow(16))
  var candidates:Array=[]
+ var survey_usec:=0;var recipe_usec:=0;var fitting_usec:=0;var attempts:=0
  for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
   for dz in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144]:
    var center:Vector3=hint+Vector3(dx,0,dz)
@@ -27,13 +28,22 @@ static func locate(core,hint:Vector3,occupied:AABB)->Dictionary:
    var lines:Array=[]
    for z in [-24,24]:lines.append(Lots._segment(center+Vector3(-44,0,z),center+Vector3(44,0,z),3,3,4,0,4))
    for x in [-44,44]:lines.append(Lots._segment(center+Vector3(x,0,-24),center+Vector3(x,0,24),3,3,4,0,4))
+   var begun:=Time.get_ticks_usec()
    var roads:Dictionary=Planner.streets(core,center,lines)
+   survey_usec+=Time.get_ticks_usec()-begun
    if roads.ok:candidates.append({"center":center,"roads":roads,"cost":roads.mean_earthwork+0.3*(roads.max_cut+roads.max_fill)+0.001*center.distance_to(hint)})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost)
  for candidate:Dictionary in candidates:
-  var lots:Dictionary=Planner.plan(core,candidate.center,candidate.roads.segments,0,recipe(candidate.center))
+  attempts+=1
+  var begun:=Time.get_ticks_usec()
+  var assets:Array=recipe(candidate.center)
+  recipe_usec+=Time.get_ticks_usec()-begun;begun=Time.get_ticks_usec()
+  var lots:Dictionary=Planner.plan(core,candidate.center,candidate.roads.segments,0,assets)
+  fitting_usec+=Time.get_ticks_usec()-begun
   if not lots.ok:continue
   var plan:Dictionary={"ok":true,"center":candidate.center,"roads":candidate.roads.segments,"lots":lots.lots,"mean_earthwork":candidate.roads.mean_earthwork}
   var works:Dictionary=Planner.earthworks(plan)
-  if works.ok and Planner.footprint_clear(works.bounds,reserved):return plan
+  if works.ok and Planner.footprint_clear(works.bounds,reserved):
+   print("MARKET_PLAN_TIMINGS candidates=",candidates.size()," attempts=",attempts," survey_ms=",survey_usec/1000.0," recipe_ms=",recipe_usec/1000.0," fitting_ms=",fitting_usec/1000.0)
+   return plan
  return {"ok":false,"reason":"No eight-building market fits the reserved landscape","candidates":candidates.size()}

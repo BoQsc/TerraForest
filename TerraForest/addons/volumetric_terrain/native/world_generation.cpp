@@ -42,6 +42,34 @@ struct Survey {
  }
 };
 }
+// Fit water levels to the actual coastal terrain without changing terrain or saves.
+// Catalog bounds remain the same reservations. Closed rim sampling prevents filling
+// an obsolete inland level into a coast-adjusted basin.
+Dictionary fit_generated_lakes(const World &world,const Array &records){
+ if(records.size()>16)return failure("Too many generated lakes");
+ Array fitted,rejected;Survey survey{world};
+ for(int i=0;i<records.size();++i){
+  if(records[i].get_type()!=Variant::DICTIONARY)return failure("Invalid lake record");
+  Dictionary record=records[i];
+  if(!record.has("id")||!record.has("origin")||!record.has("cells")||!record.has("spacing")||record["origin"].get_type()!=Variant::VECTOR3||record["cells"].get_type()!=Variant::VECTOR3I)return failure("Incomplete lake record");
+  Vector3 origin=record["origin"];Vector3i cells=record["cells"];double spacing=record["spacing"];
+  if(!std::isfinite(spacing)||spacing<=0||cells.x<=0||cells.z<=0)return failure("Invalid lake spacing");
+  double width=cells.x*spacing,depth=cells.z*spacing;
+  if(!inside(origin)||width<4||depth<4||width>160||depth>160||!inside(origin+Vector3(width,0,depth)))return failure("Invalid lake bounds");
+  double rim=256,minimum=256;Vector3 seed;
+  for(double z=0;z<=depth;z+=.5)for(double x:{0.,width})rim=std::min(rim,survey.height(origin+Vector3(x,0,z)));
+  for(double x=0;x<=width;x+=.5)for(double z:{0.,depth})rim=std::min(rim,survey.height(origin+Vector3(x,0,z)));
+  for(double z=1;z<depth;z+=2)for(double x=1;x<width;x+=2){
+   Vector3 p=origin+Vector3(x,0,z);double h=survey.height(p);
+   if(h<minimum){minimum=h;seed=p;}
+  }
+  double level=std::min(rim-1.,minimum+(width>100?5.:9.));
+  if(level-minimum<1.5){rejected.push_back(record["id"]);continue;}
+  origin.y=std::floor(minimum)-2.;cells.y=int(std::ceil((level+2-origin.y)/spacing));seed.y=minimum+.75;
+  record["origin"]=origin;record["cells"]=cells;record["level"]=level;record["seed"]=seed;fitted.push_back(record);
+ }
+ Dictionary result;result["ok"]=true;result["records"]=fitted;result["rejected"]=rejected;result["height_samples"]=survey.samples;return result;
+}
 Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,const Array &reservations){
  if(!inside(start)||!inside(finish)||reservations.size()>4096)return failure("Invalid route input");
  Survey survey{world};
@@ -175,10 +203,11 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
 }
 namespace terraforest {
 namespace {
-Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const Array &roads){
+struct LotRoad {Vector3 start,finish;Vector2 a,axis;double denominator;};
+Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const std::vector<LotRoad> &roads){
  Vector3 b(a.x,0,street_z);bool found=false;
  for(int i=0;i<roads.size();i++){
-  Dictionary road=roads[i];Vector3 start=road["start"],finish=road["finish"];
+  const Vector3 &start=roads[i].start,&finish=roads[i].finish;
   if(std::abs(start.z-b.z)>.001||std::abs(finish.z-b.z)>.001||b.x<std::min(start.x,finish.x)||b.x>std::max(start.x,finish.x)||std::abs(finish.x-start.x)<.001)continue;
   double t=(b.x-start.x)/(finish.x-start.x);b.y=start.y+(finish.y-start.y)*t*t*(3-2*t);found=true;break;
  }
@@ -194,9 +223,12 @@ Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const Array &r
 Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &lots,const Array &roads,bool default_streets){
  if(!inside(center)||lots.is_empty()||lots.size()>256||roads.size()>8192)return failure("Invalid lot plan size");
  // Validate before computation: callers supply plain prefab geometry, not scene objects.
+ std::vector<LotRoad> road_geometry;road_geometry.reserve(roads.size());
  for(int i=0;i<roads.size();i++){
   if(roads[i].get_type()!=Variant::DICTIONARY)return failure("Invalid lot road");Dictionary r=roads[i];
   if(!r.has("start")||!r.has("finish")||!inside(r["start"])||!inside(r["finish"]))return failure("Invalid lot road endpoints");
+  Vector3 a=r["start"],b=r["finish"];Vector2 first(a.x,a.z),axis(b.x-a.x,b.z-a.z);
+  road_geometry.push_back({a,b,first,axis,std::max(.001,double(axis.length_squared()))});
  }
  for(int i=0;i<lots.size();i++){
   if(lots[i].get_type()!=Variant::DICTIONARY)return failure("Invalid lot descriptor");Dictionary l=lots[i];
@@ -223,10 +255,12 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     if(default_streets){
      for(int street:{-52,0,52})if(std::abs(p.z-center.z-street)<6.5){blocked=true;break;}
      if(std::abs(std::abs(p.x-center.x)-42)<6.5&&std::abs(p.z-center.z)<=57)blocked=true;
-    }else for(int r=0;r<roads.size();r++){
-     Dictionary road=roads[r];Vector3 a3=road["start"],b3=road["finish"];Vector2 a(a3.x,a3.z),b(b3.x,b3.z),q(p.x,p.z),axis=b-a;
-     double t=std::clamp(double((q-a).dot(axis))/std::max(.001,double(axis.length_squared())),0.,1.);
-     if(q.distance_to(a+axis*t)<6.5){blocked=true;break;}
+    }else for(const auto &road:road_geometry){
+     // Unpack Variant endpoints once per request, not for every foundation cell.
+     if(p.x<std::min(road.start.x,road.finish.x)-6.5||p.x>std::max(road.start.x,road.finish.x)+6.5||
+        p.z<std::min(road.start.z,road.finish.z)-6.5||p.z>std::max(road.start.z,road.finish.z)+6.5)continue;
+     Vector2 q(p.x,p.z);double t=std::clamp(double((q-road.a).dot(road.axis))/road.denominator,0.,1.);
+     if(q.distance_to(road.a+road.axis*t)<6.5){blocked=true;break;}
     }
     if(blocked)break;double h=survey.height(p);low=std::min(low,h);high=std::max(high,h);
    }
@@ -236,7 +270,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     bool found=false;Vector3 local=lot["entrance_local"];
     for(int candidate=minimum;candidate<=maximum;candidate++){
      Vector3 a=local+Vector3(origin.x,candidate-surface_offset,origin.z);
-     Dictionary path=entrance_path(survey,a,double(lot["street_z"]),roads);
+     Dictionary path=entrance_path(survey,a,double(lot["street_z"]),road_geometry);
      if(bool(path["ok"])&&(!found||std::abs(candidate-mid)<std::abs(grade-mid))){grade=candidate;entrance=path;found=true;}
     }if(!found)continue;
    }
@@ -252,9 +286,14 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
 }
 }
 namespace terraforest {
-godot::PackedByteArray render_generation_map(const godot::PackedByteArray &base,const godot::Array &roads,const godot::Array &lots){
+godot::PackedByteArray render_generation_map(const godot::PackedByteArray &base,const godot::Array &roads,const godot::Array &lots,const godot::PackedByteArray &water){
  if(base.size()!=256*256*4||roads.size()>16384||lots.size()>512)return {};
+ if(!water.is_empty()&&water.size()!=base.size())return {};
  PackedByteArray result=base;auto *pixels=result.ptrw();
+ if(!water.is_empty())for(int at=0;at<water.size();at+=4){
+  unsigned alpha=water[at+3];
+  for(int channel=0;channel<3;channel++)pixels[at+channel]=(pixels[at+channel]*(255-alpha)+water[at+channel]*alpha+127)/255;
+ }
  auto pixel=[&](int x,int y,int r,int g,int b){if(x<0||y<0||x>=256||y>=256)return;int i=(y*256+x)*4;pixels[i]=r;pixels[i+1]=g;pixels[i+2]=b;pixels[i+3]=255;};
  for(int i=0;i<roads.size();i++){
   if(roads[i].get_type()!=Variant::DICTIONARY)return {};Dictionary road=roads[i];if(!road.has("start")||!road.has("finish"))return {};

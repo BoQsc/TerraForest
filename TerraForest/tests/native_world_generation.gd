@@ -35,6 +35,7 @@ func _initialize()->void:
   if name.ends_with(".bin"):count+=1
  if count>Plan.CACHE_ENTRIES or not FileAccess.file_exists(folder.path_join("keep.txt")):failures+=1
  for name:String in DirAccess.get_files_at(folder):DirAccess.remove_absolute(folder.path_join(name))
+ print("GENERATION_STAGE_TIMINGS ",first.get("timings",{}))
  print("GENERATION_PLAN cold_ms=",first.worker_ms," warm_ms=",second.worker_ms," buildings=20 segments=",first.works.segments.size()," digest=",first.plan_digest," failures=",failures)
  DirAccess.remove_absolute(folder)
  quit(1 if failures else 0)

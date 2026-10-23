@@ -6,6 +6,7 @@ const Launch=preload("res://demo/world_launch.gd")
 var destination:=""
 var seed_value:=42
 var generator:=19
+var settlement_layout:="connected"
 var status_path:=""
 var cancel_path:=""
 var report:=""
@@ -22,10 +23,11 @@ func _initialize()->void:
  for arg:String in OS.get_cmdline_user_args():
   if arg.begins_with("--destination="):destination=arg.trim_prefix("--destination=")
   if arg.begins_with("--seed="):seed_value=int(arg.trim_prefix("--seed="))
+  if arg.begins_with("--settlement-layout="):settlement_layout=arg.trim_prefix("--settlement-layout=")
   if arg.begins_with("--generator="):generator=int(arg.trim_prefix("--generator="))
   if arg.begins_with("--status-file="):status_path=arg.trim_prefix("--status-file=")
   if arg.begins_with("--cancel-file="):cancel_path=arg.trim_prefix("--cancel-file=")
- if not Launch.valid_slot(destination) or seed_value<0 or seed_value>2147483647 or generator not in [13,17,19]:finish("failed","Invalid generation settings");return
+ if not Launch.valid_slot(destination) or seed_value<0 or seed_value>2147483647 or generator not in [13,17,19] or settlement_layout not in ["connected","road","settlement"]:finish("failed","Invalid generation settings");return
  var worlds:=ProjectSettings.globalize_path("user://worlds")
  DirAccess.make_dir_recursive_absolute(worlds)
  lease=ClassDB.instantiate("NativeWorldArchive")
@@ -38,7 +40,7 @@ func _initialize()->void:
  stage="combined_stage_"+identity
  report="user://generation_reports/"+identity
  DirAccess.make_dir_recursive_absolute(report)
- metadata={"version":1,"destination":destination,"stage":stage,"seed":seed_value,"generator":generator,"phases":[]}
+ metadata={"version":1,"destination":destination,"stage":stage,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"phases":[]}
  if not cancel_path.is_empty() and FileAccess.file_exists(cancel_path):finish("cancelled","Cancelled before generation started");return
  start_stage("creating")
 func status(state:String,reason:String="")->void:
@@ -55,7 +57,9 @@ func start_stage(state:String)->void:
  var fitted:=generator in [17,19]
  var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://"+stage])
  if fitted:
-  args.append_array(PackedStringArray(["--central-market","--regional-connection","--preparation-output="+ProjectSettings.globalize_path(report),"--save-terrain-lots" if state=="creating" else "--reopen-terrain-lots"]))
+  if settlement_layout=="connected":args.append("--central-market")
+  if settlement_layout!="settlement":args.append("--regional-connection")
+  args.append_array(PackedStringArray(["--preparation-output="+ProjectSettings.globalize_path(report),"--save-terrain-lots" if state=="creating" else "--reopen-terrain-lots"]))
  if state=="verifying":args.append_array(PackedStringArray(["--reopen-checkpoint","--gameplay-construction","--snapshot-readonly"]))
  child=OS.create_process(OS.get_executable_path(),args,false)
  if child<0:finish("failed","Could not start generation stage");return

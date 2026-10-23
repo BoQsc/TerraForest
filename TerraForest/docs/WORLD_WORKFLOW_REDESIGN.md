@@ -151,3 +151,68 @@ This exercised bundled resources and process handoff; it is not yet a clean-mach
 release-template installer test. The first Steam-editor --main-pack attempt failed
 before creation because res:// globalized to an empty path; that failure is retained
 in report c9b24250da4c48d5e8371c998ea004a0. The corrected export uses its adjacent PCK.
+
+
+## Generator options and route correctness — 2026-10-23
+
+The selector now offers connected settlements, one settlement with a regional
+road, or a standalone settlement. Preview and bake consume the same option flags.
+Coastal preview uses the native implicit-ocean survey and visibility raster, not
+an invented blue border. The 1080p generator image was inspected; the layout and
+coastal overlay are readable. Actual standalone-settlement creation and fresh
+process verification passed in report 525a84d5bdef1a4f30d5dd1f599c32c4.
+The previously exported PCK predates these options and must be refreshed.
+
+Native lot fitting now unpacks road descriptors once, with an exact conservative
+segment broadphase. Same-machine A/B against 2320bda6 retained identical plan
+hashes: seed42 6277 to 1314 ms, seed1703 3307 to 813 ms. This is an offline planning
+measurement, not runtime FPS or laptop thermal evidence. See generation_matrix_*
+in evidence/native_world_generation. Seed0 failed in both versions: its chosen
+street exit was inside a building clearance reservation. The corrected coordinator
+filters those exits and tries at most 8x8 existing street endpoints through the
+unchanged native corridor validator. No grade, cut/fill or exclusion budget was
+relaxed. All three seeds now plan successfully; plan cache version is 2.
+
+Checks: generation_plan_matrix 20261023T051426676676Z;
+native_world_generation 20261023T051604850049Z;
+generation_layout_options 20261023T051609708935Z.
+An initial diagnostic script failed on a void-valued conditional expression
+(20261023T051248544190Z); its corrected diagnostic identified the blocked endpoint.
+
+Newly discovered coverage gap: generators17/19 supply lake basins but did not
+initialize their catalog. Integration with the existing finite-water bake/save
+path is underway. Existing saves must not be populated or refilled on load.
+Closure requires actual generated occupancy, fresh-process persistence, map
+coverage, and inspected lake views. This does not reopen water flow or cosmetics.
+
+Still open: broader seed/terrain admission, world visual acceptance, native/compute
+work distribution, canonical storage recovery, large edit scaling, vegetation
+streaming continuity and distant shadow substitutes, current exported packaging,
+and representative populated travel/resource measurements. The rewrite remains
+in progress; these checks do not certify a game-ready world.
+
+
+### Generated basin integration
+
+Generators17/19 now initialize finite-water definitions only for new/reset worlds;
+existing canonical saves are not populated or refilled. Coastal terrain changes
+basin heights, so native generation samples the actual floor and closed rim,
+selects a contained level and seed, and rejects basins without sufficient depth.
+This does not change the terrain field, existing saves, or static bucket behavior.
+Seeds0/1/42/1703/9999/2147483647 pass deterministic native admission checks; invalid
+records fail. Seed0 rejects its first shallow/open basin and retains three lakes.
+This is explicit admission, not a claim that every seed includes a large lake.
+
+The earlier lake_editor probe first exposed empty seed occupancy, then exceeded
+its old30-second live-generation deadline (20261023T051705414397Z and
+20261023T052133120024Z); neither is counted as passing. Offline generated_basin_review
+passed (20261023T052309344861Z) and both retained lake images were inspected: a large
+contained lake and a small shallow pond. World landscaping remains unaccepted.
+Native fitting passes 20261023T052752487690Z.
+
+Full seed0 connected-world creation and fresh-process verification now pass with
+water included in the saved-content signature. Native publication reports ready:
+integrated_rewrite_0_20261023, report d23449a0182a95ca1421ba06bb966d7b. Generation fills
+water offline, and reopen verifies its cached state. A broader seed/shoreline matrix,
+map preview of planned inland water, explicit generation-progress granularity and
+populated travel performance remain open. Do not confuse these with flow work.

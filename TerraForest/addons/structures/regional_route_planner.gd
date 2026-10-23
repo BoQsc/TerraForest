@@ -30,4 +30,29 @@ static func central_connection(core,town:Dictionary,layout:Dictionary,market:Dic
    for lot:Dictionary in site.lots:
     var bounds:AABB=lot.bounds
     reserved.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(2))
- return route(core,start,finish,reserved)
+ # Preserve the preferred route when valid, then try a bounded set of actual
+ # street endpoints. A lexicographic extreme can lie beside a protected lot.
+ var starts:=arrival_points(town,reserved,true)
+ var finishes:=arrival_points(market,reserved,false) if not market.is_empty() else [finish]
+ if starts.is_empty() or finishes.is_empty():return {"ok":false,"reason":"No unobstructed settlement road exit"}
+ var last:Dictionary={}
+ for a:Vector3 in starts:
+  for b:Vector3 in finishes:
+   last=route(core,a,b,reserved)
+   if last.ok:return last
+ return last
+
+static func arrival_points(site:Dictionary,reserved:Array,south:bool)->Array:
+ var points:Array=[]
+ for road:Dictionary in site.roads:
+  for point:Vector3 in [road.start,road.finish]:
+   if points.has(point):continue
+   var blocked:=false
+   for area:Rect2 in reserved:
+    # Matches native road-corridor clearance exactly.
+    if area.grow(6).has_point(Vector2(point.x,point.z)):blocked=true;break
+   if not blocked:points.append(point)
+ points.sort_custom(func(a:Vector3,b:Vector3):
+  if a.z==b.z:return a.x>b.x
+  return a.z>b.z if south else a.z<b.z)
+ return points.slice(0,8)

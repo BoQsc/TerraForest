@@ -32,12 +32,12 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 	slots.clear()
 	for row:Dictionary in rows:slots.append(row.slot)
 	return slots
-static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true) -> Dictionary:
+static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected") -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")
 	if create:
 		if preparation_slot(slot):return {"ok":false,"reason":"That name is reserved for preparation. Choose a different world name."}
-		if not PRESETS.has(generator) or seed<0 or seed>2147483647:return {"ok":false,"reason":"Choose a generator and seed between 0 and 2147483647."}
+		if not PRESETS.has(generator) or seed<0 or seed>2147483647 or layout not in ["connected","road","settlement"]:return {"ok":false,"reason":"Choose a generator and seed between 0 and 2147483647."}
 		for suffix in ["",".bak",".tmp",".regions",".models",".water"]:
 			if FileAccess.file_exists(canonical+suffix) or DirAccess.dir_exists_absolute(canonical+suffix):return {"ok":false,"reason":"That name already has world data. Choose another name or open the saved world."}
 		if FileAccess.file_exists(directory.path_join(slot+".clone.lock")):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
@@ -50,7 +50,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
 	if create and generator in [INTEGRATED_PRESET,LEGACY_INTEGRATED_PRESET]:
 		var actual_generator:int=(19 if ocean else 17) if generator==INTEGRATED_PRESET else 13
-		var preparation:=engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--seed="+str(seed),"--generator="+str(actual_generator)])
+		var preparation:=engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--seed="+str(seed),"--generator="+str(actual_generator),"--settlement-layout="+layout])
 		return {"ok":true,"prepare":true,"args":preparation}
 
 	var args:=engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])

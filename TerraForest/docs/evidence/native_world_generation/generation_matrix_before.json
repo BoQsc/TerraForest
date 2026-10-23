@@ -1,0 +1,23 @@
+[
+  {
+    "digest": "",
+    "ms": 0,
+    "ok": false,
+    "reason": "No route fits terrain and exclusions",
+    "seed": 0
+  },
+  {
+    "digest": "22f5c682d8d7da07af97491e02817cd9868a3c7e4983cb2aa14cd63d8e4cc28e",
+    "ms": 6277.105,
+    "ok": true,
+    "reason": "",
+    "seed": 42
+  },
+  {
+    "digest": "baf86448080247180513b631c2f8f69b409c6f94490127c5ee6d358afb7b62eb",
+    "ms": 3307.42,
+    "ok": true,
+    "reason": "",
+    "seed": 1703
+  }
+]

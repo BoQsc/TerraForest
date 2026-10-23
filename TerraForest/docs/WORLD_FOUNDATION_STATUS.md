@@ -2453,3 +2453,12 @@ without a source-project path or runtime Python. See WORLD_WORKFLOW_REDESIGN.md 
 evidence/native_world_generation/exported_generation_run.json. Clean-machine
 release-template installation remains unverified. This closes the bundled runtime
 creation dependency gap, not the larger native/compute/storage/vegetation rewrite.
+
+
+2026-10-23 rewrite follow-through: generator layout options, native coastal preview,
+lot-fitting CPU reduction, and seed0 road-exit correction are implemented. Details
+and retained failures: WORLD_WORKFLOW_REDESIGN.md, "Generator options and route
+correctness". Newly discovered missing generated lake initialization is being
+integrated before broader world review. All previously open rewrite items remain
+open until their stated evidence exists, including far tree shadows and vegetation
+owner-publication continuity; irregular scattering alone does not close them.
