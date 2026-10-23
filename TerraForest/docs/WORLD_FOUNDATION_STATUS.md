@@ -1,3 +1,15 @@
+## Target durability feedback - 2026-10-23
+
+Accepted gameplay attacks now show the target's name, remaining/maximum durability
+and a colored bar beside the crosshair. Repeated hits refresh a 2.2-second display;
+it fades and stops processing while idle. Inventory clears it immediately, and
+menu/development focus suppresses it. Existing damage results supply the values;
+there are no new world queries or health polling. Character hits show the struck
+region's health. Actual-world attack and character checks pass (73 and 19 checks),
+with block/object screenshots inspected at 1920x1080. Earlier failed setup and UI
+checks remain documented in [target durability evidence](evidence/target_durability/README.md).
+This is interaction presentation, not closure of world or performance gaps below.
+
 ## Loading presentation and visible generation work - 2026-10-23
 
 Generation and gameplay loading now share a wide, shallow bottom-centered progress

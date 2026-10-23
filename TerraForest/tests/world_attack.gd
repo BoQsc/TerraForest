@@ -17,6 +17,8 @@ func run() -> void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	game.ecosystem.set_process(false)
 	var hud=game.player_hud;var attack=game.world_attack
+	check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing(),"target durability is idle until an accepted hit")
+	DirAccess.make_dir_recursive_absolute("res://reports/target_durability")
 	var original_position: Vector3=game.player.position
 	var base:=Vector3i(game.player.position.floor())+Vector3i(0,10,0)
 	game.player.position=Vector3(base)+Vector3(0,0,3)
@@ -31,10 +33,22 @@ func run() -> void:
 		var before: int=hud.inventory.snapshot().slots[slot].wear
 		attack.next_attack=0
 		check(attack.attack() and game.structures.blocks.get_cell(base)!=0 and hud.inventory.snapshot().slots[slot].wear==before+1,"tool "+str(slot)+" damages block and wears without instant removal")
+		check(hud.damage_feedback.visible and hud.damage_feedback.remaining==int(t.health)-int(attack.TOOLS[game.equipped_tool].wood) and hud.damage_feedback.maximum==t.health,"block hit displays exact native target durability")
+		var expires:int=hud.damage_feedback.expires_us
+		check(not attack.attack() and hud.damage_feedback.expires_us==expires,"cooldown rejection does not refresh target feedback")
+		if slot==0:
+			await RenderingServer.frame_post_draw
+			var rect:Rect2=hud.damage_feedback.get_global_rect()
+			check(rect.position.distance_to(Vector2(root.size)*0.5)<140 and rect.end.y<root.size.y*0.5 and rect.end.x<=root.size.x,"durability stays near and above the crosshair without covering it")
+			root.get_texture().get_image().save_png("res://reports/target_durability/block_hit.png")
 		for i in 8:
 			if game.structures.blocks.get_cell(base)==0:break
 			attack.next_attack=0;attack.attack()
 		check(game.structures.blocks.get_cell(base)==0,"tool "+str(slot)+" eventually destroys block")
+		check(hud.damage_feedback.remaining==0 and hud.damage_feedback.maximum==60,"successful destruction displays an empty target bar")
+	var damage_snapshot:PackedByteArray=attack.durability.capture_storage_snapshot()
+	await create_timer(2.35).timeout
+	check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and damage_snapshot==attack.durability.capture_storage_snapshot(),"feedback expires without polling or mutating target health")
 	# No held material can route into an attack.
 	hud.equip(4);var snapshot: PackedByteArray=attack.durability.capture_storage_snapshot();attack.next_attack=0
 	check(not attack.attack() and snapshot==attack.durability.capture_storage_snapshot(),"placeable material never attacks")
@@ -60,9 +74,21 @@ func run() -> void:
 	check(attack.target().get("kind")=="model","furniture participates in shared nearest hit query")
 	var model_target={"kind":"model","key":"model:furniture/shelf/v1:%d"%id,"id":id,"collection":shelf,"health":90,"material":"wood","name":"Shelf"}
 	shelf.set_removal_protected(id,true);snapshot=hud.inventory.capture_storage_snapshot()
+	var protected_expiry:int=hud.damage_feedback.expires_us
 	check(not attack.apply_target(model_target) and hud.inventory.capture_storage_snapshot()==snapshot,"protected container/object consumes no wear or items")
+	check(hud.damage_feedback.expires_us==protected_expiry,"protected target does not produce damage feedback")
 	shelf.set_removal_protected(id,false)
-	for i in 3:attack.apply_target(model_target)
+	attack.apply_target(model_target)
+	check(hud.damage_feedback.visible and hud.damage_feedback.remaining==60 and hud.damage_feedback.maximum==90 and hud.damage_feedback.name_label.text=="Shelf","object uses its own native health and target name")
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("res://reports/target_durability/object_hit.png")
+	hud.set_open(true);await process_frame
+	check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing(),"inventory clears target feedback")
+	hud.set_open(false);attack.apply_target(model_target)
+	check(hud.damage_feedback.remaining==30 and hud.damage_feedback.visible,"next hit refreshes the same reusable display")
+	game.session_menu.set_open(true);await process_frame
+	check(not hud.damage_feedback.visible,"escape menu clears target feedback")
+	game.session_menu.set_open(false);attack.apply_target(model_target)
 	check(shelf.get_instance(id).is_empty(),"shared attack destroys furniture through salvage transaction")
 	if game.actors.pool==null:check(game.actors.enable(),"actor pool enables for damage fixture")
 	var actor_point:=tree_point+Vector3(10,2,0)

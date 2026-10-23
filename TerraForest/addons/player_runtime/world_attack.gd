@@ -70,6 +70,8 @@ func apply_target(t: Dictionary) -> bool:
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
 	if t.kind=="zombie":
 		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z):return false
+		var part:String=t.get("part","torso")
+		hud.show_target_damage("Zombie: "+part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))),int(t.zombie.PARTS.get(part,{}).get("health",180)))
 		if item!=0:
 			hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
 			game.terrain.changed_since_save=true
@@ -88,6 +90,7 @@ func apply_target(t: Dictionary) -> bool:
 	if result.destroyed:accepted=destroy(t)
 	if not accepted:
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
+	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
 	if result.destroyed:durability.forget(t.key)
 	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision) if item!=0 else {}
 	hud.refresh()

@@ -1,0 +1,80 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+ERROR: Unable to open file: res://.godot/imported/water_ripples_normal.png-e5c1ce0254c9de5a7a71331cea5b33aa.s3tc.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Failed loading resource: res://.godot/imported/water_ripples_normal.png-e5c1ce0254c9de5a7a71331cea5b33aa.s3tc.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Failed loading resource: res://addons/volumetric_water/textures/water_ripples_normal.png.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://addons/volumetric_water/textures/water_ripples_normal.png".
+   at: GDScript::reload (res://addons/volumetric_water/lake_world.gd:115)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Cannot open file 'res://.godot/imported/Human.r11.glb-71c4166bb619faca2a48eaf0e9d3f264.scn'.
+   at: load (core/io/resource_format_binary.cpp:1156)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Failed loading resource: res://.godot/imported/Human.r11.glb-71c4166bb619faca2a48eaf0e9d3f264.scn.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Failed loading resource: res://addons/characters/runtime/assets/Human.r11.glb.
+   at: _load (core/io/resource_loader.cpp:317)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Parse Error: Could not preload resource file "res://addons/characters/runtime/assets/Human.r11.glb".
+   at: GDScript::reload (res://addons/characters/runtime/human_view.gd:4)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/player_runtime/tool_view.gd:0)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://demo/world.gd:0)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+ERROR: Failed to load script "res://demo/world.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: @implicit_new (res://demo/world.gd:32)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_new (res://demo/world.gd:32)
+       [1] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Invalid assignment of property or key 'gameplay' with value of type 'bool' on a base object of type 'Nil'.
+   at: _ready (res://demo/world.gd:106)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://demo/world.gd:106)
+       [1] run (res://tests/world_attack.gd:13)
+SCRIPT ERROR: Invalid call. Nonexistent function 'update' in base 'Nil'.
+   at: _process (res://demo/world.gd:1353)
+   GDScript backtrace (most recent call first):
+       [0] _process (res://demo/world.gd:1353)
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] _physics_process (res://demo/world.gd:1345)
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] _physics_process (res://demo/world.gd:1345)
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] _physics_process (res://demo/world.gd:1345)
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] _physics_process (res://demo/world.gd:1345)
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):

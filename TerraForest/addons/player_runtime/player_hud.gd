@@ -52,9 +52,13 @@ var ground_hint: Label
 var mode_hint: Label
 var action_hint: Label
 var interaction_hint: Label
+var damage_feedback:Control
 var editor_hint: String=""
 var ground_feedback: String=""
 var gameplay_construction:=false
+
+func show_target_damage(target_name:String,remaining:int,maximum:int)->void:
+	if damage_feedback!=null:damage_feedback.show_hit(target_name,remaining,maximum)
 
 func show_interaction_hint(text: String) -> void:
 	if interaction_hint==null:return
@@ -132,6 +136,9 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 func _ready() -> void:
 	layer=20
 	if not prepare(): return
+	damage_feedback=preload("res://addons/player_runtime/target_durability.gd").new()
+	damage_feedback.allowed=func()->bool:return enabled and not inventory_open and not developer_belt and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
+	add_child(damage_feedback)
 	modal=Control.new()
 	message=Label.new()
 	var bar:=HBoxContainer.new()
@@ -341,6 +348,7 @@ func set_open(value: bool) -> void:
 	if not enabled or inventory==null or inventory_open==value: return
 	inventory_open=value
 	if value:
+		if damage_feedback!=null:damage_feedback.clear()
 		previous_mouse=Input.mouse_mode
 		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	else:
