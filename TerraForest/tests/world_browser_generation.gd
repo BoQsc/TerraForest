@@ -25,6 +25,11 @@ func run()->void:
  ok=ok and FileAccess.file_exists("user://worlds/"+slot+".trw")
  var status:Variant=JSON.parse_string(FileAccess.get_file_as_string(browser.preparation_status)) if FileAccess.file_exists(browser.preparation_status) else null
  ok=ok and status is Dictionary and status.get("state","")=="ready"
+ var timing_argument:="--loading-started-ms="+str(browser.preparation_started_unix_ms)
+ ok=ok and browser.preparation_started_unix_ms>0 and timing_argument in browser.opened
+ ok=ok and int(status.get("loading_started_ms",0))==browser.preparation_started_unix_ms
+ var run_metadata:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(status.report).path_join("run.json")))
+ ok=ok and timing_argument in run_metadata.phases[0].arguments
  var handoff:=browser.opened.duplicate()
  browser.opened.clear();browser.preparation_pid=OS.get_process_id()
  browser.launch_selected(true)

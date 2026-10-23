@@ -3,6 +3,7 @@ extends SceneTree
 # Engine-owned coordinator. Generation/persistence work runs in native APIs;
 # this script manages isolated stages and user-visible status only.
 const Launch=preload("res://demo/world_launch.gd")
+var loading_started_ms:=0
 var destination:=""
 var recovery_mode:=false
 var presentation_report:=""
@@ -26,6 +27,8 @@ var review_generation:=false # Developer qualification only; never the player pa
 var capture_generation_ui:=false
 func _initialize()->void:
  Engine.max_fps=10
+ loading_started_ms=preload("res://addons/world_runtime/loading_timer.gd").requested_start()
+ if loading_started_ms==0:loading_started_ms=preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
  for arg:String in OS.get_cmdline_user_args():
   if arg=="--recover-publication":recovery_mode=true
   if arg=="--review-generation":review_generation=true
@@ -60,7 +63,7 @@ func status(state:String,reason:String="")->void:
  if state not in ["creating","verifying"]:progress_detail={}
  phase=state
  if status_path.is_empty():return
- var value:Dictionary={"state":state,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason,"progress":progress_detail,"coordinator_pid":OS.get_process_id(),"child_pid":child,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"staging_slot":stage,"status_file":status_path,"worker_active":publish_worker!=null,"validation":metadata.get("validation",{}),"publication":metadata.get("publication",{})}
+ var value:Dictionary={"state":state,"loading_started_ms":loading_started_ms,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason,"progress":progress_detail,"coordinator_pid":OS.get_process_id(),"child_pid":child,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"staging_slot":stage,"status_file":status_path,"worker_active":publish_worker!=null,"validation":metadata.get("validation",{}),"publication":metadata.get("publication",{})}
  var pending:=status_path+".pending"
  var file:=FileAccess.open(pending,FileAccess.WRITE)
  if file!=null:
@@ -77,6 +80,7 @@ func start_stage(state:String)->void:
   if settlement_layout!="settlement":args.append("--regional-connection")
   args.append_array(PackedStringArray(["--preparation-output="+ProjectSettings.globalize_path(report),"--save-terrain-lots" if state=="creating" else "--reopen-terrain-lots"]))
  if state=="verifying":args.append_array(PackedStringArray(["--reopen-checkpoint","--gameplay-construction","--snapshot-readonly"]))
+ args.append("--loading-started-ms="+str(loading_started_ms))
  if capture_generation_ui:args.append("--capture-generation-ui")
  if not cancel_path.is_empty():args.append("--cancel-file="+cancel_path)
  child=OS.create_process(OS.get_executable_path(),args,false)

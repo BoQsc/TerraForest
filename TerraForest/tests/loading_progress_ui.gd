@@ -31,6 +31,9 @@ func run()->void:
  await RenderingServer.frame_post_draw
  var rect:Rect2=screen.panel.get_global_rect();var bar:Rect2=screen.panel.bar.get_global_rect()
  check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.85 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"large bar centered near bottom at full resolution")
+ var clock:Rect2=screen.panel.clock_label.get_global_rect()
+ check(clock.end.x<screen.cancel_button.get_global_rect().position.x and clock.position.x>screen.panel.title.get_global_rect().end.x,"elapsed and estimate fit in header without overlap")
+ check(screen.panel.clock_label.text.contains("Elapsed") and screen.panel.clock_label.text.contains("Est. remaining"),"both timers are visible beside bar from startup")
  var logo:Rect2=screen.diagnostics.wordmark.get_global_rect()
  check(absf(logo.get_center().x-root.size.x*0.5)<2 and logo.get_center().y>root.size.y*0.3 and logo.get_center().y<root.size.y*0.47,"wordmark is centered slightly above middle")
  check(screen.diagnostics.panel.get_global_rect().end.y<rect.position.y and logo.end.y<screen.diagnostics.panel.get_global_rect().position.y,"wordmark, technical panel and bottom bar do not overlap")
@@ -52,11 +55,13 @@ func run()->void:
  screen.free()
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  # Keep the actual loading flow; record only stage changes and one live frame.
+ var elapsed_samples:Array=[]
  var rows:Array=[];var previous:="";var captured:=false;var diagnostic_sample:Dictionary={};var deadline:=Time.get_ticks_msec()+60000
  while game.loading_active and Time.get_ticks_msec()<deadline:
   if game.loading_label.text!=previous:
    previous=game.loading_label.text;rows.append({"stage":previous,"percent":game.loading_progress.value})
   check(game.loading_progress.value<100,"input remains gated below completion")
+  elapsed_samples.append(game.loading_panel.timing_snapshot().elapsed_us)
   if not captured and game.loading_progress.value>20:
    game.loading_diagnostics.refresh()
    await RenderingServer.frame_post_draw
@@ -66,6 +71,9 @@ func run()->void:
   await process_frame
  check(not game.loading_active and game.loading_progress.value==100,"100 only accompanies playable readiness")
  check(not game.loading_diagnostics.is_processing(),"technical display stops polling when gameplay starts")
+ var final_timing:Dictionary=game.loading_panel.timing_snapshot()
+ check(final_timing.status=="complete" and final_timing.remaining_us==0 and game.loading_panel.clock_label.text.contains("Total") and not game.loading_panel.is_processing(),"ready freezes total, clears ETA and stops timer polling")
+ check(elapsed_samples.size()>1 and elapsed_samples.back()>elapsed_samples.front(),"actual elapsed timer advances during loading")
  var state:Dictionary=game.terrain.loading_state(game.player.position,game.fly)
  var expected:=0;var total:=0
  for key:Vector3i in game.terrain.roots:
@@ -78,6 +86,6 @@ func run()->void:
  check(Meter.loading_caption("Loading landscape coverage",state).contains("%d / %d"%[expected,total]),"landscape caption carries the live fraction")
  check(rows.size()>=3,"actual load communicates changing readiness stages")
  check(game.loading_panel.work.text.contains("worker:") and game.loading_panel.work.text.contains("cache hits") and game.loading_panel.work.text.contains("Coverage"),"bottom bar itself exposes live landscape counters")
- FileAccess.open("res://reports/loading_progress_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"stages":rows,"diagnostics":diagnostic_sample,"scope":"Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately."},"  "))
+ FileAccess.open("res://reports/loading_progress_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"stages":rows,"diagnostics":diagnostic_sample,"timing":final_timing,"scope":"Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately."},"  "))
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free()
  print("LOADING_PROGRESS_UI failures=",failures);quit(1 if failures else 0)

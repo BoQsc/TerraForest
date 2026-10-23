@@ -18,6 +18,14 @@ rendered and actual generation/fresh-process reopening checks pass; see
 [developer loading evidence](evidence/loading_developer_details/README.md). This
 improves visibility; it does not close the loading latency or world-quality gaps.
 
+The loading bar now shows elapsed time and an approximate remaining-time estimate.
+Elapsed time carries from browser creation through the generator/coordinator to
+the first playable load; later reloads start fresh. The estimate uses recent
+measured progress, initially says estimating, and withdraws a stale prediction
+while work is stalled. Completion freezes the total. This is a rough prediction
+from weighted work, not a measured guarantee for every upcoming stage. See
+[loading timer evidence](evidence/loading_timers/README.md).
+
 Each photograph now names its viewpoint and exposes destination terrain/collision,
 water, nearby vegetation readiness, then capture/save. Map preparation reports
 pending layers, saved-world identity verification and cache writes. The first

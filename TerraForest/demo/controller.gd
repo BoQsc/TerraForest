@@ -350,6 +350,7 @@ func _setup_loading() -> void:
 	loading_panel.action.text="Save and quit"
 	loading_panel.action.pressed.connect(func() -> void: _notification(NOTIFICATION_WM_CLOSE_REQUEST))
 	loading_from_generation="--generation-handoff" in OS.get_cmdline_user_args()
+	loading_panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start() if loading_from_generation else 0,94 if loading_from_generation else 0)
 	loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 
 func _loading_reload() -> void:
@@ -361,7 +362,7 @@ func _begin_loading(reason: String) -> void:
 		loading_diagnostics.reset();loading_diagnostics.set_process(true)
 	loading_diagnostics_next_us=0
 	if loading_panel!=null:
-		loading_panel.reset()
+		loading_panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start() if loading_from_generation else 0,94 if loading_from_generation else 0)
 		loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 	loading_reason = reason
 	loading_started_us = Time.get_ticks_usec()
@@ -390,6 +391,7 @@ func _update_loading() -> void:
 		loading_diagnostics_next_us=Time.get_ticks_usec()+250000
 		loading_diagnostics.context=preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(self)
 	if terrain.latest_error != "":
+		loading_panel.stop_timer("failed")
 		loading_diagnostics.observe("Loading failed",{"error":terrain.latest_error})
 		loading_label.text = "Loading failed\n" + terrain.latest_error + "\nRead the startup log in reports."
 		return
@@ -401,7 +403,7 @@ func _update_loading() -> void:
 	var display_percent:float=94.0+loading_stage_percent*0.06 if loading_from_generation else loading_stage_percent
 	loading_panel.show_progress("Loading your world",preload("res://addons/world_runtime/progress_meter.gd").loading_caption(loading_stage_text,state),display_percent)
 	loading_panel.show_work(loading_work_text)
-	loading_diagnostics.observe(loading_stage_text,{"stage":loading_stage_text,"overall_percent":display_percent,"ready_frames":loading_ready_frames,"required_ready_frames":3})
+	loading_diagnostics.observe(loading_stage_text,{"stage":loading_stage_text,"overall_percent":display_percent,"ready_frames":loading_ready_frames,"required_ready_frames":3,"timing":loading_panel.timing_snapshot()})
 	if loading_ready_frames < 3:
 		return
 	loading_panel.show_progress("Ready to play","Your world is ready",100)

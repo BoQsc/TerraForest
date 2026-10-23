@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 extends PanelContainer
 # Shared, viewport-anchored presentation. No timed/fabricated progress animation.
+const Timing=preload("res://addons/world_runtime/loading_timer.gd")
+var timer=Timing.new()
+var clock_label:Label
+var next_clock_us:=0
 var title:Label
 var detail:Label
 var percentage:Label
@@ -16,6 +20,9 @@ func _ready()->void:
  var box:=VBoxContainer.new();box.add_theme_constant_override("separation",6);add_child(box)
  var header:=HBoxContainer.new();box.add_child(header)
  title=Label.new();title.text="Loading your world";title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title.add_theme_font_size_override("font_size",18);header.add_child(title)
+ clock_label=Label.new();clock_label.add_theme_font_size_override("font_size",15);clock_label.add_theme_color_override("font_color",Color("a9ddc8"));clock_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;header.add_child(clock_label)
+ clock_label.tooltip_text="Elapsed time includes generation, verification and the first load. Remaining time is a rough estimate from recent measured progress, updated as work changes."
+ header.add_theme_constant_override("separation",18)
  action=Button.new();action.custom_minimum_size=Vector2(180,26);action.add_theme_font_size_override("font_size",14);action.text="Cancel";header.add_child(action)
  var row:=HBoxContainer.new();row.add_theme_constant_override("separation",20);box.add_child(row)
  detail=Label.new();detail.text="Starting…";detail.size_flags_horizontal=Control.SIZE_EXPAND_FILL;detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;detail.add_theme_font_size_override("font_size",17);row.add_child(detail)
@@ -25,12 +32,25 @@ func _ready()->void:
  var fill:=StyleBoxFlat.new();fill.bg_color=Color("6cc7aa");fill.set_corner_radius_all(4);bar.add_theme_stylebox_override("fill",fill)
  bar.tooltip_text="Overall completion estimate based on finished stages and work counts. 100% means ready to play."
  work=Label.new();work.visible=false;work.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;work.add_theme_font_size_override("font_size",14);box.add_child(work)
-func reset()->void:
- high_water=0;bar.value=0;percentage.text="0%"
+ reset()
+func reset(start_ms:int=0,baseline:float=0)->void:
+ high_water=baseline;bar.value=baseline;percentage.text="%d%%"%int(baseline)
+ timer.reset(Time.get_ticks_usec(),baseline,Timing.carried_elapsed(start_ms));next_clock_us=0;set_process(true);refresh_clock()
+func _process(_delta:float)->void:
+ if not is_visible_in_tree() or Time.get_ticks_usec()<next_clock_us:return
+ next_clock_us=Time.get_ticks_usec()+250000;refresh_clock()
+func refresh_clock()->void:
+ clock_label.text=Timing.label(timer.snapshot(Time.get_ticks_usec()))
+func stop_timer(reason:String)->void:
+ timer.stop(reason,Time.get_ticks_usec());refresh_clock()
+func timing_snapshot()->Dictionary:
+ return timer.snapshot(Time.get_ticks_usec())
 func show_progress(caption:String,stage:String,value:float)->void:
  title.text=caption;detail.text=stage
  high_water=maxf(high_water,clampf(value,0,100));bar.value=high_water
  percentage.text="%d%%"%int(floor(high_water))
+ timer.observe(high_water,Time.get_ticks_usec())
+ if high_water>=100:refresh_clock();set_process(false)
 
 func show_work(text:String)->void:
  work.text=text;work.visible=not text.is_empty()

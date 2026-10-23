@@ -23,6 +23,11 @@ counters are also shown directly under the bar. Full details and completed-stage
 timings remain scrollable above it; see
 [developer loading evidence](evidence/loading_developer_details/README.md).
 
+Elapsed and approximate remaining timers now sit beside the bottom bar.
+Generation, verification and the first game load share one elapsed origin across
+processes. ETA uses recent progress and is explicitly withdrawn when stale; see
+[loading timer evidence](evidence/loading_timers/README.md).
+
 The missing bounded pre-publication generation mechanism is now integrated.
 Native earthworks checkpoint into the coordinator's private staging world and
 continue through the same terrain pager; first compound save inherits that exact

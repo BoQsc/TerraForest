@@ -1,0 +1,13 @@
+{
+  "failures": 0,
+  "scope": "Deterministic injected monotonic times: changing throughput, stalls, handoff, completion, failure/cancellation and bounded window. Rendered actual-world UI checked separately.",
+  "steady": {
+    "elapsed_us": 4000000,
+    "estimate_state": "approximate",
+    "progress": 40.0,
+    "remaining_us": 6000000,
+    "sample_count": 3,
+    "status": "working",
+    "window_us": 30000000
+  }
+}

@@ -154,7 +154,11 @@ func launch_selected(create: bool) -> void:
 	# exit the browser instead of replacing a live world's storage ownership.
 	_open_game(result.args)
 
+var preparation_started_unix_ms:=0
+
 func start_preparation(result:Dictionary,slot:String)->void:
+	preparation_started_unix_ms=preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
+	result.args.append("--loading-started-ms="+str(preparation_started_unix_ms))
 	preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
 	preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
 	preparation_cancel=preparation_status+".cancel";cancel_pending=false
@@ -165,6 +169,7 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	preparation_started_msec=Time.get_ticks_msec()
 	Engine.max_fps=10
 	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=preparation_cancel;add_child(generation_screen)
+	generation_screen.panel.reset(preparation_started_unix_ms)
 	generation_screen.cancel_requested.connect(func():cancel_pending=true;cancel_button.disabled=true)
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
@@ -215,6 +220,7 @@ func _process(delta:float)->void:
 	var launch:=Launch.command(preparation_slot,false,12,0,preparation_gameplay)
 	if not launch.ok:notice.text=launch.reason;return
 	launch.args.append("--generation-handoff")
+	launch.args.append("--loading-started-ms="+str(int(result.get("loading_started_ms",preparation_started_unix_ms))))
 	_open_game(launch.args)
 
 func _open_game(args:PackedStringArray)->void:
@@ -227,7 +233,7 @@ func _update_preparation_notice()->void:
 	if cancel_pending:
 		notice.text="Cancelling generation…"
 		if generation_screen!=null:
-			generation_screen.cancellation_requested=true;generation_screen.detail.text=notice.text;generation_screen.cancel_button.disabled=true
+			generation_screen.cancellation_requested=true;generation_screen.panel.stop_timer("cancelling");generation_screen.detail.text=notice.text;generation_screen.cancel_button.disabled=true
 		return
 	var stage:="Starting world generation"
 	var state:=str(result.get("state","")) if result is Dictionary else ""
