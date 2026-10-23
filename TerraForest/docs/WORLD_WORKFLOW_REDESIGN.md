@@ -28,6 +28,12 @@ Generation, verification and the first game load share one elapsed origin across
 processes. ETA uses recent progress and is explicitly withdrawn when stale; see
 [loading timer evidence](evidence/loading_timers/README.md).
 
+Loading backgrounds now retain full-resolution lossless captures and use one
+shared dim overlay in generation and gameplay loading. The Compact switch has
+been removed from the loading UI. Existing 720p images can be refreshed through
+the world's read-only photograph action; see
+[photograph quality evidence](evidence/loading_photo_quality/README.md).
+
 The missing bounded pre-publication generation mechanism is now integrated.
 Native earthworks checkpoint into the coordinator's private staging world and
 continue through the same terrain pager; first compound save inherits that exact

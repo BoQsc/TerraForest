@@ -5,7 +5,7 @@ func run()->void:
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
  var failures:=0
  var found:=false
- for child:Node in game.loading_layer.get_children():
+ for child:Node in game.loading_layer.find_children("*","TextureRect",true,false):
   if child is TextureRect and child.texture!=null:found=true
  if not found:failures+=1
  await RenderingServer.frame_post_draw

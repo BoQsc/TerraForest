@@ -26,12 +26,21 @@ while work is stalled. Completion freezes the total. This is a rough prediction
 from weighted work, not a measured guarantee for every upcoming stage. See
 [loading timer evidence](evidence/loading_timers/README.md).
 
-Compact loading is now the default: a centered 1120-pixel progress panel at
-1920x1080, with a saved Compact switch for the previous wide layout. Timers and
-technical details remain available. The targeted rendered check covers both
-widths, preference restoration and actual gameplay loading; see
-[compact loading evidence](evidence/loading_compact/README.md). This supersedes
-the earlier default-width description while retaining its readiness behavior.
+Compact loading remains the default: a centered 1120-pixel progress panel at
+1920x1080. The inline Compact switch has been removed at the user's request;
+the optional width preference remains in loading_presentation.cfg. Timers and
+technical details remain available. Earlier width verification is retained in
+[compact loading evidence](evidence/loading_compact/README.md).
+
+Generation and gameplay loading now share the same 50% dim overlay behind their
+UI. Captures preserve the full rendered 1920x1080 lossless PNG, replacing the
+previous forced 1280x720 reduction followed by upscaling. Display uses explicit
+linear filtering at native size. Existing lower-resolution sidecars need the
+read-only Refresh photographs action; they are not sharpened by upscaling. Actual
+refresh, fresh generation/publication and reopening evidence is retained in
+[loading photograph quality](evidence/loading_photo_quality/README.md). This is
+presentation fidelity, not approval of the existing world art or a performance
+qualification. World data and gameplay rendering settings remain unchanged.
 
 Each photograph now names its viewpoint and exposes destination terrain/collision,
 water, nearby vegetation readiness, then capture/save. Map preparation reports

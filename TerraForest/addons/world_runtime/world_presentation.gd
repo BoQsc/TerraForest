@@ -44,7 +44,8 @@ static func capture(game:Node,viewport:Viewport,path:String)->Error:
   if child.visible:layers.append(child);child.hide()
  await RenderingServer.frame_post_draw
  var picture:Image=viewport.get_texture().get_image()
- picture.resize(1280,720,Image.INTERPOLATE_LANCZOS)
+ # Preserve every rendered pixel (1920x1080 under the fullscreen policy).
+ # PNG is lossless; the loading background displays this image at native size.
  var result:=picture.save_png(path)
  for layer:CanvasLayer in layers:layer.show()
  if tool!=null:tool.visible=tool_visible

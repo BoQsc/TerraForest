@@ -4,6 +4,7 @@ signal cancel_requested
 const Meter=preload("res://addons/world_runtime/progress_meter.gd")
 var detail:Label
 var title:Label
+var background:Control
 var picture:TextureRect
 var panel:PanelContainer
 var diagnostics:Control
@@ -12,8 +13,8 @@ var cancel_button:Button
 var cancellation_requested:=false
 func _ready()->void:
  layer=120
- var fill:=ColorRect.new();fill.color=Color("101b1c");fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(fill)
- picture=TextureRect.new();picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED;add_child(picture)
+ background=preload("res://addons/world_runtime/loading_background.gd").new();add_child(background)
+ picture=background.picture
  diagnostics=preload("res://addons/world_runtime/loading_details.gd").new();add_child(diagnostics)
  panel=preload("res://addons/world_runtime/loading_panel.gd").new();add_child(panel)
  detail=panel.detail;title=panel.title;cancel_button=panel.action

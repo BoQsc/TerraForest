@@ -1,0 +1,22 @@
+{
+  "authoritative_files": 324,
+  "canonical_unchanged": true,
+  "clone": "photo_review_62860_1115307",
+  "failures": 0,
+  "resolutions": [
+    {
+      "size": "(1920, 1080)",
+      "view": "north"
+    },
+    {
+      "size": "(1920, 1080)",
+      "view": "road"
+    },
+    {
+      "size": "(1920, 1080)",
+      "view": "market"
+    }
+  ],
+  "scope": "Real browser-driven read-only photograph refresh of a disposable generated-world clone, native-resolution PNGs and loading display.",
+  "source": "browser_seed50_606677"
+}

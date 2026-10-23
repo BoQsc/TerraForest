@@ -46,8 +46,23 @@ func run()->void:
    if before[path]!=after.get(path):print("CHANGED_CANONICAL ",path)
   for path:String in after:
    if not before.has(path):print("NEW_CANONICAL ",path)
+ var resolutions:Array=[]
  for name in ["north","road","market"]:
   var image:=Image.load_from_file("user://worlds/"+slot+".preview/"+name+".png")
-  if image==null or image.get_size()!=Vector2i(1280,720):failures+=1;print("INVALID_PHOTO ",name)
- print("WORLD_PHOTOGRAPHS failures=",failures," cold_removed=",cold_removed," authoritative_files=",before.size()," notice=",browser.notice.text)
- browser.free();quit(1 if failures else 0)
+  if image==null or image.get_size()!=Vector2i(1920,1080):failures+=1;print("INVALID_PHOTO ",name)
+  if image!=null:resolutions.append({"view":name,"size":str(image.get_size())})
+ var texture:Texture2D=preload("res://addons/world_runtime/world_presentation.gd").image_for(slot)
+ if texture==null or texture.get_size()!=Vector2(1920,1080):failures+=1
+ var notice:String=browser.notice.text
+ browser.free()
+ var screen=preload("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
+ screen.use_photograph("user://worlds/"+slot+".preview/north.png")
+ screen.update_stage("Photographing the generated world",3,3,{"activity":"Full-resolution world photographs ready"})
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("res://reports/world_photo_loading.png")
+ if screen.picture.texture.get_size()!=Vector2(1920,1080) or screen.picture.get_global_rect().size!=Vector2(1920,1080):failures+=1
+ DirAccess.copy_absolute("user://worlds/"+slot+".preview/north.png","res://reports/world_photo_native.png")
+ FileAccess.open("res://reports/world_photographs.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"source":original,"clone":slot,"resolutions":resolutions,"canonical_unchanged":before==after,"authoritative_files":before.size(),"scope":"Real browser-driven read-only photograph refresh of a disposable generated-world clone, native-resolution PNGs and loading display."},"  "))
+ screen.free()
+ print("WORLD_PHOTOGRAPHS failures=",failures," cold_removed=",cold_removed," authoritative_files=",before.size()," notice=",notice)
+ quit(1 if failures else 0)

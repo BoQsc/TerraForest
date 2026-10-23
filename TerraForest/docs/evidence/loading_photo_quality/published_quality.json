@@ -1,0 +1,32 @@
+{
+  "slot": "browser_seed50_463368",
+  "photos": [
+    {
+      "name": "north",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "published_without_reencoding": true,
+      "bytes": 2562491
+    },
+    {
+      "name": "road",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "published_without_reencoding": true,
+      "bytes": 2400837
+    },
+    {
+      "name": "market",
+      "pixels": [
+        1920,
+        1080
+      ],
+      "published_without_reencoding": true,
+      "bytes": 2677197
+    }
+  ]
+}

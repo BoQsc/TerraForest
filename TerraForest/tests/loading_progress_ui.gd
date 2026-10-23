@@ -4,6 +4,7 @@ const Meter=preload("res://addons/world_runtime/progress_meter.gd")
 var failures:=0
 func check(ok:bool,message:String)->void:
  if not ok:failures+=1;push_error(message)
+func screen_shade()->Color:return Color(0.01,0.02,0.03,0.5)
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var screen=preload("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
@@ -34,6 +35,8 @@ func run()->void:
  check(absf(bar.get_center().x-root.size.x*0.5)<2 and bar.position.y>root.size.y*0.65 and bar.size.x>root.size.x*0.5 and bar.size.x<root.size.x*0.65 and bar.size.y>=18 and bar.size.y<=22 and rect.size.y<180 and rect.end.y<=root.size.y-8 and screen.cancel_button.get_global_rect().end.y<root.size.y,"compact bar centered near bottom at full resolution")
  var clock:Rect2=screen.panel.clock_label.get_global_rect()
  check(clock.end.x<screen.cancel_button.get_global_rect().position.x and clock.position.x>screen.panel.title.get_global_rect().end.x,"elapsed and estimate fit in header without overlap")
+ check(screen.panel.find_children("*","CheckButton",true,false).is_empty(),"loading screen has no Compact toggle")
+ check(screen.background.shade.color.a==0.5 and screen.background.shade.get_index()>screen.picture.get_index(),"generation dims the photograph underneath the UI")
  check(screen.panel.clock_label.text.contains("Elapsed") and screen.panel.clock_label.text.contains("Est. remaining"),"both timers are visible beside bar from startup")
  var logo:Rect2=screen.diagnostics.wordmark.get_global_rect()
  check(absf(logo.get_center().x-root.size.x*0.5)<2 and logo.get_center().y>root.size.y*0.3 and logo.get_center().y<root.size.y*0.47,"wordmark is centered slightly above middle")
@@ -48,15 +51,15 @@ func run()->void:
  check(screen.panel.bar.value==progress_before and screen.panel.timing_snapshot().elapsed_us>=elapsed_before,"switching width preserves progress and timer")
  root.get_texture().get_image().save_png("res://reports/loading_progress_wide.png")
  screen.panel.set_compact_width(true,false)
- # Exercise the actual toggle and disk preference using an isolated file.
+ # The optional width preference remains available without a loading-screen control.
  var preference_path:="user://loading_layout_check_%d.cfg"%Time.get_ticks_usec()
  var preference_panel=preload("res://addons/world_runtime/loading_panel.gd").new();preference_panel.preferences_path=preference_path;root.add_child(preference_panel)
- check(preference_panel.compact_width and preference_panel.compact_toggle.button_pressed,"new users default to compact")
- preference_panel.compact_toggle.button_pressed=false
- check(not preference_panel.compact_width,"UI toggle changes to wide")
+ check(preference_panel.compact_width,"new users default to compact")
+ preference_panel.set_compact_width(false)
+ check(not preference_panel.compact_width,"optional width preference changes to wide")
  preference_panel.free()
  var restored=preload("res://addons/world_runtime/loading_panel.gd").new();restored.preferences_path=preference_path;root.add_child(restored)
- check(not restored.compact_width and not restored.compact_toggle.button_pressed,"wide choice survives a new loading panel")
+ check(not restored.compact_width,"optional width preference survives a new loading panel")
  restored.free();DirAccess.remove_absolute(ProjectSettings.globalize_path(preference_path))
  # A large payload stays accessible by scrolling and is never interpreted as BBCode.
  var probe:Dictionary={}
@@ -86,6 +89,8 @@ func run()->void:
    game.loading_diagnostics.refresh()
    await RenderingServer.frame_post_draw
    diagnostic_sample=game.loading_diagnostics.context.duplicate(true)
+   var backdrop:Control=game.loading_layer.get_node("LoadingBackground")
+   check(backdrop.shade.color==screen_shade() and backdrop.shade.get_index()>backdrop.picture.get_index(),"gameplay loading uses the same dimmed background")
    var loading_rect:Rect2=game.loading_panel.get_global_rect()
    check(absf(loading_rect.get_center().x-root.size.x*0.5)<2 and loading_rect.size.x<root.size.x*0.65 and game.loading_diagnostics.panel.get_global_rect().end.y<=loading_rect.position.y,"actual loading uses compact centered panel without diagnostics overlap")
    check(game.loading_diagnostics.live.text.contains("readiness.queued") and game.loading_diagnostics.live.text.contains("addons.ground_cover") and game.loading_diagnostics.live.text.contains("addons.water") and game.loading_diagnostics.live.text.contains("terrain_worker.phase"),"actual world diagnostics are displayed")

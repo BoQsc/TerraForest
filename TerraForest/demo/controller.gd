@@ -329,19 +329,13 @@ func _setup_hud() -> void:
 func _setup_loading() -> void:
 	loading_layer.layer = 50
 	add_child(loading_layer)
-	var background := ColorRect.new()
-	background.color = Color(0.035, 0.045, 0.06, 1.0)
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	loading_layer.add_child(background)
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var picture:=TextureRect.new()
+	var background=preload("res://addons/world_runtime/loading_background.gd").new()
+	background.name="LoadingBackground";loading_layer.add_child(background)
+	var picture:TextureRect=background.picture
 	var preview_slot:String=terrain.save_slot
 	for arg:String in OS.get_cmdline_user_args():
 		if arg.begins_with("--world-slot="):preview_slot=arg.trim_prefix("--world-slot=")
 	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(preview_slot)
-	picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(picture)
-	var shade:=ColorRect.new();shade.color=Color(0.01,0.02,0.03,0.63);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(shade)
 	loading_diagnostics=preload("res://addons/world_runtime/loading_details.gd").new()
 	loading_layer.add_child(loading_diagnostics)
 	loading_panel=preload("res://addons/world_runtime/loading_panel.gd").new()

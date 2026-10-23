@@ -6,7 +6,6 @@ var timer=Timing.new()
 const COMPACT_WIDTH:=1120.0
 var preferences_path:="user://loading_presentation.cfg"
 var compact_width:=true
-var compact_toggle:CheckButton
 var clock_label:Label
 var next_clock_us:=0
 var title:Label
@@ -27,9 +26,6 @@ func _ready()->void:
  clock_label=Label.new();clock_label.add_theme_font_size_override("font_size",15);clock_label.add_theme_color_override("font_color",Color("a9ddc8"));clock_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;header.add_child(clock_label)
  clock_label.tooltip_text="Elapsed time includes generation, verification and the first load. Remaining time is a rough estimate from recent measured progress, updated as work changes."
  header.add_theme_constant_override("separation",18)
- compact_toggle=CheckButton.new();compact_toggle.text="Compact";compact_toggle.add_theme_font_size_override("font_size",14);header.add_child(compact_toggle)
- compact_toggle.tooltip_text="Keep the loading panel compact and centered. Turn off for a wide layout. Applies to generation and loading."
- compact_toggle.toggled.connect(set_compact_width)
  action=Button.new();action.custom_minimum_size=Vector2(180,26);action.add_theme_font_size_override("font_size",14);action.text="Cancel";header.add_child(action)
  var row:=HBoxContainer.new();row.add_theme_constant_override("separation",20);box.add_child(row)
  detail=Label.new();detail.text="Starting…";detail.size_flags_horizontal=Control.SIZE_EXPAND_FILL;detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;detail.add_theme_font_size_override("font_size",17);row.add_child(detail)
@@ -45,7 +41,7 @@ func _ready()->void:
  get_viewport().size_changed.connect(_apply_width)
  reset()
 func set_compact_width(enabled:bool,persist:bool=true)->void:
- compact_width=enabled;compact_toggle.set_pressed_no_signal(enabled);_apply_width()
+ compact_width=enabled;_apply_width()
  if persist:
   var preferences:=ConfigFile.new();preferences.load(preferences_path)
   preferences.set_value("loading","compact_width",enabled)
