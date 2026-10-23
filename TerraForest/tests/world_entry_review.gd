@@ -20,6 +20,9 @@ func run()->void:
   root.get_texture().get_image().save_png("res://reports/world_creation_ui.png")
   tabs.current_tab=0
   for i in 3:await process_frame
+  for control:Control in browser.find_children("*","Control",true,false):
+   if not control.is_visible_in_tree() or not (control is BaseButton or control is LineEdit or control==browser.saved_picture or control==browser.saved_details or control==browser.notice):continue
+   if not screen.encloses(control.get_global_rect()):failures+=1;print("OUTSIDE_SCREEN ",control.get_global_rect())
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_selector_ui.png")
   browser.show_recovery()

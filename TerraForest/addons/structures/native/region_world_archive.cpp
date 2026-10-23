@@ -215,6 +215,9 @@ int64_t NativeRegionWorldArchive::publish_sections(const String &path,const Dict
             model->publish_storage_state(state["resident"],state["unavailable_keys"],state["unavailable_checksums"]):model->publish_snapshot(models[asset]);
         if(!bool(stored["ok"]))return stored["error"];
         Dictionary model_pin=model->pin_checkpoint();if(!bool(model_pin["ok"]))return model_pin["error"];
+        // Bake derived metadata only at explicit save publication. Read-only
+        // startup may rebuild in memory but never writes checkpoint sidecars.
+        Dictionary metadata=model->bake_metadata(model_pin["checkpoint"]);if(!bool(metadata["ok"]))return metadata["error"];
         Dictionary model_index=model->checkpoint_regions(model_pin["checkpoint"]);if(!bool(model_index["ok"]))return model_index["error"];
         model_indexes.emplace(asset,PublishedModelIndex{model_index["keys"],model_index["checksums"],model_pin["checkpoint"]});
         models[asset]=NativeStructuresSnapshot::model_reference(asset,model_pin["checkpoint"]);

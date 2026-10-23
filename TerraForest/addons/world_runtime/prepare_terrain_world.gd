@@ -2,6 +2,9 @@
 extends SceneTree
 var seed_value:=42
 var output_dir:="res://reports"
+var progress_path:=""
+const Progress=preload("res://addons/world_runtime/generation_progress.gd")
+func progress(stage:String,completed:int=0,total:int=0)->void:Progress.write(progress_path,stage,completed,total)
 func _initialize()->void:run.call_deferred()
 func ready_world(game:Node)->bool:
  return await wait_until(func():return not game.loading_active,120)
@@ -39,9 +42,11 @@ func run()->void:
  for arg:String in OS.get_cmdline_user_args():
   if arg.begins_with("--world-seed="):seed_value=int(arg.trim_prefix("--world-seed="))
   if arg.begins_with("--world-generator="):generator=int(arg.trim_prefix("--world-generator="))
+  if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
  if generator not in [17,18,19] or seed_value<0 or seed_value>2147483647:quit(1);return
  DirAccess.make_dir_recursive_absolute(output_dir)
+ progress("Planning terrain, streets and building sites")
  var prepared:Dictionary=preload("res://addons/world_runtime/world_generation_plan.gd").build(seed_value,generator,"--central-market" in OS.get_cmdline_user_args(),"--regional-connection" in OS.get_cmdline_user_args())
  if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
  var plan:Dictionary=prepared.plan
@@ -61,9 +66,12 @@ func run()->void:
   if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ progress("Loading terrain and collision")
  if not await ready_world(game) or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
+ progress("Baking generated lakes")
  if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
  game.set_physics_process(false);game._clear_motion();game.terrain.autosave_timer=-3600.0
+ progress("Baking terrain overview")
  var map_worker:=Thread.new()
  if map_worker.start(preload("res://addons/world_runtime/survey_cache.gd").prepare.bind(seed_value,generator))!=OK:
   print("CARTOGRAPHY_WORKER_FAILED");game.free();quit(1);return
@@ -72,6 +80,7 @@ func run()->void:
  if not map_result.get("ok",false):print("CARTOGRAPHY_CACHE_FAILED");game.free();quit(1);return
  print("PREPARED_CARTOGRAPHY ",JSON.stringify(map_result))
  if reopen:
+  progress("Verifying saved terrain, buildings and water")
   var expected=FileAccess.get_file_as_bytes(output_dir.path_join("terrain_lot_region_expected.bin"))
   if expected.is_empty() or game.generated_region.store.capture_snapshot()!=expected or game.generated_region.describe(seed_value,generator).is_empty():
    print("REGION_REOPEN_FAILED");game.free();quit(1);return
@@ -97,6 +106,7 @@ func run()->void:
    if count!=0:game.free();quit(1);return
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output_dir.path_join("terrain_lot_regional_ground.png"))
+  progress("Baking saved world map layers")
   game.app_focused=true;game.world_map.set_open(true)
   var atlas:Node=game.world_map
   var map_ready:bool=await wait_until(func():
@@ -113,18 +123,24 @@ func run()->void:
   game.free();quit();return
  var runner=preload("res://addons/structures/site_preparation.gd").new()
  var completed_edits:=0
+ var last_progress_ms:=0
+ progress("Grading roads and foundations",0,works.segments.size())
  for offset in range(0,works.segments.size(),256):
   var batch:Dictionary={"ok":true,"segments":works.segments.slice(offset,mini(offset+256,works.segments.size())),"bounds":works.bounds}
   if not runner.begin(batch,game.terrain,func(_bounds:AABB)->String:return ""):quit(1);return
   var deadline:int=Time.get_ticks_msec()+90000
   while runner.status=="running" and Time.get_ticks_msec()<deadline:
    runner.tick(game.terrain,func(_bounds:AABB)->String:return "")
+   if Time.get_ticks_msec()-last_progress_ms>=250:
+    progress("Grading roads and foundations",completed_edits+runner.completed,works.segments.size());last_progress_ms=Time.get_ticks_msec()
    await process_frame
   if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
   completed_edits+=runner.completed
  game.structure_mode=true;game.structure_rotation=0
  var all_lots:Array=plan.lots.duplicate()
  if not market.is_empty():all_lots.append_array(market.lots)
+ var completed_buildings:=0
+ progress("Placing buildings and interiors",0,all_lots.size())
  for lot:Dictionary in all_lots:
   var index:int=game.structure_prefabs.find(lot.asset)
   if index<0:
@@ -134,6 +150,8 @@ func run()->void:
   game._begin_frontage_placement(lot.asset,lot.origin,true)
   if not await wait_until(func():return game._foundation_placement.is_empty(),20) or game.doors.collection.get_ids().size()!=doors+1:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
+  completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
+ progress("Baking streets and location metadata")
  var poses:Array=Planner.paving(plan)
  if not market.is_empty():poses.append_array(Planner.paving(market))
  var collection=game.structures.model(preload("res://addons/structures/paving_catalog.gd").KEY)
@@ -167,6 +185,7 @@ func run()->void:
  game.world_map.refresh_world()
  if game.world_map.places.size()!=((1 if connection.is_empty() else 2)+(1 if generator==18 else 0)) or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
+ progress("Capturing world photographs")
  var center:Vector3=plan.center
  center.y=plan.lots[5].origin.y
  game.teleport(center+Vector3(70,0,70))
@@ -255,6 +274,7 @@ func run()->void:
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("coastal_inlet.png"))
  if bake:
+  progress("Saving generated world")
   var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)
   file.store_buffer(game.generated_region.store.capture_snapshot());file.close()
   var manifest:=FileAccess.open(output_dir.path_join("world_signature.json"),FileAccess.WRITE)

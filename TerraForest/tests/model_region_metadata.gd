@@ -35,6 +35,9 @@ func run() -> void:
 	check(store.open_store(path,"test/metadata").ok and store.publish_snapshot(original).ok,"large collection publishes into immutable region catalog")
 	var pin: PackedByteArray=store.pin_checkpoint().checkpoint
 	var read: Dictionary=store.read_metadata(pin)
+	var cold_cache:=path.path_join("checkpoints").path_join(pin.hex_encode()+".tfmd")
+	check(read.ok and not read.cache_hit and not read.cache_written and not FileAccess.file_exists(cold_cache),"cold read rebuilds metadata without writing into world storage")
+	read=store.bake_metadata(pin)
 	check(read.ok and not read.cache_hit and read.cache_written and read.regions_read==100,"first metadata build verifies region packets individually and persists derived manifest")
 	var metadata: PackedByteArray=read.metadata
 	check(metadata.size()<850000 and original.size()>5600000,"manifest stores IDs and region basis bounds instead of all instance transforms")
@@ -81,7 +84,9 @@ func run() -> void:
 	var cache:=path.path_join("checkpoints").path_join(pin.hex_encode()+".tfmd")
 	write(cache,PackedByteArray([1,2,3]))
 	read=store.read_metadata(pin)
-	check(read.ok and not read.cache_hit and read.cache_written and read.metadata==metadata,"corrupt derived cache regenerates from authoritative region blobs")
+	check(read.ok and not read.cache_hit and not read.cache_written and read.metadata==metadata and FileAccess.get_file_as_bytes(cache)==PackedByteArray([1,2,3]),"corrupt derived cache regenerates in memory without read-side writes")
+	read=store.bake_metadata(pin)
+	check(read.ok and read.cache_written,"explicit bake repairs corrupt derived metadata")
 	var duplicate:=batch("test/metadata")
 	duplicate.upsert_instances(PackedInt64Array([1]),PackedFloat32Array([1,0,0,9600,0,1,0,0,0,0,1,0]))
 	check(store.publish_region(duplicate.capture_region(Vector3i(300,0,0)),PackedByteArray()).ok,"low-level fixture creates a cross-region duplicate ID catalog")

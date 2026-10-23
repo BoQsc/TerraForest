@@ -20,6 +20,8 @@ var lease:RefCounted
 var lease_owned:=false
 var publish_worker:Thread
 var metadata:Dictionary={}
+var progress_detail:Dictionary={}
+var next_progress_poll:=0
 func _initialize()->void:
  Engine.max_fps=10
  for arg:String in OS.get_cmdline_user_args():
@@ -51,18 +53,20 @@ func _initialize()->void:
    finish("failed","Destination already contains world data");return
  start_stage("creating")
 func status(state:String,reason:String="")->void:
+ if state not in ["creating","verifying"]:progress_detail={}
  phase=state
  if status_path.is_empty():return
- var value:Dictionary={"state":state,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason}
+ var value:Dictionary={"state":state,"slot":destination,"report":ProjectSettings.globalize_path(report),"reason":reason,"progress":progress_detail}
  var pending:=status_path+".pending"
  var file:=FileAccess.open(pending,FileAccess.WRITE)
  if file!=null:
   file.store_string(JSON.stringify(value));file.close();DirAccess.rename_absolute(pending,status_path)
 func start_stage(state:String)->void:
+ progress_detail={}
  status(state)
  var folder:=report.path_join(state);DirAccess.make_dir_recursive_absolute(folder)
  var fitted:=generator in [17,19]
- var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://"+stage])
+ var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script","res://addons/world_runtime/prepare_terrain_world.gd" if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://"+stage])
  if fitted:
   if settlement_layout=="connected":args.append("--central-market")
   if settlement_layout!="settlement":args.append("--regional-connection")
@@ -86,7 +90,10 @@ func _process(_delta:float)->bool:
     presentation_report="user://generation_reports/"+source.trim_prefix("combined_stage_")
     var previous=JSON.parse_string(FileAccess.get_file_as_string(presentation_report.path_join("generation_plan_identity.json"))) if FileAccess.file_exists(presentation_report.path_join("generation_plan_identity.json")) else null
     if previous is Dictionary:seed_value=int(previous.get("seed",seed_value));generator=int(previous.get("generator",generator))
-   metadata["seed"]=seed_value;metadata["generator"]=generator
+    var prior_run=JSON.parse_string(FileAccess.get_file_as_string(presentation_report.path_join("run.json"))) if FileAccess.file_exists(presentation_report.path_join("run.json")) else null
+    if prior_run is Dictionary:settlement_layout=str(prior_run.get("settlement_layout","unknown"))
+    else:settlement_layout="unknown"
+   metadata["seed"]=seed_value;metadata["generator"]=generator;metadata["settlement_layout"]=settlement_layout
    metadata["recovered_source"]=source
   publish_presentation()
   finish("ready");return false
@@ -95,7 +102,12 @@ func _process(_delta:float)->bool:
   OS.kill(child);child=-1;finish("cancelled","Unpublished staging retained for diagnosis");return false
  if Time.get_ticks_msec()>deadline:
   OS.kill(child);child=-1;finish("failed","Generation stage timed out; staging retained");return false
- if OS.is_process_running(child):return false
+ if OS.is_process_running(child):
+  if Time.get_ticks_msec()>=next_progress_poll:
+   next_progress_poll=Time.get_ticks_msec()+500
+   var observed:=preload("res://addons/world_runtime/generation_progress.gd").read(report.path_join(phase+"_progress.json"))
+   if observed!=progress_detail:progress_detail=observed;status(phase)
+  return false
  var exit_code:=OS.get_process_exit_code(child);child=-1
  var log:=FileAccess.get_file_as_string(report.path_join(phase).path_join("engine.log"))
  var token:="TERRAIN_LOT_WORLD_REVIEW failures=0" if phase=="creating" else "TERRAIN_LOT_REOPEN failures=0"
@@ -127,7 +139,7 @@ func publish_presentation()->void:
   var image:=source_report.path_join("loading_"+name+".png")
   if FileAccess.file_exists(image) and DirAccess.copy_absolute(image,prefix+".preview/"+name+".png")==OK:count+=1
  var file:=FileAccess.open(prefix+".presentation.json",FileAccess.WRITE)
- if file!=null:file.store_string(JSON.stringify({"created":int(Time.get_unix_time_from_system()),"seed":seed_value,"preview_count":count}));file.close()
+ if file!=null:file.store_string(JSON.stringify({"created":int(Time.get_unix_time_from_system()),"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"preview_count":count}));file.close()
  var identity:=source_report.path_join("generation_plan_identity.json")
  if FileAccess.file_exists(identity):DirAccess.copy_absolute(identity,prefix+".generation.json")
 func finish(state:String,reason:String="")->void:

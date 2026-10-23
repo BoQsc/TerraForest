@@ -488,7 +488,7 @@ Dictionary NativeBlockRegionStore::read_model_checkpoint(const PackedByteArray &
     }
     Dictionary out=status(OK);out["snapshot"]=NativeStaticBatch::encode_placements(model_asset_,values);return out;
 }
-Dictionary NativeBlockRegionStore::read_model_metadata(const PackedByteArray &hash) const {
+Dictionary NativeBlockRegionStore::read_model_metadata(const PackedByteArray &hash,bool bake) const {
     std::lock_guard<std::mutex> lock(mutex_);
     if(!lease_||model_asset_.is_empty())return status(ERR_UNCONFIGURED,"Model store is closed.");
     if(hash.size()!=32)return status(ERR_INVALID_PARAMETER,"Checkpoint identity must contain 32 bytes.");
@@ -529,7 +529,7 @@ Dictionary NativeBlockRegionStore::read_model_metadata(const PackedByteArray &ha
         int64_t offset=at+84;for(const auto &value:values){bytes.encode_u64(offset,value.first);offset+=8;}
     }
     bytes.append_array(digest(bytes));
-    String pending;bool cached=write_pending(path,bytes,pending);
+    String pending;bool cached=bake&&write_pending(path,bytes,pending);
     if(cached){cached=move_file(pending,path,true);if(!cached)delete_exact(pending);}
     Dictionary out=status(OK);out["metadata"]=bytes;out["cache_hit"]=false;out["cache_written"]=cached;out["regions_read"]=int(catalog.size());return out;
 }

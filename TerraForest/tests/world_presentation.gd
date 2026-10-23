@@ -16,4 +16,10 @@ func _initialize()->void:
  if not presentation.mark_played("alpha",directory) or launch.saved_slots(directory)[0]!="alpha":failures+=1
  if FileAccess.get_file_as_string(directory.path_join("alpha.trw"))!="unchanged":failures+=1
  if presentation.image_for("alpha",directory)!=null:failures+=1
+ FileAccess.open(directory.path_join("alpha.generation.json"),FileAccess.WRITE).store_string(JSON.stringify({"seed":42,"generator":19,"version":2,"digest":"fixture"}))
+ var details:Dictionary=presentation.details("alpha",directory)
+ if details.get("seed")!=42 or details.get("generator")!=19 or details.get("created")!=300 or details.get("saved",0)<=0:failures+=1
+ if presentation.details("../alpha",directory)!={}:failures+=1
+ if presentation.details("gamma",directory).has("seed"):failures+=1
+ if FileAccess.get_file_as_string(directory.path_join("alpha.trw"))!="unchanged":failures+=1
  print("WORLD_PRESENTATION failures=",failures);quit(1 if failures else 0)

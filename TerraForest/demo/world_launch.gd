@@ -63,3 +63,7 @@ static func recovery_command(slot:String)->Dictionary:
 	if not valid_slot(slot) or preparation_slot(slot):return {"ok":false,"reason":"Enter the original world name using letters, digits and underscores."}
 	if FileAccess.file_exists("user://worlds/"+slot+".trw"):return {"ok":false,"reason":"This world is already published. Open it from My worlds."}
 	return {"ok":true,"prepare":true,"args":engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--recover-publication"])}
+
+static func photograph_command(slot:String,directory:String="user://worlds")->Dictionary:
+	if not valid_slot(slot) or preparation_slot(slot) or not FileAccess.file_exists(directory.path_join(slot+".trw")):return {"ok":false,"reason":"Select a published saved world first."}
+	return {"ok":true,"args":engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--script","res://addons/world_runtime/capture_world_previews.gd","--","--snapshot-readonly","--temporary","--world-slot="+slot,"--ground-cover"])}

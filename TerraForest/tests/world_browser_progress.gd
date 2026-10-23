@@ -16,6 +16,10 @@ func run()->void:
   for frame in 3:await RenderingServer.frame_post_draw
   if stage=="verifying":root.get_texture().get_image().save_png("res://reports/world_browser_progress.png")
  if not messages[0].contains("Generating") or not messages[1].contains("Reopening") or not messages[2].contains("Publishing") or not messages[3].contains("World ready"):failures+=1
+ var detailed:={"state":"creating","progress":{"stage":"Grading roads and foundations","completed":12,"total":240}}
+ FileAccess.open(browser.preparation_status,FileAccess.WRITE).store_string(JSON.stringify(detailed))
+ browser._update_preparation_notice()
+ if not browser.notice.text.contains("Grading roads and foundations · 12 / 240"):failures+=1
  browser.preparation_pid=-1
  DirAccess.remove_absolute(ProjectSettings.globalize_path(browser.preparation_status))
  FileAccess.open("res://reports/world_browser_progress.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"messages":messages,"scope":"Actual browser polling/UI with controlled status records and live own-process sentinel; no world generation."},"  "))

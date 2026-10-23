@@ -32,7 +32,7 @@ func run() -> void:
     check(archive.acquire(path) and archive.publish(path,archive.encode({"terrain":PackedByteArray([1]),"structures":original}))==OK,"fixture saves compact checkpoint-root world")
     var bytes: PackedByteArray=archive.read(path)
     var cold: Dictionary=archive.decode(bytes)
-    check(cold.get("ok",false) and cold.model_bootstrap.assets==2 and cold.model_bootstrap.regions_read==12 and cold.model_bootstrap.cache_hits==0,"cold world decode builds model manifests from individual regions")
+    check(cold.get("ok",false) and cold.model_bootstrap.assets==2 and cold.model_bootstrap.regions_read==0 and cold.model_bootstrap.cache_hits==2,"first world decode uses metadata baked during save publication")
     var warm: Dictionary=archive.decode(bytes)
     check(warm.ok and warm.model_bootstrap.regions_read==0 and warm.model_bootstrap.cache_hits==2,"cached world decode reads no model region payloads")
     var startup: PackedByteArray=warm.sections.structures

@@ -50,3 +50,19 @@ static func capture(game:Node,viewport:Viewport,path:String)->Error:
  if tool!=null:tool.visible=tool_visible
  game.set_process(processing)
  return result
+
+# Informational sidecars only. Missing old metadata stays unknown, never inferred
+# from the generator currently selected in the create-world UI.
+static func details(slot:String,directory:String="user://worlds")->Dictionary:
+ if not slot.is_valid_identifier() or slot.length()>48:return {}
+ var state:=metadata(slot,directory)
+ var path:=directory.path_join(slot+".generation.json")
+ var file:=FileAccess.open(path,FileAccess.READ) if FileAccess.file_exists(path) else null
+ if file!=null and file.get_length()<=16384:
+  var identity=JSON.parse_string(file.get_as_text())
+  if identity is Dictionary:
+   for key in ["seed","generator","version","digest"]:
+    if identity.has(key):state[key]=identity[key]
+ var saved:=FileAccess.get_modified_time(directory.path_join(slot+".trw"))
+ state["saved"]=saved
+ return state

@@ -12,12 +12,21 @@ var notice: Label
 var filter_field: LineEdit
 var show_preparation:CheckBox
 var sort_order:OptionButton
+var saved_picture:TextureRect
+var saved_details:Label
+var saved_title:Label
 var preview_view:TextureRect
 var preview_status:Label
 var preview_worker:Thread
 var preview_key:=""
 var preview_button:Button
 var slots:=PackedStringArray()
+var photograph_pid:=-1
+var photograph_log:=""
+var photograph_deadline:=0
+var photograph_slot:=""
+var photograph_button:Button
+var photograph_cancel:Button
 var preparation_pid:=-1
 var preparation_status:=""
 var preparation_slot:=""
@@ -48,10 +57,18 @@ func _ready() -> void:
 	var filters:=HBoxContainer.new();saved.add_child(filters)
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Preparation saves (read-only)";show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
-	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size.y=300;saved.add_child(worlds)
+	var library:=HBoxContainer.new();library.add_theme_constant_override("separation",28);library.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library)
+	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(600,300);library.add_child(worlds)
+	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=660;library.add_child(detail_column)
+	saved_title=heading(detail_column,"Select a world",24)
+	saved_picture=TextureRect.new();saved_picture.custom_minimum_size=Vector2(660,200);saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(saved_picture)
+	saved_details=heading(detail_column,"",18);saved_details.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	worlds.item_selected.connect(show_saved_details)
 	button(saved,"Open selected world",func():launch_selected(false))
 	var library_actions:=HBoxContainer.new();saved.add_child(library_actions)
 	button(library_actions,"Refresh saved worlds",refresh)
+	photograph_button=button(library_actions,"Refresh photographs",refresh_photographs)
+	photograph_cancel=button(library_actions,"Cancel photographs",cancel_photographs);photograph_cancel.hide()
 	button(library_actions,"Recover interrupted publication",show_recovery)
 	var create_page:=HBoxContainer.new();create_page.name="Create world";create_page.add_theme_constant_override("separation",40);columns.add_child(create_page)
 	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",8);create_page.add_child(create)
@@ -84,17 +101,45 @@ func _ready() -> void:
 	button(panel,"Quit",request_quit)
 	refresh()
 func refresh() -> void:
-	if preparation_pid>=0:return
+	if preparation_pid>=0 or photograph_pid>=0:return
 	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed,["played","created","name"][sort_order.selected]);filter_list()
 	notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
 func filter_list() -> void:
+	var selected:=""
+	if not worlds.get_selected_items().is_empty():selected=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
 	worlds.clear()
 	for slot: String in slots:
 		if filter_field.text.is_empty() or slot.to_lower().contains(filter_field.text.to_lower()):
 			worlds.add_item(("[Preparation] " if Launch.preparation_slot(slot) else "")+slot)
 			worlds.set_item_metadata(worlds.item_count-1,slot)
+	if worlds.item_count>0:
+		var index:=0
+		for i in worlds.item_count:
+			if str(worlds.get_item_metadata(i))==selected:index=i;break
+		worlds.select(index);show_saved_details(index)
+	else:saved_title.text="No matching worlds";saved_picture.texture=null;saved_details.text=""
+func show_saved_details(index:int)->void:
+	if index<0 or index>=worlds.item_count:return
+	var slot:=str(worlds.get_item_metadata(index))
+	var presentation=preload("res://addons/world_runtime/world_presentation.gd")
+	var data:Dictionary=presentation.details(slot)
+	saved_title.text=slot
+	saved_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
+	saved_picture.texture=presentation.image_for(slot)
+	var lines:=PackedStringArray()
+	for entry in [["created","Created"],["last_played","Last played"],["saved","Last saved"]]:
+		var value:int=int(data.get(entry[0],0))
+		lines.append(entry[1]+": "+(Time.get_datetime_string_from_unix_time(value,true)+" UTC" if value>0 else "Not recorded"))
+	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
+	if data.has("generator"):
+		var id:int=int(data.generator)
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
+	if saved_picture.texture==null:lines.append("No cached photograph yet.")
+	lines.append("Opening uses this world's saved generation settings.")
+	saved_details.text="\n".join(lines)
 func launch_selected(create: bool) -> void:
-	if preparation_pid>=0:return
+	if preparation_pid>=0 or photograph_pid>=0:return
 	var slot:=name_field.text.strip_edges()
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
@@ -120,7 +165,7 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	notice.text="Preparing and verifying %s. The preparation window will close when finished, then your world will open. Existing saves are preserved."%slot
 
 func show_recovery()->void:
-	if preparation_pid>=0:return
+	if preparation_pid>=0 or photograph_pid>=0:return
 	var dialog:=ConfirmationDialog.new();dialog.title="Recover interrupted publication";dialog.ok_button_text="Recover";dialog.min_size=Vector2i(580,220)
 	var content:=VBoxContainer.new();dialog.add_child(content)
 	var label:=Label.new();label.text="Enter the original world name. Recovery verifies existing staged data;\nit does not generate a different world or replace a published save.";content.add_child(label)
@@ -135,6 +180,16 @@ func show_recovery()->void:
 
 func _process(delta:float)->void:
 	poll_preview()
+	if photograph_pid>=0:
+		if OS.is_process_running(photograph_pid):
+			if Time.get_ticks_msec()>photograph_deadline:cancel_photographs();notice.text="Photograph capture timed out. Saved world unchanged."
+			return
+		var code:=OS.get_process_exit_code(photograph_pid)
+		photograph_pid=-1;Engine.max_fps=60;photograph_button.disabled=false;photograph_cancel.hide()
+		var log:=FileAccess.get_file_as_string(photograph_log) if FileAccess.file_exists(photograph_log) else ""
+		refresh()
+		notice.text=("Photographs refreshed for "+photograph_slot+".") if code==0 and "WORLD_PREVIEWS failures=0" in log and not "ERROR:" in log else "Photograph capture failed. Saved world unchanged. Log: "+photograph_log
+		return
 	if preparation_pid<0:return
 	preparation_poll-=delta
 	if preparation_poll>0:return
@@ -174,6 +229,11 @@ func _update_preparation_notice()->void:
 			"publishing":stage="Publishing the verified world"
 			"ready":stage="World ready; preparing to open"
 			"failed":stage="Preparation failed; collecting the result"
+	if result is Dictionary and result.get("progress",{}) is Dictionary:
+		var detail:Dictionary=result.get("progress",{})
+		if not str(detail.get("stage","")).is_empty():
+			stage=str(detail.stage)
+			if int(detail.get("total",0))>0:stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
 	var elapsed:int=maxi(0,Time.get_ticks_msec()-preparation_started_msec)/1000
 	notice.text="%s: %s. Elapsed %d:%02d. Existing saves are preserved."%[preparation_slot,stage,elapsed/60,elapsed%60]
 
@@ -185,6 +245,7 @@ func cancel_preparation()->void:
 	cancel_pending=true;cancel_button.disabled=true
 	_update_preparation_notice()
 func request_quit()->void:
+	if photograph_pid>=0:cancel_photographs()
 	if preparation_pid<0:get_tree().quit();return
 	cancel_preparation()
 	quit_pending=cancel_pending
@@ -217,3 +278,22 @@ func poll_preview()->void:
 	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:
 	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null
+
+func refresh_photographs()->void:
+	if preparation_pid>=0 or photograph_pid>=0 or worlds.get_selected_items().is_empty():return
+	photograph_slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
+	var command:=Launch.photograph_command(photograph_slot)
+	if not command.ok:notice.text=command.reason;return
+	photograph_log=ProjectSettings.globalize_path("user://photograph_%d_%d.log"%[OS.get_process_id(),Time.get_ticks_usec()])
+	var args:PackedStringArray=command.args
+	var separator:=args.find("--");args.insert(separator,"--log-file");args.insert(separator+1,photograph_log)
+	photograph_pid=OS.create_process(OS.get_executable_path(),args,false)
+	if photograph_pid<0:notice.text="Could not start photograph capture.";return
+	photograph_deadline=Time.get_ticks_msec()+150000
+	Engine.max_fps=10;photograph_button.disabled=true;photograph_cancel.show()
+	notice.text="Photographing "+photograph_slot+" in a read-only window. Its saved world will not change."
+func cancel_photographs()->void:
+	if photograph_pid<0:return
+	if OS.is_process_running(photograph_pid):OS.kill(photograph_pid)
+	photograph_pid=-1;Engine.max_fps=60;photograph_button.disabled=false;photograph_cancel.hide()
+	notice.text="Photograph capture cancelled. Saved world unchanged."

@@ -1,0 +1,2216 @@
+[
+  {
+    "progress": {},
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Planning terrain, streets and building sites",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Loading terrain and collision",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 1,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 2,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 3,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 5,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 7,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 9,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 11,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 13,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 14,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 16,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 17,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 19,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 22,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 24,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 26,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 27,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 29,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 31,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 33,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 34,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 36,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 38,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 40,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 42,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 43,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 45,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 47,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 49,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 51,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 52,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 54,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 56,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 58,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 59,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 60,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 62,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 63,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 65,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 67,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 69,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 70,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 72,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 74,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 75,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 77,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 78,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 80,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 82,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 83,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 85,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 87,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 89,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 90,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 91,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 92,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 93,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 94,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 95,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 97,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 99,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 101,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 102,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 103,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 104,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 105,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 107,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 109,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 110,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 112,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 113,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 114,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 115,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 116,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 117,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 118,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 120,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 121,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 123,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 124,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 126,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 128,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 129,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 131,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 133,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 135,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 137,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 138,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 140,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 142,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 144,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 146,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 148,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 149,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 151,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 153,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 154,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 156,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 158,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 159,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 161,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 163,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 164,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 165,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 166,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 167,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 169,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 171,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 172,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 174,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 176,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 177,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 178,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 179,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 181,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 183,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 184,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 186,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 188,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 189,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 190,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 191,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 192,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 194,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 195,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 197,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 199,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 200,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 202,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 203,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 205,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 207,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 208,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 210,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 212,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 213,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 215,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 216,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 218,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 220,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 221,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 223,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 225,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 226,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 227,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 229,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 231,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 234,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 240,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 245,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 249,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 252,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 254,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 257,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 261,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 265,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 269,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 273,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 278,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 280,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 282,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 285,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 288,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 292,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 294,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 297,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 301,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 305,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 307,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 310,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 311,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 314,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 317,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 321,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 326,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 329,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 333,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 338,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 342,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 345,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 349,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 353,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 356,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 360,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 364,
+      "stage": "Grading roads and foundations",
+      "total": 367
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 3,
+      "stage": "Placing buildings and interiors",
+      "total": 20
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 6,
+      "stage": "Placing buildings and interiors",
+      "total": 20
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 10,
+      "stage": "Placing buildings and interiors",
+      "total": 20
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 15,
+      "stage": "Placing buildings and interiors",
+      "total": 20
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Baking streets and location metadata",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Capturing world photographs",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Saving generated world",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "creating"
+  },
+  {
+    "progress": {},
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "verifying"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Planning terrain, streets and building sites",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "verifying"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Loading terrain and collision",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "verifying"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Verifying saved terrain, buildings and water",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "verifying"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Baking saved world map layers",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "verifying"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Baking saved world map layers",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "publishing"
+  },
+  {
+    "progress": {
+      "completed": 0,
+      "stage": "Baking saved world map layers",
+      "total": 0
+    },
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/37af39f492550f2f8b0a581d8266f9bb",
+    "slot": "bundled_rewrite_1703_20261023",
+    "state": "ready"
+  }
+]

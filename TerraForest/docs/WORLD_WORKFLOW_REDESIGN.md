@@ -298,3 +298,37 @@ validated fallback on the ordinary renderer increased visible edits from18/24 to
 29/29, but both arrival gaps still fail (061615399336Z). Capture-to-draw p95 and
 frame p99 pass; these do not erase the failed first-response gate. Keep arrival
 readiness and large-edit scaling active. This is not sustained mining acceptance.
+
+
+## Saved-world identity, photographs and progress — 2026-10-23
+
+The selector displays a cached actual-world photograph, recorded dates and saved
+seed/generator; unknown legacy values remain unknown. New publications retain
+layout settings. Existing worlds have a supported Refresh photographs action:
+read-only engine capture, cancellation and150s coordinator timeout. Runtime capture
+is now under addons/world_runtime, included in the exported pack.
+
+The first capture test failed because native model metadata reads wrote missing
+.tfmd derived caches inside the model store (063618426837Z); its warm repeat pass
+alone was insufficient. Reads now rebuild missing/corrupt metadata in memory.
+Explicit save publication bakes it instead. A disposable world clone with13 caches
+removed passes cold capture with all224 remaining world files byte-identical:
+064740117380Z. Source metadata/native100000-instance test:064718698580Z; current
+model bootstrap/save/paging test:064840989756Z. Its initial failed cold-cache
+expectation (064750329834Z) was updated to require publication-baked cache hits,
+while low-level tests retain real cold/corrupt-read coverage.
+
+The refreshed photograph was inspected: actual buildings/landscape, no HUD/hands.
+Repeated buildings and landscaping remain visually unaccepted. Selector layout
+and sorting do not establish world-quality acceptance. Creation stage observations
+now carry real grading/building counters rather than an invented overall percent.
+The latest exported pack starts; full bundled generation is still under observation.
+
+
+Full current bundled creation, fresh-process verification and publication now pass
+for bundled_rewrite_1703_20261023 (report37af39f492550f2f8b0a581d8266f9bb), including
+water content signatures, maps, publication-baked model metadata and photographs.
+The job ran from dist/TerraForest.exe with its adjacent PCK and libraries, without
+source-project arguments. Real creation/verification progress observations are in
+evidence/native_world_generation/bundled_1703_progress.json. This closes this
+bundled integration check, not clean-machine installation or the full rewrite.

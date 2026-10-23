@@ -2475,3 +2475,15 @@ but inland map preview and broader basin admission remain open. Next dependency:
 vegetation streaming/publication continuity, preserving native interaction and stable
 harvest IDs. Close it only with moving-view and edit/removal regression evidence.
 All other listed full-rewrite requirements remain open.
+
+
+2026-10-23 workflow continuation: selected-world photograph/settings display and
+manual photo refresh are implemented; cold read-side model metadata writes were
+found and corrected by moving cache baking to save publication. Integrated cold
+capture and native bootstrap checks pass, but packaged end-to-end creation with
+these changes is still running. Generation now exposes actual stage/counter progress.
+Newly identified pipeline gap: offline creation reuses interactive publication for
+hundreds of grading sections, repeatedly building intermediate terrain. Next work
+applies the identical native packets before initial mesh admission, gated by exact
+saved-payload equivalence and actual bake/reopen proof. Do not close earlier large
+edit/mining latency, compute, map/content or storage-capacity requirements from this.
