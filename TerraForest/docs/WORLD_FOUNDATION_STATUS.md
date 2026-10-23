@@ -10,19 +10,29 @@ section rejection, and explicit-PCK generation/reopen pass. Selector, creation,
 generation and restored map images were inspected. See
 [evidence/unified_generation_flow](evidence/unified_generation_flow/README.md).
 
-This closes that duplicated review workflow, not the complete rewrite. Measured
-generation ranges from 42–71 seconds across different warmed/cold seeds/layouts;
-no controlled speedup ratio or universal instant generation is claimed. Generated
-lake authoring alone takes 15–29 seconds, and first photographs/residency dominate
-the remainder. Required next generator work: detached native offline authoring
-using the accepted static volume algorithm, with identical saved water/terrain,
-bounded cancellation and actual create/reopen proof. Do not reopen water flow or
-art direction. Native selective terrain residency remains a parallel foundation
+The generation-only native lake job now replaces frame-paced lake authoring. It
+preserves the accepted volume/contact algorithm and exact saved bytes. Native
+authoring measured about 0.9–2.2 seconds, versus the earlier 15–29-second paced
+stage. In-flight cancellation, time budgets, protected existing saves and actual
+source/PCK creation/reopen pass. It also exposed two map bookkeeping defects:
+exact block paging advanced an unsaved content stamp, and water serialization
+advanced a logical map revision. Both now preserve unchanged content; cursors
+still invalidate on residency changes and authoring still invalidates maps.
+The saved-water alias also uses the exact snapshot identity and raster size.
+See [offline_generation_bake](evidence/offline_generation_bake/README.md).
+
+This closes that duplicated review workflow and generation-authoring handoff, not
+the complete rewrite. Latest source runs observed 29–42 seconds; the explicit-PCK
+connected run took 60 seconds, including 36 seconds for photo residency. These are
+different warmed/cold seeds/layouts, not controlled speedup ratios or universal
+instant generation. First rendered photographs, scene finalization/handoff and
+whole startup cost remain required generator/loading work. Do not reopen water
+flow or art direction. Native selective terrain residency remains a foundation
 requirement after this workflow correction: the 16,384 resident/history cap and
 full expansion are not solved. Full options/POI coverage, compute equivalence and
 benefit, world visual quality, populated runtime/thermal proof, and clean-machine
 release installation also remain open. Unused Blender source import was disabled;
-the updated 194,077,000-byte PCK starts and reopens with 14 external native DLLs.
+the updated resource pack starts and reopens with 14 external native DLLs.
 
 ## Native dirty-page saves integrated - 2026-10-23
 

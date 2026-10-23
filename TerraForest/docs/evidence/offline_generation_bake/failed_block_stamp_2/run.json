@@ -1,0 +1,96 @@
+{
+  "destination": "workflow_13424_142161",
+  "generator": 19,
+  "phases": [
+    {
+      "arguments": [
+        "--path",
+        "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/51bd50ba5803d6c3ab2d1519bcbe245c/creating/engine.log",
+        "--script",
+        "res://addons/world_runtime/generate_world.gd",
+        "--",
+        "--world-slot=combined_stage_51bd50ba5803d6c3ab2d1519bcbe245c",
+        "--world-generator=19",
+        "--world-seed=1703",
+        "--progress-file=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/51bd50ba5803d6c3ab2d1519bcbe245c/creating_progress.json",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/51bd50ba5803d6c3ab2d1519bcbe245c/checkpoint.json",
+        "--derived-cache=user://derived_046",
+        "--central-market",
+        "--regional-connection",
+        "--preparation-output=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/51bd50ba5803d6c3ab2d1519bcbe245c",
+        "--save-terrain-lots",
+        "--capture-generation-ui",
+        "--cancel-file=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/world_generation_workflow/workflow_13424_142161.cancel"
+      ],
+      "elapsed_usec": 51101690,
+      "exit_code": 1,
+      "pid": 33436,
+      "profile": {
+        "completed": 0.0,
+        "elapsed_microseconds": 45968873.0,
+        "stage": "Caching the saved world map",
+        "stage_microseconds": 0.0,
+        "timings": [
+          {
+            "microseconds": 1009720.0,
+            "stage": "Planning terrain, streets and building sites"
+          },
+          {
+            "microseconds": 1447009.0,
+            "stage": "Baking roads and foundations before terrain loading"
+          },
+          {
+            "microseconds": 902472.0,
+            "stage": "Initializing generated terrain data"
+          },
+          {
+            "microseconds": 13511.0,
+            "stage": "Baking generated lakes"
+          },
+          {
+            "microseconds": 22493.0,
+            "stage": "Baking terrain overview"
+          },
+          {
+            "microseconds": 1736.0,
+            "stage": "Grading roads and foundations"
+          },
+          {
+            "microseconds": 2029599.0,
+            "stage": "Placing buildings and interiors"
+          },
+          {
+            "microseconds": 31244.0,
+            "stage": "Baking streets and location metadata"
+          },
+          {
+            "microseconds": 38365732.0,
+            "stage": "Photographing the generated world"
+          },
+          {
+            "microseconds": 2145357.0,
+            "stage": "Saving generated world"
+          }
+        ],
+        "total": 0.0
+      },
+      "stage": "creating",
+      "started_usec": 215462
+    }
+  ],
+  "seed": 1703,
+  "settlement_layout": "connected",
+  "stage": "combined_stage_51bd50ba5803d6c3ab2d1519bcbe245c",
+  "version": 1
+}

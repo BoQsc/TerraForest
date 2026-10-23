@@ -1499,7 +1499,10 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
         u32(offset,count);offset+=4;
         for(int i=0;i<int(r.vacancies.size());i++)if(r.vacancies[i]){u32(offset,i);u32(offset+4,r.vacancies[i]);offset+=8;}
     }
-    invalidate_snapshot();
+    // Serialization changes only derived snapshot caches. It must not advance
+    // the logical map revision or discard a certified, unchanged water identity.
+    saved_frozen.unref();frozen_catalog=PackedByteArray();
+    saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();snapshot_cached=false;
     if(out.size()+catalog.size()<=64*1024*1024){saved_snapshot=out;saved_catalog=catalog;snapshot_cached=true;}
     return out;
 }

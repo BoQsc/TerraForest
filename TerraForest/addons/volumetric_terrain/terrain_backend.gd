@@ -59,6 +59,8 @@ var readonly_snapshot: bool = false
 var _initial_earthworks:Array=[] # New-world offline bake; configured before worker start.
 var _initial_plan_digest:=""
 var initial_earthworks_result:Dictionary={}
+var _initial_lake_bake:RefCounted # Detached native authoring, generation only.
+var initial_lakes_result:Dictionary={}
 var cache_path: String = "user://derived_046"
 var latest_packets: Dictionary = {}
 var latest_packet_bytes: int = 0
@@ -234,6 +236,15 @@ func configure_initial_earthworks(packets:Array,digest:String)->bool:
 	if total>4*1024*1024:return false
 	_initial_earthworks=packets.duplicate(true);_initial_plan_digest=digest
 	return true
+
+func configure_initial_lake_bake()->bool:
+	if thread.is_started() or _initial_lake_bake!=null:return false
+	# Setup runs on the main thread, including fresh source ZIPs with no editor
+	# extension cache. Do not depend on loading the gameplay scene first.
+	if not ClassDB.class_exists("NativeGeneratedLakeBake"):GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+	if not ClassDB.class_exists("NativeGeneratedLakeBake"):return false
+	_initial_lake_bake=ClassDB.instantiate("NativeGeneratedLakeBake")
+	return _initial_lake_bake!=null
 
 func start(use_temporary: bool) -> Error:
 	_startup_mark("main_initialization")
@@ -449,6 +460,7 @@ func poll() -> Array[Dictionary]:
 	return ready
 
 func stop() -> void:
+	if _initial_lake_bake!=null:_initial_lake_bake.cancel()
 	_shutdown_snapshot = _capture_snapshot()
 	mutex.lock()
 	stopping = true
@@ -690,11 +702,19 @@ func _initialize_generated_components() -> bool:
 			write_allowed=false
 			return false
 		components["volumetric_water"]=encoded
+		if _initial_lake_bake!=null:
+			var revision:=_call(Codec.command(0));var epoch:=_call(Codec.command(13))
+			if not Codec.reply_ok(revision) or not Codec.reply_ok(epoch):write_allowed=false;return false
+			var baked:Dictionary=_initial_lake_bake.run(native,encoded,revision.decode_u32(12),epoch.decode_u32(12))
+			initial_lakes_result=baked.duplicate();initial_lakes_result.erase("snapshot")
+			print("OFFLINE_GENERATED_LAKES ",JSON.stringify(initial_lakes_result))
+			if not baked.get("ok",false):write_allowed=false;return false
+			components["volumetric_water"]=baked.snapshot
 	return true
 
 func _load() -> String:
-	if not _initial_earthworks.is_empty() and (readonly_snapshot or FileAccess.file_exists(save_path)):
-		write_allowed=false;return "ERROR: offline grading never replaces existing world data"
+	if (not _initial_earthworks.is_empty() or _initial_lake_bake!=null) and (readonly_snapshot or FileAccess.file_exists(save_path)):
+		write_allowed=false;return "ERROR: offline generation never replaces existing world data"
 	if (temporary and not readonly_snapshot) or not FileAccess.file_exists(save_path):
 		if not Codec.reply_ok(_call(Codec.command(6,[world_seed,world_generator]))):
 			write_allowed=false

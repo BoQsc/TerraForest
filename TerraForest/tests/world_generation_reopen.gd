@@ -8,12 +8,15 @@ func wait_until(condition:Callable,seconds:int)->bool:
  return condition.call()
 func run()->void:
  var slot:=""
+ var expected_seed:=1703;var expected_generator:=19
  for arg:String in OS.get_cmdline_user_args():
   if arg.begins_with("--review-world="):slot=arg.trim_prefix("--review-world=")
+  if arg.begins_with("--case-seed="):expected_seed=int(arg.trim_prefix("--case-seed="))
+  if arg.begins_with("--case-generator="):expected_generator=int(arg.trim_prefix("--case-generator="))
  if not Launch.valid_slot(slot):quit(2);return
  if not "--reopen-child" in OS.get_cmdline_user_args():
   var path:="user://worlds/"+slot+".trw";var before:=FileAccess.get_sha256(path)
-  var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path("res://reports/world_generation_reopen.log"),"--script","res://tests/world_generation_reopen.gd","--","--reopen-child","--review-world="+slot,"--world-slot="+slot,"--snapshot-readonly","--ground-cover","--actors","--vehicle-fleet","--gameplay-construction"])
+  var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path("res://reports/world_generation_reopen.log"),"--script","res://tests/world_generation_reopen.gd","--","--reopen-child","--review-world="+slot,"--world-slot="+slot,"--case-seed="+str(expected_seed),"--case-generator="+str(expected_generator),"--snapshot-readonly","--ground-cover","--actors","--vehicle-fleet","--gameplay-construction"])
   var pid:=OS.create_process(OS.get_executable_path(),args,false)
   var finished:bool=pid>=0 and await wait_until(func():return not OS.is_process_running(pid),90)
   if not finished and pid>=0:OS.kill(pid)
@@ -28,7 +31,7 @@ func run()->void:
  if not ready or root.size!=Vector2i(1920,1080):failures+=1
  if ready:
   game.set_physics_process(false);game._clear_motion()
-  if game.generated_region.describe(1703,19).get("places",[]).size()!=2 or not game.construction_inventory.gameplay:failures+=1
+  if game.generated_region.describe(expected_seed,expected_generator).get("places",[]).size()!=2 or not game.construction_inventory.gameplay:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_generation_reopen.png")
   game.world_map.set_open(true)
