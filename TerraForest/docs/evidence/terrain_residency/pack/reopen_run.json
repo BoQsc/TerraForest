@@ -1,0 +1,43 @@
+{
+  "slot": "residency_bundle_20261023T144007",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_pack\\reopen\\engine.log",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\world_generation_reopen.gd",
+    "--",
+    "--reopen-child",
+    "--review-world=residency_bundle_20261023T144007",
+    "--world-slot=residency_bundle_20261023T144007",
+    "--case-seed=1703",
+    "--case-generator=19",
+    "--snapshot-readonly",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 9900,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 13.808598099974915,
+    "passed": true
+  },
+  "canonical_unchanged": true,
+  "scope": "External test-only harness; all game resources and native libraries from explicit production PCK."
+}

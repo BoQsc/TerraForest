@@ -1,0 +1,31 @@
+{
+  "catalog_pages": 549,
+  "failures": 0,
+  "final": {
+    "active": true,
+    "catalog_pages": 549,
+    "eviction_scan_high": 16,
+    "evictions": 2180,
+    "failures": 1,
+    "faults": 2196,
+    "generator": 19,
+    "resident_limit": 16,
+    "resident_pages": 16,
+    "sample_bytes": 196608,
+    "seed": 1703
+  },
+  "read_travel": {
+    "active": true,
+    "catalog_pages": 549,
+    "eviction_scan_high": 0,
+    "evictions": 122,
+    "failures": 0,
+    "faults": 138,
+    "generator": 19,
+    "resident_limit": 16,
+    "resident_pages": 16,
+    "sample_bytes": 196608,
+    "seed": 1703
+  },
+  "scope": "Native cold mount, exact density/normal traversal, bounded sample residency, dirty-page pinning, incremental save and rejected-edit rollback. Production integration and beyond-16384 history still required."
+}

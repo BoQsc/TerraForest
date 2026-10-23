@@ -5,6 +5,18 @@ generator, selector, loading screen, map, baking/cache and storage foundation be
 returning to gameplay inconsistencies. This is a required workstream, not completed
 by the first UI changes.
 
+## Selective loading follow-through — 2026-10-23
+
+The regional terrain checkpoint is now mounted by the production native worker
+without expanded whole-world sample bytes. Bounded LRU residency, dirty/atomic-edit
+pinning, exact incremental checkpoint retention and history beyond the old resident
+cap have targeted evidence. Source generation and fresh map-cache playback also
+use this path. See [terrain residency](evidence/terrain_residency/README.md) and
+[required continuation](TERRAIN_REGIONAL_STORAGE.md). Older full-expansion entries
+below describe the prior checkpoint. Prefetch/first-response, populated rendered
+history pressure, retention-safe collection, complete generation/POI options,
+compute benefit and world quality remain active requirements of this rewrite.
+
 ## Latest production workflow — 2026-10-23
 
 Ordinary creation is now Generate → Load → Play with one generation child,

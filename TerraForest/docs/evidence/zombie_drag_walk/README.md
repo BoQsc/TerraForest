@@ -44,6 +44,13 @@ in `../../../addons/characters/authoring/Zombie.drag_walk.README.md`.
 - Scoped character packaging passes, including the new resource. Blender tools
   pass Python syntax checks. No native library rebuild is needed for this change.
 
+After merging terrain paging checkpoint `9b451125` with animation checkpoint
+`92ac6795`, the 16 gait checks and nine rendered actual-world combat checks pass
+again. `combined_gait/` and `combined_world_combat/` retain those fresh runs,
+including native DLL hashes. This confirms the selected controller and host
+integration with the new terrain library; it does not repeat or expand the
+saved-tower traversal or qualify the terrain checkpoint's open performance work.
+
 ## Actual generated-world traversal
 
 `tower/` passes all 13 existing saved-world journey checks at the new 0.45-m/s

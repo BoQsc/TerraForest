@@ -159,7 +159,7 @@ void NativeTerrainRegionStore::_bind_methods(){
 }
 NativeTerrainRegionStore::~NativeTerrainRegionStore(){close();}
 void NativeTerrainRegionStore::close_locked(){
- if(lease_)CloseHandle(static_cast<HANDLE>(lease_));lease_=nullptr;directory_=String();writable_=false;cached_id_=Buffer();cached_index_=Index{};
+ if(lease_)CloseHandle(static_cast<HANDLE>(lease_));lease_=nullptr;directory_=String();writable_=false;cached_id_=Buffer();cached_index_=Index{};page_cache_.clear();page_cache_id_=Buffer();page_cache_region_=0;
 }
 void NativeTerrainRegionStore::close(){std::lock_guard<std::mutex> lock(mutex_);close_locked();}
 bool NativeTerrainRegionStore::configure_worker_limit(int64_t workers){
@@ -251,7 +251,7 @@ Buffer NativeTerrainRegionStore::publish_capture(const Ref<NativeTerrainCapture>
  Index previous;if(incremental){if(!load_index(capture->source_,previous))return {};}
  else if(!inherited.is_empty()&&!load_index(inherited,previous))return {};
  int64_t count=capture->keys_.size(),dirty=capture->changed_.size();
- if(count>MAX_PAGES||capture->versions_.size()!=count||capture->samples_.size()!=dirty*PAGE_SAMPLES*3||(!incremental&&dirty!=count)||capture->blocks_.size()%8||capture->blocks_.size()>2000000*8||capture->generator_<1||capture->generator_>SURROUNDING_COAST_GENERATOR_ID)return {};
+ if(count>MAX_AUTHORED_PAGES||capture->versions_.size()!=count||capture->samples_.size()!=dirty*PAGE_SAMPLES*3||(!incremental&&dirty!=count)||capture->blocks_.size()%8||capture->blocks_.size()>2000000*8||capture->generator_<1||capture->generator_>SURROUNDING_COAST_GENERATOR_ID)return {};
  if(incremental&&(previous.seed!=capture->seed_||previous.generator!=capture->generator_||previous.order.size()>size_t(count)))return {};
  Index metadata;metadata.seed=capture->seed_;metadata.generator=capture->generator_;metadata.revision=capture->revision_;metadata.edits=capture->edits_;metadata.blocks=capture->blocks_;
  std::set<uint32_t> seen;std::map<uint32_t,std::vector<uint32_t>> members;

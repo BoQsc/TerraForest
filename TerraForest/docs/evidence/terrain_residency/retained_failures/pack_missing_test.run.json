@@ -1,0 +1,29 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_pack\\engine.log",
+    "--script",
+    "res://tests/world_generation_workflow.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 58344,
+    "exit_code": 1,
+    "diagnostics": [
+      "\nERROR: Attempt to open script 'res://tests/world_generation_workflow.gd' resulted in error 'File not found'.",
+      "ERROR: Can't load script: res://tests/world_generation_workflow.gd",
+      "ERROR: Failed loading resource: res://tests/world_generation_workflow.gd."
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 0.18622420000610873,
+    "passed": false
+  }
+}

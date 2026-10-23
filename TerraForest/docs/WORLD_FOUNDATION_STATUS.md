@@ -1,3 +1,32 @@
+## Selective native terrain residency integrated - 2026-10-23
+
+Ordinary regional world loading now mounts the checkpoint directly instead of
+expanding every edited sample. Exact saved pages fault through the native terrain
+worker into a bounded LRU; unsaved pages and atomic edit footprints stay pinned.
+The 16,384 resident-page ceiling is unchanged while the authored catalog can exceed
+it. The capacity check reaches 16,896 pages with 1,024 resident pages, then cold
+reopens with 32. Exact meshes, density/normal queries, incremental publication,
+newer-edit pinning, damaged dependency rejection and allocation rollback pass.
+Actual generated-world playback uses paging and hits all four baked map layers.
+See [evidence/terrain_residency](evidence/terrain_residency/README.md) and
+[the remaining storage contract](TERRAIN_REGIONAL_STORAGE.md).
+
+This supersedes older statements below that ordinary loading still fully expands
+regional terrain. It does not close mining response, whole-world memory or runtime
+qualification. Demand faults run synchronously on the worker; targeted prefetch,
+rendered populated travel beyond the old history cap, unsaved-edit pressure,
+retention-safe collection/compaction and the failed first-visible mining gate
+remain required. Finish those with explicit reader/checkpoint ownership, crash and
+corruption recovery, exact distant representations, rendered travel and latency
+evidence. Generator options/POI coverage, world visual quality and compute/thermal
+qualification remain open; do not return to water flow or unrelated gameplay work.
+
+The generated-checkpoint held-mining rerun explicitly still fails: first burst
+capture-to-draw p95 about 272 ms, second about 73 ms, and both visible-gap gates
+fail despite frame p99 below 20 ms. The older generator-1 fixture is a different
+world, so this is not a controlled regression comparison. Diagnose the remaining
+worker/build/arrival latency before declaring the paging path responsive.
+
 ## Block placement forest exclusion corrected - 2026-10-23
 
 The reported Character Preview / slot-5 brick disappearance was reproduced in the
@@ -41,9 +70,9 @@ connected run took 60 seconds, including 36 seconds for photo residency. These a
 different warmed/cold seeds/layouts, not controlled speedup ratios or universal
 instant generation. First rendered photographs, scene finalization/handoff and
 whole startup cost remain required generator/loading work. Do not reopen water
-flow or art direction. Native selective terrain residency remains a foundation
-requirement after this workflow correction: the 16,384 resident/history cap and
-full expansion are not solved. Full options/POI coverage, compute equivalence and
+flow or art direction. The later selective-residency section above supersedes the
+full-expansion/history-cap limitation; prefetch and rendered pressure remain open.
+Full options/POI coverage, compute equivalence and
 benefit, world visual quality, populated runtime/thermal proof, and clean-machine
 release installation also remain open. Unused Blender source import was disabled;
 the updated resource pack starts and reopens with 14 external native DLLs.
@@ -57,9 +86,9 @@ fixture captured zero unchanged sample bytes and 12 KiB for one local edit, with
 exact reopen, backup, root-failure retry and asynchronous edit/save ordering checks.
 See [evidence](evidence/terrain_dirty_capture/README.md). This is not completion of
 terrain storage: key scans, legacy block copies, compressed-history verification,
-full expansion, resident capacity, retention-aware cleanup and the rendered mining
-arrival gate remain open. Next is native selective residency; retain exact distant
-edits and test beyond the old 16,384-page historical limit without raising that cap.
+prefetch/admission, retention-aware cleanup and the rendered mining arrival gate
+remain open. Selective residency and native beyond-cap capacity now have the
+separate evidence above; populated rendered pressure still needs qualification.
 
 ## Terrain edit rejection is transactional - 2026-10-23
 
@@ -162,7 +191,7 @@ pursuit defaults to 0.45 m/s with matched playback; original R4 actions and
 severed-leg crawling remain available. Flat-floor evaluated-skin checks and real
 controller transitions are in [gait evidence](evidence/zombie_drag_walk/README.md).
 The selected tower/door/upper-floor round trip also passes at this slower speed
-with all210 source files unchanged. Cold paths in that uncontrolled run take
+with all 210 source files unchanged. Cold paths in that uncontrolled run take
 20.3/40.2s and cooperative planning overruns remain; the animation does not close
 the existing navigation timing requirement.
 This is animation presentation and a deliberate speed change, not new traversal

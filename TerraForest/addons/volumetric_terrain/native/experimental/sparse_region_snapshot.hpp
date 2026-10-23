@@ -54,7 +54,8 @@ public:
   for(int i=0;i<w.caves.n;i++)caves_[i]=w.caves[i];
   for(int i=0;i<count;i++){
    if(limits.cancelled()){caves_.clear();pages_.clear();return status_=MeshStatus::cancelled;}
-   std::copy(w.pages[sources[i]].d,w.pages[sources[i]].d+PAGE_SAMPLES,pages_.data()+size_t(i)*PAGE_SAMPLES);
+   const Page*p=w.resident_page(sources[i]);if(!p)return status_=MeshStatus::allocation_failed;
+   std::copy(p->d,p->d+PAGE_SAMPLES,pages_.data()+size_t(i)*PAGE_SAMPLES);
   }
   if(limits.cancelled()){caves_.clear();pages_.clear();return status_=MeshStatus::cancelled;}
   seed_=w.seed;revision_=w.revision;return status_=MeshStatus::ok;

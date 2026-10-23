@@ -31,6 +31,8 @@ class NativeTerrainRegionStore : public godot::RefCounted {
  int64_t written_=0,reused_=0,reused_regions_=0,written_bytes_=0,read_regions_=0;
  Buffer cached_id_;
  Index cached_index_;
+ Buffer page_cache_id_;uint32_t page_cache_region_=0;
+ std::map<uint32_t,Buffer> page_cache_;
  static Buffer hash(const Buffer &bytes);
  static bool ordinary(const godot::String &path,bool directory);
  static bool read_file(const godot::String &path,int64_t limit,Buffer &bytes);
@@ -60,5 +62,8 @@ public:
  godot::Dictionary verify_snapshot(const Buffer &reference);
  godot::Dictionary read_region(const Buffer &reference,godot::Vector3i coordinate);
  godot::Dictionary stats();
+ // Worker-only native paging API, not script-owned mutable page data.
+ bool mount_world(World &world,const Buffer &reference);
+ Buffer read_page(const Buffer &reference,uint32_t page);
 };
 }

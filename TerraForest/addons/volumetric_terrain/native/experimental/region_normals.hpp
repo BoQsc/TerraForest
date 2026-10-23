@@ -71,7 +71,7 @@ static NormalResult build_region_normals_cached(const World&w,const Result&mesh,
   if(x<0||x>WORLD||z<0||z>WORLD||y<0||y>WORLD_Y)return SDF_BAND;
   constexpr int np=WORLD/PAGE+1;
   int page=w.pages_by_key.get(u32((x>>4)+np*((z>>4)+np*(y>>4)))+1);
-  if(page>=0)return float(w.pages[page].d[(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE;
+  if(page>=0){const Page*p=w.resident_page(page);return p?float(p->d[(x&15)+16*((z&15)+16*(y&15))])/SDF_SCALE:__builtin_nanf("");}
   return w.base({float(x),float(y),float(z)},heights[(x-x0)+n*(z-z0)]);
  };
  NormalResult result=build_normals_from_samples(mesh,limits,[&](int x,int y,int z){

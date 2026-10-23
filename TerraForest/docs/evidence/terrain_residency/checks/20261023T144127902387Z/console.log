@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS checkpoint store opens
+PASS source checkpoint committed
+PASS native field mounts verified checkpoint without expansion
+PASS mount keeps catalog and zero sample pages
+PASS all distributed density hits and normals match original terrain exactly
+PASS paged meshes retain exact topology materials normals and lighting
+PASS read residency and eviction work stay bounded independently of history
+PASS cold unchanged capture loads no samples
+PASS paged traversal serializes byte-exact original field
+PASS edit faults and pins touched pages
+PASS local dirty samples remain pinned
+PASS incremental save merges evicted history exactly
+PASS newer edit occurs during frozen publication
+PASS older publication leaves newer resident samples dirty and pinned
+PASS fresh paged reopen retains edit and distant history
+PASS oversized pinned edit is rejected atomically at resident budget
+PASS rejected allocation preserves resident bound
+PASS cold corruption fixture mounts exact saved checkpoint
+PASS damaged cold dependency fails the native read instead of returning base terrain
+PASS damaged cold density query reports an error instead of a plausible hit
+PASS damaged checkpoint cannot replace live native world
+PASS rejected mount leaves original field and page catalog unchanged
+PASS restoring exact immutable products permits the failed page fault to recover
+TERRAIN_RESIDENCY failures=0

@@ -1,0 +1,35 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_residency_mining\\engine.log",
+    "--script",
+    "res://tests/held_mining_flight.gd",
+    "--",
+    "--snapshot-readonly",
+    "--world-slot=workflow_66068_179427",
+    "--derived-cache=user://residency_mining_20261023_final"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 63144,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL held capture-to-draw p95 <=150ms",
+      "FAIL no gap between visible mining changes exceeds 150ms"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 18.56929620000301,
+    "passed": false
+  },
+  "scope": "Existing generated regional checkpoint opened read-only; held terrain brush edits are in-memory only. Other checkout has a headless navigation job; not isolated resource/thermal proof."
+}

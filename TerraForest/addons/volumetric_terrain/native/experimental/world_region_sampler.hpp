@@ -49,7 +49,7 @@ struct WorldRegionSampler {
    if(!checkpoint())return;
    for(int x=0;x<n;x++){
     int wx=x0+x,wz=z0+z,at=x+n*z,pi=page_indices[at];
-    float d=pi==-2?SDF_BAND:(pi<0?w.base({float(wx),float(y),float(wz)},heights[at]):float(w.pages[pi].d[(wx&15)+16*((wz&15)+16*(y&15))])/SDF_SCALE);
+    float d=pi==-2?SDF_BAND:(pi<0?w.base({float(wx),float(y),float(wz)},heights[at]):w.sample(wx,y,wz));
     out[at]=density_value(d);
    }
   }

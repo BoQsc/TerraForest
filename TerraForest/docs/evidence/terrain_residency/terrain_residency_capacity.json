@@ -1,0 +1,41 @@
+{
+  "completed": 2112,
+  "failures": 0,
+  "milliseconds": 2730.911,
+  "peak_resident_pages": 1024,
+  "reopened": {
+    "active": true,
+    "catalog_pages": 16896,
+    "eviction_scan_high": 0,
+    "evictions": 33,
+    "failures": 0,
+    "faults": 65,
+    "generator": 5,
+    "resident_limit": 32,
+    "resident_pages": 32,
+    "sample_bytes": 393216,
+    "seed": 1703
+  },
+  "runtime": {
+    "active": true,
+    "catalog_pages": 16896,
+    "eviction_scan_high": 0,
+    "evictions": 15872,
+    "failures": 0,
+    "faults": 0,
+    "generator": 5,
+    "resident_limit": 1024,
+    "resident_pages": 1024,
+    "sample_bytes": 12582912,
+    "seed": 1703
+  },
+  "scope": "2112 independent native field additions with periodic durable checkpoints, history beyond 16384 pages, bounded LRU, cold density/normal/content parity; no renderer/FPS or thermal qualification.",
+  "storage": {
+    "region_reads": 2496,
+    "reused_files": 0,
+    "reused_regions": 11758,
+    "workers": 4,
+    "written_bytes": 11502544,
+    "written_files": 45
+  }
+}
