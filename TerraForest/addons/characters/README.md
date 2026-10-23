@@ -25,8 +25,9 @@ Development mode to use gameplay melee. `--no-zombies` overrides either mode.
 The free editor has no encounters unless requested. Existing saves remain valid.
 
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
-selection drives equipment visibility; native motor velocity drives walk/run/jump
-presentation. Head, mouth, eyes and hair are hidden in first-person view. The
+selection drives equipment visibility; native motor velocity drives authored
+pickaxe/axe walk/run/jump presentation. Empty hands keep the original idle pose
+between actions, including while moving. Head, mouth, eyes and hair are hidden in first-person view. The
 source full body remains available for later third-person presentation. Existing
 hammer, assembly tool and water bucket previews remain available.
 
@@ -121,6 +122,9 @@ accepted block placements and terrain-fill submissions. The whole hand is held
 low; the wrist stays aligned with the forearm. The index is softly extended,
 the remaining fingers loosely curled and the thumb naturally opposed. Equipment
 returns afterward, and held placement cannot restart an unfinished gesture.
+The empty hand automatically lowers into its original idle when the one-shot
+ends and stays there until another action; movement does not play the placement
+pose or generic full-body arm swings.
 The original 71 clips and runtime GLB are unchanged; a compact AnimationLibrary
 supplies the additional clip. See the [editable Blender source and rebuild steps](authoring/README.md)
 and [review evidence](../../docs/evidence/human_placement/README.md).

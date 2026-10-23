@@ -21,6 +21,14 @@ body integration or root-motion events. Asset and tool hashes are retained.
 
 ## Verification and review
 
+The idle follow-up explicitly keeps empty hands in the original idle clip
+between actions, including while moving. Only the authored pickaxe/axe holds
+select locomotion clips. `idle_lifecycle/` records 29 passing rendered host
+checks, including real-time completion (no manual pose reset), physical lowering
+of the wrist below 1.1 m, no automatic gesture replay, and preserved tool
+locomotion. `returned_idle.png` was inspected: the hand has dropped below the
+normal first-person frame. The action resource itself is unchanged.
+
 - `placement/`: all 22 actual-host checks pass. These include accepted native
   block placement, removal not starting placement feedback, queued terrain fill,
   uninterrupted held input, selected-equipment restoration, neutral wrist,

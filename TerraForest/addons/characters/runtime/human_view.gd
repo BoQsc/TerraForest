@@ -99,7 +99,10 @@ func _process(delta: float) -> void:
 		placement_active = false
 		_sync_equipment()
 	var motion := "Idle"
-	if is_instance_valid(body):
+	# Empty hands stay at rest between deliberate actions. Generic full-body
+	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
+	# Only the authored pickaxe/axe holds use locomotion presentation.
+	if current in [1, 2] and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"

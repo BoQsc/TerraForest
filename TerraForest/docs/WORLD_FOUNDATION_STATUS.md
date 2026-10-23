@@ -149,7 +149,8 @@ this host integration or close the wider world visual/performance gates.
 
 The relaxed placement follow-up supplies one Blender-authored empty-hand gesture:
 the whole hand is low with a neutral wrist, a slightly extended index and natural
-thumb. It is presentation for accepted single-block/terrain-fill submissions,
+thumb. Empty hands keep the original idle between actions, including while moving;
+the one-shot automatically lowers the hand back to rest. It is presentation for accepted single-block/terrain-fill submissions,
 not a construction-tool grip or general interaction system. Editable source,
 runtime animation, review images and targeted host checks are linked in
 [placement evidence](evidence/human_placement/README.md). The other presentation
