@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
-# A handful of opaque meshes, built once; no idle processing or physics bodies.
+# R11 animated character, with existing construction and water tool previews.
 var tools: Dictionary={}
 var motion: Tween
 var current:=0
@@ -9,27 +9,15 @@ func part(parent: Node3D,size: Vector3,at: Vector3,color: Color,angle: float=0.0
 	var material:=StandardMaterial3D.new();material.albedo_color=color;material.roughness=0.8
 	var node:=MeshInstance3D.new();node.mesh=mesh;node.material_override=material;node.position=at;node.rotation.z=angle
 	node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;parent.add_child(node)
-func point(parent: Node3D,at: Vector3,angle: float) -> void:
-	var mesh:=CylinderMesh.new();mesh.top_radius=0.002;mesh.bottom_radius=0.035;mesh.height=0.16;mesh.radial_segments=6;mesh.rings=1
-	var material:=StandardMaterial3D.new();material.albedo_color=Color("777e83");material.roughness=0.8
-	var node:=MeshInstance3D.new();node.mesh=mesh;node.material_override=material;node.position=at;node.rotation.z=angle
-	node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;parent.add_child(node)
+var human = preload("res://addons/characters/runtime/human_view.gd").new()
 func _ready() -> void:
-	position=Vector3(0.34,-0.32,-0.65);rotation=Vector3(-0.2,0.15,-0.28)
+	add_child(human)
 	for id in [0,1,2,3,4]:
-		var root:=Node3D.new();add_child(root);tools[id]=root;root.hide()
-		if id==0:
-			for x in [0.0,-0.68]:
-				part(root,Vector3(0.095,0.09,0.12),Vector3(x,-0.03,0),Color("b98b6e"),0.12)
-				for finger in 4:part(root,Vector3(0.023,0.055,0.065),Vector3(x-0.035+finger*0.024,0.005,-0.045),Color("ca997a"))
-				part(root,Vector3(0.09,0.24,0.10),Vector3(x,-0.18,0.06),Color("384944"))
-			continue
+		var root := Node3D.new();add_child(root);tools[id]=root;root.hide()
+		root.position=Vector3(0.34,-0.32,-0.65);root.rotation=Vector3(-0.2,0.15,-0.28)
+		if id<=2:continue # R11 owns hands, pickaxe and axe.
 		part(root,Vector3(0.045,0.42,0.045),Vector3.ZERO,Color("62472f"))
-		if id==1:
-			part(root,Vector3(0.19,0.055,0.055),Vector3(0,0.2,0),Color("777e83"))
-			point(root,Vector3(-0.16,0.18,0),1.85);point(root,Vector3(0.16,0.18,0),-1.85)
-		elif id==2:part(root,Vector3(0.16,0.14,0.045),Vector3(0.06,0.17,0),Color("81888b"),-0.12)
-		elif id==3:part(root,Vector3(0.18,0.09,0.085),Vector3(0,0.2,0),Color("626a71"))
+		if id==3:part(root,Vector3(0.18,0.09,0.085),Vector3(0,0.2,0),Color("626a71"))
 		else:
 			part(root,Vector3(0.12,0.045,0.06),Vector3(0,0.18,0),Color("939b9c"))
 			for x in [-0.05,0.05]:part(root,Vector3(0.035,0.09,0.06),Vector3(x,0.23,0),Color("939b9c"))
@@ -37,13 +25,17 @@ func equip(id: int) -> void:
 	if id>=401 and id<=411:
 		id=401
 		if not tools.has(401):
-			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;add_child(bucket);tools[401]=bucket
+			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;bucket.position=Vector3(0.34,-0.32,-0.65);bucket.rotation=Vector3(-0.2,0.15,-0.28);add_child(bucket);tools[401]=bucket
 
 	current=id
 	if motion!=null:motion.kill()
-	rotation=Vector3.ZERO if id==0 else Vector3(-0.2,0.15,-0.28)
-	position=Vector3(0.34,-0.40,-0.75) if id==0 else Vector3(0.34,-0.32,-0.65)
+	human.equip(id)
 	for key in tools:tools[key].visible=key==id
 func swing() -> void:
+	if current<=2:
+		human.swing()
+		return
 	if motion!=null and motion.is_running():return
-	motion=create_tween();motion.tween_property(self,"rotation:x",-0.85,0.1);motion.tween_property(self,"rotation:x",0.0 if current==0 else -0.2,0.18)
+	if not tools.has(current):return
+	var preview:Node3D=tools[current]
+	motion=create_tween();motion.tween_property(preview,"rotation:x",-0.85,0.1);motion.tween_property(preview,"rotation:x",-0.2,0.18)

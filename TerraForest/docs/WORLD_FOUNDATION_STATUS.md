@@ -9,6 +9,29 @@ This establishes a prerequisite for incremental captures; it does not close full
 capture/recompression, paging, cleanup or the failed rendered mining-arrival gate.
 Continue the native dirty-page/checkpoint work in TERRAIN_REGIONAL_STORAGE.md.
 
+## Character integration checkpoint — 2026-10-23
+
+Original Human R11 and Zombie Lab packages are preserved in asset-only baseline
+`e63a36d8`. Character work uses an isolated `codex/character-integration` checkout;
+concurrent terrain edits/commits remain owned by their existing checkout.
+R11 replaces first-person box hands/pickaxe/axe, and bounded R4 zombie encounters
+now use loaded collision and existing melee/tool-wear adapters. See
+[contract and remaining requirements](../addons/characters/README.md) and
+[evidence](evidence/character_integration/README.md). Scoped runtime/world checks
+pass; the old combat and packaging suites still fail identically on the baseline.
+Those failures remain open and are not overridden by the new fixture passes.
+
+This is a first integration milestone, not completed survival gameplay. Required
+continuation: player health/death/respawn, saved encounter identity/state and loot,
+obstacle navigation and automatic traversal, third-person/outfit presentation,
+authored empty-hand punches and construction grips, draw/stow transitions and
+camera/tool wall clipping, plus sustained population/frame-cost qualification.
+These are deferred because this milestone preserves native movement and existing
+world save schemas while admitting the source rigs. Resume after the rig/spawn
+contract is accepted; close each with actual gameplay, save/reopen or rendered
+animation evidence as appropriate. The original source reports do not certify
+this host integration or close the wider world visual/performance gates.
+
 ## Regional terrain checkpoint integration - 2026-10-23
 
 Actual compound saves now select native compressed, immutable terrain packs;

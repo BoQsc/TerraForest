@@ -1,0 +1,166 @@
+[
+  {
+    "run": "20261023T092810215490Z",
+    "test": "res://tests/character_runtime.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 53604,
+      "exit_code": 4294967295,
+      "diagnostics": [
+        "FAIL R4 installs fitted limb regions and ragdoll",
+        "SCRIPT ERROR: Invalid type in function 'pick' in base 'Node3D (zombie_world.gd)'. The array of argument 3 (Array) does not have the same element type as the expected typed array argument."
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 43.58705099998042,
+      "passed": false
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T092854421792Z",
+    "test": "res://tests/character_runtime.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 67704,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Attempted to find an object of type 'StaticBody3D' into a TypedArray, which does not inherit from 'CharacterBody3D'.",
+        "ERROR: Condition \"!_p->typed.validate(value, \"find\")\" is true. Returning: -1",
+        "ERROR: The object does not have any 'meta' values with the key 'zombie'.",
+        "FAIL leg loss keeps R4 alive and enters crawl"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 3.653066700033378,
+      "passed": false
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T093234725744Z",
+    "test": "res://tests/character_world.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 27884,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL existing world attack resolves R4 target"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 9.950832399947103,
+      "passed": false
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T093359471878Z",
+    "test": "res://tests/character_runtime.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 62688,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 9.831130300008226,
+      "passed": true
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T093438209690Z",
+    "test": "res://tests/world_attack.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 50880,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL Alt exposes mouse for on-screen controls",
+        "FAIL actor destruction retires persistent entity",
+        "FAIL axe finishes the same damaged tree",
+        "FAIL natural ground-cover damage fixture available",
+        "FAIL persistent context HUD follows selected developer tool",
+        "FAIL pickaxe damages a real tree without immediate harvest",
+        "FAIL shared attack destroys furniture through salvage transaction",
+        "FAIL tool 0 damages block and wears without instant removal",
+        "FAIL tool 0 eventually destroys block",
+        "FAIL tool 0 submits excavation through shared attack",
+        "FAIL tool 1 damages block and wears without instant removal",
+        "FAIL tool 1 eventually destroys block",
+        "FAIL tool 1 submits excavation through shared attack",
+        "FAIL tool 2 damages block and wears without instant removal",
+        "FAIL tool 2 eventually destroys block",
+        "FAIL tool 2 submits excavation through shared attack",
+        "FAIL tool 3 damages block and wears without instant removal",
+        "FAIL tool 3 eventually destroys block",
+        "FAIL tool 3 submits excavation through shared attack",
+        "FAIL vehicle destruction removes body and saved identity"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 11.09949290001532,
+      "passed": false
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T093627523760Z",
+    "test": "res://tests/world_attack.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 32432,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL Alt exposes mouse for on-screen controls",
+        "FAIL actor destruction retires persistent entity",
+        "FAIL axe finishes the same damaged tree",
+        "FAIL natural ground-cover damage fixture available",
+        "FAIL persistent context HUD follows selected developer tool",
+        "FAIL pickaxe damages a real tree without immediate harvest",
+        "FAIL shared attack destroys furniture through salvage transaction",
+        "FAIL tool 0 damages block and wears without instant removal",
+        "FAIL tool 0 eventually destroys block",
+        "FAIL tool 0 submits excavation through shared attack",
+        "FAIL tool 1 damages block and wears without instant removal",
+        "FAIL tool 1 eventually destroys block",
+        "FAIL tool 1 submits excavation through shared attack",
+        "FAIL tool 2 damages block and wears without instant removal",
+        "FAIL tool 2 eventually destroys block",
+        "FAIL tool 2 submits excavation through shared attack",
+        "FAIL tool 3 damages block and wears without instant removal",
+        "FAIL tool 3 eventually destroys block",
+        "FAIL tool 3 submits excavation through shared attack",
+        "FAIL vehicle destruction removes body and saved identity"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 11.090609100006986,
+      "passed": false
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  },
+  {
+    "run": "20261023T093808647039Z",
+    "test": "res://tests/character_world.gd",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 54972,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 9.607784799998626,
+      "passed": true
+    },
+    "revision": "e63a36d8a7bec38e248a9766f78f005a1bd6bbfe"
+  }
+]

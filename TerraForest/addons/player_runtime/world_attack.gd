@@ -14,6 +14,9 @@ func target() -> Dictionary:
 	var start: Vector3=game.camera.global_position
 	var end: Vector3=start-game.camera.global_basis.z*3.5
 	var hit: Dictionary=game.structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[game.player.get_rid()])
+	var zombie_hit: Dictionary=game.zombies.pick(start,end,[game.player.get_rid()])
+	if not zombie_hit.is_empty() and (hit.is_empty() or hit.get("collider")==zombie_hit.zombie or start.distance_squared_to(zombie_hit.position)<=start.distance_squared_to(hit.position)+0.001):
+		return zombie_hit
 	if game.ground_enabled and game.ground_interaction.available():
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
 		if cover.get("hit",false):
@@ -58,12 +61,21 @@ func attack() -> bool:
 	next_attack=now+250;game.tool_view.swing();game.terrain.note_interaction()
 	var selected:=target()
 	if selected.is_empty():return false
+	if selected.kind=="zombie" and game.equipped_tool in [1,2]:next_attack=now+1200
 	if selected.kind=="terrain":game.terrain.set_interaction_target(selected.position)
 	return apply_target(selected)
 func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
+	if t.kind=="zombie":
+		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z):return false
+		if item!=0:
+			hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
+			game.terrain.changed_since_save=true
+		hud.refresh()
+		game._show_lake_notice("Zombie struck")
+		return true
 	if t.kind=="actor" and (t.handle==0 or game.actors.store.resolve_identity(t.id)!=t.handle):return false
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):

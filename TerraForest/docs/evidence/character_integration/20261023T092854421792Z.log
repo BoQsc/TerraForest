@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS R11 imports all 71 animations
+PASS R11 imported skinned body, wardrobe and equipment
+HUMAN MESH NODES [&"Brows_Fine_Hairs", &"Carry_Axe belt frog", &"Carry_Back cross strap", &"Carry_Belt buckle", &"Carry_Carbine keeper 1_066", &"Carry_Carbine keeper 1_425", &"Carry_Left shoulder harness", &"Carry_Pickaxe keeper 1_066", &"Carry_Pickaxe keeper 1_355", &"Carry_Right shoulder harness", &"Carry_Waist belt", &"Equipment_Axe", &"Equipment_Carbine", &"Equipment_Pickaxe", &"Eyeball_Left", &"Eyeball_Right", &"Eyelids_Lashes_Left", &"Eyelids_Lashes_Right", &"Eyelids_Left", &"Eyelids_Right", &"Hair_ShortCrop", &"Human_Body", &"Wardrobe_Boots", &"Wardrobe_FieldVest", &"Wardrobe_Trousers", &"Wardrobe_WorkShirt"]
+PASS pickaxe uses authored first-person idle
+PASS pickaxe uses authored swing
+PASS switching tool cancels previous action
+PASS axe uses authored swing
+PASS empty hands remove equipped tools
+PASS unarmed hides Equipment_Axe
+PASS unarmed hides Equipment_Carbine
+PASS unarmed hides Equipment_Pickaxe
+PASS unloaded collision rejects spawn
+PASS underwater spawn rejects
+PASS missing ground rejects spawn
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS R4 rig and behavior contract initialize
+PASS R4 installs fitted limb regions and ragdoll
+PASS zombie bodies use dedicated collision layer
+PASS zombie pursues the real target with physical movement
+PASS world updates suspend zombie subtree
+PASS suspended zombie does not move
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS ready world resumes zombie
+ERROR: The object does not have any 'meta' values with the key 'zombie'.
+   at: get_meta (core/object/object.cpp:1053)
+   GDScript backtrace (most recent call first):
+       [0] pick (res://addons/characters/runtime/zombie_world.gd:129)
+       [1] run (res://tests/character_runtime.gd:63)
+PASS melee ray resolves fitted zombie target
+PASS melee delivers damage to zombie controller
+PASS damage changes live zombie health
+ERROR: The object does not have any 'meta' values with the key 'zombie'.
+   at: get_meta (core/object/object.cpp:1053)
+   GDScript backtrace (most recent call first):
+       [0] pick (res://addons/characters/runtime/zombie_world.gd:129)
+       [1] run (res://tests/character_runtime.gd:70)
+ERROR: Attempted to find an object of type 'StaticBody3D' into a TypedArray, which does not inherit from 'CharacterBody3D'.
+   at: _internal_validate_object (./core/variant/container_type_validate.h:115)
+   GDScript backtrace (most recent call first):
+       [0] pick (res://addons/characters/runtime/zombie_world.gd:130)
+       [1] run (res://tests/character_runtime.gd:70)
+ERROR: Condition "!_p->typed.validate(value, "find")" is true. Returning: -1
+   at: find (core/variant/array.cpp:374)
+   GDScript backtrace (most recent call first):
+       [0] pick (res://addons/characters/runtime/zombie_world.gd:130)
+       [1] run (res://tests/character_runtime.gd:70)
+PASS solid wall blocks zombie melee ray
+Zombie severed shin_l: ["shin_l", "foot_l"]
+FAIL leg loss keeps R4 alive and enters crawl
+Zombie ragdoll started with 13 physical bones.
+PASS fatal damage starts corpse ragdoll
+PASS corpses retire within the encounter budget
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS live encounter population never exceeds six
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS automatic scheduler admits one supported encounter
+PASS lost streamed collision retires resident safely
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+CHARACTER_RUNTIME_FAIL

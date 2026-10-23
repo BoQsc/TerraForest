@@ -10,7 +10,7 @@ EXCLUDED = {'.godot', '.build', '.git', 'dist', 'reports', '__pycache__'}
 # These are distribution dependencies, including optional native acceleration.
 # They do not claim that a scene adapter works without a host-world contract.
 DEPENDENCIES = {
-    'player_runtime': ['volumetric_water'], 'presentation': [],
+    'player_runtime': ['volumetric_water', 'characters'], 'characters': [], 'presentation': [],
     'world_runtime': ['player_runtime', 'volumetric_water'],
     'vegetation_runtime': [], 'volumetric_water': [],
     'volumetric_terrain': ['world_runtime', 'volumetric_water'],
@@ -19,7 +19,8 @@ DEPENDENCIES = {
     'world_ecosystem': ['vegetation', 'volumetric_terrain', 'vegetation_runtime'],
     'vehicle_runtime': [],
 }
-ASSETS = {'vehicle_runtime': ['vehicle_demo'],
+ASSETS = {'characters': ['addons/characters/README.md', 'addons/characters/LICENSE.txt'],
+          'vehicle_runtime': ['vehicle_demo'],
           'player_runtime': ['addons/structures/textures/terraforest',
                              'addons/world_ecosystem/woodland.gdshader']}
 
@@ -43,7 +44,7 @@ def dependency_closure(addon):
 
 def addon_entries(addon, root=ROOT):
     names = dependency_closure(addon)
-    directories = ['addons/' + name for name in names]
+    directories = ['addons/' + name + ('/runtime' if name == 'characters' else '') for name in names]
     for name in names:
         directories.extend(ASSETS.get(name, []))
     files = {root/'LICENSE.txt'}

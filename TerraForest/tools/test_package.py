@@ -64,6 +64,20 @@ class PackageTests(unittest.TestCase):
         files,_=package.addon_entries('vehicle_runtime')
         names={p.relative_to(package.ROOT).as_posix() for p in files}
         self.assertTrue({'vehicle_demo/LICENSE.txt','vehicle_demo/PROVENANCE.md','vehicle_demo/assets/Vehicle.glb'}<=names)
+    def test_character_runtime_bundle_and_player_dependency(self):
+        files, metadata=package.addon_entries('player_runtime')
+        names={p.relative_to(package.ROOT).as_posix() for p in files}
+        self.assertIn('characters', metadata['included_addons'])
+        self.assertTrue({'addons/characters/runtime/assets/Human.r11.glb',
+                         'addons/characters/runtime/assets/Zombie.r4.glb',
+                         'addons/characters/runtime/assets/Zombie.r4.behavior.json',
+                         'addons/characters/LICENSE.txt', 'addons/characters/README.md'}<=names)
+        self.assertFalse(any('/ZombieLab/' in name or '/Human_R11_Complete_Repost/' in name for name in names))
+        pairs=[('Human.r11.glb','Human_R11_Complete_Repost/Godot_Viewer/models/Human.r11.glb'),
+               ('Zombie.r4.glb','ZombieLab/assets/Zombie.r4.glb')]
+        for runtime, original in pairs:
+            self.assertEqual(hashlib.sha256((package.ROOT/'addons/characters/runtime/assets'/runtime).read_bytes()).digest(),
+                             hashlib.sha256((package.ROOT/'addons/characters'/original).read_bytes()).digest())
 
 if __name__ == '__main__':
     unittest.main()

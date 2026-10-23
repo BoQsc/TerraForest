@@ -7,6 +7,8 @@ const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var generated_region=preload("res://addons/world_runtime/generated_region.gd").new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
+var zombies=preload("res://addons/characters/runtime/zombie_world.gd").new()
+var zombie_target=preload("res://addons/characters/runtime/zombie_target.gd").new()
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 # Native regional residency is the normal world path; retain an explicit diagnostic fallback.
@@ -198,6 +200,14 @@ func _ready() -> void:
 	movement.configure_ladders(ladder.collection)
 	camera.add_child(headlamp)
 	camera.add_child(tool_view)
+	tool_view.human.body=player
+	player.add_child(zombie_target)
+	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
+	add_child(zombies)
+	zombies.enabled=(construction_inventory.gameplay or "--zombies" in OS.get_cmdline_user_args()) and not "--no-zombies" in OS.get_cmdline_user_args()
+	zombies.target=zombie_target
+	zombies.readiness=_actor_collision_ready
+	zombies.water_depth=lakes.depth_at
 	add_child(model_tool)
 	model_tool.gameplay=construction_inventory.gameplay
 	model_tool.paid_placement=_place_inventory_model
@@ -350,6 +360,8 @@ func _capture_player_pose() -> PackedByteArray:
 func _restore_player_pose(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=player_pose.decode(data)
 	if not decoded.ok: return false
+	zombies.clear()
+	zombie_target.damage_received=0.0
 	ground_mode=false;equipped_tool=0;editor_tool_active=false
 	player_hud.show_ground_tool(-1)
 	_saved_pose=data
@@ -1261,6 +1273,7 @@ func _actor_collision_ready(bounds: AABB) -> bool:
 	return terrain.is_collision_region_ready(bounds) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
 
 func _physics_process(delta: float) -> void:
+	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
 	actors.update_simulation(delta,terrain.focus,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
