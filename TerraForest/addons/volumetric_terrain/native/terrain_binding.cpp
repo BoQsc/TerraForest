@@ -329,6 +329,10 @@ public:
                                            : __atomic_load_n(&control_.epoch,__ATOMIC_RELAXED);
             return reply(command,0,epoch,true);
         }
+        godot::PackedByteArray result;
+        const int expected_reply=fixed_edit_reply_size(command);
+        const bool edit_reply=expected_reply>0;
+        if(edit_reply&&result.resize(expected_reply)!=godot::OK)return {};
         std::lock_guard<std::mutex> lock(mutex_);
         // Load/reset may reuse revision values; invalidate even a failed attempt.
         if(command==5||command==6)snapshot_epoch_.fetch_add(1);
@@ -342,14 +346,16 @@ public:
                 Reader bounds{bytes.p,bytes.n,28};V3 lo=bounds.vec(),hi=bounds.vec();
                 if(snapshot_worker_&&bounds.good)snapshot_worker_->observe_density_edit(previous_revision,world_.revision,lo,hi);
             }else{
-                // Failed edits can have partially modified pages before returning
-                // without a revision increment. Never certify those snapshots.
+                // Rejected edits retain the field; invalidate outstanding
+                // admission tokens conservatively before another attempt.
                 snapshot_epoch_.fetch_add(1);
             }
         }
         active_command_.store(-1,std::memory_order_relaxed);
-        godot::PackedByteArray result;
-        if(result.resize(bytes.n)==godot::OK && bytes.n)copy_bytes(result.ptrw(),bytes.p,size_t(bytes.n));
+        if(edit_reply&&bytes.n>EDIT_REPLY_CAPACITY){bytes.release();return {};}
+        bool ready=edit_reply&&bytes.n==expected_reply;
+        if(!ready)ready=result.resize(bytes.n)==godot::OK;
+        if(ready&&bytes.n)copy_bytes(result.ptrw(),bytes.p,size_t(bytes.n));
         bytes.release();
         return result;
     }

@@ -5,6 +5,9 @@ constexpr int WORLD=2000, WORLD_Y=256, PAGE=16, PAGE_SAMPLES=4096, MAX_PAGES=163
 constexpr int WORLD_PAGE_COLUMNS=WORLD/PAGE+1; // Inclusive boundary lattice.
 constexpr float SDF_BAND=4.f, SDF_SCALE=1024.f;
 constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x32505254u;
+constexpr int EDIT_REPLY_CAPACITY=128; // Complete edit receipt, reserved before mutation.
+inline bool fixed_edit_reply(u32 command){return command==2||command==28;}
+inline int fixed_edit_reply_size(u32 command){return command==2?116:(command==28?52:0);}
 // Identity of the immutable base field (height, caves and generated materials).
 // Legacy format-1 worlds use generator 1. New generators must keep that reader.
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.

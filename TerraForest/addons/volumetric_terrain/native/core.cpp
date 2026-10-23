@@ -462,15 +462,20 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  // Capacity check before mutation: fail the edit, never silently discard terrain.
  int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
  if(pages.n+need>MAX_PAGES)return false;
+ // Stage references and values before changing authoritative pages. Virtual
+ // page admission preserves the old first-touch quantization/repaint behavior.
+ struct EditSample {i32 page;u16 sample;i16 density;u8 flags;};
+ List<EditSample> staged;List<u32> new_keys;Map planned;
+ auto discard=[&](){staged.release();new_keys.release();planned.release();};
  int x0=fl(lo.x),x1=fl(hi.x),y0=fl(lo.y),y1=fl(hi.y),z0=fl(lo.z),z1=fl(hi.z);
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
-  float h=height(float(x),float(z));int lastpy=-1,idx=-1;
+  float h=height(float(x),float(z));int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
   for(int y=y0;y<=y1;y++){
    V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
    float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
-   int py=y>>4;if(py!=lastpy){idx=pages_by_key.get(page_key(x>>4,py,z>>4));lastpy=py;}
-   int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;
+   int py=y>>4;if(py!=lastpy){key=page_key(x>>4,py,z>>4);idx=pages_by_key.get(key);int virtual_page=idx<0?planned.get(key):-1;present=idx>=0||virtual_page>=0;reference=idx>=0?idx:-1-virtual_page;lastpy=py;}
+   int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;if(idx<0&&present)old=float(quant(old))/SDF_SCALE;
    float value=add?mn(old,brush):mx(old,-brush);
    if(shape==2&&clearance>0)value=mx(value,-cut);
    if(y<=3)value=old; // Preserve the bottom solid slab; excavation cannot open the world underside.
@@ -479,24 +484,41 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    i16 q=quant(value),previous=quant(old);
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
-   bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(idx<0||pages[idx].mat[j]!=material);
+   bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
    if(q==previous&&!repaint)continue;
-   if(idx<0){Page* page=ensure(x>>4,py,z>>4);if(!page)return false;idx=pages_by_key.get(page_key(x>>4,py,z>>4));}
-   // Count only newly excavated lattice samples, before material rewriting.
-   // Existing air, band reshaping, paving and additive edits yield nothing.
-   if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){
-    u8 source=pages[idx].mat[j];
-    // Receipt-only classification: preserve terrain storage/shading identities.
-    // Natural surface soil occupies the upper two metres; explicit rock and ore stay distinct.
-    if(source==0 && float(y)>=h-2.f)source=10;
-    if(source<16)removed_samples[source]++;
+   if(!present){
+    int at=new_keys.push(key);planned.put(key,at);if(tr_oom){discard();return false;}
+    present=true;reference=-1-at;
    }
-   pages[idx].d[j]=q;
-   // Cut walls retain their substrate; pavement is limited to the bed.
-   if((add||!has_geology())&&!(shape==2&&clearance>0&&brush>0))pages[idx].mat[j]=material;
-   pages[idx].geometry_digest_valid=false;changes++;
+   u8 flags=((add||!has_geology())&&!(shape==2&&clearance>0&&brush>0))?1:0;
+   if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){flags|=2;if(float(y)>=h-2.f)flags|=4;}
+   staged.push({reference,u16(j),q,flags});if(tr_oom){discard();return false;}
   }
  }
+ int original_pages=pages.n;
+ if(new_keys.n){
+  if(!pages.reserve(original_pages+new_keys.n)){discard();return false;}
+  int capacity=pages_by_key.cap?pages_by_key.cap:64;
+  while((pages_by_key.n+new_keys.n+1)*10>=capacity*7)capacity*=2;
+  if(capacity!=pages_by_key.cap||(pages_by_key.used+new_keys.n+1)*10>=capacity*7)pages_by_key.rehash(capacity);
+  if(tr_oom){discard();return false;}
+  bool allocated=true;
+  for(int i=0;i<new_keys.n;i++){
+   int x,y,z;decode_page(new_keys[i],x,y,z);
+   if(!ensure(x,y,z)||tr_oom||pages.n!=original_pages+i+1){allocated=false;break;}
+  }
+  if(!allocated){
+   for(int i=pages.n-1;i>=original_pages;i--){auto &page=pages[i];int x,y,z;decode_page(page.key,x,y,z);pages_by_key.erase(page.key);edit_columns[x+NP*z]&=~(1u<<y);tr_free(page.d);tr_free(page.mat);}
+   pages.n=original_pages;discard();return false;
+  }
+ }
+ // No fallible allocation remains in the authoritative commit below.
+ for(int i=0;i<staged.n;i++){
+  auto sample=staged[i];int id=sample.page<0?original_pages-1-sample.page:sample.page;auto &page=pages[id];
+  if(sample.flags&2){u8 source=page.mat[sample.sample];if(source==0&&(sample.flags&4))source=10;if(source<16)removed_samples[source]++;}
+  page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;page.geometry_digest_valid=false;
+ }
+ changes=staged.n;discard();
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
  // rather than silently rounding them into the smooth density lattice.
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
@@ -1145,7 +1167,7 @@ void encode_mesh(const Mesh&m,int ox,int oz,int size,int step,Bytes&out){
 }
 #include "experimental/density_ray.hpp"
 void process_request(World&w,const u8*data,int n,Bytes&out){
- Reader r{data,n};u32 cmd=r.u();out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
+ Reader r{data,n};u32 cmd=r.u();if(!out.reserve(fixed_edit_reply(cmd)?EDIT_REPLY_CAPACITY:12))return;out.u(REPLY_MAGIC);out.u(cmd);out.u(0);
  if(!r.good){out.p[8]=1;return;}
  if(cmd==0){out.u(w.revision);out.u(w.edits);out.u(w.pages.n);out.u(w.blocks.n);out.u(u32(w.changed_samples));out.u(w.seed);}
  else if(cmd==1||cmd==20){

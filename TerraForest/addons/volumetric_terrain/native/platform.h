@@ -46,7 +46,7 @@ struct Map {
  void release(){if(p)tr_free(p);p=nullptr;cap=n=used=0;}
  void rehash(int c){MapSlot *old=p;int oc=cap;p=(MapSlot*)tr_alloc(size_t(c)*sizeof(MapSlot));if(!p){p=old;tr_oom=true;return;}zero_bytes(p,size_t(c)*sizeof(MapSlot));cap=c;n=used=0;for(int i=0;i<oc;i++)if(old[i].key&&old[i].key!=0xffffffffu)put(old[i].key,old[i].value);if(old)tr_free(old);}
  int get(u32 k)const{if(!cap)return -1;u32 j=hash32(k)&(cap-1);for(int t=0;t<cap;t++,j=(j+1)&(cap-1)){if(!p[j].key)return -1;if(p[j].key==k)return p[j].value;}return -1;}
- void put(u32 k,int v){if(!cap)rehash(64);if((used+1)*10>=cap*7)rehash((n+1)*10>=cap*5?cap*2:cap);if(!p)return;u32 j=hash32(k)&(cap-1);int tomb=-1;for(;;j=(j+1)&(cap-1)){if(p[j].key==k){p[j].value=v;return;}if(p[j].key==0xffffffffu&&tomb<0)tomb=int(j);if(!p[j].key){if(tomb>=0)j=tomb;else used++;p[j]={k,v};n++;return;}}}
+ void put(u32 k,int v){if(!cap){rehash(64);if(!p||!cap)return;}if((used+1)*10>=cap*7){rehash((n+1)*10>=cap*5?cap*2:cap);if(tr_oom)return;}if(!p)return;u32 j=hash32(k)&(cap-1);int tomb=-1;for(;;j=(j+1)&(cap-1)){if(p[j].key==k){p[j].value=v;return;}if(p[j].key==0xffffffffu&&tomb<0)tomb=int(j);if(!p[j].key){if(tomb>=0)j=tomb;else used++;p[j]={k,v};n++;return;}}}
  void erase(u32 k){if(!cap)return;u32 j=hash32(k)&(cap-1);for(int t=0;t<cap;t++,j=(j+1)&(cap-1)){if(!p[j].key)return;if(p[j].key==k){p[j].key=0xffffffffu;n--;return;}}}
 };
 struct Bytes:List<u8>{

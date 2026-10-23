@@ -460,3 +460,12 @@ post-release work. Continue with immutable dirty-page capture, native paging and
 retention-aware cleanup, then recheck mining arrival and combined populated travel.
 Compute generation integration, full options/map/POI coverage, vegetation arrival
 cases, world design acceptance and clean-machine release proof also remain active.
+
+## Atomic brush prerequisite - 2026-10-23
+
+Before incremental snapshot work, a short allocator probe reproduced partial native
+brush mutations after rejection. Staging/reservation/rollback and preallocated
+fixed edit replies now pass the fault sweep, preserve successful edit/receipt bytes
+and retain prior full earthwork hashes. Evidence: terrain_edit_atomicity. This
+corrects an authoritative-state invariant; it is not the pending native paging,
+constant dirty-capture or visible mining-arrival solution. Continue those next.

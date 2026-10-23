@@ -1,0 +1,27 @@
+{
+  "failures": 2,
+  "checks": [
+    {
+      "case": "new_page_allocation_failure",
+      "passed": false,
+      "accepted": false,
+      "before_bytes": 36,
+      "after_bytes": 12328,
+      "reported_changes": 4
+    },
+    {
+      "case": "existing_page_allocation_failure",
+      "passed": false,
+      "accepted": false,
+      "before_bytes": 12328,
+      "after_bytes": 12328,
+      "reported_changes": 4
+    }
+  ],
+  "exit_code": 1,
+  "source_hashes": {
+    "tests\\native\\terrain_edit_atomicity_probe.cpp": "0a47c5f9a1976ed1946075a2ccf022ece13f52c8638df1f56872f86c47f2107b",
+    "addons\\volumetric_terrain\\native\\core.cpp": "cc9a33155070a27f3b59a0244d76d4ca4186543f7fc3e589133940b649be74c0",
+    "addons\\volumetric_terrain\\native\\core.h": "30dca23c9c221374eac0c474676571ba6315508d9e5b48d639e90abb9a8bef33"
+  }
+}

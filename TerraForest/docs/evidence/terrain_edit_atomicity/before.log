@@ -1,0 +1,2 @@
+{"case":"new_page_allocation_failure","passed":false,"accepted":false,"before_bytes":36,"after_bytes":12328,"reported_changes":4}
+{"case":"existing_page_allocation_failure","passed":false,"accepted":false,"before_bytes":12328,"after_bytes":12328,"reported_changes":4}

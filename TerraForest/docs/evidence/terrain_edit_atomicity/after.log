@@ -1,0 +1,5 @@
+{"case":"successful_edit_fields","passed":true}
+{"case":"new_page_allocation_failure","passed":true,"accepted":false,"before_bytes":36,"after_bytes":36,"reported_changes":0}
+{"case":"existing_page_allocation_failure","passed":true,"accepted":false,"before_bytes":12328,"after_bytes":12328,"reported_changes":0}
+{"case":"allocation_and_reallocation_sweep","passed":true,"attempts":512,"forced_failures":224}
+{"case":"allocation_balance","passed":true,"live":0}

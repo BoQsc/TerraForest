@@ -1,3 +1,14 @@
+## Terrain edit rejection is transactional - 2026-10-23
+
+An allocator probe confirmed partial brush edits after a returned failure.
+Staged native edits, allocation rollback, safe map allocation and preallocated edit
+replies now pass 512 fault combinations / 224 forced failures with zero tracked
+allocation leaks. Successful fields, receipts and three generated earthworks
+archives retain their earlier exact hashes. See [evidence](evidence/terrain_edit_atomicity/README.md).
+This establishes a prerequisite for incremental captures; it does not close full
+capture/recompression, paging, cleanup or the failed rendered mining-arrival gate.
+Continue the native dirty-page/checkpoint work in TERRAIN_REGIONAL_STORAGE.md.
+
 ## Regional terrain checkpoint integration - 2026-10-23
 
 Actual compound saves now select native compressed, immutable terrain packs;
