@@ -108,9 +108,16 @@ game-world save size.
    synchronous on the terrain worker, so bounded memory is not a latency guarantee.
    Dirty-only pressure rejects an edit when no resident slot can safely be freed;
    it must never discard an unsaved page or silently restore base terrain.
-   A brand-new field also retains the old resident ceiling before its first
-   checkpoint. Large offline plans need bounded unpublished checkpoint stages;
-   add these before claiming generation of arbitrarily large authored layouts.
+   Production offline earthworks now create private checkpoints before the first
+   compound root, then continue through this pager. Batches checkpoint every 64
+   commands or once on dirty-pressure rejection before retrying the atomic command.
+   A single indivisible command exceeding residency still rejects safely. The
+   [generation staging evidence](evidence/terrain_generation_staging/README.md)
+   covers exact real-plan archives, 16,896 authored pages in one native generation
+   job, cancellation and first-root handoff/retry. Legacy raw/unpublished API paths
+   retain their old limits. This finite-world mechanism is not arbitrary world size
+   or populated runtime qualification. Private stale products remain retained;
+   staged storage fault/crash recovery and live bake progress need further evidence.
 3. Add bounded retention-aware collection and pack compaction. First establish
    canonical/backup/in-flight reader ownership, then collect only products not used
    by any retained checkpoint. Close with interrupted collection, active readers,

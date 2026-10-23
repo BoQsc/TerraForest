@@ -7,6 +7,17 @@ by the first UI changes.
 
 ## Selective loading follow-through — 2026-10-23
 
+The missing bounded pre-publication generation mechanism is now integrated.
+Native earthworks checkpoint into the coordinator's private staging world and
+continue through the same terrain pager; first compound save inherits that exact
+private lineage. Full real coastal-plan archive parity passes for three seeds,
+and a single 2,112-command generation job authors 16,896 pages with a 1,024-page
+resident bound. Production creation and fresh full-game/cache reopen pass.
+See [generation staging](evidence/terrain_generation_staging/README.md).
+This supersedes the earlier requirement to implement unpublished checkpoint
+stages, not the larger capacity/runtime, retention, world-design or compute gates.
+Live detailed bake progress and mid-stage storage/crash recovery remain open.
+
 The regional terrain checkpoint is now mounted by the production native worker
 without expanded whole-world sample bytes. Bounded LRU residency, dirty/atomic-edit
 pinning, exact incremental checkpoint retention and history beyond the old resident
@@ -23,7 +34,7 @@ no page faults during its measured reconstruction. Native simplifier scratch now
 preserves 60 complete pre-change mesh packets while avoiding nested neighbor
 searches, but the integrated 150 ms arrival/gap gates still fail. Bounded local
 owner publication remains the response prerequisite; storage prefetch alone is
-not a resolution. This does not close generation staging/capacity, world content,
+not a resolution. This does not close broad capacity qualification, world content,
 compute benefit, populated runtime or the larger rewrite.
 
 ## Latest production workflow — 2026-10-23

@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS ordinary native bake establishes exact reference
+PASS bounded native bake completes all commands
+PASS dirty pressure checkpoints and retries without raising residency
+PASS staging preserves byte-exact field including sample order materials and revisions
+PASS staged write lease released after bake
+PASS cold checkpoint reopen reproduces complete native bake
+PASS all private checkpoint products verify
+PASS last private checkpoint makes completed data clean
+PASS ordinary runtime edit follows staged bake
+PASS runtime capture continues exact staged lineage
+PASS nonpristine world rejects before filesystem mutation
+PASS existing storage refuses overwrite without changing its data
+PASS late invalid command discards every unpublished edit and exposes no reference
+PASS single edit larger than residency rejects safely
+PASS cancellation before native entry creates no staging data
+TERRAIN_GENERATION_STAGING failures=0

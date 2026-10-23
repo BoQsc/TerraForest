@@ -12,6 +12,8 @@
 #include "experimental/godot_surface_mesh.hpp"
 #include "experimental/mesh_partition.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/dir_access.hpp>
+#include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -75,6 +77,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
+        godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1));
         godot::ClassDB::bind_method(godot::D_METHOD("survey_generated_lake_surfaces","records"), &TerrainCore::survey_generated_lake_surfaces);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_patch","size","x","z","width","height"), &TerrainCore::survey_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("measure_material_surface","x","z","size","y_begin","y_end"), &TerrainCore::measure_material_surface);
@@ -334,9 +337,86 @@ public:
         result["ok"]=true;result["completed"]=completed;result["revision"]=world_.revision;
         result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
     }
+    // Unpublished generation only. Durable private checkpoints make clean pages
+    // evictable without publishing a compound-world root or losing prior edits.
+    godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1){
+        godot::Dictionary result;result["ok"]=false;result["completed"]=0;
+        if(packets.is_empty()||packets.size()>4096||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||!directory.is_absolute_path()){
+            result["reason"]="Invalid staged generation bounds";return result;
+        }
+        std::vector<godot::PackedByteArray> commands;int64_t total=0;
+        for(int64_t i=0;i<packets.size();++i){
+            if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
+            godot::PackedByteArray packet=packets[i];total+=packet.size();
+            if(packet.size()<44||packet.size()>1080||packet.decode_u32(0)!=28||total>4*1024*1024)return result;
+            commands.push_back(packet);
+        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(expected_epoch>=0&&terrain_build_epoch(&world_)!=uint32_t(expected_epoch)){result["reason"]="Generation cancelled before staging";return result;}
+        if(world_.revision||world_.edits||world_.pages.n||world_.blocks.n||snapshot_worker_||residency_||!storage_reference_.is_empty()){
+            result["reason"]="Generation requires a pristine unpublished world";return result;
+        }
+        if(godot::DirAccess::dir_exists_absolute(directory)||godot::FileAccess::file_exists(directory)){
+            result["reason"]="Generation staging directory already exists";return result;
+        }
+        godot::Ref<NativeTerrainRegionStore> store;store.instantiate();
+        if(!store->open_store(directory,true)){result["reason"]="Cannot create private terrain staging store";return result;}
+        const int seed=world_.seed;const auto generator=world_.generator_id;
+        const u32 epoch=expected_epoch>=0?uint32_t(expected_epoch):terrain_build_epoch(&world_);const auto started=std::chrono::steady_clock::now();
+        godot::PackedByteArray reference;int checkpoints=0,retries=0,checkpoint_revision=-1;
+        int64_t capture_high=0;
+        auto checkpoint=[&](){
+            if(terrain_build_epoch(&world_)!=epoch)return false;
+            if(checkpoint_revision==world_.revision)return true;
+            auto capture=capture_storage_snapshot_locked();if(capture.is_null())return false;
+            capture_high=std::max(capture_high,int64_t(capture->stats()["sample_bytes"]));
+            auto next=store->publish_capture(capture,reference);
+            if(next.size()!=40||terrain_build_epoch(&world_)!=epoch||!commit_storage_snapshot_locked(capture,next))return false;
+            reference=next;checkpoint_revision=world_.revision;++checkpoints;return true;
+        };
+        snapshot_epoch_.fetch_add(1);active_command_.store(28,std::memory_order_relaxed);
+        bool good=checkpoint()&&mount_storage_checkpoint_locked(directory,reference,limit);
+        int completed=0;
+        for(const auto &packet:commands){
+            if(!good||terrain_build_epoch(&world_)!=epoch){good=false;break;}
+            auto apply=[&](){
+                tr_oom=false;Bytes response;process_request(world_,packet.ptr(),int(packet.size()),response);
+                bool ok=!tr_oom&&response.n>=12&&response.p[8]==0;response.release();return ok;
+            };
+            good=apply();
+            // Ordinary edits roll back exactly on failed admission. Checkpoint
+            // earlier commands once, then retry; an indivisible oversized edit
+            // still rejects rather than raising the resident limit.
+            if(!good&&world_.revision!=checkpoint_revision&&terrain_build_epoch(&world_)==epoch){
+                ++retries;good=checkpoint()&&apply();
+            }
+            if(!good)break;
+            ++completed;
+            if(completed%batch==0)good=checkpoint();
+        }
+        if(good)good=checkpoint()&&terrain_build_epoch(&world_)==epoch;
+        active_command_.store(-1,std::memory_order_relaxed);
+        result["completed"]=completed;result["checkpoints"]=checkpoints;result["admission_retries"]=retries;
+        result["capture_sample_bytes_high"]=capture_high;result["resident_limit"]=limit;
+        result["resident_high"]=residency_?residency_->resident_high():0;
+        result["worker_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();
+        result["storage"]=store->stats();
+        if(!good){
+            // Only immutable staging products may remain. No canonical root was
+            // published; invalidate captures and discard every partial world edit.
+            tr_oom=false;world_.release();residency_.reset();world_=World{};world_.build_control=&control_;world_.init(seed,generator);
+            saved_keys_=godot::PackedInt32Array();saved_versions_=godot::PackedInt64Array();storage_reference_=godot::PackedByteArray();
+            storage_load_pending_=false;++storage_epoch_;snapshot_epoch_.fetch_add(1);
+            result["reason"]="Staged generation rejected or cancelled; unpublished edits discarded";return result;
+        }
+        result["ok"]=true;result["revision"]=world_.revision;result["checkpoint"]=reference;return result;
+    }
     godot::Dictionary survey_generated_lake_surfaces(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest::survey_generated_lake_surfaces(world_,records);return tr_oom?godot::Dictionary():result;}
     godot::Ref<NativeTerrainCapture> capture_storage_snapshot(){
         std::lock_guard<std::mutex> lock(mutex_);
+        return capture_storage_snapshot_locked();
+    }
+    godot::Ref<NativeTerrainCapture> capture_storage_snapshot_locked(){
         tr_oom=false;int count=world_.pages.n;if(count<0||count>MAX_AUTHORED_PAGES)return {};
         const int32_t *saved=saved_keys_.ptr();const int64_t *versions=saved_versions_.ptr();
         auto dirty=[&](int i){return i>=saved_keys_.size()||saved[i]!=int32_t(world_.pages[i].key)||uint64_t(versions[i])!=world_.pages[i].storage_version;};
@@ -371,7 +451,10 @@ public:
         saved_keys_=keys;saved_versions_=versions;storage_reference_=reference;storage_load_pending_=false;return true;
     }
     bool commit_storage_snapshot(const godot::Ref<NativeTerrainCapture> &capture,const godot::PackedByteArray &reference){
-        if(capture.is_null())return false;std::lock_guard<std::mutex> lock(mutex_);std::lock_guard<std::mutex> publication(capture->publication_mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);return commit_storage_snapshot_locked(capture,reference);
+    }
+    bool commit_storage_snapshot_locked(const godot::Ref<NativeTerrainCapture> &capture,const godot::PackedByteArray &reference){
+        if(capture.is_null())return false;std::lock_guard<std::mutex> publication(capture->publication_mutex_);
         if(!capture->sealed_||capture->owner_!=get_instance_id()||capture->epoch_!=storage_epoch_||capture->source_!=storage_reference_||capture->published_!=reference||reference.size()!=40||capture->keys_.size()>world_.pages.n)return false;
         for(int i=0;i<capture->keys_.size();i++)if(uint32_t(capture->keys_[i])!=world_.pages[i].key)return false;
         // Newer edits keep their newer page stamps and remain dirty.
@@ -380,7 +463,10 @@ public:
         if(residency_)residency_->checkpoint(reference);return true;
     }
     bool mount_storage_checkpoint(const godot::String &directory,const godot::PackedByteArray &reference,int64_t limit=MAX_PAGES){
-        if(limit<8||limit>MAX_PAGES)return false;std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);return mount_storage_checkpoint_locked(directory,reference,limit);
+    }
+    bool mount_storage_checkpoint_locked(const godot::String &directory,const godot::PackedByteArray &reference,int64_t limit){
+        if(limit<8||limit>MAX_PAGES)return false;
         godot::Ref<NativeTerrainRegionStore> store;store.instantiate();if(!store->open_store(directory,false))return false;
         godot::Dictionary description=store->describe_snapshot(reference);if(!bool(description.get("ok",false)))return false;
         godot::PackedInt32Array keys;godot::PackedInt64Array versions;int64_t count=description["pages"];

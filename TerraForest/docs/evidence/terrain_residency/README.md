@@ -102,9 +102,12 @@ with an explicit current-log evaluation; no failed diagnostics were deleted.
    short correctness prerequisite. Re-run the failed 150 ms first-visible gate.
 3. Long unsaved dirty pressure still needs explicit gameplay admission/recovery
    evidence. If every slot is pinned, reject safely; never evict unsaved samples.
-   Brand-new fields retain the original ceiling before their first checkpoint;
-   offline plans exceeding it need bounded unpublished checkpoint stages as part
-   of generation. The periodic-checkpoint capacity test does not prove that case.
+   The subsequent [generation staging](../terrain_generation_staging/README.md)
+   work implements bounded unpublished checkpoint stages in production. One
+   native generation job now exceeds the old cap, preserves exact actual-plan
+   archives, and passes creation/first-root handoff/reopen. The earlier periodic
+   runtime checkpoint fixture alone did not prove that case. Large unsaved
+   gameplay pressure remains open; see the current storage contract.
 4. Retention-aware collection/pack compaction needs canonical, backup, in-flight
    capture and active-reader ownership before deleting any authoritative product.
    Repeated index verification/key scans and legacy block copies remain costs.

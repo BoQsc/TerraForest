@@ -1,0 +1,28 @@
+{
+  "failures": 0,
+  "native_result": {
+    "admission_retries": 0,
+    "cancel_join_us": 28772,
+    "cancel_signal_us": 19,
+    "capture_sample_bytes_high": 2359296,
+    "checkpoints": 3,
+    "completed": 72,
+    "observed_private_checkpoints": 3,
+    "ok": false,
+    "reason": "Staged generation rejected or cancelled; unpublished edits discarded",
+    "resident_high": 256,
+    "resident_limit": 256,
+    "storage": {
+      "region_reads": 22,
+      "reused_files": 0,
+      "reused_regions": 130,
+      "workers": 1,
+      "written_bytes": 256937,
+      "written_files": 7
+    },
+    "worker_ms": 115.3477
+  },
+  "production_private_checkpoints": 2,
+  "production_stop_us": 11996,
+  "scope": "Confirmed live native and production-owner cancellation after intermediate private checkpoints, bounded stop/join and no final reference or canonical root. Not a crash/power-loss test."
+}

@@ -1,0 +1,32 @@
+{
+  "failures": 0,
+  "load_milliseconds": 13839,
+  "map": {
+    "blocks_hits": 1,
+    "models_hits": 1,
+    "ready": true,
+    "terrain_hits": 1,
+    "terrain_patches": 0,
+    "water_hits": 1
+  },
+  "ready": true,
+  "root_size": "(1920, 1080)",
+  "scope": "Fresh full game opens a generated published world read-only, with normal paid gameplay, bounded native terrain residency and all baked map layers hitting cache. Not sustained performance qualification.",
+  "slot": "workflow_64724_150637",
+  "terrain_residency": {
+    "active": true,
+    "catalog_pages": 479,
+    "eviction_scan_high": 0,
+    "evictions": 0,
+    "failures": 0,
+    "faults": 298,
+    "generator": 19,
+    "profiled_fault_max_us": 0.0,
+    "profiled_fault_us": 0.0,
+    "resident_high": 298,
+    "resident_limit": 16384,
+    "resident_pages": 298,
+    "sample_bytes": 3661824,
+    "seed": 1703
+  }
+}

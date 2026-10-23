@@ -57,6 +57,7 @@ var survey_compatibility: String = ""
 var cache_valid: bool = true
 var readonly_snapshot: bool = false
 var _initial_earthworks:Array=[] # New-world offline bake; configured before worker start.
+var _initial_terrain_checkpoint:=PackedByteArray() # Private bake lineage before the first compound root.
 var _initial_plan_digest:=""
 var initial_earthworks_result:Dictionary={}
 var _initial_lake_bake:RefCounted # Detached native authoring, generation only.
@@ -465,6 +466,7 @@ func stop() -> void:
 	mutex.lock()
 	stopping = true
 	if active_kind=="partition": _call(Codec.command(12))
+	elif not _initial_earthworks.is_empty() and native!=null: _call(Codec.command(12))
 	mutex.unlock()
 	semaphore.post()
 	if thread.is_started():
@@ -492,6 +494,7 @@ func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,prof
 	if not writing and not checkpoint:return sections
 	if not ClassDB.class_exists("NativeTerrainRegionStore"):return {}
 	var inherited:=PackedByteArray()
+	if writing and not FileAccess.file_exists(path):inherited=_initial_terrain_checkpoint
 	if writing and FileAccess.file_exists(path):
 		var reader:RefCounted=ClassDB.instantiate("NativeWorldArchive")
 		var old:Dictionary=reader.decode(reader.read(path))
@@ -720,8 +723,13 @@ func _load() -> String:
 			write_allowed=false
 			return "ERROR: unsupported world generator"
 		if not _initial_earthworks.is_empty():
-			initial_earthworks_result=native.bake_generated_earthworks(_initial_earthworks)
+			if temporary:initial_earthworks_result=native.bake_generated_earthworks(_initial_earthworks)
+			else:
+				var page_limit:int=native.residency_stats().resident_limit
+				initial_earthworks_result=native.bake_generated_earthworks_staged(_initial_earthworks,ProjectSettings.globalize_path(save_path)+".terrain",page_limit,64,build_epoch)
 			if not initial_earthworks_result.get("ok",false):write_allowed=false;return "ERROR: offline earthworks rejected"
+			_initial_terrain_checkpoint=initial_earthworks_result.get("checkpoint",PackedByteArray())
+			initial_earthworks_result.erase("checkpoint")
 			print("OFFLINE_EARTHWORKS ",JSON.stringify(initial_earthworks_result))
 		if not _initialize_generated_components():
 			return "ERROR: generated lake definitions unavailable"

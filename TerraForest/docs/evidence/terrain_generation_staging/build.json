@@ -1,0 +1,14 @@
+{
+  "source_sha256": {
+    "addons\\volumetric_terrain\\native\\terrain_binding.cpp": "fdabb218fbd9dc9e1d462bdfa54e8c586f5f3f130471e1f718a6f68a290d3715",
+    "addons\\volumetric_terrain\\native\\terrain_residency.hpp": "13e4af76d8b7ff229da2980a33a8c143dbf79506fd291faca44c67550f589e10",
+    "addons\\volumetric_terrain\\terrain_backend.gd": "3c78eaca31da3574d8cdd3d077d6c1b71c9796fa5cffcf5026e7522f3a365b75"
+  },
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f1393be4badb4ee95ee5cf28c756373013dab859e78a137a9d55b1a1acc2735d",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "102d9cf4b68f3052b167d83dd34c85551133ef35a109f8f06eb2588b3194220c"
+  },
+  "pack_bytes": 250056672,
+  "pack_sha256": "5672ccf468b7cf3bc8b40d230412d546744d43c48d1d3613823f4e30879da8b0",
+  "compiler": "Pinned Zig 0.16.0 and prebuilt godot-cpp API 4.7 d7b6162; no godot-cpp source compiled"
+}

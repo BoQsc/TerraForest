@@ -11,7 +11,7 @@ namespace terraforest {
 class TerrainResidency final : public PageAccess {
  godot::Ref<NativeTerrainRegionStore> store_;
  godot::PackedByteArray reference_;
- int limit_,count_=0,head_=-1,tail_=-1;
+ int limit_,count_=0,high_=0,head_=-1,tail_=-1;
  int64_t faults_=0,evictions_=0,failed_=0,scan_high_=0;
  double fault_us_=0,fault_max_us_=0;
  void detach(World&w,int i){
@@ -27,13 +27,14 @@ class TerrainResidency final : public PageAccess {
  }
 public:
  TerrainResidency(godot::Ref<NativeTerrainRegionStore> store,const godot::PackedByteArray &reference,int limit):store_(store),reference_(reference),limit_(limit){}
+ int resident_high()const{return high_;}
  void checkpoint(const godot::PackedByteArray&reference){reference_=reference;}
  void touch(World&w,int i)override{
   if(tail_==i)return;detach(w,i);--count_;inserted(w,i);
  }
  void inserted(World&w,int i)override{
   auto&p=w.pages[i];p.resident_previous=tail_;p.resident_next=-1;
-  if(tail_>=0)w.pages[tail_].resident_next=i;else head_=i;tail_=i;++count_;
+  if(tail_>=0)w.pages[tail_].resident_next=i;else head_=i;tail_=i;++count_;high_=std::max(high_,count_);
  }
  bool admit(World&w)override{
   // At most the fixed resident budget is traversed. No scan over historical pages.
@@ -58,7 +59,7 @@ public:
   return true;
  }
  godot::Dictionary stats(const World&w)const{
-  godot::Dictionary d;d["active"]=true;d["catalog_pages"]=w.pages.n;d["resident_pages"]=count_;d["resident_limit"]=limit_;d["sample_bytes"]=int64_t(count_)*PAGE_SAMPLES*3;d["faults"]=faults_;d["evictions"]=evictions_;d["failures"]=failed_;d["eviction_scan_high"]=scan_high_;d["profiled_fault_us"]=fault_us_;d["profiled_fault_max_us"]=fault_max_us_;return d;
+  godot::Dictionary d;d["active"]=true;d["catalog_pages"]=w.pages.n;d["resident_pages"]=count_;d["resident_high"]=high_;d["resident_limit"]=limit_;d["sample_bytes"]=int64_t(count_)*PAGE_SAMPLES*3;d["faults"]=faults_;d["evictions"]=evictions_;d["failures"]=failed_;d["eviction_scan_high"]=scan_high_;d["profiled_fault_us"]=fault_us_;d["profiled_fault_max_us"]=fault_max_us_;return d;
  }
  // An atomic edit may allocate new pages and then roll back on admission/OOM.
  void removed(World&w,int i)override{detach(w,i);--count_;}

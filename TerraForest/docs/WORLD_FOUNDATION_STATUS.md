@@ -1,3 +1,29 @@
+## Bounded unpublished terrain generation integrated - 2026-10-23
+
+Production generation now checkpoints its native earthworks inside the isolated
+staging world before a compound root exists, then continues through bounded
+residency. It no longer depends on keeping every authored sample resident until
+the first complete-world save. Captures retain the exact private checkpoint
+lineage; only verified outer publication selects the complete world. Existing
+storage and nonpristine worlds reject before staging changes. Cancellation and
+failed first outer publication retain safe retry/no-publication behavior.
+
+Evidence: [generation staging](evidence/terrain_generation_staging/README.md).
+The actual coastal plans for seeds 0/42/1703 serialize exactly like ordinary edits
+under a 512-page bound. One native job authors 16,896 pages with 1,024 resident
+pages and reopens with 32. The actual connected-world Generate → Load → Play
+workflow and fresh full-game/cache reopen pass. These are separate finite scopes:
+the rendered world has 479 authored pages, not the synthetic capacity workload.
+
+This closes the previously missing unpublished-checkpoint generation mechanism.
+It does not close populated travel beyond the former cap, long unsaved gameplay
+pressure, mining arrival, retention/compaction, POI/options coverage, compute
+benefit, visual world acceptance or thermal qualification. Private cancelled and
+superseded products remain retained until ownership-aware collection exists.
+Live per-command/checkpoint UI progress and injected mid-bake storage/crash
+recovery still need dedicated evidence; revisit now that staging boundaries exist.
+Keep every remaining requirement in WORLD_WORKFLOW_REDESIGN.md active.
+
 ## Selective native terrain residency integrated - 2026-10-23
 
 Ordinary regional world loading now mounts the checkpoint directly instead of

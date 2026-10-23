@@ -1,0 +1,39 @@
+{
+  "bake": {
+    "admission_retries": 19,
+    "capture_sample_bytes_high": 196608,
+    "checkpoints": 21,
+    "completed": 40,
+    "ok": true,
+    "resident_high": 16,
+    "resident_limit": 16,
+    "revision": 40,
+    "storage": {
+      "region_reads": 84,
+      "reused_files": 0,
+      "reused_regions": 420,
+      "workers": 1,
+      "written_bytes": 366984,
+      "written_files": 41
+    },
+    "worker_ms": 702.4828
+  },
+  "failures": 0,
+  "pages": {
+    "active": true,
+    "catalog_pages": 320,
+    "eviction_scan_high": 16,
+    "evictions": 632,
+    "failures": 19,
+    "faults": 328,
+    "generator": 5,
+    "profiled_fault_max_us": 0.0,
+    "profiled_fault_us": 0.0,
+    "resident_high": 16,
+    "resident_limit": 16,
+    "resident_pages": 16,
+    "sample_bytes": 196608,
+    "seed": 1703
+  },
+  "scope": "Forty native grading commands, 16-page bound, exact ordinary-bake bytes, cold reopen, runtime lineage, existing/pristine protection, late invalid command rollback, oversized command and pre-entry cancellation. Not world-quality or FPS proof."
+}

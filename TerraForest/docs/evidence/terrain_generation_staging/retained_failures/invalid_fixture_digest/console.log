@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS unpublished compound root has exclusive owner
+FAIL production loader performs native staged generation
+FAIL baked terrain is paged while canonical world remains unpublished
+FAIL production initialization preserves exact ordinary bake
+PASS additional gameplay edit enters unpublished field
+FAIL failed first outer publication preserves private lineage and unsaved edits
+PASS first compound save publishes from private checkpoint then acknowledges
+PASS canonical archive selects compact final terrain checkpoint
+PASS ordinary fresh loader restores exact staged terrain and later edit
+PASS production world publication copies final staged checkpoint
+PASS published destination reopens exact final field
+TERRAIN_GENERATION_HANDOFF failures=4

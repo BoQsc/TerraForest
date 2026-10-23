@@ -1,0 +1,87 @@
+{
+  "cases": [
+    {
+      "batch_native_ms": 289.125,
+      "bytes": 5506864,
+      "seed": 0,
+      "segments": 361,
+      "serial_native_ms": 503.652,
+      "sha256": "34a0550566238d159fda2c571001caa16851d1f5bfc065122dc9cec1096941f1",
+      "staged": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 3256320,
+        "checkpoints": 13,
+        "completed": 361,
+        "ok": true,
+        "resident_high": 448,
+        "resident_limit": 512,
+        "revision": 361,
+        "storage": {
+          "region_reads": 53,
+          "reused_files": 0,
+          "reused_regions": 156,
+          "workers": 1,
+          "written_bytes": 4222779,
+          "written_files": 25
+        },
+        "worker_ms": 645.4744
+      }
+    },
+    {
+      "batch_native_ms": 281.2391,
+      "bytes": 6035420,
+      "seed": 42,
+      "segments": 363,
+      "serial_native_ms": 301.152,
+      "sha256": "1985c9f0808716e9f7f6cf0fc9d6d5ff882c0c6003e025edb3cd4adf9e228aa6",
+      "staged": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 3772416,
+        "checkpoints": 13,
+        "completed": 363,
+        "ok": true,
+        "resident_high": 491,
+        "resident_limit": 512,
+        "revision": 363,
+        "storage": {
+          "region_reads": 68,
+          "reused_files": 0,
+          "reused_regions": 340,
+          "workers": 1,
+          "written_bytes": 3633781,
+          "written_files": 25
+        },
+        "worker_ms": 724.1937
+      }
+    },
+    {
+      "batch_native_ms": 381.7098,
+      "bytes": 5887916,
+      "seed": 1703,
+      "segments": 367,
+      "serial_native_ms": 372.994,
+      "sha256": "daea693c7af12813aa0cec26ff21f79bc8b98b4d7514e98d0d4dada5a0c2f71d",
+      "staged": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 3477504,
+        "checkpoints": 13,
+        "completed": 367,
+        "ok": true,
+        "resident_high": 479,
+        "resident_limit": 512,
+        "revision": 367,
+        "storage": {
+          "region_reads": 82,
+          "reused_files": 0,
+          "reused_regions": 309,
+          "workers": 1,
+          "written_bytes": 4241854,
+          "written_files": 25
+        },
+        "worker_ms": 694.8587
+      }
+    }
+  ],
+  "failures": 0,
+  "scope": "Exact full native terrain serialization parity, offline transaction only; no rendered generation-time claim"
+}

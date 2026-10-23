@@ -1,0 +1,55 @@
+{
+  "bake": {
+    "admission_retries": 0,
+    "capture_sample_bytes_high": 9437184,
+    "checkpoints": 23,
+    "completed": 2112,
+    "ok": true,
+    "resident_high": 1024,
+    "resident_limit": 1024,
+    "revision": 2112,
+    "storage": {
+      "region_reads": 1318,
+      "reused_files": 0,
+      "reused_regions": 11758,
+      "workers": 4,
+      "written_bytes": 11586152,
+      "written_files": 45
+    },
+    "worker_ms": 2970.5205
+  },
+  "cold": {
+    "active": true,
+    "catalog_pages": 16896,
+    "eviction_scan_high": 0,
+    "evictions": 2,
+    "failures": 0,
+    "faults": 34,
+    "generator": 5,
+    "profiled_fault_max_us": 0.0,
+    "profiled_fault_us": 0.0,
+    "resident_high": 32,
+    "resident_limit": 32,
+    "resident_pages": 32,
+    "sample_bytes": 393216,
+    "seed": 1703
+  },
+  "failures": 0,
+  "runtime": {
+    "active": true,
+    "catalog_pages": 16896,
+    "eviction_scan_high": 0,
+    "evictions": 15872,
+    "failures": 0,
+    "faults": 0,
+    "generator": 5,
+    "profiled_fault_max_us": 0.0,
+    "profiled_fault_us": 0.0,
+    "resident_high": 1024,
+    "resident_limit": 1024,
+    "resident_pages": 1024,
+    "sample_bytes": 12582912,
+    "seed": 1703
+  },
+  "scope": "One native staged generation job: 2112 grading commands / 16896 authored pages; 1024-page resident and capture bounds, full product validation and 34 independent cold density/normal references. No rendered world/FPS or universal capacity proof."
+}

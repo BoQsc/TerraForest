@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS plan admitted 0
+PASS entire native terrain archive exactly matches ordered ordinary edits 0
+PASS cannot rebake or mutate an edited world
+PASS paged staged bake exactly matches entire actual coastal plan 0
+PASS plan admitted 42
+PASS entire native terrain archive exactly matches ordered ordinary edits 42
+PASS cannot rebake or mutate an edited world
+PASS paged staged bake exactly matches entire actual coastal plan 42
+PASS plan admitted 1703
+PASS entire native terrain archive exactly matches ordered ordinary edits 1703
+PASS cannot rebake or mutate an edited world
+PASS paged staged bake exactly matches entire actual coastal plan 1703
+PASS late validation failure discards every unpublished edit
+PASS offline API rejects other command kinds without mutation
+GENERATION_EARTHWORKS failures=0

@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+WORLD_PLAN digest=91d645b3c7eca9d4661832e210dbd6a7b50006890ba90dcda84c3a26f7ceaf39 cache_hit=true ms=35.46
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":4030464,"checkpoints":7,"completed":367,"ok":true,"resident_high":479,"resident_limit":16384,"revision":367,"storage":{"region_reads":44,"reused_files":0,"reused_regions":137,"workers":1,"written_bytes":2775302,"written_files":13},"worker_ms":801.8254}
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":1,"milliseconds":1420.628,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"status":2,"steps":934,"water_ml":13693871176}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":13.058}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=20 edits=367
