@@ -1,0 +1,82 @@
+{
+  "destination": "exported_world_42_20261023",
+  "generator": 19,
+  "phases": [
+    {
+      "arguments": [
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673/creating/engine.log",
+        "--script",
+        "res://addons/world_runtime/prepare_terrain_world.gd",
+        "--",
+        "--world-slot=combined_stage_4eae29b10e01b540d829a15a4b14d673",
+        "--world-generator=19",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673/checkpoint.json",
+        "--derived-cache=user://combined_stage_4eae29b10e01b540d829a15a4b14d673",
+        "--central-market",
+        "--regional-connection",
+        "--preparation-output=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673",
+        "--save-terrain-lots"
+      ],
+      "exit_code": 0,
+      "pid": 31060,
+      "stage": "creating",
+      "started_usec": 139271
+    },
+    {
+      "arguments": [
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673/verifying/engine.log",
+        "--script",
+        "res://addons/world_runtime/prepare_terrain_world.gd",
+        "--",
+        "--world-slot=combined_stage_4eae29b10e01b540d829a15a4b14d673",
+        "--world-generator=19",
+        "--world-seed=42",
+        "--ground-cover",
+        "--actors",
+        "--vehicle-fleet",
+        "--checkpoint-layout=districts",
+        "--checkpoint-report=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673/checkpoint.json",
+        "--derived-cache=user://combined_stage_4eae29b10e01b540d829a15a4b14d673",
+        "--central-market",
+        "--regional-connection",
+        "--preparation-output=C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/4eae29b10e01b540d829a15a4b14d673",
+        "--reopen-terrain-lots",
+        "--reopen-checkpoint",
+        "--gameplay-construction",
+        "--snapshot-readonly"
+      ],
+      "exit_code": 0,
+      "pid": 22812,
+      "stage": "verifying",
+      "started_usec": 91609544
+    }
+  ],
+  "publication": {
+    "bytes": 166080,
+    "created": true,
+    "files": 235,
+    "ok": true,
+    "slot": "exported_world_42_20261023",
+    "staging": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/worlds/.publish_exported_world_42_20261023_66720_1"
+  },
+  "seed": 42,
+  "stage": "combined_stage_4eae29b10e01b540d829a15a4b14d673",
+  "version": 1
+}

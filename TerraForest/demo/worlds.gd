@@ -98,9 +98,9 @@ func launch_selected(create: bool) -> void:
 		preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
 		preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
 		preparation_cancel=preparation_status+".cancel";cancel_pending=false
-		result.args.append_array(PackedStringArray(["--status-file",ProjectSettings.globalize_path(preparation_status),"--cancel-file",ProjectSettings.globalize_path(preparation_cancel)]))
-		preparation_pid=OS.create_process("python",result.args,false)
-		if preparation_pid<0:notice.text="Could not start Python for world preparation. Install Python or use the preparation command.";return
+		result.args.append_array(PackedStringArray(["--status-file="+ProjectSettings.globalize_path(preparation_status),"--cancel-file="+ProjectSettings.globalize_path(preparation_cancel)]))
+		preparation_pid=OS.create_process(OS.get_executable_path(),result.args,false)
+		if preparation_pid<0:notice.text="Could not start the world-generation process.";return
 		cancel_button.show();cancel_button.disabled=false
 		preparation_started_msec=Time.get_ticks_msec()
 		Engine.max_fps=10
@@ -127,7 +127,7 @@ func _process(delta:float)->void:
 		if result is Dictionary and result.get("state","")=="ready":notice.text="Preparation finished before cancellation. The verified world is saved; select it when ready to play."
 		return
 	if not result is Dictionary or result.get("state","")!="ready":
-		notice.text="World preparation did not finish. Existing saves are preserved. " + (str(result.get("reason",""))+" Logs: "+str(result.get("report","")) if result is Dictionary else "Check that Python is available.")
+		notice.text="World preparation did not finish. Existing saves are preserved. " + (str(result.get("reason",""))+" Logs: "+str(result.get("report","")) if result is Dictionary else "Check the generation report.")
 		return
 	var launch:=Launch.command(preparation_slot,false,12,0,preparation_gameplay)
 	if not launch.ok:notice.text=launch.reason;return

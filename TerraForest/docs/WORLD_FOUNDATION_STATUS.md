@@ -1,3 +1,28 @@
+## Rewrite checkpoint — 2026-10-23 (work remains active)
+
+The generator now launches engine-owned creation/verification jobs without Python;
+native publication copies bounded stores under source/destination leases and promotes
+the canonical root last. Full seed42 creation and fresh-process verification passed:
+see the exact retained report in WORLD_WORKFLOW_REDESIGN.md. Cancellation before
+launch, duplicate destination and orphan-store preservation checks pass. This does
+not qualify recovery after every interruption or a clean exported installation.
+
+Vegetation detail candidates now use irregular subcell jitter and continuous pocket
+strength; native placement applies bounded anisotropic silhouettes before overlap
+validation. Base stones and harvest identity namespaces remain stable. Existing
+1084-check scatter test and new multi-seed/edge distribution checks pass. Integrated
+near/elevated images in `reports/generated_vegetation_review/` were inspected.
+They show production vegetation and existing tree shadows, but are NOT evidence
+that distant shadow coverage or moving-owner transitions are fixed. Roadside cover
+is still sparse and settlement frontage/landscaping is not visually accepted.
+
+Still required in this same rewrite: complete options and map layers; bounded native
+parallel generation/compute integration with equivalence and benefit evidence;
+canonical regional storage capacity/recovery; large-edit/mining scaling; distant
+shadow substitutes and rectangular streaming-transition review; clean standalone
+export; populated travel/frame-cost checks. These remain active, not deferred or
+redefined as optional. Preserve the 0BSD license, saves and accepted static water.
+
 ## Native world-generation rewrite in progress — 2026-10-22
 
 Regional road search/surveys, street grading, building lot searches and entrance
@@ -2419,3 +2444,12 @@ check. It does not close the unrelated legacy shutdown-drain/ID-reuse regression
 room art/human acceptance, global storage scaling or sustained performance. Continue
 connected regional destinations and the owned mine; keep those open requirements
 visible rather than extending water work or polishing this room indefinitely.
+
+## Bundled generation verification — 2026-10-23
+
+The new engine-owned generator created, reopened/verified and published
+exported_world_42_20261023 from an executable beside its exported PCK and libraries,
+without a source-project path or runtime Python. See WORLD_WORKFLOW_REDESIGN.md and
+evidence/native_world_generation/exported_generation_run.json. Clean-machine
+release-template installation remains unverified. This closes the bundled runtime
+creation dependency gap, not the larger native/compute/storage/vegetation rewrite.

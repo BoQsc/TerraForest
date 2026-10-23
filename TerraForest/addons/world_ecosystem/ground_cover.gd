@@ -182,7 +182,7 @@ func _measured_step(_delta:float)->void:
 		# Keep one owner in flight and preserve terrain's foreground priority.
 		for slot in 4:
 			if _scatter_job.next_layer>=_scatter_job.layers:break
-			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer,_scatter_job.shelter)
+			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer,_scatter_job.shelter,true)
 			var token:=Tokens.allocate()
 			if not terrain.request_surface_batch(data.points,token):break
 			data.key=key;data.layer=_scatter_job.next_layer

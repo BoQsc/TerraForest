@@ -11,6 +11,7 @@ protected:
     static void _bind_methods();
 public:
     ~NativeWorldArchive();
+    godot::Dictionary clone_world(const godot::String &absolute_root,const godot::String &source,const godot::String &destination) const;
     bool acquire(const godot::String &absolute_path);
     void release();
     bool validate_sections(const godot::Dictionary &sections) const;

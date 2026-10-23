@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "core.h"
+#include "generation_parallel.hpp"
 #include <godot_cpp/variant/variant.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -15,7 +16,9 @@ static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
  auto start=std::chrono::steady_clock::now();
  std::vector<float> heights(size_t(size)*size);
  float step=float(WORLD)/float(size);
- for(int z=0;z<size;++z)for(int x=0;x<size;++x)heights[x+z*size]=w.height((x+.5f)*step,(z+.5f)*step);
+ int workers=terraforest::generation_parallel_for(int(size*size),[&](int index){
+  int x=index%size,z=index/size;heights[index]=w.height((x+.5f)*step,(z+.5f)*step);
+ });
  godot::PackedByteArray pixels;if(pixels.resize(size*size*4)!=godot::OK)return out;
  auto *p=pixels.ptrw();
  for(int z=0;z<size;++z)for(int x=0;x<size;++x){
@@ -28,7 +31,7 @@ static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
   if(h>0&&int(h)%20==0)shade*=.9f;
   size_t at=(x+z*size)*4;p[at]=u8(clampf(r*shade,0,255));p[at+1]=u8(clampf(g*shade,0,255));p[at+2]=u8(clampf(b*shade,0,255));p[at+3]=255;
  }
- out["ok"]=true;out["pixels"]=pixels;out["size"]=size;
+ out["ok"]=true;out["pixels"]=pixels;out["size"]=size;out["workers"]=workers;
  out["generation_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();return out;
 }
 

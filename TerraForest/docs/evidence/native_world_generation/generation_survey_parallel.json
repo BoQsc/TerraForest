@@ -1,0 +1,65 @@
+[
+  {
+    "digest": "84732363aec7ed9cb9efaf24db13dffe2c90b622c2b263945a4b15f1f2b527e6",
+    "ms": 0.5025,
+    "seed": 0,
+    "size": 64,
+    "workers": 4
+  },
+  {
+    "digest": "a2bbc84737b201f5cd9995a3eddffefda502cd34b037958a2aac857b4157e313",
+    "ms": 6.2219,
+    "seed": 0,
+    "size": 256,
+    "workers": 4
+  },
+  {
+    "digest": "9cdf4089306ddd695f5224b3ea1c77a43894346ab9329279c2450a8be2b7a0f2",
+    "ms": 19.1329,
+    "seed": 0,
+    "size": 512,
+    "workers": 4
+  },
+  {
+    "digest": "456de17922d94187e36a6e9384cc7776791668786a4cba3c011066420c581293",
+    "ms": 0.7349,
+    "seed": 42,
+    "size": 64,
+    "workers": 4
+  },
+  {
+    "digest": "1b22d0c7126d2c67b264e79af0a0604021c0f70359cc5f55aa477401adbc315c",
+    "ms": 6.2501,
+    "seed": 42,
+    "size": 256,
+    "workers": 4
+  },
+  {
+    "digest": "251244279550728c19169c3ba59d27a7581638633b7208e83aab4934aa7f3738",
+    "ms": 24.6335,
+    "seed": 42,
+    "size": 512,
+    "workers": 4
+  },
+  {
+    "digest": "50220d90a03e41b2353faa6a7b58cb422bb9949487849f6e620a57e5b4ac7850",
+    "ms": 0.6744,
+    "seed": 1703,
+    "size": 64,
+    "workers": 4
+  },
+  {
+    "digest": "c5d7e75360f018d9aaad83a1f79b49f20ce79af4c5bf6f9e0138c5c3935c8e12",
+    "ms": 5.1982,
+    "seed": 1703,
+    "size": 256,
+    "workers": 4
+  },
+  {
+    "digest": "b6064a01d9cb5a235c5f165dda336e26d68e3f7a5f5a72317546aaeacde2d72e",
+    "ms": 18.6633,
+    "seed": 1703,
+    "size": 512,
+    "workers": 4
+  }
+]

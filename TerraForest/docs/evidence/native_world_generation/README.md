@@ -50,3 +50,14 @@ A headless invocation of the visual UI-bounds test failed because it had no
 1920x1080 display viewport (reports/checks/20261022T203352309354Z). The actual
 1920x1080 graphical rerun passed (20261022T203419005340Z). This does not establish
 support for smaller UI resolutions; 1920x1080 remains the requested test target.
+
+## Subsequent implementation (2026-10-23)
+
+The older open list above is superseded for Python dependence in the source runtime
+and publication: generation_job.gd orchestrates engine children, world_publication.cpp
+copies and promotes canonical data natively. Source full create/reopen passed.
+Preparation scripts are now runtime addon resources; exported startup passed.
+Standalone full generation remains under test. See WORLD_WORKFLOW_REDESIGN.md for
+precise current scope. CPU overview survey gains are recorded in the two JSON files
+here and protected by tests/fixtures/generation_survey/serial_hashes.json. No new
+compute kernel, canonical-store redesign, or sustained gameplay result is claimed.

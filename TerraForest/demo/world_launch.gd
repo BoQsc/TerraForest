@@ -3,6 +3,11 @@ extends RefCounted
 const INTEGRATED_PRESET:=10019
 const LEGACY_INTEGRATED_PRESET:=10012
 const PRESETS={10019:"Terrain-fitted regional world",10012:"Earlier five-site regional recipe",1:"Original woodland",4:"Mountains, caves, ore veins and lakes",6:"Accessible cave entrances, ore veins and lakes",7:"Regional roads and settlement ground (in development)",8:"Regional world with domed cave chambers",9:"Regional world with connected cave floors",10:"Provisional mine layout",11:"Regional world with owned mine (in development)",12:"Regional world with larger lake (in development)"}
+static func engine_prefix()->PackedStringArray:
+	# In an export res:// is inside the PCK, not a filesystem directory. Child
+	# executions of the same exported binary discover its adjacent PCK themselves.
+	var folder:=ProjectSettings.globalize_path("res://")
+	return PackedStringArray(["--path",folder]) if not folder.is_empty() else PackedStringArray()
 static func valid_slot(slot: String) -> bool:
 	var pattern:=RegEx.new();pattern.compile("^[A-Za-z_][A-Za-z0-9_]{0,47}$")
 	return pattern.search(slot)!=null
@@ -33,18 +38,22 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	if create:
 		if preparation_slot(slot):return {"ok":false,"reason":"That name is reserved for preparation. Choose a different world name."}
 		if not PRESETS.has(generator) or seed<0 or seed>2147483647:return {"ok":false,"reason":"Choose a generator and seed between 0 and 2147483647."}
-		for suffix in ["",".bak",".tmp",".regions",".models"]:
+		for suffix in ["",".bak",".tmp",".regions",".models",".water"]:
 			if FileAccess.file_exists(canonical+suffix) or DirAccess.dir_exists_absolute(canonical+suffix):return {"ok":false,"reason":"That name already has world data. Choose another name or open the saved world."}
-		for suffix in [".clone.lock",".prepare.lock"]:
-			if FileAccess.file_exists(directory.path_join(slot+suffix)):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
+		if FileAccess.file_exists(directory.path_join(slot+".clone.lock")):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
+		# Native leases are owned by an OS handle, not by the presence of a file.
+		# A process crash can leave the file but must not permanently reserve a name.
+		if FileAccess.file_exists(directory.path_join(slot+".prepare.lock")):
+			var lease=ClassDB.instantiate("NativeWorldArchive")
+			if not lease.acquire(ProjectSettings.globalize_path(directory.path_join(slot+".prepare"))):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
+			lease.release()
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
 	if create and generator in [INTEGRATED_PRESET,LEGACY_INTEGRATED_PRESET]:
-		var preparation:=PackedStringArray([ProjectSettings.globalize_path("res://tools/prepare_combined_world.py"),"--godot",OS.get_executable_path(),"--layout","districts","--seed",str(seed),"--destination",slot])
-		if generator==INTEGRATED_PRESET:
-			preparation.append("--terrain-fitted")
-			if not ocean:preparation.append("--no-ocean")
+		var actual_generator:int=(19 if ocean else 17) if generator==INTEGRATED_PRESET else 13
+		var preparation:=engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--seed="+str(seed),"--generator="+str(actual_generator)])
 		return {"ok":true,"prepare":true,"args":preparation}
-	var args:=PackedStringArray(["--path",ProjectSettings.globalize_path("res://"),"--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
+
+	var args:=engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","res://demo/world.tscn","--","--world-slot="+slot,"--ground-cover","--actors","--vehicle-fleet","--max-fps=60"])
 	if create:args.append_array(PackedStringArray(["--world-generator="+str(generator),"--world-seed="+str(seed)]))
 	if preparation_slot(slot):args.append("--snapshot-readonly")
 	if gameplay:args.append("--gameplay-construction")

@@ -9,7 +9,7 @@ protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("wanted","center"),&NativeGroundCover::wanted);
         ClassDB::bind_method(D_METHOD("wanted_view","eye","forward","fov","aspect"),&NativeGroundCover::wanted_view);
-        ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()));
+        ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter","irregular"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()),DEFVAL(false));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
     }
@@ -51,7 +51,7 @@ public:
         for(size_t i=0;i<std::min(size_t(81),candidates.size());++i)cells.append(candidates[i].p);
         result["cells"]=cells;result["range"]=visible;return result;
     }
-    Dictionary candidates(Vector2i cell,int64_t seed,int layer=0,const PackedVector3Array &shelter=PackedVector3Array()) const {
+    Dictionary candidates(Vector2i cell,int64_t seed,int layer=0,const PackedVector3Array &shelter=PackedVector3Array(),bool irregular=false) const {
         PackedVector3Array points;PackedInt64Array ids;
         if(cell.x>=0&&cell.y>=0&&cell.x<63&&cell.y<63&&seed>=0&&seed<=0x7fffffff&&layer>=0&&layer<16&&shelter.size()<=144){
             // Validate/copy the bounded anchor set once per batch, not per plant.
@@ -69,6 +69,14 @@ public:
                     // Redistribute existing detail identities, never add candidates.
                     // Variable-strength pockets avoid a uniformly spaced lawn.
                     const float bx=cell.x*32+(i%8)*4,bz=cell.y*32+(i/8)*4;
+                    if(irregular){
+                        // Full subcell jitter removes the previous layer-aligned 1m
+                        // lattice. Stable IDs, owner bounds and base stones are unchanged.
+                        const uint32_t random=hash(h^0x51e2a9bdu);
+                        x=bx+.04f+3.92f*(random&65535)/65535.f;
+                        z=bz+.04f+3.92f*(random>>16)/65535.f;
+                    }
+
                     const uint32_t pocket=hash(uint32_t((cell.y*8+i/8)*504+cell.x*8+i%8)^uint32_t(seed));
                     float ax=bx+1.0f+2.0f*(pocket&65535)/65535.f;
                     float az=bz+1.0f+2.0f*(pocket>>16)/65535.f;
@@ -79,7 +87,8 @@ public:
                         ax=bx+(.15f+.7f*(rock&65535)/65535.f)*4;
                         az=bz+(.15f+.7f*(rock>>16)/65535.f)*4;
                     }
-                    const float strength=.12f+.48f*float(pocket%997)/996.f;
+                    const float field=.5f+.25f*std::sin(bx*.083f+bz*.047f)+.25f*std::sin(bz*.139f-bx*.063f);
+                    const float strength=irregular?.10f+.56f*field:.12f+.48f*float(pocket%997)/996.f;
                     x+=(ax-x)*strength;z+=(az-z)*strength;
                     // Potential tree anchors use the same persisted grove recipe, not
                     // currently resident trees: visit order/harvesting cannot shuffle plants.
@@ -111,7 +120,16 @@ public:
             if(!points[i].is_finite()||!normals[i].is_finite()||normals[i].length_squared()<1e-12f||normals[i].normalized().y<.82f)continue;
             uint32_t h=hash(uint32_t(ids[i]));float scale=.7f+.6f*(h&65535)/65535.f;
             Basis basis(Vector3(0,1,0),float(h>>16)/65535.f*6.283185307f);
-            transforms.append(Transform3D(basis.scaled(Vector3(scale,scale,scale)),points[i]-Vector3(0,.03f,0)));accepted.append(ids[i]);
+            basis=basis.scaled(Vector3(scale,scale,scale));
+            // Apply shape variation before support/exclusion validation and packing.
+            // Base-layer stones retain their existing shape and position.
+            if(ids[i]>63*63*64 || h%10!=0){
+                const uint32_t shape=hash(uint32_t(ids[i])^0xa92d33b1u);
+                basis=basis.scaled_local(Vector3(.86f+.28f*float(shape&255)/255.f,
+                    .90f+.20f*float((shape>>8)&255)/255.f,
+                    .88f+.24f*float((shape>>16)&255)/255.f));
+            }
+            transforms.append(Transform3D(basis,points[i]-Vector3(0,.03f,0)));accepted.append(ids[i]);
         }
         out["ok"]=true;out["ids"]=accepted;out["transforms"]=transforms;return out;
     }

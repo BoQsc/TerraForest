@@ -97,3 +97,57 @@ preview, canonical regional storage/capacity/recovery, and sustained performance
 Current placement recipes remain visually unfinished. The derived plan cache
 must not be presented as completing canonical world storage. Next backend work
 must build on this shared plan rather than recreate separate preview logic.
+
+## Engine-owned creation and native publication — 2026-10-23
+
+Worlds.cmd now discovers Steam Godot through tools/start_worlds.ps1; the selector
+starts addons/world_runtime/generation_job.gd through the engine itself. Python is
+still used for developer test/build tooling, not the player creation path. Job
+creation and fresh-process verification completed for engine_generated_42_20261022.
+Report: user://generation_reports/2f4c712ca1f3ccd42c2b603d9c2db927/run.json.
+Native publication copied 235 files / 166080 bytes and published the root last.
+The world opened in the integrated 1080p vegetation review without save mutation.
+
+Checks: native_world_publication (20261022T204820032933Z), world_browser
+(20261022T205029329633Z), generation_job_failures (20261022T210206572763Z).
+Ground scatter passed 1084 assertions (20261022T210052634280Z); the earlier run
+20261022T205934645481Z was marked failed by a wrong required-output string despite
+zero test failures. Initial irregular-edge test indexed old/new clipped arrays by
+position; corrected to match stable IDs, then passed (20261022T210138270348Z).
+
+Open: mid-stage cancellation/recovery, publication failure at each promotion step,
+exported-installation path, old-world photo refresh, complete generator settings,
+water/POI preview, CPU/GPU generation work, canonical storage and large edit costs.
+The full rewrite is not complete. Images do not establish resource headroom.
+
+### Export and worker follow-through
+
+Preparation code now lives under addons/world_runtime; tools/prepare_* retain thin
+compatibility entry points. The prior export excluded tools/, so its source-only
+success was insufficient. Exported PCK startup now passes and includes the runtime
+preparation scripts. An explicit pack launch exposed empty globalized res:// paths;
+child arguments now distinguish source projects from bundled executables. Full
+standalone generation is being verified, not yet accepted by the startup check.
+Native preparation leases now check the live OS handle instead of stale file
+presence, allowing retry after a coordinator crash without deleting world data.
+
+The immutable overview survey uses at most four CPU workers (half the reported
+logical processors, capped at four), with one parallel batch per extension. Tiny
+surveys remain serial after a measured overhead regression. Nine seed/size images
+match the serial SHA256 fixtures exactly. Initial 512-square observations: serial
+31–34 ms, parallel 19–25 ms on the i5-12450H. This is bounded offline survey work,
+not proof of whole-generation acceleration or gameplay/thermal headroom. Stored
+measurements are in evidence/native_world_generation/generation_survey_*.json.
+
+Publication now checks filesystem inspection errors and flushes copied authoritative
+files before root publication. Native publication checks pass again; failure at
+each store promotion and resumption of interrupted publication remain open.
+
+Standalone full generation now passed using dist/TerraForest.exe beside its exported
+PCK and native libraries, launched from dist with no project path. Created and
+fresh-process verified exported_world_42_20261023, then native publication reported
+ready. Report: user://generation_reports/4eae29b10e01b540d829a15a4b14d673.
+This exercised bundled resources and process handoff; it is not yet a clean-machine
+release-template installer test. The first Steam-editor --main-pack attempt failed
+before creation because res:// globalized to an empty path; that failure is retained
+in report c9b24250da4c48d5e8371c998ea004a0. The corrected export uses its adjacent PCK.

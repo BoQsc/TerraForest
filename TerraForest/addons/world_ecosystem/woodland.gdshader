@@ -32,6 +32,10 @@ void vertex() {
     variation = 0.95 + 0.05 * sin(phase * 3.7);
     if (!stone) {
         float weight = clamp(VERTEX.y / 0.65, 0.0, 1.0);
+        // Stable slight per-instance curvature; no new geometry or texture reads.
+        vec2 bend=(fract(sin(vec2(phase,phase+19.7))*vec2(43758.5453,19642.349))-0.5)*0.07;
+        VERTEX.xz+=bend*weight*weight;
+
         float sway = sin(TIME * 1.35 + phase) * 0.009 + sin(TIME * 2.1 + phase * 1.7) * 0.003;
         VERTEX.x += sway * weight * weight * wind_strength;
         VERTEX.z += sway * weight * weight * 0.55 * wind_strength;
