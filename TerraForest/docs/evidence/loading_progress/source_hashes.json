@@ -1,0 +1,24 @@
+{
+  "revision": "22d1f18f31121a2c72095b614529519ae9562d7f",
+  "files": {
+    "addons/world_runtime/loading_panel.gd": "064a8433e3cdcf90a6cba5c94c730b47661893e63fa4dad5f4247a9409fb685a",
+    "addons/world_runtime/progress_meter.gd": "469c5f86c63b93e67fb9f4dea255072a5d5abb8a2b4e0421606f1a1e5613117c",
+    "addons/world_runtime/generation_screen.gd": "f9a47320b1bf50725aefd5f388221e60046593b7c082802cc8dda5afa817f858",
+    "addons/world_runtime/generation_progress.gd": "01535c71c4db8c7677bccf7222f83397dd7600d4a605134a47b9e9392da7ce17",
+    "addons/world_runtime/generate_world.gd": "5ad1f36bb6c7ba15202b826430c091ec8764fb8efb3579fb6ce2f208ba5726fb",
+    "demo/controller.gd": "5e2a504c6bb5d1223df3643b9d730f3a2e495eefdc01d24a28ec4bff7bd3c399",
+    "demo/worlds.gd": "3918118d10d3d04efd43dcc2da36cfccbe4ff19e2b95bc2cdde415663742b624",
+    "demo/world.gd": "c8548ea1a44dea8c6dea88d2a790461af37cc9489015f3daf8be88e97705973b"
+  },
+  "checks": {
+    "layout": "20261023T171024600540Z",
+    "generation": "20261023T171157231896Z",
+    "cancel": "20261023T171415507850Z",
+    "browser": "20261023T171505173852Z",
+    "reopen": "20261023T171507410130Z"
+  },
+  "package": {
+    "bytes": 250066952,
+    "sha256": "d6a63efde41767df9d6dccd228f42c8cfbbd112a89dc46a4b8cee460a1ed1801"
+  }
+}

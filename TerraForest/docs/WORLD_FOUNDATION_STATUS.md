@@ -1,3 +1,26 @@
+## Loading presentation and visible generation work - 2026-10-23
+
+Generation and gameplay loading now share a wide, shallow bottom-centered progress
+bar with smaller text and an overall percentage. The percentage is a stage-weighted
+completion estimate using real counters where available, not an elapsed-time or
+remaining-time prediction. Generation reserves verification/publication and the
+final playable load: its child finishes at 88%, publication hands off at 94%, and
+only the existing terrain/collision/object/water readiness gates unlock play at
+100%. Ordinary saved-world loading starts at 0%. Cancel/error states stay explicit.
+
+Each photograph now names its viewpoint and exposes destination terrain/collision,
+water, nearby vegetation readiness, then capture/save. Map preparation reports
+pending layers, saved-world identity verification and cache writes. The first
+instrumented three-view check spent 10.543 s loading destinations, 18.349 s waiting
+for vegetation and 1.194 s capturing/saving images. These are finite observations,
+not performance qualification. Photograph latency remains to improve alongside
+streaming/vegetation admission: compare per-view timings and equal visual readiness
+before closing it; hiding incomplete vegetation or dropping views is not a fix.
+
+Evidence and final visual review: [loading progress](evidence/loading_progress/README.md).
+This completes the requested UI presentation scope, not the larger generator,
+storage, mining or generated-world quality requirements below.
+
 ## Bounded unpublished terrain generation integrated - 2026-10-23
 
 Production generation now checkpoints its native earthworks inside the isolated

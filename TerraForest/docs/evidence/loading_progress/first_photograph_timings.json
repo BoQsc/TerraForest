@@ -1,0 +1,20 @@
+[
+  {
+    "capture_ms": 348,
+    "loading_ms": 8797,
+    "vegetation_ms": 6149,
+    "view": "north"
+  },
+  {
+    "capture_ms": 432,
+    "loading_ms": 970,
+    "vegetation_ms": 6634,
+    "view": "road"
+  },
+  {
+    "capture_ms": 414,
+    "loading_ms": 776,
+    "vegetation_ms": 5566,
+    "view": "market"
+  }
+]

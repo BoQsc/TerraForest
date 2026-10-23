@@ -1,0 +1,10 @@
+{
+  "failures": 0,
+  "messages": [
+    "woodland_home · Generating terrain, locations and saved world · 0:00",
+    "woodland_home · Verifying saved terrain, buildings and water · 0:00",
+    "woodland_home · Publishing the verified world · 0:00",
+    "woodland_home · Loading your world · 0:00"
+  ],
+  "scope": "Actual browser polling/UI with controlled status records and live own-process sentinel; no world generation."
+}

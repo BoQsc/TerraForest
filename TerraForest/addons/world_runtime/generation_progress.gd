@@ -1,15 +1,16 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
-# Stage observations only: never fabricate an overall completion percentage.
+# Real stage observations and work counts; presentation derives a stage-weighted estimate.
 static var observations:Dictionary={}
 static func write(path:String,stage:String,completed:int=0,total:int=0,details:Dictionary={})->bool:
  if path.is_empty() or completed<0 or total<0 or (total>0 and completed>total):return false
  var now:=Time.get_ticks_usec()
- if not observations.has(path):observations[path]={"started":now,"stage":stage,"since":now,"timings":[]}
+ var activity:String=str(details.get("activity",stage))
+ if not observations.has(path):observations[path]={"started":now,"stage":activity,"since":now,"timings":[]}
  var profile:Dictionary=observations[path]
- if profile.stage!=stage:
+ if profile.stage!=activity:
   if profile.timings.size()<64:profile.timings.append({"stage":profile.stage,"microseconds":now-int(profile.since)})
-  profile.stage=stage;profile.since=now
+  profile.stage=activity;profile.since=now
  var file:=FileAccess.open(path+".pending",FileAccess.WRITE)
  if file==null:return false
  file.store_string(JSON.stringify({"stage":stage,"completed":completed,"total":total,"details":details,"elapsed_microseconds":now-int(profile.started),"stage_microseconds":now-int(profile.since),"timings":profile.timings}));file.close()

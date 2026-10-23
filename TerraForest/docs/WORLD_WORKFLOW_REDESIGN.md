@@ -7,6 +7,16 @@ by the first UI changes.
 
 ## Selective loading follow-through — 2026-10-23
 
+Loading presentation now uses one slim bottom-centered bar and a stage-weighted
+percentage across creation, verification, publication and playable loading. Real
+viewpoint loading/vegetation/capture tasks and map-layer/cache tasks are visible.
+Only actual playable readiness reaches 100%; see
+[loading progress evidence](evidence/loading_progress/README.md). This supersedes
+earlier text-only presentation. Photograph latency is still dominated by destination
+and vegetation readiness in the finite trace; improve those budgets with matching
+visual readiness and per-view timing evidence rather than claiming UI work sped up
+generation. All broader foundation requirements remain active.
+
 The missing bounded pre-publication generation mechanism is now integrated.
 Native earthworks checkpoint into the coordinator's private staging world and
 continue through the same terrain pager; first compound save inherits that exact

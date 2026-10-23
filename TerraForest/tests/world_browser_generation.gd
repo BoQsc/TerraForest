@@ -3,6 +3,9 @@ extends SceneTree
 class ReviewBrowser extends "res://demo/worlds.gd":
  var opened:=PackedStringArray()
  func _open_game(args:PackedStringArray)->void:opened=args
+ func start_preparation(result:Dictionary,slot:String)->void:
+  if "--capture-generation-ui" in OS.get_cmdline_user_args():result.args.append("--capture-generation-ui")
+  super.start_preparation(result,slot)
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var browser:=ReviewBrowser.new();root.add_child(browser)
@@ -18,7 +21,7 @@ func run()->void:
   browser.preparation_gameplay=true;browser.preparation_pid=2147483647
  var deadline:=Time.get_ticks_msec()+560000
  while browser.preparation_pid>=0 and Time.get_ticks_msec()<deadline:await process_frame
- var ok:bool=browser.preparation_pid<0 and "--world-slot="+slot in browser.opened and "--gameplay-construction" in browser.opened
+ var ok:bool=browser.preparation_pid<0 and "--world-slot="+slot in browser.opened and "--gameplay-construction" in browser.opened and "--generation-handoff" in browser.opened
  ok=ok and FileAccess.file_exists("user://worlds/"+slot+".trw")
  var status:Variant=JSON.parse_string(FileAccess.get_file_as_string(browser.preparation_status)) if FileAccess.file_exists(browser.preparation_status) else null
  ok=ok and status is Dictionary and status.get("state","")=="ready"

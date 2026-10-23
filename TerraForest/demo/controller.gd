@@ -126,8 +126,12 @@ const StrokeBuffer = preload("res://demo/brush_stroke.gd")
 var stroke_buffer = StrokeBuffer.new()
 var loading_layer := CanvasLayer.new()
 var _recorded_world_visit:=false
-var loading_label := Label.new()
-var loading_progress := ProgressBar.new()
+var loading_label: Label
+var loading_progress: ProgressBar
+var loading_panel: PanelContainer
+var loading_stage_percent:=75.0
+var loading_stage_text:="Checking nearby objects"
+var loading_from_generation:=false
 var loading_active: bool = true
 var loading_reason: String = "Preparing world"
 var loading_started_us: int = 0
@@ -335,29 +339,22 @@ func _setup_loading() -> void:
 	picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	picture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(picture)
 	var shade:=ColorRect.new();shade.color=Color(0.01,0.02,0.03,0.63);shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);loading_layer.add_child(shade)
-	var panel := VBoxContainer.new()
-	panel.position = Vector2(100, 680)
-	panel.custom_minimum_size = Vector2(900, 220)
-	loading_layer.add_child(panel)
-	loading_label.add_theme_font_size_override("font_size", 23)
-	loading_label.text = "Loading terrain..."
-	panel.add_child(loading_label)
-	loading_progress.custom_minimum_size = Vector2(900, 20)
-	loading_progress.show_percentage = false
-	panel.add_child(loading_progress)
-	var explanation := Label.new()
-	explanation.text = "Preparing your surroundings before play. Your saved progress is preserved."
-	panel.add_child(explanation)
-	var quit_button := Button.new()
-	quit_button.text = "Save and quit"
-	quit_button.pressed.connect(func() -> void: _notification(NOTIFICATION_WM_CLOSE_REQUEST))
-	panel.add_child(quit_button)
+	loading_panel=preload("res://addons/world_runtime/loading_panel.gd").new()
+	loading_layer.add_child(loading_panel)
+	loading_label=loading_panel.detail;loading_progress=loading_panel.bar
+	loading_panel.action.text="Save and quit"
+	loading_panel.action.pressed.connect(func() -> void: _notification(NOTIFICATION_WM_CLOSE_REQUEST))
+	loading_from_generation="--generation-handoff" in OS.get_cmdline_user_args()
+	loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 
 func _loading_reload() -> void:
 	_begin_loading("Reloading world")
 
 func _begin_loading(reason: String) -> void:
 	loading_active = true
+	if loading_panel!=null:
+		loading_panel.reset()
+		loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 	loading_reason = reason
 	loading_started_us = Time.get_ticks_usec()
 	loading_ready_frames = 0
@@ -375,18 +372,22 @@ func _update_loading() -> void:
 	if not loading_active:
 		return
 	var state: Dictionary = terrain.loading_state(player.position, fly)
-	loading_label.text = loading_reason + "\nPreparing the environment · %.1f s" % (float(Time.get_ticks_usec() - loading_started_us) / 1000000.0)
-	loading_progress.max_value = maxf(1.0, float(state["root_total"] + state["local_total"]))
-	loading_progress.value = float(state["roots"] + state["local"])
+	var observation:Dictionary=preload("res://addons/world_runtime/progress_meter.gd").loading(state,terrain.world_ready,waiting_spawn)
+	loading_stage_percent=observation.percent;loading_stage_text=observation.stage
 	if terrain.latest_error != "":
 		loading_label.text = "Loading failed\n" + terrain.latest_error + "\nRead the startup log in reports."
 		return
 	if bool(state["ready"]) and not waiting_spawn and _additional_loading_ready():
 		loading_ready_frames += 1
+		loading_stage_percent=97.0;loading_stage_text="Final checks before play"
 	else:
 		loading_ready_frames = 0
+	var display_percent:float=94.0+loading_stage_percent*0.06 if loading_from_generation else loading_stage_percent
+	loading_panel.show_progress("Loading your world",loading_stage_text,display_percent)
 	if loading_ready_frames < 3:
 		return
+	loading_panel.show_progress("Ready to play","Your world is ready",100)
+	loading_from_generation=false
 	loading_layer.visible = false
 	loading_active = false
 	if not _recorded_world_visit and not temporary_world and not terrain.backend.readonly_snapshot:

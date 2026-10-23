@@ -1,0 +1,14 @@
+{
+  "failures": 0,
+  "notice": "Generation cancelled. Existing saves are preserved.",
+  "opened": false,
+  "slot": "cancel_review_1318641",
+  "status": {
+    "progress": {},
+    "reason": "Unpublished staging retained for diagnosis",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/dbe27a24164c30b0838b4c70b2ea7cce",
+    "slot": "cancel_review_1318641",
+    "state": "cancelled"
+  },
+  "stop_ms": 850
+}

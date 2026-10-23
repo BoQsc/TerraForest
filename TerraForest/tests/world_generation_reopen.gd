@@ -17,6 +17,7 @@ func run()->void:
  if not "--reopen-child" in OS.get_cmdline_user_args():
   var path:="user://worlds/"+slot+".trw";var before:=FileAccess.get_sha256(path)
   var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path("res://reports/world_generation_reopen.log"),"--script","res://tests/world_generation_reopen.gd","--","--reopen-child","--review-world="+slot,"--world-slot="+slot,"--case-seed="+str(expected_seed),"--case-generator="+str(expected_generator),"--snapshot-readonly","--ground-cover","--actors","--vehicle-fleet","--gameplay-construction"])
+  if "--capture-loading-ui" in OS.get_cmdline_user_args():args.append_array(PackedStringArray(["--capture-loading-ui","--generation-handoff"]))
   var pid:=OS.create_process(OS.get_executable_path(),args,false)
   var finished:bool=pid>=0 and await wait_until(func():return not OS.is_process_running(pid),90)
   if not finished and pid>=0:OS.kill(pid)
@@ -25,8 +26,21 @@ func run()->void:
   print("WORLD_GENERATION_REOPEN failures=",0 if ok else 1);quit(0 if ok else 1);return
  var began:=Time.get_ticks_msec()
  var game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ var loading_rows:Array=[];var loading_ok:=true
+ if "--capture-loading-ui" in OS.get_cmdline_user_args():
+  loading_ok=game.loading_progress.value==94
+  var previous:="";var captured:=false;var deadline:=Time.get_ticks_msec()+70000
+  while game.loading_active and Time.get_ticks_msec()<deadline:
+   loading_ok=loading_ok and game.loading_progress.value>=94 and game.loading_progress.value<100
+   if game.loading_label.text!=previous:
+    previous=game.loading_label.text;loading_rows.append({"stage":previous,"percent":game.loading_progress.value})
+   if not captured and game.loading_progress.value>94:
+    await RenderingServer.frame_post_draw
+    root.get_texture().get_image().save_png("res://reports/loading_progress_handoff.png");captured=true
+   await process_frame
+  loading_ok=loading_ok and not game.loading_active and game.loading_progress.value==100
  var ready:bool=await wait_until(func():return not game.loading_active,70)
- var failures:=0
+ var failures:=0 if loading_ok else 1
  var map_profile:Dictionary={}
  var residency:Dictionary={}
  if not ready or root.size!=Vector2i(1920,1080):failures+=1
@@ -48,7 +62,7 @@ func run()->void:
   if not cached or map_profile.terrain_hits==0 or map_profile.water_hits==0 or map_profile.blocks_hits==0 or map_profile.models_hits==0:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_generation_reopen_map.png")
- var result:={"failures":failures,"slot":slot,"ready":ready,"map":map_profile,"terrain_residency":residency,"load_milliseconds":Time.get_ticks_msec()-began,"root_size":str(root.size),"scope":"Fresh full game opens a generated published world read-only, with normal paid gameplay, bounded native terrain residency and all baked map layers hitting cache. Not sustained performance qualification."}
+ var result:={"failures":failures,"slot":slot,"ready":ready,"map":map_profile,"terrain_residency":residency,"load_milliseconds":Time.get_ticks_msec()-began,"root_size":str(root.size),"loading_stages":loading_rows,"loading_ok":loading_ok,"scope":"Fresh full game opens a generated published world read-only, with normal paid gameplay, bounded native terrain residency and all baked map layers hitting cache. Not sustained performance qualification."}
  FileAccess.open("res://reports/world_generation_reopen.json",FileAccess.WRITE).store_string(JSON.stringify(result,"  "))
  game.shutdown_requested=true;game.terrain.backend.disable_snapshot_writes();await game.terrain.shutdown_after_edits();game.free()
  print("WORLD_GENERATION_REOPEN_CHILD failures=",failures);quit(1 if failures else 0)

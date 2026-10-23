@@ -1519,17 +1519,19 @@ func _additional_loading_ready() -> bool:
 	# Keep a small departure margin available before restoring player input.
 	var arrival_bounds:=AABB(player.global_position-Vector3(2,2,2),Vector3(4,5,4))
 	if not structures.is_collision_region_ready(arrival_bounds) or not vegetation.is_collision_region_ready(arrival_bounds):
-		loading_label.text+="\nPreparing nearby object collision"
+		loading_stage_percent=75;loading_stage_text="Preparing nearby object collision"
 		return false
 	# Match the nearby model acceptance radius; distant world continues streaming.
 	var visual_bounds:=AABB(player.global_position-Vector3(128,128,128),Vector3(256,256,256))
 	if not structures.is_model_render_region_ready(visual_bounds):
-		loading_label.text+="\nPreparing nearby building and object visuals"
+		loading_stage_percent=82;loading_stage_text="Loading nearby buildings and objects"
 		return false
-	if lakes.water==null:return false
+	if lakes.water==null:
+		loading_stage_percent=90;loading_stage_text="Loading water sources";return false
 	var state:Dictionary=lakes.statistics()
 	if not state.render_ready or state.ready!=state.lakes:
-		loading_label.text+="\nPreparing water: %d cached regions, %d pending, %d surfaces"%[state.cache_hits,state.pending_regions,state.dirty_meshes]
+		loading_stage_percent=90
+		loading_stage_text="Loading water - %d regions remaining"%int(state.pending_regions) if state.pending_regions>0 else "Building water surfaces - %d remaining"%int(state.dirty_meshes)
 		return false
 	return true
 

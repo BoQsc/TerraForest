@@ -1,0 +1,30 @@
+{
+  "notice": "World generation did not finish. Existing saves are preserved. test verification rejection Logs: test report",
+  "ok": true,
+  "opened": [
+    "--path",
+    "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "res://demo/world.tscn",
+    "--",
+    "--world-slot=browser_seed50_405807",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--max-fps=60",
+    "--gameplay-construction",
+    "--generation-handoff"
+  ],
+  "slot": "browser_seed50_405807",
+  "status": {
+    "progress": {},
+    "reason": "",
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/6675d5db7cee279b7e5d3df3aa967094",
+    "slot": "browser_seed50_405807",
+    "state": "ready"
+  }
+}

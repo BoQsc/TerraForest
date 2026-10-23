@@ -37,6 +37,7 @@ var preparation_cancel:=""
 var cancel_pending:=false
 var quit_pending:=false
 var cancel_button:Button
+var generation_screen:CanvasLayer
 func heading(parent: Node,text: String,size: int=24) -> Label:
 	var label:=Label.new();label.text=text;label.add_theme_font_size_override("font_size",size);parent.add_child(label);return label
 func button(parent: Node,text: String,action: Callable) -> Button:
@@ -163,6 +164,8 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	cancel_button.show();cancel_button.disabled=false
 	preparation_started_msec=Time.get_ticks_msec()
 	Engine.max_fps=10
+	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=preparation_cancel;add_child(generation_screen)
+	generation_screen.cancel_requested.connect(func():cancel_pending=true;cancel_button.disabled=true)
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
 func show_recovery()->void:
@@ -198,6 +201,7 @@ func _process(delta:float)->void:
 	if OS.is_process_running(preparation_pid):
 		_update_preparation_notice();return
 	preparation_pid=-1;Engine.max_fps=60;cancel_button.hide()
+	if generation_screen!=null:generation_screen.queue_free();generation_screen=null
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	refresh()
 	if quit_pending:get_tree().quit();return
@@ -210,6 +214,7 @@ func _process(delta:float)->void:
 		return
 	var launch:=Launch.command(preparation_slot,false,12,0,preparation_gameplay)
 	if not launch.ok:notice.text=launch.reason;return
+	launch.args.append("--generation-handoff")
 	_open_game(launch.args)
 
 func _open_game(args:PackedStringArray)->void:
@@ -220,8 +225,13 @@ func _open_game(args:PackedStringArray)->void:
 func _update_preparation_notice()->void:
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	if cancel_pending:
-		notice.text="Cancelling generation…";return
+		notice.text="Cancelling generation…"
+		if generation_screen!=null:
+			generation_screen.cancellation_requested=true;generation_screen.detail.text=notice.text;generation_screen.cancel_button.disabled=true
+		return
 	var stage:="Starting world generation"
+	var state:=str(result.get("state","")) if result is Dictionary else ""
+	var detail:Dictionary={}
 	if result is Dictionary:
 		match str(result.get("state","")):
 			"creating":stage="Generating terrain, locations and saved world"
@@ -230,11 +240,16 @@ func _update_preparation_notice()->void:
 			"publishing":stage="Publishing the verified world"
 			"ready":stage="Loading your world"
 			"failed":stage="Generation failed; collecting the result"
-	if result is Dictionary and result.get("progress",{}) is Dictionary:
-		var detail:Dictionary=result.get("progress",{})
+	if state=="creating" and result is Dictionary and result.get("progress",{}) is Dictionary:
+		detail=result.get("progress",{})
 		if not str(detail.get("stage","")).is_empty():
-			stage=str(detail.stage)
-			if int(detail.get("total",0))>0:stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
+			stage=str(detail.get("details",{}).get("activity",detail.stage))
+			if int(detail.get("total",0))>0 and not detail.get("details",{}).has("activity"):stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
+	if generation_screen!=null:
+		generation_screen.update_status(state,stage,detail)
+		if generation_screen.picture.texture==null and result is Dictionary:
+			var photo:String=str(result.get("report","")).path_join("loading_north.png")
+			if FileAccess.file_exists(photo):generation_screen.use_photograph(photo)
 	var elapsed:int=maxi(0,Time.get_ticks_msec()-preparation_started_msec)/1000
 	notice.text="%s · %s · %d:%02d"%[preparation_slot,stage,elapsed/60,elapsed%60]
 

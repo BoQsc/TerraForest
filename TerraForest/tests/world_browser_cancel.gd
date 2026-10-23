@@ -17,7 +17,7 @@ func run()->void:
   await process_frame
  if not creating:failures+=1
  await create_timer(3.0).timeout
- browser.cancel_button.pressed.emit()
+ browser.generation_screen.cancel_button.pressed.emit()
  var started:=Time.get_ticks_msec();deadline=started+10000
  while browser.preparation_pid>=0 and Time.get_ticks_msec()<deadline:await process_frame
  var status:Variant=JSON.parse_string(FileAccess.get_file_as_string(browser.preparation_status)) if FileAccess.file_exists(browser.preparation_status) else null

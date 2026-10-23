@@ -1,0 +1,26 @@
+{
+  "failures": 0,
+  "scope": "Real gameplay loading gates and rendered UI, plus controlled generation stage/counter presentation. Full generation workflow checked separately.",
+  "stages": [
+    {
+      "percent": 0.0,
+      "stage": "Reading saved world data"
+    },
+    {
+      "percent": 15.0,
+      "stage": "Finding a safe player position"
+    },
+    {
+      "percent": 20.0,
+      "stage": "Loading nearby terrain and collision"
+    },
+    {
+      "percent": 55.31,
+      "stage": "Loading landscape coverage"
+    },
+    {
+      "percent": 97.0,
+      "stage": "Final checks before play"
+    }
+  ]
+}

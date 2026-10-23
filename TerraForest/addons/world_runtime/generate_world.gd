@@ -12,7 +12,7 @@ var planning_worker:Thread
 const Progress=preload("res://addons/world_runtime/generation_progress.gd")
 func progress(stage:String,completed:int=0,total:int=0,details:Dictionary={})->void:
  Progress.write(progress_path,stage,completed,total,details)
- if generation_screen!=null:generation_screen.update_stage(stage,completed,total)
+ if generation_screen!=null:generation_screen.update_stage(stage,completed,total,details)
 func _initialize()->void:run.call_deferred()
 func _finalize()->void:
  if planning_worker!=null and planning_worker.is_started():planning_worker.wait_to_finish()
@@ -39,8 +39,8 @@ func wait_generation_data(game:Node,seconds:float)->bool:
  return game.terrain.world_ready and game.terrain.snapshot_restore_ok
 func ready_world(game:Node)->bool:
  return await wait_until(func():return not game.loading_active,120)
-func capture_loading_view(game:Node,name:String)->void:
- await preload("res://addons/world_runtime/world_presentation.gd").capture(game,root,output_dir.path_join("loading_"+name+".png"))
+func capture_loading_view(game:Node,name:String)->Error:
+ return await preload("res://addons/world_runtime/world_presentation.gd").capture(game,root,output_dir.path_join("loading_"+name+".png"))
 func snapshot_signature(game:Node)->Dictionary:
  var water:PackedByteArray=game.lakes.capture_snapshot()
  var result:Dictionary={"water":preload("res://addons/world_runtime/survey_cache.gd").digest(water).hex_encode(),"blocks":block_signature(game),"region":Marshalls.raw_to_base64(game.generated_region.store.capture_snapshot())}
@@ -378,11 +378,17 @@ func run()->void:
 func bake_map_layers(game:Node)->bool:
  game.app_focused=true;game.world_map.refresh_world();game.world_map.set_open(true)
  var atlas:Node=game.world_map
- var ready:bool=await wait_until(func():
-  if atlas.updates.image==null or not atlas.updates.cache_saved or atlas.updates.io!=null or not atlas.updates.dirty.is_empty() or not atlas.updates.pending.is_empty():return false
+ var ready:=false;var deadline:=Time.get_ticks_msec()+120000;var next_poll:=0
+ while not ready and Time.get_ticks_msec()<deadline:
+  var pending:=PackedStringArray()
+  if atlas.updates.image==null or not atlas.updates.cache_saved or atlas.updates.io!=null or not atlas.updates.dirty.is_empty() or not atlas.updates.pending.is_empty():pending.append("terrain")
   for layer:Node in [atlas.water_survey,atlas.block_survey,atlas.model_survey]:
-   if not layer.complete or layer.io!=null or layer.cache_hits+layer.cache_writes==0:return false
-  return true,120)
+   if not layer.complete or layer.io!=null or layer.cache_hits+layer.cache_writes==0:pending.append(str(layer.caption))
+  ready=pending.is_empty()
+  if Time.get_ticks_msec()>=next_poll:
+   next_poll=Time.get_ticks_msec()+250
+   progress("Caching the saved world map",4-pending.size(),4,{"activity":"Preparing world map layers","work":"Remaining: "+", ".join(pending) if not ready else "Map layers ready; verifying saved identities","stage_fraction":0.8*float(4-pending.size())/4.0})
+  if not ready:await process_frame
  atlas.set_open(false)
  if not ready:print("WORLD_MAP_GENERATION_FAILED ",atlas.status.text)
  if not ready:return false
@@ -394,6 +400,7 @@ func cache_for_playback(game:Node,atlas:Node)->bool:
  var water_stamp:String=atlas.water_survey.current_stamp()
  if saved_map_stamps.get("blocks")!=block_stamp or saved_map_stamps.get("models")!=model_stamp or saved_map_stamps.get("water")!=water_stamp or saved_map_stamps.get("terrain")!=game.terrain.density_revision:
   print("MAP_SAVED_STATE_CHANGED blocks=",saved_map_stamps.get("blocks")!=block_stamp," models=",saved_map_stamps.get("models")!=model_stamp," water=",saved_map_stamps.get("water")!=water_stamp," terrain=",saved_map_stamps.get("terrain")!=game.terrain.density_revision);return false
+ progress("Caching the saved world map",0,0,{"activity":"Verifying map cache against the saved world","stage_fraction":0.8})
  var worker:=Thread.new()
  if worker.start(saved_map_certificates.bind(game.terrain.backend))!=OK:print("MAP_CERTIFICATE_WORKER_FAILED");return false
  while worker.is_alive():await process_frame
@@ -409,8 +416,10 @@ func cache_for_playback(game:Node,atlas:Node)->bool:
  var model_identity:String="|".join(parts).sha256_text()
  var aliases:Array=[[atlas.block_survey,block_identity],[atlas.model_survey,model_identity]]
  if certificate.has("water_identity"):aliases.append([atlas.water_survey,certificate.water_identity])
+ var cached_layers:=0
  for row:Array in aliases:
   var layer:Node=row[0]
+  progress("Caching the saved world map",0,0,{"activity":"Saving "+str(layer.caption)+" map cache","stage_fraction":0.85+0.15*float(cached_layers)/aliases.size()})
   var key:String=layer.cache_namespace+"|certified|"+atlas.updates.cache_identity+"|"+str(row[1])
   var pixels:PackedByteArray=layer.texture.get_image().get_data()
   var io:=Thread.new()
@@ -418,6 +427,7 @@ func cache_for_playback(game:Node,atlas:Node)->bool:
   while io.is_alive():await process_frame
   var written:Dictionary=io.wait_to_finish()
   if not written.get("persisted",false):print("MAP_ALIAS_WRITE_FAILED ",layer.caption," ",written);return false
+  cached_layers+=1
  return true
 
 func saved_map_certificates(backend:RefCounted)->Dictionary:
@@ -454,6 +464,18 @@ func generate_prefab(game:Node,lot:Dictionary)->bool:
  if not result.get("ok",false):print("GENERATION_PREFAB_REJECTED ",lot.label," ",result)
  return result.get("ok",false)
 
+func photograph_cover_status(game:Node)->Dictionary:
+ var cover:Node=game.ground_cover
+ var total:=0;var ready:=0
+ var eye:Vector3=game.camera.global_position
+ if cover!=null and cover.is_processing():
+  for key:Vector2i in cover._wanted:
+   var center:=Vector3(key.x*32+16,eye.y,key.y*32+16)
+   if center.distance_squared_to(eye)<96.0*96.0:
+    total+=1
+    if cover.resident.has(key) and not cover._dirty.has(key):ready+=1
+ return {"total":total,"ready":ready}
+
 func photograph_ready(game:Node)->bool:
  if game.loading_active or game.terrain.pending_edit:return false
  var cover:Node=game.ground_cover
@@ -476,19 +498,43 @@ func bake_photographs(game:Node,plan:Dictionary,market:Dictionary,connection:Dic
   var street:Dictionary=market.roads[3]
   views.append({"name":"market","anchor":street.start,"eye":street.start+Vector3.UP*1.7,"target":street.finish+Vector3.UP*1.7})
  var completed:=0
+ var trace:Array=[]
  for view:Dictionary in views:
+  var label:String={"north":"Northern streets","road":"Woodland road","market":"Market square"}.get(view.name,view.name)
+  var context:="View %d/%d · %s"%[completed+1,views.size(),label]
+  var began:=Time.get_ticks_msec();var next_poll:=0;var deadline:=began+120000
   game.teleport(view.anchor)
-  if not await ready_world(game):return false
+  game.loading_stage_text="Preparing destination";game.loading_stage_percent=0
+  while game.loading_active and Time.get_ticks_msec()<deadline:
+   if Time.get_ticks_msec()>=next_poll:
+    next_poll=Time.get_ticks_msec()+250
+    var state:Dictionary=game.terrain.loading_state(game.player.position,game.fly)
+    progress("Photographing the generated world",completed,views.size(),{"activity":context+" · "+game.loading_stage_text,"stage_fraction":(completed+0.65*game.loading_stage_percent/100.0)/views.size(),"work":"Terrain %d/%d · nearby collision %d/%d · queued tasks %d"%[state.roots,state.root_total,state.local,state.local_total,state.queued]})
+   await process_frame
+  if game.loading_active:return false
+  var loaded:=Time.get_ticks_msec()
   game.set_physics_process(false);game._clear_motion()
   game.camera.global_position=view.eye;game.camera.look_at(view.target)
-  # Readiness replaces fixed 90/120/150-frame waits. Camera-driven cover needs
-  # one update before its wanted set can be evaluated at this new view.
   await process_frame
-  if not await wait_until(func():return photograph_ready(game),20):print("PHOTOGRAPH_RESIDENCY_TIMEOUT ",view.name);return false
-  await capture_loading_view(game,view.name)
+  deadline=Time.get_ticks_msec()+20000;next_poll=0
+  while not photograph_ready(game) and Time.get_ticks_msec()<deadline:
+   if Time.get_ticks_msec()>=next_poll:
+    next_poll=Time.get_ticks_msec()+250
+    var cover:Dictionary=photograph_cover_status(game)
+    var fraction:float=float(cover.ready)/maxi(1,int(cover.total))
+    progress("Photographing the generated world",completed,views.size(),{"activity":context+" · Loading grass and plants","stage_fraction":(completed+0.65+0.25*fraction)/views.size(),"work":"Nearby vegetation regions ready: %d / %d"%[cover.ready,cover.total]})
+   await process_frame
+  if not photograph_ready(game):print("PHOTOGRAPH_RESIDENCY_TIMEOUT ",view.name);return false
+  var detailed:=Time.get_ticks_msec()
+  progress("Photographing the generated world",completed,views.size(),{"activity":context+" · Capturing and saving image","stage_fraction":(completed+0.9)/views.size()})
+  # Draw this state before readback/encoding; no extra rendering viewport.
+  await process_frame
+  if await capture_loading_view(game,view.name)!=OK:print("PHOTOGRAPH_SAVE_FAILED ",view.name);return false
+  trace.append({"view":view.name,"loading_ms":loaded-began,"vegetation_ms":detailed-loaded,"capture_ms":Time.get_ticks_msec()-detailed})
   if generation_screen!=null:generation_screen.use_photograph(output_dir.path_join("loading_"+view.name+".png"))
   if completed==0 and "--capture-generation-ui" in OS.get_cmdline_user_args():
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output_dir.path_join("generation_loading.png"))
   completed+=1;progress("Photographing the generated world",completed,views.size())
+ FileAccess.open(output_dir.path_join("photograph_timings.json"),FileAccess.WRITE).store_string(JSON.stringify(trace,"  "))
  return true
