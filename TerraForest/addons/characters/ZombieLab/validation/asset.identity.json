@@ -1,0 +1,584 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "F1 is startup; only F1 F2 F4 active",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "R3 is explicitly deprecated and archived",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Preserved bytes: assets/Zombie.glb",
+      "passed": true,
+      "details": {
+        "expected": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+        "actual": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0"
+      }
+    },
+    {
+      "name": "Preserved bytes: source/Zombie.blend",
+      "passed": true,
+      "details": {
+        "expected": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+        "actual": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b"
+      }
+    },
+    {
+      "name": "Preserved bytes: assets/Zombie.r2.glb",
+      "passed": true,
+      "details": {
+        "expected": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+        "actual": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b"
+      }
+    },
+    {
+      "name": "Preserved bytes: source/Zombie.r2.blend",
+      "passed": true,
+      "details": {
+        "expected": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+        "actual": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82"
+      }
+    },
+    {
+      "name": "Preserved bytes: archive/r3/Zombie.r3.glb",
+      "passed": true,
+      "details": {
+        "expected": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+        "actual": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2"
+      }
+    },
+    {
+      "name": "Preserved bytes: archive/r3/Zombie.r3.blend",
+      "passed": true,
+      "details": {
+        "expected": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+        "actual": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f"
+      }
+    },
+    {
+      "name": "Preserved bytes: archive/r4.previous/Zombie.r4.glb",
+      "passed": true,
+      "details": {
+        "expected": "f9f387e637bdaeea0bbdf7d00e842b2a52279c7e9381b1daddea2c2f4852d992",
+        "actual": "f9f387e637bdaeea0bbdf7d00e842b2a52279c7e9381b1daddea2c2f4852d992"
+      }
+    },
+    {
+      "name": "Preserved bytes: archive/r4.previous/Zombie.r4.blend",
+      "passed": true,
+      "details": {
+        "expected": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+        "actual": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847"
+      }
+    },
+    {
+      "name": "Catalog matches assets/Zombie.glb",
+      "passed": true,
+      "details": {
+        "actual": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+        "catalog": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0"
+      }
+    },
+    {
+      "name": "Catalog matches source/Zombie.blend",
+      "passed": true,
+      "details": {
+        "actual": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+        "catalog": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b"
+      }
+    },
+    {
+      "name": "Catalog matches assets/Zombie.r4.glb",
+      "passed": true,
+      "details": {
+        "actual": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+        "catalog": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+      }
+    },
+    {
+      "name": "Catalog matches source/Zombie.r4.blend",
+      "passed": true,
+      "details": {
+        "actual": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+        "catalog": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73"
+      }
+    },
+    {
+      "name": "Catalog matches assets/Zombie.r2.glb",
+      "passed": true,
+      "details": {
+        "actual": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+        "catalog": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b"
+      }
+    },
+    {
+      "name": "Catalog matches source/Zombie.r2.blend",
+      "passed": true,
+      "details": {
+        "actual": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+        "catalog": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82"
+      }
+    },
+    {
+      "name": "Catalog matches archive/r3/Zombie.r3.glb",
+      "passed": true,
+      "details": {
+        "actual": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+        "catalog": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2"
+      }
+    },
+    {
+      "name": "Catalog matches archive/r3/Zombie.r3.blend",
+      "passed": true,
+      "details": {
+        "actual": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+        "catalog": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f"
+      }
+    },
+    {
+      "name": "Full R4 geometry below 15000 triangles including caps",
+      "passed": true,
+      "details": {
+        "triangles": 14992
+      }
+    },
+    {
+      "name": "R4 retains 59 skin joints",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "All GLB buffers and images are self-contained",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "R4 inverse bind matrices preserved exactly",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Preserved base action Zombie_Idle",
+      "passed": true,
+      "details": {
+        "exact_decoded_channel_match": true,
+        "same_sampling": true,
+        "maximum_component_difference": 0.0
+      }
+    },
+    {
+      "name": "Preserved base action Zombie_Walk",
+      "passed": true,
+      "details": {
+        "exact_decoded_channel_match": true,
+        "same_sampling": true,
+        "maximum_component_difference": 0.0
+      }
+    },
+    {
+      "name": "Preserved base action Zombie_Attack",
+      "passed": true,
+      "details": {
+        "exact_decoded_channel_match": true,
+        "same_sampling": true,
+        "maximum_component_difference": 0.0
+      }
+    },
+    {
+      "name": "Preserved base action Zombie_Hit",
+      "passed": true,
+      "details": {
+        "exact_decoded_channel_match": true,
+        "same_sampling": true,
+        "maximum_component_difference": 0.0
+      }
+    },
+    {
+      "name": "All new morphs are zero in preserved base clip: Zombie_Idle",
+      "passed": true,
+      "details": {
+        "morph_tracks": 6,
+        "largest_absolute_weight": 0.0
+      }
+    },
+    {
+      "name": "All new morphs are zero in preserved base clip: Zombie_Walk",
+      "passed": true,
+      "details": {
+        "morph_tracks": 6,
+        "largest_absolute_weight": 0.0
+      }
+    },
+    {
+      "name": "All new morphs are zero in preserved base clip: Zombie_Attack",
+      "passed": true,
+      "details": {
+        "morph_tracks": 6,
+        "largest_absolute_weight": 0.0
+      }
+    },
+    {
+      "name": "All new morphs are zero in preserved base clip: Zombie_Hit",
+      "passed": true,
+      "details": {
+        "morph_tracks": 6,
+        "largest_absolute_weight": 0.0
+      }
+    },
+    {
+      "name": "All new actions are in the actual R4 GLB",
+      "passed": true,
+      "details": {
+        "required": [
+          "Zombie_Attack_Bite",
+          "Zombie_Attack_Left",
+          "Zombie_Attack_Right",
+          "Zombie_Attack_Both",
+          "Zombie_Crawl",
+          "Zombie_Crawl_Idle",
+          "Zombie_Crawl_Bite",
+          "Zombie_To_Crawl",
+          "Zombie_Crawl_Hit",
+          "Zombie_Jump",
+          "Zombie_Climb_Ladder"
+        ],
+        "actual": [
+          "Zombie_Idle",
+          "Zombie_Walk",
+          "Zombie_Attack",
+          "Zombie_Hit",
+          "Zombie_Attack_Bite",
+          "Zombie_Attack_Left",
+          "Zombie_Attack_Right",
+          "Zombie_Attack_Both",
+          "Zombie_Crawl",
+          "Zombie_Crawl_Idle",
+          "Zombie_Crawl_Bite",
+          "Zombie_To_Crawl",
+          "Zombie_Crawl_Hit",
+          "Zombie_Jump",
+          "Zombie_Climb_Ladder"
+        ]
+      }
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Attack_Bite",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.350000023841858,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 1.0,
+        "maximum_corrective_weight": 0.7395289540290833
+      }
+    },
+    {
+      "name": "Bite contains visible animated mouth morph: Zombie_Attack_Bite",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Attack_Left",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.2999999523162842,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 1.0
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Attack_Left",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Attack_Right",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.399999976158142,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 0.8044007420539856
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Attack_Right",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Attack_Both",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.600000023841858,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 1.0
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Attack_Both",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Crawl",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.600000023841858,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 0.1775442659854889
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Crawl",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Crawl_Idle",
+      "passed": true,
+      "details": {
+        "duration_seconds": 2.0,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 0.11668458580970764
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Crawl_Idle",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Crawl_Bite",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.2000000476837158,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 1.0,
+        "maximum_corrective_weight": 0.11668458580970764
+      }
+    },
+    {
+      "name": "Bite contains visible animated mouth morph: Zombie_Crawl_Bite",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_To_Crawl",
+      "passed": true,
+      "details": {
+        "duration_seconds": 0.800000011920929,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 1.0
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_To_Crawl",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Crawl_Hit",
+      "passed": true,
+      "details": {
+        "duration_seconds": 0.5,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 0.34068602323532104
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Crawl_Hit",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Jump",
+      "passed": true,
+      "details": {
+        "duration_seconds": 1.2000000476837158,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 0.9780814051628113
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Jump",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "Action tracks and duration: Zombie_Climb_Ladder",
+      "passed": true,
+      "details": {
+        "duration_seconds": 2.0,
+        "channels": 183,
+        "finite": true,
+        "morph_channels": 6,
+        "maximum_mouth_weight": 0.0,
+        "maximum_corrective_weight": 1.0
+      }
+    },
+    {
+      "name": "Non-bite action resets the mouth: Zombie_Climb_Ladder",
+      "passed": true,
+      "details": {}
+    }
+  ],
+  "source_sha256": {
+    "assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+    "source/Zombie.blend": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+    "assets/Zombie.r2.glb": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+    "source/Zombie.r2.blend": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+    "archive/r3/Zombie.r3.glb": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+    "archive/r3/Zombie.r3.blend": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+    "archive/r4.previous/Zombie.r4.glb": "f9f387e637bdaeea0bbdf7d00e842b2a52279c7e9381b1daddea2c2f4852d992",
+    "archive/r4.previous/Zombie.r4.blend": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "source/Zombie.r4.blend": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73"
+  },
+  "triangles_including_caps": 14992,
+  "base_action_comparison": {
+    "Zombie_Idle": {
+      "exact_decoded_channel_match": true,
+      "same_sampling": true,
+      "maximum_component_difference": 0.0
+    },
+    "Zombie_Walk": {
+      "exact_decoded_channel_match": true,
+      "same_sampling": true,
+      "maximum_component_difference": 0.0
+    },
+    "Zombie_Attack": {
+      "exact_decoded_channel_match": true,
+      "same_sampling": true,
+      "maximum_component_difference": 0.0
+    },
+    "Zombie_Hit": {
+      "exact_decoded_channel_match": true,
+      "same_sampling": true,
+      "maximum_component_difference": 0.0
+    }
+  },
+  "r4_actions": {
+    "Zombie_Attack_Bite": {
+      "duration_seconds": 1.350000023841858,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 1.0,
+      "maximum_corrective_weight": 0.7395289540290833
+    },
+    "Zombie_Attack_Left": {
+      "duration_seconds": 1.2999999523162842,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 1.0
+    },
+    "Zombie_Attack_Right": {
+      "duration_seconds": 1.399999976158142,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 0.8044007420539856
+    },
+    "Zombie_Attack_Both": {
+      "duration_seconds": 1.600000023841858,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 1.0
+    },
+    "Zombie_Crawl": {
+      "duration_seconds": 1.600000023841858,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 0.1775442659854889
+    },
+    "Zombie_Crawl_Idle": {
+      "duration_seconds": 2.0,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 0.11668458580970764
+    },
+    "Zombie_Crawl_Bite": {
+      "duration_seconds": 1.2000000476837158,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 1.0,
+      "maximum_corrective_weight": 0.11668458580970764
+    },
+    "Zombie_To_Crawl": {
+      "duration_seconds": 0.800000011920929,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 1.0
+    },
+    "Zombie_Crawl_Hit": {
+      "duration_seconds": 0.5,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 0.34068602323532104
+    },
+    "Zombie_Jump": {
+      "duration_seconds": 1.2000000476837158,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 0.9780814051628113
+    },
+    "Zombie_Climb_Ladder": {
+      "duration_seconds": 2.0,
+      "channels": 183,
+      "finite": true,
+      "morph_channels": 6,
+      "maximum_mouth_weight": 0.0,
+      "maximum_corrective_weight": 1.0
+    }
+  },
+  "limits": [
+    "Static source and accessor checks do not replace runtime, contact, cloth or visual review."
+  ]
+}

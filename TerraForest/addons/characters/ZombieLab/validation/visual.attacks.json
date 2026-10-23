@@ -1,0 +1,2461 @@
+{
+  "reviewer": "root",
+  "status": "actual_visual_review_complete",
+  "passed": true,
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "source_sha256": {
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "assets/Zombie.r4.glb.import": "c7d7a6cabb795679005321b5693ae1caf172712ca7889b0060830fe8574dfa57",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "tools/capture_behavior_frames.gd": "304848904881e5d64fb314535d0bd274df84f32e265698828e9429f1230491d5"
+  },
+  "source_blend_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+  "capture_manifest_sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346",
+  "capture_partition_sha256": "e31a57cc5f5f865d60ca66485d4438b9c1edb9ffb71f5198c5d2274488d36970",
+  "clips": [
+    "Zombie_Attack_Bite",
+    "Zombie_Attack_Left",
+    "Zombie_Attack_Right",
+    "Zombie_Attack_Both"
+  ],
+  "authored_integer_poses_reviewed": 343,
+  "views": [
+    "FRONT",
+    "RIGHT",
+    "BACK",
+    "LEFT"
+  ],
+  "view_poses_reviewed": 1372,
+  "atlases_reviewed": 60,
+  "per_view_resolution": [
+    384,
+    448
+  ],
+  "method": "Every row of every listed final-model four-view atlas was actually displayed and visually inspected. The exact two-draw captures are distinct from obsolete single-draw scout images.",
+  "blocking_visual_defects_observed": [],
+  "review_groups": [
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Bite",
+      "first": 0,
+      "last": 23,
+      "observations": "Actually reviewed every row in all four views. Bent asymmetrical guard retains defined elbow/forearm segments. Rearward weight shift, knee flexion and jaw preparation develop progressively. Shirt, sleeve and trouser contours stay coherent; no new visible arm stretch, skin poke or abrupt pose change.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Bite.000-005.png",
+          "sha256": "9d1b89623bcf7fb48169d6fda7ee82c498b3fec523cce5242b0775749f564a50"
+        },
+        {
+          "file": "Zombie_Attack_Bite.006-011.png",
+          "sha256": "c24de8734f63dff60b19cd175375ec4c1be2e70cdde86f349b4255c94157d55b"
+        },
+        {
+          "file": "Zombie_Attack_Bite.012-017.png",
+          "sha256": "046d2c94aef42019c766395cf02fe47efb4ba242436d941d661c7444eb69a83c"
+        },
+        {
+          "file": "Zombie_Attack_Bite.018-023.png",
+          "sha256": "3b8f5fcc71f69568d77fab9e16e88408562ff772cb893af3c27fff1bdcb9e6f5"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Bite",
+      "first": 24,
+      "last": 53,
+      "observations": "All rows viewed from four directions. Neck and torso surge forward while hands retain a compact bent guard; jaw closure accompanies the contact pose. Follow-through is visibly different from wind-up. Sleeve contours and trouser seams remain coherent with no new visible skin poke, arm stretch, or disconnected joint.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Bite.024-029.png",
+          "sha256": "7cccffae17ef07090232da54212b2092e97be3c097cc51b45e0c6ec42e27110d"
+        },
+        {
+          "file": "Zombie_Attack_Bite.030-035.png",
+          "sha256": "d20afd393578c1d6af2330decca925e7fc5489b860357d67763176076d2787fa"
+        },
+        {
+          "file": "Zombie_Attack_Bite.036-041.png",
+          "sha256": "baf9c89a6f4c2051e7446ca940d100118b14aa8d9e96179b49dc0592a69d5b42"
+        },
+        {
+          "file": "Zombie_Attack_Bite.042-047.png",
+          "sha256": "5c29e35a1c176d1dc506daafb38cf61ba189fb2685f22053723fafed021275aa"
+        },
+        {
+          "file": "Zombie_Attack_Bite.048-053.png",
+          "sha256": "b5ea500a76eb8a511de2dff0ba95325996b72dde6e17ac8c97036310b1bdd69a"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Bite",
+      "first": 54,
+      "last": 81,
+      "observations": "Every row viewed from front, right, back and left. Recovery gradually restores the asymmetrical guard and bent stance. Hands and shoulders settle without a sudden end-frame jump. Cloth follows the torso and knees; no new visible skin poke, arm-length change or twisting collapse was observed.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Bite.054-059.png",
+          "sha256": "77ef4fdc9dffa21e38bb4aa9cee723f1f7635227a3f1596ebc64116c75dbe471"
+        },
+        {
+          "file": "Zombie_Attack_Bite.060-065.png",
+          "sha256": "538970337f7c137a6ff7a6c949a0ab59a5f297fa39642d65ea46689dd8bb9b5c"
+        },
+        {
+          "file": "Zombie_Attack_Bite.066-071.png",
+          "sha256": "55799ae0ca2a590b6df6b9cb8eb6b56cfcd1931e1764e33c1dea1b3269868d40"
+        },
+        {
+          "file": "Zombie_Attack_Bite.072-077.png",
+          "sha256": "d9c6efc52ccbd7b9c88e66c63e745e6bef82cd73f24b6f0d3016f8228f76697b"
+        },
+        {
+          "file": "Zombie_Attack_Bite.078-081.png",
+          "sha256": "9977cb1159ad09e668a70c29b382d3b0be99a2a069e8a34d0b90eb99339e1b6d"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Left",
+      "first": 0,
+      "last": 29,
+      "observations": "All four views inspected at every row. The left arm draws upward and back into a clear bent-elbow wind-up while the opposite arm stays in guard; knees and torso load before the strike. Forearm volume remains coherent, sleeves follow the shoulders, and the neck stays separate from the raised hand. No new visible interpenetration or cloth tear was observed.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Left.000-005.png",
+          "sha256": "f8b00d287dd92156dfee6e22324a28832a7dbb2e2697a4f3a309ec388eafcf7e"
+        },
+        {
+          "file": "Zombie_Attack_Left.006-011.png",
+          "sha256": "8360d98845a0207c08be8531f01df6d0bee13d33425b8a708b9f7643acc412c8"
+        },
+        {
+          "file": "Zombie_Attack_Left.012-017.png",
+          "sha256": "cd7757dbad5687c7250d0eedf7130d682fcf64f8d49a53abd7c771a660868579"
+        },
+        {
+          "file": "Zombie_Attack_Left.018-023.png",
+          "sha256": "cb56e1810a5e60507e2b6eaccda72b2d23325112585d71273964d94493d194a8"
+        },
+        {
+          "file": "Zombie_Attack_Left.024-029.png",
+          "sha256": "fa8b6f66fdc30bbf7df92b045af45ec83d5d271816493ce140adb7426e68b0ff"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Left",
+      "first": 30,
+      "last": 59,
+      "observations": "Every integer row inspected from four sides, including corrected collar frames30 and44-46. The left hand extends through the contact arc then recovers across the guard while the torso leans and rotates. The collar and underarm maintain their outline; no visible collapse, new slit or skin poke appears. Upper and lower arm segments remain distinct throughout the forward reach.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Left.030-035.png",
+          "sha256": "c3a1a2176335980976fa8dacf866f1ddaa5b9391ec8597fbc0ecc859de5962ee"
+        },
+        {
+          "file": "Zombie_Attack_Left.036-041.png",
+          "sha256": "73cea50dcc3f3e66721eaf9aaf5470c3589bf4475cb47530a6fe75d5394a9404"
+        },
+        {
+          "file": "Zombie_Attack_Left.042-047.png",
+          "sha256": "75c2fb6316bbe4e3ed72e181b48a7c320d2ca3164e9ea4d50dfa72f8f8929ddb"
+        },
+        {
+          "file": "Zombie_Attack_Left.048-053.png",
+          "sha256": "148177d2510da453ebccc078d0962b7a92990fc1280fd059ca5dfe86c84b7582"
+        },
+        {
+          "file": "Zombie_Attack_Left.054-059.png",
+          "sha256": "9dab418dcedfd80b235f78de1fd9d0467930edf5651e3b1d6b67c6e97c8e1f6f"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Left",
+      "first": 60,
+      "last": 78,
+      "observations": "All four views checked through the true final pose. The left forearm returns to its lower guard with a gradual shoulder and body recovery; sleeves, hem and knees remain visually coherent. Final frame matches the intended shared guard and shows no stale previous pose.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Left.060-065.png",
+          "sha256": "47a9f450febc4c4921f19d49c3c1dd044de2f6bc53f246828166cb121cdffe30"
+        },
+        {
+          "file": "Zombie_Attack_Left.066-071.png",
+          "sha256": "6fa566b299ac81ae893eb6a605dc8c3b95270759b5161e2b0403615c72c162e8"
+        },
+        {
+          "file": "Zombie_Attack_Left.072-077.png",
+          "sha256": "2fd9e60a1fe7681f20bd21f15cf515c27f71cdbc7677b817eb793e5d3712c604"
+        },
+        {
+          "file": "Zombie_Attack_Left.078-078.png",
+          "sha256": "8c4497f6473ddc451270e46d025b2dc33515ae0c59a5ffb6fb42a07c13539d80"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Right",
+      "first": 0,
+      "last": 11,
+      "observations": "All rows and all four sides viewed. Compact asymmetrical starting guard with a small preparatory knee dip and weight shift. Elbows, wrists and shirt contours retain their shape; no new visible poke-through or joint disconnection.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Right.000-005.png",
+          "sha256": "af9b5e0e0b3a1d0a79a46d4842b60c587e4e7548a65cbfe4af51cca23f0e00ce"
+        },
+        {
+          "file": "Zombie_Attack_Right.006-011.png",
+          "sha256": "e0880b96cc05dea2ccf37495937077a68816c63d7388549de1b32fc2a793d759"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Right",
+      "first": 12,
+      "last": 47,
+      "observations": "Every frame row viewed from all four directions. The right elbow rises and retracts into a higher wind-up; the left remains lower. The body dips and the right hand accelerates forward into its longer reach, followed by a downward recovery. Shirt and sleeve silhouettes remain intact through shoulder rotation, and no new visible arm thinning, wrist snap or skin poke appears.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Right.012-017.png",
+          "sha256": "7e15df24f2387d877466829adce1fc82ed20bc13f0a5f4fdb3c9e2e39667e516"
+        },
+        {
+          "file": "Zombie_Attack_Right.018-023.png",
+          "sha256": "a39892b12b07ad1be1a58d0d8b282fe8e10934fff7e0034b26bde32d0afa1eca"
+        },
+        {
+          "file": "Zombie_Attack_Right.024-029.png",
+          "sha256": "512a2ee1db45a3d10fde84b833ed292a560ba91ee109d1e5efcc79fd1c86f558"
+        },
+        {
+          "file": "Zombie_Attack_Right.030-035.png",
+          "sha256": "f0e49d46be57d28daf1ba1097218868b155ed1527411aec16a042f2118947788"
+        },
+        {
+          "file": "Zombie_Attack_Right.036-041.png",
+          "sha256": "d405ceb6485d0f8d93462060b1dd002bb9b20806d5b8ac017a013bc9af9f653d"
+        },
+        {
+          "file": "Zombie_Attack_Right.042-047.png",
+          "sha256": "aedcab36480722a506f74727dfa9d41844330708731bc830a716e1852d6e2984"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Right",
+      "first": 48,
+      "last": 83,
+      "observations": "All rows inspected in the four views. The extended right hand lowers, elbow bends back into guard and torso recoil settles gradually. The sleeve maintains a coherent opening and upper-arm volume. The recovery retains connected wrists and stable garment silhouettes with no observed new skin poke or twisting collapse.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Right.048-053.png",
+          "sha256": "a9fbbae204efc998bdb7981a14f376d7ca25189bd8454149b138e6e703821cf4"
+        },
+        {
+          "file": "Zombie_Attack_Right.054-059.png",
+          "sha256": "d4eee6c5c92b3621c1638ea126916e44947c21374a3df587c3923e41f53f65d3"
+        },
+        {
+          "file": "Zombie_Attack_Right.060-065.png",
+          "sha256": "3a4f409d6e5eb376d6f252d3e7894c2ef6e05048e972f363b7f91149c43bb3fd"
+        },
+        {
+          "file": "Zombie_Attack_Right.066-071.png",
+          "sha256": "fe7559abcbe02169d243f42206379cb1e4b2ed040778aee303376ad7120d42c1"
+        },
+        {
+          "file": "Zombie_Attack_Right.072-077.png",
+          "sha256": "fdecff2b47b9f51b87e27d283fd6d4dc37fc91db9b315435a386f849aa6cd490"
+        },
+        {
+          "file": "Zombie_Attack_Right.078-083.png",
+          "sha256": "cd79ac15c1b34634304ee1feda4b8aff6c69281f61d83db8c94bf02e001a5005"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Right",
+      "first": 84,
+      "last": 84,
+      "observations": "True final endpoint viewed from all four sides. Shared guard is restored with coherent elbow bends and clothing silhouette; no stale pose or visible final-frame jump.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Right.084-084.png",
+          "sha256": "aea81118b5e302381678cbd6038cecc140db1f7642e2b9300ae69ca2aad87c9c"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Both",
+      "first": 0,
+      "last": 29,
+      "observations": "Every row in four views inspected. Both hands rise together into a high bent-elbow wind-up as knees and torso load backward. Hands remain distinct and shoulder motion carries the sleeves without a new visible tear or skin poke. The combined posture is visibly different from either single-hand attack.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Both.000-005.png",
+          "sha256": "e53ce75b2c15c7f97f542cbc437262e4a1397036d7ba0c04696748b0fd6e0f40"
+        },
+        {
+          "file": "Zombie_Attack_Both.006-011.png",
+          "sha256": "452b144b1dc932296a5470bfc1fac08ebc01c918cdafb1a0157c3e124ceaa38a"
+        },
+        {
+          "file": "Zombie_Attack_Both.012-017.png",
+          "sha256": "e09a57aa297e78ea68602e87b1e12b71d2f0464f2a1cc7182eacfc0ce1a138a2"
+        },
+        {
+          "file": "Zombie_Attack_Both.018-023.png",
+          "sha256": "dc156b7a4b40483ca79643882ed3ee974876a4f0f19e2db583d9332988590157"
+        },
+        {
+          "file": "Zombie_Attack_Both.024-029.png",
+          "sha256": "6802fe783421e16dac29e30f33943fe67959b1a6e6dbb21af4463eec617d4b83"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Both",
+      "first": 30,
+      "last": 65,
+      "observations": "Every row inspected from four directions. The high two-arm wind-up drives into a pronounced forward torso dip with both hands extending together at frame42. Forearm segments remain readable instead of collapsing into a curve. Hands descend into follow-through without crossing each other or the chest. The collar and underarm cloth preserve their outlines through the deep pose; no new visible poke-through or fabric collapse appears.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Both.030-035.png",
+          "sha256": "9dd0f8b1a7c4b1ce75681296fac92919dcd62b62a6a164333d7ece9e5e9f175d"
+        },
+        {
+          "file": "Zombie_Attack_Both.036-041.png",
+          "sha256": "794316f397fae4a8777c6f327f73ebf61c256e0a7b475228854d04130e8284f9"
+        },
+        {
+          "file": "Zombie_Attack_Both.042-047.png",
+          "sha256": "d2eebe6b5277ccb092ab0d61180fcfb58e16adf4fdab9948945f10690a6d856e"
+        },
+        {
+          "file": "Zombie_Attack_Both.048-053.png",
+          "sha256": "0c42eb6cdece97a951be20d97025db8f9c3920e0bc9bf163419ed4848f64a646"
+        },
+        {
+          "file": "Zombie_Attack_Both.054-059.png",
+          "sha256": "02eea4cd9af4dbcb641a201a75b62e2bbc235f9de4cfcde732e293a5a6955900"
+        },
+        {
+          "file": "Zombie_Attack_Both.060-065.png",
+          "sha256": "c9ead66c9cceb116cd9f8f4fc1b055700c36e9d77cadfaf7dc54b1883ae2fd28"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Attack_Both",
+      "first": 66,
+      "last": 96,
+      "observations": "All four views inspected through recovery and the true endpoint. Both arms bend and settle back into the asymmetric guard as the torso rises; garment contours remain coherent. No sudden end-frame change, arm-volume collapse, new cloth tear or visible skin poke was observed.",
+      "atlases": [
+        {
+          "file": "Zombie_Attack_Both.066-071.png",
+          "sha256": "32ad4dea100e17378ee3d6c725efa871245d47a09cbfe46888e3305784a1479a"
+        },
+        {
+          "file": "Zombie_Attack_Both.072-077.png",
+          "sha256": "34af49b9e6d9e7d31baa4ff150892b9bfa7aea65caedd242d6ad431708b63812"
+        },
+        {
+          "file": "Zombie_Attack_Both.078-083.png",
+          "sha256": "73dc8d9ca6118a95458ffeeae07c9cdd9ff83beb20a7d0ce67f39618c6e09e0b"
+        },
+        {
+          "file": "Zombie_Attack_Both.084-089.png",
+          "sha256": "cd497888791aaf69573e4018c46d615e486134d75a9235ede530d7dc65398e29"
+        },
+        {
+          "file": "Zombie_Attack_Both.090-095.png",
+          "sha256": "a29b81064ca9f705c63b0926fc919191cb77551e1a21d21adabd3f4db852f493"
+        },
+        {
+          "file": "Zombie_Attack_Both.096-096.png",
+          "sha256": "501f8d04b6eaaa3d97d7edabe430b9f472e19a5b3940d0a6e3be61558fe43875"
+        }
+      ]
+    }
+  ],
+  "frame_images": [
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 0,
+      "file": "frames/Zombie_Attack_Bite.000.png",
+      "sha256": "d4f6c1d055160368c3d9a03960a59327635d1d6e077ef94d4275e19926cfb990"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 1,
+      "file": "frames/Zombie_Attack_Bite.001.png",
+      "sha256": "7a534c389a5cd28746fb6087d16e59255c62d50172cef76118985a0c0b1d42f2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 2,
+      "file": "frames/Zombie_Attack_Bite.002.png",
+      "sha256": "b56f21813a6c7564144906c3244f19833d6b2d392b6d7910d56aae7e79a673fe"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 3,
+      "file": "frames/Zombie_Attack_Bite.003.png",
+      "sha256": "44987a3229021ad6f45e97fdb0516d912bebca214a03f059ea6596a12f629817"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 4,
+      "file": "frames/Zombie_Attack_Bite.004.png",
+      "sha256": "7e2d76f1b35537fbca89b148a9a9f4308555855725e3ec0648f2c57ac95d4dbe"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 5,
+      "file": "frames/Zombie_Attack_Bite.005.png",
+      "sha256": "8b27cd7e3f7abce7c7502bbe420b4f472c6e1d72817bd94fd850d4abb57784e6"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 6,
+      "file": "frames/Zombie_Attack_Bite.006.png",
+      "sha256": "774d1a3d69e14051531336086cf381ad6d8bdd9d5a9265ae5955c5f14525d6a1"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 7,
+      "file": "frames/Zombie_Attack_Bite.007.png",
+      "sha256": "3d2dadc4b0c07a6f719290e6e66bd8b7814f49de62258fc3a39513ca03da6901"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 8,
+      "file": "frames/Zombie_Attack_Bite.008.png",
+      "sha256": "30602f569d755649ba207b46638f0e10b97dbadf2ae5af1184fd8a4032ebfb7a"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 9,
+      "file": "frames/Zombie_Attack_Bite.009.png",
+      "sha256": "d2bc3e3a87dbb377288e812814110a6beb5733efff593674a36abc89cf68e75d"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 10,
+      "file": "frames/Zombie_Attack_Bite.010.png",
+      "sha256": "42a53aed904edd313de2d9341c9e93003c8e24bfa23b96f0592adba802e61759"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 11,
+      "file": "frames/Zombie_Attack_Bite.011.png",
+      "sha256": "65c25bfdaa2ad5c6adefa409a10b5e2432ff7f7ffaf2928d9ed53cdbc2b28c83"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 12,
+      "file": "frames/Zombie_Attack_Bite.012.png",
+      "sha256": "2f101fe44fbd98ff41710af8e6542d592b7c4cc4dede9f9b161d0914d968f828"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 13,
+      "file": "frames/Zombie_Attack_Bite.013.png",
+      "sha256": "092868be6b090abebb0a84484413da37fdc852a5883e8d7d2849ae064dfbdfd4"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 14,
+      "file": "frames/Zombie_Attack_Bite.014.png",
+      "sha256": "95d88e010dac915a140182887a7fbf5379d1aba76b3d295cf55194e8934946a0"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 15,
+      "file": "frames/Zombie_Attack_Bite.015.png",
+      "sha256": "6044d0ce92ee4af2c3db0fc1a270fb63c87d584acb1baac31f22a5467992deec"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 16,
+      "file": "frames/Zombie_Attack_Bite.016.png",
+      "sha256": "787cef158131053e70800a2312c7fb2455174c60d4d0a8276b24f354bc1512f6"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 17,
+      "file": "frames/Zombie_Attack_Bite.017.png",
+      "sha256": "b82ab78ba4732eb2179b9e160884631120528c027a8b442aad5cc9cef4086f8b"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 18,
+      "file": "frames/Zombie_Attack_Bite.018.png",
+      "sha256": "470f2f1d72655a652f4a6a535374f79d530c24b02bf4eecc27ae6eae7d6563f2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 19,
+      "file": "frames/Zombie_Attack_Bite.019.png",
+      "sha256": "812fa7b9a51a3456b18d46d91ea67b2cb6539b46dc490b9024419bd7edf3e9ea"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 20,
+      "file": "frames/Zombie_Attack_Bite.020.png",
+      "sha256": "06027ee3d790e878980f1fc2bdc5897a25e74e37365ccf460bc602483a613b14"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 21,
+      "file": "frames/Zombie_Attack_Bite.021.png",
+      "sha256": "3ad7a79ccbf7f87d0a6b2b33c893b67a715ead60793597f2508949b0961f6ba4"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 22,
+      "file": "frames/Zombie_Attack_Bite.022.png",
+      "sha256": "f6fba8092cb6ae5a6d0856708c4f8b0b3f03916f8b5db81e8855512885f15812"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 23,
+      "file": "frames/Zombie_Attack_Bite.023.png",
+      "sha256": "3b3e905cfddc307d988058676ae5d167e2eb999914ad16960c4f0adcf8305640"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 24,
+      "file": "frames/Zombie_Attack_Bite.024.png",
+      "sha256": "8445ca77c47bc8769af5fc7f062a68405f47cfefc54496b8c49c673c125aa4a3"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 25,
+      "file": "frames/Zombie_Attack_Bite.025.png",
+      "sha256": "0eedd4bcfed3de1e263bf7f08618efa59a60851dfc7b56de0576b9d670d0768a"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 26,
+      "file": "frames/Zombie_Attack_Bite.026.png",
+      "sha256": "82d32405590d08d469bde8a55ce8962f8625ae151cc7280f07e3076d1b05e3d6"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 27,
+      "file": "frames/Zombie_Attack_Bite.027.png",
+      "sha256": "472cfe39251fd3e0b5907c2de96f197149e1882f791e404eb4a0e495db983692"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 28,
+      "file": "frames/Zombie_Attack_Bite.028.png",
+      "sha256": "32560bd5447f98ecb1eacf09652491b80374e0ee7d5c15866c14eed863ad9897"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 29,
+      "file": "frames/Zombie_Attack_Bite.029.png",
+      "sha256": "51c7db85143925cd9aa4be624c8ab6b6845648ccde171a90b5de84df81956b0d"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 30,
+      "file": "frames/Zombie_Attack_Bite.030.png",
+      "sha256": "c9191f2243acd4c519f0d4fdc6066373d53625e09c4d9dd9f044cc39ee26916e"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 31,
+      "file": "frames/Zombie_Attack_Bite.031.png",
+      "sha256": "2ab6c93df027b465788ca72e8de6c6a8a84a4afbf26e1cc30d8fb955e05747a2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 32,
+      "file": "frames/Zombie_Attack_Bite.032.png",
+      "sha256": "13e037e5174d730f9841d0a08f62701eaab5406b62145ba1670e45caa21ef375"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 33,
+      "file": "frames/Zombie_Attack_Bite.033.png",
+      "sha256": "e82fb13236de02d2b94226f79aaeea364a62382dd64950698885d3cdf438a29e"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 34,
+      "file": "frames/Zombie_Attack_Bite.034.png",
+      "sha256": "39f5930a2166d914d6a031d5ad4696c4443d17661ba713ac07e4b16dad3540cc"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 35,
+      "file": "frames/Zombie_Attack_Bite.035.png",
+      "sha256": "303e68aaeb9d8378b1a8ed384493a8c48f0214025fce68d7e276eb42d39a1565"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 36,
+      "file": "frames/Zombie_Attack_Bite.036.png",
+      "sha256": "7abcdf01bfd7323fc3a80b341db6f77b00ba3f08a45f573a15931d78e1b3d154"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 37,
+      "file": "frames/Zombie_Attack_Bite.037.png",
+      "sha256": "0fb3d71e4637bb9f5e576e4432e11678e563e10c4adc26e9d906628bf5b8953e"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 38,
+      "file": "frames/Zombie_Attack_Bite.038.png",
+      "sha256": "422e658e6316a504d4424cbd60256ef9da292cab56e59d1fae65a89665dc1b00"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 39,
+      "file": "frames/Zombie_Attack_Bite.039.png",
+      "sha256": "71c82be2dca58ce98078744f1c587e2946418653547f77b96ed47ed1ea2439fa"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 40,
+      "file": "frames/Zombie_Attack_Bite.040.png",
+      "sha256": "edcbe4fb5b4e1fce09ac10dcaac0b48790c525e70d2578f41580b6faadc435a2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 41,
+      "file": "frames/Zombie_Attack_Bite.041.png",
+      "sha256": "3ecdbc5a34616620e9a30e4e81c0b8a74c909c1bb9b5a021371f0c7cfcc1abab"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 42,
+      "file": "frames/Zombie_Attack_Bite.042.png",
+      "sha256": "3f496e8c981e07d1dae4a491570bcf448e3ca729f6b72fd940f2fbe644ff2e67"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 43,
+      "file": "frames/Zombie_Attack_Bite.043.png",
+      "sha256": "15f0b79ca4d9feb433d7634023017d0f40c0a0157c845891234d143d614f11d2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 44,
+      "file": "frames/Zombie_Attack_Bite.044.png",
+      "sha256": "9bcf3d5069c89fc30393bc102e693f70bad16df662f8eb970704c0ae3b149d2b"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 45,
+      "file": "frames/Zombie_Attack_Bite.045.png",
+      "sha256": "9410b08dac2a6ddde9e0b8c3d379047f01068cefbfd1839b052b1f397564ae7f"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 46,
+      "file": "frames/Zombie_Attack_Bite.046.png",
+      "sha256": "380e8b1b0faa2b2da0f0be30c838dda4d0f7bc4a77cd176b041d29f865d28a87"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 47,
+      "file": "frames/Zombie_Attack_Bite.047.png",
+      "sha256": "dba4a83fd11644e520cebfcc0a98b812e335ba11d7075a58cdd74b27a6c06ddb"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 48,
+      "file": "frames/Zombie_Attack_Bite.048.png",
+      "sha256": "29e21ad0b2713d3934afa64f725d992af1083cefee7fa90761294d9bfc374512"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 49,
+      "file": "frames/Zombie_Attack_Bite.049.png",
+      "sha256": "a4e15927f1900c2d357656ef0cf7677f4dbe24153fd282e6da567f030f320c56"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 50,
+      "file": "frames/Zombie_Attack_Bite.050.png",
+      "sha256": "13ef2c99c556826d459b4f15b375c479fdabf742f196f950d3637140ddc16cc3"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 51,
+      "file": "frames/Zombie_Attack_Bite.051.png",
+      "sha256": "43cc6f5a38cdc2d1febb73ce94014a010b7bb5a72ed07cd3ae78773033dc4f15"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 52,
+      "file": "frames/Zombie_Attack_Bite.052.png",
+      "sha256": "55c51debcf61f2695794063b4394543c533dda4d737a81a6c9c9e49790c96f77"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 53,
+      "file": "frames/Zombie_Attack_Bite.053.png",
+      "sha256": "059e1106e55c2a8f33af95bc567a66719693fae920594da6579a5e78f5a82f79"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 54,
+      "file": "frames/Zombie_Attack_Bite.054.png",
+      "sha256": "58aa9368f1d678749f3fd51aaa0fa3ed3f11d4b66c9d4568abb064aa354216f2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 55,
+      "file": "frames/Zombie_Attack_Bite.055.png",
+      "sha256": "b702c6ce6a8f397ef55d0d822a19a2e1211ff3ce24971a20e88617df7da68e41"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 56,
+      "file": "frames/Zombie_Attack_Bite.056.png",
+      "sha256": "02296768cc1386f137ebafbee1cd226372b2c037df59a23ff879211768e0fd2d"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 57,
+      "file": "frames/Zombie_Attack_Bite.057.png",
+      "sha256": "629d1e19ac6cba70186abdfcbb2472768d66c549dcbe1dff1aa94dbe954dbacb"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 58,
+      "file": "frames/Zombie_Attack_Bite.058.png",
+      "sha256": "5cb0b33d38bcdf395d087b00bca0e38a8f931e8f90ec2ebe7211effded81756b"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 59,
+      "file": "frames/Zombie_Attack_Bite.059.png",
+      "sha256": "69bc2bdfa1ec0a40ea7ee9956614163f2cbdd4fb4de7e061db13286045b42bd2"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 60,
+      "file": "frames/Zombie_Attack_Bite.060.png",
+      "sha256": "6e3399cfbb1bb78c34c31499d12a7f0f77ae8f9b6c18615efe3e13d7d2c4cda4"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 61,
+      "file": "frames/Zombie_Attack_Bite.061.png",
+      "sha256": "3659b6307e84698da046914d54f7c90e45ffaed8718ec2a85fb5e3ec8ec81ba4"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 62,
+      "file": "frames/Zombie_Attack_Bite.062.png",
+      "sha256": "778071dfe0ae4f964e9dc55fd693c9dc266e4f63aa706e1aa1816d5ccbb93b07"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 63,
+      "file": "frames/Zombie_Attack_Bite.063.png",
+      "sha256": "e6ac3117acd1c6cb11ebfbc87ca5bb55391fa1f2a2a091f8fc3ad2fe013f2877"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 64,
+      "file": "frames/Zombie_Attack_Bite.064.png",
+      "sha256": "74d6204e4375fdf563db3bec52b0e854b0f882c9f58fe13df84d6e3e9430acb0"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 65,
+      "file": "frames/Zombie_Attack_Bite.065.png",
+      "sha256": "f3c058bf7761582e04463c1bb21a79df9c6d5001c6c51cbca47327973db12147"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 66,
+      "file": "frames/Zombie_Attack_Bite.066.png",
+      "sha256": "67b0f61a890d7c1dd27598645ec7927da24e8dd810c5805de0f5be7b52053489"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 67,
+      "file": "frames/Zombie_Attack_Bite.067.png",
+      "sha256": "ae5d55493d795b9eb5335bf0897dc7b3df19ddd4373778808ae5fdbdf60cfa2a"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 68,
+      "file": "frames/Zombie_Attack_Bite.068.png",
+      "sha256": "84c147b48265d57dd7612bd979de892fa15ac6c9ce0f5b42024bd879661872ef"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 69,
+      "file": "frames/Zombie_Attack_Bite.069.png",
+      "sha256": "ec526a30f693590ce823dc7806210bdaf01e682f6ddac93039d419fdb947ab74"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 70,
+      "file": "frames/Zombie_Attack_Bite.070.png",
+      "sha256": "ab4cd3f2d8ac2f6ddc343c68792d68ea9ffac22aaa55e196b966f4df67a0410f"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 71,
+      "file": "frames/Zombie_Attack_Bite.071.png",
+      "sha256": "d247d94495054d20daa9eb91628325237a8879ece3ff18fced98a07d7877ca79"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 72,
+      "file": "frames/Zombie_Attack_Bite.072.png",
+      "sha256": "ec7e7800e74d0267210643e1cee762d51a25d24cdd0194e11d3973382e147d00"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 73,
+      "file": "frames/Zombie_Attack_Bite.073.png",
+      "sha256": "073796708d99e2960a6b97522ffe8637d4900feaa0eabded16391cc2b0f1b15b"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 74,
+      "file": "frames/Zombie_Attack_Bite.074.png",
+      "sha256": "d89f3fc89c522ab28616de5a13d6370ead447d8bd1ba8ca4c65e659f82bcfbf5"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 75,
+      "file": "frames/Zombie_Attack_Bite.075.png",
+      "sha256": "27023bc10aaf7c0597006bbb9fb2523c81a12df80fa575b893f47f96ed3cd087"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 76,
+      "file": "frames/Zombie_Attack_Bite.076.png",
+      "sha256": "6400fbe192b74bbb0df02580c9c3e0cab01df3fbcc926047a58c094d42df9f75"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 77,
+      "file": "frames/Zombie_Attack_Bite.077.png",
+      "sha256": "1ba02da6ce18aa6cd3addb25ab96ae39e17f66f1cb1895319bfe38b90b3e74fc"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 78,
+      "file": "frames/Zombie_Attack_Bite.078.png",
+      "sha256": "c98a853fa1c9da37aab935cc6329e3225082746c0d77f5804250b75c1025e618"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 79,
+      "file": "frames/Zombie_Attack_Bite.079.png",
+      "sha256": "58b4415ead88fce36a928f7379d7d5776e9d8c82f7a089ec12b15edbea58c3bc"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 80,
+      "file": "frames/Zombie_Attack_Bite.080.png",
+      "sha256": "f352fc020315a5d1f26165ac64efbadfdba96f47c0a249a19fa4a2d6fb3ce4db"
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "frame": 81,
+      "file": "frames/Zombie_Attack_Bite.081.png",
+      "sha256": "7827555a8bb1e894b608c84713f6c177934c9e493fda193b60d54d380c2e45d3"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 0,
+      "file": "frames/Zombie_Attack_Left.000.png",
+      "sha256": "3ae94dc917227dca36e9a2c2e8f8874c063b7e3a650c4dec439528a1e61d27ad"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 1,
+      "file": "frames/Zombie_Attack_Left.001.png",
+      "sha256": "99ebadfb5d262b2a2680d9bc6b40c10c7cf218ffcb29f258a058b3a61e7fa112"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 2,
+      "file": "frames/Zombie_Attack_Left.002.png",
+      "sha256": "bb94c66a254c41dec009498d2ed000e5ef3fa0323e256ed575d8e755cd3b7afc"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 3,
+      "file": "frames/Zombie_Attack_Left.003.png",
+      "sha256": "c9750a7fa82a9a80abd3a78e8c4e5f6fa958723dfb1f2ce59c9d24199c7c1501"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 4,
+      "file": "frames/Zombie_Attack_Left.004.png",
+      "sha256": "f24cc20dc0cc89922bd80c85e7c1f68b30e24522b45eafec7d07cac97aee11d9"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 5,
+      "file": "frames/Zombie_Attack_Left.005.png",
+      "sha256": "8b060cc4d8139662f1706093c1b157d0967cbc7b9bb728295f962a86376f1f60"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 6,
+      "file": "frames/Zombie_Attack_Left.006.png",
+      "sha256": "ab99cb396eb54df7405433c511a7e3f26c26de23b7b2f2122ded95730abe87be"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 7,
+      "file": "frames/Zombie_Attack_Left.007.png",
+      "sha256": "cb93a7b072e9212311ccaf2446c3dc0e9d66f1ad46872889c0255d10096c98f2"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 8,
+      "file": "frames/Zombie_Attack_Left.008.png",
+      "sha256": "f1a7f4fd1961b1c1459d4513be33658c53880c110c5cbb3092659a645b9d0787"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 9,
+      "file": "frames/Zombie_Attack_Left.009.png",
+      "sha256": "6991e8c756ceb8dfa5e61132d1561632960831229a3f9551071a00f19f680263"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 10,
+      "file": "frames/Zombie_Attack_Left.010.png",
+      "sha256": "63d001af1a6c71b0115be4b184f8b2fd8e8c85a01d56fd8d3a502c38339bf097"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 11,
+      "file": "frames/Zombie_Attack_Left.011.png",
+      "sha256": "cf624ef1ec63af35ad190926892bc03dae152f3a789119f682f0fcf0038b9fcf"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 12,
+      "file": "frames/Zombie_Attack_Left.012.png",
+      "sha256": "c83e32bcb818b6476845b75fb2c163eea076e21a696a132dc678bc10b06c58a3"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 13,
+      "file": "frames/Zombie_Attack_Left.013.png",
+      "sha256": "b1aa09526f763022e8bccbae869f8ff2f38a2d82791af90ed5cb8b16f83bb46c"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 14,
+      "file": "frames/Zombie_Attack_Left.014.png",
+      "sha256": "d1c73ee1b1f0717bd635d62ba94d55a750794898afc33fbaa497e70c13056894"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 15,
+      "file": "frames/Zombie_Attack_Left.015.png",
+      "sha256": "4f69f089a80b688310df7acb59abe973523091a0867871156e3481df12452551"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 16,
+      "file": "frames/Zombie_Attack_Left.016.png",
+      "sha256": "dec6c0c41acc0779eb96abd9cdf8472ac07de71447e425842f74f968a5efb80a"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 17,
+      "file": "frames/Zombie_Attack_Left.017.png",
+      "sha256": "50baa83eb66c675327313dae8c74f63ac2507f6ecd4e14c09811efb149d98d7f"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 18,
+      "file": "frames/Zombie_Attack_Left.018.png",
+      "sha256": "751ab27322196e7847821fc625be1283d8de2ed224fbefd26bdddf162cf92b39"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 19,
+      "file": "frames/Zombie_Attack_Left.019.png",
+      "sha256": "5bd825d976e31134c4abde47a23d494a617bd9baf93ac578f79c4c0911b56573"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 20,
+      "file": "frames/Zombie_Attack_Left.020.png",
+      "sha256": "38b976b8cd5f5c95d1e292d5c10a7148b6e7d3c7ed411118b5448300857014b6"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 21,
+      "file": "frames/Zombie_Attack_Left.021.png",
+      "sha256": "16ef78cd1dd283874070082b77e5d0ba1f6af7380c35a48abed468b3713346ae"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 22,
+      "file": "frames/Zombie_Attack_Left.022.png",
+      "sha256": "d8fa304f311bbfc28b5f4f863c35fea2116ed674c177f89e87e49229404ee385"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 23,
+      "file": "frames/Zombie_Attack_Left.023.png",
+      "sha256": "86e7f1cee36bb0c80c380c2bc3ba9b7006f5815a75461bca0dff670807e2e032"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 24,
+      "file": "frames/Zombie_Attack_Left.024.png",
+      "sha256": "95accdfbaac4f7a15c0ecb5623b658606e73b44fcce65405ac1cef4dc7a601f2"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 25,
+      "file": "frames/Zombie_Attack_Left.025.png",
+      "sha256": "fe59afb27d06e697df1ac551f5ff117a36334839e05688b1f5f4a33e6eeeccdd"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 26,
+      "file": "frames/Zombie_Attack_Left.026.png",
+      "sha256": "b5ca0c72824004d487cbbabd01b7fb1efa1f8fee7dd9e10776a09aa4f677626c"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 27,
+      "file": "frames/Zombie_Attack_Left.027.png",
+      "sha256": "c28b8c926630b14ac96b1189d62defea32b38341c65b9040dc23e8cb7288b1b5"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 28,
+      "file": "frames/Zombie_Attack_Left.028.png",
+      "sha256": "995627b8118cb3dd75d1fd3d3120098fa2b2e5c8f21a162f64940ee3af520156"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 29,
+      "file": "frames/Zombie_Attack_Left.029.png",
+      "sha256": "4ed6f346fb2d43f4452188ca1a4b70ad91c349b395639d075bf0a50476b46095"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 30,
+      "file": "frames/Zombie_Attack_Left.030.png",
+      "sha256": "92fdf8ea1d09ce9429e596e8adaaa21c4143ddb23ace0c6286b92f0c70413bf4"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 31,
+      "file": "frames/Zombie_Attack_Left.031.png",
+      "sha256": "b4f1682c09990ceecd9eb75f13852595793070d54d39bca877b0a1959e40368d"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 32,
+      "file": "frames/Zombie_Attack_Left.032.png",
+      "sha256": "6c60bb672ded1c6b4246c75086373e2cc1b1f3315a5d3a45f6440aa51d5867b5"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 33,
+      "file": "frames/Zombie_Attack_Left.033.png",
+      "sha256": "ff9a62817952a433cc8370c7d4b4d69aaee93af86206c78ac0cfed5ae60a174c"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 34,
+      "file": "frames/Zombie_Attack_Left.034.png",
+      "sha256": "5d462803f93e9642d8ab2cb570b9f1c110242adfb1135252711178789bfd9a3b"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 35,
+      "file": "frames/Zombie_Attack_Left.035.png",
+      "sha256": "b07586aef409dbfb19e62ac4394f584053bbb6b759fa18d9ab9e785703dcfc96"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 36,
+      "file": "frames/Zombie_Attack_Left.036.png",
+      "sha256": "692d429556e8fb853863302ff57096a8d6a11291b63d7c1becdf45d853d069b5"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 37,
+      "file": "frames/Zombie_Attack_Left.037.png",
+      "sha256": "2809a376ed9ebfb3ab2a99e1ae7403857dbf2cc23da71a6a76550ad03347567f"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 38,
+      "file": "frames/Zombie_Attack_Left.038.png",
+      "sha256": "a5e0136b6eb82d30978f759f1788be87c5b9a5b6aa5da415a8a6c16ccfbd2344"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 39,
+      "file": "frames/Zombie_Attack_Left.039.png",
+      "sha256": "d1af4728a0c1578e3d68a65d5827ec650b6606ede042087f037e05336ebf8d05"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 40,
+      "file": "frames/Zombie_Attack_Left.040.png",
+      "sha256": "1347dc113c44ae84046c4679251b56fad4ee707521bd6d0be736920893131676"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 41,
+      "file": "frames/Zombie_Attack_Left.041.png",
+      "sha256": "ae1d723b4079615dbb360bb90e4770cb7e2732ed716f1c68119b34982e146ff2"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 42,
+      "file": "frames/Zombie_Attack_Left.042.png",
+      "sha256": "17c543702554a8c746c631d745e315cc6494f3d59b794b8e8b3f204d76df1243"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 43,
+      "file": "frames/Zombie_Attack_Left.043.png",
+      "sha256": "dc6953411429d08105dd478996acde6d40eace4189a74e0cb3746f8c1ef48cb7"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 44,
+      "file": "frames/Zombie_Attack_Left.044.png",
+      "sha256": "ebc4fd3b4e4cb0379b9a4947a3028a90535dd9c95331fa34080a9a8bf5ce71d8"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 45,
+      "file": "frames/Zombie_Attack_Left.045.png",
+      "sha256": "37bc8a0f31c31d1865bbb96ff354bb561081938e5e246c8853b8d8bb266c8b39"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 46,
+      "file": "frames/Zombie_Attack_Left.046.png",
+      "sha256": "e46da0d177fb078c23b3c5f1c17629c06422300015bcd34c44d57309f1f590b4"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 47,
+      "file": "frames/Zombie_Attack_Left.047.png",
+      "sha256": "763ca863bb0438f55e231c3475fb4bbf803760f52e508cc4f3606f6f5ebaea8d"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 48,
+      "file": "frames/Zombie_Attack_Left.048.png",
+      "sha256": "6b62f072de5891688af63ced4540eef1ea6ce0432a79d138b27b25a36a5bb3b1"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 49,
+      "file": "frames/Zombie_Attack_Left.049.png",
+      "sha256": "b16387eb8835ff78df9b3080fc7895f61a48419c90a81145088539fed1ffebdd"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 50,
+      "file": "frames/Zombie_Attack_Left.050.png",
+      "sha256": "29c19f658c16f3647abd8f3276791882f534c98d23ad1e65252968188a4c51a5"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 51,
+      "file": "frames/Zombie_Attack_Left.051.png",
+      "sha256": "3736408f61a9b12caf48180dd51659b70746d54bd27dfb65e8c2a13f12885335"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 52,
+      "file": "frames/Zombie_Attack_Left.052.png",
+      "sha256": "f56cbd5a3e153b1e9edd0be4c353b56b61320ff28d080bd25563b1153003b73a"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 53,
+      "file": "frames/Zombie_Attack_Left.053.png",
+      "sha256": "7ba6fc5f39960b8a4ac4414e91449e7b5c4066f96cd40c24265f5409d2b21c4b"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 54,
+      "file": "frames/Zombie_Attack_Left.054.png",
+      "sha256": "c17b260b4a1552b18ffeef4d6e595b895a86e5a7f9476a849a034f5bc60faf54"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 55,
+      "file": "frames/Zombie_Attack_Left.055.png",
+      "sha256": "c70240f60258cd7208dcb660e20fc0cd1a01642dad875eb929abf6442f6cb4cc"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 56,
+      "file": "frames/Zombie_Attack_Left.056.png",
+      "sha256": "c515ffaaf32e78a9ce368bf149d8fc556feaabe1afc32089f4f02a0dd35f3448"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 57,
+      "file": "frames/Zombie_Attack_Left.057.png",
+      "sha256": "1683ddb9c8541f7d9674099eb5b8b4b24fe043f2f856549142f178ea5c91b331"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 58,
+      "file": "frames/Zombie_Attack_Left.058.png",
+      "sha256": "866687a987a699cd49dbfb674cd19a9177b697869a18f1e8143a2f6f79c6e773"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 59,
+      "file": "frames/Zombie_Attack_Left.059.png",
+      "sha256": "024531de6ffe19c6e70c1899d143b046a6d9e299d271f0efa0ce12645d774e68"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 60,
+      "file": "frames/Zombie_Attack_Left.060.png",
+      "sha256": "615398f417264075910a793db3061bb6bb7d98dbcfee6549d31721038dc0dfee"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 61,
+      "file": "frames/Zombie_Attack_Left.061.png",
+      "sha256": "b54650b0ab55134c563a7cb1de019408d6db0ca7ce00fb51891743065f6db9cb"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 62,
+      "file": "frames/Zombie_Attack_Left.062.png",
+      "sha256": "156fded7a6328f820bbd7d070c191fedc8d932b3048e0a3a83b35a7b262767ec"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 63,
+      "file": "frames/Zombie_Attack_Left.063.png",
+      "sha256": "f4549d59c3802dd586634ccd21191337f74ea319caad698e4a197203b4060b09"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 64,
+      "file": "frames/Zombie_Attack_Left.064.png",
+      "sha256": "1cbc4ef083168df59fdc97dbfe3ea328c3125539a5e8c71f48e9323b4018c6d2"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 65,
+      "file": "frames/Zombie_Attack_Left.065.png",
+      "sha256": "69dbe3ccac9cbd3aa811e29bc1e70ed0d0bcef0e0fa55cd5ede56092660209c4"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 66,
+      "file": "frames/Zombie_Attack_Left.066.png",
+      "sha256": "9d7792315446cac54ab566bfee9d911b2c1a5b04b2add6025a330b385216ea67"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 67,
+      "file": "frames/Zombie_Attack_Left.067.png",
+      "sha256": "82a821994208a2436660118db40e2e2e3c794a5a48c6dc1678ec8add02ae9447"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 68,
+      "file": "frames/Zombie_Attack_Left.068.png",
+      "sha256": "94579755c64c59451b0522bd9175870d17535121fc836ed906f3befcb09b4d12"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 69,
+      "file": "frames/Zombie_Attack_Left.069.png",
+      "sha256": "ca6cd48a1d4af2c1a6e7af586e5fe5745ee62d67210c95f7795d6a54ae739010"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 70,
+      "file": "frames/Zombie_Attack_Left.070.png",
+      "sha256": "1d8ed37d35409388484ec979786d84b16b05f6e90b1913618374914e6da0a405"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 71,
+      "file": "frames/Zombie_Attack_Left.071.png",
+      "sha256": "3ecb1aa1570a87f5664f5caa8668a264c3c59de41c6cffb1a9fd7ccd7dcc23e5"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 72,
+      "file": "frames/Zombie_Attack_Left.072.png",
+      "sha256": "85ee80e8352a4222b06533990381e9bf434c505e0ceb1aa4a7c855df4f8b4227"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 73,
+      "file": "frames/Zombie_Attack_Left.073.png",
+      "sha256": "aa13b85c17c5bddc8bdfbc1611484d1a36eaa8f5355b04270311cad74936b26f"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 74,
+      "file": "frames/Zombie_Attack_Left.074.png",
+      "sha256": "3a3c42e52cfe119ef0209844fb3525e6213b725d3cf9fbc9cecefd4895f16ed9"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 75,
+      "file": "frames/Zombie_Attack_Left.075.png",
+      "sha256": "d76d5e9ae18197ca83fe922d407a8a24e832f1b60ca7c08c8850830b15f6f4aa"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 76,
+      "file": "frames/Zombie_Attack_Left.076.png",
+      "sha256": "4ccf4aa219aa73066daa0282e16cc74e1208056130202d07e0dde26a65f2b045"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 77,
+      "file": "frames/Zombie_Attack_Left.077.png",
+      "sha256": "a4e4e833fa7041461ce0adbc582f4be4825d9ba4593937c644e9c87fddc176af"
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "frame": 78,
+      "file": "frames/Zombie_Attack_Left.078.png",
+      "sha256": "8c4497f6473ddc451270e46d025b2dc33515ae0c59a5ffb6fb42a07c13539d80"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 0,
+      "file": "frames/Zombie_Attack_Right.000.png",
+      "sha256": "be82e81581ff3454e0eb30bdaef65f473b050379430da92d040265a991e4aabf"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 1,
+      "file": "frames/Zombie_Attack_Right.001.png",
+      "sha256": "ed5ce3f07cd47f34751dc27ce0431ac515a4085e312cf094624ed5d2016f4495"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 2,
+      "file": "frames/Zombie_Attack_Right.002.png",
+      "sha256": "c3f607f9e7b9a98a16a44342ded5e2d8424e8f062b560c488d596fb695bff0ec"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 3,
+      "file": "frames/Zombie_Attack_Right.003.png",
+      "sha256": "1ee0bd5edc6c4a99151952e6d87533865796d4f278773f1fd1185e6dad04bd6b"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 4,
+      "file": "frames/Zombie_Attack_Right.004.png",
+      "sha256": "3d2f926cdfe5b91ec7f4ceedca50b95f70e73b083eeff838bbc42319e260bc0e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 5,
+      "file": "frames/Zombie_Attack_Right.005.png",
+      "sha256": "169af81792645b1ead60d0ac7b9c47780110e65c4eec0239fe7986b1202f52f0"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 6,
+      "file": "frames/Zombie_Attack_Right.006.png",
+      "sha256": "d492aabfba315cb778fe788bf150ca74cc6b900ca63ec7de428300e4e5aaa3dc"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 7,
+      "file": "frames/Zombie_Attack_Right.007.png",
+      "sha256": "7b27ef286ccf87fe26a604d067886d90c22858fb7ae278debba066576d536845"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 8,
+      "file": "frames/Zombie_Attack_Right.008.png",
+      "sha256": "7e2f0ae6f5b55569c1edd6d431f5174d20d0ae014c3fb20e07ad879a962ab2f9"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 9,
+      "file": "frames/Zombie_Attack_Right.009.png",
+      "sha256": "6d7c7308b8b827e168998227c81e80c45ab2785e09dfbe2b0bc68c21d89b8613"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 10,
+      "file": "frames/Zombie_Attack_Right.010.png",
+      "sha256": "a24785281b9e5e65ec25d9128b47736be56a526fbc59602b3d42a8b05ce31898"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 11,
+      "file": "frames/Zombie_Attack_Right.011.png",
+      "sha256": "c93769c7967fb3403e61600824e4f84a75e6571ce45b168d37db3f165b731c97"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 12,
+      "file": "frames/Zombie_Attack_Right.012.png",
+      "sha256": "651d26bbe6209e4ae02c21b5818309cc9d1db14e9c8b1c280aa952f06e657115"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 13,
+      "file": "frames/Zombie_Attack_Right.013.png",
+      "sha256": "3238267d86842311b3b20f4eb71fb286a11eaf150ec9cf3858fc2391e3fe8cae"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 14,
+      "file": "frames/Zombie_Attack_Right.014.png",
+      "sha256": "a242d6c5482f7b3b1ce606bb3e32d045441dd70cdfd99a32af82644eb501b740"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 15,
+      "file": "frames/Zombie_Attack_Right.015.png",
+      "sha256": "6b7bc0a420d6793c54dc05b2de561ccd7704455a5ce47512807517dcfa0a7009"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 16,
+      "file": "frames/Zombie_Attack_Right.016.png",
+      "sha256": "82bd29f0b7022982b580d74ea43d6f9b15ae62e08aa8b6039e18a24307ee6fca"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 17,
+      "file": "frames/Zombie_Attack_Right.017.png",
+      "sha256": "4ac4b928b70d43744ad6f12c77a994376f5dd30b96aec40eaa2fa7ed7c8a921e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 18,
+      "file": "frames/Zombie_Attack_Right.018.png",
+      "sha256": "6a9595f1941f29d320a1b11bf2b234a3ffe4bf9f4d61a8dd508e273d31efd140"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 19,
+      "file": "frames/Zombie_Attack_Right.019.png",
+      "sha256": "ef6661a7d7553ebc878a911cc98f75722f4f9639dfe9d3593f2b667516f27fcc"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 20,
+      "file": "frames/Zombie_Attack_Right.020.png",
+      "sha256": "7624a3418d6fc87495fca63b69d5c784b33095ea7a77ee7071fe3d1451a7ddad"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 21,
+      "file": "frames/Zombie_Attack_Right.021.png",
+      "sha256": "ee77789c5e28265a48310354e873a1c04310bd7526bb1610c1d174e55ee8ced4"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 22,
+      "file": "frames/Zombie_Attack_Right.022.png",
+      "sha256": "d697decb4f6ca7745526672d5276f1ce9cf8ce63a18f48372b23e3f9dcf60c5a"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 23,
+      "file": "frames/Zombie_Attack_Right.023.png",
+      "sha256": "05996c2626db81fe0976771da53ec57ec3754236319221c5e9e4c011eb4825c5"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 24,
+      "file": "frames/Zombie_Attack_Right.024.png",
+      "sha256": "0d908db39f751cbe12abd85a3b1eaa51bfd2c3bb4345c1d09746889821c45f42"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 25,
+      "file": "frames/Zombie_Attack_Right.025.png",
+      "sha256": "41e1520a59ceff4dc63492ad4873a4eec43629ef659de1787183663ffb77464e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 26,
+      "file": "frames/Zombie_Attack_Right.026.png",
+      "sha256": "4433a545b47e10b0a156c9a43cfa85c272f4a2ec8f29dd1afe04d7b1578e0c3e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 27,
+      "file": "frames/Zombie_Attack_Right.027.png",
+      "sha256": "020b910aa289c89e60b72b503236449478ab289081215e1a10a9b1213932cc27"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 28,
+      "file": "frames/Zombie_Attack_Right.028.png",
+      "sha256": "975d39228144e6a06c32ad7b9d69c29dd629599c997889d6489dec3edc785784"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 29,
+      "file": "frames/Zombie_Attack_Right.029.png",
+      "sha256": "7091ad457df753f41902bbd47258e90d22cf6364340ae42253f4f21aeb44d016"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 30,
+      "file": "frames/Zombie_Attack_Right.030.png",
+      "sha256": "b8f24aea03329018524a60d09a10ada06f9097eeac6c1f27d6d5ac17abf9b704"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 31,
+      "file": "frames/Zombie_Attack_Right.031.png",
+      "sha256": "2453c500af8b2edce41c04f33baacc4cceb7d450dcb3853a1e47b6f77723f8b5"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 32,
+      "file": "frames/Zombie_Attack_Right.032.png",
+      "sha256": "1d6dbb6c110d33c35e0fe74fc05f2c56661b43e99fc9ad8052d9da72ec60531b"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 33,
+      "file": "frames/Zombie_Attack_Right.033.png",
+      "sha256": "438744f9d6ae94b46846d1cbe73096ae491cfc8f6f2ea34eab561ddb20b8c71f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 34,
+      "file": "frames/Zombie_Attack_Right.034.png",
+      "sha256": "44e6e16b5971228b286cfac213b013e5757fb4b892484bb0e5efb97bd1f157dd"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 35,
+      "file": "frames/Zombie_Attack_Right.035.png",
+      "sha256": "c6466484df434eef696f9a43e87d376119c559d5db56f0c01b434e25949a1b42"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 36,
+      "file": "frames/Zombie_Attack_Right.036.png",
+      "sha256": "872ddb218cc34d364403ddd996061a950543533c0b57f63b867ce4fc1371e37c"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 37,
+      "file": "frames/Zombie_Attack_Right.037.png",
+      "sha256": "c800771dde431df3f7dddcc91376bca7a79f4e1de9adf7c6f38b28b2b5c2419a"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 38,
+      "file": "frames/Zombie_Attack_Right.038.png",
+      "sha256": "51048b434a6357dacb11a4d7ae8f312f8d304ef379db84c4ba803bbf5fdad12e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 39,
+      "file": "frames/Zombie_Attack_Right.039.png",
+      "sha256": "87de427c910a4fb2f94291a003b3534fc27426559db40297c282dd897c9e645f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 40,
+      "file": "frames/Zombie_Attack_Right.040.png",
+      "sha256": "a04daf33a04f43a75e5a293ac050aab31298786464aa83739eb1ee9207683763"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 41,
+      "file": "frames/Zombie_Attack_Right.041.png",
+      "sha256": "bfb3e3ef38a0c0d0a87b53405c8f502cc0671cfe9ce4e34ee89c1641e6e3506e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 42,
+      "file": "frames/Zombie_Attack_Right.042.png",
+      "sha256": "a42cd1d2b7c0a71b950a71ad78c80aad09f247281d3b916046207b1ee4958a79"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 43,
+      "file": "frames/Zombie_Attack_Right.043.png",
+      "sha256": "73401b201f9db53d144d99fecbd5a840b2e897d8352d35a16453ddf018230170"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 44,
+      "file": "frames/Zombie_Attack_Right.044.png",
+      "sha256": "2199cda2a05b519857db95efd18fff459f79efcea9e9505e6925ed6b68c27540"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 45,
+      "file": "frames/Zombie_Attack_Right.045.png",
+      "sha256": "40ed0544c350e843058322a3d0020b836e3646892e83bd90febc0fe24480c07f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 46,
+      "file": "frames/Zombie_Attack_Right.046.png",
+      "sha256": "f7bbdaa4bb6f0fa8f8dbf46e9135acec72bbe4d5508932165b54480f08cbc6bb"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 47,
+      "file": "frames/Zombie_Attack_Right.047.png",
+      "sha256": "1ccdeec1baff0ff2339adb17b49ce8d483a1c3f91389bcd04f1165e19e8d3064"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 48,
+      "file": "frames/Zombie_Attack_Right.048.png",
+      "sha256": "fbcb2753e979cbff7db17fc51aa9332dbe686e3d62f2e3eee4c3272aa9934e4c"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 49,
+      "file": "frames/Zombie_Attack_Right.049.png",
+      "sha256": "a281def33217ea030aed30408915f0800358a8f20e67b9af9db9f9c536c0c8a2"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 50,
+      "file": "frames/Zombie_Attack_Right.050.png",
+      "sha256": "8fbb40a3b812ca65fbe2fa5d9e80a16c91b35063e8dc68857640e8ce62ca35dc"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 51,
+      "file": "frames/Zombie_Attack_Right.051.png",
+      "sha256": "7ead57e63b59b5878194651f2a5d779472fe77b393354e13fa80193b66e811c1"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 52,
+      "file": "frames/Zombie_Attack_Right.052.png",
+      "sha256": "80b4928d1a22f609c251d0711829a74bd6c98cb4f9689e83dce35b9fb705ff23"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 53,
+      "file": "frames/Zombie_Attack_Right.053.png",
+      "sha256": "8b3d3de75a94517418b9de9be7b032f32a82e9180391fe910364dc42ce81ed39"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 54,
+      "file": "frames/Zombie_Attack_Right.054.png",
+      "sha256": "ea5dc30540a49e83765afc88330058bb5848965a3974c4b77e9bfab8e13304b6"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 55,
+      "file": "frames/Zombie_Attack_Right.055.png",
+      "sha256": "81333ff10362e2c4bef69cf4fa22f5c145b6af7771bd62da4c66f10c6d5b7609"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 56,
+      "file": "frames/Zombie_Attack_Right.056.png",
+      "sha256": "0b5a3d96c8e8e1ea9abe96edf94007f834d1be072583f9e26f54417209c65f3f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 57,
+      "file": "frames/Zombie_Attack_Right.057.png",
+      "sha256": "bc8137f725064d6ca21fe7e25730924cb8546bf8bc2583364d0a292f8af7fca0"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 58,
+      "file": "frames/Zombie_Attack_Right.058.png",
+      "sha256": "463ce1ac1115c28e90fe601f5d94f897370ee9d77e4fc0e9bb5d578a20a5661e"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 59,
+      "file": "frames/Zombie_Attack_Right.059.png",
+      "sha256": "a25c978078c546ac6234ea9162e8600df6f2fbf51359f15c114bf25927648f5f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 60,
+      "file": "frames/Zombie_Attack_Right.060.png",
+      "sha256": "53ffb31a8cb67df61ab802864f24b8c9632d7eae93b8d2f4e2bd70cb1633480c"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 61,
+      "file": "frames/Zombie_Attack_Right.061.png",
+      "sha256": "54ee33e1874d457792440456b503b123d892a05adc170a12260875f9ca3625f6"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 62,
+      "file": "frames/Zombie_Attack_Right.062.png",
+      "sha256": "7b5f8217a48f38baf31f1c5f0b348cebcba373cef4b825ac7f84d7aaab80f06d"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 63,
+      "file": "frames/Zombie_Attack_Right.063.png",
+      "sha256": "9226a47cc05fdc76544bf8b78d1a4fb14503a04ad4b960dd35f40322aa18c5e3"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 64,
+      "file": "frames/Zombie_Attack_Right.064.png",
+      "sha256": "e085146616c55eb6dc9e1a972a572221656452dde9f71ea22bfe97ddd310d363"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 65,
+      "file": "frames/Zombie_Attack_Right.065.png",
+      "sha256": "2a13bdfe62419b7a49fd009adb453f06c0ad27d46b00d6af97e22c5f13758b20"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 66,
+      "file": "frames/Zombie_Attack_Right.066.png",
+      "sha256": "711abf60cc9d547f1cc5fc609795e1cd79c5602d59bc9fb522baea43930572d3"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 67,
+      "file": "frames/Zombie_Attack_Right.067.png",
+      "sha256": "65c2da22b7d32b83d338fee48c24e20eca8c1d00202296f7d7222766457502df"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 68,
+      "file": "frames/Zombie_Attack_Right.068.png",
+      "sha256": "447553c3c562159019f1e71e5740374157e6351c65a9b1ca68c3fc50b8db74cc"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 69,
+      "file": "frames/Zombie_Attack_Right.069.png",
+      "sha256": "3a0754c7b6acc4fc08eb013106128ca511da3cc7c3e91edff3d2c9e2593fdd97"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 70,
+      "file": "frames/Zombie_Attack_Right.070.png",
+      "sha256": "5061687244c640654cfcc71efc70530ce7027839b1ac851df28028fe9e5bfdc9"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 71,
+      "file": "frames/Zombie_Attack_Right.071.png",
+      "sha256": "dfdab2c49d5af80e7a7adfd6fb3589c7b7c5e37b787cf2fe44ea5c6b2515b218"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 72,
+      "file": "frames/Zombie_Attack_Right.072.png",
+      "sha256": "2a731f2ed614b91383ab9c1b9049790c33a42bbcaf5f4fec8a6d8cf9f3823419"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 73,
+      "file": "frames/Zombie_Attack_Right.073.png",
+      "sha256": "ed9913be37459ea17775141c8c2eec338c45da732bbdb8896ffb89d0b962d692"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 74,
+      "file": "frames/Zombie_Attack_Right.074.png",
+      "sha256": "adafeca6118b5d09e4b5581039c88a27a2ae5ee5ceb460350c9f01363866392f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 75,
+      "file": "frames/Zombie_Attack_Right.075.png",
+      "sha256": "2f6f25c87f87a78f09dfc1189c646411c10fdb387ef93011c5aceb657d075a38"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 76,
+      "file": "frames/Zombie_Attack_Right.076.png",
+      "sha256": "9c9d6800f61f54112b9f4994a634627f46d2a3915ce0a64411500bb4e4c11ed9"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 77,
+      "file": "frames/Zombie_Attack_Right.077.png",
+      "sha256": "346686709b7ef0316373f50f3d197eaf0a10b739a76803bbdf728f5259314432"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 78,
+      "file": "frames/Zombie_Attack_Right.078.png",
+      "sha256": "add1fc727d64f7ce3c845abb46d2af08196e72d68c84849d5972b2f0e8bc2c7f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 79,
+      "file": "frames/Zombie_Attack_Right.079.png",
+      "sha256": "44d9ab9929a9d4df8589cadedefcd5a5c6571ef75bf8771f64f927108fe6a982"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 80,
+      "file": "frames/Zombie_Attack_Right.080.png",
+      "sha256": "d03e1a3d8d5258adea82b77c495761eed2365672d59066a6a282910a552e6016"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 81,
+      "file": "frames/Zombie_Attack_Right.081.png",
+      "sha256": "b6a27fd762e934443b0987326cc84ce1ec7e0dafda6a708f729b81772fb97304"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 82,
+      "file": "frames/Zombie_Attack_Right.082.png",
+      "sha256": "753e9afc12ef3fb20785268ec0b2185a3e3e3fa3336158044bfaa0be9730802f"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 83,
+      "file": "frames/Zombie_Attack_Right.083.png",
+      "sha256": "c9dfe079f7eca2dfa502e6bdfb9a0833510a293c1eff7b5e1c33e669b7a73e30"
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "frame": 84,
+      "file": "frames/Zombie_Attack_Right.084.png",
+      "sha256": "aea81118b5e302381678cbd6038cecc140db1f7642e2b9300ae69ca2aad87c9c"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 0,
+      "file": "frames/Zombie_Attack_Both.000.png",
+      "sha256": "42480ac1b902af262bae49894025cb0658e4b6357f1e2f8ef17a50ef8359fdf8"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 1,
+      "file": "frames/Zombie_Attack_Both.001.png",
+      "sha256": "ec48c923c8afa8e83d774214d8728406fc0e8a8e9ecd50d418810f1ec04bf9e1"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 2,
+      "file": "frames/Zombie_Attack_Both.002.png",
+      "sha256": "92127abb51e0bbd149f232bf5a484562b86a232c5759f61534767d4cbe8a53ba"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 3,
+      "file": "frames/Zombie_Attack_Both.003.png",
+      "sha256": "6cb1d35a0ea1e22141804b25b1f375e1a474995f94937a175afcc2d766d1a0a2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 4,
+      "file": "frames/Zombie_Attack_Both.004.png",
+      "sha256": "edee86036458b7d184b27bcb73f6ba855d5b4169b0f76dddd82e4692861150e7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 5,
+      "file": "frames/Zombie_Attack_Both.005.png",
+      "sha256": "6cd19e20f01326293a781f8a21788c7f3a4e1abd3fac032237c2b3aa1cc24fe5"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 6,
+      "file": "frames/Zombie_Attack_Both.006.png",
+      "sha256": "7761eaf91bc58c4c19771f0a610fe338c785292b7c5f6158ca5c7a0b980da56c"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 7,
+      "file": "frames/Zombie_Attack_Both.007.png",
+      "sha256": "433d9d3a9222f91b974308302c2bb4061bfee61adeefae95dc9269dc77cbd966"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 8,
+      "file": "frames/Zombie_Attack_Both.008.png",
+      "sha256": "3e9045199511a9759103e80687a4ca9138555364914a1023897b56959cc79283"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 9,
+      "file": "frames/Zombie_Attack_Both.009.png",
+      "sha256": "8570412b03134a4710cc6a1e0f801d7ad9aad09aac80fe26500c569e196bfd5e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 10,
+      "file": "frames/Zombie_Attack_Both.010.png",
+      "sha256": "2cadf36f33ba535c13b5e2d8a6a2b867c61b93039be0097c89de04cad7f4c58a"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 11,
+      "file": "frames/Zombie_Attack_Both.011.png",
+      "sha256": "220873c9df34ffb270960428cbd1a13263f9c37f0d7581e9a55a81bc277497a5"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 12,
+      "file": "frames/Zombie_Attack_Both.012.png",
+      "sha256": "f96bc98ea0c75ca7469e5af1a830d7040516d89341f75633217ac026203770a5"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 13,
+      "file": "frames/Zombie_Attack_Both.013.png",
+      "sha256": "d156a55f45359e919388b10ef5c715d083b4295fe5ea58a3b694901a3e5063a5"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 14,
+      "file": "frames/Zombie_Attack_Both.014.png",
+      "sha256": "522b7457091eeb3952c245512888c6f6255a4931a8cdba14fcaaa88769336b4b"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 15,
+      "file": "frames/Zombie_Attack_Both.015.png",
+      "sha256": "d814d2b137a23367bfc8793e2ff4678ddfb30a60d9ff05c94fb0f39e16925bde"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 16,
+      "file": "frames/Zombie_Attack_Both.016.png",
+      "sha256": "14ad070e465646f01c19e9fe5951f9649d6ae80bb24fd5d5fe5340d1e26e7882"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 17,
+      "file": "frames/Zombie_Attack_Both.017.png",
+      "sha256": "83964cc18b25c5764c7016a6aa115d0abe6fd4564014f51b002e0a8c92ea914f"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 18,
+      "file": "frames/Zombie_Attack_Both.018.png",
+      "sha256": "1a8e673e264a92da124fed4900d3ccf7f8b4e0c0a480c7d67b448326635e9e57"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 19,
+      "file": "frames/Zombie_Attack_Both.019.png",
+      "sha256": "8bbbfcc1fc5542ff379bcecef88f353bfd6a71f8cdb40dd294c26f5e0b3ee9a7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 20,
+      "file": "frames/Zombie_Attack_Both.020.png",
+      "sha256": "fd79ecb7c1c94821a2be46bc50f05b6c163972a7440514450a43cd0b13029d09"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 21,
+      "file": "frames/Zombie_Attack_Both.021.png",
+      "sha256": "020d8295725c8d3cc5a34b59b7dded9183f34a12b090323bb61dec019f9611bf"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 22,
+      "file": "frames/Zombie_Attack_Both.022.png",
+      "sha256": "bb84866ede1b972aef61fd6c48d909990bb0d1619bac5749fad9c0f96a0121c2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 23,
+      "file": "frames/Zombie_Attack_Both.023.png",
+      "sha256": "de93f5aabccdc33046841700d75e4697dff1b7b64d8da63c7ff0433ca3eba14a"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 24,
+      "file": "frames/Zombie_Attack_Both.024.png",
+      "sha256": "f9726028fda91e14858035f2fb915fed5074ff559b283fa2778fde9469c5b9a4"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 25,
+      "file": "frames/Zombie_Attack_Both.025.png",
+      "sha256": "1f74231ac771a27613de81c3cc7ced73ab74e6b17d7e5d4930041cfe4fb1eaad"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 26,
+      "file": "frames/Zombie_Attack_Both.026.png",
+      "sha256": "78ae7648d55d006be93228d8e0d21c63e0393f6a39e791b0e00db0d758df2340"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 27,
+      "file": "frames/Zombie_Attack_Both.027.png",
+      "sha256": "eed8058bf046f738388280bdcdf0d346d31fa34c1ca62907ecd05bef4e42bb06"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 28,
+      "file": "frames/Zombie_Attack_Both.028.png",
+      "sha256": "0bdbe798d88f8ee085bf26575de1c0e9d5cf332cffb23cb43d5e144cb6b8a545"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 29,
+      "file": "frames/Zombie_Attack_Both.029.png",
+      "sha256": "6bedd7c608d1df729d30a1af262dc500397d357f305738c378047aa0af4f2e1d"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 30,
+      "file": "frames/Zombie_Attack_Both.030.png",
+      "sha256": "4644d9962dfd1535360d0857b9db14d78f9ef4147d746637f64bfe39fa9d7ebb"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 31,
+      "file": "frames/Zombie_Attack_Both.031.png",
+      "sha256": "cc1d96273932c6c6f6015b88c93e4cbd5f7354bb893d86bf91067619065f05f8"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 32,
+      "file": "frames/Zombie_Attack_Both.032.png",
+      "sha256": "871bc2f9df528da5d2b91bca02af85885c094231e5f3ba1bffac536773a12f7e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 33,
+      "file": "frames/Zombie_Attack_Both.033.png",
+      "sha256": "08b332ea5cf865031fc04b2e18333fb155c704922ac06328aab17ff522cda539"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 34,
+      "file": "frames/Zombie_Attack_Both.034.png",
+      "sha256": "4ec8237a855be5312c38ae377b54a9f003ffb04b69f216a949ea4283c4b848d8"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 35,
+      "file": "frames/Zombie_Attack_Both.035.png",
+      "sha256": "82f8445444c946a733f065e35fdf052f2b49b9ed74aa729abc296305068e09ec"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 36,
+      "file": "frames/Zombie_Attack_Both.036.png",
+      "sha256": "9c4c7471cdbba36f12ad3f8254d3f61de1ea452b6de2780364c5ae30bbc29135"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 37,
+      "file": "frames/Zombie_Attack_Both.037.png",
+      "sha256": "1f5fa9079faadda5c32f048503784d62341cc016a824a4c6b4c3b1f56af6336f"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 38,
+      "file": "frames/Zombie_Attack_Both.038.png",
+      "sha256": "7b82669eb51beabf085c898b64bbc8bad3e5f8e55d8391dfdb9d321aa6225cb2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 39,
+      "file": "frames/Zombie_Attack_Both.039.png",
+      "sha256": "d734b601b059f7e9d93bf26bf5f755e64c7be20f29a2d7afea42bdd9c6e834cc"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 40,
+      "file": "frames/Zombie_Attack_Both.040.png",
+      "sha256": "1037d8d98f5d266ca552bbf78402f65dd14b332474fbf703baa0e2286286b7a0"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 41,
+      "file": "frames/Zombie_Attack_Both.041.png",
+      "sha256": "e1036ee1af43f09396e8dafdbc4090e380502914cf3b32b9fc7265dda21365a4"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 42,
+      "file": "frames/Zombie_Attack_Both.042.png",
+      "sha256": "f5ab827a90bef5c3420cabf4db524f5b25a28924ab37461f76d2d8fa15655229"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 43,
+      "file": "frames/Zombie_Attack_Both.043.png",
+      "sha256": "a9e568fcf0806b4d146ec347f69c634710d0e5b975c69c57bbba5feb6001c87d"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 44,
+      "file": "frames/Zombie_Attack_Both.044.png",
+      "sha256": "6078a6a2cfd996fc746122209708c1751bb437c30d838a3194978180bca17383"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 45,
+      "file": "frames/Zombie_Attack_Both.045.png",
+      "sha256": "515694ac4e12f4a90d5531840ce0eabe78e8e1e943089171f0677290361edbc4"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 46,
+      "file": "frames/Zombie_Attack_Both.046.png",
+      "sha256": "ba12a2cd000ac59847f40c9647fdc22fd6b4fa6a8ca82523697033816ec48a8e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 47,
+      "file": "frames/Zombie_Attack_Both.047.png",
+      "sha256": "9f58d00b0e07b8f4c93317bdd2c4d60101928b4edc990ff1c615199bce4b8862"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 48,
+      "file": "frames/Zombie_Attack_Both.048.png",
+      "sha256": "ea2788a664719a1ed2242368c51d8b84d860e96c23499882e1e4bccc31ba7f07"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 49,
+      "file": "frames/Zombie_Attack_Both.049.png",
+      "sha256": "711bc5b1778ba4f8f82d0b897aa26cb18a0d3c17dd57554e774df2f54af6bad7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 50,
+      "file": "frames/Zombie_Attack_Both.050.png",
+      "sha256": "f4fe19879751733dd1e0cf683bcaf9309161caca19f7e5cb1a6715befcdb522d"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 51,
+      "file": "frames/Zombie_Attack_Both.051.png",
+      "sha256": "9c8b5a7791d52808cbc59f75e152f6d2ba6864d68b2af7f0f2462da45c23e9cb"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 52,
+      "file": "frames/Zombie_Attack_Both.052.png",
+      "sha256": "27ecd0148eb677322821a4d8b0c1802a0c00b694731eccc14fcf3efed7a7a80e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 53,
+      "file": "frames/Zombie_Attack_Both.053.png",
+      "sha256": "e196509e3336c7b0414ce562c8d0de16e08ee52128dd87bb79d6e3a507a264dc"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 54,
+      "file": "frames/Zombie_Attack_Both.054.png",
+      "sha256": "2a18658965fae216101ae16188be9a7f3a02585ab305bd72c5d9011996f5829c"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 55,
+      "file": "frames/Zombie_Attack_Both.055.png",
+      "sha256": "94e063e5297ce36694111996aa158404e88df3a3d1ff07ed540b6c984ac0ebae"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 56,
+      "file": "frames/Zombie_Attack_Both.056.png",
+      "sha256": "0ea01babe85248f88ca0be2221b36cdd6f782f7cf3f587512ae167dad461c5de"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 57,
+      "file": "frames/Zombie_Attack_Both.057.png",
+      "sha256": "a906f714de0cc97179e5cc1694c0e15abc490dc23a037f19302bb66e64f322d7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 58,
+      "file": "frames/Zombie_Attack_Both.058.png",
+      "sha256": "2e708cee024743b63f183fb266cd10c2210b1f3010482ebaaf5c8bd1b98f8b42"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 59,
+      "file": "frames/Zombie_Attack_Both.059.png",
+      "sha256": "9a6e677072977fd00dc59bce01445594ad2423f2bcb92d0c20a7f32b40fedf5f"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 60,
+      "file": "frames/Zombie_Attack_Both.060.png",
+      "sha256": "01821c47d487efbf018f735738909255955d6241aa8274966ced2a5174b7dd20"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 61,
+      "file": "frames/Zombie_Attack_Both.061.png",
+      "sha256": "4b8feb3c83d027ac556c001e9c59d55e76ba5b11b0e3154ebed08630dd40e291"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 62,
+      "file": "frames/Zombie_Attack_Both.062.png",
+      "sha256": "db75491c196832b51613a5b07930b9ae98a5d3963368c3c3bd34ea187dd2c822"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 63,
+      "file": "frames/Zombie_Attack_Both.063.png",
+      "sha256": "54d0753a1fe613b07e88651a35cec23c12214e5e1421a89c4d4397f002d85aa9"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 64,
+      "file": "frames/Zombie_Attack_Both.064.png",
+      "sha256": "46615f195eadfab7d7b2b44d767b8a8a1d5feeb416444f25e4f1551dcb68f3e7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 65,
+      "file": "frames/Zombie_Attack_Both.065.png",
+      "sha256": "420c2c72bd2388041ee309fddc4f9e1c53e22920f270ebe3d513d4719b6f00ff"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 66,
+      "file": "frames/Zombie_Attack_Both.066.png",
+      "sha256": "ffddd908febf1090566b0a7d9a4f54276b87feebdfeaa0c90f2db17542cf9934"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 67,
+      "file": "frames/Zombie_Attack_Both.067.png",
+      "sha256": "727737296e07ddc355b6b1c85fb76e67b2d5883ce878f2f4ff595c755082fc7d"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 68,
+      "file": "frames/Zombie_Attack_Both.068.png",
+      "sha256": "e0cc1b06105c111ca144206553db6cbd9479ecfb4075f4ae9086cf6f75704dbb"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 69,
+      "file": "frames/Zombie_Attack_Both.069.png",
+      "sha256": "719fd11b975c7651e9b716e92487ac38e4a6384268749a37007c048cd5fa485e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 70,
+      "file": "frames/Zombie_Attack_Both.070.png",
+      "sha256": "4dc4e14972ae276db2fcc8a6fd08470fb57fad659388b3f705d5fc6c5fe83759"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 71,
+      "file": "frames/Zombie_Attack_Both.071.png",
+      "sha256": "8f42560825825734c1e02b5b967b8a4444dfdaa0f7d7b50dae2eef97561ebd14"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 72,
+      "file": "frames/Zombie_Attack_Both.072.png",
+      "sha256": "16bd6f9bfa1ff063273f3a6318c81e114d1d620b0ae9ffab65c42272c1119896"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 73,
+      "file": "frames/Zombie_Attack_Both.073.png",
+      "sha256": "e15154b3423b52f865c7d9ff369d65c8886862f7952c7aeafa8dc7fb8ad53ed2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 74,
+      "file": "frames/Zombie_Attack_Both.074.png",
+      "sha256": "a3443a68c15507520e3edcae8bc1a5d949a9bebd450ac9a18a872cd3748a5cf9"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 75,
+      "file": "frames/Zombie_Attack_Both.075.png",
+      "sha256": "796cf50b33a6e350312c503230d8a54172ca36c9a6f26f1cd90240e52b78340c"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 76,
+      "file": "frames/Zombie_Attack_Both.076.png",
+      "sha256": "8753438e3b9e498be9132755d35ff96fc8ee262373f2038c55386352f73c30de"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 77,
+      "file": "frames/Zombie_Attack_Both.077.png",
+      "sha256": "9d38dcaa621cfaeb457f6fd82870ed5dad9c639eb275fd1a64f79ac2c19741d5"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 78,
+      "file": "frames/Zombie_Attack_Both.078.png",
+      "sha256": "467b29dc433a64cf61118f414245c84a45f8b5a8cd7288e90230612891f7f4cb"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 79,
+      "file": "frames/Zombie_Attack_Both.079.png",
+      "sha256": "f5c88d0c120e1a1404bd801c706024167c584a24ca1e1341521952b3fd5574f0"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 80,
+      "file": "frames/Zombie_Attack_Both.080.png",
+      "sha256": "5fa8d915740813c859f1323e43a11b02225ca7532a7adcec4e5db47249d58acd"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 81,
+      "file": "frames/Zombie_Attack_Both.081.png",
+      "sha256": "f55c385099a00df79f8a77ffaa344d31b85fb47e4e9b14a46c9f197fc02a13bb"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 82,
+      "file": "frames/Zombie_Attack_Both.082.png",
+      "sha256": "3926266eb449d5e1c43e75f0a745a67a24d5a0ea79aa20eeaf278e6b6944c7b2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 83,
+      "file": "frames/Zombie_Attack_Both.083.png",
+      "sha256": "7e1d02b16a0dfd3c014b533330c17f87103d80c072c65ab77d3c462a5e9b46be"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 84,
+      "file": "frames/Zombie_Attack_Both.084.png",
+      "sha256": "526a5cb5cc67353e461a978568002fd307ab20649e1222b8076aeb11b96f2cc8"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 85,
+      "file": "frames/Zombie_Attack_Both.085.png",
+      "sha256": "4b4d17d4899243a5fab6a31c83ba1010f675755cd9ae795a6798d081ab473bec"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 86,
+      "file": "frames/Zombie_Attack_Both.086.png",
+      "sha256": "73f0f2f98ff55f6492ef775f1a02402301288105760151437cedd984b8398bc7"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 87,
+      "file": "frames/Zombie_Attack_Both.087.png",
+      "sha256": "dfb04efc54f93db7ac36a6bf830b6305998e0edf99d54c856e7976be927cfeae"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 88,
+      "file": "frames/Zombie_Attack_Both.088.png",
+      "sha256": "33790fe036d890a34c5155463eaea14591f4f7a7314d8fb6a46269bcad2934ae"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 89,
+      "file": "frames/Zombie_Attack_Both.089.png",
+      "sha256": "6dc9214b2a14188fac28bd7b6e269a792d0491236b9ebd226e9a7f33ee0536a8"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 90,
+      "file": "frames/Zombie_Attack_Both.090.png",
+      "sha256": "df21a2b3fff6b7126a82a64e06af88ba09780375131146de39ef5fd07ebd4f4f"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 91,
+      "file": "frames/Zombie_Attack_Both.091.png",
+      "sha256": "f7da2a1abf05fc0966e61ea1aa054d8b91a180b4e4e40d67bc587efb5d6b6d70"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 92,
+      "file": "frames/Zombie_Attack_Both.092.png",
+      "sha256": "526423978f6994cf3d7ede9a8714cdfa1092a3d4e2cb34999530f6e3ad17ff7e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 93,
+      "file": "frames/Zombie_Attack_Both.093.png",
+      "sha256": "bfa06fbee33dbc697b545615531110583676ab577195acb1a83ea4ccc0605ea2"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 94,
+      "file": "frames/Zombie_Attack_Both.094.png",
+      "sha256": "7dec82120dd8c3ff46fc515f62c41593d8728c712b48d5d8daa33435e61e982e"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 95,
+      "file": "frames/Zombie_Attack_Both.095.png",
+      "sha256": "a8d62147b77b98164a370d751762bfbacd35f990e879b3bec0d1caeb1d759808"
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "frame": 96,
+      "file": "frames/Zombie_Attack_Both.096.png",
+      "sha256": "501f8d04b6eaaa3d97d7edabe430b9f472e19a5b3940d0a6e3be61558fe43875"
+    }
+  ],
+  "limits": [
+    "Visual review checks rendered silhouettes, joint continuity and visible skin/clothing behavior at the declared resolution. It is not an exhaustive microscopic visibility guarantee.",
+    "Mouth close-ups, live target interaction and dynamic ragdoll behavior have separate recorded reviews.",
+    "Numerical mesh and fabric checks include half-frame samples; these body atlases review integer frames."
+  ]
+}

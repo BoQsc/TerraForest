@@ -1,0 +1,166 @@
+{
+  "status": "complete",
+  "passed": true,
+  "reviewer": "r4_lab_demo",
+  "reviewed_utc": "2026-10-18T20:20:42.879075+00:00",
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "source_sha256": {
+    "assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+    "assets/Zombie.r2.glb": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "assets/zombie.revisions.json": "cfd9305dc79be85fcbe906b38f4254543acb0c7900b9053395353816244564a6",
+    "main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+    "main.tscn": "40019e7ce75137d1cd93f814dfb247ceae49fcf9c338255b728fb825ba6941d3",
+    "project.godot": "e2174af57c2b531154b74ed46a7f2adc54365b4adb9d7f53d79f9a0f8fcfde8a",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+    "scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5",
+    "tests/r4_demo_movie.gd": "b932d2068d75a3600221b9a2192d54d619534d45aab219c045a200b7f0cb4db0"
+  },
+  "movie_file": "preview/Zombie.r4.demo.mp4",
+  "movie_sha256": "f2064f6981ade6076316d8df8b604062c4e4f703c5dc6628db334301270afdc8",
+  "movie_duration_seconds": 28.633333,
+  "native_movie_frames": 859,
+  "decoded_frames_verified": 859,
+  "visually_reviewed_checkpoint_count": 16,
+  "method": "Direct visual inspection of all sixteen PNG checkpoints decoded from the final H.264 movie; complete frame decoding and native source/import checks are recorded separately. This is sampled movie review, not a claim that all 859 movie frames were visually inspected. Every authored integer animation pose is covered by the independent four-view atlas review reports.",
+  "checkpoint_image_source": "Decoded from the final movie at the listed zero-based native_movie_frame values; PNGs retained in inspect/r4_demo_movie_frames.",
+  "camera_repair": "The initial movie review found the platform hiding the jump feet/obstacle. Only the capture harness jump camera was adjusted to yaw -0.60, distance 3.20 m and pitch 0.14 before a complete native re-record. All sixteen final movie checkpoints were then viewed again; no product/fixture/physics retiming or changes occurred.",
+  "checkpoints": [
+    {
+      "file": "frame.00.png",
+      "native_movie_frame": 0,
+      "seconds": 0.0,
+      "sha256": "53bb3d6142a766db24fb0e747202e1410060c0546b26f413451a33094028bb7b",
+      "reviewed": true,
+      "notes": "Actual F1 startup is visible with Zombie.glb, four clips, the Original/Main selection and the Run R4 demonstration button. Whole subject and controls are readable."
+    },
+    {
+      "file": "frame.01.png",
+      "native_movie_frame": 46,
+      "seconds": 1.5333333333333334,
+      "sha256": "1394e6dbec17322325851118130f41e31d792b58f0136cf778cf02212c09905d",
+      "reviewed": true,
+      "notes": "Actual Run button has selected R4, the loaded label shows Zombie.r4.glb and 15 clips, and live pursuit begins. Whole walking subject is visible; the far target partly lies under the left HUD at the start of pursuit."
+    },
+    {
+      "file": "frame.02.png",
+      "native_movie_frame": 147,
+      "seconds": 4.9,
+      "sha256": "4c4e57475808e41d2d28a200ae32f4ee67f2063ade46b220b35676e708dd9bde",
+      "reviewed": true,
+      "notes": "Bite contact is indicated by the orange pad and first contact/86 HP. The head, bent arms and whole stance are visible; the target partly hides the mouth from this three-quarter view, with detailed surface contact covered by the separate four-angle outcome review."
+    },
+    {
+      "file": "frame.03.png",
+      "native_movie_frame": 194,
+      "seconds": 6.466666666666667,
+      "sha256": "eb95c4ae0a4a609cc280aa50e23d8c123f56bf33d35733a4f85edece74765e92",
+      "reviewed": true,
+      "notes": "Left-arm strike reaches the exposed rectangular pad, with the other arm bent separately. Orange contact feedback, left-attack label, two contacts and 76 HP agree."
+    },
+    {
+      "file": "frame.04.png",
+      "native_movie_frame": 241,
+      "seconds": 8.033333333333333,
+      "sha256": "845cd9cf36856a701f9ba3a7fcaa678607b86b34ad25c27dde2971fa6c049fe7",
+      "reviewed": true,
+      "notes": "Right-arm strike uses the opposite arm and distinct torso/stance; right-attack label, orange contact feedback, three contacts and 64 HP agree."
+    },
+    {
+      "file": "frame.05.png",
+      "native_movie_frame": 292,
+      "seconds": 9.733333333333333,
+      "sha256": "fddaccd212682f8f800e71ca76d3a8ff767358f877824793eb130adefbb0f255",
+      "reviewed": true,
+      "notes": "The double-hand strike presents both arms forward and a braced lower body, with both-attack label, four contacts and 46 HP. Shirt and elbow silhouettes are coherent."
+    },
+    {
+      "file": "frame.06.png",
+      "native_movie_frame": 348,
+      "seconds": 11.6,
+      "sha256": "84702a96c44c27c78ec9ded19e9fab3a1e6a23afd23577a2eba76f7bb1198d02",
+      "reviewed": true,
+      "notes": "The corrected open jump angle now shows the complete body, both boots and the yellow 10 cm obstacle. The platform and ladder no longer hide the feet; compact bent knees and raised arms read as a small hop."
+    },
+    {
+      "file": "frame.07.png",
+      "native_movie_frame": 421,
+      "seconds": 14.033333333333333,
+      "sha256": "ad215a8f9891be46c1938802546b212238ac239abc787f5daa87be29c827445e",
+      "reviewed": true,
+      "notes": "Ladder traversal shows both arms, the offset hand reaches, both boots and the rungs. The target remains behind the ladder without hiding the main body; the climb action label matches."
+    },
+    {
+      "file": "frame.08.png",
+      "native_movie_frame": 535,
+      "seconds": 17.833333333333332,
+      "sha256": "6e022dca879a9cd0df953445c2871cb6562cc1bd346aaa7153463f49d0fbc7a6",
+      "reviewed": true,
+      "notes": "After one-leg loss the live subject is prone; the detached leg is moving physically in the foreground and the retained leg remains attached. The status names the severed left thigh."
+    },
+    {
+      "file": "frame.09.png",
+      "native_movie_frame": 603,
+      "seconds": 20.1,
+      "sha256": "af6a3f339e602663a508d14487d7c8e068430d14a2e541bf76b93aaff69aa383",
+      "reviewed": true,
+      "notes": "One-leg crawl pursuit shows alternating arm support, the intact leg, detached leg and low target. The target has moved relative to the subject, and the live crawl label matches."
+    },
+    {
+      "file": "frame.10.png",
+      "native_movie_frame": 638,
+      "seconds": 21.266666666666666,
+      "sha256": "576d2a7ac0f637c01a8e6a589949e7b01b5f41feb2dc543ea813d2754071c5ca",
+      "reviewed": true,
+      "notes": "One-leg crawl bite reaches the lowered sphere, with five contacts and 36 rounded HP. The mouth remains outside the bulk of the target while the hands brace the body."
+    },
+    {
+      "file": "frame.11.png",
+      "native_movie_frame": 704,
+      "seconds": 23.466666666666665,
+      "sha256": "e83e44b7a30a6d6dd7c24515425e5e5c09324c54d57f75e9f6633cd9bc102d2e",
+      "reviewed": true,
+      "notes": "After the second leg loss, the body continues crawling with two detached leg chains behind. Low target, arm positions, missing-leg count and crawl stage are readable."
+    },
+    {
+      "file": "frame.12.png",
+      "native_movie_frame": 764,
+      "seconds": 25.466666666666665,
+      "sha256": "0356b019175c2601228b59e8edaa58131c2ebe536835290291b879a4afcf2b98",
+      "reviewed": true,
+      "notes": "The second prone bite shows visible orange target contact feedback, six contacts and 26 rounded HP. The body and both detached leg chains remain visible."
+    },
+    {
+      "file": "frame.13.png",
+      "native_movie_frame": 786,
+      "seconds": 26.2,
+      "sha256": "5b8d4bee07e397428a18b65c0be26234b21103a4caa178cd556ae9a767800241",
+      "reviewed": true,
+      "notes": "The completed-cycle state displays Crawl Idle and the four-second restore countdown, preserving six contacts and the final target health."
+    },
+    {
+      "file": "frame.14.png",
+      "native_movie_frame": 824,
+      "seconds": 27.466666666666665,
+      "sha256": "3c4d304da38904cd3ad0dc22b807b54cef3d376994fdfbbd5ad42bedf45d7daf",
+      "reviewed": true,
+      "notes": "Actual Stop button has ended the demo, hidden the target and restored the Run button with orbit/frame inspection available. The existing prone subject and detached legs remain in the scene."
+    },
+    {
+      "file": "frame.15.png",
+      "native_movie_frame": 858,
+      "seconds": 28.6,
+      "sha256": "aaeb33d66a000623f5fc599d9456ad210c7f3c48c0f75584fc5f0a574e76c749",
+      "reviewed": true,
+      "notes": "The final decoded frame remains a valid stopped inspection view with the Run button available and a continuing prone idle pose; no blank or truncated final frame."
+    }
+  ],
+  "findings": [
+    "All action/stage HUD labels match the sampled live poses.",
+    "Four standing attack variants, actual hop, ladder and one-/both-leg crawling are visible in the final recording.",
+    "Six actual validated contacts occur during a completed cycle; actual Run and Stop button events are recorded.",
+    "The final jump view resolves both feet and the obstacle; detailed contact and limb inspection is supplemented by all 44 native multi-angle outcome stills."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+	"asset_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+	"check_count": 10,
+	"checks": [
+		{
+			"check": "Zombie_Crawl_Idle is originally looping",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Zombie_Crawl_Idle holds exact endpoint after8ticks",
+			"details": {
+				"frame": 120,
+				"loop": 0,
+				"position": 2.0
+			},
+			"passed": true
+		},
+		{
+			"check": "Zombie_Crawl_Idle remains nonlooping while paused",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Zombie_Crawl_Idle restores loop and resumes from start",
+			"details": 0.0333333333333333,
+			"passed": true
+		},
+		{
+			"check": "Zombie_Climb_Ladder is originally looping",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Zombie_Climb_Ladder holds exact endpoint after8ticks",
+			"details": {
+				"frame": 120,
+				"loop": 0,
+				"position": 2.0
+			},
+			"passed": true
+		},
+		{
+			"check": "Zombie_Climb_Ladder remains nonlooping while paused",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Zombie_Climb_Ladder restores loop and resumes from start",
+			"details": 0.0333333333333333,
+			"passed": true
+		},
+		{
+			"check": "switching a paused action restores old loop metadata",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "revision switch preserves paused inspection",
+			"details": null,
+			"passed": true
+		}
+	],
+	"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+	"main_sha256": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+	"passed": true
+}

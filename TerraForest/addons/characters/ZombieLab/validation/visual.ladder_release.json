@@ -1,0 +1,513 @@
+{
+  "reviewer": "r4_runtime",
+  "status": "reviewed_verified_final_live_physics",
+  "source_identity_note": "Fresh native captures from the final GLB 6b6021c6 and matched import df767a8b. All listed final images were actually re-viewed; candidate visual approval was not carried over. Live physics/movie capture does not use seeked inspection frames.",
+  "unique_release_frame_views_reviewed": 70,
+  "scope": "Both ladder collapse angles sampled every three movie frames through 1.45 seconds, plus 1.983/2.983/3.483-second settled samples. Peak-neighbor native full-resolution frames 3, 4, 5 inspected for each view. This is sampled collapse visual review, not an every-physics-tick visual review.",
+  "findings": [
+    {
+      "phase": "release peak",
+      "finding": "The 82.9037 rad/s left-hand transient occurs at release +0.0667 seconds. Adjacent full-resolution renders at +0.05, +0.067 and +0.083 seconds retain the wrist connection; the fast local turn does not show a gross detached snap or complete hand spin."
+    },
+    {
+      "phase": "0.0 to 0.85 seconds",
+      "finding": "Hands release from the rungs as the body descends and folds. Limbs remain attached and retain recognizable upper/forearm and thigh/shin segments; the rear oblique angle follows the complete fall to the floor."
+    },
+    {
+      "phase": "0.9 to 3.483 seconds",
+      "finding": "After impact the body turns into a prone resting pose, arms settle forward and no continuing explosive motion appears. The rear oblique camera contains the complete head, hands and boots throughout settling."
+    },
+    {
+      "phase": "view limitation",
+      "finding": "The front grip angle clearly shows the fingers, rungs and early wrist release. Its landing view is partly occluded by the platform, so full-body landing and settled pose were assessed from the clear rear oblique view."
+    }
+  ],
+  "blocking_visual_defects_observed": [],
+  "captures": [
+    {
+      "capture_json": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/capture.json",
+      "capture_json_sha256": "7c4acfc2cea0e12d24024377e89cb699d9c75f981b7dfe434c990aa63dbec167",
+      "movie": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified.mp4",
+      "movie_sha256": "cf840061010275e230c442d0a74c9d5fe9bab7ca52155866931a2c1bda379187",
+      "source_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+      "peak": {
+        "angular_speed_radps": 82.903678894043,
+        "hand": "LeftHand",
+        "position": [
+          0.238216578960419,
+          1.87195432186127,
+          0.0750767439603806
+        ],
+        "screen_pixel": [
+          689.365905761719,
+          236.721343994141
+        ],
+        "seconds_after_release": 0.0666666666666667,
+        "speed_mps": 3.64932870864868,
+        "tick": 16
+      },
+      "maximum_hand_speed_mps": 6.19667911529541,
+      "camera": {
+        "fov": 35.0,
+        "name": "grip",
+        "position": [
+          3.09999990463257,
+          1.70000004768372,
+          4.40000009536743
+        ],
+        "target": [
+          0.100000001490116,
+          1.04999995231628,
+          -0.349999994039536
+        ]
+      },
+      "inputs_valid": true
+    },
+    {
+      "capture_json": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/capture.json",
+      "capture_json_sha256": "4e37af80607c8ef0ec812aa15795fe66b0fbcd8fac5be208631547ec87ed708d",
+      "movie": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified.mp4",
+      "movie_sha256": "6287cd19104db23d5b1148156b47f02fef89cbe865ea5383f07270b1f325a832",
+      "source_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+      "peak": {
+        "angular_speed_radps": 82.903678894043,
+        "hand": "LeftHand",
+        "position": [
+          0.238216578960419,
+          1.87195432186127,
+          0.0750767439603806
+        ],
+        "screen_pixel": [
+          809.360290527344,
+          231.549209594727
+        ],
+        "seconds_after_release": 0.0666666666666667,
+        "speed_mps": 3.64932870864868,
+        "tick": 16
+      },
+      "maximum_hand_speed_mps": 6.19667911529541,
+      "camera": {
+        "fov": 44.0,
+        "name": "collapse",
+        "position": [
+          -3.20000004768372,
+          2.15000009536743,
+          -4.19999980926514
+        ],
+        "target": [
+          0.100000001490116,
+          0.949999988079071,
+          -0.699999988079071
+        ]
+      },
+      "inputs_valid": true
+    }
+  ],
+  "full_resolution_peak_images": [
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.003.png",
+      "sha256": "8bb2f5a5d0b28acadcf374b47c902d136d50656fbd95a2cd84319dac88cb24cf",
+      "release_frame": 3,
+      "reviewed_at_original_resolution": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.004.png",
+      "sha256": "53ed59e3d3bf12e57acb3a4fdb5ac55977aeb573ea71855e344807d8157035a0",
+      "release_frame": 4,
+      "reviewed_at_original_resolution": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.005.png",
+      "sha256": "8377a3d50cf702b082ac8782453215c8243f7aca22ff185993bd2742552eafb2",
+      "release_frame": 5,
+      "reviewed_at_original_resolution": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.003.png",
+      "sha256": "089a5c7fd53988c1646fc3f1e0afe8439dd26a9ea913a960d904d15034ae69fc",
+      "release_frame": 3,
+      "reviewed_at_original_resolution": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.004.png",
+      "sha256": "1d3681e3d1cd2c8ba491c0768417702170d66b9be0fab5073411675b9a21535c",
+      "release_frame": 4,
+      "reviewed_at_original_resolution": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.005.png",
+      "sha256": "a79f413097f96386ba78807f0ee9ed5facc9ccac377296c4e33987d6f509e706",
+      "release_frame": 5,
+      "reviewed_at_original_resolution": true
+    }
+  ],
+  "reviewed_sheets": [
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_ladder_verified_visual_review/grip.01.png",
+      "sha256": "507a803b1ad2cd297a178c5c97f615bf42cd719783608479544fc3b9a0fa523a",
+      "inputs": [
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.000.png",
+          "sha256": "cf389098081edfa0d397369e94791065eef1ad026dca363297c975ed0d0c78c9",
+          "release_frame": 0
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.003.png",
+          "sha256": "8bb2f5a5d0b28acadcf374b47c902d136d50656fbd95a2cd84319dac88cb24cf",
+          "release_frame": 3
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.006.png",
+          "sha256": "a179e35d56ac3596ea57bfad9d85ca34ddb21cac4dfc6be60f484dd6dec5ed01",
+          "release_frame": 6
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.009.png",
+          "sha256": "859a7bce5df2478ddb5db827e025ebc54ed2367e5c64b75e07457318f006941c",
+          "release_frame": 9
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.012.png",
+          "sha256": "a8573ee36fc64d6595bf275cf31c21e93219c0013da48f71457cd509ae0e7288",
+          "release_frame": 12
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.015.png",
+          "sha256": "da98ed6bd77c59953d6300d6ee3bbc41e99684b82dc74cc189ea657404284bb3",
+          "release_frame": 15
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.018.png",
+          "sha256": "dcc9ef19658a20833da7c96dec74a09d28521fb7ac29206dc9cc20d7a73872df",
+          "release_frame": 18
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.021.png",
+          "sha256": "03242823e2d74b5082352ce26668433f119227d499116486571fa050ed3790c4",
+          "release_frame": 21
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.024.png",
+          "sha256": "58c6700033238af1037055a460418248b884684ca84046ebdcd7c07280dbf776",
+          "release_frame": 24
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.027.png",
+          "sha256": "48ab3bb632e461517b75ee5e14a741493d3912f84d34eb8ddef31c0b544e18d7",
+          "release_frame": 27
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.030.png",
+          "sha256": "08a0465f91b5f91260d4def485644e6ce13c2fd0212af50e899aa36f7424f715",
+          "release_frame": 30
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.033.png",
+          "sha256": "bb54242158ea0921f102a6662c20d4a0840ae1caa73aecbdcee5ccf7c77531ab",
+          "release_frame": 33
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.036.png",
+          "sha256": "f2c644164d37ddcd554885da15458477e8cae4f1e6c38b2cd5b96bcabc946b83",
+          "release_frame": 36
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.039.png",
+          "sha256": "b93862f7917a6e73f70e31d639f272b4d33d065bc018ad5d1653c00b3700f12b",
+          "release_frame": 39
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.042.png",
+          "sha256": "204676dba1243dc4bb8bfa73888058e4c764b89f4f7ae319325a7c711ff1ddbd",
+          "release_frame": 42
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.045.png",
+          "sha256": "7da41d118d894bf62d22c6a7a46656ea669ac86f894f8059cd3ce53271961f7b",
+          "release_frame": 45
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.048.png",
+          "sha256": "c1a3c4c316e3d81232554e108f52b289cd01cf82a11a11771ede9de53db3d63d",
+          "release_frame": 48
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.051.png",
+          "sha256": "5f7119d581eba47f6daaee0d131f603f4d0c12862ce179f59572367485aeba41",
+          "release_frame": 51
+        }
+      ],
+      "reviewed": true,
+      "sha256_unchanged_after_review": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_ladder_verified_visual_review/grip.02.png",
+      "sha256": "e4f8dc73b05f72001c5f3777836089780561c27253e3819fbd06d3853eabcdfd",
+      "inputs": [
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.054.png",
+          "sha256": "968b3e3ce360b0a39bfcc94a7dd7034b84c8478b1ef1076a5720b0fb9005f1e4",
+          "release_frame": 54
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.057.png",
+          "sha256": "b6f1605feedc7d070428cb8e547f931120e47b6031fb74c4196c24e6f5b0ebdd",
+          "release_frame": 57
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.060.png",
+          "sha256": "1831eedb7e0b844a0b0743576755f8b5d31f3c70f8b1b0e583afb89698ae3138",
+          "release_frame": 60
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.063.png",
+          "sha256": "a6fde92133ecdbd8294bceb5c2debad1e8063ac727dfd9316b4a773228b2733d",
+          "release_frame": 63
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.066.png",
+          "sha256": "d27b75316bceae26043b680ab39a9ef2c32555afdf11b9b10339724c49dd6269",
+          "release_frame": 66
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.069.png",
+          "sha256": "b91353ea5be6cded133b64933e90c470cc848c8adf1d5a4b6cb6d66c5fda87d4",
+          "release_frame": 69
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.072.png",
+          "sha256": "b63a01414f3218c74d70d8ce0e3bb91efae44239ea3ee64255161ac6f656d01b",
+          "release_frame": 72
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.075.png",
+          "sha256": "220a05552b5c489974819adf7f1ff52d5f906380cb94afab336bfbeaa55d41b1",
+          "release_frame": 75
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.078.png",
+          "sha256": "2dca89c98828aba004254da439a3a32860f1c467a6b177e49cb89f9d2efc41c6",
+          "release_frame": 78
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.081.png",
+          "sha256": "f17997cd073875a04da63a4e95b1f87b53e4137adf7a23ebb3fa67f98619e8ef",
+          "release_frame": 81
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.084.png",
+          "sha256": "0b69a846386fae184c95ffcaab19a9764a13067d247ef4957bebc25a430964de",
+          "release_frame": 84
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.087.png",
+          "sha256": "bede50f6e75709e4c8bd26767cdaa6e2795d50a3f59a542ff407398eafc76815",
+          "release_frame": 87
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.119.png",
+          "sha256": "8bfb9ca9b9570ff15fcf2bdaaf7e233df75253170be9488ee213783068219ba1",
+          "release_frame": 119
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.179.png",
+          "sha256": "6294362ec1074689d59bb005eb72e5487e9ad177fb4ecb7f03d1e8b305a6d9d9",
+          "release_frame": 179
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.grip.verified/release.209.png",
+          "sha256": "618f31ec12c18fd8f66c4c0e9385a9027a32c8f6d7247739d67ee7574be5d4b1",
+          "release_frame": 209
+        }
+      ],
+      "reviewed": true,
+      "sha256_unchanged_after_review": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_ladder_verified_visual_review/collapse.01.png",
+      "sha256": "f39ea7b894c666824c29baeb0675d9fe80821bac0960a326a6eb3c837835919c",
+      "inputs": [
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.000.png",
+          "sha256": "b02235f63167e03ad6f4f6fb9abcb3c3e19c4a14048b754c50342cbe02b124a8",
+          "release_frame": 0
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.003.png",
+          "sha256": "089a5c7fd53988c1646fc3f1e0afe8439dd26a9ea913a960d904d15034ae69fc",
+          "release_frame": 3
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.006.png",
+          "sha256": "aa99a09ab2b1254de5c5075dd9cc83555bb521901c6fd3ec1487185b199eb260",
+          "release_frame": 6
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.009.png",
+          "sha256": "076533b364bd2e3bb2d62d7b63f75f6fc2684057052f2232c3bf5c07d4ceb5bd",
+          "release_frame": 9
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.012.png",
+          "sha256": "5035b44b96b79f1542f6dfc453a77674d40758d43dc6176fdbf911b6a1f21d53",
+          "release_frame": 12
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.015.png",
+          "sha256": "02c12f6a1bf80705567731500802992e75c7ad9cccf563b8be59b0888424dd6a",
+          "release_frame": 15
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.018.png",
+          "sha256": "36b545bea826cb39e3b1c369a5485060dc01b8f9bdc9e0033982ca94ee66c96c",
+          "release_frame": 18
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.021.png",
+          "sha256": "85d7fdb740f8969bda22a0a4fb66212733126eeab33924278abc647c047d72b6",
+          "release_frame": 21
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.024.png",
+          "sha256": "45ab70eca287e2ddba8f62563a13ee3ccf619f9e90db48fd723dcd4cc7aea13d",
+          "release_frame": 24
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.027.png",
+          "sha256": "a2711e9995b6dc0bdcac6002914b104333b0c900492d4978692d412cb11873c9",
+          "release_frame": 27
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.030.png",
+          "sha256": "f15f98ceace4ab4d9f956a5eac66df373738ddac7ba9c06834a7c0f60a7fa91e",
+          "release_frame": 30
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.033.png",
+          "sha256": "199ea7067e083f0cc255071d3c2fce6e15b40694c6c2031f1a7f984e6ee00eca",
+          "release_frame": 33
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.036.png",
+          "sha256": "cfab1313bf9b57596343add03efae428b6de45d71c2609699047205087370985",
+          "release_frame": 36
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.039.png",
+          "sha256": "4b733b9cc4a349277abf9b09d276365d2117585d42f5673379a15ba0d2b85417",
+          "release_frame": 39
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.042.png",
+          "sha256": "a8a4afd410e724a7384582566f9dfbf69f843fb306b1e18d3c4aced129983bad",
+          "release_frame": 42
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.045.png",
+          "sha256": "e9233cfed14ff7882f1405b71478a4b1071bb14fc85fd92669be54106069991f",
+          "release_frame": 45
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.048.png",
+          "sha256": "5b365aa1841c6e05af1c24aa6a2005580df94e5e69f760b7f28f2f0bdbab62cc",
+          "release_frame": 48
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.051.png",
+          "sha256": "f6e773b93b37a01f3a54c2511ac0543bb8b83da929639e57af9e672bc39bcf25",
+          "release_frame": 51
+        }
+      ],
+      "reviewed": true,
+      "sha256_unchanged_after_review": true
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_ladder_verified_visual_review/collapse.02.png",
+      "sha256": "c43b71815e8f185bde988ff6402399ac0b23047ee6ae0f880a76bb131f3fc90a",
+      "inputs": [
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.054.png",
+          "sha256": "a233a5848e8bc55901516a8002b49798cc9200ef1929488729dfaf63e5cb091e",
+          "release_frame": 54
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.057.png",
+          "sha256": "58e8c3c42e46452a54acf7e9b9199c59a2c42a623a687a46f73d95aa43669fdf",
+          "release_frame": 57
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.060.png",
+          "sha256": "b4d0d2871ef8948e02a4d91734f2658ec9f25f7750b71bc5b89a259f4416f00e",
+          "release_frame": 60
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.063.png",
+          "sha256": "e84a92fd96190a95df9e3a0638fc883babcde58e7995500b1fe557d052b3645f",
+          "release_frame": 63
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.066.png",
+          "sha256": "05b9fc79a83eeead82898f1e6a5468f8d2b6d65e40354acf9de4eb9e18ea2ffa",
+          "release_frame": 66
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.069.png",
+          "sha256": "c52602ae5bf8797a9be748140127b0cf3eef24243087acc4c7540cf21a661c47",
+          "release_frame": 69
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.072.png",
+          "sha256": "7145468604d2130d1c64ed486ec06be0c4ad23de733db2196237d4e09cdfd1b1",
+          "release_frame": 72
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.075.png",
+          "sha256": "ab6dd503fa8fb68ef3cd6ccfd5229ce7c13733b3bc57df9764ff2ff7f3280554",
+          "release_frame": 75
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.078.png",
+          "sha256": "2e74ea5392189200e1f7c4db5d3954af8ca56a0d52e60dadaf0130b1afe38c89",
+          "release_frame": 78
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.081.png",
+          "sha256": "ac619724644d7ff9e5d00ef4a7fd79053ed1b45cb2efb48dc97d58e5cef66bbb",
+          "release_frame": 81
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.084.png",
+          "sha256": "9bbe900c4bc514740312af4215647e85ae633b98aab2e7b30a4617ebf10ee5d7",
+          "release_frame": 84
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.087.png",
+          "sha256": "e74ecfba8605bfc03333104cf695cf89bef30512591e90cf61861b15fbfbdb4f",
+          "release_frame": 87
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.119.png",
+          "sha256": "d0dfacfda4ca3be26dc7cb5f75ad763ddc8029969455cd0c76c0c426f82e066d",
+          "release_frame": 119
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.179.png",
+          "sha256": "5dab83e3a9cc6c661c284ad71ce3c26394f57c9db043012d699a6954000065d1",
+          "release_frame": 179
+        },
+        {
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4.ladder.collapse.verified/release.209.png",
+          "sha256": "c7262c1b68d13049c0adeea734d1fa45ff4519f5cfed5bb3f0d9312852aa5568",
+          "release_frame": 209
+        }
+      ],
+      "reviewed": true,
+      "sha256_unchanged_after_review": true
+    }
+  ],
+  "source_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "complete_for_declared_sampled_scope": true,
+  "passed": true
+}

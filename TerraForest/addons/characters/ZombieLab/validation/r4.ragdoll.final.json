@@ -1,0 +1,1236 @@
+{
+	"cases": [
+		{
+			"contact_impulses_by_pair_ns": {
+				"Physical_Hips / Physical_RightArm": 1.10457980632782,
+				"Physical_Hips / Physical_RightForeArm": 1.14407312870026,
+				"Physical_LeftForeArm / Physical_Spine2": 1.03036272525787,
+				"Physical_LeftHand / Physical_LeftUpLeg": 1.1381710767746,
+				"Physical_RightForeArm / Physical_Spine2": 11.9076976776123,
+				"Physical_RightHand / Physical_RightUpLeg": 1.36174488067627
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 52.2261543273926,
+			"maximum_joint_anchor_error_m": 0.0137732932344079,
+			"maximum_nonadjacent_impulse_ns": 11.9076976776123,
+			"maximum_radius_from_spawn": 1.55981886386871,
+			"maximum_speed_mps": 5.00840759277344,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0290768966078758,
+			"mutual_collision_enabled": true,
+			"nonadjacent_contact_records": 1278,
+			"pose": "bite_contact",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.6,
+				"clip": "Zombie_Attack_Bite",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0799999907612801,
+					"Z_Shin_L/BendRelief": 0.211398378014565,
+					"Z_Shin_R/BendRelief": 0.0123762795701623,
+					"Z_Thigh_L/BendRelief": 0.211398378014565,
+					"Z_Thigh_R/BendRelief": 0.0123762795701623,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 0.0
+				},
+				"model_offset": "(0.0, 0.0, 0.0)",
+				"movement_mode": "standing",
+				"root_position": "(0.0, 0.000053, 0.0)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 52.2261543273926,
+				"body": "Physical_LeftForeArm",
+				"tick": 205
+			},
+			"worst_joint": {
+				"child": "Physical_LeftHand",
+				"error_m": 0.0137732932344079,
+				"parent": "Physical_LeftForeArm",
+				"tick": 205
+			},
+			"worst_speed": {
+				"body": "Physical_RightHand",
+				"speed_mps": 5.00840759277344,
+				"tick": 97
+			}
+		},
+		{
+			"contact_impulses_by_pair_ns": {
+				"Physical_Hips / Physical_RightForeArm": 2.00827860832214,
+				"Physical_Hips / Physical_RightHand": 25.991569519043,
+				"Physical_LeftFoot / Physical_RightLeg": 0.173489227890968,
+				"Physical_LeftHand / Physical_LeftUpLeg": 1.9412978887558,
+				"Physical_RightForeArm / Physical_Spine2": 21.3092994689941,
+				"Physical_RightHand / Physical_RightUpLeg": 2.7402184009552
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 60.6341361999512,
+			"maximum_joint_anchor_error_m": 0.016166565939784,
+			"maximum_nonadjacent_impulse_ns": 25.991569519043,
+			"maximum_radius_from_spawn": 1.53526711463928,
+			"maximum_speed_mps": 5.43719720840454,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0205660276114941,
+			"mutual_collision_enabled": true,
+			"nonadjacent_contact_records": 4824,
+			"pose": "both_impact",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.7,
+				"clip": "Zombie_Attack_Both",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0,
+					"Z_Shin_L/BendRelief": 0.451315492391586,
+					"Z_Shin_R/BendRelief": 0.249542057514191,
+					"Z_Thigh_L/BendRelief": 0.451315492391586,
+					"Z_Thigh_R/BendRelief": 0.249542057514191,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 1.0
+				},
+				"model_offset": "(0.0, 0.0, 0.0)",
+				"movement_mode": "standing",
+				"root_position": "(0.0, 0.000053, 0.0)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 60.6341361999512,
+				"body": "Physical_RightFoot",
+				"tick": 62
+			},
+			"worst_joint": {
+				"child": "Physical_LeftHand",
+				"error_m": 0.016166565939784,
+				"parent": "Physical_LeftForeArm",
+				"tick": 164
+			},
+			"worst_speed": {
+				"body": "Physical_RightHand",
+				"speed_mps": 5.43719720840454,
+				"tick": 105
+			}
+		},
+		{
+			"contact_impulses_by_pair_ns": {
+				"Physical_RightHand / Physical_Spine2": 1.56462609767914
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 27.5925426483154,
+			"maximum_joint_anchor_error_m": 0.023639589548111,
+			"maximum_nonadjacent_impulse_ns": 1.56462609767914,
+			"maximum_radius_from_spawn": 0.724294185638428,
+			"maximum_speed_mps": 1.78157579898834,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0389098897576332,
+			"mutual_collision_enabled": true,
+			"nonadjacent_contact_records": 28,
+			"pose": "crawl",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.45,
+				"clip": "Zombie_Crawl",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0,
+					"Z_Shin_L/BendRelief": 0.0419576838612556,
+					"Z_Shin_R/BendRelief": 0.167981326580048,
+					"Z_Thigh_L/BendRelief": 0.0419576838612556,
+					"Z_Thigh_R/BendRelief": 0.167981326580048,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 0.0
+				},
+				"model_offset": "(0.0, 0.0, 0.0)",
+				"movement_mode": "crawling",
+				"root_position": "(0.0, 0.000053, 0.0)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 27.5925426483154,
+				"body": "Physical_LeftHand",
+				"tick": 64
+			},
+			"worst_joint": {
+				"child": "Physical_RightHand",
+				"error_m": 0.023639589548111,
+				"parent": "Physical_RightForeArm",
+				"tick": 0
+			},
+			"worst_speed": {
+				"body": "Physical_Head",
+				"speed_mps": 1.78157579898834,
+				"tick": 57
+			}
+		},
+		{
+			"contact_impulses_by_pair_ns": {
+				"Physical_Head / Physical_LeftHand": 0.943590104579926,
+				"Physical_Head / Physical_RightForeArm": 2.60107350349426,
+				"Physical_Head / Physical_RightHand": 0.698331952095032,
+				"Physical_Hips / Physical_LeftForeArm": 4.13820648193359,
+				"Physical_Hips / Physical_LeftHand": 1.20494854450226,
+				"Physical_LeftForeArm / Physical_Spine2": 2.26636290550232,
+				"Physical_LeftHand / Physical_LeftUpLeg": 0.0,
+				"Physical_LeftHand / Physical_Spine2": 0.433135509490967,
+				"Physical_LeftLeg / Physical_RightFoot": 6.02008390426636,
+				"Physical_LeftUpLeg / Physical_RightFoot": 2.65809893608093,
+				"Physical_LeftUpLeg / Physical_RightUpLeg": 11.3053483963013,
+				"Physical_RightFoot / Physical_RightUpLeg": 11.044095993042,
+				"Physical_RightHand / Physical_RightUpLeg": 0.974819421768188
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 91.6428375244141,
+			"maximum_joint_anchor_error_m": 0.021155072376132,
+			"maximum_nonadjacent_impulse_ns": 11.3053483963013,
+			"maximum_radius_from_spawn": 1.97484648227692,
+			"maximum_speed_mps": 6.77907657623291,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0368446968495846,
+			"mutual_collision_enabled": true,
+			"nonadjacent_contact_records": 526,
+			"pose": "ladder_grip",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.883333333333331,
+				"clip": "Zombie_Climb_Ladder",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0,
+					"Z_Shin_L/BendRelief": 0.0,
+					"Z_Shin_R/BendRelief": 1.0,
+					"Z_Thigh_L/BendRelief": 0.0,
+					"Z_Thigh_R/BendRelief": 1.0,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 0.0
+				},
+				"model_offset": "(0.0, 0.0, 0.0)",
+				"movement_mode": "climbing",
+				"root_position": "(0.0, 0.265863, -0.4)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 91.6428375244141,
+				"body": "Physical_RightHand",
+				"tick": 153
+			},
+			"worst_joint": {
+				"child": "Physical_RightHand",
+				"error_m": 0.021155072376132,
+				"parent": "Physical_RightForeArm",
+				"tick": 10
+			},
+			"worst_speed": {
+				"body": "Physical_LeftHand",
+				"speed_mps": 6.77907657623291,
+				"tick": 123
+			}
+		},
+		{
+			"contact_impulses_by_pair_ns": {
+				"Physical_Head / Physical_RightArm": 0.497665733098984,
+				"Physical_Head / Physical_RightForeArm": 2.60427260398865,
+				"Physical_Hips / Physical_LeftArm": 0.920774757862091,
+				"Physical_Hips / Physical_LeftForeArm": 0.888415157794952,
+				"Physical_Hips / Physical_RightForeArm": 4.5765528678894,
+				"Physical_Hips / Physical_RightHand": 0.230480894446373,
+				"Physical_LeftForeArm / Physical_Spine2": 8.16574382781982,
+				"Physical_LeftHand / Physical_LeftUpLeg": 0.98513662815094,
+				"Physical_LeftHand / Physical_RightHand": 0.514880836009979,
+				"Physical_LeftUpLeg / Physical_RightHand": 1.07139444351196,
+				"Physical_LeftUpLeg / Physical_RightUpLeg": 8.80157375335693,
+				"Physical_RightForeArm / Physical_Spine2": 5.53243684768677,
+				"Physical_RightHand / Physical_RightUpLeg": 1.14003300666809
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 59.2387390136719,
+			"maximum_joint_anchor_error_m": 0.0134728699922562,
+			"maximum_nonadjacent_impulse_ns": 8.80157375335693,
+			"maximum_radius_from_spawn": 1.63939905166626,
+			"maximum_speed_mps": 6.03294086456299,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0214851498603821,
+			"mutual_collision_enabled": true,
+			"nonadjacent_contact_records": 2098,
+			"pose": "jump_apex",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.541666666666666,
+				"clip": "Zombie_Jump",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0,
+					"Z_Shin_L/BendRelief": 0.0151561377570033,
+					"Z_Shin_R/BendRelief": 0.0,
+					"Z_Thigh_L/BendRelief": 0.0151561377570033,
+					"Z_Thigh_R/BendRelief": 0.0,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 0.0
+				},
+				"model_offset": "(0.0, -0.179667, 0.0)",
+				"movement_mode": "jumping",
+				"root_position": "(0.0, 0.188719, 0.078491)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 59.2387390136719,
+				"body": "Physical_LeftHand",
+				"tick": 106
+			},
+			"worst_joint": {
+				"child": "Physical_RightFoot",
+				"error_m": 0.0134728699922562,
+				"parent": "Physical_RightLeg",
+				"tick": 79
+			},
+			"worst_speed": {
+				"body": "Physical_RightHand",
+				"speed_mps": 6.03294086456299,
+				"tick": 101
+			}
+		},
+		{
+			"contact_impulses_by_pair_ns": {
+
+			},
+			"finite": true,
+			"maximum_angular_speed_radps": 60.6333427429199,
+			"maximum_joint_anchor_error_m": 0.00850897934287786,
+			"maximum_nonadjacent_impulse_ns": 0.0,
+			"maximum_radius_from_spawn": 1.53033494949341,
+			"maximum_speed_mps": 5.82095336914062,
+			"mesh_morphs_preserved": true,
+			"minimum_body_y": 0.0206748060882092,
+			"mutual_collision_enabled": false,
+			"nonadjacent_contact_records": 0,
+			"pose": "both_impact",
+			"seconds": 3.0,
+			"source_pose": {
+				"animation_time": 0.7,
+				"clip": "Zombie_Attack_Both",
+				"mesh_morphs": {
+					"Z_Head/BiteOpen": 0.0,
+					"Z_Shin_L/BendRelief": 0.451315492391586,
+					"Z_Shin_R/BendRelief": 0.249542057514191,
+					"Z_Thigh_L/BendRelief": 0.451315492391586,
+					"Z_Thigh_R/BendRelief": 0.249542057514191,
+					"Z_Torso/LeftDrape": 0.0,
+					"Z_Torso/SlamDrape": 1.0
+				},
+				"model_offset": "(0.0, 0.0, 0.0)",
+				"movement_mode": "standing",
+				"root_position": "(0.0, 0.000053, 0.0)"
+			},
+			"ticks": 720,
+			"worst_angular": {
+				"angular_speed_radps": 60.6333427429199,
+				"body": "Physical_RightFoot",
+				"tick": 56
+			},
+			"worst_joint": {
+				"child": "Physical_RightFoot",
+				"error_m": 0.00850897934287786,
+				"parent": "Physical_RightLeg",
+				"tick": 55
+			},
+			"worst_speed": {
+				"body": "Physical_RightHand",
+				"speed_mps": 5.82095336914062,
+				"tick": 109
+			}
+		}
+	],
+	"check_count": 30,
+	"checks": [
+		{
+			"details": {
+				"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+				"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+				"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+			},
+			"name": "native R4 imported cache matches the GLB being validated",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.6,
+					"clip": "Zombie_Attack_Bite",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0799999907612801,
+						"Z_Shin_L/BendRelief": 0.211398378014565,
+						"Z_Shin_R/BendRelief": 0.0123762795701623,
+						"Z_Thigh_L/BendRelief": 0.211398378014565,
+						"Z_Thigh_R/BendRelief": 0.0123762795701623,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				}
+			},
+			"name": "bite_contact preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"bodies": 15,
+				"collidable_nonadjacent_pairs": 91,
+				"excluded_pairs": 14,
+				"expected_nonadjacent": 91,
+				"invalid": []
+			},
+			"name": "bite_contact exempts only directly connected joint neighbors",
+			"passed": true
+		},
+		{
+			"details": {
+				"Physical_LeftHand": [
+					"Palm",
+					"Pinky1",
+					"Pinky2",
+					"Ring1",
+					"Ring2",
+					"Pinky3",
+					"Ring3",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Middle1",
+					"Middle2",
+					"Middle3",
+					"Thumb1",
+					"Index2"
+				],
+				"Physical_RightHand": [
+					"Middle3",
+					"Ring2",
+					"Middle2",
+					"Ring1",
+					"Palm",
+					"Ring3",
+					"Pinky1",
+					"Pinky3",
+					"Index2",
+					"Middle1",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Thumb1",
+					"Pinky2"
+				]
+			},
+			"name": "bite_contact keeps palm/finger grip concavity with native compound shapes",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+					"Physical_Hips / Physical_RightArm": 1.10457980632782,
+					"Physical_Hips / Physical_RightForeArm": 1.14407312870026,
+					"Physical_LeftForeArm / Physical_Spine2": 1.03036272525787,
+					"Physical_LeftHand / Physical_LeftUpLeg": 1.1381710767746,
+					"Physical_RightForeArm / Physical_Spine2": 11.9076976776123,
+					"Physical_RightHand / Physical_RightUpLeg": 1.36174488067627
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 52.2261543273926,
+				"maximum_joint_anchor_error_m": 0.0137732932344079,
+				"maximum_nonadjacent_impulse_ns": 11.9076976776123,
+				"maximum_radius_from_spawn": 1.55981886386871,
+				"maximum_speed_mps": 5.00840759277344,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0290768966078758,
+				"mutual_collision_enabled": true,
+				"nonadjacent_contact_records": 1278,
+				"pose": "bite_contact",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.6,
+					"clip": "Zombie_Attack_Bite",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0799999907612801,
+						"Z_Shin_L/BendRelief": 0.211398378014565,
+						"Z_Shin_R/BendRelief": 0.0123762795701623,
+						"Z_Thigh_L/BendRelief": 0.211398378014565,
+						"Z_Thigh_R/BendRelief": 0.0123762795701623,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 52.2261543273926,
+					"body": "Physical_LeftForeArm",
+					"tick": 205
+				},
+				"worst_joint": {
+					"child": "Physical_LeftHand",
+					"error_m": 0.0137732932344079,
+					"parent": "Physical_LeftForeArm",
+					"tick": 205
+				},
+				"worst_speed": {
+					"body": "Physical_RightHand",
+					"speed_mps": 5.00840759277344,
+					"tick": 97
+				}
+			},
+			"name": "bite_contact native collapse stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.7,
+					"clip": "Zombie_Attack_Both",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.451315492391586,
+						"Z_Shin_R/BendRelief": 0.249542057514191,
+						"Z_Thigh_L/BendRelief": 0.451315492391586,
+						"Z_Thigh_R/BendRelief": 0.249542057514191,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 1.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				}
+			},
+			"name": "both_impact preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"bodies": 15,
+				"collidable_nonadjacent_pairs": 91,
+				"excluded_pairs": 14,
+				"expected_nonadjacent": 91,
+				"invalid": []
+			},
+			"name": "both_impact exempts only directly connected joint neighbors",
+			"passed": true
+		},
+		{
+			"details": {
+				"Physical_LeftHand": [
+					"Palm",
+					"Pinky1",
+					"Pinky2",
+					"Ring1",
+					"Ring2",
+					"Pinky3",
+					"Ring3",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Middle1",
+					"Middle2",
+					"Middle3",
+					"Thumb1",
+					"Index2"
+				],
+				"Physical_RightHand": [
+					"Middle3",
+					"Ring2",
+					"Middle2",
+					"Ring1",
+					"Palm",
+					"Ring3",
+					"Pinky1",
+					"Pinky3",
+					"Index2",
+					"Middle1",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Thumb1",
+					"Pinky2"
+				]
+			},
+			"name": "both_impact keeps palm/finger grip concavity with native compound shapes",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+					"Physical_Hips / Physical_RightForeArm": 2.00827860832214,
+					"Physical_Hips / Physical_RightHand": 25.991569519043,
+					"Physical_LeftFoot / Physical_RightLeg": 0.173489227890968,
+					"Physical_LeftHand / Physical_LeftUpLeg": 1.9412978887558,
+					"Physical_RightForeArm / Physical_Spine2": 21.3092994689941,
+					"Physical_RightHand / Physical_RightUpLeg": 2.7402184009552
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 60.6341361999512,
+				"maximum_joint_anchor_error_m": 0.016166565939784,
+				"maximum_nonadjacent_impulse_ns": 25.991569519043,
+				"maximum_radius_from_spawn": 1.53526711463928,
+				"maximum_speed_mps": 5.43719720840454,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0205660276114941,
+				"mutual_collision_enabled": true,
+				"nonadjacent_contact_records": 4824,
+				"pose": "both_impact",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.7,
+					"clip": "Zombie_Attack_Both",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.451315492391586,
+						"Z_Shin_R/BendRelief": 0.249542057514191,
+						"Z_Thigh_L/BendRelief": 0.451315492391586,
+						"Z_Thigh_R/BendRelief": 0.249542057514191,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 1.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 60.6341361999512,
+					"body": "Physical_RightFoot",
+					"tick": 62
+				},
+				"worst_joint": {
+					"child": "Physical_LeftHand",
+					"error_m": 0.016166565939784,
+					"parent": "Physical_LeftForeArm",
+					"tick": 164
+				},
+				"worst_speed": {
+					"body": "Physical_RightHand",
+					"speed_mps": 5.43719720840454,
+					"tick": 105
+				}
+			},
+			"name": "both_impact native collapse stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.45,
+					"clip": "Zombie_Crawl",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0419576838612556,
+						"Z_Shin_R/BendRelief": 0.167981326580048,
+						"Z_Thigh_L/BendRelief": 0.0419576838612556,
+						"Z_Thigh_R/BendRelief": 0.167981326580048,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "crawling",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				}
+			},
+			"name": "crawl preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"bodies": 9,
+				"collidable_nonadjacent_pairs": 28,
+				"excluded_pairs": 8,
+				"expected_nonadjacent": 28,
+				"invalid": []
+			},
+			"name": "crawl exempts only directly connected joint neighbors",
+			"passed": true
+		},
+		{
+			"details": {
+				"Physical_LeftHand": [
+					"Palm",
+					"Pinky1",
+					"Pinky2",
+					"Ring1",
+					"Ring2",
+					"Pinky3",
+					"Ring3",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Middle1",
+					"Middle2",
+					"Middle3",
+					"Thumb1",
+					"Index2"
+				],
+				"Physical_RightHand": [
+					"Middle3",
+					"Ring2",
+					"Middle2",
+					"Ring1",
+					"Palm",
+					"Ring3",
+					"Pinky1",
+					"Pinky3",
+					"Index2",
+					"Middle1",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Thumb1",
+					"Pinky2"
+				]
+			},
+			"name": "crawl keeps palm/finger grip concavity with native compound shapes",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+					"Physical_RightHand / Physical_Spine2": 1.56462609767914
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 27.5925426483154,
+				"maximum_joint_anchor_error_m": 0.023639589548111,
+				"maximum_nonadjacent_impulse_ns": 1.56462609767914,
+				"maximum_radius_from_spawn": 0.724294185638428,
+				"maximum_speed_mps": 1.78157579898834,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0389098897576332,
+				"mutual_collision_enabled": true,
+				"nonadjacent_contact_records": 28,
+				"pose": "crawl",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.45,
+					"clip": "Zombie_Crawl",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0419576838612556,
+						"Z_Shin_R/BendRelief": 0.167981326580048,
+						"Z_Thigh_L/BendRelief": 0.0419576838612556,
+						"Z_Thigh_R/BendRelief": 0.167981326580048,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "crawling",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 27.5925426483154,
+					"body": "Physical_LeftHand",
+					"tick": 64
+				},
+				"worst_joint": {
+					"child": "Physical_RightHand",
+					"error_m": 0.023639589548111,
+					"parent": "Physical_RightForeArm",
+					"tick": 0
+				},
+				"worst_speed": {
+					"body": "Physical_Head",
+					"speed_mps": 1.78157579898834,
+					"tick": 57
+				}
+			},
+			"name": "crawl native collapse stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "ladder_grip entered real climb",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.883333333333331,
+					"clip": "Zombie_Climb_Ladder",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0,
+						"Z_Shin_R/BendRelief": 1.0,
+						"Z_Thigh_L/BendRelief": 0.0,
+						"Z_Thigh_R/BendRelief": 1.0,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "climbing",
+					"root_position": "(0.0, 0.265863, -0.4)"
+				}
+			},
+			"name": "ladder_grip preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"bodies": 15,
+				"collidable_nonadjacent_pairs": 91,
+				"excluded_pairs": 14,
+				"expected_nonadjacent": 91,
+				"invalid": []
+			},
+			"name": "ladder_grip exempts only directly connected joint neighbors",
+			"passed": true
+		},
+		{
+			"details": {
+				"Physical_LeftHand": [
+					"Palm",
+					"Pinky1",
+					"Pinky2",
+					"Ring1",
+					"Ring2",
+					"Pinky3",
+					"Ring3",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Middle1",
+					"Middle2",
+					"Middle3",
+					"Thumb1",
+					"Index2"
+				],
+				"Physical_RightHand": [
+					"Middle3",
+					"Ring2",
+					"Middle2",
+					"Ring1",
+					"Palm",
+					"Ring3",
+					"Pinky1",
+					"Pinky3",
+					"Index2",
+					"Middle1",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Thumb1",
+					"Pinky2"
+				]
+			},
+			"name": "ladder_grip keeps palm/finger grip concavity with native compound shapes",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+					"Physical_Head / Physical_LeftHand": 0.943590104579926,
+					"Physical_Head / Physical_RightForeArm": 2.60107350349426,
+					"Physical_Head / Physical_RightHand": 0.698331952095032,
+					"Physical_Hips / Physical_LeftForeArm": 4.13820648193359,
+					"Physical_Hips / Physical_LeftHand": 1.20494854450226,
+					"Physical_LeftForeArm / Physical_Spine2": 2.26636290550232,
+					"Physical_LeftHand / Physical_LeftUpLeg": 0.0,
+					"Physical_LeftHand / Physical_Spine2": 0.433135509490967,
+					"Physical_LeftLeg / Physical_RightFoot": 6.02008390426636,
+					"Physical_LeftUpLeg / Physical_RightFoot": 2.65809893608093,
+					"Physical_LeftUpLeg / Physical_RightUpLeg": 11.3053483963013,
+					"Physical_RightFoot / Physical_RightUpLeg": 11.044095993042,
+					"Physical_RightHand / Physical_RightUpLeg": 0.974819421768188
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 91.6428375244141,
+				"maximum_joint_anchor_error_m": 0.021155072376132,
+				"maximum_nonadjacent_impulse_ns": 11.3053483963013,
+				"maximum_radius_from_spawn": 1.97484648227692,
+				"maximum_speed_mps": 6.77907657623291,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0368446968495846,
+				"mutual_collision_enabled": true,
+				"nonadjacent_contact_records": 526,
+				"pose": "ladder_grip",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.883333333333331,
+					"clip": "Zombie_Climb_Ladder",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0,
+						"Z_Shin_R/BendRelief": 1.0,
+						"Z_Thigh_L/BendRelief": 0.0,
+						"Z_Thigh_R/BendRelief": 1.0,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "climbing",
+					"root_position": "(0.0, 0.265863, -0.4)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 91.6428375244141,
+					"body": "Physical_RightHand",
+					"tick": 153
+				},
+				"worst_joint": {
+					"child": "Physical_RightHand",
+					"error_m": 0.021155072376132,
+					"parent": "Physical_RightForeArm",
+					"tick": 10
+				},
+				"worst_speed": {
+					"body": "Physical_LeftHand",
+					"speed_mps": 6.77907657623291,
+					"tick": 123
+				}
+			},
+			"name": "ladder_grip native collapse stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "jump_apex entered real jump",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.541666666666666,
+					"clip": "Zombie_Jump",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0151561377570033,
+						"Z_Shin_R/BendRelief": 0.0,
+						"Z_Thigh_L/BendRelief": 0.0151561377570033,
+						"Z_Thigh_R/BendRelief": 0.0,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, -0.179667, 0.0)",
+					"movement_mode": "jumping",
+					"root_position": "(0.0, 0.188719, 0.078491)"
+				}
+			},
+			"name": "jump_apex preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"bodies": 15,
+				"collidable_nonadjacent_pairs": 91,
+				"excluded_pairs": 14,
+				"expected_nonadjacent": 91,
+				"invalid": []
+			},
+			"name": "jump_apex exempts only directly connected joint neighbors",
+			"passed": true
+		},
+		{
+			"details": {
+				"Physical_LeftHand": [
+					"Palm",
+					"Pinky1",
+					"Pinky2",
+					"Ring1",
+					"Ring2",
+					"Pinky3",
+					"Ring3",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Middle1",
+					"Middle2",
+					"Middle3",
+					"Thumb1",
+					"Index2"
+				],
+				"Physical_RightHand": [
+					"Middle3",
+					"Ring2",
+					"Middle2",
+					"Ring1",
+					"Palm",
+					"Ring3",
+					"Pinky1",
+					"Pinky3",
+					"Index2",
+					"Middle1",
+					"Index1",
+					"Index3",
+					"Thumb2",
+					"Thumb3",
+					"Thumb1",
+					"Pinky2"
+				]
+			},
+			"name": "jump_apex keeps palm/finger grip concavity with native compound shapes",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+					"Physical_Head / Physical_RightArm": 0.497665733098984,
+					"Physical_Head / Physical_RightForeArm": 2.60427260398865,
+					"Physical_Hips / Physical_LeftArm": 0.920774757862091,
+					"Physical_Hips / Physical_LeftForeArm": 0.888415157794952,
+					"Physical_Hips / Physical_RightForeArm": 4.5765528678894,
+					"Physical_Hips / Physical_RightHand": 0.230480894446373,
+					"Physical_LeftForeArm / Physical_Spine2": 8.16574382781982,
+					"Physical_LeftHand / Physical_LeftUpLeg": 0.98513662815094,
+					"Physical_LeftHand / Physical_RightHand": 0.514880836009979,
+					"Physical_LeftUpLeg / Physical_RightHand": 1.07139444351196,
+					"Physical_LeftUpLeg / Physical_RightUpLeg": 8.80157375335693,
+					"Physical_RightForeArm / Physical_Spine2": 5.53243684768677,
+					"Physical_RightHand / Physical_RightUpLeg": 1.14003300666809
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 59.2387390136719,
+				"maximum_joint_anchor_error_m": 0.0134728699922562,
+				"maximum_nonadjacent_impulse_ns": 8.80157375335693,
+				"maximum_radius_from_spawn": 1.63939905166626,
+				"maximum_speed_mps": 6.03294086456299,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0214851498603821,
+				"mutual_collision_enabled": true,
+				"nonadjacent_contact_records": 2098,
+				"pose": "jump_apex",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.541666666666666,
+					"clip": "Zombie_Jump",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.0151561377570033,
+						"Z_Shin_R/BendRelief": 0.0,
+						"Z_Thigh_L/BendRelief": 0.0151561377570033,
+						"Z_Thigh_R/BendRelief": 0.0,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 0.0
+					},
+					"model_offset": "(0.0, -0.179667, 0.0)",
+					"movement_mode": "jumping",
+					"root_position": "(0.0, 0.188719, 0.078491)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 59.2387390136719,
+					"body": "Physical_LeftHand",
+					"tick": 106
+				},
+				"worst_joint": {
+					"child": "Physical_RightFoot",
+					"error_m": 0.0134728699922562,
+					"parent": "Physical_RightLeg",
+					"tick": 79
+				},
+				"worst_speed": {
+					"body": "Physical_RightHand",
+					"speed_mps": 6.03294086456299,
+					"tick": 101
+				}
+			},
+			"name": "jump_apex native collapse stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_solver_impulse_ns": 25.991569519043,
+				"solver_contact_records": 8754
+			},
+			"name": "new-pose ragdolls exchange real nonadjacent collision impulses",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_bone_origin_error": 0.0,
+				"mesh_morphs_preserved": true,
+				"source_pose": {
+					"animation_time": 0.7,
+					"clip": "Zombie_Attack_Both",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.451315492391586,
+						"Z_Shin_R/BendRelief": 0.249542057514191,
+						"Z_Thigh_L/BendRelief": 0.451315492391586,
+						"Z_Thigh_R/BendRelief": 0.249542057514191,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 1.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				}
+			},
+			"name": "both_impact preserves the exact evaluated pose at death",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 60.6333427429199,
+				"maximum_joint_anchor_error_m": 0.00850897934287786,
+				"maximum_nonadjacent_impulse_ns": 0.0,
+				"maximum_radius_from_spawn": 1.53033494949341,
+				"maximum_speed_mps": 5.82095336914062,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0206748060882092,
+				"mutual_collision_enabled": false,
+				"nonadjacent_contact_records": 0,
+				"pose": "both_impact",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.7,
+					"clip": "Zombie_Attack_Both",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.451315492391586,
+						"Z_Shin_R/BendRelief": 0.249542057514191,
+						"Z_Thigh_L/BendRelief": 0.451315492391586,
+						"Z_Thigh_R/BendRelief": 0.249542057514191,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 1.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 60.6333427429199,
+					"body": "Physical_RightFoot",
+					"tick": 56
+				},
+				"worst_joint": {
+					"child": "Physical_RightFoot",
+					"error_m": 0.00850897934287786,
+					"parent": "Physical_RightLeg",
+					"tick": 55
+				},
+				"worst_speed": {
+					"body": "Physical_RightHand",
+					"speed_mps": 5.82095336914062,
+					"tick": 109
+				}
+			},
+			"name": "both_impact mutual masks disabled stays finite with attached joints",
+			"passed": true
+		},
+		{
+			"details": {
+				"contact_impulses_by_pair_ns": {
+
+				},
+				"finite": true,
+				"maximum_angular_speed_radps": 60.6333427429199,
+				"maximum_joint_anchor_error_m": 0.00850897934287786,
+				"maximum_nonadjacent_impulse_ns": 0.0,
+				"maximum_radius_from_spawn": 1.53033494949341,
+				"maximum_speed_mps": 5.82095336914062,
+				"mesh_morphs_preserved": true,
+				"minimum_body_y": 0.0206748060882092,
+				"mutual_collision_enabled": false,
+				"nonadjacent_contact_records": 0,
+				"pose": "both_impact",
+				"seconds": 3.0,
+				"source_pose": {
+					"animation_time": 0.7,
+					"clip": "Zombie_Attack_Both",
+					"mesh_morphs": {
+						"Z_Head/BiteOpen": 0.0,
+						"Z_Shin_L/BendRelief": 0.451315492391586,
+						"Z_Shin_R/BendRelief": 0.249542057514191,
+						"Z_Thigh_L/BendRelief": 0.451315492391586,
+						"Z_Thigh_R/BendRelief": 0.249542057514191,
+						"Z_Torso/LeftDrape": 0.0,
+						"Z_Torso/SlamDrape": 1.0
+					},
+					"model_offset": "(0.0, 0.0, 0.0)",
+					"movement_mode": "standing",
+					"root_position": "(0.0, 0.000053, 0.0)"
+				},
+				"ticks": 720,
+				"worst_angular": {
+					"angular_speed_radps": 60.6333427429199,
+					"body": "Physical_RightFoot",
+					"tick": 56
+				},
+				"worst_joint": {
+					"child": "Physical_RightFoot",
+					"error_m": 0.00850897934287786,
+					"parent": "Physical_RightLeg",
+					"tick": 55
+				},
+				"worst_speed": {
+					"body": "Physical_RightHand",
+					"speed_mps": 5.82095336914062,
+					"tick": 109
+				}
+			},
+			"name": "matched negative control produces no mutual solver contacts",
+			"passed": true
+		},
+		{
+			"details": {
+				"maximum_world_vertex_error": 0.000000238912832628557,
+				"morph_amount": 1.0
+			},
+			"name": "severed open mouth is an exact independent posed mesh",
+			"passed": true
+		},
+		{
+			"details": {
+				"detached_vertex_arrays_fixed": true,
+				"source_mesh_sha_preserved": true,
+				"source_morph_instance_value": 1.0
+			},
+			"name": "detached mouth pose stays frozen while source mesh remains unmodified",
+			"passed": true
+		},
+		{
+			"details": {
+				"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+				"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+				"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+			},
+			"name": "model, controller and timing contract stayed unchanged throughout validation",
+			"passed": true
+		}
+	],
+	"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+	"failure_count": 0,
+	"passed": true,
+	"physics_ticks": 5501,
+	"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+	"scope": "Five new R4 pose collapses, actual native body collision impulses with a matched disabled-mask control, direct-neighbor exception policy, joint-anchor stability, and exact frozen open-mouth detachment. Numeric simulation; visual deformation inspection is reported separately.",
+	"version_inputs": {
+		"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+		"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+		"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+		"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+	}
+}

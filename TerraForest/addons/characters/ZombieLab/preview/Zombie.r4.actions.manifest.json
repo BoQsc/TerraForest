@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "movie": "Zombie.r4.actions.mp4",
+  "sha256": "e3ca953f85aec3257b44bb817b48390d910849cecc6a943196d6d9b812be1e6f",
+  "bytes": 3220430,
+  "native_capture_inputs": [
+    {
+      "path": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frame.manifest.json",
+      "sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346",
+      "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "frames": 1308,
+      "detail_mode": "body"
+    },
+    {
+      "path": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_mouth/frame.manifest.json",
+      "sha256": "14ed4d2a3dd05be4c8a9c641249e5ad4e29893b972db974ec7b3b7a92b40fccf",
+      "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "frames": 155,
+      "detail_mode": "mouth"
+    }
+  ],
+  "source_frame_count": 1463,
+  "encoded_stream": {
+    "width": 1536,
+    "height": 448,
+    "r_frame_rate": "60/1",
+    "duration": "24.383333",
+    "nb_read_frames": "1463"
+  },
+  "chapters": [
+    {
+      "clip": "Zombie_Idle",
+      "detail": "body",
+      "first_frame": 0,
+      "last_frame_exclusive": 181
+    },
+    {
+      "clip": "Zombie_Walk",
+      "detail": "body",
+      "first_frame": 181,
+      "last_frame_exclusive": 266
+    },
+    {
+      "clip": "Zombie_Attack",
+      "detail": "body",
+      "first_frame": 266,
+      "last_frame_exclusive": 363
+    },
+    {
+      "clip": "Zombie_Hit",
+      "detail": "body",
+      "first_frame": 363,
+      "last_frame_exclusive": 400
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "detail": "body",
+      "first_frame": 400,
+      "last_frame_exclusive": 482
+    },
+    {
+      "clip": "Zombie_Attack_Left",
+      "detail": "body",
+      "first_frame": 482,
+      "last_frame_exclusive": 561
+    },
+    {
+      "clip": "Zombie_Attack_Right",
+      "detail": "body",
+      "first_frame": 561,
+      "last_frame_exclusive": 646
+    },
+    {
+      "clip": "Zombie_Attack_Both",
+      "detail": "body",
+      "first_frame": 646,
+      "last_frame_exclusive": 743
+    },
+    {
+      "clip": "Zombie_Crawl",
+      "detail": "body",
+      "first_frame": 743,
+      "last_frame_exclusive": 840
+    },
+    {
+      "clip": "Zombie_Crawl_Idle",
+      "detail": "body",
+      "first_frame": 840,
+      "last_frame_exclusive": 961
+    },
+    {
+      "clip": "Zombie_Crawl_Bite",
+      "detail": "body",
+      "first_frame": 961,
+      "last_frame_exclusive": 1034
+    },
+    {
+      "clip": "Zombie_To_Crawl",
+      "detail": "body",
+      "first_frame": 1034,
+      "last_frame_exclusive": 1083
+    },
+    {
+      "clip": "Zombie_Crawl_Hit",
+      "detail": "body",
+      "first_frame": 1083,
+      "last_frame_exclusive": 1114
+    },
+    {
+      "clip": "Zombie_Jump",
+      "detail": "body",
+      "first_frame": 1114,
+      "last_frame_exclusive": 1187
+    },
+    {
+      "clip": "Zombie_Climb_Ladder",
+      "detail": "body",
+      "first_frame": 1187,
+      "last_frame_exclusive": 1308
+    },
+    {
+      "clip": "Zombie_Attack_Bite",
+      "detail": "mouth",
+      "first_frame": 1308,
+      "last_frame_exclusive": 1390
+    },
+    {
+      "clip": "Zombie_Crawl_Bite",
+      "detail": "mouth",
+      "first_frame": 1390,
+      "last_frame_exclusive": 1463
+    }
+  ],
+  "sampling": "One labelled image per authored integer frame, including each clip endpoint.",
+  "limits": [
+    "This is animation inspection at authored speed. The demonstration recording validates interaction and root physics separately."
+  ]
+}

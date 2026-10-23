@@ -1,0 +1,451 @@
+{
+	"check_count": 18,
+	"checks": [
+		{
+			"check": "startup keeps Original",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "F1 F2 F4 available; F3 archived",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "deprecated R3 cannot replace current subject",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Run demonstration starts R4",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "R4 action inspector includes bite crawl jump ladder",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "R4 behavior expansion enabled",
+			"details": {
+				"action_time": 0.0,
+				"active_action": "",
+				"alive": true,
+				"animation_time": 0.0,
+				"available_attacks": [
+					"bite",
+					"left",
+					"right",
+					"both"
+				],
+				"behavior_enabled": true,
+				"clip": "Zombie_Idle",
+				"contact_count": 0,
+				"crawl_speed": 0.32,
+				"crawl_transition": false,
+				"crawling": false,
+				"grounded": false,
+				"last_attack": "",
+				"last_contact": {
+
+				},
+				"last_rejection": "",
+				"learned_contact_distance": null,
+				"left_arm": true,
+				"miss_count": 0,
+				"movement_mode": "standing",
+				"position": "(0.0, 0.025, -0.8)",
+				"r4_actions_enabled": true,
+				"revision_id": "r4",
+				"right_arm": true,
+				"standing_legs": true,
+				"state": "idle",
+				"target_distance": 3.0,
+				"traversal_state": "none",
+				"velocity": "(0.0, 0.0, 0.0)"
+			},
+			"passed": true
+		},
+		{
+			"check": "all demo stations complete from controller outcomes",
+			"details": {
+				"active": true,
+				"complete": true,
+				"contacts": 6,
+				"cycle": 1,
+				"cycles_completed": 1,
+				"elapsed": 24.6458333333323,
+				"last_action": "crawl_bite",
+				"last_damage": 10.2,
+				"note": "Cycle complete · restoring in 4 seconds",
+				"stage": "cycle_complete",
+				"stage_contact": false,
+				"stage_count": 9,
+				"stage_distance": 0.0,
+				"stage_finished": false,
+				"stage_index": 9,
+				"stage_requested": false,
+				"stage_time": 0.0,
+				"target_health": 25.6
+			},
+			"passed": true
+		},
+		{
+			"check": "bite left right both contacts demonstrated",
+			"details": {
+				"bite": true,
+				"both": true,
+				"crawl_bite": true,
+				"left": true,
+				"right": true
+			},
+			"passed": true
+		},
+		{
+			"check": "at least two crawl bite contacts",
+			"details": [],
+			"passed": true
+		},
+		{
+			"check": "target health changes only through confirmed contacts",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "every contact uses the actual visible padding",
+			"details": [],
+			"passed": true
+		},
+		{
+			"check": "short jump raises the physical root",
+			"details": 0.188527807593346,
+			"passed": true
+		},
+		{
+			"check": "short jump passes the low obstacle",
+			"details": [
+				2.34999990463257,
+				0.000799372908659279,
+				-2.95046806335449
+			],
+			"passed": true
+		},
+		{
+			"check": "ladder exits onto elevated platform",
+			"details": [
+				3.82956433296204,
+				0.900940239429474,
+				-2.44879770278931
+			],
+			"passed": true
+		},
+		{
+			"check": "both leg loss keeps zombie alive and crawling",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Stop returns usable orbit inspection",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "Restart launches a fresh R4 cycle",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "F2 remains available after demo",
+			"details": null,
+			"passed": true
+		}
+	],
+	"demo_summary": {
+		"contacts": [
+			{
+				"action": "bite",
+				"damage": 13.8,
+				"elapsed": 3.39166666666673,
+				"point": [
+					0.00539844483137131,
+					1.41476452350616,
+					1.25373423099518
+				],
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"signed_surface_distance_m": 0.00243419051170349,
+				"stage": "bite",
+				"surface_gap_m": 0.00243417918682098,
+				"target": [
+					0.0,
+					0.0,
+					1.40656280517578
+				],
+				"visible_target_shapes": true
+			},
+			{
+				"action": "left",
+				"damage": 10.2,
+				"elapsed": 4.95833333333337,
+				"point": [
+					0.0441167429089546,
+					1.38312649726868,
+					1.67000997066498
+				],
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"signed_surface_distance_m": 0.00255287438631058,
+				"stage": "left",
+				"surface_gap_m": 0.00255286693572998,
+				"target": [
+					0.0,
+					0.0,
+					1.78756284713745
+				],
+				"visible_target_shapes": true
+			},
+			{
+				"action": "right",
+				"damage": 12.0,
+				"elapsed": 6.52499999999995,
+				"point": [
+					-0.187589049339294,
+					1.30515694618225,
+					1.70353782176971
+				],
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"signed_surface_distance_m": 0.00152481347322464,
+				"stage": "right",
+				"surface_gap_m": 0.00152480602264404,
+				"target": [
+					0.0,
+					0.0,
+					1.8200626373291
+				],
+				"visible_target_shapes": true
+			},
+			{
+				"action": "both",
+				"damage": 18.0,
+				"elapsed": 8.22499999999985,
+				"point": [
+					0.189282834529877,
+					1.25593841075897,
+					1.62455296516418
+				],
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"signed_surface_distance_m": 0.00200987607240677,
+				"stage": "both",
+				"surface_gap_m": 0.00200986862182617,
+				"target": [
+					0.0,
+					0.0,
+					1.74156284332275
+				],
+				"visible_target_shapes": true
+			},
+			{
+				"action": "crawl_bite",
+				"damage": 10.2,
+				"elapsed": 19.7666666666659,
+				"point": [
+					0.00207278109155595,
+					0.372057676315308,
+					0.734371900558472
+				],
+				"root": [
+					0.0,
+					0.000899011502042413,
+					0.141019478440285
+				],
+				"signed_surface_distance_m": -0.0000153005123138539,
+				"stage": "one_leg",
+				"surface_gap_m": 0.0,
+				"target": [
+					0.0,
+					0.0,
+					0.899999976158142
+				],
+				"visible_target_shapes": true
+			},
+			{
+				"action": "crawl_bite",
+				"damage": 10.2,
+				"elapsed": 23.9416666666656,
+				"point": [
+					0.00208505825139582,
+					0.375560879707336,
+					1.68687605857849
+				],
+				"root": [
+					0.0,
+					0.000938276294618845,
+					1.09004068374634
+				],
+				"signed_surface_distance_m": -0.0000798821449279896,
+				"stage": "both_legs",
+				"surface_gap_m": 0.0,
+				"target": [
+					0.0,
+					0.0,
+					1.84999990463257
+				],
+				"visible_target_shapes": true
+			}
+		],
+		"cycle": 1,
+		"final_alive": true,
+		"final_movement_mode": "crawling",
+		"jump_end": [
+			2.34999990463257,
+			0.000799372908659279,
+			-2.95046806335449
+		],
+		"jump_peak_y": 0.188527807593346,
+		"ladder_end": [
+			3.82956433296204,
+			0.900940239429474,
+			-2.44879770278931
+		],
+		"stations": [
+			{
+				"elapsed": 0.0,
+				"root": [
+					0.0,
+					0.025000000372529,
+					-0.800000011920929
+				],
+				"stage": "approach"
+			},
+			{
+				"elapsed": 2.1875,
+				"root": [
+					0.0,
+					0.000825844064820558,
+					0.770562887191772
+				],
+				"stage": "bite"
+			},
+			{
+				"elapsed": 4.14583333333342,
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"stage": "left"
+			},
+			{
+				"elapsed": 5.72916666666666,
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"stage": "right"
+			},
+			{
+				"elapsed": 7.32916666666657,
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"stage": "both"
+			},
+			{
+				"elapsed": 9.12916666666647,
+				"root": [
+					0.0,
+					0.000825844006612897,
+					0.770562887191772
+				],
+				"stage": "jump"
+			},
+			{
+				"elapsed": 10.7416666666664,
+				"root": [
+					2.34999990463257,
+					0.000799372908659279,
+					-2.95046806335449
+				],
+				"stage": "ladder"
+			},
+			{
+				"elapsed": 15.5249999999994,
+				"root": [
+					3.82956433296204,
+					0.900940239429474,
+					-2.44879770278931
+				],
+				"stage": "one_leg"
+			},
+			{
+				"elapsed": 20.4708333333325,
+				"root": [
+					0.0,
+					0.000899011502042413,
+					0.141019478440285
+				],
+				"stage": "both_legs"
+			},
+			{
+				"elapsed": 24.6458333333323,
+				"root": [
+					0.0,
+					0.000938276294618845,
+					1.09004068374634
+				],
+				"stage": "cycle_complete"
+			}
+		],
+		"target_health": 25.6
+	},
+	"failures": 0,
+	"final_demo_snapshot": {
+		"active": true,
+		"complete": true,
+		"contacts": 6,
+		"cycle": 1,
+		"cycles_completed": 1,
+		"elapsed": 24.6458333333323,
+		"last_action": "crawl_bite",
+		"last_damage": 10.2,
+		"note": "Cycle complete · restoring in 4 seconds",
+		"stage": "cycle_complete",
+		"stage_contact": false,
+		"stage_count": 9,
+		"stage_distance": 0.0,
+		"stage_finished": false,
+		"stage_index": 9,
+		"stage_requested": false,
+		"stage_time": 0.0,
+		"target_health": 25.6
+	},
+	"passed": true,
+	"physics_hz": 240,
+	"physics_ticks_observed": 5916,
+	"schema_version": 1,
+	"source_sha256": {
+		"assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+		"main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+		"scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+		"scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5"
+	}
+}

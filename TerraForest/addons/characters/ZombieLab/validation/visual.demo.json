@@ -1,0 +1,279 @@
+{
+  "status": "complete",
+  "reviewer": "r4_lab_demo",
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "method": "Direct visual inspection of all four frozen live-controller outcome views; playback screenshots reviewed separately.",
+  "outcomes": [
+    {
+      "file": "bite.contact.back.png",
+      "sha256": "caa26e202a6b314f975cc48ec6f1df054068a77d295b323ad909807b636e690d",
+      "reviewed": true,
+      "notes": "Both side views show lips against the reduced sphere without deep facial occlusion. Arms remain bent around the pad; back cloth and stepping stance are coherent. Front target partly occludes the contact, as expected for that sightline."
+    },
+    {
+      "file": "bite.contact.front.png",
+      "sha256": "1ef04694913f39cd070df0c4f55489cc1e86b6e94caf1abc0270bbbf4fb0e4c3",
+      "reviewed": true,
+      "notes": "Both side views show lips against the reduced sphere without deep facial occlusion. Arms remain bent around the pad; back cloth and stepping stance are coherent. Front target partly occludes the contact, as expected for that sightline."
+    },
+    {
+      "file": "bite.contact.left.png",
+      "sha256": "ee34137d0fd54573be75f0fe3edab112eb59719289a8624eaa7fa05af7759f95",
+      "reviewed": true,
+      "notes": "Both side views show lips against the reduced sphere without deep facial occlusion. Arms remain bent around the pad; back cloth and stepping stance are coherent. Front target partly occludes the contact, as expected for that sightline."
+    },
+    {
+      "file": "bite.contact.right.png",
+      "sha256": "259b08ada45f437866a5828a21595ea61c2f995ff6fe7da7480583a061702a01",
+      "reviewed": true,
+      "notes": "Both side views show lips against the reduced sphere without deep facial occlusion. Arms remain bent around the pad; back cloth and stepping stance are coherent. Front target partly occludes the contact, as expected for that sightline."
+    },
+    {
+      "file": "both.contact.back.png",
+      "sha256": "fd0761b38d2fffce4c912a1440b6fea890d1984860467a4e119987add471f079",
+      "reviewed": true,
+      "notes": "All four angles show both arms at a shared contact with coherent torso and bent-knee stance. Side views resolve the hands on the rectangular padding."
+    },
+    {
+      "file": "both.contact.front.png",
+      "sha256": "e2e5b7fd6933585caf18ba65bf0dfeb0ea34a519bced369c065cd34a6b02e460",
+      "reviewed": true,
+      "notes": "All four angles show both arms at a shared contact with coherent torso and bent-knee stance. Side views resolve the hands on the rectangular padding."
+    },
+    {
+      "file": "both.contact.left.png",
+      "sha256": "57e0c8a7b79e2d7ac50e56f912208082b806ac11f93ed1e780fa325afe0bb9b3",
+      "reviewed": true,
+      "notes": "All four angles show both arms at a shared contact with coherent torso and bent-knee stance. Side views resolve the hands on the rectangular padding."
+    },
+    {
+      "file": "both.contact.right.png",
+      "sha256": "b4ea7da02f6d4ced4513ff2a988043d90130f163d9e949c7bedf49d781749b2e",
+      "reviewed": true,
+      "notes": "All four angles show both arms at a shared contact with coherent torso and bent-knee stance. Side views resolve the hands on the rectangular padding."
+    },
+    {
+      "file": "both_legs.contact.back.png",
+      "sha256": "969a54b9cfbaac8f789a3e0e7173e05eab47a3b6090627b1a5533a8f1a88626a",
+      "reviewed": true,
+      "notes": "Side views show the lips reaching the actual lowered sphere surface without deep face occlusion, with both palms braced on the ground. Both detached leg chains are separate behind the moving body. The live display advances to six contacts and 26 rounded HP; front/back contact is partly hidden by the target or head as expected from those sightlines."
+    },
+    {
+      "file": "both_legs.contact.front.png",
+      "sha256": "3b40132e1182ee9b4bee78f2812c41eeba0a97c4478e28daac96c9da5b7b7605",
+      "reviewed": true,
+      "notes": "Side views show the lips reaching the actual lowered sphere surface without deep face occlusion, with both palms braced on the ground. Both detached leg chains are separate behind the moving body. The live display advances to six contacts and 26 rounded HP; front/back contact is partly hidden by the target or head as expected from those sightlines."
+    },
+    {
+      "file": "both_legs.contact.left.png",
+      "sha256": "a95729c7e457a55fd2aa5ad2e309738b652782bc6a6037fd7213bc65beadb3ce",
+      "reviewed": true,
+      "notes": "Side views show the lips reaching the actual lowered sphere surface without deep face occlusion, with both palms braced on the ground. Both detached leg chains are separate behind the moving body. The live display advances to six contacts and 26 rounded HP; front/back contact is partly hidden by the target or head as expected from those sightlines."
+    },
+    {
+      "file": "both_legs.contact.right.png",
+      "sha256": "f58778ccc6e8689ae00c1f587f46b55c81e51282420377868707e641a469f00e",
+      "reviewed": true,
+      "notes": "Side views show the lips reaching the actual lowered sphere surface without deep face occlusion, with both palms braced on the ground. Both detached leg chains are separate behind the moving body. The live display advances to six contacts and 26 rounded HP; front/back contact is partly hidden by the target or head as expected from those sightlines."
+    },
+    {
+      "file": "both_legs.crawl.back.png",
+      "sha256": "b178393acd085a7301a843aef142a082da8e23727be1bb62554c0d2b6bd9ff11",
+      "reviewed": true,
+      "notes": "Front and side angles show both palms supporting the low body while the two detached leg chains remain behind. Elbow and upper-arm proportions remain coherent, and back/side cloth follows the torso. Rear/left HUD partly covers distant detached pieces; the other angles show them clearly."
+    },
+    {
+      "file": "both_legs.crawl.front.png",
+      "sha256": "f3da7a78cd14781615e3b145493f47829146a955bc5c90a6fe85bb963a9f0f56",
+      "reviewed": true,
+      "notes": "Front and side angles show both palms supporting the low body while the two detached leg chains remain behind. Elbow and upper-arm proportions remain coherent, and back/side cloth follows the torso. Rear/left HUD partly covers distant detached pieces; the other angles show them clearly."
+    },
+    {
+      "file": "both_legs.crawl.left.png",
+      "sha256": "f43c2a964f9efef92adc6dc468571c48bd060c64434a35dc0ede9df1d5bef5a5",
+      "reviewed": true,
+      "notes": "Front and side angles show both palms supporting the low body while the two detached leg chains remain behind. Elbow and upper-arm proportions remain coherent, and back/side cloth follows the torso. Rear/left HUD partly covers distant detached pieces; the other angles show them clearly."
+    },
+    {
+      "file": "both_legs.crawl.right.png",
+      "sha256": "f5f99b5d64a97cc4e67a7bd127185b08d15585b70d001d7d65c9e8ddf04d8c7f",
+      "reviewed": true,
+      "notes": "Front and side angles show both palms supporting the low body while the two detached leg chains remain behind. Elbow and upper-arm proportions remain coherent, and back/side cloth follows the torso. Rear/left HUD partly covers distant detached pieces; the other angles show them clearly."
+    },
+    {
+      "file": "jump.apex.back.png",
+      "sha256": "fefd4efd5ddac8943b395ed5232e9eb2ca05a35a67999316b24893090697b83d",
+      "reviewed": true,
+      "notes": "Recaptured all four native views with adjusted front/rear camera positions. The complete body is visible in every angle, with bent knees, compact raised arms, coherent clothing and the small obstacle under the airborne stance. Front/rear views are now clear of the ladder and room wall; native physics checks separately verify the real hop and landing."
+    },
+    {
+      "file": "jump.apex.front.png",
+      "sha256": "13a311cb6491684da93ea6aab7c39d4cb0c7a3ed4903f9389a399539bc38d651",
+      "reviewed": true,
+      "notes": "Recaptured all four native views with adjusted front/rear camera positions. The complete body is visible in every angle, with bent knees, compact raised arms, coherent clothing and the small obstacle under the airborne stance. Front/rear views are now clear of the ladder and room wall; native physics checks separately verify the real hop and landing."
+    },
+    {
+      "file": "jump.apex.left.png",
+      "sha256": "693594554fa30be812083c5d40f06c7929654215e8f3a4026f11f18b30e01255",
+      "reviewed": true,
+      "notes": "Recaptured all four native views with adjusted front/rear camera positions. The complete body is visible in every angle, with bent knees, compact raised arms, coherent clothing and the small obstacle under the airborne stance. Front/rear views are now clear of the ladder and room wall; native physics checks separately verify the real hop and landing."
+    },
+    {
+      "file": "jump.apex.right.png",
+      "sha256": "7e5d74cc65ef7fa44dab69ff2bb3fc7249a374a5c2a15f2115e44af823bb4cba",
+      "reviewed": true,
+      "notes": "Recaptured all four native views with adjusted front/rear camera positions. The complete body is visible in every angle, with bent knees, compact raised arms, coherent clothing and the small obstacle under the airborne stance. Front/rear views are now clear of the ladder and room wall; native physics checks separately verify the real hop and landing."
+    },
+    {
+      "file": "ladder.mid.back.png",
+      "sha256": "e838577c0995467a7645a03d291cf39fac50678d7dc87176a329f7fec117552f",
+      "reviewed": true,
+      "notes": "Both hands and boots remain aligned with the ladder; torso and trouser bends are coherent. The relocated target no longer hides the upper body in the right-side view."
+    },
+    {
+      "file": "ladder.mid.front.png",
+      "sha256": "58521ae90437881dbc22001e8ec9d419b0e5371504503983eb0aa91f12bfb391",
+      "reviewed": true,
+      "notes": "Both hands and boots remain aligned with the ladder; torso and trouser bends are coherent. The relocated target no longer hides the upper body in the right-side view."
+    },
+    {
+      "file": "ladder.mid.left.png",
+      "sha256": "ba1675a12d28a449385727d84aae7326a08503447a2f0696bffac2baf8a065da",
+      "reviewed": true,
+      "notes": "Both hands and boots remain aligned with the ladder; torso and trouser bends are coherent. The relocated target no longer hides the upper body in the right-side view."
+    },
+    {
+      "file": "ladder.mid.right.png",
+      "sha256": "6544dd079eca62da0e050ff1f081e7be7b67e5fe2a48271d5f2711c672c42ee0",
+      "reviewed": true,
+      "notes": "Both hands and boots remain aligned with the ladder; torso and trouser bends are coherent. The relocated target no longer hides the upper body in the right-side view."
+    },
+    {
+      "file": "left.contact.back.png",
+      "sha256": "2e5d095d96035c3bffdf768f0796831970c55a591c29a66ad5835b27686b5e9f",
+      "reviewed": true,
+      "notes": "Leading left fingers reach the actual rectangular pad; the retracted sphere no longer hides the strike. Opposite arm remains recovered, elbow proportions and outfit are coherent from both sides and back."
+    },
+    {
+      "file": "left.contact.front.png",
+      "sha256": "92676c92210a5ce0a24b821fc6849297c7b903693685d0a0f58c58a6bfefe0c8",
+      "reviewed": true,
+      "notes": "Leading left fingers reach the actual rectangular pad; the retracted sphere no longer hides the strike. Opposite arm remains recovered, elbow proportions and outfit are coherent from both sides and back."
+    },
+    {
+      "file": "left.contact.left.png",
+      "sha256": "a26acc36b69dfe69db82b07a1ad6417bee755c589e2b33f4d46f84ab0ab52119",
+      "reviewed": true,
+      "notes": "Leading left fingers reach the actual rectangular pad; the retracted sphere no longer hides the strike. Opposite arm remains recovered, elbow proportions and outfit are coherent from both sides and back."
+    },
+    {
+      "file": "left.contact.right.png",
+      "sha256": "c19eea8ade58bab8ce6a44ecbbe219e9a658362f0bc3ef9b759cf876aa8361ec",
+      "reviewed": true,
+      "notes": "Leading left fingers reach the actual rectangular pad; the retracted sphere no longer hides the strike. Opposite arm remains recovered, elbow proportions and outfit are coherent from both sides and back."
+    },
+    {
+      "file": "one_leg.contact.back.png",
+      "sha256": "7bea0d0d575a880538930063837bcb30118aebf3e6d1a5fdbd65e9f4dfbde368",
+      "reviewed": true,
+      "notes": "Prone lips meet the lowered sphere without deep head occlusion. Both sides show bent supporting arms, the retained leg and the separate detached chain; the target HP changes to36 after this real contact."
+    },
+    {
+      "file": "one_leg.contact.front.png",
+      "sha256": "b757478e2521a6ebed3af5ddb5be7d3cd8b6cee9ff0b21d255f6677e3dd3dd38",
+      "reviewed": true,
+      "notes": "Prone lips meet the lowered sphere without deep head occlusion. Both sides show bent supporting arms, the retained leg and the separate detached chain; the target HP changes to36 after this real contact."
+    },
+    {
+      "file": "one_leg.contact.left.png",
+      "sha256": "4e6a74ae765411fcd93710bc57debf94f8e34888c24e3734425aa5250981e812",
+      "reviewed": true,
+      "notes": "Prone lips meet the lowered sphere without deep head occlusion. Both sides show bent supporting arms, the retained leg and the separate detached chain; the target HP changes to36 after this real contact."
+    },
+    {
+      "file": "one_leg.contact.right.png",
+      "sha256": "8ab1415cc0ffe451e51b7ea940f9cadd449a5a0d8d465f8e3c5ced2cc2ca4ede",
+      "reviewed": true,
+      "notes": "Prone lips meet the lowered sphere without deep head occlusion. Both sides show bent supporting arms, the retained leg and the separate detached chain; the target HP changes to36 after this real contact."
+    },
+    {
+      "file": "one_leg.crawl.back.png",
+      "sha256": "ed5836ad5dd8d7822435ba4ee09a1cbf912a727deb3d98950db968e4432dc65b",
+      "reviewed": true,
+      "notes": "Rear and left views confirm the braced palms, trailing retained leg and coherent shirt/hip surfaces during actual pursuit. Some trailing-leg area falls behind the left HUD panel; the body and target interaction remain visible."
+    },
+    {
+      "file": "one_leg.crawl.front.png",
+      "sha256": "49c729c7d3e70b347454b4abb85798e9aa1559509528252420e10cac1f4be846",
+      "reviewed": true,
+      "notes": "The living zombie crawls on the hands with one leg retained; the severed chain lies separately on the floor. Side view resolves the torso clearance, bent elbows, and nonintersecting detached pieces."
+    },
+    {
+      "file": "one_leg.crawl.left.png",
+      "sha256": "375dfa916dc952ff3275e827f35983975b560317d9efbf0f7a982fac57244864",
+      "reviewed": true,
+      "notes": "Rear and left views confirm the braced palms, trailing retained leg and coherent shirt/hip surfaces during actual pursuit. Some trailing-leg area falls behind the left HUD panel; the body and target interaction remain visible."
+    },
+    {
+      "file": "one_leg.crawl.right.png",
+      "sha256": "e1908ad4e1ea4e86107d0d4bb347ec82fb8691371f0402c87628f5bd35c17159",
+      "reviewed": true,
+      "notes": "The living zombie crawls on the hands with one leg retained; the severed chain lies separately on the floor. Side view resolves the torso clearance, bent elbows, and nonintersecting detached pieces."
+    },
+    {
+      "file": "one_leg.drop.back.png",
+      "sha256": "b47f84b7fe544ff068414adb6d9693d9d2d9f8522e12d2ed5deab668d1d605b6",
+      "reviewed": true,
+      "notes": "Actual severed thigh/shin/boot remain physical while the living torso falls and reaches for support. Front and right views clearly show the detached chain and retained leg; the HUD partly covers a boot in the left/back orbit."
+    },
+    {
+      "file": "one_leg.drop.front.png",
+      "sha256": "1b45f96760eb80d59a061a1fcf1c1ac7e72e937e746a34a6517b4d839e7cfaf6",
+      "reviewed": true,
+      "notes": "Actual severed thigh/shin/boot remain physical while the living torso falls and reaches for support. Front and right views clearly show the detached chain and retained leg; the HUD partly covers a boot in the left/back orbit."
+    },
+    {
+      "file": "one_leg.drop.left.png",
+      "sha256": "1633fc30345ce63dd651b355db466dab2f485c479ae26e8704b029bf7e538d6d",
+      "reviewed": true,
+      "notes": "Actual severed thigh/shin/boot remain physical while the living torso falls and reaches for support. Front and right views clearly show the detached chain and retained leg; the HUD partly covers a boot in the left/back orbit."
+    },
+    {
+      "file": "one_leg.drop.right.png",
+      "sha256": "4040158918e737dcbe453854ab3cb64db3d35295f9acd227a17c108ada2b1ed5",
+      "reviewed": true,
+      "notes": "Actual severed thigh/shin/boot remain physical while the living torso falls and reaches for support. Front and right views clearly show the detached chain and retained leg; the HUD partly covers a boot in the left/back orbit."
+    },
+    {
+      "file": "right.contact.back.png",
+      "sha256": "3e78fb56efa874c6a82c1565691364c7449f6cb4f13dafd7cca636c6c037f736",
+      "reviewed": true,
+      "notes": "Right attack visibly commits the opposite arm while the other remains bent; fingertips meet the padding without a floating hand or collapsed elbow."
+    },
+    {
+      "file": "right.contact.front.png",
+      "sha256": "da2724d206d95e7fd5c492a0a112fc63be8b5fdf21337d81c302c51acc075663",
+      "reviewed": true,
+      "notes": "Right attack visibly commits the opposite arm while the other remains bent; fingertips meet the padding without a floating hand or collapsed elbow."
+    },
+    {
+      "file": "right.contact.left.png",
+      "sha256": "40d95dff23769382b891b5ed0af1371622e8435b94d7ca3915f61b86e7dbe960",
+      "reviewed": true,
+      "notes": "Right attack visibly commits the opposite arm while the other remains bent; fingertips meet the padding without a floating hand or collapsed elbow."
+    },
+    {
+      "file": "right.contact.right.png",
+      "sha256": "ab0e611317905493a42cad3424ec1e5dd8459f5ff1924e6d00d2f974a683f635",
+      "reviewed": true,
+      "notes": "Right attack visibly commits the opposite arm while the other remains bent; fingertips meet the padding without a floating hand or collapsed elbow."
+    }
+  ],
+  "overview_review": {
+    "ui.original.png": "Actual F1 startup, four clips, both originals retained and R4 Run button visible.",
+    "lab.r4.png": "F4 selected with exact Zombie.r4.glb 15-clip label; Both contact frame42 held at.700s; three-quarter view shows both arms and bent legs with coherent cloth."
+  },
+  "passed": true,
+  "reviewed_outcome_images": 44,
+  "camera_repair": "The four jump.apex stills were recaptured after actual review found the previous rear view behind a wall and front view behind the ladder. A separate review of the movie then found the platform hiding the jump feet/obstacle; only its jump camera was adjusted before re-recording the same real-time live cycle. The product, fixture, assets and controller physics were unchanged in both capture repairs."
+}

@@ -1,0 +1,1856 @@
+{
+	"behavior_contract_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+	"check_count": 53,
+	"checks": [
+		{
+			"details": {
+				"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+				"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+				"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+			},
+			"name": "native R4 imported cache matches the GLB being validated",
+			"passed": true
+		},
+		{
+			"details": {
+				"glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.108333333333333,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "complete R4 behavior contract and imported clips loaded",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"events": [
+					{
+						"action": "bite",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"damage": 13.8,
+						"landed": true,
+						"point": [
+							0.032018631696701,
+							1.4226461648941,
+							0.472594082355499
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.560000002384186
+					}
+				],
+				"finished": [
+					"bite"
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.4375,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "bite",
+					"last_contact": {
+						"action": "bite",
+						"action_time": 0.599999999999999,
+						"damage": 13.8,
+						"landed": true,
+						"point": "(0.032019, 1.422646, 0.472594)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 0.560000002384186,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "bite actual animated contact and full recovery",
+			"passed": true
+		},
+		{
+			"details": {
+				"event": {
+					"action": "bite",
+					"action_time": 0.599999999999999,
+					"animation_time": 0.599999999999999,
+					"damage": 13.8,
+					"landed": true,
+					"point": [
+						0.032018631696701,
+						1.4226461648941,
+						0.472594082355499
+					],
+					"surface_distance": 0.0,
+					"target_distance": 0.560000002384186
+				},
+				"expected": 0.6
+			},
+			"name": "bite marker matches pose within one physics tick",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"events": [
+					{
+						"action": "left",
+						"action_time": 0.533333333333333,
+						"animation_time": 0.533333333333333,
+						"damage": 10.2,
+						"landed": true,
+						"point": [
+							0.114937707781792,
+							1.37912106513977,
+							0.843382596969604
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.899999976158142
+					}
+				],
+				"finished": [
+					"left"
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.487499999999999,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "left",
+					"last_contact": {
+						"action": "left",
+						"action_time": 0.533333333333333,
+						"damage": 10.2,
+						"landed": true,
+						"point": "(0.114938, 1.379121, 0.843383)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "left actual animated contact and full recovery",
+			"passed": true
+		},
+		{
+			"details": {
+				"event": {
+					"action": "left",
+					"action_time": 0.533333333333333,
+					"animation_time": 0.533333333333333,
+					"damage": 10.2,
+					"landed": true,
+					"point": [
+						0.114937707781792,
+						1.37912106513977,
+						0.843382596969604
+					],
+					"surface_distance": 0.0,
+					"target_distance": 0.899999976158142
+				},
+				"expected": 0.533333333333333
+			},
+			"name": "left marker matches pose within one physics tick",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"events": [
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"damage": 12.0,
+						"landed": true,
+						"point": [
+							-0.186341658234596,
+							1.29183518886566,
+							0.932941794395447
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.899999976158142
+					}
+				],
+				"finished": [
+					"right"
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.3875,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "right",
+					"last_contact": {
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"damage": 12.0,
+						"landed": true,
+						"point": "(-0.186342, 1.291835, 0.932942)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "right actual animated contact and full recovery",
+			"passed": true
+		},
+		{
+			"details": {
+				"event": {
+					"action": "right",
+					"action_time": 0.599999999999999,
+					"animation_time": 0.599999999999999,
+					"damage": 12.0,
+					"landed": true,
+					"point": [
+						-0.186341658234596,
+						1.29183518886566,
+						0.932941794395447
+					],
+					"surface_distance": 0.0,
+					"target_distance": 0.899999976158142
+				},
+				"expected": 0.6
+			},
+			"name": "right marker matches pose within one physics tick",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"events": [
+					{
+						"action": "both",
+						"action_time": 0.699999999999999,
+						"animation_time": 0.699999999999999,
+						"damage": 18.0,
+						"landed": true,
+						"point": [
+							0.189282834529877,
+							1.25516617298126,
+							0.853989958763123
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.899999976158142
+					}
+				],
+				"finished": [
+					"both"
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.1875,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "both",
+					"last_contact": {
+						"action": "both",
+						"action_time": 0.699999999999999,
+						"damage": 18.0,
+						"landed": true,
+						"point": "(0.189283, 1.255166, 0.85399)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "both actual animated contact and full recovery",
+			"passed": true
+		},
+		{
+			"details": {
+				"event": {
+					"action": "both",
+					"action_time": 0.699999999999999,
+					"animation_time": 0.699999999999999,
+					"damage": 18.0,
+					"landed": true,
+					"point": [
+						0.189282834529877,
+						1.25516617298126,
+						0.853989958763123
+					],
+					"surface_distance": 0.0,
+					"target_distance": 0.899999976158142
+				},
+				"expected": 0.7
+			},
+			"name": "both marker matches pose within one physics tick",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "out-of-range attack request rejected",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"landed": false,
+						"learned_contact_distance": null,
+						"reason": "target moved out of range",
+						"surface_gap": -1.0,
+						"target_distance": 2.40000009536743
+					}
+				]
+			},
+			"name": "target can evade a committed attack",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"landed": false,
+						"learned_contact_distance": null,
+						"reason": "target left the strike arc",
+						"surface_gap": -1.0,
+						"target_distance": 0.899999976158142
+					}
+				]
+			},
+			"name": "target outside strike arc is not hit",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"landed": false,
+						"learned_contact_distance": null,
+						"reason": "animated contact surface missed",
+						"surface_gap": 1.09338510036469,
+						"target_distance": 0.899999976158142
+					}
+				]
+			},
+			"name": "target above animated reach is not hit",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"landed": false,
+						"learned_contact_distance": null,
+						"reason": "solid world object blocked contact",
+						"surface_gap": -1.0,
+						"target_distance": 0.899999976158142
+					}
+				]
+			},
+			"name": "solid wall blocks damage even when animated hand crosses it",
+			"passed": true
+		},
+		{
+			"details": {
+				"available": [
+					"bite",
+					"right"
+				],
+				"events": []
+			},
+			"name": "severing striking arm cancels contact and removes unavailable choices",
+			"passed": true
+		},
+		{
+			"details": {
+				"sequence": [
+					"bite",
+					"left",
+					"right",
+					"both",
+					"bite",
+					"left"
+				]
+			},
+			"name": "autonomous close-range choices vary without immediate repeats",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "left",
+						"action_time": 0.533333333333333,
+						"animation_time": 0.533333333333333,
+						"damage": 10.2,
+						"landed": true,
+						"point": [
+							0.0441167429089546,
+							1.38312649726868,
+							1.44193434715271
+						],
+						"surface_distance": 0.0380656719207764,
+						"target_distance": 0.957512557506561
+					},
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"damage": 12.0,
+						"landed": true,
+						"point": [
+							-0.187589049339294,
+							1.30515694618225,
+							1.47546243667603
+						],
+						"surface_distance": 0.00453758239746094,
+						"target_distance": 0.957512557506561
+					},
+					{
+						"action": "both",
+						"action_time": 0.699999999999999,
+						"animation_time": 0.699999999999999,
+						"landed": false,
+						"learned_contact_distance": 0.898180887877941,
+						"reason": "animated contact surface missed",
+						"surface_gap": 0.0773316696286201,
+						"target_distance": 0.957512557506561
+					},
+					{
+						"action": "left",
+						"action_time": 0.533333333333333,
+						"animation_time": 0.533333333333333,
+						"damage": 10.2,
+						"landed": true,
+						"point": [
+							0.0883101373910904,
+							1.41061520576477,
+							1.48937451839447
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.886275410652161
+					},
+					{
+						"action": "right",
+						"action_time": 0.599999999999999,
+						"animation_time": 0.599999999999999,
+						"damage": 12.0,
+						"landed": true,
+						"point": [
+							-0.142227023839951,
+							1.27364122867584,
+							1.49075818061829
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.886275410652161
+					},
+					{
+						"action": "both",
+						"action_time": 0.699999999999999,
+						"animation_time": 0.699999999999999,
+						"damage": 18.0,
+						"landed": true,
+						"point": [
+							0.194912746548653,
+							1.24297988414764,
+							1.46966934204102
+						],
+						"surface_distance": 0.0114393178373575,
+						"target_distance": 0.886275410652161
+					}
+				],
+				"snapshot": {
+					"action_time": 0.887499999999998,
+					"active_action": "both",
+					"alive": true,
+					"animation_time": 0.887499999999998,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": true,
+					"clip": "Zombie_Attack_Both",
+					"contact_count": 5,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "both",
+					"last_contact": {
+						"action": "both",
+						"action_time": 0.699999999999999,
+						"damage": 18.0,
+						"landed": true,
+						"point": "(0.194913, 1.24298, 1.469669)",
+						"surface_distance": 0.0114393178373575,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": 0.898180887877941,
+					"left_arm": true,
+					"miss_count": 1,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000824, 0.613725)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "attack",
+					"target_distance": 0.886275410652161,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				},
+				"target_contact_box_size_m": [
+					0.379999995231628,
+					0.579999983310699,
+					0.0399999991059303
+				],
+				"target_movement_capsule_radius_m": 0.16
+			},
+			"name": "pursuit closes after a real thin-surface miss and then lands contacts",
+			"passed": true
+		},
+		{
+			"details": {
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.05,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": true,
+					"clip": "Zombie_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000899, 0.017326)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "crawl",
+					"target_distance": 2.98267364501953,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.32)"
+				}
+			},
+			"name": "one leg loss survives and completes down transition",
+			"passed": true
+		},
+		{
+			"details": {
+				"distance": 0.319892525672913,
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 1.05,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": true,
+					"clip": "Zombie_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000899, 0.337219)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "crawl",
+					"target_distance": 2.66278123855591,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.32)"
+				}
+			},
+			"name": "one-leg crawler physically pursues target",
+			"passed": true
+		},
+		{
+			"details": {
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 1.09166666666666,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": true,
+					"clip": "Zombie_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000938, 0.350548)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "crawl",
+					"target_distance": 2.64945197105408,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.32)"
+				}
+			},
+			"name": "second leg loss remains alive and prone",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "crawl hit stays in prone hit animation",
+			"passed": true
+		},
+		{
+			"details": {
+				"events": [
+					{
+						"action": "crawl_bite",
+						"action_time": 0.499999999999999,
+						"animation_time": 0.499999999999999,
+						"damage": 10.2,
+						"landed": true,
+						"point": [
+							0.0282349344342947,
+							0.386513113975525,
+							0.996765673160553
+						],
+						"surface_distance": 0.0,
+						"target_distance": 0.730000019073486
+					}
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.129166666666667,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Crawl_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "crawl_bite",
+					"last_contact": {
+						"action": "crawl_bite",
+						"action_time": 0.499999999999999,
+						"damage": 10.2,
+						"landed": true,
+						"point": "(0.028235, 0.386513, 0.996766)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000899, 0.40932)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "crawl_idle",
+					"target_distance": 0.730000019073486,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "prone bite uses low real contact",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "missing legs reject jumping and ladder",
+			"passed": true
+		},
+		{
+			"details": {
+				"drift": 0.0,
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 1.12083333333333,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": true,
+					"clip": "Zombie_Crawl_Idle",
+					"contact_count": 1,
+					"crawl_speed": 0.0,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "crawl_bite",
+					"last_contact": {
+						"action": "crawl_bite",
+						"action_time": 0.499999999999999,
+						"damage": 10.2,
+						"landed": true,
+						"point": "(0.028235, 0.386513, 0.996766)",
+						"surface_distance": 0.0,
+						"visible_target_shapes": true
+					},
+					"last_rejection": "Ladder climbing requires both full arm chains and both legs",
+					"learned_contact_distance": null,
+					"left_arm": false,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000899, 0.40932)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": false,
+					"standing_legs": false,
+					"state": "crawl_idle",
+					"target_distance": 2.73000001907349,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "crawler without arms cannot propel itself but retains bite",
+			"passed": true
+		},
+		{
+			"details": {
+				"capsule_transform": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.879012, 0.476799), Z: (0.0, -0.476799, 0.879012), O: (0.0, 0.718684, -0.011074)]",
+				"snapshot": {
+					"action_time": 0.3,
+					"active_action": "to_crawl",
+					"alive": true,
+					"animation_time": 0.3,
+					"available_attacks": [],
+					"behavior_enabled": false,
+					"clip": "Zombie_To_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": true,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "to_crawl",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "to_crawl",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "pause during the live drop holds its exact pose and capsule beyond clip duration",
+			"passed": true
+		},
+		{
+			"details": {
+				"capsule_rotation": "(1.073786, 0.0, 0.0)",
+				"snapshot": {
+					"action_time": 0.5,
+					"active_action": "to_crawl",
+					"alive": true,
+					"animation_time": 0.5,
+					"available_attacks": [],
+					"behavior_enabled": false,
+					"clip": "Zombie_To_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": true,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "to_crawl",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "to_crawl",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "seeking the paused drop keeps collider and pose cursor synchronized",
+			"passed": true
+		},
+		{
+			"details": {
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.075,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Crawl_Idle",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "crawl_idle",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "resuming the paused drop completes normal prone conversion",
+			"passed": true
+		},
+		{
+			"details": {
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.0125,
+					"available_attacks": [
+						"crawl_bite"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Crawl",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": true,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "crawling",
+					"position": "(0.0, 0.000053, 0.0)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": false,
+					"state": "preview",
+					"target_distance": 0.899999976158142,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "selecting another action during the drop chooses a valid prone preview",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"end": "(0.0, 0.000799, 0.649584)",
+				"peak_m": 0.18842387967743,
+				"start": "(0.0, 0.000053, 0.0)",
+				"trajectory": [
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 0,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 12,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 24,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 36,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 48,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 60,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_anticipation",
+						"tick": 72,
+						"y": 0.0000533831771463156,
+						"z": 0.0
+					},
+					{
+						"model_y": -0.0074861110188067,
+						"phase": "jump_airborne",
+						"tick": 84,
+						"y": 0.0162117164582014,
+						"z": 0.0120394257828593
+					},
+					{
+						"model_y": -0.0871111080050468,
+						"phase": "jump_airborne",
+						"tick": 96,
+						"y": 0.0958367064595222,
+						"z": 0.082039438188076
+					},
+					{
+						"model_y": -0.142236113548279,
+						"phase": "jump_airborne",
+						"tick": 108,
+						"y": 0.150961697101593,
+						"z": 0.152039423584938
+					},
+					{
+						"model_y": -0.172861114144325,
+						"phase": "jump_airborne",
+						"tick": 120,
+						"y": 0.181586652994156,
+						"z": 0.222039356827736
+					},
+					{
+						"model_y": -0.178986117243767,
+						"phase": "jump_airborne",
+						"tick": 132,
+						"y": 0.187711626291275,
+						"z": 0.292039304971695
+					},
+					{
+						"model_y": -0.160611107945442,
+						"phase": "jump_airborne",
+						"tick": 144,
+						"y": 0.169336587190628,
+						"z": 0.362039238214493
+					},
+					{
+						"model_y": -0.117736108601093,
+						"phase": "jump_airborne",
+						"tick": 156,
+						"y": 0.126461535692215,
+						"z": 0.432039171457291
+					},
+					{
+						"model_y": -0.0503611117601395,
+						"phase": "jump_airborne",
+						"tick": 168,
+						"y": 0.0590864680707455,
+						"z": 0.502039134502411
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 180,
+						"y": 0.00040590000571683,
+						"z": 0.570988714694977
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 192,
+						"y": 0.000878602382726967,
+						"z": 0.621164500713348
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 204,
+						"y": 0.000881369691342115,
+						"z": 0.646354913711548
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 216,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 228,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 240,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 252,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 264,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 276,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "jump_landing",
+						"tick": 288,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 300,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 312,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 324,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 336,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 348,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					},
+					{
+						"model_y": 0.0,
+						"phase": "none",
+						"tick": 360,
+						"y": 0.000799376168288291,
+						"z": 0.649584114551544
+					}
+				]
+			},
+			"name": "short hop clears real 10cm obstacle and recovers",
+			"passed": true
+		},
+		{
+			"details": {
+				"lowest_model_offset": -0.179666668176651,
+				"physical_peak": 0.18842387967743
+			},
+			"name": "physics hop uses one 18cm elevation, not doubled authored height",
+			"passed": true
+		},
+		{
+			"details": {
+				"accepted": true,
+				"end": "(0.88915, 0.900743, -0.448934)",
+				"maximum_y": 0.900940358638763,
+				"phases": [
+					"ladder_align",
+					"ladder_climb",
+					"ladder_exit",
+					"none"
+				],
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 1.24166666666666,
+					"available_attacks": [
+						"bite",
+						"left",
+						"right",
+						"both"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 0,
+					"crawl_speed": 0.32,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": true,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.88915, 0.900743, -0.448934)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 5.42866468429565,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "ladder climbs physical rungs and exits on real platform",
+			"passed": true
+		},
+		{
+			"details": {
+				"height_after": 0.0000656810589134693,
+				"height_before": 0.253362536430359,
+				"snapshot": {
+					"action_time": 0.0,
+					"active_action": "",
+					"alive": true,
+					"animation_time": 0.995833333333331,
+					"available_attacks": [
+						"bite",
+						"right"
+					],
+					"behavior_enabled": false,
+					"clip": "Zombie_Idle",
+					"contact_count": 0,
+					"crawl_speed": 0.1856,
+					"crawl_transition": false,
+					"crawling": false,
+					"grounded": true,
+					"last_attack": "",
+					"last_contact": {
+
+					},
+					"last_rejection": "",
+					"learned_contact_distance": null,
+					"left_arm": false,
+					"miss_count": 0,
+					"movement_mode": "standing",
+					"position": "(0.0, 0.000066, -0.4)",
+					"r4_actions_enabled": true,
+					"revision_id": "r4",
+					"right_arm": true,
+					"standing_legs": true,
+					"state": "idle",
+					"target_distance": 5.94642734527588,
+					"traversal_state": "none",
+					"velocity": "(0.0, 0.0, 0.0)"
+				}
+			},
+			"name": "losing ladder grip releases climb and real gravity takes over",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "paused inspector snapshot retains the evaluated frame",
+			"passed": true
+		},
+		{
+			"details": {
+				"amount": 1.0,
+				"blend_shape": "BiteOpen",
+				"maximum_pose_difference": 0.0292859338223934
+			},
+			"name": "CPU sever/contact bake includes the animated mouth morph",
+			"passed": true
+		},
+		{
+			"details": {
+				"expected_shapes": {
+					"shin_l": "BendRelief",
+					"shin_r": "BendRelief",
+					"thigh_l": "BendRelief",
+					"thigh_r": "BendRelief",
+					"torso": "SlamDrape"
+				},
+				"parts": [
+					"thigh_l",
+					"thigh_r",
+					"shin_l",
+					"shin_r",
+					"torso"
+				]
+			},
+			"name": "all five corrected leg and torso meshes include their authored morphs",
+			"passed": true
+		},
+		{
+			"details": {
+				"clip": "Zombie_To_Crawl",
+				"finite": true,
+				"frame": 11,
+				"maximum_world_vertex_difference_m": 0.0378318503499031,
+				"morph_amount": 1.0,
+				"shape_key": "BendRelief",
+				"source_unchanged": true
+			},
+			"name": "thigh_l CPU freeze bake retains its live corrective without changing the source",
+			"passed": true
+		},
+		{
+			"details": {
+				"clip": "Zombie_To_Crawl",
+				"finite": true,
+				"frame": 13,
+				"maximum_world_vertex_difference_m": 0.0393602512776852,
+				"morph_amount": 1.0,
+				"shape_key": "BendRelief",
+				"source_unchanged": true
+			},
+			"name": "thigh_r CPU freeze bake retains its live corrective without changing the source",
+			"passed": true
+		},
+		{
+			"details": {
+				"clip": "Zombie_To_Crawl",
+				"finite": true,
+				"frame": 11,
+				"maximum_world_vertex_difference_m": 0.0355434082448483,
+				"morph_amount": 1.0,
+				"shape_key": "BendRelief",
+				"source_unchanged": true
+			},
+			"name": "shin_l CPU freeze bake retains its live corrective without changing the source",
+			"passed": true
+		},
+		{
+			"details": {
+				"clip": "Zombie_To_Crawl",
+				"finite": true,
+				"frame": 13,
+				"maximum_world_vertex_difference_m": 0.0359997823834419,
+				"morph_amount": 1.0,
+				"shape_key": "BendRelief",
+				"source_unchanged": true
+			},
+			"name": "shin_r CPU freeze bake retains its live corrective without changing the source",
+			"passed": true
+		},
+		{
+			"details": {
+				"clip": "Zombie_Attack_Both",
+				"finite": true,
+				"frame": 35,
+				"maximum_world_vertex_difference_m": 0.0149440700188279,
+				"morph_amount": 1.0,
+				"shape_key": "SlamDrape",
+				"source_unchanged": true
+			},
+			"name": "torso CPU freeze bake retains its live corrective without changing the source",
+			"passed": true
+		},
+		{
+			"details": {
+				"shape_indices": {
+					"LeftDrape": 1,
+					"SlamDrape": 0
+				}
+			},
+			"name": "torso imports both named cloth correctives on one mesh",
+			"passed": true
+		},
+		{
+			"details": {
+				"LeftDrape": 1.0,
+				"SlamDrape": 0.0,
+				"frame": 29,
+				"maximum_world_vertex_difference_m": 0.000993611291050911
+			},
+			"name": "Left attack uses its second torso key in the posed CPU bake",
+			"passed": true
+		},
+		{
+			"details": {
+				"LeftDrape": 0.8,
+				"SlamDrape": 0.65,
+				"maximum_additive_error_m": 0.000000357647280679885,
+				"source_vertices_unchanged": true
+			},
+			"name": "two torso morphs accumulate before skinning without replacing each other",
+			"passed": true
+		},
+		{
+			"details": {
+				"Zombie_Attack": {
+					"LeftDrape": 0.0,
+					"SlamDrape": 0.0
+				},
+				"Zombie_Attack_Both": {
+					"LeftDrape": 0.0,
+					"SlamDrape": 1.0
+				},
+				"Zombie_Attack_Left": {
+					"LeftDrape": 1.0,
+					"SlamDrape": 0.0
+				},
+				"Zombie_Hit": {
+					"LeftDrape": 0.0,
+					"SlamDrape": 0.0
+				},
+				"Zombie_Idle": {
+					"LeftDrape": 0.0,
+					"SlamDrape": 0.0
+				},
+				"Zombie_Walk": {
+					"LeftDrape": 0.0,
+					"SlamDrape": 0.0
+				}
+			},
+			"name": "torso morph tracks reset across attacks and preserved base clips",
+			"passed": true
+		},
+		{
+			"details": {
+				"LeftDrape": 1.0,
+				"frame": 29,
+				"maximum_world_vertex_error_at_death_m": 0.0,
+				"physics_seconds_after_freeze": 0.25,
+				"source_vertices_unchanged": true
+			},
+			"name": "Left torso corrective survives pose freeze and actual ragdoll simulation",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Original GLB remains byte-identical",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "R2 GLB remains byte-identical",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "original retains legacy action path",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "original retains original leg-loss ragdoll behavior",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r2 retains legacy action path",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r2 retains original leg-loss ragdoll behavior",
+			"passed": true
+		},
+		{
+			"details": {
+				"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+				"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+				"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+				"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+			},
+			"name": "model, controller and timing contract stayed unchanged throughout validation",
+			"passed": true
+		}
+	],
+	"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+	"failure_count": 0,
+	"passed": true,
+	"phase_samples": {
+		"jump": [
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 0,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 12,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 24,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 36,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 48,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 60,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_anticipation",
+				"tick": 72,
+				"y": 0.0000533831771463156,
+				"z": 0.0
+			},
+			{
+				"model_y": -0.0074861110188067,
+				"phase": "jump_airborne",
+				"tick": 84,
+				"y": 0.0162117164582014,
+				"z": 0.0120394257828593
+			},
+			{
+				"model_y": -0.0871111080050468,
+				"phase": "jump_airborne",
+				"tick": 96,
+				"y": 0.0958367064595222,
+				"z": 0.082039438188076
+			},
+			{
+				"model_y": -0.142236113548279,
+				"phase": "jump_airborne",
+				"tick": 108,
+				"y": 0.150961697101593,
+				"z": 0.152039423584938
+			},
+			{
+				"model_y": -0.172861114144325,
+				"phase": "jump_airborne",
+				"tick": 120,
+				"y": 0.181586652994156,
+				"z": 0.222039356827736
+			},
+			{
+				"model_y": -0.178986117243767,
+				"phase": "jump_airborne",
+				"tick": 132,
+				"y": 0.187711626291275,
+				"z": 0.292039304971695
+			},
+			{
+				"model_y": -0.160611107945442,
+				"phase": "jump_airborne",
+				"tick": 144,
+				"y": 0.169336587190628,
+				"z": 0.362039238214493
+			},
+			{
+				"model_y": -0.117736108601093,
+				"phase": "jump_airborne",
+				"tick": 156,
+				"y": 0.126461535692215,
+				"z": 0.432039171457291
+			},
+			{
+				"model_y": -0.0503611117601395,
+				"phase": "jump_airborne",
+				"tick": 168,
+				"y": 0.0590864680707455,
+				"z": 0.502039134502411
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 180,
+				"y": 0.00040590000571683,
+				"z": 0.570988714694977
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 192,
+				"y": 0.000878602382726967,
+				"z": 0.621164500713348
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 204,
+				"y": 0.000881369691342115,
+				"z": 0.646354913711548
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 216,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 228,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 240,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 252,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 264,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 276,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "jump_landing",
+				"tick": 288,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 300,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 312,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 324,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 336,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 348,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			},
+			{
+				"model_y": 0.0,
+				"phase": "none",
+				"tick": 360,
+				"y": 0.000799376168288291,
+				"z": 0.649584114551544
+			}
+		]
+	},
+	"physics_fps": 240,
+	"physics_ticks": 12680,
+	"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+	"scope": "Native controller, marker contacts, limb decisions, physical hop and ladder traversal. Separate Blender/native visual reviews validate deformation and appearance.",
+	"version_inputs": {
+		"behavior_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+		"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"imported_r4_source_md5": "df767a8b5a98e0996194f945a8741250",
+		"r4_glb_md5": "df767a8b5a98e0996194f945a8741250",
+		"r4_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+	}
+}

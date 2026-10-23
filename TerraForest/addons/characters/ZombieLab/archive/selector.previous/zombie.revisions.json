@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "build_label": "Zombie Lab \u2014 Revision Selector",
+  "default_revision": "original",
+  "latest_revision": "r4",
+  "revision_order": [
+    "original",
+    "r4",
+    "r2",
+    "r3"
+  ],
+  "revisions": [
+    {
+      "id": "original",
+      "label": "Original / Main",
+      "description": "First released zombie; startup default.",
+      "model_path": "res://assets/Zombie.glb",
+      "model_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+      "blend_path": "source/Zombie.blend",
+      "blend_sha256": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+      "triangles_including_caps": 14905,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.0,
+      "attack_strike_seconds": 0.6398,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.8,
+        "Zombie_Attack": 1.4,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision2_baseline"
+    },
+    {
+      "id": "r4",
+      "label": "R4 / Latest",
+      "description": "Corrected arm proportions, fabric and reauthored movement.",
+      "model_path": "res://assets/Zombie.r4.glb",
+      "model_sha256": "f9f387e637bdaeea0bbdf7d00e842b2a52279c7e9381b1daddea2c2f4852d992",
+      "blend_path": "source/Zombie.r4.blend",
+      "blend_sha256": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+      "triangles_including_caps": 14896,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.72,
+      "attack_strike_seconds": 0.7,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.4,
+        "Zombie_Attack": 1.6,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision4_project"
+    },
+    {
+      "id": "r2",
+      "label": "R2",
+      "description": "Earlier collision and deformation corrections.",
+      "model_path": "res://assets/Zombie.r2.glb",
+      "model_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+      "blend_path": "source/Zombie.r2.blend",
+      "blend_sha256": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+      "triangles_including_caps": 14771,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.0,
+      "attack_strike_seconds": 0.6398,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.8,
+        "Zombie_Attack": 1.4,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision3_baseline"
+    },
+    {
+      "id": "r3",
+      "label": "R3",
+      "description": "Earlier reauthored movement.",
+      "model_path": "res://assets/Zombie.r3.glb",
+      "model_sha256": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+      "blend_path": "source/Zombie.r3.blend",
+      "blend_sha256": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+      "triangles_including_caps": 14847,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.72,
+      "attack_strike_seconds": 0.7,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.4,
+        "Zombie_Attack": 1.6,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision4_previous_live"
+    }
+  ],
+  "shared_runtime_note": "Every selection loads the preserved complete GLB with its own mesh, rig and animation. The shared controller retains the latest contact, joint and replay fixes. Historical R1 physics bugs are not reintroduced. All imports use 60 Hz and keep textures embedded in their compiled model."
+}

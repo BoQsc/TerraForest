@@ -1,0 +1,1983 @@
+{
+  "reviewer": "r4_runtime",
+  "status": "reviewed_final",
+  "complete": true,
+  "passed": true,
+  "source_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+  "capture_manifest": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frame.manifest.json",
+  "capture_manifest_sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346",
+  "capture_manifest_passed": true,
+  "capture_source_sha256": {
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "assets/Zombie.r4.glb.import": "c7d7a6cabb795679005321b5693ae1caf172712ca7889b0060830fe8574dfa57",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "tools/capture_behavior_frames.gd": "304848904881e5d64fb314535d0bd274df84f32e265698828e9429f1230491d5"
+  },
+  "capture_method": "Native complete R4 model; exact AnimationPlayer seek; two complete renders to settle GPU skin upload; four shared-world camera views. Every clip start/end also compares a third draw pixel-for-pixel.",
+  "views": [
+    "FRONT",
+    "RIGHT",
+    "BACK",
+    "LEFT"
+  ],
+  "expected_poses": 194,
+  "expected_view_poses": 776,
+  "expected_atlases": 34,
+  "reviewed_atlases": 34,
+  "reviewed_poses": 194,
+  "reviewed_view_poses": 776,
+  "scope": "Actual visual examination of each image row and all four views; quantitative mesh/collision distances are validated in separate native and Blender reports.",
+  "caveats": [
+    "These body atlases have 384 by 448 pixels per direction; submillimeter surface distances and intersections are assessed by the separate mesh/fabric probes.",
+    "The isolated ladder atlases omit ladder geometry and apply the declared 0.30 m/s upward root travel. Physical rung contact, traversal exit and actual collapse are assessed in the native runtime/demo reports and final live ladder captures."
+  ],
+  "blocking_findings": [],
+  "atlases": [
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.000-005.png",
+      "filename": "Zombie_Jump.000-005.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        0,
+        5
+      ],
+      "sha256_at_inventory": "3ded93af9026cc440efdad05f5eda0ba130e95dce2d61a36526e783c2f3383f3",
+      "reviewed": true,
+      "sha256_reviewed": "3ded93af9026cc440efdad05f5eda0ba130e95dce2d61a36526e783c2f3383f3",
+      "reviewed_at_original_resolution": true,
+      "observation": "The guarded stance begins a gradual knee and hip compression. Both boots stay planted, elbows hold distinct rigid arm segments, and shirt sleeves, waist hem and trouser silhouettes remain continuous in all four views.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 0,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.000.png",
+          "sha256": "506a2c15c3fd22bb4d41f930de2833b3abc6d7f8f09a9a3b0bc4e531b2bf0476",
+          "bone_pose_sha256": "3bcdeba2510dba5acb35c1e86ce8ad0851d33d8459b7e85304cbf1cae2ff6455",
+          "actual_time_seconds": 0.0
+        },
+        {
+          "frame": 1,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.001.png",
+          "sha256": "68013046e742d50531f2e5fbbea0197011e4dfb14eb3512784d0390e307ccec4",
+          "bone_pose_sha256": "26213a9e20320e6f94e514fd7df8b31095eced99d48947a8b1a1c7943ab39310",
+          "actual_time_seconds": 0.0166666666666667
+        },
+        {
+          "frame": 2,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.002.png",
+          "sha256": "1ed8797029f7e75c0dab64dd3800c16a0332db6e133458c60bd5af6cdc95360d",
+          "bone_pose_sha256": "079c580224ee861389d5a09980951d5df2ed5a6493de386126a9b10a7540b53c",
+          "actual_time_seconds": 0.0333333333333333
+        },
+        {
+          "frame": 3,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.003.png",
+          "sha256": "70488ff277ddc3e9bdf6372ec6bf68f21bc1427226d7d61e704ef1a4fa603e24",
+          "bone_pose_sha256": "19980f16dbe7a12b3223de7e97eb6d875bfb93172e49abf4a615d4aa51bcfaab",
+          "actual_time_seconds": 0.05
+        },
+        {
+          "frame": 4,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.004.png",
+          "sha256": "97a664d3a5aeee170ad846bd0c2763cc1f248b947b861d1fec75f7535bcf52db",
+          "bone_pose_sha256": "8a6b8e41fe8cf0e73f571872ccfea942400728e9086db30320531eb920a4ac33",
+          "actual_time_seconds": 0.0666666666666667
+        },
+        {
+          "frame": 5,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.005.png",
+          "sha256": "c536b7f05dc8cb65aaf9b39d062df3c7aec55ed41a2edaa3599bbf2f529a76c7",
+          "bone_pose_sha256": "28782e0b99d4dc4174aef490e86361375ccab9fce77579ac68e49748af039c4e",
+          "actual_time_seconds": 0.0833333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.006-011.png",
+      "filename": "Zombie_Jump.006-011.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        6,
+        11
+      ],
+      "sha256_at_inventory": "a43cd2b27f388936fd4f3c9389dface40ae001eea7dff83c07c623091d53ad5d",
+      "reviewed": true,
+      "sha256_reviewed": "a43cd2b27f388936fd4f3c9389dface40ae001eea7dff83c07c623091d53ad5d",
+      "reviewed_at_original_resolution": true,
+      "observation": "Crouch anticipation deepens progressively with forward torso inclination and slightly drawing-in hands. Foot placement is stable; wrists maintain claw shapes without stretching; no visible cloth inversion or sudden shoulder-volume change.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 6,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.006.png",
+          "sha256": "3ad54c3392219df08669d37da3eb1555ebe2c152429f2d6ecd97e74ba1fb1df0",
+          "bone_pose_sha256": "0355783f6473d0d7d74e9922f23462e3f31bd6fec7491943b59a69adbb3a96a9",
+          "actual_time_seconds": 0.1
+        },
+        {
+          "frame": 7,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.007.png",
+          "sha256": "651b78e69b115f7998b2f9a2adbbab3f89f77e91e3f8d699042bec1aed5a30e1",
+          "bone_pose_sha256": "4da30a0e2047293120886e0b3f585900e55ed1118fd8cbd02e18bd8d4aaba5f0",
+          "actual_time_seconds": 0.116666666666667
+        },
+        {
+          "frame": 8,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.008.png",
+          "sha256": "49c3a07629dc77905700e49527c84788573e9cf8c95763cc97109c13fca5a503",
+          "bone_pose_sha256": "1d58a0957f1447ba66eef7bc59aa885504f573e37cb2f765e669c1c6ad0b24c9",
+          "actual_time_seconds": 0.133333333333333
+        },
+        {
+          "frame": 9,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.009.png",
+          "sha256": "f56b53d560bc47aeded47d1edb447a5dc14abb8e5374bfa3c70ec583aa8d0a07",
+          "bone_pose_sha256": "0d94a1af91cb8fe153ebd524522edf90e00bc1b4dcd7d834ca1e228e9f4c8a60",
+          "actual_time_seconds": 0.15
+        },
+        {
+          "frame": 10,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.010.png",
+          "sha256": "35bb0d14234b6f1d46f72555143402fcc5759b2f3078d590528be274ca7626a4",
+          "bone_pose_sha256": "d33c8a9a3af867b6ccc68c373183c8f2c9327abd6329c3f1886a352d5f4ba96d",
+          "actual_time_seconds": 0.166666666666667
+        },
+        {
+          "frame": 11,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.011.png",
+          "sha256": "4cd473f3af704b37d716d477a5c0c4500b08a81d1fcc31a53970fdc8ab91b604",
+          "bone_pose_sha256": "544304eeaa704dcd81a099821bc7eea4cfe9942ca7f2e1de94c2e66f3c904041",
+          "actual_time_seconds": 0.183333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.012-017.png",
+      "filename": "Zombie_Jump.012-017.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        12,
+        17
+      ],
+      "sha256_at_inventory": "72647d6dda7bff3e69e45733b336a50baaeb8f66c34b19b4e533b9e22839b53d",
+      "reviewed": true,
+      "sha256_reviewed": "72647d6dda7bff3e69e45733b336a50baaeb8f66c34b19b4e533b9e22839b53d",
+      "reviewed_at_original_resolution": true,
+      "observation": "The knees and hips compress into the lower anticipation pose while hands remain guarded in front. Side views show a readable squat with no arm-length distortion. Sleeve edges, trouser knees and rear shirt panels stay continuous.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 12,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.012.png",
+          "sha256": "05726cfeeefa5f026d84bb23c2c5aa6e715033bc8ba36219900611b02457ec72",
+          "bone_pose_sha256": "19ab9abfb9452e1421fff96be518eba949f662cf367986f287d670879a986379",
+          "actual_time_seconds": 0.2
+        },
+        {
+          "frame": 13,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.013.png",
+          "sha256": "a5a61ddef731b56c4be21a73ddc3ba448a0e88daaad5924579a57dc7d3177d8b",
+          "bone_pose_sha256": "c3ddd1fb3a3001b86a66ae1abb4d9152774ad7a3a33ddf010bbe2f236fa696ae",
+          "actual_time_seconds": 0.216666666666667
+        },
+        {
+          "frame": 14,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.014.png",
+          "sha256": "0fd6eb4566dbaa78bf2756b227f75f0fc23f151ffce574cdfd873baabf55f032",
+          "bone_pose_sha256": "88fcff161803ec797228a981e5c0f7d7d274b0034bbdabac620a15e737b8d223",
+          "actual_time_seconds": 0.233333333333333
+        },
+        {
+          "frame": 15,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.015.png",
+          "sha256": "0132724a3e4c755905c0730f2b2cf584ee1c6d6161403255367f8b2dd01f69b0",
+          "bone_pose_sha256": "6577d94cd05c25ae92e9beaeed4164880c03e23cf0b3efd998523ad0280e4ae8",
+          "actual_time_seconds": 0.25
+        },
+        {
+          "frame": 16,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.016.png",
+          "sha256": "2456db73fabd9447a0be35339dacdc262dbbec17f798c281b09862ccc2876dd6",
+          "bone_pose_sha256": "ab2e6bee86eced458998ca5f64e6322ae7467d4fec3a623b90adf84c58ab9474",
+          "actual_time_seconds": 0.266666666666667
+        },
+        {
+          "frame": 17,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.017.png",
+          "sha256": "5bf4a477fd13d2fc625548b19f012f527928d9929e862a6754b7fdf2e69c4433",
+          "bone_pose_sha256": "5ca5ff2abd7a5a7491ccac9de32dabe58fa604eb652a52be00ea2fe523f20bd5",
+          "actual_time_seconds": 0.283333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.018-023.png",
+      "filename": "Zombie_Jump.018-023.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        18,
+        23
+      ],
+      "sha256_at_inventory": "6337453c9fb834cd464d17d1e77eee805f0bda0ae2c686a01af0494a13c66220",
+      "reviewed": true,
+      "sha256_reviewed": "6337453c9fb834cd464d17d1e77eee805f0bda0ae2c686a01af0494a13c66220",
+      "reviewed_at_original_resolution": true,
+      "observation": "The bottom of the crouch transitions into leg extension and initial lift around the takeoff marker. The feet maintain their stance width, shoulders retain volume, and there is no visible pop or garment spike between consecutive rows.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 18,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.018.png",
+          "sha256": "2f4d1bb0ecb460140ba75fe6d0f7f501d59156189843a37d16fd921e76cd8d1e",
+          "bone_pose_sha256": "f3ca663213553ddb9a30e36a555e29c0b75bed802ea2ca4435e899381e5af6a4",
+          "actual_time_seconds": 0.3
+        },
+        {
+          "frame": 19,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.019.png",
+          "sha256": "c949a8c28454c01ef3d782d92ea02bc546235fab687fd5f7c40b13ee24133ff3",
+          "bone_pose_sha256": "6011f3f7b207774aecee3ddc0ee9cb6f9291766b86bda583f1cdb04e37d01e15",
+          "actual_time_seconds": 0.316666666666667
+        },
+        {
+          "frame": 20,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.020.png",
+          "sha256": "0d137e036862a1d81ec918a788cb920d40915322a514caf87173c92f96f8ee32",
+          "bone_pose_sha256": "1790ebde9a92f1e78b1c7d11bdfb01d24cea246d17dea581878a4960c1f96918",
+          "actual_time_seconds": 0.333333333333333
+        },
+        {
+          "frame": 21,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.021.png",
+          "sha256": "6f8053219fb16c63f9a89d25078ffa2e021b5384ea6a5b36dc37fa182a4d8a09",
+          "bone_pose_sha256": "75827374904f86cafa176a3be4555b76ea6aa4d070cc99024ff24e1f9b783880",
+          "actual_time_seconds": 0.35
+        },
+        {
+          "frame": 22,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.022.png",
+          "sha256": "1e52411d2447b84930d916098557ec0cc79413d4b36fbc40571e65ad31e97d5f",
+          "bone_pose_sha256": "a884af5921da53d8325308e73ee5abc92794df356a7e21e97c753e1f6779a6c3",
+          "actual_time_seconds": 0.366666666666667
+        },
+        {
+          "frame": 23,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.023.png",
+          "sha256": "05b1b2ffc46bc1dc8eb217ddfe6d990471767ebb022637c98283eab5cf38def0",
+          "bone_pose_sha256": "e2905eab73082d4c74916413dbd3c0e2bd5fb669aaddf258e45b15183fbcd177",
+          "actual_time_seconds": 0.383333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.024-029.png",
+      "filename": "Zombie_Jump.024-029.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        24,
+        29
+      ],
+      "sha256_at_inventory": "2ec50a483e08e54a189b7e4b7e2db2b56d61ff7b6e81dd957aef7916b1f0c0f0",
+      "reviewed": true,
+      "sha256_reviewed": "2ec50a483e08e54a189b7e4b7e2db2b56d61ff7b6e81dd957aef7916b1f0c0f0",
+      "reviewed_at_original_resolution": true,
+      "observation": "The zombie rises visibly off the floor while reaching its guarded hands forward. Elbows remain bent and anatomically distinct, boots lift together, and shoulder, sleeve, waist and trouser volumes remain consistent.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 24,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.024.png",
+          "sha256": "cebe63ba311fc40c8e7cf37ca45760c4f8ab4a6ce73943ba0763e3016dc99273",
+          "bone_pose_sha256": "30fd487f29b6fb80594bd10e943e5f36d0723c7463a664b6373b624cff69e9b4",
+          "actual_time_seconds": 0.4
+        },
+        {
+          "frame": 25,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.025.png",
+          "sha256": "919817d60303bcc1ec5260b20d3e7a8e2e99fe18bc83bc6406b40cb852ab937f",
+          "bone_pose_sha256": "5d35322e9479a4b5ef6a85f501c08c5dd46ba690217de9d092cb5e627daeacba",
+          "actual_time_seconds": 0.416666666666667
+        },
+        {
+          "frame": 26,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.026.png",
+          "sha256": "df958d5a928fd37d7bf1de771ffa31d7dcfe5923d59a4c8b3c1dcdd487993a71",
+          "bone_pose_sha256": "7a3df0cb06a6ac92d3875d9e9e7dd8f45370921a1bfd5130f70cdd3dad0a3646",
+          "actual_time_seconds": 0.433333333333333
+        },
+        {
+          "frame": 27,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.027.png",
+          "sha256": "fe4d01360141e2a8323f43654f314f84fb77c0547dfc51c372e126bf119407cc",
+          "bone_pose_sha256": "e354c614ffcb304bc7c36f48134649a40e092ce77f5a052b0818c209d48a2d3e",
+          "actual_time_seconds": 0.45
+        },
+        {
+          "frame": 28,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.028.png",
+          "sha256": "ba1d44dedfd26075317e96c732641707c3ee7bd71cc325bc8a00b1f53ac403f0",
+          "bone_pose_sha256": "4fe76e7dfb62f71bc2f59811ae878c4d837a57b734e173a041824c8533c48048",
+          "actual_time_seconds": 0.466666666666667
+        },
+        {
+          "frame": 29,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.029.png",
+          "sha256": "545a4acf259dab1494162bfac08257a1c44a3c40a77df5a0d86a4c06397519df",
+          "bone_pose_sha256": "87f2a2192e848defbb80c2921a1edf13519c28af1c460b241843ddac5d82131e",
+          "actual_time_seconds": 0.483333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.030-035.png",
+      "filename": "Zombie_Jump.030-035.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        30,
+        35
+      ],
+      "sha256_at_inventory": "575d3ecd03e247a74bafeff855614663301467b0b4cf9103c37ef3d936e715f1",
+      "reviewed": true,
+      "sha256_reviewed": "575d3ecd03e247a74bafeff855614663301467b0b4cf9103c37ef3d936e715f1",
+      "reviewed_at_original_resolution": true,
+      "observation": "The shallow jump apex is clear in all directions with both soles above the floor. The restrained arm guard stays stable while the body changes height; no noodle-like stretch, shirt flash or knee-volume collapse is visible.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 30,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.030.png",
+          "sha256": "e1d72c1595c50aa268c3c21470985a655d61751b3b9efce68e1361c158643390",
+          "bone_pose_sha256": "393b3cfee744a38c9b023d7578cf37421d8aa500e9b7c04f9c23cdc33194da6f",
+          "actual_time_seconds": 0.5
+        },
+        {
+          "frame": 31,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.031.png",
+          "sha256": "31858c274e8ff373205a8e8f9e833531d0bc31461a492d3b56ba30cc155a5a70",
+          "bone_pose_sha256": "6077389b4d39b4a98ace4bf95282c36720bfd0ab8d8d9372e6ac413ce6e7f678",
+          "actual_time_seconds": 0.516666666666667
+        },
+        {
+          "frame": 32,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.032.png",
+          "sha256": "0919be9d1294a1c2969ad8157ca6e0ed14c63346b218deff02f164ca5c62ec8d",
+          "bone_pose_sha256": "c1771cd48149dbc6d3db1b99074124b5560106646daf204446c0e30d9c652a8d",
+          "actual_time_seconds": 0.533333333333333
+        },
+        {
+          "frame": 33,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.033.png",
+          "sha256": "377ddee96364a09b24758df4e0aff67b95b393417186bb38066a727a1fb24013",
+          "bone_pose_sha256": "c1771cd48149dbc6d3db1b99074124b5560106646daf204446c0e30d9c652a8d",
+          "actual_time_seconds": 0.55
+        },
+        {
+          "frame": 34,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.034.png",
+          "sha256": "42b0b04f2e49101a584447fdf77900aa6ab26d79adc8ca3793fb1a95dfa1f114",
+          "bone_pose_sha256": "3978b729dd29f3908595cd4afddd67cdb6611e15cff727f22296958469925557",
+          "actual_time_seconds": 0.566666666666667
+        },
+        {
+          "frame": 35,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.035.png",
+          "sha256": "f05d68f95f09201661add06577bc373f0c9ecc19a4f160067c189bd1bac4b1ff",
+          "bone_pose_sha256": "572322f7df19bd2e10ee47bed45db07ae5ee4438f0e2b61f9c9b4a68a5a807db",
+          "actual_time_seconds": 0.583333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.036-041.png",
+      "filename": "Zombie_Jump.036-041.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        36,
+        41
+      ],
+      "sha256_at_inventory": "222037613ccf68ff9f647c31a81f44bdfa5f05d35ae4c8490e543b6c8c44e2cd",
+      "reviewed": true,
+      "sha256_reviewed": "222037613ccf68ff9f647c31a81f44bdfa5f05d35ae4c8490e543b6c8c44e2cd",
+      "reviewed_at_original_resolution": true,
+      "observation": "The body descends smoothly from the apex and hands draw back toward the guard. Knee and elbow proportions remain stable, with no visible sleeve collapse, waist gap or frame-to-frame pose discontinuity.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 36,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.036.png",
+          "sha256": "444a5ec2b62bd766fcd16998764ab7e95d732238542efee6de48f13b734b3397",
+          "bone_pose_sha256": "dc3bbaeb9bd67e7fdfc60c0d1e88cbd0ef8ca75832227318c440a7e3cfc10a51",
+          "actual_time_seconds": 0.6
+        },
+        {
+          "frame": 37,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.037.png",
+          "sha256": "658c7e408fd3ff355d18c2496267cc1183b0349884380d4f46f50e6d7b751cdb",
+          "bone_pose_sha256": "cce8498b318399dbd8d38a96674a97fe01217b9c0ae8bc47e00f3f38e794e442",
+          "actual_time_seconds": 0.616666666666667
+        },
+        {
+          "frame": 38,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.038.png",
+          "sha256": "2072ad02591a7b2cf4ef8c81e7b4af95ecb33e02b34f77a0bffbddae07524fe3",
+          "bone_pose_sha256": "862cd16156a02c32cd986a6b4014d9497f2f6b5d3997d0980816dc6bead6d22f",
+          "actual_time_seconds": 0.633333333333333
+        },
+        {
+          "frame": 39,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.039.png",
+          "sha256": "dfff0a28b593418a8aed285d37dc0bdfcef7ff976c29d25f250af171b2cf0a9a",
+          "bone_pose_sha256": "9105ede3ac7c0a62d2af3099b22af42d7c988e3d84a65d19a951334a462faed4",
+          "actual_time_seconds": 0.65
+        },
+        {
+          "frame": 40,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.040.png",
+          "sha256": "c2910d226777c15f5552445b827b452cb0920a9c46cf2546c087eed709c55ded",
+          "bone_pose_sha256": "106eae642fe0d3710a1044f5f009ddbb117b88b0728cd385c7c7f39d7d98405c",
+          "actual_time_seconds": 0.666666666666667
+        },
+        {
+          "frame": 41,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.041.png",
+          "sha256": "d09f79b34c8aa8aae9264863c4516fc9c8eb2ce27ba400975031c43a283a9cb6",
+          "bone_pose_sha256": "d22cf38ead5d0e7e7d00089dc511b562071540dee40ddaf3a2d4a46cab4cc1f9",
+          "actual_time_seconds": 0.683333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.042-047.png",
+      "filename": "Zombie_Jump.042-047.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        42,
+        47
+      ],
+      "sha256_at_inventory": "090148df7276ba8379df8140ee57419d31c94a50284c04664522c0f34075da98",
+      "reviewed": true,
+      "sha256_reviewed": "090148df7276ba8379df8140ee57419d31c94a50284c04664522c0f34075da98",
+      "reviewed_at_original_resolution": true,
+      "observation": "Landing develops into a clear impact-absorption crouch around the authored landing phase. The knees and hips bend while both boots settle at the floor, and the torso and hands recover together without distorted limb lengths or inverted cloth silhouettes.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 42,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.042.png",
+          "sha256": "7ec1cf1296c4ff6a1a841f67fe4e7f098cf3ab3aebe4f03ff90d7344d0cb57b9",
+          "bone_pose_sha256": "5e3b85450884591fb3640a703e02dfaf335603b44fffd9a950711ebc36dee6e4",
+          "actual_time_seconds": 0.7
+        },
+        {
+          "frame": 43,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.043.png",
+          "sha256": "f4289d9245c7b52553f789c3993bd636d8f11fb0351bab7769c1447d0974536b",
+          "bone_pose_sha256": "04522e78ae1b2a2e15d3c4effe9fe70912fff8086199d2e69329ded4181926de",
+          "actual_time_seconds": 0.716666666666667
+        },
+        {
+          "frame": 44,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.044.png",
+          "sha256": "b16d6f904f9634d091263f26f2efc4358799580bf85bbe754dceacbf88509e16",
+          "bone_pose_sha256": "bd45397111cc5d7573283f66d9a88f3211057660ebdc4091983116eb73f199cc",
+          "actual_time_seconds": 0.733333333333333
+        },
+        {
+          "frame": 45,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.045.png",
+          "sha256": "0b0c5066e9325ef7f503ca77717f187388d908a4b4049f2356e3e37b5a70d458",
+          "bone_pose_sha256": "110d73bf0059a09ef734fabde7cdbb1a4fa698f7a35b8b565c006a6990b160e7",
+          "actual_time_seconds": 0.75
+        },
+        {
+          "frame": 46,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.046.png",
+          "sha256": "0a358cd2db66ce0d80db4c139589de85af146d4492af346fd2c6f2d453bb7531",
+          "bone_pose_sha256": "64541e8d8b4734547f4e34ea2b49b8d520730b372686d15e6cc2f54b038f73e3",
+          "actual_time_seconds": 0.766666666666667
+        },
+        {
+          "frame": 47,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.047.png",
+          "sha256": "000a781bc8497526f99feaa0fd2eeeaeabdf19c2be2df1c781ed694001c88ffd",
+          "bone_pose_sha256": "ffbd3862cbcd36159c1e8c78a5f98d920cd927b540ec547731d49ad0e022b327",
+          "actual_time_seconds": 0.783333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.048-053.png",
+      "filename": "Zombie_Jump.048-053.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        48,
+        53
+      ],
+      "sha256_at_inventory": "b778e659d728762ad25463d1200f9cc48779c42e6ae4611f1f5cdf141c92254d",
+      "reviewed": true,
+      "sha256_reviewed": "b778e659d728762ad25463d1200f9cc48779c42e6ae4611f1f5cdf141c92254d",
+      "reviewed_at_original_resolution": true,
+      "observation": "The deepest landing crouch eases into recovery. Bent knees keep their cloth volume, hands remain in a controlled guard, and the shirt hem and sleeve openings retain a stable silhouette through the lowest frames.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 48,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.048.png",
+          "sha256": "1366e264923d3ce70a482e2eca8bcd59dc47fa12d404c19c5a0273b6ba962c74",
+          "bone_pose_sha256": "a48606c0aaceeab8e9b943fbd20b5f9c872c01322e930f160aa1240e1417a563",
+          "actual_time_seconds": 0.8
+        },
+        {
+          "frame": 49,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.049.png",
+          "sha256": "94be879e4c8a37d60cc933e6c859e6c001c16417c44313305ae708537055dd05",
+          "bone_pose_sha256": "d784782f6d13c9c827b7dd792231d9fa3c5855717f488ee98866f35cbb62f1b8",
+          "actual_time_seconds": 0.816666666666667
+        },
+        {
+          "frame": 50,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.050.png",
+          "sha256": "2826c425047edc517ec013d3ea22a63daa9bc4da9b3ef40a96247e05a715f32c",
+          "bone_pose_sha256": "6b52005ff110f348115738555cf541c22552cbf43479ebe92bad2d3dd9094fbd",
+          "actual_time_seconds": 0.833333333333333
+        },
+        {
+          "frame": 51,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.051.png",
+          "sha256": "b592359520a45a12b234d9afe9008b2b2c68403d4f28a00fd0403ef601d6d0fe",
+          "bone_pose_sha256": "8245e71662ff3db4ebd1b6a7831553f37f4e8c431f4102c35ed58e3acbdee935",
+          "actual_time_seconds": 0.85
+        },
+        {
+          "frame": 52,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.052.png",
+          "sha256": "92e9228698e56cdbfc1560ccf167ccea58ab2a4cc33eab010a971ada8d6456a4",
+          "bone_pose_sha256": "378c4ff7ffc3544720f6cc1618643e01c80f43952b7edd4438672cc164899a28",
+          "actual_time_seconds": 0.866666666666667
+        },
+        {
+          "frame": 53,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.053.png",
+          "sha256": "6a55f871ab42dfefaaa7fc703ef006c8f41c4533135d5aeb70116da0bf42f406",
+          "bone_pose_sha256": "872126b828c8006d1d4b277488e5238a8097f635dd72e2bbf485f7c7f2257098",
+          "actual_time_seconds": 0.883333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.054-059.png",
+      "filename": "Zombie_Jump.054-059.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        54,
+        59
+      ],
+      "sha256_at_inventory": "923fc83b19a43d2be819db3763a026ea6dbc86cf27a1dc611807c430a95c3469",
+      "reviewed": true,
+      "sha256_reviewed": "923fc83b19a43d2be819db3763a026ea6dbc86cf27a1dc611807c430a95c3469",
+      "reviewed_at_original_resolution": true,
+      "observation": "Legs extend gradually out of the landing crouch while the feet hold position. Front and rear views retain shoulder width and arm proportions; no sudden cloth jump or detached-looking cuff is visible.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 54,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.054.png",
+          "sha256": "2955e62d0120801bb00f3ccf6997da9125bf3782b0b6ea510ff5a99bed108321",
+          "bone_pose_sha256": "dab4f8a34d743d464354a7011fa2de3ad45c5fb262d442cc7d2466ebb8accd20",
+          "actual_time_seconds": 0.9
+        },
+        {
+          "frame": 55,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.055.png",
+          "sha256": "b99eab852371adbb859af4ae0979379efd438985e4bae24d62b375a37697dad2",
+          "bone_pose_sha256": "97dea886b65ac93d78e3cb49a8dc1c1791c44b8086be7ea94eb40cb544cb51ee",
+          "actual_time_seconds": 0.916666666666667
+        },
+        {
+          "frame": 56,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.056.png",
+          "sha256": "84056bf73adfb6a7c4c34815f06ee071fd64b40f98d380453b5f1673b3d62695",
+          "bone_pose_sha256": "703aaacf701bd4ba3dc5df5e11c0f7e561c97bd3efbecc3032595e7c15916c18",
+          "actual_time_seconds": 0.933333333333333
+        },
+        {
+          "frame": 57,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.057.png",
+          "sha256": "c44cb3982ac37c2ffa628ae9a1c9e253fa81550da68761dfab531ea0b8d41410",
+          "bone_pose_sha256": "2f024deeb5f189d8d49624218ba4b17068de0bee29c10d4d82c66e782dde5417",
+          "actual_time_seconds": 0.95
+        },
+        {
+          "frame": 58,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.058.png",
+          "sha256": "480cbbf6a4ef5d94ba81d78ddc7f4bba57e3633469aad67a728b357ed05364dc",
+          "bone_pose_sha256": "b612e791c263d016b592bb18edcbba19cd8f1a7129f8e172af93485e905ec19d",
+          "actual_time_seconds": 0.966666666666667
+        },
+        {
+          "frame": 59,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.059.png",
+          "sha256": "501c9a23002d960e0180a56f9bdbad58ebfffc3bb5a26e77b451d525fafa6db3",
+          "bone_pose_sha256": "a7acf6275db0dd6713d87b0e7225a6d19f62b4cef89492b542343ed9560b4200",
+          "actual_time_seconds": 0.983333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.060-065.png",
+      "filename": "Zombie_Jump.060-065.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        60,
+        65
+      ],
+      "sha256_at_inventory": "3ab9334d3e356270ba99931f20fe378a26a16b7a6db9c3fd0d14fd3e1ea8de59",
+      "reviewed": true,
+      "sha256_reviewed": "3ab9334d3e356270ba99931f20fe378a26a16b7a6db9c3fd0d14fd3e1ea8de59",
+      "reviewed_at_original_resolution": true,
+      "observation": "Recovery settles smoothly toward the initial guarded stance. Arm lengths and elbow shape remain unchanged, both boots stay planted, and shoulder, waist and knee fabric remain coherent.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 60,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.060.png",
+          "sha256": "b9c77a4c99869ba70598abc4e4d810f09098385fd9ef30159508cee11b59663a",
+          "bone_pose_sha256": "c132774c9b7b07346a4bd124529e02e4f97a2dc7ed239ea0eb3b7e473b621605",
+          "actual_time_seconds": 1.0
+        },
+        {
+          "frame": 61,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.061.png",
+          "sha256": "ffd30a4134fd7e370ab897e5729212ffb19cd588ce50e3ffcb61d24aa68311f1",
+          "bone_pose_sha256": "10ea92bc83a474bc898b12d0d7141090379e40863025a10f8091940d8fc001af",
+          "actual_time_seconds": 1.01666666666667
+        },
+        {
+          "frame": 62,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.062.png",
+          "sha256": "2dde008e573b75a4ee49cf1435e46546418fb6481def2cb9bf8afc1261dfbd2a",
+          "bone_pose_sha256": "d387155334477ca3641512df40cae62ee6f555093b7a40a00bdbd27a745e9615",
+          "actual_time_seconds": 1.03333333333333
+        },
+        {
+          "frame": 63,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.063.png",
+          "sha256": "e59e8a98a689dc13c61dbab6f5a212508889e04ce2942fd71e5411fe30ce5976",
+          "bone_pose_sha256": "98192ff346280209bfd49a1945f959fda79e4fa4eb6d2d2ed196f0e53effd8aa",
+          "actual_time_seconds": 1.05
+        },
+        {
+          "frame": 64,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.064.png",
+          "sha256": "a9a3e88ea7bebf3db64b22b5cbc350e363e773379fcc4c1bd80fcf80071f50bd",
+          "bone_pose_sha256": "6ab382279eaf2e9c90086167573309ec4237ffe9707a976f3aa337ea9c81d0d9",
+          "actual_time_seconds": 1.06666666666667
+        },
+        {
+          "frame": 65,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.065.png",
+          "sha256": "aac79b583e09272f35ad61e56770f8a1bb90f2b302a1e98afe6cda04ded9cbaf",
+          "bone_pose_sha256": "0b4c29fdce1cd83ca15acf42b3e688a2634d583c640e758dea723601b846b02b",
+          "actual_time_seconds": 1.08333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.066-071.png",
+      "filename": "Zombie_Jump.066-071.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        66,
+        71
+      ],
+      "sha256_at_inventory": "7f8dcc5ef3b340791b2bc7f7c757ef1e25a34dce44ce6221be5cde09a02cd665",
+      "reviewed": true,
+      "sha256_reviewed": "7f8dcc5ef3b340791b2bc7f7c757ef1e25a34dce44ce6221be5cde09a02cd665",
+      "reviewed_at_original_resolution": true,
+      "observation": "The final settling frames hold a deliberate guarded recovery pose with only small eased movement. No snap, stretched wrist or garment discontinuity appears approaching the endpoint.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 66,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.066.png",
+          "sha256": "71ab3c7f5aa7936e05c2f54c3112d0e64a5580e9583949a1f6cd3a80c8734691",
+          "bone_pose_sha256": "0bfba582f96d9f70910d445f1a942fb50addfd59d48cd87c3c6e0988e9dd0202",
+          "actual_time_seconds": 1.1
+        },
+        {
+          "frame": 67,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.067.png",
+          "sha256": "820c670ed630c02456fd8b1a02bdc0769345eaa5f598eb4b9604d1dcc4bff712",
+          "bone_pose_sha256": "25c158598781729b59860993fdf93445f53a5a1fe993fc4ef5047de86f1cec8c",
+          "actual_time_seconds": 1.11666666666667
+        },
+        {
+          "frame": 68,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.068.png",
+          "sha256": "2e7a061ca0a4d178883d00e94f1a30dcd3e8bddfb95787d3615f46cdd2b4a577",
+          "bone_pose_sha256": "39080dabb7086f953169985429585a865a80c85d18c4bce19138268b1eb5b500",
+          "actual_time_seconds": 1.13333333333333
+        },
+        {
+          "frame": 69,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.069.png",
+          "sha256": "b3b2b0abd25dbea37bf9b99b096c067bf89925c31603af23c8fddf01b2b86166",
+          "bone_pose_sha256": "7f4d1f2df4e2185805744b8b1085469777f3776261041a9011a20600a9677881",
+          "actual_time_seconds": 1.15
+        },
+        {
+          "frame": 70,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.070.png",
+          "sha256": "80f3a1b5f02ca49ff2320d33472149d5532134a784567de30b5b262a24df815c",
+          "bone_pose_sha256": "0c80760169f474932b32279e1f17349e58a8e12c9b4ac66cb6d0e63df5e3df83",
+          "actual_time_seconds": 1.16666666666667
+        },
+        {
+          "frame": 71,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.071.png",
+          "sha256": "af83c92e8fff80726b12a74fe916a20fa84bf4803572c2a762cec8088f2d210e",
+          "bone_pose_sha256": "b853f43211ebdef8aa48c18202cb22ce98d37acbb279e08ae329f848fdc826dc",
+          "actual_time_seconds": 1.18333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Jump.072-072.png",
+      "filename": "Zombie_Jump.072-072.png",
+      "clip": "Zombie_Jump",
+      "frames_inclusive": [
+        72,
+        72
+      ],
+      "sha256_at_inventory": "bdb1965c7f6400b56d0b2aac0e6cc2b37c47b0da1e400b45d77ce63ee1f2f6d3",
+      "reviewed": true,
+      "sha256_reviewed": "bdb1965c7f6400b56d0b2aac0e6cc2b37c47b0da1e400b45d77ce63ee1f2f6d3",
+      "reviewed_at_original_resolution": true,
+      "observation": "The final endpoint returns to the original guarded stance cleanly, with matching limb proportions and continuous shirt, trousers and boots. No last-frame snap is visible against the preceding recovery rows.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 72,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Jump.072.png",
+          "sha256": "bdb1965c7f6400b56d0b2aac0e6cc2b37c47b0da1e400b45d77ce63ee1f2f6d3",
+          "bone_pose_sha256": "c794a41aca8daf15214d8aaf89353a243683467442ec4d75fe5b26573a99b96c",
+          "actual_time_seconds": 1.20000004768372
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.000-005.png",
+      "filename": "Zombie_Climb_Ladder.000-005.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        0,
+        5
+      ],
+      "sha256_at_inventory": "c34645b68fef8a73b5e2c206bda8ec2646ec2fd2ee1d30f1512ef4a4ab9ccbe9",
+      "reviewed": true,
+      "sha256_reviewed": "c34645b68fef8a73b5e2c206bda8ec2646ec2fd2ee1d30f1512ef4a4ab9ccbe9",
+      "reviewed_at_original_resolution": true,
+      "observation": "The climb opens in an asymmetric support pose with one knee high and one hand reaching above the head. Elbows remain distinct, the lifted knee retains trouser volume, and the sleeves and upper-back cloth remain continuous. These isolated body views do not include physical ladder rungs.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 0,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.000.png",
+          "sha256": "d84b110f5b19adc25fed8fa98c277906117d8515384065f9320c88d9781aea0f",
+          "bone_pose_sha256": "cbda68be52b778e4857a260c95a5d2f7e74cf3a39e2b8c8ea73c5990f61749af",
+          "actual_time_seconds": 0.0
+        },
+        {
+          "frame": 1,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.001.png",
+          "sha256": "ae1a2ee9252dd296ab5afda08a1428997d765fa05659e7a5f1a6c3c5c4889d14",
+          "bone_pose_sha256": "9c17d50a5765c9b41dc6460095d10cc4f2f4ffe6ee931ce721f7e7a9c0de7ae2",
+          "actual_time_seconds": 0.0166666666666667
+        },
+        {
+          "frame": 2,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.002.png",
+          "sha256": "ebddefb943eebb73b9a406401c3530489288fe7d9c88704eb8b08e03e434af8f",
+          "bone_pose_sha256": "555ffdce0a531f5f1b37a998f85561c3e487c78ed0450cecf64d60bbea22875a",
+          "actual_time_seconds": 0.0333333333333333
+        },
+        {
+          "frame": 3,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.003.png",
+          "sha256": "e8f9a278fa0fc0ff28dde5a92a526bd0d991839203ddc312f339a58536a7575b",
+          "bone_pose_sha256": "1c458a3a703e007aa60768761307bb0719e7ba12273ba1535a438bb83173fff1",
+          "actual_time_seconds": 0.05
+        },
+        {
+          "frame": 4,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.004.png",
+          "sha256": "143a9f9a0fff1c00c8595c0c27b6e282f3320c406d58b840a172ba024771ce1f",
+          "bone_pose_sha256": "ac7619e7d168bd72e3697749142457248d2a21e9d80b2d6ee5dad6d079d9c876",
+          "actual_time_seconds": 0.0666666666666667
+        },
+        {
+          "frame": 5,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.005.png",
+          "sha256": "f49d57d5295b4b817ed4597c7984c2e52e04c916a1174c61650bd4417e59f78b",
+          "bone_pose_sha256": "68bb95dd19656014db2dde3164c341d95f3b3656a99a9d697c37210004b84b45",
+          "actual_time_seconds": 0.0833333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.006-011.png",
+      "filename": "Zombie_Climb_Ladder.006-011.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        6,
+        11
+      ],
+      "sha256_at_inventory": "361ee81f3c4be9abcf01954a32a587ff1a2e4a3886dea602601e76331eb777ea",
+      "reviewed": true,
+      "sha256_reviewed": "361ee81f3c4be9abcf01954a32a587ff1a2e4a3886dea602601e76331eb777ea",
+      "reviewed_at_original_resolution": true,
+      "observation": "The torso rises through the held support phase as the lower leg begins changing position. The raised hand keeps a firm curved grip shape and both forearms retain their lengths. Shirt shoulders, waist and lifted-knee cloth stay coherent.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 6,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.006.png",
+          "sha256": "fa358d09063aa61e232ed4fa51b57fcdf3247090191f3cf4341dffbb201f431b",
+          "bone_pose_sha256": "210d3c91c8a86bc3cea1deafc1e24984bb2eb5c2d1810ea9713856ab6734c5cf",
+          "actual_time_seconds": 0.1
+        },
+        {
+          "frame": 7,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.007.png",
+          "sha256": "1e77656d4de03faa15f09404fed3fdfb5b027e9346c2d928c1356d3d84649b7b",
+          "bone_pose_sha256": "17931818c6ed4bd0c19f7eb07cc4b7fdd2a000540e58e74ca4cb72f42c8aba0c",
+          "actual_time_seconds": 0.116666666666667
+        },
+        {
+          "frame": 8,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.008.png",
+          "sha256": "bc31be10f9e401aec2c826f53134afafa71a7109b2701675d57aed07f5bfada9",
+          "bone_pose_sha256": "aead284e01351fe12f0262c5ab7306cc2520f5e1c82a5347e2b0619eb3124b88",
+          "actual_time_seconds": 0.133333333333333
+        },
+        {
+          "frame": 9,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.009.png",
+          "sha256": "f9f6cd8b8a9b081855d20651837979ba97995cf3220a4c0df345366324190faa",
+          "bone_pose_sha256": "ac4eee9b08cc505ed523cb8de311d42def93f70ac6729e38dcbe0d34e7dd64a3",
+          "actual_time_seconds": 0.15
+        },
+        {
+          "frame": 10,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.010.png",
+          "sha256": "bdeaec636bc29c74889254a833589e22db3aeaa9cfcebf85e6cfbbe53d317939",
+          "bone_pose_sha256": "db286214a973a096452f6ec6c7a801e6ac0094563cc02556e1cb43b2328389df",
+          "actual_time_seconds": 0.166666666666667
+        },
+        {
+          "frame": 11,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.011.png",
+          "sha256": "59c57747535c88e9743d4f724a1556c35af636cf0bd8ea68a52f879273aeb162",
+          "bone_pose_sha256": "db3542e1a968dd9dd71cfefa4eb20b8fe0eb027da40e362b701f352a0acd2229",
+          "actual_time_seconds": 0.183333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.012-017.png",
+      "filename": "Zombie_Climb_Ladder.012-017.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        12,
+        17
+      ],
+      "sha256_at_inventory": "e3d9b6bd4b91c379925055284776af906adca7644df6084299b585595ad8bf5d",
+      "reviewed": true,
+      "sha256_reviewed": "e3d9b6bd4b91c379925055284776af906adca7644df6084299b585595ad8bf5d",
+      "reviewed_at_original_resolution": true,
+      "observation": "Weight shifts toward the next step: the lower knee starts lifting and the previously raised knee extends relative to the rising torso. All four views retain clear knee and elbow geometry without an abrupt hand or shoulder pop.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 12,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.012.png",
+          "sha256": "c45cc3f5bd98c88dbdaf9a5e79004e68ce5e3e8549c9f763a38e87a836b21988",
+          "bone_pose_sha256": "921bbb7c2d0c3a6ff1d989eb6fde8edc52983b7b46b2c2c968a3f0eb70743ec2",
+          "actual_time_seconds": 0.2
+        },
+        {
+          "frame": 13,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.013.png",
+          "sha256": "3a1ea5bead08b00029bb9598b689c13940734ff1c65ac21ed2c8cac865669523",
+          "bone_pose_sha256": "e0ab4da25a09ca094513dfaef15fb7d176894b91171a4f8204cfef96187e3709",
+          "actual_time_seconds": 0.216666666666667
+        },
+        {
+          "frame": 14,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.014.png",
+          "sha256": "52162e13b120d192660d7287b356d8bcf69894bcb6d6a0b9051c709bfe473ef6",
+          "bone_pose_sha256": "4d7ab8224b9fd610b74f5e50d87126e2ec12c12241a5d7422f564947ece8ac09",
+          "actual_time_seconds": 0.233333333333333
+        },
+        {
+          "frame": 15,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.015.png",
+          "sha256": "897a8c4563bc388ded6699e526c3cb0891662bbaa9d73f6c5995740151101784",
+          "bone_pose_sha256": "898c266656a5a0a0a9c0fc5e3ec6e806836c5b880ca70286721f2b09f1c26c07",
+          "actual_time_seconds": 0.25
+        },
+        {
+          "frame": 16,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.016.png",
+          "sha256": "b10123ab415bd997da765360c2341601f110116f8ac8f0f875c1690f6a47e273",
+          "bone_pose_sha256": "5f0d44ccf243702026b46e67b00ede7b6f4beafcbca237d8025523ea2cabe640",
+          "actual_time_seconds": 0.266666666666667
+        },
+        {
+          "frame": 17,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.017.png",
+          "sha256": "c1a06a34a2d7932a05083b0b7d22a6905e05c4a12c5d5571d207b11760e18add",
+          "bone_pose_sha256": "48ac25ad910ee47dd6d3c081803d46d33dd9a74dedab826fdf84ba8b1b2a00fc",
+          "actual_time_seconds": 0.283333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.018-023.png",
+      "filename": "Zombie_Climb_Ladder.018-023.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        18,
+        23
+      ],
+      "sha256_at_inventory": "dcf3bc8f7d89215403b868ca55684521e07192c46fb3f96c1647b91ebecc26a9",
+      "reviewed": true,
+      "sha256_reviewed": "dcf3bc8f7d89215403b868ca55684521e07192c46fb3f96c1647b91ebecc26a9",
+      "reviewed_at_original_resolution": true,
+      "observation": "The knees pass through the mid-step configuration while the body rises; the hands maintain their support/reach relationship. Forearms stay rigid and the compressed knee, hip and back-shirt areas show no visible collapse or inversion.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 18,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.018.png",
+          "sha256": "76b50bfcbec7a9e0fe13c4b783abc6dfda22911d88eeef25473e823c8503b418",
+          "bone_pose_sha256": "5e3b72e655aa6fd4f1510d3b0f8302f7d468ca37afa3f514a623a178dcdbffcf",
+          "actual_time_seconds": 0.3
+        },
+        {
+          "frame": 19,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.019.png",
+          "sha256": "e6e2ddb2f46f2145331641b5b7910c36a3d2d375dd41bb0e5b0ab074dbd1b3f9",
+          "bone_pose_sha256": "e95397604b43fae260642f9d3585414bc49d548f2d9ac5d96cf656029c68b1af",
+          "actual_time_seconds": 0.316666666666667
+        },
+        {
+          "frame": 20,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.020.png",
+          "sha256": "1d9d18d62e5e757955f3dec63b03ab62b0812dd6dbd3f29d0fc54d18b2d763fe",
+          "bone_pose_sha256": "63c72feea99a9f7ff0fb227f026438135081ed5a10c652341777e73a674830e3",
+          "actual_time_seconds": 0.333333333333333
+        },
+        {
+          "frame": 21,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.021.png",
+          "sha256": "1e0af5dabbccebc32b5c07b5cbbfb8a83b296d49252068b01463c332ea072dbb",
+          "bone_pose_sha256": "5dac28b638c9556b2d23a4a1c61675a8f660b5acf2bdc885f47ee10175f28d01",
+          "actual_time_seconds": 0.35
+        },
+        {
+          "frame": 22,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.022.png",
+          "sha256": "808687d32fcb0d3c2e9eea197f2df3390f5f4386392a94591be0c99d9e1585c5",
+          "bone_pose_sha256": "02bfba85f4ecddbc8f22838b07c0c18106696f716ff0a351d1a05a16f066b351",
+          "actual_time_seconds": 0.366666666666667
+        },
+        {
+          "frame": 23,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.023.png",
+          "sha256": "6ccd72f6e2e471c4ab24d23e2de4edf4ae3bc1e70633a3d31835c4e014bdbca3",
+          "bone_pose_sha256": "3038f519f080ec3734763a0684bc1f7a7e9dd96b8302d045727ef84ad702df30",
+          "actual_time_seconds": 0.383333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.024-029.png",
+      "filename": "Zombie_Climb_Ladder.024-029.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        24,
+        29
+      ],
+      "sha256_at_inventory": "388e3499cee718c4ac1fb117639ade987dbd1fd8c9730a0744655e1bd826497e",
+      "reviewed": true,
+      "sha256_reviewed": "388e3499cee718c4ac1fb117639ade987dbd1fd8c9730a0744655e1bd826497e",
+      "reviewed_at_original_resolution": true,
+      "observation": "The opposite knee gains height as the lower hand starts its next reach. Arm and leg segments remain proportional, shoulders rotate without collapsing sleeve volume, and the waist and trouser silhouettes remain continuous.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 24,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.024.png",
+          "sha256": "f4d55448bebaaa1e5b1b310a91ad7127d096d2b96c7a4ab1435c95d13ffdfceb",
+          "bone_pose_sha256": "8d2a716ea15e7c9c2914f94ad72037c2f77a0f78bbadd83d9567edeb1521ea48",
+          "actual_time_seconds": 0.4
+        },
+        {
+          "frame": 25,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.025.png",
+          "sha256": "a27e0f4043af4dfa873e10705bd26bcfcac03c9ad097608c490a3685c4821601",
+          "bone_pose_sha256": "4dfea805f6c7663b47f1971a3dd82fb3d881fbfd0a22063406ddde404b369d1d",
+          "actual_time_seconds": 0.416666666666667
+        },
+        {
+          "frame": 26,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.026.png",
+          "sha256": "e911ce89e0812a7ab8a8431079c97c61e95b95cb750b657095b8a5bcf6f66550",
+          "bone_pose_sha256": "b17d0e90679ee763d9a805c5e92741019911a45f2470f3545eb2e761b4378c4e",
+          "actual_time_seconds": 0.433333333333333
+        },
+        {
+          "frame": 27,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.027.png",
+          "sha256": "dd1d2713b01dfc116427dc7431f04368b3e11361deadea0104fec82977be3a33",
+          "bone_pose_sha256": "d6aac7a508a3d16a6ad2e9ff8998814286b98667bc4dc108e02d16e57c0b4e80",
+          "actual_time_seconds": 0.45
+        },
+        {
+          "frame": 28,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.028.png",
+          "sha256": "404e3349a0b7d275dfd469a2d6d79d03f07ad3a2fcd7347379aa3070e12658a4",
+          "bone_pose_sha256": "1a8eb205a365f0cb7c75a7771b75be201fbcf76298705954903822fafef0646d",
+          "actual_time_seconds": 0.466666666666667
+        },
+        {
+          "frame": 29,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.029.png",
+          "sha256": "a2e70c6bd4efa90595dbe461927f3cb3b1b5b479f0798bc8915b918708a84710",
+          "bone_pose_sha256": "e595177cc5c499dc0d190f1edf70b7bd301ed64b7e6afcc500df307a693315d8",
+          "actual_time_seconds": 0.483333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.030-035.png",
+      "filename": "Zombie_Climb_Ladder.030-035.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        30,
+        35
+      ],
+      "sha256_at_inventory": "7028f71273135d0a68a598f054256d6687c1607850815c7ee60aaabc6d3a3d58",
+      "reviewed": true,
+      "sha256_reviewed": "7028f71273135d0a68a598f054256d6687c1607850815c7ee60aaabc6d3a3d58",
+      "reviewed_at_original_resolution": true,
+      "observation": "Both hands pass near head height during the grip exchange, then the next reaching hand lifts. Front and back views retain lateral clearance around the face, while side views show a clear elbow hinge. No visible sleeve inversion or knee-cloth spike appears.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 30,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.030.png",
+          "sha256": "c49647902c7e55dc66bfe6caa7d7a938c1d69bd099aa818305d61c02333b7654",
+          "bone_pose_sha256": "8283119ca918930a84c56df569d28436b3ca3c8983a9d90bbcb2afe16cd52f4b",
+          "actual_time_seconds": 0.5
+        },
+        {
+          "frame": 31,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.031.png",
+          "sha256": "9c2386b669e0374b7cf25944aefa6b3b11dff552e84b0d87e833c8842238b219",
+          "bone_pose_sha256": "2b6fb73127d4da37008bc52ebbb8ca86037c44340443d964966701d0b323ec32",
+          "actual_time_seconds": 0.516666666666667
+        },
+        {
+          "frame": 32,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.032.png",
+          "sha256": "ed8b7f90dc0088766a48aca66f25ccd4a66d1ea654ce3ae10def75e397384775",
+          "bone_pose_sha256": "44d396b3c3f75247f5ff1dc6da9b7c598f4800d8a165c294e681dcf363a14b3d",
+          "actual_time_seconds": 0.533333333333333
+        },
+        {
+          "frame": 33,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.033.png",
+          "sha256": "b692113ae93879d744ef80c2aceb0d4e2ab4f21d2e6512e2282410a88e9282f0",
+          "bone_pose_sha256": "ce40f00f13edf44d9bc67d9b72949282c58a249c35b0ad4395bcb76702ad52d7",
+          "actual_time_seconds": 0.55
+        },
+        {
+          "frame": 34,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.034.png",
+          "sha256": "c715a7689eb6afe2d81aafe21eb14e7560d87cb59b264559aa2cb4ef73469ac2",
+          "bone_pose_sha256": "8f73ea80d6d2e5b26921f7e7ec4af129e71c7ce972f2fde6184d52a20d593df0",
+          "actual_time_seconds": 0.566666666666667
+        },
+        {
+          "frame": 35,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.035.png",
+          "sha256": "7c360cd4b867257360bbb68155cc596566ddf84f4251191ad95d5545425ddaaa",
+          "bone_pose_sha256": "1bc5805431798eb4c40933428835444e75219beba16827430419cbe2d053def7",
+          "actual_time_seconds": 0.583333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.036-041.png",
+      "filename": "Zombie_Climb_Ladder.036-041.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        36,
+        41
+      ],
+      "sha256_at_inventory": "0f26cd288c2f028cc1834061ae980840c32074259a3e56f524a3c4668f90cd80",
+      "reviewed": true,
+      "sha256_reviewed": "0f26cd288c2f028cc1834061ae980840c32074259a3e56f524a3c4668f90cd80",
+      "reviewed_at_original_resolution": true,
+      "observation": "The new reaching arm rises as the opposite arm holds support and the knees alternate height. The raised elbow and upper arm keep their volume, wrist curvature stays localized to the hand, and trouser folds remain continuous through the deeper bend.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 36,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.036.png",
+          "sha256": "61848aa413a74fafdd530a12164014ce2077d44a9a5ec2454567642e04fa0d39",
+          "bone_pose_sha256": "773c50c63e52e2bd402d83e84fa69bfe320bd4b3e7eaf17401cd0ff5309d6545",
+          "actual_time_seconds": 0.6
+        },
+        {
+          "frame": 37,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.037.png",
+          "sha256": "b21075fe1675737fbfff072fd52d425e7fab0dce54175264c0c893074a0fe3e3",
+          "bone_pose_sha256": "d2d8ab99603fd83814af394e5b52e4cd5d227df24de132d098ea63d5999e356f",
+          "actual_time_seconds": 0.616666666666667
+        },
+        {
+          "frame": 38,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.038.png",
+          "sha256": "123709d604542086c987e0fe71ecb82766fc792d72f1f01212ef4c16570fd058",
+          "bone_pose_sha256": "7aa4502d7eab292b199813bd23accd5ef2ffee754d1b1a831250228a51870bb9",
+          "actual_time_seconds": 0.633333333333333
+        },
+        {
+          "frame": 39,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.039.png",
+          "sha256": "58ae39b40fd6cbab055e61890597622fd52e5b5aef54c796b71907f4dfb96c54",
+          "bone_pose_sha256": "15c8d8ad83603a741844ab2797c7359dce6cd7f295a4807a1b5f69a5f8138385",
+          "actual_time_seconds": 0.65
+        },
+        {
+          "frame": 40,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.040.png",
+          "sha256": "c666e5a76e270d2fb4a1911932c6f59e8ec5f906b5ad5c066e765332fa22fcac",
+          "bone_pose_sha256": "c8fd459f63ae479a4ffce40249b45308e545d2644e4735c2b45c44afd0b474ca",
+          "actual_time_seconds": 0.666666666666667
+        },
+        {
+          "frame": 41,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.041.png",
+          "sha256": "74ff2734f3a404fbfb752cfad6d035f832d2938ac2759633fde46cbf6772039f",
+          "bone_pose_sha256": "b3459db4a74911cee447f788bd56797f341dc9ba70354c2b273ee306b62ab974",
+          "actual_time_seconds": 0.683333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.042-047.png",
+      "filename": "Zombie_Climb_Ladder.042-047.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        42,
+        47
+      ],
+      "sha256_at_inventory": "27fb499db828b3b0a877f4bf89e7b723a89b513449170595d498040c2bcef358",
+      "reviewed": true,
+      "sha256_reviewed": "27fb499db828b3b0a877f4bf89e7b723a89b513449170595d498040c2bcef358",
+      "reviewed_at_original_resolution": true,
+      "observation": "The reaching arm extends to its higher support pose while the opposite knee stays lifted. The shoulder and sleeve retain a rounded volume, the forearm stays proportional, and waist and knee folds do not visibly flip or spike.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 42,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.042.png",
+          "sha256": "24829b0e28fbee014919f675628cd7a8f7a5082e938210476cc5ccda91b129bc",
+          "bone_pose_sha256": "869832fec76ea15d1a0d2ad0769aee41e8dd5aaf761082855f5c57edcc7654d2",
+          "actual_time_seconds": 0.7
+        },
+        {
+          "frame": 43,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.043.png",
+          "sha256": "10cb316aa75eff84c4f528762f90e207bd4bf6109d20ae980f173cbfa6364713",
+          "bone_pose_sha256": "c5c0655bd6a2f228960281dfd725ae9bbbef4bd7334bd1cc494233a370117532",
+          "actual_time_seconds": 0.716666666666667
+        },
+        {
+          "frame": 44,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.044.png",
+          "sha256": "b9a40341c4b8a3ab4859186d0bc69bf29b4f12b7a95662a717662af996fa5809",
+          "bone_pose_sha256": "c8a1cfe5f75a6c46d36b629d121dfc886f1ba881817840b3a6b3b0c40516af90",
+          "actual_time_seconds": 0.733333333333333
+        },
+        {
+          "frame": 45,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.045.png",
+          "sha256": "d092af5f6e25beb764c8ab7bce5ead21286f33dfa43c701f69297916ff2d7f65",
+          "bone_pose_sha256": "0ed64aad675139f3e53ad151bfb2ab7547bf3c804645779d8390834ce728fed2",
+          "actual_time_seconds": 0.75
+        },
+        {
+          "frame": 46,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.046.png",
+          "sha256": "4cd33b55c56c8bc05abc2b07355aa9a6b982a600cbe6a6443a8b09f670c6670d",
+          "bone_pose_sha256": "146f08090c82f21e8a5b500f8121652b6e657cfb40f04b8b71c2e4ef941e06c0",
+          "actual_time_seconds": 0.766666666666667
+        },
+        {
+          "frame": 47,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.047.png",
+          "sha256": "ee9b8b54cb38ec5f587944cbf69999ca0624a005f52d4d3b22059cb68fd1467b",
+          "bone_pose_sha256": "2767a73b83f4beb6862fca0525f883ab9ccebc54c18a4a21f583442339d46abb",
+          "actual_time_seconds": 0.783333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.048-053.png",
+      "filename": "Zombie_Climb_Ladder.048-053.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        48,
+        53
+      ],
+      "sha256_at_inventory": "ce0d8581277a1d881304c68ab53b206c75471e84e8499be46fec7ad9fc3e05f4",
+      "reviewed": true,
+      "sha256_reviewed": "ce0d8581277a1d881304c68ab53b206c75471e84e8499be46fec7ad9fc3e05f4",
+      "reviewed_at_original_resolution": true,
+      "observation": "The higher hand and opposing support hand settle into the next hold as the torso continues rising. The deep knee bend preserves trouser thickness, the back-shirt surface remains coherent, and frame 53 is consistent with the separately rendered live ladder-release starting pose.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 48,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.048.png",
+          "sha256": "266278ad95cd010a47d97d85e59e0232b86aa9b8e009fe62436ed1929e6ee45b",
+          "bone_pose_sha256": "2abd01f779e2acbd1c5dfee1287143a591f8f112998bce81f617f6b6fa0f8ee5",
+          "actual_time_seconds": 0.8
+        },
+        {
+          "frame": 49,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.049.png",
+          "sha256": "a59eefa929b8ac8ac7e9d2770a11ea1b0cc3aa1d1af48c0be1d3adce5780ee35",
+          "bone_pose_sha256": "10c2f02bb6935d450cdf71dfb3e637f9af0e9464c21d94c39e68370f6652f6da",
+          "actual_time_seconds": 0.816666666666667
+        },
+        {
+          "frame": 50,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.050.png",
+          "sha256": "03cd6ea0e25a93b5bb879e6385dffbdc6a355c552dc2fa17e8f6415116ed068b",
+          "bone_pose_sha256": "304846346f05d5e7b7de84a2981b97acb4ada4f9eacfb1315cc3cc2c9a6b50f6",
+          "actual_time_seconds": 0.833333333333333
+        },
+        {
+          "frame": 51,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.051.png",
+          "sha256": "378114f941d55c49a20936d6df90ed256a9ce228216ba51cef0e7522c49c59ba",
+          "bone_pose_sha256": "6e5dabaad26e696c50d52653252a37ee39e899d4f49e0b6821df3be749f50071",
+          "actual_time_seconds": 0.85
+        },
+        {
+          "frame": 52,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.052.png",
+          "sha256": "aeb63ac200a951d955b45857bd6d684a1cb87896d005458ad594ef710ae865c7",
+          "bone_pose_sha256": "5b8d851e009a7dcbc2ddd5fda9766a3ab7cf11e8440a37a3ecad82aecc5ebbcf",
+          "actual_time_seconds": 0.866666666666667
+        },
+        {
+          "frame": 53,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.053.png",
+          "sha256": "1389c83d53dd6a49e2c9207c99ed1bced551289dc81d5d5deac74cc0de2ab7c2",
+          "bone_pose_sha256": "fb1263fcc9986551f026804b2dda1ccdd9f8124b15055d947572bfddc7227dc0",
+          "actual_time_seconds": 0.883333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.054-059.png",
+      "filename": "Zombie_Climb_Ladder.054-059.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        54,
+        59
+      ],
+      "sha256_at_inventory": "d487860139cbbc7e03a06e684ea18e7194e02d5023c1f816c33c49fa93b152fb",
+      "reviewed": true,
+      "sha256_reviewed": "d487860139cbbc7e03a06e684ea18e7194e02d5023c1f816c33c49fa93b152fb",
+      "reviewed_at_original_resolution": true,
+      "observation": "The half-cycle support pose holds while the body ascends, with one high hand and one high knee. Forearm and shin lengths stay fixed, the lower hand remains controlled, and no visible shirt or trouser fold inversion occurs.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 54,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.054.png",
+          "sha256": "b8f5adf055ac29ee488a76779a8e47b977a260b350fc5781e31ad42ac38b771a",
+          "bone_pose_sha256": "a5a710beeacc453d209671b880d03ad80595e558a7303399cb722a8d4b5f3d70",
+          "actual_time_seconds": 0.9
+        },
+        {
+          "frame": 55,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.055.png",
+          "sha256": "890cb450f78f2acf4c1be2f25c32161659e9577f8cda1619a0c753a89e4069bd",
+          "bone_pose_sha256": "6b770d331151d80c954de13a393a38e5f74886e25bce9be00b60640009960cb0",
+          "actual_time_seconds": 0.916666666666667
+        },
+        {
+          "frame": 56,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.056.png",
+          "sha256": "22412ad08d88beb8b29f7914fe7d87053e145bd0c189c7d83b823975c23960e1",
+          "bone_pose_sha256": "ac0c35d8a98cb2a08f41c250485276d02c89b7a174ddedb1d8e65805d50da286",
+          "actual_time_seconds": 0.933333333333333
+        },
+        {
+          "frame": 57,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.057.png",
+          "sha256": "eafd6281a0bf09a0779dd8391368d29b37570a7dfe2861ea589015e36f1259cf",
+          "bone_pose_sha256": "eb482abd6d7c5f6e79307979aa7693c0944fdc2a0bac4b0bcdece3a8ea850d99",
+          "actual_time_seconds": 0.95
+        },
+        {
+          "frame": 58,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.058.png",
+          "sha256": "0fb29e4d8d8fc36e7c4b4df07b2ac9c1246fc3b4f68a243b1506235fd80cc896",
+          "bone_pose_sha256": "a775138c9ecc7c4f03d6d63f12866fc0447cfc7acb60922ce8302026a6e53d52",
+          "actual_time_seconds": 0.966666666666667
+        },
+        {
+          "frame": 59,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.059.png",
+          "sha256": "de86fe2471e0010819e944cd597302cf31cbb732dc80d52c146c7cd869e53103",
+          "bone_pose_sha256": "03964bd5ee4b0d48fac8b1b1c995cf735c7844192135b65ff4c8b6f0ff99b497",
+          "actual_time_seconds": 0.983333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.060-065.png",
+      "filename": "Zombie_Climb_Ladder.060-065.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        60,
+        65
+      ],
+      "sha256_at_inventory": "9fb50ce88b9e324cd02612761b435dae67d1fc8d21833f4a9856b630a746648f",
+      "reviewed": true,
+      "sha256_reviewed": "9fb50ce88b9e324cd02612761b435dae67d1fc8d21833f4a9856b630a746648f",
+      "reviewed_at_original_resolution": true,
+      "observation": "The second half-cycle begins with the opposite-side support pattern. The lower foot starts preparing the next step, and shoulder, elbow, knee and waist silhouettes stay continuous as the torso rises.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 60,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.060.png",
+          "sha256": "5ad1f5455a4aacd0b4eb883974d04c725a809bac1b007caa9d6d96236fe8e929",
+          "bone_pose_sha256": "0b2a8e9eb2df4159f557f408e1568fb709dc3a8206d592f8a76a970cc6566145",
+          "actual_time_seconds": 1.0
+        },
+        {
+          "frame": 61,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.061.png",
+          "sha256": "ae9268913d627adb43f6c4a1129e9600b4b6fd0f9f0c897df0be2f01c2e1143f",
+          "bone_pose_sha256": "46885dc9683b7fa8e81a49c90eff2ceee443b0680a8e46c44900c3b947789089",
+          "actual_time_seconds": 1.01666666666667
+        },
+        {
+          "frame": 62,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.062.png",
+          "sha256": "4315ff3ea87d61afb38a549d1d003ad186cfd57f29056bc124bae2e86ce18df9",
+          "bone_pose_sha256": "59590d4ab886ca26cf7bbf30647543fed17ee5ca843aaa4937eda6211784c970",
+          "actual_time_seconds": 1.03333333333333
+        },
+        {
+          "frame": 63,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.063.png",
+          "sha256": "84bee5fd0f6cddd81be7249d9803a2b5f11598ba973146465f1cb07e4a29c6ac",
+          "bone_pose_sha256": "f0f0f2fea366163c63e2af25059377c00c247a4c0516bb973310fd5b0d2e5b1a",
+          "actual_time_seconds": 1.05
+        },
+        {
+          "frame": 64,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.064.png",
+          "sha256": "457cd5830ed8fc4632f263d777fa30ba42391b2750f689ef8c53f1a914726863",
+          "bone_pose_sha256": "cd626cb26283e88991b451eafc5a6e8cc0193bc7a7cb5a8aa3e2713bee5a9b56",
+          "actual_time_seconds": 1.06666666666667
+        },
+        {
+          "frame": 65,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.065.png",
+          "sha256": "85b99b23622a17926a8ea74be6609c7fad7e733a590c2b2c3d214c36741090d6",
+          "bone_pose_sha256": "2058f7dd62bbd6b67489af11e200c5ff5e9a18492bdfc45b52a28e343e1e80be",
+          "actual_time_seconds": 1.08333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.066-071.png",
+      "filename": "Zombie_Climb_Ladder.066-071.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        66,
+        71
+      ],
+      "sha256_at_inventory": "4ee368bf3e11f8ca9bb6e5a94b62890ee27c2090a234c90eb7f641a041bd2880",
+      "reviewed": true,
+      "sha256_reviewed": "4ee368bf3e11f8ca9bb6e5a94b62890ee27c2090a234c90eb7f641a041bd2880",
+      "reviewed_at_original_resolution": true,
+      "observation": "The lower knee lifts into the second step while the previous support leg extends relative to the torso. The upper hand holds a stable grip shape, and elbows, sleeves and trouser knees retain consistent thickness.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 66,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.066.png",
+          "sha256": "5a71a5b0221f93f575dc9cc99613777e3fe01a2ec011ac20dbc9d76880b524c0",
+          "bone_pose_sha256": "238321ea2f97d7f8bb3c4c1954995ebd7d1d0e3e5f282e5dbfff9fcddbac22ba",
+          "actual_time_seconds": 1.1
+        },
+        {
+          "frame": 67,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.067.png",
+          "sha256": "c3a6d6b2d24171675be46f4764a9cf1e359378066503882aa91aa5e4c293d447",
+          "bone_pose_sha256": "5c90e77344e40d2bb4c8dfe9ec4073c59a895b724bc90b6b783669da1cad83e9",
+          "actual_time_seconds": 1.11666666666667
+        },
+        {
+          "frame": 68,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.068.png",
+          "sha256": "da268cb0a88276656915ee03f062611d975bd38a79a705db53f3a201cb6b61ef",
+          "bone_pose_sha256": "372682870957b8e1d960ca5590aac0eff4b4284f2fdb3199509e1d87ec8dc297",
+          "actual_time_seconds": 1.13333333333333
+        },
+        {
+          "frame": 69,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.069.png",
+          "sha256": "8069e9b73fe02aea93d6e941632bb2fcfb067aaec8631b1600ba6001b9dfef00",
+          "bone_pose_sha256": "3f4e4361fc2fc5f01052622e6b85427692cb9b0011d2c1a6ffe03c83e265d60e",
+          "actual_time_seconds": 1.15
+        },
+        {
+          "frame": 70,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.070.png",
+          "sha256": "e751f110fe02deee7ebc71b37eab8988afe362bdc44d51aafb7b4ec26464360e",
+          "bone_pose_sha256": "41ce0b114f50ea47c7d6727a1442dc1803193ed4107b8339cd178dd9726c6bb3",
+          "actual_time_seconds": 1.16666666666667
+        },
+        {
+          "frame": 71,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.071.png",
+          "sha256": "c6ac27636b7fde0e37822e8f784d105bb2263ea9222703ffd370b23d9183bb1d",
+          "bone_pose_sha256": "9774db718f8dc740314bea154bb0ff22428fc6106e0c4500bd415c6f3dc5af62",
+          "actual_time_seconds": 1.18333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.072-077.png",
+      "filename": "Zombie_Climb_Ladder.072-077.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        72,
+        77
+      ],
+      "sha256_at_inventory": "62598b4a9eca97b40963d35bdb98d55b2b60a1c78266b9d44d39a0be98007cca",
+      "reviewed": true,
+      "sha256_reviewed": "62598b4a9eca97b40963d35bdb98d55b2b60a1c78266b9d44d39a0be98007cca",
+      "reviewed_at_original_resolution": true,
+      "observation": "The body passes through the second mid-step crouch, with both knees bent before the next exchange. Arm and torso proportions remain coherent in all four views, and the waist and underarm fabric show no visible tearing or sudden fold reversal.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 72,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.072.png",
+          "sha256": "7eca7c379ffcd2b91588abb0f72f13f526584ebfdcd1c267cc5d2ea7f1ae5b69",
+          "bone_pose_sha256": "3a5cf8a52d7cbd3328f910a92ed0158c31fae7e6423d1afb04f92ec39a683054",
+          "actual_time_seconds": 1.2
+        },
+        {
+          "frame": 73,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.073.png",
+          "sha256": "88f5905b7875603f114eb4cb5efcba1804f59adc76e1808f82574afa856f1555",
+          "bone_pose_sha256": "1859d963c43fcbf6c20574ef540db52671031ad5d7d0c569f5d146f236dcd762",
+          "actual_time_seconds": 1.21666666666667
+        },
+        {
+          "frame": 74,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.074.png",
+          "sha256": "06d88cd469e3690a74332e1c387bd939ef6570cfaed9d86cc30723b1e4709aeb",
+          "bone_pose_sha256": "d4702a4ccde1676820c2282a538212cffefed81f5268e3fdca93ce19236a789a",
+          "actual_time_seconds": 1.23333333333333
+        },
+        {
+          "frame": 75,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.075.png",
+          "sha256": "abb06833db254a324afad34c2f59b8e3c7b0457cc697e1140c0d686eb9ff3e49",
+          "bone_pose_sha256": "24bce8da28575b9ad21e403a11fc4d3484290011d73bdcf6a09047febe27a111",
+          "actual_time_seconds": 1.25
+        },
+        {
+          "frame": 76,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.076.png",
+          "sha256": "5057fd91d4a6cc68fb3e052670af7a00d2c3ec4c776718ec9abadb0255e1f70e",
+          "bone_pose_sha256": "b909fab1aa14a976532ba6c48c4b22c7a9322e6586ceb0e979f2ceb5f66c6e23",
+          "actual_time_seconds": 1.26666666666667
+        },
+        {
+          "frame": 77,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.077.png",
+          "sha256": "2d488b387cfe65c59dd8bf486f61df0e8db97799ef621c4ed09cb0d79089383d",
+          "bone_pose_sha256": "7f86131b335ec65afc2e733484d94f5684755375f5de542e9b86847d66eb9f4c",
+          "actual_time_seconds": 1.28333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.078-083.png",
+      "filename": "Zombie_Climb_Ladder.078-083.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        78,
+        83
+      ],
+      "sha256_at_inventory": "0d4320a14cdb680ae9420617ad1766d79655b3d05d3ffaa6781b5355579d40d1",
+      "reviewed": true,
+      "sha256_reviewed": "0d4320a14cdb680ae9420617ad1766d79655b3d05d3ffaa6781b5355579d40d1",
+      "reviewed_at_original_resolution": true,
+      "observation": "The support legs pass through the middle of their exchange while the hands retain staggered heights. Clear elbow bends and a stable shoulder silhouette remain visible; knee and seat fabric preserve their volume.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 78,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.078.png",
+          "sha256": "82b998ddd3ddf9400da8270bd3f5645c106b62c8065a4d3f3361b9545ef7a6a9",
+          "bone_pose_sha256": "d693f2b686167585be54a2a6d517d8eefa85f52a38913e6d33511876fbbb628e",
+          "actual_time_seconds": 1.3
+        },
+        {
+          "frame": 79,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.079.png",
+          "sha256": "92b3ebb64398cd5f6e722360b3dba0bd11ebcbfe1ce214803b4aef3909b78c79",
+          "bone_pose_sha256": "87d838a3822435cb1c68133e0f4d4d0cd9e69cf26d8690f41e76303835e55697",
+          "actual_time_seconds": 1.31666666666667
+        },
+        {
+          "frame": 80,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.080.png",
+          "sha256": "e330b183178628240a18d6d9cf5957ef8f124606984faa51387b529786bc9fa6",
+          "bone_pose_sha256": "02c0d78a076ce91e0c02286effdddc47ea2a2214ff02a0f9d9d2dc15c86a671c",
+          "actual_time_seconds": 1.33333333333333
+        },
+        {
+          "frame": 81,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.081.png",
+          "sha256": "f222ab462fd7d0e9eaa03a4fc466e5b173d3c7ba1335d91be98ecdb113d75331",
+          "bone_pose_sha256": "70b10bc6c863e8038ed52703d1dfe2275bc0eec9feb47a8bddd77add9a0fc759",
+          "actual_time_seconds": 1.35
+        },
+        {
+          "frame": 82,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.082.png",
+          "sha256": "f1e7b7b51b20fbbc14845efc2ee4200af40b4c90caec605b5d00321d6c3c6309",
+          "bone_pose_sha256": "0095c2c0ba23b40d5c7bc38766a09de3baf958646f3331034976cbd0bbafb683",
+          "actual_time_seconds": 1.36666666666667
+        },
+        {
+          "frame": 83,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.083.png",
+          "sha256": "42c26c5f03f26cf4172560bbae6fc75f30fe722b3ebc021054643a2888c87b7d",
+          "bone_pose_sha256": "ae4453d80232508714ea803203dc656c359b004326a08d385dd47d8cc485247b",
+          "actual_time_seconds": 1.38333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.084-089.png",
+      "filename": "Zombie_Climb_Ladder.084-089.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        84,
+        89
+      ],
+      "sha256_at_inventory": "8448baedf82aa0bf8c3fc6e1e9244f8633374e24b0bae38ebae3be55b9ee0117",
+      "reviewed": true,
+      "sha256_reviewed": "8448baedf82aa0bf8c3fc6e1e9244f8633374e24b0bae38ebae3be55b9ee0117",
+      "reviewed_at_original_resolution": true,
+      "observation": "The next reaching hand begins rising while the new knee takes height. The opposite hand remains controlled near the support position. No obvious cloth inversion, stretched forearm or discontinuous wrist movement appears across the six frames.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 84,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.084.png",
+          "sha256": "975ed939248ce1c2f4718d0b3edee504218fd6ea3f9ef0b7b745ce85366deced",
+          "bone_pose_sha256": "b30f071f3f4089b31f429dbebf4d3ef1990fb70c59c64d8a8e6d0009fe80d629",
+          "actual_time_seconds": 1.4
+        },
+        {
+          "frame": 85,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.085.png",
+          "sha256": "f1cd0cb77b5d83a4fc989988358c7838fbb9f875f4252902344a9c58d8265269",
+          "bone_pose_sha256": "c23d7697628e46363c1cfafc53e96229e959c926589a1fc969e78b95b2c99d0d",
+          "actual_time_seconds": 1.41666666666667
+        },
+        {
+          "frame": 86,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.086.png",
+          "sha256": "add02603c945895226e340d05ce4985c2a5f69522f7f0eb9f53d8fed77fd4aa6",
+          "bone_pose_sha256": "c98c16b67ba8a398951560d79869564d4d3468ab338b6caed0682834113bb916",
+          "actual_time_seconds": 1.43333333333333
+        },
+        {
+          "frame": 87,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.087.png",
+          "sha256": "da085f96d7fccdba1f73e0766acffd214364b884b77de58bcece3598e2cc398f",
+          "bone_pose_sha256": "72d9c72f621ab3c6a3e177f80cfd9c2a8f521ad36252889800ea6dc9b335af7f",
+          "actual_time_seconds": 1.45
+        },
+        {
+          "frame": 88,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.088.png",
+          "sha256": "027b2a1e4672c59ef90b8067007a36145d49403c0f92261c11a86a771b437a28",
+          "bone_pose_sha256": "3239d48beb0afa4d0a4dbccfa05b1206fb60d91ecfaa21a3769b6c442281f900",
+          "actual_time_seconds": 1.46666666666667
+        },
+        {
+          "frame": 89,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.089.png",
+          "sha256": "c27288e73713beff6ff037e5b3c71fb5477063e1d47195ec4748036813464741",
+          "bone_pose_sha256": "8c6ba54ad8c05bc9e3e53c995db36b4dae882627e119221ecd7e9b6db3c9c6d3",
+          "actual_time_seconds": 1.48333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.090-095.png",
+      "filename": "Zombie_Climb_Ladder.090-095.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        90,
+        95
+      ],
+      "sha256_at_inventory": "89f400af4f44cd4ced3d3b4affc7662f26331a8946cc718303ab957c6d3e5318",
+      "reviewed": true,
+      "sha256_reviewed": "89f400af4f44cd4ced3d3b4affc7662f26331a8946cc718303ab957c6d3e5318",
+      "reviewed_at_original_resolution": true,
+      "observation": "The second grip exchange passes both hands near head height with maintained lateral spacing. Shoulder width and elbow volumes remain stable; the bent knee and trouser seat retain a readable solid silhouette.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 90,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.090.png",
+          "sha256": "dac50ebc53ff6c8f70a54f75cfc5208cbaa97591aeb468de3a73341bc5ebcd61",
+          "bone_pose_sha256": "fbe6e0306ced43e9b11d13bb647e6d3c82bf4d4555642544a5470194c8df05ac",
+          "actual_time_seconds": 1.5
+        },
+        {
+          "frame": 91,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.091.png",
+          "sha256": "ba743726c9e226f765cc5be8606394b18feb150c8a0af7d18c00e32a25ec9f0a",
+          "bone_pose_sha256": "e8ec7c296e3130586f6cd46c558f15bda34dd95f25e7fea48fd0026332153513",
+          "actual_time_seconds": 1.51666666666667
+        },
+        {
+          "frame": 92,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.092.png",
+          "sha256": "10070f7455cc85420886f34e5ec6197153f48579f894a5a40bf9d0d37986ccd8",
+          "bone_pose_sha256": "f4fed82643052d39eedfae1843b65c1cc31fdd43e1903bf2404b898ac9f679d7",
+          "actual_time_seconds": 1.53333333333333
+        },
+        {
+          "frame": 93,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.093.png",
+          "sha256": "702cc19035490c0a4cb27d99cdedab8b7d43ddd79115deb8bca7074990ff41c0",
+          "bone_pose_sha256": "265d0217771b733c4e10f6fb6cdac55a855b711812f2c7f9673b8e887d329e9b",
+          "actual_time_seconds": 1.55
+        },
+        {
+          "frame": 94,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.094.png",
+          "sha256": "8825090387a4428e883ea89e4dec1512aaedd968feee93eff165610451ecae6d",
+          "bone_pose_sha256": "a568b3f7362ce31823aa17b6ad41b4634bfa0666f63a9bcee316b0d820bc7452",
+          "actual_time_seconds": 1.56666666666667
+        },
+        {
+          "frame": 95,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.095.png",
+          "sha256": "41f820a921b0edd92aee0962347a81dc1365dc690ce22b4f9adf8d06f54eab96",
+          "bone_pose_sha256": "73be98fb73c712c15ead194b1d49cc16b837a263bff7d8cbc6676d57b6292d08",
+          "actual_time_seconds": 1.58333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.096-101.png",
+      "filename": "Zombie_Climb_Ladder.096-101.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        96,
+        101
+      ],
+      "sha256_at_inventory": "7f0c0a8bacae0195312c814b36b63d404e361ab11f729646fb6904c83887bb61",
+      "reviewed": true,
+      "sha256_reviewed": "7f0c0a8bacae0195312c814b36b63d404e361ab11f729646fb6904c83887bb61",
+      "reviewed_at_original_resolution": true,
+      "observation": "The next reaching arm rises toward the original-side high support while the legs continue alternating. Forearms remain firm segments, finger curvature stays confined to the hands, and the sleeves and waist remain visually continuous.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 96,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.096.png",
+          "sha256": "2892a3a55c0a7105ab3ff088c2a38f8f5654c2fee33dd3c28f326569c9691f84",
+          "bone_pose_sha256": "7d722c00cca186e4112a8bb6c56ebcb121a7d109dc6e3a778160f905291d6b34",
+          "actual_time_seconds": 1.6
+        },
+        {
+          "frame": 97,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.097.png",
+          "sha256": "2740aec364077f37e1344c8ff5aa32ffd382f2db9e7b0f4459f0239daf76dd78",
+          "bone_pose_sha256": "bf064db308cc1d16c7617e7faf4c2e860f0588a6ebdd0fa0436042d95ee33c4f",
+          "actual_time_seconds": 1.61666666666667
+        },
+        {
+          "frame": 98,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.098.png",
+          "sha256": "07337e5ddb2313b3f7524f83a784081a9b8e6c6deb80ac4ac299cd07928f231f",
+          "bone_pose_sha256": "a1506ad71f3ef81085d9c00c0440c12bc7ae1561d5737606a6377201cd4ad485",
+          "actual_time_seconds": 1.63333333333333
+        },
+        {
+          "frame": 99,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.099.png",
+          "sha256": "29659d343ae8c099d4f4602e5b3383c28b729b0c3a09ff3c9dada8c83e2019c1",
+          "bone_pose_sha256": "c53f9a2ddde2a5ff208275c9fb0271a54adc8edeb1575f6d9308a78a0e5b3c04",
+          "actual_time_seconds": 1.65
+        },
+        {
+          "frame": 100,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.100.png",
+          "sha256": "ff43342d86520190de15549fab48438db58d0cdd1237a73b5c959dfdd1ec6540",
+          "bone_pose_sha256": "e1f9b51e48a45cc204ecd328b171f7fae43cd760b8895808d2f8ca33614813a5",
+          "actual_time_seconds": 1.66666666666667
+        },
+        {
+          "frame": 101,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.101.png",
+          "sha256": "3d122089a433105ec0f4c345cac3ad1850a76e49e5dcb3de55b8b22f5622c802",
+          "bone_pose_sha256": "f64c3ed41af8d2615ef6970e440308bb86ba0146a92410f890c6cb8d7ed77c68",
+          "actual_time_seconds": 1.68333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.102-107.png",
+      "filename": "Zombie_Climb_Ladder.102-107.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        102,
+        107
+      ],
+      "sha256_at_inventory": "88ce6bba27d44272a1225bfe00c06479a3e6f9c18ccb45ae503f12057044d70b",
+      "reviewed": true,
+      "sha256_reviewed": "88ce6bba27d44272a1225bfe00c06479a3e6f9c18ccb45ae503f12057044d70b",
+      "reviewed_at_original_resolution": true,
+      "observation": "The reaching arm approaches its higher grip and the newly raised knee stabilizes. Upper-arm and forearm sections remain distinct, elbow curvature is controlled, and the sleeve and upper-back surfaces retain volume.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 102,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.102.png",
+          "sha256": "86cabbd45a1eea3c0de69d55eb4b3e6a7d8dd815ba447d26434fae711d59a782",
+          "bone_pose_sha256": "9327d64d1bcf71c10baa0785ec89706b4210c57e4961d2b69ddbe2337e89a889",
+          "actual_time_seconds": 1.7
+        },
+        {
+          "frame": 103,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.103.png",
+          "sha256": "f8996e2140693e3fd4ca4600306096fc34d4f2e7b8b39522c75fdfd4c007b828",
+          "bone_pose_sha256": "008ecd8da7c90c409c08ef39895c63ae982f87df100b6080e5428ded385474ec",
+          "actual_time_seconds": 1.71666666666667
+        },
+        {
+          "frame": 104,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.104.png",
+          "sha256": "790c90b5963ff722bc4478c61e0aae5e97abe5c5a2146168424e80bbcd559a1e",
+          "bone_pose_sha256": "a6652bd3124197e869efc345b65ec24002ac078273c7bad3ebddf3e355d50573",
+          "actual_time_seconds": 1.73333333333333
+        },
+        {
+          "frame": 105,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.105.png",
+          "sha256": "1771c122e60d756de18915c3776da0aff5b46d67d4b5b70242b1d49bb3dc7d16",
+          "bone_pose_sha256": "770ed91b48fa953aef2d44ce2f23c29f565b02c09556db756ef97ed0dc9d7fe8",
+          "actual_time_seconds": 1.75
+        },
+        {
+          "frame": 106,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.106.png",
+          "sha256": "1974b6852f94843c1cfbf32610fe54b9c72fe140a7d047ef7b16602706731d5b",
+          "bone_pose_sha256": "5d2e96ac67d3175630aaf84f2deb540589b6b2fa6e0d9addaafa61e6ebd17036",
+          "actual_time_seconds": 1.76666666666667
+        },
+        {
+          "frame": 107,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.107.png",
+          "sha256": "6075455e4fd53219097bfa39066346d222d55926c686f7da1f967e0e00eab1db",
+          "bone_pose_sha256": "2390724fb83750ea4e0cfec18545c17a616a44e08364494827042eab75e69540",
+          "actual_time_seconds": 1.78333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.108-113.png",
+      "filename": "Zombie_Climb_Ladder.108-113.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        108,
+        113
+      ],
+      "sha256_at_inventory": "7c2b02e6682e487b9c68747ec27b34fa4f2b158995df9d590fb773e6f873bce0",
+      "reviewed": true,
+      "sha256_reviewed": "7c2b02e6682e487b9c68747ec27b34fa4f2b158995df9d590fb773e6f873bce0",
+      "reviewed_at_original_resolution": true,
+      "observation": "The support pattern returns toward the cycle's opening configuration while the root continues upward. Deep knee cloth and the raised shoulder stay coherent; no sudden pose or fabric discontinuity is visible as the loop endpoint approaches.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 108,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.108.png",
+          "sha256": "0e0e4e1918ffe8f41bb1790421346ed965e50d5b1417c52a9e45e69f2ff295b4",
+          "bone_pose_sha256": "19fd5a6cb8ef9f457669013dc5310c1d3efca558edcba12ce4fdfc89d1891bd4",
+          "actual_time_seconds": 1.8
+        },
+        {
+          "frame": 109,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.109.png",
+          "sha256": "ce0a7c423b479da21f3155dc8f4db12f2065661d34e70432dae37afb1d1c562f",
+          "bone_pose_sha256": "275c2f8736a1a401393804675c082fa6905bd7c90a17e2349a912df6f5cd8546",
+          "actual_time_seconds": 1.81666666666667
+        },
+        {
+          "frame": 110,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.110.png",
+          "sha256": "2df44711e4ab5d4e85c432c812e14eecd5b5ba6295fa90ef8a710feb66022b6b",
+          "bone_pose_sha256": "9532b1248886899a449de729f6d4e902fc393d1e2316d5324cf84664eb70566b",
+          "actual_time_seconds": 1.83333333333333
+        },
+        {
+          "frame": 111,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.111.png",
+          "sha256": "042c1aef0a7d4a6de43eaba1469641a4a96e9cb03b58d3fdb867fe9dd77aa784",
+          "bone_pose_sha256": "b89c6b0b6bd0f07be761251b2d2f64f538e1397fd66aac638a66ee90317f23e3",
+          "actual_time_seconds": 1.85
+        },
+        {
+          "frame": 112,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.112.png",
+          "sha256": "beb0bf841e2d959c7c742abdf2ae15e294da16818a809a3540c747826988d463",
+          "bone_pose_sha256": "4a066cf9a6f297dde2946967dc6577b96f87f7507d8c98055943aebec5965315",
+          "actual_time_seconds": 1.86666666666667
+        },
+        {
+          "frame": 113,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.113.png",
+          "sha256": "ec5923f7cfa33649ac8435260cbc9b114181c575c359f0f3c6138e141fb2d523",
+          "bone_pose_sha256": "211847519c04804514082716dc9ee806f688567748dcdbbd071faee15c7d6896",
+          "actual_time_seconds": 1.88333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.114-119.png",
+      "filename": "Zombie_Climb_Ladder.114-119.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        114,
+        119
+      ],
+      "sha256_at_inventory": "3958af7b4536f3173394bb1c530eaf54050f901ef2dac4349108de6fb00547fb",
+      "reviewed": true,
+      "sha256_reviewed": "3958af7b4536f3173394bb1c530eaf54050f901ef2dac4349108de6fb00547fb",
+      "reviewed_at_original_resolution": true,
+      "observation": "The loop settles toward its opening asymmetric hand-and-knee support pose. Shoulder and knee volumes remain stable, hand curvature stays controlled, and no endpoint approach pop or garment flash appears.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 114,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.114.png",
+          "sha256": "d24afa6d3b4ebe3258c46e70cd99325d7a5104f1317b25af4594713816d141d7",
+          "bone_pose_sha256": "2f3267d063579f7ebcfc35fe60ba33dfcf4d146feaf94afdb0aa001685dd344a",
+          "actual_time_seconds": 1.9
+        },
+        {
+          "frame": 115,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.115.png",
+          "sha256": "f94c921363d97f967820ae5f6664e02678fbb070858b50c14bfedd69e198e385",
+          "bone_pose_sha256": "99cd9e8e58912c6b9210956214f586f47aa68a380d489f7cf90923daae66ee8e",
+          "actual_time_seconds": 1.91666666666667
+        },
+        {
+          "frame": 116,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.116.png",
+          "sha256": "6e3aeab6dbda292b46ae68755494f5dbbd794a62fbc85fae5d749344684fda9c",
+          "bone_pose_sha256": "b73b3aa8e67e306eda2ab58602b844170b67ea46edb835ca6e0ec629083ffc56",
+          "actual_time_seconds": 1.93333333333333
+        },
+        {
+          "frame": 117,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.117.png",
+          "sha256": "a2653c3406b456fc655fcd2daebfc926b4cc66fd09b2b0930a8e286219516c1f",
+          "bone_pose_sha256": "6f46f4554691b8c379f0536174f0e8a0da59b118e8f1493b42e4e695a06f47ed",
+          "actual_time_seconds": 1.95
+        },
+        {
+          "frame": 118,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.118.png",
+          "sha256": "f9d485ad488f1ae4db5218aba4f73439451616aa8b864d7242b60a30eed68249",
+          "bone_pose_sha256": "fb4cadd38e15cffb31fc84f62d17c78d1a86d9c4e6a41f9547a4fc6252610405",
+          "actual_time_seconds": 1.96666666666667
+        },
+        {
+          "frame": 119,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.119.png",
+          "sha256": "a920840bd457a8e69b66d0f18014c6274984b2262e8f392d4cab155e3ae1c6c9",
+          "bone_pose_sha256": "62e5f2390cc43f7d3343bbe65c98b537d3af77cb3b8d111b0c510ce7bcd883bb",
+          "actual_time_seconds": 1.98333333333333
+        }
+      ]
+    },
+    {
+      "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases/Zombie_Climb_Ladder.120-120.png",
+      "filename": "Zombie_Climb_Ladder.120-120.png",
+      "clip": "Zombie_Climb_Ladder",
+      "frames_inclusive": [
+        120,
+        120
+      ],
+      "sha256_at_inventory": "6ab74b7c7a5fe137c89f088f80e27dcb1dfc49a1d9d045c6775857d6e9ed74c6",
+      "reviewed": true,
+      "sha256_reviewed": "6ab74b7c7a5fe137c89f088f80e27dcb1dfc49a1d9d045c6775857d6e9ed74c6",
+      "reviewed_at_original_resolution": true,
+      "observation": "The final endpoint matches the opening body configuration after the declared upward root travel. The arm proportions, sleeve openings, trouser knees and boots remain coherent, and the support pattern closes without a visible pose snap.",
+      "blocking_findings": [],
+      "frames": [
+        {
+          "frame": 120,
+          "file": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/frames/Zombie_Climb_Ladder.120.png",
+          "sha256": "6ab74b7c7a5fe137c89f088f80e27dcb1dfc49a1d9d045c6775857d6e9ed74c6",
+          "bone_pose_sha256": "f66a9e7b0823ea62a9bcbd8cefb2f975209b19a70155a4217549ad3f536afd58",
+          "actual_time_seconds": 2.0
+        }
+      ]
+    }
+  ],
+  "capture_partition": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/part.traversal.json",
+  "capture_partition_sha256": "264de7367c997e3d3461eaea5ef06d0cd78c9538c6ae6acaf91cef449377361d",
+  "all_reviewed_hashes_stable_at_completion": true,
+  "summary": [
+    "All 73 jump poses and 121 ladder poses were actually inspected in four views, including each 60 Hz frame and both endpoints.",
+    "The jump has readable crouch anticipation, shallow flight, landing compression and guarded recovery. Arm segment proportions and garment silhouettes remain visually stable.",
+    "The ladder cycle alternates reaching hands and lifted knees while the root rises. Shoulder, elbow and knee volumes remain coherent and the support pose closes smoothly at the loop endpoint."
+  ]
+}

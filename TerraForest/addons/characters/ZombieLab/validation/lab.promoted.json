@@ -1,0 +1,582 @@
+{
+	"checks": [
+		{
+			"details": {
+
+			},
+			"name": "F1 Original remains startup default",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Active revision controls are exactly F1/F2/F4",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "original: expanded behavior is enabled only for R4",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+				"bones": 59,
+				"cache_source_md5": "db23252b9362c87089aef6c95f5b31ef",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				},
+				"expected_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+				"instantiated_scene": "res://assets/Zombie.glb",
+				"model_path": "res://assets/Zombie.glb",
+				"r4_actions_enabled": false,
+				"regions": 14,
+				"source_md5": "db23252b9362c87089aef6c95f5b31ef",
+				"triangles_including_caps": 14905
+			},
+			"name": "original: displayed and loaded model matches exact catalog bytes",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "original: import cache belongs to the source GLB",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+				"bones": 59,
+				"cache_source_md5": "db23252b9362c87089aef6c95f5b31ef",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				},
+				"expected_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+				"instantiated_scene": "res://assets/Zombie.glb",
+				"model_path": "res://assets/Zombie.glb",
+				"r4_actions_enabled": false,
+				"regions": 14,
+				"source_md5": "db23252b9362c87089aef6c95f5b31ef",
+				"triangles_including_caps": 14905
+			},
+			"name": "original: full rig / damage regions / sever cap budget",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				}
+			},
+			"name": "original: complete animation set with matching inspector timing",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": 4,
+				"items": 4
+			},
+			"name": "original: action dropdown reflects this complete model",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Actual hotkey selects r2",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r2: expanded behavior is enabled only for R4",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+				"bones": 59,
+				"cache_source_md5": "625f7a4f4c7d726888b78655393cd6da",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				},
+				"expected_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+				"instantiated_scene": "res://assets/Zombie.r2.glb",
+				"model_path": "res://assets/Zombie.r2.glb",
+				"r4_actions_enabled": false,
+				"regions": 14,
+				"source_md5": "625f7a4f4c7d726888b78655393cd6da",
+				"triangles_including_caps": 14771
+			},
+			"name": "r2: displayed and loaded model matches exact catalog bytes",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r2: import cache belongs to the source GLB",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+				"bones": 59,
+				"cache_source_md5": "625f7a4f4c7d726888b78655393cd6da",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				},
+				"expected_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+				"instantiated_scene": "res://assets/Zombie.r2.glb",
+				"model_path": "res://assets/Zombie.r2.glb",
+				"r4_actions_enabled": false,
+				"regions": 14,
+				"source_md5": "625f7a4f4c7d726888b78655393cd6da",
+				"triangles_including_caps": 14771
+			},
+			"name": "r2: full rig / damage regions / sever cap budget",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": {
+					"Zombie_Attack": 1.39999997615814,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Walk": 1.79999995231628
+				}
+			},
+			"name": "r2: complete animation set with matching inspector timing",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": 4,
+				"items": 4
+			},
+			"name": "r2: action dropdown reflects this complete model",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Actual hotkey selects r4",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r4: expanded behavior is enabled only for R4",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+				"bones": 59,
+				"cache_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.60000002384186,
+					"Zombie_Attack_Bite": 1.35000002384186,
+					"Zombie_Attack_Both": 1.60000002384186,
+					"Zombie_Attack_Left": 1.29999995231628,
+					"Zombie_Attack_Right": 1.39999997615814,
+					"Zombie_Climb_Ladder": 2.0,
+					"Zombie_Crawl": 1.60000002384186,
+					"Zombie_Crawl_Bite": 1.20000004768372,
+					"Zombie_Crawl_Hit": 0.5,
+					"Zombie_Crawl_Idle": 2.0,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Jump": 1.20000004768372,
+					"Zombie_To_Crawl": 0.800000011920929,
+					"Zombie_Walk": 1.39999997615814
+				},
+				"expected_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+				"instantiated_scene": "res://assets/Zombie.r4.glb",
+				"model_path": "res://assets/Zombie.r4.glb",
+				"r4_actions_enabled": true,
+				"regions": 14,
+				"source_md5": "df767a8b5a98e0996194f945a8741250",
+				"triangles_including_caps": 14992
+			},
+			"name": "r4: displayed and loaded model matches exact catalog bytes",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "r4: import cache belongs to the source GLB",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+				"bones": 59,
+				"cache_source_md5": "df767a8b5a98e0996194f945a8741250",
+				"cap_pairs": 13,
+				"clips": {
+					"Zombie_Attack": 1.60000002384186,
+					"Zombie_Attack_Bite": 1.35000002384186,
+					"Zombie_Attack_Both": 1.60000002384186,
+					"Zombie_Attack_Left": 1.29999995231628,
+					"Zombie_Attack_Right": 1.39999997615814,
+					"Zombie_Climb_Ladder": 2.0,
+					"Zombie_Crawl": 1.60000002384186,
+					"Zombie_Crawl_Bite": 1.20000004768372,
+					"Zombie_Crawl_Hit": 0.5,
+					"Zombie_Crawl_Idle": 2.0,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Jump": 1.20000004768372,
+					"Zombie_To_Crawl": 0.800000011920929,
+					"Zombie_Walk": 1.39999997615814
+				},
+				"expected_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+				"instantiated_scene": "res://assets/Zombie.r4.glb",
+				"model_path": "res://assets/Zombie.r4.glb",
+				"r4_actions_enabled": true,
+				"regions": 14,
+				"source_md5": "df767a8b5a98e0996194f945a8741250",
+				"triangles_including_caps": 14992
+			},
+			"name": "r4: full rig / damage regions / sever cap budget",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": {
+					"Zombie_Attack": 1.60000002384186,
+					"Zombie_Attack_Bite": 1.35000002384186,
+					"Zombie_Attack_Both": 1.60000002384186,
+					"Zombie_Attack_Left": 1.29999995231628,
+					"Zombie_Attack_Right": 1.39999997615814,
+					"Zombie_Climb_Ladder": 2.0,
+					"Zombie_Crawl": 1.60000002384186,
+					"Zombie_Crawl_Bite": 1.20000004768372,
+					"Zombie_Crawl_Hit": 0.5,
+					"Zombie_Crawl_Idle": 2.0,
+					"Zombie_Hit": 0.600000023841858,
+					"Zombie_Idle": 3.0,
+					"Zombie_Jump": 1.20000004768372,
+					"Zombie_To_Crawl": 0.800000011920929,
+					"Zombie_Walk": 1.39999997615814
+				}
+			},
+			"name": "r4: complete animation set with matching inspector timing",
+			"passed": true
+		},
+		{
+			"details": {
+				"clips": 15,
+				"items": 15
+			},
+			"name": "r4: action dropdown reflects this complete model",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "F3 cannot activate deprecated R3",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Deprecated R3 is also rejected by selection API",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.6,
+				"assigned_clip": "Zombie_Attack_Bite",
+				"requested_frame": 36
+			},
+			"name": "Inspector exact frozen pose: Zombie_Attack_Bite f36",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.533333333333333,
+				"assigned_clip": "Zombie_Attack_Left",
+				"requested_frame": 32
+			},
+			"name": "Inspector exact frozen pose: Zombie_Attack_Left f32",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.6,
+				"assigned_clip": "Zombie_Attack_Right",
+				"requested_frame": 36
+			},
+			"name": "Inspector exact frozen pose: Zombie_Attack_Right f36",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.7,
+				"assigned_clip": "Zombie_Attack_Both",
+				"requested_frame": 42
+			},
+			"name": "Inspector exact frozen pose: Zombie_Attack_Both f42",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 1.60000002384186,
+				"assigned_clip": "Zombie_Crawl",
+				"requested_frame": 96
+			},
+			"name": "Inspector exact frozen pose: Zombie_Crawl f96",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 2.0,
+				"assigned_clip": "Zombie_Crawl_Idle",
+				"requested_frame": 120
+			},
+			"name": "Inspector exact frozen pose: Zombie_Crawl_Idle f120",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.5,
+				"assigned_clip": "Zombie_Crawl_Bite",
+				"requested_frame": 30
+			},
+			"name": "Inspector exact frozen pose: Zombie_Crawl_Bite f30",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.5,
+				"assigned_clip": "Zombie_Crawl_Hit",
+				"requested_frame": 30
+			},
+			"name": "Inspector exact frozen pose: Zombie_Crawl_Hit f30",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.800000011920929,
+				"assigned_clip": "Zombie_To_Crawl",
+				"requested_frame": 48
+			},
+			"name": "Inspector exact frozen pose: Zombie_To_Crawl f48",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 0.55,
+				"assigned_clip": "Zombie_Jump",
+				"requested_frame": 33
+			},
+			"name": "Inspector exact frozen pose: Zombie_Jump f33",
+			"passed": true
+		},
+		{
+			"details": {
+				"actual_seconds": 2.0,
+				"assigned_clip": "Zombie_Climb_Ladder",
+				"requested_frame": 120
+			},
+			"name": "Inspector exact frozen pose: Zombie_Climb_Ladder f120",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Frame step remains clamped at endpoint",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Frame step retreats exactly one frame",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Switching from R4 extras restores a supported F1 clip",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Actual GUI mouse hit selects F4",
+			"passed": true
+		},
+		{
+			"details": {
+				"active": true,
+				"complete": false,
+				"contacts": 0,
+				"cycle": 1,
+				"cycles_completed": 0,
+				"elapsed": 0.0125,
+				"last_action": "—",
+				"last_damage": 0.0,
+				"note": "Pursuit · moving target enters reach",
+				"stage": "approach",
+				"stage_contact": false,
+				"stage_count": 9,
+				"stage_distance": 0.00600004196166992,
+				"stage_finished": false,
+				"stage_index": 0,
+				"stage_requested": false,
+				"stage_time": 0.0125,
+				"target_health": 100.0
+			},
+			"name": "Actual GUI demonstration button starts live R4 controller",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Stop demonstration restores manual control",
+			"passed": true
+		},
+		{
+			"details": {
+
+			},
+			"name": "Reset preserves chosen revision and restores all limbs",
+			"passed": true
+		},
+		{
+			"details": {
+				"changed": []
+			},
+			"name": "Verified code and contract stayed unchanged during run",
+			"passed": true
+		}
+	],
+	"engine": "4.5.2-stable (official)",
+	"input_method": "Actual key events and Window.push_input GUI pointer hit-testing",
+	"models": {
+		"original": {
+			"actual_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+			"bones": 59,
+			"cache_source_md5": "db23252b9362c87089aef6c95f5b31ef",
+			"cap_pairs": 13,
+			"clips": {
+				"Zombie_Attack": 1.39999997615814,
+				"Zombie_Hit": 0.600000023841858,
+				"Zombie_Idle": 3.0,
+				"Zombie_Walk": 1.79999995231628
+			},
+			"expected_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+			"instantiated_scene": "res://assets/Zombie.glb",
+			"model_path": "res://assets/Zombie.glb",
+			"r4_actions_enabled": false,
+			"regions": 14,
+			"source_md5": "db23252b9362c87089aef6c95f5b31ef",
+			"triangles_including_caps": 14905
+		},
+		"r2": {
+			"actual_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+			"bones": 59,
+			"cache_source_md5": "625f7a4f4c7d726888b78655393cd6da",
+			"cap_pairs": 13,
+			"clips": {
+				"Zombie_Attack": 1.39999997615814,
+				"Zombie_Hit": 0.600000023841858,
+				"Zombie_Idle": 3.0,
+				"Zombie_Walk": 1.79999995231628
+			},
+			"expected_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+			"instantiated_scene": "res://assets/Zombie.r2.glb",
+			"model_path": "res://assets/Zombie.r2.glb",
+			"r4_actions_enabled": false,
+			"regions": 14,
+			"source_md5": "625f7a4f4c7d726888b78655393cd6da",
+			"triangles_including_caps": 14771
+		},
+		"r4": {
+			"actual_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+			"bones": 59,
+			"cache_source_md5": "df767a8b5a98e0996194f945a8741250",
+			"cap_pairs": 13,
+			"clips": {
+				"Zombie_Attack": 1.60000002384186,
+				"Zombie_Attack_Bite": 1.35000002384186,
+				"Zombie_Attack_Both": 1.60000002384186,
+				"Zombie_Attack_Left": 1.29999995231628,
+				"Zombie_Attack_Right": 1.39999997615814,
+				"Zombie_Climb_Ladder": 2.0,
+				"Zombie_Crawl": 1.60000002384186,
+				"Zombie_Crawl_Bite": 1.20000004768372,
+				"Zombie_Crawl_Hit": 0.5,
+				"Zombie_Crawl_Idle": 2.0,
+				"Zombie_Hit": 0.600000023841858,
+				"Zombie_Idle": 3.0,
+				"Zombie_Jump": 1.20000004768372,
+				"Zombie_To_Crawl": 0.800000011920929,
+				"Zombie_Walk": 1.39999997615814
+			},
+			"expected_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+			"instantiated_scene": "res://assets/Zombie.r4.glb",
+			"model_path": "res://assets/Zombie.r4.glb",
+			"r4_actions_enabled": true,
+			"regions": 14,
+			"source_md5": "df767a8b5a98e0996194f945a8741250",
+			"triangles_including_caps": 14992
+		}
+	},
+	"passed": true,
+	"source_sha256": {
+		"assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+		"assets/Zombie.glb.import": "32335e922b5833ec77c26c7c205605f51f97e85c5f9f3ef5d3003d679f0a77ab",
+		"assets/Zombie.r2.glb": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+		"assets/Zombie.r2.glb.import": "a208acdae0387f2bb58a98cf6b78434a71892e8766e7795eb07df1345c651121",
+		"assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+		"assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+		"assets/Zombie.r4.glb.import": "c7d7a6cabb795679005321b5693ae1caf172712ca7889b0060830fe8574dfa57",
+		"assets/zombie.revisions.json": "cfd9305dc79be85fcbe906b38f4254543acb0c7900b9053395353816244564a6",
+		"main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+		"scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+		"scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5"
+	},
+	"window_pixels": [
+		1280,
+		800
+	]
+}

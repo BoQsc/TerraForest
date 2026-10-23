@@ -1,0 +1,617 @@
+{
+  "active_asset_label": "ASSET  Zombie.r4.glb  \u00b7  15 clips",
+  "actual_gui_run_button": true,
+  "actual_gui_stop_button": true,
+  "camera": "Three-quarter orbit with distinct standing, jump, ladder and prone framing; character physics unchanged",
+  "changed_during_recording": [],
+  "completed": true,
+  "contacts": [
+    {
+      "action": "bite",
+      "action_time": 0.599999999999999,
+      "animation_time": 0.599999999999999,
+      "clip": "Zombie_Attack_Bite",
+      "damage": 13.8,
+      "demo_elapsed_seconds": 3.39166666666673,
+      "movie_frame": 147,
+      "movie_seconds": 4.9,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "surface_gap_m": 0.00243417918682098,
+      "visible_target_shapes": true,
+      "world_point": [
+        0.00539844483137131,
+        1.41476452350616,
+        1.25373423099518
+      ]
+    },
+    {
+      "action": "left",
+      "action_time": 0.533333333333333,
+      "animation_time": 0.533333333333333,
+      "clip": "Zombie_Attack_Left",
+      "damage": 10.2,
+      "demo_elapsed_seconds": 4.95833333333337,
+      "movie_frame": 194,
+      "movie_seconds": 6.46666666666667,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "surface_gap_m": 0.00255286693572998,
+      "visible_target_shapes": true,
+      "world_point": [
+        0.0441167429089546,
+        1.38312649726868,
+        1.67000997066498
+      ]
+    },
+    {
+      "action": "right",
+      "action_time": 0.599999999999999,
+      "animation_time": 0.599999999999999,
+      "clip": "Zombie_Attack_Right",
+      "damage": 12.0,
+      "demo_elapsed_seconds": 6.52499999999995,
+      "movie_frame": 241,
+      "movie_seconds": 8.03333333333333,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "surface_gap_m": 0.00152480602264404,
+      "visible_target_shapes": true,
+      "world_point": [
+        -0.187589049339294,
+        1.30515694618225,
+        1.70353782176971
+      ]
+    },
+    {
+      "action": "both",
+      "action_time": 0.699999999999999,
+      "animation_time": 0.699999999999999,
+      "clip": "Zombie_Attack_Both",
+      "damage": 18.0,
+      "demo_elapsed_seconds": 8.22499999999985,
+      "movie_frame": 292,
+      "movie_seconds": 9.73333333333333,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "surface_gap_m": 0.00200986862182617,
+      "visible_target_shapes": true,
+      "world_point": [
+        0.189282834529877,
+        1.25593841075897,
+        1.62455296516418
+      ]
+    },
+    {
+      "action": "crawl_bite",
+      "action_time": 0.499999999999999,
+      "animation_time": 0.499999999999999,
+      "clip": "Zombie_Crawl_Bite",
+      "damage": 10.2,
+      "demo_elapsed_seconds": 19.7666666666659,
+      "movie_frame": 638,
+      "movie_seconds": 21.2666666666667,
+      "root_position": [
+        0.0,
+        0.000899011502042413,
+        0.141019478440285
+      ],
+      "surface_gap_m": 0.0,
+      "visible_target_shapes": true,
+      "world_point": [
+        0.00207278109155595,
+        0.372057676315308,
+        0.734371900558472
+      ]
+    },
+    {
+      "action": "crawl_bite",
+      "action_time": 0.499999999999999,
+      "animation_time": 0.499999999999999,
+      "clip": "Zombie_Crawl_Bite",
+      "damage": 10.2,
+      "demo_elapsed_seconds": 23.9416666666656,
+      "movie_frame": 764,
+      "movie_seconds": 25.4666666666667,
+      "root_position": [
+        0.0,
+        0.000938276294618845,
+        1.09004068374634
+      ],
+      "surface_gap_m": 0.0,
+      "visible_target_shapes": true,
+      "world_point": [
+        0.00208505825139582,
+        0.375560879707336,
+        1.68687605857849
+      ]
+    }
+  ],
+  "cycle_completed_frame": 786,
+  "cycle_summary": {
+    "contacts": [
+      {
+        "action": "bite",
+        "damage": 13.8,
+        "elapsed": 3.39166666666673,
+        "point": [
+          0.00539844483137131,
+          1.41476452350616,
+          1.25373423099518
+        ],
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "signed_surface_distance_m": 0.00243419051170349,
+        "stage": "bite",
+        "surface_gap_m": 0.00243417918682098,
+        "target": [
+          0.0,
+          0.0,
+          1.40656280517578
+        ],
+        "visible_target_shapes": true
+      },
+      {
+        "action": "left",
+        "damage": 10.2,
+        "elapsed": 4.95833333333337,
+        "point": [
+          0.0441167429089546,
+          1.38312649726868,
+          1.67000997066498
+        ],
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "signed_surface_distance_m": 0.00255287438631058,
+        "stage": "left",
+        "surface_gap_m": 0.00255286693572998,
+        "target": [
+          0.0,
+          0.0,
+          1.78756284713745
+        ],
+        "visible_target_shapes": true
+      },
+      {
+        "action": "right",
+        "damage": 12.0,
+        "elapsed": 6.52499999999995,
+        "point": [
+          -0.187589049339294,
+          1.30515694618225,
+          1.70353782176971
+        ],
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "signed_surface_distance_m": 0.00152481347322464,
+        "stage": "right",
+        "surface_gap_m": 0.00152480602264404,
+        "target": [
+          0.0,
+          0.0,
+          1.8200626373291
+        ],
+        "visible_target_shapes": true
+      },
+      {
+        "action": "both",
+        "damage": 18.0,
+        "elapsed": 8.22499999999985,
+        "point": [
+          0.189282834529877,
+          1.25593841075897,
+          1.62455296516418
+        ],
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "signed_surface_distance_m": 0.00200987607240677,
+        "stage": "both",
+        "surface_gap_m": 0.00200986862182617,
+        "target": [
+          0.0,
+          0.0,
+          1.74156284332275
+        ],
+        "visible_target_shapes": true
+      },
+      {
+        "action": "crawl_bite",
+        "damage": 10.2,
+        "elapsed": 19.7666666666659,
+        "point": [
+          0.00207278109155595,
+          0.372057676315308,
+          0.734371900558472
+        ],
+        "root": [
+          0.0,
+          0.000899011502042413,
+          0.141019478440285
+        ],
+        "signed_surface_distance_m": -1.53005123138539e-05,
+        "stage": "one_leg",
+        "surface_gap_m": 0.0,
+        "target": [
+          0.0,
+          0.0,
+          0.899999976158142
+        ],
+        "visible_target_shapes": true
+      },
+      {
+        "action": "crawl_bite",
+        "damage": 10.2,
+        "elapsed": 23.9416666666656,
+        "point": [
+          0.00208505825139582,
+          0.375560879707336,
+          1.68687605857849
+        ],
+        "root": [
+          0.0,
+          0.000938276294618845,
+          1.09004068374634
+        ],
+        "signed_surface_distance_m": -7.98821449279896e-05,
+        "stage": "both_legs",
+        "surface_gap_m": 0.0,
+        "target": [
+          0.0,
+          0.0,
+          1.84999990463257
+        ],
+        "visible_target_shapes": true
+      }
+    ],
+    "cycle": 1,
+    "final_alive": true,
+    "final_movement_mode": "crawling",
+    "jump_end": [
+      2.34999990463257,
+      0.000799372908659279,
+      -2.95046806335449
+    ],
+    "jump_peak_y": 0.188527807593346,
+    "ladder_end": [
+      3.82956433296204,
+      0.900940239429474,
+      -2.44879770278931
+    ],
+    "stations": [
+      {
+        "elapsed": 0.0,
+        "root": [
+          0.0,
+          0.025000000372529,
+          -0.800000011920929
+        ],
+        "stage": "approach"
+      },
+      {
+        "elapsed": 2.1875,
+        "root": [
+          0.0,
+          0.000825844064820558,
+          0.770562887191772
+        ],
+        "stage": "bite"
+      },
+      {
+        "elapsed": 4.14583333333342,
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "stage": "left"
+      },
+      {
+        "elapsed": 5.72916666666666,
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "stage": "right"
+      },
+      {
+        "elapsed": 7.32916666666657,
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "stage": "both"
+      },
+      {
+        "elapsed": 9.12916666666647,
+        "root": [
+          0.0,
+          0.000825844006612897,
+          0.770562887191772
+        ],
+        "stage": "jump"
+      },
+      {
+        "elapsed": 10.7416666666664,
+        "root": [
+          2.34999990463257,
+          0.000799372908659279,
+          -2.95046806335449
+        ],
+        "stage": "ladder"
+      },
+      {
+        "elapsed": 15.5249999999994,
+        "root": [
+          3.82956433296204,
+          0.900940239429474,
+          -2.44879770278931
+        ],
+        "stage": "one_leg"
+      },
+      {
+        "elapsed": 20.4708333333325,
+        "root": [
+          0.0,
+          0.000899011502042413,
+          0.141019478440285
+        ],
+        "stage": "both_legs"
+      },
+      {
+        "elapsed": 24.6458333333323,
+        "root": [
+          0.0,
+          0.000938276294618845,
+          1.09004068374634
+        ],
+        "stage": "cycle_complete"
+      }
+    ],
+    "target_health": 25.6
+  },
+  "engine": "4.5.2-stable (official)",
+  "error": "",
+  "final_demo": {
+    "active": false,
+    "complete": true,
+    "contacts": 6,
+    "cycle": 1,
+    "cycles_completed": 1,
+    "elapsed": 25.9333333333322,
+    "last_action": "crawl_bite",
+    "last_damage": 10.2,
+    "note": "Stopped. R resets the subject; Run starts a fresh cycle.",
+    "stage": "stopped",
+    "stage_contact": false,
+    "stage_count": 9,
+    "stage_distance": 0.0,
+    "stage_finished": false,
+    "stage_index": -1,
+    "stage_requested": false,
+    "stage_time": 1.2875,
+    "target_health": 25.6
+  },
+  "first_revision": "original",
+  "fps": 30.0,
+  "import_sources": {
+    "assets/Zombie.glb": {
+      "compiled_resource": "res://.godot/imported/Zombie.glb-e07d2413ceec86cdd5c80ea3ed59db7a.scn",
+      "compiled_source_md5": "db23252b9362c87089aef6c95f5b31ef",
+      "current_file_md5": "db23252b9362c87089aef6c95f5b31ef",
+      "match": true
+    },
+    "assets/Zombie.r2.glb": {
+      "compiled_resource": "res://.godot/imported/Zombie.r2.glb-c7d5a380994932c2e220d426b1a9d23a.scn",
+      "compiled_source_md5": "625f7a4f4c7d726888b78655393cd6da",
+      "current_file_md5": "625f7a4f4c7d726888b78655393cd6da",
+      "match": true
+    },
+    "assets/Zombie.r4.glb": {
+      "compiled_resource": "res://.godot/imported/Zombie.r4.glb-daa2ba0ff6a140e4851c880594046810.scn",
+      "compiled_source_md5": "df767a8b5a98e0996194f945a8741250",
+      "current_file_md5": "df767a8b5a98e0996194f945a8741250",
+      "match": true
+    }
+  },
+  "initial_asset_label": "ASSET  Zombie.glb  \u00b7  4 clips",
+  "observed_process_frames": 859,
+  "physics_hz": 240,
+  "recording": "Native Godot MovieWriter; actual controller and GUI events",
+  "retimed": false,
+  "run_button_release_frame": 46,
+  "schema_version": 1,
+  "source_sha256": {
+    "assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+    "assets/Zombie.r2.glb": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "assets/zombie.revisions.json": "cfd9305dc79be85fcbe906b38f4254543acb0c7900b9053395353816244564a6",
+    "main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+    "main.tscn": "40019e7ce75137d1cd93f814dfb247ceae49fcf9c338255b728fb825ba6941d3",
+    "project.godot": "e2174af57c2b531154b74ed46a7f2adc54365b4adb9d7f53d79f9a0f8fcfde8a",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+    "scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5",
+    "tests/r4_demo_movie.gd": "b932d2068d75a3600221b9a2192d54d619534d45aab219c045a200b7f0cb4db0"
+  },
+  "stages": [
+    {
+      "demo_elapsed_seconds": 0.0,
+      "movie_frame": 46,
+      "movie_seconds": 1.53333333333333,
+      "root_position": [
+        0.0,
+        0.025000000372529,
+        -0.800000011920929
+      ],
+      "stage": "approach"
+    },
+    {
+      "demo_elapsed_seconds": 2.1875,
+      "movie_frame": 111,
+      "movie_seconds": 3.7,
+      "root_position": [
+        0.0,
+        0.000825844064820558,
+        0.770562887191772
+      ],
+      "stage": "bite"
+    },
+    {
+      "demo_elapsed_seconds": 4.14583333333342,
+      "movie_frame": 170,
+      "movie_seconds": 5.66666666666667,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "stage": "left"
+    },
+    {
+      "demo_elapsed_seconds": 5.72916666666666,
+      "movie_frame": 217,
+      "movie_seconds": 7.23333333333333,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "stage": "right"
+    },
+    {
+      "demo_elapsed_seconds": 7.32916666666657,
+      "movie_frame": 265,
+      "movie_seconds": 8.83333333333333,
+      "root_position": [
+        0.0,
+        0.000825844006612897,
+        0.770562887191772
+      ],
+      "stage": "both"
+    },
+    {
+      "demo_elapsed_seconds": 9.12916666666647,
+      "movie_frame": 319,
+      "movie_seconds": 10.6333333333333,
+      "root_position": [
+        2.34999990463257,
+        0.025000000372529,
+        -3.59999990463257
+      ],
+      "stage": "jump"
+    },
+    {
+      "demo_elapsed_seconds": 10.7416666666664,
+      "movie_frame": 368,
+      "movie_seconds": 12.2666666666667,
+      "root_position": [
+        3.0,
+        0.025000000372529,
+        -2.40000009536743
+      ],
+      "stage": "ladder"
+    },
+    {
+      "demo_elapsed_seconds": 15.5249999999994,
+      "movie_frame": 511,
+      "movie_seconds": 17.0333333333333,
+      "root_position": [
+        0.0,
+        0.025000000372529,
+        -0.800000011920929
+      ],
+      "stage": "one_leg"
+    },
+    {
+      "demo_elapsed_seconds": 20.4708333333325,
+      "movie_frame": 660,
+      "movie_seconds": 22.0,
+      "root_position": [
+        0.0,
+        0.000899011502042413,
+        0.141019478440285
+      ],
+      "stage": "both_legs"
+    },
+    {
+      "demo_elapsed_seconds": 24.6458333333323,
+      "movie_frame": 785,
+      "movie_seconds": 26.1666666666667,
+      "root_position": [
+        0.0,
+        0.000938276294618845,
+        1.09004068374634
+      ],
+      "stage": "cycle_complete"
+    }
+  ],
+  "stop_button_release_frame": 824,
+  "time_scale": 1.0,
+  "verified": true,
+  "window_pixels": [
+    1280,
+    800
+  ],
+  "encoding": {
+    "verified": true,
+    "codec": "H.264",
+    "pixel_format": "yuv420p",
+    "preset": "medium",
+    "crf": 19,
+    "retimed": false,
+    "decoded_frame_count": 859,
+    "native_avi_sha256": "77fc3991022d4468616711e199115de5266a726b2787a59065bb5d9b2c0e5621",
+    "mp4_sha256": "f2064f6981ade6076316d8df8b604062c4e4f703c5dc6628db334301270afdc8",
+    "mp4_size_bytes": 11058519,
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 800,
+          "r_frame_rate": "30/1",
+          "avg_frame_rate": "30/1",
+          "duration": "28.633333",
+          "nb_frames": "859",
+          "nb_read_frames": "859"
+        }
+      ],
+      "format": {
+        "duration": "28.633333",
+        "size": "11058519"
+      }
+    },
+    "file": "preview/Zombie.r4.demo.mp4",
+    "native_avi_retained": false,
+    "native_avi_cleanup": "Reproducible native AVI truncated to zero bytes after successful MP4 encoding, all-frame decode verification and final visual checkpoint review; original AVI SHA256 preserved above."
+  },
+  "visual_review_report": "validation/visual.demo.movie.json"
+}

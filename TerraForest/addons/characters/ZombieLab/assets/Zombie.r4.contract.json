@@ -1,0 +1,630 @@
+{
+  "model": "Zombie.r4.glb",
+  "source_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+  "triangles_including_hidden_caps": 14992,
+  "mesh_triangles": {
+    "Z_Cap_Foot_L_body": 21,
+    "Z_Cap_Foot_L_detached": 21,
+    "Z_Cap_Foot_R_body": 20,
+    "Z_Cap_Foot_R_detached": 20,
+    "Z_Cap_Forearm_L_body": 15,
+    "Z_Cap_Forearm_L_detached": 15,
+    "Z_Cap_Forearm_R_body": 24,
+    "Z_Cap_Forearm_R_detached": 24,
+    "Z_Cap_Hand_L_body": 34,
+    "Z_Cap_Hand_L_detached": 34,
+    "Z_Cap_Hand_R_body": 33,
+    "Z_Cap_Hand_R_detached": 33,
+    "Z_Cap_Head_body": 35,
+    "Z_Cap_Head_detached": 35,
+    "Z_Cap_Shin_L_body": 16,
+    "Z_Cap_Shin_L_detached": 16,
+    "Z_Cap_Shin_R_body": 15,
+    "Z_Cap_Shin_R_detached": 15,
+    "Z_Cap_Thigh_L_body": 23,
+    "Z_Cap_Thigh_L_detached": 23,
+    "Z_Cap_Thigh_R_body": 26,
+    "Z_Cap_Thigh_R_detached": 26,
+    "Z_Cap_UpperArm_L_body": 26,
+    "Z_Cap_UpperArm_L_detached": 26,
+    "Z_Cap_UpperArm_R_body": 23,
+    "Z_Cap_UpperArm_R_detached": 23,
+    "Z_Foot_L": 110,
+    "Z_Foot_R": 110,
+    "Z_Forearm_L": 148,
+    "Z_Forearm_R": 238,
+    "Z_Hand_L": 1278,
+    "Z_Hand_R": 1306,
+    "Z_Head": 7406,
+    "Z_Shin_L": 217,
+    "Z_Shin_R": 228,
+    "Z_Thigh_L": 210,
+    "Z_Thigh_R": 212,
+    "Z_Torso": 2084,
+    "Z_UpperArm_L": 412,
+    "Z_UpperArm_R": 411
+  },
+  "animations": {
+    "Zombie_Idle": {
+      "duration_seconds": 3.0,
+      "frames_inclusive": 181,
+      "loop": true
+    },
+    "Zombie_Walk": {
+      "duration_seconds": 1.4,
+      "frames_inclusive": 85,
+      "loop": true,
+      "authored_speed_mps": 0.72,
+      "stance_fraction": 0.6,
+      "stance_travel_m": 0.6048,
+      "description": "Alternating heel-to-toe foot plants, timed weight acceptance and push-off, independent elbow-led arm paths and shoulder accents."
+    },
+    "Zombie_Attack": {
+      "duration_seconds": 1.6,
+      "frames_inclusive": 97,
+      "loop": false,
+      "strike_frame_60hz": 42,
+      "strike_time_seconds": 0.7,
+      "description": "Compact asymmetric guard, held overhead right claw, planted-step diagonal rake, left-arm brace, weighted follow-through and recoil before recovery."
+    },
+    "Zombie_Hit": {
+      "duration_seconds": 0.6,
+      "frames_inclusive": 37,
+      "loop": false
+    },
+    "Zombie_Attack_Bite": {
+      "kind": "attack",
+      "duration_seconds": 1.35,
+      "frames_inclusive": 82,
+      "loop": false,
+      "contact_frame": 36,
+      "contact_time_seconds": 0.6,
+      "strike_frame_60hz": 36,
+      "strike_time_seconds": 0.6
+    },
+    "Zombie_Attack_Left": {
+      "kind": "attack",
+      "duration_seconds": 1.3,
+      "frames_inclusive": 79,
+      "loop": false,
+      "contact_frame": 32,
+      "contact_time_seconds": 0.5333333333333333,
+      "strike_frame_60hz": 32,
+      "strike_time_seconds": 0.5333333333333333
+    },
+    "Zombie_Attack_Right": {
+      "kind": "attack",
+      "duration_seconds": 1.4,
+      "frames_inclusive": 85,
+      "loop": false,
+      "contact_frame": 36,
+      "contact_time_seconds": 0.6,
+      "strike_frame_60hz": 36,
+      "strike_time_seconds": 0.6
+    },
+    "Zombie_Attack_Both": {
+      "kind": "attack",
+      "duration_seconds": 1.6,
+      "frames_inclusive": 97,
+      "loop": false,
+      "contact_frame": 42,
+      "contact_time_seconds": 0.7,
+      "strike_frame_60hz": 42,
+      "strike_time_seconds": 0.7
+    },
+    "Zombie_Crawl": {
+      "kind": "crawl",
+      "duration_seconds": 1.6,
+      "frames_inclusive": 97,
+      "loop": true,
+      "authored_speed_mps": 0.32
+    },
+    "Zombie_Crawl_Idle": {
+      "kind": "prone_idle",
+      "duration_seconds": 2.0,
+      "frames_inclusive": 121,
+      "loop": true
+    },
+    "Zombie_Crawl_Bite": {
+      "kind": "prone_attack",
+      "duration_seconds": 1.2,
+      "frames_inclusive": 73,
+      "loop": false,
+      "contact_frame": 30,
+      "contact_time_seconds": 0.5,
+      "strike_frame_60hz": 30,
+      "strike_time_seconds": 0.5
+    },
+    "Zombie_To_Crawl": {
+      "kind": "prone_transition",
+      "duration_seconds": 0.8,
+      "frames_inclusive": 49,
+      "loop": false
+    },
+    "Zombie_Crawl_Hit": {
+      "kind": "prone_hit",
+      "duration_seconds": 0.5,
+      "frames_inclusive": 31,
+      "loop": false
+    },
+    "Zombie_Jump": {
+      "kind": "jump",
+      "duration_seconds": 1.2,
+      "frames_inclusive": 73,
+      "loop": false
+    },
+    "Zombie_Climb_Ladder": {
+      "kind": "climb",
+      "duration_seconds": 2.0,
+      "frames_inclusive": 121,
+      "loop": true,
+      "authored_speed_mps": 0.3
+    }
+  },
+  "forward_axis": "+Z",
+  "units": "meters",
+  "limb_parts": {
+    "Head": {
+      "mesh": "Z_Head",
+      "parent_part": "Torso",
+      "bone": "Head",
+      "cap_bone": "Neck",
+      "cap_skin_weights": {
+        "Neck": 1.0,
+        "Head": 0.0
+      },
+      "cap_body": "Z_Cap_Head_body",
+      "cap_detached": "Z_Cap_Head_detached",
+      "cut_point_godot": [
+        0.0,
+        1.5499999523162842,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        1.0,
+        -0.0
+      ]
+    },
+    "UpperArm_L": {
+      "mesh": "Z_UpperArm_L",
+      "parent_part": "Torso",
+      "bone": "LeftArm",
+      "cap_bone": "LeftShoulder",
+      "cap_skin_weights": {
+        "LeftShoulder": 0.15000000000000002,
+        "LeftArm": 0.85
+      },
+      "cap_body": "Z_Cap_UpperArm_L_body",
+      "cap_detached": "Z_Cap_UpperArm_L_detached",
+      "cut_point_godot": [
+        0.257999986410141,
+        1.437000036239624,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        1.0,
+        0.0,
+        -0.0
+      ]
+    },
+    "Forearm_L": {
+      "mesh": "Z_Forearm_L",
+      "parent_part": "UpperArm_L",
+      "bone": "LeftForeArm",
+      "cap_bone": "LeftArm",
+      "cap_skin_weights": {
+        "LeftArm": 0.5,
+        "LeftForeArm": 0.5
+      },
+      "cap_body": "Z_Cap_Forearm_L_body",
+      "cap_detached": "Z_Cap_Forearm_L_detached",
+      "cut_point_godot": [
+        0.48076218366622925,
+        1.370887279510498,
+        -0.031357381492853165
+      ],
+      "cut_normal_godot": [
+        0.9569872617721558,
+        -0.18295326828956604,
+        0.2251739650964737
+      ]
+    },
+    "Hand_L": {
+      "mesh": "Z_Hand_L",
+      "parent_part": "Forearm_L",
+      "bone": "LeftHand",
+      "cap_bone": "LeftForeArm",
+      "cap_skin_weights": {
+        "LeftForeArm": 0.5,
+        "LeftHand": 0.5
+      },
+      "cap_body": "Z_Cap_Hand_L_body",
+      "cap_detached": "Z_Cap_Hand_L_detached",
+      "cut_point_godot": [
+        0.6938413381576538,
+        1.3561556339263916,
+        0.05234618857502937
+      ],
+      "cut_normal_godot": [
+        0.934413492679596,
+        -0.08009199798107147,
+        0.34706854820251465
+      ]
+    },
+    "UpperArm_R": {
+      "mesh": "Z_UpperArm_R",
+      "parent_part": "Torso",
+      "bone": "RightArm",
+      "cap_bone": "RightShoulder",
+      "cap_skin_weights": {
+        "RightShoulder": 0.15000000000000002,
+        "RightArm": 0.85
+      },
+      "cap_body": "Z_Cap_UpperArm_R_body",
+      "cap_detached": "Z_Cap_UpperArm_R_detached",
+      "cut_point_godot": [
+        -0.257999986410141,
+        1.437000036239624,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        -1.0,
+        0.0,
+        -0.0
+      ]
+    },
+    "Forearm_R": {
+      "mesh": "Z_Forearm_R",
+      "parent_part": "UpperArm_R",
+      "bone": "RightForeArm",
+      "cap_bone": "RightArm",
+      "cap_skin_weights": {
+        "RightArm": 0.5,
+        "RightForeArm": 0.5
+      },
+      "cap_body": "Z_Cap_Forearm_R_body",
+      "cap_detached": "Z_Cap_Forearm_R_detached",
+      "cut_point_godot": [
+        -0.4738922417163849,
+        1.3708871603012085,
+        -0.031357284635305405
+      ],
+      "cut_normal_godot": [
+        -0.9569875001907349,
+        -0.1829526424407959,
+        0.22517400979995728
+      ]
+    },
+    "Hand_R": {
+      "mesh": "Z_Hand_R",
+      "parent_part": "Forearm_R",
+      "bone": "RightHand",
+      "cap_bone": "RightForeArm",
+      "cap_skin_weights": {
+        "RightForeArm": 0.5,
+        "RightHand": 0.5
+      },
+      "cap_body": "Z_Cap_Hand_R_body",
+      "cap_detached": "Z_Cap_Hand_R_detached",
+      "cut_point_godot": [
+        -0.6869714260101318,
+        1.3561557531356812,
+        0.05234624072909355
+      ],
+      "cut_normal_godot": [
+        -0.9344136118888855,
+        -0.0800928995013237,
+        0.347068190574646
+      ]
+    },
+    "Thigh_L": {
+      "mesh": "Z_Thigh_L",
+      "parent_part": "Torso",
+      "bone": "LeftUpLeg",
+      "cap_bone": "Hips",
+      "cap_body": "Z_Cap_Thigh_L_body",
+      "cap_detached": "Z_Cap_Thigh_L_detached",
+      "cut_point_godot": [
+        0.10339999943971634,
+        0.824999988079071,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.7690392732620239,
+        -0.6392015218734741,
+        -0.0
+      ],
+      "cap_skin_weights_mode": "Continuous spatial blend between Hips, LeftUpLeg and RightUpLeg, stored per vertex in the GLB; paired caps have identical weights."
+    },
+    "Thigh_R": {
+      "mesh": "Z_Thigh_R",
+      "parent_part": "Torso",
+      "bone": "RightUpLeg",
+      "cap_bone": "Hips",
+      "cap_body": "Z_Cap_Thigh_R_body",
+      "cap_detached": "Z_Cap_Thigh_R_detached",
+      "cut_point_godot": [
+        -0.0966000035405159,
+        0.824999988079071,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        -0.7690392732620239,
+        -0.6392015218734741,
+        -0.0
+      ],
+      "cap_skin_weights_mode": "Continuous spatial blend between Hips, LeftUpLeg and RightUpLeg, stored per vertex in the GLB; paired caps have identical weights."
+    },
+    "Shin_L": {
+      "mesh": "Z_Shin_L",
+      "parent_part": "Thigh_L",
+      "bone": "LeftLeg",
+      "cap_bone": "LeftUpLeg",
+      "cap_skin_weights": {
+        "LeftUpLeg": 0.5,
+        "LeftLeg": 0.5
+      },
+      "cap_body": "Z_Cap_Shin_L_body",
+      "cap_detached": "Z_Cap_Shin_L_detached",
+      "cut_point_godot": [
+        0.12319924682378769,
+        0.510760486125946,
+        -0.025148579850792885
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Foot_L": {
+      "mesh": "Z_Foot_L",
+      "parent_part": "Shin_L",
+      "bone": "LeftFoot",
+      "cap_bone": "LeftLeg",
+      "cap_skin_weights": {
+        "LeftLeg": 0.5,
+        "LeftFoot": 0.5
+      },
+      "cap_body": "Z_Cap_Foot_L_body",
+      "cap_detached": "Z_Cap_Foot_L_detached",
+      "cut_point_godot": [
+        0.0,
+        0.14000000059604645,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Shin_R": {
+      "mesh": "Z_Shin_R",
+      "parent_part": "Thigh_R",
+      "bone": "RightLeg",
+      "cap_bone": "RightUpLeg",
+      "cap_skin_weights": {
+        "RightUpLeg": 0.5,
+        "RightLeg": 0.5
+      },
+      "cap_body": "Z_Cap_Shin_R_body",
+      "cap_detached": "Z_Cap_Shin_R_detached",
+      "cut_point_godot": [
+        -0.11632895469665527,
+        0.5107602477073669,
+        -0.025148950517177582
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Foot_R": {
+      "mesh": "Z_Foot_R",
+      "parent_part": "Shin_R",
+      "bone": "RightFoot",
+      "cap_bone": "RightLeg",
+      "cap_skin_weights": {
+        "RightLeg": 0.5,
+        "RightFoot": 0.5
+      },
+      "cap_body": "Z_Cap_Foot_R_body",
+      "cap_detached": "Z_Cap_Foot_R_detached",
+      "cut_point_godot": [
+        0.0,
+        0.14000000059604645,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    }
+  },
+  "notes": [
+    "Caps default hidden in runtime; joined clothing, eyes, hair follow their severable part.",
+    "The GLB contains geometry, skin and animations. Godot physics and limb health are implemented in scripts/zombie.gd."
+  ],
+  "motion_revision": 4,
+  "anatomy_revision": 4,
+  "anatomy": {
+    "upper_arm_length_m": 0.278375274790184,
+    "forearm_length_m": 0.2294036469966525,
+    "elbow_shift_m": 0.035,
+    "elbow_blend_halfwidth_m": 0.032,
+    "wrist_blend_halfwidth_m": 0.021,
+    "shoulder_and_wrist_rest_positions_preserved": true,
+    "inner_elbow_relief_m": 0.014,
+    "inner_elbow_blend_halfwidth_m": 0.046
+  },
+  "arm_articulation": {
+    "method": "fixed anatomical elbow hinge plane with two rigid bone segments",
+    "elbow_flexion_degrees": [
+      24,
+      118
+    ],
+    "hand_direction_correction_limit_degrees": 14,
+    "hand_roll_degrees": {
+      "right": -4,
+      "left_range": [
+        3,
+        4
+      ]
+    },
+    "elbow_pole_lateral_offset_m": 0.18,
+    "right_wrist_lateral_clearance_m": 0.0,
+    "scale_animation": false
+  },
+  "fabric_revision": 4,
+  "fabric": {
+    "method": "Continuous pelvis-to-thigh weight field on all coincident skin and cloth vertices, instead of constant dismemberment-rim weights. No geometry or arm edits.",
+    "parameters": {
+      "hip_low": 0.67,
+      "hip_high": 1.06,
+      "cross_width": 0.1
+    }
+  },
+  "shirt_revision": 4,
+  "shirt_deformation": {
+    "method": "Screened harmonic averaging on the actual cotton surface graph; cut rims, medial chest and lower shirt fixed. Corresponding cloth trim duplicates share one node.",
+    "inner_x_m": 0.13,
+    "lowest_z_m": 1.25,
+    "screening_to_original": 0.04,
+    "regions": {
+      "Left": {
+        "free_surface_nodes": 33,
+        "iterations": 140,
+        "max_final_delta": 9.067201434120875e-10
+      },
+      "Right": {
+        "free_surface_nodes": 36,
+        "iterations": 251,
+        "max_final_delta": 9.669397504907806e-10
+      }
+    },
+    "changed_vertex_count": 69,
+    "triangles": 14887
+  },
+  "shirt_deformation_refinement": {
+    "input_source": "/workspace/scratch/c8ab530c5f54/inspect/revision4_motion/clearance_012/source/Zombie.blend",
+    "input_sha256": "08150fd669716e6c1877bf6ec4cd7bbeda5602ce5b3ab2772331014b80746ce6",
+    "output_sha256": "543babcc5c86a6b60e18c6526603b8228843489d7292e5b5dc16fc4720bf48f7",
+    "method": "Small bounded projection of existing local cotton weights against regular triangle area in 60fps action samples; fixed cuff/chest/rim, no geometry change.",
+    "sample_count": 142,
+    "minimum_area_target": 0.2,
+    "iterations": 40,
+    "minimum_sample_area": 0.1999847454893608,
+    "elapsed_seconds": 3.791795253753662
+  },
+  "sleeve_fit_revision": 4,
+  "sleeve_fit": {
+    "input_source": "/workspace/scratch/c8ab530c5f54/inspect/revision4_fabric_qa/clearance12_refined.blend",
+    "input_sha256": "543babcc5c86a6b60e18c6526603b8228843489d7292e5b5dc16fc4720bf48f7",
+    "method": "Inner/front distal cotton follows original upperarm skin radius plus6mm clearance, tapered to fixed cutrim. Separate binding receives interpolated cotton displacement. Lower right axilla shirt fits medially by a smooth50mm maximum field.",
+    "skin_clearance_m": 0.006,
+    "torso_relief_m": 0.05,
+    "changed_vertices": 90,
+    "missing_skin_rays": [],
+    "maximum_sleeve_vertex_displacement_m": 0.02099922761151263,
+    "output_sha256": "827e8fda0a95052e383dce7c537333323419b3d02902911f382a5eda878a976b",
+    "contour_direction": "Medial normal matches supported skin: normalized(1,-y*2.5,0)."
+  },
+  "isolated_reverse_panel_support": {
+    "input_source": "/workspace/scratch/c8ab530c5f54/inspect/revision4_anatomy/matched_skin_candidate.blend",
+    "input_sha256": "765900a01bd374db794cdd3711238d1c1aa31804fe84b44aceb9d5ff3fd8d2f2",
+    "method": "Only five core Cotton nodes and their geodesic transition toward the nearest retained Torso skin support. Skin, geometry, sleeve and cutrim weights unchanged.",
+    "factor": 1.0,
+    "radius_m": 0.1,
+    "seed_vertices": [
+      1074,
+      996,
+      975,
+      1020,
+      973
+    ],
+    "changed_vertices": 8,
+    "output_sha256": "548bc5ace7858d53473b960e69fff5018943b20400451b5dd251388e2cadda4a"
+  },
+  "behavior_expansion": 1,
+  "mouth_articulation": {
+    "shape_key": "BiteOpen",
+    "bone_count_unchanged": 59,
+    "maximum_jaw_open_degrees": 12,
+    "changed_vertices": 564,
+    "interior_teeth_added_triangles": 96,
+    "cavity_depth_m": 0.018
+  },
+  "source_blend_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "base_source_blend_sha256": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+  "behavior_manifest": "Zombie.r4.behavior.json",
+  "morph_actions": {
+    "Z_Head": {
+      "action_prefix": "Jaw.",
+      "shape_keys": [
+        "BiteOpen"
+      ]
+    },
+    "Z_Thigh_L": {
+      "action_prefix": "Bend.Z_Thigh_L.",
+      "shape_keys": [
+        "BendRelief"
+      ]
+    },
+    "Z_Thigh_R": {
+      "action_prefix": "Bend.Z_Thigh_R.",
+      "shape_keys": [
+        "BendRelief"
+      ]
+    },
+    "Z_Shin_L": {
+      "action_prefix": "Bend.Z_Shin_L.",
+      "shape_keys": [
+        "BendRelief"
+      ]
+    },
+    "Z_Shin_R": {
+      "action_prefix": "Bend.Z_Shin_R.",
+      "shape_keys": [
+        "BendRelief"
+      ]
+    },
+    "Z_Torso": {
+      "action_prefix": "Slam.Z_Torso.",
+      "shape_keys": [
+        "SlamDrape",
+        "LeftDrape"
+      ]
+    }
+  },
+  "knee_corrective": {
+    "shape_key": "BendRelief",
+    "active_only_in_new_actions": true,
+    "neutral_geometry_unchanged": true,
+    "skin_weights_unchanged": true,
+    "shared_cut_and_cap_vertices_unchanged": true,
+    "front_kneecap_and_body_shafts_unchanged": true,
+    "description": "Local rear-knee fold relief and outward trouser allowance during deep flexion. Smoother crease formation preserves the neutral leg and garment shape and maintains body volume."
+  },
+  "slam_corrective": {
+    "shape_key": "SlamDrape",
+    "active_only_in": "Zombie_Attack_Both",
+    "neutral_geometry_unchanged": true,
+    "skin_weights_unchanged": true,
+    "shared_cut_and_cap_vertices_unchanged": true,
+    "description": "Local collar drape allowance and a small soft underarm crease correction during the two-hand slam; zero in every other clip."
+  },
+  "left_collar_corrective": {
+    "shape_key": "LeftDrape",
+    "active_only_in": "Zombie_Attack_Left",
+    "neutral_geometry_unchanged": true,
+    "skin_weights_unchanged": true,
+    "shared_cut_and_cap_vertices_unchanged": true,
+    "maximum_bind_displacement_m": 0.001,
+    "description": "One millimeter of downward allowance over ten front-collar cloth vertices preserves the fold during the left clavicle lift; zero in every other clip."
+  }
+}

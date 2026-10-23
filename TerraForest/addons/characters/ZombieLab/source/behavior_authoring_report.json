@@ -1,0 +1,2886 @@
+{
+  "input_sha256": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+  "author_script_sha256": "cd1d4bbc86779932608461f7ab71d3910eed1c3f65c85cabc89f5144c6db3ad4",
+  "base_action_digests": {
+    "Zombie_Idle": "db1957aff2ea4c2ad147dd04fc18c2c4abeaea9944029935a544174d2e009d97",
+    "Zombie_Walk": "5528d0e105e48e762857d4416c0eda3461fa435f9fd7dbf47b11c093cb53e4c8",
+    "Zombie_Attack": "f2b8df3ecd6086de23925a6f69307665aa8a8a41f9f342f22c9555ec2939c890",
+    "Zombie_Hit": "103ea22c6107e03419a93150c54319b08f7e4eb03b96c1969d75bbc900d9e373"
+  },
+  "bone_count": 59,
+  "actions": {
+    "Zombie_Attack_Bite": {
+      "frames_inclusive": 82,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 6.556510925292969e-06,
+      "maximum_arm_segment_length_error_m": 3.203680710439638e-07,
+      "elbow_flexion_degrees": [
+        29.99557487224389,
+        100.00005514753715
+      ],
+      "maximum_leg_segment_length_error_m": 1.6616721115747524e-07,
+      "knee_flexion_degrees": [
+        40.30156534860609,
+        71.63033850532311
+      ]
+    },
+    "Zombie_Attack_Left": {
+      "frames_inclusive": 79,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 7.68899917602539e-06,
+      "maximum_arm_segment_length_error_m": 2.5956392016301955e-07,
+      "elbow_flexion_degrees": [
+        58.983594389073346,
+        100.00004148715881
+      ],
+      "maximum_leg_segment_length_error_m": 1.751602094479665e-07,
+      "knee_flexion_degrees": [
+        40.30156534860609,
+        71.98280358725245
+      ]
+    },
+    "Zombie_Attack_Right": {
+      "frames_inclusive": 85,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 7.510185241699219e-06,
+      "maximum_arm_segment_length_error_m": 4.1704084216553916e-07,
+      "elbow_flexion_degrees": [
+        30.788252476369717,
+        100.00004831734799
+      ],
+      "maximum_leg_segment_length_error_m": 1.7162810511672788e-07,
+      "knee_flexion_degrees": [
+        40.30156534860609,
+        73.6582421604674
+      ]
+    },
+    "Zombie_Attack_Both": {
+      "frames_inclusive": 97,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 6.794929504394531e-06,
+      "maximum_arm_segment_length_error_m": 3.5446054583165854e-07,
+      "elbow_flexion_degrees": [
+        23.999946026347484,
+        100.00007563810466
+      ],
+      "maximum_leg_segment_length_error_m": 1.9023784197935711e-07,
+      "knee_flexion_degrees": [
+        40.30156534860609,
+        71.5344699701328
+      ]
+    },
+    "Zombie_Crawl": {
+      "frames_inclusive": 97,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 2.0265579223632812e-06,
+      "maximum_arm_segment_length_error_m": 1.273682879721072e-07,
+      "elbow_flexion_degrees": [
+        28.965073496312797,
+        100.00002782678048
+      ],
+      "maximum_leg_segment_length_error_m": 2.921290755408812e-07,
+      "knee_flexion_degrees": [
+        49.59836122415305,
+        55.73935698615484
+      ]
+    },
+    "Zombie_Crawl_Idle": {
+      "frames_inclusive": 121,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 1.7881393432617188e-06,
+      "maximum_arm_segment_length_error_m": 1.2955975234318906e-07,
+      "elbow_flexion_degrees": [
+        73.91990670757059,
+        79.77303731681302
+      ],
+      "maximum_leg_segment_length_error_m": 2.6440876782496403e-07,
+      "knee_flexion_degrees": [
+        52.96450725847253,
+        53.516212373585724
+      ]
+    },
+    "Zombie_Crawl_Bite": {
+      "frames_inclusive": 73,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 1.7881393432617188e-06,
+      "maximum_arm_segment_length_error_m": 1.0317135534787525e-07,
+      "elbow_flexion_degrees": [
+        73.92058289629841,
+        95.48573723826561
+      ],
+      "maximum_leg_segment_length_error_m": 1.9720499050412954e-07,
+      "knee_flexion_degrees": [
+        34.54598350108978,
+        53.516212373585724
+      ]
+    },
+    "Zombie_To_Crawl": {
+      "frames_inclusive": 49,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 1.1920928955078125e-05,
+      "maximum_arm_segment_length_error_m": 2.4918593566347624e-07,
+      "elbow_flexion_degrees": [
+        24.02797370760663,
+        84.78110277099562
+      ],
+      "maximum_leg_segment_length_error_m": 2.3311288843697042e-07,
+      "knee_flexion_degrees": [
+        28.280780749031315,
+        95.40124779823255
+      ]
+    },
+    "Zombie_Crawl_Hit": {
+      "frames_inclusive": 31,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 2.2649765014648438e-06,
+      "maximum_arm_segment_length_error_m": 8.450011060312512e-08,
+      "elbow_flexion_degrees": [
+        72.39549727728296,
+        79.6978984057537
+      ],
+      "maximum_leg_segment_length_error_m": 1.8207705820838527e-07,
+      "knee_flexion_degrees": [
+        53.18149895330925,
+        60.68465983205419
+      ]
+    },
+    "Zombie_Jump": {
+      "frames_inclusive": 73,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 8.821487426757812e-06,
+      "maximum_arm_segment_length_error_m": 3.0894795755020965e-07,
+      "elbow_flexion_degrees": [
+        36.85270913853234,
+        100.00004831734799
+      ],
+      "maximum_leg_segment_length_error_m": 2.3963203188426263e-07,
+      "knee_flexion_degrees": [
+        40.30156534860609,
+        81.47588543916723
+      ]
+    },
+    "Zombie_Climb_Ladder": {
+      "frames_inclusive": 121,
+      "finite_transforms": true,
+      "maximum_local_scale_error": 1.0848045349121094e-05,
+      "maximum_arm_segment_length_error_m": 4.0469991999247945e-07,
+      "elbow_flexion_degrees": [
+        52.76239513074268,
+        100.00003465696965
+      ],
+      "maximum_leg_segment_length_error_m": 2.3912803442938113e-07,
+      "knee_flexion_degrees": [
+        15.460121233492814,
+        95.74968306855158
+      ]
+    }
+  },
+  "notes": [
+    "Numeric sweep measures bone geometry; visual contact and fabric checks are separate."
+  ],
+  "bend_correctives": {
+    "Z_Thigh_L": {
+      "action_prefix": "Bend.Z_Thigh_L.",
+      "shape_keys": [
+        "BendRelief"
+      ],
+      "changed_vertices": 39,
+      "shared_vertices_protected": 68,
+      "maximum_rear_crease_relief_m": 0.04,
+      "changes": [
+        {
+          "vertex": 0,
+          "rear_crease_relief_m": 0.021844436075626594,
+          "delta_m": [
+            0.0,
+            -0.02184443548321724,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 3,
+          "rear_crease_relief_m": 0.0115276262608907,
+          "delta_m": [
+            0.0,
+            -0.01152762584388256,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 5,
+          "rear_crease_relief_m": 0.04,
+          "delta_m": [
+            0.0,
+            -0.03999999910593033,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 7,
+          "rear_crease_relief_m": 0.022898101222143308,
+          "delta_m": [
+            0.0,
+            -0.022898100316524506,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 8,
+          "rear_crease_relief_m": 0.03988293519254942,
+          "delta_m": [
+            0.0,
+            -0.03988293558359146,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 15,
+          "rear_crease_relief_m": 0.0012983904545039303,
+          "delta_m": [
+            0.0,
+            -0.0012983904452994466,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 17,
+          "rear_crease_relief_m": 0.03710314247905971,
+          "delta_m": [
+            0.0,
+            -0.03710314258933067,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 21,
+          "rear_crease_relief_m": 8.85933747776062e-06,
+          "delta_m": [
+            0.0,
+            -8.859337867761496e-06,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 22,
+          "rear_crease_relief_m": 0.0005026447549452407,
+          "delta_m": [
+            0.0,
+            -0.00050264474702999,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 37,
+          "rear_crease_relief_m": 0.002454428016167555,
+          "delta_m": [
+            0.0,
+            -0.0024544280022382736,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 39,
+          "rear_crease_relief_m": 0.018405056158264554,
+          "delta_m": [
+            0.0,
+            -0.01840505562722683,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 41,
+          "rear_crease_relief_m": 0.03783193534435415,
+          "delta_m": [
+            0.0,
+            -0.03783193603157997,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 42,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.006765368394553661,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 43,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.002159319119527936,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 45,
+          "rear_crease_relief_m": 0.0013434823241069934,
+          "delta_m": [
+            0.0,
+            -0.0013434822903946042,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 46,
+          "rear_crease_relief_m": 0.0015321975595022016,
+          "delta_m": [
+            0.0,
+            -0.0015321975806728005,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 47,
+          "rear_crease_relief_m": 0.00039615084686926764,
+          "delta_m": [
+            0.0,
+            -0.0003961508336942643,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 49,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.002388334833085537,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 50,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01693120226264,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 51,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01566077396273613,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 53,
+          "rear_crease_relief_m": 0.02292287358709871,
+          "delta_m": [
+            0.0,
+            -0.022922873497009277,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 54,
+          "rear_crease_relief_m": 0.023,
+          "delta_m": [
+            0.0,
+            -0.023000000044703484,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 55,
+          "rear_crease_relief_m": 0.023,
+          "delta_m": [
+            0.0,
+            -0.023000000044703484,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 57,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01694086380302906,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 59,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.005323641002178192,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 60,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0056271920911967754,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 61,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0016885212389752269,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 67,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0059141009114682674,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 68,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.006000000052154064,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 69,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.001999222906306386,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 71,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00390626210719347,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 72,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.001898431801237166,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 73,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0037089106626808643,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 74,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00011805309623014182,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 75,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.017000000923871994,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 77,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00029150399495847523,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 78,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00023158588737715036,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 80,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00029150399495847523,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 81,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.00023158588737715036,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        }
+      ]
+    },
+    "Z_Thigh_R": {
+      "action_prefix": "Bend.Z_Thigh_R.",
+      "shape_keys": [
+        "BendRelief"
+      ],
+      "changed_vertices": 43,
+      "shared_vertices_protected": 75,
+      "maximum_rear_crease_relief_m": 0.04,
+      "changes": [
+        {
+          "vertex": 0,
+          "rear_crease_relief_m": 0.04,
+          "delta_m": [
+            0.0,
+            -0.03999999910593033,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 1,
+          "rear_crease_relief_m": 0.0004426037734329029,
+          "delta_m": [
+            0.0,
+            -0.000442603777628392,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 9,
+          "rear_crease_relief_m": 0.03255303731762343,
+          "delta_m": [
+            0.0,
+            -0.03255303576588631,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 14,
+          "rear_crease_relief_m": 0.001075446576445094,
+          "delta_m": [
+            0.0,
+            -0.001075446605682373,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 16,
+          "rear_crease_relief_m": 0.03948727109983581,
+          "delta_m": [
+            0.0,
+            -0.03948727250099182,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 17,
+          "rear_crease_relief_m": 0.039542877765674,
+          "delta_m": [
+            0.0,
+            -0.039542876183986664,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 20,
+          "rear_crease_relief_m": 0.025183664640547696,
+          "delta_m": [
+            0.0,
+            -0.0251836646348238,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 21,
+          "rear_crease_relief_m": 0.006729210420174452,
+          "delta_m": [
+            0.0,
+            -0.006729210261255503,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 26,
+          "rear_crease_relief_m": 0.0008749114860190803,
+          "delta_m": [
+            0.0,
+            -0.0008749114931561053,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 28,
+          "rear_crease_relief_m": 0.03886967216289659,
+          "delta_m": [
+            0.0,
+            -0.038869671523571014,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 30,
+          "rear_crease_relief_m": 0.04,
+          "delta_m": [
+            0.0,
+            -0.03999999910593033,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 34,
+          "rear_crease_relief_m": 0.0024140344057741433,
+          "delta_m": [
+            0.0,
+            -0.0024140344467014074,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 35,
+          "rear_crease_relief_m": 0.01235296302125463,
+          "delta_m": [
+            0.0,
+            -0.012352962978184223,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 36,
+          "rear_crease_relief_m": 0.00579639922965669,
+          "delta_m": [
+            0.0,
+            -0.005796399433165789,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 37,
+          "rear_crease_relief_m": 0.0001447587489462743,
+          "delta_m": [
+            0.0,
+            -0.0001447587419534102,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 38,
+          "rear_crease_relief_m": 0.00825891176052323,
+          "delta_m": [
+            0.0,
+            -0.008258911781013012,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 40,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.004010913893580437,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 41,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.002135641872882843,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 43,
+          "rear_crease_relief_m": 0.002027624900073293,
+          "delta_m": [
+            0.0,
+            -0.002027624985203147,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 44,
+          "rear_crease_relief_m": 0.0009123400195907723,
+          "delta_m": [
+            0.0,
+            -0.0009123400086537004,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 45,
+          "rear_crease_relief_m": 0.0007204505772171343,
+          "delta_m": [
+            0.0,
+            -0.0007204505964182317,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 47,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.0003612202999647707,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 48,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01696232706308365,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 49,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.016276970505714417,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 51,
+          "rear_crease_relief_m": 0.023,
+          "delta_m": [
+            0.0,
+            -0.023000000044703484,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 52,
+          "rear_crease_relief_m": 0.02299999999998431,
+          "delta_m": [
+            0.0,
+            -0.023000000044703484,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 53,
+          "rear_crease_relief_m": 0.023,
+          "delta_m": [
+            0.0,
+            -0.023000000044703484,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 55,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.017000000923871994,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 57,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.005188947077840567,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 58,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.005632705520838499,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 59,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.001026068814098835,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 65,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.0057227215729653835,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 66,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.006000000052154064,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 67,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.0015381209086626768,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 69,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.0031558405607938766,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 70,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.001898431801237166,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 71,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.003195552621036768,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 72,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.00011583376908674836,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 73,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.00011211298988200724,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 74,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.0002913731732405722,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 76,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.00023149453045334667,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 77,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.0002913704083766788,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        },
+        {
+          "vertex": 79,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            -0.00023150145716499537,
+            -0.0,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Binding.Dark"
+          ]
+        }
+      ]
+    },
+    "Z_Shin_L": {
+      "action_prefix": "Bend.Z_Shin_L.",
+      "shape_keys": [
+        "BendRelief"
+      ],
+      "changed_vertices": 30,
+      "shared_vertices_protected": 55,
+      "maximum_rear_crease_relief_m": 0.036,
+      "changes": [
+        {
+          "vertex": 0,
+          "rear_crease_relief_m": 0.0032320558436415713,
+          "delta_m": [
+            0.0,
+            -0.0032320558093488216,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 1,
+          "rear_crease_relief_m": 0.0032776785731467584,
+          "delta_m": [
+            0.0,
+            -0.00327767850831151,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 2,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 3,
+          "rear_crease_relief_m": 0.000110069707500505,
+          "delta_m": [
+            0.0,
+            -0.00011006970453308895,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 6,
+          "rear_crease_relief_m": 0.013674260392351777,
+          "delta_m": [
+            0.0,
+            -0.01367426011711359,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 7,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 12,
+          "rear_crease_relief_m": 0.0005107380231939295,
+          "delta_m": [
+            0.0,
+            -0.0005107379984110594,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 13,
+          "rear_crease_relief_m": 0.0036326665395876694,
+          "delta_m": [
+            0.0,
+            -0.0036326665431261063,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 14,
+          "rear_crease_relief_m": 0.00036476556617822883,
+          "delta_m": [
+            0.0,
+            -0.00036476555396802723,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 15,
+          "rear_crease_relief_m": 0.006978405187195205,
+          "delta_m": [
+            0.0,
+            -0.006978405173867941,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 16,
+          "rear_crease_relief_m": 0.0012766317402881232,
+          "delta_m": [
+            0.0,
+            -0.0012766317231580615,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 17,
+          "rear_crease_relief_m": 0.0017643710499802285,
+          "delta_m": [
+            0.0,
+            -0.0017643710598349571,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 18,
+          "rear_crease_relief_m": 0.00023871282390008084,
+          "delta_m": [
+            0.0,
+            -0.00023871281882748008,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 19,
+          "rear_crease_relief_m": 0.002534165305621635,
+          "delta_m": [
+            0.0,
+            -0.0025341652799397707,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 82,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.0008218744769692421,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 83,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.0006609419360756874,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 84,
+          "rear_crease_relief_m": 0.00012619340152849432,
+          "delta_m": [
+            0.0,
+            -0.00012619340850505978,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 85,
+          "rear_crease_relief_m": 0.0013416310484320446,
+          "delta_m": [
+            0.0,
+            -0.0013416310539469123,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 86,
+          "rear_crease_relief_m": 0.001476359455861479,
+          "delta_m": [
+            0.0,
+            -0.0014763594372197986,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 87,
+          "rear_crease_relief_m": 0.0013770482737158354,
+          "delta_m": [
+            0.0,
+            -0.0013770483201369643,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 88,
+          "rear_crease_relief_m": 0.00011216028784813656,
+          "delta_m": [
+            0.0,
+            -0.00011216029088245705,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 89,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.00011766372335841879,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 90,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01600000075995922,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 91,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.008821210823953152,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 92,
+          "rear_crease_relief_m": 0.0004168586831914006,
+          "delta_m": [
+            0.0,
+            -0.00041685867472551763,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 93,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 94,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 95,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 96,
+          "rear_crease_relief_m": 0.0004018382578663084,
+          "delta_m": [
+            0.0,
+            -0.0004018382460344583,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 97,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.0102766714990139,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        }
+      ]
+    },
+    "Z_Shin_R": {
+      "action_prefix": "Bend.Z_Shin_R.",
+      "shape_keys": [
+        "BendRelief"
+      ],
+      "changed_vertices": 32,
+      "shared_vertices_protected": 59,
+      "maximum_rear_crease_relief_m": 0.036,
+      "changes": [
+        {
+          "vertex": 0,
+          "rear_crease_relief_m": 0.005258120273545414,
+          "delta_m": [
+            0.0,
+            -0.005258120130747557,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 1,
+          "rear_crease_relief_m": 0.035992803060892524,
+          "delta_m": [
+            0.0,
+            -0.035992804914712906,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 2,
+          "rear_crease_relief_m": 0.02304233417928898,
+          "delta_m": [
+            0.0,
+            -0.023042334243655205,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 7,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 8,
+          "rear_crease_relief_m": 0.004097424648970749,
+          "delta_m": [
+            0.0,
+            -0.0040974244475364685,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 9,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 10,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 11,
+          "rear_crease_relief_m": 6.875942486645044e-05,
+          "delta_m": [
+            0.0,
+            -6.875942199258134e-05,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 12,
+          "rear_crease_relief_m": 0.0034520509275094264,
+          "delta_m": [
+            0.0,
+            -0.0034520509652793407,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 16,
+          "rear_crease_relief_m": 0.036,
+          "delta_m": [
+            0.0,
+            -0.035999998450279236,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 17,
+          "rear_crease_relief_m": 0.028941921118843125,
+          "delta_m": [
+            0.0,
+            -0.028941921889781952,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 19,
+          "rear_crease_relief_m": 0.00023825558850549514,
+          "delta_m": [
+            0.0,
+            -0.00023825558309908956,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 20,
+          "rear_crease_relief_m": 0.0024658792833574853,
+          "delta_m": [
+            0.0,
+            -0.002465879311785102,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 21,
+          "rear_crease_relief_m": 0.011895021070950022,
+          "delta_m": [
+            0.0,
+            -0.011895021423697472,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 22,
+          "rear_crease_relief_m": 0.0013045412310798209,
+          "delta_m": [
+            0.0,
+            -0.0013045412488281727,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Body.PBR"
+          ]
+        },
+        {
+          "vertex": 85,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.000813423830550164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 86,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.0006915669655427337,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 87,
+          "rear_crease_relief_m": 8.562989854829128e-05,
+          "delta_m": [
+            0.0,
+            -8.56299011502415e-05,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 88,
+          "rear_crease_relief_m": 0.0011946114648712922,
+          "delta_m": [
+            0.0,
+            -0.0011946114245802164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 89,
+          "rear_crease_relief_m": 0.0010980983103328393,
+          "delta_m": [
+            0.0,
+            -0.0010980983497574925,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 90,
+          "rear_crease_relief_m": 0.0009559894166138855,
+          "delta_m": [
+            0.0,
+            -0.0009559894097037613,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 91,
+          "rear_crease_relief_m": 0.0001078951553059326,
+          "delta_m": [
+            0.0,
+            -0.00010789515363285318,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 92,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -7.675745291635394e-05,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 93,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01600000075995922,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 94,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01087254099547863,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 95,
+          "rear_crease_relief_m": 0.00041701796701945393,
+          "delta_m": [
+            0.0,
+            -0.00041701795998960733,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 96,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 97,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 98,
+          "rear_crease_relief_m": 0.02,
+          "delta_m": [
+            0.0,
+            -0.019999999552965164,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 99,
+          "rear_crease_relief_m": 0.00041675204207175244,
+          "delta_m": [
+            0.0,
+            -0.00041675203829072416,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 100,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.006605226546525955,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        },
+        {
+          "vertex": 101,
+          "rear_crease_relief_m": 0.0,
+          "delta_m": [
+            0.0,
+            -0.01417634729295969,
+            0.0
+          ],
+          "materials": [
+            "Zombie.Cloth.Twill.Charcoal"
+          ]
+        }
+      ]
+    }
+  },
+  "slam_corrective": {
+    "action_prefix": "Slam.Z_Torso.",
+    "shape_keys": [
+      "SlamDrape"
+    ],
+    "changed_vertices": 75,
+    "maximum_bind_displacement_m": 0.015842939926483113,
+    "underarm_pose_displacement_m": 0.0018,
+    "shared_cut_vertices_unchanged": true,
+    "changes": [
+      {
+        "vertex": 821,
+        "delta_m": [
+          -8.11921836429974e-06,
+          -6.834268333477667e-06,
+          1.0612433243295527e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 822,
+        "delta_m": [
+          -1.3855759789294098e-05,
+          -1.166294350696262e-05,
+          1.811052698030835e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 825,
+        "delta_m": [
+          -0.0005412397440522909,
+          -0.0004555830091703683,
+          7.074413588270545e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 826,
+        "delta_m": [
+          -0.0006747847655788064,
+          -0.0005679930909536779,
+          8.819947834126651e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 829,
+        "delta_m": [
+          -0.0011973197106271982,
+          -0.0010078315390273929,
+          0.00015649874694645405
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 830,
+        "delta_m": [
+          -0.0010075439931824803,
+          -0.000848089752253145,
+          0.00013169362500775605
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 845,
+        "delta_m": [
+          -0.001036008121445775,
+          -0.0008720491314306855,
+          0.00013541409862227738
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 846,
+        "delta_m": [
+          -0.0010317990090698004,
+          -0.0008685062057338655,
+          0.00013486394891515374
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 851,
+        "delta_m": [
+          -0.00029609614284709096,
+          -0.0002492358617018908,
+          3.870200816891156e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 852,
+        "delta_m": [
+          -0.00041942167445085943,
+          -0.00035304389894008636,
+          5.482159031089395e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 857,
+        "delta_m": [
+          -0.000549614371266216,
+          -0.0004626322479452938,
+          7.183876005001366e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 858,
+        "delta_m": [
+          -0.0007733282400295138,
+          -0.0006509411032311618,
+          0.00010107985872309655
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 859,
+        "delta_m": [
+          -0.000799810397438705,
+          -0.0006732321926392615,
+          0.00010454127914272249
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 860,
+        "delta_m": [
+          -0.0008351271389983594,
+          -0.0007029596599750221,
+          0.00010915743769146502
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 861,
+        "delta_m": [
+          -0.00010277467663399875,
+          -8.65095280460082e-05,
+          1.3433428648568224e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 862,
+        "delta_m": [
+          -0.00010367690265411511,
+          -8.726897067390382e-05,
+          1.3551356460084207e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 865,
+        "delta_m": [
+          -4.388804427435389e-06,
+          -3.694230827022693e-06,
+          5.736499701924913e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 866,
+        "delta_m": [
+          -3.7222214359644568e-06,
+          -3.1331414902524557e-06,
+          4.865225378125615e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 886,
+        "delta_m": [
+          -0.00012087901268387213,
+          -0.00010174866474699229,
+          1.5799801985849626e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 887,
+        "delta_m": [
+          -0.0006536407745443285,
+          -0.0005501954001374543,
+          8.543580042896792e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 888,
+        "delta_m": [
+          -0.00014865129196550697,
+          -0.00012512569082900882,
+          1.942984999914188e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 889,
+        "delta_m": [
+          -9.756817598827183e-05,
+          -8.212700777221471e-05,
+          1.275289923796663e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 890,
+        "delta_m": [
+          -1.0634299542289227e-05,
+          -8.951312338467687e-06,
+          1.3899834812036715e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 895,
+        "delta_m": [
+          -0.0002890306059271097,
+          -0.00024328853760380298,
+          3.7778489058837295e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 896,
+        "delta_m": [
+          -0.0002790418511722237,
+          -0.00023488060105592012,
+          3.64728803106118e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 897,
+        "delta_m": [
+          -0.00010348272189730778,
+          -8.710551628610119e-05,
+          1.352597519144183e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 898,
+        "delta_m": [
+          -0.0006057810387574136,
+          -0.0005099099362269044,
+          7.918016490293667e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 899,
+        "delta_m": [
+          -0.00031670514727011323,
+          -0.0002665832871571183,
+          4.139576049055904e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 900,
+        "delta_m": [
+          -0.000678244570735842,
+          -0.0005709053948521614,
+          8.865170093486086e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 901,
+        "delta_m": [
+          -0.0005849924054928124,
+          -0.0004924113163724542,
+          7.646293670404702e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 902,
+        "delta_m": [
+          -0.00035318557638674974,
+          -0.00029729033121839166,
+          4.616403020918369e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 903,
+        "delta_m": [
+          -0.0007950267754495144,
+          -0.0006692056194879115,
+          0.00010391601972514763
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 904,
+        "delta_m": [
+          -2.5445822757319547e-05,
+          -2.1418760297819972e-05,
+          3.3259616429859307e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 905,
+        "delta_m": [
+          -4.049225481139729e-06,
+          -3.40839369528112e-06,
+          5.292644118526368e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 906,
+        "delta_m": [
+          -2.3776219677529298e-05,
+          -2.00133872567676e-05,
+          3.107731799900648e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 907,
+        "delta_m": [
+          -2.4848171960911714e-05,
+          -2.0915693312417716e-05,
+          3.247844233555952e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 917,
+        "delta_m": [
+          -0.0011004670523107052,
+          -0.0009263067622669041,
+          0.00014383936650119722
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 918,
+        "delta_m": [
+          -0.0009830434573814273,
+          -0.0008274666615761817,
+          0.00012849121412727982
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 919,
+        "delta_m": [
+          -0.0008990464848466218,
+          -0.0007567630964331329,
+          0.00011751217971323058
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 920,
+        "delta_m": [
+          -0.0008193535613827407,
+          -0.0006896823761053383,
+          0.00010709570778999478
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 921,
+        "delta_m": [
+          -0.0009193562436848879,
+          -0.0007738586864434183,
+          0.00012016682740068063
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 923,
+        "delta_m": [
+          -0.00111952587030828,
+          -0.0009423493756912649,
+          0.00014633050886914134
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 924,
+        "delta_m": [
+          -0.0010236749658361077,
+          -0.0008616678533144295,
+          0.00013380206655710936
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 925,
+        "delta_m": [
+          -0.0010364784393459558,
+          -0.0008724451181478798,
+          0.00013547558046411723
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 926,
+        "delta_m": [
+          -0.0010268371552228928,
+          -0.0008643296314403415,
+          0.0001342153991572559
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 927,
+        "delta_m": [
+          -0.0005578299169428647,
+          -0.0004695476091001183,
+          7.291259680641815e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 928,
+        "delta_m": [
+          -0.0006402687286026776,
+          -0.0005389396101236343,
+          8.368796989088878e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 929,
+        "delta_m": [
+          -0.0004742808232549578,
+          -0.0003992210258729756,
+          6.199209747137502e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Binding.Dark"
+        ]
+      },
+      {
+        "vertex": 965,
+        "delta_m": [
+          -7.641266165592242e-06,
+          -6.431956990127219e-06,
+          9.987712701331475e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 977,
+        "delta_m": [
+          -0.00047728081699460745,
+          -0.0004017462197225541,
+          6.23842206550762e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 979,
+        "delta_m": [
+          -0.00010652197670424357,
+          -8.966377936303616e-05,
+          1.3923228834755719e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 984,
+        "delta_m": [
+          -0.0010776096023619175,
+          -0.0009070668020285666,
+          0.00014085172733757645
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 987,
+        "delta_m": [
+          -0.00029531525797210634,
+          -0.00024857858079485595,
+          3.859993739752099e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 992,
+        "delta_m": [
+          -0.0006598281906917691,
+          -0.0005554035888053477,
+          8.624453766969964e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 993,
+        "delta_m": [
+          -0.0006575247971341014,
+          -0.0005534646916203201,
+          8.594346581958234e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 994,
+        "delta_m": [
+          -0.0005541962455026805,
+          -0.00046648900024592876,
+          7.243765139719471e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 995,
+        "delta_m": [
+          -0.0011572244111448526,
+          -0.000974081689491868,
+          0.00015125799109227955
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 997,
+        "delta_m": [
+          -0.012060395441949368,
+          -0.010151713155210018,
+          0.0015763849951326847
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1011,
+        "delta_m": [
+          -8.291306585306302e-06,
+          -6.979122190386988e-06,
+          1.0837366062332876e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1012,
+        "delta_m": [
+          -9.066264965440496e-07,
+          -7.631434755239752e-07,
+          1.1850294612258949e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1013,
+        "delta_m": [
+          -0.00011108379840152338,
+          -9.350364416604862e-05,
+          1.451949356123805e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1014,
+        "delta_m": [
+          -4.922844254906522e-06,
+          -4.143753358221147e-06,
+          6.434530064325372e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1025,
+        "delta_m": [
+          -1.7914902628035634e-06,
+          -1.5079684771990287e-06,
+          2.3416133387854643e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1029,
+        "delta_m": [
+          -0.004531777463853359,
+          -0.003814576892182231,
+          0.0005923376302234828
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1037,
+        "delta_m": [
+          -8.317326319229323e-06,
+          -7.001023732300382e-06,
+          1.087137434296892e-06
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1047,
+        "delta_m": [
+          -1.7873492197395535e-06,
+          -1.504482838754484e-06,
+          2.3362008505500853e-07
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1048,
+        "delta_m": [
+          -0.00047727959463372827,
+          -0.0004017452010884881,
+          6.23840605840087e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1049,
+        "delta_m": [
+          -0.0013162984978407621,
+          -0.0011079807300120592,
+          0.00017205018957611173
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1050,
+        "delta_m": [
+          -0.012060475535690784,
+          -0.010151781141757965,
+          0.0015763954725116491
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1056,
+        "delta_m": [
+          -0.0007814166019670665,
+          -0.0006577493622899055,
+          0.00010213706264039502
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1065,
+        "delta_m": [
+          -0.0005526042659766972,
+          -0.0004651489434763789,
+          7.222955900942907e-05
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1073,
+        "delta_m": [
+          -0.001316614798270166,
+          -0.0011082469718530774,
+          0.00017209153156727552
+        ],
+        "materials": [
+          "Zombie.Cloth.Cotton.Olive"
+        ]
+      },
+      {
+        "vertex": 1420,
+        "delta_m": [
+          -4.669950044444704e-07,
+          -3.617291076807305e-05,
+          8.098573016468436e-05
+        ],
+        "materials": [
+          "Zombie.Body.PBR"
+        ]
+      },
+      {
+        "vertex": 1475,
+        "delta_m": [
+          -1.0058953193947673e-05,
+          -0.0007791552925482392,
+          0.0017444120021536946
+        ],
+        "materials": [
+          "Zombie.Body.PBR"
+        ]
+      },
+      {
+        "vertex": 1503,
+        "delta_m": [
+          -3.303188975678495e-07,
+          -2.558613232395146e-05,
+          5.728351970901713e-05
+        ],
+        "materials": [
+          "Zombie.Body.PBR"
+        ]
+      }
+    ]
+  },
+  "left_collar_corrective": {
+    "shape_key": "LeftDrape",
+    "changed_vertices": 10,
+    "maximum_bind_displacement_m": 0.001,
+    "influence_radius_m": 0.025,
+    "shared_cut_vertices_unchanged": true,
+    "changes": [
+      {
+        "vertex": 230,
+        "delta_m": [
+          0.0,
+          0.0,
+          -0.0009933101246133447
+        ]
+      },
+      {
+        "vertex": 231,
+        "delta_m": [
+          0.0,
+          0.0,
+          -0.0009465659968554974
+        ]
+      },
+      {
+        "vertex": 251,
+        "delta_m": [
+          0.0,
+          0.0,
+          -1.599999563950405e-06
+        ]
+      },
+      {
+        "vertex": 252,
+        "delta_m": [
+          0.0,
+          0.0,
+          -1.956912274181377e-05
+        ]
+      },
+      {
+        "vertex": 253,
+        "delta_m": [
+          0.0,
+          0.0,
+          -0.0009796104859560728
+        ]
+      },
+      {
+        "vertex": 255,
+        "delta_m": [
+          0.0,
+          0.0,
+          -1.3474023944581859e-05
+        ]
+      },
+      {
+        "vertex": 270,
+        "delta_m": [
+          0.0,
+          0.0,
+          -6.698178185615689e-05
+        ]
+      },
+      {
+        "vertex": 272,
+        "delta_m": [
+          0.0,
+          0.0,
+          -8.782015356700867e-05
+        ]
+      },
+      {
+        "vertex": 273,
+        "delta_m": [
+          0.0,
+          0.0,
+          -2.2497040845337324e-05
+        ]
+      },
+      {
+        "vertex": 388,
+        "delta_m": [
+          0.0,
+          0.0,
+          -0.0010000000474974513
+        ]
+      }
+    ]
+  },
+  "mouth_shape_changed_vertices": 564,
+  "base_actions_preserved_exactly": true,
+  "triangles_including_caps": 14992,
+  "output_blend_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+  "output_glb_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf"
+}

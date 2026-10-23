@@ -1,0 +1,21 @@
+{
+	"active_asset_label": "ASSET  Zombie.r4.glb  ·  15 clips",
+	"animation": "Zombie_Attack_Both",
+	"animation_time": 0.7,
+	"camera": {
+		"distance": 3.25,
+		"pitch": 0.1,
+		"yaw": 0.7
+	},
+	"completed_draws_after_pose": 2,
+	"frame": 42,
+	"native_lab_screenshots": true,
+	"source_sha256": {
+		"assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+		"assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+		"assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+		"main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881"
+	},
+	"startup_asset_label": "ASSET  Zombie.glb  ·  4 clips",
+	"verified": true
+}

@@ -1,0 +1,879 @@
+{
+  "status": "complete",
+  "reviewer": "r4_lab_demo",
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "native_capture_directory": "/workspace/scratch/c8ab530c5f54/inspect/r4_verified_frames/atlases",
+  "method": "Direct visual inspection of every native atlas and all four camera columns, including each labeled integer frame. No scout images reused.",
+  "atlases": [
+    {
+      "file": "Zombie_Crawl.000-005.png",
+      "sha256": "7ae1cf406297b5e65a13dcb63481f69e5e2c8794807ded65f586d2aea06b928d",
+      "reviewed": true,
+      "notes": [
+        "All six labeled poses and front/right/back/left camera columns inspected. Torso stays low with separated bent elbows; the leading hand begins its recovery as the opposite hand supports the body. Trouser and shirt surfaces remain coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        0,
+        5
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.006-011.png",
+      "sha256": "3f3acd7824d1fefb0874b65fb91ba9dd3a04266395d4064644937e422de34090",
+      "reviewed": true,
+      "notes": [
+        "All six labeled poses and front/right/back/left camera columns inspected. Torso stays low with separated bent elbows; the leading hand begins its recovery as the opposite hand supports the body. Trouser and shirt surfaces remain coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        6,
+        11
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.012-017.png",
+      "sha256": "13bd5d408ee9a951ae5b3435a9b80475490bdf805f1254ff152fb2484f0c6b07",
+      "reviewed": true,
+      "notes": [
+        "All six labeled poses and front/right/back/left camera columns inspected. Torso stays low with separated bent elbows; the leading hand begins its recovery as the opposite hand supports the body. Trouser and shirt surfaces remain coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        12,
+        17
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.018-023.png",
+      "sha256": "701fcba6feee7ed8fc5406d82077ec49eaf531cb05c1aab3cc4ed3dbf058f849",
+      "reviewed": true,
+      "notes": [
+        "All six labeled poses and front/right/back/left camera columns inspected. Torso stays low with separated bent elbows; the leading hand begins its recovery as the opposite hand supports the body. Trouser and shirt surfaces remain coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        18,
+        23
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.024-029.png",
+      "sha256": "30f41ac2fbdd6a947bf00ad7b1719217b73eae42fb17e36ae1c90b060250eca8",
+      "reviewed": true,
+      "notes": [
+        "All six poses and four camera columns inspected. The reaching wrist advances and settles without elbow length changes; shoulder and back silhouettes stay continuous. No visible floor penetration, cloth pop or limb crossing in this interval."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        24,
+        29
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.030-035.png",
+      "sha256": "4aac49c45369f71879460e4f04eacff2c56b5e7fa9117b3767db2d13282862f6",
+      "reviewed": true,
+      "notes": [
+        "All six poses and four camera columns inspected. The reaching wrist advances and settles without elbow length changes; shoulder and back silhouettes stay continuous. No visible floor penetration, cloth pop or limb crossing in this interval."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        30,
+        35
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.036-041.png",
+      "sha256": "9b90b61bfcaeb3e849e9ff176194c9eb25c29fcf32fe66491b9cb8ed4506eaa9",
+      "reviewed": true,
+      "notes": [
+        "All six poses and four camera columns inspected. The reaching wrist advances and settles without elbow length changes; shoulder and back silhouettes stay continuous. No visible floor penetration, cloth pop or limb crossing in this interval."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        36,
+        41
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.042-047.png",
+      "sha256": "29d3b2144a939f6f893a9e8c6c2f06d2c342b5b1c88dab855fb65236f05f5030",
+      "reviewed": true,
+      "notes": [
+        "All six poses and four camera columns inspected. The reaching wrist advances and settles without elbow length changes; shoulder and back silhouettes stay continuous. No visible floor penetration, cloth pop or limb crossing in this interval."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        42,
+        47
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.048-053.png",
+      "sha256": "1203ad317475f072ff25daec2dee8a4d932e1212039438249d67f5944958a888",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        48,
+        53
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.054-059.png",
+      "sha256": "a41403d8d3064aa8e81a2ea8e0e078ef105e193de6f055016c36c39f30903c05",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        54,
+        59
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.060-065.png",
+      "sha256": "8305b8b7fd8d06984477ecf1f70bd87a6a8b0197c842aaeedf602ab8c9fb92d1",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        60,
+        65
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.066-071.png",
+      "sha256": "506aa9aa8fd1819d78231e1b8788de8e765ecdbbbeaaed33671e6d38eda3a83a",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        66,
+        71
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.072-077.png",
+      "sha256": "d875760de5a5150c56a4049d6ed91d1dc1248f788068d286d5e1301ca2cca4c8",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        72,
+        77
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.078-083.png",
+      "sha256": "299c7c03f730d4e93103fc86395a74d1c5b3a2af29b813e9d8f9412b5f3aa07a",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four camera columns inspected. Support changes to the other side; the recovering hand lifts and extends with a stable elbow bend. Shirt and trousers retain their surface continuity; low body and trailing boots stay coherent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        78,
+        83
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.084-089.png",
+      "sha256": "9b3a6a79465b11636dd0742c08882d041e216ad4c0bc5d399de9023a7995b571",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Recovered hand returns to the planted pose without a discontinuity; final frame96 matches the opening prone silhouette. No outfit or arm deformation issue seen."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        84,
+        89
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.090-095.png",
+      "sha256": "5ae6066a16079e8d6a222dbd5ff39d35b17ddf56e592e609274ef86d54b49433",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Recovered hand returns to the planted pose without a discontinuity; final frame96 matches the opening prone silhouette. No outfit or arm deformation issue seen."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        90,
+        95
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl.096-096.png",
+      "sha256": "62ebe4090a0414c5858d16bd66aa0346ee7390aa3b1a1c35abe2156d2ec59ad1",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Recovered hand returns to the planted pose without a discontinuity; final frame96 matches the opening prone silhouette. No outfit or arm deformation issue seen."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        96,
+        96
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.000-005.png",
+      "sha256": "c965eaa6d9141770d15ba4f9479e62ee7b4b227635e73200e98648ce0e47c8ad",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Frame0 correctly renders the prone mesh after the prior clip; bite anticipation lifts the head while palms remain supported. Shirt, neck and elbow silhouettes are continuous."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        0,
+        5
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.006-011.png",
+      "sha256": "b45eceb23ebce1b1534e8687c342d1145849ac91f0f32574dde7e8e5fda16f49",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Frame0 correctly renders the prone mesh after the prior clip; bite anticipation lifts the head while palms remain supported. Shirt, neck and elbow silhouettes are continuous."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        6,
+        11
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.012-017.png",
+      "sha256": "0146702ffd8601fd8395d113cf2391ebd059c3405d8cf0a51a8748d68eae46ec",
+      "reviewed": true,
+      "notes": [
+        "All labeled poses and four views inspected. Frame0 correctly renders the prone mesh after the prior clip; bite anticipation lifts the head while palms remain supported. Shirt, neck and elbow silhouettes are continuous."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        12,
+        17
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.018-023.png",
+      "sha256": "a6ee3e71a9c496b1d4dc577b77ebb707e595b7d3a4d90e743fe2b16d2e6afde0",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        18,
+        23
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.024-029.png",
+      "sha256": "45ffbba7b74db79d78bba13cf58d15b2c9bab06be2e16ce17c8a282f53b19e7c",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        24,
+        29
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.030-035.png",
+      "sha256": "83e3605c8cf18c502b8aa2a47089a46b368053ec7390a4e8e750108280641550",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        30,
+        35
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.036-041.png",
+      "sha256": "67def6d39996d06218d4937425f5773c365436614a9bab4a570eb61d257e7fbe",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        36,
+        41
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.042-047.png",
+      "sha256": "270a270fb80baff56bfd7a495889aac89a0629ba0e4743e40f93710a784121df",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        42,
+        47
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.048-053.png",
+      "sha256": "83402cbc4f2c07dbbb192d39efaa03a7cda47a9a7f8873b0b63687a67a77800b",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. Jaw opens during anticipation, the head thrusts forward and down through contact, then recoils while the palms remain braced. Neck, collar, elbows and trouser surfaces remain coherent; no pose-pop or intersection is visible."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        48,
+        53
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.054-059.png",
+      "sha256": "e9e87aee3e7472137a00dba2c5168f53bc61a5e7428c0af96c1d809ce06c55da",
+      "reviewed": true,
+      "notes": [
+        "Every labeled recovery pose and four views inspected. Jaw and head settle smoothly back into the supported prone pose; final frame72 is coherent with the opening shape. Outfit surfaces and arm proportions remain consistent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        54,
+        59
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.060-065.png",
+      "sha256": "fe4e38868e6a5802431c551abdceca5975e768e2e7f90b4205c6d3cb447db091",
+      "reviewed": true,
+      "notes": [
+        "Every labeled recovery pose and four views inspected. Jaw and head settle smoothly back into the supported prone pose; final frame72 is coherent with the opening shape. Outfit surfaces and arm proportions remain consistent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        60,
+        65
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.066-071.png",
+      "sha256": "a8621eef6fdb9f335197a9bf741af4f432b7cb4d65edbae001da69166620b9c5",
+      "reviewed": true,
+      "notes": [
+        "Every labeled recovery pose and four views inspected. Jaw and head settle smoothly back into the supported prone pose; final frame72 is coherent with the opening shape. Outfit surfaces and arm proportions remain consistent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        66,
+        71
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Bite.072-072.png",
+      "sha256": "c389215757d6fadb4f7ce7cbe6d85778b71805b007ebd0d6ee967126238ed167",
+      "reviewed": true,
+      "notes": [
+        "Every labeled recovery pose and four views inspected. Jaw and head settle smoothly back into the supported prone pose; final frame72 is coherent with the opening shape. Outfit surfaces and arm proportions remain consistent."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        72,
+        72
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.000-005.png",
+      "sha256": "543440f100f5b5373ccfcd2dd380ac598f44dff9477cad5bd3706cca6809584e",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. The brief hit flinch lifts and pulls the head and shoulder line back while keeping the hands braced; cloth and neck remain continuous."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        0,
+        5
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.006-011.png",
+      "sha256": "dfea8590a7804eb9daa0e20a1e4882d0230b8b9fb033f40ffa3b5b097c4a609d",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and four views inspected. The brief hit flinch lifts and pulls the head and shoulder line back while keeping the hands braced; cloth and neck remain continuous."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        6,
+        11
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.012-017.png",
+      "sha256": "16abda086a0a130f5dd776fec05c5e65358ee0b3155fba261990b14da2c27901",
+      "reviewed": true,
+      "notes": [
+        "All labeled hit-recovery poses and four views inspected. The flinch resolves continuously to the supported prone silhouette with no visible cloth collapse, neck pop or arm proportion change."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        12,
+        17
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.018-023.png",
+      "sha256": "9829ab6c5c6252fb135c276d199692c85bda60004d5851f9f5a2f77dd61b069d",
+      "reviewed": true,
+      "notes": [
+        "All labeled hit-recovery poses and four views inspected. The flinch resolves continuously to the supported prone silhouette with no visible cloth collapse, neck pop or arm proportion change."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        18,
+        23
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.024-029.png",
+      "sha256": "df214d14fd2e8ab19b49f324bcf5034f889219bcad25b1c5d6bea2f249eefd68",
+      "reviewed": true,
+      "notes": [
+        "All labeled hit-recovery poses and four views inspected. The flinch resolves continuously to the supported prone silhouette with no visible cloth collapse, neck pop or arm proportion change."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        24,
+        29
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_Crawl_Hit.030-030.png",
+      "sha256": "d0ee37d790e841a7afa1db4582cf36c8d6af6bf8778a746a2fe871593529f840",
+      "reviewed": true,
+      "notes": [
+        "All labeled hit-recovery poses and four views inspected. The flinch resolves continuously to the supported prone silhouette with no visible cloth collapse, neck pop or arm proportion change."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        30,
+        30
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.000-005.png",
+      "sha256": "3fb3c12e6969b0e1d36d0db84c469fe4761e03a9ad574c650c62209ef3bf91f6",
+      "reviewed": true,
+      "notes": [
+        "All labeled transition poses and four views inspected. The body pitches forward as knees unweight and fold, and hands reach down in preparation for the fall. Leg and arm lengths remain coherent; trouser and shirt surfaces follow the bends."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        0,
+        5
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.006-011.png",
+      "sha256": "8f9471be9a6e60fa27b79970dc11189e24586dfb7403f71e70f650b57fba7a09",
+      "reviewed": true,
+      "notes": [
+        "All labeled transition poses and four views inspected. The body pitches forward as knees unweight and fold, and hands reach down in preparation for the fall. Leg and arm lengths remain coherent; trouser and shirt surfaces follow the bends."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        6,
+        11
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.012-017.png",
+      "sha256": "8db552fc3f5b7b8ac08884b8238f6fb8461918f2233531500def336ead08e912",
+      "reviewed": true,
+      "notes": [
+        "All labeled transition poses and four views inspected. The body pitches forward as knees unweight and fold, and hands reach down in preparation for the fall. Leg and arm lengths remain coherent; trouser and shirt surfaces follow the bends."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        12,
+        17
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.018-023.png",
+      "sha256": "854787e7d9690c10874458f9c3618f9ce983adb708cf23e2b1a23eab15b4ca8b",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        18,
+        23
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.024-029.png",
+      "sha256": "b87c76a6e222c73c2b52d2e16f0cfe94e6fc99601aa3df8dcc6eb75db484364e",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        24,
+        29
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.030-035.png",
+      "sha256": "9d88aa349514d3d4270fb3d1cdbe0b3a652c1ee1dc269d51d670755a4f074814",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        30,
+        35
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.036-041.png",
+      "sha256": "c6c4960a85cc7f488f50b7fde876cd5e8bc7fcb6c632e6cf360897b8af2104cd",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        36,
+        41
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.042-047.png",
+      "sha256": "c815a9840ba508005dee240e6999afccd4355500a84afe3e2dcfd88db68e5c1d",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        42,
+        47
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    },
+    {
+      "file": "Zombie_To_Crawl.048-048.png",
+      "sha256": "d64a0c88fd28612b69be9a038c59db39fd58463bd50d960ec5e8aca991bbcaeb",
+      "reviewed": true,
+      "notes": [
+        "Every labeled pose and all four views inspected. The falling torso rotates forward while knees unfold behind it; arms extend to receive the weight and finish in the supported crawl pose. Cloth follows hip, knee, shoulder and elbow bends without a visible collapse or discontinuity; final frame48 is coherent with the prone actions."
+      ],
+      "current_hash_matches": true,
+      "frame_range": [
+        48,
+        48
+      ],
+      "camera_views": [
+        "front",
+        "right",
+        "back",
+        "left"
+      ]
+    }
+  ],
+  "scope": [
+    "Zombie_Crawl",
+    "Zombie_Crawl_Bite",
+    "Zombie_Crawl_Hit",
+    "Zombie_To_Crawl"
+  ],
+  "separate_review": "Crawl_Idle (121 poses / 21 atlases) delegated to root; see visual.crawl_idle.json.",
+  "passed": true,
+  "atlas_count": 45,
+  "integer_pose_count": 250,
+  "camera_pose_count": 1000,
+  "all_png_hashes_match": true,
+  "model_hash_matches": true,
+  "issues": [],
+  "conclusion": "All 250 integer poses across four clips were visually inspected in four camera columns. Arm proportions, prone support, transition continuity and visible outfit surfaces are coherent. Crawl_Idle has a separate root review."
+}

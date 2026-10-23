@@ -1,0 +1,3006 @@
+R11 — OPTIONAL RIGHT-HAND-LED PICKAXE GRIP
+========================================
+Recorded UTC: 2026-10-19T01:15:38.317715+00:00
+
+DELIVERED BEHAVIOR
+------------------
+Select Swing styles > Pickaxe grip > Right hand + left support (experimental).
+Choose Return to live controls, equip with 2, and swing with the left mouse button.
+The right hand takes the upper/leading station; the left hand supports the
+lower handle from the character's left side. Original remains the startup
+grip. Grip choice is independent of the default, right-lean and tool-tilt
+swing-style choices. All three pickaxe styles have matching new grip clips.
+
+The optional grip includes idle, walk, run, jump, swing, first-person
+draw/stow and held third-person crouch. Live changes wait through active
+actions, jumping and crouch exit, then lower/redraw the tool. Paused
+inspection maps the matching clip at the current time for direct comparison.
+During live switching, the hands lower mostly below the first-person frame
+while the head stays visible. The different setbacks produce a progressive
+apparent-size change before the hands rise into the newly selected grip.
+
+The first-person tool moves 6 cm toward the body for reach. At the fully
+lowered draw/stow endpoint this becomes 15 cm, with the support station 3 cm
+higher on the handle, fading back to the ordinary station by Ready.
+This changes the camera crop; the lower support hand and portions of the
+tool head are outside the view in some poses. The right/left side views
+are needed to assess parts hidden from the first-person camera.
+
+Tool rotation and swing timing are inherited. The new ordinary third-person
+clips retain their source tool path. Held crouch combines the existing
+crouch body motion with the grip relative to the chest. See the authored
+profile and per-clip reports for the actual arm route and measured limits.
+
+ACTUAL CLIPS AND COUNTS
+----------------------
+54 retained clips + 17 new optional clips = 71 total.
+497 editable native actions = 378 retained + 119 new rig/shape companions.
+Geometry: 14,997 triangles; 59 bones.
+WorkShirt: 266 retained targets + 32 new sleeve targets.
+  Pickaxe_RightGrip_Idle: 3.000000s
+  Pickaxe_RightGrip_Walk: 1.000000s
+  Pickaxe_RightGrip_Run: 0.800000s
+  Pickaxe_RightGrip_Jump: 1.500000s
+  Pickaxe_RightGrip_Swing: 1.200000s
+  Pickaxe_RightGrip_Swing_Right: 1.200000s
+  Pickaxe_RightGrip_Swing_Tilt: 1.200000s
+  FP_Pickaxe_RightGrip_Idle: 3.000000s
+  FP_Pickaxe_RightGrip_Walk: 1.000000s
+  FP_Pickaxe_RightGrip_Run: 0.800000s
+  FP_Pickaxe_RightGrip_Jump: 1.500000s
+  FP_Pickaxe_RightGrip_Swing: 1.300000s
+  FP_Pickaxe_RightGrip_Swing_Right: 1.300000s
+  FP_Pickaxe_RightGrip_Swing_Tilt: 1.300000s
+  FP_Pickaxe_RightGrip_Equip: 0.600000s
+  FP_Pickaxe_RightGrip_Holster: 0.500000s
+  Pickaxe_RightGrip_Crouch: 2.100000s
+
+PRESERVATION AND CORRECTION SCOPE
+---------------------------------
+Every existing component of the 54 old animation clips is preserved.
+The old shirt-weight outputs are widened with exact-zero new components.
+Their complete animation JSON records are therefore not byte-identical:
+only the necessary shirt output-accessor references change.
+
+Every newly authored rotation track has consistent adjacent quaternion
+signs. Ten antipodal pairs on the hidden Weapon_Axe tracks are inherited
+exactly from the source Walk/Run/Jump clips; the audit separately requires
+their source sampler, timestamps and decoded values to remain exact.
+Their reported rotation steps use shortest-arc orientation distance.
+
+The entire original binary prefix, original accessors/buffer views, base
+geometry, rest normals, skin, materials, textures, rest rig and all original
+morph target data remain exact. New POSITION fields are confined to the
+existing sleeve/underarm correction support. New NORMAL fields may also
+affect its incident face neighborhood and coincident exported copies.
+There are no new morph TANGENT fields, matching the source convention.
+Original base tangents remain exact. This export convention by itself
+does not prove exact geometric normals for arbitrary mixtures of shapes.
+
+The native comparison independently reopens the exact R10 baseline first.
+All existing curves in 378 original actions remain exact. The 54 old shirt
+companions gain constant-zero new curves. Old shape coordinates are
+compared by their original names; new coordinates are independently
+checked against the authored cache and original sleeve vertex support.
+
+IDLE TIMELINE EXPORT REPAIR
+---------------------------
+An independent gate rejected the initial export for duplicate Float32
+input times in the two new Idle clips. The separate post-bake normalizer
+keeps the exact source-breakpoint row at each alias and removes the
+redundant paired row. The other 69 exported animation records and the
+original static records/binary prefix remain exact to the baked model.
+All 17 native-cache schedules are rounded to the emitted Float32 seconds;
+only the two Idle schedules lose rows. The native file was then rebuilt.
+
+Affected exported samplers: 17
+Enforced change bounds:
+{
+  "rotation_degrees": 0.0001,
+  "morph_position_m": 5e-06,
+  "morph_normal_vector": 0.0004
+}
+Measured alias differences:
+{
+  "Pickaxe_RightGrip_Idle": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 5.960464477539063e-08,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 6.006501559677587e-10,
+        "maximum_pre_skin_normal_vector_difference": 2.9511983886837865e-08,
+        "peaks": {
+          "POSITION": {
+            "canonical_seconds": 2.866666555404663,
+            "kept_index": 178,
+            "discarded_index": 179,
+            "primitive": 1,
+            "vertex": 142
+          },
+          "NORMAL": {
+            "canonical_seconds": 2.866666555404663,
+            "kept_index": 178,
+            "discarded_index": 179,
+            "primitive": 1,
+            "vertex": 152
+          }
+        }
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Walk": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Run": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Jump": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Swing": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Swing_Right": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Swing_Tilt": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Idle": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 1.1920928955078125e-07,
+        "maximum_rotation_degrees": 2.2908163938464903e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 3.725290298461914e-07,
+        "maximum_rotation_degrees": 5.3901360236991744e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 2.384185791015625e-07,
+        "maximum_rotation_degrees": 3.5650577347175194e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 5.960464477539063e-08,
+        "maximum_rotation_degrees": 1.2159032965308036e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 2.384185791015625e-07,
+        "maximum_rotation_degrees": 4.1552997274500195e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 8.707866072654724e-08,
+        "maximum_rotation_degrees": 1.0123522514645801e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 1.7881393432617188e-07,
+        "maximum_rotation_degrees": 3.0996567180269554e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 3.427267074584961e-07,
+        "maximum_rotation_degrees": 4.981499822548165e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 2.2351741790771484e-07,
+        "maximum_rotation_degrees": 3.394280377649783e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 1.1920928955078125e-07,
+        "maximum_rotation_degrees": 1.8704443908145833e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 1.7881393432617188e-07,
+        "maximum_rotation_degrees": 2.9409592341388568e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 9.103678166866302e-08,
+        "maximum_rotation_degrees": 1.0670067627140519e-05,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 4.5686960220336914e-05,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 5.150518820375225e-07,
+        "maximum_pre_skin_normal_vector_difference": 0.0001235818851273215,
+        "peaks": {
+          "NORMAL": {
+            "canonical_seconds": 2.866666555404663,
+            "kept_index": 178,
+            "discarded_index": 179,
+            "primitive": 1,
+            "vertex": 1182
+          },
+          "POSITION": {
+            "canonical_seconds": 2.866666555404663,
+            "kept_index": 178,
+            "discarded_index": 179,
+            "primitive": 1,
+            "vertex": 2038
+          }
+        }
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0001042783260345459,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 2.8645919860213567e-06,
+        "maximum_pre_skin_normal_vector_difference": 0.00029347739569045343,
+        "peaks": {
+          "POSITION": {
+            "canonical_seconds": 2.883333444595337,
+            "kept_index": 181,
+            "discarded_index": 180,
+            "primitive": 1,
+            "vertex": 115
+          },
+          "NORMAL": {
+            "canonical_seconds": 2.883333444595337,
+            "kept_index": 181,
+            "discarded_index": 180,
+            "primitive": 0,
+            "vertex": 101
+          }
+        }
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Walk": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Run": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Jump": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Swing": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Swing_Right": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Swing_Tilt": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Equip": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "FP_Pickaxe_RightGrip_Holster": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  },
+  "Pickaxe_RightGrip_Crouch": {
+    "transforms": {
+      "gltf_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:Weapon_Pickaxe.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandIndex3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandIndex2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandIndex1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandMiddle3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandMiddle2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandMiddle1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandPinky3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandPinky2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandPinky1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandRing3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandRing2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandRing1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandThumb3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandThumb2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:LeftHandThumb1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandIndex3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandIndex2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandIndex1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandMiddle3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandMiddle2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandMiddle1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandPinky3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandPinky2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandPinky1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandRing3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandRing2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandRing1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandThumb3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandThumb2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "gltf_tracks:RightHandThumb1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightForeArm.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHand.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.translation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:Weapon_Pickaxe.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandIndex3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandIndex2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandIndex1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandMiddle3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandMiddle2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandMiddle1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandPinky3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandPinky2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandPinky1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandRing3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandRing2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandRing1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandThumb3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandThumb2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:LeftHandThumb1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandIndex3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandIndex2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandIndex1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandMiddle3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandMiddle2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandMiddle1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandPinky3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandPinky2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandPinky1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandRing3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandRing2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandRing1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandThumb3.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandThumb2.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      },
+      "native_tracks:RightHandThumb1.rotation": {
+        "maximum_component_difference": 0.0,
+        "maximum_rotation_degrees": 0.0,
+        "maximum_translation_difference_m": 0.0
+      }
+    },
+    "shapes": {
+      "Human_Body": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      },
+      "Wardrobe.WorkShirt": {
+        "maximum_coefficient_difference": 0.0,
+        "maximum_nonupdated_coefficient_difference": 0.0,
+        "maximum_pre_skin_position_difference_m": 0.0,
+        "maximum_pre_skin_normal_vector_difference": 0.0,
+        "peaks": {}
+      }
+    }
+  }
+}
+
+All 71 exported sampler schedules and all 17 cached Float32 native-frame
+schedules pass the strict increasing-time check after repair. The saved
+native/GLB comparison below uses the repaired final files. The original
+pose/fit diagnostics retain their frozen bake times and counts; the
+normalization report identifies retained/discarded rows and the small
+serialization differences. No pose/cloth fitting was rerun for this repair.
+
+The native writer separately preserves closely spaced LINEAR keys without
+calling Blender's deduplicating FCurve.update operation. The initial
+writer coalesced distinct nearby recovery keys, producing small numeric
+differences in four swings. The new writer saves and reopens every key,
+and the independent comparison checks exact Float32 time/value pairs
+and key counts against the normalized cache. The GLB animation payload
+and authored cache are unchanged by this native-only writer repair.
+
+SAVED NATIVE / GLB NUMERICAL COMPARISON
+--------------------------------------
+The reopened native comparison sampled 2,825 clip-times
+at 120 Hz plus exact inspection stages across all 17 new clips. It evaluated
+actual native bones and shape values, then compared them with the GLB.
+Mesh objects remain enabled for dependency-graph evaluation. An initial
+verifier attempt hid the meshes and therefore read reset-zero shape
+values; the retained visibility probe isolates that setup error. The
+final comparison uses enabled meshes and the same limits for authored
+grip coefficients, with explicit source-preservation checks for others.
+Independent saved-key check: 1,104,378 keys in 9,438 curves.
+
+The existing native FP Walk/Run/Jump Blink curves and their GLB exports
+have different inherited sample schedules. Their cross-format maxima
+are reported separately. Every unauthored native shape value must equal
+its retained source exactly; the corresponding GLB interpolation must
+stay within 0.000002 of its source. Authored grip coefficients keep the
+original 0.0005 native/GLB comparison limit.
+  Maximum native/GLB bone-origin difference (m): 0.000101333244; Pickaxe_RightGrip_Swing_Right; t=1.1; Weapon_Axe
+  Maximum native/GLB matrix-component difference: 0.0004682838917; FP_Pickaxe_RightGrip_Swing_Right; t=1.1416666666666666; Weapon_Pickaxe
+  Maximum authored-grip native/GLB shape-value difference: 1.942521007e-05; Pickaxe_RightGrip_Swing_Tilt; t=0.45; Wardrobe.WorkShirt/R11_RightGrip_Sleeve_29
+  Maximum all-shape native/GLB difference (includes inherited Blink): 0.1585121309; FP_Pickaxe_RightGrip_Walk; t=0.475; Eyelids.Lashes.Left/Blink
+  Maximum inherited-source native/GLB shape difference: 0.1585121309; FP_Pickaxe_RightGrip_Walk; t=0.475; Eyelids.Lashes.Left/Blink
+  Maximum unauthored native shape change from source: 0; Pickaxe_RightGrip_Idle; t=None; None
+  Maximum unauthored GLB shape change from source: 1.458086875e-07; Pickaxe_RightGrip_Swing_Right; t=0.6666666666666666; Human_Body/TP_Knee_Posterior_Left
+  Maximum shoulder-origin change (m): 0; Pickaxe_RightGrip_Idle; t=None; None
+  Maximum arm-segment-length change (m): 2.725445357e-07; FP_Pickaxe_RightGrip_Swing; t=1.0333333333333334; LeftHand
+  Maximum native/GLB palm-point difference (m): 5.820567521e-05; Pickaxe_RightGrip_Swing_Right; t=1.1; RightHand
+
+The saved-native shape coordinates were also compared with every appended
+GLB POSITION row on both shirt primitives. Rest-position matching is exact.
+  Targets: 32; POSITION rows: 14528
+  Maximum POSITION vector error record: {
+  "value_m": 0.0,
+  "target": null,
+  "primitive": null,
+  "exported_vertex": null,
+  "native_vertex": null
+}
+  Morph NORMAL parity against native evaluated normals was not verified.
+
+SLEEVE FIT AND CONTACT LIMITS
+-----------------------------
+The following diagnostics retain actual nonzero results. They compare
+authored posed geometry with a fitted sleeve target; a target residual is
+not a penetration depth or a direct measure of the rendered appearance.
+The target itself can retain contacts. Increasing approximation accuracy
+alone would not establish better clearance.
+
+Training summary:
+{
+  "training_sample_count": 403,
+  "target_count": 32,
+  "maximum_training_rest_error_m": 0.005609855783891251,
+  "training_compression_target_m": 0.0015,
+  "passed_training_compression_bound": false,
+  "maximum_training_target_retained_contacts": 4
+}
+
+Per-clip diagnostics:
+{
+  "Pickaxe_RightGrip_Idle": {
+    "samples": 189,
+    "maximum_posed_extension_fit_error_m": 0.004932954853559848,
+    "maximum_abs_extension_coefficient": 0.9869755506515503,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "Pickaxe_RightGrip_Walk": {
+    "samples": 61,
+    "maximum_posed_extension_fit_error_m": 0.004658849219236344,
+    "maximum_abs_extension_coefficient": 0.9884650111198425,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "Pickaxe_RightGrip_Run": {
+    "samples": 49,
+    "maximum_posed_extension_fit_error_m": 0.004905636791262577,
+    "maximum_abs_extension_coefficient": 0.9906162619590759,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "Pickaxe_RightGrip_Jump": {
+    "samples": 91,
+    "maximum_posed_extension_fit_error_m": 0.004298193411199925,
+    "maximum_abs_extension_coefficient": 0.9881177544593811,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "Pickaxe_RightGrip_Swing": {
+    "samples": 146,
+    "maximum_posed_extension_fit_error_m": 0.007823442187733825,
+    "maximum_abs_extension_coefficient": 1.0862698554992676,
+    "maximum_target_retained_contacts": 4,
+    "maximum_projected_retained_contacts": 9
+  },
+  "Pickaxe_RightGrip_Swing_Right": {
+    "samples": 146,
+    "maximum_posed_extension_fit_error_m": 0.007733808624225191,
+    "maximum_abs_extension_coefficient": 1.0548877716064453,
+    "maximum_target_retained_contacts": 4,
+    "maximum_projected_retained_contacts": 7
+  },
+  "Pickaxe_RightGrip_Swing_Tilt": {
+    "samples": 146,
+    "maximum_posed_extension_fit_error_m": 0.018252092477193522,
+    "maximum_abs_extension_coefficient": 1.0548877716064453,
+    "maximum_target_retained_contacts": 4,
+    "maximum_projected_retained_contacts": 7
+  },
+  "FP_Pickaxe_RightGrip_Idle": {
+    "samples": 189,
+    "maximum_posed_extension_fit_error_m": 0.0011856983743849994,
+    "maximum_abs_extension_coefficient": 0.9612773060798645,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Walk": {
+    "samples": 61,
+    "maximum_posed_extension_fit_error_m": 0.0026927098898172014,
+    "maximum_abs_extension_coefficient": 0.9628716707229614,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Run": {
+    "samples": 49,
+    "maximum_posed_extension_fit_error_m": 0.003869764792788404,
+    "maximum_abs_extension_coefficient": 0.9645440578460693,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Jump": {
+    "samples": 91,
+    "maximum_posed_extension_fit_error_m": 0.004116139512837872,
+    "maximum_abs_extension_coefficient": 0.9622235894203186,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Swing": {
+    "samples": 159,
+    "maximum_posed_extension_fit_error_m": 0.005038676197667711,
+    "maximum_abs_extension_coefficient": 0.9638078808784485,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Swing_Right": {
+    "samples": 159,
+    "maximum_posed_extension_fit_error_m": 0.004630883402624184,
+    "maximum_abs_extension_coefficient": 1.0008103847503662,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Swing_Tilt": {
+    "samples": 159,
+    "maximum_posed_extension_fit_error_m": 0.004628226567625197,
+    "maximum_abs_extension_coefficient": 1.0008103847503662,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Equip": {
+    "samples": 37,
+    "maximum_posed_extension_fit_error_m": 0.002245822620984068,
+    "maximum_abs_extension_coefficient": 1.000184178352356,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "FP_Pickaxe_RightGrip_Holster": {
+    "samples": 31,
+    "maximum_posed_extension_fit_error_m": 0.002241566756971995,
+    "maximum_abs_extension_coefficient": 1.0,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  },
+  "Pickaxe_RightGrip_Crouch": {
+    "samples": 128,
+    "maximum_posed_extension_fit_error_m": 0.004377503635722491,
+    "maximum_abs_extension_coefficient": 1.0156704187393188,
+    "maximum_target_retained_contacts": 0,
+    "maximum_projected_retained_contacts": 0
+  }
+}
+
+The intended 1.5 mm compression target remains unmet by this 32-field
+basis. Nonzero triangle-contact records also remain. Their full times,
+triangles, extent and camera/filter classifications are preserved in the
+GLB author report. Intersection-segment extent is not penetration depth.
+Actual rendered review is a separate acceptance gate, with exact image
+coverage and limitations below. This experiment is not certified free of
+all body/garment intersections.
+
+These are numerical checks, not visual acceptance or a proof of continuous
+collision freedom. Finite sampled data and pose parity do not establish
+that every hidden surface or every subframe is clear.
+
+COMPLETED GODOT CAPTURE AND ACTUAL VISUAL REVIEW
+-----------------------------------------------
+The exact completed capture counts are:
+  source_pose_count: 1663
+  live_swing_frame_count: 204
+  grip_redraw_frame_count: 276
+  ui_capture_count: 4
+  unique_captured_png_count: 2147
+
+Source poses are manually sought AnimationPlayer positions, captured with
+the production materials. Live swings and grip redraws use actual runtime
+playback and have separate captured frame/state records.
+
+Paused source-pose inspection uses isolated nonlooping copies of looping
+Animation resources, preventing exact-duration seeks from wrapping to zero.
+Each capture records its actual AnimationPlayer time and original/inspection
+loop modes. Completed manifests verify unchanged, restored production
+resources; live playback keeps production loop behavior. Four focused
+endpoint diagnostic images are retained separately from coverage totals.
+The failed endpoint preflight is excluded from final coverage.
+
+Source coverage: all nine new first-person clips at 60 Hz including endpoints;
+all three full third-person swings at 60 Hz in front/back/left/right views;
+five selected phases of each third-person idle/walk/run/jump/crouch
+clip in four views. The latter are representative pose checks, not a
+full-frame visual review of every third-person locomotion clip.
+
+The visual aggregator requires explicit named-reviewer records of every
+selected page or raw image actually opened. Counts below are computed from
+those completed manifests and attributed opens, not from the capture plan.
+{
+  "selected_page_count": 249,
+  "owned_page_count": 249,
+  "selected_unique_capture_count": 2147,
+  "owned_unique_capture_count": 2147,
+  "required_raw_capture_count": 4,
+  "supplemental_raw_image_count": 0,
+  "captures_by_clip": {
+    "FP_Pickaxe_Equip": 37,
+    "FP_Pickaxe_Holster": 30,
+    "FP_Pickaxe_Idle": 26,
+    "FP_Pickaxe_RightGrip_Equip": 74,
+    "FP_Pickaxe_RightGrip_Holster": 61,
+    "FP_Pickaxe_RightGrip_Idle": 207,
+    "FP_Pickaxe_RightGrip_Jump": 91,
+    "FP_Pickaxe_RightGrip_Run": 49,
+    "FP_Pickaxe_RightGrip_Swing": 79,
+    "FP_Pickaxe_RightGrip_Swing_Right": 79,
+    "FP_Pickaxe_RightGrip_Swing_Tilt": 157,
+    "FP_Pickaxe_RightGrip_Walk": 61,
+    "FP_Pickaxe_Swing_Tilt": 78,
+    "Pickaxe_Idle": 69,
+    "Pickaxe_RightGrip_Crouch": 20,
+    "Pickaxe_RightGrip_Idle": 89,
+    "Pickaxe_RightGrip_Jump": 20,
+    "Pickaxe_RightGrip_Run": 20,
+    "Pickaxe_RightGrip_Swing": 292,
+    "Pickaxe_RightGrip_Swing_Right": 292,
+    "Pickaxe_RightGrip_Swing_Tilt": 292,
+    "Pickaxe_RightGrip_Walk": 20,
+    "unspecified": 4
+  },
+  "captures_by_view": {
+    "back": 244,
+    "fp": 1029,
+    "front": 244,
+    "left": 244,
+    "right": 382,
+    "unspecified": 4
+  },
+  "unowned_pages": [],
+  "unowned_captures": [],
+  "counting_note": "Distinct captured files are counted once. Raw reopens and repeated tiles do not inflate unique capture coverage. Different files at an identical animation time remain separate captured images."
+}
+
+Attributed final reviewer observations:
+[
+  {
+    "reviewer": "/root",
+    "observations": [
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.front",
+        "pages": "01-03",
+        "samples": "0-35",
+        "observation": "Lead right and support left stations stay ordered; hands and elbows move continuously through load. Angular low-poly elbow contours and changing highlights are visible, without a one-frame reversal or gross collapse in these samples. Tool head partly leaves crop; arm chain remains visible."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.front",
+        "pages": "04-07",
+        "samples": "36-72",
+        "observation": "Right lead hand stays above left support through strike and recovery, without a visible wrist reversal. Follow-through shows angular elbow/cuff silhouettes; no broad exterior skin patch appears above cuffs. Highlights track pose direction through recovery; endpoint visibly returns to ready."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.right",
+        "pages": "01-03",
+        "samples": "0-35",
+        "observation": "Right-view load retains a recognizable bent elbow with a continuous exterior cuff and no large detached skin island. Right wrist and left support stay aligned to the shaft. Local elbow highlights increase progressively during load; no isolated on/off flash is apparent on these ordered tiles."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.right",
+        "pages": "04-07",
+        "samples": "36-72",
+        "observation": "Forward component of strike is evident from side. No gross arm collapse or visible full wrist spin through strike/return. Cuff edges stay continuous; some sharp low-poly corners remain. Left supporting arm is partly occluded by right arm/body from this view."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.left",
+        "pages": "01-03",
+        "samples": "0-35",
+        "observation": "Supporting left elbow remains outside torso silhouette with a stable cuff edge as body winds up. Left wrist is progressively hidden by torso/near arm; no visible pinched-to-zero elbow or detached skin island. Shirt surface shading changes gradually with body rotation."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.left",
+        "pages": "04-07",
+        "samples": "36-72",
+        "observation": "Supporting left forearm and wrist remain connected and continuously turn with the shaft. Triangular low-poly shading on forearm is persistent across strike/follow-through, not a one-frame reversal. No broad skin patch appears through sleeve exterior; left follow-through sample47 selected for raw reopen."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.back",
+        "pages": "01-03",
+        "samples": "0-35",
+        "observation": "Rear shoulder/sleeve surfaces stay covered through load. Lead forearm becomes visible around right silhouette continuously, without an abrupt elbow reversal. The body occludes most support-hand geometry from rear, so side/front views carry hand assessment."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_tilt.back",
+        "pages": "04-07",
+        "samples": "36-72",
+        "observation": "Back and sleeves remain continuous through fast strike and return; exposed elbow silhouettes vary continuously with body turning. No broad skin breakthrough or single-frame rear shoulder jump appears. Endpoint returns to the same ready silhouette."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.front",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Default style has less lateral wind-up; right higher grip and left lower support remain ordered through vertical load and forward strike. Elbows retain sharp polygonal contours but no single-frame arm inversion or palm reversal is visible. Tool overlaps hands in projection near blow, limiting contact detail from front."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.front",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Default return preserves hand ordering and continuous wrist direction; low-poly elbow edges remain angular. Visible forearm volume does not disappear or reverse in these samples. Endpoint matches ready posture."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.right",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Default side view shows wrist/hand moving with tool into forward strike. Right elbow flexes through load and extends continuously; no abrupt full spin or detached skin patch is visible. Left support is partly behind lead arm in this projection."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.right",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Default side follow-through/return maintains bent arm chain and hand stations. Sharp cuff/forearm corners persist but do not produce a broad one-frame pop. Ready endpoint is consistent with start."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.left",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Left support has visible elbow bend and wrist continuity throughout default load/strike. Forearm shading remains faceted but follows rotation consistently. No gross wrist squeeze or detached sleeve skin island is visible in these samples."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing.left",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Left support keeps its lower shaft station and returns smoothly with forearm bend retained. Persistent polygonal shading is visible on both exposed arms; no abrupt orientation reversal or broad sleeve breakthrough. Endpoint matches initial held pose."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.front",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Right-lean wind-up shifts the held grip laterally while preserving right-over-left hand order. Strike is continuous across quick samples36-41, with no full palm inversion or collapsing arm silhouette. Elbow contours remain angular, as elsewhere."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.front",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Right-lean follow-through/recovery retains right higher hand and left supporting lower station. No visible broad sleeve breakthrough or arm collapse is found. The recovered silhouette matches ready; tool overlaps part of support hand during follow-through."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.left",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Supporting elbow follows torso wind-up with stable cuff; hand becomes visible again as strike rotates forward. No abrupt wrist flip, arm detachment or broad sleeve breakthrough visible. Progressive highlights and faceted forearm shadows remain."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.left",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Supporting arm remains continuous and hand stays in its lower handle station through recovery. Forearm facets are stable across neighboring poses; no isolated broad illumination pop or sleeve breakthrough is apparent. Ready return is consistent."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.right",
+        "pages": "01-04",
+        "samples": "0-47",
+        "observation": "Right upper grip stays above the support through the raised load and forward/down blow. The right wrist follows the handle without a visible full-turn reversal. Elbow and sleeve remain connected; broad bright facets at the bent elbow move progressively, with angular low-poly contours remaining. The left support is partly hidden at the strike. No gross collapse or exposed upper-arm strip is apparent."
+      },
+      {
+        "group": "pickaxe_rightgrip_swing_right.right",
+        "pages": "05-07",
+        "samples": "48-72",
+        "observation": "Both hands retain their handle order through follow-through and return to Ready. The right elbow gradually opens and the visible wrist stays connected to the upper grip. Angular shading and a pointed elbow contour remain but no one-frame whole-arm brightness pop, broad sleeve breakthrough or gross wrist inversion is apparent."
+      },
+      {
+        "raw": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/tp_swings/left/pickaxe_rightgrip_swing_tilt_0047.png",
+        "observation": "Reopened the original uncropped left-view Tilt follow-through at 0.78333 s. The left elbow and forearm have conspicuous triangular lighting facets and an angular contour, while the arm remains connected from cuff to lower support. The reviewed outline does not show gross local collapse or a detached skin island; this is not a claim of smooth anatomy or hidden contact clearance."
+      }
+    ]
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "observations": [
+      {
+        "scope": "FP Idle/Walk/Run",
+        "finding": "The right hand remains at the upper shaft station, with readable thumb/palm and finger arrangement through the reviewed sequences. Walking and running retain their tool/hand bob; running has the stronger excursion. No visible detached grip, sudden gross wrist squeeze, or isolated broad arm brightness pop was identified in these ordered source poses."
+      },
+      {
+        "scope": "TP five stance families, four views",
+        "finding": "The right upper/main and left lower/support arrangement persists through the sampled movement and crouch phases. Side views show the support forearm approaching from below/in front of the torso; both hands keep separated shaft stations. No obvious exposed shoulder/sleeve strip or gross arm collapse was identified at these selected poses."
+      },
+      {
+        "scope": "TP Crouch raw .462 and 1.596",
+        "finding": "The former visible cuff/skin protrusion was not present in the final raw right-view dip and hold-exit poses. Left and front raw dip frames also showed continuous sleeve edges without the prior exposed strip. Existing angular low-poly surface character remains."
+      },
+      {
+        "scope": "TP Jump apex .63",
+        "finding": "The back/left page framing trims the topmost head/tool area at the apex; reopening their full raw captures recovered that area. No corresponding raw camera clipping or new shoulder-strip concern was identified there."
+      }
+    ]
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "observations": [
+      {
+        "scope": "Default back swing",
+        "finding": "The rear shoulders and shirt maintain coverage through lift, load, strike, follow-through, and recovery. No new visible exposed shoulder strip, gross sleeve collapse, or sudden rear shoulder inversion was identified in samples 0–72. The end returns to the Ready rear silhouette."
+      },
+      {
+        "scope": "Right-style back swing",
+        "finding": "The farther-right preparation is visible before the torso turns through the strike and low follow-through. Rear sleeve and shoulder silhouettes remain continuous across the ordered source poses. No new exposed shoulder strip or gross collapse was identified in samples 0–72."
+      },
+      {
+        "scope": "Four raw reopens",
+        "finding": "Both styles were reopened at .533333 and .816667 seconds. The raised forearm is visible outside the sleeve opening, with continuous rear shoulder coverage. Follow-through remains largely occluded at the hands; no visible back/shoulder breakthrough was identified in these raw views."
+      }
+    ]
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "observations": [
+      {
+        "id": "equip_ordered",
+        "clip": "FP_Pickaxe_RightGrip_Equip",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.6
+        ],
+        "severity": "info",
+        "finding": "All 37 source images opened in order. The tool rises progressively; the right main hand enters the lower crop near sample 17 (0.2833 s) and remains adjacent to the shaft through the endpoint. Visible thumb and curled finger orientation remain consistent, with no isolated reversal or exposed wrist collapse. The raw endpoint confirms the hand silhouette is continuous. A small dark angular region remains on the outer hand, visually attached rather than an open tear; it is retained as a shading limitation. The left support is only a small sliver at the bottom edge late in the clip; palm contact, left elbow and sleeve clearance cannot be certified from this framing.",
+        "evidence_pages": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_equip.fp/manifest.json",
+        "manifest_sha256": "fd2947335c6e89ce69d3725f36d36b75b0ed5eb95c2a41d615944f64f453a056"
+      },
+      {
+        "id": "holster_ordered",
+        "clip": "FP_Pickaxe_RightGrip_Holster",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.5
+        ],
+        "severity": "info",
+        "finding": "All 31 source images opened in order. The visible right grip lowers continuously with the shaft until the hand leaves the crop near sample 17 (0.2833 s). Tool rotation and lowering continue progressively to the endpoint. The pick head remains visible in this source-pose capture; runtime visibility switching is outside this static clip review. The raw 0.1667 s view confirms a continuous wrist outline and attached thumb/finger grip. No isolated hand flip, abrupt collapse or discontinuous tool step was seen. The small outer-hand dark facet remains attached while visible.",
+        "evidence_pages": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_holster.fp/manifest.json",
+        "manifest_sha256": "dd725aec1aae61488b3bdd2577afe23099d7ba41785790e7fc1088c2e0c244f8"
+      },
+      {
+        "id": "jump_000_023",
+        "clip": "FP_Pickaxe_RightGrip_Jump",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.383333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 0–23 opened in order. The pickaxe and right hand dip gently and begin to recover together. Thumb direction, visible curled fingers and wrist outline remain consistent; no detached shaft contact or isolated hand reversal was seen. The outer-hand angular shadow/facet remains attached. Left support appears only as a small bottom-edge sliver early, and elbows/cuffs are outside the image.",
+        "evidence_pages": [
+          1,
+          2,
+          3
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_jump.fp/manifest.json",
+        "manifest_sha256": "5088d2e0ec6ac1690378752a28ced5c48a9d834c0d3da7cab97a4b4e763e1913"
+      },
+      {
+        "id": "jump_024_047",
+        "clip": "FP_Pickaxe_RightGrip_Jump",
+        "view": "fp",
+        "time_range": [
+          0.4,
+          0.783333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 24–47 opened in order. The held pickaxe rises gradually, pauses near its upper position and begins to settle. Right palm/shaft adjacency and thumb/finger direction stay consistent across the page boundaries. No abrupt surface collapse or isolated brightness flash was seen in the exposed hand. Slightly more of the lower support is visible at the bottom edge near the raised portion, but its palm and the elbows remain cropped.",
+        "evidence_pages": [
+          4,
+          5,
+          6
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_jump.fp/manifest.json",
+        "manifest_sha256": "5088d2e0ec6ac1690378752a28ced5c48a9d834c0d3da7cab97a4b4e763e1913"
+      },
+      {
+        "id": "jump_048_071",
+        "clip": "FP_Pickaxe_RightGrip_Jump",
+        "view": "fp",
+        "time_range": [
+          0.8,
+          1.18333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 48–71 opened in order, including the deeper held-tool dip near samples 56–60 and the recovery after 61. The right hand remains adjacent to the same shaft section and turns with the pickaxe; visible fingertips and thumb do not reverse or visibly detach. The hand shadow changes position gradually with the pose, with no single-frame bright/dark flash apparent on these sheets. Elbows, cuffs and most of the supporting hand are cropped.",
+        "evidence_pages": [
+          7,
+          8,
+          9
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_jump.fp/manifest.json",
+        "manifest_sha256": "5088d2e0ec6ac1690378752a28ced5c48a9d834c0d3da7cab97a4b4e763e1913"
+      },
+      {
+        "id": "jump_072_090",
+        "clip": "FP_Pickaxe_RightGrip_Jump",
+        "view": "fp",
+        "time_range": [
+          1.2,
+          1.5
+        ],
+        "severity": "info",
+        "finding": "Samples 72–90 opened in order. The tool settles back to the ready hold without a visible last-frame jump. The right hand keeps a continuous wrist silhouette, consistent curled fingertips and shaft adjacency. The left support remains only a bottom-edge sliver, and the same small outer-hand dark facet is still visible. No live-animation flicker conclusion is made from these sought poses.",
+        "evidence_pages": [
+          10,
+          11,
+          12
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_jump.fp/manifest.json",
+        "manifest_sha256": "5088d2e0ec6ac1690378752a28ced5c48a9d834c0d3da7cab97a4b4e763e1913"
+      },
+      {
+        "id": "jump_raw_058",
+        "clip": "FP_Pickaxe_RightGrip_Jump",
+        "view": "fp",
+        "time_range": [
+          0.966666666666667,
+          0.966666666666667
+        ],
+        "severity": "info",
+        "finding": "Raw sample 58 confirms that the right thumb/fingers remain next to the shaft and the exposed wrist outline is continuous during the deeper dip. The left support and elbow are outside this image; the small outer-hand shaded facet remains visible.",
+        "evidence_pages": [],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_jump.fp/manifest.json",
+        "manifest_sha256": "5088d2e0ec6ac1690378752a28ced5c48a9d834c0d3da7cab97a4b4e763e1913"
+      },
+      {
+        "id": "swing_000_023",
+        "clip": "FP_Pickaxe_RightGrip_Swing",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.383333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 0–23 opened in order. The main right hand and handle rise toward the camera during the windup, increasing their apparent size gradually. The wrist and palm rotate together with the shaft; the thumb remains over the near face of the handle and the curled fingers remain on its far/left edge. No isolated reversal, contact separation or exposed wrist squeeze is visible in this interval. Only a narrow part of the lower supporting hand is visible near the bottom edge; the elbows and sleeves are cropped.",
+        "evidence_pages": [
+          1,
+          2,
+          3
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing.fp/manifest.json",
+        "manifest_sha256": "5bbe46fb1f1b659717f51ae20b576636e387c5e43c9b3c682b277d426bfd71cb"
+      },
+      {
+        "id": "swing_024_047",
+        "clip": "FP_Pickaxe_RightGrip_Swing",
+        "view": "fp",
+        "time_range": [
+          0.4,
+          0.783333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 24–47 opened in order. The loaded pose keeps the right hand large in the foreground and the supporting hand lower on the shaft at the bottom edge. The visible thumb and curled finger positions follow the handle through the faster forward/downward delivery starting near samples 38–41. The pick head turns progressively from side profile to a foreshortened forward profile as the hand recedes and lowers. No visible corkscrew wrist or isolated hand/shaft detachment was seen. Angular dark regions appear on the partly cropped left support during the load and on the main hand; targeted raw load/delivery reopens are recorded below and retain these angular shaded areas as a visible limitation. Sleeves and complete elbows remain cropped.",
+        "evidence_pages": [
+          4,
+          5,
+          6
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing.fp/manifest.json",
+        "manifest_sha256": "5bbe46fb1f1b659717f51ae20b576636e387c5e43c9b3c682b277d426bfd71cb"
+      },
+      {
+        "id": "swing_048_071",
+        "clip": "FP_Pickaxe_RightGrip_Swing",
+        "view": "fp",
+        "time_range": [
+          0.8,
+          1.18333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 48–71 opened in order. After the forward/downward follow-through, the right hand slips below the bottom crop near sample 49 and re-enters near sample 61 during recovery. The exposed tool moves progressively; the returning hand keeps the same thumb direction and grip relative to the shaft. No isolated entry pop, reversed wrist or abrupt hand brightness change was seen. The cropped interval prevents a direct hand/elbow assessment for those poses.",
+        "evidence_pages": [
+          7,
+          8,
+          9
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing.fp/manifest.json",
+        "manifest_sha256": "5bbe46fb1f1b659717f51ae20b576636e387c5e43c9b3c682b277d426bfd71cb"
+      },
+      {
+        "id": "swing_072_078",
+        "clip": "FP_Pickaxe_RightGrip_Swing",
+        "view": "fp",
+        "time_range": [
+          1.2,
+          1.29999995231628
+        ],
+        "severity": "info",
+        "finding": "Samples 72–78 opened in order. The tool head rotates from its forward profile back to the ready side profile while the right hand returns to the initial hold. The silhouette and main grip remain continuous through the endpoint; no isolated final-frame snap or exposed wrist flip was seen.",
+        "evidence_pages": [
+          10
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing.fp/manifest.json",
+        "manifest_sha256": "5bbe46fb1f1b659717f51ae20b576636e387c5e43c9b3c682b277d426bfd71cb"
+      },
+      {
+        "id": "swing_raw_load_delivery",
+        "clip": "FP_Pickaxe_RightGrip_Swing",
+        "view": "fp",
+        "time_range": [
+          0.516666666666667,
+          0.683333333333333
+        ],
+        "severity": "info",
+        "finding": "Raw sample 31 shows the main right thumb across the near shaft face and curled fingertips on its far side; the wrist broadens continuously into the forearm without a squeezed neck. A small exposed portion of the lower left support has a sharp shaded facet and remains cropped, so full finger/palm wrap is not certified. Raw sample 41 shows a continuous right wrist and handle adjacency during the faster forward delivery, without a visible torsion spiral or collapsed arm cross-section. These are image observations only, not a full geometric clearance measurement.",
+        "evidence_pages": [],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing.fp/manifest.json",
+        "manifest_sha256": "5bbe46fb1f1b659717f51ae20b576636e387c5e43c9b3c682b277d426bfd71cb"
+      },
+      {
+        "id": "swing_right_000_023",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Right",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.383333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 0–23 opened in order. The windup moves the pickaxe and main right hand farther toward the screen right than in the separately opened default style. The hand approaches the camera progressively while retaining the same thumb-over-shaft and curled-finger orientation. No abrupt wrist reversal, detached handle contact or exposed hand collapse was seen. The support and sleeve are mostly below the crop.",
+        "evidence_pages": [
+          1,
+          2,
+          3
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_right.fp/manifest.json",
+        "manifest_sha256": "52d0f1fce57410bde81978409896d7762137398f089477f208f9412cae356d00"
+      },
+      {
+        "id": "swing_right_024_047",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Right",
+        "view": "fp",
+        "time_range": [
+          0.4,
+          0.783333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 24–47 opened in order. The main hand loads near the screen-right edge, with part of the wrist cropped at the farthest load. Beginning near 38–41, the handle and right hand travel leftward while receding and lowering, giving the delivery both lateral and forward/downward motion. The exposed thumb and curled fingers remain next to the shaft throughout the faster portion. No extra wrist turn, abrupt exposed hand collapse or isolated lighting flash was seen. The supporting hand and sleeves remain outside this camera view in most of this interval.",
+        "evidence_pages": [
+          4,
+          5,
+          6
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_right.fp/manifest.json",
+        "manifest_sha256": "52d0f1fce57410bde81978409896d7762137398f089477f208f9412cae356d00"
+      },
+      {
+        "id": "swing_right_048_071",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Right",
+        "view": "fp",
+        "time_range": [
+          0.8,
+          1.18333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 48–71 opened in order. The follow-through remains left of the initial ready position. The right hand falls below the crop near sample 49 and begins to return near 61–62; the tool remains visible throughout. Recovery moves the exposed hand progressively upward and rightward with consistent thumb/shaft orientation. No isolated entry pop, extra wrist cycle or sudden exposed-hand shading flash was seen, while the cropped interval remains unobservable for direct hand/elbow contact.",
+        "evidence_pages": [
+          7,
+          8,
+          9
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_right.fp/manifest.json",
+        "manifest_sha256": "52d0f1fce57410bde81978409896d7762137398f089477f208f9412cae356d00"
+      },
+      {
+        "id": "swing_right_072_078",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Right",
+        "view": "fp",
+        "time_range": [
+          1.2,
+          1.29999995231628
+        ],
+        "severity": "info",
+        "finding": "Samples 72–78 opened in order. The head turns back to the side profile and the main right grip settles to the same visible ready hand orientation as the starting pose. No isolated final-frame snap or extra wrist roll was seen.",
+        "evidence_pages": [
+          10
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_right.fp/manifest.json",
+        "manifest_sha256": "52d0f1fce57410bde81978409896d7762137398f089477f208f9412cae356d00"
+      },
+      {
+        "id": "swing_right_raw_load_delivery",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Right",
+        "view": "fp",
+        "time_range": [
+          0.516666666666667,
+          0.7
+        ],
+        "severity": "info",
+        "finding": "Raw sample 31 confirms the farther-right load and consistent visible thumb/finger orientation relative to the shaft, while the wrist extends out of the screen-right crop. Raw sample 42 shows the exposed wrist widening continuously into the forearm during the delivery, without a narrow squeezed section or a visible spiral twist. Full finger pad contact and the supporting hand are hidden by the shaft/crop, so this is an exposed-silhouette acceptance only.",
+        "evidence_pages": [],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_right.fp/manifest.json",
+        "manifest_sha256": "52d0f1fce57410bde81978409896d7762137398f089477f208f9412cae356d00"
+      },
+      {
+        "id": "swing_tilt_000_023",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Tilt",
+        "view": "fp",
+        "time_range": [
+          0,
+          0.383333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 0–23 opened in order. The early ready-to-windup motion remains familiar to the opened Right style, then the shaft develops a more noticeable rightward lean by samples 19–23. The main hand turns with the shaft; its thumb/finger orientation and exposed wrist outline stay continuous. No isolated contact separation, extra wrist cycle or obvious surface collapse was seen in this interval. Supporting hand and elbow/cuff areas remain cropped.",
+        "evidence_pages": [
+          1,
+          2,
+          3
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_tilt.fp/manifest.json",
+        "manifest_sha256": "a455f92b5762c5da81ee6c507241615fe00ea1af9afde7e6529d5f88dfbf7610"
+      },
+      {
+        "id": "swing_tilt_024_047",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Tilt",
+        "view": "fp",
+        "time_range": [
+          0.4,
+          0.783333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 24–47 opened in order. The loaded shaft leans right more strongly than in the opened Right style, with the thumb and finger silhouette rotating along with it. The far-right main wrist and supporting hand are cropped during the loaded pose. The quick delivery straightens and carries the shaft leftward, forward and down over samples 38–44. Where the hand returns fully into view, the wrist-to-forearm outline remains continuous, without an extra twist cycle or squeezed neck. The lighting varies with the pose; no isolated hand brightness flash was apparent in these consecutive source stills.",
+        "evidence_pages": [
+          4,
+          5,
+          6
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_tilt.fp/manifest.json",
+        "manifest_sha256": "a455f92b5762c5da81ee6c507241615fe00ea1af9afde7e6529d5f88dfbf7610"
+      },
+      {
+        "id": "swing_tilt_048_071",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Tilt",
+        "view": "fp",
+        "time_range": [
+          0.8,
+          1.18333333333333
+        ],
+        "severity": "info",
+        "finding": "Samples 48–71 opened in order, without substituting the separately reviewed Right frames. The hand leaves the bottom crop near sample 49 and reappears near 61–62 while the tool recovers from its left/forward follow-through. The exposed thumb and wrist return progressively with the handle. No new twist cycle, isolated re-entry pop or visible single-frame brightness discontinuity was seen; the hidden hand interval still cannot be directly assessed.",
+        "evidence_pages": [
+          7,
+          8,
+          9
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_tilt.fp/manifest.json",
+        "manifest_sha256": "a455f92b5762c5da81ee6c507241615fe00ea1af9afde7e6529d5f88dfbf7610"
+      },
+      {
+        "id": "swing_tilt_072_078",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Tilt",
+        "view": "fp",
+        "time_range": [
+          1.2,
+          1.29999995231628
+        ],
+        "severity": "info",
+        "finding": "Samples 72–78 opened in order. The pickaxe returns to its initial side-profile ready hold; visible right thumb, fingers and wrist keep a continuous outline and shaft relation. No isolated endpoint snap or extra wrist revolution was seen.",
+        "evidence_pages": [
+          10
+        ],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_tilt.fp/manifest.json",
+        "manifest_sha256": "a455f92b5762c5da81ee6c507241615fe00ea1af9afde7e6529d5f88dfbf7610"
+      },
+      {
+        "id": "swing_tilt_raw_load_delivery",
+        "clip": "FP_Pickaxe_RightGrip_Swing_Tilt",
+        "view": "fp",
+        "time_range": [
+          0.516666666666667,
+          0.666666666666667
+        ],
+        "severity": "info",
+        "finding": "Raw sample 31 confirms the stronger rightward lean of the shaft during stage two and that the visible thumb/fingers lean with it; much of the main wrist and all of the support are cropped. Raw sample 40 shows the main wrist and hand after the quick straightening into the forward delivery. Its exposed silhouette is continuous and does not show a narrow squeezed section or spiral twist. Full hidden palm contact and elbow/sleeve geometry remain outside this FP review.",
+        "evidence_pages": [],
+        "manifest_path": "/workspace/scratch/2251eb516642/revision11/runtime_review/final/pages/fp_pickaxe_rightgrip_swing_tilt.fp/manifest.json",
+        "manifest_sha256": "a455f92b5762c5da81ee6c507241615fe00ea1af9afde7e6529d5f88dfbf7610"
+      }
+    ]
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "observations": [
+      {
+        "scope": "Both final live FP Tilt swing sequences; all 26 pages / 204 frames opened chronologically in matching pairs.",
+        "status": "no_visible_blocker_in_reviewed_scope",
+        "detail": "The new right hand visibly occupies the upper shaft station and remains the dominant visible hand through preparation, forward strike and return. Tool and hand trajectories progress coherently; no gross arm collapse, sudden wrist reversal or abrupt skin-material flash was identified in these fixed-camera sequences. Return to idle is visually continuous.",
+        "limits": "The lower support hand is mostly outside the FP image, and both hands leave the bottom of the view through part of follow-through. This pass cannot establish occluded palm/shaft contact or full elbow/cloth clearance. The new FP tool is visibly closer/larger as approved; the comparison does not claim exact original screen placement."
+      },
+      {
+        "scope": "Both final FP redraw sequences; all18 pages /138 frames opened in chronological matching pairs.",
+        "status": "no_visible_blocker_in_reviewed_scope",
+        "detail": "Hands lower below the first-person frame and the opposite leading hand returns progressively. The commit retains the outgoing pose at frame30; the tool approaches or recedes across frames31–36 and rises into the selected idle hold without an identified one-frame whole-tool jump, visible wrist reversal or gross arm collapse. Skin highlights remain coherent across the reviewed visible hands.",
+        "limits": "The pickaxe head stays visible while the hands are lowered. The approved differing tool setbacks produce a perceptible apparent-size change over the blend; this is not an entirely offscreen tool switch. Occluded or out-of-frame palm/shaft contact cannot be evaluated from FP pixels."
+      },
+      {
+        "scope": "Both final right-side third-person redraw sequences; all12 pages /138 frames opened chronologically, with four full-resolution raw reopens at frames36/37.",
+        "status": "no_visible_blocker_in_reviewed_scope",
+        "detail": "The held tool remains upright while the two arms progressively exchange their upper and lower shaft stations. The incoming right arm and outgoing support arm keep continuous visible elbow and wrist outlines, and both directions settle into the opposite held idle. No gross arm collapse, sudden wrist reversal, visibly detached whole tool or one-frame whole-tool jump was identified. The exposed sleeve surface does not show the prior protruding skin strip in this transition view.",
+        "limits": "The hands overlap in right-side projection around frames36–38. The raw reopens preserve the whole-tool silhouette but do not reveal all hidden palm, finger and shaft interfaces. This is a visible-motion judgment, not a zero-contact assertion. The earlier front preflight is separate historical evidence and contributes no frames to this final count."
+      }
+    ]
+  }
+]
+
+The exact aggregate limitations are:
+[
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "Forearm and elbow contours remain noticeably angular. Triangular lighting facets and pointed elbow corners persist; acceptance does not claim anatomically smooth volume."
+  },
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "Back views obscure most palms and shaft contact. Side views partly occlude the other hand; there is no visual proof of clearance at hidden surfaces."
+  },
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "The pages crop the central body at native scale; the raised tool head sometimes leaves that page crop. The review scope is visible arm and grip geometry. The selected raw reopen includes the full camera frame."
+  },
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "Ordered source poses showed no obvious isolated broad one-frame arm flash in this scope, but pose-dependent highlights and shadows remain. Live playback and transitions are covered by the runtime reviewer."
+  },
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "No gross wrist reversal, detached arm island, broad sleeve breakthrough or local arm disappearance was identified in these reviewed pixels. This does not imply zero mesh intersections or zero corrective residuals."
+  },
+  {
+    "reviewer": "/root",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_swings_root_visual_review_r11.json",
+    "limitation": "Original and experimental baseline sparse previews are excluded from these final coverage counts."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "FP compositions expose the right main grip clearly but place most of the left support hand, both elbows, and the shirt/cuffs below or outside the camera crop. This FP review cannot establish their hidden contact or sleeve clearance."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "TP stance review covers five selected phases in each of four cardinal views, not every intervening TP stance frame or arbitrary camera angle."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "This is source-pose inspection with independent nonlooping Animation copies used only by the capture harness so exact loop endpoints can be sought. It does not by itself validate live runtime interpolation, blending, input timing, or real-time frame cadence."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "No visible broad brightness pop was found in the assigned ordered FP source sequences, but this is not a proof of lighting stability under all rendering conditions or of geometric morph-normal parity."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "Low-poly faceting, occluded surfaces, subpixel contacts, and numerical conservative contact records are not converted into an assertion that all mesh intersections have been eliminated."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_locomotion_tp_stances_visual_review_r11.json",
+    "limitation": "FP actions and TP swing timelines, other than the separate additional back-view review assigned afterward, belong to other attributed reviews and are not included in this report."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_back_swings_visual_review_r11.json",
+    "limitation": "The back camera hides most palm/shaft contact and much of the forearm surface. Acceptance here is limited to the visible rear silhouette and exposed sleeve/arm regions; front and side evidence must establish the other surfaces."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_back_swings_visual_review_r11.json",
+    "limitation": "These are source-pose frames at 60 Hz, not real-time live transition/blend footage and not a continuous all-angle collision proof."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_back_swings_visual_review_r11.json",
+    "limitation": "Shirt normal interpolation, subpixel/hidden contacts, and low-poly faceting are not proven absent by this inspection. Existing numeric contact records remain measurements rather than being replaced by a universal clearance claim."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_back_swings_visual_review_r11.json",
+    "limitation": "The third-person page crop concentrates on the upper body; four raw reopens were used to inspect complete source framing at the identified load and follow-through poses."
+  },
+  {
+    "reviewer": "/root/grip_author_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_tp_back_swings_visual_review_r11.json",
+    "limitation": "Tilt-style back coverage and the front/left/right views are outside this report and belong to root's attributed review."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "The first-person camera crops most of the left supporting hand and both elbows/cuffs. Full support-palm/finger contact, elbow shape and garment clearance are not accepted by this report and require the separately assigned third-person review."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "The far-right load in the Right and Tilt styles crops part of the main wrist. In all three swings the right hand drops completely below the bottom crop for part of the follow-through; those hidden surfaces cannot be visually assessed here."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "Visible small angular hand shading facets remain, including the outer main hand and the partial lower support in the default load. They are not claimed fixed. The historical fine elbow shading seam is also not claimed fixed by this FP review."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "All assigned 60 Hz source samples were inspected as ordered still images. This does not prove absence of temporal flicker during live playback, correctness of input-driven transitions or blending, or clearance between sampled times."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "Most source images were inspected at their original tile dimensions on JPEG contact sheets. Nine selected original PNGs were reopened for detail. Hidden finger pads and the back side of the shaft cannot be certified for geometric contact from these views."
+  },
+  {
+    "reviewer": "/root/grip_review_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/final_fp_actions_visual_review_r11.json",
+    "limitation": "This report includes no visual ownership of the retained R10 clips, FP Idle/Walk/Run, third-person clips, live/redraw captures or control/UI screenshots. Historical prototypes and diagnostic captures contribute zero final pixel coverage."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "The pickaxe head remains visible while the first-person hands lower below frame. Differing approved tool setbacks cause a perceptible progressive apparent-size change over approximately frames31–36. This must not be described as an entirely offscreen tool switch."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "The lower left supporting hand, proximal arms, elbows and shoulders are partly or mostly outside the first-person image, and both hands leave the frame during part of the swing follow-through. Hidden palm/shaft contact and full sleeve clearance cannot be accepted from those pixels."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "Right-side third-person redraw projection occludes portions of the two hands near their exchange. No zero-contact or finger-by-finger clearance proof is claimed. Separate historical front preflight evidence is excluded from the final coverage counts."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "The ordered 60Hz live captures showed no identified abrupt skin-material flash in the visible hands at this fixed camera and lighting. This does not establish lighting stability for every camera, renderer, environment or subframe."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "The live review covers Tilt swings and the named redraws. Source-pose action, locomotion and stance review belongs to the other attributed reports; this report does not imply extra source-pose ownership."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "The comparison movie encoding was numerically verified and all its underlying captured frames were visually reviewed through pages. Direct viewing of the encoded movie is not claimed here."
+  },
+  {
+    "reviewer": "/root/grip_runtime_r11",
+    "report": "/workspace/scratch/2251eb516642/revision11/review/runtime_live_visual_review_r11.json",
+    "limitation": "UI screenshots establish visible labeling and captured selection/queue state only. Behavior checks are reported separately in runtime_result.json."
+  }
+]
+
+Runtime controls: 62 recorded checks.
+{
+  "independent_swing_style": 6,
+  "stance_route": 8,
+  "crouch_route": 2,
+  "grip_action_queue": 6,
+  "jump_queue": 1,
+  "crouch_queue": 1,
+  "stage_route": 36,
+  "equipment_scope": 1,
+  "other_weapon_preference": 1
+}
+
+The comparison video pairs freshly captured Original/new-grip live swings.
+Its source clocks and frame identities are verified before composition.
+Repeated frames used for slow playback are not additional captured poses.
+The video and contact sheets are composed from actual Godot pixels.
+
+PROTOTYPE HISTORY
+-----------------
+Earlier sparse prototypes were rejected after visible sleeve/skin defects
+were found in side views. The changed support-elbow route and dedicated
+sleeve basis were introduced to address those contacts. Their retained
+reports identify the exact images opened and the defects found. Prototype
+capture totals are not included in final capture/review totals. Some
+completed sparse capture sets are included for manifest integrity; their
+inclusion does not imply every prototype image received a visual review.
+
+FROZEN IDENTITIES
+-----------------
+glb_sha256: 0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8
+runtime_sha256: 3c51c879cc6295cfbc6647322fa692e58a815cd3c7bc774ab7a6657cf20b71fe
+project_sha256: 1b460ba43a6510ff5fb71752c7a80a2ead5c47491a78b8f70b171d367d276e1f
+contract_sha256: 8331b50ea0820b178959fbf6e06c33760e4883ba0662113ae9acaebdc6a76a37
+native_sha256: 8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3
+authored_cache_sha256: 2c1aac30f2c55af47983c43cda60e11d2d59e0468e5923477a8bd353621736dc
+sleeve_basis_input_sha256: 62582578415f9b24b4a8f17990c905a464965baed3de4492cdee98b9dbdaa6d1
+wardrobe_contract_sha256: ebbd3df2f33111ae4d003af1cc5fc2854ab5b71c1fd7bbd138cd80a95cd12ccb
+runtime_result_sha256: 04579845a3ae3bf5c0e872d89ad71b65a694d8bf80538eacf632ce18f11a0518
+final_visual_review_sha256: 936011376234e72cc5df7bc55ff4b7c14a22063b6e8ff2525eb2c294c0fcd4ae
+independent_glb_audit_sha256: 65473da114f3ee5ad140a71c4d18dc13799fb4cde3861c60bbd6017601ec83c3
+native_author_report_sha256: 6ccdb0a4a5c43ffa5ae6d3c8e4dbc7051e6676220d0cdc841154691d0ac3c4fe
+saved_native_glb_comparison_sha256: 874e88f095a75ff8522770a05573dcb5cd0370526600d5c69be2414fb3835fae
+glb_author_report_sha256: 2d5f7f6c9d950e425ad41783211b0029ce8852ba9865b2d3f7d0cc12c5ad12f8
+time_normalization_report_sha256: 7187b917a59f289ff10853c87099ac8ebb922e42e908624b0d250ea8a9b43fc2
+
+The standalone GLB and the project asset are required to have identical
+bytes. Packaging verifies every selected ZIP member by hash and CRC,
+and every member of the lossless evidence tar.xz by its original hash.
+All selected evidence is retained. Each of the five deliverables must
+differ from its R10 counterpart.
+A separate saved-file readback follows packaging; the chat reports its
+outcome after those saved bytes have been checked.
+
+FILES AND REPRODUCTION
+----------------------
+FirstPersonLab.r11.zip: Godot project, assets, scripts and included evidence.
+Human.r11.glb: the same model bytes used by the project.
+Human.r11.blend: editable source, new actions/shapes and packed textures.
+Human.r11.review.mp4: Original/new-grip live comparison.
+R11.validation.txt: this record.
+
+See README.md for use and source_tools/README.txt for authoring/review.
+validation/evidence_paths.json maps original recorded paths to included
+files. Extract validation/review_evidence.tar.xz into the project root
+to restore the raw captures, pages and detailed reports under validation/.
+The project, this overview, the index and comparison video are directly
+accessible. Historical R10 baseline image references remain external to R11.
+Only original project code, Python standard library, Blender's built-in
+API, Godot, and installed FFmpeg were used. No external asset/package was
+added. The project and original author-created assets remain CC0-1.0.

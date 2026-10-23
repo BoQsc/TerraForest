@@ -1,0 +1,34 @@
+BG5 Zombie Lab — CC0 1.0 Universal
+
+SPDX-License-Identifier: CC0-1.0
+
+To the extent possible under law, the contributors dedicate the newly authored
+project code, test scene, zombie animation trajectories, material modifications,
+mesh partitioning and cut-cap geometry in this delivery to the public domain
+under the CC0 1.0 Universal Public Domain Dedication.
+
+You may copy, modify, distribute and use this original content, including for
+commercial purposes, without asking permission. Attribution is appreciated
+but is not required. The content is provided without warranty to the extent
+permitted by law.
+
+Full CC0 1.0 legal text:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+INHERITED CHARACTER PROVENANCE
+
+The character is based on assets/Human.realistic.glb in the user-supplied
+FirstPersonLab.r3(1).zip. That source identifies its content as CC0-1.0 and
+states that its base geometry and textures retain the provenance of the
+original user-supplied asset. This derivative retains that provenance; this
+dedication grants only rights held by the contributors to this delivery.
+
+Source GLB SHA-256:
+667f7746d21cd19db6b2c796a2e9b741269312265cbdf7f14a8e3c799f7914e2
+
+No external models, texture packs, animation packs, motion capture, add-ons or
+third-party Python libraries were added. Blender's bundled APIs, Godot's built-in
+features and Python's standard library were used for authoring and validation.
+
+Godot and Blender are separate software products. Their licenses continue to
+apply to those applications; neither application is distributed in this archive.

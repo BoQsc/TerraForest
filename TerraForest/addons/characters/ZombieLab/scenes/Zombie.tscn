@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/zombie.gd" id="1_runtime"]
+[ext_resource type="PackedScene" path="res://assets/Zombie.glb" id="2_model"]
+
+[node name="Zombie" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_runtime")
+model_scene = ExtResource("2_model")
+behavior_enabled = false

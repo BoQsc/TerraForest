@@ -1,0 +1,3914 @@
+{
+  "reviewer": "root",
+  "status": "actual_visual_review_complete",
+  "passed": true,
+  "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "source_sha256": {
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "assets/Zombie.r4.glb.import": "c7d7a6cabb795679005321b5693ae1caf172712ca7889b0060830fe8574dfa57",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "tools/capture_behavior_frames.gd": "304848904881e5d64fb314535d0bd274df84f32e265698828e9429f1230491d5"
+  },
+  "source_blend_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+  "capture_manifest_sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346",
+  "capture_partition_sha256": "a7a3fa89300a7f687f3fd2bfda0fe015c69f4d1dd5f6a9a759bd5facb0d0d6df",
+  "clips": [
+    "Zombie_Crawl_Idle"
+  ],
+  "authored_integer_poses_reviewed": 121,
+  "views": [
+    "FRONT",
+    "RIGHT",
+    "BACK",
+    "LEFT"
+  ],
+  "view_poses_reviewed": 484,
+  "atlases_reviewed": 21,
+  "per_view_resolution": [
+    384,
+    448
+  ],
+  "method": "Every row of every listed final-model four-view atlas was actually displayed and visually inspected. The exact two-draw captures are distinct from obsolete single-draw scout images.",
+  "blocking_visual_defects_observed": [],
+  "review_groups": [
+    {
+      "set": "body",
+      "clip": "Zombie_Crawl_Idle",
+      "first": 0,
+      "last": 35,
+      "observations": "Every row viewed from front, right, back and left. Low prone support retains distinct bent upper arms and forearms; small torso/head breathing motion keeps the idle alive. The shirt drapes along the torso and the trousers trail coherently over the remaining intact preview legs. No new visible skin poke, collapsed elbow, disconnected wrist or abrupt silhouette change was observed.",
+      "atlases": [
+        {
+          "file": "Zombie_Crawl_Idle.000-005.png",
+          "sha256": "0dad8dc3b68073023ba36ce35fd7d0c4164e7952aea8dba3446060e0b2d2af11"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.006-011.png",
+          "sha256": "e06770c48f867f39d99727f41cfd23147921f9130c211840d7c71dff7241ceaf"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.012-017.png",
+          "sha256": "5e48e034063e8420d116512847d94f7a33b3034b6de3559fd71867bffbd9caf6"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.018-023.png",
+          "sha256": "5355de8e3869d7aaffffe5aadc11711d839a7213ac11056d51d2586f1659f0c2"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.024-029.png",
+          "sha256": "2bf0738bc6f30d172a58b1cffd6860860eeffb6ba37c99e1c938a4b027c2e177"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.030-035.png",
+          "sha256": "40f888c36310dec6135aa4b7eb5738ce3b2d3338f20c6025537cf0200be0d912"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Crawl_Idle",
+      "first": 36,
+      "last": 71,
+      "observations": "Actually viewed all six atlases, all four camera columns and every displayed integer frame. Low prone breathing produces small coherent shoulder and head movement. Upper arms, elbows and forearms retain distinct proportions; shirt, waist and trousers retain their silhouettes without visible skin breakthrough, detached pieces or collapsing contours. Trailing legs are intentional in this intact-limb clip preview; actual limb loss is covered by the live demo.",
+      "atlases": [
+        {
+          "file": "Zombie_Crawl_Idle.036-041.png",
+          "sha256": "4c6729702255e7eadd417cd99bdb7ba89434af671c9c014154dc25fbf7b0fc0a"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.042-047.png",
+          "sha256": "38e52c3a4a2fbdbb5e12d956eed4d7b8b14bd16c05e7b22358fcbcbf45168a1a"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.048-053.png",
+          "sha256": "9eca0b8d62a51dc60d07d1c2a228ec0883393af031da607fa250d3bb719f49a9"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.054-059.png",
+          "sha256": "5903e2f746473ee5a38c93fc2e6d51bf0a41f515d8f322391c789e4052123b22"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.060-065.png",
+          "sha256": "f274c4ed8472f9b22744f7011675641f2c02ad1c43ef63d5dea29ad70ff168c2"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.066-071.png",
+          "sha256": "99999ee093d6fca275d55edbea9fd4928830e2a8d59167c12f52b5d7263aa7e9"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Crawl_Idle",
+      "first": 72,
+      "last": 107,
+      "observations": "Actually viewed all six atlases, every integer frame and all four camera columns. The low chest and head drift continuously through the second half of the breathing loop; palm, elbow and shoulder alignment stays coherent. Shirt hem, trouser volume and limb lengths remain visually stable, with no visible tear, skin breakthrough or disconnected joint.",
+      "atlases": [
+        {
+          "file": "Zombie_Crawl_Idle.072-077.png",
+          "sha256": "accd3803afa5f88d2d9e5de67ed77028c12bd86d443bf7c090ae4ef774fd4d86"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.078-083.png",
+          "sha256": "e9d87c6f4a32f97beeef8989433fe68fd97842e00e307edf4239178c8bc1bd53"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.084-089.png",
+          "sha256": "898cab6d4ffa64d22d6cf00d097cdbbdb6528c4cff53d322f614059b96624de9"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.090-095.png",
+          "sha256": "29ee1ab1dd587e4a0e68e0189c294642879092c92b28817fbdc0ce09c51a5737"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.096-101.png",
+          "sha256": "a11fdc401d87aed4a905ccbeae8bab592a75bfd832fd863e3020cff2372691e9"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.102-107.png",
+          "sha256": "425d059b3d60e5a4705845d73ad092daba608de262fde1491f9554bc79d6b373"
+        }
+      ]
+    },
+    {
+      "set": "body",
+      "clip": "Zombie_Crawl_Idle",
+      "first": 108,
+      "last": 120,
+      "observations": "Actually viewed all three remaining atlases, every integer frame and all four camera columns including the true endpoint 120. The breathing motion settles smoothly back into the initial prone posture. Elbows remain anatomically defined, wrists stay seated, and shirt and trousers keep their silhouettes without visible holes, skin breakthrough or sudden garment collapse.",
+      "atlases": [
+        {
+          "file": "Zombie_Crawl_Idle.108-113.png",
+          "sha256": "91042f277365a117a18c9cf505c828f3ca5f3f707548786782378ffa635440ba"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.114-119.png",
+          "sha256": "0d2bdaf669d5958d47582d7630871526ebab139419f0b6751cf56d300c510984"
+        },
+        {
+          "file": "Zombie_Crawl_Idle.120-120.png",
+          "sha256": "09c8bb61f9f25bee35c83362444fa103588ebf81f370ca1730dccc2dbef34f42"
+        }
+      ]
+    }
+  ],
+  "frame_images": [
+    {
+      "actual_time_seconds": 0.0,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5a28e4663361a2110bc1f44f8a1eb06713aab61b8b413c35eb66c26017611dd0",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.000.png",
+      "finite": true,
+      "frame": 0,
+      "image_sha256": "48d69384c003230b3abace4f622439e4fa84d127b9bf25926d8ded4885b15b8e",
+      "render_frame": 412,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.0,
+      "two_draw_settle_verified": true,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.0166666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "7180e348142ae63a56341548fd377655cbf83bc1e4f6d2c096847f8bd322e45c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.001.png",
+      "finite": true,
+      "frame": 1,
+      "image_sha256": "dea3cea604173b84a3881c0a086e2450d913385b5d9359654bcc8c9bf90cd69a",
+      "render_frame": 414,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.0166666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.0333333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "fa3882d513c04e101bc6d07be489a5f38a5ff8e625db62138cef7caf5a0261ca",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.002.png",
+      "finite": true,
+      "frame": 2,
+      "image_sha256": "a99ebeeb20479c3cbebb8f0d2d1537084d7dee88d2c0c479af1be0da05fbf9bf",
+      "render_frame": 416,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.0333333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.05,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "c40fc11d920300d6d5d11ab037be1b110c06c825662963afecee2b33776c6050",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.003.png",
+      "finite": true,
+      "frame": 3,
+      "image_sha256": "7f11db436487e3b454591fb4754f2a7cd1c3675d915662faac4f21921a9b2474",
+      "render_frame": 418,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.05,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.0666666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "7b3116d5d511f922071b9edda7a7e005cd93d51cfb99023e94613189fce015e8",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.004.png",
+      "finite": true,
+      "frame": 4,
+      "image_sha256": "90d32476d2e600ce24ea9ecca745f9f35e0ae967678e69e6b6cc87302163bfca",
+      "render_frame": 420,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.0666666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.0833333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "93a5bf515dabc4990bf7b98297b0c3ef251a2f32d359f083ca2708b023fd73a9",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.005.png",
+      "finite": true,
+      "frame": 5,
+      "image_sha256": "09f38adc152cc98e9041f9921f104c462df640615d690f476b64ddb5fa8bebf8",
+      "render_frame": 422,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.0833333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.1,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f178cc2d994b59a1c476005bdfcfe308238a796b9b65f7c9de3b14a97c0bed80",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.006.png",
+      "finite": true,
+      "frame": 6,
+      "image_sha256": "ee8865a82daaa5c8068feee2d6eaff625bf3675c8f2c29615dbcd271af672c13",
+      "render_frame": 424,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.1,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.116666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ec6e7e511af05844fe35faca32247fa1a56bd16ab81f116a839b3b5bcbbeac1d",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.007.png",
+      "finite": true,
+      "frame": 7,
+      "image_sha256": "30b35ad6028b049baa6f7d61ec99bc989aecda46b3d035530611212c89344b6e",
+      "render_frame": 426,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.116666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.133333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "23d49845caa09d6f4a7d02587255e6dad0917740e368ccbace0d81d571cdee78",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.008.png",
+      "finite": true,
+      "frame": 8,
+      "image_sha256": "ac572367161a77b455c72fafc8884bd08b6d531315f212e808522d5ff5362076",
+      "render_frame": 428,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.133333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.15,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "6e58657a473172debe7e0a6ec8bcfdba34299a797669c16953490a845d104926",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.009.png",
+      "finite": true,
+      "frame": 9,
+      "image_sha256": "25892fbf71597877884075560460ba2cc9f6ff0d53dd1a218b974cb4a0a03307",
+      "render_frame": 430,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.15,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.166666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "1185c07c6f180317c15c13fd731078bdc18e242be9bcf3364552112d7f324a18",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.010.png",
+      "finite": true,
+      "frame": 10,
+      "image_sha256": "449999eb0cc0580188474e96b9cdd99c11aa7bcb038788cd6f53a09e16bce70c",
+      "render_frame": 432,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.166666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.183333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "daa1b9affeaf342ad3a66b2d2343a10f4f78262cf98cfb77dc68c792bea83575",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.011.png",
+      "finite": true,
+      "frame": 11,
+      "image_sha256": "1ef999ced3b421df2f448268651423ddd7209c5977afa50ef0656cbcc02edcd2",
+      "render_frame": 434,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.183333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.2,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "a5b41f09cfe646dd6db7b2b797c71769e024c11a246af7b1a0358233ca4b6497",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.012.png",
+      "finite": true,
+      "frame": 12,
+      "image_sha256": "138f765857ca523e1d970436ef90ec3294161c82ea7773c667925583db2c856f",
+      "render_frame": 436,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.2,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.216666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "a3d50a0cbe5b877e66b4852cdc5a1a587b4aa06108d0cc249b240978cb08200f",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.013.png",
+      "finite": true,
+      "frame": 13,
+      "image_sha256": "8f75908f6febaff694a53ef71b59e243a0d399320786cc493cbdd107f1ff0e65",
+      "render_frame": 438,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.216666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.233333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "db63f70780b2c62b439beb311f094deaf00e3c2b4d4456b0fbcdf4f2de76271c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.014.png",
+      "finite": true,
+      "frame": 14,
+      "image_sha256": "ad7b671f14f1cab042d7e20892f0c0af8bfe14be5f1966bec82c094b285d0605",
+      "render_frame": 440,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.233333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.25,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "11de7437c9bdfa813bd58b6fed754ddfeaa9fd0d501a9fb488d2609f2f3e7afd",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.015.png",
+      "finite": true,
+      "frame": 15,
+      "image_sha256": "ff1af1577beebaa2070731ace0d29eb7c5897d56a121b5f20600c0e9ff1ca1c0",
+      "render_frame": 442,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.25,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.266666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5a38db3f3f9b0732b0fe3e76563b49f1630f1f602694e6ad7ba897645e94cac4",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.016.png",
+      "finite": true,
+      "frame": 16,
+      "image_sha256": "7bb528bdf274e37ab537080175cd975b33588e696449c8df8f4e8f23dcddda75",
+      "render_frame": 444,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.266666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.283333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f78c2255a10dfa9b3e7f3c2a4f5558913db9a264fba69d25cdd9f1d2889ea51e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.017.png",
+      "finite": true,
+      "frame": 17,
+      "image_sha256": "a73cdc5c8eef2ea1f85c1b9a05609aa3fc7f5f856ecf725981f0f5155ccb5f67",
+      "render_frame": 446,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.283333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.3,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "87c78bd9852a5a48a6f8ecfc1f56c681d363fa84dbe67d5cccacd5f070e14e09",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.018.png",
+      "finite": true,
+      "frame": 18,
+      "image_sha256": "19e590de762e503fb9384c9d0b51e9adde0ed10e975759aea47ae56d428109bc",
+      "render_frame": 448,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.3,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.316666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "cdd08269e589968f9b951ff6830f9b2b3ef10dfff348abce05e462849b759acc",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.019.png",
+      "finite": true,
+      "frame": 19,
+      "image_sha256": "e303f4580855b7a440736fd8f354f38e1989daabedc49a684dd38b923891215f",
+      "render_frame": 450,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.316666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.333333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "9e0f3313fca00e260769dab66b31e45ed1213385022db5f2441917c21a30d2cd",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.020.png",
+      "finite": true,
+      "frame": 20,
+      "image_sha256": "03974792a36d7b120b7b8b3e626d2a547466fa24696ec98a40174f0e695024ab",
+      "render_frame": 452,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.333333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.35,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f84bd57789fbab08a5011d53a059c3a6b44cc23ff164709f64738d2712f1be0f",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.021.png",
+      "finite": true,
+      "frame": 21,
+      "image_sha256": "e4242e9b9174a8e2f866309010ef5eef7f8c2b37f1757817c74655edebef4a3d",
+      "render_frame": 454,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.35,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.366666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "4c9b1b57f7b93203e2a583e76105964a1037221280af13a04b5cfcfc3c470a58",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.022.png",
+      "finite": true,
+      "frame": 22,
+      "image_sha256": "596290e3168bc3b1b47f60cfffe0e13459ce82c6ea97f02ce250048d3647f2ab",
+      "render_frame": 456,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.366666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.383333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5bc668b92996e179deb796087cf51a6840dfa423a36200d252b4ab995fcbcd98",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.023.png",
+      "finite": true,
+      "frame": 23,
+      "image_sha256": "e3924698295baa92d2d52624b0ce852be2d0e5b99612b5042365eecde91d5429",
+      "render_frame": 458,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.383333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.4,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.22940368950367
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "a63e3a719ea41febe8a3e050d2ea4ea0a24b956d3d5b4b24d15b80bcbec46fd2",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.024.png",
+      "finite": true,
+      "frame": 24,
+      "image_sha256": "5b35f6284ab520e697744171587ad0aaf112bb28d931e526678adacd5bdb10f7",
+      "render_frame": 460,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.4,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.416666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "efeead560bca28ce6b4d49633b24351b9151581a9049a144cede50e98b72fefd",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.025.png",
+      "finite": true,
+      "frame": 25,
+      "image_sha256": "f243f48d2f37f02b7b8fb56dc285372b36350e4c6a2e22f401f268dd00f28627",
+      "render_frame": 462,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.416666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.433333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "c0c5113fe4d1bb1481295d420051f7b9318472e2823263fb0d002193b0d21bcc",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.026.png",
+      "finite": true,
+      "frame": 26,
+      "image_sha256": "3d6ae39f759039ce4ebf2dae3c174d43c48611677b34991ca97dbbcf98c027f6",
+      "render_frame": 464,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.433333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.45,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "0f823a03f98d642c7b5182af8a37330c64ad5940b0a68ee4021f0c9b888d7b12",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.027.png",
+      "finite": true,
+      "frame": 27,
+      "image_sha256": "ddbaf19cc940c30cfe9386781003afaa6acdcbe757105f716721aa073000844b",
+      "render_frame": 466,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.45,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.466666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "6ca3376ec8cdfeb8b81b0ee9f4534669ad2bd92aff04d5ce17c64ce7e4166077",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.028.png",
+      "finite": true,
+      "frame": 28,
+      "image_sha256": "9657070ae9b828e4239b53611266be7e554f6aac2b755bc000a2ed00bc13631e",
+      "render_frame": 468,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.466666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.483333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "4fe33de09558f10c098659690adb9c070b89e17b471c3c4548daf29887d8ec49",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.029.png",
+      "finite": true,
+      "frame": 29,
+      "image_sha256": "b49ca1d034a59378031bca11bd394f2dbaf02bef59c470d26b54936c296080ff",
+      "render_frame": 470,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.483333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.5,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "eaa7c8caf639d24257dba6cc64d9dd2ae97a81ab2a2b772232e04d45776b24aa",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.030.png",
+      "finite": true,
+      "frame": 30,
+      "image_sha256": "2f2c4255abcb230b907df8df1ae5e1951bb5bb765ff73b39e7a387b459e4a8c2",
+      "render_frame": 472,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.5,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.516666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "4e88d584c91fb6bc3010fe7505fe5c42a03cc8d6d34928c0bbe4a3baf401b6dc",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.031.png",
+      "finite": true,
+      "frame": 31,
+      "image_sha256": "48885afb63625a4dc80ebce552492facac1a205fa1c67c698de1eaf91d1cf146",
+      "render_frame": 474,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.516666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.533333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "deaac8a39df6a3057c3179899e8a29a6307d07a60e14741d76c438512ebd038a",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.032.png",
+      "finite": true,
+      "frame": 32,
+      "image_sha256": "df824703af866ba92964ed7bf597c84ecede61bba89590c080a8431cf3c9732e",
+      "render_frame": 476,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.533333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.55,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ad620dc8c23a2ca4ac3f08e8d5d5907e7ef6b23f6e72e0c36e68193bc1db5798",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.033.png",
+      "finite": true,
+      "frame": 33,
+      "image_sha256": "d551a3698f22e3134abf86c3c1d5dac95f6c4eb5dbd72cc2995c7bad368b6f17",
+      "render_frame": 478,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.55,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.566666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "32887969587a6bc001a7929501dad48309007aacfe4aec3b8425c5e46013ab52",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.034.png",
+      "finite": true,
+      "frame": 34,
+      "image_sha256": "e0679231706d9133bc6b0b11aa3d49087c470c6e73781b29d08382b7705d2161",
+      "render_frame": 480,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.566666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.583333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "114398dcc96ca3e5f989968381180de6915537ca3869b5884b9360d5da089be9",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.035.png",
+      "finite": true,
+      "frame": 35,
+      "image_sha256": "bbf461e4f997db714b3658f2f691e193e3f0c871b92a6511a94db1598cb81b59",
+      "render_frame": 482,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.583333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.6,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403674602509
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "2a037b965737d89c12d2bdc031dff8aa04ed37cfce8b9429fa0c15f4a64bf08e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.036.png",
+      "finite": true,
+      "frame": 36,
+      "image_sha256": "d868cbd17ebdf24305fa5ea8570113bc76e2037ccea11f4eccd22965671543ed",
+      "render_frame": 484,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.6,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.616666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "0a4c63d5e58367fea3f30601fe30e21016ce0cd7456ba538a9029e2242694bbf",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.037.png",
+      "finite": true,
+      "frame": 37,
+      "image_sha256": "2ff0357971825762dbb8a7038fdaa93dbf8d02936362b216c88351a438bedf4f",
+      "render_frame": 486,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.616666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.633333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "536c32069b53f1d736871be6d538b5f83b518141ca523067fbba34ab5073bc02",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.038.png",
+      "finite": true,
+      "frame": 38,
+      "image_sha256": "ea1f803c828afd31a8747d36dd42353fea76398b90e7fecebbc616605db65689",
+      "render_frame": 488,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.633333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.65,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ea0aa0ff76c62dc8a264609609059817ef30ec8dafcf4a6793504329f33c66b9",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.039.png",
+      "finite": true,
+      "frame": 39,
+      "image_sha256": "56dbc3b67a03e01eb025e0254949913c35ebf30ae6c82ab335a964c4df7e7c8d",
+      "render_frame": 490,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.65,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.666666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "15038a1598e8702239bbf5614fc09883b409329a3ec8b07241432cf4876950e9",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.040.png",
+      "finite": true,
+      "frame": 40,
+      "image_sha256": "ac1e9d97389a90600a3f14fe1add18e0517f1d610cf0913fe5d48f8ec68a01ea",
+      "render_frame": 492,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.666666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.683333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "7f63b98a2c33dafeabcbfa756d1c955e4a1884bae24ec893055af9b8f03e4e71",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.041.png",
+      "finite": true,
+      "frame": 41,
+      "image_sha256": "4234ba8724b992ab099ee7800c80e91f81dd68758a371f72a01f67c51c44af17",
+      "render_frame": 494,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.683333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.7,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "9748affc548495c12962ad9ffeeeaba795de9482dc0f65d3123a59dfaeecf9cb",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.042.png",
+      "finite": true,
+      "frame": 42,
+      "image_sha256": "443b5ad0d8be3e8a58a3227759b08999148965e6f9733a24fb72000b8b3ea040",
+      "render_frame": 496,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.7,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.716666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278375029563904,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5683254282289b82772b23a2f967afd4abffc39f066aefb921ca60e1b8c51758",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.043.png",
+      "finite": true,
+      "frame": 43,
+      "image_sha256": "ec246fa4985ae53e21b8e44e5427e1f2593226ecc358c8237b9c65a06e77ac5f",
+      "render_frame": 498,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.716666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.733333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "37c6ed7dd7e44296492b38a7cda3be4665dd24a989b104ad2afb1342ceb90f1e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.044.png",
+      "finite": true,
+      "frame": 44,
+      "image_sha256": "3365f80fdcb11892f7d56e0ee396831ffd7ecd04517414d40e8bbd6daaa5fd16",
+      "render_frame": 500,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.733333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.75,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "854f3d4d9ef184841f7780f19ffe5aea00c659c7ba935c567dbf709c2d3da329",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.045.png",
+      "finite": true,
+      "frame": 45,
+      "image_sha256": "7747deaefe52ae55d5b596492d43c8540c036c1a7e5313956b94f7f0e4bde9bc",
+      "render_frame": 502,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.75,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.766666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "81996fdce9ec8e36e6387e984ae2d1bafe7cf5302a3a1104e9c4432e5e17cbe7",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.046.png",
+      "finite": true,
+      "frame": 46,
+      "image_sha256": "33fc741322534509aaaf4b18c51081633a11abe787dadc0daf4c93cd430b0b1b",
+      "render_frame": 504,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.766666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.783333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ef18349d5e6c1d0a667561150c5e4d2ff969741b11c712206e24b7ce5767f9ad",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.047.png",
+      "finite": true,
+      "frame": 47,
+      "image_sha256": "3195c5e548bbdec52bd5b5c810e9839c5e0646baa8de0f697435e0513fe604ca",
+      "render_frame": 506,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.783333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.8,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "2ca4c1ac060d5b0efa9364adb03597a6af0a103061992c2face075de48d4a36e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.048.png",
+      "finite": true,
+      "frame": 48,
+      "image_sha256": "d49bc45e5ab26d14edae902d53f412f515bb6bd8f39b82848ddb4618d1c035a9",
+      "render_frame": 508,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.8,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.816666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "51b2d0009f6717c16e103892713be9abb9293d9c1ed46e796eb9096a71bc95d6",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.049.png",
+      "finite": true,
+      "frame": 49,
+      "image_sha256": "571630f2ec16885770994c280691c4744a87b57bb7982b69b5c7600e59d4e44a",
+      "render_frame": 510,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.816666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.833333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "8809f5cdb368aed76e62c94f65745764e0f45e9298b12ca792761385492059ee",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.050.png",
+      "finite": true,
+      "frame": 50,
+      "image_sha256": "95e3997b57f684a96f0ca8701da936a8af493830b9691823cbef4c06750e3e0e",
+      "render_frame": 512,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.833333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.85,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "8e0a6874533932c5bf26e80f442366f1f0c45de1351772da8f5ea7ef076085e8",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.051.png",
+      "finite": true,
+      "frame": 51,
+      "image_sha256": "b3c9120889e869883143cf1bf44f05c09fa44239cd9ea204b108b33718d76585",
+      "render_frame": 514,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.85,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.866666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "6c782c3b7deeb70c41f4d3fa64d27f8ed6c5316d657f03ad45b8d693bf98c16d",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.052.png",
+      "finite": true,
+      "frame": 52,
+      "image_sha256": "2dba8adb0cfc3a10dade2a6478f642dacecb50b4964d9664e775090b0d4d7ea3",
+      "render_frame": 516,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.866666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.883333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ffe1a8cce4541ce531b5cf6a742ba8abead4de23ebde14bfb2dacf40702bfdd2",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.053.png",
+      "finite": true,
+      "frame": 53,
+      "image_sha256": "5a4619dc115ffe232fb81c5bf32f5c6b3967bade75ac981188835d2b5f9da5dc",
+      "render_frame": 518,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.883333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.9,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "31bb5babd4038df698fdb740dd1d3b1a00ab72e7cfe093ac6de9f219da3a0680",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.054.png",
+      "finite": true,
+      "frame": 54,
+      "image_sha256": "3f977a3c9c13effc38e447309ccb66b6990c085dd87442902f321000da4daa2b",
+      "render_frame": 520,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.9,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.916666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "9731be56622c2c2ef2a0bd7c29a492eea22763d85986bda49b7e32db2e208d70",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.055.png",
+      "finite": true,
+      "frame": 55,
+      "image_sha256": "cbdd278004f4ec76a554e8a14826d67834e12c42745ce9b59370c48f18103456",
+      "render_frame": 522,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.916666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.933333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "339c1a81fcb3a03beaf99979a6c9012afdfddc2799aa1caea8c64daff2f11a1c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.056.png",
+      "finite": true,
+      "frame": 56,
+      "image_sha256": "445c2526afffac59ae633eac10d751732c67cc4a8a172027b0a131b96d08ba15",
+      "render_frame": 524,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.933333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.95,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "a0397ca4121fdc17f0b5187df19b43244274625f3596fe46a9b59492f7367396",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.057.png",
+      "finite": true,
+      "frame": 57,
+      "image_sha256": "43f02ed19f083a02c57518beca031bbdb6027d1a3f4a92aa5a93d0dc70d49094",
+      "render_frame": 526,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.95,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.966666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "c84403815b4a560a84bb682781a907fb6d15237476735a9eb1281d70fc07f489",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.058.png",
+      "finite": true,
+      "frame": 58,
+      "image_sha256": "c1f0eb9eaedc95419862f2b0c2f75c95a6097c6662bdbe133df16e5f7ca0a6d7",
+      "render_frame": 528,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.966666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 0.983333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403778910637
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "1326fe898e0d171d0aafd6d8a3f78714ae9426097767b66d56daade7616fd838",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.059.png",
+      "finite": true,
+      "frame": 59,
+      "image_sha256": "fac69deeb7b346a1fceb88cfce5b2ca95744c379a2cc5c4f63cc978ae7c37b19",
+      "render_frame": 530,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 0.983333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.0,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "46b738df3062fca2a48d5c873668682df2f1d1b3947b823f3f89bd5be5e3025e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.060.png",
+      "finite": true,
+      "frame": 60,
+      "image_sha256": "1b04c2d6f8aba6000e06a1219e3f49609ca454810defffff190f32e7e0e1aa01",
+      "render_frame": 532,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.0,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.01666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "1f879d5a9179e462c28dafc68fc8b8691e9b651bcdbff2941aeb2a4f20014eed",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.061.png",
+      "finite": true,
+      "frame": 61,
+      "image_sha256": "9e8419bf8f644381236c4d0ed2de04c6c479c5e0c1f08afee1a3de74cfbc507a",
+      "render_frame": 534,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.01666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.03333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "222510c2e1dd968ab7b4a68d85ef16d591a487522c2c1cd318a0b22dd0637897",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.062.png",
+      "finite": true,
+      "frame": 62,
+      "image_sha256": "b5bdfe75c1be25ec77160bf18a724afab0ed20c871c6a12158df263791f2cd9c",
+      "render_frame": 536,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.03333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.05,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "dfefc3b5461000d881686053855bcdf6e1986f2cad340343bc39aa8b11414d75",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.063.png",
+      "finite": true,
+      "frame": 63,
+      "image_sha256": "43b0dd5f9a036180b5ceb6a2424d85a44df207f9e9b3c9faf4155df6de694d3d",
+      "render_frame": 538,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.05,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.06666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375178575516,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "b8f95274141313cdf80b702b910d66c8a425135eaf04876a0456b572db1b0092",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.064.png",
+      "finite": true,
+      "frame": 64,
+      "image_sha256": "f201f90f2edd597528e4c9056dbd9040d841b163009b355fc089b582d2f7a057",
+      "render_frame": 540,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.06666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.08333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "dbb3d98da06a72e23b5b8102095131cb14003b45883a233c6d80fd68d663d579",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.065.png",
+      "finite": true,
+      "frame": 65,
+      "image_sha256": "7c3e4a1b2751d126fd488cf7796368edb4837fec5e63298a997a9de650b2a39c",
+      "render_frame": 542,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.08333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.1,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "b008d62fdc7d5d45e3fd89c8b4da5f896121070c6bfcb92071f55ace70fc9ec7",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.066.png",
+      "finite": true,
+      "frame": 66,
+      "image_sha256": "3a64c1a160de24778ba355b7a6b0ec8c6586ad4168181f8afa3aad6043c65eb4",
+      "render_frame": 544,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.1,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.11666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "1ea0ef79cc968758168515a54c7cb4dbb3e6763f79e7dd229d8d964863faa7f8",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.067.png",
+      "finite": true,
+      "frame": 67,
+      "image_sha256": "257773583dfc3184feb91d5afc88ad4fea0e2e495a594ca8ecc23a7ddedb2ea3",
+      "render_frame": 546,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.11666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.13333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403778910637
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "92a2aaf3d0a7fd879dcc212979fb6218b55a0cd1c3d551cb8d462bff903631cf",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.068.png",
+      "finite": true,
+      "frame": 68,
+      "image_sha256": "fff16c1b2f0d65c22e53a4c3739d29d496bc1bbf2cf3a108219b0528784a867e",
+      "render_frame": 548,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.13333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.15,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "b52514ffcad86ae5390ec1237c2f90bcefa66b7ee05a6948b27ba1e94c2d02cb",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.069.png",
+      "finite": true,
+      "frame": 69,
+      "image_sha256": "fc4e052445f7c9685187139990413f1931913a56302f7d869a6c0fb5628e35a2",
+      "render_frame": 550,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.15,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.16666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5ab3f16f3738ad1a32eaf7f72059c989a4a82ab89cb1c23e60181542e3665818",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.070.png",
+      "finite": true,
+      "frame": 70,
+      "image_sha256": "44dbf79f745cba5d48a26aafcab163697a3890f3373593c0465f3da5a1806f93",
+      "render_frame": 552,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.16666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.18333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403778910637
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "e20b4305d22d91149cc8b984eb117346f237000052dbe8a5ef3abc87e4267867",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.071.png",
+      "finite": true,
+      "frame": 71,
+      "image_sha256": "48fdc7c22cc2fac66147ec154a1ce83252569596c1bd3683cb2c39359b6b8182",
+      "render_frame": 554,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.18333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.2,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ad78a7c011bd3a1da59974de991cc3af0faedca2887a6607c59abf2639a73703",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.072.png",
+      "finite": true,
+      "frame": 72,
+      "image_sha256": "33924c91ad6217569b02320f54e9a80555e1aef4ebd109130ff1c4743e241025",
+      "render_frame": 556,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.2,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.21666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "069f96d5826cd6a63a9996a2d427e5f85a03fc975f2c89b252b495190ca63cbd",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.073.png",
+      "finite": true,
+      "frame": 73,
+      "image_sha256": "94703e461753caa6375b4c151a592e27caaa420c8d4d364a50f37074171f4f2c",
+      "render_frame": 558,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.21666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.23333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ad80622609a44f113f5a1c57e43e3b1a89895b49fddeff35384c5ccd74169403",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.074.png",
+      "finite": true,
+      "frame": 74,
+      "image_sha256": "8ca909d092a91eac88a603d96f66db71381f22ab36f4057c96127fa659551c4b",
+      "render_frame": 560,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.23333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.25,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "39ed536368a89580afe297c7f98173c2fd20db7a5bcf578e4de862d84ba68f7f",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.075.png",
+      "finite": true,
+      "frame": 75,
+      "image_sha256": "1a5077bd5d72c6960958c59d30c1d4408020d928937a55eb818d3dd803d1eb91",
+      "render_frame": 562,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.25,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.26666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "435e1ff237b97f71a7e4103b76edb4530e7aa3952f8f395ecbc11a4c9256844e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.076.png",
+      "finite": true,
+      "frame": 76,
+      "image_sha256": "2a115dd17deb5e40ac5e24c627fed9922766c173ddf53b0de5cd05874d306d85",
+      "render_frame": 564,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.26666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.28333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ebcf70dfdeaf5e07828b08d70afb8b650bf138259e92af365bd838154b8353b1",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.077.png",
+      "finite": true,
+      "frame": 77,
+      "image_sha256": "e7df79be4bf279ec744c71c1d5648ffdd72d357c9082c50f7cb5b516fb492b05",
+      "render_frame": 566,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.28333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.3,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "00c58661bf99cd7852c47312cecc826113719f4ffaede4777a60eb6778a791e6",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.078.png",
+      "finite": true,
+      "frame": 78,
+      "image_sha256": "53c60674eb28ca41e783824d00c8f3821b78fd56da33fe04ba21c10534ae5967",
+      "render_frame": 568,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.3,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.31666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f1521a7b0e675336369c2051d1c239c0d5b724dc13ff34057f72e9a5656272ec",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.079.png",
+      "finite": true,
+      "frame": 79,
+      "image_sha256": "399e2ba1757415321dd631fd0efe42789d7517d9574b2122ccbbf4a035e930be",
+      "render_frame": 570,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.31666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.33333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "0efcf2c2348a25d25cbc0af4c1f26a459f15f1dc93bf75f492e9c298744c4606",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.080.png",
+      "finite": true,
+      "frame": 80,
+      "image_sha256": "7d4214c48821b01a28492d8b050af4421b65b8533a090be52b998261f06db113",
+      "render_frame": 572,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.33333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.35,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "02781c8283c037d95b243befead7d5d3611c982ef95ec0f4c0bc4aa3e7440875",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.081.png",
+      "finite": true,
+      "frame": 81,
+      "image_sha256": "9c2509e718fb5488834d077306957a4f554f560318ff5e33f9c8e109926ec905",
+      "render_frame": 574,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.35,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.36666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "79d8b1df6ac5d86aeaa80cf7410d2abac5cdf647bc245ebf3efc19b2177b7ef8",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.082.png",
+      "finite": true,
+      "frame": 82,
+      "image_sha256": "2318be27672d946cc406c4df6634226c269c57996c22d463c73b703ef589553a",
+      "render_frame": 576,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.36666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.38333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "40b3a2625f147385734d463b3131263c528e9c6636a77adf301d29b80c4e39fd",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.083.png",
+      "finite": true,
+      "frame": 83,
+      "image_sha256": "f24d83ff65902acc397dcf454e7d68bdda5a81e4e21280e597a460ce0a1a071a",
+      "render_frame": 578,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.38333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.4,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f042197b6dd3c8e70fd5da87d7caffead4f67590f1dd787b4fd5fe4042dfd132",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.084.png",
+      "finite": true,
+      "frame": 84,
+      "image_sha256": "a24945f855dbcbc0b904500e98a81b422f1b7ac7c21f1be2c70aafd75ff0971f",
+      "render_frame": 580,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.4,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.41666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "d06c4500c0091e9bcf8e98312da986d7f6759f622f6e0103ba45f0e7f435be11",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.085.png",
+      "finite": true,
+      "frame": 85,
+      "image_sha256": "f9f7428aa886d959dd236d36b06a2de8eaa5396391512455e43fcbc799f9e1e1",
+      "render_frame": 582,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.41666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.43333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375148773193,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "bf6acce1afbc196d678923b1af43c76c70785fd0654983dd87dd92a2b51b1fa4",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.086.png",
+      "finite": true,
+      "frame": 86,
+      "image_sha256": "ebfe53d40b3a1f365024c37070ce02f97cdd2c98abd3caf71485f81b1497af8a",
+      "render_frame": 584,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.43333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.45,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f1e23cb2749725a41b33dbbebbb8ccdeb252a763087a8fc6f00ecb1b832e0e8e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.087.png",
+      "finite": true,
+      "frame": 87,
+      "image_sha256": "d541edbd0aac5955f5c080560bb0844a6200e1b2ca70cded537e4dfdf852fd20",
+      "render_frame": 586,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.45,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.46666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.22940368950367
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "cca95cc8d5fba3b639f72cae5f1fd188535dedea75cf186d62e5cb74deaa7bdb",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.088.png",
+      "finite": true,
+      "frame": 88,
+      "image_sha256": "f59b468bdfaaac30b07f0a83d52d0a2093456cc841b99e7f545f6e248a88c49d",
+      "render_frame": 588,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.46666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.48333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403674602509
+        ],
+        "Right": [
+          0.278374969959259,
+          0.22940368950367
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5b4bbec570a2a40b8d6413ff4d7c27f24af5304b1cc6f05fc4bec32ba8d08de5",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.089.png",
+      "finite": true,
+      "frame": 89,
+      "image_sha256": "3b091183bf3d53a0d25839974957ab68b612e0a6c8beea43b0d53eedd027eddd",
+      "render_frame": 590,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.48333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.5,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "f0bbe7f03d63296b9dd0c418b51b6f78d4b1e15f738e78d3b52b82ccf48861c4",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.090.png",
+      "finite": true,
+      "frame": 90,
+      "image_sha256": "e1b2e430320581175f33fb5c9a29c2d410bf15e00c3a9a0515e4d31e0a73d09a",
+      "render_frame": 592,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.5,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.51666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403674602509
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "96caf7e88a5f205edc45d14d5b56317c86fffe3e38917b7eda51b66ef009e1ee",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.091.png",
+      "finite": true,
+      "frame": 91,
+      "image_sha256": "98f819ab1b2f1fd203de15ba79d66b5e22b3dd4d4959ab55af933bc162b41b6b",
+      "render_frame": 594,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.51666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.53333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "1f09cdd88d2598aa2a2134df46241c9de72a8411466605774c6ab162c6e3c087",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.092.png",
+      "finite": true,
+      "frame": 92,
+      "image_sha256": "d992055bca3b1a28e95261e7c80ebe804c217735d8c665f45e2963591c1de5fb",
+      "render_frame": 596,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.53333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.55,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "66c209b85455223a349cf6c2a0c093c2bf9bff3213555c114a7bc38195d7aea0",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.093.png",
+      "finite": true,
+      "frame": 93,
+      "image_sha256": "9bc650af9afaf7fd060cafdb9741e57f913a8c71017aae63cd0946a79eda24d3",
+      "render_frame": 598,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.55,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.56666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375148773193,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.22940368950367
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "29e53e10712a8cebac6a159a30f3546de8191a9d5dd842d46f8bd3ecd55b3c8c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.094.png",
+      "finite": true,
+      "frame": 94,
+      "image_sha256": "4d0ca03c100021c3dc83aa090e1d149d230052eb120094ae96544f4b84cb565c",
+      "render_frame": 600,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.56666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.58333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403749108315
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "3ca4ca785ab1bc7fe5e9def903a934863a4bbd3c41667167e0f129cb2dd0b5b8",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.095.png",
+      "finite": true,
+      "frame": 95,
+      "image_sha256": "d7ba12494ddaa793471e90b3ad34602823595883861e63d1f6dac7a346a2f8f3",
+      "render_frame": 602,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.58333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.6,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "8b61cd3d0e19d5c64c198d117d3fbc610808ea8a37641922f8da1d6ce32099b1",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.096.png",
+      "finite": true,
+      "frame": 96,
+      "image_sha256": "4467b42a4e5823d365be11b23a176c9d631f0efc82e9e2dc987fcc3f3c0bf9f1",
+      "render_frame": 604,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.6,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.61666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "08648e0e68eb1f328e44c5cbdefd567478ed42feef9ddc9acd6083a190d684a3",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.097.png",
+      "finite": true,
+      "frame": 97,
+      "image_sha256": "94e2a3e5b36f30996d12388fa44ec44ed31550bb5200b1954900292e3ca3e588",
+      "render_frame": 606,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.61666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.63333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "db9c43eba5fec8e551e74a53baf418bafb7bf953964f3047df7dd9ced79a0959",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.098.png",
+      "finite": true,
+      "frame": 98,
+      "image_sha256": "d989f5e4753e033f0f9876fc194ef9c88f2180537ed109423a7a081b00279a89",
+      "render_frame": 608,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.63333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.65,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "58b27159c840cd2a8c4a8ffe9b60db0afe95af43f6274ea4f6eefe2c82491aa1",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.099.png",
+      "finite": true,
+      "frame": 99,
+      "image_sha256": "9f59a4592a159aefd7fedc1a890adaae35df83be6a5a86c272bf368f8fba2901",
+      "render_frame": 610,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.65,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.66666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "59bb478773ef2eeb741f10a748c94394ad46dbd37d575cf406ada7c3e24ec58c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.100.png",
+      "finite": true,
+      "frame": 100,
+      "image_sha256": "af3e0199082b460e52b78a93cb8d5c6064439110587483b1ccdf1fb9bc35d9f3",
+      "render_frame": 612,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.66666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.68333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "00da38016892af5378f95b5cc597681f6bf5f6583b639c1c49da9f6877fc042d",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.101.png",
+      "finite": true,
+      "frame": 101,
+      "image_sha256": "5826cca33b53556c78203274b1004dfe7b5e38c11ae412af9ff5d0d18162f0ad",
+      "render_frame": 614,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.68333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.7,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "74d7d3dd9dec6a526bfb916c14c02f8ac0a759cb1fcb400904cc9992e93e442b",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.102.png",
+      "finite": true,
+      "frame": 102,
+      "image_sha256": "50cd7b8757ed010370aa3c6cef56df0042a96fc9325af3ea3a6603801449e163",
+      "render_frame": 616,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.7,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.71666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "91a2fd4bbf4f69f08bf75c86dd258cd8f68f2d8e7b92771ef62969dc234cd872",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.103.png",
+      "finite": true,
+      "frame": 103,
+      "image_sha256": "ae590652f80b31fbec1f3220a9f4a1cd1cecbdb10fad1e8b2274646cf2fcdaa5",
+      "render_frame": 618,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.71666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.73333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "111ba095c53bc5f2001f36eb7f7740dc6bebd864d5a81a11c1b162808f8a31be",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.104.png",
+      "finite": true,
+      "frame": 104,
+      "image_sha256": "a47eb5abe8b631e3d86342825d742b85462f76c78e965767ea7962d9116c47d1",
+      "render_frame": 620,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.73333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.75,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5db155d9da964896aac32e135a6465337049c91baa1176a015c49b2a3485bf36",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.105.png",
+      "finite": true,
+      "frame": 105,
+      "image_sha256": "35239abd528a94a2e7a757495ffb97efaa218fd96e4e01a9e859ba84f1f4cc39",
+      "render_frame": 622,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.75,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.76666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "bb06f0bd0f0fbabd1c5e6f59d5564beb28c41752f7badae7ca09c44ebe02b926",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.106.png",
+      "finite": true,
+      "frame": 106,
+      "image_sha256": "87d6897550d9b450c19c9958a1d1de5055c0c5a88fe9d5c6100a8f4eb0364a5d",
+      "render_frame": 624,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.76666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.78333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "7915390fa600a7d354150d8d1fbd114ef6f02daf3dcd656b7c8e5c8868e8ec78",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.107.png",
+      "finite": true,
+      "frame": 107,
+      "image_sha256": "df668623dd7e47654885f075c4234f193df5bc088757fedf28118c90750c9373",
+      "render_frame": 626,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.78333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.8,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374940156937,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "d00d45ca443541ed31d6df5b0d206f93dc069b005e1a8743ede49b14edd1b4b0",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.108.png",
+      "finite": true,
+      "frame": 108,
+      "image_sha256": "03458266818cec271462b704798c815eab63c5e5162cb4d8705dbf79e30321c2",
+      "render_frame": 628,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.8,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.81666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403719305992
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "8ca855b17acbc6c551f0bb2bb061356fd4d1f98deffb86ada9d6bf39c880f65e",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.109.png",
+      "finite": true,
+      "frame": 109,
+      "image_sha256": "d1005d95daa3b9d5cec3505c2502af4f3868019370af76543e82aca12cd9a9c4",
+      "render_frame": 630,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.81666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.83333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403749108315
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "cbbac87430fa38ab3e6c84619b62f6ea355fda01339dd90cbd91a7dc425a4959",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.110.png",
+      "finite": true,
+      "frame": 110,
+      "image_sha256": "22d389750edfc2ad436028e190404b4cb00fef07c25004697db541e433ae4e61",
+      "render_frame": 632,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.83333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.85,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "61cc138bc5f29ededaedd93a32a33d6f12b987e77c7111c7d78ab5f5ee72bae4",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.111.png",
+      "finite": true,
+      "frame": 111,
+      "image_sha256": "6b86d23934d0e48f52a8bcf806aa5376843627b7d57d279cabd33d877364ad94",
+      "render_frame": 634,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.85,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.86666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375267982483,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278375029563904,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "6c5b6e80616cfa5de05715a375b26fe3b7ffd47b4d90b6edbd215e614c2f351d",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.112.png",
+      "finite": true,
+      "frame": 112,
+      "image_sha256": "768cf4a08325ac7988984e7a8cc0f57452592da118fd0b6019a5dd1feeda5dfc",
+      "render_frame": 636,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.86666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.88333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "4149705d80b91badbfdbf4c3813f034d1d7690112494a8e272db7dec94ac5c3c",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.113.png",
+      "finite": true,
+      "frame": 113,
+      "image_sha256": "765a6ef2a0a81b7e5b698a109e425de433a34e1a728027d27a75c6e657c62fc6",
+      "render_frame": 638,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.88333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.9,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403764009476
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "b5781bb06ec2dbd55e3787bc858e7e7c4e028f0df221a34300d50fb3eaeeda2a",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.114.png",
+      "finite": true,
+      "frame": 114,
+      "image_sha256": "ab72cb562e2b3907006609b943c56924de7bf321ee698f5d054aa50a917ffd22",
+      "render_frame": 640,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.9,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.91666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.229403734207153
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "92ca0f7738219f76daf30199df0375f5d0a9451241968ba160a6f97f58adf6d9",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.115.png",
+      "finite": true,
+      "frame": 115,
+      "image_sha256": "37a9992cf200c93e64f12c60f31612617a220c39b142352848c9a1ca86b5b9ea",
+      "render_frame": 642,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.91666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.93333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403704404831
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "ddb3d7af1727764eaaaf64749b2583050bd8bfb15f7080089e2462aeee6851a6",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.116.png",
+      "finite": true,
+      "frame": 116,
+      "image_sha256": "d1c087de5dc0b2d01f0e20147b569e05dd2597e56310819c0e8e9ac256e9facc",
+      "render_frame": 644,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.93333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.95,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "c5a7df45eb8c038ab23b3dfcb7c83e896d1eddea24a14e0d87e6677f86594afb",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.117.png",
+      "finite": true,
+      "frame": 117,
+      "image_sha256": "1ca75b6ae7558e241ea57aa94d5771cf67826303c2f6e517bb70069ead81cf5d",
+      "render_frame": 646,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.95,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.96666666666667,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.229403704404831
+        ],
+        "Right": [
+          0.278374999761581,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "26ef24a6aebc957fb9f227b8798926aa6213e27b687ea07cf03ae86fae90fe8d",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.118.png",
+      "finite": true,
+      "frame": 118,
+      "image_sha256": "683ac4c1315bf257d857406c8582d14ca7209f1e028e98a28f2cec697f7b260c",
+      "render_frame": 648,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.96666666666667,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 1.98333333333333,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375238180161,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403734207153
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "5e44d9db32741240e373ae839a8e81679de8244ac6fc8bd44de50818c10c5da1",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.119.png",
+      "finite": true,
+      "frame": 119,
+      "image_sha256": "729121bb2e740f4e096d25dc400a322276484e571bfad96990eb28b21c94f42b",
+      "render_frame": 650,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 1.98333333333333,
+      "two_draw_settle_verified": false,
+      "two_vs_three_draw_pixels_identical": true
+    },
+    {
+      "actual_time_seconds": 2.0,
+      "arm_lengths_m": {
+        "Left": [
+          0.278375208377838,
+          0.22940368950367
+        ],
+        "Right": [
+          0.278374969959259,
+          0.229403719305992
+        ]
+      },
+      "assigned_clip": "Zombie_Crawl_Idle",
+      "bone_pose_sha256": "16b0249d319887d3c7b0e39bc6d23faa91f9f6b9d6129d025600688c5f9dfc00",
+      "bones": 59,
+      "clip": "Zombie_Crawl_Idle",
+      "file": "frames/Zombie_Crawl_Idle.120.png",
+      "finite": true,
+      "frame": 120,
+      "image_sha256": "09c8bb61f9f25bee35c83362444fa103588ebf81f370ca1730dccc2dbef34f42",
+      "render_frame": 653,
+      "root_position_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "save_error": 0,
+      "time_seconds": 2.0,
+      "two_draw_settle_verified": true,
+      "two_vs_three_draw_pixels_identical": true
+    }
+  ],
+  "limits": [
+    "Visual review is at 384 x 448 pixels per direction on the final integer-frame captures. Subframe structural and cloth measurements are recorded separately.",
+    "This isolated prone-idle preview retains both legs to expose full garment deformation; actual severed-limb states are covered by the live demonstration.",
+    "The subtle breathing loop intentionally has much less movement than attacks or locomotion. This is not an independent cloth simulation or an exhaustive physics contact proof."
+  ]
+}

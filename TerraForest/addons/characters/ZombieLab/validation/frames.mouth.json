@@ -1,0 +1,5247 @@
+{
+	"atlases": [
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.000-005.png",
+			"first_frame": 0,
+			"image_sha256": "1665bf4410e7a9bba1eead47c123d70d209e4478ceeb9e23dfac12e6d535b660",
+			"last_frame": 5,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.006-011.png",
+			"first_frame": 6,
+			"image_sha256": "6ed729f98fe6e9efd26eccc08fb28b4c9d14e922112c5d8387bd28c02d5f7963",
+			"last_frame": 11,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.012-017.png",
+			"first_frame": 12,
+			"image_sha256": "4267ce5eb65ef34833115de62173d689e0c7669c64b2c2c66669e816cbfe9afb",
+			"last_frame": 17,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.018-023.png",
+			"first_frame": 18,
+			"image_sha256": "3fb27cc7ba6403b886a1abc12634dba1361495af92cfca9220188b041e4cb6ee",
+			"last_frame": 23,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.024-029.png",
+			"first_frame": 24,
+			"image_sha256": "696c4c456c90a13de3e04afba4ac1df21508b1c803d1cf3a41ada44e4b7b9904",
+			"last_frame": 29,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.030-035.png",
+			"first_frame": 30,
+			"image_sha256": "beea21ca22f9028136880868a34ed8060b1d2806a60ce3d52bd18cd16f5031be",
+			"last_frame": 35,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.036-041.png",
+			"first_frame": 36,
+			"image_sha256": "06815fd8e50363d80b14cf5a2aae3b4633d23a2859a0149c026cac7c37bce055",
+			"last_frame": 41,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.042-047.png",
+			"first_frame": 42,
+			"image_sha256": "1e33b7994c292ae2bfae5df0608c9cc9858caafac6a2335c5c6cfbdbbca6f7b6",
+			"last_frame": 47,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.048-053.png",
+			"first_frame": 48,
+			"image_sha256": "f245796eba61029f6681c1157ddcf014643879b28e34e1e2d966eb8e1bf6ce89",
+			"last_frame": 53,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.054-059.png",
+			"first_frame": 54,
+			"image_sha256": "3d44fd8863c6253dc38910f21309ae418196144507408739df63aea56b0000bf",
+			"last_frame": 59,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.060-065.png",
+			"first_frame": 60,
+			"image_sha256": "5ac4b5b6d6f12b1c67831b71864ffa2ec27d6a2493c2181cdf55cda5316a2bf7",
+			"last_frame": 65,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.066-071.png",
+			"first_frame": 66,
+			"image_sha256": "348e35b4c00b7951ff75583ab4c92636fe1948a571e0ff417b0d01ab564ae0bf",
+			"last_frame": 71,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.072-077.png",
+			"first_frame": 72,
+			"image_sha256": "810e667a5ac1f694e6f56803e144a510c6d941fe4a2713b65929021d8e488726",
+			"last_frame": 77,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Attack_Bite",
+			"file": "atlases/Zombie_Attack_Bite.078-081.png",
+			"first_frame": 78,
+			"image_sha256": "fc6ff420ee150e43354217845fbf3ecaf00dfb535ef5ecb4fb0eb19cff2b3bff",
+			"last_frame": 81,
+			"rows": 4,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.000-005.png",
+			"first_frame": 0,
+			"image_sha256": "735958fb4e7c605cb299d50ac4813efe1273c4af2c5ae8efead5a67c06a8be4a",
+			"last_frame": 5,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.006-011.png",
+			"first_frame": 6,
+			"image_sha256": "9cb6258865fed097c29244fb65791ffc3a2a54c7e9583a3b75bfdd30664ab64c",
+			"last_frame": 11,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.012-017.png",
+			"first_frame": 12,
+			"image_sha256": "e7332c771c56c0a0502a9a77ffa85bccc9e2170f107fb523ab35fd4d6a431b26",
+			"last_frame": 17,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.018-023.png",
+			"first_frame": 18,
+			"image_sha256": "d5f5e7856e9ec63b7758dbb0bfef081bc574c1057331724a0cf12e6e6a9ba92c",
+			"last_frame": 23,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.024-029.png",
+			"first_frame": 24,
+			"image_sha256": "33a6c9c57ca8a74fc33dc63b7336e02e25bc26f98453be908473b90536585c98",
+			"last_frame": 29,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.030-035.png",
+			"first_frame": 30,
+			"image_sha256": "8e744e2e39dbca1f88ef02df75c7f753840b801a700464f7cf19d01f5d11d2e4",
+			"last_frame": 35,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.036-041.png",
+			"first_frame": 36,
+			"image_sha256": "5a94c24026d552e1fba3b86325d623688261eb22dc04491235dd2a048c69908b",
+			"last_frame": 41,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.042-047.png",
+			"first_frame": 42,
+			"image_sha256": "4dd371e55a2282207a4244332b792dae645440349e179f3827b165553d53663b",
+			"last_frame": 47,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.048-053.png",
+			"first_frame": 48,
+			"image_sha256": "f03c04e55f0ea40001dee4b4ccce011e2c241351c6db62e1531f3ace806c2bd8",
+			"last_frame": 53,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.054-059.png",
+			"first_frame": 54,
+			"image_sha256": "f9977a9f897cb2c3c22cf2bfcb766d94a21646dd7e03f46735c6c9f4d6a92b8a",
+			"last_frame": 59,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.060-065.png",
+			"first_frame": 60,
+			"image_sha256": "a1f1fa310844452c85ed46751c70be2bc251892d734ae04cfdff6063d6b35fef",
+			"last_frame": 65,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.066-071.png",
+			"first_frame": 66,
+			"image_sha256": "715d00f5957b78f8fe0fa6bc565f83382860f44f154bee1662ee4a7c15f7a90a",
+			"last_frame": 71,
+			"rows": 6,
+			"save_error": 0
+		},
+		{
+			"clip": "Zombie_Crawl_Bite",
+			"file": "atlases/Zombie_Crawl_Bite.072-072.png",
+			"first_frame": 72,
+			"image_sha256": "bbd8c9bf1ac2767fb2ddd33f6501ab5f27fea533532b03f3a39bba61323d9956",
+			"last_frame": 72,
+			"rows": 1,
+			"save_error": 0
+		}
+	],
+	"complete": true,
+	"detail_mode": "mouth",
+	"engine": "4.5.2-stable (official)",
+	"frame_count": 155,
+	"frame_step": 1,
+	"frames": [
+		{
+			"actual_time_seconds": 0.0,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "a052afbcb6248e38f2f6e033bc4ca47aa0d52b7195dbbfdc9c632fc675f9ae94",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.000.png",
+			"finite": true,
+			"frame": 0,
+			"image_sha256": "c15d01abdd2ef93e32f05222664c0616768725d08902ccf6dcd147b8cd67398d",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 4,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0,
+			"two_draw_settle_verified": true,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0166666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "d8d6992f3e48ab13026f158fe36b43b7937516731fd12f250fadb4a119554816",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.001.png",
+			"finite": true,
+			"frame": 1,
+			"image_sha256": "e3538ec7a647adddde614cfa28b4e75eaebfede4cb705148bb668fcb40dd87ba",
+			"mouth_camera_focus_error_m": 0.0000000540167093276978,
+			"render_frame": 6,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0166666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0333333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "0b7f72187075f92e45ad14cd565f772fc59707977779c7e2929672b4bf0b0499",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.002.png",
+			"finite": true,
+			"frame": 2,
+			"image_sha256": "4bddae532ec121243165d5feff5c6eb7518d2b3760175ac769bcc04409578934",
+			"mouth_camera_focus_error_m": 0.0000000409781932830811,
+			"render_frame": 8,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0333333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.05,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "c1514e079d225f8c60c2feb451f975ee08cd910998ea3d13a3f04f3148c0e2fe",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.003.png",
+			"finite": true,
+			"frame": 3,
+			"image_sha256": "d4d684784d3779c647207dcb6e4b413053fc1f85701254722c573fd0d9edc63a",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 10,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.05,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0666666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "77417f42143f9bcf9ef5e7f6fa9377b53601128212dbdc56ef380a397e0482f5",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.004.png",
+			"finite": true,
+			"frame": 4,
+			"image_sha256": "e071a20d696938695465d0ff3cee5e7316c4f4893046c9b471fa7c6b192b7aba",
+			"mouth_camera_focus_error_m": 0.0000000968575477600098,
+			"render_frame": 12,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0666666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0833333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375089168549,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "4ef2f2f4e0a388e68743212af593d1f95607704171f12081bce411feb06bb0c0",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.005.png",
+			"finite": true,
+			"frame": 5,
+			"image_sha256": "a697714a414f8bca949d172efcdda6e1ea30dd7c98a948b4ae03236bec3b4ec3",
+			"mouth_camera_focus_error_m": 0.000000044703483581543,
+			"render_frame": 14,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0833333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.1,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "172a62917f0258b6aea7bf8667f4d9ce12e25e28a74ab69bad07bcf7cc0453de",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.006.png",
+			"finite": true,
+			"frame": 6,
+			"image_sha256": "6860164f560e88b03810eb15aa88d415d08faee30efe1b97d0b06b1a267ca2ef",
+			"mouth_camera_focus_error_m": 0.0000000968575477600098,
+			"render_frame": 16,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.1,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.116666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "06b45860353d6651592bcbb194dbf8645acefb892193ff7cc065d2b16c944a58",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.007.png",
+			"finite": true,
+			"frame": 7,
+			"image_sha256": "be0a46049ce453ece24bda4f19b1f4d6a8ffcbebeabfdc3df227b8c3df6d7b1f",
+			"mouth_camera_focus_error_m": 0.0000000335276126861572,
+			"render_frame": 18,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.116666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.133333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "2b373aa6018e69f3461cba9735eebb133de35a882cadc0fa0a931b61c522c6df",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.008.png",
+			"finite": true,
+			"frame": 8,
+			"image_sha256": "1fe10f968b89a2b011f668d6540dbdcb05d096ec3394e73ad7f72c700de4adf2",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 20,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.133333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.15,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "4dc1e7e1b2edc8d3f072fbe6ddeed9457c26decc5f59e425589dc65652394f16",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.009.png",
+			"finite": true,
+			"frame": 9,
+			"image_sha256": "2497f2f35928704d9a5b3419bdc9628c1f02ee1627ad33cba6393948d3c57fc1",
+			"mouth_camera_focus_error_m": 0.0000000745058059692383,
+			"render_frame": 22,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.15,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.166666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403644800186
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "f65a746407f709f102f0b413f2157bc79d7f66adab24a4e5cb84a309481ede69",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.010.png",
+			"finite": true,
+			"frame": 10,
+			"image_sha256": "3c076e54f766015cfd50e66bd08cb7ae742365d9070c48c08b598ed0952aa555",
+			"mouth_camera_focus_error_m": 0.0000000931322574615479,
+			"render_frame": 24,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.166666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.183333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "bbca448feb9c4ca1d83731eaec6c47a906a01edd3afe5d429fb8bd721d02586b",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.011.png",
+			"finite": true,
+			"frame": 11,
+			"image_sha256": "09123bc78869a7314f1857f85263699bcc278d3d9c700c3a012b0783e3b211d3",
+			"mouth_camera_focus_error_m": 0.0000000745058059692383,
+			"render_frame": 26,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.183333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.2,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "ec4a7106a5d4984328c7af93063291c12d93144776e23f3e223f7b3102d66d67",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.012.png",
+			"finite": true,
+			"frame": 12,
+			"image_sha256": "31993726bb610ef403429ee354b47dbc439306924189b2bf72c23d19b035cc8d",
+			"mouth_camera_focus_error_m": 0.000000085681676864624,
+			"render_frame": 28,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.2,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.216666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "b591439a4792208ae2a1afd08800ba81b5193dd8f4798942201719cfb1656113",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.013.png",
+			"finite": true,
+			"frame": 13,
+			"image_sha256": "e272aaf5db6ee673735caaf404a69b17848f456a941f63504e2f864140e3ece1",
+			"mouth_camera_focus_error_m": 0.0000000335276126861572,
+			"render_frame": 30,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.216666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.233333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403778910637
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "ab7a045e86214ed2e297f9202303643c90ef5d7d73a87c0e73040018a1eeae72",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.014.png",
+			"finite": true,
+			"frame": 14,
+			"image_sha256": "cd7edd7c84819b9164015ffd992eeae65b3ae1a652eb1021edbf78e3dea43468",
+			"mouth_camera_focus_error_m": 0.0000000451691448688507,
+			"render_frame": 32,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.233333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.25,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "e254e59bcbf38df041d14b6988cc9d6d1d1a9fcc4a0110be6e536d98b62a5f1c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.015.png",
+			"finite": true,
+			"frame": 15,
+			"image_sha256": "db2ad245b9451ca05ebbce9d62e78b1b00e1ac5df1f10b5b37c06a61296ff50e",
+			"mouth_camera_focus_error_m": 0.000000109430402517319,
+			"render_frame": 34,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.25,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.266666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "d2bd032ed9efdb5d8d57d88585ab7bc6277ef2857d41f15001f07fa6ee7ec0f9",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.016.png",
+			"finite": true,
+			"frame": 16,
+			"image_sha256": "562c1541161b5785bedc7ec6664dd8733090d32aa6b2961b8f19fdb3016489a3",
+			"mouth_camera_focus_error_m": 0.0000000353902578353882,
+			"render_frame": 36,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.266666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.283333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403778910637
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "9e56d8b6b656db1a25e3dafdf6f4f696ad1540556ba351642305dc1e9e35baeb",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.017.png",
+			"finite": true,
+			"frame": 17,
+			"image_sha256": "8159f7cae85285c10fbd6c76a84984a0181553c9b68bae7536c2f89f3215207f",
+			"mouth_camera_focus_error_m": 0.0000000959262251853943,
+			"render_frame": 38,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.283333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.3,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "ec018fffb1ab1809bdc5f57f2417015b54680ef491994f7d13f5c69923693efa",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.018.png",
+			"finite": true,
+			"frame": 18,
+			"image_sha256": "18516ffda60e472ea01adc97c880a174c0d878b45e82214df1f883c903878e5e",
+			"mouth_camera_focus_error_m": 0.0000000926665961742401,
+			"render_frame": 40,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.3,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.316666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "255082993b5e4eb3e118fc3800e96d757a22f739ee882725c28b1f1eccaa1749",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.019.png",
+			"finite": true,
+			"frame": 19,
+			"image_sha256": "67ed48419ac95f822be1e9112a99d39012bbd8e49354b3a47709675c2e51c920",
+			"mouth_camera_focus_error_m": 0.0000000665895640850067,
+			"render_frame": 42,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.316666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.333333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403629899025
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403793811798
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "75f4d06dc80a52616ee68797fd15251d353cdb109ec0aee88c681332d97e8f68",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.020.png",
+			"finite": true,
+			"frame": 20,
+			"image_sha256": "ff0bcf03f3c1d27f22f5e723d1a42d6d3ef73521f5aeafa5212ee37e6b93ec6e",
+			"mouth_camera_focus_error_m": 0.000000105239450931549,
+			"render_frame": 44,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.333333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.35,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "3b943b82fc57c173a28fdc6405ffb7974c25cdac3cb13c7e263f221420e68d92",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.021.png",
+			"finite": true,
+			"frame": 21,
+			"image_sha256": "2c05e5c1a3248057aa73decc50d5ca4afc66e0de797185ef6b1deda634ee90de",
+			"mouth_camera_focus_error_m": 0.0000000325962901115417,
+			"render_frame": 46,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.35,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.366666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374910354614,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "6cea06a990c632178e0b23e34832632bf4e7116bf34aec670eb6ccf7992400d4",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.022.png",
+			"finite": true,
+			"frame": 22,
+			"image_sha256": "2f0dd55465c27fedb8a5a3e21c1911aa18b1b2c8dcb190c77e29baaf8d9ae283",
+			"mouth_camera_focus_error_m": 0.0000000465661287307739,
+			"render_frame": 48,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.366666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.383333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "a14e5e16d1e85576dde4b3bb6a44e35f63bce835e7b51fa0cb8c554191dc61bb",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.023.png",
+			"finite": true,
+			"frame": 23,
+			"image_sha256": "750ebce05dcae9ac99c5385743aa7b3521e2a029f94906d2c5d8aa9613376a52",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 50,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.383333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.4,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "61cc3bb5e2dd4aeb80abb0f2a6a2a3aab704cff08679a62421d466104c73caed",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.024.png",
+			"finite": true,
+			"frame": 24,
+			"image_sha256": "22493359aeb3fccc797e9698c5f4ef3b1704f1148e74eb472d4eea71156467fd",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 52,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.4,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.416666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374910354614,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "084504311058e5bb630769ff82da1a6d1ce67aef97d6cb734d234b2975c48355",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.025.png",
+			"finite": true,
+			"frame": 25,
+			"image_sha256": "77aa87926671148083cddda01fec210d93bd7a3485535faa124246d7b5cef04a",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 54,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.416666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.433333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "1e5a4839948de238d169d3d404a2657af49cb7a307d00253e18dcb01c826715f",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.026.png",
+			"finite": true,
+			"frame": 26,
+			"image_sha256": "86bdbc99517cb94bea0d3a7f48518027764052e5c64a97863a80e15d5c7a13e5",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 56,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.433333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.45,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "98eeed1c9db94a82287ec1007d44bfca6861a220a64edb74ea8471a60422ae64",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.027.png",
+			"finite": true,
+			"frame": 27,
+			"image_sha256": "2563108c6c50479cd9aa78830fbd1ba96cfeb2e601399e1fb1126ab8b680875d",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 58,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.45,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.466666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "89f017a20d0f742cd4087a7ca8f4ca267457d8e53802139bfb1ccbfe1ebd988b",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.028.png",
+			"finite": true,
+			"frame": 28,
+			"image_sha256": "7512953a809cb105f2a779e84d019c6759d7f9276af8e0d0e84352f8e7cbddb0",
+			"mouth_camera_focus_error_m": 0.0000000987201929092407,
+			"render_frame": 60,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.466666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.483333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403629899025
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "bf330764acaa4cf6f5a823798a36dc892928e8177b066f8446a65f979f1f4ebc",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.029.png",
+			"finite": true,
+			"frame": 29,
+			"image_sha256": "b179d64a31750183bcbc34d48f15733c51b27915447c08f985e9a46ab0b3765d",
+			"mouth_camera_focus_error_m": 0.000000100582838058472,
+			"render_frame": 62,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.483333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.5,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403644800186
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "9ed80c3c56df0a00e733e81d41b085088d819c0d09d78cd2ce50ce7625967fed",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.030.png",
+			"finite": true,
+			"frame": 30,
+			"image_sha256": "29bcdc12c098e40cd97cf55536c172319e342284c1c8a2b4d7746420bde0962b",
+			"mouth_camera_focus_error_m": 0.000000111758708953857,
+			"render_frame": 64,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.5,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.516666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403674602509
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "7064d20e323a5199e2e7481b8d1a62202da8347a0b06cf697f0950412a5cfbde",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.031.png",
+			"finite": true,
+			"frame": 31,
+			"image_sha256": "b1a43c15532722a46137b6b90a0e5fe301444c588e89dbe480759b2b827c88a1",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 66,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.516666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.533333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "bf5d0b4495f5fe8db91fd7b54e3d6a3da2be89cf3e7fb7480ff0d216d7194e43",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.032.png",
+			"finite": true,
+			"frame": 32,
+			"image_sha256": "741c0ef12dcc0cb15c52a4bbbde659ea64cca393d3a112f0374cbd8239d6b797",
+			"mouth_camera_focus_error_m": 0.000000028638169169426,
+			"render_frame": 68,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.533333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.55,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "d5c12f27a76fdb57cfa0c4fae5b3bfbed530dab0abe84ce1fac4d3e99a061e3a",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.033.png",
+			"finite": true,
+			"frame": 33,
+			"image_sha256": "428d1b2f003beeccce23b20914883b30ae7d767a91b723f1e039d8e82efd0379",
+			"mouth_camera_focus_error_m": 0.0000000582076609134674,
+			"render_frame": 70,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.55,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.566666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "eb21effe88b77af2f8124a9006eb747dc5997ed11b4b5c579501b5755b2b34c5",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.034.png",
+			"finite": true,
+			"frame": 34,
+			"image_sha256": "2fbbdbc57888cdd18bc33395ee6caf3c51b1a1121ffe61b9afc8bde917844c8d",
+			"mouth_camera_focus_error_m": 0.0000000800937414169312,
+			"render_frame": 72,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.566666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.583333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "6140d08fa3f6f1f3735a46948a391a7ee0eca177cd583741507e57b0e20580bd",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.035.png",
+			"finite": true,
+			"frame": 35,
+			"image_sha256": "248dc90d88887851e3716edab7c6abba1de5d72d424b9f004cc09471e07a4bd2",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 74,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.583333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.6,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "20a39bfc6ca514b17bf5e1910b63bc483ca7aa400662645c0c2c4506236491fa",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.036.png",
+			"finite": true,
+			"frame": 36,
+			"image_sha256": "873e924f7c6e1a8e0eb2479fda55c5bf61559b42c24bdf1d6d9841957c51c22a",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 76,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.6,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.616666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "3bb01e61cd08d60ad14dcbabdf606b22b8b2c79f70bfc75c357ab6c76a6cb0bc",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.037.png",
+			"finite": true,
+			"frame": 37,
+			"image_sha256": "70710ada92f5510c94c46ba3c18c22597f9fa6ce81d7969979ee76d7d3c3b959",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 78,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.616666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.633333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374910354614,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "b2d774bb41a0d6dee76d0cb113a1998d8c84631836acfeaba17df8ef153a338c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.038.png",
+			"finite": true,
+			"frame": 38,
+			"image_sha256": "e10ce4231f60d4d11481852b2ad860097d99b096a28c620e536c2dbea6393163",
+			"mouth_camera_focus_error_m": 0.0000000810250639915466,
+			"render_frame": 80,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.633333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.65,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "03026bd448881cd10c401c73470fd8f2cd975d665030c65d1a75ec233a0051cc",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.039.png",
+			"finite": true,
+			"frame": 39,
+			"image_sha256": "99d1c9df0db8ffed96cff99d7890a471f8b98bd8db3cd185b67d643f0af259bb",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 82,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.65,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.666666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403778910637
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "33a8f5c1c2cfb9d159793fabe1b510a456f315c0592cc5cdc07d11326b9685e1",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.040.png",
+			"finite": true,
+			"frame": 40,
+			"image_sha256": "5377a08b8561b8b160855b2665ca4e8c2e0fbf53f06f47fbbd17355a91ee8ac2",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 84,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.666666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.683333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "ca475925b022b6fb437e84c53e8c277995f8636cef47e904dfec4d2274f9ff3f",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.041.png",
+			"finite": true,
+			"frame": 41,
+			"image_sha256": "d4548753f0eb0e7efbf72649a864be90384a0cf6315221b15be86442cef463c1",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 86,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.683333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.7,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374910354614,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "c28728dd6db65ee11e19631a6c00735df2f3498002753d66ec118b8deebcec3c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.042.png",
+			"finite": true,
+			"frame": 42,
+			"image_sha256": "7d830f0e5aa5b4f3ace971128f3e23059f1026e8087f46784c5dc83c8924e2a3",
+			"mouth_camera_focus_error_m": 0.0000000400468707084656,
+			"render_frame": 88,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.7,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.716666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "ea76bbf5431fda57259cda19132f677b88791109a21c7899533a1eb419ece627",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.043.png",
+			"finite": true,
+			"frame": 43,
+			"image_sha256": "5f0bc321242b3b07c070c1be2548383209e82d5bf81a05ba76f413f9dc8c114a",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 90,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.716666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.733333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374850749969,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "45b034e888800484884c3881ca409229ea55285b55b97bf90fbdbcbbef1e5bc1",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.044.png",
+			"finite": true,
+			"frame": 44,
+			"image_sha256": "87f3a25eecea968f6a2118011e1b2cd3b1927edee5d0db6ce605e2304c9c18a9",
+			"mouth_camera_focus_error_m": 0.0000000456348061561584,
+			"render_frame": 92,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.733333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.75,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "b4fe1cacc81f94019cf61ccf0f814d3ca2f43ef2fc11d7e75db8b5df18d5ceef",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.045.png",
+			"finite": true,
+			"frame": 45,
+			"image_sha256": "cd3c81cc8b3fe63cbbda564e28e60523e55b9e2102140e6c5bd82b4500043df4",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 94,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.75,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.766666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374880552292,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "23f296267a3a2f548a81e12d3c7a413d40cb8de6854e4eafb9283cac4c9c3a76",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.046.png",
+			"finite": true,
+			"frame": 46,
+			"image_sha256": "83472c2218906f6d296a21fa1a4c5a4e783f7b2ea0619ac4dd9830606b7ab2b0",
+			"mouth_camera_focus_error_m": 0.000000115483999252319,
+			"render_frame": 96,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.766666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.783333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278375029563904,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "aa7903c0c90c3ac6df332b3d7c0627589e7a911238aadf1fed975e75b15d597b",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.047.png",
+			"finite": true,
+			"frame": 47,
+			"image_sha256": "2de68e70bac4e7f12d9ee36da5857047cb46ae3cb59f011a5930f653b7bd72c6",
+			"mouth_camera_focus_error_m": 0.0000000167638063430786,
+			"render_frame": 98,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.783333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.8,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "fddf31e52ff9243b74f3120ac91411b0661d7b2754c3c933bd15831483d15561",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.048.png",
+			"finite": true,
+			"frame": 48,
+			"image_sha256": "88610719bd0cf08539114f1b819bede6522d42c17ebe30987e2b00f2e0fc085c",
+			"mouth_camera_focus_error_m": 0.000000085681676864624,
+			"render_frame": 100,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.8,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.816666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403778910637
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "6b3ba46c6716a0be80ee8d6a9331befdb11fc231c1a9af685465cf8067f4370f",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.049.png",
+			"finite": true,
+			"frame": 49,
+			"image_sha256": "a8ba86be6309b061c4fd2db5daf426e7968281b8a660feafbdafb6072ab737b2",
+			"mouth_camera_focus_error_m": 0.0000000763684511184692,
+			"render_frame": 102,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.816666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.833333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "e1b7764e28b9e16565acc5d303454bc80d1c0ecc5981588827d787e6caef2628",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.050.png",
+			"finite": true,
+			"frame": 50,
+			"image_sha256": "15bf04ca99f56107f0fc1a664654f82458cfa95a6d49cad0a4fe02f807849175",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 104,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.833333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.85,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "7930964f7da5522020111c5456364ca8140bbe65bed4525814057959117756be",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.051.png",
+			"finite": true,
+			"frame": 51,
+			"image_sha256": "2b3e280d8cc3a5c1cfe7bc26e8657477117ec78a209da09c3b47e0bc91fe7456",
+			"mouth_camera_focus_error_m": 0.0000000316649675369263,
+			"render_frame": 106,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.85,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.866666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375267982483,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "27e0bf05f4e367363d89fc7536484f102e307709bf802d479132925558e82f50",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.052.png",
+			"finite": true,
+			"frame": 52,
+			"image_sha256": "8c5af98c3182a22df55bb9c26d703e9d2a05c6a8a6c474eafb588c06c5fb8140",
+			"mouth_camera_focus_error_m": 0.0000000465661287307739,
+			"render_frame": 108,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.866666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.883333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "618456e0c9138dfac9d481f8c11eace07c9b4b539ae096418a132f4f34b5cd67",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.053.png",
+			"finite": true,
+			"frame": 53,
+			"image_sha256": "3754ce3ce95b0d4bbcab7d506ab6ace9af7384170ad50e3e03710efd6bba4e0e",
+			"mouth_camera_focus_error_m": 0.0000000149011611938477,
+			"render_frame": 110,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.883333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.9,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403629899025
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "0c095d8719cc334964132ed98679bca61755e8565bff47df32e9e3ed263d9d2b",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.054.png",
+			"finite": true,
+			"frame": 54,
+			"image_sha256": "60c2016cfcb7dc0013ce45a33838bf59e5f9c3e7a7e13db9e4588b5ce3e01c76",
+			"mouth_camera_focus_error_m": 0.0000000335276126861572,
+			"render_frame": 112,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.9,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.916666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "f89129da86ca5d3f91e292ce2b82cedce6213b821c733b9f78d233d0d8eb3e9c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.055.png",
+			"finite": true,
+			"frame": 55,
+			"image_sha256": "c4da6351ea34733abbbf194cf62fa24dfb778d113370c451341f9b8236cabffe",
+			"mouth_camera_focus_error_m": 0.000000104308128356934,
+			"render_frame": 114,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.916666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.933333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403764009476
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "f247d47f4801b828f87865127bded18c5e88a376d8ef3cdf6078d9b43e896eb3",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.056.png",
+			"finite": true,
+			"frame": 56,
+			"image_sha256": "b5075c534d7318b8b70afce71624407332d2409941040db39cb9f5487a69ee1a",
+			"mouth_camera_focus_error_m": 0.0000000745058059692383,
+			"render_frame": 116,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.933333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.95,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "e9114f595a84f73517911349c8ff677e4bd88ff42cb6601843743f38f219be40",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.057.png",
+			"finite": true,
+			"frame": 57,
+			"image_sha256": "e075d5b8ea8e507877b0ef0f6bb5fc6fdb7eec32549583fc3a90915831be29d2",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 118,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.95,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.966666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374850749969,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "b334d0a192b9ea48b34dfb81456afdd62dadc3e5dd496e71d7562f054d7b3906",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.058.png",
+			"finite": true,
+			"frame": 58,
+			"image_sha256": "c64005d3c4d5e5f1da4b1f35205076db689c3b9bf7b54f62a594b43c48a29eb2",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 120,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.966666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.983333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "1b191f4de1b62a86ac53c24c8374b25747d0284c53e9b409584f283c71495844",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.059.png",
+			"finite": true,
+			"frame": 59,
+			"image_sha256": "e6e684c28faa2b047686f4c02c7237210c2e47417d978dc2b393c28551a90617",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 122,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.983333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.0,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "a094c7d94e62fbb306038da2c2f2f1061fa750d13ca9afcd75fa9dcf5d4d8647",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.060.png",
+			"finite": true,
+			"frame": 60,
+			"image_sha256": "f0bf28a5be730f1920e2eeabba6d8b166226b0a82243d0fdcf8bb8806eb7b044",
+			"mouth_camera_focus_error_m": 0.00000011734664440155,
+			"render_frame": 124,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.0,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.01666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "8635b628b54bdd53d55eabdbd20a30fbaea54238b4a3da24c1afb1ff94d1614f",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.061.png",
+			"finite": true,
+			"frame": 61,
+			"image_sha256": "02c41e423ad497ee573e3172d73d09f4bb2fc1d79fb4aa7eebe910aacaee806b",
+			"mouth_camera_focus_error_m": 0.0000000540167093276978,
+			"render_frame": 126,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.01666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.03333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "dfd7df2df4e959c6899f5f417d4b101cc2457cc5de4c6d835411dbe4c86d69b0",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.062.png",
+			"finite": true,
+			"frame": 62,
+			"image_sha256": "f5b162a8f33e656aff3f21d3e3c5a1ca074923b3db6696af6522095ab91c7703",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 128,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.03333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.05,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "d865089ad688c824692d499d572a888644a96c5078dec75c4a0aff78ce6db737",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.063.png",
+			"finite": true,
+			"frame": 63,
+			"image_sha256": "c0db9ceb532ff124595a8ba1d2d50175e460edaed52674ad1dd1ac05d0d5188c",
+			"mouth_camera_focus_error_m": 0.000000104308128356934,
+			"render_frame": 130,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.05,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.06666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "e8894926e95808b8669ad42e91d9520cc6b3c1bfe1f02bbf7f01c12c5cd4b050",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.064.png",
+			"finite": true,
+			"frame": 64,
+			"image_sha256": "e1fb8a1a9bf3d787be589a111d1e7ad8c7859394a44191cc547075e5d731d3e3",
+			"mouth_camera_focus_error_m": 0.000000113621354103088,
+			"render_frame": 132,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.06666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.08333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375267982483,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "4e54c16460145b4d6a0d9aa37fe98f6e599d4ed5b4b41a51241ef664e6f3deb1",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.065.png",
+			"finite": true,
+			"frame": 65,
+			"image_sha256": "272ffaec920a47ba59e1f124f30228081e2f941f4e5dc9a04fe14ee85e92b000",
+			"mouth_camera_focus_error_m": 0.0000000968575477600098,
+			"render_frame": 134,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.08333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.1,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403793811798
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "0aaab48f28408897a1ba9c9ee1c19eb6e5fff368d2ea7acc01692dae94565bb8",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.066.png",
+			"finite": true,
+			"frame": 66,
+			"image_sha256": "1184ea8bb0fe45dcb557c238c0b115f447283dfb35c48f0bc467cd416f80a8d5",
+			"mouth_camera_focus_error_m": 0.0000000968575477600098,
+			"render_frame": 136,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.1,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.11666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "725aa7109c47509ae1ff344630eb94727088c54010d71adeb2ba3c3095a2c8ed",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.067.png",
+			"finite": true,
+			"frame": 67,
+			"image_sha256": "7dfdcc8c7bb6b5be4a4111a52164dd1f1056d90c91b52b9cbcbdbede148bf34d",
+			"mouth_camera_focus_error_m": 0.000000087544322013855,
+			"render_frame": 138,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.11666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.13333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "d3f735fce611634ec6f3473241ba71bc63599849e7d4603eae9e6b2fce19a645",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.068.png",
+			"finite": true,
+			"frame": 68,
+			"image_sha256": "2382a66c59f949db63e10c551d2b67fbe14f68652e3c0121040eb961548c67af",
+			"mouth_camera_focus_error_m": 0.0000000931322574615479,
+			"render_frame": 140,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.13333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.15,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "1ec23942a3778011c04d9a1b2930443415d94dbce00562fae9590f0d3ed4db5a",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.069.png",
+			"finite": true,
+			"frame": 69,
+			"image_sha256": "d7b18be26bd598aa8e3a22782103fa8268bd20b208a096604c42310ee0f5c926",
+			"mouth_camera_focus_error_m": 0.0000000800937414169312,
+			"render_frame": 142,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.15,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.16666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "52df41bb4590dfefa81e09a30a0060f126a2348ab9f1e391d742711168048f37",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.070.png",
+			"finite": true,
+			"frame": 70,
+			"image_sha256": "3f7737af6fa0e5a3c575ab893dc108a7c74c354bb620ae3dfa4e4aa19631bbbe",
+			"mouth_camera_focus_error_m": 0.0000000819563865661621,
+			"render_frame": 144,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.16666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.18333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403793811798
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "8053ab5d9e37b43734f021d56e608069082989f42bb31f752278f096fe7f5e38",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.071.png",
+			"finite": true,
+			"frame": 71,
+			"image_sha256": "344e45fde9ccd5eed9d69cb01aa00f043c44a85cd41e832c126e0a9ea480fc77",
+			"mouth_camera_focus_error_m": 0.0000000968575477600098,
+			"render_frame": 146,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.18333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.2,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "a01c11cb2483943305ab93c75b74fdbe2df2799bde6837dae83e69b28ec673cd",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.072.png",
+			"finite": true,
+			"frame": 72,
+			"image_sha256": "d731c1dec379392c8e35b0405322752c082f7e007f5952da71d2c4ac7a2b6aba",
+			"mouth_camera_focus_error_m": 0.000000087544322013855,
+			"render_frame": 148,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.2,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.21666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "8b9bcc641cc4f9a9b3318882f901738620e19861cc8d7b1e16bd29cd81510b6c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.073.png",
+			"finite": true,
+			"frame": 73,
+			"image_sha256": "aad4f257ed9c3042cf9d6cabade79611feb868d05bdf1b37d62ebaed29ec08aa",
+			"mouth_camera_focus_error_m": 0.0000000745058059692383,
+			"render_frame": 150,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.21666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.23333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "2e04f9fbd6709c2bdfa4c10ac2b777938659ec36cb8492e8b71bedce4de033a8",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.074.png",
+			"finite": true,
+			"frame": 74,
+			"image_sha256": "1c24a9afbdcfe0e0cdb89ade769d0f59a7369d80de3dbe5360d1ef61737e8be2",
+			"mouth_camera_focus_error_m": 0.000000104308128356934,
+			"render_frame": 152,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.23333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.25,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "0f16abb694f907acbf99860f4c6c38482c8b9980434a833da6985abf6cf6fe3a",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.075.png",
+			"finite": true,
+			"frame": 75,
+			"image_sha256": "2d2afaaede98bc521d38e8a59aeabe3705046b590835c8d8b261c5574ee47013",
+			"mouth_camera_focus_error_m": 0.0000000372529029846191,
+			"render_frame": 154,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.25,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.26666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "2563b0704901a4c4ae850b8f180d119c7a964e4f9466cab7f1183ceaf6815b56",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.076.png",
+			"finite": true,
+			"frame": 76,
+			"image_sha256": "16748df4a5517606570ed100392a31aebeac29d5a0a7c2217a160b254a5137d9",
+			"mouth_camera_focus_error_m": 0.000000108033418655396,
+			"render_frame": 156,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.26666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.28333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374880552292,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "e19f285459c2413944e0a544a4f4e2646f9b53485e16572df7cfcd84d6fd9e8f",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.077.png",
+			"finite": true,
+			"frame": 77,
+			"image_sha256": "081b85ead2ee1681bf680d18411dced17cf5e0b05fa0f3aa5e2c80994aea3248",
+			"mouth_camera_focus_error_m": 0.0000000521540641784668,
+			"render_frame": 158,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.28333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.3,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375089168549,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "373aee90dd827ef7b582edccc05fdc1d47576b361eccd1657df16a4c5b17365b",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.078.png",
+			"finite": true,
+			"frame": 78,
+			"image_sha256": "ceba97755ca3bb7c0c65d4c2df1cff27e1c83433b7ae0085a7924353848b6f91",
+			"mouth_camera_focus_error_m": 0.0000000763684511184692,
+			"render_frame": 160,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.3,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.31666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375118970871,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "a6ab33a6f71de7c96a48b87b3fd24bd29a59e20ad1930aa1a1ea518da55a802c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.079.png",
+			"finite": true,
+			"frame": 79,
+			"image_sha256": "ad7bc3adbf9cfce6284ab7634aec46c564f2a2e71344ee2acd48314baa208a12",
+			"mouth_camera_focus_error_m": 0.0000000223517417907715,
+			"render_frame": 162,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.31666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.33333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "04689f9255b184bc3428f834ee735fabf8f4a4aa206dbd1e787e121a4ca4d480",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.080.png",
+			"finite": true,
+			"frame": 80,
+			"image_sha256": "8f9660fef20913441c64322dccd0fe216f46037874251a8337db451edb5d7b2b",
+			"mouth_camera_focus_error_m": 0.000000044703483581543,
+			"render_frame": 164,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.33333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.35000002384186,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374910354614,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Attack_Bite",
+			"bone_pose_sha256": "c794a41aca8daf15214d8aaf89353a243683467442ec4d75fe5b26573a99b96c",
+			"bones": 59,
+			"clip": "Zombie_Attack_Bite",
+			"file": "frames/Zombie_Attack_Bite.081.png",
+			"finite": true,
+			"frame": 81,
+			"image_sha256": "7e1a26983abc1324a66b5c125b7d0c5e095e4abcd83d1c5d38098f1e53b576a6",
+			"mouth_camera_focus_error_m": 0.000000104308128356934,
+			"render_frame": 167,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.35,
+			"two_draw_settle_verified": true,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "5a28e4663361a2110bc1f44f8a1eb06713aab61b8b413c35eb66c26017611dd0",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.000.png",
+			"finite": true,
+			"frame": 0,
+			"image_sha256": "35ef03f6c42613255b13170d6c92d547cc2c6184d87bc4e1213ed543be40061c",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 170,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0,
+			"two_draw_settle_verified": true,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0166666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "890b2ae20eaaf901c5397ba198cbe062c46acedbbb661169bc2217feca7fa90e",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.001.png",
+			"finite": true,
+			"frame": 1,
+			"image_sha256": "75658cb1df1d850684d9aa7d1a1e73202cb8064a04abecc79308de8622a84329",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 172,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0166666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0333333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "6ee52d9b0d6c36d454a385740938b797867a6e8ae397b5126465902edfecd78c",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.002.png",
+			"finite": true,
+			"frame": 2,
+			"image_sha256": "d81620815ecf24c1776284a20257728c4a67983811b7d06212eff79a11c5e9a0",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 174,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0333333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.05,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "8107b267b58229f4dec40867c4062456b14233f71a01d7279e54204bc5ea6275",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.003.png",
+			"finite": true,
+			"frame": 3,
+			"image_sha256": "380da478c0ccb0e9b9e3a0a17cc9425567a501674e36985b20f20f20310b14f8",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 176,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.05,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0666666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "be867a978071f0dd28aae792b4879c3a57dd94efe1ed65edd664de932a98fd91",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.004.png",
+			"finite": true,
+			"frame": 4,
+			"image_sha256": "912315a14e1eab550960eaf14ef0b3809736a4ebefdfabe2cfdbf141c3611c0a",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 178,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0666666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.0833333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "3e5ec55dff498c0cf5ac862b7bf698d1799d4e70536f8d8813abaf5b7dc3247d",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.005.png",
+			"finite": true,
+			"frame": 5,
+			"image_sha256": "3a65328abebb09145d1ed909dd71f308b60ba5b42c697bf277621c7ae906235c",
+			"mouth_camera_focus_error_m": 0.000000110827386379242,
+			"render_frame": 180,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.0833333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.1,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "f9030b5f3049eab3673e7578c5df183e5c12551782d861364edd2d1d052eeb4e",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.006.png",
+			"finite": true,
+			"frame": 6,
+			"image_sha256": "390ed3a666aa7b4613f47bcb10045caa3adfc06d756817f928a3bbbbd45071ee",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 182,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.1,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.116666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "e71008c31ec957235ed7ee8eaea7100c275f39d0a1ae5fdf02d9ef4d986b5a67",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.007.png",
+			"finite": true,
+			"frame": 7,
+			"image_sha256": "6ee7af8564b541ea118cf876ce7ff245ae089c49be38d7d2187d517d2bb6d8cf",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 184,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.116666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.133333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "cb8d2c2246978d667ad4d47adffaec9963cd63f4ec6f2bcbe466ab1e2cfd86b4",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.008.png",
+			"finite": true,
+			"frame": 8,
+			"image_sha256": "eebca0329ce19f72849116117ea59fdc224046929d824702fb431050f6bd7893",
+			"mouth_camera_focus_error_m": 0.000000100117176771164,
+			"render_frame": 186,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.133333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.15,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "cb9fc469397b5445b6203937f878fb59ed63388b4e8d0dd824ee4ba5f8eadb08",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.009.png",
+			"finite": true,
+			"frame": 9,
+			"image_sha256": "8e526d2871afc1e1544870564b56e34306d0f151fa93d2c8a45d49cc57be7550",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 188,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.15,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.166666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "96e51018bb79475d66049609ee028c08db5492ad3119737bdae0fbf590baad39",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.010.png",
+			"finite": true,
+			"frame": 10,
+			"image_sha256": "5e45ef20b2b2231baf5b00d3c0339f59aadfeff764f587a02a0a847535b1790f",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 190,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.166666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.183333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278375029563904,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "17f34808b7f78f724acf1b1eee6afb9f20c5d7bbff99b24a7d785b4c13c569c6",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.011.png",
+			"finite": true,
+			"frame": 11,
+			"image_sha256": "abecbdf2734719970bc652352aa97086987f7cb5f35c7b6fdecbdc91ae919378",
+			"mouth_camera_focus_error_m": 0.0000000903382897377014,
+			"render_frame": 192,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.183333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.2,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "3b82b7cb8b1f9ff3ae5d7c0a263c56f00cc8b96a905c585a5a12e0f46afe1b23",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.012.png",
+			"finite": true,
+			"frame": 12,
+			"image_sha256": "0860cd1e543607f34f2a16bd05557f763416680b61b29ed2f3057c705c4f6ddc",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 194,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.2,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.216666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "67774e4949ca1096d8aecde986c4316d853abac142728f483513091baee511e2",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.013.png",
+			"finite": true,
+			"frame": 13,
+			"image_sha256": "0cb20073ccaf05e31ee39c149f25e41e5458ed1ebe93d78cc08f492912ccbc85",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 196,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.216666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.233333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "625a00c1fa065cef9857194e999287e08d748050700807ee30b33cc7eba54a58",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.014.png",
+			"finite": true,
+			"frame": 14,
+			"image_sha256": "c942828970ac8b055eed0a08f3f17879e8fde9e7bff4419f3f3e2aa11b652947",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 198,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.233333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.25,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "dd39f66412c6c78e03e7841a04d68f529fad72be7a6e10eb3a3b6faec3f506ab",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.015.png",
+			"finite": true,
+			"frame": 15,
+			"image_sha256": "67790ebce7bb10b0c43cf247ae3f1f9061366e04814852ed3ea804c4d59ce401",
+			"mouth_camera_focus_error_m": 0.0000000698491930961609,
+			"render_frame": 200,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.25,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.266666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403764009476
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "4a72a7d51c898c6159f8e085c39feee520444658fd26daed6f9bad589a0af298",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.016.png",
+			"finite": true,
+			"frame": 16,
+			"image_sha256": "84ff40612f8caee5b7c4e0a5591853f0b67216f802aa0defd3971df5f9f07094",
+			"mouth_camera_focus_error_m": 0.0000000791624188423157,
+			"render_frame": 202,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.266666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.283333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "147364aec411caf85c86b4c44483160114452f0e00f954d370b50a665cf0e02a",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.017.png",
+			"finite": true,
+			"frame": 17,
+			"image_sha256": "240ddecd89ae6a85e87f91c646d45568abfc84cec59656c87dbab1fbace46269",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 204,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.283333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.3,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "a2681783a840b1d7caa7b06b80bd90ef5170b0323613ecba10e7a486c47ebe52",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.018.png",
+			"finite": true,
+			"frame": 18,
+			"image_sha256": "23110e79440f6cfb0f9512e481f6cec8009ed2e4f8683a028cd9234c05137d6b",
+			"mouth_camera_focus_error_m": 0.0000000800937414169312,
+			"render_frame": 206,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.3,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.316666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "21160900d9345c6bcb24d4c81977c2990d1af80557a26861577aa8858af1e345",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.019.png",
+			"finite": true,
+			"frame": 19,
+			"image_sha256": "17c299449898def00fe623c7584bdb101c677638fd58d0002467872bb1b1093e",
+			"mouth_camera_focus_error_m": 0.000000118277966976166,
+			"render_frame": 208,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.316666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.333333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "fce62728cfafa34a506326834477b59a7850b1a0679c6610189f7ce2b728a024",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.020.png",
+			"finite": true,
+			"frame": 20,
+			"image_sha256": "36a38a925834dc12386d25b54a0c6a500beb097172fd1fdf59854fdca8d9afdd",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 210,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.333333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.35,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "833cc21717142f5d1d1747517d08f845338042c05bd67b5c2ee0ee3d898bd3a4",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.021.png",
+			"finite": true,
+			"frame": 21,
+			"image_sha256": "b92f825800ba2f46e1ebac24959562a9d4dac732a1b532723770b667e0f4531b",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 212,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.35,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.366666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "9702db5b2976779979514c34e8cbae49ad686ca41ecf2535aca5671df202bb9f",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.022.png",
+			"finite": true,
+			"frame": 22,
+			"image_sha256": "193f47229cd7c14f5a100cce147d74775f78b4cafe57a0d8458f365279c0d278",
+			"mouth_camera_focus_error_m": 0.0000000549480319023132,
+			"render_frame": 214,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.366666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.383333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "dbdb1133d434636124126ca7d9c38c16c871d5c46cbeab2265eb1529a571b6fb",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.023.png",
+			"finite": true,
+			"frame": 23,
+			"image_sha256": "71b0a3e5650009aab46de2e7b6546ef8c937ce895f76520e95490b5a0f4c7784",
+			"mouth_camera_focus_error_m": 0.000000108033418655396,
+			"render_frame": 216,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.383333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.4,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "5f7b0f36be39960dc545d940fc2c361d20edb498873f789ceb59f30c723136e2",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.024.png",
+			"finite": true,
+			"frame": 24,
+			"image_sha256": "28e53f5e05eb5ebb001a73a1e291fb7c731813edc6bae7caab607ad9eecae957",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 218,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.4,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.416666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "07e9816ec9ccf22ac6859075a5a284b25ee1cd1a6ef10097fbc8b6d7ca6846b2",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.025.png",
+			"finite": true,
+			"frame": 25,
+			"image_sha256": "6c496589b325732a115a0db643cfa265cd9687ab51c43a3f4e9597b2c69c9834",
+			"mouth_camera_focus_error_m": 0.0000000782310962677002,
+			"render_frame": 220,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.416666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.433333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "abc5cb59da02c0d357d1fc41da3a37a97c73ef5bc12e56304ef80ca3ad7459a8",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.026.png",
+			"finite": true,
+			"frame": 26,
+			"image_sha256": "6efaaa5c5139bfe4eb51ba9cdbd2fb6f1b1bf11881f4145a6f92123dfd35b906",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 222,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.433333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.45,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "f267a4e0e16b372a7090e347e0262059841e40926a75ccec4d74b7a175381f00",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.027.png",
+			"finite": true,
+			"frame": 27,
+			"image_sha256": "45a341f3efc1c3d1c94de71e44081035abc5e412d78364d7ed794f3cae0d68d6",
+			"mouth_camera_focus_error_m": 0.0000000926665961742401,
+			"render_frame": 224,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.45,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.466666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "bcef47831dda9ee36b0e3d3e5f834861b8abb502f13b0e06292bd9a5e24fc46b",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.028.png",
+			"finite": true,
+			"frame": 28,
+			"image_sha256": "33adce38fcc1bdbc7ded4d90fd1f1407565ad662af9d106cf14ee4e33ad9bceb",
+			"mouth_camera_focus_error_m": 0.0000000931322574615479,
+			"render_frame": 226,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.466666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.483333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403659701347
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "6e2082273e740b221c9ec349fadb55c346aef524876dc511e95b8f53a57e2d9a",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.029.png",
+			"finite": true,
+			"frame": 29,
+			"image_sha256": "60bde0c9f5f2aa3ad834922b20e63ff5228b67156a333f0462f0d2b9640be340",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 228,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.483333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.5,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "12f16d94d63b39cd6fed6c6520c83b13d2610a55a87e2eb8a431aa24e170140a",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.030.png",
+			"finite": true,
+			"frame": 30,
+			"image_sha256": "dcefee06bdd6d675202bfab81b3c14c0e11f3f41e4f1a5ccb15b3564d9e06f17",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 230,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.5,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.516666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "dcfcb1aa7853c4c7ef784ff22b59f68998cc8a1bfd56f69b08787aee32725ab1",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.031.png",
+			"finite": true,
+			"frame": 31,
+			"image_sha256": "4161c728a6c052c5900b4789df1d549a066ed172ebed16e9dbd791cc0052becf",
+			"mouth_camera_focus_error_m": 0.000000107567757368088,
+			"render_frame": 232,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.516666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.533333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "6bb9875b97086a9e8ccf0268a05405acc5d856be1904d98ff2bde72798a300bf",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.032.png",
+			"finite": true,
+			"frame": 32,
+			"image_sha256": "45cb434b4dadf7406742a47a6a32224bc5560ab578364ec0d859c009d757dbdf",
+			"mouth_camera_focus_error_m": 0.0000000763684511184692,
+			"render_frame": 234,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.533333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.55,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "6be826f7535382028828d396e7b4766589d2b19526cd2ab37f6b64e2dc1ea3ce",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.033.png",
+			"finite": true,
+			"frame": 33,
+			"image_sha256": "3495d32f845a4e1a2a8e50fc776831514e6a46000d6f670a8906eb0e9b457a20",
+			"mouth_camera_focus_error_m": 0.000000096391886472702,
+			"render_frame": 236,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.55,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.566666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374999761581,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "8f043d75cfadf3647f41ffeed8c64df296133f3e1cb26fdb98e9d6b4435ceea7",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.034.png",
+			"finite": true,
+			"frame": 34,
+			"image_sha256": "86803bc069bca4c45a4045be004cd1871306ac81cd846c27260f6a161a1a9ab2",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 238,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.566666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.583333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "43731b759f13300675c66e0cc9de560b28c3e5611b744c10727a55638fce3bcf",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.035.png",
+			"finite": true,
+			"frame": 35,
+			"image_sha256": "d75d8e3e6b096e1847e54bfd520b09d6f42ea7c077d3960665b062d9698c580a",
+			"mouth_camera_focus_error_m": 0.0000000474974513053894,
+			"render_frame": 240,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.583333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.6,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "70f5f62e63eb0ab326e4180fe690d034465a8f6f544900fa8336486132c4119b",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.036.png",
+			"finite": true,
+			"frame": 36,
+			"image_sha256": "346e1dd757a5b6236d6adc0b0efa9f99e79db07f05f14e7d6e2e12ba96283a09",
+			"mouth_camera_focus_error_m": 0.000000087544322013855,
+			"render_frame": 242,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.6,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.616666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403674602509
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "e4267648a9cc715f324fbfcd5fc41749b7568af09c0f347482fec8184e8d380a",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.037.png",
+			"finite": true,
+			"frame": 37,
+			"image_sha256": "780519433cb6d5b899f8dba07eabdd94028c5a47644710f0f592f6e172e32fb7",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 244,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.616666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.633333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "70bc373a7b8a8b78799267535ee3eacff8d1e10af56a37757abe5becaef29652",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.038.png",
+			"finite": true,
+			"frame": 38,
+			"image_sha256": "7d579b67c550739ce1a0562f1077c352d1ac9a4d21c023372a6f49091142f358",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 246,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.633333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.65,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "d76de350a6e3224de9449701e8a533d7430940f4cb7e4f280facdb39497ea514",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.039.png",
+			"finite": true,
+			"frame": 39,
+			"image_sha256": "0eccfee2c967210a3716ea56e3e68ca21318e21ecf3db525a1e49f9553b3cdf5",
+			"mouth_camera_focus_error_m": 0.000000071479007601738,
+			"render_frame": 248,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.65,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.666666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "ec360c955cbf0a53915471886e8d8bc51af74d2d4ca3a83005dda46cff5d4b68",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.040.png",
+			"finite": true,
+			"frame": 40,
+			"image_sha256": "a19f7c673309c227585a50aa3f4a037d042dec65f128724af41a104ca0eb2396",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 250,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.666666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.683333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "7b74cc7c0a23e358735d3a55529096aee2a64be3db64daecdebb33e7677183e6",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.041.png",
+			"finite": true,
+			"frame": 41,
+			"image_sha256": "3b4d3644c9fcb44e175f8d6b7c5e377023b3e37647ee56b5d1683917eb31643c",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 252,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.683333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.7,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "ec584ba95c78e8eef7528c9a01bdcde4cbcb106edbcf93e38a526a151410329b",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.042.png",
+			"finite": true,
+			"frame": 42,
+			"image_sha256": "fb5d1f86f74a61931ea9cf557475321a603cc190e1944ab8cee9bca1ba0b1772",
+			"mouth_camera_focus_error_m": 0.000000116357114166021,
+			"render_frame": 254,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.7,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.716666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "f94fc298908f84de4a156eaf3960d32152a6a3fed039a0e2f9a97e6de5dfbd56",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.043.png",
+			"finite": true,
+			"frame": 43,
+			"image_sha256": "8d79bbe38c34065287ef68e83abceee57d543b969b1ebbdd5f5f233f91e7329e",
+			"mouth_camera_focus_error_m": 0.000000101688783615828,
+			"render_frame": 256,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.716666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.733333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "3e8ec00146468dd0ec407b113be8f33add221af8a1ff456aaac59b42ab442c63",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.044.png",
+			"finite": true,
+			"frame": 44,
+			"image_sha256": "76728913c05d765c4bd395e601821c43cb0d0133cc97e9d0efd7433fc13fd4aa",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 258,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.733333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.75,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403659701347
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "861c2a41d41ff18d73af5a7535e91c7273f45a85a05d393707365f687e959b91",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.045.png",
+			"finite": true,
+			"frame": 45,
+			"image_sha256": "018565b50b880b33c13ebcbbe3426cd54215fd9ae55df040e381a0e3a9d08955",
+			"mouth_camera_focus_error_m": 0.0000000635918695479631,
+			"render_frame": 260,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.75,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.766666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "34a44ca5459db153aca17db403429152ff562c81e2d8c986d8961feeecefc4d6",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.046.png",
+			"finite": true,
+			"frame": 46,
+			"image_sha256": "056b096a922c2264e06729aa85a30fdb2757daeffb2aebb6033cde639b35ce10",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 262,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.766666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.783333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "da4c64c9d58cb654f2c893d7525ab19b472b96831b966834ace6ee6a54962152",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.047.png",
+			"finite": true,
+			"frame": 47,
+			"image_sha256": "bfb84036529fdee2c640eb9dbbec6509053458953552d2db8d0a01895a764f31",
+			"mouth_camera_focus_error_m": 0.0000000784639269113541,
+			"render_frame": 264,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.783333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.8,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "7c530d48d22a120028a841cd885f29243611ffefb0bccbf8f0ce4a48367164ee",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.048.png",
+			"finite": true,
+			"frame": 48,
+			"image_sha256": "2b7acff7b33d35afd3117fd305eebc2e747af80b7c6c50b2d1817084f8abd31d",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 266,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.8,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.816666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "9997784754917202588b8769db7b5a1e0a92daff7d43c50f85c47bb08782a502",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.049.png",
+			"finite": true,
+			"frame": 49,
+			"image_sha256": "faed2380c4b89be22c215b5a00231fb3fe0dbf424ef45e9580f21c5a4d77527d",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 268,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.816666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.833333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "c0cad3e3075861cdf37a5e64b0fb3589dde5befbbb4cd1e49a08ba3cdf4f27aa",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.050.png",
+			"finite": true,
+			"frame": 50,
+			"image_sha256": "6b7aaa16d329ead2145251d61f222112776a1e341018e814fbc6dfd773932a9f",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 270,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.833333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.85,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "33a3f3ece9863f7d458964b2b297f00dd6d5e58cfa28fe9c9cc04640f7d7610f",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.051.png",
+			"finite": true,
+			"frame": 51,
+			"image_sha256": "c9a77870c33fcdb65603b8c3ae2e0cc0b06bf02537c2b06905713af028614a4b",
+			"mouth_camera_focus_error_m": 0.0000000412110239267349,
+			"render_frame": 272,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.85,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.866666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375148773193,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "51d9a43e1074bbe6f0eb20997c678e91274af1d7b0e66553eb2144d07e6831dc",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.052.png",
+			"finite": true,
+			"frame": 52,
+			"image_sha256": "810b54da4485ede0187e24c48c7ad150861b6925ca2bf4199f35358704dcde78",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 274,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.866666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.883333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "7ab744e4d2bd7d0d92b7973b07f5c5428d9ceb0e6d9cd54c84672ebd8cfc9e1b",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.053.png",
+			"finite": true,
+			"frame": 53,
+			"image_sha256": "b0d596704fc317f0089663480d1d0e3df5c893ee92c48d6bfb10061974ae84ad",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 276,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.883333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.9,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403778910637
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "a15bc452fdf52791b90e84d856d81f104e7b71c4ddae15fadb0a07e8ee8fc69f",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.054.png",
+			"finite": true,
+			"frame": 54,
+			"image_sha256": "7bb94bdf08591469d5ca4a6d08243c1cc48ad09dec1d802fbbfabdeb50e5aeff",
+			"mouth_camera_focus_error_m": 0.0000000705476850271225,
+			"render_frame": 278,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.9,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.916666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "1cb3d06cbffe5dd3887970abf49c0c0d0f2c279f84976b009fa4f8f0e7094008",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.055.png",
+			"finite": true,
+			"frame": 55,
+			"image_sha256": "5f714dcb90aeccd97d61c6b75c6ee18295051f8d023ceb049d53e4aba4390b00",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 280,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.916666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.933333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "8f1d35cfd3b4db32ec8b5fbf913f858cf406b0a097a4152ae8350494e58d8b05",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.056.png",
+			"finite": true,
+			"frame": 56,
+			"image_sha256": "bf197aec7a48ec7c34b64e20e1a0b607a54a6286a0c4c3385f878cd5125c8e50",
+			"mouth_camera_focus_error_m": 0.0000000994186848402023,
+			"render_frame": 282,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.933333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.95,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374940156937,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "4bf629635dc276c386400b07775404ea920700ac3b04c6f7c3fad0c6926cf903",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.057.png",
+			"finite": true,
+			"frame": 57,
+			"image_sha256": "ae326390a80dc00b4482d09edcccd09572104a5f1406bf9cef3b2970139e59f1",
+			"mouth_camera_focus_error_m": 0.0000000398140400648117,
+			"render_frame": 284,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.95,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.966666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403764009476
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "bd101a5ce9354c427c91504e95c3e73f59a09b26f1454b2d7faa38acb109c2d7",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.058.png",
+			"finite": true,
+			"frame": 58,
+			"image_sha256": "47a8bdec761d2f0aba3b11ec9a03740a4e31ee9c41a1bc41d5a965c7bc98fcba",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 286,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.966666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 0.983333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403719305992
+				],
+				"Right": [
+					0.278375029563904,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "1ba2d6046535470d79f1a5388cf34c8d5e1c7aba6eeb411374814b281e43c741",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.059.png",
+			"finite": true,
+			"frame": 59,
+			"image_sha256": "e7278c7c73b88805811ee6858829b7b8dbc80dfd97ba60c25ec258c70d125ec8",
+			"mouth_camera_focus_error_m": 0.000000119209289550781,
+			"render_frame": 288,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 0.983333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.0,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.22940368950367
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "16b3a6bb31f837db85e600d118e86201e446e0358d35d5f54d6fc6ba187018cd",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.060.png",
+			"finite": true,
+			"frame": 60,
+			"image_sha256": "b136858dc8a94f8c777cb3297fa28d968ce089d5065e18d7e0a34d032cd25d41",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 290,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.0,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.01666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "dd913a895a9ceb409fabe8f60c19c4af081c252356028cd56ce1f6d2fc7e3bfb",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.061.png",
+			"finite": true,
+			"frame": 61,
+			"image_sha256": "63dfbefe2b71ad728593356514605ca8a8a14657e86f0c73f10ff59f8de8ac2a",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 292,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.01666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.03333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "bbd474f6ab6b27c0be1987e41cf3a55c89606604af724d0cf4289662f7be2833",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.062.png",
+			"finite": true,
+			"frame": 62,
+			"image_sha256": "e0ceed6ac9a94676454f1b21b0f94c2b3ceb482c1c7df2b5bce408eb3cfbfe98",
+			"mouth_camera_focus_error_m": 0.0000000752042979001999,
+			"render_frame": 294,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.03333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.05,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "41ecccb9290e851eb2b3f090b879cb8b80432aad092af61ced9c972bb804ed42",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.063.png",
+			"finite": true,
+			"frame": 63,
+			"image_sha256": "1791c6e2ceb3b0c52aaea6f709a3fdb1ae05081b03b83552348604f9ec9208fe",
+			"mouth_camera_focus_error_m": 0.000000117288436740637,
+			"render_frame": 296,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.05,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.06666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403719305992
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "f03a05d3c5160a155ef5c53c276c23cc7901bf861d1fbf9024bbf1b341672c91",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.064.png",
+			"finite": true,
+			"frame": 64,
+			"image_sha256": "08581eb31d1c525ccdb14828acf12263de3463c8eeb3da024eee8fde61295505",
+			"mouth_camera_focus_error_m": 0.0000000787258613854647,
+			"render_frame": 298,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.06666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.08333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403674602509
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "839d1164df67ba8d281cf100e5235bd1b7d5b6bd3758b0eca0f40766857f6060",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.065.png",
+			"finite": true,
+			"frame": 65,
+			"image_sha256": "a40cc39b9affa477007aaf38a5a72b4c8bbf209337f6cbcaae34aec99c81a13f",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 300,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.08333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.1,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403749108315
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "19356d6a43fde2c601330fbd802dde1458de6cc4c2962724096848e83fd769f1",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.066.png",
+			"finite": true,
+			"frame": 66,
+			"image_sha256": "3f28c0ef1d968ba3633c160c3b989be5db35486db76737e3eab06a18d143f069",
+			"mouth_camera_focus_error_m": 0.0000000298023223876953,
+			"render_frame": 302,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.1,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.11666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403778910637
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "8a65662564613781cb4bf28255fbff38aab90b46d5c9470e457b90b2a2ca6849",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.067.png",
+			"finite": true,
+			"frame": 67,
+			"image_sha256": "6565fedd466d5c09f68baac72a6c1ba876845c9fb3b2d55df6e39ff56c7af355",
+			"mouth_camera_focus_error_m": 0.0000000596046447753906,
+			"render_frame": 304,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.11666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.13333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403749108315
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403704404831
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "42c19f0efa202060256b321ddb4fe373ae0617ca83c0a74601c01dbbca86393b",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.068.png",
+			"finite": true,
+			"frame": 68,
+			"image_sha256": "2d873604f8fd6c79569ef9beee35505c36cf5480127518260c21ac01af2bb617",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 306,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.13333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.15,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375238180161,
+					0.229403734207153
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403734207153
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "1b87474be0e7f45011f500c9c68956d8651de356c972b904e15f9462cc0e9b67",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.069.png",
+			"finite": true,
+			"frame": 69,
+			"image_sha256": "e608cf78f3e1e33dcbf3e775980de7bb6729ac51b4b61c9134179657ad385bd3",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 308,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.15,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.16666666666667,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375178575516,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374999761581,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "741acec74881c3483a7f50e32fc75f39be4c8c4373367c1674678736bd598f7c",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.070.png",
+			"finite": true,
+			"frame": 70,
+			"image_sha256": "3676f8938cd5b0a701af5a0dbd8c3b1e39fcd73e7ff414203392df82ae6015fb",
+			"mouth_camera_focus_error_m": 0.000000108266249299049,
+			"render_frame": 310,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.16666666666667,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.18333333333333,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.229403704404831
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "156082bc3d4e83c41d343688f708efa5c8c88ff4f6588b877532cf2ca8bf05ce",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.071.png",
+			"finite": true,
+			"frame": 71,
+			"image_sha256": "c33de2748d4da4b8531a23500f37eb028b9e0be84e1125ad3b82b9ad8b19b648",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 312,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.18333333333333,
+			"two_draw_settle_verified": false,
+			"two_vs_three_draw_pixels_identical": true
+		},
+		{
+			"actual_time_seconds": 1.20000004768372,
+			"arm_lengths_m": {
+				"Left": [
+					0.278375208377838,
+					0.22940368950367
+				],
+				"Right": [
+					0.278374969959259,
+					0.229403719305992
+				]
+			},
+			"assigned_clip": "Zombie_Crawl_Bite",
+			"bone_pose_sha256": "16b0249d319887d3c7b0e39bc6d23faa91f9f6b9d6129d025600688c5f9dfc00",
+			"bones": 59,
+			"clip": "Zombie_Crawl_Bite",
+			"file": "frames/Zombie_Crawl_Bite.072.png",
+			"finite": true,
+			"frame": 72,
+			"image_sha256": "bbd8c9bf1ac2767fb2ddd33f6501ab5f27fea533532b03f3a39bba61323d9956",
+			"mouth_camera_focus_error_m": 0.0000000894069671630859,
+			"render_frame": 315,
+			"root_position_m": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"save_error": 0,
+			"time_seconds": 1.2,
+			"two_draw_settle_verified": true,
+			"two_vs_three_draw_pixels_identical": true
+		}
+	],
+	"import_identity": {
+		"compiled_path": "res://.godot/imported/Zombie.r4.glb-daa2ba0ff6a140e4851c880594046810.scn",
+		"compiled_sha256": "d466015df15e8a22aa92b9ca28dfe189aff77dbfd4439fb8444fdb3158f1991a",
+		"compiled_source_md5": "df767a8b5a98e0996194f945a8741250",
+		"passed": true,
+		"source_md5": "df767a8b5a98e0996194f945a8741250"
+	},
+	"ladder_presentation": "Declared 0.30m/s upward root travel is applied during ladder review; cameras follow the same root. Actual lab traversal is validated separately.",
+	"limits": [
+		"Image generation is evidence capture. Human/model visual inspection is recorded separately; generation alone is not a visual pass.",
+		"Independent animation presentation uses neutral review lighting. Gameplay is also checked separately in the actual lab."
+	],
+	"method": "Native complete R4 model; exact AnimationPlayer seek; two complete renders to settle GPU skin upload; four shared-world camera views. Every clip start/end also compares a third draw pixel-for-pixel.",
+	"passed": true,
+	"per_view_resolution": [
+		384,
+		448
+	],
+	"source_files_changed": [],
+	"source_sha256": {
+		"assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+		"assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+		"assets/Zombie.r4.glb.import": "c7d7a6cabb795679005321b5693ae1caf172712ca7889b0060830fe8574dfa57",
+		"scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"tools/capture_behavior_frames.gd": "304848904881e5d64fb314535d0bd274df84f32e265698828e9429f1230491d5"
+	},
+	"view_pose_count": 620,
+	"views": [
+		"FRONT",
+		"RIGHT",
+		"BACK",
+		"LEFT"
+	]
+}

@@ -1,0 +1,250 @@
+{
+	"attack_samples": {
+		"bite": {
+			"sample_count": 323,
+			"worst": {
+				"action_time": 0.599999999999999,
+				"contact_region_signed_distance_m": 0.00243419051170349,
+				"elapsed": 3.39166666666673,
+				"entire_part_nearest_point": [
+					0.00543186813592911,
+					1.45698046684265,
+					1.27728569507599
+				],
+				"entire_part_signed_distance_m": 0.00170121729373932,
+				"target_root_distance_m": 0.635999917984009
+			}
+		},
+		"both": {
+			"sample_count": 383,
+			"worst": {
+				"action_time": 0.699999999999999,
+				"contact_region_signed_distance_m": 0.00200987607240677,
+				"elapsed": 8.22499999999985,
+				"entire_part_nearest_point": [
+					0.189282834529877,
+					1.25593841075897,
+					1.62455296516418
+				],
+				"entire_part_signed_distance_m": 0.00200987607240677,
+				"target_root_distance_m": 0.970999956130981
+			}
+		},
+		"both_legs": {
+			"sample_count": 288,
+			"worst": {
+				"action_time": 0.499999999999999,
+				"contact_region_signed_distance_m": -0.0000798821449279896,
+				"elapsed": 23.9416666666656,
+				"entire_part_nearest_point": [
+					0.00208505825139582,
+					0.375560879707336,
+					1.68687605857849
+				],
+				"entire_part_signed_distance_m": -0.0000798821449279896,
+				"target_root_distance_m": 0.75995922088623
+			}
+		},
+		"left": {
+			"sample_count": 311,
+			"worst": {
+				"action_time": 0.533333333333333,
+				"contact_region_signed_distance_m": 0.00255287438631058,
+				"elapsed": 4.95833333333337,
+				"entire_part_nearest_point": [
+					0.0441167429089546,
+					1.38312649726868,
+					1.67000997066498
+				],
+				"entire_part_signed_distance_m": 0.00255287438631058,
+				"target_root_distance_m": 1.01699995994568
+			}
+		},
+		"one_leg": {
+			"sample_count": 288,
+			"worst": {
+				"action_time": 0.499999999999999,
+				"contact_region_signed_distance_m": -0.000900518894195568,
+				"elapsed": 19.7666666666659,
+				"entire_part_nearest_point": [
+					0.00208505825139582,
+					0.375521540641785,
+					0.737854897975922
+				],
+				"entire_part_signed_distance_m": -0.000900518894195568,
+				"target_root_distance_m": 0.758980512619019
+			}
+		},
+		"right": {
+			"sample_count": 335,
+			"worst": {
+				"action_time": 0.608333333333332,
+				"contact_region_signed_distance_m": -0.0065067932009697,
+				"elapsed": 6.53333333333328,
+				"entire_part_nearest_point": [
+					-0.185836583375931,
+					1.26386201381683,
+					1.72218573093414
+				],
+				"entire_part_signed_distance_m": -0.0065067932009697,
+				"target_root_distance_m": 1.04949975013733
+			}
+		}
+	},
+	"check_count": 14,
+	"checks": [
+		{
+			"check": "actual demo cycle completed",
+			"passed": true
+		},
+		{
+			"check": "all six actual contacts sampled",
+			"passed": true
+		},
+		{
+			"check": "bite lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "left lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "right lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "both lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "one_leg lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "both_legs lip or hand reaches the visible pad within 15 mm",
+			"passed": true
+		},
+		{
+			"check": "bite full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		},
+		{
+			"check": "left full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		},
+		{
+			"check": "right full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		},
+		{
+			"check": "both full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		},
+		{
+			"check": "one_leg full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		},
+		{
+			"check": "both_legs full posed head or hand stays within 15 mm pad compression",
+			"passed": true
+		}
+	],
+	"contacts": [
+		{
+			"action": "bite",
+			"action_time": 0.599999999999999,
+			"contact_region_signed_distance_m": 0.00243419051170349,
+			"elapsed": 3.39166666666673,
+			"entire_part_nearest_point": [
+				0.00543186813592911,
+				1.45698046684265,
+				1.27728569507599
+			],
+			"entire_part_signed_distance_m": 0.00170121729373932,
+			"stage": "bite",
+			"target_root_distance_m": 0.635999917984009
+		},
+		{
+			"action": "left",
+			"action_time": 0.533333333333333,
+			"contact_region_signed_distance_m": 0.00255287438631058,
+			"elapsed": 4.95833333333337,
+			"entire_part_nearest_point": [
+				0.0441167429089546,
+				1.38312649726868,
+				1.67000997066498
+			],
+			"entire_part_signed_distance_m": 0.00255287438631058,
+			"stage": "left",
+			"target_root_distance_m": 1.01699995994568
+		},
+		{
+			"action": "right",
+			"action_time": 0.599999999999999,
+			"contact_region_signed_distance_m": 0.00152481347322464,
+			"elapsed": 6.52499999999995,
+			"entire_part_nearest_point": [
+				-0.187589049339294,
+				1.30515694618225,
+				1.70353782176971
+			],
+			"entire_part_signed_distance_m": 0.00152481347322464,
+			"stage": "right",
+			"target_root_distance_m": 1.04949975013733
+		},
+		{
+			"action": "both",
+			"action_time": 0.699999999999999,
+			"contact_region_signed_distance_m": 0.00200987607240677,
+			"elapsed": 8.22499999999985,
+			"entire_part_nearest_point": [
+				0.189282834529877,
+				1.25593841075897,
+				1.62455296516418
+			],
+			"entire_part_signed_distance_m": 0.00200987607240677,
+			"stage": "both",
+			"target_root_distance_m": 0.970999956130981
+		},
+		{
+			"action": "crawl_bite",
+			"action_time": 0.499999999999999,
+			"contact_region_signed_distance_m": -0.000900518894195568,
+			"elapsed": 19.7666666666659,
+			"entire_part_nearest_point": [
+				0.00208505825139582,
+				0.375521540641785,
+				0.737854897975922
+			],
+			"entire_part_signed_distance_m": -0.000900518894195568,
+			"stage": "one_leg",
+			"target_root_distance_m": 0.758980512619019
+		},
+		{
+			"action": "crawl_bite",
+			"action_time": 0.499999999999999,
+			"contact_region_signed_distance_m": -0.0000798821449279896,
+			"elapsed": 23.9416666666656,
+			"entire_part_nearest_point": [
+				0.00208505825139582,
+				0.375560879707336,
+				1.68687605857849
+			],
+			"entire_part_signed_distance_m": -0.0000798821449279896,
+			"stage": "both_legs",
+			"target_root_distance_m": 0.75995922088623
+		}
+	],
+	"failures": 0,
+	"native_controller": true,
+	"passed": true,
+	"sampling_hz": 240,
+	"signed_distance_convention": "positive clearance, negative visible-surface penetration",
+	"source_sha256": {
+		"assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+		"scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+		"scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+		"scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5"
+	}
+}

@@ -1,0 +1,371 @@
+{
+  "model": "Zombie.glb",
+  "source_sha256": "667f7746d21cd19db6b2c796a2e9b741269312265cbdf7f14a8e3c799f7914e2",
+  "triangles_including_hidden_caps": 14847,
+  "mesh_triangles": {
+    "Z_Cap_Foot_L_body": 21,
+    "Z_Cap_Foot_L_detached": 21,
+    "Z_Cap_Foot_R_body": 20,
+    "Z_Cap_Foot_R_detached": 20,
+    "Z_Cap_Forearm_L_body": 15,
+    "Z_Cap_Forearm_L_detached": 15,
+    "Z_Cap_Forearm_R_body": 24,
+    "Z_Cap_Forearm_R_detached": 24,
+    "Z_Cap_Hand_L_body": 34,
+    "Z_Cap_Hand_L_detached": 34,
+    "Z_Cap_Hand_R_body": 33,
+    "Z_Cap_Hand_R_detached": 33,
+    "Z_Cap_Head_body": 35,
+    "Z_Cap_Head_detached": 35,
+    "Z_Cap_Shin_L_body": 16,
+    "Z_Cap_Shin_L_detached": 16,
+    "Z_Cap_Shin_R_body": 15,
+    "Z_Cap_Shin_R_detached": 15,
+    "Z_Cap_Thigh_L_body": 23,
+    "Z_Cap_Thigh_L_detached": 23,
+    "Z_Cap_Thigh_R_body": 26,
+    "Z_Cap_Thigh_R_detached": 26,
+    "Z_Cap_UpperArm_L_body": 26,
+    "Z_Cap_UpperArm_L_detached": 26,
+    "Z_Cap_UpperArm_R_body": 23,
+    "Z_Cap_UpperArm_R_detached": 23,
+    "Z_Foot_L": 110,
+    "Z_Foot_R": 110,
+    "Z_Forearm_L": 128,
+    "Z_Forearm_R": 218,
+    "Z_Hand_L": 1278,
+    "Z_Hand_R": 1306,
+    "Z_Head": 7310,
+    "Z_Shin_L": 217,
+    "Z_Shin_R": 228,
+    "Z_Thigh_L": 210,
+    "Z_Thigh_R": 212,
+    "Z_Torso": 2061,
+    "Z_UpperArm_L": 413,
+    "Z_UpperArm_R": 424
+  },
+  "animations": {
+    "Zombie_Idle": {
+      "duration_seconds": 3.0,
+      "frames_inclusive": 181,
+      "loop": true
+    },
+    "Zombie_Walk": {
+      "duration_seconds": 1.4,
+      "frames_inclusive": 85,
+      "loop": true,
+      "authored_speed_mps": 0.72,
+      "stance_fraction": 0.6,
+      "stance_travel_m": 0.6048,
+      "description": "Alternating heel-to-toe steps, pelvis weight transfer, opposing shoulder and arm motion."
+    },
+    "Zombie_Attack": {
+      "duration_seconds": 1.6,
+      "frames_inclusive": 97,
+      "loop": false,
+      "strike_frame_60hz": 42,
+      "strike_time_seconds": 0.7,
+      "description": "Right claw wind-up, left planted step, rotating forward rake, follow-through and full recovery."
+    },
+    "Zombie_Hit": {
+      "duration_seconds": 0.6,
+      "frames_inclusive": 37,
+      "loop": false
+    }
+  },
+  "forward_axis": "+Z",
+  "units": "meters",
+  "limb_parts": {
+    "Head": {
+      "mesh": "Z_Head",
+      "parent_part": "Torso",
+      "bone": "Head",
+      "cap_bone": "Neck",
+      "cap_skin_weights": {
+        "Neck": 1.0,
+        "Head": 0.0
+      },
+      "cap_body": "Z_Cap_Head_body",
+      "cap_detached": "Z_Cap_Head_detached",
+      "cut_point_godot": [
+        0.0,
+        1.5499999523162842,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        1.0,
+        -0.0
+      ]
+    },
+    "UpperArm_L": {
+      "mesh": "Z_UpperArm_L",
+      "parent_part": "Torso",
+      "bone": "LeftArm",
+      "cap_bone": "LeftShoulder",
+      "cap_skin_weights": {
+        "LeftShoulder": 0.4475,
+        "LeftArm": 0.5525
+      },
+      "cap_body": "Z_Cap_UpperArm_L_body",
+      "cap_detached": "Z_Cap_UpperArm_L_detached",
+      "cut_point_godot": [
+        0.257999986410141,
+        1.437000036239624,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        1.0,
+        0.0,
+        -0.0
+      ]
+    },
+    "Forearm_L": {
+      "mesh": "Z_Forearm_L",
+      "parent_part": "UpperArm_L",
+      "bone": "LeftForeArm",
+      "cap_bone": "LeftArm",
+      "cap_skin_weights": {
+        "LeftArm": 0.5,
+        "LeftForeArm": 0.5
+      },
+      "cap_body": "Z_Cap_Forearm_L_body",
+      "cap_detached": "Z_Cap_Forearm_L_detached",
+      "cut_point_godot": [
+        0.4472676217556,
+        1.3772906064987183,
+        -0.039238471537828445
+      ],
+      "cut_normal_godot": [
+        0.9569873809814453,
+        -0.18295279145240784,
+        0.22517400979995728
+      ]
+    },
+    "Hand_L": {
+      "mesh": "Z_Hand_L",
+      "parent_part": "Forearm_L",
+      "bone": "LeftHand",
+      "cap_bone": "LeftForeArm",
+      "cap_skin_weights": {
+        "LeftForeArm": 0.5,
+        "LeftHand": 0.5
+      },
+      "cap_body": "Z_Cap_Hand_L_body",
+      "cap_detached": "Z_Cap_Hand_L_detached",
+      "cut_point_godot": [
+        0.6938413381576538,
+        1.3561556339263916,
+        0.05234618857502937
+      ],
+      "cut_normal_godot": [
+        0.934413492679596,
+        -0.08009199798107147,
+        0.34706854820251465
+      ]
+    },
+    "UpperArm_R": {
+      "mesh": "Z_UpperArm_R",
+      "parent_part": "Torso",
+      "bone": "RightArm",
+      "cap_bone": "RightShoulder",
+      "cap_skin_weights": {
+        "RightShoulder": 0.4475,
+        "RightArm": 0.5525
+      },
+      "cap_body": "Z_Cap_UpperArm_R_body",
+      "cap_detached": "Z_Cap_UpperArm_R_detached",
+      "cut_point_godot": [
+        -0.257999986410141,
+        1.437000036239624,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        -1.0,
+        0.0,
+        -0.0
+      ]
+    },
+    "Forearm_R": {
+      "mesh": "Z_Forearm_R",
+      "parent_part": "UpperArm_R",
+      "bone": "RightForeArm",
+      "cap_bone": "RightArm",
+      "cap_skin_weights": {
+        "RightArm": 0.5,
+        "RightForeArm": 0.5
+      },
+      "cap_body": "Z_Cap_Forearm_R_body",
+      "cap_detached": "Z_Cap_Forearm_R_detached",
+      "cut_point_godot": [
+        -0.4403976798057556,
+        1.3772904872894287,
+        -0.039238374680280685
+      ],
+      "cut_normal_godot": [
+        -0.9569873809814453,
+        -0.18295305967330933,
+        0.22517399489879608
+      ]
+    },
+    "Hand_R": {
+      "mesh": "Z_Hand_R",
+      "parent_part": "Forearm_R",
+      "bone": "RightHand",
+      "cap_bone": "RightForeArm",
+      "cap_skin_weights": {
+        "RightForeArm": 0.5,
+        "RightHand": 0.5
+      },
+      "cap_body": "Z_Cap_Hand_R_body",
+      "cap_detached": "Z_Cap_Hand_R_detached",
+      "cut_point_godot": [
+        -0.6869714260101318,
+        1.3561557531356812,
+        0.05234624072909355
+      ],
+      "cut_normal_godot": [
+        -0.9344136118888855,
+        -0.0800928995013237,
+        0.347068190574646
+      ]
+    },
+    "Thigh_L": {
+      "mesh": "Z_Thigh_L",
+      "parent_part": "Torso",
+      "bone": "LeftUpLeg",
+      "cap_bone": "Hips",
+      "cap_skin_weights": {
+        "Hips": 0.75,
+        "LeftUpLeg": 0.25
+      },
+      "cap_body": "Z_Cap_Thigh_L_body",
+      "cap_detached": "Z_Cap_Thigh_L_detached",
+      "cut_point_godot": [
+        0.10339999943971634,
+        0.824999988079071,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.7690392732620239,
+        -0.6392015218734741,
+        -0.0
+      ]
+    },
+    "Thigh_R": {
+      "mesh": "Z_Thigh_R",
+      "parent_part": "Torso",
+      "bone": "RightUpLeg",
+      "cap_bone": "Hips",
+      "cap_skin_weights": {
+        "Hips": 0.75,
+        "RightUpLeg": 0.25
+      },
+      "cap_body": "Z_Cap_Thigh_R_body",
+      "cap_detached": "Z_Cap_Thigh_R_detached",
+      "cut_point_godot": [
+        -0.0966000035405159,
+        0.824999988079071,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        -0.7690392732620239,
+        -0.6392015218734741,
+        -0.0
+      ]
+    },
+    "Shin_L": {
+      "mesh": "Z_Shin_L",
+      "parent_part": "Thigh_L",
+      "bone": "LeftLeg",
+      "cap_bone": "LeftUpLeg",
+      "cap_skin_weights": {
+        "LeftUpLeg": 0.5,
+        "LeftLeg": 0.5
+      },
+      "cap_body": "Z_Cap_Shin_L_body",
+      "cap_detached": "Z_Cap_Shin_L_detached",
+      "cut_point_godot": [
+        0.12319924682378769,
+        0.510760486125946,
+        -0.025148579850792885
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Foot_L": {
+      "mesh": "Z_Foot_L",
+      "parent_part": "Shin_L",
+      "bone": "LeftFoot",
+      "cap_bone": "LeftLeg",
+      "cap_skin_weights": {
+        "LeftLeg": 0.5,
+        "LeftFoot": 0.5
+      },
+      "cap_body": "Z_Cap_Foot_L_body",
+      "cap_detached": "Z_Cap_Foot_L_detached",
+      "cut_point_godot": [
+        0.0,
+        0.14000000059604645,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Shin_R": {
+      "mesh": "Z_Shin_R",
+      "parent_part": "Thigh_R",
+      "bone": "RightLeg",
+      "cap_bone": "RightUpLeg",
+      "cap_skin_weights": {
+        "RightUpLeg": 0.5,
+        "RightLeg": 0.5
+      },
+      "cap_body": "Z_Cap_Shin_R_body",
+      "cap_detached": "Z_Cap_Shin_R_detached",
+      "cut_point_godot": [
+        -0.11632895469665527,
+        0.5107602477073669,
+        -0.025148950517177582
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    },
+    "Foot_R": {
+      "mesh": "Z_Foot_R",
+      "parent_part": "Shin_R",
+      "bone": "RightFoot",
+      "cap_bone": "RightLeg",
+      "cap_skin_weights": {
+        "RightLeg": 0.5,
+        "RightFoot": 0.5
+      },
+      "cap_body": "Z_Cap_Foot_R_body",
+      "cap_detached": "Z_Cap_Foot_R_detached",
+      "cut_point_godot": [
+        0.0,
+        0.14000000059604645,
+        -0.0
+      ],
+      "cut_normal_godot": [
+        0.0,
+        -1.0,
+        -0.0
+      ]
+    }
+  },
+  "notes": [
+    "Caps default hidden in runtime; joined clothing, eyes, hair follow their severable part.",
+    "The GLB contains geometry, skin and animations. Godot physics and limb health are implemented in scripts/zombie.gd."
+  ],
+  "motion_revision": 3
+}

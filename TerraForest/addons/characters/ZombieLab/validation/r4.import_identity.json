@@ -1,0 +1,31 @@
+{
+  "all_imports_match": true,
+  "frozen_r4_sha256_match": true,
+  "engine": "Godot 4.5.2 stable",
+  "imports": [
+    {
+      "asset": "assets/Zombie.glb",
+      "sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+      "source_md5": "db23252b9362c87089aef6c95f5b31ef",
+      "compiled_source_md5": "db23252b9362c87089aef6c95f5b31ef",
+      "compiled_resource": ".godot/imported/Zombie.glb-e07d2413ceec86cdd5c80ea3ed59db7a.scn",
+      "match": true
+    },
+    {
+      "asset": "assets/Zombie.r2.glb",
+      "sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+      "source_md5": "625f7a4f4c7d726888b78655393cd6da",
+      "compiled_source_md5": "625f7a4f4c7d726888b78655393cd6da",
+      "compiled_resource": ".godot/imported/Zombie.r2.glb-c7d5a380994932c2e220d426b1a9d23a.scn",
+      "match": true
+    },
+    {
+      "asset": "assets/Zombie.r4.glb",
+      "sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "source_md5": "df767a8b5a98e0996194f945a8741250",
+      "compiled_source_md5": "df767a8b5a98e0996194f945a8741250",
+      "compiled_resource": ".godot/imported/Zombie.r4.glb-daa2ba0ff6a140e4851c880594046810.scn",
+      "match": true
+    }
+  ]
+}

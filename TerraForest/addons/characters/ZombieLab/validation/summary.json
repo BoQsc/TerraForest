@@ -1,0 +1,410 @@
+{
+  "schema_version": 1,
+  "release": "r4-actions-2026-10-18-6b6021c6",
+  "title": "Zombie Lab: F1 main, F2 original, F4 expanded actions",
+  "assembled_utc": "2026-10-18T20:21:11.014857+00:00",
+  "passed": true,
+  "validated_runtimes": {
+    "Godot": "4.5.2 stable",
+    "Blender": "4.5.3"
+  },
+  "versions": [
+    {
+      "key": "F1",
+      "role": "Main and startup default; original bytes preserved",
+      "model": "assets/Zombie.glb",
+      "source": "source/Zombie.blend",
+      "clips": 4,
+      "model_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+      "source_sha256": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b"
+    },
+    {
+      "key": "F2",
+      "role": "Original alternate; original bytes preserved",
+      "model": "assets/Zombie.r2.glb",
+      "source": "source/Zombie.r2.blend",
+      "clips": 4,
+      "model_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+      "source_sha256": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82"
+    },
+    {
+      "key": "F4",
+      "role": "Active development with expanded actions and behavior",
+      "model": "assets/Zombie.r4.glb",
+      "source": "source/Zombie.r4.blend",
+      "clips": 15,
+      "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "source_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73"
+    },
+    {
+      "key": "F3 / R3",
+      "role": "Deprecated; archived and excluded from active selection",
+      "model": "archive/r3/Zombie.r3.glb",
+      "source": "archive/r3/Zombie.r3.blend",
+      "model_sha256": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+      "source_sha256": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f"
+    }
+  ],
+  "source_sha256": {
+    "assets/Zombie.glb": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+    "source/Zombie.blend": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+    "assets/Zombie.r2.glb": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+    "source/Zombie.r2.blend": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+    "archive/r3/Zombie.r3.glb": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+    "archive/r3/Zombie.r3.blend": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+    "archive/r4.previous/Zombie.r4.glb": "f9f387e637bdaeea0bbdf7d00e842b2a52279c7e9381b1daddea2c2f4852d992",
+    "archive/r4.previous/Zombie.r4.blend": "72386e6e30655e4de148879d4a46ccbd6176f8bf9146e5ecd594851e8a182847",
+    "assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "source/Zombie.r4.blend": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+    "main.gd": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+    "scripts/zombie.gd": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+    "scripts/zombie_demo.gd": "016755e48b0cd2e93abab4feec20be35c418664198d2c086ff0226b0416c52d8",
+    "scripts/zombie_demo_target.gd": "134f465be0532e34805ec29a594c073d4655d551a263115780a1f14a7a8aa8b5",
+    "assets/zombie.revisions.json": "cfd9305dc79be85fcbe906b38f4254543acb0c7900b9053395353816244564a6",
+    "assets/Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "assets/Zombie.r4.contract.json": "4f510e74944d9873ec42527afc93f56f763f8202d48cf9f95fc9b2169d76df2e",
+    "source/author_behaviors.py": "cd1d4bbc86779932608461f7ab71d3910eed1c3f65c85cabc89f5144c6db3ad4",
+    "tools/capture_behavior_frames.gd": "304848904881e5d64fb314535d0bd274df84f32e265698828e9429f1230491d5"
+  },
+  "r4_model": {
+    "triangles_including_sever_caps": 14992,
+    "skin_bones": 59,
+    "damage_regions": 14,
+    "paired_sever_locations": 13,
+    "preserved_base_clips": 4,
+    "added_clips": 11
+  },
+  "added_actions": [
+    "Attack_Bite",
+    "Attack_Left",
+    "Attack_Right",
+    "Attack_Both",
+    "To_Crawl",
+    "Crawl",
+    "Crawl_Idle",
+    "Crawl_Bite",
+    "Crawl_Hit",
+    "Jump",
+    "Climb_Ladder"
+  ],
+  "behavior": [
+    "Context-eligible attack variety with marker-timed evaluated hand and mouth contact.",
+    "Living prone transition and crawling after leg-segment loss; attacks respect complete arm chains.",
+    "Small hop with real gravity and landing; ladder alignment, ascent, platform exit and interrupted fall.",
+    "Actual target, health, severing and traversal in Run R4 demonstration; GUI Stop and Restart.",
+    "Native articulated ragdoll, self/world collision and frozen evaluated morphs on detached parts."
+  ],
+  "automated_suites": {
+    "passed": true,
+    "unique_checks": 230,
+    "suites": [
+      {
+        "report": "validation/asset.identity.json",
+        "checks": 53,
+        "passed": true
+      },
+      {
+        "report": "validation/lab.assets.json",
+        "checks": 43,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.runtime.final.json",
+        "checks": 53,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.ragdoll.final.json",
+        "checks": 30,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.demo.json",
+        "checks": 18,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.inspection.json",
+        "checks": 10,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.demo.interruption.json",
+        "checks": 9,
+        "passed": true
+      },
+      {
+        "report": "validation/r4.contact_fixture.json",
+        "checks": 14,
+        "passed": true
+      }
+    ],
+    "promoted_main_project_recheck": {
+      "passed": true,
+      "checks": 43,
+      "report": "validation/lab.promoted.json"
+    }
+  },
+  "geometry_and_fabric": {
+    "passed": true,
+    "clips": 15,
+    "sampled_poses": 2601,
+    "sample_spacing_authored_frames": 0.5,
+    "unexpected_intersection_samples_within_declared_scope": 0,
+    "arm_and_fabric_checks": {
+      "exact_frame_and_midpoint_coverage": true,
+      "arm_segments_keep_bind_length": true,
+      "all_midshaft_sections_present": true,
+      "midshaft_area_retains_at_least_95_percent": true,
+      "midshaft_width_retains_at_least_95_percent": true,
+      "midshaft_center_within_5mm_of_rigid_segment": true,
+      "no_regular_cloth_faces_collapse_below_10_percent_rest_area": true
+    },
+    "geometry_limits": [
+      "no claim about unsampled times",
+      "coplanar/tangent contacts excluded",
+      "triangle plane penetration is a local proxy, not a volumetric signed distance",
+      "hidden wound caps excluded",
+      "self-test triangle pairs sharing any vertex excluded",
+      "head internal surfaces such as teeth, eyes and mouth are not self-tested",
+      "same-part clothing-layer self contacts are outside --skin-self coverage; --all-body-self reports them unfiltered"
+    ],
+    "fabric_limits": [
+      "Every integer frame and midpoint is measured; no claim is made for arbitrary unsampled times.",
+      "The cloth is a skinned game mesh, not a cloth simulation.",
+      "Cross-sectional hull areas describe silhouette and are not watertight anatomical volumes.",
+      "Passing these checks does not replace the separate exact intersection audit or visual frame inspection."
+    ]
+  },
+  "actual_visual_review": {
+    "body": {
+      "complete": true,
+      "integer_poses": 1308,
+      "directions": [
+        "FRONT",
+        "RIGHT",
+        "BACK",
+        "LEFT"
+      ],
+      "directional_views": 5232,
+      "atlases_actually_reviewed": 230,
+      "partitions": [
+        {
+          "report": "validation/visual.base.json",
+          "atlases": 70,
+          "integer_poses": 400,
+          "directional_views": 1600
+        },
+        {
+          "report": "validation/visual.attacks.json",
+          "atlases": 60,
+          "integer_poses": 343,
+          "directional_views": 1372
+        },
+        {
+          "report": "validation/visual.crawl.json",
+          "atlases": 45,
+          "integer_poses": 250,
+          "directional_views": 1000
+        },
+        {
+          "report": "validation/visual.crawl_idle.json",
+          "atlases": 21,
+          "integer_poses": 121,
+          "directional_views": 484
+        },
+        {
+          "report": "validation/visual.traversal.json",
+          "atlases": 34,
+          "integer_poses": 194,
+          "directional_views": 776
+        }
+      ],
+      "capture_manifest_sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346"
+    },
+    "mouth_closeups": {
+      "complete": true,
+      "integer_poses": 155,
+      "directions": [
+        "FRONT",
+        "RIGHT",
+        "BACK",
+        "LEFT"
+      ],
+      "directional_views": 620,
+      "atlases_actually_reviewed": 27,
+      "partitions": [
+        {
+          "report": "validation/visual.mouth.json",
+          "atlases": 27,
+          "integer_poses": 155,
+          "directional_views": 620
+        }
+      ],
+      "capture_manifest_sha256": "14ed4d2a3dd05be4c8a9c641249e5ad4e29893b972db974ec7b3b7a92b40fccf"
+    },
+    "live_outcome_images": 44,
+    "ladder_release_reviewed_frame_view_pairs": 70,
+    "method": "Each listed final atlas was actually displayed and reviewed, with exact image and source hashes. Capturing an image alone was not counted as visual review."
+  },
+  "videos": {
+    "live_demo": {
+      "file": "preview/Zombie.r4.demo.mp4",
+      "bytes": 11058519,
+      "sha256": "f2064f6981ade6076316d8df8b604062c4e4f703c5dc6628db334301270afdc8",
+      "frames": 859,
+      "fps": 30.0,
+      "retimed": false,
+      "includes_actual_gui_run_and_stop": true
+    },
+    "all_frame_review": {
+      "file": "preview/Zombie.r4.actions.mp4",
+      "bytes": 3220430,
+      "sha256": "e3ca953f85aec3257b44bb817b48390d910849cecc6a943196d6d9b812be1e6f",
+      "frames": 1463,
+      "fps": 60,
+      "resolution": [
+        1536,
+        448
+      ]
+    }
+  },
+  "report_files": {
+    "asset.identity.json": {
+      "bytes": 17510,
+      "sha256": "5cbd330c7b15c6920b415236bec7eb090c9e0a2acb550353bace862f7b989d9e"
+    },
+    "lab.assets.json": {
+      "bytes": 16282,
+      "sha256": "cd2c9a0940561368bf4d1ad813b4f8a2d175e115a2d5cef7aa175d2594ceaa76"
+    },
+    "r4.runtime.final.json": {
+      "bytes": 44084,
+      "sha256": "545fdbeaba35e26b671b38bb0dc0e6f5d1365b3df01847cfadcd42fc6b4cbcff"
+    },
+    "r4.ragdoll.final.json": {
+      "bytes": 36308,
+      "sha256": "74211e773371f26686d411ece3fad1979eb7a9220d6dd3e7f5548e07f8f0699b"
+    },
+    "r4.demo.json": {
+      "bytes": 9178,
+      "sha256": "1ac78abebf2bc80b6f7203045e86442d0e1b35c91eb471541bdcda97235690ae"
+    },
+    "r4.inspection.json": {
+      "bytes": 1569,
+      "sha256": "67645d066250c28ff45182c2a469a1e593385e40c11017888dc0b5ccee53eabb"
+    },
+    "r4.demo.interruption.json": {
+      "bytes": 4934,
+      "sha256": "42d2fa51efaaf8bc5054af52da31943243c807da8c2bd83e08d1b6898e1ad92c"
+    },
+    "r4.contact_fixture.json": {
+      "bytes": 6889,
+      "sha256": "89ebb877a328cdcac7b018c17d0d795db66386eb51a94e0ad57afb225bae3d14"
+    },
+    "lab.promoted.json": {
+      "bytes": 16282,
+      "sha256": "cd2c9a0940561368bf4d1ad813b4f8a2d175e115a2d5cef7aa175d2594ceaa76"
+    },
+    "animation.mesh.json": {
+      "bytes": 1026282,
+      "sha256": "5e69722167f51ebfbc26f758fc540a41ab15285266c132d3922e079dbc08bdfd"
+    },
+    "fabric.json": {
+      "bytes": 404890,
+      "sha256": "f88c46f4554000370cc5a7f4114fdbb7778933226cfc8e427bbeb12fa961e6f3"
+    },
+    "fabric.measurements.json": {
+      "bytes": 81232075,
+      "sha256": "88111bf76a83f2f320940f504b78f70ffcdb5ff7b04b8d150787750343cfa4b2"
+    },
+    "motion.json": {
+      "bytes": 16165367,
+      "sha256": "eea5682ef07529e579f0336ec223f9bff013007a21e887a1fd32dd04cf0dfd67"
+    },
+    "r4.import_identity.json": {
+      "bytes": 1235,
+      "sha256": "f00a36862d265119aff0cbf335ca8627256f5c75678a2baf8f7ecfe4bdee6bc7"
+    },
+    "frames.body.json": {
+      "bytes": 1217853,
+      "sha256": "4b75f57a8089266aa50322e137884fab11a93fa5bd69ac47190115520f8e9346"
+    },
+    "frames.mouth.json": {
+      "bytes": 138859,
+      "sha256": "14ed4d2a3dd05be4c8a9c641249e5ad4e29893b972db974ec7b3b7a92b40fccf"
+    },
+    "frames.base.json": {
+      "bytes": 323895,
+      "sha256": "366eba793b91c336ce9b86d9d1c2ae78bfa8cc2155148e12cb68358debc1b186"
+    },
+    "frames.attacks.json": {
+      "bytes": 285829,
+      "sha256": "e31a57cc5f5f865d60ca66485d4438b9c1edb9ffb71f5198c5d2274488d36970"
+    },
+    "frames.crawl.json": {
+      "bytes": 305697,
+      "sha256": "a7a3fa89300a7f687f3fd2bfda0fe015c69f4d1dd5f6a9a759bd5facb0d0d6df"
+    },
+    "frames.traversal.json": {
+      "bytes": 162646,
+      "sha256": "264de7367c997e3d3461eaea5ef06d0cd78c9538c6ae6acaf91cef449377361d"
+    },
+    "r4.ladder.grip.final.json": {
+      "bytes": 562846,
+      "sha256": "7c4acfc2cea0e12d24024377e89cb699d9c75f981b7dfe434c990aa63dbec167"
+    },
+    "r4.ladder.collapse.final.json": {
+      "bytes": 562854,
+      "sha256": "4e37af80607c8ef0ec812aa15795fe66b0fbcd8fac5be208631547ec87ed708d"
+    },
+    "r4.demo.movie.json": {
+      "bytes": 16358,
+      "sha256": "87712087b76b53352f336c6ee1a82d20a1680b8fe9a2fc27d3efe67a3ce37e1e"
+    },
+    "visual.mouth.json": {
+      "bytes": 86222,
+      "sha256": "fa2505e88dc2a0021ec2a6e34640216b324625b5beec22869dbc8da71894cb3a"
+    },
+    "visual.demo.json": {
+      "bytes": 19084,
+      "sha256": "9a4bed762155960cafe8aea1d6a9e54c3d29f861f927fa53fc18dd7f1a6fa208"
+    },
+    "visual.demo.movie.json": {
+      "bytes": 9617,
+      "sha256": "9be3842349ecea85d2f1a814b82d2b1510e00ad269f92bbbce98c1c65a703575"
+    },
+    "visual.ladder_release.json": {
+      "bytes": 23697,
+      "sha256": "3a0928835181ffcb4112c46f02a8ca8952631e4292e1c0ea16a49cb58c2a3415"
+    },
+    "visual.base.json": {
+      "bytes": 175125,
+      "sha256": "f77bb193c51a86a8aa7e2cdee4ee29c9dcd5ecaeddb0d1fb40883c66adcc3653"
+    },
+    "visual.attacks.json": {
+      "bytes": 87146,
+      "sha256": "cdea861fb1466ee278ebbf6b0f17c473c01df4cc41161c8e74ce49981975c248"
+    },
+    "visual.crawl.json": {
+      "bytes": 29622,
+      "sha256": "1e248fd8cde20aec9da1ce9eb485a4c95a02016ce7683c1b468b62ef3174c761"
+    },
+    "visual.crawl_idle.json": {
+      "bytes": 114696,
+      "sha256": "25b3f4770bda8aa05292aa137afd86ef684e37e021db56215fc6971b560338c1"
+    },
+    "visual.traversal.json": {
+      "bytes": 106717,
+      "sha256": "55d36f60ca1de07c9cb98a08d840671f0064eef44d896c5f4a1560fa8e212dfa"
+    }
+  },
+  "practical_limits": [
+    "Clothing uses skinned geometry and local corrective morphs; it is not an independent cloth simulation.",
+    "Traversal requests are integrated with real collision and support. The demo arranges its stations; general obstacle recognition and navigation are the integrating game responsibility.",
+    "Geometry checks use documented seam tolerances and exclusions, and visual review is resolution-limited. Passing them does not prove every possible runtime contact or world configuration.",
+    "Every authored integer animation frame was reviewed in four directions; dynamic ragdoll visual review is sampled and separately identified.",
+    "Raw frame PNG sets are represented by the packaged all-frame video, exact capture/review manifests and reproducible capture tool. Live outcome PNGs are included.",
+    "The GLB carries the rig, materials and animations. Living behavior, demonstration and native ragdoll integration are in the Godot project."
+  ]
+}

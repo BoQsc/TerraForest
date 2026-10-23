@@ -1,0 +1,127 @@
+{
+  "schema_version": 2,
+  "build_label": "Zombie Lab \u2014 R4 Actions & Behavior",
+  "default_revision": "original",
+  "latest_revision": "r4",
+  "revision_order": [
+    "original",
+    "r4",
+    "r2"
+  ],
+  "revisions": [
+    {
+      "id": "original",
+      "label": "F1 / Original \u2014 Main",
+      "description": "First released zombie; startup default.",
+      "model_path": "res://assets/Zombie.glb",
+      "model_sha256": "8486a5b6441f8242cdac0dc96c411cbb763c46aa6b38ae1cd458d94db891f5a0",
+      "blend_path": "source/Zombie.blend",
+      "blend_sha256": "d9b207ee96672acc5cb12c9544d46914b736dfda784b91f049f49fae0d12656b",
+      "triangles_including_caps": 14905,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.0,
+      "attack_strike_seconds": 0.6398,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.8,
+        "Zombie_Attack": 1.4,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision2_baseline",
+      "selectable": true,
+      "status": "preserved_original",
+      "shortcut": "F1"
+    },
+    {
+      "id": "r4",
+      "label": "F4 / R4 \u2014 Active",
+      "description": "R4 development: varied attacks, limb-aware crawling, short jump and ladder climb.",
+      "model_path": "res://assets/Zombie.r4.glb",
+      "model_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+      "blend_path": "source/Zombie.r4.blend",
+      "blend_sha256": "d94a2177afdc9a5c181852aec796b0b3aeb62f87a467191db511eb3d337bcb73",
+      "triangles_including_caps": 14992,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.72,
+      "attack_strike_seconds": 0.7,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.4,
+        "Zombie_Attack": 1.6,
+        "Zombie_Hit": 0.6,
+        "Zombie_Attack_Bite": 1.35,
+        "Zombie_Attack_Left": 1.3,
+        "Zombie_Attack_Right": 1.4,
+        "Zombie_Attack_Both": 1.6,
+        "Zombie_Crawl": 1.6,
+        "Zombie_Crawl_Idle": 2.0,
+        "Zombie_Crawl_Bite": 1.2,
+        "Zombie_To_Crawl": 0.8,
+        "Zombie_Crawl_Hit": 0.5,
+        "Zombie_Jump": 1.2,
+        "Zombie_Climb_Ladder": 2.0
+      },
+      "provenance_directory": "r4_behaviors_project",
+      "selectable": true,
+      "status": "active_development",
+      "shortcut": "F4",
+      "behavior_contract_path": "res://assets/Zombie.r4.behavior.json",
+      "previous_model_path": "archive/r4.previous/Zombie.r4.glb",
+      "behavior_contract_sha256": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4"
+    },
+    {
+      "id": "r2",
+      "label": "F2 / Original alternate",
+      "description": "Preserved R2 original; complete earlier model and animations.",
+      "model_path": "res://assets/Zombie.r2.glb",
+      "model_sha256": "7ba891bc1c72cb31a9ec4d807ea81cc10dad37d767041048da464d1e0bb6028b",
+      "blend_path": "source/Zombie.r2.blend",
+      "blend_sha256": "56e28fb299197ce1d908879a7237563fc381a4acf9de83e46f3261cd270cdd82",
+      "triangles_including_caps": 14771,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.0,
+      "attack_strike_seconds": 0.6398,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.8,
+        "Zombie_Attack": 1.4,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision3_baseline",
+      "selectable": true,
+      "status": "preserved_original",
+      "shortcut": "F2"
+    },
+    {
+      "id": "r3",
+      "label": "F3 / R3 \u2014 Deprecated",
+      "description": "Archived intermediate revision; removed from active selection.",
+      "model_path": "res://archive/r3/Zombie.r3.glb",
+      "model_sha256": "2ed8ee3d69b66a799479c75c5144aee84045e9aa647b6a2efa8ce3c737b892e2",
+      "blend_path": "archive/r3/Zombie.r3.blend",
+      "blend_sha256": "983623cee93a3651f784bc0f49378089e609ec011d03c180a5630d86de28d85f",
+      "triangles_including_caps": 14847,
+      "animation_fps": 60,
+      "walk_speed_mps": 0.72,
+      "walk_reference_speed_mps": 0.72,
+      "attack_strike_seconds": 0.7,
+      "clip_lengths_seconds": {
+        "Zombie_Idle": 3.0,
+        "Zombie_Walk": 1.4,
+        "Zombie_Attack": 1.6,
+        "Zombie_Hit": 0.6
+      },
+      "provenance_directory": "revision4_previous_live",
+      "selectable": false,
+      "status": "deprecated",
+      "shortcut": null
+    }
+  ],
+  "shared_runtime_note": "F1 and F2 preserve their complete original GLBs and Blender sources. F4 is the active R4 behavior build. R3 is retained only in archive/r3 and has no active hotkey. Shared contact, joint, replay and version-loading fixes remain in the controller. R4 behavior features are enabled only for its matching model and contract.",
+  "deprecated_revisions": [
+    "r3"
+  ]
+}

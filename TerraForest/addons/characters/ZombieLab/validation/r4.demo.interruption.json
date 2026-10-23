@@ -1,0 +1,195 @@
+{
+	"actual_keyboard_events": true,
+	"asset_sha256": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+	"check_count": 9,
+	"checks": [
+		{
+			"check": "P during actual leg-loss transition stops demo and enters inspection",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "paused transition holds the exact frame beyond its normal completion time",
+			"details": {
+				"action_time": 0.4,
+				"active_action": "to_crawl",
+				"alive": true,
+				"animation_time": 0.4,
+				"available_attacks": [],
+				"behavior_enabled": false,
+				"clip": "Zombie_To_Crawl",
+				"contact_count": 0,
+				"crawl_speed": 0.32,
+				"crawl_transition": true,
+				"crawling": false,
+				"grounded": true,
+				"last_attack": "",
+				"last_contact": {
+
+				},
+				"last_rejection": "",
+				"learned_contact_distance": null,
+				"left_arm": true,
+				"miss_count": 0,
+				"movement_mode": "to_crawl",
+				"position": "(0.0, 0.000089, -0.8)",
+				"r4_actions_enabled": true,
+				"revision_id": "r4",
+				"right_arm": true,
+				"standing_legs": false,
+				"state": "to_crawl",
+				"target_distance": 3.84999990463257,
+				"traversal_state": "none",
+				"velocity": "(0.0, 0.0, 0.0)"
+			},
+			"passed": true
+		},
+		{
+			"check": "period advances exactly one authored frame during the paused transition",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "P resumes and naturally completes the physical prone conversion",
+			"details": {
+				"action_time": 0.0,
+				"active_action": "",
+				"alive": true,
+				"animation_time": 0.283333333333334,
+				"available_attacks": [
+					"crawl_bite"
+				],
+				"behavior_enabled": false,
+				"clip": "Zombie_Crawl_Idle",
+				"contact_count": 0,
+				"crawl_speed": 0.32,
+				"crawl_transition": false,
+				"crawling": true,
+				"grounded": true,
+				"last_attack": "",
+				"last_contact": {
+
+				},
+				"last_rejection": "",
+				"learned_contact_distance": null,
+				"left_arm": true,
+				"miss_count": 0,
+				"movement_mode": "crawling",
+				"position": "(0.0, 0.000089, -0.8)",
+				"r4_actions_enabled": true,
+				"revision_id": "r4",
+				"right_arm": true,
+				"standing_legs": false,
+				"state": "crawl_idle",
+				"target_distance": 3.84999990463257,
+				"traversal_state": "none",
+				"velocity": "(0.0, 0.0, 0.0)"
+			},
+			"passed": true
+		},
+		{
+			"check": "incompatible action selects and labels the available prone fallback",
+			"details": null,
+			"passed": true
+		},
+		{
+			"check": "P preserves the live attack clip and frame before stopping behavior",
+			"details": {
+				"clip": "Zombie_Attack_Bite",
+				"frame": 18,
+				"saved_frame": 18
+			},
+			"passed": true
+		},
+		{
+			"check": "stop test begins on the real elevated ladder",
+			"details": {
+				"action_time": 1.51666666666666,
+				"active_action": "climb",
+				"alive": true,
+				"animation_time": 1.31666666666666,
+				"available_attacks": [
+					"bite",
+					"left",
+					"right",
+					"both"
+				],
+				"behavior_enabled": false,
+				"clip": "Zombie_Climb_Ladder",
+				"contact_count": 0,
+				"crawl_speed": 0.32,
+				"crawl_transition": false,
+				"crawling": false,
+				"grounded": false,
+				"last_attack": "",
+				"last_contact": {
+
+				},
+				"last_rejection": "",
+				"learned_contact_distance": null,
+				"left_arm": true,
+				"miss_count": 0,
+				"movement_mode": "climbing",
+				"position": "(3.0, 0.395838, -2.4)",
+				"r4_actions_enabled": true,
+				"revision_id": "r4",
+				"right_arm": true,
+				"standing_legs": true,
+				"state": "climb",
+				"target_distance": 1.55241739749908,
+				"traversal_state": "ladder_climb",
+				"velocity": "(0.0, 0.3, 0.0)"
+			},
+			"passed": true
+		},
+		{
+			"check": "Stop during a climb restores grounded physics and available inspection",
+			"details": {
+				"action_time": 0.0,
+				"active_action": "",
+				"alive": true,
+				"animation_time": 0.999999999999998,
+				"available_attacks": [
+					"bite",
+					"left",
+					"right",
+					"both"
+				],
+				"behavior_enabled": false,
+				"clip": "Zombie_Idle",
+				"contact_count": 0,
+				"crawl_speed": 0.32,
+				"crawl_transition": false,
+				"crawling": false,
+				"grounded": true,
+				"last_attack": "",
+				"last_contact": {
+
+				},
+				"last_rejection": "",
+				"learned_contact_distance": null,
+				"left_arm": true,
+				"miss_count": 0,
+				"movement_mode": "standing",
+				"position": "(3.0, 0.000129, -2.4)",
+				"r4_actions_enabled": true,
+				"revision_id": "r4",
+				"right_arm": true,
+				"standing_legs": true,
+				"state": "idle",
+				"target_distance": 6.2211332321167,
+				"traversal_state": "none",
+				"velocity": "(0.0, 0.0, 0.0)"
+			},
+			"passed": true
+		},
+		{
+			"check": "Restart after an interrupted climb restores fresh limbs and active pursuit",
+			"details": null,
+			"passed": true
+		}
+	],
+	"controller_sha256": "13dbc744674671bda2a371787dfedd77bdda0a7e87575db9b0dfd0ae1ab80844",
+	"main_sha256": "8ef30f126ac2c8f7ff5fce62cf90efdb4d8d5d71d8f17ce1a8a9625c63d4d881",
+	"passed": true
+}
