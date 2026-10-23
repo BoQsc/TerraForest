@@ -105,7 +105,7 @@ func prepare() -> bool:
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	for id: int in CATALOG:
 		inventory.register_item(id,1)
-		inventory.register_durable(id,200)
+		inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
 	equipment=ClassDB.instantiate("NativeContainerStore")

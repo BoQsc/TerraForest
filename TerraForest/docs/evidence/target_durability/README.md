@@ -1,5 +1,9 @@
 # Target durability beside the crosshair
 
+Historical initial implementation. The subsequent
+[catalog/destruction change](../durability_catalog/README.md) replaces the zero
+bar on fatal hits with immediate dismissal; the evidence below predates it.
+
 2026-10-23. A reused, mouse-transparent HUD panel shows the last successfully
 damaged target's name, current/max durability and green/amber/red bar. It lasts
 2.2 seconds, fading over the last 0.35 seconds. Hits refresh the same control;

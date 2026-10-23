@@ -5,6 +5,7 @@ var game: Node
 var durability: RefCounted
 var next_attack:=0
 var rejection_reason:=""
+const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15}}
 func prepare(world: Node) -> bool:
 	game=world;durability=ClassDB.instantiate("NativeWorldDurability")
@@ -21,7 +22,7 @@ func target() -> Dictionary:
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
 		if cover.get("hit",false):
 			if game.ground_cover._dirty.has(cover.cell) or game.ground_cover._pending.has(cover.cell):return {}
-			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":2 if cover.species==8 else (45 if cover.species==0 else (40 if cover.species==6 else 10)),"material":"stone" if cover.species==0 else "wood","name":game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
+			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
 	if hit.is_empty():
 		if game.terrain.backend.region_terrain:hit=game._terrain_pick(start,end)
 		if hit.is_empty():return {}
@@ -29,30 +30,31 @@ func target() -> Dictionary:
 	if collider==game.structures.blocks and hit.has("cell"):
 		var cell: Vector3i=hit.cell
 		var word: int=game.structures.blocks.get_cell(cell)
-		return {"kind":"block","key":block_key(cell),"health":[90,60,120,180][(word>>5)&3],"material":"wood" if ((word>>5)&3)==1 else "stone","name":"Building block","cell":cell}
+		return {"kind":"block","key":block_key(cell),"health":Durability.BLOCK_MAXIMUM[(word>>5)&3],"material":"wood" if ((word>>5)&3)==1 else "stone","name":"Building block","cell":cell}
 	if collider!=null and collider==game.vegetation.trunk_collision:
 		var id: int=collider.placement_for_body(hit.rid)
-		if id>0:return {"kind":"tree","key":"tree:%d"%id,"id":id,"health":90,"material":"wood","name":"Tree"}
+		if id>0:return {"kind":"tree","key":"tree:%d"%id,"id":id,"health":Durability.WORLD.tree,"material":"wood","name":"Tree"}
 	for asset: String in game.structures._models:
 		var collection=game.structures._models[asset]
 		if collider==collection:
 			var id: int=collection.placement_for_body(hit.rid)
-			if id>0:return {"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"health":90,"material":"wood" if "wood" in asset or "furniture" in asset or "storage" in asset else "other","name":"Object"}
+			var profile:Dictionary=Durability.model_profile(asset)
+			if id>0:return {"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"health":profile.health,"material":profile.material,"name":profile.name}
 	if collider!=null and game.actors.pool!=null and collider.get_parent()==game.actors.pool:
 		var handle: int=collider.entity_handle(game.actors.store)
 		if handle!=0:
 			var id: int=game.actors.store.persistent_id(handle)
-			return {"kind":"actor","key":"actor:%d"%id,"id":id,"handle":handle,"health":100,"material":"other","name":"Actor"}
+			return {"kind":"actor","key":"actor:%d"%id,"id":id,"handle":handle,"health":Durability.WORLD.actor,"material":"other","name":"Actor"}
 	var vehicles=game.world_vehicle
 	var vehicle_id: int=vehicles.car_identity if collider!=null and collider==vehicles.car else 0
 	if vehicles.fleet_enabled and collider!=null:
 		for id: int in vehicles.activation.residents:
 			if vehicles.activation.residents[id]==collider:vehicle_id=id
 		if collider==vehicles.activation.parked_view and collider.has_method("identity_for_body"):vehicle_id=collider.identity_for_body(hit.rid)
-	if vehicle_id>0:return {"kind":"vehicle","key":"vehicle:%d"%vehicle_id,"id":vehicle_id,"health":300,"material":"other","name":"Vehicle"}
+	if vehicle_id>0:return {"kind":"vehicle","key":"vehicle:%d"%vehicle_id,"id":vehicle_id,"health":Durability.WORLD.vehicle,"material":"other","name":"Vehicle"}
 	if collider==null or (collider is CollisionObject3D and game.terrain.is_ancestor_of(collider) and collider.collision_layer&1):
 		var cell:=Vector3i((hit.position-hit.normal*0.05).floor())
-		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":30,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}
+		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}
 	return {}
 func attack() -> bool:
 	if game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
@@ -71,7 +73,7 @@ func apply_target(t: Dictionary) -> bool:
 	if t.kind=="zombie":
 		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z):return false
 		var part:String=t.get("part","torso")
-		hud.show_target_damage("Zombie: "+part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))),int(t.zombie.PARTS.get(part,{}).get("health",180)))
+		hud.show_target_damage("Zombie: "+part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))) if t.zombie.alive else 0,int(t.zombie.PARTS.get(part,{}).get("health",180)))
 		if item!=0:
 			hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
 			game.terrain.changed_since_save=true

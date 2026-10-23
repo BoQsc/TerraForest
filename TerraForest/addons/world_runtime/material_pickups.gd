@@ -56,7 +56,7 @@ func prepare(persistence: RefCounted) -> bool:
 	for bucket_id in range(402,412):schema.register_item(bucket_id,1)
 	for item: int in ITEMS:
 		schema.register_item(item,1 if item<100 or item>=301 else 999)
-		if item in [1,2,3,4]:schema.register_durable(item,200)
+		if item in [1,2,3,4]:schema.register_durable(item,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[item])
 	var next_stacks:Dictionary={};var next_stores:Dictionary={};var next_renderers:Dictionary={}
 	var components:Array[Dictionary]=[]
 	for item: int in ITEMS:

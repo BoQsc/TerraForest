@@ -17,6 +17,10 @@ func run() -> void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	game.ecosystem.set_process(false)
 	var hud=game.player_hud;var attack=game.world_attack
+	var uncatalogued:Array[String]=[]
+	for asset:String in game.structures._models:
+		if not attack.Durability.MODELS.has(asset):uncatalogued.append(asset)
+	check(uncatalogued.is_empty(),"every registered model has an explicit durability profile: "+str(uncatalogued))
 	check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing(),"target durability is idle until an accepted hit")
 	DirAccess.make_dir_recursive_absolute("res://reports/target_durability")
 	var original_position: Vector3=game.player.position
@@ -41,14 +45,17 @@ func run() -> void:
 			var rect:Rect2=hud.damage_feedback.get_global_rect()
 			check(rect.position.distance_to(Vector2(root.size)*0.5)<140 and rect.end.y<root.size.y*0.5 and rect.end.x<=root.size.x,"durability stays near and above the crosshair without covering it")
 			root.get_texture().get_image().save_png("res://reports/target_durability/block_hit.png")
+			var damage_snapshot:PackedByteArray=attack.durability.capture_storage_snapshot()
+			await create_timer(2.35).timeout
+			check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and damage_snapshot==attack.durability.capture_storage_snapshot(),"feedback expires without polling or mutating surviving target health")
 		for i in 8:
 			if game.structures.blocks.get_cell(base)==0:break
 			attack.next_attack=0;attack.attack()
 		check(game.structures.blocks.get_cell(base)==0,"tool "+str(slot)+" eventually destroys block")
-		check(hud.damage_feedback.remaining==0 and hud.damage_feedback.maximum==60,"successful destruction displays an empty target bar")
-	var damage_snapshot:PackedByteArray=attack.durability.capture_storage_snapshot()
-	await create_timer(2.35).timeout
-	check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and damage_snapshot==attack.durability.capture_storage_snapshot(),"feedback expires without polling or mutating target health")
+		check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and hud.damage_feedback.expires_us==0,"fatal block hit clears feedback synchronously")
+		if slot==0:
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png("res://reports/target_durability/block_destroyed.png")
 	# No held material can route into an attack.
 	hud.equip(4);var snapshot: PackedByteArray=attack.durability.capture_storage_snapshot();attack.next_attack=0
 	check(not attack.attack() and snapshot==attack.durability.capture_storage_snapshot(),"placeable material never attacks")
@@ -64,6 +71,7 @@ func run() -> void:
 	hud.equip(1)
 	for i in 3:attack.next_attack=0;attack.attack()
 	check(game.ecosystem.harvest_state.contains(1),"axe finishes the same damaged tree")
+	check(not hud.damage_feedback.visible and hud.damage_feedback.expires_us==0,"fatal tree hit clears feedback synchronously")
 	# Furniture and protected chest use the same authoritative removal path.
 	var shelf=game.structures.model("furniture/shelf/v1")
 	var pose:=Transform3D(Basis.IDENTITY,tree_point+Vector3(5,0,0))
@@ -90,6 +98,7 @@ func run() -> void:
 	check(not hud.damage_feedback.visible,"escape menu clears target feedback")
 	game.session_menu.set_open(false);attack.apply_target(model_target)
 	check(shelf.get_instance(id).is_empty(),"shared attack destroys furniture through salvage transaction")
+	check(not hud.damage_feedback.visible and hud.damage_feedback.expires_us==0,"fatal furniture hit clears feedback synchronously")
 	if game.actors.pool==null:check(game.actors.enable(),"actor pool enables for damage fixture")
 	var actor_point:=tree_point+Vector3(10,2,0)
 	var actor_id: int=game.actors.spawn(actor_point);game.actors.select_near(actor_point)
@@ -100,6 +109,7 @@ func run() -> void:
 	if actor_target.get("kind")=="actor":
 		for i in 7:attack.apply_target(actor_target)
 		check(game.actors.store.resolve_identity(actor_id)==0,"actor destruction retires persistent entity")
+		check(not hud.damage_feedback.visible,"fatal actor hit clears feedback synchronously")
 	var vehicle_point:=tree_point+Vector3(20,2,0)
 	check(game.world_vehicle._install_vehicle(game,Transform3D(Basis.IDENTITY,vehicle_point)),"vehicle damage fixture installs")
 	game.camera.global_position=vehicle_point+Vector3(2,0.4,0);game.camera.look_at(vehicle_point+Vector3(0,0.4,0))
@@ -109,6 +119,7 @@ func run() -> void:
 	if car_target.get("kind")=="vehicle":
 		for i in 20:attack.apply_target(car_target)
 		check(not game.world_vehicle.fleet.get_record(car_target.id).present and game.world_vehicle.car==null,"vehicle destruction removes body and saved identity")
+		check(not hud.damage_feedback.visible,"fatal vehicle hit clears feedback synchronously")
 	check(game.persistence._capture().sections.has("world_durability"),"world save includes sparse durability")
 	# Tool drop/recollect preserves wear using actual pickup stores.
 	var worn: int=hud.inventory.snapshot().slots[1].wear
@@ -136,6 +147,7 @@ func run() -> void:
 				if game.ground_cover.removed.contains(cover_target.id):break
 				attack.apply_target(cover_target)
 			check(game.ground_cover.removed.contains(cover_target.id),"ground-cover destruction persists removal")
+			check(not hud.damage_feedback.visible,"fatal ground-cover hit clears feedback synchronously")
 	# One shared terrain route for every tool, with spatially separate fresh targets.
 	game.ground_enabled=false
 	for slot in 4:

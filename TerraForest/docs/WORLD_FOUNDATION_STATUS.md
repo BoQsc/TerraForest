@@ -10,6 +10,15 @@ with block/object screenshots inspected at 1920x1080. Earlier failed setup and U
 checks remain documented in [target durability evidence](evidence/target_durability/README.md).
 This is interaction presentation, not closure of world or performance gaps below.
 
+Follow-up: fatal hits now hide this display synchronously rather than showing a
+zero bar. Shared balance definitions and the initial [durability table](DURABILITY_TABLE.md)
+cover every registered model, block material, cover species, terrain/entity class
+and durable tool without changing maxima or save formats. Standalone character
+anatomy keeps its own authoritative definitions. The table explicitly records
+unsupported damage coverage and provisional values; listing them does not complete
+player health, independent paving damage or material-specific terrain hardness.
+See [catalog and destruction evidence](evidence/durability_catalog/README.md).
+
 ## Loading presentation and visible generation work - 2026-10-23
 
 Generation and gameplay loading now share a wide, shallow bottom-centered progress

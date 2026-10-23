@@ -52,6 +52,12 @@ func run() -> void:
 		check(not game.zombies.apply_hit(selected,20,Vector3.FORWARD),"suspended target rejects stale attack")
 		game.zombies.update(0.1,game.player.global_position,true,false)
 		zombie.set_behavior(false)
+		var death_target:Dictionary=selected.duplicate()
+		death_target.part="torso"
+		for hit in 20:
+			if not zombie.alive:break
+			game.world_attack.apply_target(death_target)
+		check(not zombie.alive and not game.player_hud.damage_feedback.visible and game.player_hud.damage_feedback.expires_us==0,"fatal character strike clears feedback synchronously")
 		game.player_hud.equip(0)
 		for tick in 5:await process_frame
 		DirAccess.make_dir_recursive_absolute("res://reports/character_world")

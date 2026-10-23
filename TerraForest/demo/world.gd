@@ -1333,7 +1333,7 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	obstacle.validity=func():return _model_edit_available() and doors.collection.placement_for_body(obstacle.body_rid)==identity and doors.collection.get_instance(identity)==transform and not doors.state.is_open(identity) and not doors.collection.is_removal_protected(identity)
 	obstacle.damage_callback=func(damage:float):
 		var key:String="model:%s:%d"%[preload("res://addons/structures/door_catalog.gd").KEY,identity]
-		var result:Dictionary=world_attack.durability.hit(key,90,maxi(1,int(roundf(damage))))
+		var result:Dictionary=world_attack.durability.hit(key,world_attack.Durability.model_profile(preload("res://addons/structures/door_catalog.gd").KEY).health,maxi(1,int(roundf(damage))))
 		if not result.ok:return
 		terrain.changed_since_save=true
 		if result.destroyed and doors.collection.remove_instances(PackedInt64Array([identity])):

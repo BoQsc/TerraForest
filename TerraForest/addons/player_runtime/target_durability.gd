@@ -30,6 +30,7 @@ func _ready()->void:
 	clear()
 
 func show_hit(target_name:String,current:int,total:int)->void:
+	if current<=0:clear();return
 	if total<=0 or (allowed.is_valid() and not allowed.call()):return
 	maximum=total;remaining=clampi(current,0,total)
 	name_label.text=target_name;amount_label.text="%d / %d"%[remaining,maximum]
