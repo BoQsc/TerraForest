@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS native structures ready
+PASS production forest ready
+PASS tier 0 visible prefix matches identities
+PASS tier 1 visible prefix matches identities
+PASS tier 2 visible prefix matches identities
+PASS tier 3 visible prefix matches identities
+PASS tier 4 visible prefix matches identities
+PASS trees and near shadows rendered
+PASS single block placed through native API
+PASS only overlapping tree removed
+PASS tier 0 visible prefix matches identities
+PASS tier 1 visible prefix matches identities
+PASS tier 2 visible prefix matches identities
+PASS tier 3 visible prefix matches identities
+PASS tier 4 visible prefix matches identities
+PASS frame 0 survivor tree/shadow GPU transforms and fades unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged
+PASS surviving root pose unchanged

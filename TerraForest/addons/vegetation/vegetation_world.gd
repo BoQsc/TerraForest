@@ -3,6 +3,10 @@ extends Node3D
 signal initialization_failed(message: String)
 const Renderer = preload("res://addons/vegetation/forest.gd")
 const Assets = preload("res://addons/vegetation/assets.gd")
+# Construction and the native trunk proxy must reserve the same solid volume.
+# A canopy/wind render bound is not an obstruction: using it here erases nearby
+# trees when a single brick is placed underneath their overhanging branches.
+const TRUNK_BOUNDS := AABB(Vector3(-0.35, 0, -0.35), Vector3(0.7, 8, 0.7))
 @export var camera: Camera3D
 @export_range(64.0, 2200.0, 16.0) var draw_distance: float = 448.0
 @export_range(0.0, 256.0, 8.0) var shadow_distance: float = 128.0
@@ -20,7 +24,7 @@ func enable_trunk_collision() -> bool:
 	if not ClassDB.class_exists("NativeStaticBatch") or not renderer.roots.is_empty(): return false
 	trunk_collision=ClassDB.instantiate("NativeStaticBatch")
 	var proxy:=BoxMesh.new()
-	if not trunk_collision.configure_asset("vegetation/trunk_proxy/v1",proxy) or not trunk_collision.configure_collision_only() or not trunk_collision.configure_collision(AABB(Vector3(-.35,0,-.35),Vector3(.7,8,.7)),96,256,16):
+	if not trunk_collision.configure_asset("vegetation/trunk_proxy/v1",proxy) or not trunk_collision.configure_collision_only() or not trunk_collision.configure_collision(TRUNK_BOUNDS,96,256,16):
 		trunk_collision.free();trunk_collision=null;return false
 	add_child(trunk_collision)
 	return true
@@ -83,8 +87,9 @@ func remove_chunk(key: String) -> void:
 	renderer.remove_chunk(key)
 
 func placement_bounds() -> AABB:
-	# Maximum supported wind amplitude, before instance scale/rotation.
-	return assets.meshes[0].get_aabb().grow(2.0) if ready_to_render else AABB()
+	# Reserve solid wood, not empty space beneath the crown. Rendering retains
+	# its independent, wind-safe cell bounds in forest.gd.
+	return TRUNK_BOUNDS if ready_to_render else AABB()
 
 func remove_root(id: int) -> bool:
 	if not renderer.roots.has(id): return false

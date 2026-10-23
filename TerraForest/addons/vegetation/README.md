@@ -21,6 +21,12 @@ The node must stay at identity world transform because transforms and camera pos
 
 `remove_roots_in_bounds(bounds) -> int` removes roots from intersecting spatial cells while preserving other roots' owners and LOD/fade state. Removing a visual root does not persist a gameplay action; persistence belongs to the caller or terrain coordinator.
 
+`placement_bounds()` returns the solid trunk obstruction bounds, shared with the
+native trunk collision proxy (0.7 × 8 × 0.7 m before instance scale/rotation).
+Structure exclusion must use this volume. Canopy and wind bounds describe rendering
+coverage; using those for construction erases surrounding trees when placing a
+small block underneath branches. Rendering keeps its independent wind-safe bounds.
+
 Defaults: 448 m draw distance, 128 m shadow reach, wind 0.3. `sun_direction` points toward the sun. The renderer uses source geometry close up, fitted layered view proxies in the middle, and silhouette proxies far away. Visual and shadow transitions share stable per-tree state. Ordinary camera movement updates changed instance rows rather than rebuilding complete batches.
 
 The included source loader is specialized to the supplied spruce asset (6,592 triangles, two surfaces, fixed proxy bake metadata). Replacing the six textures alone does not create a new compatible species. Multiple species and an arbitrary-asset authoring/bake pipeline require further work. Trees are render/shadow objects; add your own gameplay collision policy.

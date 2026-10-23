@@ -1,3 +1,17 @@
+## Block placement forest exclusion corrected - 2026-10-23
+
+The reported Character Preview / slot-5 brick disappearance was reproduced in the
+main scene: one brick outside all solid trunks removed three trees and their
+shadows because construction used wind-expanded canopy boxes. Structure exclusion
+now shares the native trunk proxy's solid bounds; rendering bounds stay independent.
+The actual paid/right-click route retains all 2,724 trees and 3,179 tree/shadow
+MultiMesh records, with no canopy revision or forest rebuild. True trunk overlap
+and frontage undo/redo/restore checks pass. Images were inspected; the failing
+reproduction and initial diagnostic timeout remain recorded in
+[evidence/block_forest_exclusion](evidence/block_forest_exclusion/README.md).
+This closes the reproduced canopy-exclusion defect, not the broader unfinished
+generator, terrain residency, mining latency or populated-runtime requirements below.
+
 ## User-directed generation workflow correction - 2026-10-23
 
 The ordinary Generate → Load → Play path now uses one generation child, native
