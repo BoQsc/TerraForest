@@ -11,11 +11,50 @@
 using namespace godot;
 namespace terraforest {
 void NativeVegetationSelection::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("prepare_shadow_mask","renderer","origin","span","resolution","sun"),&NativeVegetationSelection::prepare_shadow_mask);
+ ClassDB::bind_method(D_METHOD("build_shadow_mask"),&NativeVegetationSelection::build_shadow_mask);
+ ClassDB::bind_method(D_METHOD("shadow_mask","renderer","origin","span","resolution","sun"),&NativeVegetationSelection::shadow_mask);
  ClassDB::bind_method(D_METHOD("flush","renderer"),&NativeVegetationSelection::flush);
  ClassDB::bind_method(D_METHOD("select","renderer","eye","projection","time","instant"),&NativeVegetationSelection::select);
  ClassDB::bind_method(D_METHOD("clear"),&NativeVegetationSelection::clear);
  ClassDB::bind_method(D_METHOD("erase","id"),&NativeVegetationSelection::erase);
  ClassDB::bind_method(D_METHOD("queue_stats"),&NativeVegetationSelection::queue_stats);
+}
+// Bounded distant canopy projection. No terrain rays, per-tree draw calls or
+// additional shadow-map pass. Max-composition is stable under owner ordering.
+PackedByteArray NativeVegetationSelection::shadow_mask(Object *f,Vector3 origin,double span,int resolution,Vector3 sun){
+ return prepare_shadow_mask(f,origin,span,resolution,sun)?build_shadow_mask():PackedByteArray();
+}
+bool NativeVegetationSelection::prepare_shadow_mask(Object *f,Vector3 origin,double span,int resolution,Vector3 sun){
+ shadow_roots.clear();shadow_resolution=0;
+ if(!f||!origin.is_finite()||!sun.is_finite()||sun.y<.15||!std::isfinite(span)||span<64||span>2048||resolution<16||resolution>256)return false;
+ Dictionary roots=f->get("roots");if(roots.size()>65536)return false;
+ shadow_roots.reserve(roots.size());Array ids=roots.keys();
+ for(int i=0;i<ids.size();++i){Dictionary row=roots[ids[i]];shadow_roots.push_back(row["t"]);}
+ shadow_origin=origin;shadow_sun=sun;shadow_span=span;shadow_resolution=resolution;return true;
+}
+PackedByteArray NativeVegetationSelection::build_shadow_mask()const{
+ PackedByteArray pixels;if(!shadow_resolution)return pixels;
+ const int resolution=shadow_resolution;const double span=shadow_span;
+ const Vector3 origin=shadow_origin,sun=shadow_sun;
+ pixels.resize(resolution*resolution);pixels.fill(0);auto *out=pixels.ptrw();
+ const double texel=span/resolution;
+ for(const auto &t:shadow_roots){
+  double scale=t.basis.get_column(0).length();
+  if(!t.origin.is_finite()||!std::isfinite(scale)||scale<.05||scale>10)continue;
+  Vector2 root(t.origin.x,t.origin.z),axis(-sun.x/sun.y*9*scale,-sun.z/sun.y*9*scale);
+  Vector2 a=root+axis*.25,b=root+axis;double radius=std::max(2.,3.5*scale),length2=(b-a).length_squared();
+  int x0=std::max(0,int(std::floor((std::min(a.x,b.x)-radius-origin.x)/texel))),x1=std::min(resolution-1,int(std::ceil((std::max(a.x,b.x)+radius-origin.x)/texel)));
+  int z0=std::max(0,int(std::floor((std::min(a.y,b.y)-radius-origin.z)/texel))),z1=std::min(resolution-1,int(std::ceil((std::max(a.y,b.y)+radius-origin.z)/texel)));
+  for(int z=z0;z<=z1;++z)for(int x=x0;x<=x1;++x){
+   Vector2 p(origin.x+(x+.5)*texel,origin.z+(z+.5)*texel);
+   double along=length2>.001?std::clamp(double((p-a).dot(b-a))/length2,0.,1.):0.;
+   double r=(p-(a+(b-a)*along)).length()/radius;if(r>=1)continue;
+   uint8_t value=uint8_t(std::round(255*(1-r*r)*(1-r*r)));
+   out[z*resolution+x]=std::max(out[z*resolution+x],value);
+  }
+ }
+ return pixels;
 }
 void NativeVegetationSelection::clear(){events={};live.clear();travel=0;}
 void NativeVegetationSelection::erase(int64_t id){live.erase(id);}

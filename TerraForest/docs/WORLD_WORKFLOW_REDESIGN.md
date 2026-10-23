@@ -216,3 +216,37 @@ integrated_rewrite_0_20261023, report d23449a0182a95ca1421ba06bb966d7b. Generati
 water offline, and reopen verifies its cached state. A broader seed/shoreline matrix,
 map preview of planned inland water, explicit generation-progress granularity and
 populated travel performance remain open. Do not confuse these with flow work.
+
+
+## Recovery and distant canopy shadows — 2026-10-23
+
+Publication now writes a durable journal before promotion. Explicit recovery takes
+source/destination OS leases, validates the canonical archive and byte-compares all
+three stores before promoting remaining files, with the canonical root last. It
+refuses overwrite, changed data, reparse points and ambiguous journals. Recovery
+requires the original staging source to remain unchanged. Four injected interruption
+points and a tampered-store case pass; actual coordinator recovery passes too.
+The selector offers recovery by original world name. Mid-generation cancellation
+also passed with the owned child stopped and the destination unpublished.
+
+Native publication: 20261023T055137145736Z; coordinator recovery:
+20261023T055137930794Z; cancellation: 20261023T052942579194Z. A required-token typo
+marked 20261023T055102885911Z failed despite its zero assertion failures. Earlier
+mixed-indentation parse failures were corrected and retained. The UI review now
+checks all visible interactive controls, catching and fixing a clipped Quit button;
+1080p creation and recovery images were inspected (20261023T055100361066Z).
+
+Distant trees now have a shared native R8 canopy mask, built on one worker from an
+immutable root snapshot. The 256-square texture is 64 KiB, updated only after root,
+region or sunlight changes and at most four times per second. Directional terrain
+lighting blends it beyond the real-shadow range; nearby full shadows remain. It is
+an approximation for terrain, not accurate shadowing of arbitrary objects.
+
+Determinism/removal/immutable-worker checks and native selection parity pass:
+20261023T053716912977Z / 20261023T053717671593Z. Inspected integrated on/off images
+show subtle distant canopy darkening. Two alternating GPU median pairs were
+6.109/6.116 and 6.034/6.121 ms (off/on), with 2724 trees and main-thread snapshot
+capture max 1.320 ms. These short measurements are not sustained thermal proof.
+Integrated report: 20261023T053720559601Z. Large-root capture cost, vegetation
+owner-publication continuity, current bundled export and broader rewrite requirements
+remain open. No vegetation density reduction was introduced.

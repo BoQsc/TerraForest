@@ -4,6 +4,8 @@ extends SceneTree
 # this script manages isolated stages and user-visible status only.
 const Launch=preload("res://demo/world_launch.gd")
 var destination:=""
+var recovery_mode:=false
+var presentation_report:=""
 var seed_value:=42
 var generator:=19
 var settlement_layout:="connected"
@@ -21,6 +23,7 @@ var metadata:Dictionary={}
 func _initialize()->void:
  Engine.max_fps=10
  for arg:String in OS.get_cmdline_user_args():
+  if arg=="--recover-publication":recovery_mode=true
   if arg.begins_with("--destination="):destination=arg.trim_prefix("--destination=")
   if arg.begins_with("--seed="):seed_value=int(arg.trim_prefix("--seed="))
   if arg.begins_with("--settlement-layout="):settlement_layout=arg.trim_prefix("--settlement-layout=")
@@ -33,15 +36,19 @@ func _initialize()->void:
  lease=ClassDB.instantiate("NativeWorldArchive")
  if not lease.acquire(worlds.path_join(destination+".prepare")):finish("failed","Another generation owns this destination");return
  lease_owned=true
- for suffix in [".trw",".trw.regions",".trw.models",".trw.water"]:
-  if FileAccess.file_exists(worlds.path_join(destination+suffix)) or DirAccess.dir_exists_absolute(worlds.path_join(destination+suffix)):
-   finish("failed","Destination already contains world data");return
  var identity:=Crypto.new().generate_random_bytes(16).hex_encode()
  stage="combined_stage_"+identity
  report="user://generation_reports/"+identity
  DirAccess.make_dir_recursive_absolute(report)
  metadata={"version":1,"destination":destination,"stage":stage,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"phases":[]}
  if not cancel_path.is_empty() and FileAccess.file_exists(cancel_path):finish("cancelled","Cancelled before generation started");return
+ if recovery_mode:
+  status("recovering");publish_worker=Thread.new()
+  if publish_worker.start(recover_world)!=OK:publish_worker=null;finish("failed","Cannot start recovery worker")
+  return
+ for suffix in [".trw",".trw.regions",".trw.models",".trw.water"]:
+  if FileAccess.file_exists(worlds.path_join(destination+suffix)) or DirAccess.dir_exists_absolute(worlds.path_join(destination+suffix)):
+   finish("failed","Destination already contains world data");return
  start_stage("creating")
 func status(state:String,reason:String="")->void:
  phase=state
@@ -65,12 +72,22 @@ func start_stage(state:String)->void:
  if child<0:finish("failed","Could not start generation stage");return
  metadata.phases.append({"stage":state,"pid":child,"arguments":args,"started_usec":Time.get_ticks_usec()})
  deadline=Time.get_ticks_msec()+(540000 if state=="creating" else 270000)
+ persist_metadata()
 func _process(_delta:float)->bool:
  if publish_worker!=null:
   if publish_worker.is_alive():return false
   var result:Dictionary=publish_worker.wait_to_finish();publish_worker=null
-  if not result.get("ok",false):finish("failed",str(result.get("reason","Publication failed")));return false
   metadata["publication"]=result
+  if not result.get("ok",false):finish("failed",str(result.get("reason","Publication failed")));return false
+  if recovery_mode:
+   if not result.get("recovered",false):finish("failed","No completed interrupted publication exists for this world name");return false
+   var source:String=result.get("source","")
+   if Launch.preparation_slot(source):
+    presentation_report="user://generation_reports/"+source.trim_prefix("combined_stage_")
+    var previous=JSON.parse_string(FileAccess.get_file_as_string(presentation_report.path_join("generation_plan_identity.json"))) if FileAccess.file_exists(presentation_report.path_join("generation_plan_identity.json")) else null
+    if previous is Dictionary:seed_value=int(previous.get("seed",seed_value));generator=int(previous.get("generator",generator))
+   metadata["seed"]=seed_value;metadata["generator"]=generator
+   metadata["recovered_source"]=source
   publish_presentation()
   finish("ready");return false
  if child<0:return false
@@ -87,23 +104,31 @@ func _process(_delta:float)->bool:
  if exit_code!=0 or not token in log or "SCRIPT ERROR:" in log or "ERROR:" in log:
   finish("failed","Generation or restoration check failed; see stage log");return false
  if phase=="creating":start_stage("verifying");return false
- status("publishing")
+ status("publishing");persist_metadata()
  publish_worker=Thread.new()
  if publish_worker.start(publish_world)!=OK:publish_worker=null;finish("failed","Cannot start publication worker")
  return false
+func persist_metadata()->void:
+ if report.is_empty():return
+ var file:=FileAccess.open(report.path_join("run.json"),FileAccess.WRITE)
+ if file!=null:file.store_string(JSON.stringify(metadata,"  "));file.close()
+func recover_world()->Dictionary:
+ var archive=ClassDB.instantiate("NativeWorldArchive")
+ return archive.recover_world(ProjectSettings.globalize_path("user://worlds"),destination)
 func publish_world()->Dictionary:
  var archive=ClassDB.instantiate("NativeWorldArchive")
  return archive.clone_world(ProjectSettings.globalize_path("user://worlds"),stage,destination)
 func publish_presentation()->void:
+ var source_report:=report if presentation_report.is_empty() else presentation_report
  var prefix:="user://worlds/"+destination
  var count:=0
  DirAccess.make_dir_recursive_absolute(prefix+".preview")
  for name:String in ["north","road","market"]:
-  var image:=report.path_join("loading_"+name+".png")
+  var image:=source_report.path_join("loading_"+name+".png")
   if FileAccess.file_exists(image) and DirAccess.copy_absolute(image,prefix+".preview/"+name+".png")==OK:count+=1
  var file:=FileAccess.open(prefix+".presentation.json",FileAccess.WRITE)
  if file!=null:file.store_string(JSON.stringify({"created":int(Time.get_unix_time_from_system()),"seed":seed_value,"preview_count":count}));file.close()
- var identity:=report.path_join("generation_plan_identity.json")
+ var identity:=source_report.path_join("generation_plan_identity.json")
  if FileAccess.file_exists(identity):DirAccess.copy_absolute(identity,prefix+".generation.json")
 func finish(state:String,reason:String="")->void:
  if not report.is_empty():

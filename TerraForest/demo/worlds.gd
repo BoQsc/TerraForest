@@ -37,7 +37,7 @@ func _ready() -> void:
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	var background:=ColorRect.new();background.color=Color("101e22");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
-	var panel:=VBoxContainer.new();panel.position=Vector2(160,100);panel.size=Vector2(1600,840);panel.add_theme_constant_override("separation",24);add_child(panel)
+	var panel:=VBoxContainer.new();panel.position=Vector2(160,40);panel.size=Vector2(1600,1000);panel.add_theme_constant_override("separation",12);add_child(panel)
 	heading(panel,"TERRAFOREST / WORLDS",36)
 	heading(panel,"Choose where to play. Each named world keeps its own saved progress.",20)
 	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;panel.add_child(columns)
@@ -48,11 +48,13 @@ func _ready() -> void:
 	var filters:=HBoxContainer.new();saved.add_child(filters)
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Preparation saves (read-only)";show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
-	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size.y=360;saved.add_child(worlds)
+	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size.y=300;saved.add_child(worlds)
 	button(saved,"Open selected world",func():launch_selected(false))
-	button(saved,"Refresh saved worlds",refresh)
+	var library_actions:=HBoxContainer.new();saved.add_child(library_actions)
+	button(library_actions,"Refresh saved worlds",refresh)
+	button(library_actions,"Recover interrupted publication",show_recovery)
 	var create_page:=HBoxContainer.new();create_page.name="Create world";create_page.add_theme_constant_override("separation",40);columns.add_child(create_page)
-	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",12);create_page.add_child(create)
+	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",8);create_page.add_child(create)
 	heading(create,"Create a world")
 	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="e.g. woodland_home";name_field.max_length=48;create.add_child(name_field)
 	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
@@ -100,20 +102,36 @@ func launch_selected(create: bool) -> void:
 	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,["connected","road","settlement"][layout_preset.selected])
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):
-		preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
-		preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
-		preparation_cancel=preparation_status+".cancel";cancel_pending=false
-		result.args.append_array(PackedStringArray(["--status-file="+ProjectSettings.globalize_path(preparation_status),"--cancel-file="+ProjectSettings.globalize_path(preparation_cancel)]))
-		preparation_pid=OS.create_process(OS.get_executable_path(),result.args,false)
-		if preparation_pid<0:notice.text="Could not start the world-generation process.";return
-		cancel_button.show();cancel_button.disabled=false
-		preparation_started_msec=Time.get_ticks_msec()
-		Engine.max_fps=10
-		notice.text="Preparing and verifying %s. The preparation window will close when finished, then your world will open. Existing saves are preserved."%slot
-		return
+		start_preparation(result,slot);return
 	# The browser owns no world worker or canonical save. Launch one world and
 	# exit the browser instead of replacing a live world's storage ownership.
 	_open_game(result.args)
+
+func start_preparation(result:Dictionary,slot:String)->void:
+	preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
+	preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
+	preparation_cancel=preparation_status+".cancel";cancel_pending=false
+	result.args.append_array(PackedStringArray(["--status-file="+ProjectSettings.globalize_path(preparation_status),"--cancel-file="+ProjectSettings.globalize_path(preparation_cancel)]))
+	preparation_pid=OS.create_process(OS.get_executable_path(),result.args,false)
+	if preparation_pid<0:notice.text="Could not start the world-generation process.";return
+	cancel_button.show();cancel_button.disabled=false
+	preparation_started_msec=Time.get_ticks_msec()
+	Engine.max_fps=10
+	notice.text="Preparing and verifying %s. The preparation window will close when finished, then your world will open. Existing saves are preserved."%slot
+
+func show_recovery()->void:
+	if preparation_pid>=0:return
+	var dialog:=ConfirmationDialog.new();dialog.title="Recover interrupted publication";dialog.ok_button_text="Recover";dialog.min_size=Vector2i(580,220)
+	var content:=VBoxContainer.new();dialog.add_child(content)
+	var label:=Label.new();label.text="Enter the original world name. Recovery verifies existing staged data;\nit does not generate a different world or replace a published save.";content.add_child(label)
+	var field:=LineEdit.new();field.placeholder_text="Original world name";content.add_child(field)
+	dialog.confirmed.connect(func():
+		var slot:=field.text.strip_edges();var result:=Launch.recovery_command(slot)
+		if result.ok:start_preparation(result,slot)
+		else:notice.text=result.reason
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog);dialog.popup_centered();field.grab_focus()
 
 func _process(delta:float)->void:
 	poll_preview()
@@ -152,6 +170,7 @@ func _update_preparation_notice()->void:
 		match str(result.get("state","")):
 			"creating":stage="Generating terrain, locations and saved world"
 			"verifying":stage="Reopening the saved world and checking its contents"
+			"recovering":stage="Verifying and recovering interrupted publication"
 			"publishing":stage="Publishing the verified world"
 			"ready":stage="World ready; preparing to open"
 			"failed":stage="Preparation failed; collecting the result"

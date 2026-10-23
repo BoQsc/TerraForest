@@ -12,7 +12,8 @@ func run()->void:
  if browser.preview_worker!=null or browser.preview_view.texture==null:failures+=1
  for i in 3:await process_frame
  var screen:=Rect2(Vector2.ZERO,Vector2(root.size))
- for control:Control in [browser.preview_view,browser.seed_field,browser.notice,browser.preview_button]:
+ for control:Control in browser.find_children("*","Control",true,false):
+  if not control.is_visible_in_tree() or not (control is BaseButton or control is LineEdit or control==browser.preview_view or control==browser.notice):continue
   if not screen.encloses(control.get_global_rect()):failures+=1;print("OUTSIDE_SCREEN ",control.get_global_rect())
  if DisplayServer.get_name()!="headless":
   await RenderingServer.frame_post_draw
@@ -21,4 +22,8 @@ func run()->void:
   for i in 3:await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_selector_ui.png")
+  browser.show_recovery()
+  for i in 3:await process_frame
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/world_recovery_ui.png")
  browser.free();print("WORLD_ENTRY_REVIEW failures=",failures);quit(1 if failures else 0)

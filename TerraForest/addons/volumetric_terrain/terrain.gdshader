@@ -18,6 +18,11 @@ uniform bool alpine_snow_enabled = false;
 uniform bool regional_temperate = false;
 uniform int debug_view = 0;
 uniform bool cached_sun_enabled = true;
+uniform bool canopy_enabled = false;
+uniform sampler2D canopy_mask : filter_linear, repeat_disable;
+uniform vec3 canopy_region = vec3(0.0,0.0,1024.0);
+uniform vec3 canopy_eye = vec3(0.0);
+uniform float canopy_near = 148.0;
 varying vec3 wp;
 varying vec3 wn;
 varying vec2 visibility;
@@ -123,6 +128,12 @@ void light(){
  // more occluded mask, not their product (which doubled fractional darkness).
  float attenuation=ATTENUATION;
  if(LIGHT_IS_DIRECTIONAL&&cached_sun_enabled)attenuation=min(attenuation,clamp(visibility.y,0.0,1.0));
+ if(LIGHT_IS_DIRECTIONAL && canopy_enabled){
+  vec2 uv=(wp.xz-canopy_region.xy)/canopy_region.z;
+  float fade=smoothstep(canopy_near,canopy_near+32.0,distance(wp.xz,canopy_eye.xz));
+  if(all(greaterThanEqual(uv,vec2(0.0))) && all(lessThanEqual(uv,vec2(1.0))))
+   attenuation=min(attenuation,1.0-texture(canopy_mask,uv).r*0.55*fade*smoothstep(0.15,0.65,wn.y));
+ }
  if(debug_view>0)attenuation=0.0;
  DIFFUSE_LIGHT+=max(dot(NORMAL,LIGHT),0.0)*attenuation*LIGHT_COLOR/PI;
  // Rough terrain has no highlight. Preserve a cheap direct highlight for metal.

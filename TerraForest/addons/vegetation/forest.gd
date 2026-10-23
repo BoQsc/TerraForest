@@ -45,6 +45,7 @@ var last_eye: Vector3=Vector3(1e20,1e20,1e20)
 var last_projection: float=-1.0
 var changed: bool=true
 var membership_changed: bool=false
+var canopy_revision:int=0
 var reference: bool=false
 var trees_enabled: bool=true
 var shadows_enabled: bool=true
@@ -85,6 +86,7 @@ func upsert_chunk(chunk: String,ids: PackedInt64Array,transforms: Array[Transfor
 		var row: Dictionary={"id":ids[i],"owner":chunk,"key":key,"t":t,"center":t*CENTER,"scale":sc,"lod":2,"next":-1,"shadow":-1,"shadow_next":-2,"time":0.0,"shadow_time":0.0,"seed":float(posmod(ids[i]*48271,2147483647))/2147483647.0}
 		var local_t: Transform3D=t;local_t.origin-=_ensure(key)["origin"];row["local_t"]=local_t
 		if audit_enabled:_audit_pending[ids[i]]=true
+		canopy_revision+=1
 		roots[ids[i]]=row;_ensure(key)["rows"][ids[i]]=row;_invalidate_cell(key);max_scale=maxf(max_scale,sc)
 		_invalid_decisions[ids[i]]=true
 	stats["trees"]=roots.size();membership_changed=true
@@ -94,6 +96,7 @@ func remove_root(id: int)->void:
 	if native_selection!=null: native_selection.erase(id)
 	if audit_enabled:_audit_pending[id]=true
 	if not roots.has(id):return
+	canopy_revision+=1
 	var row: Dictionary=roots[id];var key: Vector2i=row["key"]
 	cells[key]["rows"].erase(id);roots.erase(id);moving.erase(id);_invalidate_cell(key);membership_changed=true;stats["trees"]=roots.size()
 	_due_tokens.erase(id);_due_distances.erase(id);_invalid_decisions.erase(id)

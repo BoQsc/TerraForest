@@ -286,6 +286,9 @@ func _ready() -> void:
 		return
 	if not vegetation.enable_trunk_collision():
 		push_error("Tree collision initialization failed");get_tree().quit(2);return
+	if not "--no-tree-shadow-substitutes" in OS.get_cmdline_user_args():
+		var canopy=preload("res://addons/vegetation/canopy_shadows.gd").new()
+		canopy.name="CanopyShadows";canopy.forest=vegetation;canopy.camera=camera;canopy.material=terrain_material;add_child(canopy)
 	ecosystem.name = "Ecosystem"
 	ecosystem.terrain = terrain
 	ecosystem.vegetation = vegetation

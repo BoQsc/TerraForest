@@ -58,3 +58,8 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	if preparation_slot(slot):args.append("--snapshot-readonly")
 	if gameplay:args.append("--gameplay-construction")
 	return {"ok":true,"args":args}
+
+static func recovery_command(slot:String)->Dictionary:
+	if not valid_slot(slot) or preparation_slot(slot):return {"ok":false,"reason":"Enter the original world name using letters, digits and underscores."}
+	if FileAccess.file_exists("user://worlds/"+slot+".trw"):return {"ok":false,"reason":"This world is already published. Open it from My worlds."}
+	return {"ok":true,"prepare":true,"args":engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--recover-publication"])}

@@ -2462,3 +2462,14 @@ correctness". Newly discovered missing generated lake initialization is being
 integrated before broader world review. All previously open rewrite items remain
 open until their stated evidence exists, including far tree shadows and vegetation
 owner-publication continuity; irregular scattering alone does not close them.
+
+
+2026-10-23 continuation: distant canopy shadow substitutes and explicit interrupted
+publication recovery now have targeted/integrated evidence in WORLD_WORKFLOW_REDESIGN.md.
+This supersedes their earlier wholly-unimplemented status. Native worker capture
+scaling and sustained travel performance still need evidence; shadows remain an
+approximation on terrain. Generated lakes now persist through fresh-process reopen,
+but inland map preview and broader basin admission remain open. Next dependency:
+vegetation streaming/publication continuity, preserving native interaction and stable
+harvest IDs. Close it only with moving-view and edit/removal regression evidence.
+All other listed full-rewrite requirements remain open.

@@ -30,7 +30,8 @@ static PackedByteArray archive_hash(const PackedByteArray &data) {
     return context->finish();
 }
 void NativeWorldArchive::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("clone_world","absolute_root","source","destination"),&NativeWorldArchive::clone_world);
+    ClassDB::bind_method(D_METHOD("clone_world","absolute_root","source","destination","test_stop_after"),&NativeWorldArchive::clone_world,DEFVAL(-1));
+    ClassDB::bind_method(D_METHOD("recover_world","absolute_root","destination"),&NativeWorldArchive::recover_world);
     ClassDB::bind_method(D_METHOD("acquire","absolute_path"),&NativeWorldArchive::acquire);
     ClassDB::bind_method(D_METHOD("release"),&NativeWorldArchive::release);
     ClassDB::bind_method(D_METHOD("encode","sections"),&NativeWorldArchive::encode);
