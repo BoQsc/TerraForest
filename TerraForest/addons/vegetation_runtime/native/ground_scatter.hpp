@@ -12,7 +12,7 @@ protected:
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter","irregular"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()),DEFVAL(false));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
-        ClassDB::bind_method(D_METHOD("boulder_rows","row"),&NativeGroundCover::boulder_rows);
+        ClassDB::bind_method(D_METHOD("boulder_rows","row","large"),&NativeGroundCover::boulder_rows,DEFVAL(true));
     }
 public:
     TypedArray<Vector2i> wanted(Vector2i center) const {
@@ -167,11 +167,11 @@ public:
         }
         out["ok"]=true;out["ids"]=accepted;out["transforms"]=transforms;return out;
     }
-    Dictionary boulder_rows(const Dictionary &row) const {
+    Dictionary boulder_rows(const Dictionary &row,bool large=true) const {
         PackedInt64Array ids=row["ids"],selected;PackedFloat32Array values=row["transforms"],packed;
         if(values.size()!=ids.size()*12)return Dictionary();
         for(int64_t i=0;i<ids.size();++i){const float *p=values.ptr()+i*12;
-            if(p[0]*p[0]+p[4]*p[4]+p[8]*p[8]<36.f)continue;
+            if((p[0]*p[0]+p[4]*p[4]+p[8]*p[8]>=36.f)!=large)continue;
             selected.append(ids[i]);for(int j=0;j<12;++j)packed.append(p[j]);
         }
         Dictionary result;result["ids"]=selected;result["transforms"]=packed;return result;

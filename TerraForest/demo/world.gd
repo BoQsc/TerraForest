@@ -340,6 +340,7 @@ func _ready() -> void:
 	add_child(ecosystem)
 	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
 	ground_cover.seed_source=func():return terrain.backend.world_seed
+	ground_cover.rock_damage=world_attack.durability
 	ground_cover.shelter_source=ecosystem.ground_shelter
 	add_child(ground_cover);ground_cover.set_process(ground_enabled)
 	add_child(ground_preview)

@@ -1,3 +1,28 @@
+## Three boulder fracture stages - motion revision, 2026-10-24
+
+Mining now splits boulders into halves, quarters and eight final rubble pieces.
+Native cached closed cut meshes and shared GPU animation retain the existing
+240 durability, binary saved damage and single 24-stone reward. Partial fractures
+keep the original solid collider; final rubble is cosmetic and retires after
+2.6 seconds. Full inventory preserves the quarters for a later harvest retry.
+
+The initial thin layers/collapsing animation and the next uniform ease-out version
+were rejected by the user. Their evidence is retained. The current revision uses
+upright irregular chunks, strike-side release ordering, independent timing,
+an angular impulse and damped ground-contact motion. Children start in the settled
+parent pose; intermediate hits react without resetting those poses. A newly
+generated granite texture uses shared triplanar sampling, mipmaps and compression.
+
+Current pickaxe contact/save/reopen checks pass in source and exported builds
+(22 each), as do eleven cache/topology checks and nine motion-fixture checks.
+Both native build variants and export/startup pass. Updated in-world images and
+sampled motion frames were inspected. User visual acceptance remains open, pending
+review of the revised animated preview or in-world mining; close it only when the
+user accepts the appearance. These checks do not close existing world-quality,
+navigation or sustained-performance gates.
+Commands, manifests, images and retained failures:
+[boulder fracture evidence](evidence/boulder_fracture/README.md).
+
 ## Blender hammer and shovel - 2026-10-24
 
 The existing repair hammer now has Blender-authored R11 hands and a strike;

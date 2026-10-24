@@ -44,18 +44,21 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 		if not grant.ok: busy=false;return {"ok":false,"reason":"Make room in inventory"}
 		revision=grant.revision
 	var applied: bool=cover.picker.replace_cell(key,next)
-	if applied: applied=cover.batches[hit.species].remove_instances(PackedInt64Array([hit.id]))
+	if applied and not hit.get("large",false):applied=cover.batches[hit.species].remove_instances(PackedInt64Array([hit.id]))
 	if applied and hit.get("large",false):applied=cover.rock_collision.remove_instances(PackedInt64Array([hit.id]))
 	if applied:
 		applied=cover.removed.mark(hit.id) if hit.id<4294967296 else cover.removed.erase(hit.id)
 	if not applied:
 		cover.picker.replace_cell(key,previous)
-		cover.batches[hit.species].upsert_instances(previous[hit.species].ids,previous[hit.species].transforms)
+		cover.restore_render_row(previous[hit.species],hit.species)
 		if hit.get("large",false):
 			var large:Dictionary=cover.native.boulder_rows(previous[0]);cover.rock_collision.upsert_instances(large.ids,large.transforms)
 		if revision>=0 and not inventory.restore(before,revision).ok: push_error("Ground-cover inventory rollback failed")
 		busy=false;return {"ok":false,"reason":"Ground cover changed; try again"}
 	cover.resident[key]=next
+	if hit.get("large",false):
+		if gameplay:cover.fractures.finish(hit.id)
+		else:cover.fractures.remove_rows(PackedInt64Array([hit.id]))
 	changed.emit();busy=false
 	return {"ok":true,"reason":"Collected ground cover" if gameplay else "Ground cover removed","id":hit.id}
 

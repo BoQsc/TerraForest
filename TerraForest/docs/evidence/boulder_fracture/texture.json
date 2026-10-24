@@ -1,0 +1,13 @@
+{
+  "tool_mode": "built-in image_gen.imagegen",
+  "skill": "imagegen",
+  "source_image": "C:/Users/windows10/.codex/generated_images/01a0e3a2-5a58-7772-a113-48dc9d83edb7/exec-d9ac5bb4-1a41-47fd-89f5-0bcc897f5fca.png",
+  "asset": "addons\\world_ecosystem\\art\\boulder_granite_v1.png",
+  "size": [
+    1254,
+    1254
+  ],
+  "sha256": "ba1259d0085944f10c930eee2ce7b54cfaf576e03a356e5f959c4a53db00978d",
+  "prompt": "texture_prompt.txt",
+  "processing": "Unchanged generated PNG; Godot importer generates mipmaps and S3TC VRAM compression."
+}

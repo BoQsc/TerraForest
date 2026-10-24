@@ -19,6 +19,8 @@ var grass_texture_enabled:=false
 var foliage_materials:Array[ShaderMaterial]=[]
 var batches: Array[Node3D]=[]
 var rock_collision:Node3D
+var fractures:Node3D
+var rock_damage:RefCounted
 var resident: Dictionary={}
 var _wanted: Dictionary={}
 var _requests: Dictionary={}
@@ -59,14 +61,21 @@ func _ready() -> void:
 	if native==null or terrain==null or camera==null:
 		push_error("Ground cover requires prepared persistence, terrain and camera")
 		set_process(false);return
+	var stone_geometry:Mesh
 	for species in range(Catalog.COUNT):
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
-		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,_mesh(species)) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,8192):
+		var geometry:Mesh=_mesh(species)
+		if species==0:stone_geometry=geometry
+		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)
 		batches.append(batch)
+	fractures=ClassDB.instantiate("NativeBoulderFracture");add_child(fractures)
+	var stone_material:ShaderMaterial=preload("res://addons/world_ecosystem/boulder_material.tres").duplicate()
+	if not fractures.configure(stone_geometry,stone_material,rock_damage):
+		push_error("Boulder fragment cache initialization failed");set_process(false);return
 	rock_collision=ClassDB.instantiate("NativeStaticBatch");add_child(rock_collision)
 	if not rock_collision.configure_asset("vegetation/boulder_proxy/v1",BoxMesh.new()) or not rock_collision.configure_collision_only() or not rock_collision.configure_collision(AABB(Vector3(-0.26,-0.12,-0.2),Vector3(0.52,0.26,0.4)),96,256,16):
 		push_error("Boulder collision initialization failed");set_process(false);return
@@ -98,6 +107,7 @@ func set_grass_texture(enabled: bool) -> bool:
 func _begin_reset()->void:
 	if _reset_active:return
 	if rock_collision!=null:rock_collision.clear_instances()
+	if fractures!=null:fractures.clear()
 	_reset_active=true;_reset_batch=0;_reset_keys=resident.keys()
 	for batch:Node3D in batches:batch.visible=false
 
@@ -132,8 +142,23 @@ func reset() -> void:
 func _retire(key: Vector2i) -> void:
 	picker.remove_cell(key)
 	if rock_collision!=null:rock_collision.remove_instances(resident[key][0].ids)
+	if fractures!=null:fractures.remove_rows(native.boulder_rows(resident[key][0]).ids)
 	for species in range(Catalog.COUNT):
-		batches[species].remove_instances(resident[key][species].ids)
+		batches[species].remove_instances(render_row(resident[key][species],species).ids)
+
+func render_row(row:Dictionary,species:int)->Dictionary:
+	return native.boulder_rows(row,false) if species==0 else row
+
+func restore_render_row(row:Dictionary,species:int)->bool:
+	var draw:=render_row(row,species)
+	if not batches[species].upsert_instances(draw.ids,draw.transforms):return false
+	if species==0:
+		var large:Dictionary=native.boulder_rows(row)
+		return fractures.upsert_rows(large.ids,large.transforms)
+	return true
+
+func damage_boulder(id:int,hit_from:=Vector3.ZERO)->void:
+	if fractures!=null:fractures.sync_damage(id,hit_from)
 
 var last_process_us:int=0
 func _process(_delta: float) -> void:
@@ -152,6 +177,7 @@ func _measured_step(_delta:float)->void:
 		material.set_shader_parameter("cover_clock",Time.get_ticks_msec()/1000.0)
 	for batch in batches: batch.set_render_focus(camera.global_position)
 	if rock_collision!=null:rock_collision.set_collision_focus(camera.global_position)
+	if fractures!=null:fractures.advance(camera.global_position)
 	var center:=Vector2i(floori(camera.global_position.x/32.0),floori(camera.global_position.z/32.0))
 	var forward:Vector3=-camera.global_basis.z
 	var zoomed:bool=camera.fov<71.0
@@ -308,13 +334,16 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 		else:picker.replace_cell(key,previous)
 		rejected_batches+=1;return
 	for species in range(Catalog.COUNT):
-		if not batches[species].upsert_instances(packed[species].ids,packed[species].transforms):
+		if not restore_render_row(packed[species],species):
 			# Restore interaction and all collections if any publication fails.
 			if previous.is_empty(): picker.remove_cell(key)
 			else: picker.replace_cell(key,previous)
 			for rollback in range(Catalog.COUNT):
-				batches[rollback].remove_instances(packed[rollback].ids)
-				if not previous.is_empty(): batches[rollback].upsert_instances(previous[rollback].ids,previous[rollback].transforms)
+				batches[rollback].remove_instances(render_row(packed[rollback],rollback).ids)
+				if not previous.is_empty():restore_render_row(previous[rollback],rollback)
+			fractures.remove_rows(large.ids)
+			if not previous.is_empty():
+				var prior:Dictionary=native.boulder_rows(previous[0]);fractures.upsert_rows(prior.ids,prior.transforms)
 			rock_collision.remove_instances(large.ids)
 			if not previous.is_empty():
 				var old_large:Dictionary=native.boulder_rows(previous[0]);rock_collision.upsert_instances(old_large.ids,old_large.transforms)
@@ -324,10 +353,12 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 		for id:int in old_large.ids:
 			if id not in large.ids:removed_large.append(id)
 		rock_collision.remove_instances(removed_large)
+		fractures.remove_rows(removed_large)
 		for species in range(Catalog.COUNT):
 			var retired:=PackedInt64Array()
-			for id in previous[species].ids:
-				if not packed[species].ids.has(id): retired.append(id)
+			var old_draw:=render_row(previous[species],species);var new_draw:=render_row(packed[species],species)
+			for id in old_draw.ids:
+				if not new_draw.ids.has(id): retired.append(id)
 			batches[species].remove_instances(retired)
 	resident[key]=packed;_dirty.erase(key)
 	var prior_boulders:Dictionary=native.boulder_rows(previous[0]) if not previous.is_empty() else {"ids":PackedInt64Array(),"transforms":PackedFloat32Array()}

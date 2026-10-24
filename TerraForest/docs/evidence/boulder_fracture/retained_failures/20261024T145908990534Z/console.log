@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS shared native fracture cache initializes
+PASS stage 1 has 2 closed cut fragments
+PASS stage 2 has 4 closed cut fragments
+OPEN_EDGE count=1 (0.00156, 0.00495, 0.00567)/(0.00156, 0.00497, 0.00488)
+FAIL stage 3 has 8 closed cut fragments
+BOULDER_FRACTURE_GEOMETRY checks=4 failures=1

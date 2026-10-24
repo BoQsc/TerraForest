@@ -1,0 +1,4 @@
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\boulder_fracture.cpp:106:46: error: no member named 'surface_get_array_len' in 'godot::Mesh'
+  106 |         cache_triangles+=groups[depth].mesh->surface_get_array_len(0)/3;
+      |                          ~~~~~~~~~~~~~~~~~~~~^
+1 error generated.

@@ -30,7 +30,7 @@ func target() -> Dictionary:
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
 		if cover.get("hit",false):
 			if game.ground_cover._dirty.has(cover.cell) or game.ground_cover._pending.has(cover.cell):return {}
-			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":240 if cover.get("large",false) else Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":"Stone boulder" if cover.get("large",false) else game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
+			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"large":cover.get("large",false),"health":240 if cover.get("large",false) else Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":"Stone boulder" if cover.get("large",false) else game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
 	if hit.is_empty():
 		if game.terrain.backend.region_terrain:hit=game._terrain_pick(start,end)
 		if hit.is_empty():return {}
@@ -131,6 +131,7 @@ func apply_target(t: Dictionary) -> bool:
 	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
 	var result: Dictionary=durability.hit(t.key,t.health,1 if t.kind=="cover" and t.get("species",-1)==8 else damage)
 	if not result.ok:game._show_lake_notice(result.get("reason","Damage unavailable"));return false
+	if t.kind=="cover" and t.get("large",false):game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	game.terrain.changed_since_save=true
 	rejection_reason=""
 	var accepted:=true
