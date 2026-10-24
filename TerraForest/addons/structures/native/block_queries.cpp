@@ -143,4 +143,46 @@ Dictionary NativeBlockWorld::raycast_scene(Vector3 from,Vector3 to,int64_t mask,
     Vector3 physics_position=physics["position"],authored_position=authored["position"];
     return from.distance_squared_to(physics_position)+1e-8<from.distance_squared_to(authored_position)?physics:authored;
 }
+Dictionary NativeBlockWorld::placement_support(const AABB &bounds,Vector3 surface,bool lattice,bool terrain_only,const TypedArray<RID> &exclude) const {
+    Dictionary out;out["ok"]=false;out["samples"]=0;out["hits"]=0;out["inside"]=0;
+    out["reason"]="Placement surface is unavailable";
+    Vector3 size=bounds.size;
+    if(!bounds.position.is_finite()||!size.is_finite()||!surface.is_finite()||
+       size.x<=0||size.z<=0||size.y<=0||size.x>16||size.z>16||size.y>32||exclude.size()>64||!is_inside_tree())return out;
+    for(int a=0;a<3;a++)if(std::abs(bounds.position[a])>1048544||std::abs(surface[a])>1048544)return out;
+    Ref<World3D> world=get_world_3d();if(world.is_null())return out;
+    TypedArray<RID> ignored=exclude.duplicate();
+    if(!terrain_only)for(const auto &entry:visuals)if(entry.second.body)ignored.push_back(entry.second.body->get_rid());
+    auto query=PhysicsRayQueryParameters3D::create(Vector3(),Vector3(),terrain_only?1:3,ignored);
+    query->set_hit_from_inside(true);
+    double minimum=INF,maximum=-INF;int hits=0,inside=0;
+    // One fixed 3x3 footprint, inset from shared seams. Never a world scan.
+    constexpr double factors[3]={.08,.5,.92};
+    for(double x:factors)for(double z:factors){
+        Vector3 from(bounds.position.x+size.x*x,surface.y+1.5,bounds.position.z+size.z*z);
+        Vector3 to(from.x,surface.y-1.5,from.z);query->set_from(from);query->set_to(to);
+        Dictionary hit=world->get_direct_space_state()->intersect_ray(query);
+        if(!terrain_only){
+            Dictionary authored=raycast_cells(from,to);
+            if(!authored.is_empty()&&(hit.is_empty()||from.distance_squared_to(authored["position"])<from.distance_squared_to(hit["position"])))hit=authored;
+        }
+        if(hit.is_empty())continue;
+        Vector3 normal=hit["normal"],point=hit["position"];
+        if(normal.length_squared()<1e-8){inside++;continue;}
+        if(normal.y<.35)continue;
+        minimum=std::min(minimum,double(point.y));maximum=std::max(maximum,double(point.y));hits++;
+    }
+    out["samples"]=9;out["hits"]=hits;out["inside"]=inside;
+    if(hits){out["minimum"]=minimum;out["maximum"]=maximum;}
+    if(inside){out["reason"]="Ground or structure rises through this placement; aim higher or dig it clear";return out;}
+    if(!hits){out["reason"]="Aim at a nearby supporting surface";return out;}
+    double overlap=lattice?(terrain_only?std::min(.20,double(size.y)*.25):0.):std::min(.03,double(size.y)*.10);
+    double bottom=lattice?std::max(double(bounds.position.y),std::ceil(maximum-overlap-1e-5)):maximum-overlap;
+    double shift=bottom-bounds.position.y,gap=std::max(0.,bottom-minimum);
+    out["overlap_limit"]=overlap;out["bottom"]=bottom;out["offset_y"]=shift;out["gap"]=gap;
+    if((lattice&&(shift>1.001||gap>1.15))||(!lattice&&(std::abs(shift)>.8||gap>.6))){
+        out["reason"]="Ground is too uneven here; aim at a flatter spot";return out;
+    }
+    out["ok"]=true;out["reason"]="";return out;
+}
 }

@@ -168,6 +168,7 @@ public:
     PackedByteArray sample_solid(const PackedVector3Array &points) const;
     Dictionary raycast_cells(Vector3 from,Vector3 to) const;
     Dictionary raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const;
+    Dictionary placement_support(const AABB &bounds,Vector3 surface,bool lattice,bool terrain_only,const TypedArray<RID> &exclude) const;
     ~NativeBlockWorld();
     void _process(double delta) override;
     bool set_cells(const PackedInt32Array &records);

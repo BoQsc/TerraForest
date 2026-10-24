@@ -34,8 +34,9 @@ func run() -> void:
 	while game.loading_active and Time.get_ticks_msec()<deadline: await process_frame
 	check(not game.loading_active,"construction scene ready")
 	if game.loading_active: finish();return
-	game.fly=true;game._clear_motion()
-	game.player_hud.equip(2)
+	game.set_physics_process(false);game.fly=true;game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
+	if not game.session_menu.developer:game.session_menu.toggle_developer()
+	game.session_menu.activate_developer_slot(3)
 	var base:=Vector3i(game.player.position.floor())+Vector3i(0,8,-8)
 	var target:=base+Vector3i.UP
 	var blocks=game.structures.blocks
@@ -44,6 +45,10 @@ func run() -> void:
 	game.camera.look_at(Vector3(base)+Vector3(0.5,1,0.5))
 	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	var hit: Dictionary=game._structure_target(false)
+	deadline=Time.get_ticks_msec()+10000
+	while not hit.get("placement_ok",false) and Time.get_ticks_msec()<deadline:
+		await process_frame;hit=game._structure_target(false)
+	check(hit.get("placement_ok",false),"support collision becomes ready before accepting placement")
 	check(hit.get("target",Vector3i())==target,"camera ray selects support top for placement")
 	game._prefab_preview_timer=0;game._update_prefab_preview(0)
 	check(game.prefab_preview.visible and game.prefab_preview.position==Vector3(target) and game.prefab_preview.scale==Vector3.ONE,"single-block preview outlines exact placement cell")

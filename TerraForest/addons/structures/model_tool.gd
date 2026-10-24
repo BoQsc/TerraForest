@@ -27,6 +27,7 @@ var paid_placement: Callable
 var gameplay_removal: Callable
 var placement_failure := ""
 var availability: Callable
+var support_ready:Callable
 var action_buttons: Array[Button]=[]
 var scale_buttons: Array[Button]=[]
 var numeric_controls:=VBoxContainer.new()
@@ -281,7 +282,18 @@ func target() -> Dictionary:
 	anchor.x=snappedf(anchor.x,0.5)
 	anchor.z=snappedf(anchor.z,0.5)
 	anchor.y-=local_bounds.position.y
-	return {"transform":Transform3D(basis,anchor)}
+	var bounds:=AABB(anchor+local_bounds.position,local_bounds.size)
+	var result:Dictionary={"transform":Transform3D(basis,anchor),"placement_ok":true,"reason":""}
+	if support_ready.is_valid() and not support_ready.call(bounds):
+		result.placement_ok=false;result.reason="Placement area is still loading";return result
+	if is_instance_valid(block_world):
+		var fit:Dictionary=block_world.placement_support(bounds,hit.position,false,false,[player.get_rid()])
+		result.placement_ok=fit.ok;result.reason=fit.reason;result["support"]=fit
+		if fit.ok:
+			anchor.y+=float(fit.offset_y);bounds.position.y+=float(fit.offset_y)
+			result.transform=Transform3D(basis,anchor)
+			if support_ready.is_valid() and not support_ready.call(bounds):result.placement_ok=false;result.reason="Placement area is still loading"
+	return result
 
 func protection() -> AABB:
 	return AABB(player.global_position+Vector3(-0.4,0,-0.4),Vector3(0.8,1.8,0.8))
@@ -315,7 +327,8 @@ func refresh() -> void:
 		return
 	var collection: Node3D = catalog[selected].collection
 	preview.global_transform=hit.transform
-	preview_valid=collection.can_insert_instance(records(hit.transform,collection),protection())
+	preview_valid=hit.get("placement_ok",true) and collection.can_insert_instance(records(hit.transform,collection),protection())
+	if not hit.get("placement_ok",true):help.text+="\n"+str(hit.reason)
 	preview_material.albedo_color=Color(0.3,1.0,0.65,0.42) if preview_valid else Color(1,0.2,0.15,0.42)
 	preview.show()
 
@@ -350,6 +363,7 @@ func edit(remove: bool) -> int:
 	if hit.is_empty():
 		notice.emit("Aim at a nearby upward-facing surface")
 		return 0
+	if not hit.get("placement_ok",true):notice.emit(hit.reason);return 0
 	var collection: Node3D = catalog[selected].collection
 	var id: int = 0
 	if gameplay:

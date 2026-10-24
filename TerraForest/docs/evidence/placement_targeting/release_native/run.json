@@ -1,0 +1,46 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\placement_release_7nupv6i_",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T095734931548Z_placement_release\\engine.log",
+    "--script",
+    "res://placement_support.gd"
+  ],
+  "scope": "Clean temporary project, release DLL only; fixed native support-query assertions.",
+  "utc": "20261024T095734931548Z",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "library_sha256": "73ad6dfc010b3f3219320123ac8900bfa46ff23de11d21f6cdd732429b2e3b8d",
+  "test_sha256": "b7be847c3ffb114468c1d8b536229733a12dfae21d04dd8603e6731e38cc7dd8",
+  "revision": "5c7be53d211a96c783ad0a57c7a460a98826974c",
+  "worktree_changes": [
+    " M TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/structures/model_tool.gd",
+    " M TerraForest/addons/structures/native/block_queries.cpp",
+    " M TerraForest/addons/structures/native/block_world.cpp",
+    " M TerraForest/addons/structures/native/block_world.hpp",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/docs/WORLD_FOUNDATION_STATUS.md",
+    " M TerraForest/tests/construction_interaction.gd",
+    "?? TerraForest/docs/evidence/placement_targeting/",
+    "?? TerraForest/tests/placement_support.gd",
+    "?? TerraForest/tests/placement_support.gd.uid",
+    "?? TerraForest/tests/placement_targeting_world.gd",
+    "?? TerraForest/tests/placement_targeting_world.gd.uid"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 70476,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.3660801000078209,
+    "passed": true
+  }
+}

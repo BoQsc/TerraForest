@@ -1,3 +1,30 @@
+## Ground-aware placement targeting - 2026-10-24
+
+Single blocks and ordinary objects now fit their aimed footprint through a fixed
+nine-point native support query. Grid blocks allow at most 20 cm of sampled base
+overlap (25% of height for thin shapes) before choosing the next whole cell.
+Authored block faces retain exact grid adjacency; surrounding soil cannot silently
+move a wall up a cell. Objects use the highest sampled support with at most 3 cm
+overlap (10% of height for thin objects). Excessive unevenness and unready collision
+produce a red preview and reject before payment. Clicks repeat the same fit used
+by previews. No save format, block-grid identity or terrain density is changed.
+
+Source gameplay, clean release-library and exported-runtime assertions cover
+real forest terrain, deep/shallow overlap, slopes, adjacency, preview/paid-placement
+agreement and rejected-placement inventory conservation. The development input
+regression covers stairs, removal, history and prefab capture. Retained failures,
+build records, inspected images and reproduction:
+[placement targeting evidence](evidence/placement_targeting/README.md).
+
+This is a bounded initial-targeting aid, not continuous full-footprint geometry
+or structural integrity. Whole-cell snapping can still leave ground gaps; automatic
+gap filling/terrain enclosure remains deferred at the user's request. Revisit if
+that feature is requested, requiring density/material-conservation and edited-ground
+visual evidence. Existing prefab foundation surveys and explicit object-transform
+controls retain their own rules. These checks do not qualify settlement terrain
+fit, all terrain shapes or aggregate frame performance; world-quality requirements
+below remain open.
+
 ## Resource gain HUD - 2026-10-24
 
 The lower-right HUD now shows small shared-icon notifications such as Gained

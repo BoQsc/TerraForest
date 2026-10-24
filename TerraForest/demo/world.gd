@@ -228,6 +228,7 @@ func _ready() -> void:
 	model_tool.paid_placement=_place_inventory_model
 	model_tool.gameplay_removal=_remove_inventory_model
 	model_tool.availability=_model_edit_available
+	model_tool.support_ready=_placement_collision_ready
 	var object_entries: Array[Dictionary]=[
 		{"title":"Metal beam","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.2,0.2),"costs":PackedInt64Array([104,4]),"cost_label":"4 metal"},
 		{"title":"Floor panel","mesh":beam,"collection":structures.model("architecture/metal_beam/v1"),"scale":Vector3(4,0.25,4),"costs":PackedInt64Array([104,8]),"cost_label":"8 metal"},
@@ -502,7 +503,7 @@ func _update_prefab_preview(delta: float) -> void:
 	if structure_prefab_index<0:
 		prefab_preview.position=Vector3(hit.target)
 		prefab_preview.scale=Vector3.ONE
-		_prefab_preview_material.albedo_color=Color("66f2b3") if _block_player_clear(hit.target) else Color("ff705f")
+		_prefab_preview_material.albedo_color=Color("66f2b3") if hit.get("placement_ok",true) and _block_player_clear(hit.target) else Color("ff705f")
 		shape_preview.mesh=structures.blocks.preview_mesh(structure_shape,structure_rotation)
 		shape_preview.position=Vector3(hit.target)
 		var tint: Color=_prefab_preview_material.albedo_color
@@ -998,7 +999,33 @@ func _structure_target(remove: bool) -> Dictionary:
 			var normal: Vector3 = hit.cell_normal
 			var axis := normal.abs().max_axis_index()
 			target[axis] += 1 if normal[axis]>0 else -1
-	return {"target":target,"position":hit.position,"normal":hit.normal}
+	var result:Dictionary={"target":target,"position":hit.position,"normal":hit.normal,"placement_ok":true,"reason":""}
+	if remove or structure_prefab_index>=0:return result
+	var mesh:Mesh=structures.blocks.preview_mesh(structure_shape,structure_rotation)
+	var local_bounds:AABB=mesh.get_aabb()
+	var bounds:=AABB(Vector3(target)+local_bounds.position,local_bounds.size)
+	if not _placement_collision_ready(bounds):
+		result.placement_ok=false;result.reason="Placement area is still loading";return result
+	var collider:Node=hit.get("collider")
+	var terrain_hit:bool=collider==null or terrain.is_ancestor_of(collider)
+	var fit:Dictionary=structures.blocks.placement_support(bounds,hit.position,true,building_hit or terrain_hit,[player.get_rid()])
+	if building_hit:
+		# Authored faces keep exact grid adjacency. Never silently detach a wall
+		# from the block the player aimed at just to climb surrounding soil.
+		result.placement_ok=int(fit.inside)==0 and (int(fit.hits)==0 or float(fit.maximum)-bounds.position.y<=minf(.20,bounds.size.y*.25)+.001)
+		if not result.placement_ok:result.reason="Terrain covers this cell; aim higher or dig it clear"
+		return result
+	result.placement_ok=fit.ok;result.reason=fit.reason;result["support"]=fit
+	if fit.ok:
+		target.y+=roundi(float(fit.offset_y));result.target=target
+		bounds.position.y+=float(fit.offset_y)
+		if not _placement_collision_ready(bounds):result.placement_ok=false;result.reason="Placement area is still loading"
+	return result
+
+func _placement_collision_ready(bounds:AABB)->bool:
+	# Cover the vertical support-ray envelope as well as the proposed object.
+	bounds=AABB(bounds.position-Vector3(0,1.5,0),bounds.size+Vector3(0,3,0))
+	return terrain.world_ready and not terrain.pending_edit and not terrain.foreground_brush and terrain.is_collision_region_ready(bounds.grow(.1)) and structures.is_collision_region_ready(bounds.grow(.1))
 
 func _place_material_supply(item: int) -> void:
 	if construction_inventory.gameplay:
@@ -1093,6 +1120,8 @@ func _edit_structure(remove: bool) -> void:
 	if hit.is_empty():
 		_show_lake_notice("Aim at a building block to remove it" if remove else "Aim at terrain or a building")
 		return
+	if not remove and not hit.get("placement_ok",true):
+		_show_lake_notice(hit.reason);return
 	var target: Vector3i = hit.target
 	if not remove and structure_prefab_index>=0:
 		var asset: Resource = structure_prefabs[structure_prefab_index]
