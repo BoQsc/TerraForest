@@ -96,7 +96,7 @@ class NativeStaticBatch : public Node3D {
     uint64_t render_page_size(RenderKey key) const;
     void release_batch(RenderKey key);
     void release_group(BlockKey key);
-    void upload_batch(RenderKey key);
+    void upload_batch(RenderKey key,uint64_t limit=uint64_t(-1));
     void select_render_batches();
     Ref<Mesh> source_mesh;
     String asset_id;
@@ -134,7 +134,7 @@ class NativeStaticBatch : public Node3D {
     static BlockKey group_for(const Placement &p);
     static bool valid_asset(const String &id);
     static bool parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out);
-    void rebuild(const std::set<BlockKey> &keys);
+    void rebuild(const std::set<BlockKey> &keys,bool continuous=false);
     struct CollectionRetirement {
         decltype(placements) old_placements;
         decltype(groups) old_groups;

@@ -1,3 +1,24 @@
+## Grass continuity during placement and mining - 2026-10-24
+
+The recurring edit-triggered grass blink had a separate native path from the
+earlier single-pickup correction. Bulk exclusions, support-transform updates and
+insertions discarded affected visible pages, then waited for budgeted uploads.
+Faded ground-cover collections now compact local membership and refresh changed
+resident pages within the edit call. Insertions retain old partial pages while
+new payload is admitted; unchanged plants retain both transforms and fade ages.
+The immediate work scales with touched resident pages/local groups and remains
+separate from the background upload budget. Resident byte/page ceilings remain.
+
+Native debug/release regressions, actual paid brick/native mining and per-rendered-
+frame packet checks, retained failures and exported-runtime evidence are in
+[edit continuity evidence](evidence/vegetation_edit_continuity/README.md). Explicit
+restore retains its original rebuild semantics. Existing pickup/fade, streaming,
+tree-support and generic-model checks pass. These checks close the reproduced
+local edit path; distant travel, other shadow/shimmer causes, combined budgets
+and sustained frame-cost qualification remain open below. If playtesting exposes
+another blink, preserve its trigger and first failing frame against these witnesses
+instead of treating post-settle membership as continuity proof.
+
 ## Zombie roaming, awareness and distant admission - 2026-10-24
 
 The existing session spawner now waits eighteen active-play seconds after startup

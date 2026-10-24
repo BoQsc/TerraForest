@@ -147,7 +147,45 @@ bool NativeStaticBatch::upsert_transforms(const PackedInt64Array &ids,const Type
     }
     return upsert_instances(ids,packed);
 }
-void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys) {
+void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys,bool continuous) {
+    if(continuous&&render_streaming&&appearance_fade&&!collision_only) {
+        // Live cover edits retain compact slots. Remove by swapping the tail,
+        // append new identities, and republish only changed resident pages in
+        // this call. Unchanged neighbours never wait in the admission queue.
+        for(auto key:keys) {
+            auto &ordered=render_ids[key];auto group=groups.find(key);
+            const std::set<int64_t> empty;
+            const auto &members=group==groups.end()?empty:group->second;
+            size_t at=0;
+            while(at<ordered.size()) {
+                if(members.count(ordered[at])){++at;continue;}
+                ordered[at]=ordered.back();ordered.pop_back();
+            }
+            std::set<int64_t> indexed(ordered.begin(),ordered.end());
+            for(auto id:members)if(!indexed.count(id))ordered.push_back(id);
+        }
+        refresh_collision_bounds(keys);
+        std::map<RenderKey,uint64_t> changed;
+        for(auto key:keys) {
+            auto page=batches.lower_bound({key,0});
+            for(;page!=batches.end()&&!(key<page->first.first)&&!(page->first.first<key);++page) {
+                const auto draw=page->first;const auto &old=resident_ids.at(draw);
+                const uint64_t count=std::min(uint64_t(old.size()),render_page_size(draw));
+                bool same=count==old.size();
+                if(same&&count) {
+                    const auto &ordered=render_ids.at(key);
+                    same=std::equal(old.begin(),old.end(),ordered.begin()+uint64_t(draw.second)*render_page_capacity());
+                }
+                if(!same)changed.emplace(draw,count);
+            }
+        }
+        // Cross-group moves cannot let an old page erase a newly assigned slot.
+        for(const auto &page:changed)release_batch(page.first);
+        for(const auto &page:changed)if(page.second)upload_batch(page.first,page.second);
+        // Appends may grow a partial page. Keep its old members visible until
+        // selection admits that extra payload under the normal upload budgets.
+        return;
+    }
     // Membership changes invalidate page offsets. Ordinary same-group transform
     // edits bypass this path and retain the ordered index allocation.
     for(auto key:keys)render_ids.erase(key);
@@ -196,10 +234,10 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     // A few moves inside an existing group update GPU slots directly. Large
     // edits use one buffer upload instead of thousands of renderer API calls.
     for(auto &e:local_updates)if(!render_streaming&&e.second.size()>64)touched.insert(e.first);
-    rebuild(touched);
+    rebuild(touched,true);
     std::set<BlockKey> locally_changed;for(auto &e:local_updates)if(!touched.count(e.first))locally_changed.insert(e.first);
     refresh_collision_bounds(locally_changed);
-    for(auto &e:local_updates)if(!touched.count(e.first)) {
+    for(auto &e:local_updates)if(!touched.count(e.first)||(render_streaming&&appearance_fade)) {
         if(collision_only)continue;
         if(render_streaming) {
             // Same-group transforms preserve compact membership. Rebuild only
@@ -209,7 +247,13 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
                 auto index=std::find(ordered.begin(),ordered.end(),id)-ordered.begin();
                 pages.insert(uint32_t(index/render_page_capacity()));
             }
-            for(auto page:pages)release_batch({e.first,page});
+            for(auto page:pages) {
+                RenderKey draw{e.first,page};
+                auto resident=resident_ids.find(draw);
+                const uint64_t count=resident==resident_ids.end()?0:resident->second.size();
+                release_batch(draw);
+                if(appearance_fade&&count)upload_batch(draw,count);
+            }
             continue;
         }
         if(!batches.count({e.first,0}))continue;
@@ -312,7 +356,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         auto old=placements.find(id);auto k=group_for(old->second);auto &g=groups.at(k);g.erase(id);if(g.empty())groups.erase(k);
         placements.erase(old);slots.erase(id);appearance_birth.erase(id);touched.insert(k);
     }
-    rebuild(touched);if(!touched.empty())publish_change();return true;
+    rebuild(touched,true);if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
     if(admission||!unloaded_regions.empty()||!removal_protected.empty())return false;

@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native rendering and trunk records ready
+PASS initial surface publishes two roots
+PASS same stable ID follows changed terrain support
+PASS trunk placement follows changed terrain support
+PASS unchanged neighbor retains its transition state and transform
+PASS identical resample does not republish owner
+PASS lowered support updates both representations too
+PASS stale support cannot replace the accepted transform
+PASS native rejection keeps owner scheduled for resampling
+PASS rejected completion releases request admission for retry
+PASS malformed batch preserves both live roots and collision support
+PASS valid retry replaces retained support and clears resampling
+PASS unknown completion cannot release a live owner's request
+PASS completion during terrain edit retains old support and retry intent
+PASS post-edit retry publishes updated support
+PASS zero-candidate resample retires existing renderer and trunk records
+PASS empty owner replaces stale sample cache and completes resampling
+PASS later exclusion reconciliation cannot resurrect retired candidates
+PASS empty candidate caches do not schedule pointless structure or water reconciliation
+VEGETATION_RESAMPLE failures=0

@@ -1,0 +1,7 @@
+{
+  "addons/structures/native/static_batch.hpp": "14465b7b44f3ee8cc43a241249d985da821ccd8ce66834a5492077c7b66ded16",
+  "addons/structures/native/static_batch.cpp": "7ed91b702f04a67d926b018903900c12958e00b68b9cd868b496e1ec22edd232",
+  "addons/structures/native/static_streaming.cpp": "bccfd66e177d5e4209a8c684b3e0cb0fb4244dad1b7c89395c8ea2497631d614",
+  "tests/vegetation_edit_continuity.gd": "5a1ccb068d2a27066131fc7fa73822bf2268b24d100c85789d33a3b6ea8b4f65",
+  "tests/vegetation_edit_world.gd": "6536e40223bcc150d63fafce029d01c717098f7193231f9711e62155eef07446"
+}

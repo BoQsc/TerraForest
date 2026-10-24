@@ -1,0 +1,10 @@
+{
+  "checks": 20,
+  "failures": 0,
+  "group": "(768.0, 32.0, 1280.0)",
+  "missing_frames": 0,
+  "observed_frames": 92,
+  "point": "(799.7135, 49.7244, 1310.278)",
+  "scope": "Actual temporary world, paid brick coordinator, native mining and per-render-frame GPU packet continuity. Screenshot/readback overhead is not performance evidence.",
+  "unaffected_grass": 888
+}

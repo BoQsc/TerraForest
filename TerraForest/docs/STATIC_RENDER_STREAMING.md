@@ -41,6 +41,18 @@ while queued; streaming edits do not bypass upload limits. The eager mode
 retains incremental slot updates for small edits. See DENSE_MODEL_PAGES.md for
 the implementation and validation that supersede the initial whole-page limit.
 
+Appearance-faded collections, including gameplay ground cover, now have a
+continuous local edit path. Bulk removals compact membership, and changed support
+transforms refresh their already-resident pages synchronously. Surviving plants
+keep their fade ages. Appends preserve old slots and partial pages while additional
+payload waits for budgeted admission. A partial page can be replaced in one tick;
+its previous members remain visible until that admission. Resident payload never
+grows synchronously for an append. This immediate edit work is separate from the
+background upload budget and scales with changed resident pages/local groups;
+it is not a total per-frame deadline. Snapshot restore, asset replacement and
+generic static-model collections retain their existing rebuild contract. See
+[edit continuity evidence](evidence/vegetation_edit_continuity/README.md).
+
 `render_stats()` reports authored groups, resident pages/instances/payload,
 pending pages, candidate and deferred counts, selection status/count, evictions
 and cumulative uploaded transform bytes. Payload accounting uses 48 bytes per

@@ -31,9 +31,12 @@ void NativeStaticBatch::release_group(BlockKey key) {
         RenderKey page=it->first;++it;release_batch(page);
     }
 }
-void NativeStaticBatch::upload_batch(RenderKey page) {
-    auto key=page.first;uint64_t count=render_page_size(page);
+void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
+    auto key=page.first;uint64_t count=std::min(render_page_size(page),limit);
     if(!count||source_mesh.is_null()||retirement_locks(key))return;
+    // Replace an admitted partial page atomically within the current scene tick.
+    // Callers have already reserved its target payload through selection.
+    if(batches.count(page))release_batch(page);
     const auto &ordered=render_ids.at(key);
     uint64_t start=uint64_t(page.second)*render_page_capacity();
     Ref<MultiMesh> multi;multi.instantiate();
@@ -130,7 +133,8 @@ void NativeStaticBatch::select_render_batches() {
     for(auto key:evict)release_batch(key);
     for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     render_pending.clear();
-    for(auto it=ordered.rbegin();it!=ordered.rend();++it)if(!batches.count(*it))render_pending.push_back(*it);
+    for(auto it=ordered.rbegin();it!=ordered.rend();++it)
+        if(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it))render_pending.push_back(*it);
 }
 void NativeStaticBatch::_process(double) {
     if(collection_retirement)return; // Retired GPU pages count against the collection budget.

@@ -6,6 +6,13 @@ could remain invisible indefinitely. Native rendering now divides each group
 into draw pages. Authored IDs, group coordinates, collision/exclusion data and
 the snapshot format remain unchanged.
 
+Follow-up: appearance-faded ground-cover collections now retain compact page
+membership through local edits and append new identities without dropping old
+pages. Bulk removal and support-transform refresh preserve visible neighbours
+and appearance ages; new residency retains background budgets. Generic model
+rebuilds and explicit restore retain the contract described below. Details and
+retained failure witnesses: [edit continuity](evidence/vegetation_edit_continuity/README.md).
+
 Page capacity is the minimum of 1,024, resident-payload budget divided by 48,
 and upload-payload budget divided by 48. Each page therefore fits both budgets
 on its own. Page and payload limits still constrain total residency. The native

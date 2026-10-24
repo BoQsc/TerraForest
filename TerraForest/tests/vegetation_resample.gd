@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 class TerrainStub extends Node3D:
+	var backend:Dictionary={"world_generator":14}
 	var epoch:=1
 	var published_revision:=1
 	var pending_edit:=false

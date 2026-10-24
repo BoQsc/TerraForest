@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: 0BSD
+from pathlib import Path
+import datetime, hashlib, json, sys
+root=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(root/'tools'))
+from run_godot_check import command_for,execute
+from run import parse_args
+from play_checkpoint import revision_metadata
+config,_=parse_args([])
+engine=Path(config.godot).resolve()
+stamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+folder=root/'reports/checks'/(stamp+'_vegetation_edit_pack');folder.mkdir(parents=True)
+pack=root/'dist/TerraForest.pck'
+command,cache=command_for(engine,'vegetation_edit_world',folder,['--gameplay-construction','--ground-cover','--vegetation-evidence-dir='+str(folder/'captures')])
+command[command.index('--path')+1]=str(root/'dist')
+command[command.index('--script')+1]=str(root/'tests/vegetation_edit_world.gd')
+command[1:1]=['--main-pack',str(pack)]
+details=dict(command=command,cache=cache,timeout=180,utc=stamp,required_text='VEGETATION_EDIT_WORLD checks=20 failures=0',
+    scope='External test script; game resources resolve from exported PCK/dist, with its native libraries. Temporary world; fresh derived cache.',
+    engine_sha256=hashlib.sha256(engine.read_bytes()).hexdigest(),pack_sha256=hashlib.sha256(pack.read_bytes()).hexdigest(),
+    test_sha256=hashlib.sha256((root/'tests/vegetation_edit_world.gd').read_bytes()).hexdigest(),
+    native_sha256={str(p.relative_to(root/'dist')):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((root/'dist/addons').glob('*/bin/*.dll'))},**revision_metadata())
+manifest=folder/'run.json';manifest.write_text(json.dumps(details,indent=2)+'\n',encoding='utf-8')
+details['result']=execute(command,folder,180,details['required_text'])
+manifest.write_text(json.dumps(details,indent=2)+'\n',encoding='utf-8')
+print(('PASS ' if details['result']['passed'] else 'FAIL ')+str(folder),flush=True)
+raise SystemExit(0 if details['result']['passed'] else 1)
