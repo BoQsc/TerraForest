@@ -87,7 +87,7 @@ bool NativeTerrainRegionStore::parse_index(const Buffer &b,Index &out){
  uint32_t pc=b.decode_u32(24),bc=b.decode_u32(28),rc=b.decode_u32(32);
  if(pc>PAGE_COUNT||bc>2000000||rc>5120||b.size()!=40+int64_t(pc)*4+int64_t(bc)*8+int64_t(rc)*80)return false;
  out=Index{};out.seed=b.decode_u32(8);out.generator=b.decode_u32(12);out.revision=b.decode_u32(16);out.edits=b.decode_u32(20);
- if(out.generator<1||out.generator>SURROUNDING_COAST_GENERATOR_ID)return false;
+ if(out.generator<1||out.generator>MAX_GENERATOR_ID)return false;
  int64_t at=40;std::set<uint32_t> seen;std::map<uint32_t,uint32_t> counts;
  for(uint32_t i=0;i<pc;i++,at+=4){uint32_t k=b.decode_u32(at);if(!valid_page(k)||!seen.insert(k).second)return false;out.order.push_back(k);++counts[region_for(k)];}
  out.blocks=b.slice(at,at+int64_t(bc)*8);at+=int64_t(bc)*8;if(!valid_blocks(out.blocks)||counts.size()!=rc)return false;
@@ -184,7 +184,7 @@ Buffer NativeTerrainRegionStore::publish_snapshot(const Buffer &b,const Buffer &
  uint32_t format=b.decode_u32(4),pc=b.decode_u32(12),bc=b.decode_u32(16);int header=format==1?28:32;
  if(format<1||format>3||pc>PAGE_COUNT||bc>2000000||b.size()!=header+4+int64_t(pc)*(4+PAGE_SAMPLES*3)+int64_t(bc)*8)return {};
  if(b.decode_u32(b.size()-4)!=(format==3?terrain_checksum::checksum(b.ptr(),int(b.size()-4)):fnv(b.ptr(),int(b.size()-4))))return {};
- uint32_t generator=format==1?1:b.decode_u32(28);if(generator<1||generator>SURROUNDING_COAST_GENERATOR_ID)return {};
+ uint32_t generator=format==1?1:b.decode_u32(28);if(generator<1||generator>MAX_GENERATOR_ID)return {};
  int64_t at=header;std::vector<uint32_t> order;std::set<uint32_t> seen;
  std::map<uint32_t,std::vector<std::pair<uint32_t,int64_t>>> sources;
  for(uint32_t i=0;i<pc;i++,at+=4+PAGE_SAMPLES*3){uint32_t key=b.decode_u32(at);if(!valid_page(key)||!seen.insert(key).second)return {};order.push_back(key);sources[region_for(key)].emplace_back(key,at+4);}
@@ -251,7 +251,7 @@ Buffer NativeTerrainRegionStore::publish_capture(const Ref<NativeTerrainCapture>
  Index previous;if(incremental){if(!load_index(capture->source_,previous))return {};}
  else if(!inherited.is_empty()&&!load_index(inherited,previous))return {};
  int64_t count=capture->keys_.size(),dirty=capture->changed_.size();
- if(count>MAX_AUTHORED_PAGES||capture->versions_.size()!=count||capture->samples_.size()!=dirty*PAGE_SAMPLES*3||(!incremental&&dirty!=count)||capture->blocks_.size()%8||capture->blocks_.size()>2000000*8||capture->generator_<1||capture->generator_>SURROUNDING_COAST_GENERATOR_ID)return {};
+ if(count>MAX_AUTHORED_PAGES||capture->versions_.size()!=count||capture->samples_.size()!=dirty*PAGE_SAMPLES*3||(!incremental&&dirty!=count)||capture->blocks_.size()%8||capture->blocks_.size()>2000000*8||capture->generator_<1||capture->generator_>MAX_GENERATOR_ID)return {};
  if(incremental&&(previous.seed!=capture->seed_||previous.generator!=capture->generator_||previous.order.size()>size_t(count)))return {};
  Index metadata;metadata.seed=capture->seed_;metadata.generator=capture->generator_;metadata.revision=capture->revision_;metadata.edits=capture->edits_;metadata.blocks=capture->blocks_;
  std::set<uint32_t> seen;std::map<uint32_t,std::vector<uint32_t>> members;

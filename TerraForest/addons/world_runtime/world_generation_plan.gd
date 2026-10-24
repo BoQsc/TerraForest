@@ -57,7 +57,7 @@ static func trim_cache(folder:String,keep:String)->void:
   if DirAccess.remove_absolute(entry.path)==OK:count-=1;total-=entry.size
 static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans")->Dictionary:
  var started:=Time.get_ticks_usec()
- if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19]:return {"ok":false,"reason":"Unsupported generation settings"}
+ if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19,20,21]:return {"ok":false,"reason":"Unsupported generation settings"}
  with_connection=with_connection or with_market
  var path:=path_for(seed_value,generator,with_market,with_connection,folder)
  var cached:=read_plan(path,seed_value,generator,with_market,with_connection)
@@ -110,10 +110,10 @@ static func water_preview(core,generator:int)->PackedByteArray:
  # Reuse the runtime's native implicit-ocean source, visibility and rasterizer.
  # No resident water regions, meshes or scene nodes are created for this preview.
  var water=ClassDB.instantiate("NativeRegionalWater")
- water.set_surrounding_ocean(generator==19)
+ water.set_surrounding_ocean(generator in [19,21])
  var raster=ClassDB.instantiate("NativeSurfaceMapRaster")
  var cursor:=0
- while generator==19 and cursor<512*512:
+ while generator in [19,21] and cursor<512*512:
   var source:Dictionary=water.survey_ocean(cursor,water.survey_revision_id())
   if not source.get("ok",false) or source.cursor<=cursor or not raster.offer(source.points):return PackedByteArray()
   cursor=source.cursor
@@ -133,7 +133,7 @@ static func water_preview(core,generator:int)->PackedByteArray:
 static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation")->Dictionary:
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain
- if not integrated or generator not in [17,18,19]:return terrain
+ if not integrated or generator not in [17,18,19,20,21]:return terrain
  var plan:=build(seed_value,generator,with_market,with_connection)
  if not plan.get("ok",false):return plan
  var roads:Array=plan.plan.roads.duplicate();roads.append_array(plan.market.get("roads",[]));roads.append_array(plan.connection.get("segments",[]))

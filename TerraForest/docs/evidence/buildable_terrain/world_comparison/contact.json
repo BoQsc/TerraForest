@@ -1,0 +1,36 @@
+[
+  {
+    "profile": 19,
+    "support": {
+      "bottom": 50.0,
+      "gap": 0.321617126464844,
+      "hits": 9,
+      "inside": 0,
+      "maximum": 49.7747688293457,
+      "minimum": 49.6783828735352,
+      "offset_y": 1.0,
+      "ok": true,
+      "overlap_limit": 0.2,
+      "reason": "",
+      "samples": 9
+    },
+    "target": "(800, 50, 1312)"
+  },
+  {
+    "profile": 21,
+    "support": {
+      "bottom": 50.0,
+      "gap": 0.0874290466308594,
+      "hits": 9,
+      "inside": 0,
+      "maximum": 50.0032730102539,
+      "minimum": 49.9125709533691,
+      "offset_y": 1.0,
+      "ok": true,
+      "overlap_limit": 0.2,
+      "reason": "",
+      "samples": 9
+    },
+    "target": "(800, 50, 1312)"
+  }
+]

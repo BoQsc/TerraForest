@@ -76,7 +76,7 @@ static godot::Dictionary terraforest_survey_water_visibility(const World &w,cons
  auto start=std::chrono::steady_clock::now();godot::PackedByteArray visible;int slow=0;
  for(int i=0;i<points.size();++i){auto p=points[i];int ix=fl(p.x),iz=fl(p.z);float dx=p.x-ix,dz=p.z-iz;
   auto sample=[&](int y){float d=0;for(int k=0;k<4;++k){float weight=(k&1?dx:1-dx)*(k&2?dz:1-dz);if(weight>0)d+=w.sample(ix+(k&1),y,iz+((k>>1)&1))*weight;}return d;};
-  bool pristine=w.generator_id==SURROUNDING_COAST_GENERATOR_ID&&p.y==40;
+  bool pristine=surrounding_coast(w.generator_id)&&p.y==40;
   for(int k=0;k<4&&pristine;++k){int x=ix+(k&1),z=iz+((k>>1)&1);
    if(w.edit_columns[(x>>4)+WORLD_PAGE_COLUMNS*(z>>4)]||w.block_columns[(x>>5)+64*(z>>5)].n)pristine=false;
   }

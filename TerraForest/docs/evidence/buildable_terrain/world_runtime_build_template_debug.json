@@ -1,0 +1,40 @@
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [
+    "actor_navigator.cpp",
+    "actor_route.cpp",
+    "derived_cache_index.cpp",
+    "entity_activation.cpp",
+    "entity_actor.cpp",
+    "entity_renderer.cpp",
+    "entity_storage.cpp",
+    "entity_store.cpp",
+    "regional_navigation.cpp",
+    "register_types.cpp",
+    "world_archive.cpp",
+    "world_publication.cpp",
+    "zombie_anatomy.cpp",
+    "zombie_awareness.cpp",
+    "zombie_rest_body.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 5.752125500002876,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll",
+  "sha256": "7d437c19d329665cff259aa38d41d4d1672587adb807f572acfa9734d5c8fd79",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "world_runtime"
+}

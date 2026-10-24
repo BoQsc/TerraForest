@@ -17,12 +17,17 @@ func run() -> void:
 	check(not Launch.command("../world",true,6,1703,true,path).ok and not Launch.valid_slot("1world") and not Launch.valid_slot("x".repeat(49)),"invalid names cannot escape or alias save paths")
 	check(not Launch.command("new_world",true,6,-1,true,path).ok and not Launch.command("new_world",true,99,1703,true,path).ok,"invalid seed and generator rejected")
 	var integrated:=Launch.command("integrated",true,Launch.INTEGRATED_PRESET,50,true,path)
-	check(integrated.ok and integrated.get("prepare",false) and "--generator=19" in integrated.args and "--seed=50" in integrated.args,"integrated preset routes through verified offline preparation")
-	check("--generator=19" in integrated.args and "res://addons/world_runtime/generation_job.gd" in integrated.args,"new integrated worlds default to the surrounding coast recipe")
+	var buildable:=Launch.command("buildable",true,Launch.INTEGRATED_PRESET,50,true,path,true,"connected",true)
+	check(buildable.ok and "--generator=21" in buildable.args,"build-friendly coast routes to its own saved generator identity")
+	check("--generator=20" in Launch.command("buildable_inland",true,Launch.INTEGRATED_PRESET,50,true,path,false,"connected",true).args,"build-friendly terrain also supports no-ocean worlds")
+	check(integrated.ok and integrated.get("prepare",false) and "--generator=21" in integrated.args and "--seed=50" in integrated.args,"integrated preset routes through verified offline preparation")
+	check("--generator=21" in integrated.args and "res://addons/world_runtime/generation_job.gd" in integrated.args,"new integrated worlds default to the accepted build-friendly coast recipe")
+	check("--generator=19" in Launch.command("original_coast",true,Launch.INTEGRATED_PRESET,50,true,path,true,"connected",false).args,"explicit opt-out retains the original coastal terrain")
 	var legacy:=Launch.command("legacy",true,Launch.LEGACY_INTEGRATED_PRESET,50,true,path,false)
 	check(legacy.ok and legacy.get("prepare",false) and "--generator=13" in legacy.args,"earlier authored recipe remains available without unsupported coast overrides")
 	var inland:=Launch.command("inland",true,Launch.INTEGRATED_PRESET,50,true,path,false)
-	check(inland.ok and "--generator=17" in inland.args,"ocean can be disabled without changing the settlement recipe")
+	check(inland.ok and "--generator=20" in inland.args,"ocean can be disabled while keeping build-friendly terrain")
+	check("--generator=17" in Launch.command("original_inland",true,Launch.INTEGRATED_PRESET,50,true,path,false,"connected",false).args,"explicit opt-out retains the original inland terrain")
 	var created:=Launch.command("new_world",true,6,1703,true,path)
 	check(created.ok and "--world-generator=6" in created.args and "--world-seed=1703" in created.args and "--gameplay-construction" in created.args and "--ground-cover" in created.args,"new world command uses chosen generation and gameplay settings")
 	check("--fullscreen" in created.args and "1920x1080" in created.args and "res://demo/world.tscn" in created.args,"launch targets actual world at full resolution")
@@ -66,9 +71,19 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		DirAccess.make_dir_recursive_absolute("res://reports/world_browser")
 		root.get_texture().get_image().save_png("res://reports/world_browser/browser.png")
+		var pages:TabContainer=browser.buildable_ground.get_parent().get_parent().get_parent()
+		pages.current_tab=1
+		for frame in 3:await process_frame
+		check(browser.buildable_ground.is_visible_in_tree() and screen.encloses(browser.buildable_ground.get_global_rect()) and screen.encloses(browser.seed_field.get_global_rect()),"build-friendly terrain control and seed fit the visible creation page")
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/world_browser/buildable_create.png")
 	browser.free()
 	# Exercise the real create action without starting an unnecessary world bake.
 	var naming:=NameBrowser.new();root.add_child(naming)
+	check(naming.buildable_ground.button_pressed and naming.selected_preview_key().contains("/21/"),"browser and map preview default to the same accepted terrain profile")
+	naming.buildable_ground.button_pressed=false
+	check(naming.selected_preview_key().contains("/19/"),"turning terrain experiment off restores the original landscape preview")
+	naming.buildable_ground.button_pressed=true
 	naming.name_field.text="   ";naming.seed_field.value=123;naming.launch_selected(true)
 	var generated:String=naming.name_field.text
 	check(Launch.valid_slot(generated) and generated.split("_").size()>=2 and naming.submitted_slot==generated and "--destination="+generated in naming.submitted_args,"blank create action assigns and submits a two-word world name")

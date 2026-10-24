@@ -15,6 +15,10 @@ constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently edi
 constexpr u32 WALKABLE_CAVE_GENERATOR_ID=6; // New immutable landscape profile; never repurpose saved IDs.
 constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial lake.
 constexpr u32 SURROUNDING_COAST_GENERATOR_ID=19; // All-side coast; prior saved fields stay immutable.
+constexpr u32 BUILDABLE_REGION_GENERATOR_ID=20;
+constexpr u32 BUILDABLE_COAST_GENERATOR_ID=21;
+constexpr u32 MAX_GENERATOR_ID=BUILDABLE_COAST_GENERATOR_ID;
+inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID;}
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
@@ -66,6 +70,9 @@ struct World {
  Basin basins[4]{};int basin_count=0;
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.
  void plan_roads();
+ u8 buildable_weights[65*65]{};
+ void prepare_buildable_ground(bool coast);
+ float buildable_height(float x,float z,float original)const;
  float road_distance(int road,float x,float z,float &grade)const;
  RegionalSite sites[5]{};int site_count=0;bool regional_roads=false;
  // Derived only: never serialized. Owned by the terrain worker, not renderer.

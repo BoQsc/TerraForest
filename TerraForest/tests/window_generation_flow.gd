@@ -26,7 +26,7 @@ func run()->void:
 	check(await wait_for(game_ready,600),"Generate and play completes in the original window")
 	if not game_ready():
 		print("GENERATION_DIAGNOSTIC ",FileAccess.get_file_as_string(report_path));await finish();return
-	check(current_scene.terrain.save_slot==slot and current_scene.terrain.backend.world_generator==19 and current_scene.construction_inventory.gameplay,"generated save opens with its saved profile and gameplay mode")
+	check(current_scene.terrain.save_slot==slot and current_scene.terrain.backend.world_generator==21 and current_scene.construction_inventory.gameplay,"generated save opens with its saved build-friendly profile and gameplay mode")
 	var status:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(report_path))
 	var metadata:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(status.report).path_join("run.json")))
 	var local_only:=true

@@ -1,0 +1,45 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\placement_release_wod7g9us",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T170239797169Z_placement_release\\engine.log",
+    "--script",
+    "res://placement_support.gd"
+  ],
+  "scope": "Clean temporary project, release DLL only; fixed native support-query assertions.",
+  "utc": "20261024T170239797169Z",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "library_sha256": "8871f6b16ea050abe18be385906ec484b5c0a13f4ffd0985506c339ca1a4db9a",
+  "test_sha256": "612a5d1650c662ffeb5aca821864f265f5baba3fbf727a3ad3faf0ff336748aa",
+  "revision": "7124f8cb0a3ea6cdeec2b0c308413d6cd674a948",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/session_menu.gd",
+    " M TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/structures/model_tool.gd",
+    " M TerraForest/addons/structures/native/block_queries.cpp",
+    " M TerraForest/addons/structures/native/block_world.cpp",
+    " M TerraForest/addons/structures/native/block_world.hpp",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/docs/WORLD_BUILDING_STANDARD.md",
+    " M TerraForest/tests/placement_support.gd",
+    " M TerraForest/tests/placement_targeting_world.gd",
+    "?? TerraForest/addons/player_runtime/placement_policy.gd",
+    "?? TerraForest/docs/PLACEMENT_STANDARD.md"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 33744,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.8331792000099085,
+    "passed": true
+  }
+}

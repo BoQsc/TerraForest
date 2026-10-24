@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS build-friendly generator initializes seed 0
+PASS bounded native terrain survey is complete
+PASS generator increases close-fitting block footprints by over four percentage points
+PASS generator reduces average grid-to-ground air gap
+PASS terrain height adjustment remains below 36 cm
+PASS new terrain never reuses the old mesh cache identity
+PASS saved new profile regenerates identical ground
+PASS coastal profile retains the old coastline and beach heights
+PASS lake definitions stay identical
+PASS lake interiors stay unchanged
+BUILDABLE_MEASURE {"after":{"contact":1253,"contact_fraction":0.190976985215668,"mean_air_gap":0.287439862614524,"sites":6561},"after_survey_ms":14.864,"before":{"contact":812,"contact_fraction":0.123761621704009,"mean_air_gap":0.31946054687407,"sites":6561},"before_survey_ms":14.777,"initialize_ms":3.935,"max_displacement":0.352130889892578,"seed":0}
+PASS build-friendly generator initializes seed 42
+PASS bounded native terrain survey is complete
+PASS generator increases close-fitting block footprints by over four percentage points
+PASS generator reduces average grid-to-ground air gap
+PASS terrain height adjustment remains below 36 cm
+PASS new terrain never reuses the old mesh cache identity
+PASS saved new profile regenerates identical ground
+PASS coastal profile retains the old coastline and beach heights
+PASS lake definitions stay identical
+PASS lake interiors stay unchanged
+BUILDABLE_MEASURE {"after":{"contact":1235,"contact_fraction":0.188233500990703,"mean_air_gap":0.288591911654304,"sites":6561},"after_survey_ms":15.977,"before":{"contact":795,"contact_fraction":0.121170553269319,"mean_air_gap":0.320886354078663,"sites":6561},"before_survey_ms":15.144,"initialize_ms":4.668,"max_displacement":0.351093292236328,"seed":42}
+PASS build-friendly generator initializes seed 1703
+PASS bounded native terrain survey is complete
+PASS generator increases close-fitting block footprints by over four percentage points
+PASS generator reduces average grid-to-ground air gap
+PASS terrain height adjustment remains below 36 cm
+PASS new terrain never reuses the old mesh cache identity
+PASS saved new profile regenerates identical ground
+PASS coastal profile retains the old coastline and beach heights
+PASS lake definitions stay identical
+PASS lake interiors stay unchanged
+BUILDABLE_MEASURE {"after":{"contact":993,"contact_fraction":0.151348879743941,"mean_air_gap":0.294825114195094,"sites":6561},"after_survey_ms":16.278,"before":{"contact":642,"contact_fraction":0.0978509373571102,"mean_air_gap":0.320779710004214,"sites":6561},"before_survey_ms":15.625,"initialize_ms":4.63,"max_displacement":0.352165222167969,"seed":1703}
+PASS build-friendly generator initializes seed 2147483647
+PASS bounded native terrain survey is complete
+PASS generator increases close-fitting block footprints by over four percentage points
+PASS generator reduces average grid-to-ground air gap
+PASS terrain height adjustment remains below 36 cm
+PASS new terrain never reuses the old mesh cache identity
+PASS saved new profile regenerates identical ground
+PASS coastal profile retains the old coastline and beach heights
+PASS lake definitions stay identical
+PASS lake interiors stay unchanged
+BUILDABLE_MEASURE {"after":{"contact":1035,"contact_fraction":0.157750342935528,"mean_air_gap":0.292267341654469,"sites":6561},"after_survey_ms":16.21,"before":{"contact":704,"contact_fraction":0.107300716354214,"mean_air_gap":0.316769736402919,"sites":6561},"before_survey_ms":15.83,"initialize_ms":4.38,"max_displacement":0.347080230712891,"seed":2147483647}
+PASS mining edits the new native field
+PASS isolated binary region store opens
+PASS edited coastal profile roundtrips through binary region storage
+BUILDABLE_TERRAIN checks=43 failures=0
+

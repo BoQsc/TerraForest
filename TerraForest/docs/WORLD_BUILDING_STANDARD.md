@@ -19,6 +19,11 @@ Do not promote a draft as the finished foundation or silently relax a failed rul
 
 ## Terrain fit comes before construction
 
+Natural terrain/grid alignment follows [PLACEMENT_STANDARD.md](PLACEMENT_STANDARD.md).
+Its experimental generation profiles reduce gaps without changing the block grid
+or forbidding intentional player floating builds. The site-quality rules below
+apply to generated/authored settlements, not a new restriction on player creativity.
+
 Survey the full intended occupied footprint before edits. Include roads, entrances,
 yards, transitions and the surrounding terrain in final validation; current native
 foundation samples alone do not establish all of this coverage.

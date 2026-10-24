@@ -6,6 +6,7 @@ var name_field: LineEdit
 var seed_field: SpinBox
 var preset: OptionButton
 var ocean:CheckBox
+var buildable_ground:CheckBox
 var layout_preset:OptionButton
 var gameplay: CheckBox
 var notice: Label
@@ -86,6 +87,10 @@ func _ready() -> void:
 		if id==Launch.INTEGRATED_PRESET or "--developer-worlds" in OS.get_cmdline_user_args():preset.add_item(Launch.PRESETS[id],id)
 	preset.select(0)
 	ocean=CheckBox.new();ocean.text="Surrounding ocean and beaches";ocean.button_pressed=true;create.add_child(ocean)
+	buildable_ground=CheckBox.new();buildable_ground.text="Build-friendly terrain";buildable_ground.button_pressed=true;create.add_child(buildable_ground)
+	buildable_ground.tooltip_text="Adds broader, gently connected ground levels that fit the block grid. Applies to new worlds; building rules and floating construction stay the same."
+	buildable_ground.toggled.connect(func(_value:bool):invalidate_preview())
+	preset.item_selected.connect(func(_index:int):buildable_ground.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	ocean.tooltip_text="Applies to new terrain-fitted worlds. Existing worlds keep their saved coastline."
 	preset.item_selected.connect(func(_index:int):ocean.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
 	layout_preset=OptionButton.new();layout_preset.add_item("Two settlements with connecting road");layout_preset.add_item("One settlement with regional road");layout_preset.add_item("One standalone settlement");create.add_child(layout_preset)
@@ -142,7 +147,7 @@ func show_saved_details(index:int)->void:
 	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
 	if data.has("generator"):
 		var id:int=int(data.generator)
-		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
 	if saved_picture.texture==null:lines.append("No cached photograph yet.")
 	lines.append("Opening uses this world's saved generation settings.")
@@ -155,7 +160,7 @@ func launch_selected(create: bool) -> void:
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
 		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
-	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,["connected","road","settlement"][layout_preset.selected])
+	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,["connected","road","settlement"][layout_preset.selected],buildable_ground.button_pressed)
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):
 		start_preparation(result,slot);return
@@ -286,13 +291,13 @@ func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
 
 func selected_preview_key()->String:
-	return "%d/%d/%d"%[int(seed_field.value),19 if ocean.button_pressed else 17,layout_preset.selected] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+	return "%d/%d/%d"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),layout_preset.selected] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func invalidate_preview()->void:
 	preview_view.texture=null
 	preview_status.text="Settings changed. Preview the new world plan before creating."
 func start_preview()->void:
 	if preview_worker!=null:return
-	var generator:int=19 if ocean.button_pressed else 17
+	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
 	preview_key=selected_preview_key();preview_status.text="Planning terrain, settlements and roads…";preview_button.disabled=true

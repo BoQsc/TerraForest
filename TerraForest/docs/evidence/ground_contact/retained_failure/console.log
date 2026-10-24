@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable world ready
+PASS player has settled onto the real forest floor
+PASS ground contact assist defaults on and is exposed in ESC
+PASS streamed forest terrain supplies a supported placement target
+PASS real forest terrain uses the new native contact policy
+NATURAL_CONTACT {"bottom":50.0,"contact_gap":0.338302612304688,"contact_limit":0.03,"gap":0.420742034912109,"gap_limit":0.2,"ground_contact":true,"hits":9,"inside":0,"maximum":49.6616973876953,"minimum":49.5792579650879,"offset_y":1.0,"ok":false,"overlap_limit":0.2,"reason":"Ground does not meet the block grid; level it or attach to a block","samples":9}
+PASS unsupported forest target does not place or spend materials
+FAIL real terrain placement limits burial and spends one brick
+PASS aimed brick target lifts out of deeply intersecting terrain
+PASS assist marks the former 18 cm floating placement red at the proposed cell
+PASS floating placement rejects without payment, terrain edits or blocking message
+PASS disabling assist restores the exact legacy target immediately
+PASS block preview uses the same corrected grid cell
+PASS click publishes exactly the previewed paid block
+PASS authored top face preserves exact grid stacking
+PASS authored side face preserves exact grid adjacency
+PASS covered adjacent cell is rejected without moving the wall or taking materials
+PASS small ground overlap remains accepted in the lower cell
+PASS assisted contact placement uses the displayed cell and ordinary paid transaction
+PASS ordinary furniture catalog is available
+PASS assistance prevents a furniture base gap without payment or blocking message
+PASS the same furniture slope remains available with assistance off
+PASS object target samples its footprint instead of using one clicked height
+PASS object preview matches the accepted support fit
+PASS supported furniture places through its normal paid transaction
+PASS excessively uneven furniture placement turns red and rejects without payment
+PASS unavailable support rejects placement without charging materials
+PASS opt-out persists through a fresh preference instance
+PASS opt-in persists without touching world storage
+[TerrainRewrite] Temporary test world: save skipped
+PLACEMENT_TARGETING_WORLD failures=1

@@ -1,0 +1,70 @@
+# Terrain and building-grid standard
+
+Accepted improvement/default, 2026-10-24. Improve the generated ground rather than deny
+player construction. **Floating builds remain allowed.** The extra ground-contact
+admission experiment and its ESC switch were removed following user clarification.
+Do not reintroduce them as a solution to terrain/grid mismatch.
+
+## Coordinate and generation contract
+
+One world unit is one metre. Blocks retain their exact integer-metre lattice and
+shared faces; do not introduce per-block offsets, deform blocks, or silently grade
+terrain when the player places one. Existing clearance, inventory and collision
+readiness checks stay unchanged. Generated settlements still obey
+`WORLD_BUILDING_STANDARD.md`; its supported-foundation requirement is not a ban on
+intentional player overhangs or floating structures.
+
+Create world offers **Build-friendly terrain**, accepted and enabled by default.
+It selects immutable native profile 20 (inland) or 21 (surrounding coast). Disabling
+it selects the preceding profiles 17/19. It applies only to new worlds. Existing
+saves retain their profile, terrain edits and constructions; there is no migration.
+Preview, generation, binary save/restore, cache identity and water use the same
+selected profile. A saved build-friendly world retains that profile when reopened.
+
+## Native terrain shaping
+
+During world initialization, derive a 65 by 65 byte eligibility field at 32 m
+spacing. Each node samples a local 3 by 3 raw-height footprint; low-gradient,
+low-altitude regions receive stronger shaping. Smooth interpolation avoids cell
+boundaries. Lake margins, the existing coastal band and steep/high terrain are
+excluded or faded out, rather than globally flattening the landscape.
+
+Eligible ground forms wider levels at integer height plus 0.08 m, connected by
+continuous smooth ramps. The slight overlap accommodates meshed terrain without
+changing the block grid or the existing burial allowance. The transformation is
+continuous across integer elevations, with displacement bounded below 0.36 m.
+It reduces common fractional-height gaps, not every possible gap on every slope.
+
+The derived field occupies 4,225 bytes per native World and is reconstructed from
+seed/profile, not serialized. Each height query interpolates four bytes; native
+worker ownership, binary density edits and existing region caches remain in use.
+No per-frame GDScript terrain shaping, physics readback or placement-triggered
+terrain mutation is added. Excavation and subsequent terrain edits remain possible.
+
+## Verification and remaining acceptance
+
+Four-seed native sampling covers 26,244 one-metre footprints. Close-fitting sites
+increase from 2,953 to 4,516 (11.25% to 17.21%); mean sampled air gap decreases from
+0.3195 m to 0.2908 m. This is a modest absolute improvement, not universal buildable
+terrain. The diagnostic contact thresholds are test measurements, not admission
+rules. Maximum observed height displacement is 0.3522 m.
+
+Native debug/release checks cover determinism, cache identity, binary restoration,
+unchanged coast/lake interiors, mining and edited-region restoration. A graphical
+comparison places a paid brick at the same natural site under profiles 19 and 21:
+maximum sampled gap falls from 0.3216 m to 0.0874 m. It also exercises the actual
+placement handler to extend an unsupported floating block. Inspected ground and
+overview images support this local improvement; they do not establish world-wide
+visual acceptance. Generation/cancellation/play/save/return-to-selector also pass.
+
+The user accepted this as an improvement and requested it as the default. Keep
+reviewing multiple seeds, slopes, edited ground and larger block/object footprints
+in normal play. Return to tuning if reviews show distracting terraces or insufficient
+ground contact; retain exact block alignment and player freedom. Sustained travel
+performance and lower-end hardware remain unqualified. Automatic seam enclosure,
+foundation fill, arbitrary-object contact guarantees and existing settlement-quality
+defects are not solved here. See [evidence and retained failures](evidence/buildable_terrain/README.md).
+
+Next priority: repair topsoil targeting/stacking and obtain user approval. Only
+after that approval, investigate building-grid-friendly road adjustments without
+relaxing settlement terrain-fit and access requirements.

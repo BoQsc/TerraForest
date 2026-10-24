@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS playable comparison world loads profile 19
+PASS nearby natural site improves grid contact without editing terrain
+PASS comparison location collision is ready
+PASS existing placement rules accept profile 19
+PASS ordinary paid click places the aimed block
+ACTUAL_GROUND_CONTACT {"profile":19,"support":{"bottom":50.0,"gap":0.321617126464844,"hits":9,"inside":0,"maximum":49.7747688293457,"minimum":49.6783828735352,"offset_y":1.0,"ok":true,"overlap_limit":0.2,"reason":"","samples":9},"target":"(800, 50, 1312)"}
+[TerrainRewrite] Temporary test world: save skipped
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS playable comparison world loads profile 21
+PASS comparison location collision is ready
+PASS existing placement rules accept profile 21
+PASS ordinary paid click places the aimed block
+ACTUAL_GROUND_CONTACT {"profile":21,"support":{"bottom":50.0,"gap":0.0874290466308594,"hits":9,"inside":0,"maximum":50.0032730102539,"minimum":49.9125709533691,"offset_y":1.0,"ok":true,"overlap_limit":0.2,"reason":"","samples":9},"target":"(800, 50, 1312)"}
+PASS rendered terrain collision closes the old gap
+PASS floating block-face attachment remains allowed
+PASS actual input handler extends floating construction
+[TerrainRewrite] Temporary test world: save skipped
+BUILDABLE_TERRAIN_WORLD failures=0

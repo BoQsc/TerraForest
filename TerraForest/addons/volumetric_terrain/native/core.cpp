@@ -174,9 +174,44 @@ u8 World::base_material(V3 point,float h)const{
  if(has_geology()){float weight=ore_weight(point,h);return weight>.5f?8:(weight<-.5f?9:0);}
  return 0;
 }
+void World::prepare_buildable_ground(bool coast){
+ for(int row=0;row<65;row++)for(int column=0;column<65;column++){
+  float center_x=float(column*32),center_z=float(row*32),samples[3][3],slope=0;
+  for(int across=0;across<3;across++)for(int along=0;along<3;along++)
+   samples[across][along]=inland_height(center_x+float(across-1)*8.f,center_z+float(along-1)*8.f,true);
+  for(int across=0;across<2;across++)for(int along=0;along<2;along++){
+   float gradient_x=(samples[across+1][along]-samples[across][along])/8.f;
+   float gradient_z=(samples[across][along+1]-samples[across][along])/8.f;
+   slope=mx(slope,__builtin_sqrtf(gradient_x*gradient_x+gradient_z*gradient_z));
+  }
+  float weight=1.f-smooth(clampf((slope-.07f)/.09f,0.f,1.f));
+  weight*=1.f-smooth(clampf((samples[1][1]-75.f)/20.f,0.f,1.f));
+  if(coast){
+   float edge=mn(mn(center_x,center_z),mn(float(WORLD)-center_x,float(WORLD)-center_z));
+   weight*=smooth(clampf((edge-272.f)/48.f,0.f,1.f));
+  }
+  for(int basin=0;basin<basin_count;basin++){
+   float distance=length(V3{center_x-basins[basin].x,0,center_z-basins[basin].z});
+   float radius=(basin==0?96.f:40.f)+48.f;
+   weight*=smooth(clampf((distance-radius)/32.f,0.f,1.f));
+  }
+  buildable_weights[column+row*65]=u8(clampf(weight,0.f,1.f)*255.f+.5f);
+ }
+}
+float World::buildable_height(float x,float z,float original)const{
+ float scaled_x=clampf(x/32.f,0.f,63.999f),scaled_z=clampf(z/32.f,0.f,63.999f);
+ int column=fl(scaled_x),row=fl(scaled_z);
+ float blend_x=smooth(scaled_x-column),blend_z=smooth(scaled_z-row);
+ float near_weight=buildable_weights[column+row*65]*(1.f-blend_x)+buildable_weights[column+1+row*65]*blend_x;
+ float far_weight=buildable_weights[column+(row+1)*65]*(1.f-blend_x)+buildable_weights[column+1+(row+1)*65]*blend_x;
+ float weight=(near_weight*(1.f-blend_z)+far_weight*blend_z)/255.f;
+ float level=float(fl(original)),phase=original-level;
+ float terrace=level+.08f+smooth(clampf((phase-.25f)/.5f,0.f,1.f));
+ return original+(terrace-original)*weight;
+}
 float World::height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);
-  if(generator_id==SURROUNDING_COAST_GENERATOR_ID){
+  if(surrounding_coast(generator_id)){
    // One continuous border field, including corners. Only the outer 240 m
    // changes; settlements and the existing regional interior retain their field.
    float edge=mn(mn(x,z),mn(float(WORLD)-x,float(WORLD)-z));
@@ -192,7 +227,7 @@ float World::height(float x,float z,bool developed)const{
     h=shelf*(1.f-inland)+h*inland;
    }
   }
- return h;
+ return generator_id==BUILDABLE_REGION_GENERATOR_ID||generator_id==BUILDABLE_COAST_GENERATOR_ID?buildable_height(x,z,h):h;
 }
 float World::inland_height(float x,float z,bool developed)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
@@ -281,7 +316,7 @@ float World::base(V3 p,float h)const{
  return clampf(d,-SDF_BAND,SDF_BAND);
 }
 void World::init(int p_seed,u32 generator){
- seed=p_seed;generator_id=generator==SURROUNDING_COAST_GENERATOR_ID?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+ seed=p_seed;generator_id=surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
  if(generator_id>=REGIONAL_WORLD_GENERATOR_ID){
@@ -346,6 +381,7 @@ void World::init(int p_seed,u32 generator){
   V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
   caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
   caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
+  if(generator==BUILDABLE_REGION_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID)prepare_buildable_ground(surrounding_coast(generator));
   generator_id=generator;return;
  }
  if(generator_id>=2){
@@ -614,7 +650,7 @@ bool World::deserialize(const u8*data,int n){
  Reader r{data,n-4};if(r.u()!=SAVE_MAGIC)return false;u32 format=r.u();if(format!=1&&format!=2&&format!=3)return false;
  int s=int(r.u()),pc=int(r.u()),bc=int(r.u()),rev=int(r.u()),ed=int(r.u());
  u32 generator=format==1?1:r.u();
- if(!r.good||generator<1||generator>SURROUNDING_COAST_GENERATOR_ID)return false;
+ if(!r.good||generator<1||generator>MAX_GENERATOR_ID)return false;
  if(pc<0||pc>MAX_PAGES||bc<0||bc>2000000||i64(pc)*(4+PAGE_SAMPLES*3)+i64(bc)*8+(format==1?28:32)!=n-4)return false;
  World t;t.build_control=build_control;t.init(s,generator);t.revision=rev;t.edits=ed;t.surface_style=surface_style;
  for(int i=0;i<pc;i++){
@@ -1274,7 +1310,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==4){bool fast=n==8&&r.u()==3;if((n!=4&&!fast)||!r.good){out.p[8]=1;return;}w.serialize(out,fast);}
  else if(cmd==5){if(!w.deserialize(data+4,n-4))out.p[8]=1;out.u(w.revision);out.u(w.pages.n);out.u(w.blocks.n);}
- else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>SURROUNDING_COAST_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
+ else if(cmd==6){int seed=int(r.u());u32 generator=n==12?r.u():1;if(!r.good||(n!=8&&n!=12)||generator<1||generator>MAX_GENERATOR_ID){out.p[8]=1;return;}BuildControl *control=w.build_control;w.release();w=World{};w.build_control=control;w.init(seed,generator);}
  else if(cmd==7){V3 p=r.vec();if(!r.good||!(ab(p.x)<=10000&&ab(p.y)<=10000&&ab(p.z)<=10000)){out.p[8]=1;return;}out.f(w.height(p.x,p.z));out.f(w.sample(fl(p.x),fl(p.y),fl(p.z)));}
  else if(cmd==8){ // Deterministic construction proof; not a replay list.
   int bx=1472,bz=1440,by=int(w.height(float(bx),float(bz)))+1;
@@ -1371,7 +1407,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
     float patch=.5f+.5f*noise(p.x/3.f,p.z/3.f,u32(w.seed)+947u);
     if(p.y<=40.15f||patch>coverage)normal=V3{};
    }
-   if(w.generator_id==SURROUNDING_COAST_GENERATOR_ID&&mn(mn(p.x,p.z),mn(float(WORLD)-p.x,float(WORLD)-p.z))<140.f){
+   if(surrounding_coast(w.generator_id)&&mn(mn(p.x,p.z),mn(float(WORLD)-p.x,float(WORLD)-p.z))<140.f){
     float coverage=smooth(clampf((p.y-40.15f)/4.35f,0.f,1.f));
     float patch=.5f+.5f*noise(p.x/3.f,p.z/3.f,u32(w.seed)+947u);
     if(p.y<=40.15f||patch>coverage)normal=V3{};

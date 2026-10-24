@@ -1,0 +1,78 @@
+[
+  {
+    "after": {
+      "contact": 1253,
+      "contact_fraction": 0.190976985215668,
+      "mean_air_gap": 0.287439862614524,
+      "sites": 6561
+    },
+    "after_survey_ms": 18.368,
+    "before": {
+      "contact": 812,
+      "contact_fraction": 0.123761621704009,
+      "mean_air_gap": 0.31946054687407,
+      "sites": 6561
+    },
+    "before_survey_ms": 15.386,
+    "initialize_ms": 5.973,
+    "max_displacement": 0.352130889892578,
+    "seed": 0
+  },
+  {
+    "after": {
+      "contact": 1235,
+      "contact_fraction": 0.188233500990703,
+      "mean_air_gap": 0.288591911654304,
+      "sites": 6561
+    },
+    "after_survey_ms": 18.483,
+    "before": {
+      "contact": 795,
+      "contact_fraction": 0.121170553269319,
+      "mean_air_gap": 0.320886354078663,
+      "sites": 6561
+    },
+    "before_survey_ms": 19.626,
+    "initialize_ms": 6.863,
+    "max_displacement": 0.351093292236328,
+    "seed": 42
+  },
+  {
+    "after": {
+      "contact": 993,
+      "contact_fraction": 0.151348879743941,
+      "mean_air_gap": 0.294825114195094,
+      "sites": 6561
+    },
+    "after_survey_ms": 25.826,
+    "before": {
+      "contact": 642,
+      "contact_fraction": 0.0978509373571102,
+      "mean_air_gap": 0.320779710004214,
+      "sites": 6561
+    },
+    "before_survey_ms": 17.036,
+    "initialize_ms": 6.19,
+    "max_displacement": 0.352165222167969,
+    "seed": 1703
+  },
+  {
+    "after": {
+      "contact": 1035,
+      "contact_fraction": 0.157750342935528,
+      "mean_air_gap": 0.292267341654469,
+      "sites": 6561
+    },
+    "after_survey_ms": 16.067,
+    "before": {
+      "contact": 704,
+      "contact_fraction": 0.107300716354214,
+      "mean_air_gap": 0.316769736402919,
+      "sites": 6561
+    },
+    "before_survey_ms": 17.342,
+    "initialize_ms": 6.85,
+    "max_displacement": 0.347080230712891,
+    "seed": 2147483647
+  }
+]

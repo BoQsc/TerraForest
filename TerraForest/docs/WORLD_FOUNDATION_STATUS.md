@@ -1,3 +1,39 @@
+## Build-friendly terrain - accepted improvement and default, 2026-10-24
+
+The user's clarification is authoritative: fix generated terrain, preserve the
+block grid and allow floating construction. The attempted extra ground-contact
+restriction and ESC switch have been removed. No placement-admission changes remain.
+Create world now defaults to an optional native terrain profile that
+broadens gentle grid-fitting ground, with continuous transitions and protected
+coast/lake areas. Old saves are unchanged. New profile IDs separate baked caches
+and persist through normal binary save/restore.
+
+Native debug and release pass 43 checks each; four seeds yield close-fitting sites
+at 17.21% of sampled footprints versus 11.25% before. Mean air gap falls about 9%,
+not to zero. The actual-world same-site comparison reduces maximum sampled gap
+from 32 cm to 9 cm and passes paid placement plus floating block-face attachment.
+Ground/overview screenshots were inspected. Generation, cancellation, play, save
+and return in the same window pass 12 checks. Original placement-support regression
+passes. These are scoped engineering results, not final world-quality acceptance.
+Exported startup and all 43 packaged native checks pass; the new-world controls
+were inspected at 1920x1080. Full graphical interaction checks used source resources.
+
+The user accepted this improvement and authorized its commit/default promotion.
+The experimental label is removed; UI and direct creation commands default to
+profiles 20/21, retaining opt-out and existing saves. Broader review across seeds,
+slopes, edited ground and larger objects is ongoing rather than an acceptance
+blocker for this improvement. Sustained travel and low-end performance still need
+measurements. No new blocker for
+floating builds, automatic seam filling, arbitrary-object fit guarantee or existing
+settlement-quality resolution is implied. The failed raw-inland comparison fixture
+did not become playable in its 50-second budget; its readiness cause remains
+unresolved, with logs retained separately from the successful coastal comparison.
+Next priority is topsoil targeting/stacking: its marker embeds in ground and
+repeated placement on player-added soil is unreliable. Fix and obtain user review
+before returning to grid-friendly road adjustments. Roads are explicitly deferred
+until that approval; require terrain-fit, access and visual evidence when resumed.
+[Terrain/grid contract](PLACEMENT_STANDARD.md), [evidence and open gates](evidence/buildable_terrain/README.md).
+
 ## Terrain placement targeting preview - compact octahedron, 2026-10-24
 
 Carried topsoil, stone and both ores now show a dedicated placement marker without

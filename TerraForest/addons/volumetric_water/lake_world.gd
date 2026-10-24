@@ -163,11 +163,11 @@ func _measured_step(delta:float)->void:
  _poll_cached_task()
  if terrain==null or not terrain.world_ready:return
  water.set_western_ocean(terrain.backend.world_generator==18)
- water.set_surrounding_ocean(terrain.backend.world_generator==19)
- if terrain.backend.world_generator==19 and _surrounding_ocean==null:
+ water.set_surrounding_ocean(terrain.backend.world_generator in [19,21])
+ if terrain.backend.world_generator in [19,21] and _surrounding_ocean==null:
   _surrounding_ocean=preload("res://addons/volumetric_water/ocean_presentation.gd").new()
   add_child(_surrounding_ocean);_surrounding_ocean.setup(_material)
- elif terrain.backend.world_generator!=19 and _surrounding_ocean!=null:
+ elif terrain.backend.world_generator not in [19,21] and _surrounding_ocean!=null:
   _surrounding_ocean.queue_free();_surrounding_ocean=null;_material.set_shader_parameter("surrounding_ocean",false)
  if _surrounding_ocean==null or not _pending_bucket.is_empty() or not _pending_dev.is_empty():_ocean_admitting=false
  if _surrounding_ocean!=null and not _busy and _builder==null and not terrain.pending_edit and _pending_bucket.is_empty() and _pending_dev.is_empty():

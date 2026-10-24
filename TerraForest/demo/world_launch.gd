@@ -67,7 +67,9 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 	slots.clear()
 	for row:Dictionary in rows:slots.append(row.slot)
 	return slots
-static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected") -> Dictionary:
+static func terrain_generator(ocean:bool,buildable:bool)->int:
+	return (21 if ocean else 20) if buildable else (19 if ocean else 17)
+static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected",buildable:bool=true) -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")
 	if create:
@@ -84,7 +86,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 			lease.release()
 	elif not FileAccess.file_exists(canonical):return {"ok":false,"reason":"The selected save is no longer available. Refresh the list."}
 	if create and generator in [INTEGRATED_PRESET,LEGACY_INTEGRATED_PRESET]:
-		var actual_generator:int=(19 if ocean else 17) if generator==INTEGRATED_PRESET else 13
+		var actual_generator:int=terrain_generator(ocean,buildable) if generator==INTEGRATED_PRESET else 13
 		var preparation:=engine_prefix()+PackedStringArray(["--headless","--script","res://addons/world_runtime/generation_job.gd","--","--destination="+slot,"--seed="+str(seed),"--generator="+str(actual_generator),"--settlement-layout="+layout])
 		return {"ok":true,"prepare":true,"args":preparation}
 

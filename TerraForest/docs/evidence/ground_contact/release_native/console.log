@@ -1,0 +1,37 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fixed native footprint resolves flat ground at 0.12 m
+PASS shallow overlap stays on-grid; deeply buried cube moves up
+PASS block burial is limited to 20 cm
+PASS fixed native footprint resolves flat ground at 0.82 m
+PASS shallow overlap stays on-grid; deeply buried cube moves up
+PASS block burial is limited to 20 cm
+PASS thin blocks use a proportional overlap limit
+PASS ground contact distinguishes grid contact from floating at 0.00 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS ground contact distinguishes grid contact from floating at 0.04 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS ground contact distinguishes grid contact from floating at 0.12 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS ground contact distinguishes grid contact from floating at 0.19 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS ground contact distinguishes grid contact from floating at 0.21 m
+PASS ground contact distinguishes grid contact from floating at 0.42 m
+PASS ground contact distinguishes grid contact from floating at 0.82 m
+PASS ground contact distinguishes grid contact from floating at 0.96 m
+PASS ground contact distinguishes grid contact from floating at 0.98 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS ground contact distinguishes grid contact from floating at 1.02 m
+PASS accepted block keeps contact, edge gap and burial within the standard
+PASS assistance rejects one-point support that legacy placement accepted
+PASS object footprint settles above uphill ground with only slight base overlap
+PASS assistance rejects the furniture gap allowed by legacy slope fitting
+PASS gentle object support settles into contact with bounded edge gap
+PASS extreme unevenness is explained instead of burying or greatly floating an object
+PASS oversized footprint is rejected before unbounded work
+PASS non-finite support request is rejected
+PASS out-of-range support request is rejected before physics queries
+PASS missing ground is unavailable rather than guessed
+PASS authored block support resolves before derived collision is baked
+PASS ground contact recognizes exact authored block support before baking
+PLACEMENT_SUPPORT failures=0
