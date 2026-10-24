@@ -15,6 +15,13 @@ var message: Label
 var player_state: Dictionary={}
 var box_state: Dictionary={}
 var prior_mouse:=Input.MOUSE_MODE_CAPTURED
+var external_picker:Callable
+var external:=false
+var container_name:="WOODEN CHEST / STORAGE"
+func prepare_external(owner_game:Node,owner_store:RefCounted,picker:Callable)->void:
+	game=owner_game;store=owner_store;external_picker=picker;external=true;container_name="ZOMBIE / LOOT STORAGE"
+func protect(id:int,enabled:bool)->bool:
+	return true if external else collection.set_removal_protected(id,enabled)
 func prepare(owner_game: Node,persistence: RefCounted) -> bool:
 	game=owner_game;collection=game.structures.model("storage/wooden_chest/v1")
 	store=ClassDB.instantiate("NativeContainerStore")
@@ -40,6 +47,7 @@ func restore_structures(bytes: PackedByteArray) -> bool:
 func allowed() -> bool:
 	return game.app_focused and game.terrain.world_ready and not game.loading_active and not game.shutdown_requested and not game.terrain.pending_edit and not game.world_vehicle.driving
 func aimed_id(shared_hit: Variant=null) -> int:
+	if external:return external_picker.call(shared_hit)
 	var origin: Vector3=game.camera.global_position
 	var hit: Dictionary=game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()]) if shared_hit==null else shared_hit
 	if hit.is_empty() or hit.collider!=collection: return 0
@@ -64,10 +72,10 @@ func _ready() -> void:
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",14);margin.add_child(column)
-	var title:=Label.new();title.text="WOODEN CHEST / STORAGE";title.add_theme_font_size_override("font_size",26);column.add_child(title)
-	var instructions:=Label.new();instructions.text="Drag between inventories. Shift-drag moves half. Empty the chest before removal.";column.add_child(instructions)
+	var title:=Label.new();title.text=container_name;title.add_theme_font_size_override("font_size",26);column.add_child(title)
+	var instructions:=Label.new();instructions.text="Drag between inventories. Shift-drag moves half."+(" Empty the chest before removal." if not external else " Loot remains saved with this corpse.");column.add_child(instructions)
 	var headings:=HBoxContainer.new();headings.add_theme_constant_override("separation",18);column.add_child(headings)
-	for text in ["YOUR INVENTORY","CHEST CONTENTS"]:
+	for text in ["YOUR INVENTORY","CORPSE CONTENTS" if external else "CHEST CONTENTS"]:
 		var heading:=Label.new();heading.text=text;heading.size_flags_horizontal=Control.SIZE_EXPAND_FILL;headings.add_child(heading)
 	var row:=HBoxContainer.new();row.size_flags_vertical=Control.SIZE_EXPAND_FILL;row.add_theme_constant_override("separation",18);column.add_child(row)
 	player_list=preload("res://addons/player_runtime/inventory_grid.gd").new();storage_list=preload("res://addons/player_runtime/inventory_grid.gd").new()
@@ -77,7 +85,7 @@ func _ready() -> void:
 	var buttons:=HBoxContainer.new();buttons.add_theme_constant_override("separation",16);column.add_child(buttons)
 	quantity=SpinBox.new();quantity.min_value=1;quantity.max_value=1000000;quantity.value=1;buttons.add_child(quantity)
 	for deposit in [true,false]:
-		var button:=Button.new();button.text="Deposit into chest" if deposit else "Take from chest"
+		var button:=Button.new();button.text=("Store items" if deposit else "Take items") if external else ("Deposit into chest" if deposit else "Take from chest")
 		button.pressed.connect(func():move_selected(deposit));buttons.add_child(button)
 	var done:=Button.new();done.text="Close (Esc / Tab)";done.pressed.connect(close);buttons.add_child(done)
 	message=Label.new();column.add_child(message)
@@ -90,7 +98,7 @@ func refresh() -> void:
 			var item: Dictionary=state.slots[i]
 			list.add_item("",item.count==0)
 			list.buttons[i].present(item,names.get(item.item,"Empty"),str(i+1))
-	message.text="F5 saves after closing. Contents remain attached when the chest is moved."
+	message.text="F5 saves after closing. Corpse contents do not refill." if external else "F5 saves after closing. Contents remain attached when the chest is moved."
 func move_selected(deposit: bool) -> bool:
 	if not opened or not allowed() or aimed_id()!=identity:
 		close();return false
@@ -99,11 +107,11 @@ func move_selected(deposit: bool) -> bool:
 	if selected.is_empty(): message.text="Select a stack first.";return false
 	quantity.apply()
 	var existed: bool=store.has_contents(identity)
-	if deposit and not collection.set_removal_protected(identity,true):
+	if deposit and not protect(identity,true):
 		message.text="Chest is currently unavailable.";return false
 	var result: Dictionary=store.deposit(identity,game.player_hud.inventory,selected[0],int(quantity.value),player_state.revision,box_state.store_revision) if deposit else store.withdraw(identity,game.player_hud.inventory,selected[0],int(quantity.value),player_state.revision,box_state.store_revision)
 	if (not result.ok and not existed) or (result.ok and not store.has_contents(identity)):
-		collection.set_removal_protected(identity,false)
+		protect(identity,false)
 	refresh()
 	if result.ok:
 		game.terrain.changed_since_save=true;game.player_hud.refresh();message.text="Items moved.";return true
@@ -123,9 +131,9 @@ func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
 func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not accepts_drag(side,slot,data):return
 	if not allowed() or aimed_id()!=identity:close();return
-	if not collection.set_removal_protected(identity,true):return
+	if not protect(identity,true):return
 	var result: Dictionary=store.drag_slots(identity,game.player_hud.inventory,data.side=="chest",side=="chest",data.slot,slot,data.count,data.player_revision,data.store_revision)
-	if not store.has_contents(identity):collection.set_removal_protected(identity,false)
+	if not store.has_contents(identity):protect(identity,false)
 	if result.ok:game.terrain.changed_since_save=true
 	refresh();game.player_hud.refresh()
 	message.text="Stack moved" if result.ok else "Cannot move that stack; inventories refreshed"

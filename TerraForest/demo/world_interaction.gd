@@ -8,12 +8,14 @@ func hit(game: Node) -> Dictionary:
 	var origin: Vector3=game.camera.global_position
 	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()])
 func describe(game: Node, target: Dictionary) -> String:
+	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
 	if game.storage.aimed_id(target)>0:return "E · Open wooden chest"
 	var door_id: int=game.doors.aimed_id(target)
 	if door_id>0:return "E · Close wooden door" if game.doors.state.is_open(door_id) else "E · Open wooden door"
 	var loose:=loose_target(game,target)
 	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
 	if loose.get("kind")=="ground":
+		if game.construction_inventory.gameplay and loose.hit.get("large",false):return "Left mouse · Mine stone boulder (pickaxe)"
 		if game.construction_inventory.gameplay and loose.hit.species==8:return "Left mouse · Harvest woody bush (two hits)"
 		var name: String=preload("res://addons/world_ecosystem/ground_catalog.gd").NAMES[loose.hit.species]
 		return "E · "+("Collect " if game.construction_inventory.gameplay else "Remove ")+name
@@ -49,7 +51,7 @@ func interact(game: Node) -> bool:
 	if not available(game):return false
 	# Re-pick at the input event: the presentation cache is never authoritative.
 	var target:=hit(game)
-	var handled: bool=game.storage.try_open(target) or game.doors.try_interact(target)
+	var handled: bool=game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.doors.try_interact(target)
 	var loose: Dictionary={} if handled else loose_target(game,target)
 	if not handled and loose.get("kind")=="pickup":
 		var result: Dictionary=game.pickups.collect_aimed(game.camera.global_position,pickup_end(game,target),game.player_hud.inventory,game._pickup_reachable)

@@ -34,7 +34,7 @@ var harvest_state: RefCounted
 var _harvesting:=false
 var _native_scatter: RefCounted
 
-func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
+func harvest_root(id: int, inventory: RefCounted,fall_direction:Vector3=Vector3.FORWARD) -> Dictionary:
 	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
 		return {"ok":false,"reason":"World updating; try again"}
 	if _harvesting or harvest_state==null or vegetation==null or not vegetation.renderer.roots.has(id) or harvest_state.contains(id):
@@ -48,6 +48,7 @@ func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
 	if _resample.has(key) or _pending_cells.has(key) or _reconcile.has(key):
 		return {"ok":false,"reason":"Vegetation updating; try again"}
 	var before: Dictionary=inventory.snapshot()
+	var felled_pose:Transform3D=vegetation.renderer.roots[id].t
 	var wood:=PackedInt64Array([102,4])
 	if not inventory.can_receive(wood,before.revision).ok: return {"ok":false,"reason":"Make room for 4 wood"}
 	_harvesting=true
@@ -62,6 +63,7 @@ func harvest_root(id: int, inventory: RefCounted) -> Dictionary:
 		if not inventory.restore(before,grant.revision).ok: push_error("Harvest inventory rollback failed")
 		_harvesting=false;return {"ok":false,"reason":"Tree removal failed"}
 	_reconcile[key]=true
+	vegetation.topple(felled_pose,fall_direction,id)
 	# Observers see the exclusion, inventory grant and removal together.
 	harvested.emit()
 	_harvesting=false

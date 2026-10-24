@@ -27,6 +27,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	var hit: Dictionary=candidate.hit
 	if attack_target!=0 and hit.id!=attack_target:return {"ok":false,"reason":"Target changed"}
 	if gameplay and hit.species==8 and attack_target!=hit.id:return {"ok":false,"reason":"Strike the woody bush twice to gather wood"}
+	if gameplay and hit.get("large",false) and attack_target!=hit.id:return {"ok":false,"reason":"Mine the boulder with a pickaxe"}
 	var key: Vector2i=hit.cell
 	var previous: Array=cover.resident[key]
 	var next: Array=previous.duplicate(true)
@@ -39,16 +40,19 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	var before: Dictionary={};var revision: int=-1
 	if gameplay:
 		before=inventory.snapshot()
-		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],1]),before.revision)
+		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],24 if hit.get("large",false) else 1]),before.revision)
 		if not grant.ok: busy=false;return {"ok":false,"reason":"Make room in inventory"}
 		revision=grant.revision
 	var applied: bool=cover.picker.replace_cell(key,next)
 	if applied: applied=cover.batches[hit.species].remove_instances(PackedInt64Array([hit.id]))
+	if applied and hit.get("large",false):applied=cover.rock_collision.remove_instances(PackedInt64Array([hit.id]))
 	if applied:
 		applied=cover.removed.mark(hit.id) if hit.id<4294967296 else cover.removed.erase(hit.id)
 	if not applied:
 		cover.picker.replace_cell(key,previous)
 		cover.batches[hit.species].upsert_instances(previous[hit.species].ids,previous[hit.species].transforms)
+		if hit.get("large",false):
+			var large:Dictionary=cover.native.boulder_rows(previous[0]);cover.rock_collision.upsert_instances(large.ids,large.transforms)
 		if revision>=0 and not inventory.restore(before,revision).ok: push_error("Ground-cover inventory rollback failed")
 		busy=false;return {"ok":false,"reason":"Ground cover changed; try again"}
 	cover.resident[key]=next

@@ -19,6 +19,7 @@ var obstacle_provider: Callable
 var navigation_interest:Callable
 var spawn_visible:Callable
 var world_geometry:Node3D
+var corpse_host:Node
 var _last_player_position:=Vector3.INF
 var awareness:RefCounted
 var awareness_status:Dictionary={}
@@ -48,6 +49,7 @@ func _ready() -> void:
 	if not awareness.configure(LIMIT,randi()):push_error("Zombie awareness initialization failed")
 
 func clear() -> void:
+	if is_instance_valid(corpse_host):corpse_host.clear_live()
 	for zombie in residents:
 		if is_instance_valid(zombie):
 			zombie.queue_free()
@@ -63,6 +65,7 @@ func clear() -> void:
 	_spawn_clock = SPAWN_GRACE
 
 func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) -> void:
+	if is_instance_valid(corpse_host):corpse_host.update(delta,focus,available)
 	if not enabled or not is_instance_valid(target):
 		if not residents.is_empty():
 			clear()
@@ -73,6 +76,8 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 			residents.remove_at(index)
 			continue
 		var id: int = zombie.get_instance_id()
+		if not zombie.alive and is_instance_valid(corpse_host):
+			if corpse_host.retain(zombie):_retire(index,true);continue
 		if not zombie.alive:
 			_corpse_age[id] = _corpse_age.get(id, 0.0) + delta
 		var bounds := AABB(zombie.global_position - Vector3(1.5, 1, 1.5), Vector3(3, 4, 3))
@@ -113,6 +118,9 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 
 func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	if navigator!=null:navigator.invalidate(bounds)
+	if is_instance_valid(corpse_host):
+		for zombie:Node3D in corpse_host.active.values():
+			if is_instance_valid(zombie) and zombie.anatomy!=null:zombie.anatomy.wake_ragdolls(bounds)
 	for zombie in residents:
 		if is_instance_valid(zombie) and zombie.anatomy!=null:zombie.anatomy.wake_ragdolls(bounds)
 	_obstacle_clock.clear()
@@ -232,7 +240,7 @@ func _freeze_detached(node: Node, frozen: bool) -> void:
 	for child in node.get_children():
 		_freeze_detached(child, frozen)
 
-func _retire(index: int) -> void:
+func _retire(index: int,keep_corpse:bool=false) -> void:
 	var zombie = residents[index]
 	_corpse_age.erase(zombie.get_instance_id())
 	var id:int=zombie.get_instance_id()
@@ -242,7 +250,7 @@ func _retire(index: int) -> void:
 		if is_instance_valid(_obstacles[id]):_obstacles[id].queue_free()
 		_obstacles.erase(id)
 	residents.remove_at(index)
-	zombie.queue_free()
+	if not keep_corpse:zombie.queue_free()
 
 func supported_point(around: Vector3) -> Vector3:
 	if not around.is_finite() or not readiness.is_valid():
@@ -285,6 +293,7 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
 	add_child(zombie)
 	residents.append(zombie)
+	if is_instance_valid(corpse_host):zombie.died.connect(func():corpse_host.retain(zombie))
 	var id:int=zombie.get_instance_id()
 	awareness.add_agent(id,zombie.global_position)
 	_sense_clock[id]=float(residents.size()%3)*0.08
@@ -294,20 +303,24 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	return zombie
 
 func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
-	if not enabled or residents.is_empty():
+	var bodies:Array=residents.duplicate()
+	if is_instance_valid(corpse_host):
+		for zombie:Node3D in corpse_host.active.values():
+			if zombie not in bodies:bodies.append(zombie)
+	if bodies.is_empty():
 		return {}
 	# World collision occludes the evaluated skinned surface, not a broad movement
 	# capsule or a convex hull fitted to an earlier animation pose.
 	var omitted: Array[RID] = []
 	omitted.assign(exclude)
-	for resident in residents:
+	for resident in bodies:
 		if is_instance_valid(resident):
 			omitted.append(resident.get_rid())
 			for body:PhysicalBone3D in resident.physical_bones.values():omitted.append(body.get_rid())
 	var solid:Dictionary=world_geometry.raycast_scene(start,end,15|RAGDOLL_LAYER,omitted) if is_instance_valid(world_geometry) else get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start,end,15|RAGDOLL_LAYER,omitted))
 	var stop:Vector3=solid.position if not solid.is_empty() else end
 	var nearest:Dictionary={};var distance:=start.distance_squared_to(stop)
-	for resident in residents:
+	for resident in bodies:
 		if not is_instance_valid(resident) or resident.anatomy==null:continue
 		var hit:Dictionary=resident.anatomy.pick(start,stop)
 		if hit.is_empty() or start.distance_squared_to(hit.position)>distance:continue
@@ -317,7 +330,7 @@ func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
 
 func apply_hit(hit: Dictionary, damage: float, direction: Vector3) -> bool:
 	var zombie: Object = hit.get("zombie")
-	if not enabled or not is_instance_valid(zombie) or not zombie in residents or zombie.process_mode == Node.PROCESS_MODE_DISABLED or not is_finite(damage) or damage<=0 or damage>1000000 or not direction.is_finite():
+	if not enabled or not is_instance_valid(zombie) or (not zombie in residents and (not is_instance_valid(corpse_host) or not zombie in corpse_host.active.values())) or zombie.process_mode == Node.PROCESS_MODE_DISABLED or not is_finite(damage) or damage<=0 or damage>1000000 or not direction.is_finite():
 		return false
 	var part:String=hit.get("part","")
 	if not zombie.PARTS.has(part) or zombie.missing.get(part,true) or not hit.get("position",Vector3.INF).is_finite():return false

@@ -1,3 +1,25 @@
+## Gathering boulders, falling trees and corpse storage - 2026-10-24
+
+Sparse native ground-cover boulders retain existing harvest identities, use shared
+geometry and bounded nearby solid collision, reserve their footprint around roads
+and trees, and grant 24 stone through mining (240 durability). E pickup cannot
+bypass mining. Successful tree harvest now starts a native toppling/landing/fade
+animation using the shared tree mesh; at most sixteen falls are active.
+
+Dead zombies now have native persistent loot/storage, opened with E through the
+standard inventory UI. Contents, stable identities, missing limbs and all fifteen
+bone poses publish in the compound save with player inventory. A separate bounded
+corpse body pool streams the saved records, leaving the living encounter slots
+available. Menus/unknown collision freeze the corpse, and emptying a corpse never
+refills it. Body residency and saved-record limits are twelve and 4,096 respectively.
+
+Source and packaged interaction/save/reopen checks, native regressions, both native
+build variants, inspected images, export logs and retained fixture/build failures:
+[gathering lifecycle evidence](evidence/gathering_lifecycle/README.md).
+Toppling is cosmetic and detached fragments remain transient. These feature
+checks do not close the older world-quality, navigation or sustained-performance
+requirements below.
+
 ## Current model inventory icons - 2026-10-24
 
 Pickaxe and hatchet thumbnails now use the held tools' actual R11 equipment

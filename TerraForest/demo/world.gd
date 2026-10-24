@@ -37,6 +37,7 @@ var world_map=preload("res://addons/world_runtime/world_map.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
+var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
 var world_interaction=preload("res://demo/world_interaction.gd").new()
 var terrain_placement=preload("res://addons/player_runtime/terrain_placement.gd").new()
@@ -95,7 +96,7 @@ func _additional_motion_ready(delta: float) -> bool:
 	var bounds := AABB(player.global_position+Vector3(-0.34,-player.floor_snap_length,-0.34),Vector3(0.68,1.8+player.floor_snap_length,0.68))
 	bounds.size.y+=0.3 # Native walking step-up head clearance.
 	bounds = bounds.grow(player.velocity.length()*delta+0.05)
-	return structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
+	return structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and (not ground_enabled or ground_cover.rock_collision==null or ground_cover.rock_collision.is_collision_region_ready(bounds))
 
 func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
@@ -189,6 +190,7 @@ func _ready() -> void:
 		return
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
+		["corpse storage",func():return corpse_loot.prepare(self,persistence)],
 		["structure catalog",func():return structures_ready],
 		["water",func():return lakes.prepare()],
 		["structure registration",func():return persistence.register_component("structures",structures.capture_storage_snapshot,storage.restore_structures,structures.snapshot_validator(),structures.empty_snapshot())],
@@ -215,6 +217,7 @@ func _ready() -> void:
 	player.add_child(zombie_target)
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
 	add_child(zombies)
+	zombies.corpse_host=corpse_loot
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
@@ -255,6 +258,7 @@ func _ready() -> void:
 	player_hud.resource_gains_allowed=func()->bool:return not loading_active and not shutdown_requested and not world_vehicle.driving and not session_menu.visible_ui() and not ProjectSettings.get_setting("terraforest/offscreen_session",false)
 	add_child(player_hud)
 	add_child(storage)
+	add_child(corpse_loot)
 	session_menu.world_page_factory=_make_world_locations
 	target_overlay.game=self;add_child(target_overlay)
 	vehicle_radial.game=self;add_child(vehicle_radial)
@@ -341,7 +345,13 @@ func _ready() -> void:
 	add_child(ground_preview)
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
-	ground_interaction.changed.connect(func():terrain.changed_since_save=true;player_hud.refresh())
+	ground_interaction.changed.connect(func():
+		terrain.changed_since_save=true;player_hud.refresh()
+		if actors.pool!=null:actors.pool.invalidate_navigation()
+		zombies.invalidate_navigation())
+	ground_cover.obstacles_changed.connect(func(bounds:AABB):
+		if actors.pool!=null:actors.pool.invalidate_navigation(bounds)
+		zombies.invalidate_navigation(bounds))
 	lakes.interaction_finished.connect(_show_lake_notice)
 	lakes.bucket_completed.connect(func(slot:int):
 		if player_hud.active_slot==slot:player_hud.equip_inventory(slot);tool_view.swing()
@@ -1340,7 +1350,7 @@ func _advance_frontage_placement() -> void:
 	_prefab_preview_timer=0.0
 
 func _actor_collision_ready(bounds: AABB) -> bool:
-	return terrain.is_collision_region_ready(bounds) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds)
+	return terrain.is_collision_region_ready(bounds) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and (not ground_enabled or ground_cover.rock_collision==null or ground_cover.rock_collision.is_collision_region_ready(bounds))
 
 func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	if not _model_edit_available():return null

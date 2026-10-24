@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+signal obstacles_changed(bounds:AABB)
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 var road_regions:RefCounted
@@ -17,6 +18,7 @@ var grass_material: ShaderMaterial
 var grass_texture_enabled:=false
 var foliage_materials:Array[ShaderMaterial]=[]
 var batches: Array[Node3D]=[]
+var rock_collision:Node3D
 var resident: Dictionary={}
 var _wanted: Dictionary={}
 var _requests: Dictionary={}
@@ -65,6 +67,9 @@ func _ready() -> void:
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)
 		batches.append(batch)
+	rock_collision=ClassDB.instantiate("NativeStaticBatch");add_child(rock_collision)
+	if not rock_collision.configure_asset("vegetation/boulder_proxy/v1",BoxMesh.new()) or not rock_collision.configure_collision_only() or not rock_collision.configure_collision(AABB(Vector3(-0.26,-0.12,-0.2),Vector3(0.52,0.26,0.4)),96,256,16):
+		push_error("Boulder collision initialization failed");set_process(false);return
 	if not set_grass_texture(true):push_warning("Grass detail unavailable; using untextured material")
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)
@@ -92,6 +97,7 @@ func set_grass_texture(enabled: bool) -> bool:
 
 func _begin_reset()->void:
 	if _reset_active:return
+	if rock_collision!=null:rock_collision.clear_instances()
 	_reset_active=true;_reset_batch=0;_reset_keys=resident.keys()
 	for batch:Node3D in batches:batch.visible=false
 
@@ -125,6 +131,7 @@ func reset() -> void:
 
 func _retire(key: Vector2i) -> void:
 	picker.remove_cell(key)
+	if rock_collision!=null:rock_collision.remove_instances(resident[key][0].ids)
 	for species in range(Catalog.COUNT):
 		batches[species].remove_instances(resident[key][species].ids)
 
@@ -144,6 +151,7 @@ func _measured_step(_delta:float)->void:
 		material.set_shader_parameter("cover_eye",camera.global_position)
 		material.set_shader_parameter("cover_clock",Time.get_ticks_msec()/1000.0)
 	for batch in batches: batch.set_render_focus(camera.global_position)
+	if rock_collision!=null:rock_collision.set_collision_focus(camera.global_position)
 	var center:=Vector2i(floori(camera.global_position.x/32.0),floori(camera.global_position.z/32.0))
 	var forward:Vector3=-camera.global_basis.z
 	var zoomed:bool=camera.fov<71.0
@@ -246,6 +254,26 @@ func _density_ready(result: Dictionary) -> void:
 	_publish(job.key,job.packed,job.poses,unsupported)
 
 func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],unsupported: PackedByteArray) -> void:
+	# Existing low cover reserves only its centre. Large rocks must clear roads
+	# across their whole footprint, using the road query's bounded 4m margin.
+	if road_regions!=null:
+		var boulders:Dictionary=native.boulder_rows(packed[0])
+		var probes:Array[Transform3D]=[]
+		for i in boulders.ids.size():
+			var j:int=i*12;var values:PackedFloat32Array=boulders.transforms
+			var centre:=Vector3(values[j+3],values[j+7],values[j+11])
+			probes.append(Transform3D(Basis.IDENTITY,centre))
+			for side in 8:probes.append(Transform3D(Basis.IDENTITY,centre+Vector3(cos(side*TAU/8),0,sin(side*TAU/8))*4.0))
+		if not probes.is_empty():
+			var road_mask:PackedByteArray=road_regions.placement_mask(probes,4.0)
+			if road_mask.size()!=probes.size():rejected_batches+=1;return
+			for i in range(boulders.ids.size()-1,-1,-1):
+				var blocked:=false
+				for sample_index in 9:
+					if road_mask[i*9+sample_index]!=0:blocked=true
+				if blocked:
+					var index:int=packed[0].ids.find(boulders.ids[i]);packed[0].ids.remove_at(index)
+					packed[0].transforms=packed[0].transforms.slice(0,index*12)+packed[0].transforms.slice((index+1)*12)
 	var authored_blocked:=PackedByteArray();authored_blocked.resize(authored_poses.size())
 	var authored_water:=PackedByteArray();authored_water.resize(authored_poses.size())
 	if structures!=null: authored_blocked=structures.overlap_mask(authored_poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,0.8,0.8)))
@@ -274,6 +302,11 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 	if resident.get(key,[])==packed: _dirty.erase(key);return
 	var previous: Array=resident.get(key,[])
 	if not picker.replace_cell(key,packed): rejected_batches+=1;return
+	var large:Dictionary=native.boulder_rows(packed[0])
+	if not rock_collision.upsert_instances(large.ids,large.transforms):
+		if previous.is_empty():picker.remove_cell(key)
+		else:picker.replace_cell(key,previous)
+		rejected_batches+=1;return
 	for species in range(Catalog.COUNT):
 		if not batches[species].upsert_instances(packed[species].ids,packed[species].transforms):
 			# Restore interaction and all collections if any publication fails.
@@ -282,14 +315,23 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 			for rollback in range(Catalog.COUNT):
 				batches[rollback].remove_instances(packed[rollback].ids)
 				if not previous.is_empty(): batches[rollback].upsert_instances(previous[rollback].ids,previous[rollback].transforms)
+			rock_collision.remove_instances(large.ids)
+			if not previous.is_empty():
+				var old_large:Dictionary=native.boulder_rows(previous[0]);rock_collision.upsert_instances(old_large.ids,old_large.transforms)
 			rejected_batches+=1;return
 	if not previous.is_empty():
+		var old_large:Dictionary=native.boulder_rows(previous[0]);var removed_large:=PackedInt64Array()
+		for id:int in old_large.ids:
+			if id not in large.ids:removed_large.append(id)
+		rock_collision.remove_instances(removed_large)
 		for species in range(Catalog.COUNT):
 			var retired:=PackedInt64Array()
 			for id in previous[species].ids:
 				if not packed[species].ids.has(id): retired.append(id)
 			batches[species].remove_instances(retired)
 	resident[key]=packed;_dirty.erase(key)
+	var prior_boulders:Dictionary=native.boulder_rows(previous[0]) if not previous.is_empty() else {"ids":PackedInt64Array(),"transforms":PackedFloat32Array()}
+	if prior_boulders!=large:obstacles_changed.emit(AABB(Vector3(key.x*32,-4096,key.y*32),Vector3(32,8192,32)).grow(8))
 
 func _terrain_changed(bounds: AABB,_revision: int) -> void: _exclusion_changed(bounds)
 func _exclusion_changed(bounds: AABB) -> void:

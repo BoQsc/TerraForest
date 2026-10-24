@@ -19,6 +19,12 @@ void NativeContainerStore::_bind_methods() {
 Ref<NativePlayerInventory> NativeContainerStore::empty_inventory() const {
     Ref<NativePlayerInventory> out;out.instantiate();out->catalog_owner=schema;return out;
 }
+bool NativeContainerStore::initialize_contents(int64_t id,const PackedInt64Array &items){
+    if(schema.is_null()||id<=0||contents.count(id)||int64_t(contents.size())>=capacity)return false;
+    auto box=empty_inventory();Dictionary granted=box->grant_items(items,0);
+    if(!bool(granted["ok"]))return false;
+    ++revision;box->revision=revision;contents[id]=box;return true;
+}
 bool NativeContainerStore::configure(const Ref<NativePlayerInventory> &prototype,int64_t max_containers) {
     if(schema.is_valid()||prototype.is_null()||prototype->catalog().empty()||max_containers<1||max_containers>65536)return false;
     schema.instantiate();schema->limits=prototype->catalog();schema->durability=prototype->durable_catalog();capacity=max_containers;return true;
@@ -108,7 +114,7 @@ bool NativeContainerStore::validate_snapshot(const PackedByteArray &bytes) const
     return true;
 }
 bool NativeContainerStore::restore_storage_snapshot(const PackedByteArray &bytes) {
-    if(!validate_snapshot(bytes))return false;
+    if(!NativeContainerStore::validate_snapshot(bytes))return false;
     const int stride=bytes[4]==1?272:(bytes[4]==2?400:528);
     decltype(contents) staged;uint64_t count=bytes.decode_u64(8);int64_t next_revision=revision+1;
     for(uint64_t i=0;i<count;++i) {

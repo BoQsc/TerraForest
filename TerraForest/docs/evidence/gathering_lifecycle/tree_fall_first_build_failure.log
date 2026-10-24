@@ -1,0 +1,312 @@
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:33:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:483:33: error: implicit instantiation of undefined template 'godot::GetTypeInfo<const godot::Ref<godot::Mesh> &>'
+  483 |                 type = GDExtensionVariantType(GetTypeInfo<Q>::VARIANT_TYPE);
+      |                                               ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:494:21: note: in instantiation of function template specialization 'godot::call_get_argument_type_helper<const godot::Ref<godot::Mesh> &>' requested here
+  494 |         expand_type a{ 0, (call_get_argument_type_helper<P>(p_arg, index, type), 0)... };
+      |                            ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:450:11: note: in instantiation of function template specialization 'godot::call_get_argument_type<const godot::Ref<godot::Mesh> &>' requested here
+  450 |                         return call_get_argument_type<P...>(p_arg);
+      |                                ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::gen_argument_type' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/type_info.hpp:104:8: note: template is declared here
+  104 | struct GetTypeInfo;
+      |        ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:33:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:503:10: error: implicit instantiation of undefined template 'godot::GetTypeInfo<const godot::Ref<godot::Mesh> &>'
+  503 |                 info = GetTypeInfo<Q>::get_class_info();
+      |                        ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:513:21: note: in instantiation of function template specialization 'godot::call_get_argument_type_info_helper<const godot::Ref<godot::Mesh> &>' requested here
+  513 |         expand_type a{ 0, (call_get_argument_type_info_helper<P>(p_arg, index, info), 0)... };
+      |                            ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:459:4: note: in instantiation of function template specialization 'godot::call_get_argument_type_info<const godot::Ref<godot::Mesh> &>' requested here
+  459 |                         call_get_argument_type_info<P...>(p_arg, pi);
+      |                         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::gen_argument_type_info' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/type_info.hpp:104:8: note: template is declared here
+  104 | struct GetTypeInfo;
+      |        ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:33:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:521:8: error: implicit instantiation of undefined template 'godot::GetTypeInfo<const godot::Ref<godot::Mesh> &>'
+  521 |                 md = GetTypeInfo<Q>::METADATA;
+      |                      ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:533:21: note: in instantiation of function template specialization 'godot::call_get_argument_metadata_helper<const godot::Ref<godot::Mesh> &>' requested here
+  533 |         expand_type a{ 0, (call_get_argument_metadata_helper<P>(p_arg, index, md), 0)... };
+      |                            ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:472:11: note: in instantiation of function template specialization 'godot::call_get_argument_metadata<const godot::Ref<godot::Mesh> &>' requested here
+  472 |                         return call_get_argument_metadata<P...>(p_argument);
+      |                                ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::get_argument_metadata' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/type_info.hpp:104:8: note: template is declared here
+  104 | struct GetTypeInfo;
+      |        ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:37:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:33:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:179:59: error: implicit instantiation of undefined template 'godot::GetTypeInfo<godot::Ref<godot::Mesh>>'
+  179 |                 GDExtensionVariantType argtype = GDExtensionVariantType(GetTypeInfo<T>::VARIANT_TYPE);
+      |                                                                         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:260:63: note: in instantiation of member function 'godot::VariantCasterAndValidate<const godot::Ref<godot::Mesh> &>::cast' requested here
+  260 |         r_ret = (p_instance->*p_method)(VariantCasterAndValidate<P>::cast(p_args, Is, r_error)...);
+      |                                                                      ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:435:2: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_helper<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &, 0ULL>' requested here
+  435 |         call_with_variant_args_ret_helper(p_instance, p_method, argsp.data(), r_ret, r_error, BuildIndexSequence<sizeof...(P)>{});
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:483:3: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_dv<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &>' requested here
+  483 |                 call_with_variant_args_ret_dv((MB_T *)p_instance, method, p_args, p_argument_count, ret, r_error, get_default_arguments());
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::call' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/type_info.hpp:104:8: note: template is declared here
+  104 | struct GetTypeInfo;
+      |        ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:4:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/scatter.hpp:4:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/random_number_generator.hpp:35:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:139:14: error: comparison of distinct pointer types ('Object *' and 'godot::Mesh *')
+  139 |                 if (object == reference) {
+      |                     ~~~~~~ ^  ~~~~~~~~~
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:174:9: note: in instantiation of member function 'godot::Ref<godot::Mesh>::operator=' requested here
+  174 |                 this->operator=(p_from);
+      |                       ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:92:11: note: in instantiation of member function 'godot::Ref<godot::Mesh>::Ref' requested here
+   92 |                         return p_variant;
+      |                                ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:187:28: note: in instantiation of member function 'godot::VariantCaster<godot::Ref<godot::Mesh>>::cast' requested here
+  187 |                 return VariantCaster<T>::cast(*p_args[p_arg_idx]);
+      |                                          ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:260:63: note: in instantiation of member function 'godot::VariantCasterAndValidate<const godot::Ref<godot::Mesh> &>::cast' requested here
+  260 |         r_ret = (p_instance->*p_method)(VariantCasterAndValidate<P>::cast(p_args, Is, r_error)...);
+      |                                                                      ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:435:2: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_helper<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &, 0ULL>' requested here
+  435 |         call_with_variant_args_ret_helper(p_instance, p_method, argsp.data(), r_ret, r_error, BuildIndexSequence<sizeof...(P)>{});
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:483:3: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_dv<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &>' requested here
+  483 |                 call_with_variant_args_ret_dv((MB_T *)p_instance, method, p_args, p_argument_count, ret, r_error, get_default_arguments());
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::call' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:35:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/object.hpp:122:40: error: incomplete type 'godot::Mesh' named in nested name specifier
+  122 |         return p_object && p_object->is_class(T::get_class_static()) ? static_cast<T *>(p_object) : nullptr;
+      |                                               ^~~
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:143:30: note: in instantiation of function template specialization 'godot::Object::cast_to<godot::Mesh>' requested here
+  143 |                 ref_pointer<false>(Object::cast_to<T>(object));
+      |                                            ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:174:9: note: in instantiation of member function 'godot::Ref<godot::Mesh>::operator=' requested here
+  174 |                 this->operator=(p_from);
+      |                       ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:92:11: note: in instantiation of member function 'godot::Ref<godot::Mesh>::Ref' requested here
+   92 |                         return p_variant;
+      |                                ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:187:28: note: in instantiation of member function 'godot::VariantCaster<godot::Ref<godot::Mesh>>::cast' requested here
+  187 |                 return VariantCaster<T>::cast(*p_args[p_arg_idx]);
+      |                                          ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:260:63: note: in instantiation of member function 'godot::VariantCasterAndValidate<const godot::Ref<godot::Mesh> &>::cast' requested here
+  260 |         r_ret = (p_instance->*p_method)(VariantCasterAndValidate<P>::cast(p_args, Is, r_error)...);
+      |                                                                      ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:435:2: note: (skipping 1 context in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+  435 |         call_with_variant_args_ret_helper(p_instance, p_method, argsp.data(), r_ret, r_error, BuildIndexSequence<sizeof...(P)>{});
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:483:3: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_dv<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &>' requested here
+  483 |                 call_with_variant_args_ret_dv((MB_T *)p_instance, method, p_args, p_argument_count, ret, r_error, get_default_arguments());
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::call' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/multi_mesh.hpp:49:7: note: forward declaration of 'godot::Mesh'
+   49 | class Mesh;
+      |       ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:2:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/selection.hpp:3:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/ref_counted.hpp:35:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/object.hpp:122:65: error: static_cast from 'Object *' to 'godot::Mesh *', which are not related by inheritance, is not allowed
+  122 |         return p_object && p_object->is_class(T::get_class_static()) ? static_cast<T *>(p_object) : nullptr;
+      |                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/multi_mesh.hpp:49:7: note: 'Mesh' is incomplete
+   49 | class Mesh;
+      |       ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:4:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/scatter.hpp:4:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/random_number_generator.hpp:35:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:69:19: error: member access into incomplete type 'godot::Mesh'
+   69 |                                 if (!reference->reference()) {
+      |                                               ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:143:3: note: in instantiation of function template specialization 'godot::Ref<godot::Mesh>::ref_pointer<false>' requested here
+  143 |                 ref_pointer<false>(Object::cast_to<T>(object));
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:174:9: note: in instantiation of member function 'godot::Ref<godot::Mesh>::operator=' requested here
+  174 |                 this->operator=(p_from);
+      |                       ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:92:11: note: in instantiation of member function 'godot::Ref<godot::Mesh>::Ref' requested here
+   92 |                         return p_variant;
+      |                                ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:187:28: note: in instantiation of member function 'godot::VariantCaster<godot::Ref<godot::Mesh>>::cast' requested here
+  187 |                 return VariantCaster<T>::cast(*p_args[p_arg_idx]);
+      |                                          ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:260:63: note: in instantiation of member function 'godot::VariantCasterAndValidate<const godot::Ref<godot::Mesh> &>::cast' requested here
+  260 |         r_ret = (p_instance->*p_method)(VariantCasterAndValidate<P>::cast(p_args, Is, r_error)...);
+      |                                                                      ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:435:2: note: (skipping 1 context in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+  435 |         call_with_variant_args_ret_helper(p_instance, p_method, argsp.data(), r_ret, r_error, BuildIndexSequence<sizeof...(P)>{});
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:483:3: note: in instantiation of function template specialization 'godot::call_with_variant_args_ret_dv<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &>' requested here
+  483 |                 call_with_variant_args_ret_dv((MB_T *)p_instance, method, p_args, p_argument_count, ret, r_error, get_default_arguments());
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::call' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/multi_mesh.hpp:49:7: note: forward declaration of 'godot::Mesh'
+   49 | class Mesh;
+      |       ^
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native\register_types.cpp:4:
+In file included from C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/scatter.hpp:4:
+In file included from C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/random_number_generator.hpp:35:
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:65:19: error: member access into incomplete type 'godot::Mesh'
+   65 |                                 if (!reference->init_ref()) {
+      |                                               ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:133:3: note: in instantiation of function template specialization 'godot::Ref<godot::Mesh>::ref_pointer<true>' requested here
+  133 |                 ref_pointer<true>(p_from);
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:170:9: note: in instantiation of member function 'godot::Ref<godot::Mesh>::operator=' requested here
+  170 |                 this->operator=(p_from);
+      |                       ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/classes/ref.hpp:267:10: note: in instantiation of member function 'godot::Ref<godot::Mesh>::Ref' requested here
+  267 |                 return Ref<T>(reinterpret_cast<T *>(::godot::internal::get_object_instance_binding(::godot::gdextension_interface::ref_get_object(ref))));
+      |                        ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:203:59: note: in instantiation of member function 'godot::PtrToArg<const godot::Ref<godot::Mesh> &>::convert' requested here
+  203 |         PtrToArg<R>::encode((p_instance->*p_method)(PtrToArg<P>::convert(p_args[Is])...), r_ret);
+      |                                                                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/binder_common.hpp:223:2: note: in instantiation of function template specialization 'godot::call_with_ptr_args_ret_helper<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &, 0ULL>' requested here
+  223 |         call_with_ptr_args_ret_helper<T, R, P...>(p_instance, p_method, p_args, r_ret, BuildIndexSequence<sizeof...(P)>{});
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:491:3: note: in instantiation of function template specialization 'godot::call_with_ptr_args<godot::_gde_UnexistingClass, bool, const godot::Ref<godot::Mesh> &>' requested here
+  491 |                 call_with_ptr_args<MB_T, R, P...>(reinterpret_cast<MB_T *>(p_instance), method, p_args, r_ret);
+      |                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:495:2: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::ptrcall' requested here
+  495 |         MethodBindTR(R (MB_T::*p_method)(P...)) {
+      |         ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/method_bind.hpp:508:26: note: in instantiation of member function 'godot::MethodBindTR<bool, const godot::Ref<godot::Mesh> &>::MethodBindTR' requested here
+  508 |         MethodBind *a = memnew((MethodBindTR<R, P...>)(reinterpret_cast<R (MB_T::*)(P...)>(p_method)));
+      |                                 ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/memory.hpp:133:190: note: expanded from macro 'memnew'
+  133 | #define memnew(m_class) (::godot::_pre_initialize<std::remove_pointer_t<decltype(new (::godot::DefaultAllocator{}) m_class)>>(), ::godot::_post_initialize(new (::godot::DefaultAllocator{}) m_class))
+      |                                                                                                                                                                                              ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\include/godot_cpp/core/class_db.hpp:338:21: note: in instantiation of function template specialization 'godot::create_method_bind<terraforest::NativeTreeFall, bool, const godot::Ref<godot::Mesh> &>' requested here
+  338 |         MethodBind *bind = create_method_bind(p_method);
+      |                            ^
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\vegetation_runtime\native/tree_fall.hpp:22:18: note: in instantiation of function template specialization 'godot::ClassDB::bind_method<godot::MethodDefinition, bool (NativeTreeFall::*)(const godot::Ref<godot::Mesh> &)>' requested here
+   22 |         ClassDB::bind_method(D_METHOD("configure","mesh"),&NativeTreeFall::configure);
+      |                  ^
+C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f\godot-cpp\gen\include/godot_cpp/classes/multi_mesh.hpp:49:7: note: forward declaration of 'godot::Mesh'
+   49 | class Mesh;
+      |       ^
+9 errors generated.

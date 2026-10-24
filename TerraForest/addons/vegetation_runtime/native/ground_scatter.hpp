@@ -12,6 +12,7 @@ protected:
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","layer","shelter","irregular"),&NativeGroundCover::candidates,DEFVAL(0),DEFVAL(PackedVector3Array()),DEFVAL(false));
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
+        ClassDB::bind_method(D_METHOD("boulder_rows","row"),&NativeGroundCover::boulder_rows);
     }
 public:
     TypedArray<Vector2i> wanted(Vector2i center) const {
@@ -142,6 +143,8 @@ public:
         for(int64_t i=0;i<ids.size();++i){
             if(!points[i].is_finite()||!normals[i].is_finite()||normals[i].length_squared()<1e-12f||normals[i].normalized().y<.82f)continue;
             uint32_t h=hash(uint32_t(ids[i]));float scale=.7f+.6f*(h&65535)/65535.f;
+            bool boulder=ids[i]<=63*63*64&&h%10==0&&hash(uint32_t(ids[i])^0xb017de5u)%24==0;
+            if(boulder&&normals[i].normalized().y<=.96f)continue;
             Basis basis(Vector3(0,1,0),float(h>>16)/65535.f*6.283185307f);
             basis=basis.scaled(Vector3(scale,scale,scale));
             // Apply shape variation before support/exclusion validation and packing.
@@ -152,9 +155,26 @@ public:
                     .90f+.20f*float((shape>>8)&255)/255.f,
                     .88f+.24f*float((shape>>16)&255)/255.f));
             }
-            transforms.append(Transform3D(basis,points[i]-Vector3(0,.03f,0)));accepted.append(ids[i]);
+            Vector3 origin=points[i]-Vector3(0,.03f,0);
+            // A sparse subset of existing base stone identities becomes a
+            // gathering boulder. Saved removals and all other plant IDs survive.
+            if(boulder){
+                float size=10.f+4.f*float(hash(uint32_t(ids[i])^0x79a3u)&65535)/65535.f;
+                basis=basis.scaled_local(Vector3(size,size*(.9f+.2f*float(h&255)/255.f),size*.92f));
+                origin.y+=basis.get_column(1).length()*.12f;
+            }
+            transforms.append(Transform3D(basis,origin));accepted.append(ids[i]);
         }
         out["ok"]=true;out["ids"]=accepted;out["transforms"]=transforms;return out;
+    }
+    Dictionary boulder_rows(const Dictionary &row) const {
+        PackedInt64Array ids=row["ids"],selected;PackedFloat32Array values=row["transforms"],packed;
+        if(values.size()!=ids.size()*12)return Dictionary();
+        for(int64_t i=0;i<ids.size();++i){const float *p=values.ptr()+i*12;
+            if(p[0]*p[0]+p[4]*p[4]+p[8]*p[8]<36.f)continue;
+            selected.append(ids[i]);for(int j=0;j<12;++j)packed.append(p[j]);
+        }
+        Dictionary result;result["ids"]=selected;result["transforms"]=packed;return result;
     }
     Array pack(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms,const PackedByteArray &excluded,const PackedVector3Array &shelter=PackedVector3Array()) const {
         Array out;
@@ -166,6 +186,11 @@ public:
             Transform3D t=transforms[i];if(!t.origin.is_finite()||!t.basis.is_finite()||std::abs(t.basis.determinant())<1e-12)return Array();
             if(excluded[i])continue;
             int pick=hash(uint32_t(ids[i]))%10;int species=pick==0?0:(pick<3?1:2);
+            if(species==0&&t.basis.get_column(0).length_squared()>=36.f){
+                bool overlaps=false;double radius=.34*t.basis.get_column(0).length()+.6;
+                for(int j=0;j<shelter.size();++j){Vector3 offset=t.origin-shelter[j];offset.y=0;if(offset.length_squared()<radius*radius){overlaps=true;break;}}
+                if(overlaps)continue;
+            }
             // Preserve stones/ferns and all identities; enrich a small subset of grass.
             uint32_t accent=hash(uint32_t(ids[i])^0x739ac51du)%1000;
             if(species==2){if(accent<15)species=3+accent/5;else if(accent<40)species=6;else if(accent<70)species=7;}

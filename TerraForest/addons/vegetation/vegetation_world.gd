@@ -18,6 +18,7 @@ var assets = Assets.new()
 var ready_to_render: bool = false
 var _clock: float = 0.0
 var trunk_collision: Node3D
+var falling_trees:Node3D
 var _collision_sync_ok:=true
 func enable_trunk_collision() -> bool:
 	if trunk_collision!=null: return true
@@ -49,6 +50,9 @@ func initialize() -> Error:
 		initialization_failed.emit("Vegetation geometry or view data could not be loaded")
 		return ERR_FILE_CORRUPT
 	renderer.setup(assets.meshes, draw_distance)
+	if not ClassDB.class_exists("NativeTreeFall"):GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
+	falling_trees=ClassDB.instantiate("NativeTreeFall");add_child(falling_trees)
+	if not falling_trees.configure(assets.meshes[0]):return ERR_CANT_CREATE
 	renderer.shadow_reach = shadow_distance
 	ready_to_render = true
 	set_process(true)
@@ -97,6 +101,9 @@ func remove_root(id: int) -> bool:
 	renderer.remove_root(id)
 	return true
 
+func topple(pose:Transform3D,direction:Vector3,id:int)->void:
+	if falling_trees!=null:falling_trees.start(pose,direction,float(posmod(id*48271,2147483647))/2147483647.0)
+
 func remove_roots_in_bounds(bounds: AABB) -> int:
 	# Spatial lookup touches only intersecting render cells. Surviving roots keep
 	# their current LOD/fade state and owner, avoiding cell-wide disappearance.
@@ -116,6 +123,7 @@ func remove_roots_in_bounds(bounds: AABB) -> int:
 	return removed
 
 func clear() -> void:
+	if falling_trees!=null:falling_trees.clear()
 	for key in renderer.owners.keys():
 		remove_chunk(key)
 	# Flush even without a camera so unloaded GPU batches do not remain visible.
@@ -140,6 +148,7 @@ func _measured_step(delta:float)->void:
 	if not ready_to_render or not is_instance_valid(camera):
 		return
 	_clock += delta
+	if falling_trees!=null:falling_trees.advance(delta,_clock)
 	if trunk_collision!=null: trunk_collision.set_collision_focus(camera.global_position)
 	var height: float = camera.get_viewport().get_visible_rect().size.y
 	var projection: float = height / (2.0 * tan(deg_to_rad(camera.fov) * 0.5))

@@ -30,7 +30,7 @@ func target() -> Dictionary:
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
 		if cover.get("hit",false):
 			if game.ground_cover._dirty.has(cover.cell) or game.ground_cover._pending.has(cover.cell):return {}
-			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
+			return {"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"health":240 if cover.get("large",false) else Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":"Stone boulder" if cover.get("large",false) else game.player_hud.GroundCatalog.NAMES[cover.species],"end":end}
 	if hit.is_empty():
 		if game.terrain.backend.region_terrain:hit=game._terrain_pick(start,end)
 		if hit.is_empty():return {}
@@ -145,7 +145,7 @@ func apply_target(t: Dictionary) -> bool:
 func destroy(t: Dictionary) -> bool:
 	match t.kind:
 		"block":return game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,t.cell,0)
-		"tree":return game.ecosystem.harvest_root(t.id,game.player_hud.inventory).ok
+		"tree":return game.ecosystem.harvest_root(t.id,game.player_hud.inventory,-game.camera.global_basis.z).ok
 		"model":return game._remove_inventory_model(game.model_tool.history,t.collection,t.id)
 		"cover":
 			var collected: Dictionary=game.ground_interaction.collect(game.camera.global_position,t.end,game.player_hud.inventory,true,null,t.id)
