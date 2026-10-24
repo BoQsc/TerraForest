@@ -1,0 +1,4 @@
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\world_runtime\native\zombie_anatomy.cpp:240:110: error: no member named 'set_bias' in 'godot::ConeTwistJoint3D'
+  240 |                         else if(auto *joint=Object::cast_to<ConeTwistJoint3D>(body->get_child(child)))joint->set_bias(.03);
+      |                                                                                                       ~~~~~  ^
+1 error generated.

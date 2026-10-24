@@ -1,3 +1,44 @@
+## Zombie combat, perception and passive corpses - 2026-10-24
+
+Native zombie anatomy now evaluates the supplied rig's live skinned triangles and
+blend shapes for weapon hits across fourteen regions. Movement capsules and old
+limb hulls no longer decide damage. Limb pools and body vitality share one native
+owner; severing blows also damage vitality, destroyed heads are fatal, and wounded
+arm chains affect attacks and crawling. Combat feedback shows both limb condition
+and overall health. Detached chains retain their caps, collisions and anatomical
+attack restrictions; corpses remain targetable after displacement and can lose
+additional limbs.
+
+Healthy roaming is 0.72 m/s, pursuit 0.864 m/s and crawling 0.4 m/s, with existing
+travel-driven gait. Native perception uses 32 m initial sight, 44 m engaged sight,
+a 140-degree cone, close visibility checks and bounded footstep investigation.
+Occlusion, last-seen memory, search, losing interest and unreachable-target
+cooldown remain enforced. The existing native navigator owns routes; there is
+still one physical integration owner and no direct-pursuit fallback.
+
+Animation and joint drives remain off after death. Native contact-island checks
+apply passive damping after support, then park quiet grounded constraints and let
+physical bodies sleep. Impacts, damage, support loss and nearby world edits restore
+simulation and constraints. Airborne bodies keep falling. Support verification
+also restores parked rigid fragments' gravity and swept collision settings;
+parked sleep is committed after scene/contact synchronization.
+Support verification
+uses at most one short ray per island at 10 Hz, bounded by sixteen groups per
+anatomy, so scattered fragments cannot starve behind a shared two-ray budget.
+Health, evaluated hit queries and rest handling run in native code on the physics
+thread; they introduce no GPU readback or second physics owner. Save schemas and
+existing worlds are unchanged. The redundant Character Preview.cmd shortcut was
+removed at the user's request; Worlds.cmd remains the normal launcher.
+
+Source gameplay, clean release-library and exported-runtime evidence, inspected
+images, retained failures and reproduction:
+[zombie combat upgrade](evidence/zombie_combat_upgrade/README.md).
+These bounded correctness checks do not qualify aggregate frame performance or
+complete world-scale navigation. Automatic ladder/jump links, tight crawler
+clearance and the other open gates in [NAVIGATION_STANDARD.md](NAVIGATION_STANDARD.md)
+remain tracked there; this combat milestone does not close them. The existing
+world-generation and district-quality requirements below also remain open.
+
 ## Alt-Tab input recovery - 2026-10-24
 
 Temporary Alt access to tool controls now remembers when application focus loss

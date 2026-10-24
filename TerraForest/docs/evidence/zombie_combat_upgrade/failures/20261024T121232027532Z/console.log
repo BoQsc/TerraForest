@@ -1,0 +1,81 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS native geometry caches the supplied rig within declared limits
+PASS native damage surfaces follow independently baked skin during Zombie_Idle (14 regions)
+PASS native damage surfaces follow independently baked skin during Zombie_Attack_Both (14 regions)
+PASS native damage surfaces follow independently baked skin during Zombie_Walk_Drag_Right (14 regions)
+PASS native damage surfaces follow independently baked skin during Zombie_Crawl (14 regions)
+PASS native damage surfaces follow independently baked skin during Zombie_Attack_Bite (14 regions)
+PASS native damage surfaces follow independently baked skin during Zombie_Crawl_Bite (14 regions)
+PASS all fourteen damage regions are reachable at their visible animated surface
+PASS air between the legs does not hit the movement capsule or a broad limb hull
+PASS world combat uses the same evaluated surface picker
+PASS a forearm wound affects health and arm effectiveness
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+PASS severing a forearm damages vitality and detaches its hand
+PASS lost arm chain removes only anatomically impossible attacks
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed head: ["head"]
+Zombie ragdoll started with 14 physical bones.
+PASS complete sever behavior for head
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed upper_arm_l: ["upper_arm_l", "forearm_l", "hand_l"]
+PASS complete sever behavior for upper_arm_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+PASS complete sever behavior for forearm_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed hand_l: ["hand_l"]
+PASS complete sever behavior for hand_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed upper_arm_r: ["upper_arm_r", "forearm_r", "hand_r"]
+PASS complete sever behavior for upper_arm_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed forearm_r: ["forearm_r", "hand_r"]
+PASS complete sever behavior for forearm_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed hand_r: ["hand_r"]
+PASS complete sever behavior for hand_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed thigh_l: ["thigh_l", "shin_l", "foot_l"]
+PASS complete sever behavior for thigh_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+PASS complete sever behavior for shin_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed foot_l: ["foot_l"]
+PASS complete sever behavior for foot_l
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed thigh_r: ["thigh_r", "shin_r", "foot_r"]
+PASS complete sever behavior for thigh_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_r: ["shin_r", "foot_r"]
+PASS complete sever behavior for shin_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed foot_r: ["foot_r"]
+PASS complete sever behavior for foot_r
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed thigh_l: ["thigh_l", "shin_l", "foot_l"]
+PASS leg loss produces living crawl and disables unsupported jumping
+Zombie severed upper_arm_l: ["upper_arm_l", "forearm_l", "hand_l"]
+Zombie severed upper_arm_r: ["upper_arm_r", "forearm_r", "hand_r"]
+PASS one arm slows crawling; no arms leaves an anatomically valid stationary bite
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ragdoll started with 15 physical bones.
+PASS an airborne ragdoll keeps falling and is never frozen by a timeout
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ragdoll started with 15 physical bones.
+RAGDOLL_SETTLE [{"hips":"(-0.41946, 0.378061, 0.451167)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":9.86800479888916,"maximum_linear_speed":4.59506559371948,"resting":0,"settle_events":0,"sleeping":0},"second":1},{"hips":"(-0.391353, 0.219449, 0.858412)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":1.19422912597656,"maximum_linear_speed":0.0995649993419647,"resting":0,"settle_events":0,"sleeping":0},"second":2},{"hips":"(-0.410577, 0.198631, 0.868979)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.191511318087578,"maximum_linear_speed":0.0277524869889021,"resting":0,"settle_events":0,"sleeping":0},"second":3},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":4},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":5},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":6},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":7},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":8},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":9},{"hips":"(-0.409591, 0.197925, 0.869411)","rig":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15},"second":10}]
+PASS grounded corpse settles with every physical body asleep
+PASS corpse collides with structure/model floor layer 2
+PASS host updates cannot reactivate a corpse animation or behavior motor
+PASS corpse joints have no spring or motor drives
+PASS corpse displaced from its character root retains accurate postmortem targeting
+Zombie severed head: ["head"]
+PASS ordinary combat adapter can detach a corpse head without reviving it
+PASS new impact wakes physical pieces after settling
+PASS removing resting support restores gravity instead of leaving a frozen corpse in the air
+FAIL six scattered detached islands all retain verified physical rest
+ZOMBIE_COMBAT_REGIONS checks=38 failures=1

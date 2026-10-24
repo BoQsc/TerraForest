@@ -1,0 +1,17 @@
+extends SceneTree
+func _initialize():run.call_deferred()
+func run():
+ var scene=Node3D.new();root.add_child(scene)
+ var zombies=[]
+ for origin in [Vector3.ZERO,Vector3(800,31,1310)]:
+  var ground=StaticBody3D.new();scene.add_child(ground);ground.position=origin
+  var shape=CollisionShape3D.new();var box=BoxShape3D.new();box.size=Vector3(30,1,30);shape.shape=box;shape.position.y=-.5;ground.add_child(shape)
+  var z=load("res://addons/characters/runtime/zombie.gd").new();z.position=origin+Vector3.UP*.06;scene.add_child(z)
+  z.play_clip("Zombie_Hit");z.animation_player.pause();z.animation_player.seek(.6,true)
+  z.receive_hit("forearm_l",45,Vector3.ZERO,Vector3.FORWARD*2)
+  z.receive_hit("head",50,Vector3.ZERO,Vector3.FORWARD*2)
+  zombies.append(z)
+ for second in 7:
+  for tick in 60:await physics_frame
+  for z in zombies:print("POSE_PROBE ",second+1," ",z.position," ",JSON.stringify(z.anatomy.ragdoll_stats()))
+ scene.free();await process_frame;print("PROBE_DONE");quit()

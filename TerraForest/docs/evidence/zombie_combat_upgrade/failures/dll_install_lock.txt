@@ -1,0 +1,1 @@
+2026-10-24: first installation of the final anatomy DLL overlapped an owned door-regression process. Windows rejected replacing the loaded debug DLL (WinError 5). The door test passed. After it exited, the same debug/release build installed successfully. No user game was terminated. See build manifests for final installed hashes.

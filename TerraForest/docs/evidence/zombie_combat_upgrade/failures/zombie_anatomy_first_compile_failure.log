@@ -1,0 +1,4 @@
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\world_runtime\native\zombie_anatomy.cpp:65:22: error: no member named 'surface_get_primitive_type' in 'godot::Mesh'
+   65 |             if(mesh->surface_get_primitive_type(s)!=Mesh::PRIMITIVE_TRIANGLES)return false;
+      |                ~~~~~~^
+1 error generated.

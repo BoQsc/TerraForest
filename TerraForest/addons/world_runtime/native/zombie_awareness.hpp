@@ -33,6 +33,7 @@ public:
     bool wants_sight(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &forward,const godot::Vector3 &player);
     void observe(int64_t id,const godot::Vector3 &player,bool visible);
     void provoke(int64_t id,const godot::Vector3 &player);
+    bool hear(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &source,double radius);
     bool accept_roam(int64_t id,const godot::Vector3 &supported);
     godot::Dictionary advance(int64_t id,const godot::Vector3 &feet,double delta,bool active,const godot::String &route_state);
     godot::Dictionary status(int64_t id);

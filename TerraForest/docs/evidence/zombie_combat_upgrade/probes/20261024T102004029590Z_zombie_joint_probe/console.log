@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+joint_constraints/x/linear_spring_enabled=false
+joint_constraints/x/linear_spring_stiffness=0.0
+joint_constraints/x/linear_spring_damping=0.0
+joint_constraints/x/angular_spring_enabled=false
+joint_constraints/x/angular_spring_stiffness=0.0
+joint_constraints/x/angular_spring_damping=0.0
+joint_constraints/y/linear_spring_enabled=false
+joint_constraints/y/linear_spring_stiffness=0.0
+joint_constraints/y/linear_spring_damping=0.0
+joint_constraints/y/angular_spring_enabled=false
+joint_constraints/y/angular_spring_stiffness=0.0
+joint_constraints/y/angular_spring_damping=0.0
+joint_constraints/z/linear_spring_enabled=false
+joint_constraints/z/linear_spring_stiffness=0.0
+joint_constraints/z/linear_spring_damping=0.0
+joint_constraints/z/angular_spring_enabled=false
+joint_constraints/z/angular_spring_stiffness=0.0
+joint_constraints/z/angular_spring_damping=0.0
+Zombie ragdoll started with 15 physical bones.
+RAGDOLL 1 peak=32.4689519405365 awake=15
+RAGDOLL 2 peak=1.17644833773375 awake=15
+RAGDOLL 3 peak=1.2880094088614 awake=15
+RAGDOLL 4 peak=1.62112721800804 awake=15
+RAGDOLL 5 peak=2.37636614590883 awake=15
+RAGDOLL 6 peak=1.57379257678986 awake=15
+RAGDOLL 7 peak=1.57320067286491 awake=15
+RAGDOLL 8 peak=1.56959936022758 awake=15
+RAGDOLL 9 peak=1.56592923402786 awake=15
+RAGDOLL 10 peak=0.83721169084311 awake=15

@@ -1,0 +1,4 @@
+C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\world_runtime\native\zombie_anatomy.cpp:10:10: fatal error: 'godot_cpp/classes/generic6dof_joint3d.hpp' file not found
+   10 | #include <godot_cpp/classes/generic6dof_joint3d.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

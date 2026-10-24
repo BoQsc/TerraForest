@@ -9,6 +9,7 @@ var expires_us:=0
 var name_label:Label
 var amount_label:Label
 var health_bar:ProgressBar
+var detail_label:Label
 var remaining:=0
 var maximum:=0
 var _fill:StyleBoxFlat
@@ -27,10 +28,21 @@ func _ready()->void:
 	health_bar=ProgressBar.new();health_bar.custom_minimum_size.y=7;health_bar.show_percentage=false;health_bar.mouse_filter=Control.MOUSE_FILTER_IGNORE;column.add_child(health_bar)
 	var track:=StyleBoxFlat.new();track.bg_color=Color("283d3b");track.set_corner_radius_all(2);health_bar.add_theme_stylebox_override("background",track)
 	_fill=StyleBoxFlat.new();_fill.set_corner_radius_all(2);health_bar.add_theme_stylebox_override("fill",_fill)
+	detail_label=Label.new();detail_label.mouse_filter=Control.MOUSE_FILTER_IGNORE;detail_label.add_theme_font_size_override("font_size",13);column.add_child(detail_label);detail_label.hide()
 	clear()
 
 func show_hit(target_name:String,current:int,total:int)->void:
 	if current<=0:clear();return
+	detail_label.hide();offset_top=-66
+	_present_hit(target_name,current,total)
+
+func show_zombie_hit(part:String,current:int,total:int,vitality:int,vitality_maximum:int)->void:
+	if vitality<=0:clear();return
+	_present_hit("Zombie: "+part,current,total)
+	detail_label.text="Health %d / %d%s"%[vitality,vitality_maximum," · Severed" if current<=0 else ""]
+	detail_label.show();offset_top=-90
+
+func _present_hit(target_name:String,current:int,total:int)->void:
 	if total<=0 or (allowed.is_valid() and not allowed.call()):return
 	maximum=total;remaining=clampi(current,0,total)
 	name_label.text=target_name;amount_label.text="%d / %d"%[remaining,maximum]

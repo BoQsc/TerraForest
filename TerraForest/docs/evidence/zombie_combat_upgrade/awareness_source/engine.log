@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native awareness is bounded and configured once
+PASS identities are unique
+PASS unaware zombie cannot see behind itself
+PASS forward player is eligible for occlusion-tested sight
+PASS peripheral player inside the wider 140-degree cone can be noticed
+PASS unaware sight improves to a finite 32 metre range
+PASS close awareness still requires the host visibility check
+PASS blocked sight does not alert
+PASS idle chooses a bounded randomized roaming goal without a combat target
+PASS unsupported roaming rejects before movement
+PASS confirmed sight enters pursuit
+PASS engaged tracking has range and bearing hysteresis
+PASS lost sight commits to last seen position without tracking the hidden player
+PASS suspension freezes intent and memory timers
+PASS arrival searches near last sighting
+PASS unsuccessful search loses interest
+PASS being struck provokes investigation even from behind
+PASS unreached last sighting expires after eighteen seconds
+PASS unreachable visible player does not cause endless blocked pursuit
+PASS blocked-pursuit cooldown prevents immediate reacquisition
+PASS footsteps beyond their declared radius are inaudible
+PASS audible footsteps behind the zombie start investigation without magical sight
+PASS sound investigation retains its clue instead of continuously tracking a hidden player
+PASS bounded resident 1
+PASS bounded resident 2
+PASS bounded resident 3
+PASS bounded resident 4
+PASS bounded resident 5
+PASS bounded resident 6
+PASS seventh awareness record rejects
+PASS retirement releases capacity
+ZOMBIE_AWARENESS checks=31 failures=0

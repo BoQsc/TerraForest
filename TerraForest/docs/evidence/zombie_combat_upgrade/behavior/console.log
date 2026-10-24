@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS normal admission starts unaware without a player combat target
+PASS unaware body walks a native route instead of waiting beside the player
+PASS wandering cannot attack a roaming destination
+PASS unobstructed player in view alerts the body
+PASS detected player produces real physical pursuit
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS second fixture obtains real sight before hiding
+PASS solid wall loses sight and cancels player combat target
+PASS hidden movement does not update the remembered position
+PASS occluded player takes no invisible attacks
+PASS manager suspension freezes both brain and physical body
+PASS unreachable last sighting eventually loses interest and returns to roaming
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS roaming can reacquire a newly visible player
+PASS body reaches a reachable last sighting and searches without a combat target
+PASS finished physical search returns to ordinary wandering
+PASS newly spawned player has an eighteen-second active-play grace period
+PASS automatic candidates in the player's view reject
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS automatic scheduler admits one offscreen supported resident
+PASS automatic spawn is forty to sixty-four metres from player
+PASS automatic spawn is not born pursuing the player
+PASS suspension does not spend the spawn clock
+PASS world reset clears brains and restores spawn grace
+ZOMBIE_BEHAVIOR checks=21 failures=0

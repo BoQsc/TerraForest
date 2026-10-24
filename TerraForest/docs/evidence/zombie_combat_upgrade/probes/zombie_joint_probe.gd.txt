@@ -1,0 +1,19 @@
+extends SceneTree
+func _initialize():run.call_deferred()
+func run():
+ var scene=Node3D.new();root.add_child(scene)
+ var ground=StaticBody3D.new();scene.add_child(ground)
+ var shape=CollisionShape3D.new();var box=BoxShape3D.new();box.size=Vector3(30,1,30);shape.shape=box;shape.position.y=-.5;ground.add_child(shape)
+ var z=load("res://addons/characters/runtime/zombie.gd").new();scene.add_child(z);z.position.y=1
+ var b=z.physical_bones.LeftHand
+ for row in b.get_property_list():
+  if str(row.name).contains("spring") or str(row.name).contains("motor"):print(row.name,"=",b.get(row.name))
+ z.die(Vector3(1,0,0))
+ for second in 10:
+  for tick in 60:await physics_frame
+  var peak=0.0;var active=0
+  for body in z.physical_bones.values():
+   peak=max(peak,body.linear_velocity.length()+body.angular_velocity.length())
+   if not PhysicsServer3D.body_get_state(body.get_rid(),PhysicsServer3D.BODY_STATE_SLEEPING):active+=1
+  print("RAGDOLL ",second+1," peak=",peak," awake=",active)
+ scene.free();await process_frame;quit()

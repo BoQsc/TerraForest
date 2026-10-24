@@ -18,6 +18,8 @@ var water_depth: Callable
 var obstacle_provider: Callable
 var navigation_interest:Callable
 var spawn_visible:Callable
+var world_geometry:Node3D
+var _last_player_position:=Vector3.INF
 var awareness:RefCounted
 var awareness_status:Dictionary={}
 # Explicit navigation/animation fixture override; normal gameplay uses perception.
@@ -111,10 +113,17 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 
 func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	if navigator!=null:navigator.invalidate(bounds)
+	for zombie in residents:
+		if is_instance_valid(zombie) and zombie.anatomy!=null:zombie.anatomy.wake_ragdolls(bounds)
 	_obstacle_clock.clear()
 
 func _update_navigation(delta: float, available: bool) -> void:
 	navigator.set_water_depth(water_depth)
+	var noise_speed:=0.0
+	if _last_player_position.is_finite() and delta>0:
+		var step:Vector3=target.global_position-_last_player_position;step.y=0
+		if step.length()<2.0:noise_speed=step.length()/delta
+	_last_player_position=target.global_position
 	var excluded: Array[RID]=[]
 	if target.get_parent() is PhysicsBody3D:excluded.append(target.get_parent().get_rid())
 	# Refresh only when the recipient body changes: assignment invalidates routes.
@@ -131,7 +140,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 			if active:
 				_sense_clock[id]=float(_sense_clock.get(id,0.0))-delta
 				if float(_sense_clock[id])<=0 and sight_budget>0:
-					sight_budget-=1;_sense_clock[id]=0.25
+					sight_budget-=1;_sense_clock[id]=0.15
 					var seen:bool=awareness.wants_sight(id,zombie.global_position,zombie.global_basis.z,target.global_position)
 					if seen:
 						var eye:Vector3=zombie.global_position+Vector3.UP*(0.45 if zombie._crawling else 1.35)
@@ -139,6 +148,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 						var sight_bounds:=AABB(eye,Vector3.ZERO).expand(player_eye).grow(0.1)
 						seen=readiness.is_valid() and bool(readiness.call(sight_bounds)) and get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye,player_eye,7,excluded)).is_empty()
 					awareness.observe(id,target.global_position,seen)
+					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>7.0 else 7.0)
 			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.status(id).get("state","idle"))
 			if intent.is_empty():continue
 			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
@@ -217,7 +227,7 @@ func _update_spacing() -> void:
 		zombie.crowd_steering = steering.limit_length(1.2)
 
 func _freeze_detached(node: Node, frozen: bool) -> void:
-	if node is RigidBody3D:
+	if node is RigidBody3D and node.freeze!=frozen:
 		node.freeze = frozen
 	for child in node.get_children():
 		_freeze_detached(child, frozen)
@@ -286,28 +296,31 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
 	if not enabled or residents.is_empty():
 		return {}
-	# Areas must be explicitly enabled; the source controller uses fitted limb areas.
+	# World collision occludes the evaluated skinned surface, not a broad movement
+	# capsule or a convex hull fitted to an earlier animation pose.
 	var omitted: Array[RID] = []
 	omitted.assign(exclude)
 	for resident in residents:
-		if is_instance_valid(resident):omitted.append(resident.get_rid())
-	var query := PhysicsRayQueryParameters3D.create(start, end, 1 | 2 | CHARACTER_LAYER | HIT_LAYER | RAGDOLL_LAYER, omitted)
-	query.collide_with_areas = true
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
-	if hit.is_empty():
-		return {}
-	var collider: Object = hit.collider
-	var zombie: Object = collider.get_meta("zombie") if collider.has_meta("zombie") else null
-	if collider in residents:
-		zombie = collider
-	if not is_instance_valid(zombie) or not zombie.alive or not zombie in residents:
-		return {}
-	return {"kind": "zombie", "zombie": zombie, "part": collider.get_meta("limb_key", "torso"), "position": hit.position, "normal": hit.normal, "material": "other", "name": "Zombie"}
+		if is_instance_valid(resident):
+			omitted.append(resident.get_rid())
+			for body:PhysicalBone3D in resident.physical_bones.values():omitted.append(body.get_rid())
+	var solid:Dictionary=world_geometry.raycast_scene(start,end,15|RAGDOLL_LAYER,omitted) if is_instance_valid(world_geometry) else get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start,end,15|RAGDOLL_LAYER,omitted))
+	var stop:Vector3=solid.position if not solid.is_empty() else end
+	var nearest:Dictionary={};var distance:=start.distance_squared_to(stop)
+	for resident in residents:
+		if not is_instance_valid(resident) or resident.anatomy==null:continue
+		var hit:Dictionary=resident.anatomy.pick(start,stop)
+		if hit.is_empty() or start.distance_squared_to(hit.position)>distance:continue
+		distance=start.distance_squared_to(hit.position);nearest=hit
+		nearest.merge({"kind":"zombie","zombie":resident,"material":"other","name":"Zombie"})
+	return nearest
 
 func apply_hit(hit: Dictionary, damage: float, direction: Vector3) -> bool:
 	var zombie: Object = hit.get("zombie")
-	if not enabled or not is_instance_valid(zombie) or not zombie in residents or not zombie.alive or zombie.process_mode == Node.PROCESS_MODE_DISABLED:
+	if not enabled or not is_instance_valid(zombie) or not zombie in residents or zombie.process_mode == Node.PROCESS_MODE_DISABLED or not is_finite(damage) or damage<=0 or damage>1000000 or not direction.is_finite():
 		return false
+	var part:String=hit.get("part","")
+	if not zombie.PARTS.has(part) or zombie.missing.get(part,true) or not hit.get("position",Vector3.INF).is_finite():return false
 	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0)
-	awareness.provoke(zombie.get_instance_id(),target.global_position)
+	if zombie.alive:awareness.provoke(zombie.get_instance_id(),target.global_position)
 	return true

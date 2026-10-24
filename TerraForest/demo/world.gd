@@ -217,6 +217,7 @@ func _ready() -> void:
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
+	zombies.world_geometry=structures.blocks
 	zombies.spawn_visible=func(point:Vector3):return camera.is_position_in_frustum(point)
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.water.depth_at

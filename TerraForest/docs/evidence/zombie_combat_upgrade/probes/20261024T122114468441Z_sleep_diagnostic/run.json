@@ -1,0 +1,38 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T122114468441Z_sleep_diagnostic\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\zombie_sleep_diagnostic.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_d72239de937c459e89c5a547cab672c2",
+    "--derived-cache=user://zombie_combat_world_d72239de937c459e89c5a547cab672c2",
+    "--gameplay-construction",
+    "--zombies",
+    "--zombie-world-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T122114468441Z_sleep_diagnostic\\images"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 3912,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL forest corpse and detached arm settle with animation disabled"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 19.19530289998511,
+    "passed": false
+  }
+}

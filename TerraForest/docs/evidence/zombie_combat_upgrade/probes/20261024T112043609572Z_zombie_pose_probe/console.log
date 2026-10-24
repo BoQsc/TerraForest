@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+Zombie severed head: ["head"]
+Zombie ragdoll started with 12 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+Zombie severed head: ["head"]
+Zombie ragdoll started with 12 physical bones.
+POSE_PROBE 1 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":3.14327454566956,"maximum_linear_speed":0.366535514593124,"settle_events":0,"sleeping":0}
+POSE_PROBE 1 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":2.84135317802429,"maximum_linear_speed":0.226819798350334,"settle_events":0,"sleeping":0}
+POSE_PROBE 2 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":5.98906421661377,"maximum_linear_speed":1.31219482421875,"settle_events":2,"sleeping":1}
+POSE_PROBE 2 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":8.3712854385376,"maximum_linear_speed":1.88452970981598,"settle_events":1,"sleeping":0}
+POSE_PROBE 3 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":2.41297221183777,"maximum_linear_speed":0.330591470003128,"settle_events":3,"sleeping":1}
+POSE_PROBE 3 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":1.25485360622406,"maximum_linear_speed":0.357398957014084,"settle_events":2,"sleeping":0}
+POSE_PROBE 4 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":2.39995145797729,"maximum_linear_speed":0.0868597254157066,"settle_events":4,"sleeping":1}
+POSE_PROBE 4 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":0.651297092437744,"maximum_linear_speed":0.228851720690727,"settle_events":4,"sleeping":0}
+POSE_PROBE 5 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":1.47561693191528,"maximum_linear_speed":0.117471545934677,"settle_events":5,"sleeping":1}
+POSE_PROBE 5 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":1.63573801517487,"maximum_linear_speed":0.0560321472585201,"settle_events":7,"sleeping":0}
+POSE_PROBE 6 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":0.592925488948822,"maximum_linear_speed":0.0504071265459061,"settle_events":7,"sleeping":1}
+POSE_PROBE 6 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":3.35917544364929,"maximum_linear_speed":0.298846453428268,"settle_events":9,"sleeping":0}
+POSE_PROBE 7 (0.0, 0.06, 0.0) {"bodies":15,"groups":3,"maximum_angular_speed":0.66434508562088,"maximum_linear_speed":0.0544885918498039,"settle_events":8,"sleeping":1}
+POSE_PROBE 7 (800.0, 31.06, 1310.0) {"bodies":15,"groups":3,"maximum_angular_speed":0.320915281772614,"maximum_linear_speed":0.0132822412997484,"settle_events":12,"sleeping":0}
+PROBE_DONE

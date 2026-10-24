@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable world ready
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits on real streamed forest terrain
+PASS healthy roaming, pursuit and crawl speeds improve over the previous defaults
+PASS actual held-tool ray resolves the visible forearm, strike 0
+PASS actual tool animation starts, strike 0
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact changes both health pools and wears the held tool exactly once
+PASS combat HUD shows authoritative limb condition and overall health together
+PASS actual held-tool ray resolves the visible forearm, strike 1
+PASS actual tool animation starts, strike 1
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact changes both health pools and wears the held tool exactly once
+PASS actual held-tool ray resolves the visible forearm, strike 2
+PASS actual tool animation starts, strike 2
+PASS windup cannot apply damage before animation contact
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+PASS animation contact resolves a live zombie hit
+PASS contact changes both health pools and wears the held tool exactly once
+PASS ordinary player swings sever an exhausted forearm and its hand
+PASS live anatomy changes available zombie attacks in the playable world
+Zombie severed head: ["head"]
+Zombie ragdoll started with 12 physical bones.
+PASS head destruction enters the real physical corpse path
+FOREST_SETTLE 1 {"bodies":15,"groups":3,"maximum_angular_speed":8.89936447143555,"maximum_linear_speed":1.06528377532959,"settle_events":0,"sleeping":0}
+FOREST_SETTLE 2 {"bodies":15,"groups":3,"maximum_angular_speed":1.6246190071106,"maximum_linear_speed":0.210950419306755,"settle_events":0,"sleeping":0}
+FOREST_SETTLE 3 {"bodies":15,"groups":3,"maximum_angular_speed":4.51736307144165,"maximum_linear_speed":0.184881344437599,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 4 {"bodies":15,"groups":3,"maximum_angular_speed":1.6754002571106,"maximum_linear_speed":0.262175381183624,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 5 {"bodies":15,"groups":3,"maximum_angular_speed":2.40068912506104,"maximum_linear_speed":0.297643840312958,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 6 {"bodies":15,"groups":3,"maximum_angular_speed":0.33422726392746,"maximum_linear_speed":0.028896126896143,"settle_events":1,"sleeping":0}
+FOREST_CORPSE {"bodies":15,"groups":3,"maximum_angular_speed":0.33422726392746,"maximum_linear_speed":0.028896126896143,"settle_events":1,"sleeping":0}
+FOREST_CONTACTS {"contacts":{"219429213725":"MatchingCollision:StaticBody3D","220100302358":"MatchingCollision:StaticBody3D","226777634279":"MatchingCollision:StaticBody3D","390540040693":"Physical_RightHand:PhysicalBone3D","390607149561":"Physical_LeftLeg:PhysicalBone3D","390707812863":"Physical_RightLeg:PhysicalBone3D","390741367297":"Physical_RightFoot:PhysicalBone3D","438489324211":"Detached_forearm_l:RigidBody3D","438606764735":"Detached_hand_l:RigidBody3D"},"no_sleep":[],"world_physics_enabled":false}
+FAIL forest corpse and detached arm settle with animation disabled
+PASS normal host update leaves the corpse passive
+PASS encounter anatomy remains session-local without changing saved world schemas
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_COMBAT_WORLD checks=25 failures=1

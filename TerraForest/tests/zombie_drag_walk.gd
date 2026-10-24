@@ -53,7 +53,7 @@ func run()->void:
 	check(not key.is_empty() and zombie.animation_player.get_animation_list().size()==16,"all 15 original actions coexist with the new dragging walk")
 	var animation:Animation=zombie.animation_player.get_animation(key)
 	check(is_equal_approx(animation.length,2.0) and animation.loop_mode==Animation.LOOP_LINEAR,"dragging walk is a looping two-second action")
-	check(is_equal_approx(zombie.walk_speed,.45) and is_equal_approx(zombie._standing_walk_reference_speed(),.45),"body speed matches the authored slow 0.45-m/s gait")
+	check(is_equal_approx(zombie.walk_speed,.72) and is_equal_approx(zombie._standing_walk_reference_speed(),.45),"faster body travel retains the authored gait reference for synchronized playback")
 	var bone_or_shape_only:=true
 	for track in animation.get_track_count():bone_or_shape_only=bone_or_shape_only and animation.track_get_type(track) in [Animation.TYPE_POSITION_3D,Animation.TYPE_ROTATION_3D,Animation.TYPE_SCALE_3D,Animation.TYPE_BLEND_SHAPE]
 	check(bone_or_shape_only,"animation cannot invoke movement or world mutation")
@@ -123,7 +123,7 @@ func run()->void:
 		observed=observed or String(zombie._current_clip).ends_with("Zombie_Walk_Drag_Right")
 		peak_work=maxi(peak_work,int(encounters.navigation_status.get("route_work",0)))
 	check(observed and zombie.position.z>1.5,"actual native navigation and body motor use the dragging walk while pursuing")
-	check(absf(zombie.animation_player.speed_scale-1.0)<.05,"default healthy walking keeps the authored slow cadence")
+	check(absf(zombie.animation_player.speed_scale-zombie.walk_speed*zombie.chase_speed_multiplier/zombie._standing_walk_reference_speed())<.05,"healthy pursuit cadence matches the faster actual body travel")
 	var suspended:Vector3=zombie.position
 	active=false;encounters.update(.01,Vector3.ZERO,false)
 	for frame in 10:await physics_frame
@@ -154,7 +154,7 @@ func run()->void:
 	wall.position.x=-30
 	var released_z:float=blocked.position.z
 	for frame in 60:await physics_frame
-	check(blocked.position.z-released_z>.30 and absf(blocked.animation_player.speed_scale-1.0)<.05,"clearing the collision resumes matched body and gait travel")
+	check(blocked.position.z-released_z>.30 and absf(blocked.animation_player.speed_scale-blocked.walk_speed/blocked._standing_walk_reference_speed())<.05,"clearing the collision resumes matched body and gait travel")
 	blocked.set_physics_process(false);blocked.set_behavior(false)
 	DirAccess.make_dir_recursive_absolute("res://reports/zombie_drag_walk")
 	FileAccess.open("res://reports/zombie_drag_walk/result.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"left_sole_min":left_min,"left_sole_max":left_max,"right_sole_min":right_min,"right_sole_max":right_max,"stance_drift_m":absf(stance_end-stance_start),"left_boot_drift_m":left_drift,"right_boot_drift_m":right_drift,"pelvis_range":pelvis_max-pelvis_min,"right_arm_swing_m":arm_max-arm_min,"seam_error":seam_error,"samples":rows,"native_peak_work":peak_work,"scope":"Flat-floor evaluated skin and live shared-navigation controller lifecycle; no terrain foot IK or complete-world traversal claim."},"  "))

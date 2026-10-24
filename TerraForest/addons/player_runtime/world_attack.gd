@@ -23,7 +23,8 @@ func target() -> Dictionary:
 	var end: Vector3=start-game.camera.global_basis.z*3.5
 	var hit: Dictionary=game.structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[game.player.get_rid()])
 	var zombie_hit: Dictionary=game.zombies.pick(start,end,[game.player.get_rid()])
-	if not zombie_hit.is_empty() and (hit.is_empty() or hit.get("collider")==zombie_hit.zombie or start.distance_squared_to(zombie_hit.position)<=start.distance_squared_to(hit.position)+0.001):
+	var same_zombie:bool=not zombie_hit.is_empty() and not hit.is_empty() and (hit.get("collider")==zombie_hit.zombie or (hit.get("collider")!=null and hit.collider.get_meta("zombie",null)==zombie_hit.zombie))
+	if not zombie_hit.is_empty() and (hit.is_empty() or same_zombie or start.distance_squared_to(zombie_hit.position)<=start.distance_squared_to(hit.position)+0.001):
 		return zombie_hit
 	if game.ground_enabled and game.ground_interaction.available():
 		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
@@ -116,12 +117,12 @@ func apply_target(t: Dictionary) -> bool:
 	if t.kind=="zombie":
 		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z):return false
 		var part:String=t.get("part","torso")
-		hud.show_target_damage("Zombie: "+part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))) if t.zombie.alive else 0,int(t.zombie.PARTS.get(part,{}).get("health",180)))
+		hud.damage_feedback.show_zombie_hit(part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))),int(t.zombie.PARTS.get(part,{}).get("health",180)),int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health))
 		if item!=0:
 			hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
 			game.terrain.changed_since_save=true
 		hud.refresh()
-		game._show_lake_notice("Zombie struck")
+		game._show_lake_notice("Zombie struck · %d / %d health"%[int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health)] if t.zombie.alive else "Zombie down")
 		return true
 	if t.kind=="actor" and (t.handle==0 or game.actors.store.resolve_identity(t.id)!=t.handle):return false
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false

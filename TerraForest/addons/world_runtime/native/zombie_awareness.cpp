@@ -13,6 +13,7 @@ void NativeZombieAwareness::_bind_methods(){
     ClassDB::bind_method(D_METHOD("wants_sight","id","feet","forward","player"),&NativeZombieAwareness::wants_sight);
     ClassDB::bind_method(D_METHOD("observe","id","player","visible"),&NativeZombieAwareness::observe);
     ClassDB::bind_method(D_METHOD("provoke","id","player"),&NativeZombieAwareness::provoke);
+    ClassDB::bind_method(D_METHOD("hear","id","feet","source","radius"),&NativeZombieAwareness::hear);
     ClassDB::bind_method(D_METHOD("accept_roam","id","supported"),&NativeZombieAwareness::accept_roam);
     ClassDB::bind_method(D_METHOD("advance","id","feet","delta","active","route_state"),&NativeZombieAwareness::advance);
     ClassDB::bind_method(D_METHOD("status","id"),&NativeZombieAwareness::status);
@@ -44,10 +45,10 @@ void NativeZombieAwareness::remove_agent(int64_t id){agents_.erase(std::remove_i
 void NativeZombieAwareness::clear(){agents_.clear();}
 bool NativeZombieAwareness::wants_sight(int64_t id,const Vector3 &feet,const Vector3 &forward,const Vector3 &player){
     auto *a=find(id);if(!a||a->ignore>0||!feet.is_finite()||!forward.is_finite()||!player.is_finite())return false;
-    Vector3 offset=player-feet;if(offset.length_squared()>((a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH)?36*36:24*24))return false;
-    if(offset.length_squared()<=3.5*3.5)return true;
+    Vector3 offset=player-feet;if(offset.length_squared()>((a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH)?44*44:32*32))return false;
+    if(offset.length_squared()<=5*5)return true;
     offset.y=0;Vector3 facing=forward;facing.y=0;
-    return a->state==CHASE||offset.normalized().dot(facing.normalized())>=.5;
+    return a->state==CHASE||offset.normalized().dot(facing.normalized())>=.342;
 }
 void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visible){
     auto *a=find(id);if(!a||!player.is_finite())return;
@@ -58,6 +59,11 @@ void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visibl
 void NativeZombieAwareness::provoke(int64_t id,const Vector3 &player){
     auto *a=find(id);if(!a||!player.is_finite())return;
     a->ignore=0;a->last_seen=a->goal=player;a->unseen=0;a->remaining=18;a->state=INVESTIGATE;
+}
+bool NativeZombieAwareness::hear(int64_t id,const Vector3 &feet,const Vector3 &source,double radius){
+    auto *a=find(id);
+    if(!a||a->ignore>0||(a->state!=IDLE&&a->state!=WANDER)||!feet.is_finite()||!source.is_finite()||!std::isfinite(radius)||radius<=0||radius>14||feet.distance_squared_to(source)>radius*radius)return false;
+    a->visible=false;a->last_seen=a->goal=source;a->unseen=0;a->remaining=18;a->state=INVESTIGATE;return true;
 }
 bool NativeZombieAwareness::accept_roam(int64_t id,const Vector3 &supported){
     auto *a=find(id);if(!a||(a->state!=WANDER&&a->state!=SEARCH))return false;

@@ -22,8 +22,8 @@ const PLAYER_LAYER := 2
 const CHARACTER_LAYER := 1 << 16
 const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
-const BODY_COLLISION_MASK := WORLD_LAYER | RAGDOLL_LAYER
-const DETACHED_COLLISION_MASK := WORLD_LAYER | CHARACTER_LAYER | RAGDOLL_LAYER
+const BODY_COLLISION_MASK := WORLD_LAYER | PLAYER_LAYER | 4 | RAGDOLL_LAYER
+const DETACHED_COLLISION_MASK := WORLD_LAYER | PLAYER_LAYER | 4 | CHARACTER_LAYER | RAGDOLL_LAYER
 const SOLE_FRICTION := 0.2
 const ANIMATION_FPS := 60.0
 # R4 action identity is independent of the preserved Original/R2 attack.
@@ -63,7 +63,9 @@ const PARTS := {
 @export var walk_reference_speed := 0.72 # Preserved original walk's reference.
 @export var dragging_walk := true
 @export var behavior_enabled := false
-@export var walk_speed := 0.45
+@export var walk_speed := 0.72
+@export var chase_speed_multiplier := 1.2
+@export var crawl_speed_multiplier := 1.25
 @export var attack_distance := 1.25
 @export var attack_damage := 12.0
 @export var turn_speed := 3.6
@@ -81,6 +83,7 @@ var alive := true
 var state := "idle"
 var health := 180.0
 var limb_health: Dictionary = {}
+var anatomy:RefCounted
 var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
@@ -185,6 +188,9 @@ func configure(scene: PackedScene = null) -> void:
 	capsule.shape = shape
 	capsule.position.y = shape.height * 0.5
 	add_child(capsule)
+	anatomy=ClassDB.instantiate("NativeZombieAnatomy")
+	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes):
+		push_error("Zombie native anatomy initialization failed");return
 	_fit_collision_shapes()
 	_build_hit_areas()
 	_build_ragdoll()
@@ -539,7 +545,7 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 	var index := skeleton.find_bone(bone_name)
 	if index < 0:
 		return
-	var physical := PhysicalBone3D.new()
+	var physical:PhysicalBone3D=ClassDB.instantiate("NativeZombiePhysicalBone")
 	physical.name = "Physical_" + bone_name
 	physical.collision_layer = 0
 	physical.collision_mask = 0
@@ -793,8 +799,16 @@ func get_crawl_speed() -> float:
 	for side: String in ["l", "r"]:
 		if _has_full_arm(side):
 			arms += 1
-			condition *= lerpf(0.65, 1.0, float(limb_health.get("upper_arm_" + side, 0.0)) / float(PARTS["upper_arm_" + side].health))
-	return float(behavior_contract.get("crawl", {}).get("authored_speed_mps", 0.32)) * (0.0 if arms == 0 else 0.58 if arms == 1 else 1.0) * condition
+			condition *= _arm_condition(side)
+	return float(behavior_contract.get("crawl", {}).get("authored_speed_mps", 0.32)) * crawl_speed_multiplier * (0.0 if arms == 0 else 0.58 if arms == 1 else 1.0) * condition
+
+func _arm_condition(side:String)->float:
+	if not _has_full_arm(side):return 0.0
+	var condition:=1.0
+	for section:String in ["upper_arm_","forearm_","hand_"]:
+		var key:=section+side
+		condition=minf(condition,lerpf(.65,1.0,float(limb_health[key])/float(PARTS[key].health)))
+	return condition
 
 
 func get_behavior_snapshot() -> Dictionary:
@@ -811,6 +825,7 @@ func get_behavior_snapshot() -> Dictionary:
 		"left_arm": _has_full_arm("l"), "right_arm": _has_full_arm("r"),
 		"target_distance": _target_distance() if is_instance_valid(target) else null, "clip": _current_clip,
 		"awareness": awareness_state, "intent_goal": behavior_goal,
+		"health":health,"maximum_health":PARTS.torso.health,"ragdoll":anatomy.ragdoll_stats() if anatomy!=null else {},
 		"animation_time": animation_player.current_animation_position if animation_player != null and _animation_cursor_valid else 0.0,
 		"learned_contact_distance": _contact_standoff if is_finite(_contact_standoff) else null,
 		"grounded": is_on_floor(), "position": global_position, "velocity": velocity
@@ -994,6 +1009,7 @@ func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
 		direction = (direction.normalized() + crowd_steering).normalized()
 		_face_direction(direction, delta, 0.75 if _crawling else 1.0)
 		var speed := get_crawl_speed() if _crawling else walk_speed * get_walk_multiplier()
+		if not _crawling and awareness_state=="chase":speed*=chase_speed_multiplier
 		if speed <= 0.0001:
 			state = "crawl_idle" if _crawling else "idle"
 			_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
@@ -1074,7 +1090,7 @@ func _attempt_contact(action: String) -> void:
 		return
 	var damage := attack_damage * float(spec.damage)
 	for side: String in (["l"] if action == "left" else ["r"] if action == "right" else ["l", "r"] if action == "both" else []):
-		damage *= lerpf(0.65, 1.0, float(limb_health["upper_arm_" + side]) / float(PARTS["upper_arm_" + side].health))
+		damage *= _arm_condition(side)
 	var point: Vector3 = contact.point
 	var recipient := target
 	_contact_count += 1
@@ -1411,6 +1427,7 @@ func cancel_traversal() -> void:
 
 
 func set_behavior(enabled: bool) -> void:
+	if not alive:return
 	# The host refreshes availability every tick. Reapplying the same mode must
 	# preserve an attack's contact marker and any traversal already in progress.
 	if enabled == behavior_enabled:
@@ -1498,6 +1515,7 @@ func get_attack_multiplier() -> float:
 
 
 func _physics_process(delta: float) -> void:
+	if anatomy!=null:anatomy.advance_ragdolls(delta)
 	if not initialized or not alive:
 		return
 	if _r4_enabled:
@@ -1592,17 +1610,18 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 		return
 	if not is_finite(damage) or not impulse.is_finite() or not world_point.is_finite():
 		return
-	damage = maxf(damage, 0.0)
-	limb_health[part] = maxf(float(limb_health[part]) - damage, 0.0)
+	var result:Dictionary=anatomy.hit(part,damage,force_sever)
+	if not result.ok:return
+	health=float(result.health);limb_health=anatomy.snapshot().limbs
 	damaged.emit(part, float(limb_health[part]))
-	if part != "torso" and (force_sever or float(limb_health[part]) <= 0.0):
+	if result.sever:
 		sever_limb(part, impulse)
+		if alive and result.dead:die(impulse)
 		return
 	if not alive:
 		_apply_body_impulse(part, impulse, world_point)
 		return
-	health -= damage if part == "torso" else damage * 0.15
-	if health <= 0.0 or (part == "torso" and force_sever):
+	if result.dead:
 		die(impulse)
 	else:
 		if _r4_enabled:
@@ -1631,6 +1650,7 @@ func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:
 		return
 	var chain: Array[String] = []
 	_collect_chain(part, chain)
+	anatomy.detach(part);health=float(anatomy.snapshot().health)
 	skeleton.force_update_all_bone_transforms()
 	_spawn_detached(part, chain, impulse)
 	for removed: String in chain:
@@ -1686,6 +1706,7 @@ func die(impulse: Vector3 = Vector3.ZERO) -> void:
 	if not initialized or not alive:
 		return
 	alive = false
+	anatomy.kill();health=0.0;limb_health=anatomy.snapshot().limbs
 	state = "ragdoll"
 	behavior_enabled = false
 	_active_action = ""
@@ -1726,6 +1747,7 @@ func _begin_ragdoll(impulse: Vector3) -> void:
 		for property in physical.get_property_list():
 			if String(property.name).begins_with("joint_constraints/"):
 				parameters[property.name] = physical.get(property.name)
+				if String(property.name).ends_with("spring_enabled") or String(property.name).ends_with("motor_enabled"):parameters[property.name]=false
 		saved_constraints[bone_name] = parameters
 		physical.joint_type = PhysicalBone3D.JOINT_TYPE_NONE
 	_refresh_pose_collision_shapes()
@@ -1754,6 +1776,7 @@ func _begin_ragdoll(impulse: Vector3) -> void:
 	for physical: PhysicalBone3D in physical_bones.values():
 		physical.linear_velocity = _death_velocity
 	_apply_body_impulse("torso", impulse)
+	anatomy.track_ragdoll(physical_bones.values())
 
 
 func _apply_body_impulse(part: String, impulse: Vector3, point: Vector3 = Vector3.ZERO) -> void:
@@ -1785,7 +1808,7 @@ func _current_bone_pose(index: int) -> Transform3D:
 
 
 func _new_detached_body(part: String) -> RigidBody3D:
-	var body := RigidBody3D.new()
+	var body:RigidBody3D=ClassDB.instantiate("NativeZombieRigidPart")
 	body.name = "Detached_" + part
 	body.set_meta("limb_key", part)
 	body.collision_layer = RAGDOLL_LAYER
@@ -1830,6 +1853,9 @@ func _new_detached_joint(part: String) -> Joint3D:
 			joint.set(angular + "restitution", 0.0)
 			joint.set(angular + "damping", 1.0)
 			joint.set(angular + "erp", 0.5)
+		for property:Dictionary in joint.get_property_list():
+			var key:=String(property.name)
+			if (key.contains("motor") or key.contains("spring")) and key.ends_with("enabled"):joint.set(key,false)
 		return joint
 	var joint := ConeTwistJoint3D.new()
 	joint.swing_span = deg_to_rad(55.0)
@@ -1918,6 +1944,7 @@ func _spawn_detached(part: String, chain: Array[String], impulse: Vector3) -> vo
 	root_body.set_meta("segment_bodies", bodies.values())
 	root_body.set_meta("total_mass", total_mass)
 	detached_parts.append(root_body)
+	anatomy.track_ragdoll(bodies.values())
 
 
 func _attach_baked_mesh(body: RigidBody3D, source: MeshInstance3D, to_local: Transform3D) -> void:
