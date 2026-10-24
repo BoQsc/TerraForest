@@ -11,16 +11,42 @@ func bounds(node: Node3D) -> AABB:
 	return box
 func instance(mesh: Mesh) -> MeshInstance3D:
 	var out:=MeshInstance3D.new();out.mesh=mesh;return out
+func copy_visible(source:Node,model:Node3D)->void:
+	if source is MeshInstance3D and source.mesh!=null and source.is_visible_in_tree():copy_mesh(source,model)
+	for child in source.get_children():copy_visible(child,model)
+func copy_mesh(source:MeshInstance3D,model:Node3D)->void:
+	# Detached, static imported geometry/materials: no player or driving rig is
+	# rendered into the icon, and no gameplay asset is modified by this bake.
+	var copy:=instance(source.mesh);copy.transform=model.global_transform.affine_inverse()*source.global_transform
+	copy.material_override=source.material_override;copy.skeleton=NodePath("");copy.skin=null
+	for surface in source.mesh.get_surface_count():copy.set_surface_override_material(surface,source.get_surface_override_material(surface))
+	model.add_child(copy)
 func run() -> void:
-	var viewport:=SubViewport.new();viewport.size=Vector2i(256,256);viewport.transparent_bg=true;viewport.own_world_3d=true;viewport.msaa_3d=Viewport.MSAA_4X;root.add_child(viewport)
+	var current_models:bool="--current-models" in OS.get_cmdline_user_args()
+	var viewport:=SubViewport.new();viewport.size=Vector2i(512,512);viewport.transparent_bg=true;viewport.own_world_3d=true;viewport.msaa_3d=Viewport.MSAA_4X;root.add_child(viewport)
 	var environment:=WorldEnvironment.new();environment.environment=Environment.new();environment.environment.background_mode=Environment.BG_COLOR;environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR;environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.7;viewport.add_child(environment)
 	var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-35,-35,0);sun.light_energy=1.6;viewport.add_child(sun)
 	var camera:=Camera3D.new();camera.projection=Camera3D.PROJECTION_ORTHOGONAL;viewport.add_child(camera);camera.current=true
-	var tool=preload("res://addons/player_runtime/tool_view.gd").new();viewport.add_child(tool)
+	var tool=preload("res://addons/player_runtime/tool_view.gd").new();viewport.add_child(tool);tool.hide()
 	var atlas:=Image.create(1024,ceili(Icons.KEYS.size()/8.0)*128,false,Image.FORMAT_RGBA8);atlas.fill(Color.TRANSPARENT)
+	if current_models:
+		var previous:=Image.new()
+		if previous.load_png_from_buffer(FileAccess.get_file_as_bytes("res://addons/player_runtime/art/item_icons.trtex"))!=OK:viewport.free();quit(1);return
+		atlas.blit_rect(previous,Rect2i(Vector2i.ZERO,previous.get_size()),Vector2i.ZERO)
+	DirAccess.make_dir_recursive_absolute("res://reports/current_item_icons")
 	for i in Icons.KEYS.size():
 		var key: String=Icons.KEYS[i];var id:=key.to_int();var model:=Node3D.new();viewport.add_child(model)
-		if id in [1,2,3,4]:
+		if current_models and id not in [1,2,501]:model.free();continue
+		if id in [1,2]:
+			tool.human.equip(id)
+			for mesh:MeshInstance3D in tool.human.meshes:
+				var label:=String(mesh.name).to_lower().replace("_",".")
+				if label.begins_with("equipment.") and mesh.visible:copy_mesh(mesh,model)
+		elif id==501:
+			var car:RigidBody3D=load("res://vehicle_demo/scenes/car.tscn").instantiate()
+			car.freeze=true;car.process_mode=Node.PROCESS_MODE_DISABLED;viewport.add_child(car)
+			copy_visible(car,model);car.free()
+		elif id in [3,4]:
 			for child in tool.tools[id].get_children():model.add_child(child.duplicate())
 		elif id in [101,102,103,104]:
 			var mesh:=BoxMesh.new();mesh.size=Vector3.ONE
@@ -46,12 +72,17 @@ func run() -> void:
 		else:
 			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Wooden fence":"fence","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
-		if id>0 and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
+		if id>0 and id!=501 and not current_models and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5
+		if box.size.length_squared()<.000001:push_error("No current icon geometry for "+key);model.free();viewport.free();quit(1);return
 		camera.position=center+Vector3(1.3,0.9,2).normalized()*maxf(4,radius*3);camera.look_at(center);camera.size=maxf(0.1,radius*2.2)
 		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS
 		for frame in 3:await RenderingServer.frame_post_draw
 		var image:=viewport.get_texture().get_image();image.resize(128,128,Image.INTERPOLATE_LANCZOS);atlas.blit_rect(image,Rect2i(0,0,128,128),Vector2i((i%8)*128,(i/8)*128))
+		if image.get_used_rect().size==Vector2i.ZERO:push_error("Empty current icon for "+key);model.free();viewport.free();quit(1);return
+		if id in [1,2,501]:
+			image.save_png("res://reports/current_item_icons/%d.png"%id)
+			print("CURRENT_ICON ",id," meshes=",model.get_child_count()," bounds=",box)
 		model.free()
 	var error:=atlas.save_png("res://addons/player_runtime/art/item_icons.trtex")
 	viewport.free();print("ICON_BAKE failures=",0 if error==OK else 1);quit(0 if error==OK else 1)

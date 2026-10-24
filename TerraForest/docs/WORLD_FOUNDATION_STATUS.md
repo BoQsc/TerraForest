@@ -1,3 +1,19 @@
+## Current model inventory icons - 2026-10-24
+
+Pickaxe and hatchet thumbnails now use the held tools' actual R11 equipment
+meshes; the vehicle thumbnail uses the current car scene and its accessories.
+The vehicle SVG override is removed. An offline 512px bake downsamples into the
+existing transparent 128px atlas tiles, preserving every other icon and leaving
+pickup meshes unchanged. Inventory and toolbelt share cached static images;
+there are no live 3D icon viewports or cameras. Atlas dimensions and decoded
+memory stay unchanged. Restarting reloads textures cached by an older process.
+
+Source and exported UI checks pass all seven assertions, including exact
+three-tile comparison; the images were inspected. Bake/export logs, screenshots,
+provenance and the corrected initial test-setup failure are retained in
+[current model icon evidence](evidence/current_model_icons/README.md).
+This image-only change does not close existing world/navigation requirements.
+
 ## Optional third-person view - 2026-10-24
 
 Escape → Session now has a Third-person camera toggle, off by default and retained
