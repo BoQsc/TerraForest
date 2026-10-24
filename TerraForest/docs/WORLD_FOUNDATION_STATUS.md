@@ -1,3 +1,20 @@
+## Developer vehicle spawning - 2026-10-24
+
+The Escape Developer action now finds nearby visible clear ground instead of
+requiring a precise twelve-metre camera ray. It tries at most nine positions
+ahead, checks the entire vehicle footprint through native support queries, and
+retains collision/readiness, player-clearance and fleet-capacity admission. A
+new fleet record must admit a visible live body before the action reports success;
+failed admission removes that record. A resource still loading is awaited by the
+button, with duplicate clicks disabled. Failure reopens the Developer page with
+the reason visible; success closes it and shows the car. Paid carried-vehicle
+placement keeps explicit aiming and now shares footprint support checks.
+
+Actual menu actions on streamed forest terrain, standalone vehicle lifecycle,
+missing-support rejection and exported-runtime checks are retained with inspected
+images in [vehicle spawn evidence](evidence/developer_vehicle_spawn/README.md).
+Existing driving physics, parked stance height and world-save schemas are unchanged.
+
 ## Zombie combat, perception and passive corpses - 2026-10-24
 
 Native zombie anatomy now evaluates the supplied rig's live skinned triangles and

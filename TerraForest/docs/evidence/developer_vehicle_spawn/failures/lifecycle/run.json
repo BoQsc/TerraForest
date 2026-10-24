@@ -1,0 +1,71 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T124819129049Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/world_vehicle.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_c405711ff39f4aeb942447856af93a48",
+    "--derived-cache=user://world_vehicle_c405711ff39f4aeb942447856af93a48"
+  ],
+  "cache": "user://world_vehicle_c405711ff39f4aeb942447856af93a48",
+  "utc": "20261024T124819129049Z",
+  "timeout": 45.0,
+  "required_text": "failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "35cea1871b66f12094005ab88d3603d9197fee8a",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/developer_spawn.gd",
+    " M TerraForest/addons/vehicle_runtime/fleet_activation.gd",
+    " M TerraForest/addons/vehicle_runtime/world_vehicle.gd",
+    "?? TerraForest/addons/vehicle_runtime/vehicle_placement.gd",
+    "?? TerraForest/tests/developer_vehicle_spawn.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "d9c6b4af3608d5c67b24c7edff6f693924be601c0fc744b9cbfcff4714b0c505",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "91fde63730cc9e17783f7cfed748403b42818719327e630af4b72df4a021e4ef",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "239bb2c9b2e01c19ccaa307ef85a57d2a4059f2273a66524612f54acd96474f3",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "f31c7a072c3f27bd5626864a36e7e5c10ff0cbbfe03527c42a8d36aced3b80e2",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "73ad6dfc010b3f3219320123ac8900bfa46ff23de11d21f6cdd732429b2e3b8d",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "e7be2f6b594e7f7ea74399cfa36df70f1cf3f4f27d887426933496f624c2f16c",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "8c318ca1c80da4ad791c90903202ab46b96b89a65f787cedea1c65777dc8013b",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "bbbbe5259139697efe150855ebe2f042e3887539d2392676556565226d6c8537",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "c6fd2093de0689c65435c5d6968513b79f67fe2e99c848f1d8cf23d3e18d9691",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "56ace26f98ad5a3f87f6dd7be5e5816abd7b491736f0fb233617f48d66385f63",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "0510da938bf8f1c66e72181b0a2bbc1c558049c43a84e1e679f199176b82eac5"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 25944,
+    "exit_code": 1,
+    "diagnostics": [
+      "\nSCRIPT ERROR: Parse Error: Cannot infer the type of \"space\" variable because the value doesn't have a set type.",
+      "ERROR: Failed to load script \"res://demo/world.gd\" with error \"Compilation failed\".",
+      "FAIL spawn on clear loaded ground",
+      "FAIL spawn rejects unavailable ground",
+      "SCRIPT ERROR: Compile Error: Failed to compile depended scripts.",
+      "SCRIPT ERROR: Invalid call. Nonexistent function 'find' in base 'GDScript'."
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 3.164975699968636,
+    "passed": false
+  }
+}

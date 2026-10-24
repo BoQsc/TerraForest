@@ -86,8 +86,6 @@ func place(world: Node,pose: Transform3D) -> String:
 		if AABB(parked-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5)).has_point(pose.origin):return "Another saved vehicle occupies this area."
 	var id: int=owner.fleet.spawn(pose)
 	if id==0:return "Vehicle storage rejected placement."
-	if parked_view==null:
-		owner.last_spawn_identity=id;timer=0;return "Vehicle placed; preparing visuals · F5 saves world"
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
 	owner.last_spawn_identity=id
 	return "Vehicle placed · E nearby to enter · F5 saves world"

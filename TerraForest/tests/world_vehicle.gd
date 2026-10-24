@@ -86,5 +86,10 @@ func run() -> void:
 	session.car.position.x=-1
 	check(not session.fleet.validate_snapshot(session.capture_snapshot()),"invalid live pose rejects save instead of removing vehicle")
 	check(session.restore_snapshot(PackedByteArray()) and session.car==null,"absent section removes old vehicle")
+	var ledge:=StaticBody3D.new();var ledge_shape:=CollisionShape3D.new();var ledge_box:=BoxShape3D.new();ledge_box.size=Vector3(.5,.5,.5);ledge_shape.shape=ledge_box;ledge.add_child(ledge_shape);world.add_child(ledge);ledge.position=Vector3(0,5,-6)
+	world.camera.global_position=Vector3(0,8,-2);world.camera.look_at(Vector3(0,5.25,-6))
+	await physics_frame;await physics_frame
+	result=session.spawn(world)
+	check(result.contains("support") and session.car==null and session.last_spawn_identity==0 and session.fleet.statistics().records==0,"aimed ledge rejects missing footprint support without creating a vehicle record")
 	print("WORLD_VEHICLE failures=",failures)
 	world.free();quit(0 if failures==0 else 1)

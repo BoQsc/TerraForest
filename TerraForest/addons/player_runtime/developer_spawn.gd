@@ -4,6 +4,8 @@ var game:Node
 var menu:CanvasLayer
 var count:SpinBox
 var entries:Dictionary={}
+var vehicle_button:Button
+var vehicle_busy:=false
 func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	game=host;menu=session
 	menu.label(parent,"Developer spawner").add_theme_font_size_override("font_size",22)
@@ -11,9 +13,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	var row:=HBoxContainer.new();parent.add_child(row)
 	var search:=LineEdit.new();search.placeholder_text="Filter items…";search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
 	count=SpinBox.new();count.custom_minimum_size.x=160;count.min_value=1;count.max_value=999;count.value=1;count.prefix="Count ";row.add_child(count)
-	menu.button(parent,"Spawn drivable vehicle at aimed ground",func():
-		if not menu.developer:menu.message.text="Enter development mode first.";return
-		menu.set_open(false);game._show_lake_notice(game.world_vehicle.spawn(game)))
+	vehicle_button=menu.button(parent,"Spawn drivable vehicle nearby",spawn_vehicle)
 	var grid:=GridContainer.new();grid.columns=2;parent.add_child(grid)
 	for item:int in game.pickups.ITEMS:
 		var text:String="%s  ·  %d"%[game.pickups.ITEMS[item],item]
@@ -21,6 +21,21 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 		entries[item]=button
 	search.text_changed.connect(func(value:String):
 		for item:int in entries:entries[item].visible=value.is_empty() or value.to_lower() in entries[item].text.to_lower())
+func spawn_vehicle()->void:
+	if vehicle_busy:return
+	if not menu.developer:menu.message.text="Enter development mode first using Session → Enter development (~).";return
+	vehicle_busy=true;vehicle_button.disabled=true
+	menu.set_open(false)
+	game.world_vehicle.request_scene()
+	var deadline:=Time.get_ticks_msec()+10000
+	if not game.world_vehicle.scene_ready():game._show_lake_notice("Loading vehicle model…")
+	while is_instance_valid(game) and not game.shutdown_requested and not game.world_vehicle.scene_ready() and Time.get_ticks_msec()<deadline:await game.get_tree().process_frame
+	if not is_instance_valid(game) or game.shutdown_requested:return
+	var message:String=game.world_vehicle.spawn(game,-1,true)
+	vehicle_busy=false;vehicle_button.disabled=false
+	if game.world_vehicle.last_spawn_identity==0:
+		menu.set_open(true);menu.show_page("Developer");menu.message.text=message
+	game._show_lake_notice(message)
 func spawn(item:int)->void:
 	if not menu.developer:menu.message.text="Enter development mode first.";return
 	menu.set_open(false)

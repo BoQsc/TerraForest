@@ -109,7 +109,7 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	# This includes the support immediately beneath the parked vehicle.
 	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
-func spawn(world: Node,carried_slot:int=-1) -> String:
+func spawn(world: Node,carried_slot:int=-1,nearby:bool=false) -> String:
 	last_spawn_identity=0
 	if not can_interact():return "Vehicle interaction unavailable"
 	var inventory:RefCounted
@@ -119,7 +119,8 @@ func spawn(world: Node,carried_slot:int=-1) -> String:
 	else:
 		inventory=world.player_hud.inventory;state=inventory.snapshot()
 		if carried_slot>=32 or state.slots[carried_slot].item!=501:return "Equip an owned vehicle item to place it"
-	var message:=_spawn(world)
+	if nearby and carried_slot>=0:return "Nearby spawning is a development action"
+	var message:=_spawn(world,nearby)
 	if last_spawn_identity==0:return message
 	if carried_slot>=0:
 		var row:Dictionary=state.slots[carried_slot]
@@ -129,30 +130,18 @@ func spawn(world: Node,carried_slot:int=-1) -> String:
 	if "changed_since_save" in world.terrain:world.terrain.changed_since_save=true
 	if "player_hud" in world:world.player_hud.refresh()
 	return message
-func _spawn(world: Node) -> String:
+func _spawn(world: Node,nearby:bool=false) -> String:
 	if not can_interact(): return "Vehicle interaction unavailable"
 	if not fleet_enabled and is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
 	request_scene()
 	if not scene_ready():
 		if not _scene_requested or ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)==ResourceLoader.THREAD_LOAD_FAILED:
 			return "Vehicle resource could not be loaded"
-		return "Vehicle is loading · press V again shortly"
-	var from: Vector3=world.camera.global_position
-	var ray:=PhysicsRayQueryParameters3D.create(from,from-world.camera.global_basis.z*12,3,[world.player.get_rid()])
-	var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
-	if hit.is_empty() or hit.normal.dot(Vector3.UP)<0.9: return "Aim at nearby level ground"
-	var at: Vector3=hit.position+Vector3.UP*0.85
-	var bounds:=AABB(at-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))
-	if not ready_bounds(world,bounds): return "Vehicle area is still loading"
-	# Vehicle art/physics use +Z forward; player view uses -Z.
-	var heading:=Basis(Vector3.UP,world.player.global_rotation.y+PI)
-	var box:=BoxShape3D.new();box.size=Vector3(2.2,1.8,4.4)
-	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.transform=Transform3D(heading,at+Vector3.UP*0.3);query.collision_mask=15
-	# Keep the ground below the initial chassis and reject walls/objects/player.
-	if bounds.has_point(world.player.global_position): return "Place vehicle farther from the player"
-	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
-	if fleet_enabled:return activation.place(world,Transform3D(heading,at))
-	if not _install_vehicle(world,Transform3D(heading,at)): return "Vehicle resource could not be loaded"
+		return "Vehicle model is still loading; try again shortly"
+	var placement:Dictionary=preload("res://addons/vehicle_runtime/vehicle_placement.gd").find(world,self,nearby)
+	if not placement.ok:return placement.reason
+	if fleet_enabled:return activation.place(world,placement.pose)
+	if not _install_vehicle(world,placement.pose): return "Vehicle resource could not be loaded"
 	last_spawn_identity=car_identity
 	return "Vehicle placed · E nearby to enter · F5 saves world"
 func candidate(world:Node)->int:
