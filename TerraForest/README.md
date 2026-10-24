@@ -9,6 +9,10 @@ creation ordering; Create world includes a native terrain preview and coast opti
 Earlier launchers are preserved in `launchers/legacy/`, with their original save
 slots. The replacement workflow is tracked in [world workflow redesign](docs/WORLD_WORKFLOW_REDESIGN.md).
 
+The launcher waits for the icon check before opening the game. If either step
+fails, it reports the exit code and keeps the console available; diagnostics are
+in `reports/worlds_icons.log` and `reports/worlds_game.log`.
+
 ## Historical playable checkpoints
 
 Open `Worlds.cmd` (or run the project from Godot) for the world browser. Select a

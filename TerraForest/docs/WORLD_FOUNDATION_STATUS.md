@@ -1,3 +1,17 @@
+## Windows launcher exit-status fix, 2026-10-24
+
+`Worlds.cmd` could return silently before opening the browser. Windows PowerShell
+did not wait for the GUI-subsystem Godot executable, leaving `$LASTEXITCODE` null;
+the icon-check branch treated that as failure and then exited with a success code.
+Both native invocations now pipe to `Out-Host` to wait and retain their real exit
+codes. Launch steps and failures are visible, with dedicated icon/game logs under
+`reports/`. Automatic icon refresh remains enabled.
+All four `tools/test_worlds_launcher.py` checks pass using a compiled GUI-subsystem
+fixture through the actual CMD/PowerShell chain: check-only, ordered successful
+launch, icon failure and game failure, including paths containing spaces.
+Launching the real `Worlds.cmd` opens a responding TerraForest window after the
+successful icon check. No world-save or gameplay behavior changed.
+
 ## Flesh hit blood, 2026-10-24
 
 Accepted flesh hits now produce a short dark-red GPU droplet/mist spray at the

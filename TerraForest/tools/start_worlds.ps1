@@ -22,6 +22,21 @@ if (-not $engine) { throw 'Godot was not found. Set GODOT_EXE to your installed 
 if ($CheckOnly) { Write-Output $engine; exit 0 }
 $directEngine = Join-Path (Split-Path -Parent $engine) 'godot.windows.opt.tools.64.exe'
 if (Test-Path -LiteralPath $directEngine -PathType Leaf) { $engine = $directEngine }
-& $engine --headless --path $projectRoot --script res://tools/ensure_item_icons.gd
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& $engine --path $projectRoot --fullscreen --resolution 1920x1080 --max-fps 60 res://demo/worlds.tscn
+$reportRoot = Join-Path $projectRoot 'reports'
+New-Item -ItemType Directory -Force -Path $reportRoot | Out-Null
+$iconLog = Join-Path $reportRoot 'worlds_icons.log'
+$gameLog = Join-Path $reportRoot 'worlds_game.log'
+Write-Host 'Checking item icons...'
+& $engine --headless --path $projectRoot --log-file $iconLog --script res://tools/ensure_item_icons.gd | Out-Host
+$iconExit = $LASTEXITCODE
+if ($null -eq $iconExit) { throw 'Godot icon refresh did not return an exit status.' }
+if ($iconExit -ne 0) {
+    Write-Host "Item icon refresh failed (exit $iconExit). See $iconLog"
+    exit $iconExit
+}
+Write-Host 'Opening TerraForest world browser...'
+& $engine --path $projectRoot --log-file $gameLog --fullscreen --resolution 1920x1080 --max-fps 60 res://demo/worlds.tscn | Out-Host
+$gameExit = $LASTEXITCODE
+if ($null -eq $gameExit) { throw 'Godot did not return an exit status.' }
+if ($gameExit -ne 0) { Write-Host "TerraForest exited with an error (exit $gameExit). See $gameLog" }
+exit $gameExit
