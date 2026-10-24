@@ -13,7 +13,7 @@ func part(parent: Node3D,size: Vector3,at: Vector3,color: Color,angle: float=0.0
 	var mesh:=BoxMesh.new();mesh.size=size
 	var material:=StandardMaterial3D.new();material.albedo_color=color;material.roughness=0.8
 	var node:=MeshInstance3D.new();node.mesh=mesh;node.material_override=material;node.position=at;node.rotation.z=angle
-	node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;parent.add_child(node)
+	node.layers=1<<19;node.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;parent.add_child(node)
 var human = preload("res://addons/characters/runtime/human_view.gd").new()
 func _ready() -> void:
 	add_child(human)
@@ -36,7 +36,7 @@ func equip(id: int) -> void:
 	if id>=401 and id<=411:
 		id=401
 		if not tools.has(401):
-			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;bucket.position=Vector3(0.34,-0.32,-0.65);bucket.rotation=Vector3(-0.2,0.15,-0.28);add_child(bucket);tools[401]=bucket
+			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.layers=1<<19;bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;bucket.position=Vector3(0.34,-0.32,-0.65);bucket.rotation=Vector3(-0.2,0.15,-0.28);add_child(bucket);tools[401]=bucket
 
 	current=id
 	if motion!=null:motion.kill()

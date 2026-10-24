@@ -47,6 +47,7 @@ var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var equipped_tool:=0
 var editor_tool_active:=false
 var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
+var player_view=preload("res://addons/player_runtime/player_view.gd").new()
 var tool_use_after:=0
 var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
 var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
@@ -218,7 +219,7 @@ func _ready() -> void:
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
 	zombies.world_geometry=structures.blocks
-	zombies.spawn_visible=func(point:Vector3):return camera.is_position_in_frustum(point)
+	zombies.spawn_visible=func(point:Vector3):return get_viewport().get_camera_3d().is_position_in_frustum(point)
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.water.depth_at
 	zombies.obstacle_provider=_zombie_obstacle_target
@@ -355,6 +356,7 @@ func _ready() -> void:
 		var start_water=preload("res://addons/volumetric_water/water_start.gd").new();start_water.game=self;add_child(start_water)
 	lakes.lake_ready.connect(func(_id: int): _show_lake_notice("Lake ready · temporary world" if temporary_world else "Lake ready · F5 saves world"))
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
+	add_child(player_view);player_view.prepare(self)
 
 func _show_lake_notice(text: String) -> void:
 	var sync_started:=Time.get_ticks_usec()
@@ -1433,7 +1435,7 @@ func _process(delta: float) -> void:
 	ground_preview.update(self,delta)
 	_update_prefab_preview(delta)
 	model_tool.update(delta,_model_edit_available())
-	tool_view.visible=not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving
+	tool_view.visible=not world_vehicle.driving and (player_view.active or (not session_menu.visible_ui() and not player_hud.inventory_open))
 	if structures.blocks != null:
 		structures.blocks.set_focus(player.position)
 		if terrain.world_ready and (not temporary_world or terrain.backend.readonly_snapshot) and not shutdown_requested:

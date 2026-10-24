@@ -20,6 +20,7 @@ var session_message:Label
 var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
+var third_person_toggle:CheckButton
 var confirmation: ConfirmationDialog
 var pending_action: Callable
 var leaving_world:=false
@@ -61,6 +62,8 @@ func _ready() -> void:
 	button(session,"Save world",save_world)
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
+	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
+	third_person_toggle.toggled.connect(game.player_view.set_enabled);session.add_child(third_person_toggle)
 	mode_button=button(session,"Development mode",toggle_developer)
 	var target_toggle:=CheckButton.new();target_toggle.text="Show targeting visuals for all tools / weapons (testing)"
 	target_toggle.button_pressed=game.target_overlay.enabled

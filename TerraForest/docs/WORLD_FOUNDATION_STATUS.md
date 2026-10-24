@@ -1,3 +1,23 @@
+## Optional third-person view - 2026-10-24
+
+Escape → Session now has a Third-person camera toggle, off by default and retained
+as a player preference separately from world saves. The existing R11 player model
+is reused at the player's feet, with its head and body shadows restored. A native
+SpringArm3D sweeps a sphere to retract the shoulder camera before solid obstacles.
+Very close camera positions cull player geometry without disabling animations or
+held-tool actions. The original eye camera retains all aim/reach queries; the
+render camera centres the same visible target, so moving it back grants no extra
+reach. Visibility, canopy substitutes and underwater effects follow the active
+render camera. Vehicle cameras retain control while driving and restore the
+selected on-foot view on exit. First-person transforms and materials restore
+when disabled; the boom and aim update are idle in first person.
+
+Real forest/menu, collision, aim, attack timing, preference and vehicle-transition
+checks, inspected images and export evidence:
+[third-person view](evidence/third_person_view/README.md).
+This changes presentation only; movement ownership, saved worlds and existing
+navigation/world-quality requirements below are unchanged.
+
 ## Developer vehicle spawning - 2026-10-24
 
 The Escape Developer action now finds nearby visible clear ground instead of

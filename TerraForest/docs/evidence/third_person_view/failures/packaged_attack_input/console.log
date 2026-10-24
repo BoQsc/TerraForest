@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable forest and player ready
+PASS first person remains the default
+PASS ESC Session exposes the optional third-person checkbox
+PASS checkbox switches the actual viewport camera while leaving ESC open
+PASS view switching preserves the existing eye aim and player body
+PASS one full player model stands upright at the feet
+PASS third person restores the supplied model's head surfaces
+PASS visibility and underwater presentation use the actual render camera
+PASS render-camera centre agrees with the unchanged eye target
+PASS native spring arm retracts before a wall behind the player
+PASS shoulder sweep also retracts before a thin wall beside the player
+PASS very close obstacles hide body geometry without disabling held-tool actions
+FAIL held-tool attack starts in third person with a retracted camera
+FAIL third-person swing preserves its single authored animation contact
+PASS unchecking restores first-person camera and tool transforms
+PASS returning to first person reinstates hidden head surfaces
+PASS camera choice persists as a player preference
+PASS vehicle fixture admits on real nearby forest ground: Vehicle placed · E nearby to enter · F5 saves world
+PASS vehicle entry gives the vehicle camera control while remembering third person
+PASS changing the preference while driving leaves the vehicle camera in control
+PASS vehicle exit restores the selected on-foot third-person view
+[TerrainRewrite] Temporary test world: save skipped
+THIRD_PERSON_VIEW checks=21 failures=2

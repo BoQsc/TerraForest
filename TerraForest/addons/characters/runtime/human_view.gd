@@ -23,6 +23,9 @@ var contact_sent:=false
 # Contact poses in the authored clips (seconds on the animation timeline).
 const CONTACTS={"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
+var third_person:=false
+var face_surfaces:Array=[]
+var face_meshes:Dictionary={}
 @export var diagonal_pickaxe := true
 @export_enum("pullback", "diagonal") var pickaxe_swing := "pullback"
 
@@ -46,6 +49,8 @@ func _collect(node: Node) -> void:
 		animation_player = node
 	if node is MeshInstance3D:
 		meshes.append(node)
+		node.layers=1<<19 # Player presentation, independently culled near the camera.
+		face_meshes[node.get_instance_id()]=node.visible
 		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		# The source body combines skin and head in one skinned mesh. Hide only
 		# its head/mouth surfaces so the FP camera cannot see inside the face.
@@ -54,8 +59,16 @@ func _collect(node: Node) -> void:
 			if material != null and ("Human.Head" in material.resource_name or "Human.Mouth" in material.resource_name):
 				var hidden := ShaderMaterial.new();hidden.shader = HIDDEN_SURFACE
 				node.set_surface_override_material(index, hidden)
+				face_surfaces.append([node,index,hidden])
 	for child in node.get_children():
 		_collect(child)
+
+func set_third_person(value:bool)->void:
+	if third_person==value:return
+	third_person=value
+	for entry:Array in face_surfaces:entry[0].set_surface_override_material(entry[1],null if value else entry[2])
+	for mesh:MeshInstance3D in meshes:mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if value else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_sync_equipment()
 
 func equip(item: int) -> void:
 	cancel_swing()
@@ -73,7 +86,7 @@ func _sync_equipment() -> void:
 		if label.begins_with("equipment."):
 			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
-			mesh.hide()
+			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 
 func _motion_clip(action: String) -> String:
 	if current==0 and action=="Swing":return "FP_Place_Relaxed"
@@ -155,7 +168,7 @@ func _process(delta: float) -> void:
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
 	# Only the authored pickaxe/axe holds use locomotion presentation.
-	if current in [1, 2] and is_instance_valid(body):
+	if (third_person or current in [1, 2]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"
