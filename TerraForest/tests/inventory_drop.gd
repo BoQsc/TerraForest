@@ -2,6 +2,9 @@
 extends SceneTree
 var failures:=0
 var checks:=0
+class SnapshotTerrain extends Node:
+	var prepared_snapshot_components:Dictionary={}
+	var snapshot_restore_ok:=true
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -15,6 +18,7 @@ func run() -> void:
 	var pickups=load("res://addons/world_runtime/material_pickups.gd").new()
 	root.add_child(pickups)
 	check(pickups.prepare(persistence),"native pickup stores ready")
+	var restore_fixture:=SnapshotTerrain.new();root.add_child(restore_fixture);persistence._terrain=restore_fixture
 	var inventory: RefCounted=hud.inventory
 	var before: Dictionary=inventory.snapshot()
 	var slot:=4
@@ -49,6 +53,6 @@ func run() -> void:
 	saved_inventory=inventory.capture_storage_snapshot()
 	check(not pickups.drop_one(inventory,slot,revision,Vector3.ZERO).ok,"full native world store rejects drop")
 	check(inventory.snapshot().revision==revision and inventory.capture_storage_snapshot()==saved_inventory and store.statistics().active==4096,"capacity rejection leaves inventory revision and contents unchanged")
-	hud.free();pickups.free()
+	hud.free();pickups.free();restore_fixture.free()
 	print("INVENTORY_DROP checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

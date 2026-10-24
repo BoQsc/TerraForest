@@ -24,7 +24,7 @@ func copy_mesh(source:MeshInstance3D,model:Node3D)->void:
 	model.add_child(copy)
 func run() -> void:
 	var current_models:bool="--current-models" in OS.get_cmdline_user_args()
-	var selected:Array=["1","2","501"]
+	var selected:Array=["1","2","3","5","501"]
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--icon-items="):selected=Array(argument.trim_prefix("--icon-items=").split(",",false));current_models=true
 	var input_state:=Cache.snapshot();var baked:Array=[]
@@ -42,7 +42,11 @@ func run() -> void:
 	for i in Icons.KEYS.size():
 		var key: String=Icons.KEYS[i];var id:=key.to_int();var model:=Node3D.new();viewport.add_child(model)
 		if current_models and key not in selected:model.free();continue
-		if id in [1,2]:
+		if id in [3,5]:
+			var equipment:Node3D=tool.human.EQUIPMENT[id].instantiate()
+			viewport.add_child(equipment)
+			copy_visible(equipment,model);equipment.free()
+		elif id in [1,2]:
 			tool.human.equip(id)
 			for mesh:MeshInstance3D in tool.human.meshes:
 				var label:=String(mesh.name).to_lower().replace("_",".")
@@ -51,7 +55,7 @@ func run() -> void:
 			var car:RigidBody3D=load("res://vehicle_demo/scenes/car.tscn").instantiate()
 			car.freeze=true;car.process_mode=Node.PROCESS_MODE_DISABLED;viewport.add_child(car)
 			copy_visible(car,model);car.free()
-		elif id in [3,4]:
+		elif id==4:
 			for child in tool.tools[id].get_children():model.add_child(child.duplicate())
 		elif id in [101,102,103,104]:
 			var mesh:=BoxMesh.new();mesh.size=Vector3.ONE
@@ -77,7 +81,8 @@ func run() -> void:
 		else:
 			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Wooden fence":"fence","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
-		if id>0 and id!=501 and not current_models and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
+		if id>0 and id not in [3,5,501] and not current_models and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
+		if id in [3,5] and (not current_models or key in selected):bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5
 		if box.size.length_squared()<.000001:push_error("No current icon geometry for "+key);model.free();viewport.free();quit(1);return
 		camera.position=center+Vector3(1.3,0.9,2).normalized()*maxf(4,radius*3);camera.look_at(center);camera.size=maxf(0.1,radius*2.2)
@@ -85,7 +90,7 @@ func run() -> void:
 		for frame in 3:await RenderingServer.frame_post_draw
 		var image:=viewport.get_texture().get_image();image.resize(128,128,Image.INTERPOLATE_LANCZOS);atlas.blit_rect(image,Rect2i(0,0,128,128),Vector2i((i%8)*128,(i/8)*128))
 		if image.get_used_rect().size==Vector2i.ZERO:push_error("Empty current icon for "+key);model.free();viewport.free();quit(1);return
-		if id in [1,2,501]:
+		if id in [1,2,3,5,501]:
 			image.save_png("res://reports/current_item_icons/%d.png"%id)
 			print("CURRENT_ICON ",id," meshes=",model.get_child_count()," bounds=",box)
 		baked.append(key)
@@ -101,7 +106,7 @@ func bake_drop(model: Node3D,id: int) -> void:
 	for child: MeshInstance3D in model.get_children():
 		for surface in child.mesh.get_surface_count():
 			var material: Material=child.material_override if child.material_override!=null else child.mesh.surface_get_material(surface)
-			if id in [1,2,3,4] or id>=301:
+			if id in [1,2,4] or id>=301:
 				var arrays:=child.mesh.surface_get_arrays(surface)
 				var indices: PackedInt32Array=arrays[Mesh.ARRAY_INDEX]
 				var vertices: PackedVector3Array=arrays[Mesh.ARRAY_VERTEX]
@@ -112,7 +117,7 @@ func bake_drop(model: Node3D,id: int) -> void:
 					tool_surface.set_color(material.albedo_color);tool_surface.set_normal(child.basis*normals[index]);tool_surface.add_vertex(normalized*child.transform*vertices[index])
 			else:
 				var builder:=SurfaceTool.new();builder.begin(Mesh.PRIMITIVE_TRIANGLES);builder.append_from(child.mesh,surface,normalized*child.transform);builder.set_material(material);builder.commit(output)
-	if id in [1,2,3,4] or id>=301:
+	if id in [1,2,4] or id>=301:
 		var material:=StandardMaterial3D.new();material.vertex_color_use_as_albedo=true;material.roughness=0.8;tool_surface.set_material(material);tool_surface.commit(output)
 	DirAccess.make_dir_recursive_absolute("res://addons/player_runtime/art/drops")
-	if ResourceSaver.save(output,"res://addons/player_runtime/art/drops/%d.res"%id)!=OK:push_error("Drop mesh bake failed")
+	if ResourceSaver.save(output,"res://addons/player_runtime/art/drops/%d.res"%id,ResourceSaver.FLAG_COMPRESS if id in [3,5] else 0)!=OK:push_error("Drop mesh bake failed")

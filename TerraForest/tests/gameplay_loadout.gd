@@ -2,6 +2,9 @@
 extends SceneTree
 var checks:=0
 var failures:=0
+class SnapshotTerrain extends Node:
+	var prepared_snapshot_components:Dictionary={}
+	var snapshot_restore_ok:=true
 func check(ok: bool, label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -24,6 +27,7 @@ func run() -> void:
 	check(gameplay.prepare() and gameplay.capture_snapshot()==initial,"repeated prepare cannot duplicate starter stock")
 	var persistence=preload("res://addons/world_runtime/world_persistence.gd").new()
 	check(persistence.register_component("player_loadout",gameplay.capture_snapshot,gameplay.restore_snapshot,gameplay.inventory,gameplay.default_loadout),"default passes persistence validation")
+	var restore_fixture:=SnapshotTerrain.new();root.add_child(restore_fixture);persistence._terrain=restore_fixture
 	check(gameplay.inventory.consume_items(PackedInt64Array([101,64,102,63,103,10,104,64]),gameplay.inventory.snapshot().revision).ok,"spend mixed starter materials")
 	var spent: PackedByteArray=gameplay.capture_snapshot()
 	var path:="user://gameplay_loadout_%d.bin"%OS.get_process_id()
@@ -39,6 +43,6 @@ func run() -> void:
 	persistence._restore({},4)
 	check(gameplay.capture_snapshot()==initial,"missing loadout section receives the configured new-world default")
 	DirAccess.remove_absolute(path)
-	editor.free();gameplay.free()
+	editor.free();gameplay.free();restore_fixture.free()
 	print("GAMEPLAY_LOADOUT ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)

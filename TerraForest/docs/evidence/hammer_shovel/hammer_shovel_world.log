@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable temporary world ready
+PASS existing item IDs preserved; shovel is item 5
+PASS crafting makes one durable shovel for two wood and two metal
+PASS old loadout without shovel restores without free grants
+PASS new shovel survives native inventory save/restore
+PASS shovel equips through the ordinary inventory path without editor controls
+PASS shovel drops as a collectible native pickup
+PASS recollecting shovel preserves wear
+PASS compound restore preserves dropped shovel ownership
+PASS saved shovel pickup recollects once with its saved wear
+PASS real block collider publishes before the hammer check
+HAMMER_INPUT {"admitted":true,"focused":true,"item":3,"mouse":2,"profile":{"clip":"FP_Hammer_Swing","contact":0.466666666666667,"duration":1.0},"remaining":0.0,"target":{"cell":"(800, 59, 1310)","health":60,"key":"block:800:59:1310","kind":"block","material":"wood","name":"Building block"},"ui":false,"visible":true}
+PASS hammer repair windup does not mutate target
+PASS Blender hammer repairs exactly once and consumes one wear point
+HAMMER_RESULT {"damage":15,"focused":true,"impacts":[{"accepted":true,"identity":1,"time":0.466666666666667}],"mouse":2,"target":{"cell":"(800, 59, 1310)","health":60,"key":"block:800:59:1310","kind":"block","material":"wood","name":"Building block"}}
+PASS hammer repair uses Blender contact frame 28
+PASS loaded nearby terrain available for shovel
+PASS shovel aims at real terrain within normal reach
+PASS mouse starts shovel windup before excavation
+PASS shovel contact publishes real native excavation and mining rewards
+PASS shovel excavation uses frame 34 and consumes wear once
+PASS shovel has a static inventory icon and baked world pickup mesh
+PASS Hammer has dense geometry and embedded PBR base color, roughness and normal maps
+PASS Shovel has dense geometry and embedded PBR base color, roughness and normal maps
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary compound world closes consistently
+HAMMER_SHOVEL checks=23 failures=0

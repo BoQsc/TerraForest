@@ -7,7 +7,7 @@ const WORLD={"terrain":30,"tree":90,"actor":100,"vehicle":300,"model":90}
 const BLOCK_MAXIMUM=[90,60,120,180]
 # GroundCatalog species order: stone, fern, grass, three flowers, low bush, twigs, woody bush.
 const COVER_MAXIMUM=[45,10,10,10,10,10,40,10,2]
-const TOOLS={1:200,2:200,3:200,4:200}
+const TOOLS={1:200,2:200,3:200,4:200,5:200}
 const MODELS={
 	"furniture/table/v1":{"name":"Wooden table","health":90,"material":"wood"},
 	"furniture/chair/v1":{"name":"Wooden chair","health":90,"material":"wood"},

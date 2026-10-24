@@ -36,15 +36,15 @@ func run()->void:
 	check(tools.begin_attack(4),"fresh swing after cancellation")
 	human._process(0.1);tools.equip(2);human._process(2)
 	check(contacts.size()==2 and ends[-1].id==4 and ends[-1].cancelled,"equip cancels pending contact without a ghost hit")
-	for item in [0,2]:
+	for item in [0,2,3,5]:
 		tools.equip(item);var count:=contacts.size();var current:Dictionary=tools.attack_profile()
-		check(not current.is_empty() and tools.begin_attack(10+item),"hand/axe has an actual visible strike "+str(item))
+		check(not current.is_empty() and tools.begin_attack(10+item),"authored tool has an actual visible strike "+str(item))
 		human._process(current.contact-0.01)
-		check(contacts.size()==count,"hand/axe windup does not hit "+str(item))
+		check(contacts.size()==count,"authored windup does not hit "+str(item))
 		human._process(0.02)
-		check(contacts.size()==count+1,"hand/axe emits at its contact pose "+str(item))
+		check(contacts.size()==count+1 and is_equal_approx(contacts[-1].position,current.contact) and tools.contact_ready(10+item),"authored tool emits once at the exact contact pose "+str(item))
 		human._process(2)
-	for item in [3,4]:
+	for item in [4]:
 		tools.equip(item);var count:=contacts.size()
 		check(tools.begin_attack(20+item),"procedural held tool starts "+str(item))
 		check(contacts.size()==count,"procedural tool has no immediate hit "+str(item))

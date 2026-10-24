@@ -10,7 +10,7 @@ var pending:Dictionary={}
 var last_hit:=false
 signal impact_resolved(identity:int,accepted:bool)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
-const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15}}
+const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10}}
 func prepare(world: Node) -> bool:
 	game=world;durability=ClassDB.instantiate("NativeWorldDurability")
 	game.tool_view.attack_allowed=can_continue
@@ -128,7 +128,8 @@ func apply_target(t: Dictionary) -> bool:
 	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
-	var result: Dictionary=durability.hit(t.key,t.health,1 if t.kind=="cover" and t.get("species",-1)==8 else TOOLS[item][t.material])
+	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
+	var result: Dictionary=durability.hit(t.key,t.health,1 if t.kind=="cover" and t.get("species",-1)==8 else damage)
 	if not result.ok:game._show_lake_notice(result.get("reason","Damage unavailable"));return false
 	game.terrain.changed_since_save=true
 	rejection_reason=""

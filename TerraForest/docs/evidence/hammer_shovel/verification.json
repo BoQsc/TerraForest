@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "world": 23,
+    "timing": 27,
+    "loadout": 13,
+    "drops": 16,
+    "icons": 6
+  },
+  "total_passed": 85,
+  "visual_review": "User authorized committing the current revised tools on 2026-10-24; engineering checks do not certify unrelated world quality or performance.",
+  "sha256": {
+    "addons/characters/authoring/Human.hammer.blend": "5060e06c607689bd3f725507985e4c24d6fb3463c6088c42437182ebdbb833b4",
+    "addons/characters/authoring/Human.shovel.blend": "66e4172c8f0cfb139806a808d3fb0c9a788d75690c9b69227b40cfd3705e86bf",
+    "addons/characters/runtime/assets/Hammer.glb": "4f38b696f22e495a77df2119ca97d7ec3c829fe5374d333674779710b77c1d54",
+    "addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
+    "addons/characters/runtime/assets/Human.hammer.res": "a0efd00e897b9698914a112adfa3bec8f48f78385fdc67725986472ec55b67b6",
+    "addons/characters/runtime/assets/Human.shovel.res": "04b03d5b435607298f7785f37343f66cff0b1a1d6bb42f8756b467449a91c9d7",
+    "addons/player_runtime/art/drops/3.res": "588e891e9f6ad2c06c83fed82238dc5c8e3b2cbbaebc6ce2b31ef9cf3dbfedd6",
+    "addons/player_runtime/art/drops/5.res": "6dc8cd1b736678f2122e6b765f18a6f9cda36ebf476bfa7b18e17f7c506111e2"
+  }
+}

@@ -5,6 +5,13 @@ mode, gameplay tools, selectable empty belt slots and player/chest drag-and-drop
 controls. Existing IDs 1-4 now identify pickaxe, hatchet, building hammer and
 assembly tool; inventory bytes and slots are unchanged.
 
+The repair hammer now uses a Blender-authored R11 hand grip and strike. The
+new shovel is item 5, crafted for two wood and two metal or obtained from the
+developer pickup spawner. It has a two-handed digging animation, 200 durability,
+static model icons and wear-preserving world drops. Existing starter belts and
+saved inventories keep their contents. Both tools use the existing single
+contact/recovery pipeline; see the [Blender sources and rebuild guide](../characters/authoring/Human.hammer_shovel.README.md).
+
 Default world launches remain the free editor. `Play Gameplay Construction.cmd`
 selects a separate `gameplay_construction` save slot and passes
 `--gameplay-construction`. The HUD identifies the active construction mode.

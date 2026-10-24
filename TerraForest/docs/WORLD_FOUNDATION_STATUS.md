@@ -1,3 +1,22 @@
+## Blender hammer and shovel - 2026-10-24
+
+The existing repair hammer now has Blender-authored R11 hands and a strike;
+the new shovel is durable item 5 with crafting, mining, static model icons and
+wear-preserving native pickups. Existing IDs, starter belts and saved contents
+keep their identities. Each tool has five authored actions and one visible
+gameplay contact. The original R11 body, pickaxe and hatchet remain intact.
+
+The current heads use dense smooth geometry and brushed-steel PBR maps. The
+hammer's projecting peen and the shovel's rectangular shoulder treads are
+removed. The shovel's cutting end leads forward, while the inside of the scoop
+is visible to the player. The earlier rounded-back interpretation was rejected.
+
+The user requested committing this revision after the head-quality, orientation
+and shoulder-tread changes. Earlier rejected variants are superseded. These
+tool checks do not certify unrelated world quality or sustained performance.
+Source/rebuild details, technical coverage, retained fixture failures and review history:
+[hammer and shovel evidence](evidence/hammer_shovel/README.md).
+
 ## Gathering boulders, falling trees and corpse storage - 2026-10-24
 
 Sparse native ground-cover boulders retain existing harvest identities, use shared

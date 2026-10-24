@@ -34,7 +34,7 @@ func run()->void:
 	wear=inventory.snapshot().slots[hud.active_slot].wear
 	attack.next_attack=0;attack.attack(true);await preload("res://tests/swing_driver.gd").finish(game)
 	check(attack.durability.damage(key,60)==0 and inventory.snapshot().slots[hud.active_slot].wear==wear,"fully repaired targets consume no hammer wear")
-	for item:int in [1,2,3,4]:
+	for item:int in [1,2,3,4,5]:
 		hud.equip_item(item);game.target_overlay.enabled=true;game.target_overlay.timer=0;game.target_overlay._process(.2)
 		check(game.target_overlay.visible,"global targeting overlay works for item %d"%item)
 	hud.equip_item(3);game.target_overlay.enabled=false;game.target_overlay._process(.2)

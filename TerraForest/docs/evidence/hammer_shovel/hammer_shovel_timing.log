@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pickaxe contact uses authored frame 32 of the 72-frame swing
+PASS one visible pickaxe swing starts
+PASS windup has no contact
+PASS another request cannot restart or hide a swing
+PASS crossing contact holds the exact visible contact pose and emits once
+PASS recovery cannot generate another hit
+PASS full recovery finishes before the next attack
+PASS slowed animation starts
+PASS slower playback also delays contact
+PASS contact follows animation playback speed
+PASS fresh swing after cancellation
+PASS equip cancels pending contact without a ghost hit
+PASS authored tool has an actual visible strike 0
+PASS authored windup does not hit 0
+PASS authored tool emits once at the exact contact pose 0
+PASS authored tool has an actual visible strike 2
+PASS authored windup does not hit 2
+PASS authored tool emits once at the exact contact pose 2
+PASS authored tool has an actual visible strike 3
+PASS authored windup does not hit 3
+PASS authored tool emits once at the exact contact pose 3
+PASS authored tool has an actual visible strike 5
+PASS authored windup does not hit 5
+PASS authored tool emits once at the exact contact pose 5
+PASS procedural held tool starts 4
+PASS procedural tool has no immediate hit 4
+PASS procedural contact/recovery completes once 4
+ATTACK_ANIMATION_TIMING checks=27 failures=0

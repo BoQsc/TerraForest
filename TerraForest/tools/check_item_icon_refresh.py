@@ -75,7 +75,7 @@ def main():
         original_receipt = receipt.read_bytes()
         receipt.unlink()
         try:
-            assert '["1", "2", "501"]' in run("missing_receipt", True, 2)
+            assert '["1", "2", "3", "5", "501"]' in run("missing_receipt", True, 2)
             passed("missing dependency receipt requests a refresh")
         finally:
             assert not receipt.exists(), "Receipt changed concurrently"

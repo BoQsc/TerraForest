@@ -126,7 +126,7 @@ func run() -> void:
 
 
 	# Empty slots and resources are equipment states, never editor mode selectors.
-	check(game.player_hud.CATALOG=={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool"},"saved item IDs retain four distinct gameplay tools")
+	check(game.player_hud.CATALOG=={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel"},"saved tool IDs stay stable and shovel has its own item ID")
 	check(inv.transfer(9,30,1,inv.snapshot().revision).ok,"move equipped pickaxe out of belt")
 	game.player_hud.refresh()
 	check(game.equipped_tool==0 and game.tool_view.current==0,"moving the equipped tool away puts it down")

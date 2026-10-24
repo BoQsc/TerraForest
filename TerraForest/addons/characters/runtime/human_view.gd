@@ -7,6 +7,10 @@ const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
 const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
 const PICKAXE_PULLBACK = preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
+const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
+const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
+const EQUIPMENT = {3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
+const AUTHORED_TOOLS = [0,1,2,3,5]
 const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.gdshader")
 var model: Node3D
 var animation_player: AnimationPlayer
@@ -21,7 +25,7 @@ var swing_clip:=""
 var contact_seconds:=0.0
 var contact_sent:=false
 # Contact poses in the authored clips (seconds on the animation timeline).
-const CONTACTS={"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
+const CONTACTS={"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
 var face_surfaces:Array=[]
@@ -35,11 +39,24 @@ func _ready() -> void:
 	rotation.y = PI
 	model = MODEL.instantiate()
 	add_child(model)
+	# Rigid tools share the existing weapon bones and the same skinned hands.
+	var skeleton:=model.find_children("*","Skeleton3D",true,false)[0] as Skeleton3D
+	for item:int in EQUIPMENT:
+		var attachment:=BoneAttachment3D.new()
+		attachment.bone_name="Weapon_Axe" if item==3 else "Weapon_Pickaxe"
+		skeleton.add_child(attachment)
+		var equipment:Node3D=EQUIPMENT[item].instantiate()
+		attachment.add_child(equipment)
+		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
+		# attachments carry that conversion too; undo the rest basis once.
+		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
 	_collect(model)
 	animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	animation_player.add_animation_library("placement", PLACEMENT)
 	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
 	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
+	animation_player.add_animation_library("hammer", HAMMER)
+	animation_player.add_animation_library("shovel", SHOVEL)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	equip(current)
@@ -84,7 +101,7 @@ func _sync_equipment() -> void:
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")))
+			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 
@@ -94,7 +111,7 @@ func _motion_clip(action: String) -> String:
 		return "FP_Pickaxe_SidePullback_Swing"
 	if current == 1 and diagonal_pickaxe and clips.has("FP_Pickaxe_Diagonal_" + action):
 		return "FP_Pickaxe_Diagonal_" + action
-	var prefix := "FP_Pickaxe_" if current == 1 else ("FP_Axe_" if current == 2 else "")
+	var prefix:String={1:"FP_Pickaxe_",2:"FP_Axe_",3:"FP_Hammer_",5:"FP_Shovel_"}.get(current,"")
 	return prefix + action if clips.has(prefix + action) else action
 
 func _play(clip: String, once: bool = false) -> void:
@@ -168,7 +185,7 @@ func _process(delta: float) -> void:
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
 	# Only the authored pickaxe/axe holds use locomotion presentation.
-	if (third_person or current in [1, 2]) and is_instance_valid(body):
+	if (third_person or current in [1, 2, 3, 5]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"
