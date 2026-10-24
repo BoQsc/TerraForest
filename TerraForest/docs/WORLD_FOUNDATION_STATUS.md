@@ -1,3 +1,19 @@
+## Alt-Tab input recovery - 2026-10-24
+
+Temporary Alt access to tool controls now remembers when application focus loss
+ends its cursor ownership. After application/main-window focus returns, a deferred
+check restores mouse capture only if gameplay owns input. Inventory, session,
+tool settings and map interfaces keep their cursor. A later root-window focus
+event also handles returning through a native dialog. Focus loss still clears
+held movement/strokes; fresh movement and mouse look resume without Escape.
+
+Alt-Tab is excluded from the inventory shortcut using both the event modifier and
+physical Alt state; plain Tab retains inventory behavior. Real-scene regression
+checks inject input and both focus-notification orders, including a missing Alt
+key-up, stale tool popup, modal preservation and delayed main-window focus.
+Source, development-controls and exported-runtime evidence:
+[focus recovery](evidence/focus_return/README.md).
+
 ## Ground-aware placement targeting - 2026-10-24
 
 Single blocks and ordinary objects now fit their aimed footprint through a fixed

@@ -379,6 +379,8 @@ func set_open(value: bool) -> void:
 func _input(event: InputEvent) -> void:
 	if not enabled: return
 	if event is InputEventKey and event.pressed and not event.echo:
+		# OS window switching must never open (or close) the inventory.
+		if event.physical_keycode==KEY_TAB and (event.alt_pressed or event.meta_pressed or Input.is_physical_key_pressed(KEY_ALT)):return
 		if event.physical_keycode==KEY_TAB or (inventory_open and event.physical_keycode==KEY_ESCAPE):
 			set_open(not inventory_open);get_viewport().set_input_as_handled();return
 		if event.alt_pressed and event.physical_keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:

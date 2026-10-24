@@ -5,6 +5,7 @@ var panel: PanelContainer
 var content: VBoxContainer
 var hidden_by_user:=false
 var mouse_access:=false
+var resume_mouse_after_focus:=false
 var displayed_slot:=-1
 var displayed_developer:=false
 var title: Label
@@ -21,6 +22,7 @@ func _ready() -> void:
 	panel.add_theme_stylebox_override("panel",style)
 	content=VBoxContainer.new();content.add_theme_constant_override("separation",10);panel.add_child(content)
 	game.player_hud.menu_changed.connect(func(_value: bool):refresh())
+	get_window().focus_entered.connect(_restore_mouse_after_focus,CONNECT_DEFERRED)
 	refresh()
 func label(text: String) -> Label:
 	var out:=Label.new();out.text=text;out.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;out.custom_minimum_size.x=290;content.add_child(out);return out
@@ -119,4 +121,15 @@ func end_mouse_access()->void:
 	for child in content.get_children():
 		if child is OptionButton:child.get_popup().hide()
 func _notification(what: int) -> void:
-	if what==NOTIFICATION_APPLICATION_FOCUS_OUT:end_mouse_access()
+	if what==NOTIFICATION_APPLICATION_FOCUS_OUT:
+		# Alt's release may go to another application. End the temporary UI lease,
+		# then restore aiming only after focus returns and real menus are checked.
+		resume_mouse_after_focus=resume_mouse_after_focus or mouse_access
+		end_mouse_access()
+	elif what==NOTIFICATION_APPLICATION_FOCUS_IN and resume_mouse_after_focus:
+		_restore_mouse_after_focus.call_deferred()
+func _restore_mouse_after_focus()->void:
+	if not resume_mouse_after_focus or not game.app_focused:return
+	resume_mouse_after_focus=false
+	if game.loading_active or game.shutdown_requested or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.storage.opened:return
+	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
