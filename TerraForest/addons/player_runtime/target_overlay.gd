@@ -22,6 +22,8 @@ func set_enabled(value:bool)->void:
 func _process(delta:float)->void:
 	if not enabled or not game._model_edit_available() or game.session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:
 		hide();return
+	# Carried terrain has its own always-on placement footprint.
+	if not game.session_menu.developer and game.equipped_tool in game.mining_rewards.TERRAIN_ITEMS:hide();return
 	timer-=delta
 	if timer>0:return
 	timer=.1

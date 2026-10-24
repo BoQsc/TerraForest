@@ -41,6 +41,7 @@ var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
 var world_interaction=preload("res://demo/world_interaction.gd").new()
 var terrain_placement=preload("res://addons/player_runtime/terrain_placement.gd").new()
+var terrain_placement_preview=preload("res://addons/player_runtime/terrain_placement_preview.gd").new()
 var target_overlay=preload("res://addons/player_runtime/target_overlay.gd").new()
 var vehicle_radial=preload("res://addons/vehicle_runtime/vehicle_radial.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
@@ -262,6 +263,7 @@ func _ready() -> void:
 	add_child(corpse_loot)
 	session_menu.world_page_factory=_make_world_locations
 	target_overlay.game=self;add_child(target_overlay)
+	add_child(terrain_placement_preview)
 	vehicle_radial.game=self;add_child(vehicle_radial)
 	# Optional cosmetic module: removing its folder leaves gameplay intact.
 	var effects_path:="res://addons/impact_effects/impact_effects.gd"
@@ -1449,6 +1451,7 @@ func _process(delta: float) -> void:
 	terrain._record_stage("world pickups",(Time.get_ticks_usec()-section_begin)/1000.0)
 	terrain._record_stage("controller process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 	ground_preview.update(self,delta)
+	terrain_placement_preview.update(self,delta)
 	_update_prefab_preview(delta)
 	model_tool.update(delta,_model_edit_available())
 	tool_view.visible=not world_vehicle.driving and (player_view.active or (not session_menu.visible_ui() and not player_hud.inventory_open))

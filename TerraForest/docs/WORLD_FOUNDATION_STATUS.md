@@ -1,3 +1,25 @@
+## Terrain placement targeting preview - octahedron, 2026-10-24
+
+Carried topsoil, stone and both ores now show a dedicated placement marker without
+requiring the optional all-tools debug overlay. The first rounded/spherical
+design was explicitly rejected. It has been replaced with an eight-face
+octahedron with straight thin edges and a light face tint: green for spatially
+clear targets, red for obstruction, amber for unavailable collision, plus a short
+material/action or reason caption. User acceptance of the revised shape is open.
+
+Preview and click use the same snapped target and clearance query; the click
+revalidates live state. One cached mesh and physics shape serve bounded 20 Hz
+preview queries. UI/focus loss, tool changes, missing support and pending edits
+hide the display. The marker shows the placement unit, not a prediction of the
+final terrain mesh after it blends with neighbouring density.
+
+Twenty integrated checks pass, including exact displayed-cell payment, native
+topsoil readback, obstruction without payment, all four materials, and hiding.
+Ready/blocked/placed images were inspected. Export and packaged startup pass.
+The two earlier fixture failures and rejected sphere are retained; detailed
+coverage and the existing material-probe boundary limitation are recorded in
+[terrain placement preview evidence](evidence/terrain_placement_preview/README.md).
+
 ## Material impact particles - preserved baseline and grounded style, 2026-10-24
 
 The user accepted the original impact feel as a fallback, but judged its appearance
