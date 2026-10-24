@@ -1,5 +1,35 @@
 # Developer vehicle spawning
 
+## First-click correction, 2026-10-24
+
+The previous implementation still required entering development mode before the
+vehicle button would act. Its fixture explicitly expected that rejection, which
+missed the user's actual first-click workflow. The user reproduced failure again;
+the earlier successful records below do not qualify the corrected requirement.
+
+Both the main spawn button and **Drivable vehicle · 501** now call a direct
+vehicle request in ordinary gameplay. There is no aim, mode, focus, terrain
+publication, slope or full-footprint admission gate for this action. A few native
+ground/clearance queries prefer a nearby open pose, but failure to find one falls
+back to a frozen vehicle in front of the player. This force-spawn action can
+intersect scenery in an enclosed area; it does not alter terrain or delete trees
+to make room. Driving retains its existing collision-readiness policy. A full
+live-body pool parks another vehicle while preserving its record. Normal carried
+vehicle-item placement is unchanged. Only a genuine model/storage creation error
+can fail the request. Loading waits on the original click, with no ten-second
+retry deadline or duplicate-click creation.
+
+At the user's request, verification was limited to one focused exported-game
+run: [first-click result](first_click/console.log), [manifest](first_click/run.json).
+Its seven assertions cover ordinary gameplay, sky aim, an ordinary interaction
+callback deliberately returning unavailable, a visible frozen body from one click,
+unchanged gameplay mode and the vehicle item-list button's first click as well.
+The [capture](first_click/nearby_vehicle.png) was inspected. The updated exported
+pack and native libraries are installed in dist. Older source/lifecycle/package
+records below describe the superseded placement-gated behavior and remain retained.
+
+## Earlier placement-gated implementation
+
 2026-10-24. The Escape Developer button required the centre camera ray to hit
 level ground within twelve metres, then closed the menu and only showed a brief
 world notice on rejection. Looking straight ahead could miss ground entirely.

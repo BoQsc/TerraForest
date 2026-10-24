@@ -1,6 +1,26 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 # Bounded click-time admission. Native block/physics queries own the geometry.
+static func requested_pose(world:Node)->Transform3D:
+	# A direct developer spawn always has a result. Prefer a clear chassis-sized
+	# space, but neither slopes, incomplete terrain nor a tight area reject it.
+	var heading:=Basis(Vector3.UP,world.player.global_rotation.y+PI)
+	var space:PhysicsDirectSpaceState3D=world.get_world_3d().direct_space_state
+	var box:=BoxShape3D.new();box.size=Vector3(2.2,1.8,4.4)
+	var query:=PhysicsShapeQueryParameters3D.new();query.shape=box;query.collision_mask=7
+	var fallback:=Transform3D(heading,world.player.global_position+heading.z*5+Vector3.UP*.85)
+	for distance:float in [5.0,7.0,9.0]:
+		for side:float in [0.0,3.0,-3.0]:
+			var point:Vector3=world.player.global_position+heading.z*distance+heading.x*side
+			point.x=clampf(point.x,2,1998);point.z=clampf(point.z,2,1998)
+			var ground:Dictionary=space.intersect_ray(PhysicsRayQueryParameters3D.create(point+Vector3.UP*4,point-Vector3.UP*12,3,[world.player.get_rid()]))
+			if not ground.is_empty():point.y=ground.position.y
+			point.y=clampf(point.y+.85,0,600)
+			var pose:=Transform3D(heading,point)
+			if distance==5.0 and side==0.0:fallback=pose
+			query.transform=pose*Transform3D(Basis.IDENTITY,Vector3.UP*.3)
+			if space.intersect_shape(query,1).is_empty():return pose
+	return fallback
 static func at_ground(world:Node,session:Node,hit:Dictionary,heading:Basis)->Dictionary:
 	if hit.is_empty() or hit.normal.dot(Vector3.UP)<.9:return {"ok":false,"reason":"Aim at nearby level ground"}
 	var ground:Vector3=hit.position

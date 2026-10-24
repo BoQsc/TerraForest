@@ -24,12 +24,12 @@ func reset() -> void:
 	if is_instance_valid(parked_view):parked_view.refresh(Vector3(NAN,0,0),0,PackedInt64Array(),1)
 	for id: int in residents.keys():retire(id)
 	timer=0
-func admit(world: Node,id: int) -> bool:
+func admit(world: Node,id: int,requested:bool=false) -> bool:
 	if residents.has(id):return true
 	var record: Dictionary=owner.fleet.get_record(id)
 	if not record.present:return false
 	var pose: Transform3D=record.pose
-	if not owner.ready_bounds(world,AABB(pose.origin-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))):return false
+	if not requested and not owner.ready_bounds(world,AABB(pose.origin-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))):return false
 	var body: RigidBody3D
 	for candidate in bodies:
 		if not residents.values().has(candidate):body=candidate;break
@@ -89,6 +89,21 @@ func place(world: Node,pose: Transform3D) -> String:
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
 	owner.last_spawn_identity=id
 	return "Vehicle placed · E nearby to enter · F5 saves world"
+func place_requested(world:Node,pose:Transform3D)->String:
+	if residents.size()>=CAPACITY:
+		var retired:=0;var farthest:=-1.0
+		for id:int in residents:
+			if owner.driving and id==owner.car_identity:continue
+			var distance:float=residents[id].global_position.distance_squared_to(world.player.global_position)
+			if distance>farthest:retired=id;farthest=distance
+		if retired>0:
+			owner.fleet.set_pose(retired,residents[retired].global_transform)
+			owner.coasting.erase(retired);retire(retired)
+	var id:int=owner.fleet.spawn(pose)
+	if id==0:return "Vehicle storage could not create the vehicle"
+	if not admit(world,id,true):owner.fleet.remove(id);return "Vehicle model could not be created"
+	owner.last_spawn_identity=id;refresh_parked(world)
+	return "Vehicle spawned nearby"
 func select_for_entry(point: Vector3,expected:int=0) -> void:
 	if parked_view==null:
 		owner.car=null;owner.car_identity=0;timer=0;return

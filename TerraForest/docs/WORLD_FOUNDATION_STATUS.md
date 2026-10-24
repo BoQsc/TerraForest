@@ -20,19 +20,21 @@ navigation/world-quality requirements below are unchanged.
 
 ## Developer vehicle spawning - 2026-10-24
 
-The Escape Developer action now finds nearby visible clear ground instead of
-requiring a precise twelve-metre camera ray. It tries at most nine positions
-ahead, checks the entire vehicle footprint through native support queries, and
-retains collision/readiness, player-clearance and fleet-capacity admission. A
-new fleet record must admit a visible live body before the action reports success;
-failed admission removes that record. A resource still loading is awaited by the
-button, with duplicate clicks disabled. Failure reopens the Developer page with
-the reason visible; success closes it and shows the car. Paid carried-vehicle
-placement keeps explicit aiming and now shares footprint support checks.
+Corrected after the user's failed first click: opening the Developer page does
+not imply development mode, and the original check incorrectly required a mode
+switch. Both the main vehicle button and the vehicle list entry now directly
+request a visible frozen vehicle while gameplay stays active. Neither aim,
+placement readiness, focus, footprint/slope rules nor a full live-body pool reject
+this explicit request. A ground sample and simple clearance preference select a
+nearby pose; tight areas have a forced fallback. The existing driving readiness
+policy still controls physical movement. A full live pool parks one other body
+without deleting its saved record. Model loading remains attached to the first
+click without a retry deadline. Owned-item placement retains its existing rules.
 
-Actual menu actions on streamed forest terrain, standalone vehicle lifecycle,
-missing-support rejection and exported-runtime checks are retained with inspected
-images in [vehicle spawn evidence](evidence/developer_vehicle_spawn/README.md).
+One focused exported-game run checks first clicks from gameplay through both
+controls, sky aim and an unavailable ordinary-placement callback. The previous
+mode-rejection expectation is retained as historical evidence and explicitly
+superseded in [vehicle spawn evidence](evidence/developer_vehicle_spawn/README.md).
 Existing driving physics, parked stance height and world-save schemas are unchanged.
 
 ## Zombie combat, perception and passive corpses - 2026-10-24

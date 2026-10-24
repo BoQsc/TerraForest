@@ -109,6 +109,22 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	# This includes the support immediately beneath the parked vehicle.
 	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
+func spawn_requested(world:Node)->String:
+	# Explicit Developer-menu request. This is not paid item placement and must
+	# not depend on aim, gameplay/development mode, focus or collision publication.
+	last_spawn_identity=0
+	if not scene_ready():return "Vehicle model could not be loaded"
+	var pose:Transform3D=preload("res://addons/vehicle_runtime/vehicle_placement.gd").requested_pose(world)
+	if fleet_enabled:
+		var message:String=activation.place_requested(world,pose)
+		if last_spawn_identity==0:return message
+	else:
+		if is_instance_valid(car):
+			if not driving:coasting.erase(car_identity);car.restore_parked(pose);fleet.set_pose(car_identity,pose)
+		elif not _install_vehicle(world,pose):return "Vehicle model could not be loaded"
+		last_spawn_identity=car_identity
+	world.terrain.changed_since_save=true
+	return "Vehicle spawned nearby · E nearby to enter · F5 saves world"
 func spawn(world: Node,carried_slot:int=-1,nearby:bool=false) -> String:
 	last_spawn_identity=0
 	if not can_interact():return "Vehicle interaction unavailable"
