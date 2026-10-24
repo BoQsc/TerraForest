@@ -232,15 +232,20 @@ func run()->void:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
  progress("Baking streets and location metadata")
- var poses:Array=Planner.paving(plan)
- if not market.is_empty():poses.append_array(Planner.paving(market))
- var collection=game.structures.model(preload("res://addons/structures/paving_catalog.gd").KEY)
- for pose:Transform3D in poses:
-  var records:PackedFloat32Array=preload("res://addons/structures/paving_catalog.gd").records([pose])
-  if collection.insert_instance(records,AABB())<=0:print("PAVING_FAILED");quit(1);return
- var saved_paving:PackedByteArray=collection.capture_snapshot()
- if not collection.remove_instances(collection.get_ids()) or not collection.restore_snapshot(saved_paving) or collection.capture_snapshot()!=saved_paving:
-  print("PAVING_ROUNDTRIP_FAILED");quit(1);return
+ var total_plates:int=plan.get("block_paving",{}).get("tiles",0)+market.get("block_paving",{}).get("tiles",0)
+ var completed_plates:=0
+ for site:Dictionary in [plan,market]:
+  if site.is_empty():continue
+  var pavement:Dictionary=site.get("block_paving",{})
+  if not pavement.get("ok",false):print("PAVING_PLAN_MISSING");quit(1);return
+  var records:PackedInt32Array=pavement.records
+  var plates=ClassDB.instantiate("NativeBlockPrefab")
+  for offset in range(0,records.size(),4096):
+   if cancelled():game.free();quit(2);return
+   if not plates.configure(records.slice(offset,mini(offset+4096,records.size()))) or not game.structures.blocks.place_prefab(plates,Vector3i.ZERO,0,false):print("PAVING_FAILED");quit(1);return
+   completed_plates+=mini(4096,records.size()-offset)/4
+   progress("Baking destructible sidewalk plates",completed_plates,total_plates)
+   await process_frame
  if not game.generated_region.publish_neighborhood(seed_value,plan,generator):print("REGION_PUBLICATION_FAILED");quit(1);return
  if not connection.is_empty():
   var metadata:Dictionary=game.generated_region.store.get_plan()

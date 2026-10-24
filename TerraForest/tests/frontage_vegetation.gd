@@ -32,7 +32,7 @@ func run() -> void:
 	check(ids==PackedInt64Array([3,4]) and vegetation._collision_sync_ok,"removed render roots have no remaining trunk proxy records")
 	check(vegetation.renderer.roots[4].t==untouched,"unaffected distant tree transform preserved")
 	ecosystem._reconcile.clear()
-	check(not structures.blocks.set_cells(PackedInt32Array([0,0,0,128])) and ecosystem._reconcile.is_empty(),"rejected edit emits no vegetation invalidation")
+	check(not structures.blocks.set_cells(PackedInt32Array([0,0,0,129])) and ecosystem._reconcile.is_empty(),"rejected edit emits no vegetation invalidation")
 	check(structures.blocks.undo() and ecosystem._reconcile.has(near) and not ecosystem._reconcile.has(far),"undo emits bounded vegetation invalidation")
 	ecosystem._reconcile.clear()
 	check(structures.blocks.redo() and ecosystem._reconcile.has(near) and not ecosystem._reconcile.has(far),"redo emits bounded vegetation invalidation")

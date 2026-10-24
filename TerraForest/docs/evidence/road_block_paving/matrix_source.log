@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=34 attempts=2 survey_ms=8.695 recipe_ms=16.434 fitting_ms=17.478
+MATRIX { "seed": 0, "generator": 19, "ok": true, "cache_equal": true, "digest": "7bd3842dd2a952f986c3f481ac3978141b3ed1fe925d9c9fc3caacac8c3c33d3", "reason": "", "ms": 224.224 }
+MARKET_PLAN_TIMINGS candidates=85 attempts=18 survey_ms=18.521 recipe_ms=127.142 fitting_ms=143.696
+MATRIX { "seed": 42, "generator": 19, "ok": true, "cache_equal": true, "digest": "f6aa64c23fa5f1358647c50a9b3edabd4a628571b23a25f65874094011fd1b43", "reason": "", "ms": 2090.215 }
+MARKET_PLAN_TIMINGS candidates=25 attempts=3 survey_ms=10.371 recipe_ms=18.998 fitting_ms=22.114
+MATRIX { "seed": 1703, "generator": 19, "ok": true, "cache_equal": true, "digest": "6fdcd12aa50c87f2ff124f9808fae9e728fd155f92c1e11cca2ebecee6d392fa", "reason": "", "ms": 949.444 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=10.843 recipe_ms=7.736 fitting_ms=6.616
+MATRIX { "seed": 0, "generator": 20, "ok": true, "cache_equal": true, "digest": "25cb9b6e24c96d5a7d4ca4c18ff577cf0fc3a44d80bf59ad7c3dc4d4c66f0057", "reason": "", "ms": 228.065 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=31.431 recipe_ms=21.012 fitting_ms=25.378
+MATRIX { "seed": 42, "generator": 20, "ok": true, "cache_equal": true, "digest": "c121c04ab3a6eb4743bb04835520715396015c8559109ce469e8de71a47ff207", "reason": "", "ms": 250.792 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=12.367 recipe_ms=20.451 fitting_ms=27.6
+MATRIX { "seed": 1703, "generator": 20, "ok": true, "cache_equal": true, "digest": "dcd99fb94a3120aa66031aada1ec85443552e6de20f5955b68d5c4051ee32019", "reason": "", "ms": 277.334 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=10.802 recipe_ms=6.364 fitting_ms=8.765
+MATRIX { "seed": 0, "generator": 21, "ok": true, "cache_equal": true, "digest": "9641590a0a61ae5a91c1e5230871ed13bb18a89a7f4797b25c33e6420e20e40f", "reason": "", "ms": 252.619 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=26.949 recipe_ms=25.036 fitting_ms=27.144
+MATRIX { "seed": 42, "generator": 21, "ok": true, "cache_equal": true, "digest": "14e6d10974a672b3e648a2b107f5e13e4440fa2c586c1d4bf1a448f81ca7bfb6", "reason": "", "ms": 1471.478 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=6.756 recipe_ms=20.849 fitting_ms=26.905
+MATRIX { "seed": 1703, "generator": 21, "ok": true, "cache_equal": true, "digest": "657f5e5af726e8aad68b466ca8f59e398f7090ccdb7a8a41b1d8837198f4741a", "reason": "", "ms": 739.274 }
+GENERATION_PLAN_MATRIX failures=0

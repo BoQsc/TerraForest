@@ -12,7 +12,7 @@ inline Dictionary block_map_columns(const std::map<BlockKey,BlockChunk>&chunks,B
   auto found=chunks.find(k);if(found==chunks.end())continue;
   const auto &chunk=found->second;
   for(int z=0;z<16;++z)for(int x=0;x<16;++x){uint16_t column=chunk.columns[x+16*z];if(!column)continue;
-   int y=15;while(!(column&(1u<<y)))--y;int shape=chunk.cells[x+16*y+256*z]&7;
+   int y=15;while(!(column&(1u<<y)))--y;int shape=block_shape(chunk.cells[x+16*y+256*z]);
    // Vertical projection at cell centre; stair boundaries use the higher step.
    float top=shape==2?.5f:shape==3?.75f:shape==4?.5f:1.f;
    points.push_back(Vector3(k.x*16+x+.5f,k.y*16+y+top,k.z*16+z+.5f));

@@ -144,6 +144,10 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,0,4)
   segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index
   segments.append(segment)
+ var pavement:Dictionary=ClassDB.instantiate("NativeBlockPrefab").plan_paving(plan.roads)
+ if not pavement.get("ok",false):return pavement
+ plan["block_paving"]=pavement
+ segments.append_array(pavement.beds)
  # Underground clearance is part of the master plan, after all surface grading
  # and before any building is published. Later road support must not refill it.
  for lot:Dictionary in plan.lots:
@@ -156,30 +160,3 @@ static func earthworks(plan:Dictionary)->Dictionary:
  for segment:Dictionary in segments:
   bounds=segment.bounds if first else bounds.merge(segment.bounds);first=false
  return {"ok":true,"segments":segments,"bounds":bounds}
-
-static func paving(plan:Dictionary)->Array:
- var poses:Array=[];var crossings:Array[Vector3]=[]
- for road:Dictionary in plan.roads:
-  if road.start.distance_to(road.finish)<2:crossings.append((road.start+road.finish)*0.5)
- for road:Dictionary in plan.roads:
-  var span:Vector3=road.finish-road.start
-  var horizontal:float=Vector2(span.x,span.z).length()
-  if horizontal<2:continue # Shared junctions stay flush asphalt crossings.
-  var steps:int=ceili(horizontal/2.0)
-  var across:Vector3=Vector3.UP.cross(span).normalized()
-  for i in steps:
-   var a:Vector3=road.start.lerp(road.finish,float(i)/steps)
-   var b:Vector3=road.start.lerp(road.finish,float(i+1)/steps)
-   a.y=lerpf(road.start.y,road.finish.y,smoothstep(0,1,float(i)/steps))
-   b.y=lerpf(road.start.y,road.finish.y,smoothstep(0,1,float(i+1)/steps))
-   for side in [-1,1]:
-    var midpoint:Vector3=(a+b)*0.5+across*side*3.75
-    var crossing:=false
-    for junction:Vector3 in crossings:
-     if Vector2(midpoint.x-junction.x,midpoint.z-junction.z).length()<6.5:crossing=true
-    if crossing:continue
-    var forward:Vector3=(b-a).normalized()
-    var up:Vector3=forward.cross(across).normalized()
-    var basis:=Basis(across*1.5,up*0.08,forward*(a.distance_to(b)+0.015))
-    poses.append(Transform3D(basis,midpoint+up*(-0.04+0.015)))
- return poses

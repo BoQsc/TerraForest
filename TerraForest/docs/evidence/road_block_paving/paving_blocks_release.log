@@ -1,0 +1,87 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS upper plate accepts material/rotation 128
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 136
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 144
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 152
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 160
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 168
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 176
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 184
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 192
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 200
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 208
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 216
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 224
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 232
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 240
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS upper plate accepts material/rotation 248
+PASS upper quarter is authoritative solid, not a full cell
+PASS plate hit surface meets integer block grid
+PASS prefab costs preserve the ordinary material
+PASS rendered plate is one metre square and one quarter metre thick
+PASS ordinary block stacks flush above the plate
+PASS binary world roundtrip retains plate shape and neighboring block
+PASS region archive retains plate encoding
+PASS removing one plate leaves the neighboring construction intact
+PASS undo restores exactly the removed plate
+PASS redo removes exactly that plate again
+PASS unknown shape words still reject 129
+PASS unknown shape words still reject 255
+PASS unknown shape words still reject 256
+PASS unknown shape words still reject -1
+PASS unknown shape words still reject 8
+PASS native planner produces plates and preserves smooth terrain ramps
+PASS native paving is deterministic
+PASS tiles are individually keyed, road-clear, junction-clear and do not stair-step ramps
+PASS normal native prefab publication creates destructible paving cells
+PASS paving publication cannot overwrite existing construction
+PASS invalid geometry cannot generate paving
+PASS empty plans fail explicitly
+PAVING_BLOCKS checks=83 failures=0
+

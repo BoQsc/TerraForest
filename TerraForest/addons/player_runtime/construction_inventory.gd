@@ -25,7 +25,7 @@ func place_block(blocks: Node, inventory: RefCounted, cell: Vector3i, word: int)
 		reason="Clear the occupied cell before building"
 		return false
 	var costs:=PackedInt64Array()
-	if word != 0: costs=PackedInt64Array([101+(word>>5),1])
+	if word != 0: costs=PackedInt64Array([101+((word>>5)&3),1])
 	return _apply(inventory,costs,blocks.set_cells.bind(PackedInt32Array([cell.x,cell.y,cell.z,word])))
 
 func _prefab_costs(asset: Resource, recipes: Dictionary) -> Dictionary:

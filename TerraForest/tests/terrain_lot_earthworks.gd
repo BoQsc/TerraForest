@@ -57,11 +57,21 @@ func _initialize()->void:
     misplaced+=1
  failures+=misplaced
  var pavement:PackedVector3Array=PackedVector3Array()
- for pose:Transform3D in Planner.paving(plan):
-  for side in [-0.45,0,0.45]:
-   var top:Vector3=pose*Vector3(side,0.5,0)
-   pavement.append(top-Vector3.UP*0.2);pavement.append(top+Vector3.UP*0.2)
+ var paving=ClassDB.instantiate("NativeBlockWorld")
+ if not paving.set_cells(plan.block_paving.records):failures+=1
+ var columns:Dictionary={}
+ var records:PackedInt32Array=plan.block_paving.records
+ for offset in range(0,records.size(),4):columns[Vector2i(records[offset],records[offset+2])]=true
+ for column:Vector2i in columns:
+  for side in [.05,.5,.95]:
+   var hit:Dictionary=paving.raycast_cells(Vector3(column.x+side,255,column.y+.5),Vector3(column.x+side,0,column.y+.5))
+   if hit.is_empty():failures+=1;continue
+   var top:Vector3=hit.position
+   pavement.append(top-Vector3.UP*.24);pavement.append(top+Vector3.UP*0.02)
+ paving.free()
  var pavement_mismatches:=0
+ var buried:=0
+ var unsupported_paving:=0
  for start in range(0,pavement.size(),512):
   var batch:PackedVector3Array=pavement.slice(start,mini(start+512,pavement.size()))
   var packet:=Codec.command(31,[revision,batch.size()]);packet.append_array(batch.to_byte_array())
@@ -70,11 +80,15 @@ func _initialize()->void:
   for i in batch.size():
    var value:float=reply.decode_float(20+i*4)
    if ((start+i)%2==0 and value>=0) or ((start+i)%2==1 and value<=0):
-    if pavement_mismatches<8:print("PAVEMENT_MISMATCH ",batch[i]," density=",value)
+    if (start+i)%2==0:unsupported_paving+=1
+    else:buried+=1
+    if pavement_mismatches<8 or ((start+i)%2==1 and buried<9):print("PAVEMENT_MISMATCH ",batch[i]," density=",value," air_probe=",(start+i)%2==1)
     pavement_mismatches+=1
  failures+=pavement_mismatches
+ if pavement_mismatches:
+  FileAccess.open("res://reports/paving_earthworks_plan.json",FileAccess.WRITE).store_string(JSON.stringify(edits,"  "))
  var saved:PackedByteArray=core.execute(Codec.command(4)).slice(12)
  var clone=ClassDB.instantiate("TerrainCore");var load_packet:=Codec.command(5);load_packet.append_array(saved)
  if not Codec.reply_ok(clone.execute(load_packet)) or clone.execute(Codec.command(4)).slice(12)!=saved:failures+=1
- print("TERRAIN_LOT_EARTHWORKS segments=",edits.segments.size()," support_samples=",supports.size()," unsupported=",unsupported," road_mismatches=",misplaced," pavement_mismatches=",pavement_mismatches," save_bytes=",saved.size()," failures=",failures)
+ print("TERRAIN_LOT_EARTHWORKS segments=",edits.segments.size()," support_samples=",supports.size()," unsupported=",unsupported," road_mismatches=",misplaced," pavement_mismatches=",pavement_mismatches," buried=",buried," unsupported_paving=",unsupported_paving," save_bytes=",saved.size()," failures=",failures)
  quit(1 if failures else 0)

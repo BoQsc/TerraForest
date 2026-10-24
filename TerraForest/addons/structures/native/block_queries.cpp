@@ -28,7 +28,7 @@ void clip(Intersection &hit,Vector3 origin,Vector3 direction,Vector3 normal,doub
 }
 // -1 means the segment starts within this solid; front-face picking then rejects.
 double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
-    int rotation=(word>>3)&3,shape=word&7;
+    int rotation=(word>>3)&3,shape=block_shape(word);
     for(int r=0;r<rotation;r++) {origin=Vector3(origin.z,origin.y,1-origin.x);direction=Vector3(direction.z,direction.y,-direction.x);}
     double nearest=INF;bool inside=false;
     auto accept=[&](const Intersection &hit) {
@@ -59,7 +59,7 @@ Dictionary NativeBlockWorld::solid_hulls(const AABB &bounds) const {
     for(int z=int(lo.z);z<int(hi.z);++z)for(int y=int(lo.y);y<int(hi.y);++y)for(int x=int(lo.x);x<int(hi.x);++x){
         int word=cell(x,y,z);if(!word)continue;
         PackedFloat64Array hull;Vector3 center(.5,.5,.5),translation(x,y,z);
-        visit_shape_hulls(word&7,[&](){hull=PackedFloat64Array();},[&](Vector3 n,double offset){
+        visit_shape_hulls(block_shape(word),[&](){hull=PackedFloat64Array();},[&](Vector3 n,double offset){
             Vector3 rotated=n;for(int r=0;r<((word>>3)&3);++r)rotated=Vector3(-rotated.z,rotated.y,rotated.x);
             auto dot=[](Vector3 a,Vector3 b){return double(a.x)*b.x+double(a.y)*b.y+double(a.z)*b.z;};
             double local_offset=offset+dot(rotated,center+translation)-dot(n,center);

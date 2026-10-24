@@ -45,6 +45,18 @@ deliberately; slopes/steps/retaining walls must be intentional and traversable.
 
 ## Roads form a coherent network
 
+Built construction must consist of individually addressable, destructible building
+blocks or parts, including sidewalk/roadside plates. Do not replace them with
+continuous decorative meshes that cannot be damaged or removed locally. Merged
+chunk rendering and collision remain valid optimizations; the native cell/part
+store, not a giant mesh, owns geometry, damage and persistence. Standalone objects
+and models are distinct from building fabric.
+
+Keep the road bed editable volumetric terrain. Flat settlement street grades and
+sidewalk tops should meet the integer building lattice; retain smooth editable
+terrain ramps between them rather than forcing slopes into block stairs. This is
+the user's 2026-10-24 direction. Do not regrade existing saves automatically.
+
 Plan road corridors and grades before buildings. Account for road widths, turning
 space, shoulders and elevation at crossings. Different elevations require a proper
 connection or physical separation, never overlapping cut/fill stamps. Check on-foot

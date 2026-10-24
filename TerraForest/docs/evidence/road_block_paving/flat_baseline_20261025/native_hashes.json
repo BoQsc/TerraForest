@@ -1,0 +1,6 @@
+{
+  "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "9b2501aba552bcec2041f848ef2559e50f024509b855674f180ca7d3fd73c555",
+  "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "433f7c3f63f0257a4109818f82c19549c90cb8c57e67fd9ae9bbf3abe13c6e64",
+  "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "0db0e478cb9fb4f237f3a2d072e0b9e129272656a0c7878bc6126562d37dbe3d",
+  "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "79228f1f5d834b3d1a743a88ae99930ffaadbbe177e26ee3d3108128a324be4c"
+}

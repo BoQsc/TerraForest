@@ -42,9 +42,11 @@ func _initialize()->void:
    summary["offset"]=str(located.center-center)
    summary["mean_earthwork"]=located.mean_earthwork;summary["max_cut"]=located.max_cut;summary["max_fill"]=located.max_fill;summary["ranked_candidates"]=located.ranked_candidates
    summary["entrances"]=located.lots.size()
-   if seed_value==42:
-    var previous:Dictionary=Planner.streets(core,center+Vector3(0,0,120))
-    if not previous.ok or located.mean_earthwork>=previous.mean_earthwork or located.max_fill>=previous.max_fill:failures+=1
+   var flat_segments:=0
+   for road:Dictionary in located.roads:
+    if not is_equal_approx(road.start.y,roundf(road.start.y)) or not is_equal_approx(road.finish.y,roundf(road.finish.y)):failures+=1
+    if road.start.distance_to(road.finish)>2 and is_equal_approx(road.start.y,road.finish.y):flat_segments+=1
+   if flat_segments==0 or works.get("ok",false) and located.block_paving.tiles<=0:failures+=1
    for lot:Dictionary in located.lots:
     if not lot.entrance.get("ok",false):failures+=1
     var foundations:PackedVector3Array=lot.asset.foundation_samples(lot.origin,lot.rotation,0)

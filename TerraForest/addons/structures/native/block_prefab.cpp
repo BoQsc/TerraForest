@@ -1,4 +1,5 @@
 #include "block_prefab.hpp"
+#include "block_word.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <algorithm>
@@ -15,6 +16,7 @@ static uint32_t frontage_choice(uint32_t seed,int ordinal,int count) {
     return h%uint32_t(count);
 }
 void NativeBlockPrefab::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("plan_paving","roads"),&NativeBlockPrefab::plan_paving);
     ClassDB::bind_method(D_METHOD("layout_counts","sources","lots_per_side","seed","streets"),&NativeBlockPrefab::layout_counts);
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
     ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
@@ -93,7 +95,7 @@ bool NativeBlockPrefab::configure_impl(const PackedInt32Array &records,bool noti
     Vector3 lo(4096,4096,4096),hi(-4096,-4096,-4096);
     for(int64_t i=0;i<records.size();i+=4) {
         int x=records[i],y=records[i+1],z=records[i+2],w=records[i+3];
-        if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095||w<=0||w>=128||(w&7)>7||(w&7)==0)return false;
+        if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095||w==0||!valid_block_word(w))return false;
         staged.push_back({x,y,z,w});
         for(int a=0;a<3;a++) {lo[a]=std::min(lo[a],float(records[i+a]));hi[a]=std::max(hi[a],float(records[i+a]+1));}
     }
@@ -124,7 +126,7 @@ bool NativeBlockPrefab::configure_impl(const PackedInt32Array &records,bool noti
     clearance_columns=std::move(clearance);
     foundation_columns=std::move(footprint);
     std::fill(std::begin(material_counts),std::end(material_counts),0);
-    for(const auto &cell:staged)++material_counts[cell.word>>5];
+    for(const auto &cell:staged)++material_counts[block_material(cell.word)];
     ++definition_revision;model_attachments.clear();
     cells=std::move(staged);bounds=cells.empty()?AABB():AABB(lo,hi-lo);if(notify)emit_changed();return true;
 }

@@ -1,0 +1,18 @@
+{
+  "addons/structures/bin/structures.windows.template_debug.x86_64.dll": {
+    "source": "29d64862442c87f8c0dbb81b94419e0d4b859db77247a25627837a8810a7f647",
+    "pack": "29d64862442c87f8c0dbb81b94419e0d4b859db77247a25627837a8810a7f647"
+  },
+  "addons/structures/bin/structures.windows.template_release.x86_64.dll": {
+    "source": "bc3b2838f6982ad9f924172a1b1719e47f713d13d4db4bf6d4ce87669e081d74",
+    "pack": "bc3b2838f6982ad9f924172a1b1719e47f713d13d4db4bf6d4ce87669e081d74"
+  },
+  "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": {
+    "source": "3ef136da1fbc33eb324223bfac6f8a92cf758231950d20161801cff5eef07850",
+    "pack": "3ef136da1fbc33eb324223bfac6f8a92cf758231950d20161801cff5eef07850"
+  },
+  "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": {
+    "source": "7ccd11fe24098d17929e5f05b96e50db97baeb2c80ad660034cad4a435181abc",
+    "pack": "7ccd11fe24098d17929e5f05b96e50db97baeb2c80ad660034cad4a435181abc"
+  }
+}

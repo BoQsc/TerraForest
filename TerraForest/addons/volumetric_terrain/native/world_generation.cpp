@@ -173,7 +173,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
   Dictionary road=roads[r];if(!road.has("start")||!road.has("finish"))return failure("Missing road endpoints");
   Vector3 start=road["start"],finish=road["finish"];
   if(!inside(start)||!inside(finish)||horizontal(finish-start)<.01)return failure("Invalid street endpoints");
-  int count=int(std::ceil(start.distance_to(finish)/14))*2,begin=int(edges.size());
+  int count=std::max(2,int(std::floor(horizontal(finish-start)/25))*2),begin=int(edges.size());
   if(count>1024||begin+count>8192)return failure("Street subdivision budget exceeded");
   for(int i=0;i<count;i++){
    Vector3 a=start.lerp(finish,double(i)/count),b=start.lerp(finish,double(i+1)/count);
@@ -183,15 +183,16 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
      Vector3 sample=p+Vector3(dx,0,dz);if(!inside(sample))return failure("Street outside terrain");
      double h=survey.height(sample);low=std::min(low,h);high=std::max(high,h);
     }
-    if(high-3>low+2)return failure("Street node exceeds earthworks budget");
-    vertices.emplace(key(p),Vertex{p,high-3,low+2});
+    double grade_low=std::ceil(high-3),grade_high=std::floor(low+2);
+    if(grade_low>grade_high)return failure("Street node exceeds grid-aligned earthworks budget");
+    vertices.emplace(key(p),Vertex{p,grade_low,grade_high});
    }
    edges.push_back({key(a),key(b),a.distance_to(b),begin,count});
   }
  }
  for(int iteration=0;iteration<128;iteration++){
   bool changed=false;
-  for(const auto &e:edges){Vertex *a=&vertices.at(e.a),*b=&vertices.at(e.b);double rise=e.length*.08;
+  for(const auto &e:edges){Vertex *a=&vertices.at(e.a),*b=&vertices.at(e.b);double rise=std::floor(e.length*.08+.00001);
    for(int direction=0;direction<2;direction++){
     double lo=std::max(a->lo,b->lo-rise),hi=std::min(a->hi,b->hi+rise);
     if(lo>hi+.0001)return failure("Street requires a different route to meet grade");
@@ -201,7 +202,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
  }
  Array segments;double max_fill=0,max_cut=0,sum=0;int samples=0;
  for(const auto &e:edges){
-  const auto &va=vertices.at(e.a),&vb=vertices.at(e.b);Vector3 a=va.p,b=vb.p;a.y=(va.lo+va.hi)*.5;b.y=(vb.lo+vb.hi)*.5;
+  const auto &va=vertices.at(e.a),&vb=vertices.at(e.b);Vector3 a=va.p,b=vb.p;a.y=std::round((va.lo+va.hi)*.5);b.y=std::round((vb.lo+vb.hi)*.5);
   if(std::abs(a.y-b.y)>e.length*.08001)return failure("Street grade solver did not converge");
   Vector3 across=Vector3(-(b-a).z,0,(b-a).x).normalized();
   for(int step=0;step<9;step++)for(double lateral:{-5.5,-4.,-2.,0.,2.,4.,5.5}){
@@ -226,7 +227,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
  for(int i=0;i<junctions.size();i++){
   if(!inside(junctions[i]))return failure("Invalid junction");auto found=vertices.find(key(junctions[i]));
   if(found==vertices.end())return failure("Junction is not a street node");
-  const auto &v=found->second;Vector3 p=v.p;p.y=(v.lo+v.hi)*.5;
+  const auto &v=found->second;Vector3 p=v.p;p.y=std::round((v.lo+v.hi)*.5);
   for(int dx=-6;dx<=6;dx++)for(int dz=-6;dz<=6;dz++)if(dx*dx+dz*dz<=5.5*5.5){
    Vector3 q=p+Vector3(dx,0,dz);if(!inside(q))return failure("Junction outside terrain");double fill=p.y-survey.height(q);
    if(fill>2||fill< -3)return failure("Junction exceeds earthworks budget");
@@ -234,7 +235,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
   Dictionary s=segment(p-Vector3(.5,0,0),p+Vector3(.5,0,0),3,3,4,2,4);PackedFloat64Array c;for(double value:{0.,0.,0.,double(p.y)})c.push_back(value);
   s["coefficients"]=c;s["curve_index"]=0;segments.push_back(s);
  }
- Dictionary d;d["ok"]=true;d["segments"]=segments;d["max_fill"]=max_fill;d["max_cut"]=max_cut;d["mean_earthwork"]=sum/std::max(1,samples);d["height_samples"]=survey.samples;d["planner_version"]=1;return d;
+ Dictionary d;d["ok"]=true;d["segments"]=segments;d["max_fill"]=max_fill;d["max_cut"]=max_cut;d["mean_earthwork"]=sum/std::max(1,samples);d["height_samples"]=survey.samples;d["planner_version"]=2;return d;
 }
 }
 namespace terraforest {

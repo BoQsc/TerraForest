@@ -55,7 +55,7 @@ Right mouse: fill")
 			option("Material",["Stone","Wood","Metal"],game.material_id-1,func(i: int):game.material_id=i+1)
 		3:
 			label(("Left mouse: remove" if game.session_menu.developer else "Left mouse: attack")+"\nRight mouse: place")
-			option("Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column"],game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
+			option("Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column","Top plate"],game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
 			option("Material",["Brick","Wood","Concrete","Metal"],game.structure_material,func(i: int):game._construction_selection("material",i))
 			option("Rotation",["0 degrees","90 degrees","180 degrees","270 degrees"],game.structure_rotation,func(i: int):game._construction_selection("rotation",i))
 			button("Prefabs / detailed settings",game.session_menu.open_current_tool)

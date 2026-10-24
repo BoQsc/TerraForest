@@ -16,6 +16,8 @@ func run()->void:
  screen.update_stage("Building roads and foundations",180,367)
  await process_frame
  check(screen.panel.bar.value>8 and screen.panel.bar.value<30,"native command fraction contributes to overall percentage")
+ screen.update_stage("Baking destructible sidewalk plates",500,1000)
+ check(is_equal_approx(screen.panel.bar.value,63.5),"native sidewalk publication has a real counted progress stage")
  screen.update_stage("Photographing the generated world",2,3)
  var prior:float=screen.panel.bar.value
  screen.update_stage("Placing buildings and interiors",1,100)

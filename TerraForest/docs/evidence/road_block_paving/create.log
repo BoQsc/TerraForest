@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+WORLD_PLAN digest=14e6d10974a672b3e648a2b107f5e13e4440fa2c586c1d4bf1a448f81ca7bfb6 cache_hit=true ms=23.84 planning_frames=2
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":2801664,"checkpoints":7,"completed":327,"ok":true,"resident_high":363,"resident_limit":16384,"revision":327,"storage":{"region_reads":31,"reused_files":0,"reused_regions":93,"workers":1,"written_bytes":1979929,"written_files":13},"worker_ms":338.8095}
+GENERATED_LAKE_ADMISSION accepted=4 rejected=[] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":4,"milliseconds":872.083,"ok":true,"patches":946,"peak_native_state_bytes":29215064,"regions":946,"slices":946,"snapshot_bytes":15940408,"status":2,"steps":955,"water_ml":12427917702}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":3.528}
+PASS newly generated construction contains no legacy decorative paving instances
+PASS production generation publishes native sidewalk plates
+PASS real player target hits one generated plate, not the terrain below
+PASS ordinary pickaxe contact damages the plate 1
+PASS ordinary pickaxe contact damages the plate 2
+PASS ordinary pickaxe contact damages the plate 3
+PASS ordinary pickaxe contact damages the plate 4
+PASS four normal hits remove only the selected plate and charge normal wear
+PASS player owns a building block to place
+PASS building target is exactly the cell above the road plate
+PASS actual placement puts a paid building block flush on the plate
+PASS placing above the plate consumes exactly one brick
+PASS placed block finishes native mesh and collision publication
+PAVING_RAMP_WALK { "arrived": true, "start": (1129.68, 48.96025, 502.25), "finish": (1140.32, 48.03975, 502.25), "actual": (1140.076, 48.05622, 502.2499) }
+PASS real walking controller traverses the smooth roadside ramp without jumping
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=20 edits=327
+PAVING_GENERATION failures=0

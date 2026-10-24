@@ -21,7 +21,7 @@
 
 namespace terraforest {
 static constexpr int MAX_CHUNKS=2048, LIMIT=1048575;
-static bool valid_word(int w) { return w==0 || (w>0&&w<128&&(w&7)>=1&&(w&7)<=7); }
+static bool valid_word(int w) { return valid_block_word(w); }
 static PackedByteArray sha(const PackedByteArray &data) {
     Ref<HashingContext> h; h.instantiate(); h->start(HashingContext::HASH_SHA256); h->update(data); return h->finish();
 }
@@ -92,11 +92,11 @@ void NativeBlockWorld::invalidate(BlockKey key) {
     dirty.insert(key); tickets[key]=++revision;
 }
 Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
-    if(shape<1||shape>7||rotation<0||rotation>3)return {};
+    if(shape<1||shape>8||rotation<0||rotation>3)return {};
     auto &cached=preview_meshes[(shape-1)*4+rotation];
     if(cached.is_valid())return cached;
     std::array<uint16_t,5832> halo{};
-    halo[1+18*(1+18)]=uint16_t(shape+(rotation<<3));
+    halo[1+18*(1+18)]=uint16_t(block_word(int(shape),int(rotation)));
     auto geometry=bake({},0,halo);
     PackedVector3Array vertices,normals;PackedInt32Array indices;
     vertices.resize(geometry.vertices.size());normals.resize(geometry.vertices.size());
@@ -264,11 +264,11 @@ static void bake_lattice(BlockBake &out,const std::array<uint16_t,5832> &halo) {
     auto at=[&](int x,int y,int z)->uint8_t& { return voxels[(x+1)+H*((y+1)+H*(z+1))]; };
     for(int z=-1;z<=N;z++) for(int y=-1;y<=N;y++) for(int x=-1;x<=N;x++) {
         int bx=x<0?-1:x/scale,by=y<0?-1:y/scale,bz=z<0?-1:z/scale;
-        int w=halo[(bx+1)+18*((by+1)+18*(bz+1))],shape=w&7;
+        int w=halo[(bx+1)+18*((by+1)+18*(bz+1))],shape=block_shape(w);
         int sx=(x&(scale-1))*(4/scale),sy=(y&(scale-1))*(4/scale),sz=(z&(scale-1))*(4/scale);
         for(int r=0;r<((w>>3)&3);r++) { int old=sx; sx=sz; sz=3-old; }
-        bool full=shape==1 || (shape==2&&sy<2) || (shape==3&&sy<=sz) || (shape==5&&sx>=1&&sx<=2&&sz>=1&&sz<=2);
-        if(full) at(x,y,z)=1+(w>>5);
+        bool full=shape==1 || (shape==2&&sy<2) || (shape==8&&sy==3) || (shape==3&&sy<=sz) || (shape==5&&sx>=1&&sx<=2&&sz>=1&&sz<=2);
+        if(full) at(x,y,z)=1+block_material(w)+(shape==8?4:0);
     }
     // One material surface; signed mask separates opposite-facing coplanar faces.
     for(int axis=0;axis<3;axis++) {
@@ -306,8 +306,8 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     // fragments on an otherwise ordinary cube wall. Wedges/spheres are separate.
     int scale=1;
     for(uint16_t word:halo) {
-        const int shape=word&7;
-        if(shape==3||shape==5) {scale=4;break;}
+        const int shape=block_shape(word);
+        if(shape==3||shape==5||shape==8) {scale=4;break;}
         if(shape==2)scale=2;
     }
     if(scale==1)bake_lattice<1>(out,halo);
@@ -513,9 +513,15 @@ void NativeBlockWorld::ensure_material() {
 shader_type spatial;
 uniform sampler2DArray tiles : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 void fragment() {
-    ALBEDO = texture(tiles,vec3(UV,UV2.x)).rgb;
-    ROUGHNESS = UV2.x > 2.5 ? 0.48 : 0.92;
-    METALLIC = UV2.x > 2.5 ? 0.5 : 0.0;
+    float layer = mod(UV2.x,4.0);
+    ALBEDO = texture(tiles,vec3(UV,layer)).rgb;
+    if (UV2.x > 3.5) {
+        vec2 edge = min(fract(UV),1.0-fract(UV));
+        float joint = smoothstep(.006,.012+max(fwidth(UV.x),fwidth(UV.y)),min(edge.x,edge.y));
+        ALBEDO *= mix(.55,1.0,joint);
+    }
+    ROUGHNESS = layer > 2.5 ? 0.48 : 0.92;
+    METALLIC = layer > 2.5 ? 0.5 : 0.0;
 }
 )");
     material.instantiate();material->set_shader(shader);material->set_shader_parameter("tiles",textures);

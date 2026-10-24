@@ -2,7 +2,7 @@
 extends RefCounted
 # Shared preview/bake orchestration. All field, road and lot searches are native.
 # Derived plans contain plain values; prefab Resources are reconstructed from recipes.
-const VERSION:=2 # Bump for native planner, terrain or prefab recipe changes.
+const VERSION:=3
 const CACHE_BYTES:=64*1024*1024
 const CACHE_ENTRIES:=32
 const LIMIT:=8*1024*1024

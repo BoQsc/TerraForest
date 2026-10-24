@@ -13,6 +13,7 @@ const GENERATION_STAGES={
  "Baking terrain overview":Vector2(38,42),
  "Placing buildings and interiors":Vector2(42,62),
  "Baking streets and location metadata":Vector2(62,65),
+ "Baking destructible sidewalk plates":Vector2(62,65),
  "Photographing the generated world":Vector2(65,78),
  "Capturing world photographs":Vector2(65,78),
  "Saving generated world":Vector2(78,82),

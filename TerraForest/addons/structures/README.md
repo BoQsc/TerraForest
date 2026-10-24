@@ -28,15 +28,41 @@ python tools/build_native.py --addon structures --target all
 
 `NativeBlockWorld` is a Node3D with sparse 16×16×16 cell chunks. Each cell is a 16-bit word; a resident chunk's cell payload is 8 KiB. A cell is one local metre. Translation/rotation can be applied to the world node; supply focus in that node's local coordinates. Nonuniform scaling is not a supported physics configuration. There is no node per block.
 
-`set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Nonzero words encode `shape | (rotation << 3) | (material << 5)`:
+`set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Nonzero words encode `shape | (rotation << 3) | (material << 5)`; upper plates extend this as described below:
 
 | Field | Values |
 | --- | --- |
-| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post, 6 sphere, 7 round column |
+| Shape | 1 cube, 2 lower half slab, 3 four-step staircase, 4 planar slope, 5 centred half-width post, 6 sphere, 7 round column; API shape 8 is the upper-quarter plate described below |
 | Rotation | 0–3 quarter turns about Y |
 | Material | 0 brick, 1 wood, 2 concrete, 3 metal |
 
 The entire batch is validated and staged before modification; repeated coordinates use their final value. Invalid input or exceeding the 2,048 resident chunk capacity leaves the world unchanged. Empty chunks are reclaimed. Authoring methods and snapshot capture/restore run on the main thread. `validate_snapshot` reads only its argument and can run on a worker. General concurrent authoring is not supported.
+
+### Grid-aligned sidewalk plates
+
+API shape **8**, `Top plate` in the ALT construction palette, occupies local
+`[0,1] × [0.75,1] × [0,1]`. Its top meets the cell above with no gap. This extends
+the encoding with word `128 | (rotation << 3) | (material << 5)`, not literal
+shape value 8 in the low bits. Only low shape bits zero are valid with bit 7 set.
+Material extraction is `(word >> 5) & 3`; concrete paving uses word **192**.
+All four material costs and normal damage, picking, collision, undo and region
+storage apply. Old words and binary container layouts are unchanged. New builds
+read old saves; older builds reject saves containing the new shape.
+
+`NativeBlockPrefab.plan_paving(roads)` is an offline native planner returning
+`ok`, packed cell `records`, terrain support `beds`, `tiles` and `terrain_ramps`.
+It accepts at most 8,192 finite roads and emits at most 32,768 individually keyed
+tiles. Axis-aligned flat integer-height segments receive two-metre side strips,
+excluding junction clearances. Sloped segments stay smooth editable terrain.
+Support beds join the master earthworks before construction is published; placement
+uses the normal non-overwriting prefab API in bounded batches. There is no runtime
+node, model, physics body or frame-time script per plate. Chunk rendering merges
+faces; a shared shader adds narrow one-metre seams without changing solid geometry.
+Plates select the existing quarter-cell bake lattice, like stairs and posts.
+Generation plan cache version 3 separates new recipes from older cached plans.
+Existing saves keep their original geometry, including legacy decorative paving;
+there is no automatic conversion. See `tests/paving_blocks.gd` and the road evidence
+linked from `docs/WORLD_FOUNDATION_STATUS.md`.
 
 ## Baking and rendering
 

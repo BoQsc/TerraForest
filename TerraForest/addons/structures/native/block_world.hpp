@@ -1,5 +1,6 @@
 #pragma once
 #include "block_prefab.hpp"
+#include "block_word.hpp"
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/classes/static_body3d.hpp>
@@ -84,7 +85,7 @@ class NativeBlockWorld : public Node3D {
     Ref<ShaderMaterial> material;
     String texture_set;
     bool load_texture_set(const String &name);
-    std::array<Ref<Mesh>,28> preview_meshes;
+    std::array<Ref<Mesh>,32> preview_meshes;
     Vector3 focus;
     std::vector<Vector3> navigation_interest;
     double collision_radius=48.0;

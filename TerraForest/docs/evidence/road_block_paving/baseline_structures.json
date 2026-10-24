@@ -1,0 +1,40 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\roads_baseline_structures",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\road_blocks_baseline\\engine.log",
+    "--script",
+    "res://tests/structures.gd"
+  ],
+  "baseline": "ab32f4e3",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 77392,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL capture creates reusable asset from actual world cells",
+      "FAIL captured asset can be placed independently",
+      "FAIL invalid batch is atomic",
+      "FAIL invalid batch preserves history atomically",
+      "FAIL invalid prefab authoring is atomic",
+      "FAIL preview bounds match rotated cell extents 0",
+      "FAIL preview bounds match rotated cell extents 1",
+      "FAIL preview bounds match rotated cell extents 2",
+      "FAIL preview bounds match rotated cell extents 3",
+      "FAIL quarter-turn rotates coordinates and oriented shape 0",
+      "FAIL quarter-turn rotates coordinates and oriented shape 1",
+      "FAIL quarter-turn rotates coordinates and oriented shape 2",
+      "FAIL quarter-turn rotates coordinates and oriented shape 3",
+      "FAIL redo reproduces exact shapes and materials",
+      "FAIL reject invalid shape in batch"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 2.2146821000496857,
+    "passed": false
+  }
+}

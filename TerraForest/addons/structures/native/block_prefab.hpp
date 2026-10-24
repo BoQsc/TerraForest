@@ -28,6 +28,7 @@ class NativeBlockPrefab : public Resource {
 protected:
     static void _bind_methods();
 public:
+    Dictionary plan_paving(const Array &roads) const;
     bool configure_model_attachments(const Array &attachments);
     void set_model_attachments(const Array &attachments);
     Array get_model_attachments() const;

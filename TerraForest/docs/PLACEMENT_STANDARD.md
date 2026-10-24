@@ -65,6 +65,12 @@ performance and lower-end hardware remain unqualified. Automatic seam enclosure,
 foundation fill, arbitrary-object contact guarantees and existing settlement-quality
 defects are not solved here. See [evidence and retained failures](evidence/buildable_terrain/README.md).
 
-Next priority: repair topsoil targeting/stacking and obtain user approval. Only
-after that approval, investigate building-grid-friendly road adjustments without
-relaxing settlement terrain-fit and access requirements.
+The user accepted the topsoil/targeting baseline and resumed road work on
+2026-10-24. New settlement plans now select integer street-node heights within
+the existing earthworks budgets and connect different heights with smooth terrain
+ramps. Flat roadside strips use native 1 m square upper-quarter plates, whose tops
+meet the next block cell exactly. They remain independently destructible and use
+normal player placement/payment, not a special terrain-altering building rule.
+Existing worlds are not migrated. Regional connecting roads remain smooth editable
+terrain; arbitrary slopes are not guaranteed to fit every block footprint.
+Verification and remaining review scope are tracked in `WORLD_FOUNDATION_STATUS.md`.

@@ -1,3 +1,70 @@
+## Flat-plate baseline restored, 2026-10-25
+
+The user rejected the shallow-ramp experiment and requested only the trusted
+flat plates committed. The experimental prefab, profile encoding, automatic ramp
+planner option and horizontal subdivision changes are removed. Keep the existing
+1 m square, 0.25 m thick plates and smooth editable terrain slopes; no new ramp
+pieces are part of this baseline. Do not resume the rejected kit without a new
+user request. Broad road/settlement acceptance still requires the evidence below.
+
+The seed-1703 experiment was a separate copy, not the original world. Its final
+bounded conversion passed local support/walking checks and saved, but its visible
+result was rejected; those checks do not make it accepted. The earlier failed
+automatic-road join checks remain failed. Mixed-work snapshots, rejected sources,
+images and the owned trial save are preserved locally under
+`reports/rejected_ramp_20261025/`; prior run logs remain in their report folders.
+The trial is removed from the world selector rather than opened with an
+incompatible flat-only build. All 261 recorded original-save file hashes were
+verified unchanged. Existing player worlds are not converted by this rollback.
+
+Restoration verification: all nine seed/profile generation-plan digests match the
+pre-experiment flat baseline byte-for-byte in source and exported builds. All 83
+plate checks pass in debug, release and the pack. Native earthworks, raw-lot,
+lattice, region, worker, solid-query, inventory and vegetation regressions pass.
+Packaging/startup and source/package DLL hashes match. The rendered loading-UI
+suite was mistakenly launched headless and stopped waiting for a draw signal;
+that rerun is incomplete, not passed. Prior rendered UI evidence remains below.
+No new graphical world trial was launched; the original flat-plate captures are
+retained as original evidence, not presented as new images.
+
+## Grid-aligned roads and destructible paving, 2026-10-24
+
+New settlement generation replaces the decorative road-side model strips with
+native 1 m square, 0.25 m thick concrete block plates. Each has normal picking,
+collision, material cost, damage, removal, undo and binary-region persistence.
+Flat plate tops and street nodes meet integer building heights. Different grades
+remain smooth editable terrain ramps, as the user requested; regional asphalt
+roads remain volumetric terrain. Rendering and collision are chunk-batched, not
+one node per plate. The ALT block palette also exposes `Top plate`.
+Native planning keeps the existing 2 m fill / 3 m cut limits; new plan cache
+version 3 prevents reuse of old layouts. Loading counts sidewalk publication.
+Existing saves are not regraded or converted, including legacy decorative paving.
+
+Engineering verification: 83 native plate checks pass in debug, release and the
+exported pack; nine seed/profile generation plans and cache roundtrips pass in
+source and pack. Raw-lot, earthworks, legacy mesh-byte, region, worker, solid-query,
+24 inventory/payment, vegetation-invalidation and loading-UI checks pass.
+The production seed-42/profile-21 world generates 20 buildings; actual pickaxe
+contacts remove one plate without its neighbor, and a paid brick stacks flush.
+The real walking controller traverses a smooth roadside ramp without jumping.
+Fresh-process read-only restoration matches complete captured block/model/water/
+region signatures, including the removed plate and added block. Export/startup
+passes, and packaged/source native hashes match. Ground, removal, stacking,
+overview and ramp images were inspected for this local change.
+
+This is not broad settlement/world-quality acceptance. Existing entrance,
+landscape, raw-road-end and architectural-variety requirements remain open.
+Varied-seed full-world travel, vehicle approaches and sustained/lower-end timing
+remain unqualified; revisit for broader road acceptance, requiring those journeys
+and measured frame/CPU costs rather than this short stationary review.
+The older `structures.gd` suite still reports 18 failures because it treats valid
+round-column word 7 as invalid, corrupting its later expected-state chain. The
+unchanged suite reproduces all 18 with the pre-change `ab32f4e3` DLL in isolation;
+it is not reported green or silently rewritten here. Revisit its stale fixtures
+before treating that broad suite as a release gate; require correct reserved-word
+fixtures and a complete passing baseline. Other recorded backlog remains intact.
+[Implementation, inspected images and retained failures](evidence/road_block_paving/README.md).
+
 ## Windows launcher exit-status fix, 2026-10-24
 
 `Worlds.cmd` could return silently before opening the browser. Windows PowerShell
