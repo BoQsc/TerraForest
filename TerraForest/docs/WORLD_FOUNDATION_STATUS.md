@@ -1,3 +1,15 @@
+## Resource gain HUD - 2026-10-24
+
+The lower-right HUD now shows small shared-icon notifications such as Gained
+Stone +1 for confirmed positive carried-item totals. Rapid gains of the same
+item combine; five reusable rows expire/fade after three seconds and stop
+processing while idle. Existing pickups, mining delivery, crafting, storage and
+salvage refreshes feed the display. Load/restore/development/offscreen states are
+quiet, carried-stack moves do not count, worn clothing is included in totals and
+bucket fill changes are normalized to one bucket item. Inventory/storage rules
+and native mutations are unchanged. Runtime checks and inspected 1080p evidence:
+[resource gain feed](evidence/resource_gain_feed/README.md).
+
 ## One persistent game window - 2026-10-24
 
 The world selector, generation/loading, gameplay and return now share one root

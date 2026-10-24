@@ -249,6 +249,7 @@ func _ready() -> void:
 			_abort_startup(2)
 			return
 	player_hud.temporary_world=temporary_world
+	player_hud.resource_gains_allowed=func()->bool:return not loading_active and not shutdown_requested and not world_vehicle.driving and not session_menu.visible_ui() and not ProjectSettings.get_setting("terraforest/offscreen_session",false)
 	add_child(player_hud)
 	add_child(storage)
 	session_menu.world_page_factory=_make_world_locations

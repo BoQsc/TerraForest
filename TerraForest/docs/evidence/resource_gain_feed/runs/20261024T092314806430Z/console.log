@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS actual gameplay world loads
+PASS starter/loadout items produce no gain notifications
+PASS E pickup shows the actual item icon and +1
+PASS rapid matching pickups combine into +2
+PASS moving a carried stack does not report another gain
+PASS real mining edit is admitted
+PASS mining and resource accounting publish
+PASS mined resources produce icon/quantity feedback after publication
+PASS crafting a building block shows its icon and gained quantity
+PASS restoring a saved inventory clears feedback without replaying its contents
+PASS equipping and removing clothing does not invent gains
+PASS feed stays small and bounded at the lower right
+PASS notifications fade out and stop processing when idle
+[TerrainRewrite] Temporary test world: save skipped
+RESOURCE_GAIN_FEED failures=0

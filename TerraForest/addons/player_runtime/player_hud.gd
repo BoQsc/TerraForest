@@ -53,6 +53,8 @@ var mode_hint: Label
 var action_hint: Label
 var interaction_hint: Label
 var damage_feedback:Control
+var resource_feed:Control
+var resource_gains_allowed:Callable
 var editor_hint: String=""
 var ground_feedback: String=""
 var gameplay_construction:=false
@@ -129,6 +131,7 @@ func capture_snapshot() -> PackedByteArray:
 
 func restore_snapshot(data: PackedByteArray) -> bool:
 	if not inventory.restore_storage_snapshot(data): return false
+	if resource_feed!=null:resource_feed.reset(inventory.snapshot(),equipment.snapshot(1))
 	selected_slot=-1
 	active_slot=-1;active_item=0
 	if not slots.is_empty(): refresh()
@@ -217,6 +220,10 @@ func _ready() -> void:
 	message.text="Drag to move. Release outside panels and belt to drop. Shift-drag: half stack."
 	message.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;message.custom_minimum_size.y=42
 	column.add_child(message)
+	resource_feed=preload("res://addons/player_runtime/resource_gain_feed.gd").new()
+	resource_feed.names=CATALOG.duplicate();resource_feed.names.merge(MATERIALS);resource_feed.names.merge(RESOURCES)
+	resource_feed.allowed=func()->bool:return not developer_belt and (not resource_gains_allowed.is_valid() or resource_gains_allowed.call())
+	add_child(resource_feed)
 	show_side("Crafting");modal.hide();refresh()
 
 func refresh() -> void:
@@ -225,6 +232,7 @@ func refresh() -> void:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
+	if resource_feed!=null:resource_feed.observe(latest,equipment.snapshot(1))
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
 	state=latest
 	if action_hint!=null and active_slot>=0 and active_item>=401 and active_item<=411 and not developer_belt:
