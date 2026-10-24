@@ -1133,11 +1133,11 @@ func is_collision_region_ready(bounds: AABB) -> bool:
 func request_height(point: Vector3, token: int) -> void:
 	backend.submit({"kind": "height", "point": point, "token": token}, true)
 
-func request_density_ray(from: Vector3, to: Vector3, token: int, budget: int = 256) -> bool:
+func request_density_ray(from: Vector3, to: Vector3, token: int, budget: int = 256, with_material:bool=false) -> bool:
 	if stopping or not world_ready or pending_edit or _density_requests.size()>=8 or token<0: return false
 	_density_serial+=1
 	var request := {"token":token,"epoch":epoch,"revision":native_revision,"ticket":edit_ticket}
-	if not backend.submit({"kind":"density_ray","from":from,"to":to,"budget":budget,"token":_density_serial,"epoch":epoch,"revision":native_revision}): return false
+	if not backend.submit({"kind":"density_ray","from":from,"to":to,"budget":budget,"token":_density_serial,"epoch":epoch,"revision":native_revision,"with_material":with_material}): return false
 	_density_requests[_density_serial]=request
 	return true
 

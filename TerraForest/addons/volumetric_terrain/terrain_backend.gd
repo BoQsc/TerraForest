@@ -359,7 +359,8 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 		for axis in range(3):
 			if abs(from[axis])>10000 or abs(to[axis])>10000: return false
 		# Snapshot only the bounded request fields, not a caller-owned dictionary.
-		job={"kind":"density_ray","from":from,"to":to,"token":job.token,"epoch":job.epoch,"revision":job.revision,"budget":job.budget}
+		if typeof(job.get("with_material",false))!=TYPE_BOOL:return false
+		job={"kind":"density_ray","from":from,"to":to,"token":job.token,"epoch":job.epoch,"revision":job.revision,"budget":job.budget,"with_material":job.get("with_material",false)}
 		priority=false # Queries cannot jump ahead of already queued mutations.
 	job["submitted_us"] = Time.get_ticks_usec()
 	if str(job.get("kind", "")) in ["edit", "save"]:
@@ -839,6 +840,14 @@ func _execute_density_query(job: Dictionary) -> void:
 		result={"status":"error","error":"Density query exceeded requested budget"}
 	if result.has("revision") and result.revision!=job["revision"]:
 		result.erase("position");result.erase("fraction");result["status"]="stale"
+	if result.get("status")=="hit" and job.get("with_material",false):
+		# Two optional native point samples on the existing worker, never a
+		# synchronous main-thread query or a new owner of terrain state.
+		var probe:=Codec.point_command(result.position-result.normal*.10);probe.encode_u32(0,26)
+		var material_reply:=_call(probe)
+		if Codec.reply_ok(material_reply) and material_reply.size()>=24:result["surface_material"]=material_reply.decode_u32(12)
+		var height_reply:=_call(Codec.point_command(result.position))
+		if Codec.reply_ok(height_reply) and height_reply.size()>=20:result["surface_depth"]=maxf(0.0,height_reply.decode_float(12)-result.position.y)
 	result.merge({"kind":"density_ray","token":job["token"],"epoch":job["epoch"],"requested_revision":job["revision"],"build_epoch":job["build_epoch"],"queue_ms":queue_ms,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"worker_finished_us":Time.get_ticks_usec()})
 	_push(result)
 

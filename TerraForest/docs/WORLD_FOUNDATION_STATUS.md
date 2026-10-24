@@ -1,3 +1,24 @@
+## Optional material impact particles - 2026-10-24
+
+Accepted tool contacts now emit GPU metal sparks or small material-colored chips,
+oval dirt/stone fragments and wood splinters. Successful destruction/excavation
+can add a larger burst. ESC > Session has persistent master and breakup toggles.
+The module is removable, and disabling it immediately clears particles without
+changing damage, excavation, inventory rewards or tool wear.
+
+The source integration passed 34 checks before final size/color tuning; the final
+exported build passes the same 34 checks. An omitted-module packaged run passes
+five checks. GPU motion captures and exported in-world contact/menu images were
+inspected. Export/startup passes. The initial shader compile failure and fixture
+inventory API error are retained with the successful subsequent checks.
+
+Experimental visual acceptance remains open until the user tries the sparks and
+fragments in normal play. Local-plane bounce and natural-material fallback are
+cosmetic approximations. Low-end GPU/sustained performance has not been measured;
+the fixed 384-slot budget is not a frame-rate certification. Existing world-quality
+and navigation gates are unchanged. Details and reproducible evidence:
+[impact effects](evidence/impact_effects/README.md).
+
 ## Three boulder fracture stages - motion revision, 2026-10-24
 
 Mining now splits boulders into halves, quarters and eight final rubble pieces.

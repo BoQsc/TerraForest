@@ -21,6 +21,8 @@ var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
 var third_person_toggle:CheckButton
+var impact_toggle:CheckButton
+var breakup_toggle:CheckButton
 var confirmation: ConfirmationDialog
 var pending_action: Callable
 var leaving_world:=false
@@ -68,6 +70,12 @@ func _ready() -> void:
 	var target_toggle:=CheckButton.new();target_toggle.text="Show targeting visuals for all tools / weapons (testing)"
 	target_toggle.button_pressed=game.target_overlay.enabled
 	target_toggle.toggled.connect(game.target_overlay.set_enabled);session.add_child(target_toggle)
+	if game.get("impact_effects")!=null:
+		impact_toggle=CheckButton.new();impact_toggle.text="Impact particles (experimental)"
+		impact_toggle.toggled.connect(game.impact_effects.set_enabled);session.add_child(impact_toggle)
+		breakup_toggle=CheckButton.new();breakup_toggle.text="Extra particles when objects break"
+		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);session.add_child(breakup_toggle)
+		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
 	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Developer"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
@@ -84,6 +92,10 @@ func dock_palettes() -> void:
 	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:tool_workspace.dock(pair[0],pair[1])
 	ready_to_dock=true;sync_panels()
 	developer_hud.displayed_slot=-1;developer_hud.refresh()
+func refresh_effects()->void:
+	impact_toggle.set_pressed_no_signal(game.impact_effects.enabled)
+	breakup_toggle.set_pressed_no_signal(game.impact_effects.breakup_enabled)
+	breakup_toggle.disabled=not game.impact_effects.enabled
 func visible_ui() -> bool:return opened or workspace or (world_map!=null and world_map.opened)
 func set_open(value: bool) -> void:
 	if value and world_map!=null and world_map.opened:world_map.set_open(false)

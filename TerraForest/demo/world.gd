@@ -45,6 +45,7 @@ var target_overlay=preload("res://addons/player_runtime/target_overlay.gd").new(
 var vehicle_radial=preload("res://addons/vehicle_runtime/vehicle_radial.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
+var impact_effects:Node3D
 var equipped_tool:=0
 var editor_tool_active:=false
 var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
@@ -262,6 +263,10 @@ func _ready() -> void:
 	session_menu.world_page_factory=_make_world_locations
 	target_overlay.game=self;add_child(target_overlay)
 	vehicle_radial.game=self;add_child(vehicle_radial)
+	# Optional cosmetic module: removing its folder leaves gameplay intact.
+	var effects_path:="res://addons/impact_effects/impact_effects.gd"
+	if ProjectSettings.get_setting("terraforest/impact_effects",true) and "--no-impact-effects" not in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and ResourceLoader.exists(effects_path):
+		impact_effects=load(effects_path).new();add_child(impact_effects);impact_effects.attach(self)
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
 	session_menu.world_map=world_map;world_map.game=self;add_child(world_map)
 	destination_guide.game=self;add_child(destination_guide)
