@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS existing actor world and bounded activation initialize
+PASS clear-route control reaches destination
+PASS actor reaches reachable destination around wall
+PASS actors retain floor support
+PASS active collision proxy count stays within declared capacity
+PASS observed actor trajectory does not cross solid wall

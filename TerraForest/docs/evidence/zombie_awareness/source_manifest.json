@@ -1,0 +1,8 @@
+{
+  "addons/world_runtime/native/zombie_awareness.hpp": "b92561c7faef2cf27f98f3ee6cb2d9e85f8bddb3309683ede85c0fd36b818ae2",
+  "addons/world_runtime/native/zombie_awareness.cpp": "2bc2461da8ad4c28b12ebfd094ecbd22c434e54846961828e2d6fe16af3ef1f9",
+  "addons/world_runtime/native/register_types.cpp": "af0c0d0fd2ad8a265aa3ee6051c4e85523912ac38e8d3a7c6a5469bc18690707",
+  "addons/characters/runtime/zombie_world.gd": "6743d2afe29c8ced9111520bf52493a8dbe7b1a9510e1c1a03cf1606e99e5bc4",
+  "addons/characters/runtime/zombie.gd": "d9dc8e6c8fce93c9e9b16c1c3b9e57f73d676dba1ed8b421823963643985a405",
+  "demo/world.gd": "8ed7bd60c5aa4c759a451c58b88846b72cc099640ed743f8edf050ce74efd92d"
+}

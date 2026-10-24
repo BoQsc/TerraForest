@@ -19,6 +19,7 @@ func photograph()->void:
 	root.get_texture().get_image().save_png("res://reports/zombie_door_interaction/attack.png")
 func run()->void:
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;root.add_child(game)
+	game.zombies.force_pursuit=true # Door accounting fixture begins with an acquired target.
 	var deadline:=Time.get_ticks_msec()+60000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"actual host world becomes ready")

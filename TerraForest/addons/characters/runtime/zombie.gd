@@ -73,6 +73,8 @@ var target: Node3D
 var crowd_steering := Vector3.ZERO
 var navigator: Node3D
 var navigation_target := Vector3.INF
+var behavior_goal := Vector3.INF
+var awareness_state := "idle"
 var navigation_attack_clear := true
 var navigation_motor: RefCounted
 var alive := true
@@ -808,6 +810,7 @@ func get_behavior_snapshot() -> Dictionary:
 		"crawl_speed": get_crawl_speed(), "standing_legs": _has_standing_legs(),
 		"left_arm": _has_full_arm("l"), "right_arm": _has_full_arm("r"),
 		"target_distance": _target_distance() if is_instance_valid(target) else null, "clip": _current_clip,
+		"awareness": awareness_state, "intent_goal": behavior_goal,
 		"animation_time": animation_player.current_animation_position if animation_player != null and _animation_cursor_valid else 0.0,
 		"learned_contact_distance": _contact_standoff if is_finite(_contact_standoff) else null,
 		"grounded": is_on_floor(), "position": global_position, "velocity": velocity
@@ -920,6 +923,8 @@ func _physics_r4(delta: float) -> void:
 			_play_animation(_manual_clip)
 	elif behavior_enabled and is_instance_valid(target):
 		_tick_pursuit(delta)
+	elif behavior_enabled and behavior_goal.is_finite():
+		_tick_navigation(delta,behavior_goal,0.6)
 	else:
 		state = "crawl_idle" if _crawling else "idle"
 		_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
@@ -967,7 +972,16 @@ func _tick_pursuit(delta: float) -> void:
 		if request_attack():
 			return
 	if distance > preferred_reach or not navigation_attack_clear:
-		var direction := target.global_position - global_position
+		_tick_navigation(delta,target.global_position,0.0)
+	else:
+		state = "crawl_idle" if _crawling else "idle"
+		_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
+
+
+func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
+	var offset:=goal-global_position;offset.y=0
+	if offset.length()>stop_distance:
+		var direction := offset
 		if is_instance_valid(navigator):
 			if not navigation_target.is_finite() or global_position.distance_to(navigation_target)<0.025:
 				velocity.x=0;velocity.z=0;state="crawl_idle" if _crawling else "idle"

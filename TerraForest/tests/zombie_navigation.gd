@@ -38,6 +38,7 @@ func run()->void:
 	var collision:=CollisionShape3D.new();var capsule:=CapsuleShape3D.new();capsule.radius=0.34;capsule.height=1.8;collision.shape=capsule;collision.position.y=0.9;player.add_child(collision)
 	target=preload("res://addons/characters/runtime/zombie_target.gd").new();player.add_child(target)
 	encounters=preload("res://addons/characters/runtime/zombie_world.gd").new();stage.add_child(encounters);encounters.enabled=true;encounters.target=target
+	encounters.force_pursuit=true # Isolate route/motor acceptance from sight and memory.
 	# A small resident island contains the real body, while every exit corridor
 	# is unknown. Readiness must describe the entire box, including larger probes.
 	encounters.readiness=func(bounds:AABB):return not missing_route or bounds.position.x>=-4.2 and bounds.end.x<=-.8 and bounds.position.z>=-1.7 and bounds.end.z<=1.7

@@ -74,7 +74,9 @@ func run() -> void:
 	zombie.set_physics_process(true)
 	target.position=zombie.global_position+Vector3(0,0,0.65)
 	zombie.set_behavior(true)
-	for tick in 220:await physics_frame
+	for tick in 220:
+		encounters.update(1.0/Engine.physics_ticks_per_second,target.global_position,true)
+		await physics_frame
 	check(target.damage_received>0.0,"animated zombie contacts reach player target adapter")
 	zombie.set_behavior(false);zombie.set_physics_process(false)
 	zombie.receive_hit("shin_l",100.0,chest,Vector3.ZERO)
@@ -87,7 +89,7 @@ func run() -> void:
 	for index in 8:encounters.spawn_at(Vector3(float(index)*2-7,0,-5))
 	check(encounters.residents.size()==6,"live encounter population never exceeds six")
 	encounters.clear();await process_frame
-	encounters.update(0.1,Vector3.ZERO,true)
+	encounters._spawn_clock=0;encounters.update(0.1,Vector3.ZERO,true)
 	check(encounters.residents.size()==1,"automatic scheduler admits one supported encounter")
 	ready_gate=false;encounters.update(0.1,Vector3.ZERO,true)
 	check(encounters.residents.size()==1 and encounters.residents[0].process_mode==Node.PROCESS_MODE_DISABLED,"unknown streamed collision holds resident without deleting it")

@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS actual world becomes playable
+PASS normal world uses awareness and camera exclusion
+PASS initial active play has no close surprise spawns
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS automatic scheduler finds supported distant terrain in the actual world
+PASS actual admission preserves forty metre safety distance
+PASS actual admission stays outside player view
+PASS distant resident starts living independently of the player
+PASS distant zombie walks on actual streamed terrain
+PASS actual host keeps perception probes bounded
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_POPULATION_WORLD checks=9 failures=0

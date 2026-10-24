@@ -1,0 +1,73 @@
+{
+  "checks": 9,
+  "failures": 0,
+  "record": {
+    "body": {
+      "action_time": 0.0,
+      "active_action": "",
+      "alive": true,
+      "animation_time": 0.661794692277909,
+      "available_attacks": [
+        "bite",
+        "left",
+        "right",
+        "both"
+      ],
+      "awareness": "wander",
+      "behavior_enabled": true,
+      "clip": "drag_walk/Zombie_Walk_Drag_Right",
+      "contact_count": 0,
+      "crawl_speed": 0.32,
+      "crawl_transition": false,
+      "crawling": false,
+      "grounded": true,
+      "intent_goal": "(834.4033, 46.44572, 1341.712)",
+      "last_attack": "",
+      "last_contact": {},
+      "last_rejection": "",
+      "learned_contact_distance": null,
+      "left_arm": true,
+      "miss_count": 0,
+      "movement_mode": "standing",
+      "position": "(840.962, 46.4087, 1341.641)",
+      "r4_actions_enabled": true,
+      "revision_id": "r4",
+      "right_arm": true,
+      "standing_legs": true,
+      "state": "shamble",
+      "target_distance": null,
+      "traversal_state": "none",
+      "velocity": "(-0.44872, 0.0, 0.007314)"
+    },
+    "intent": {
+      "combat": false,
+      "goal": "(834.4033, 46.44572, 1341.712)",
+      "ignore_seconds": 0.0,
+      "moving": true,
+      "remaining_seconds": 27.2,
+      "revision": 1,
+      "state": "wander",
+      "unseen_seconds": 0.0,
+      "visible": false
+    },
+    "navigation": {
+      "conditional_door_count": 0,
+      "expansions": 0,
+      "goal": "(834.4033, 46.44572, 1341.712)",
+      "local_horizon": false,
+      "minimum_floor_normal_y": 0.7072,
+      "motion_rejection": "none",
+      "node_limit": 2048,
+      "nodes": 1,
+      "planner": "local",
+      "profile": 0,
+      "radius_m": 16,
+      "replans": 0,
+      "state": "following",
+      "stuck_seconds": 0.0,
+      "waypoint_index": 1,
+      "waypoint_target": "(840.7672, 47.33688, 1341.644)",
+      "waypoints": 15
+    }
+  }
+}

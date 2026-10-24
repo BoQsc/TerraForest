@@ -72,6 +72,7 @@ func run()->void:
 		if arg.begins_with("--navigation-case="):kind=arg.trim_prefix("--navigation-case=")
 	if kind not in ["cave","tower"]:quit(2);return
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
+	game.zombies.force_pursuit=true # Explicit pre-acquired target for saved route journeys.
 	if not check(await until(func():return not game.loading_active,90),"saved actual world loads read-only"):await finish();return
 	game._clear_motion();game.needs_floor_spawn=false;game.fly=false;game.app_focused=true
 	if game.session_menu.developer:game.session_menu.toggle_developer()

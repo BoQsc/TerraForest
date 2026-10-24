@@ -3,6 +3,7 @@
 #include "entity_actor.hpp"
 #include "entity_activation.hpp"
 #include "actor_navigator.hpp"
+#include "zombie_awareness.hpp"
 #include "entity_renderer.hpp"
 #include "world_archive.hpp"
 #include "derived_cache_index.hpp"
@@ -21,6 +22,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeActorOrders);
         GDREGISTER_CLASS(terraforest::NativeEntityActivation);
         GDREGISTER_CLASS(terraforest::NativeActorNavigator);
+        GDREGISTER_CLASS(terraforest::NativeZombieAwareness);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);

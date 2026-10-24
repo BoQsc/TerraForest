@@ -1,0 +1,30 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS real encounter controller admits the original R4 rig
+PASS all 15 original actions coexist with the new dragging walk
+PASS dragging walk is a looping two-second action
+PASS body speed matches the authored slow 0.45-m/s gait
+PASS animation cannot invoke movement or world mutation
+PASS root stays in place throughout the animation
+PASS all 59 bone poses join without a loop pop
+PASS evaluated boot surfaces remain above the flat floor
+PASS left foot steps while the right toe stays close enough to drag
+PASS supporting foot stays planted during the authored travel-speed stance
+PASS left boot's contact vertices hold their world position through flat support
+PASS weak boot's contact vertices also plant during the strong leg's recovery
+PASS at least one evaluated boot remains in contact throughout the cycle
+PASS pelvis transfers weight between feet and compresses on the weak side
+PASS hanging right arm follows through independently of the pelvis
+PASS preserved original walk remains selectable
+PASS actual native navigation and body motor use the dragging walk while pursuing
+PASS default healthy walking keeps the authored slow cadence
+PASS suspension holds the body and gait
+PASS dragging locomotion still transitions into authored attack contact
+Zombie severed shin_r: ["shin_r", "foot_r"]
+PASS severed leg still selects crawling instead of a missing-leg standing gait
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS collision-stopped body holds its gait instead of walking against the wall
+PASS blocked feet retain their pose while requested movement stays nonzero
+PASS clearing the collision resumes matched body and gait travel
+ZOMBIE_DRAG_WALK checks=24 failures=0

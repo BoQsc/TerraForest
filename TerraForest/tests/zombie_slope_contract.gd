@@ -23,6 +23,7 @@ func run()->void:
 		var target:=preload("res://addons/characters/runtime/zombie_target.gd").new();player.add_child(target)
 		encounter=preload("res://addons/characters/runtime/zombie_world.gd").new();scene.add_child(encounter);encounter.enabled=true;encounter.target=target;encounter.readiness=func(_b:AABB):return true;encounter._spawn_clock=100000
 		await physics_frame;await physics_frame
+		encounter.force_pursuit=true # Physical slope capability, independent of perception.
 		var zombie:CharacterBody3D=encounter.spawn_at(Vector3(-1,0,0));active=true
 		for step in 1200:
 			await physics_frame

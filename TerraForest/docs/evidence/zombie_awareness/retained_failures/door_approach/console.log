@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS actual host world becomes ready
+PASS real breakable wooden door inserted into host model collection
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits in loaded test entrance
+PASS blocked-door perception selects explicit breakable interaction target
+FAIL authored attack contacts debit existing world durability
+FAIL repeated validated attacks destroy actual wooden door
+PASS zombie cannot walk through the intact door
+PASS door collision refresh holds rather than deleting attacking zombie
+FAIL door removal invalidates route and zombie reaches player
+PASS NPC destruction grants no player salvage and consumes no tool wear
+PASS door destruction leaves no orphan hinge state
+PASS door damage/removal marks compound world dirty
+FAIL model snapshot round trip preserves destroyed door
+PASS existing world component captures NPC structural damage
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_DOOR_INTERACTION checks=14 failures=4

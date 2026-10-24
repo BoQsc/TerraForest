@@ -6,8 +6,10 @@ const CHARACTER_LAYER := 1 << 16
 const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
 const LIMIT := 6
-const MIN_RADIUS := 12.0
-const MAX_RADIUS := 24.0
+const MIN_RADIUS := 40.0
+const MAX_RADIUS := 64.0
+const SPAWN_GRACE := 18.0
+const SPAWN_INTERVAL := 8.0
 const RETIRE_RADIUS := 96.0
 var enabled := false
 var target: Node3D
@@ -15,13 +17,20 @@ var readiness: Callable
 var water_depth: Callable
 var obstacle_provider: Callable
 var navigation_interest:Callable
+var spawn_visible:Callable
+var awareness:RefCounted
+var awareness_status:Dictionary={}
+# Explicit navigation/animation fixture override; normal gameplay uses perception.
+var force_pursuit:=false
+var _sense_clock:Dictionary={}
+var _roam_revision:Dictionary={}
 var navigator: Node3D
 var navigation_status: Dictionary={}
 var _obstacles: Dictionary={}
 var _obstacle_clock: Dictionary={}
 var _navigation_exclusions: Array[RID]=[]
 var residents: Array = []
-var _spawn_clock := 0.0
+var _spawn_clock := SPAWN_GRACE
 var _sequence := 0
 var _corpse_age: Dictionary = {}
 var _capsule: CapsuleShape3D
@@ -33,6 +42,8 @@ func _ready() -> void:
 	navigator=ClassDB.instantiate("NativeActorNavigator")
 	add_child(navigator)
 	if not navigator.configure(LIMIT):push_error("Zombie navigation initialization failed")
+	awareness=ClassDB.instantiate("NativeZombieAwareness")
+	if not awareness.configure(LIMIT,randi()):push_error("Zombie awareness initialization failed")
 
 func clear() -> void:
 	for zombie in residents:
@@ -42,10 +53,12 @@ func clear() -> void:
 	for obstacle in _obstacles.values():
 		if is_instance_valid(obstacle):obstacle.queue_free()
 	_obstacles.clear();_obstacle_clock.clear()
+	_sense_clock.clear();_roam_revision.clear();awareness_status.clear()
+	if awareness!=null:awareness.clear()
 	if navigator!=null:navigator.clear()
 	if navigation_interest.is_valid():navigation_interest.call(PackedVector3Array())
 	_corpse_age.clear()
-	_spawn_clock = 0.0
+	_spawn_clock = SPAWN_GRACE
 
 func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) -> void:
 	if not enabled or not is_instance_valid(target):
@@ -78,19 +91,22 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 	_update_navigation(delta,available and pursue)
 	if navigation_interest.is_valid():navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
 	_update_spacing()
-	if not available:
+	if not available or not pursue:
 		return
 	_spawn_clock -= delta
 	if _spawn_clock > 0.0 or residents.size() >= LIMIT:
 		return
-	_spawn_clock = 4.0
+	_spawn_clock = SPAWN_INTERVAL
 	# At most four candidate positions and one admission each interval.
 	for attempt in 4:
 		_sequence += 1
 		var angle := float(_sequence) * 2.39996323
 		var radius := MIN_RADIUS + float(_sequence % 7) / 6.0 * (MAX_RADIUS - MIN_RADIUS)
 		var point := supported_point(focus + Vector3(sin(angle), 0, cos(angle)) * radius)
-		if point.is_finite() and spawn_at(point) != null:
+		var offset:=point-target.global_position;offset.y=0
+		if not point.is_finite() or offset.length()<MIN_RADIUS:continue
+		if spawn_visible.is_valid() and bool(spawn_visible.call(point+Vector3.UP)):continue
+		if spawn_at(point) != null:
 			break
 
 func invalidate_navigation(bounds: AABB=AABB()) -> void:
@@ -104,35 +120,67 @@ func _update_navigation(delta: float, available: bool) -> void:
 	# Refresh only when the recipient body changes: assignment invalidates routes.
 	if excluded!=_navigation_exclusions:
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
+	var sight_budget:=2
 	for zombie in residents:
 		var id:int=zombie.get_instance_id()
-		_obstacle_clock[id]=float(_obstacle_clock.get(id,0.0))-delta
+		var active:bool=available and zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED
+		var intent:Dictionary
+		if force_pursuit:
+			intent={"state":"chase","goal":target.global_position,"moving":true,"combat":true}
+		else:
+			if active:
+				_sense_clock[id]=float(_sense_clock.get(id,0.0))-delta
+				if float(_sense_clock[id])<=0 and sight_budget>0:
+					sight_budget-=1;_sense_clock[id]=0.25
+					var seen:bool=awareness.wants_sight(id,zombie.global_position,zombie.global_basis.z,target.global_position)
+					if seen:
+						var eye:Vector3=zombie.global_position+Vector3.UP*(0.45 if zombie._crawling else 1.35)
+						var player_eye:Vector3=target.global_position+Vector3.UP*1.1
+						var sight_bounds:=AABB(eye,Vector3.ZERO).expand(player_eye).grow(0.1)
+						seen=readiness.is_valid() and bool(readiness.call(sight_bounds)) and get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye,player_eye,7,excluded)).is_empty()
+					awareness.observe(id,target.global_position,seen)
+			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.status(id).get("state","idle"))
+			if intent.is_empty():continue
+			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
+				_roam_revision[id]=intent.revision
+				awareness.accept_roam(id,supported_point(intent.goal))
+				intent=awareness.status(id)
+		awareness_status[id]=intent
+		zombie.awareness_state=intent.state
+		zombie.behavior_goal=intent.goal if intent.moving else Vector3.INF
+		var may_break_door:bool=intent.state in ["chase","investigate"]
+		_obstacle_clock[id]=float(_obstacle_clock.get(id,0.0))-(delta if active else 0.0)
 		var obstacle:Node3D=_obstacles.get(id)
-		if is_instance_valid(obstacle) and not obstacle.available():
+		if is_instance_valid(obstacle) and (not active or not may_break_door or not obstacle.available()):
 			obstacle.queue_free();_obstacles.erase(id);obstacle=null
-		if available and zombie.alive and not zombie._crawling and not is_instance_valid(obstacle) and float(_obstacle_clock[id])<=0 and obstacle_provider.is_valid():
+		if active and may_break_door and not zombie._crawling and not is_instance_valid(obstacle) and float(_obstacle_clock[id])<=0 and obstacle_provider.is_valid():
 			_obstacle_clock[id]=0.5
 			obstacle=obstacle_provider.call(zombie)
 			if obstacle!=null:_obstacles[id]=obstacle
-		zombie.set_behavior_target(obstacle if is_instance_valid(obstacle) else target)
-		var start:Vector3=zombie.global_position+Vector3.UP*1.1
-		var end:Vector3=zombie.target.global_position+Vector3.UP*1.1
-		var ray:=PhysicsRayQueryParameters3D.create(start,end,7,excluded)
-		var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
-		zombie.navigation_attack_clear=(hit.is_empty() or (is_instance_valid(obstacle) and hit.get("collider")==obstacle.surface)) and absf(zombie.target.global_position.y-zombie.global_position.y)<=0.5
-		var goal:Vector3=obstacle.approach_point if is_instance_valid(obstacle) else target.global_position
-		var distance:Vector3=zombie.target.global_position-zombie.global_position;distance.y=0
-		var needs_route:bool=available and zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED and zombie._active_action.is_empty() and zombie._hit_timer<=0 and (distance.length()>1.0 or not zombie.navigation_attack_clear)
+		zombie.set_behavior_target(obstacle if is_instance_valid(obstacle) else (target if intent.combat else null))
+		zombie.navigation_attack_clear=false
+		if active and is_instance_valid(zombie.target) and zombie.global_position.distance_to(zombie.target.global_position)<1.6:
+			var start:Vector3=zombie.global_position+Vector3.UP*1.1
+			var end:Vector3=zombie.target.global_position+Vector3.UP*1.1
+			var hit:Dictionary=get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start,end,7,excluded))
+			zombie.navigation_attack_clear=(hit.is_empty() or (is_instance_valid(obstacle) and hit.get("collider")==obstacle.surface)) and absf(zombie.target.global_position.y-zombie.global_position.y)<=0.5
+		var goal:Vector3=obstacle.approach_point if is_instance_valid(obstacle) else intent.goal
+		var combat_target:=is_instance_valid(zombie.target)
+		var distance:Vector3=(zombie.target.global_position if combat_target else goal)-zombie.global_position;distance.y=0
+		var needs_route:bool=active and intent.moving and zombie._active_action.is_empty() and zombie._hit_timer<=0 and (distance.length()>(1.0 if combat_target else 0.6) or (combat_target and not zombie.navigation_attack_clear))
 		navigator.set_agent(id,zombie.global_position,goal,1 if zombie._crawling else 0,needs_route)
 	navigation_status=navigator.advance(delta,readiness,Callable())
+	navigation_status["perception_probes"]=2-sight_budget
+	navigation_status["perception_probe_limit"]=2
 	for zombie in residents:
 		var id:int=zombie.get_instance_id()
 		zombie.navigation_target=navigator.steering_target(id)
 		# Within melee range the source controller may approach its contact
 		# distance, but each actual step still passes the shared native guard.
-		var offset:Vector3=zombie.target.global_position-zombie.global_position;offset.y=0
-		if zombie.navigation_attack_clear and offset.length()<=1.0:
-			zombie.navigation_target=zombie.target.global_position
+		if is_instance_valid(zombie.target):
+			var offset:Vector3=zombie.target.global_position-zombie.global_position;offset.y=0
+			if zombie.navigation_attack_clear and offset.length()<=1.0:
+				zombie.navigation_target=zombie.target.global_position
 
 func _update_spacing() -> void:
 	# At most six actors: 30 ordered neighbour checks, with no world scan.
@@ -141,7 +189,9 @@ func _update_spacing() -> void:
 		zombie.crowd_steering = Vector3.ZERO
 		if not zombie.alive:
 			continue
-		var approach: Vector3 = target.global_position - zombie.global_position
+		var destination:Vector3=zombie.target.global_position if is_instance_valid(zombie.target) else zombie.behavior_goal
+		if not destination.is_finite():continue
+		var approach: Vector3 = destination - zombie.global_position
 		approach.y = 0.0
 		approach = approach.normalized()
 		var sideways := Vector3(-approach.z, 0, approach.x)
@@ -176,6 +226,7 @@ func _retire(index: int) -> void:
 	var zombie = residents[index]
 	_corpse_age.erase(zombie.get_instance_id())
 	var id:int=zombie.get_instance_id()
+	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id)
 	navigator.remove_agent(id);_obstacle_clock.erase(id)
 	if _obstacles.has(id):
 		if is_instance_valid(_obstacles[id]):_obstacles[id].queue_free()
@@ -213,7 +264,7 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 		return null
 	var zombie := Zombie.new()
 	zombie.position = to_local(supported)
-	zombie.target = target
+	zombie.target = target if force_pursuit else null
 	zombie.behavior_enabled = true
 	zombie.navigator=navigator
 	zombie.navigation_motor=ClassDB.instantiate("NativePlayerMovement")
@@ -225,8 +276,11 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	add_child(zombie)
 	residents.append(zombie)
 	var id:int=zombie.get_instance_id()
+	awareness.add_agent(id,zombie.global_position)
+	_sense_clock[id]=float(residents.size()%3)*0.08
 	zombie.tree_exiting.connect(func():
-		if is_instance_valid(navigator):navigator.remove_agent(id))
+		if is_instance_valid(navigator):navigator.remove_agent(id)
+		if is_instance_valid(awareness):awareness.remove_agent(id))
 	return zombie
 
 func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
@@ -255,4 +309,5 @@ func apply_hit(hit: Dictionary, damage: float, direction: Vector3) -> bool:
 	if not enabled or not is_instance_valid(zombie) or not zombie in residents or not zombie.alive or zombie.process_mode == Node.PROCESS_MODE_DISABLED:
 		return false
 	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0)
+	awareness.provoke(zombie.get_instance_id(),target.global_position)
 	return true

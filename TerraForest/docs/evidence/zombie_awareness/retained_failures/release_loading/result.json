@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "timed_out": true,
+  "timeout_seconds": 120,
+  "reason": "Clean project did not explicitly load extension before ClassDB.instantiate; fixture now loads if missing."
+}

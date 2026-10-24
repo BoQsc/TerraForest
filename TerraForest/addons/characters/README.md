@@ -42,8 +42,10 @@ hammer, assembly tool and water bucket previews remain available.
 
 ## Zombie encounters
 
-The manager admits at most six live/corpse controllers combined, one per four
-seconds, 12–24 metres from the player. Four candidate probes per interval reject
+The manager admits at most six live/corpse controllers combined. New play and
+world restore get eighteen seconds of active-play grace. Afterwards, admission
+attempts run every eight seconds, 40–64 metres from the player and outside the
+player camera's view. Four candidate probes per interval reject
 missing collision, unsupported/steep ground, water and occupied capsules. Admission
 and movement use the host's terrain/structure/vegetation collision-readiness gate.
 Controllers suspend during loading, edits, menus, inventory, driving or focus loss.
@@ -51,6 +53,22 @@ Unknown collision holds living actors until coverage returns; distance over 96
 metres retires them. Corpses retire after 20 seconds or on suspension/unready
 collision. Detached bodies freeze during suspension and are removed
 with their owner. Encounters clear on world pose restore and are not persisted.
+
+`NativeZombieAwareness` owns bounded session intent and randomized roaming goals.
+Unaware zombies wander between short pauses. They notice an unobstructed player
+within a 120-degree forward cone and 24 metres; close awareness within 3.5 metres
+still requires clear sight. Engaged sight extends to 36 metres. Losing sight
+sends them to the last seen position, without tracking hidden player movement;
+arrival starts a six-second local search. Eighteen seconds without sight or a
+blocked pursuit ends interest and resumes roaming. Striking a zombie provokes
+investigation. Unreachable visible targets also receive a retry cooldown.
+
+Perception is staggered at four updates per second per resident, with at most two
+sight eligibility probes per physics tick. Physics supplies actual occlusion and
+support; existing native navigation and guarded movement execute all destinations.
+Wander/search positions are not attack recipients. Combat still requires the
+authored live contact checks. Intent, goals and perception counts are available
+in behavior/manager snapshots. See [behavior evidence](../../docs/evidence/zombie_awareness/README.md).
 
 Pursuing zombies now use the same native `ActorRoute` core as settlement actors,
 through `NativeActorNavigator`, while retaining their own animated body and combat
@@ -67,8 +85,8 @@ solid player clearance, including the prone bite proxy.
 R4 retains authored pursuit, attack contact checks, hit reactions, living crawl
 after leg loss, severing and ragdolls. Player melee picks fitted limb areas with
 solid-world occlusion, applies damage, and charges the existing equipped tool's
-wear once. Pickaxe/axe zombie strikes use the source 1.2-second action duration;
-terrain/tool behavior retains its existing cadence. Source jump/ladder request APIs
+wear once, at the held tool's contact marker and with its full recovery.
+Source jump/ladder request APIs
 remain available but have no automatic jump or ladder-link selection.
 
 Closed wooden doors blocking pursuit become explicit approach/attack targets.

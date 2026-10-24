@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: Cannot get class 'NativeZombieAwareness'.
+   at: _instantiate_internal (core/object/class_db.cpp:587)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://tests/zombie_awareness.gd:14)
+SCRIPT ERROR: Invalid call. Nonexistent function 'configure' in base 'Nil'.
+   at: _initialize (res://tests/zombie_awareness.gd:15)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://tests/zombie_awareness.gd:15)

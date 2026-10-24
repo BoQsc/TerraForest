@@ -214,6 +214,7 @@ func _ready() -> void:
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in OS.get_cmdline_user_args()) and not "--no-zombies" in OS.get_cmdline_user_args()
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
+	zombies.spawn_visible=func(point:Vector3):return camera.is_position_in_frustum(point)
 	zombies.readiness=_actor_collision_ready
 	zombies.water_depth=lakes.water.depth_at
 	zombies.obstacle_provider=_zombie_obstacle_target
@@ -1302,7 +1303,7 @@ func _actor_collision_ready(bounds: AABB) -> bool:
 func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	if not _model_edit_available():return null
 	var start:Vector3=zombie.global_position+Vector3.UP*1.1
-	var offset:Vector3=player.global_position+Vector3.UP*1.1-start
+	var offset:Vector3=zombie.behavior_goal+Vector3.UP*1.1-start
 	# Follow the routed approach on this storey. A ray aimed straight at an
 	# upstairs recipient hits the lintel instead of the intervening door leaf.
 	if zombie.navigation_target.is_finite():

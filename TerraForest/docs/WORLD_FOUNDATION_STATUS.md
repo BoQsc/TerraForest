@@ -1,3 +1,22 @@
+## Zombie roaming, awareness and distant admission - 2026-10-24
+
+The existing session spawner now waits eighteen active-play seconds after startup
+or pose/world restore, admits outside the player camera at 40–64 metres, and
+attempts one admission per eight-second interval. Collision, water, occupancy and
+the six-controller cap still apply. Native awareness supplies randomized wandering,
+sight acquisition, pursuit, last-seen investigation, a short local search and
+loss of interest. Hidden movement cannot update the remembered destination.
+Unreachable pursuit has a cooldown. Wandering/searching never supplies a player
+attack recipient; existing authored contact and native route/motor owners remain.
+
+Native debug/release, physical behavior, real-world distant admission and existing
+navigation/combat verification are retained in [awareness evidence](evidence/zombie_awareness/README.md).
+Human acceptance of pacing and encounter density remains open for play feedback;
+revisit the declared ranges/timers against actual travel and surprise encounters
+when that feedback arrives. Encounters are still bounded and session-local.
+Saved population/loot, player health/death, automatic traversal links and sustained
+population/frame-cost qualification remain the explicit requirements below.
+
 ## Held-tool impact timing - 2026-10-24
 
 Gameplay hits now resolve at the actual held animation's contact pose, with one
