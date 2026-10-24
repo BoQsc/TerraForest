@@ -10,9 +10,9 @@ var meshes: Array[ArrayMesh]=[]
 # not a GPU driver transfer measurement and never added to it again.
 var profiling_enabled: bool=false
 var native_selection: RefCounted
-var native_flush_enabled: bool=not "--scripted-vegetation-flush" in OS.get_cmdline_user_args()
+var native_flush_enabled: bool=not "--scripted-vegetation-flush" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 func _init() -> void:
-	if "--scripted-vegetation-selection" in OS.get_cmdline_user_args(): return
+	if "--scripted-vegetation-selection" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())): return
 	if not ClassDB.class_exists("NativeVegetationSelection") and FileAccess.file_exists("res://addons/vegetation_runtime/vegetation_runtime.gdextension"):
 		GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
 	if ClassDB.class_exists("NativeVegetationSelection"): native_selection=ClassDB.instantiate("NativeVegetationSelection")

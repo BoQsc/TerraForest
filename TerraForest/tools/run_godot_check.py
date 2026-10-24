@@ -77,7 +77,7 @@ def execute(command, folder, timeout, required_text, cancel_requested=None):
     diagnostic_text = log + ("\n" + engine_log.read_text(encoding="utf-8", errors="replace")
                              if engine_log.exists() else "")
     result["diagnostics"] = sorted(set(re.findall(
-        r"(?m)^\s*(?:SCRIPT ERROR:|ERROR:|FAIL\b|WARNING: ObjectDB instances leaked)[^\r\n]*",
+        r"(?m)^\s*(?:SCRIPT ERROR:|ERROR:|FAIL\b|WARNING: (?:[0-9]+ )?ObjectDB instances (?:were )?leaked)[^\r\n]*",
         diagnostic_text)))
     result["required_text_found"] = required_text in log
     result["elapsed_seconds"] = time.monotonic() - started

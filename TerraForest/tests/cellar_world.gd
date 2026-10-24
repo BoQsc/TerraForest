@@ -1,5 +1,14 @@
 # SPDX-License-Identifier: 0BSD
-extends "res://tools/prepare_combined_world.gd"
+extends SceneTree
+var game:Node
+func _initialize()->void:run.call_deferred()
+func wait_until(predicate:Callable,seconds:int=30)->bool:
+ var deadline:=Time.get_ticks_msec()+seconds*1000
+ while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
+ return predicate.call()
+func prepare_cellar_location()->bool:
+ var helper=preload("res://addons/world_runtime/prepare_combined_world_task.gd").new();helper.root=root;helper.game=game
+ var ok:bool=await helper.prepare_cellar_location();helper.free();return ok
 func run()->void:
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not await wait_until(func():return not game.loading_active,90):quit(1);return

@@ -16,10 +16,10 @@ var temporary: bool = false
 var native: Object
 var collision_recipes: RefCounted
 var _collision_piece_triangles := 1024
-var snapshot_terrain: bool = "--snapshot-terrain" in OS.get_cmdline_user_args()
-var brick_terrain: bool = "--brick-terrain" in OS.get_cmdline_user_args()
-var region_terrain: bool = "--region-terrain" in OS.get_cmdline_user_args()
-var profile_regions: bool = "--profile-owned-regions" in OS.get_cmdline_user_args()
+var snapshot_terrain: bool = "--snapshot-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var brick_terrain: bool = "--brick-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var profile_regions: bool = "--profile-owned-regions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var _snapshot_token: int = 0
 
 func configure_collision_piece_size(triangles: int) -> bool:
@@ -262,7 +262,7 @@ func configure_initial_lake_bake()->bool:
 func start(use_temporary: bool) -> Error:
 	_startup_mark("main_initialization")
 	temporary = use_temporary
-	for arg: String in OS.get_cmdline_user_args():
+	for arg: String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		if arg == "--snapshot-readonly":
 			readonly_snapshot = true
 			temporary = true

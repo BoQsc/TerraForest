@@ -18,7 +18,7 @@ static func unix_milliseconds()->int:
  return int(Time.get_unix_time_from_system()*1000.0)
 
 static func requested_start()->int:
- for arg:String in OS.get_cmdline_user_args():
+ for arg:String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
   if arg.begins_with(ARGUMENT):
    var value:=arg.trim_prefix(ARGUMENT)
    if value.is_valid_int():return maxi(0,int(value))

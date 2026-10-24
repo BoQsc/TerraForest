@@ -10,7 +10,7 @@ static func apply(window: Window) -> void:
 	if DisplayServer.get_name() != "headless":
 		# Use Windows' composed fullscreen path, including on hybrid-GPU laptops.
 		# Apply synchronization AFTER the window transition recreates presentation.
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		if DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_FULLSCREEN:DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 		restore_vsync()
 
 static func restore_vsync() -> void:

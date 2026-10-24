@@ -1,0 +1,642 @@
+[
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.preview",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.preview"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.models",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.models"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.regions",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.regions"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.terrain",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.terrain"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.water",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.water"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1b038465140e5e7d.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1b038465140e5e7d.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_1f352ceb1911cd44.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_1f352ceb1911cd44.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_2812fe83be91e640.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_2812fe83be91e640.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_4f2e1450de5a2cab.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_4f2e1450de5a2cab.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_503029d5bcbe1e39.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_503029d5bcbe1e39.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_5a17f81c312564d9.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_5a17f81c312564d9.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_66a9ddcaf2e7890e.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_66a9ddcaf2e7890e.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_69989f729597cd78.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_69989f729597cd78.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_7b868016e6e47516.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_7b868016e6e47516.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_842756f2edada06e.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_842756f2edada06e.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9ba77dcd24e63410.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9ba77dcd24e63410.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_9eb07056bf1d2a5a.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_9eb07056bf1d2a5a.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_aa530bc7b64ede0a.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_aa530bc7b64ede0a.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_c0c4e71ab9038166.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_c0c4e71ab9038166.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_de2fd9114e5e5680.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_de2fd9114e5e5680.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_flow_e24d2958d95b92c5.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_flow_e24d2958d95b92c5.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.generation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.generation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_30307672d416c9a1.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_30307672d416c9a1.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.generation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.generation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_845d32c5d4572b1c.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_845d32c5d4572b1c.trw.lock"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.generation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.generation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.presentation.json",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.presentation.json"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.bak",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.bak"
+  },
+  {
+    "destination": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\window_session_checks_20261024\\window_generated_863f72f76da1a552.trw.lock",
+    "source": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\window_generated_863f72f76da1a552.trw.lock"
+  }
+]

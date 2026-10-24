@@ -42,6 +42,14 @@ class CheckLauncherTests(unittest.TestCase):
         self.assertIsNotNone(result["launch_error"])
         self.assertFalse(result["passed"])
 
+    def test_old_and_counted_object_leak_warnings_fail(self):
+        for warning in ["WARNING: ObjectDB instances leaked at exit",
+                        "WARNING: 3 ObjectDB instances were leaked at exit"]:
+            with self.subTest(warning=warning):
+                result = self.run_process("print('DONE');print(" + repr(warning) + ")")
+                self.assertFalse(result["passed"])
+                self.assertIn(warning, result["diagnostics"])
+
     def test_engine_log_errors_override_successful_console(self):
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)

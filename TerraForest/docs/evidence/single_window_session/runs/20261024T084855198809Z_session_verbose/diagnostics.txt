@@ -1,0 +1,878 @@
+WARNING: GENERAL - Message Id Number: 0 | Message Id Name: Loader Message
+	windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+	Objects - 1
+		Object[0] - VK_OBJECT_TYPE_INSTANCE, Handle 2031899995616
+   at: _debug_messenger_callback (drivers/vulkan/rendering_context_driver_vulkan.cpp:654)
+Accessibility: window 0 adapter created.
+Devices:
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+       [3] refresh (res://demo/worlds.gd:114)
+PASS world selector opens in original window
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Loading resource: res://demo/world.gd remapped: res://demo/world.gd
+Loading resource: res://addons/volumetric_water/water.gdshader remapped: res://addons/volumetric_water/water.gdshader
+Completed load for: 'res://addons/volumetric_water/water.gdshader' remapped 'res://addons/volumetric_water/water.gdshader' at thread 0
+Loading resource: res://addons/volumetric_water/textures/water_ripples_normal.png remapped: res://addons/volumetric_water/textures/water_ripples_normal.png
+Loading resource: res://.godot/imported/water_ripples_normal.png-e5c1ce0254c9de5a7a71331cea5b33aa.s3tc.ctex remapped: res://.godot/imported/water_ripples_normal.png-e5c1ce0254c9de5a7a71331cea5b33aa.s3tc.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/brick_albedo.png' remapped 'res://addons/structures/textures/terraforest/brick_albedo.png' at thread -1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/wood_albedo.png' remapped 'res://addons/structures/textures/terraforest/wood_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/102.res' remapped 'res://addons/player_runtime/art/drops/102.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/concrete_albedo.png' remapped 'res://addons/structures/textures/terraforest/concrete_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/103.res' remapped 'res://addons/player_runtime/art/drops/103.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/metal_albedo.png' remapped 'res://addons/structures/textures/terraforest/metal_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/104.res' remapped 'res://addons/player_runtime/art/drops/104.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/player_runtime/art/drops/205.res' remapped 'res://addons/player_runtime/art/drops/205.res' at thread -1
+Loading resource: res://addons/player_runtime/art/drops/206.res remapped: res://addons/player_runtime/art/drops/206.res
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading resource: res://addons/structures/prefabs/doorway_model.tres remapped: res://addons/structures/prefabs/doorway_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/paving_catalog.gd:8)
+       [1] _ready (res://demo/world.gd:141)
+Completed load for: 'res://addons/structures/textures/original/concrete_albedo.png' remapped 'res://addons/structures/textures/original/concrete_albedo.png' at thread -1
+Loading resource: res://addons/structures/prefabs/table_model.tres remapped: res://addons/structures/prefabs/table_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 6
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 6
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 6
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] set_grass_detail (res://addons/world_ecosystem/woodland_mesh.gd:21)
+       [1] set_grass_texture (res://addons/world_ecosystem/ground_cover.gd:89)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:68)
+       [3] _ready (res://demo/world.gd:336)
+PASS selector opens a new playable world in place
+PASS session profile reaches terrain worker
+PASS gameplay and streamed systems receive session flags
+PASS confirmation dialogs remain inside the game window
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS session profile reaches terrain worker
+PASS gameplay and streamed systems receive session flags
+PASS confirmation dialogs remain inside the game window
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+PASS gameplay and streamed systems receive session flags
+PASS confirmation dialogs remain inside the game window
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+PASS confirmation dialogs remain inside the game window
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+       [3] refresh (res://demo/worlds.gd:114)
+PASS save and return to selector in the same window
+PASS old world is freed and per-session arguments are cleared
+PASS world save is published before returning
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+PASS old world is freed and per-session arguments are cleared
+PASS world save is published before returning
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+PASS world save is published before returning
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/brick_albedo.png' remapped 'res://addons/structures/textures/terraforest/brick_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/101.res' remapped 'res://addons/player_runtime/art/drops/101.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/wood_albedo.png' remapped 'res://addons/structures/textures/terraforest/wood_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/102.res' remapped 'res://addons/player_runtime/art/drops/102.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/concrete_albedo.png' remapped 'res://addons/structures/textures/terraforest/concrete_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/103.res' remapped 'res://addons/player_runtime/art/drops/103.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/metal_albedo.png' remapped 'res://addons/structures/textures/terraforest/metal_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/104.res' remapped 'res://addons/player_runtime/art/drops/104.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/player_runtime/art/drops/201.res' remapped 'res://addons/player_runtime/art/drops/201.res' at thread -1
+Loading resource: res://addons/player_runtime/art/drops/202.res remapped: res://addons/player_runtime/art/drops/202.res
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/player_runtime/art/drops/205.res' remapped 'res://addons/player_runtime/art/drops/205.res' at thread -1
+Loading resource: res://addons/player_runtime/art/drops/206.res remapped: res://addons/player_runtime/art/drops/206.res
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading resource: res://addons/structures/prefabs/doorway_model.tres remapped: res://addons/structures/prefabs/doorway_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/paving_catalog.gd:8)
+       [1] _ready (res://demo/world.gd:141)
+Completed load for: 'res://addons/structures/textures/original/concrete_albedo.png' remapped 'res://addons/structures/textures/original/concrete_albedo.png' at thread -1
+Loading resource: res://addons/structures/prefabs/table_model.tres remapped: res://addons/structures/prefabs/table_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 6
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 6
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 6
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+PASS saved world reopens without restarting the game
+PASS saved generation identity and newly selected play mode are independent
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS second return releases save ownership
+PASS photographs render offscreen in the same process
+PASS saved generation identity and newly selected play mode are independent
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS second return releases save ownership
+PASS photographs render offscreen in the same process
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+PASS second return releases save ownership
+PASS photographs render offscreen in the same process
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread -1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+PASS photographs render offscreen in the same process
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread -1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/structures/textures/terraforest/brick_albedo.png' remapped 'res://addons/structures/textures/terraforest/brick_albedo.png' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/structures/textures/terraforest/wood_albedo.png' remapped 'res://addons/structures/textures/terraforest/wood_albedo.png' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/structures/textures/terraforest/concrete_albedo.png' remapped 'res://addons/structures/textures/terraforest/concrete_albedo.png' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/structures/textures/terraforest/metal_albedo.png' remapped 'res://addons/structures/textures/terraforest/metal_albedo.png' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/player_runtime/art/drops/201.res' remapped 'res://addons/player_runtime/art/drops/201.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/player_runtime/art/drops/205.res' remapped 'res://addons/player_runtime/art/drops/205.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+       [3] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/paving_catalog.gd:8)
+       [1] _ready (res://demo/world.gd:141)
+       [2] run (res://addons/world_runtime/capture_world_previews_task.gd:10)
+Completed load for: 'res://addons/structures/textures/original/concrete_albedo.png' remapped 'res://addons/structures/textures/original/concrete_albedo.png' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+       [3] refresh (res://demo/worlds.gd:114)
+PASS offscreen photograph refresh completes
+PASS refreshed world pictures are available to selector
+PASS read-only photographs preserve save bytes and restore session context
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+PASS refreshed world pictures are available to selector
+PASS read-only photographs preserve save bytes and restore session context
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+PASS read-only photographs preserve save bytes and restore session context
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+       [3] refresh (res://demo/worlds.gd:114)
+PASS photograph cancellation tears down the offscreen task
+PASS cancelled photographs leave saved world unchanged
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread 8
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+PASS cancelled photographs leave saved world unchanged
+Loading resource: res://demo/world.tscn remapped: res://demo/world.tscn
+Completed load for: 'res://demo/world.tscn' remapped 'res://demo/world.tscn' at thread 8
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/brick_albedo.png' remapped 'res://addons/structures/textures/terraforest/brick_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/101.res' remapped 'res://addons/player_runtime/art/drops/101.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/wood_albedo.png' remapped 'res://addons/structures/textures/terraforest/wood_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/102.res' remapped 'res://addons/player_runtime/art/drops/102.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/concrete_albedo.png' remapped 'res://addons/structures/textures/terraforest/concrete_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/103.res' remapped 'res://addons/player_runtime/art/drops/103.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/structures/textures/terraforest/metal_albedo.png' remapped 'res://addons/structures/textures/terraforest/metal_albedo.png' at thread -1
+Completed load for: 'res://addons/player_runtime/art/drops/104.res' remapped 'res://addons/player_runtime/art/drops/104.res' at thread -1
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/player_runtime/art/drops/201.res' remapped 'res://addons/player_runtime/art/drops/201.res' at thread -1
+Loading resource: res://addons/player_runtime/art/drops/202.res remapped: res://addons/player_runtime/art/drops/202.res
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/world_runtime/material_pickups.gd:72)
+       [1] _ready (res://demo/world.gd:127)
+Completed load for: 'res://addons/player_runtime/art/drops/205.res' remapped 'res://addons/player_runtime/art/drops/205.res' at thread -1
+Loading resource: res://addons/player_runtime/art/drops/206.res remapped: res://addons/player_runtime/art/drops/206.res
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/material_startup.gd:9)
+       [1] prepare (res://addons/structures/structures_world.gd:175)
+       [2] _ready (res://demo/world.gd:137)
+Loading resource: res://addons/structures/prefabs/doorway_model.tres remapped: res://addons/structures/prefabs/doorway_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] register (res://addons/structures/paving_catalog.gd:8)
+       [1] _ready (res://demo/world.gd:141)
+Completed load for: 'res://addons/structures/textures/original/concrete_albedo.png' remapped 'res://addons/structures/textures/original/concrete_albedo.png' at thread -1
+Loading resource: res://addons/structures/prefabs/table_model.tres remapped: res://addons/structures/prefabs/table_model.tres
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_MetallicRoughness.png-cc94f791d81793dfc47eb7e4d4002013.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png' at thread 0
+Loading resource: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png remapped: res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png
+Loading resource: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex remapped: res://.godot/imported/Vehicle_Rebuilt_Normal.png-e98b377354fce42067b52e3021b31753.ctex
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+Completed load for: 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' remapped 'res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png' at thread 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 0
+Loading cache for shader SceneForwardClusteredShaderRD, variant 1
+Loading cache for shader SceneForwardClusteredShaderRD, variant 2
+Loading cache for shader SceneForwardClusteredShaderRD, variant 3
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] map_variant (res://addons/vegetation/source.gd:45)
+       [1] set_compact_source (res://addons/vegetation/source.gd:51)
+       [2] open (res://addons/vegetation/source.gd:82)
+       [3] build (res://addons/vegetation/assets.gd:106)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] build (res://addons/world_ecosystem/woodland_mesh.gd:255)
+       [1] _mesh (res://addons/world_ecosystem/ground_cover.gd:79)
+       [2] _ready (res://addons/world_ecosystem/ground_cover.gd:63)
+       [3] _ready (res://demo/world.gd:336)
+PASS a different world opens after photography
+PASS slot, seed, generator and readonly flags do not leak across sessions
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+PASS slot, seed, generator and readonly flags do not leak across sessions
+Loading resource: res://demo/worlds.tscn remapped: res://demo/worlds.tscn
+Completed load for: 'res://demo/worlds.tscn' remapped 'res://demo/worlds.tscn' at thread -1
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+WARNING: Image format RGB8 not supported by hardware, converting to RGBA8.
+   at: _validate_texture_format (servers/rendering/renderer_rd/storage_rd/texture_storage.cpp:2855)
+   GDScript backtrace (most recent call first):
+       [0] image_for (res://addons/world_runtime/world_presentation.gd:33)
+       [1] show_saved_details (res://demo/worlds.gd:137)
+       [2] filter_list (res://demo/worlds.gd:128)
+       [3] refresh (res://demo/worlds.gd:114)
+PASS different world returns normally
+PASS all transitions retain one native window and the original process
+WINDOW_SESSION_FLOW checks=21 failures=0 slots=["window_flow_842756f2edada06e", "window_flow_503029d5bcbe1e39"]
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Freeing Default Tex_Blit Shader
+PASS all transitions retain one native window and the original process
+WINDOW_SESSION_FLOW checks=21 failures=0 slots=["window_flow_842756f2edada06e", "window_flow_503029d5bcbe1e39"]
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Freeing Default Tex_Blit Shader
+MultiUmaBuffer 'RENDER_LIST_OPAQUE' used a total of 1 buffers. A large number may indicate a waste of VRAM and can be brought down by tweaking MAX_EXTRA_BUFFERS for this buffer.
+WINDOW_SESSION_FLOW checks=21 failures=0 slots=["window_flow_842756f2edada06e", "window_flow_503029d5bcbe1e39"]
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Freeing Default Tex_Blit Shader
+MultiUmaBuffer 'RENDER_LIST_OPAQUE' used a total of 1 buffers. A large number may indicate a waste of VRAM and can be brought down by tweaking MAX_EXTRA_BUFFERS for this buffer.
+MultiUmaBuffer 'RENDER_LIST_MOTION' used a total of 0 buffers. A large number may indicate a waste of VRAM and can be brought down by tweaking MAX_EXTRA_BUFFERS for this buffer.
+Leaked instance: RefCounted:9223372160670632157 - Reference count: 0
+Leaked instance: RefCounted:9223372162616789215 - Reference count: 0
+Leaked instance: RefCounted:9223372165787683051 - Reference count: 0
+Leaked instance: RefCounted:9223372175669463284 - Reference count: 0
+Leaked instance: RefCounted:9223372168589478140 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+Leaked instance: RefCounted:9223372162616789215 - Reference count: 0
+Leaked instance: RefCounted:9223372165787683051 - Reference count: 0
+Leaked instance: RefCounted:9223372175669463284 - Reference count: 0
+Leaked instance: RefCounted:9223372168589478140 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+Leaked instance: RefCounted:9223372165787683051 - Reference count: 0
+Leaked instance: RefCounted:9223372175669463284 - Reference count: 0
+Leaked instance: RefCounted:9223372168589478140 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+Leaked instance: RefCounted:9223372175669463284 - Reference count: 0
+Leaked instance: RefCounted:9223372168589478140 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+Leaked instance: RefCounted:9223372168589478140 - Reference count: 0
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pre-cancelled request never starts a bake
+PASS cancel before launch creates no child process
+PASS cancelled world not published
+PASS cancel releases destination lease
+PASS concurrent destination request rejected
+PASS orphan store requires recovery rather than overwrite
+PASS failed generation preserves orphan data
+GENERATION_JOB_FAILURES failures=0

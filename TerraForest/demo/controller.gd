@@ -152,13 +152,14 @@ func _ready() -> void:
 		GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	if not ClassDB.class_exists("NativePlayerMovement"):
 		push_error("Native player movement unavailable")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	movement=ClassDB.instantiate("NativePlayerMovement")
-	Presentation.apply(get_window())
+	get_tree().root.gui_embed_subwindows=true
+	if not ProjectSettings.get_setting("terraforest/offscreen_session",false):Presentation.apply(get_window())
 	start_ms = Time.get_ticks_msec()
 	get_tree().auto_accept_quit = false
-	for arg: String in OS.get_cmdline_user_args():
+	for arg: String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		if arg.begins_with("--world-slot="):
 			terrain.save_slot=arg.get_slice("=",1)
 		if arg.begins_with("--world-generator="):
@@ -177,7 +178,7 @@ func _ready() -> void:
 			record_interaction = true
 		if arg.begins_with("--max-fps="):
 			max_fps = maxi(0, int(arg.get_slice("=", 1)))
-	DisplayServer.window_set_title("Terrain Rewrite 0.4.6-r4")
+	if not ProjectSettings.get_setting("terraforest/offscreen_session",false):DisplayServer.window_set_title("TerraForest")
 	Input.use_accumulated_input = false
 	Engine.physics_jitter_fix = 0.0
 	# Keep normal physics catch-up capacity; all ticks read CURRENT key state.
@@ -197,7 +198,7 @@ func _ready() -> void:
 	var prepared_material: ShaderMaterial = Assets.make_terrain_material()
 	if prepared_material == null:
 		_message("Terrain assets could not be loaded. Read the startup log in reports.")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	terrain_material = prepared_material
 	add_child(terrain)
@@ -212,8 +213,8 @@ func _ready() -> void:
 		_message("Native TerrainCore failed to load. Run run_tests.bat and read logs. Error %d" % error)
 		push_error(status.text)
 		terrain.latest_error = status.text
-		if benchmark_enabled:
-			get_tree().quit(2)
+		if benchmark_enabled or get_tree().root.has_node("WorldSession") or get_viewport().has_meta("terraforest_scene_task"):
+			_abort_startup(2)
 		return
 	gpu_timing_enabled = RenderingServer.get_current_rendering_method() != "gl_compatibility"
 	if gpu_timing_enabled:
@@ -333,7 +334,7 @@ func _setup_loading() -> void:
 	background.name="LoadingBackground";loading_layer.add_child(background)
 	var picture:TextureRect=background.picture
 	var preview_slot:String=terrain.save_slot
-	for arg:String in OS.get_cmdline_user_args():
+	for arg:String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		if arg.begins_with("--world-slot="):preview_slot=arg.trim_prefix("--world-slot=")
 	picture.texture=preload("res://addons/world_runtime/world_presentation.gd").image_for(preview_slot)
 	loading_diagnostics=preload("res://addons/world_runtime/loading_details.gd").new()
@@ -343,7 +344,7 @@ func _setup_loading() -> void:
 	loading_label=loading_panel.detail;loading_progress=loading_panel.bar
 	loading_panel.action.text="Save and quit"
 	loading_panel.action.pressed.connect(func() -> void: _notification(NOTIFICATION_WM_CLOSE_REQUEST))
-	loading_from_generation="--generation-handoff" in OS.get_cmdline_user_args()
+	loading_from_generation="--generation-handoff" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	loading_panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start() if loading_from_generation else 0,94 if loading_from_generation else 0)
 	loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 
@@ -413,8 +414,8 @@ func _update_loading() -> void:
 	_clear_motion()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_message("Ready: nearby coverage/collision active; distant terrain still streaming" if terrain.nearby_first and terrain.root_coverage < terrain.roots.size() else "Ready: map coverage and local collision are active")
-	if "--human-playtest" in OS.get_cmdline_user_args():
-		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in OS.get_cmdline_user_args() else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
+	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
+		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))
 
 func _consume_stroke() -> void:
@@ -852,6 +853,7 @@ func _refresh_frame_cap() -> void:
 	Presentation.refresh_frame_cap(max_fps,background_fps)
 
 func _notification(what: int) -> void:
+	if ProjectSettings.get_setting("terraforest/offscreen_session",false):return
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		app_focused = false
 		_clear_motion()
@@ -868,3 +870,12 @@ func _notification(what: int) -> void:
 		stroke_buffer.clear()
 		await terrain.shutdown_after_edits()
 		get_tree().quit()
+
+func _abort_startup(code:int)->void:
+	terrain.backend.disable_snapshot_writes("World initialization failed")
+	set_process(false);set_physics_process(false)
+	var task=get_viewport().get_meta("terraforest_scene_task",null)
+	if task!=null:task.quit(code);return
+	var host=get_tree().root.get_node_or_null("WorldSession")
+	if host!=null:host.reject_world.call_deferred(self,code)
+	else:get_tree().quit(code)

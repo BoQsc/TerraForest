@@ -13,7 +13,7 @@ var navigation_residency=preload("res://addons/world_runtime/navigation_residenc
 var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 # Native regional residency is the normal world path; retain an explicit diagnostic fallback.
-var model_region_paging := not "--no-model-region-paging" in OS.get_cmdline_user_args()
+var model_region_paging := not "--no-model-region-paging" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
 var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()
@@ -25,7 +25,7 @@ var vegetation = Vegetation.new()
 var ecosystem = Ecosystem.new()
 var ground_cover=preload("res://addons/world_ecosystem/ground_cover.gd").new()
 var ground_interaction=preload("res://addons/world_ecosystem/ground_interaction.gd").new()
-var ground_enabled: bool="--ground-cover" in OS.get_cmdline_user_args()
+var ground_enabled: bool="--ground-cover" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var ground_preview=preload("res://addons/world_ecosystem/ground_preview.gd").new()
 var ground_mode:=false
 var ground_species:=0
@@ -73,7 +73,7 @@ var _prefab_preview_clear := false
 var _prefab_preview_needs_checks := false
 var _prefab_preview_asset: Resource
 var recent_action_messages: Array[String]=[]
-var log_action_messages: bool="--log-actions" in OS.get_cmdline_user_args()
+var log_action_messages: bool="--log-actions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var telemetry := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
@@ -106,7 +106,7 @@ func configure_generation_spawn(point:Vector3)->bool:
 	return true
 
 func _ready() -> void:
-	construction_inventory.gameplay="--gameplay-construction" in OS.get_cmdline_user_args()
+	construction_inventory.gameplay="--gameplay-construction" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
 	tree_exiting.connect(construction_inventory.cancel_prefab)
@@ -115,18 +115,18 @@ func _ready() -> void:
 	add_child(pickups)
 	add_child(actors)
 	if not actors.prepare(persistence):
-		push_error("Actor persistence initialization failed");get_tree().quit(2);return
-	if "--actors" in OS.get_cmdline_user_args() and not actors.enable():
-		push_error("Actor activation initialization failed");get_tree().quit(2);return
+		push_error("Actor persistence initialization failed");_abort_startup(2);return
+	if "--actors" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and not actors.enable():
+		push_error("Actor activation initialization failed");_abort_startup(2);return
 	if not ground_cover.prepare(persistence):
-		push_error("Ground-cover persistence initialization failed");get_tree().quit(2);return
+		push_error("Ground-cover persistence initialization failed");_abort_startup(2);return
 	if not ecosystem.prepare_persistence(persistence):
 		push_error("Vegetation persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	if not pickups.prepare(persistence):
 		push_error("Material pickup initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	structures.name = "Structures"
 	add_child(structures)
@@ -155,36 +155,36 @@ func _ready() -> void:
 	structures_ready = structures_ready and not fence.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
 	if not generated_region.prepare(persistence):
-		push_error("Generated region persistence initialization failed");get_tree().quit(2);return
+		push_error("Generated region persistence initialization failed");_abort_startup(2);return
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	if not world_attack.prepare(self):
-		push_error("World durability initialization failed");get_tree().quit(2);return
+		push_error("World durability initialization failed");_abort_startup(2);return
 	if not persistence.register_component("player_equipment",player_hud.equipment.capture_storage_snapshot,player_hud.equipment.restore_storage_snapshot,player_hud.equipment,player_hud.equipment.capture_storage_snapshot()):
-		push_error("Character equipment persistence initialization failed");get_tree().quit(2);return
+		push_error("Character equipment persistence initialization failed");_abort_startup(2);return
 	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
 		push_error("Pending reward persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	mining_rewards.enabled=construction_inventory.gameplay
 	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	player_pose=ClassDB.instantiate("NativePlayerPose")
 	if not persistence.register_component("player_pose",_capture_player_pose,_restore_player_pose,player_pose,PackedByteArray()):
 		push_error("Player pose persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	if not world_vehicle.prepare(self,persistence):
 		push_error("Vehicle persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	if not road_palette.prepare_persistence(terrain,persistence):
 		push_error("Road anchor persistence initialization failed")
-		get_tree().quit(2)
+		_abort_startup(2)
 		return
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
@@ -196,7 +196,7 @@ func _ready() -> void:
 		["terrain attachment",func():return persistence.attach(terrain)==OK]]
 	for step:Array in persistence_steps:
 		if not step[1].call():
-			push_error("World persistence initialization failed: "+step[0]);get_tree().quit(2);return
+			push_error("World persistence initialization failed: "+step[0]);_abort_startup(2);return
 	_setup_prefabs()
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)
@@ -214,7 +214,7 @@ func _ready() -> void:
 	player.add_child(zombie_target)
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
 	add_child(zombies)
-	zombies.enabled=(construction_inventory.gameplay or "--zombies" in OS.get_cmdline_user_args()) and not "--no-zombies" in OS.get_cmdline_user_args()
+	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
 	zombies.spawn_visible=func(point:Vector3):return camera.is_position_in_frustum(point)
@@ -246,7 +246,7 @@ func _ready() -> void:
 		add_child(model_paging)
 		if not model_paging.attach(terrain,structures,model_tool.history,func():return player.global_position):
 			push_error("Model paging lifecycle initialization failed")
-			get_tree().quit(2)
+			_abort_startup(2)
 			return
 	player_hud.temporary_world=temporary_world
 	add_child(player_hud)
@@ -308,7 +308,7 @@ func _ready() -> void:
 		if actors.pool!=null:actors.pool.invalidate_navigation()
 		zombies.invalidate_navigation())
 	_sync_player_tool()
-	DisplayServer.window_set_title("TerraForest | Living terrain")
+	if not ProjectSettings.get_setting("terraforest/offscreen_session",false):DisplayServer.window_set_title("TerraForest")
 	vegetation.name = "Vegetation"
 	vegetation.camera = camera
 	vegetation.sun_direction = sun.global_basis.z.normalized()
@@ -317,8 +317,8 @@ func _ready() -> void:
 		_message("Vegetation initialization failed; inspect the log")
 		return
 	if not vegetation.enable_trunk_collision():
-		push_error("Tree collision initialization failed");get_tree().quit(2);return
-	if not "--no-tree-shadow-substitutes" in OS.get_cmdline_user_args():
+		push_error("Tree collision initialization failed");_abort_startup(2);return
+	if not "--no-tree-shadow-substitutes" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		var canopy=preload("res://addons/vegetation/canopy_shadows.gd").new()
 		canopy.name="CanopyShadows";canopy.forest=vegetation;canopy.camera=camera;canopy.material=terrain_material;add_child(canopy)
 	ecosystem.name = "Ecosystem"
@@ -348,7 +348,7 @@ func _ready() -> void:
 	add_child(lakes)
 	add_child(water_camera)
 	water_camera.configure(camera,lakes)
-	if "--water-gameplay" in OS.get_cmdline_user_args():
+	if "--water-gameplay" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		var start_water=preload("res://addons/volumetric_water/water_start.gd").new();start_water.game=self;add_child(start_water)
 	lakes.lake_ready.connect(func(_id: int): _show_lake_notice("Lake ready · temporary world" if temporary_world else "Lake ready · F5 saves world"))
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
@@ -541,7 +541,7 @@ func _present_message(text: String,console_output: bool) -> void:
 	status.text=text
 	var label_us:=Time.get_ticks_usec()-label_started
 	var log_started:=Time.get_ticks_usec()
-	if console_output and (text.begins_with("ERROR:") or "--verbose-world-events" in OS.get_cmdline_user_args()):print("[TerrainRewrite] ",text)
+	if console_output and (text.begins_with("ERROR:") or "--verbose-world-events" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))):print("[TerrainRewrite] ",text)
 	var log_us:=Time.get_ticks_usec()-log_started
 	if terrain!=null:
 		terrain._record_stage("message label",label_us/1000.0)

@@ -16,6 +16,10 @@ config/version="1.0.0-dev"
 run/main_scene="res://demo/worlds.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
+[autoload]
+
+WorldSession="*res://addons/world_runtime/world_session.gd"
+
 [debug]
 
 gdscript/warnings/integer_division=0

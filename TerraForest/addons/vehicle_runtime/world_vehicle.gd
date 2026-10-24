@@ -43,7 +43,7 @@ func prepare(world: Node,persistence: RefCounted) -> bool:
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	storage=ClassDB.instantiate("NativeVehicleStorage");_world=world
 	fleet=ClassDB.instantiate("NativeVehicleFleet")
-	fleet_enabled="--vehicle-fleet" in OS.get_cmdline_user_args()
+	fleet_enabled="--vehicle-fleet" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if fleet_enabled:activation=preload("res://addons/vehicle_runtime/fleet_activation.gd").new(self)
 	return persistence.register_component("vehicles",capture_snapshot,restore_snapshot,fleet,PackedByteArray())
 func capture_snapshot() -> PackedByteArray:

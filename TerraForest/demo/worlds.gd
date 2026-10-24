@@ -22,6 +22,10 @@ var preview_key:=""
 var preview_button:Button
 var slots:=PackedStringArray()
 var photograph_pid:=-1
+var photograph_job:Node
+var photograph_cancelling:=false
+var preparation_job:Node
+var session:Node
 var photograph_log:=""
 var photograph_deadline:=0
 var photograph_slot:=""
@@ -43,6 +47,8 @@ func heading(parent: Node,text: String,size: int=24) -> Label:
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=48;out.pressed.connect(action);parent.add_child(out);return out
 func _ready() -> void:
+	preload("res://addons/world_runtime/session_options.gd").reset()
+	session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
 	get_tree().auto_accept_quit=false
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
@@ -102,6 +108,7 @@ func _ready() -> void:
 	notice=heading(panel,"",18);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.custom_minimum_size.y=54
 	button(panel,"Quit",request_quit)
 	refresh()
+	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
 func refresh() -> void:
 	if preparation_pid>=0 or photograph_pid>=0:return
 	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed,["played","created","name"][sort_order.selected]);filter_list()
@@ -165,11 +172,12 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
 	preparation_cancel=preparation_status+".cancel";cancel_pending=false
 	result.args.append_array(PackedStringArray(["--status-file="+ProjectSettings.globalize_path(preparation_status),"--cancel-file="+ProjectSettings.globalize_path(preparation_cancel)]))
-	preparation_pid=OS.create_process(OS.get_executable_path(),result.args,false)
-	if preparation_pid<0:notice.text="Could not start the world-generation process.";return
+	preparation_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(preparation_job)
+	preparation_job.start(preload("res://addons/world_runtime/generation_coordinator.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
+	preparation_pid=OS.get_process_id()
 	cancel_button.show();cancel_button.disabled=false
 	preparation_started_msec=Time.get_ticks_msec()
-	Engine.max_fps=10
+	Engine.max_fps=60
 	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=preparation_cancel;add_child(generation_screen)
 	generation_screen.panel.reset(preparation_started_unix_ms)
 	generation_screen.cancel_requested.connect(func():cancel_pending=true;cancel_button.disabled=true)
@@ -192,22 +200,24 @@ func show_recovery()->void:
 func _process(delta:float)->void:
 	poll_preview()
 	if photograph_pid>=0:
-		if OS.is_process_running(photograph_pid):
-			if Time.get_ticks_msec()>photograph_deadline:cancel_photographs();notice.text="Photograph capture timed out. Saved world unchanged."
+		if not photograph_job.done:
+			if Time.get_ticks_msec()>photograph_deadline and not photograph_cancelling:cancel_photographs();notice.text="Photograph capture timed out. Saved world unchanged."
 			return
-		var code:=OS.get_process_exit_code(photograph_pid)
+		var code:int=photograph_job.code;photograph_job.queue_free();photograph_job=null
 		photograph_pid=-1;Engine.max_fps=60;photograph_button.disabled=false;photograph_cancel.hide()
-		var log:=FileAccess.get_file_as_string(photograph_log) if FileAccess.file_exists(photograph_log) else ""
+		if generation_screen!=null:generation_screen.queue_free();generation_screen=null
 		refresh()
-		notice.text=("Photographs refreshed for "+photograph_slot+".") if code==0 and "WORLD_PREVIEWS failures=0" in log and not "ERROR:" in log else "Photograph capture failed. Saved world unchanged. Log: "+photograph_log
+		notice.text="Photograph capture cancelled. Saved world unchanged." if photograph_cancelling else ("Photographs refreshed for "+photograph_slot+"." if code==0 else "Photograph capture failed. Saved world unchanged.")
+		photograph_cancelling=false
+		if quit_pending:get_tree().quit()
 		return
 	if preparation_pid<0:return
 	preparation_poll-=delta
 	if preparation_poll>0:return
 	preparation_poll=0.5
-	if OS.is_process_running(preparation_pid):
+	if not preparation_job.done:
 		_update_preparation_notice();return
-	preparation_pid=-1;Engine.max_fps=60;cancel_button.hide()
+	preparation_pid=-1;preparation_job.queue_free();preparation_job=null;Engine.max_fps=60;cancel_button.hide()
 	if generation_screen!=null:generation_screen.queue_free();generation_screen=null
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	refresh()
@@ -226,9 +236,8 @@ func _process(delta:float)->void:
 	_open_game(launch.args)
 
 func _open_game(args:PackedStringArray)->void:
-	var pid:=OS.create_process(OS.get_executable_path(),args)
-	if pid<0:notice.text="Could not start Godot. Select the saved world to try again.";return
-	get_tree().quit()
+	# This scene is about to be destroyed; the persistent host owns the await.
+	session.open_world(args)
 
 func _update_preparation_notice()->void:
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
@@ -269,7 +278,7 @@ func cancel_preparation()->void:
 	cancel_pending=true;cancel_button.disabled=true
 	_update_preparation_notice()
 func request_quit()->void:
-	if photograph_pid>=0:cancel_photographs()
+	if photograph_pid>=0:quit_pending=true;cancel_photographs();return
 	if preparation_pid<0:get_tree().quit();return
 	cancel_preparation()
 	quit_pending=cancel_pending
@@ -313,13 +322,28 @@ func refresh_photographs()->void:
 	photograph_log=ProjectSettings.globalize_path("user://photograph_%d_%d.log"%[OS.get_process_id(),Time.get_ticks_usec()])
 	var args:PackedStringArray=command.args
 	var separator:=args.find("--");args.insert(separator,"--log-file");args.insert(separator+1,photograph_log)
-	photograph_pid=OS.create_process(OS.get_executable_path(),args,false)
-	if photograph_pid<0:notice.text="Could not start photograph capture.";return
+	var cancel_path:=photograph_log+".cancel"
+	args.append("--cancel-file="+cancel_path)
+	photograph_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(photograph_job)
+	photograph_job.start(preload("res://addons/world_runtime/capture_world_previews_task.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(args))
+	photograph_pid=OS.get_process_id();photograph_cancelling=false
+	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=cancel_path;add_child(generation_screen)
+	generation_screen.cancel_requested.connect(cancel_photographs)
+	generation_screen.panel.show_progress("Refreshing world photographs","Loading the saved world in an offscreen viewport…",0)
+	generation_screen.cancel_button.text="Cancel photographs"
+	generation_screen.diagnostics.provider=photograph_job.task.diagnostics
+	var photograph:Texture2D=preload("res://addons/world_runtime/world_presentation.gd").image_for(photograph_slot)
+	if photograph!=null:generation_screen.picture.texture=photograph
+	photograph_job.task.progress_changed.connect(func(stage:String,completed:int,total:int,detail:Dictionary):
+		if generation_screen!=null:
+			var fraction:float=float(detail.get("stage_fraction",float(completed)/maxi(1,total)))
+			generation_screen.panel.show_progress("Refreshing world photographs",str(detail.get("activity",stage)),fraction*100)
+			generation_screen.panel.show_work(str(detail.get("work","")))
+			generation_screen.diagnostics.observe(stage,{"completed":completed,"total":total,"details":detail}))
 	photograph_deadline=Time.get_ticks_msec()+150000
-	Engine.max_fps=10;photograph_button.disabled=true;photograph_cancel.show()
-	notice.text="Photographing "+photograph_slot+" in a read-only window. Its saved world will not change."
+	Engine.max_fps=60;photograph_button.disabled=true;photograph_cancel.disabled=false;photograph_cancel.show()
+	notice.text="Photographing "+photograph_slot+" offscreen. Its saved world will not change."
 func cancel_photographs()->void:
 	if photograph_pid<0:return
-	if OS.is_process_running(photograph_pid):OS.kill(photograph_pid)
-	photograph_pid=-1;Engine.max_fps=60;photograph_button.disabled=false;photograph_cancel.hide()
-	notice.text="Photograph capture cancelled. Saved world unchanged."
+	photograph_cancelling=true;photograph_job.cancel();photograph_cancel.disabled=true
+	notice.text="Cancelling photograph capture…"

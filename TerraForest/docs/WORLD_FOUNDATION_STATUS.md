@@ -1,3 +1,29 @@
+## One persistent game window - 2026-10-24
+
+The world selector, generation/loading, gameplay and return now share one root
+Window and one game process. A persistent session host changes scenes after safe
+worker teardown; typed session arguments replace immutable OS flags for each
+world. Generation and read-only photograph refresh run their existing task code
+in a single offscreen viewport at 1920x1080 with matching antialiasing. Native
+planning, baking, storage verification and publication retain their worker owners.
+Cancellation joins tasks and restores session state before another world opens.
+Confirmation dialogs are embedded. The legacy headless command-line coordinator
+retains process isolation for diagnostics; player-facing flows create no child
+renderer process. Loading data, percentage, timer and developer details remain
+in the visible window, and a cover spans scene transitions.
+
+Source and exported checks verify native window-handle/PID continuity, actual
+creation/play/save/reopen/return, read-only pictures, cancellation, destination
+leases and independent per-world settings. Evidence, retained failures and the
+runtime packaging check are recorded in
+[single-window session evidence](evidence/single_window_session/README.md).
+A resource-loading-thread cleanup issue found during repeated switches was fixed
+by keeping native helper-graph initialization on its owner thread. Cold setup may
+still briefly occupy the main thread; this is not a total loading-time or
+performance qualification. Long-run switching, all legacy developer recipes and
+other hardware remain wider regression coverage, not claimed here. Existing
+world-quality and navigation requirements remain unchanged below.
+
 ## Carried terrain, repair hammer and vehicle actions - 2026-10-24
 
 Mined topsoil, stone and ores now place paid native terrain samples with right

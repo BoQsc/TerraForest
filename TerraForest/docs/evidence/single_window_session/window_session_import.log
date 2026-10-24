@@ -1,0 +1,103 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[   0% ] first_scan_filesystem | Started Project initialization (5 steps)
+[   0% ] first_scan_filesystem | Scanning file structure...
+WARNING: Detected another project.godot at res://addons/characters/ZombieLab. The folder will be ignored.
+   at: _should_skip_directory (editor/file_system/editor_file_system.cpp:3497)
+[  16% ] first_scan_filesystem | Loading global class names...
+[  33% ] first_scan_filesystem | Verifying GDExtensions...
+[  50% ] first_scan_filesystem | Creating autoload scripts...
+[  66% ] first_scan_filesystem | Initializing plugins...
+[  83% ] first_scan_filesystem | Starting file scan...
+[ DONE ] first_scan_filesystem
+
+[   0% ] update_scripts_classes | Started Registering global classes... (30 steps)
+[   0% ] update_scripts_classes | 
+[   3% ] update_scripts_classes | 
+[   6% ] update_scripts_classes | 
+[   9% ] update_scripts_classes | 
+[  12% ] update_scripts_classes | 
+[  16% ] update_scripts_classes | 
+[  19% ] update_scripts_classes | 
+[  22% ] update_scripts_classes | 
+[  25% ] update_scripts_classes | 
+[  29% ] update_scripts_classes | 
+[  32% ] update_scripts_classes | 
+[  35% ] update_scripts_classes | 
+[  38% ] update_scripts_classes | 
+[  41% ] update_scripts_classes | 
+[  45% ] update_scripts_classes | 
+[  48% ] update_scripts_classes | 
+[  51% ] update_scripts_classes | 
+[  54% ] update_scripts_classes | 
+[  58% ] update_scripts_classes | 
+[  61% ] update_scripts_classes | 
+[  64% ] update_scripts_classes | 
+[  67% ] update_scripts_classes | 
+[  70% ] update_scripts_classes | 
+[  74% ] update_scripts_classes | 
+[  77% ] update_scripts_classes | 
+[  80% ] update_scripts_classes | 
+[  83% ] update_scripts_classes | 
+[  87% ] update_scripts_classes | 
+[  90% ] update_scripts_classes | 
+[  93% ] update_scripts_classes | 
+[ DONE ] update_scripts_classes
+
+[   0% ] _update_scan_actions | Started Scanning actions... (12 steps)
+[   0% ] _update_scan_actions | developer_spawner.png
+[   7% ] _update_scan_actions | placed_soil.png
+[  15% ] _update_scan_actions | repair_hammer.png
+[  23% ] _update_scan_actions | vehicle_inventory.png
+[  30% ] _update_scan_actions | vehicle_item_deployed.png
+[  38% ] _update_scan_actions | vehicle_radial.png
+[  46% ] _update_scan_actions | generated_playing.png
+[  53% ] _update_scan_actions | generated_selector.png
+[  61% ] _update_scan_actions | generation_cancel_loading.png
+[  69% ] _update_scan_actions | photograph_loading.png
+[  76% ] _update_scan_actions | playing.png
+[  84% ] _update_scan_actions | selector_returned.png
+[ DONE ] _update_scan_actions
+
+[   0% ] reimport | Started (Re)Importing Assets (12 steps)
+[   0% ] reimport | Preparing files to reimport...
+[   7% ] reimport | Preparing files to reimport...
+[  15% ] reimport | Preparing files to reimport...
+[  23% ] reimport | Preparing files to reimport...
+[  30% ] reimport | Preparing files to reimport...
+[  38% ] reimport | Preparing files to reimport...
+[  46% ] reimport | Preparing files to reimport...
+[  53% ] reimport | Preparing files to reimport...
+[  61% ] reimport | Preparing files to reimport...
+[  69% ] reimport | Preparing files to reimport...
+[  76% ] reimport | Preparing files to reimport...
+[  84% ] reimport | Preparing files to reimport...
+[   0% ] reimport | Executing pre-reimport operations...
+[   0% ] reimport | developer_spawner.png
+[   7% ] reimport | placed_soil.png
+[  15% ] reimport | repair_hammer.png
+[  23% ] reimport | vehicle_inventory.png
+[  30% ] reimport | vehicle_item_deployed.png
+[  38% ] reimport | vehicle_radial.png
+[  46% ] reimport | generated_playing.png
+[  53% ] reimport | generated_selector.png
+[  61% ] reimport | generation_cancel_loading.png
+[  69% ] reimport | photograph_loading.png
+[  76% ] reimport | playing.png
+[  84% ] reimport | selector_returned.png
+[  92% ] reimport | Finalizing Asset Import...
+[ DONE ] reimport
+
+[   0% ] reimport | Started (Re)Importing Assets (12 steps)
+[   0% ] reimport | Executing post-reimport operations...
+[ DONE ] reimport
+
+[   0% ] loading_editor_layout | Started Loading editor (5 steps)
+[   0% ] loading_editor_layout | Loading editor layout...
+[  16% ] loading_editor_layout | Loading docks...
+[  33% ] loading_editor_layout | Reopening scenes...
+[  50% ] loading_editor_layout | Loading central editor layout...
+[  66% ] loading_editor_layout | Loading plugin window layout...
+[  83% ] loading_editor_layout | Editor layout ready.
+[ DONE ] loading_editor_layout
+

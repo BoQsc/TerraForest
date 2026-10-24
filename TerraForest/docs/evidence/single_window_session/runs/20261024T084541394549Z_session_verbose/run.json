@@ -1,0 +1,33 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--verbose",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T084541394549Z_session_verbose\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/window_session_flow.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_72966f7cd3fe4c3cbe0fb4217704804c",
+    "--derived-cache=user://window_session_flow_72966f7cd3fe4c3cbe0fb4217704804c"
+  ],
+  "cache": "user://window_session_flow_72966f7cd3fe4c3cbe0fb4217704804c",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 27320,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 60.07837300002575,
+    "passed": true
+  }
+}

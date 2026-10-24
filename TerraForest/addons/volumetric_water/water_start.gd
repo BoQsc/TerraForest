@@ -24,7 +24,7 @@ func _process(_delta:float) -> void:
    if entry.state=="Ready" and game.lakes.statistics().render_ready:
     game.player.global_position=center+Vector3(0,1.0,8.0);game.needs_floor_spawn=false;game.fly=false;game.yaw=0;game.pitch=-0.8;game.player.rotation.y=0;game.camera.rotation.x=game.pitch;game._clear_motion()
     game.player_hud.equip_item(401)
-    if "--water-bucket-review" in OS.get_cmdline_user_args():
+    if "--water-bucket-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
      var shore:Vector3=game.lakes.water.surface_near(center+Vector3(0,-0.75,5.5),2.0)
      if shore.is_finite():
       var aim_target:Vector3=shore+Vector3(0,0.06,-0.6)
