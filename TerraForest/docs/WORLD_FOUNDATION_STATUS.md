@@ -1,21 +1,26 @@
-## Terrain placement targeting preview - octahedron, 2026-10-24
+## Terrain placement targeting preview - compact octahedron, 2026-10-24
 
 Carried topsoil, stone and both ores now show a dedicated placement marker without
 requiring the optional all-tools debug overlay. The first rounded/spherical
-design was explicitly rejected. It has been replaced with an eight-face
-octahedron with straight thin edges and a light face tint: green for spatially
-clear targets, red for obstruction, amber for unavailable collision, plus a short
-material/action or reason caption. User acceptance of the revised shape is open.
+design was explicitly rejected. The first octahedron was also rejected for size,
+opacity and blocking text. The revised marker is 0.7 m across (previously 1.5 m),
+with a translucent face fill and softer edges: green for spatially clear targets,
+red for obstruction, amber for unavailable collision. Invalid targets have no
+caption or rejected-click notice. The actual terrain stamp and placement rules
+are unchanged. User acceptance of the refined appearance is open; close this
+visual requirement after in-game review of the smaller translucent marker.
 
 Preview and click use the same snapped target and clearance query; the click
 revalidates live state. One cached mesh and physics shape serve bounded 20 Hz
 preview queries. UI/focus loss, tool changes, missing support and pending edits
-hide the display. The marker shows the placement unit, not a prediction of the
+hide the display. The marker shows the placement centre, not a prediction of the
 final terrain mesh after it blends with neighbouring density.
 
-Twenty integrated checks pass, including exact displayed-cell payment, native
-topsoil readback, obstruction without payment, all four materials, and hiding.
-Ready/blocked/placed images were inspected. Export and packaged startup pass.
+The compact revision passes 21 integrated checks, including exact displayed-cell
+payment, native topsoil readback, obstruction without payment or blocking text,
+all four materials, and hiding. Ready and blocked images were inspected; the
+larger marker's images remain as rejected visual evidence. Export and packaged
+startup pass. Full interaction verification used source resources.
 The two earlier fixture failures and rejected sphere are retained; detailed
 coverage and the existing material-probe boundary limitation are recorded in
 [terrain placement preview evidence](evidence/terrain_placement_preview/README.md).

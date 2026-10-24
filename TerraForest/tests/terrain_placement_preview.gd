@@ -49,7 +49,7 @@ func run()->void:
 	if not check(chosen.get("ok",false),"real forest floor supplies a reachable clear placement target"):await finish();return
 	refresh();var cell:Vector3i=preview.result.cell
 	check(preview.visible and preview.caption.visible and not game.target_overlay.enabled and preview.global_position==Vector3(cell),"placement preview works with optional debug overlay disabled and uses snapped target")
-	check(preview.mesh.surface_get_array_len(0)==24 and preview.mesh.get_aabb().size.is_equal_approx(Vector3.ONE*game.terrain_placement.STAMP_RADIUS*2),"octahedron has eight flat faces and the native stamp extents")
+	check(preview.mesh.surface_get_array_len(0)==24 and preview.mesh.get_aabb().size.is_equal_approx(Vector3.ONE*.7) and game.terrain_placement.STAMP_RADIUS==.75,"compact octahedron has eight faces without shrinking the actual terrain stamp")
 	var inventory:PackedByteArray=hud.inventory.capture_storage_snapshot();var revision:int=game.terrain.density_revision
 	for i in 10:refresh()
 	check(inventory==hud.inventory.capture_storage_snapshot() and revision==game.terrain.density_revision and not game.terrain.pending_edit,"preview probing never spends material or edits terrain")
@@ -84,7 +84,9 @@ func run()->void:
 	game.camera.look_at(prop.global_position);refresh()
 	print("PLACEMENT_OBSTRUCTION ",JSON.stringify(preview.result))
 	inventory=hud.inventory.capture_storage_snapshot()
+	var notice:String=game._lake_notice;var notice_until:int=game._lake_notice_until
 	check(preview.visible and not preview.result.ok and preview.result.reason=="Blocked by an object" and not game.terrain_placement.place(game) and inventory==hud.inventory.capture_storage_snapshot(),"obstruction is visible and rejected without charging material")
+	check(not preview.caption.visible and preview.caption.text.is_empty() and game._lake_notice==notice and game._lake_notice_until==notice_until,"blocked target uses color without caption or click notice")
 	await capture("topsoil_blocked");prop.free()
 	game.session_menu.set_open(true);refresh();check(not preview.visible and not preview.caption.visible,"ESC hides both world marker and caption")
 	game.session_menu.set_open(false);game.app_focused=false;refresh();check(not preview.visible,"focus loss hides placement marker")

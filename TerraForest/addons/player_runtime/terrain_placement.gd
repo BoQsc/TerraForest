@@ -33,8 +33,8 @@ func place(game:Node)->bool:
 	if not active(game):return false
 	# Re-evaluate the live target on click; the display is never edit authority.
 	var selected:=target(game)
-	if selected.is_empty():game._show_lake_notice("Aim at reachable ground to place terrain");return false
-	if not selected.ok:game._show_lake_notice(selected.reason);return false
+	# Invalid targets use marker color only, without repeated blocking notices.
+	if selected.is_empty() or not selected.ok:return false
 	var accepted:bool=game.mining_rewards.place(selected.cell,selected.item,game.player_hud.active_slot)
-	game._show_lake_notice("Placing "+game.player_hud.RESOURCES[selected.item] if accepted else "Terrain placement unavailable; wait for the current edit")
+	if accepted:game._show_lake_notice("Placing "+game.player_hud.RESOURCES[selected.item])
 	return accepted

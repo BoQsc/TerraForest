@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: 0BSD
 extends MeshInstance3D
-# Advisory footprint, not a second terrain edit or a baked-mesh prediction.
+# Compact target marker, not a second terrain edit or a baked-mesh prediction.
 # Geometry/shader are shared; native spatial queries run only at 20 Hz while held.
+const MARKER_RADIUS:=.35
 var remaining:=0.0
 var last_item:=-1
 var result:Dictionary={}
 var caption:Label
 func _ready()->void:
-	# Eight flat triangles, built once. The corners mark the paid stamp's axes.
-	var radius:float=preload("res://addons/player_runtime/terrain_placement.gd").STAMP_RADIUS
+	# Eight flat triangles, built once. Display size is independent of edit size.
+	var radius:float=MARKER_RADIUS
 	var vertices:=PackedVector3Array();var uvs:=PackedVector2Array()
 	for x in [-1.0,1.0]:
 		for y in [-1.0,1.0]:
@@ -40,5 +41,5 @@ func update(game:Node,delta:float)->void:
 	var tint:=Color("83d9ba") if result.ok else Color("ec876e")
 	if result.reason=="Placement area is still loading":tint=Color("e5c273")
 	material_override.set_shader_parameter("tint",tint)
-	caption.text=game.player_hud.RESOURCES[result.item]+" · "+("Right mouse: place" if result.ok else result.reason)
-	caption.modulate=tint;show();caption.show()
+	caption.text=game.player_hud.RESOURCES[result.item]+" · Right mouse: place" if result.ok else ""
+	caption.modulate=tint;caption.visible=result.ok;show()

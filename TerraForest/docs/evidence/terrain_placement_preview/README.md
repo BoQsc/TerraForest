@@ -4,13 +4,16 @@ Topsoil (211), stone (201), iron ore (202) and copper ore (203) already placed p
 native terrain units, but had no dedicated placement visualization. They now
 show a snapped **octahedron**, a thin straight outline and lightly tinted faces.
 The initial sphere/rings design was rejected by the user as horrible; it is not
-the delivered design. No sphere option remains. Revised user visual acceptance
-is still open.
+the delivered design. No sphere option remains. The initial 1.5 m octahedron was
+then rejected for size, opacity and blocking text. The compact revision is 0.7 m
+across with 10% face opacity and up to 35% edge opacity, making its volume visible
+while retaining a clear view of the ground. User visual acceptance is still open.
 
 The marker is always available for these held materials independently of the
-optional debug overlay. Green means spatial clearance, red explains obstruction
+optional debug overlay. Green means spatial clearance, red indicates obstruction
 or player/vehicle protection, and amber indicates unavailable collision. A short
-caption names the material and right-click action or rejection reason. The debug
+caption names the material and right-click action only for valid targets. Invalid
+targets use color only: no blocked caption or rejected-click notice. The debug
 box is suppressed while this marker is active. Menus, missing reach, focus loss,
 other equipment, developer tools, vehicles and in-progress edits hide the marker.
 
@@ -20,13 +23,22 @@ player/vehicle clearance remain; native world limits and carried-stack availabil
 are also reported before submission. Eight triangles are created once for the
 marker; native ray/overlap queries are bounded to 20 Hz while held. There is no
 preview terrain mutation, mesh rebuild, resource payment or CPU voxel scan.
-The octahedron's axis tips extend .75 m from the centre, matching the native paid
-stamp radius. It illustrates a placement unit; final surface blending depends on
+The octahedron's axis tips extend .35 m from the centre, independently of the
+unchanged .75 m native paid stamp radius. It marks the snapped placement centre;
+final surface blending depends on
 neighbouring density. Native no-op placement/refund remains authoritative.
 
 ## Verification
 
-`verified/`: run `20261024T164401151790Z` passes 20 integrated checks in a temporary
+`compact/`: run `20261024T165231281574Z` passes 21 integrated checks, including
+the existing payment/readback coverage and silent blocked clicks with a hidden,
+empty blocking caption. Ready and blocked captures were inspected: the smaller
+marker has a translucent fill, softer edges and no blocked message. The rebuilt
+PCK is 280,893,388 bytes; export and native-library startup passed. Full interaction
+coverage ran against source resources, not the PCK. Visual acceptance remains open.
+
+`verified/` retains the larger, rejected octahedron: run `20261024T164401151790Z`
+passes 20 integrated checks in a temporary
 forest world with an isolated cache. Tests cover all four held resources, preview
 with the debug setting off, zero preview-side mutation/payment, an actual right
 click paying for exactly the displayed lattice cell, native topsoil readback,
@@ -49,6 +61,6 @@ Separate pickaxe work was present in this shared checkout and is listed in the
 manifests. Its files and status entries are excluded from this feature commit.
 
 ```powershell
-python tools/run_godot_check.py terrain_placement_preview --timeout 100 --require 'failures=0' -- --gameplay-construction --ground-cover --no-zombies --preview-evidence=res://reports/terrain_placement_octahedron_verified
+python tools/run_godot_check.py terrain_placement_preview --timeout 100 --require 'failures=0' -- --gameplay-construction --ground-cover --no-zombies --preview-evidence=res://reports/terrain_placement_compact
 python tools/export_pack.py --godot $env:GODOT_EXE
 ```

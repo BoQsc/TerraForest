@@ -10,5 +10,5 @@ void fragment(){
     vec3 inside=smoothstep(vec3(0.0),width*1.25,barycentric);
     float edge=1.0-min(inside.x,min(inside.y,inside.z));
     ALBEDO=tint.rgb;
-    ALPHA=.025+edge*.70;
+    ALPHA=.10+edge*.25;
 }
