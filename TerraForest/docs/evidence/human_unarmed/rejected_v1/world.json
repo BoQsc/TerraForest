@@ -1,0 +1,11 @@
+{
+	"checks": 11,
+	"failures": 0,
+	"impacts": [
+		{
+			"accepted": true,
+			"identity": 1,
+			"time": 0.3
+		}
+	]
+}

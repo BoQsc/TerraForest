@@ -34,7 +34,7 @@ func run() -> void:
 	view.swing();check(view.active_clip=="FP_Pickaxe_Fresh_Swing" and is_equal_approx(view.action_remaining,1.7),"pickaxe uses accepted downward stroke and timing")
 	view.equip(2);check(view.active_clip=="FP_Axe_Idle" and view.action_remaining==0.0,"switching tool cancels previous action")
 	view.swing();check(view.active_clip=="FP_Axe_Swing","axe uses authored swing")
-	view.equip(0);check(view.active_clip=="Idle","empty hands remove equipped tools")
+	view.equip(0);check(view.active_clip=="FP_Unarmed_Idle","empty hands remove equipped tools")
 	for mesh in view.meshes:
 		if String(mesh.name).to_lower().begins_with("equipment_"):check(not mesh.visible,"unarmed hides "+String(mesh.name))
 	target=preload("res://addons/characters/runtime/zombie_target.gd").new();stage.add_child(target);target.position=Vector3(0,0,5)

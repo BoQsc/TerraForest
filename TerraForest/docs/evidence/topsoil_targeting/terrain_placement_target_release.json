@@ -1,0 +1,8 @@
+{
+  "checks": 70,
+  "failures": 0,
+  "old_embedded": 68,
+  "old_occupied": 0,
+  "shoulders": 84,
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}

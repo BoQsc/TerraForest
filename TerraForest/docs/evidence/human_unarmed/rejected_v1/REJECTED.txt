@@ -1,0 +1,1 @@
+Rejected by the user on 2026-10-24: unnatural timing/keying and visibly broken hand during the punch. Functional tests do not override this rejection.

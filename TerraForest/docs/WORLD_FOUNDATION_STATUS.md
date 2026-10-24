@@ -1,3 +1,38 @@
+## Requested baseline and punch reach correction, 2026-10-24
+
+The user requested committing the current work as a baseline after correcting
+empty-hand reach. Bare-hand reach is now 1.65 m rather than 0.72 m, providing usable
+building/object interaction distance while retaining the tools' separate 3.5 m
+reach. Hit timing, line of sight, damage and inventory behavior remain unchanged.
+This is a gameplay allowance, not a claim that the authored fist reaches every
+target physically. Prior close-contact animation captures remain historical.
+
+Baseline authorization includes the current unarmed and topsoil work, not blanket
+visual acceptance. The latest topsoil feedback rejects frequent non-green targets
+during normal building. Fix that responsiveness next; do not close its acceptance
+gate using stationary-test results. Roads remain deferred until user approval of
+terrain placement. Existing hand/wardrobe and world-quality gates remain open.
+
+## Topsoil targeting and stacking - baseline with responsiveness defect, 2026-10-24
+
+The prior near-surface rounding could embed the compact marker and select a
+filled sample on low soil crowns. Native bounded empty-sample selection now keeps
+the marker outside the aimed surface plane. It runs on the existing terrain
+worker, with cached stable aim and revision/epoch/edit-ticket freshness checks.
+Single-unit stamps, payment/refunds, block-grid rules and floating construction
+are unchanged. Pending queries use amber, not repeated blocking notices.
+
+Actual-world checks pass repeated paid topsoil stacking and a paid building block
+on that newly added soil, plus material readback and existing UI/clearance guards.
+Native material conservation and mining/reward persistence regressions also pass.
+The final source and exported-world runs each pass 33 interaction checks; native
+debug/release each pass 70. Ready/placed/stacked/blocked source captures were inspected.
+This correction is included in the requested baseline, with frequent non-green
+targeting now reported by the user. Review and correct normal moving-aim
+placement, slopes and previously edited ground before calling the feel accepted;
+existing mesh/terrain-gap limitations are not waived. Resume grid-friendly road
+work only after that approval. [Targeting evidence and failures](evidence/topsoil_targeting/README.md).
+
 ## Build-friendly terrain - accepted improvement and default, 2026-10-24
 
 The user's clarification is authoritative: fix generated terrain, preserve the
@@ -28,9 +63,8 @@ floating builds, automatic seam filling, arbitrary-object fit guarantee or exist
 settlement-quality resolution is implied. The failed raw-inland comparison fixture
 did not become playable in its 50-second budget; its readiness cause remains
 unresolved, with logs retained separately from the successful coastal comparison.
-Next priority is topsoil targeting/stacking: its marker embeds in ground and
-repeated placement on player-added soil is unreliable. Fix and obtain user review
-before returning to grid-friendly road adjustments. Roads are explicitly deferred
+The accepted improvement is committed as `b31e7137`. Topsoil targeting/stacking
+has a correction awaiting user review, tracked above. Roads are explicitly deferred
 until that approval; require terrain-fit, access and visual evidence when resumed.
 [Terrain/grid contract](PLACEMENT_STANDARD.md), [evidence and open gates](evidence/buildable_terrain/README.md).
 
@@ -84,6 +118,52 @@ material classification remain approximations; sustained/low-end performance
 is unqualified. Existing world-quality/navigation gates remain open.
 [Grounded revision evidence](evidence/impact_effects_grounded/README.md) and
 [original baseline evidence and retained failures](evidence/impact_effects/README.md).
+
+## Neutral hands and punch - third revision, not accepted, 2026-10-24
+
+Empty toolbelt slots now select a dedicated relaxed hand pose and straight right
+punch, replacing the placement gesture previously used for unarmed attacks.
+The first version was explicitly rejected for unnatural timing/keying and broken
+hand deformation; its earlier passing checks do not override that rejection.
+Rejected evidence is retained under `evidence/human_unarmed/rejected_v1/`.
+The user also rejected the second punch for its instant, awkward, flat-screen
+feel, and explicitly did not accept the resting hands despite calling them a
+useful baseline. That delivery is preserved under `unaccepted_v2/`.
+
+The rework repairs finger weights in both hands, corrects the inverted left palm,
+wraps the thumbs and holds both fists closed through extension and withdrawal.
+A new wrist path drives predominantly forward over 16 frames, contacts at 0.467
+seconds and returns to neutral within a 1.133-second cycle. The shoulder advances
+behind the strike with modest torso rotation/lean; rest turns inward with loose
+fingers and a small wrist bend that straightens before punching. Upper-arm
+orientation follows the elbow bend with a stable basis through
+palm rotation. Empty
+hands use a separate body mesh with the original rest geometry/materials; tool
+selection restores the exact original mesh and accepted pickaxe grip. First-person
+movement retains neutral hands; third-person body locomotion remains available.
+The original third revision used 0.72 m reach near its visible fist surface.
+The user's subsequent playtest rejected that as too close; the baseline reach is
+now 1.65 m as described above. Tools keep their existing 3.5 m reach. Live
+target/occlusion checks and damage permissions remain authoritative.
+
+Twenty-two runtime checks, eighteen graphical world-contact/reach checks, 27
+attack-timing checks and eleven accepted-pickaxe checks pass. Character runtime
+and the targeted package check also pass. The world check measures the striking
+knuckle within 7 cm of the hit point, verifies a distant air punch does no damage
+and confirms tools retain their reach. Actual-world contact, preparation, return
+and rest frames were inspected; the new preview shows normal and half speed.
+This block fixture does not qualify zombie/terrain appearance across all target
+distances and camera pitches. Earlier second-version evidence remains unaccepted.
+
+User appearance review of this revision remains open. Close third-person views
+still show coarse knuckle creases and shirt/shoulder clipping; they are not marked
+finished by the engineering tests. Close the motion/hand requirement after user
+review in play and the new preview; further mesh/wardrobe corrections require
+inspection from the affected angles before claiming that quality gate. The user
+subsequently authorized including this work in the baseline checkpoint, not closing
+these appearance requirements. The reach correction passes 19 real-world checks,
+including comfortable-distance damage and out-of-range rejection, plus shared timing.
+[Unarmed preview and checks](evidence/human_unarmed/README.md).
 
 ## Fixed-grip pickaxe - accepted default, 2026-10-24
 

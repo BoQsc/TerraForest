@@ -44,11 +44,13 @@ func run()->void:
 		var hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(high,high-Vector3.UP*25,1))
 		if hit.is_empty():continue
 		game.camera.global_position=feet+Vector3.UP*1.62;game.camera.look_at(hit.position)
+		await wait_for(func():return game.terrain_placement.target(game).get("ok",false),3)
 		chosen=game.terrain_placement.target(game)
 		if chosen.get("ok",false) and chosen.position.y>hit.position.y+.05:break
 	if not check(chosen.get("ok",false),"real forest floor supplies a reachable clear placement target"):await finish();return
 	refresh();var cell:Vector3i=preview.result.cell
-	check(preview.visible and preview.caption.visible and not game.target_overlay.enabled and preview.global_position==Vector3(cell),"placement preview works with optional debug overlay disabled and uses snapped target")
+	check(preview.visible and preview.caption.visible and not game.target_overlay.enabled and preview.global_position==preview.result.position,"placement preview works with optional debug overlay disabled and follows the resolved target")
+	check((preview.global_position-preview.result.surface).dot(preview.result.normal)>=.35 and preview.global_position.distance_to(Vector3(cell))<=.36,"compact marker stays outside terrain without moving its paid lattice sample")
 	check(preview.mesh.surface_get_array_len(0)==24 and preview.mesh.get_aabb().size.is_equal_approx(Vector3.ONE*.7) and game.terrain_placement.STAMP_RADIUS==.75,"compact octahedron has eight faces without shrinking the actual terrain stamp")
 	var inventory:PackedByteArray=hud.inventory.capture_storage_snapshot();var revision:int=game.terrain.density_revision
 	for i in 10:refresh()
@@ -73,12 +75,31 @@ func run()->void:
 	print("PLACEMENT_READBACK ",JSON.stringify(reply))
 	check(sampled and reply.get("surface_material")==10,"native readback confirms topsoil at the previewed placement")
 	refresh();await capture("topsoil_placed")
+	var last_cell:=cell
+	for layer in 3:
+		game.player.position=Vector3(last_cell)+Vector3(0,0,2.5)
+		game.camera.global_position=Vector3(last_cell)+Vector3(0,2.8,.2);game.camera.look_at(Vector3(last_cell))
+		if not check(await wait_for(func():return game.terrain_placement.target(game).get("ok",false),5),"placed topsoil accepts another terrain target"):print("STACK_TARGET ",game.terrain_placement.target(game));break
+		refresh();var stacked:Vector3i=preview.result.cell
+		check(stacked.y==last_cell.y+1 and (preview.global_position-preview.result.surface).dot(preview.result.normal)>=.35,"stack advances exactly one layer with an exposed marker")
+		before=amount(211);var previous_revision:int=game.terrain.density_revision
+		game._unhandled_input(click)
+		check(await wait_for(func():return not game.terrain.pending_edit,20) and amount(211)==before-1 and game.terrain.density_revision>previous_revision,"right click grows player-placed topsoil without a no-op refund")
+		last_cell=stacked
+	await capture("topsoil_stack")
+	hud.inventory.grant(101,4,hud.inventory.snapshot().revision);hud.refresh();hud.equip_item(101)
+	game.camera.global_position=Vector3(last_cell)+Vector3(.15,2.8,.2);game.camera.look_at(Vector3(last_cell)+Vector3(.15,0,.15))
+	var block:Dictionary=game._structure_target(false);print("TOPSOIL_BLOCK_TARGET ",JSON.stringify(block))
+	if check(block.get("placement_ok",false),"building block can target newly placed topsoil"):
+		before=amount(101);game._edit_structure(false)
+		check(game.structures.blocks.get_cell(block.target)==1 and amount(101)==before-1,"real block placement on topsoil preserves grid alignment and pays once")
+	hud.equip_item(211)
 	# A visible small prop on the target must turn the footprint red, without payment.
 	var prop:=StaticBody3D.new();prop.collision_layer=2;prop.collision_mask=0
 	var collision:=CollisionShape3D.new();var box:=BoxShape3D.new();box.size=Vector3.ONE*.4;collision.shape=box;prop.add_child(collision)
 	var view:=MeshInstance3D.new();var mesh:=BoxMesh.new();mesh.size=box.size;view.mesh=mesh;prop.add_child(view)
-	game.add_child(prop);prop.global_position=Vector3(cell)+Vector3.UP*2
-	game.player.position=Vector3(cell)+Vector3(0,0,2.5)
+	game.add_child(prop);prop.global_position=Vector3(cell)+Vector3(4,2,.3)
+	game.player.position=prop.global_position+Vector3(0,-1.5,2.5)
 	game.camera.global_position=prop.global_position+Vector3(0,0,2.5)
 	for i in 3:await physics_frame
 	game.camera.look_at(prop.global_position);refresh()
@@ -91,7 +112,7 @@ func run()->void:
 	game.session_menu.set_open(true);refresh();check(not preview.visible and not preview.caption.visible,"ESC hides both world marker and caption")
 	game.session_menu.set_open(false);game.app_focused=false;refresh();check(not preview.visible,"focus loss hides placement marker")
 	game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-	game.camera.look_at(game.camera.global_position+Vector3.UP+Vector3.FORWARD);refresh();check(not preview.visible and not preview.caption.visible,"no reachable support hides stale marker")
+	game.camera.global_position=Vector3(last_cell)+Vector3(4,4,4);game.camera.look_at(game.camera.global_position+Vector3.UP+Vector3.BACK);refresh();check(not preview.visible and not preview.caption.visible,"no reachable support hides stale marker")
 	hud.equip_item(1);refresh();check(not preview.visible,"switching to a weapon removes terrain preview")
 	await finish()
 func finish()->void:

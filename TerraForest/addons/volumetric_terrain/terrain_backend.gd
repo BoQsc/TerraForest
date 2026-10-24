@@ -345,6 +345,14 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 			if typeof(job.get(field))!=TYPE_INT or int(job[field])<0: return false
 		job={"kind":"partition","packet":job.packet,"token":job.token,"epoch":job.epoch,"stamp":job.stamp}
 		priority=false
+	if job.get("kind","")=="placement_target":
+		if typeof(job.get("point"))!=TYPE_VECTOR3 or typeof(job.get("normal"))!=TYPE_VECTOR3:return false
+		var point:Vector3=job.point;var normal:Vector3=job.normal
+		if not point.is_finite() or not normal.is_finite() or normal.length_squared()<.5:return false
+		for field in ["token","epoch","revision"]:
+			if typeof(job.get(field))!=TYPE_INT or job[field]<0:return false
+		job={"kind":"placement_target","point":point,"normal":normal,"token":job.token,"epoch":job.epoch,"revision":job.revision}
+		priority=false
 	if job.get("kind","")=="density_ray":
 		if typeof(job.get("from"))!=TYPE_VECTOR3 or typeof(job.get("to"))!=TYPE_VECTOR3:
 			return false
@@ -381,7 +389,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="partition" and _partition_pending>=1:
 		mutex.unlock()
 		return false
-	if job.get("kind","")=="density_ray" and _density_pending>=8:
+	if job.get("kind","") in ["density_ray","placement_target"] and _density_pending>=8:
 		mutex.unlock()
 		return false
 	if stopping or jobs.size() >= 96 or jobs.size() + results.size() >= 128:
@@ -414,7 +422,7 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="save":_save_reserved=true
 	job["build_epoch"] = build_epoch
 	if job.get("kind","")=="material_edit": _material_pending+=1
-	if job.get("kind","")=="density_ray": _density_pending+=1
+	if job.get("kind","") in ["density_ray","placement_target"]: _density_pending+=1
 	if job.get("kind","")=="partition": _partition_pending+=1
 	if job.get("kind","")=="lake_slice": _lake_pending+=1
 	if job.get("kind","")=="density_batch": _site_pending+=1
@@ -466,7 +474,7 @@ func poll() -> Array[Dictionary]:
 	for result: Dictionary in ready:
 		if result.get("kind","")=="material_edit": _material_pending-=1
 		if result.get("kind","")=="density_batch": _site_pending-=1
-		if result.get("kind","")=="density_ray": _density_pending-=1
+		if result.get("kind","") in ["density_ray","placement_target"]: _density_pending-=1
 		if result.get("kind","")=="partition": _partition_pending-=1
 		if result.get("kind","")=="lake_slice": _lake_pending-=1
 	results = []
@@ -834,6 +842,10 @@ func _build_bricks(key: Vector3i, expected_build_epoch: int, selected: Array) ->
 func _execute_density_query(job: Dictionary) -> void:
 	var query_started:=Time.get_ticks_usec()
 	var queue_ms: float=(query_started-int(job.get("submitted_us",query_started)))/1000.0
+	if job.kind=="placement_target":
+		var target:Dictionary=Codec.decode_terrain_target(_call(Codec.terrain_target_command(job.point,job.normal,job.revision,job.build_epoch)))
+		target.merge({"kind":"placement_target","token":job.token,"epoch":job.epoch,"requested_revision":job.revision,"query_ms":(Time.get_ticks_usec()-query_started)/1000.0,"queue_ms":queue_ms})
+		_push(target);return
 	var reply: PackedByteArray=_call(Codec.density_ray_command(job["from"],job["to"],job["budget"],job["build_epoch"],true))
 	var result: Dictionary=Codec.decode_density_ray(reply)
 	if result.get("cells",0)>job["budget"]:
@@ -940,7 +952,7 @@ func _service_density_query() -> void:
 	if not stopping:
 		for index in range(jobs.size()):
 			var kind: String=jobs[index].get("kind","")
-			if kind in ["density_ray","density_batch"]:
+			if kind in ["density_ray","density_batch","placement_target"]:
 				query=jobs[index];jobs.remove_at(index);break
 			# Never cross mutations, saves, or unknown future job types.
 			if kind not in ["mesh","relight","height","surface_batch"]: break
@@ -1275,8 +1287,8 @@ func _run() -> void:
 					_apply_components(remaining.get("component_snapshot", {}))
 				elif remaining_kind == "density_batch":
 					_push({"kind":"density_batch","token":remaining.token,"epoch":remaining.epoch,"revision":remaining.revision,"status":"cancelled","values":PackedFloat32Array()})
-				elif remaining_kind == "density_ray":
-					_push({"kind":"density_ray","status":"cancelled","cancelled":true,"token":remaining["token"],"epoch":remaining["epoch"],"requested_revision":remaining["revision"],"build_epoch":remaining["build_epoch"]})
+				elif remaining_kind in ["density_ray","placement_target"]:
+					_push({"kind":remaining_kind,"status":"cancelled","cancelled":true,"token":remaining["token"],"epoch":remaining["epoch"],"requested_revision":remaining["revision"],"build_epoch":remaining["build_epoch"]})
 				elif remaining_kind == "partition":
 					_push({"kind":"partition","packets":[],"cancelled":true,"token":remaining.token,"epoch":remaining.epoch,"stamp":remaining.stamp})
 				elif remaining_kind in ["load", "reset"]:
@@ -1465,7 +1477,7 @@ func _run() -> void:
 				points = PackedVector3Array()
 				normals = PackedVector3Array()
 			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
-		elif kind == "density_ray":
+		elif kind in ["density_ray","placement_target"]:
 			_execute_density_query(job)
 		elif kind == "height":
 			var reply: PackedByteArray = _call(Codec.point_command(job["point"]))

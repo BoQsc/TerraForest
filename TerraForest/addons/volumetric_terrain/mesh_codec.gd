@@ -64,6 +64,18 @@ static func density_ray_command(from: Vector3, to: Vector3, budget: int, epoch: 
 		packet.encode_float(16+axis*4,to[axis])
 	return packet
 
+static func terrain_target_command(point:Vector3,normal:Vector3,revision:int,epoch:int)->PackedByteArray:
+	var packet:=command(39,[revision,epoch])
+	packet.append_array(PackedVector3Array([point,normal]).to_byte_array())
+	return packet
+
+static func decode_terrain_target(reply:PackedByteArray)->Dictionary:
+	if reply.size()>=12 and reply.decode_u32(8)==4:return {"status":"stale"}
+	if not reply_ok(reply) or reply.size()!=32 or reply.decode_u32(4)!=39 or reply.decode_u32(16)>1:return {"status":"error"}
+	var result:={"status":"hit" if reply.decode_u32(16)==1 else "miss","revision":reply.decode_u32(12)}
+	if result.status=="hit":result.cell=Vector3i(roundi(reply.decode_float(20)),roundi(reply.decode_float(24)),roundi(reply.decode_float(28)))
+	return result
+
 static func decode_density_ray(reply: PackedByteArray) -> Dictionary:
 	if reply.size()<12 or reply.decode_u32(0)!=REPLY_MAGIC or reply.decode_u32(4) not in [23,24]:
 		return {"status":"error","error":"Invalid density query envelope"}

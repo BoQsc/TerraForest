@@ -39,7 +39,7 @@ func update(game:Node,delta:float)->void:
 	if result.is_empty():hide();caption.hide();return
 	global_position=result.position
 	var tint:=Color("83d9ba") if result.ok else Color("ec876e")
-	if result.reason=="Placement area is still loading":tint=Color("e5c273")
+	if result.reason in ["Placement area is still loading","Checking terrain"]:tint=Color("e5c273")
 	material_override.set_shader_parameter("tint",tint)
 	caption.text=game.player_hud.RESOURCES[result.item]+" · Right mouse: place" if result.ok else ""
 	caption.modulate=tint;caption.visible=result.ok;show()

@@ -13,6 +13,8 @@ signal impact_preparing(from:Vector3,to:Vector3)
 signal contact_effect(target:Dictionary)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10}}
+const BARE_HAND_REACH := 1.65
+func reach() -> float:return BARE_HAND_REACH if game.equipped_tool==0 else 3.5
 func prepare(world: Node) -> bool:
 	game=world;durability=ClassDB.instantiate("NativeWorldDurability")
 	game.tool_view.attack_allowed=can_continue
@@ -22,7 +24,7 @@ func prepare(world: Node) -> bool:
 func block_key(cell: Vector3i) -> String:return "block:%d:%d:%d"%[cell.x,cell.y,cell.z]
 func target() -> Dictionary:
 	var start: Vector3=game.camera.global_position
-	var end: Vector3=start-game.camera.global_basis.z*3.5
+	var end: Vector3=start-game.camera.global_basis.z*reach()
 	var hit: Dictionary=game.structures.blocks.raycast_scene(start,end,0xFFFFFFFF,[game.player.get_rid()])
 	var zombie_hit: Dictionary=game.zombies.pick(start,end,[game.player.get_rid()])
 	var same_zombie:bool=not zombie_hit.is_empty() and not hit.is_empty() and (hit.get("collider")==zombie_hit.zombie or (hit.get("collider")!=null and hit.collider.get_meta("zombie",null)==zombie_hit.zombie))
@@ -83,7 +85,7 @@ func attack(repairing:bool=false) -> bool:
 	if not game.tool_view.begin_attack(sequence):pending={};return false
 	# Recovery is owned by the actual animation; retain the minimum input debounce.
 	next_attack=now+250;game.terrain.note_interaction()
-	impact_preparing.emit(game.camera.global_position,game.camera.global_position-game.camera.global_basis.z*3.5)
+	impact_preparing.emit(game.camera.global_position,game.camera.global_position-game.camera.global_basis.z*reach())
 	return true
 func can_continue()->bool:
 	return not pending.is_empty() and not game.session_menu.developer and not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.loading_active and not game.shutdown_requested and not game.benchmark_enabled and game.app_focused and not game.world_vehicle.driving and game.terrain.world_ready and game.terrain.epoch==pending.epoch and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and game.equipped_tool==pending.item and game.player_hud.active_slot==pending.slot

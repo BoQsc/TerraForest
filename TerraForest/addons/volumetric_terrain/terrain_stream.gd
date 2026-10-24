@@ -5,6 +5,7 @@ signal initialized(message: String)
 signal message_changed(message: String)
 signal height_received(point: Vector3, height: float, token: int)
 signal density_ray_received(result: Dictionary)
+signal placement_target_received(result: Dictionary)
 var native_revision: int = 0
 var _density_serial: int = 0
 var _density_requests: Dictionary = {}
@@ -400,7 +401,7 @@ func _receive(result: Dictionary) -> void:
 		message_changed.emit(text)
 		initialized.emit(text)
 		schedule_timer = 0.0
-	elif kind == "density_ray":
+	elif kind in ["density_ray","placement_target"]:
 		var serial: int=int(result.get("token",-1))
 		if not _density_requests.has(serial): return
 		var request: Dictionary=_density_requests[serial]
@@ -412,8 +413,9 @@ func _receive(result: Dictionary) -> void:
 		elif str(reply.get("status","error")) in ["hit","miss","work_limit"] and int(reply.get("revision",-1))!=native_revision:
 			reply["status"]="stale"
 		if reply.get("status","")!="hit":
-			reply.erase("position");reply.erase("fraction")
-		density_ray_received.emit(reply)
+			reply.erase("position");reply.erase("fraction");reply.erase("cell")
+		if kind=="placement_target":placement_target_received.emit(reply)
+		else:density_ray_received.emit(reply)
 	elif kind == "height":
 		var reply: PackedByteArray = result["reply"]
 		if Codec.reply_ok(reply) and reply.size() >= 16:
@@ -1141,11 +1143,21 @@ func request_density_ray(from: Vector3, to: Vector3, token: int, budget: int = 2
 	_density_requests[_density_serial]=request
 	return true
 
+func request_placement_target(point:Vector3,normal:Vector3,token:int)->bool:
+	if stopping or not world_ready or pending_edit or _density_requests.size()>=8 or token<0:return false
+	_density_serial+=1
+	var request:={"kind":"placement_target","token":token,"epoch":epoch,"revision":native_revision,"ticket":edit_ticket}
+	if not backend.submit({"kind":"placement_target","point":point,"normal":normal,"token":_density_serial,"epoch":epoch,"revision":native_revision}):return false
+	_density_requests[_density_serial]=request
+	return true
+
 func _cancel_density_requests(status: String) -> void:
 	var requests := _density_requests.values()
 	_density_requests.clear()
 	for request: Dictionary in requests:
-		density_ray_received.emit({"kind":"density_ray","status":status,"token":request.token,"epoch":request.epoch,"requested_revision":request.revision})
+		var reply:={"kind":request.get("kind","density_ray"),"status":status,"token":request.token,"epoch":request.epoch,"requested_revision":request.revision}
+		if reply.kind=="placement_target":placement_target_received.emit(reply)
+		else:density_ray_received.emit(reply)
 
 func _select_dirty_owners(job: Dictionary, lo: Vector3, hi: Vector3) -> void:
 	var key: Vector3i=job.key

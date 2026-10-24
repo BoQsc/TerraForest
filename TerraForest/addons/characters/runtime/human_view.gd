@@ -5,6 +5,8 @@ signal swing_contact(identity:int)
 signal swing_finished(identity:int,cancelled:bool)
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
+const UNARMED = preload("res://addons/characters/runtime/assets/Human.unarmed.res")
+const UNARMED_BODY = preload("res://addons/characters/runtime/assets/Human.unarmed_body.res")
 const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
 const PICKAXE_PULLBACK = preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
 const PICKAXE_FRESH = preload("res://addons/characters/runtime/assets/Human.pickaxe_fresh.res")
@@ -16,6 +18,9 @@ const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.g
 var model: Node3D
 var animation_player: AnimationPlayer
 var meshes: Array[MeshInstance3D] = []
+var body_mesh: MeshInstance3D
+var original_body_mesh: Mesh
+var unarmed_body_mesh: ArrayMesh
 var clips: Dictionary = {}
 var current := 0
 var active_clip := ""
@@ -26,7 +31,7 @@ var swing_clip:=""
 var contact_seconds:=0.0
 var contact_sent:=false
 # Contact poses in the authored clips (seconds on the animation timeline).
-const CONTACTS={"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
+const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
 var face_surfaces:Array=[]
@@ -54,6 +59,7 @@ func _ready() -> void:
 	_collect(model)
 	animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	animation_player.add_animation_library("placement", PLACEMENT)
+	animation_player.add_animation_library("unarmed", UNARMED)
 	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
 	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
 	animation_player.add_animation_library("pickaxe_fresh", PICKAXE_FRESH)
@@ -68,6 +74,11 @@ func _collect(node: Node) -> void:
 		animation_player = node
 	if node is MeshInstance3D:
 		meshes.append(node)
+		if String(node.name)=="Human_Body":
+			body_mesh=node;original_body_mesh=node.mesh
+			unarmed_body_mesh=UNARMED_BODY.duplicate()
+			for surface in original_body_mesh.get_surface_count():
+				unarmed_body_mesh.surface_set_material(surface,original_body_mesh.surface_get_material(surface))
 		node.layers=1<<19 # Player presentation, independently culled near the camera.
 		face_meshes[node.get_instance_id()]=node.visible
 		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -100,6 +111,9 @@ func equip(item: int) -> void:
 	_play(_motion_clip("Idle"))
 
 func _sync_equipment() -> void:
+	if body_mesh!=null:
+		var selected:Mesh=unarmed_body_mesh if current==0 else original_body_mesh
+		if body_mesh.mesh!=selected:body_mesh.mesh=selected
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
@@ -108,7 +122,9 @@ func _sync_equipment() -> void:
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 
 func _motion_clip(action: String) -> String:
-	if current==0 and action=="Swing":return "FP_Place_Relaxed"
+	if current==0:
+		if third_person and action in ["Walk","Run","Jump"]:return action
+		return "FP_Unarmed_Punch" if action=="Swing" else "FP_Unarmed_Idle"
 	if current == 1 and diagonal_pickaxe and pickaxe_swing == "fresh":
 		# Keep the approved fixed grip during movement and recovery. The old
 		# locomotion clips place the hands at different stations on the shaft.

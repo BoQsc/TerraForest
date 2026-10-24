@@ -25,9 +25,9 @@ func run()->void:
 	game.tool_view.equip(0);view.set_process(false)
 	check(view.clips.has_all(["FP_Place_Relaxed","FP_Pickaxe_Fresh_Swing","FP_Pickaxe_Diagonal_Swing"]),"placement and prior pickaxe actions coexist with the accepted default")
 	view._process(.1)
-	check(view.active_clip=="Idle" and not view.placement_active and view.action_remaining==0,"empty hands rest in the original idle without an action")
+	check(view.active_clip=="FP_Unarmed_Idle" and not view.placement_active and view.action_remaining==0,"empty hands rest in the neutral idle without an action")
 	game.player.velocity=Vector3(6,2,0);view._process(.1)
-	check(view.active_clip=="Idle" and not view.placement_active,"movement alone keeps the empty hand idle")
+	check(view.active_clip=="FP_Unarmed_Idle" and not view.placement_active,"movement alone keeps the empty hand idle")
 	game.player.velocity=Vector3.ZERO
 	var animation:Animation=view.animation_player.get_animation(view.clips.FP_Place_Relaxed)
 	check(is_equal_approx(animation.length,.9) and animation.loop_mode==Animation.LOOP_NONE,"placement is a 0.9-second one-shot")
@@ -75,15 +75,15 @@ func run()->void:
 	await create_timer(1.25).timeout
 	view.set_process(false)
 	var resting_hand:Vector3=skeleton.get_bone_global_pose(skeleton.find_bone("RightHand")).origin
-	check(view.active_clip=="Idle" and not view.placement_active and view.action_remaining==0,"real-time one-shot automatically returns empty hands to idle")
-	check(resting_hand.y<1.1,"hand physically lowers back to the original resting pose")
+	check(view.active_clip=="FP_Unarmed_Idle" and not view.placement_active and view.action_remaining==0,"real-time one-shot automatically returns empty hands to idle")
+	check(absf(resting_hand.y-1.36)<.02,"hand physically returns to the new relaxed hold after placement")
 	var idle_output:="res://reports/human_placement/idle_lifecycle"
 	DirAccess.make_dir_recursive_absolute(idle_output)
 	if DisplayServer.get_name()!="headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(idle_output+"/returned_idle.png")
 	view._process(2.0)
-	check(view.active_clip=="Idle" and not view.placement_active,"waiting without a new action never replays the placement gesture")
+	check(view.active_clip=="FP_Unarmed_Idle" and not view.placement_active,"waiting without a new action never replays the placement gesture")
 	# Native authored block targeting exercises the real success/removal path.
 	var cell:=Vector3i(game.player.global_position.floor())+Vector3i(0,1,-3)
 	game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,1]))
@@ -109,7 +109,7 @@ func run()->void:
 	game.terrain.message_changed.connect(observe_admission)
 	check(game.stroke_buffer.push_cube(terrain_cell,1),"gameplay fill sample can be captured before admission")
 	game._consume_stroke()
-	check(not view.placement_active and view.active_clip=="Idle" and view.action_remaining==0,"rejected gameplay fill leaves the empty hand at idle")
+	check(not view.placement_active and view.active_clip=="FP_Unarmed_Idle" and view.action_remaining==0,"rejected gameplay fill leaves the empty hand at idle")
 	check(not game.terrain.pending_edit and game.terrain.edit_ticket==before_ticket and game.terrain.density_revision==before_revision,"gameplay fill rejection happens before any native terrain mutation")
 	check(admission_messages.any(func(message:String)->bool:return "excavate only" in message),"gameplay fill is rejected by the excavation-only admission policy")
 	game.terrain.message_changed.disconnect(observe_admission)
@@ -128,7 +128,7 @@ func run()->void:
 	while game.terrain.pending_edit and Time.get_ticks_msec()<edit_deadline:await process_frame
 	check(not game.terrain.pending_edit and game.terrain.last_edit_outcome.get("status")=="published" and game.terrain.density_revision>before_revision,"editor fill reaches native publication before the test completes")
 	view._process(1.0)
-	check(not view.placement_active and view.active_clip=="Idle" and view.action_remaining==0,"editor fill gesture returns the empty hand to idle")
+	check(not view.placement_active and view.active_clip=="FP_Unarmed_Idle" and view.action_remaining==0,"editor fill gesture returns the empty hand to idle")
 	if fill_capture:
 		view.animation_player.advance(.2)
 		await RenderingServer.frame_post_draw

@@ -1,0 +1,22 @@
+{
+  "actions": {
+    "FP_Unarmed_Idle": {
+      "duration": 2.0,
+      "loop": 1,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Unarmed_Punch": {
+      "duration": 0.800000011920929,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    }
+  },
+  "approval": "Implemented; user appearance review pending",
+  "bones": 59,
+  "original_clips": 71,
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0,
+  "scope": "Blender bone animation on unchanged R11 runtime model; right grip surface corrective follows fist closure; other old pose correctives reset; no methods, gameplay events, root motion or body integration."
+}

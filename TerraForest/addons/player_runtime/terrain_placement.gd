@@ -3,19 +3,42 @@ extends RefCounted
 const STAMP_RADIUS:=.75 # Native terrain command 38: one paid lattice sample.
 var clearance:=SphereShape3D.new()
 var obstruction:=PhysicsShapeQueryParameters3D.new()
+var queried_terrain:Node
+var pending:Dictionary={}
+var cached:Dictionary={}
+var sequence:=0
 func _init()->void:
 	clearance.radius=.74;obstruction.shape=clearance;obstruction.collision_mask=6
 func active(game:Node)->bool:
 	return not game.session_menu.developer and game.equipped_tool in game.mining_rewards.TERRAIN_ITEMS and game._model_edit_available() and not game.session_menu.visible_ui() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
+func receive_target(reply:Dictionary)->void:
+	if pending.is_empty() or reply.token!=pending.token:return
+	cached=pending.duplicate();cached.reply=reply;pending={}
+func matches(query:Dictionary,terrain:Node,hit:Dictionary)->bool:
+	return not query.is_empty() and query.epoch==terrain.epoch and query.revision==terrain.native_revision and query.ticket==terrain.edit_ticket and query.point.distance_squared_to(hit.position)<.0064 and query.normal.dot(hit.normal)>.995
 func target(game:Node)->Dictionary:
 	if not active(game):return {}
 	var item:int=game.equipped_tool
 	var start:Vector3=game.camera.global_position
 	var hit:Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3.5,7,[game.player.get_rid()])
 	if hit.is_empty() or not hit.has("normal"):return {}
-	var cell:=Vector3i((hit.position+hit.normal*.25).round())
+	if queried_terrain!=game.terrain:
+		queried_terrain=game.terrain;pending={};cached={}
+		queried_terrain.placement_target_received.connect(receive_target)
+	var cell:=Vector3i((hit.position+hit.normal*.5).round())
+	var axis:int=hit.normal.abs().max_axis_index()
+	if (Vector3(cell)-hit.position).dot(hit.normal)<.38:cell[axis]+=1 if hit.normal[axis]>0 else -1
+	var resolved:=matches(cached,game.terrain,hit)
+	if resolved and cached.reply.get("status")=="hit":
+		cell=cached.reply.cell
+		resolved=(Vector3(cell)-hit.position).dot(hit.normal)>=.02
+	if not resolved and pending.is_empty():
+		sequence+=1
+		if game.terrain.request_placement_target(hit.position,hit.normal,sequence):
+			pending={"token":sequence,"point":hit.position,"normal":hit.normal,"epoch":game.terrain.epoch,"revision":game.terrain.native_revision,"ticket":game.terrain.edit_ticket}
 	var bounds:=AABB(Vector3(cell)-Vector3.ONE*.85,Vector3.ONE*1.7)
-	var result:={"cell":cell,"position":Vector3(cell),"normal":hit.normal,"bounds":bounds,"item":item,"ok":false,"reason":""}
+	var anchor:Vector3=Vector3(cell)+hit.normal*maxf(0,.38-(Vector3(cell)-hit.position).dot(hit.normal))
+	var result:={"cell":cell,"position":anchor,"normal":hit.normal,"surface":hit.position,"bounds":bounds,"item":item,"ok":false,"reason":""}
 	if cell.x<1 or cell.x>=2000 or cell.z<1 or cell.z>=2000 or cell.y<4 or cell.y>=254:
 		result.reason="Outside terrain placement limits";return result
 	var player_bounds:=AABB(game.player.global_position-Vector3(.4,.05,.4),Vector3(.8,1.9,.8))
@@ -24,6 +47,8 @@ func target(game:Node)->Dictionary:
 	if game.world_vehicle.overlaps_edit(bounds):result.reason="Move placement clear of the vehicle";return result
 	obstruction.transform.origin=Vector3(cell)
 	if not game.get_world_3d().direct_space_state.intersect_shape(obstruction,1).is_empty():result.reason="Blocked by an object";return result
+	if not resolved:result.reason="Checking terrain";return result
+	if cached.reply.get("status")!="hit":result.reason="No exposed terrain sample";return result
 	var rewards=game.mining_rewards
 	if not rewards.enabled or rewards.failed or not rewards.payment.is_empty():result.reason="Terrain placement is not ready";return result
 	var state:Dictionary=game.player_hud.inventory.snapshot();var slot:int=game.player_hud.active_slot

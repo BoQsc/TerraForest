@@ -36,10 +36,22 @@ and [current gait verification](../../docs/evidence/zombie_weighted_limp/README.
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
 selection drives equipment visibility; the pickaxe keeps its approved fixed
 hold during movement, while native motor velocity drives axe walk/run/jump
-presentation. Empty hands keep the original idle pose
+presentation. Empty hands use a low relaxed neutral pose
 between actions, including while moving. Head, mouth, eyes and hair are hidden in first-person view. The
 source full body remains available for later third-person presentation. Existing
 hammer, assembly tool and water bucket previews remain available.
+
+Empty toolbelt slots now use `FP_Unarmed_Idle` and a separate
+`FP_Unarmed_Punch`. The right fist closes before extension, contacts at 0.467 s and
+returns to neutral over a 1.133 s cycle. The resting hands turn inward with
+loosely curved fingers. Empty-hand reach is 0.72 m, matching the visible arm-length stroke;
+equipped tools retain their existing 3.5 m reach. Both hands use repaired finger skin weights
+while empty; equipping a tool restores the original mesh and grip weights. The
+first two punches were rejected for broken deformation and then an instant,
+flat-screen feel. This revision is awaiting appearance review. Left mouse keeps the existing bare-hand
+damage/target rules and consumes no tool wear. Placement remains a separate
+gesture. Original third-person body locomotion is retained while moving.
+See [unarmed authoring](authoring/Human.unarmed.README.md) for rebuild and review.
 
 ## Zombie encounters
 
@@ -173,7 +185,7 @@ accepted block placements and terrain-fill submissions. The whole hand is held
 low; the wrist stays aligned with the forearm. The index is softly extended,
 the remaining fingers loosely curled and the thumb naturally opposed. Equipment
 returns afterward, and held placement cannot restart an unfinished gesture.
-The empty hand automatically lowers into its original idle when the one-shot
+The empty hand automatically returns to its neutral hold when the one-shot
 ends and stays there until another action; movement does not play the placement
 pose or generic full-body arm swings.
 The original 71 clips and runtime GLB are unchanged; a compact AnimationLibrary

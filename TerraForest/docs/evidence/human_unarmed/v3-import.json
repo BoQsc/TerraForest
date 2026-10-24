@@ -1,0 +1,29 @@
+{
+  "actions": {
+    "FP_Unarmed_Idle": {
+      "duration": 2.0,
+      "loop": 1,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Unarmed_Punch": {
+      "duration": 1.13333332538605,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    }
+  },
+  "approval": "Reworked after user rejection; visual review pending",
+  "bones": 59,
+  "original_clips": 71,
+  "rest_error": 0.000000240274005136598,
+  "save_error": 0,
+  "scope": "Separate empty-hand mesh with repaired finger weights; original rest geometry, materials, bind and other-tool mesh retained. No method events or body integration.",
+  "skin_repair": {
+    "blend_shapes": 228,
+    "cross_finger_vertices_before": 209.0,
+    "repaired_runtime_vertices": 1958,
+    "source_vertices": 1061,
+    "surface_count": 3
+  }
+}

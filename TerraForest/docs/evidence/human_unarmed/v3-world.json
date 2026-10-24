@@ -1,0 +1,26 @@
+{
+	"checks": 18,
+	"failures": 0,
+	"impacts": [
+		{
+			"accepted": true,
+			"identity": 1,
+			"time": 0.466666666666667
+		},
+		{
+			"accepted": false,
+			"identity": 3,
+			"time": 0.466666666666667
+		},
+		{
+			"accepted": true,
+			"identity": 4,
+			"time": 0.466666666666667
+		},
+		{
+			"accepted": true,
+			"identity": 5,
+			"time": 0.466666666666667
+		}
+	]
+}

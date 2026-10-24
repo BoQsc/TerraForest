@@ -1,0 +1,10 @@
+{
+	"checks": 22,
+	"failures": 0,
+	"fist_error": 0.000000778291507685935,
+	"fixed_error": 0.0,
+	"knuckle_travel": 0.37377655506134,
+	"palm_symmetry": 0.999931812286377,
+	"seam_error": 0.000000133280039449346,
+	"wrist_alignment": 0.999999940395355
+}

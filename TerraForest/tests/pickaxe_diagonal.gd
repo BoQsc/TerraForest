@@ -128,7 +128,7 @@ func run()->void:
 	view._process(1.0)
 	check(not view.placement_active and pick.visible and view.active_clip=="FP_Pickaxe_Diagonal_Idle","placement restores the new pickaxe grip")
 	view.equip(0);view._process(.1)
-	check(view.active_clip=="Idle","empty hands retain their existing idle pose")
+	check(view.active_clip=="FP_Unarmed_Idle","empty hands retain their existing idle pose")
 	FileAccess.open(folder+"/result.json",FileAccess.WRITE).store_string(JSON.stringify({"approval":"PENDING USER VISUAL REVIEW; do not commit","checks":checks,"failures":failures,"head_samples":rows,"seam_error":seam,"ready_vertical_hand_gap_m":right_ready.y-left_ready.y,"hand_station_separation_m":hand_separation,"scope":"Actual temporary world, real equipment/view controller and evaluated steel head. Animation engineering checks do not approve its appearance or qualify world performance."},"  "))
 	game.shutdown_requested=true;game.terrain.backend.disable_snapshot_writes();await game.terrain.shutdown_after_edits();game.free()
 	print("PICKAXE_DIAGONAL checks=",checks," failures=",failures);quit(1 if failures else 0)

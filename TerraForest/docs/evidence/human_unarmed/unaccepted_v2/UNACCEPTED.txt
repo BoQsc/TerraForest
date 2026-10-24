@@ -1,0 +1,1 @@
+User review 2026-10-24: useful empty-hand baseline, explicitly not accepted. Resting hands are unappealing and should turn inward. Punch feels instant, awkward and flat, like hitting 2D UI rather than a world target. Functional checks do not close these requirements.

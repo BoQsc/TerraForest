@@ -1271,6 +1271,27 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(w.sample(x,y,z)>=0)ok=w.edit(center,center,.75f,0,true,u8(material),lo,hi,changes,1.f,0.f,0.f,nullptr,nullptr,0,0,true);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
+ else if(cmd==39){
+  u32 revision=r.u(),epoch=r.u();V3 point=r.vec(),direction=r.vec();
+  float magnitude=length(direction);
+  if(!r.good||n!=36||!(point.x>=0&&point.x<=WORLD&&point.z>=0&&point.z<=WORLD&&point.y>=0&&point.y<=WORLD_Y&&magnitude>.5f&&magnitude<1.5f)){out.p[8]=1;return;}
+  if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
+  direction=direction*(1.f/magnitude);
+  int origin_x=fl(point.x+.5f),origin_y=fl(point.y+.5f),origin_z=fl(point.z+.5f);
+  V3 selected{};float best=1e30f;bool found=false;
+  for(int offset_z=-1;offset_z<=1;offset_z++)for(int offset_y=-1;offset_y<=1;offset_y++)for(int offset_x=-1;offset_x<=1;offset_x++){
+   int cell_x=origin_x+offset_x,cell_y=origin_y+offset_y,cell_z=origin_z+offset_z;
+   if(cell_x<1||cell_x>=WORLD||cell_z<1||cell_z>=WORLD||cell_y<4||cell_y>=254)continue;
+   V3 candidate={float(cell_x),float(cell_y),float(cell_z)},offset=candidate-point;
+   float outward=dot(offset,direction),distance_squared=dot(offset,offset);
+   if(outward<.04f||distance_squared>2.5f)continue;
+   float score=2.f*distance_squared-outward*outward;
+   if(score>=best||!(w.sample(cell_x,cell_y,cell_z)>=0))continue;
+   best=score;selected=candidate;found=true;
+  }
+  if(cancelled(w,epoch)){out.p[8]=4;return;}
+  out.u(w.revision);out.u(found?1:0);out.vec(selected);
+ }
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
   float coefficients[256];int curve_count=0,curve_index=0;
