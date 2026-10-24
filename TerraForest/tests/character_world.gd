@@ -43,7 +43,7 @@ func run() -> void:
 			var wear:int=game.player_hud.inventory.snapshot().slots[slot].wear
 			check(game.world_attack.apply_target(selected),"existing melee adapter accepts zombie strike")
 			var feedback=game.player_hud.damage_feedback
-			check(feedback.visible and feedback.remaining==int(ceil(zombie.limb_health[selected.part])) and feedback.maximum==int(zombie.PARTS[selected.part].health),"live character strike displays authoritative hit-region durability")
+			check(feedback.visible and feedback.remaining==int(ceil(zombie.health)) and feedback.maximum==int(zombie.PARTS.torso.health),"live character strike displays shared zombie health regardless of hit region")
 			check(zombie.health<health,"integrated strike reaches live zombie health")
 			check(game.player_hud.inventory.snapshot().slots[slot].wear==wear+1,"zombie strike wears the actual equipped tool once")
 			check(game.terrain.changed_since_save,"tool wear marks compound player save dirty")

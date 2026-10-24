@@ -135,7 +135,7 @@ func run()->void:
 		if target.damage_received>0:break
 	check(target.damage_received>0,"dragging locomotion still transitions into authored attack contact")
 	active=false;zombie.set_behavior(false)
-	zombie.receive_hit("shin_r",100,zombie.position+Vector3.UP*.4,Vector3.ZERO)
+	zombie.receive_hit("shin_r",100,zombie.position+Vector3.UP*.4,Vector3.ZERO,false,"heavy")
 	for frame in 60:await physics_frame
 	zombie.play_clip("Zombie_Walk_Drag_Right")
 	check(zombie._crawling and zombie._manual_clip=="Zombie_Crawl","severed leg still selects crawling instead of a missing-leg standing gait")

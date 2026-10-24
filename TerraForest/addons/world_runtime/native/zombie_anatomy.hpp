@@ -40,7 +40,7 @@ protected:
 public:
     bool configure(const godot::Dictionary &definitions);
     bool set_hit_meshes(godot::Skeleton3D *skeleton,const godot::Dictionary &meshes);
-    godot::Dictionary hit(const godot::String &part,double damage,bool force_sever);
+    godot::Dictionary hit(const godot::String &part,double damage,bool force_sever,const godot::String &impact);
     bool detach(const godot::String &part);
     void kill();
     godot::Dictionary snapshot() const;

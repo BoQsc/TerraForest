@@ -328,12 +328,13 @@ func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
 		nearest.merge({"kind":"zombie","zombie":resident,"material":"other","name":"Zombie"})
 	return nearest
 
-func apply_hit(hit: Dictionary, damage: float, direction: Vector3) -> bool:
+func apply_hit(hit: Dictionary, damage: float, direction: Vector3, impact: String = "melee") -> bool:
 	var zombie: Object = hit.get("zombie")
 	if not enabled or not is_instance_valid(zombie) or (not zombie in residents and (not is_instance_valid(corpse_host) or not zombie in corpse_host.active.values())) or zombie.process_mode == Node.PROCESS_MODE_DISABLED or not is_finite(damage) or damage<=0 or damage>1000000 or not direction.is_finite():
 		return false
 	var part:String=hit.get("part","")
+	if impact not in ["unarmed","melee","cutting","heavy","firearm"]:return false
 	if not zombie.PARTS.has(part) or zombie.missing.get(part,true) or not hit.get("position",Vector3.INF).is_finite():return false
-	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0)
+	zombie.receive_hit(hit.get("part", "torso"), damage, hit.position, direction * 2.0, false, impact)
 	if zombie.alive:awareness.provoke(zombie.get_instance_id(),target.global_position)
 	return true

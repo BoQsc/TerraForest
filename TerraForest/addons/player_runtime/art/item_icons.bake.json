@@ -10,7 +10,7 @@
         "res://addons/characters/runtime/assets/Human.hammer.res": "a0efd00e897b9698914a112adfa3bec8f48f78385fdc67725986472ec55b67b6",
         "res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res": "8fe847638c34f31c735c2bf928aadb5722c7244853433c72ba29c9753227a291",
         "res://addons/characters/runtime/assets/Human.pickaxe_fresh.res": "4430afc81d17a4191e724badbb7a4c588bb46284d126fc235fe01fb68c9865e4",
-        "res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res": "4468b46a77a5e84b0e2db68edc3c7fee7447d1e4435cc715ca72c5a005cbdb34",
+        "res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res": "6fb004a440021dfdd4d010e0f3c2e3b52b877c82f48f53df5c95721214f06a28",
         "res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res": "28cd60421097dc2f1ef1fc2909a6adbc9e5e87453224392926718a9322477864",
         "res://addons/characters/runtime/assets/Human.placement.res": "37d9d45a2a70b2b878486427451d9b578ed6891a9e12a79a1f78c8b2effece8c",
         "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
@@ -21,7 +21,7 @@
         "res://addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
         "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "7099dfb7f6248cb71b3f690183f6b382611eeec352828ca2064b8d743c7fe777",
+        "res://addons/characters/runtime/human_view.gd": "0f3003128eeb194b562a6b0b6ee7671140a50cdb8fe0acbfcd1450742ef51258",
         "res://addons/player_runtime/tool_view.gd": "66dcbbd41a1f77b1a531789861f0bdb96610fe656805cff55b9df2efed479a10",
         "res://addons/volumetric_water/bucket_model.gd": "6b6731e678d1e66c59f4a3930dd098f391599af34684bb30e06c8d8f4d0d90c0"
       },

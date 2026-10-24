@@ -88,9 +88,9 @@ func run()->void:
 	check(not torso_shot.is_empty() and encounters.pick(torso_shot.start,torso_shot.end,[]).get("part")=="torso","world combat uses the same evaluated surface picker")
 	var original:float=zombie.health
 	zombie.receive_hit("forearm_l",20)
-	check(zombie.health<original and zombie.limb_health.forearm_l==18 and zombie._arm_condition("l")<1,"a forearm wound affects health and arm effectiveness")
-	zombie.receive_hit("forearm_l",18)
-	check(zombie.alive and zombie.missing.forearm_l and zombie.missing.hand_l and zombie.health<original-7,"severing a forearm damages vitality and detaches its hand")
+	check(zombie.health==original-20 and zombie.limb_health.forearm_l==32 and zombie._arm_condition("l")<1,"a light forearm wound applies full shared damage with limited limb trauma")
+	zombie.receive_hit("forearm_l",36,Vector3.ZERO,Vector3.ZERO,false,"heavy")
+	check(zombie.alive and zombie.missing.forearm_l and zombie.missing.hand_l and zombie.health==original-56,"a heavy forearm strike damages shared health and detaches its hand")
 	check(not "left" in zombie.get_available_attacks() and not "both" in zombie.get_available_attacks() and "right" in zombie.get_available_attacks(),"lost arm chain removes only anatomically impossible attacks")
 	await capture("arm_detachment",zombie)
 	# Exercise every sever root through the actual controller, including caps and colliders.
@@ -131,7 +131,7 @@ func run()->void:
 	check(not corpse_shot.is_empty() and encounters.pick(corpse_shot.start,corpse_shot.end,[]).get("part")=="head","corpse displaced from its character root retains accurate postmortem targeting")
 	if not corpse_shot.is_empty():
 		var hit:Dictionary=corpse_shot.hit;hit.zombie=zombie
-		check(encounters.apply_hit(hit,50,Vector3.UP) and zombie.missing.head and not zombie.alive,"ordinary combat adapter can detach a corpse head without reviving it")
+		check(encounters.apply_hit(hit,50,Vector3.UP,"firearm") and zombie.missing.head and not zombie.alive,"firearm combat adapter can detach a corpse head without reviving it")
 		await ticks(2)
 		check(zombie.anatomy.ragdoll_stats().sleeping<zombie.anatomy.ragdoll_stats().bodies,"new impact wakes physical pieces after settling")
 	var before_drop:float=zombie.physical_bones.Hips.global_position.y

@@ -94,7 +94,7 @@ func run() -> void:
 	check(crawler!=null,"leg-loss fixture admits supported zombie")
 	if crawler!=null:
 		var before_crawl:float=target.damage_received
-		crawler.receive_hit("shin_l",100.0,crawler.position,Vector3.ZERO)
+		crawler.receive_hit("shin_l",100.0,crawler.position,Vector3.ZERO,false,"heavy")
 		driving_updates=true
 		for tick in Engine.physics_ticks_per_second*7:await physics_frame
 		check(crawler.alive and crawler.get_behavior_snapshot().crawling,"manager ticks preserve living crawl transition")

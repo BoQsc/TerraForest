@@ -1605,15 +1605,15 @@ func _play_animation(clip_name: String, restart: bool = false) -> void:
 	_current_clip = key
 
 
-func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false) -> void:
+func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false, impact: String = "melee") -> void:
 	if not initialized or not PARTS.has(part) or missing.get(part, false):
 		return
 	if not is_finite(damage) or not impulse.is_finite() or not world_point.is_finite():
 		return
-	var result:Dictionary=anatomy.hit(part,damage,force_sever)
+	var result:Dictionary=anatomy.hit(part,damage,force_sever,impact)
 	if not result.ok:return
 	health=float(result.health);limb_health=anatomy.snapshot().limbs
-	damaged.emit(part, float(limb_health[part]))
+	damaged.emit(part, health)
 	if result.sever:
 		sever_limb(part, impulse)
 		if alive and result.dead:die(impulse)
@@ -1636,8 +1636,8 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 			_play_animation("Zombie_Hit", true)
 
 
-func apply_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false) -> void:
-	receive_hit(part, damage, world_point, impulse, force_sever)
+func apply_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO, impulse: Vector3 = Vector3.ZERO, force_sever: bool = false, impact: String = "melee") -> void:
+	receive_hit(part, damage, world_point, impulse, force_sever, impact)
 
 
 func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:

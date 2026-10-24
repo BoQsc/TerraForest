@@ -79,7 +79,7 @@ func run() -> void:
 		await physics_frame
 	check(target.damage_received>0.0,"animated zombie contacts reach player target adapter")
 	zombie.set_behavior(false);zombie.set_physics_process(false)
-	zombie.receive_hit("shin_l",100.0,chest,Vector3.ZERO)
+	zombie.receive_hit("shin_l",100.0,chest,Vector3.ZERO,false,"heavy")
 	check(zombie.alive and zombie.missing.shin_l and (zombie._crawling or zombie._crawl_transition),"leg loss keeps R4 alive and enters crawl")
 	zombie.die();check(not zombie.alive,"fatal damage starts corpse ragdoll")
 	encounters.update(21.0,Vector3.ZERO,false)

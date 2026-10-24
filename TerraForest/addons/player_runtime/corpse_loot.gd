@@ -29,8 +29,9 @@ func retain(zombie:Node3D)->bool:
 func sync(id:int,zombie:Node3D)->void:
 	var poses:=PackedFloat32Array();var missing:=0;var index:=0
 	for part:String in zombie.PARTS:
-		if zombie.missing.get(part,false):missing|=1<<index
-		var pose:Transform3D=zombie.physical_bones[zombie.PARTS[part].bone].global_transform
+		var removed:bool=zombie.missing.get(part,false)
+		if removed:missing|=1<<index
+		var pose:Transform3D=zombie.physical_bones.Hips.global_transform if removed else zombie.physical_bones[zombie.PARTS[part].bone].global_transform
 		for row in 3:poses.append_array(PackedFloat32Array([pose.basis.x[row],pose.basis.y[row],pose.basis.z[row],pose.origin[row]]))
 		index+=1
 	var hips:Transform3D=zombie.physical_bones["Hips"].global_transform

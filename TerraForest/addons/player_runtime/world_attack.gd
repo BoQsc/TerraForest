@@ -13,6 +13,7 @@ signal impact_preparing(from:Vector3,to:Vector3)
 signal contact_effect(target:Dictionary)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10}}
+const ZOMBIE_IMPACTS={0:"unarmed",1:"melee",2:"cutting",3:"melee",4:"melee",5:"melee"}
 const BARE_HAND_REACH := 1.65
 func reach() -> float:return BARE_HAND_REACH if game.equipped_tool==0 else 3.5
 func prepare(world: Node) -> bool:
@@ -126,9 +127,9 @@ func apply_target(t: Dictionary) -> bool:
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
 	if t.kind=="zombie":
-		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z):return false
+		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z,ZOMBIE_IMPACTS[item]):return false
 		var part:String=t.get("part","torso")
-		hud.damage_feedback.show_zombie_hit(part.replace("_"," ").capitalize(),int(ceil(t.zombie.limb_health.get(part,0.0))),int(t.zombie.PARTS.get(part,{}).get("health",180)),int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health))
+		hud.damage_feedback.show_zombie_hit(part.replace("_"," ").capitalize(),int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health),float(t.zombie.limb_health.get(part,0.0)),float(t.zombie.PARTS[part].health),t.zombie.missing.get(part,false))
 		if item!=0:
 			hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
 			game.terrain.changed_since_save=true

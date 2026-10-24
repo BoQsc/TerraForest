@@ -10,6 +10,7 @@ var name_label:Label
 var amount_label:Label
 var health_bar:ProgressBar
 var detail_label:Label
+var limb_bar:ProgressBar
 var remaining:=0
 var maximum:=0
 var _fill:StyleBoxFlat
@@ -29,18 +30,22 @@ func _ready()->void:
 	var track:=StyleBoxFlat.new();track.bg_color=Color("283d3b");track.set_corner_radius_all(2);health_bar.add_theme_stylebox_override("background",track)
 	_fill=StyleBoxFlat.new();_fill.set_corner_radius_all(2);health_bar.add_theme_stylebox_override("fill",_fill)
 	detail_label=Label.new();detail_label.mouse_filter=Control.MOUSE_FILTER_IGNORE;detail_label.add_theme_font_size_override("font_size",13);column.add_child(detail_label);detail_label.hide()
+	limb_bar=ProgressBar.new();limb_bar.custom_minimum_size.y=3;limb_bar.step=.01;limb_bar.show_percentage=false;limb_bar.mouse_filter=Control.MOUSE_FILTER_IGNORE;column.add_child(limb_bar)
+	limb_bar.add_theme_stylebox_override("background",track)
+	var limb_fill:=StyleBoxFlat.new();limb_fill.bg_color=Color("95aaba");limb_fill.set_corner_radius_all(1);limb_bar.add_theme_stylebox_override("fill",limb_fill);limb_bar.hide()
 	clear()
 
 func show_hit(target_name:String,current:int,total:int)->void:
 	if current<=0:clear();return
-	detail_label.hide();offset_top=-66
+	detail_label.hide();limb_bar.hide();offset_top=-66
 	_present_hit(target_name,current,total)
 
-func show_zombie_hit(part:String,current:int,total:int,vitality:int,vitality_maximum:int)->void:
-	if vitality<=0:clear();return
-	_present_hit("Zombie: "+part,current,total)
-	detail_label.text="Health %d / %d%s"%[vitality,vitality_maximum," · Severed" if current<=0 else ""]
-	detail_label.show();offset_top=-90
+func show_zombie_hit(part:String,current:int,total:int,limb_current:float,limb_total:float,severed:bool=false)->void:
+	if current<=0:clear();return
+	_present_hit("Zombie",current,total)
+	limb_bar.max_value=maxf(limb_total,1.0);limb_bar.value=clampf(limb_current,0,limb_bar.max_value)
+	detail_label.text="%s: %d / %d%s"%[part,ceili(limb_bar.value),ceili(limb_bar.max_value)," · Severed" if severed else ""]
+	detail_label.show();limb_bar.show();offset_top=-99
 
 func _present_hit(target_name:String,current:int,total:int)->void:
 	if total<=0 or (allowed.is_valid() and not allowed.call()):return

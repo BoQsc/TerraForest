@@ -4,6 +4,7 @@ var game:Node
 var failures:=0
 var checks:=0
 var evidence:="res://reports/zombie_combat_world"
+var health_only:=false
 func check(ok:bool,label:String)->bool:
 	checks+=1
 	if not ok:failures+=1
@@ -28,6 +29,7 @@ func screenshot(name:String)->void:
 func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--zombie-world-evidence="):evidence=argument.trim_prefix("--zombie-world-evidence=")
+		if argument=="--zombie-health-only":health_only=true
 	DirAccess.make_dir_recursive_absolute(evidence)
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
 	if not check(await wait_for(func():return not game.loading_active,45),"playable world ready"):await finish();return
@@ -49,16 +51,44 @@ func run()->void:
 		if not check(game.world_attack.attack(),"actual tool animation starts, strike "+str(strike)):break
 		check(zombie.limb_health.forearm_l==limb_before and zombie.health==vitality_before,"windup cannot apply damage before animation contact")
 		check(await wait_for(func():return game.world_attack.pending.is_empty(),4) and game.world_attack.last_hit,"animation contact resolves a live zombie hit")
-		check(zombie.limb_health.forearm_l<limb_before and zombie.health<vitality_before and game.player_hud.inventory.snapshot().slots[slot].wear==wear+strike+1,"contact changes both health pools and wears the held tool exactly once")
+		check(zombie.limb_health.forearm_l==limb_before-7.5 and zombie.health==vitality_before-15 and game.player_hud.inventory.snapshot().slots[slot].wear==wear+strike+1,"contact applies full shared damage, increased cutting trauma and exactly one tool wear")
 		if strike==0:
 			var feedback=game.player_hud.damage_feedback
-			check(feedback.visible and feedback.remaining==23 and feedback.maximum==38 and feedback.detail_label.visible and feedback.detail_label.text.contains(str(int(ceil(zombie.health)))),"combat HUD shows authoritative limb condition and overall health together")
-			await screenshot("limb_and_health")
-	check(zombie.alive and zombie.missing.forearm_l and zombie.missing.hand_l and zombie.detached_parts.size()==1,"ordinary player swings sever an exhausted forearm and its hand")
+			check(feedback.visible and feedback.remaining==165 and feedback.maximum==180 and feedback.name_label.text=="Zombie" and feedback.detail_label.visible and feedback.detail_label.text.contains("31 / 38") and feedback.limb_bar.visible and feedback.limb_bar.value==30.5 and feedback.limb_bar.max_value==38,"combat HUD keeps overall health primary and exact limb health secondary")
+			await screenshot("shared_health")
+	check(zombie.alive and not zombie.missing.forearm_l and not zombie.missing.hand_l and zombie.detached_parts.is_empty(),"three ordinary hatchet strikes no longer sever the forearm")
+	var strikes:=3
+	for part:String in ["torso","upper_arm_r","head"]:
+		if not check(aim_part(zombie,part),"live tool ray selects another visible region: "+part):break
+		var health_before:float=zombie.health
+		game.world_attack.next_attack=0
+		check(game.world_attack.attack() and await wait_for(func():return game.world_attack.pending.is_empty(),4) and game.world_attack.last_hit,"animation contacts the selected region: "+part)
+		strikes+=1
+		var feedback=game.player_hud.damage_feedback
+		check(zombie.health==health_before-15 and feedback.remaining==int(zombie.health) and feedback.maximum==180 and game.player_hud.inventory.snapshot().slots[slot].wear==wear+strikes,"changing regions continues the same health and charges one tool wear: "+part)
+		check(feedback.limb_bar.value==zombie.limb_health[part] and feedback.limb_bar.max_value==zombie.PARTS[part].health,"secondary health follows the actual hit limb without changing overall health: "+part)
+	if health_only:
+		var feedback=game.player_hud.damage_feedback
+		feedback.show_hit("Building block",30,90)
+		check(feedback.visible and not feedback.limb_bar.visible and not feedback.detail_label.visible,"ordinary world targets hide secondary limb information")
+		feedback.show_zombie_hit("Forearm L",int(zombie.health),180,zombie.limb_health.forearm_l,38)
+		check(feedback.remaining==int(zombie.health) and feedback.limb_bar.value==15.5 and feedback.limb_bar.visible,"returning to the wounded limb retains its independent health")
+		await screenshot("overall_and_limb_health")
+		for strike in 3:
+			if not check(aim_part(zombie,"forearm_l"),"the remaining forearm is still targetable before severing"):break
+			game.world_attack.next_attack=0
+			check(game.world_attack.attack() and await wait_for(func():return game.world_attack.pending.is_empty(),4) and game.world_attack.last_hit,"additional ordinary hatchet swing lands at animation contact")
+			check(zombie.missing.forearm_l==(strike==2) and zombie.health==75-strike*15,"the sixth focused forearm hit severs without changing overall damage")
+		check(zombie.alive and zombie.missing.hand_l and zombie.detached_parts.size()==1 and feedback.remaining==45 and feedback.limb_bar.value==0 and feedback.detail_label.text.contains("Severed"),"ordinary hatchet severing updates both health displays and detaches the anatomical chain")
+		await screenshot("increased_severing")
+		feedback.clear();check(not feedback.visible,"clearing the hit display hides both health readouts")
+		print("ZOMBIE_HEALTH_ONLY scope=health_and_feedback_not_ragdoll")
+		await finish();return
+	check(game.zombies.apply_hit({"zombie":zombie,"part":"forearm_l","position":zombie.global_position+Vector3.UP},30,Vector3.FORWARD,"heavy") and zombie.alive and zombie.missing.forearm_l and zombie.missing.hand_l and zombie.detached_parts.size()==1,"strong damage still detaches the injured forearm and its hand")
 	check(not "left" in zombie.get_available_attacks() and "right" in zombie.get_available_attacks(),"live anatomy changes available zombie attacks in the playable world")
 	await screenshot("player_severed_arm")
 	zombie.animation_player.pause();zombie.set_physics_process(true)
-	check(game.zombies.apply_hit({"zombie":zombie,"part":"head","position":zombie.global_position+Vector3.UP*1.6},50,Vector3.FORWARD),"head destruction enters the real physical corpse path")
+	check(game.zombies.apply_hit({"zombie":zombie,"part":"head","position":zombie.global_position+Vector3.UP*1.6},50,Vector3.FORWARD,"firearm"),"firearm head destruction enters the real physical corpse path")
 	# Measure unforced rest without the player capsule pinning a falling limb.
 	game.player.position=zombie.global_position+Vector3(6,1,0)
 	for second in 6:
@@ -91,6 +121,12 @@ func run()->void:
 			if segment.custom_integrator or not segment.continuous_cd:force_settings_restored=false
 	check(force_settings_restored and zombie.anatomy.ragdoll_stats().resting==0 and zombie.physical_bones.Spine2.joint_type!=PhysicalBone3D.JOINT_TYPE_NONE,"nearby world edits restore corpse constraints, gravity and swept collision")
 	check(not game.persistence._capture().sections.has("zombies"),"encounter anatomy remains session-local without changing saved world schemas")
+	var corpse_id:int=zombie.get_meta("corpse_identity",0)
+	var corpse_bytes:PackedByteArray=game.corpse_loot.capture()
+	var saved:Dictionary=game.corpse_loot.store.corpse(corpse_id)
+	check(corpse_id>0 and saved.missing&26==26 and saved.pose.size()==180 and game.corpse_loot.store.validate_corpse_snapshot(corpse_bytes),"severed head and arm save with valid poses and a missing-parts mask")
+	var restored:RefCounted=ClassDB.instantiate("NativeCorpseStore")
+	check(restored.configure(game.player_hud.inventory,4096) and restored.restore_corpse_snapshot(corpse_bytes) and restored.corpse(corpse_id).missing==saved.missing and restored.corpse(corpse_id).pose==saved.pose,"corpse snapshot restores without resurrecting missing limbs or losing loot identity")
 	await finish()
 func finish()->void:
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame

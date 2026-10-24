@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS playable world ready
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits on real streamed forest terrain
+PASS healthy roaming, pursuit and crawl speeds improve over the previous defaults
+PASS actual held-tool ray resolves the visible forearm, strike 0
+PASS actual tool animation starts, strike 0
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, limited cutting trauma and exactly one tool wear
+PASS combat HUD shows one shared health bar with only the hit location as detail
+PASS actual held-tool ray resolves the visible forearm, strike 1
+PASS actual tool animation starts, strike 1
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, limited cutting trauma and exactly one tool wear
+PASS actual held-tool ray resolves the visible forearm, strike 2
+PASS actual tool animation starts, strike 2
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, limited cutting trauma and exactly one tool wear
+PASS three ordinary hatchet strikes no longer sever the forearm
+PASS live tool ray selects another visible region: torso
+PASS animation contacts the selected region: torso
+PASS changing regions continues the same health and charges one tool wear: torso
+PASS live tool ray selects another visible region: upper_arm_r
+PASS animation contacts the selected region: upper_arm_r
+PASS changing regions continues the same health and charges one tool wear: upper_arm_r
+PASS live tool ray selects another visible region: head
+PASS animation contacts the selected region: head
+PASS changing regions continues the same health and charges one tool wear: head
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+PASS strong damage still detaches the injured forearm and its hand
+PASS live anatomy changes available zombie attacks in the playable world
+Zombie severed head: ["head"]
+Zombie ragdoll started with 12 physical bones.
+PASS firearm head destruction enters the real physical corpse path
+FOREST_SETTLE 1 {"bodies":15,"groups":3,"maximum_angular_speed":13.9062070846558,"maximum_linear_speed":2.22535037994385,"resting":0,"settle_events":0,"sleeping":0}
+FOREST_SETTLE 2 {"bodies":15,"groups":3,"maximum_angular_speed":1.68886005878448,"maximum_linear_speed":0.142533853650093,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 3 {"bodies":15,"groups":3,"maximum_angular_speed":4.38798761367798,"maximum_linear_speed":0.377051919698715,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 4 {"bodies":15,"groups":3,"maximum_angular_speed":1.06919741630554,"maximum_linear_speed":0.0737075656652451,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 5 {"bodies":15,"groups":3,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}
+FOREST_SETTLE 6 {"bodies":15,"groups":3,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}
+FOREST_CORPSE {"bodies":15,"groups":3,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}
+FOREST_CONTACTS {"awake":[],"contacts":{"1703424304869":"Physical_LeftUpLeg:NativeZombiePhysicalBone","1703524968171":"Physical_RightUpLeg:NativeZombiePhysicalBone","1780263954141":"Detached_head:NativeZombieRigidPart","232565773196":"MatchingCollision:StaticBody3D","246323090987":"MatchingCollision:StaticBody3D","247044511833":"MatchingCollision:StaticBody3D","254661367851":"MatchingCollision:StaticBody3D"},"no_sleep":[],"world_physics_enabled":false}
+PASS forest corpse and detached arm settle with animation disabled
+PASS normal host update leaves the corpse passive
+PASS nearby world edits restore corpse constraints, gravity and swept collision
+SCRIPT ERROR: Invalid access to property or key 'Head' on a base object of type 'Dictionary'.
+   at: sync (res://addons/player_runtime/corpse_loot.gd:33)
+   GDScript backtrace (most recent call first):
+       [0] sync (res://addons/player_runtime/corpse_loot.gd:33)
+       [1] capture (res://addons/player_runtime/corpse_loot.gd:41)
+       [2] _capture (res://addons/world_runtime/world_persistence.gd:81)
+       [3] run (res://tests/zombie_combat_world.gd:103)
+       [4] screenshot (res://tests/zombie_combat_world.gd:27)
+PASS encounter anatomy remains session-local without changing saved world schemas
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_COMBAT_WORLD checks=36 failures=0

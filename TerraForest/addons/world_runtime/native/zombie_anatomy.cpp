@@ -32,7 +32,7 @@ bool triangle(Vector3 from,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,doubl
 void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","definitions"),&NativeZombieAnatomy::configure);
     ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes"),&NativeZombieAnatomy::set_hit_meshes);
-    ClassDB::bind_method(D_METHOD("hit","part","damage","force_sever"),&NativeZombieAnatomy::hit,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("hit","part","damage","force_sever","impact"),&NativeZombieAnatomy::hit,DEFVAL(false),DEFVAL(String("melee")));
     ClassDB::bind_method(D_METHOD("detach","part"),&NativeZombieAnatomy::detach);
     ClassDB::bind_method(D_METHOD("kill"),&NativeZombieAnatomy::kill);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativeZombieAnatomy::snapshot);
@@ -94,17 +94,25 @@ bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &
     }
     parts_=std::move(next);skeleton_=skeleton->get_instance_id();vertices_=vertices;triangles_=triangles;return true;
 }
-Dictionary NativeZombieAnatomy::hit(const String &name,double damage,bool force_sever){
+Dictionary NativeZombieAnatomy::hit(const String &name,double damage,bool force_sever,const String &impact){
     Dictionary out;out["ok"]=false;int index=part_index(name);
     if(!configured_||index<0||parts_[index].missing||!std::isfinite(damage)||damage<0||damage>1000000||(!damage&&!force_sever))return out;
+    double sever_factor;
+    if(impact=="unarmed")sever_factor=0;
+    else if(impact=="melee")sever_factor=.3;
+    else if(impact=="cutting")sever_factor=.5;
+    else if(impact=="heavy"||impact=="firearm")sever_factor=1;
+    else return out;
     if(health_<=0)wake_ragdolls();
-    auto &part=parts_[index];double applied=std::min(damage,part.health);part.health=std::max(0.,part.health-damage);
-    // Every accepted living hit, including the one that severs a chain, affects vitality.
-    double factor=index==0?1.:index==1?1.75:index>=8?.45:.35;
-    double body_damage=health_>0?std::min(health_,damage*factor):0.;health_=std::max(0.,health_-body_damage);
-    bool sever=index!=0&&(force_sever||part.health<=0);
+    auto &part=parts_[index];double previous_health=health_;
+    double limb_damage=index==0?0:std::min(part.health,damage*sever_factor);
+    part.health=std::max(0.,part.health-limb_damage);
+    health_=std::max(0.,health_-damage);
+    bool sever=index!=0&&(force_sever||(sever_factor>0&&part.health<=0));
     if((index==1&&sever)||(index==0&&force_sever))health_=0;
-    out["ok"]=true;out["part"]=name;out["remaining"]=part.health;out["applied"]=applied;
+    parts_[0].health=health_;double body_damage=previous_health-health_;
+    out["ok"]=true;out["part"]=name;out["remaining"]=health_;out["applied"]=body_damage;
+    out["limb_remaining"]=part.health;out["limb_damage"]=limb_damage;
     out["health"]=health_;out["maximum"]=maximum_;out["body_damage"]=body_damage;
     out["sever"]=sever;out["dead"]=health_<=0;return out;
 }
@@ -112,7 +120,7 @@ bool NativeZombieAnatomy::detach(const String &name){
     int root=part_index(name);if(!configured_||root<0||parts_[root].missing)return false;
     if(root==0){kill();return true;}
     for(int i=root;i<14;i++)for(int ancestor=i;ancestor>=0;ancestor=parts_[ancestor].parent)if(ancestor==root){parts_[i].missing=true;parts_[i].health=0;break;}
-    if(root==1)health_=0;return true;
+    if(root==1)health_=parts_[0].health=0;return true;
 }
 void NativeZombieAnatomy::kill(){
     if(!configured_)return;

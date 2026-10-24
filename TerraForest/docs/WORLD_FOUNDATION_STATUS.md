@@ -1,3 +1,41 @@
+## Shared zombie health and increased severing follow-up, 2026-10-24
+
+The user's follow-up makes shared 180 HP the primary combat bar, without removing
+separate limb health. Their clarification restores the struck limb's own HP as a
+smaller readout and thin secondary bar; debug-only visibility is a possible later
+change, not the current behavior. Every region receives full base damage to overall
+health; separate native limb integrity controls local injury/sever effects.
+Punches cannot sever, ordinary tools
+cause 30% sever trauma, and the light hatchet causes 50%. Heavy/firearm adapter
+profiles retain full sever trauma; no gun item is added. Head loss remains fatal.
+Animated contact timing, tool wear, accurate hit geometry and body ownership stay
+unchanged. Missing corpse bones also no longer break pose capture after detachment.
+
+Earlier native debug/release runs passed 43 checks each; surface/ragdoll, character, encounter,
+gait and timing regressions pass. In-world shared health and the revised HUD are
+verified. Export/startup passes; the previous exported-world suite passed 37/38 assertions
+with no script errors. Source and packaged runs miss the six-second
+all-pieces-asleep criterion despite all health and corpse-data checks passing;
+the overall suite is therefore not green. Keep this settling variability open for
+a separate varied-pose/terrain investigation and isolated/endurance retesting;
+close only with reproducible passive settling evidence, not a health-test pass.
+After playtesting, the user requested higher dismemberment frequency for now and
+committing/pushing all current work. The increased trauma above replaces the
+earlier 10%/25% tuning: a hatchet now needs four focused hand hits instead of
+seven, or six forearm hits instead of eleven. Overall damage and both health
+displays are unchanged; this remains provisional balance. Current tuning
+verification is recorded with its own evidence, not substituted into older logs.
+The new tuning passes 50 native checks in debug and release, 39 isolated
+surface/anatomy/ragdoll checks, and 45 scoped health/HUD/severing checks in both
+source and exported worlds,
+checks, including an actual ordinary-hatchet chain detachment on strike six.
+The severed-limb HUD capture was inspected; export/startup and packaged
+interaction verification pass, with matching source/package native DLL hashes.
+The secondary limb-health display follow-up passes 35 scoped health/HUD checks
+in both source and exported worlds, plus all 43 native anatomy checks; both bars were visually
+inspected. These scoped checks deliberately do not close the ragdoll failure.
+[Evidence, thresholds and retained failures](evidence/zombie_shared_health/README.md).
+
 ## Current work accepted as baseline, 2026-10-24
 
 After launching the updated playtest, the user explicitly accepted everything as
@@ -416,10 +454,10 @@ Existing driving physics, parked stance height and world-save schemas are unchan
 
 Native zombie anatomy now evaluates the supplied rig's live skinned triangles and
 blend shapes for weapon hits across fourteen regions. Movement capsules and old
-limb hulls no longer decide damage. Limb pools and body vitality share one native
-owner; severing blows also damage vitality, destroyed heads are fatal, and wounded
-arm chains affect attacks and crawling. Combat feedback shows both limb condition
-and overall health. Detached chains retain their caps, collisions and anatomical
+limb hulls no longer decide damage. The shared-health follow-up above replaces
+the original separate limb/body combat bars with one vitality total and reduced,
+weapon-sensitive sever trauma. Wounded arm chains still affect attacks and crawling,
+and destroyed heads remain fatal. Detached chains retain their caps, collisions and anatomical
 attack restrictions; corpses remain targetable after displacement and can lose
 additional limbs.
 

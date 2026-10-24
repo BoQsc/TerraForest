@@ -99,6 +99,20 @@ R4 retains authored pursuit, attack contact checks, hit reactions, living crawl
 after leg loss, severing and ragdolls. Player melee picks fitted limb areas with
 solid-world occlusion, applies damage, and charges the existing equipped tool's
 wear once, at the held tool's contact marker and with its full recovery.
+
+Zombie hits now subtract full weapon damage from one shared 180 HP total,
+regardless of the attached region hit. The combat bar always shows that total;
+the struck limb's separate health appears underneath as a smaller readout and
+thin secondary bar. The user wants that information visible for now, with possible
+debug-only presentation later. Native limb integrity remains separate:
+`unarmed` impacts cause no sever trauma, ordinary `melee` applies
+30%, light `cutting` applies 50%, and `heavy`/`firearm` applies 100%. The current
+hatchet uses cutting; the other carried tools use melee. Existing direct sever
+debug actions remain available. New weapon/projectile adapters can pass the
+named impact profile through `zombie_world.apply_hit`; this does not add guns.
+Head detachment is still fatal, and lost chains still constrain attacks/crawling.
+See [shared-health evidence](../../docs/evidence/zombie_shared_health/README.md).
+
 Source jump/ladder request APIs
 remain available but have no automatic jump or ladder-link selection.
 

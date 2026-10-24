@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native anatomy validates and configures once
+PASS every hit region spends the same shared health: torso
+PASS every hit region spends the same shared health: head
+PASS every hit region spends the same shared health: upper_arm_l
+PASS every hit region spends the same shared health: forearm_l
+PASS every hit region spends the same shared health: hand_l
+PASS every hit region spends the same shared health: upper_arm_r
+PASS every hit region spends the same shared health: forearm_r
+PASS every hit region spends the same shared health: hand_r
+PASS every hit region spends the same shared health: thigh_l
+PASS every hit region spends the same shared health: shin_l
+PASS every hit region spends the same shared health: foot_l
+PASS every hit region spends the same shared health: thigh_r
+PASS every hit region spends the same shared health: shin_r
+PASS every hit region spends the same shared health: foot_r
+PASS changing hit regions cannot reset health or reduce total damage
+PASS repeated unarmed hits kill through shared health without tearing off a hand
+PASS repeated melee hits kill through shared health without tearing off a hand
+PASS light cutting needs seven focused hand strikes, not two: 1
+PASS light cutting needs seven focused hand strikes, not two: 2
+PASS light cutting needs seven focused hand strikes, not two: 3
+PASS light cutting needs seven focused hand strikes, not two: 4
+PASS light cutting needs seven focused hand strikes, not two: 5
+PASS light cutting needs seven focused hand strikes, not two: 6
+PASS light cutting needs seven focused hand strikes, not two: 7
+PASS cutting detachment does not skip shared damage
+PASS limb integrity is separate from shared combat health
+PASS a powerful strike can sever while still deducting full shared damage
+PASS one anatomical chain detaches only once
+PASS detachment disables descendants while preserving parent and opposite arm
+PASS invalid or missing-region hit cannot mutate health: ["hand_l", 5.0]
+PASS invalid or missing-region hit cannot mutate health: ["unknown", 5.0]
+PASS invalid or missing-region hit cannot mutate health: ["torso", 0.0]
+PASS invalid or missing-region hit cannot mutate health: ["torso", -1.0]
+PASS invalid or missing-region hit cannot mutate health: ["head", nan]
+PASS invalid or missing-region hit cannot mutate health: ["head", inf]
+PASS unknown impact profiles cannot mutate health
+PASS firearm damage uses shared health with stronger sever trauma
+PASS firearm head destruction remains fatal and accounts for the full health loss
+PASS death health is consistently clamped to zero
+PASS a corpse can lose another limb without reviving or negative vitality
+PASS empty ragdoll groups reject
+PASS explicit developer severing remains available and keeps shared health consistent
+ZOMBIE_ANATOMY checks=43 failures=0
