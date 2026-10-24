@@ -6,7 +6,7 @@ func run() -> void:
 	if not game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.show_page("Objects")
 	for i in 3:await process_frame
-	var menu=game.session_menu
+	var menu=game.session_menu.tool_workspace
 	check(Rect2(Vector2.ZERO,Vector2(1920,1080)).encloses(menu.panel.get_global_rect()),"object workspace fits 1080p")
 	var reachable:=true
 	for index in game.model_tool.choices.size():

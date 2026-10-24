@@ -296,20 +296,20 @@ func refresh() -> void:
 	var selection := selected_transform()
 	if not selection.is_empty():
 		caption.text="OBJECT #%d · selected\nUndo %d · Redo %d" % [picked_id,status.undo_steps,status.redo_steps]
-		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · Actions / Building"
+		help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · +/− Scale · Q Clear\nCtrl+Z Undo · Ctrl+Y Redo · Alt tool controls"
 		if gameplay:
 			caption.text="OBJECT #%d · selected" % picked_id
-			help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · Q Clear · Actions / Building\nNo resizing or undo/redo in gameplay"
+			help.text="Arrows X/Z · PgUp/Dn Y · Shift fine\nR Rotate · Q Clear · Alt tool controls\nNo resizing or undo/redo in gameplay"
 		preview.global_transform=selection.transform
 		preview_material.albedo_color=Color(1.0,0.72,0.2,0.35)
 		preview.show()
 		return
-	help.text="Select aimed object in Actions · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nActions / Building · F5 Save · Esc Actions"
+	help.text="Select aimed object in tool settings · R Rotate · RMB Place · LMB Remove\nCtrl+Z Undo · Ctrl+Y / Ctrl+Shift+Z Redo\nAlt tool controls · F5 Save · Esc session"
 	var hit := target()
 	caption.text="OBJECTS · %s · %d°\nUndo %d · Redo %d" % [catalog[selected].title,quarter_turns*90,status.undo_steps,status.redo_steps]
 	if gameplay:
 		caption.text="OBJECTS · %s · %d°\nCost: %s" % [catalog[selected].title,quarter_turns*90,catalog[selected].get("cost_label","Recipe unavailable")]
-		help.text="Select aimed object in Actions · R Rotate · RMB Place · LMB Remove\nFurniture dismantles for wood · Undo/redo and resizing disabled\nActions / Building · F5 Save · Esc Actions"
+		help.text="Select aimed object in tool settings · R Rotate · RMB Place · LMB Remove\nFurniture dismantles for wood · Undo/redo and resizing disabled\nAlt tool controls · F5 Save · Esc session"
 	if hit.is_empty():
 		preview.hide()
 		return

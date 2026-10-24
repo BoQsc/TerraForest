@@ -96,7 +96,7 @@ func _ready() -> void:
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,20)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",6);margin.add_child(column)
 	var title:=Label.new();title.text="ROADS / FOUNDATIONS";title.add_theme_font_size_override("font_size",22);column.add_child(title)
-	var hint:=Label.new();hint.text="Aim at terrain, then Esc to use controls.\nMark both ends, then build.\nClearance cuts terrain above the road.";column.add_child(hint)
+	var hint:=Label.new();hint.text="Aim at terrain, then hold Alt for the road controls.\nMark both ends, then build.\nClearance cuts terrain above the road.";column.add_child(hint)
 	surface=OptionButton.new();surface.focus_mode=Control.FOCUS_NONE;surface.add_item("Asphalt road");surface.add_item("Stone foundation");column.add_child(surface)
 	surface.item_selected.connect(func(_index: int):
 		build_button.text="Build asphalt road" if material_id()==4 else "Grade stone foundation"

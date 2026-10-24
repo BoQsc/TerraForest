@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS world ready
+PASS tilde replaces gameplay items with development belt
+PASS mode switch preserves held movement
+PASS dev number selects editor brush 3
+PASS dev number selects editor brush 2
+PASS dev number selects editor brush 1
+PASS sculpt box variant stays with box tool and survives detailed settings
+PASS development block tool
+PASS development object tool
+PASS development vegetation tool
+PASS road slot selects without interrupting movement
+PASS Escape always opens session even with Roads selected
+PASS session navigation contains no tool editors or belt copy
+PASS session does not expose road controls
+PASS Alt releases cursor for current tool
+PASS road settings open in their own workspace
+PASS Alt release keeps detailed workspace cursor and clears held state
+PASS detailed tool workspace stays above belt and scrolls
+WORKSPACE_LAYOUT [P: (912.0, 60.0), S: (980.0, 860.0)] scroll=[P: (0.0, 122.0), S: (940.0, 663.0)]
+PASS Escape closes tool settings directly to aiming
+PASS Escape during Alt interaction transfers cursor ownership to session
+PASS inventory retains cursor when Alt is released
+PASS world tools select without opening a modal
+PASS world tool does not hijack Escape
+PASS world authoring belongs to selected tool workspace
+PASS water editor opens outside session
+PASS wheel wraps development slots
+PASS dev tools cannot be dragged into inventory or overwritten with items
+PASS leaving dev restores gameplay belt and previously selected item
+PASS editor actions do not mutate carried inventory
+PASS returning to dev restores its previous selection
+PASS gameplay building tool exposes its own Alt controls
+PASS gameplay tool settings retain owned tool and hide free authoring
+PASS gameplay rejects development water workspace
+[TerrainRewrite] Temporary test world: save skipped
+PASS clean shutdown
+DEVELOPER_BELT checks=34 failures=0

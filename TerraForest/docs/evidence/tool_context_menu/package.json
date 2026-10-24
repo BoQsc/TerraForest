@@ -1,0 +1,6 @@
+{
+  "bytes": 247518312,
+  "sha256": "f522bfa39b246d41727aebf886039b54b2be2a89b20dc32f6c9e4277174d0844",
+  "scope": "Rebuilt resource pack, startup and 34-check packed UI run. External assertion/capture harness; temporary world. No clean-machine claim.",
+  "concurrent_work": "Unrelated zombie animation authoring edits were present in the checkout during packaging; they are not staged as part of the menu change."
+}

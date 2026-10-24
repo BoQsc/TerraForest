@@ -1,10 +1,10 @@
-# Actions, gameplay tools and development
+# Session menu, tool controls and development
 
-Open **Play Combined Gameplay.cmd** for resource-cost gameplay, or
-**Play Combined World.cmd** for free development. Existing save slots and
-inventory/chest contents are preserved; old records migrate on save.
+Open **Worlds.cmd** to create or open a saved world. Choose gameplay costs or
+free development before play. Existing save slots and inventory/chest contents
+are preserved.
 
-## One Actions window
+## Session and tools have separate controls
 
 While aiming in the world, a prompt below the crosshair identifies nearby
 doors, chests, dropped items and collectible ground cover. **E** opens/closes the aimed door,
@@ -23,25 +23,34 @@ can still attack and dig. To replace a pickaxe, gather three stones and two wood
 tool to a toolbelt slot to use it. Replacement recipes also exist for the
 hatchet, building hammer and assembly tool.
 
-**Escape** opens Actions. The sidebar is the shared entry point:
+**Escape** opens the session menu consistently, including when Roads or World
+tools are selected. It contains save/load, headlamp, development mode,
+world-browser/quit actions and the destination directory. Tool editors and the
+second copy of the ten-slot belt have been removed from this window.
 
-- **Toolbelt:** click any of the ten belt slots, including empty slots.
-- **Building:** equips an owned building hammer and shows shape, material,
-  rotation and prefab choices. Return to world to aim and place.
-- **Objects:** equips an owned assembly tool and shows every object recipe,
-  selection, rotation and allowed transform controls.
-- **Vegetation:** choose an owned plant/stone stack to place; development
-  allows free placement. E gathers reachable ground cover without a special mode.
-- **Inventory / crafting:** rearrange items, move items to quick-use slots,
-  claim mined resources and craft. Its Actions button returns to the shared UI.
-- **Session:** save/load, headlamp, mode switching and save-and-quit.
-- **Development / Roads:** appear only in development mode.
+Select a tool on the belt, then **hold Alt** to use its contextual controls.
+Building, object and road controls have a detailed-settings button which opens
+that tool's own scrollable workspace above the belt. Releasing Alt leaves this
+workspace interactive; **Escape** or **Back to world** closes it and resumes
+aiming. Another Escape then opens Session. Choosing a tool never opens a modal.
 
-Building, object and road panels are the existing detailed controls docked into
-this window. Development Building retains prefab capture, stacking, settlement
-composition, site survey/preparation, supply authoring and history. Development
-Objects retains numeric transforms, scaling and history. Scroll to reach longer
-panels. No M/B/H mode switching is required or active through normal input.
+- **Terrain:** brush radius and material live beside development slots 1–3.
+- **Building:** shape/material/rotation and prefab/site/settlement authoring belong
+  to the block tool. Gameplay hides development-only controls and retains costs.
+- **Objects:** recipes, picking, transforms and history belong to the object tool.
+- **Vegetation:** species selection belongs to its tool; gameplay requires an owned
+  stack. E gathers ground cover independently of the selected tool.
+- **Roads:** endpoints, width, grading and build actions belong to slot 7.
+- **World tools:** slot 8 owns flight, vehicle placement, diagnostics, water/lakes
+  and the confirmed reset action.
+- **Actors:** slot 9 owns actor placement, orders and resident authoring.
+- **Inventory/crafting:** Tab remains the entry point; its Session button opens
+  session actions. Drag between inventory and the actual belt to manage items.
+
+The compact Alt panel is also available with an owned gameplay building hammer,
+assembly tool or vegetation stack. **F1** hides/shows this panel. Development
+controls cannot grant free authoring while in gameplay. Menus suspend player
+input while world simulation continues.
 
 ## Actual inventory tools
 
@@ -71,14 +80,14 @@ balance are not implemented by this change. Existing held meshes remain simple.
 The former selector IDs 1-4 now represent pickaxe, hatchet, building hammer and
 assembly tool. Existing inventory and chest placements keep their exact slots
 and quantities, with the new item definitions. No refill or save reset occurs.
-World loading starts with tools put away, so saved legacy editor-mode IDs cannot
-reactivate editing. Selecting a slot or moving its item away updates equipment;
+Gameplay loading selects the first owned belt tool when no slot is selected.
+Saved legacy editor-mode IDs cannot reactivate editing. Selecting a slot or moving its item away updates equipment;
 placing a tool in a chest cannot leave it usable in the player's hands.
 
 ## Input and inventory
 
 - **1-9 / 0** select belt slots in both modes; these keys no longer change editor
-  shapes or object recipes. The Toolbelt page provides the same choices by mouse.
+  shapes or object recipes. The visible belt provides the same choices by mouse.
 - **E** interacts independently of the equipped placement tool: aimed chest first,
   then vehicle/harvesting/collectibles. Object selection is a visible Objects action.
 - **Tab** opens inventory. Clicking selects an item or empty slot without moving
@@ -89,9 +98,9 @@ placing a tool in a chest cannot leave it usable in the player's hands.
 - **Tap the ` / ~ key** to switch development mode. Hold at least 0.45 seconds
   and release to toggle flight; **~+F** is also a flight chord. The chord consumes
   F and does not toggle the headlamp or toggle flight again on release. The
-  Development page has a Flight button; Session has the Headlamp button. Plain F
+  World tools Alt panel has a Flight button; Session has the Headlamp button. Plain F
   remains an optional headlamp shortcut.
-- Development terrain brushes, radius and material choices live in Development,
+- Development terrain brushes, radius and material choices live with their tools,
   outside inventory. Returning to gameplay restores its selected belt slot, disables flight and
   restores costs/mining rewards. Mode changes wait for pending authoring work.
 
@@ -157,13 +166,14 @@ Switch back to gameplay to manage its belt items.
 | 4 | Build blocks |
 | 5 | Place objects |
 | 6 | Vegetation |
-| 7 | Roads settings via Esc |
-| 8 | World tools via Esc |
-| 9 / 0 | Empty |
+| 7 | Roads: hold Alt for grading/build settings |
+| 8 | World tools: hold Alt for world/water/diagnostics |
+| 9 | Actors: hold Alt for placement/orders/residents |
+| 0 | Empty |
 
 Selecting Roads or World tools does not open a modal or interrupt movement.
-Press Esc to open the selected workspace. Other settings remain accessible
-through the session menu. Evidence: [development belt checks](evidence/developer_belt/README.md).
+Hold Alt to use its controls and open its detailed workspace. Escape always
+opens Session when no other panel is in front. Evidence: [development belt checks](evidence/developer_belt/README.md).
 
 
 ## Persistent development HUD and durability evidence
@@ -173,7 +183,7 @@ with the selected development tool. **F1** hides/shows it; **hold Alt** to relea
 the cursor and click its controls, then release Alt to resume aiming. Brush radius
 and materials, block shape/material/rotation, object choice, vegetation species,
 road endpoints/width, and world actions have contextual controls. Detailed authoring
-palettes remain available through their buttons and Escape. Inventory/menu panels
+palettes open through their contextual buttons in a separate tool workspace. Inventory/menu panels
 hide the compact panel temporarily. These editor actions do not wear gameplay tools.
 
 [Attack, durability and development HUD evidence](evidence/world_attack/README.md).
@@ -195,7 +205,7 @@ The developer overlay does not own Space: jumping remains available while Alt ex
 
 ## Water editing
 
-In development mode (~), open Escape > Water, or choose World tools on the
+In development mode (~), choose World tools on the
 development belt and click Water / lakes while holding Alt. The page lists each
 lake's Ready, Baking or Failed state and its water elevation. Carve lake at aim
 uses the existing terrain carving action. Remove water deletes only that water

@@ -1,0 +1,39 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\pack_tool_context\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\developer_belt.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_fbf432f06a384ad0bee9c17378390078",
+    "--derived-cache=user://developer_belt_fbf432f06a384ad0bee9c17378390078",
+    "--gameplay-construction",
+    "--ground-cover",
+    "--tool-ui-captures=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\pack_tool_context\\captures"
+  ],
+  "cache": "user://developer_belt_fbf432f06a384ad0bee9c17378390078",
+  "scope": "External assertions drive packed game scripts/assets/libraries; no source-project resource root. Temporary world only.",
+  "utc": "2026-10-24T05:58:38.806831+00:00",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 14224,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 10.180659100005869,
+    "passed": true
+  }
+}

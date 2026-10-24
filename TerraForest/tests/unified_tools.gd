@@ -93,7 +93,7 @@ func run() -> void:
 	root.get_texture().get_image().save_png("res://reports/unified_tools/menu.png")
 	key(KEY_QUOTELEFT);await process_frame
 	check(game.session_menu.developer and not game.construction_inventory.gameplay and not game.mining_rewards.enabled,"development mode enables free authoring without mining rewards")
-	game.session_menu.fly_button.pressed.emit();check(game.fly,"development flight button works")
+	game.session_menu.open_tool_page("World tools");game.session_menu.tool_workspace.fly_button.pressed.emit();check(game.fly,"world tool flight button works outside session")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/developer.png")
 	key(KEY_QUOTELEFT);await process_frame
@@ -108,7 +108,10 @@ func run() -> void:
 	check(game.session_menu.developer and game.fly,"holding tilde enters development and toggles flight")
 	key(KEY_QUOTELEFT)
 	game.session_menu.set_open(false)
-	key(KEY_G);await process_frame;check(not game.fly,"legacy flight shortcut is blocked in gameplay")
+	var carried_slot:int=game.player_hud.active_slot
+	game.player_hud.active_slot=-1;game._equip_player_tool(0)
+	key(KEY_G);await process_frame;check(not game.fly,"G with empty hands does not enable flight")
+	game.player_hud.equip(carried_slot)
 	game.player_hud.set_open(true)
 	for i in 3:await process_frame
 	check(game.player_hud.belt.size()==10,"ten toolbelt slots")
@@ -147,19 +150,25 @@ func run() -> void:
 	key(KEY_QUOTELEFT);await process_frame
 	check(not game.fly and not game.session_menu.developer,"return from development resets flight and equipment")
 	key(KEY_ESCAPE);await process_frame
-	await click_control(game.session_menu.navigation.Toolbelt)
-	check(game.session_menu.current_page=="Toolbelt" and game.session_menu.belt_choices.size()==10,"equipment page exposes all belt slots")
-	for i in 3:await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("res://reports/unified_tools/equipment.png")
-	await click_control(game.session_menu.belt_choices[9])
-	check(game.player_hud.active_slot==9 and game.equipped_tool==0 and not game.session_menu.visible_ui(),"clicking empty equipment slot returns to world with empty hands")
+	check(not game.session_menu.navigation.has("Toolbelt") and not game.session_menu.navigation.has("Building"),"session has no equipment or editor navigation")
 	key(KEY_ESCAPE);await process_frame
-	await click_control(game.session_menu.navigation.Building)
+	var belt_alt:=InputEventKey.new();belt_alt.pressed=true;belt_alt.physical_keycode=KEY_ALT;Input.parse_input_event(belt_alt);await process_frame
+	await click_control(game.player_hud.belt[9])
+	belt_alt=InputEventKey.new();belt_alt.physical_keycode=KEY_ALT;Input.parse_input_event(belt_alt);await process_frame
+	check(game.player_hud.active_slot==9 and game.equipped_tool==0 and not game.session_menu.visible_ui(),"clicking empty belt slot selects empty hands")
+	game.player_hud.equip_item(3);await process_frame
+	var alt:=InputEventKey.new();alt.pressed=true;alt.physical_keycode=KEY_ALT;Input.parse_input_event(alt);await process_frame
+	var detailed:Button
+	for control in game.session_menu.developer_hud.content.get_children():
+		if control is Button and control.text.begins_with("Prefabs /"):detailed=control
+	check(detailed!=null,"building tool owns its detailed settings action")
+	if detailed!=null:await click_control(detailed)
+	alt=InputEventKey.new();alt.physical_keycode=KEY_ALT;Input.parse_input_event(alt);await process_frame
 	check(game.session_menu.workspace and game.equipped_tool==3 and game.structure_mode and not game.player_hud.inventory_open,"Building page equips owned hammer and exposes paid controls")
 	check(game.construction_palette.panel.is_visible_in_tree() and not game.construction_palette.frontage_button.is_visible_in_tree(),"gameplay building shows shape/material/rotation/prefab without editor generation")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/building.png")
-	await click_control(game.session_menu.navigation.Objects)
+	game.session_menu.set_open(false);game.player_hud.equip_item(4);game.session_menu.open_current_tool();await process_frame
 	check(game.equipped_tool==4 and game.model_tool.panel.is_visible_in_tree() and not game.model_tool.numeric_controls.visible,"Objects page equips assembly tool with full allowed gameplay controls")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/objects.png")
@@ -169,9 +178,9 @@ func run() -> void:
 	check(game.storage.opened,"assembly tool does not steal chest interaction")
 	game.storage.close()
 	key(KEY_QUOTELEFT);await process_frame;game.session_menu.set_open(true);game.session_menu.show_page("Building");await process_frame
-	check(game.editor_tool_active and game.construction_palette.frontage_button.is_visible_in_tree() and game.construction_palette.capture_name.is_visible_in_tree(),"development keeps settlement and prefab capture details in the same window")
+	check(game.editor_tool_active and game.construction_palette.frontage_button.is_visible_in_tree() and game.construction_palette.capture_name.is_visible_in_tree(),"development keeps settlement and prefab capture in its tool workspace")
 	game.session_menu.show_page("Roads");await process_frame
-	check(game.road_palette.panel.is_visible_in_tree(),"road tools share the actions window")
+	check(game.road_palette.panel.is_visible_in_tree(),"road controls use a tool workspace outside session")
 	game.session_menu.show_page("Development");await process_frame
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/development.png")
@@ -184,8 +193,11 @@ func run() -> void:
 	var terrain_hit: Dictionary=game.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(origin,origin-Vector3.UP*200,1))
 	check(not terrain_hit.is_empty(),"nearby terrain available for tool input check")
 	if not terrain_hit.is_empty():
-		game.camera.global_position=terrain_hit.position+Vector3.UP*2;game.camera.look_at(terrain_hit.position,Vector3.FORWARD)
 		game.player_hud.equip_item(1);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		for i in 2:await process_frame
+		game.camera.global_position=terrain_hit.position+Vector3.UP*2;game.camera.look_at(terrain_hit.position,Vector3.FORWARD)
+		check(game.world_attack.target().get("kind")=="terrain","pickaxe aims at terrain after cursor handoff")
+		game.world_attack.next_attack=0
 		var revision: int=game.terrain.density_revision
 		var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;Input.parse_input_event(click);await process_frame
 		game._update_edit(0.1)

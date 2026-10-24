@@ -92,7 +92,7 @@ func _refresh_ground_hint() -> void:
 	for row: Dictionary in state.slots:
 		if row.item==items[ground_species]: available+=int(row.count)
 	var cost: String=("Place: 1 %s · have %d"%[MATERIALS.get(items[ground_species],names[ground_species]),available]) if gameplay_construction else "Free placement · editor"
-	ground_hint.text=names[ground_species]+" · "+cost+"\n"+("E collect" if gameplay_construction else "LMB / E remove")+" · RMB place · Esc to choose another plant"
+	ground_hint.text=names[ground_species]+" · "+cost+"\n"+("E collect" if gameplay_construction else "LMB / E remove")+" · RMB place · Hold Alt: plant settings"
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 func prepare() -> bool:
@@ -176,7 +176,7 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
 	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
-	var actions_button:=Button.new();actions_button.text="Actions";actions_button.pressed.connect(func():set_open(false);actions_requested.emit());title_row.add_child(actions_button)
+	var actions_button:=Button.new();actions_button.text="Session";actions_button.pressed.connect(func():set_open(false);actions_requested.emit());title_row.add_child(actions_button)
 	var close_button:=Button.new();close_button.text="Close";close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
 	var detail:=Label.new();detail.text="Backpack: 22 slots. Toolbelt: 10 separate slots below."
 	if gameplay_construction: detail.text="Backpack and toolbelt are separate. Drag to move; Shift-drag to split."
@@ -221,7 +221,7 @@ func _ready() -> void:
 func refresh() -> void:
 	deliver_mining_rewards()
 	if action_hint!=null:
-		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Esc: shape, material, rotation",4:"Assembly tool | Right mouse: place | Left mouse: attack | Esc: object and transform settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Hold Alt: tool settings",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
@@ -248,12 +248,12 @@ func refresh() -> void:
 				belt[i].clear_presentation()
 				belt[i].text="%d\n%s"%[(i+1)%10,DEV_TOOLS[i]]
 				belt[i].tooltip_text=DEV_TOOLS[i]
-				belt[i].set_appearance(i>=8,i==developer_slot,false)
+				belt[i].set_appearance(i==9,i==developer_slot,false)
 	_refresh_ground_hint()
 
 	_refresh_recipes()
 	character_panel.refresh()
-	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Esc configure | ~ gameplay"
+	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Hold Alt: tool controls | Esc: session | ~ gameplay"
 
 func show_side(tab: String) -> void:
 	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"

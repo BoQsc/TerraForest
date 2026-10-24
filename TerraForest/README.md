@@ -22,7 +22,7 @@ option. Preparation can take minutes; ocean loading still has known delays.
 The earlier five-site recipe remains selectable for its mine/cellar locations,
 lakes, meadow paths and parked vehicles; those authored additions are not yet all
 ported into the newer terrain-fitted recipe. Simpler landscape presets also remain
-available. Save from Actions or F5; choose gameplay costs or free editor before play.
+available. Save from Session or F5; choose gameplay costs or free editor before play.
 Use **Esc > Session > World browser** to save and choose another world.
 
 All launchers in this table now live under `launchers/legacy/`.
@@ -37,7 +37,7 @@ All launchers in this table now live under `launchers/legacy/`.
 
 Each uses its own save slot. Preparation preserves existing progress; F5 saves.
 Earlier generated worlds are available through `Worlds.cmd`; their saves are not
-migrated or replaced. Use **Esc > World > Track** for directions to destinations.
+migrated or replaced. Use **Esc > Destinations > Track** for directions to destinations.
 See [integrated generation](docs/INTEGRATED_WORLD_GENERATION.md) for scope and limits.
 First-time world preparation can take longer than later launches. See the
 [building guide](docs/BUILDING_REVIEW.md), [cave guide](docs/NATURAL_CAVE_GAMEPLAY.md)
@@ -49,8 +49,8 @@ unqualified or unfinished.
 
 Run `python tools/run.py --scene structures --godot PATH` to inspect the separate native block construction addon. It includes textured cubes, slabs, stairs, slopes, posts and spheres; chunked native mesh baking; nearby collision; a house and tower frame; and separate static-model MultiMesh batches. See [structures API](addons/structures/README.md) and [validation](docs/STRUCTURES_VALIDATION.md). The project opens the world browser; `tools/run.py` still defaults to the terrain demo for existing launchers.
 
-In the main world, open **Esc → Objects** for object recipes and placement
-controls, or **Esc → Building** for block shapes and prefabs. Gameplay uses owned
+In the main world, select the object or block tool and **hold Alt** for its
+controls and detailed settings. **Esc** opens Session and Destinations. Gameplay uses owned
 tools and materials. **~** switches to the separate development toolbelt and
 editor controls, including transforms and history. M/B mode switching is no
 longer the normal interaction path. See the [player UI guide](docs/PLAYER_UI.md)
@@ -61,7 +61,7 @@ A new Godot project combining editable volumetric terrain and streamed spruce ve
 
 Native development uses **Zig 0.16.0 + prebuilt godot-cpp API 4.7**. Builds compile only our extension sources. Implemented paths include native entity storage/kinematics, [static volumetric lakes](addons/volumetric_water/README.md), seeded cave/mountain/geology generation, terrain road editing, block/prefab construction and a [single world vehicle](addons/vehicle_runtime/README.md). Native [connected settlement authoring](docs/CONNECTED_SETTLEMENTS.md) now supports multiple streets. Multiplayer, vehicle fleets, automatic terrain-aware settlement placement and qualification of dense populated worlds remain incomplete. See [native development](docs/NATIVE_DEVELOPMENT.md), [delivery evidence and limitations](docs/DELIVERY_STATUS.md), and the [world systems expansion contract](docs/WORLD_SYSTEMS_DESIGN.md).
 
-In development mode, **Esc > Development > Place vehicle** places a vehicle on nearby clear, loaded ground. **E** enters or exits when stopped. **W/S** accelerates, brakes or reverses; **A/D** steers; **Space** applies the handbrake; **Shift** boosts; **R** resets. **F5** saves while seated when a clear on-foot restore location exists beside the vehicle. Reload restores you on foot beside the parked vehicle; momentum and cosmetic dents are not saved. The isolated `Launch Vehicle Demo.cmd` runs the supplied driving scene separately. Graphical checks use 1920×1080 fullscreen with a 60 FPS cap; this is a test configuration, not a sustained performance guarantee.
+In development mode, **World tools (8) > hold Alt > Place vehicle** places a vehicle on nearby clear, loaded ground. **E** enters or exits when stopped. **W/S** accelerates, brakes or reverses; **A/D** steers; **Space** applies the handbrake; **Shift** boosts; **R** resets. **F5** saves while seated when a clear on-foot restore location exists beside the vehicle. Reload restores you on foot beside the parked vehicle; momentum and cosmetic dents are not saved. The isolated `Launch Vehicle Demo.cmd` runs the supplied driving scene separately. Graphical checks use 1920×1080 fullscreen with a 60 FPS cap; this is a test configuration, not a sustained performance guarantee.
 
 ## Run
 
@@ -76,7 +76,7 @@ Use `--godot PATH` or `GODOT_EXE` if Godot is not on PATH. The launcher handles 
 
 The project now renders at **1920×1080 in fullscreen**, with 100% 3D scale. F11 reapplies fullscreen. Graphical benchmark reports must pass the presentation check; historical 1600×900 measurements are not 1080p evidence.
 
-WASD moves, mouse looks, Shift sprints and Space jumps. **Esc** opens Actions;
+WASD moves, mouse looks, Shift sprints and Space jumps. **Esc** opens Session;
 **Tab** opens inventory. **1–9 / 0** or the mouse wheel selects any of the ten
 toolbelt slots, including empty slots. Left mouse attacks/digs with the equipped
 tool or empty hands; right mouse uses placeable items or the selected building

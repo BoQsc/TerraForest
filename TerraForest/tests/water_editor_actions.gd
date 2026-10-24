@@ -8,7 +8,7 @@ func run():
  if failures:await finish();return
  game.set_process(false);game.set_physics_process(false);game._clear_motion()
  game.session_menu.toggle_developer();game.session_menu.show_page("Water")
- var editor=game.session_menu.pages["Water"].get_child(0)
+ var editor=game.session_menu.tool_workspace.pages["Water"].get_child(0)
  var remove:Button;var add:Button;var instructions:=""
  for child in editor.get_children():
   if child is Label:instructions+=child.text

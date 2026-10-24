@@ -1,3 +1,23 @@
+## Session menu and contextual tool controls - 2026-10-24
+
+Escape now opens Session and Destinations consistently. Toolbelt duplication and
+editor categories have moved out of that menu. Hold Alt to use the selected
+tool's quick controls; detailed construction/object/road settings open their own
+scrollable workspace above the belt. World tools owns diagnostics, vehicle and
+water authoring, while Actors owns actor/resident controls. Closing settings
+returns to aiming; another Escape opens Session. Gameplay retains owned-item and
+cost checks. Existing input, save/native ownership and original tool capabilities
+are retained, including both box-brush variants.
+
+The 34-check belt/focus regression, 34-check player/save smoke, 51-check combined
+interaction, 6-check object accessibility and 17-check actual water-action checks
+pass. Relevant fullscreen 1920x1080 captures were inspected. Failed implementation
+and outdated-fixture runs remain in [tool-menu evidence](evidence/tool_context_menu/README.md).
+The controls guide and runtime hints now name Alt/tool settings and ESC/session.
+Human usability acceptance remains open until reviewed; follow up on that feedback
+with the same actual tool/input routes. This requested UI work does not complete
+or replace the generator/storage/mining/performance requirements below.
+
 ## Optional generated world names - 2026-10-23
 
 Blank or whitespace-only names in Create world now receive a random two-word name,

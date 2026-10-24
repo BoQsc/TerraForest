@@ -1,0 +1,59 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS main world ready
+PASS supply paid interior fixture
+PASS normal palette furnished cottage includes chest
+PASS normal paid prefab route places furnished storage interior
+PASS E reaches chest inside furnished cottage
+PASS interior chest accepts wood through normal UI
+PASS empty supplied fixture target before withdrawal
+PASS real mouse drag withdraws to exact player slot and preserves original chest supplies
+PASS real mouse drag deposits to exact chest slot and protects contents
+PASS real mouse drag rearranges chest slots
+PASS real Shift-drag splits chest stack in half
+PASS Escape closes chest before opening menu
+PASS Escape menu owns input and releases cursor
+PASS development mode enables free authoring without mining rewards
+PASS world tool flight button works outside session
+PASS leaving development restores gameplay and walking
+HOLD_STATE true true 
+PASS holding tilde enters development and toggles flight
+PASS G with empty hands does not enable flight
+PASS ten toolbelt slots
+PASS real inventory drag swaps tool into tenth belt slot
+PASS zero key equips tenth belt slot
+PASS saved item IDs now identify four distinct gameplay tools
+PASS move equipped pickaxe out of belt
+PASS moving the equipped tool away puts it down
+PASS empty tenth slot selects empty hands and clears placement
+PASS put known terrain material stack into empty ninth belt slot
+PASS held building material enables paid right-click placement without developer tools
+PASS M opens world map without changing tool mode
+PASS M returns from map before editor chords
+PASS tilde plus F toggles flight once without toggling headlamp
+PASS return from development resets flight and equipment
+PASS session has no equipment or editor navigation
+GUI_CLICK  (1487.0, 982.0) ["down", "up"]
+PASS clicking empty belt slot selects empty hands
+PASS building tool owns its detailed settings action
+GUI_CLICK Prefabs / detailed settings (1732.0, 602.5) ["down", "up"]
+PASS Building page equips owned hammer and exposes paid controls
+PASS gameplay building shows shape/material/rotation/prefab without editor generation
+PASS Objects page equips assembly tool with full allowed gameplay controls
+PASS assembly tool does not steal chest interaction
+PASS development keeps settlement and prefab capture in its tool workspace
+PASS road controls use a tool workspace outside session
+PASS developer brush is separate from inventory equipment
+PASS leaving development restores actual gameplay equipment without a brush
+PASS nearby terrain available for tool input check
+FAIL pickaxe mouse input publishes real native excavation
+PASS pickaxe has fixed local reach and cannot fill terrain
+PASS empty fixture belt slot for hand attack
+PASS empty belt slot equips hands before shared damage check
+PASS empty hands use shared terrain damage before reaching destruction health
+PASS fullscreen1080p cap60
+[TerrainRewrite] Temporary test world: save skipped
+PASS normal shutdown
+UNIFIED_TOOLS failures=1

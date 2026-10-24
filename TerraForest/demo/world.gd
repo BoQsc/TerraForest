@@ -647,6 +647,7 @@ func _equip_player_tool(item: int) -> void:
 	edit_reach=3.5;allow_terrain_add=false
 	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0)
 	player_hud.show_active_tool(item)
+	if session_menu.developer_hud!=null:session_menu.developer_hud.refresh()
 	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - left mouse punches, E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
 
 func _activate_ground_tool(species: int) -> bool:
@@ -658,7 +659,7 @@ func _activate_ground_tool(species: int) -> bool:
 	_show_lake_notice(player_hud.GroundCatalog.NAMES[species]+"; LMB/E remove; RMB place")
 	return true
 func _sync_player_tool() -> void:
-	player_hud.editor_hint=("DEVELOPMENT | "+("Object editor" if model_tool.active else ("Block editor" if structure_mode else "Terrain brush"))+" | Esc: settings | Left mouse: remove | Right mouse: place / fill") if editor_tool_active else ""
+	player_hud.editor_hint=("DEVELOPMENT | "+("Object editor" if model_tool.active else ("Block editor" if structure_mode else "Terrain brush"))+" | Hold Alt: tool controls | Left mouse: remove | Right mouse: place / fill") if editor_tool_active else ""
 	_sync_construction_palette()
 	player_hud.show_active_tool(equipped_tool)
 
@@ -1420,7 +1421,7 @@ func _process(delta: float) -> void:
 			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
 			var actor_order: Dictionary=actors.orders.get_target(actor_authoring.selected_identity)
 			telemetry.text+=("\nPatrol route: " if actor_order.get("patrol",false) else "\nActor route: ")+str(actors.pool.navigation_status(actor_handle).state).replace("_"," ")
-		if actors.pool!=null and session_menu.visible_ui() and session_menu.current_page=="Development":telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
+		if actors.pool!=null and session_menu.workspace and session_menu.current_page=="Actors":telemetry.text+="\nJ Place actor · Shift+J Remove actor\nK Select / send · Shift+K Stop"
 	terrain._record_stage("world process",(Time.get_ticks_usec()-frame_begin)/1000.0)
 
 func _harvest_aimed_tree() -> bool:

@@ -20,9 +20,9 @@ func run():
  check(not game.loading_active and game.lakes.statistics().ready==4,"four generated lakes ready in main world")
  if not game.session_menu.developer:game.session_menu.toggle_developer()
  game.session_menu.show_page("Water")
- var editor=game.session_menu.pages.Water.get_child(0)
+ var editor=game.session_menu.tool_workspace.pages.Water.get_child(0)
  for i in 4:await process_frame
- check(editor.rows.get_child_count()==4 and game.session_menu.pages.Water.visible,"Water page lists four lakes")
+ check(editor.rows.get_child_count()==4 and game.session_menu.tool_workspace.pages.Water.visible,"Water page lists four lakes")
  var entries: Array[Dictionary]=game.lakes.descriptions()
  if entries.size()!=4:
   game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
@@ -45,6 +45,6 @@ func run():
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/lake_editor/water.png")
  game.session_menu.toggle_developer();editor.remove(first.id)
- check(game.lakes.capture_snapshot()==saved and not game.session_menu.navigation.Water.visible,"gameplay hides water editor and rejects its actions")
+ check(game.lakes.capture_snapshot()==saved and not game.session_menu.tool_workspace.panel.visible,"gameplay hides water editor and rejects its actions")
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame
  print("LAKE_EDITOR failures=",failures);quit(1 if failures else 0)
