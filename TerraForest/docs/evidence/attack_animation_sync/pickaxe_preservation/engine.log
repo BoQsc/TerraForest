@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS selected pullback coexists with kept diagonal holds
+PASS new copy retains the single 1.2-second swing
+PASS trial contains no gameplay or method events
+PASS all 59 bones preserve ready frames and frames 28-72 including contact, follow-through and recovery
+PASS body pose and tool orientation match the liked side version at every frame
+PASS both hand wraps remain attached at the original handle stations
+PASS wind-up adds 8 cm toward the player with no lateral or vertical redirection
+PASS trial returns to the preserved idle after the action
+PASS normal game retains the selected pullback after comparison
+PICKAXE_SIDE_PULLBACK checks=9 failures=0

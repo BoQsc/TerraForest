@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
+signal swing_contact(identity:int)
+signal swing_finished(identity:int,cancelled:bool)
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
 const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
@@ -14,6 +16,12 @@ var current := 0
 var active_clip := ""
 var action_remaining := 0.0
 var placement_active := false
+var swing_identity:=0
+var swing_clip:=""
+var contact_seconds:=0.0
+var contact_sent:=false
+# Contact poses in the authored clips (seconds on the animation timeline).
+const CONTACTS={"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 @export var diagonal_pickaxe := true
 @export_enum("pullback", "diagonal") var pickaxe_swing := "pullback"
@@ -25,6 +33,7 @@ func _ready() -> void:
 	model = MODEL.instantiate()
 	add_child(model)
 	_collect(model)
+	animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	animation_player.add_animation_library("placement", PLACEMENT)
 	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
 	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
@@ -49,6 +58,7 @@ func _collect(node: Node) -> void:
 		_collect(child)
 
 func equip(item: int) -> void:
+	cancel_swing()
 	current = item
 	action_remaining = 0.0
 	placement_active = false
@@ -66,6 +76,7 @@ func _sync_equipment() -> void:
 			mesh.hide()
 
 func _motion_clip(action: String) -> String:
+	if current==0 and action=="Swing":return "FP_Place_Relaxed"
 	if current == 1 and diagonal_pickaxe and action == "Swing" and pickaxe_swing == "pullback":
 		return "FP_Pickaxe_SidePullback_Swing"
 	if current == 1 and diagonal_pickaxe and clips.has("FP_Pickaxe_Diagonal_" + action):
@@ -76,18 +87,32 @@ func _motion_clip(action: String) -> String:
 func _play(clip: String, once: bool = false) -> void:
 	if not clips.has(clip):
 		return
-	if active_clip != clip or not animation_player.is_playing():
+	if once or active_clip != clip or not animation_player.is_playing():
 		animation_player.play(clips[clip], 0.10)
 		active_clip = clip
 	if once:
+		animation_player.seek(0,true)
 		action_remaining = animation_player.get_animation(clips[clip]).length
 
-func swing() -> void:
+func swing_profile()->Dictionary:
+	var clip:=_motion_clip("Swing")
+	if animation_player==null or not clips.has(clip) or not CONTACTS.has(clip):return {}
+	var duration:float=animation_player.get_animation(clips[clip]).length
+	return {"clip":clip,"contact":minf(CONTACTS[clip],duration),"duration":duration}
+func swing(identity:int=0) -> bool:
 	if action_remaining > 0.0:
-		return
-	var clip := _motion_clip("Swing")
-	if clips.has(clip):
-		_play(clip, true)
+		return false
+	var profile:=swing_profile()
+	if profile.is_empty():return false
+	swing_identity=identity;swing_clip=profile.clip;contact_seconds=profile.contact;contact_sent=false
+	_play(swing_clip,true)
+	return true
+func cancel_swing()->void:
+	if swing_clip.is_empty():return
+	var identity:=swing_identity
+	swing_identity=0;swing_clip="";action_remaining=0;contact_sent=false
+	if animation_player!=null:_play(_motion_clip("Idle"))
+	swing_finished.emit(identity,true)
 
 func place() -> bool:
 	if action_remaining > 0.0 or not is_visible_in_tree():
@@ -100,11 +125,29 @@ func place() -> bool:
 func _process(delta: float) -> void:
 	animation_player.active = is_visible_in_tree()
 	if not animation_player.active:
+		cancel_swing()
 		return
 	if action_remaining > 0.0:
-		action_remaining = maxf(0.0, action_remaining - delta)
+		if not swing_clip.is_empty() and animation_player.assigned_animation!=clips[swing_clip]:cancel_swing();return
+		var step:=delta
+		var speed:float=animation_player.get_playing_speed()
+		var position:float=animation_player.current_animation_position
+		# Draw the actual contact pose on the impact frame, even after a long frame.
+		if not swing_clip.is_empty() and not contact_sent and speed>0 and position+step*speed>=contact_seconds:
+			step=maxf(0,(contact_seconds-position)/speed)
+		animation_player.advance(step)
+		if not swing_clip.is_empty() and not contact_sent and animation_player.current_animation_position+0.00001>=contact_seconds:
+			contact_sent=true
+			swing_contact.emit(swing_identity)
+		# A hit may break/equip a tool and cancel this action inside the signal.
+		if action_remaining<=0:return
+		var length:float=animation_player.get_animation(animation_player.assigned_animation).length
+		action_remaining=maxf(0,length-animation_player.current_animation_position) if animation_player.is_playing() else 0.0
 		if action_remaining > 0.0:
 			return
+		if not swing_clip.is_empty():
+			var identity:=swing_identity;swing_identity=0;swing_clip=""
+			swing_finished.emit(identity,false)
 	if placement_active:
 		placement_active = false
 		_sync_equipment()
@@ -119,3 +162,4 @@ func _process(delta: float) -> void:
 		elif speed > 0.15:
 			motion = "Run" if speed > 5.0 else "Walk"
 	_play(_motion_clip(motion))
+	animation_player.advance(delta)

@@ -38,7 +38,7 @@ func run()->void:
   if not check(target.get("kind")=="terrain","pickaxe targets chamber floor"):break
   game.world_attack.next_attack=0
   profile_phase="strike_%d"%material
-  if not check(game.world_attack.attack(),"normal pickaxe attack accepted"):break
+  if not check(await preload("res://tests/swing_driver.gd").strike(game),"normal pickaxe attack accepted"):break
   if not check(await wait_for(func():return not game.terrain.pending_edit,20),"mining publishes"):break
   var removed:PackedInt64Array=game.terrain.last_edit_outcome.get("removed_samples",PackedInt64Array())
   check(removed.size()==16 and removed[material]>0,"natural ore removed: %d"%material)

@@ -1,3 +1,21 @@
+## Held-tool impact timing - 2026-10-24
+
+Gameplay hits now resolve at the actual held animation's contact pose, with one
+live reach/occlusion query, native damage, feedback and wear per swing. Recovery
+gates held-input repetition. Equipment, menus, inventory, Alt controls, focus loss
+and world reload cancel pending strikes; native ownership is checked at contact.
+The approved pickaxe animation keys and existing native stores/save formats are
+unchanged. Empty hands use the existing relaxed hand-reach clip; a newly authored
+punch is not part of this timing change.
+
+Source and exported-runtime verification and inspected contact captures are
+recorded in [attack timing evidence](evidence/attack_animation_sync/README.md).
+Engineering checks cover contact/recovery/cancellation and existing damage/wear
+routes. Human acceptance of strike feel remains open for play feedback; revisit
+the contact profiles against the actual held meshes if that feedback identifies
+a mismatch. This does not close the generator, storage, mining-latency or world
+performance requirements below.
+
 ## Session menu and contextual tool controls - 2026-10-24
 
 Escape now opens Session and Destinations consistently. Toolbelt duplication and

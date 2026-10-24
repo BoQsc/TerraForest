@@ -53,7 +53,7 @@ func run()->void:
       target=game.world_attack.target()
     if not check(target.get("kind")=="terrain","pickaxe targets actual ore-face terrain"):break
     game.world_attack.next_attack=0
-    if not check(game.world_attack.attack(),"ordinary pickaxe attack accepted"):break
+    if not check(await preload("res://tests/swing_driver.gd").strike(game),"ordinary pickaxe attack accepted"):break
     if not check(await wait_for(func():return not game.terrain.pending_edit,15),"mining publishes"):break
     rows.append({"item":item,"strike":strike,"target":target,"outcome":game.terrain.last_edit_outcome,"quantity":amount(item)})
     if amount(item)>=before+2:break

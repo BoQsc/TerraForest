@@ -34,14 +34,14 @@ func run() -> void:
 		batch.set_removal_protected(id,true)
 		var inventory_before: PackedByteArray=game.player_hud.inventory.capture_storage_snapshot()
 		attack.next_attack=0
-		check(not attack.attack() and game.player_hud.inventory.capture_storage_snapshot()==inventory_before and not batch.get_instance(id).is_empty(),"protected part rejects damage without wear or reward")
+		check(not await preload("res://tests/swing_driver.gd").strike(game) and game.player_hud.inventory.capture_storage_snapshot()==inventory_before and not batch.get_instance(id).is_empty(),"protected part rejects damage without wear or reward")
 		if batch==game.doors.collection:check(game.doors.state.is_open(id),"rejected damage preserves open hinge")
 		batch.set_removal_protected(id,false)
 		attack.next_attack=0
-		check(attack.attack() and not batch.get_instance(id).is_empty(),"first hit damages without removing part")
+		check(await preload("res://tests/swing_driver.gd").strike(game) and not batch.get_instance(id).is_empty(),"first hit damages without removing part")
 		for i in 8:
 			if batch.get_instance(id).is_empty():break
-			attack.next_attack=0;attack.attack()
+			attack.next_attack=0;await preload("res://tests/swing_driver.gd").strike(game)
 		check(batch.get_instance(id).is_empty() and amount(entry[1])==before+entry[2],"destruction grants exact partial salvage")
 		check(game.player_hud.inventory.snapshot().slots[1].wear>wear,"shared attack wears tool")
 		if batch==game.doors.collection:check(not game.doors.state.is_open(id),"destroyed open door leaves no hinge record")

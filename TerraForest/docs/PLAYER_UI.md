@@ -63,7 +63,12 @@ input while world simulation continues.
 | Empty hands | Left mouse punches/digs using the shared attack path, at 5 damage per hit; no tool wear. |
 | Material or placeable stack | Does not attack. Right mouse places held building materials as cubes or owned ground cover. E interacts. |
 
-Hands and all four tools share one occlusion-aware 3.5 m attack query with a 250 ms cooldown.
+Hands and all four tools resolve one occlusion-aware 3.5 m attack query at the
+held animation's contact pose. Damage, target feedback and tool wear occur there;
+holding left mouse starts another swing only after recovery. Playback speed also
+changes contact timing. Changing tools, opening menus/inventory/Alt controls,
+losing focus or reloading cancels a pending strike. Empty hands currently use
+the existing relaxed hand-reach animation. See [animation timing evidence](evidence/attack_animation_sync/README.md).
 Targets are terrain patches, building blocks, trees, ground cover, furniture/static
 models, active actors and vehicles. Partial damage persists through saves. Nonempty
 containers remain protected; failed destruction cannot discard their contents.

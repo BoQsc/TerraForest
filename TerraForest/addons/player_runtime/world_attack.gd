@@ -5,10 +5,17 @@ var game: Node
 var durability: RefCounted
 var next_attack:=0
 var rejection_reason:=""
+var sequence:=0
+var pending:Dictionary={}
+var last_hit:=false
+signal impact_resolved(identity:int,accepted:bool)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
 const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15}}
 func prepare(world: Node) -> bool:
 	game=world;durability=ClassDB.instantiate("NativeWorldDurability")
+	game.tool_view.attack_allowed=can_continue
+	game.tool_view.attack_contact.connect(resolve_contact)
+	game.tool_view.attack_finished.connect(finish_swing)
 	return game.persistence.register_component("world_durability",durability.capture_storage_snapshot,durability.restore_storage_snapshot,durability,durability.capture_storage_snapshot())
 func block_key(cell: Vector3i) -> String:return "block:%d:%d:%d"%[cell.x,cell.y,cell.z]
 func target() -> Dictionary:
@@ -57,15 +64,39 @@ func target() -> Dictionary:
 		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}
 	return {}
 func attack() -> bool:
-	if game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
+	if not pending.is_empty() or game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
 	var now:=Time.get_ticks_msec()
 	if now<next_attack:return false
-	next_attack=now+250;game.tool_view.swing();game.terrain.note_interaction()
+	var profile:Dictionary=game.tool_view.attack_profile()
+	if profile.is_empty():return false
+	sequence+=1;last_hit=false
+	pending={"identity":sequence,"item":game.equipped_tool,"slot":game.player_hud.active_slot,"epoch":game.terrain.epoch,"contacted":false}
+	if not game.tool_view.begin_attack(sequence):pending={};return false
+	# Recovery is owned by the actual animation; retain the minimum input debounce.
+	next_attack=now+250;game.terrain.note_interaction()
+	return true
+func can_continue()->bool:
+	return not pending.is_empty() and not game.session_menu.developer and not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.loading_active and not game.shutdown_requested and not game.benchmark_enabled and game.app_focused and not game.world_vehicle.driving and game.terrain.world_ready and game.terrain.epoch==pending.epoch and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and game.equipped_tool==pending.item and game.player_hud.active_slot==pending.slot
+func resolve_contact(identity:int)->void:
+	if pending.is_empty() or pending.identity!=identity or pending.contacted:return
+	if not game.tool_view.contact_ready(identity):return
+	if not can_continue() or not game._model_edit_available():cancel();return
+	if pending.item!=0:
+		var row:Dictionary=game.player_hud.inventory.snapshot().slots[pending.slot]
+		if row.item!=pending.item or row.count<=0:cancel();return
+	pending.contacted=true
+	# Resolve the live occlusion/reach query once, on the visible contact pose.
 	var selected:=target()
-	if selected.is_empty():return false
-	if selected.kind=="zombie" and game.equipped_tool in [1,2]:next_attack=now+1200
-	if selected.kind=="terrain":game.terrain.set_interaction_target(selected.position)
-	return apply_target(selected)
+	if selected.get("kind")=="terrain":game.terrain.set_interaction_target(selected.position)
+	last_hit=not selected.is_empty() and apply_target(selected)
+	impact_resolved.emit(identity,last_hit)
+func cancel()->void:
+	if pending.is_empty():return
+	game.tool_view.cancel_attack()
+func finish_swing(identity:int,cancelled:bool)->void:
+	if pending.is_empty() or pending.identity!=identity:return
+	if cancelled and not pending.contacted:next_attack=0
+	pending={}
 func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool

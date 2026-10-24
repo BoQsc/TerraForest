@@ -636,6 +636,10 @@ func _setup_hud() -> void:
 	hud.position = Vector2(26, 200)
 	status.position = Vector2(26, 570)
 
+func _cancel_edit_input()->void:
+	world_attack.cancel()
+	super._cancel_edit_input()
+
 func _equip_player_tool(item: int) -> void:
 	if world_vehicle.driving:return
 	editor_tool_active=false;equipped_tool=item

@@ -85,7 +85,7 @@ func run()->void:
    var target:Dictionary=game.world_attack.target()
    if not check(target.get("kind")=="terrain","ordinary pickaxe targets natural cave floor"):break
    game.world_attack.next_attack=0
-   if not check(game.world_attack.attack(),"ordinary pickaxe strike accepted"):break
+   if not check(await preload("res://tests/swing_driver.gd").strike(game),"ordinary pickaxe strike accepted"):break
    if not check(await wait_for(func():return not game.terrain.pending_edit,20),"excavation publishes"):break
    var after:PackedFloat32Array=await densities(points)
    var removed:PackedInt64Array=game.terrain.last_edit_outcome.get("removed_samples",PackedInt64Array())

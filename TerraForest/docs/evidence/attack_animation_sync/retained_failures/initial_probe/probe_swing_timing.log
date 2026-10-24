@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+CLIPS ["Axe_Idle", "Axe_Jump", "Axe_Run", "Axe_Swing", "Axe_Swing_Right", "Axe_Swing_Tilt", "Axe_Walk", "Crouch", "FP_Axe_Equip", "FP_Axe_Holster", "FP_Axe_Idle", "FP_Axe_Jump", "FP_Axe_Run", "FP_Axe_Swing", "FP_Axe_Swing_Right", "FP_Axe_Swing_Tilt", "FP_Axe_Walk", "FP_Pickaxe_Equip", "FP_Pickaxe_Holster", "FP_Pickaxe_Idle", "FP_Pickaxe_Jump", "FP_Pickaxe_RightGrip_Equip", "FP_Pickaxe_RightGrip_Holster", "FP_Pickaxe_RightGrip_Idle", "FP_Pickaxe_RightGrip_Jump", "FP_Pickaxe_RightGrip_Run", "FP_Pickaxe_RightGrip_Swing", "FP_Pickaxe_RightGrip_Swing_Right", "FP_Pickaxe_RightGrip_Swing_Tilt", "FP_Pickaxe_RightGrip_Walk", "FP_Pickaxe_Run", "FP_Pickaxe_Swing", "FP_Pickaxe_Swing_Right", "FP_Pickaxe_Swing_Tilt", "FP_Pickaxe_Walk", "FP_Rifle_Aim", "FP_Rifle_Equip", "FP_Rifle_Fire", "FP_Rifle_HipFire", "FP_Rifle_Holster", "FP_Rifle_Idle", "FP_Rifle_Jump", "FP_Rifle_Reload", "FP_Rifle_Run", "FP_Rifle_Walk", "Idle", "Jump", "Pickaxe_Idle", "Pickaxe_Jump", "Pickaxe_RightGrip_Crouch", "Pickaxe_RightGrip_Idle", "Pickaxe_RightGrip_Jump", "Pickaxe_RightGrip_Run", "Pickaxe_RightGrip_Swing", "Pickaxe_RightGrip_Swing_Right", "Pickaxe_RightGrip_Swing_Tilt", "Pickaxe_RightGrip_Walk", "Pickaxe_Run", "Pickaxe_Swing", "Pickaxe_Swing_Right", "Pickaxe_Swing_Tilt", "Pickaxe_Walk", "Rifle_Aim", "Rifle_Fire", "Rifle_Idle", "Rifle_Jump", "Rifle_Reload", "Rifle_Run", "Rifle_Walk", "Run", "Walk", "FP_Pickaxe_Diagonal_Idle", "FP_Pickaxe_Diagonal_Jump", "FP_Pickaxe_Diagonal_Run", "FP_Pickaxe_Diagonal_Swing", "FP_Pickaxe_Diagonal_Walk", "FP_Pickaxe_SidePullback_Swing", "FP_Place_Relaxed"]
+NO_SWING 0
+SWING 1 FP_Pickaxe_SidePullback_Swing duration=1.20000004768372 bones=["LeftHand", "LeftHandIndex1", "LeftHandIndex2", "LeftHandIndex3", "LeftHandMiddle1", "LeftHandMiddle2", "LeftHandMiddle3", "LeftHandPinky1", "LeftHandPinky2", "LeftHandPinky3", "LeftHandRing1", "LeftHandRing2", "LeftHandRing3", "LeftHandThumb1", "LeftHandThumb2", "LeftHandThumb3", "RightHand", "RightHandIndex1", "RightHandIndex2", "RightHandIndex3", "RightHandMiddle1", "RightHandMiddle2", "RightHandMiddle3", "RightHandPinky1", "RightHandPinky2", "RightHandPinky3", "RightHandRing1", "RightHandRing2", "RightHandRing3", "RightHandThumb1", "RightHandThumb2", "RightHandThumb3", "Weapon_Pickaxe", "Weapon_Axe", "Weapon_Carbine", "Weapon_Magazine"]
+POSE 1 0 (-0.04, -2.0, 0.55)
+POSE 1 6 (-0.0505, -2.0, 0.501562)
+POSE 1 12 (-0.07, -2.0, 0.39)
+POSE 1 18 (-0.096437, -1.994135, 0.282188)
+POSE 1 24 (-0.054111, -1.932096, 0.350739)
+POSE 1 30 (0.037432, -1.901179, 0.467299)
+POSE 1 36 (0.096627, -1.931971, 0.494358)
+POSE 1 42 (0.102049, -1.957337, 0.479614)
+POSE 1 48 (0.059758, -1.979885, 0.476225)
+POSE 1 54 (-0.039119, -2.007289, 0.48604)
+POSE 1 60 (-0.048437, -2.008438, 0.503844)
+POSE 1 66 (-0.043164, -2.003164, 0.533809)
+POSE 1 72 (-0.04, -2.0, 0.55)
+MOST_FORWARD 1 0.33333333333333 0.27000001072884
+SWING 2 FP_Axe_Swing duration=1.10000002384186 bones=["LeftHand", "LeftHandIndex1", "LeftHandIndex2", "LeftHandIndex3", "LeftHandMiddle1", "LeftHandMiddle2", "LeftHandMiddle3", "LeftHandPinky1", "LeftHandPinky2", "LeftHandPinky3", "LeftHandRing1", "LeftHandRing2", "LeftHandRing3", "LeftHandThumb1", "LeftHandThumb2", "LeftHandThumb3", "RightHand", "RightHandIndex1", "RightHandIndex2", "RightHandIndex3", "RightHandMiddle1", "RightHandMiddle2", "RightHandMiddle3", "RightHandPinky1", "RightHandPinky2", "RightHandPinky3", "RightHandRing1", "RightHandRing2", "RightHandRing3", "RightHandThumb1", "RightHandThumb2", "RightHandThumb3", "Weapon_Pickaxe", "Weapon_Axe", "Weapon_Carbine", "Weapon_Magazine"]
+POSE 2 0 (-0.18, -1.955, 0.51)
+POSE 2 6 (-0.198066, -1.935754, 0.45329)
+POSE 2 12 (-0.214337, -1.893324, 0.394317)
+POSE 2 18 (-0.226161, -1.833563, 0.346229)
+POSE 2 24 (-0.229959, -1.810059, 0.330048)
+POSE 2 30 (-0.210169, -1.836848, 0.351787)
+POSE 2 36 (-0.118176, -1.986602, 0.451844)
+POSE 2 42 (-0.101142, -2.063616, 0.468874)
+POSE 2 48 (-0.102979, -2.065229, 0.468765)
+POSE 2 54 (-0.137404, -2.011175, 0.456388)
+POSE 2 60 (-0.162594, -1.976768, 0.47109)
+POSE 2 66 (-0.18, -1.955, 0.51)
+MOST_FORWARD 2 0.36666666666667 0.33001092076302

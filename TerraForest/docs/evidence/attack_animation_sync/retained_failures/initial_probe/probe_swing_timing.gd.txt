@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+func _initialize()->void:run.call_deferred()
+func run()->void:
+ var view=load("res://addons/characters/runtime/human_view.gd").new();root.add_child(view);view.set_process(false)
+ var skeleton:Skeleton3D=view.model.find_child("Skeleton3D",true,false)
+ print("PLACEMENT_LENGTH ",view.animation_player.get_animation(view.clips.FP_Place_Relaxed).length)
+ for item in [0,1,2]:
+  view.equip(item)
+  var clip:String=view._motion_clip("Swing")
+  if not view.clips.has(clip):print("NO_SWING ",item);continue
+  var animation:Animation=view.animation_player.get_animation(view.clips[clip])
+  var names:Array=[]
+  for index in skeleton.get_bone_count():
+   if "Weapon" in skeleton.get_bone_name(index) or "Hand" in skeleton.get_bone_name(index):names.append(skeleton.get_bone_name(index))
+  print("SWING ",item," ",clip," duration=",animation.length," bones=",names)
+  var minimum:=INF;var best:=0.0
+  var bone:int=skeleton.find_bone("RightHand" if item==0 else ("Weapon_Pickaxe" if item==1 else "Weapon_Axe"))
+  for frame in range(int(round(animation.length*60))+1):
+   var time:float=frame/60.0
+   view.animation_player.play(view.clips[clip],0);view.animation_player.seek(time,true);view.animation_player.pause();view.animation_player.advance(0)
+   var point:Vector3=skeleton.global_transform*skeleton.get_bone_global_pose(bone).origin
+   if point.z<minimum:minimum=point.z;best=time
+   if frame%6==0:print("POSE ",item," ",frame," ",point)
+  print("MOST_FORWARD ",item," ",best," ",minimum)
+ view.free();quit()

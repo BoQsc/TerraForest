@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: 0BSD
+extends "res://tests/pickaxe_diagonal.gd"
+func run()->void:
+ var view=load("res://addons/characters/runtime/human_view.gd").new();root.add_child(view);view.set_process(false);view.equip(1);view.diagonal_pickaxe=false
+ var skeleton:Skeleton3D=view.model.find_child("Skeleton3D",true,false)
+ var axe:MeshInstance3D=view.model.find_child("Equipment_Pickaxe",true,false)
+ print("LEGACY_DURATION ",view.animation_player.get_animation(view.clips.FP_Pickaxe_Swing).length)
+ for surface in axe.mesh.get_surface_count():print("PICKAXE_MATERIAL ",axe.mesh.surface_get_material(surface).resource_name)
+ for frame in [0,24,30,32,34,36,38,40,42,48,66]:
+  pose(view,"FP_Pickaxe_Swing",frame/60.0)
+  print("PICKAXE_TIP ",frame," ",tool_head(axe,skeleton,true)," steel=",tool_head(axe,skeleton))
+ view.free();quit()

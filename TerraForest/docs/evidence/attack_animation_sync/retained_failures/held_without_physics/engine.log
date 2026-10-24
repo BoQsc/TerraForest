@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS normal world ready
+PASS two real concrete targets installed
+PASS mouse-down starts windup without damage or wear
+PASS repeated input cannot create hidden hits during windup
+PASS visible windup advances
+PASS target stays intact during visible windup
+PASS single click resolves at visible contact
+PASS exact contact pose applies one native hit and one wear point
+PASS recovery blocks another swing
+PASS recovery finishes without extra damage
+PASS retargeting swing starts
+PASS only the target aimed at contact receives damage
+PASS reach-check swing starts
+PASS moving out of reach before contact misses without wear
+PASS cancellation windup starts: equipment
+PASS pending strike cancelled: equipment
+PASS cancelled action changes no target: equipment
+PASS cancellation windup starts: session
+PASS pending strike cancelled: session
+PASS cancelled action changes no target: session
+PASS cancellation windup starts: inventory
+PASS pending strike cancelled: inventory
+PASS cancelled action changes no target: inventory
+PASS cancellation windup starts: Alt
+PASS pending strike cancelled: Alt
+PASS cancelled action changes no target: Alt
+PASS cancellation windup starts: focus
+PASS pending strike cancelled: focus
+PASS cancelled action changes no target: focus
+PASS cancellation windup starts: epoch
+PASS pending strike cancelled: epoch
+PASS cancelled action changes no target: epoch
+PASS real reload completes without a pending attack
+PASS held-input target installed after reload
+PASS last held swing completes after button release
+FAIL held input produces exactly one hit and wear per complete swing
+[TerrainRewrite] Temporary test world: save skipped
+PASS clean shutdown
+ATTACK_CONTACT_WORLD checks=37 failures=1

@@ -36,10 +36,11 @@ func run() -> void:
 		check(t.get("kind")=="block","tool "+str(slot)+" targets nearest block")
 		var before: int=hud.inventory.snapshot().slots[slot].wear
 		attack.next_attack=0
-		check(attack.attack() and game.structures.blocks.get_cell(base)!=0 and hud.inventory.snapshot().slots[slot].wear==before+1,"tool "+str(slot)+" damages block and wears without instant removal")
-		check(hud.damage_feedback.visible and hud.damage_feedback.remaining==int(t.health)-int(attack.TOOLS[game.equipped_tool].wood) and hud.damage_feedback.maximum==t.health,"block hit displays exact native target durability")
+		check(attack.attack(),"tool "+str(slot)+" starts a visible swing")
 		var expires:int=hud.damage_feedback.expires_us
-		check(not attack.attack() and hud.damage_feedback.expires_us==expires,"cooldown rejection does not refresh target feedback")
+		check(not attack.attack() and hud.damage_feedback.expires_us==expires,"windup rejection does not refresh target feedback")
+		check(await preload("res://tests/swing_driver.gd").finish(game) and game.structures.blocks.get_cell(base)!=0 and hud.inventory.snapshot().slots[slot].wear==before+1,"tool "+str(slot)+" damages block and wears only at contact")
+		check(hud.damage_feedback.visible and hud.damage_feedback.remaining==int(t.health)-int(attack.TOOLS[game.equipped_tool].wood) and hud.damage_feedback.maximum==t.health,"block hit displays exact native target durability")
 		if slot==0:
 			await RenderingServer.frame_post_draw
 			var rect:Rect2=hud.damage_feedback.get_global_rect()
@@ -50,7 +51,7 @@ func run() -> void:
 			check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and damage_snapshot==attack.durability.capture_storage_snapshot(),"feedback expires without polling or mutating surviving target health")
 		for i in 8:
 			if game.structures.blocks.get_cell(base)==0:break
-			attack.next_attack=0;attack.attack()
+			attack.next_attack=0;await preload("res://tests/swing_driver.gd").strike(game)
 		check(game.structures.blocks.get_cell(base)==0,"tool "+str(slot)+" eventually destroys block")
 		check(not hud.damage_feedback.visible and not hud.damage_feedback.is_processing() and hud.damage_feedback.expires_us==0,"fatal block hit clears feedback synchronously")
 		if slot==0:
@@ -67,9 +68,9 @@ func run() -> void:
 	game.camera.global_position=tree_point+Vector3(0,1,2);game.camera.look_at(tree_point+Vector3.UP)
 	for i in 8:await physics_frame
 	hud.equip(0);attack.next_attack=0
-	check(attack.target().get("kind")=="tree" and attack.attack() and game.vegetation.renderer.roots.has(1),"pickaxe damages a real tree without immediate harvest")
+	check(attack.target().get("kind")=="tree" and await preload("res://tests/swing_driver.gd").strike(game) and game.vegetation.renderer.roots.has(1),"pickaxe damages a real tree without immediate harvest")
 	hud.equip(1)
-	for i in 3:attack.next_attack=0;attack.attack()
+	for i in 3:attack.next_attack=0;await preload("res://tests/swing_driver.gd").strike(game)
 	check(game.ecosystem.harvest_state.contains(1),"axe finishes the same damaged tree")
 	check(not hud.damage_feedback.visible and hud.damage_feedback.expires_us==0,"fatal tree hit clears feedback synchronously")
 	# Furniture and protected chest use the same authoritative removal path.
@@ -157,9 +158,10 @@ func run() -> void:
 		var t: Dictionary=attack.target()
 		check(t.get("kind")=="terrain","tool "+str(slot)+" can aim at terrain")
 		var submitted:=false
+		var revision:int=game.terrain.density_revision
 		for i in 3:
-			attack.next_attack=0;attack.attack()
-			if game.terrain.pending_edit:submitted=true;break
+			attack.next_attack=0;await preload("res://tests/swing_driver.gd").strike(game)
+			if game.terrain.density_revision>revision:submitted=true;break
 		check(submitted,"tool "+str(slot)+" submits excavation through shared attack")
 		deadline=Time.get_ticks_msec()+10000
 		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame

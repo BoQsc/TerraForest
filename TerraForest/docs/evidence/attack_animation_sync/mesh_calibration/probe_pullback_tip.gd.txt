@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: 0BSD
+extends "res://tests/pickaxe_diagonal.gd"
+func run()->void:
+ var view=load("res://addons/characters/runtime/human_view.gd").new();root.add_child(view);view.set_process(false);view.equip(1)
+ var skeleton:Skeleton3D=view.model.find_child("Skeleton3D",true,false)
+ var pick:MeshInstance3D=view.model.find_child("Equipment_Pickaxe",true,false)
+ for clip in ["FP_Pickaxe_SidePullback_Swing","FP_Pickaxe_Diagonal_Swing"]:
+  for frame in [0,24,28,30,32,34,36,38,40,42,48,60,72]:
+   pose(view,clip,frame/60.0)
+   print("TIP ",clip," ",frame," ",tool_head(pick,skeleton,true)," steel=",tool_head(pick,skeleton))
+ view.free();quit()

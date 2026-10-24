@@ -1,0 +1,49 @@
+{
+  "checks": 43,
+  "failures": 0,
+  "impacts": [
+    {
+      "accepted": true,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 1,
+      "time_us": 9272397
+    },
+    {
+      "accepted": true,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 2,
+      "time_us": 11517058
+    },
+    {
+      "accepted": false,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 3,
+      "time_us": 12750922
+    },
+    {
+      "accepted": true,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 11,
+      "time_us": 16507104
+    },
+    {
+      "accepted": true,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 12,
+      "time_us": 17742706
+    },
+    {
+      "accepted": true,
+      "animation_seconds": 0.533333333333333,
+      "clip": "FP_Pickaxe_SidePullback_Swing",
+      "id": 13,
+      "time_us": 18973786
+    }
+  ],
+  "scope": "Actual temporary-world input, native damage/wear and animation contact/recovery; no performance or art acceptance."
+}

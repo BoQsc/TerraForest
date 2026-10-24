@@ -17,11 +17,11 @@ func run() -> void:
 	game.structures.blocks.set_focus(Vector3(cell));aim(Vector3(cell)+Vector3(0.5,-1.12,2),Vector3(cell)+Vector3.ONE*0.5)
 	await settle()
 	game.world_attack.next_attack=0
-	check(game.world_attack.attack() and hud.inventory.snapshot().slots[0].item==0,"normal attack consumes last durability and breaks tool")
+	check(await preload("res://tests/swing_driver.gd").strike(game) and hud.inventory.snapshot().slots[0].item==0,"normal attack consumes last durability and breaks tool")
 	check(game.equipped_tool==0 and hud.active_item==0 and game._lake_notice.contains("Pickaxe broke") and game._lake_notice.contains("Crafting"),"break switches to empty hands and explains replacement")
 	var target: Dictionary=game.world_attack.target()
 	game.world_attack.next_attack=0
-	check(target.get("kind")=="block" and game.world_attack.attack(),"empty hands can continue the same attack path")
+	check(target.get("kind")=="block" and await preload("res://tests/swing_driver.gd").strike(game),"empty hands can continue the same attack path")
 	hud.set_open(true);hud.craft_recipe(7)
 	check(amount(1)==0 and hud.crafting_message.text.contains("Gather"),"missing ingredients rejects replacement with current guidance")
 	hud.set_open(false)
@@ -56,7 +56,7 @@ func run() -> void:
 	check(game.equipped_tool==1 and hud.active_item==1,"replacement equips through gameplay toolbelt")
 	aim(Vector3(cell)+Vector3(0.5,-1.12,2),Vector3(cell)+Vector3.ONE*0.5)
 	game.world_attack.next_attack=0
-	check(game.world_attack.attack() and hud.inventory.snapshot().slots[0].wear==1,"crafted replacement attacks and wears normally")
+	check(await preload("res://tests/swing_driver.gd").strike(game) and hud.inventory.snapshot().slots[0].wear==1,"crafted replacement attacks and wears normally")
 	var saved: PackedByteArray=hud.capture_snapshot()
 	hud.inventory.wear_tool(0,1,hud.inventory.snapshot().revision)
 	check(hud.restore_snapshot(saved) and hud.capture_snapshot()==saved,"replacement inventory snapshot restores exactly")

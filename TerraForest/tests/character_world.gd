@@ -77,9 +77,9 @@ func run() -> void:
 	var before:int=game.player_hud.inventory.snapshot().slots[1].wear
 	print("BLOCK_ATTACK_CONTEXT ",JSON.stringify({"target":game.world_attack.target(),"available":game._model_edit_available(),"tool":game.equipped_tool,"mouse":Input.mouse_mode,"menu":game.session_menu.visible_ui(),"camera":game.camera.global_position,"base":base}))
 	game.world_attack.next_attack=0
-	check(game.world_attack.attack() and game.structures.blocks.get_cell(base)!=0 and game.player_hud.inventory.snapshot().slots[1].wear==before+1,"R11 axe preserves existing block damage and wear")
+	check(await preload("res://tests/swing_driver.gd").strike(game) and game.structures.blocks.get_cell(base)!=0 and game.player_hud.inventory.snapshot().slots[1].wear==before+1,"R11 axe preserves existing block damage and wear")
 	game.world_attack.next_attack=0
-	check(game.world_attack.attack() and game.structures.blocks.get_cell(base)==0,"R11 axe preserves existing block destruction")
+	check(await preload("res://tests/swing_driver.gd").strike(game) and game.structures.blocks.get_cell(base)==0,"R11 axe preserves existing block destruction")
 	check(not game.persistence._capture().sections.has("zombies"),"encounters do not change persistent world actor schema")
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame
 	print("CHARACTER_WORLD checks=",checks," failures=",failures)

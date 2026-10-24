@@ -105,6 +105,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled();return
 	if event is InputEventKey and event.physical_keycode==KEY_ALT and event.pressed and not event.echo and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:
 		if game.loading_active or game.storage.opened or game.world_vehicle.driving or not game.app_focused:return
+		game._cancel_edit_input()
 		mouse_access=true;Input.mouse_mode=Input.MOUSE_MODE_VISIBLE;get_viewport().set_input_as_handled();return
 	if context_slot()<0:return
 	if game.session_menu.developer and event is InputEventKey and event.physical_keycode==KEY_SPACE and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:

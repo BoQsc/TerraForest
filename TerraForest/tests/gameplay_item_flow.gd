@@ -77,7 +77,7 @@ func run() -> void:
 	hud.equip(9);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	check(game.equipped_tool==0 and game.tool_view.tools[0].visible,"empty slot shows hands")
 	saved=hud.inventory.capture_storage_snapshot();game.world_attack.next_attack=0
-	check(game.world_attack.target().get("kind")=="block" and game.world_attack.attack() and saved==hud.inventory.capture_storage_snapshot(),"unarmed attack hits shared target without tool wear")
+	check(game.world_attack.target().get("kind")=="block" and await preload("res://tests/swing_driver.gd").strike(game) and saved==hud.inventory.capture_storage_snapshot(),"unarmed attack hits shared target without tool wear")
 	# Selected wood must route a real RMB event into paid cube placement.
 	hud.equip(5);var wood:=total(hud,102);var hit: Dictionary=game._structure_target(false)
 	var mouse:=InputEventMouseButton.new();mouse.button_index=MOUSE_BUTTON_RIGHT;mouse.pressed=true;Input.parse_input_event(mouse);Input.flush_buffered_events()

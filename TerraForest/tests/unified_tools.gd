@@ -203,7 +203,7 @@ func run() -> void:
 		game._update_edit(0.1)
 		click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;Input.parse_input_event(click);await process_frame;game._update_edit(0.1)
 		deadline=Time.get_ticks_msec()+15000
-		while game.terrain.pending_edit and Time.get_ticks_msec()<deadline:await process_frame
+		while (not game.world_attack.pending.is_empty() or game.terrain.pending_edit) and Time.get_ticks_msec()<deadline:await process_frame
 		check(game.terrain.density_revision>revision and not game.mining_rewards.failed,"pickaxe mouse input publishes real native excavation")
 		for i in 3:await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://reports/unified_tools/pickaxe.png")
@@ -218,6 +218,7 @@ func run() -> void:
 		game.world_attack.next_attack=0
 		click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;Input.parse_input_event(click);await process_frame;game._update_edit(0.1)
 		click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;Input.parse_input_event(click);await process_frame
+		await preload("res://tests/swing_driver.gd").finish(game)
 		check(game.world_attack.durability.capture_storage_snapshot()!=damage_before and not game.terrain.pending_edit,"empty hands use shared terrain damage before reaching destruction health")
 
 	check(preload("res://addons/presentation/fullscreen_policy.gd").measurement(root).fair_graphical_sample and Engine.max_fps==60,"fullscreen1080p cap60")
