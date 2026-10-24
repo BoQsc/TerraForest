@@ -60,6 +60,10 @@ def main(argv=None):
     if args.dry_run:
         print(json.dumps(details, indent=2))
         return 0
+    result = subprocess.call([details['command'][0], '--headless', '--path', str(ROOT),
+                              '--script', 'res://tools/ensure_item_icons.gd'])
+    if result:
+        return result
     return subprocess.call(details['command'])
 
 

@@ -1,0 +1,119 @@
+{
+  "checks": 7,
+  "runs": [
+    {
+      "label": "initialize",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.088052199978847
+    },
+    {
+      "label": "warm",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6647178999846801
+    },
+    {
+      "label": "timestamp_only",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd",
+        "--",
+        "--check-only"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6469530999893323
+    },
+    {
+      "label": "external_texture_settings",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd",
+        "--",
+        "--check-only"
+      ],
+      "exit_code": 2,
+      "elapsed_seconds": 0.7367082000127994
+    },
+    {
+      "label": "missing_receipt",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd",
+        "--",
+        "--check-only"
+      ],
+      "exit_code": 2,
+      "elapsed_seconds": 0.6457430999726057
+    },
+    {
+      "label": "changed_model",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.90309039998101
+    },
+    {
+      "label": "restore_model",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.090925999975298
+    },
+    {
+      "label": "final_warm",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--script",
+        "res://tools/ensure_item_icons.gd",
+        "--",
+        "--check-only"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6623793999897316
+    }
+  ],
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "atlas_sha256": "bc68d0da88ecdecaeb97c23e05f5a5f9707d5e0a23235e37e3542b541f933ed4"
+}

@@ -14,6 +14,15 @@ provenance and the corrected initial test-setup failure are retained in
 [current model icon evidence](evidence/current_model_icons/README.md).
 This image-only change does not close existing world/navigation requirements.
 
+Follow-through: Worlds.cmd, the Python development launcher and resource-pack
+export now check source-content receipts and automatically import/rebake these
+three icons when their transitive model/material/texture/import dependencies or
+bake settings change. Unchanged inputs skip rendering and writes. This is a
+source-launch/build step; packaged gameplay still uses static images. Seven
+focused invalidation/rebake/restore checks and the gated export/startup pass;
+see the automatic-refresh section of the same evidence. Other icon families and
+live mod-asset watching are outside this follow-through.
+
 ## Optional third-person view - 2026-10-24
 
 Escape → Session now has a Third-person camera toggle, off by default and retained

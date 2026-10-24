@@ -20,4 +20,8 @@ foreach ($steamRoot in $steamRoots) { $candidates.Add((Join-Path $steamRoot 'ste
 $engine = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
 if (-not $engine) { throw 'Godot was not found. Set GODOT_EXE to your installed Godot executable.' }
 if ($CheckOnly) { Write-Output $engine; exit 0 }
+$directEngine = Join-Path (Split-Path -Parent $engine) 'godot.windows.opt.tools.64.exe'
+if (Test-Path -LiteralPath $directEngine -PathType Leaf) { $engine = $directEngine }
+& $engine --headless --path $projectRoot --script res://tools/ensure_item_icons.gd
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $engine --path $projectRoot --fullscreen --resolution 1920x1080 --max-fps 60 res://demo/worlds.tscn

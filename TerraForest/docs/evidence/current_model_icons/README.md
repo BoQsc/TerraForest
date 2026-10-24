@@ -43,3 +43,40 @@ python docs/evidence/current_model_icons/check_pack.py
 Restart the game to replace textures already cached by an earlier running process.
 Pickup geometry, item behavior, world saves and the existing world/navigation
 acceptance gates are outside this image-only update.
+
+## Automatic refresh — 2026-10-24
+
+`Worlds.cmd` (through `start_worlds.ps1`), `tools/run.py` and `tools/export_pack.py`
+now run the same source-side dependency preflight. SHA-256 receipts cover the
+pickaxe/hatchet model and construction scripts, vehicle scene/model, referenced
+materials/textures, import settings, native vehicle libraries, engine version and
+icon bake recipe. Resource dependencies and GLB external image/buffer URIs are
+followed transitively; derived `.godot` caches and the output atlas are excluded
+from the input graph. New referenced dependencies are discovered on the next check.
+
+Unchanged content skips import, rendering and writes, including timestamp-only
+changes. Changed inputs trigger source import and an offline bake of the affected
+group: pickaxe/hatchet together, or vehicle alone. Updating the bake recipe refreshes
+both groups. A missing receipt or changed output requests a refresh. Publication
+uses temporary files and rejects inputs changed during rendering; failures stop
+the launch/export. A process lock serializes automatic writers. The packaged game
+continues to load static pixels, with no Python or model-hashing/rendering loop.
+This is a source-launch/build check, not live model editing or a packaged mod-icon
+watcher, and currently covers these three refreshed model icons.
+
+`python tools/check_item_icon_refresh.py` passes seven checks, retained under
+`automatic_refresh/`: warm no-op with unchanged image/receipt timestamps, no-op
+for a source timestamp change, detection of a transitive texture-import change,
+missing receipt detection, actual vehicle-only rebake after a changed model pose,
+automatic restoration after restoring the source, and final warm no-op. Authored
+scene/import bytes are restored in `finally`; the final atlas and receipt exactly
+match their initial hashes. On this machine warm preflight took about 0.66 seconds;
+import plus a changed-model refresh took about 10 seconds. These are authoring
+measurements, not gameplay frame-time results. Export/startup also passed with the
+new gate; updated logs are under `automatic_refresh/`.
+
+Manual preflight, using the configured Godot executable:
+
+```powershell
+& $env:GODOT_EXE --headless --path . --script res://tools/ensure_item_icons.gd
+```

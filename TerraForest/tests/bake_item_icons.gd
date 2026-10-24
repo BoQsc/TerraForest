@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
+const Cache=preload("res://tools/item_icon_cache.gd")
 func _initialize() -> void:run.call_deferred()
 func bounds(node: Node3D) -> AABB:
 	var box:=AABB();var first:=true
@@ -23,6 +24,10 @@ func copy_mesh(source:MeshInstance3D,model:Node3D)->void:
 	model.add_child(copy)
 func run() -> void:
 	var current_models:bool="--current-models" in OS.get_cmdline_user_args()
+	var selected:Array=["1","2","501"]
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--icon-items="):selected=Array(argument.trim_prefix("--icon-items=").split(",",false));current_models=true
+	var input_state:=Cache.snapshot();var baked:Array=[]
 	var viewport:=SubViewport.new();viewport.size=Vector2i(512,512);viewport.transparent_bg=true;viewport.own_world_3d=true;viewport.msaa_3d=Viewport.MSAA_4X;root.add_child(viewport)
 	var environment:=WorldEnvironment.new();environment.environment=Environment.new();environment.environment.background_mode=Environment.BG_COLOR;environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR;environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.7;viewport.add_child(environment)
 	var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-35,-35,0);sun.light_energy=1.6;viewport.add_child(sun)
@@ -36,7 +41,7 @@ func run() -> void:
 	DirAccess.make_dir_recursive_absolute("res://reports/current_item_icons")
 	for i in Icons.KEYS.size():
 		var key: String=Icons.KEYS[i];var id:=key.to_int();var model:=Node3D.new();viewport.add_child(model)
-		if current_models and id not in [1,2,501]:model.free();continue
+		if current_models and key not in selected:model.free();continue
 		if id in [1,2]:
 			tool.human.equip(id)
 			for mesh:MeshInstance3D in tool.human.meshes:
@@ -83,8 +88,9 @@ func run() -> void:
 		if id in [1,2,501]:
 			image.save_png("res://reports/current_item_icons/%d.png"%id)
 			print("CURRENT_ICON ",id," meshes=",model.get_child_count()," bounds=",box)
+		baked.append(key)
 		model.free()
-	var error:=atlas.save_png("res://addons/player_runtime/art/item_icons.trtex")
+	var error:=Cache.publish(atlas,input_state,baked)
 	viewport.free();print("ICON_BAKE failures=",0 if error==OK else 1);quit(0 if error==OK else 1)
 
 func bake_drop(model: Node3D,id: int) -> void:

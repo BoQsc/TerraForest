@@ -1,0 +1,52 @@
+{
+  "atlas_sha256": "bc68d0da88ecdecaeb97c23e05f5a5f9707d5e0a23235e37e3542b541f933ed4",
+  "schema": 1,
+  "sources": {
+    "tools": {
+      "engine": "4.7.2-stable (steam)",
+      "files": {
+        "res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res": "8fe847638c34f31c735c2bf928aadb5722c7244853433c72ba29c9753227a291",
+        "res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res": "28cd60421097dc2f1ef1fc2909a6adbc9e5e87453224392926718a9322477864",
+        "res://addons/characters/runtime/assets/Human.placement.res": "37d9d45a2a70b2b878486427451d9b578ed6891a9e12a79a1f78c8b2effece8c",
+        "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+        "res://addons/characters/runtime/assets/Human.r11.glb.import": "25bb9993391ba7a4afb8225ea88a425c0f2b4d21cc01bb3c40df5193a5975439",
+        "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
+        "res://addons/characters/runtime/human_view.gd": "fcc10acfb5a21fa2ba8019d2aef086d1824e9612b1b4d1e28bc00f00ae421dfb",
+        "res://addons/player_runtime/tool_view.gd": "924bd66fe7f74b0dea6c947867576fe3d9404f58c5477c1b02c3939c42e115e5",
+        "res://addons/volumetric_water/bucket_model.gd": "6b6731e678d1e66c59f4a3930dd098f391599af34684bb30e06c8d8f4d0d90c0"
+      },
+      "recipe": {
+        "res://addons/player_runtime/item_icons.gd": "13a4623cab97ddffb79bd1f1a8d714634ecfcbeea6fee7c6d7dcded50ba32f7a",
+        "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
+        "res://tests/bake_item_icons.gd": "785866e321c05aadc57f76f063d63ed1c3042563fea5790a34014187ad4b9742",
+        "res://tools/item_icon_cache.gd": "2b53a87de4f9bb824b1bc4ae45f08cbb3fccd8c807756768ec73046ad49f9358"
+      }
+    },
+    "vehicle": {
+      "engine": "4.7.2-stable (steam)",
+      "files": {
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "res://addons/vehicle_runtime/vehicle_runtime.gdextension": "3158221f48bf06a5b784d5646deae71ce52d0e82dced2a0be0cfdb095f5a4100",
+        "res://addons/vehicle_runtime/vehicle_streaming.gd": "7bc2c8b88b6ade1ef8e1bf08d4cd4b18e6743047d7e57171e61b9231b2b1943b",
+        "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",
+        "res://vehicle_demo/assets/Vehicle.glb.import": "72b2c3ee9405b9d902f506c4e4b60f2d178b242adda35413f6ee7c4957b61111",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png": "155c5bd4d69180897300b601b266c43bed00e205ae0bb39491cd44b7c172e7f9",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_BaseColor.png.import": "692203a5341220069e6a0e1840b31c2b495c6a80a31659c1a5afb1564a44d19a",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png": "178025b3270f2b643a7397b767127570f1176e24b8ce4b1e42b155ca2bb68a91",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_MetallicRoughness.png.import": "e6d167c88c3c9294900de70e46e9cf3103a4087b85cfef748d246645e9e29210",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png": "0ea2e94d9e82290018171ba32692d2e61bae8dbd57d2ae35604f1b9b003661af",
+        "res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png.import": "765bb88edc32d25b6968019f469b64d4e057d7dc0fc98cbcdb49dd95ed51488e",
+        "res://vehicle_demo/scenes/car.tscn": "597766cbfe0141c3118f8762027839cdd47cbd2026ed87e93c6ae3980d8ac31a",
+        "res://vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
+        "res://vehicle_demo/scripts/car_native.gd": "7f2aab4faa2d2402062070066a8b8ea7a8105cec1a8b9c44b4556cbf771b2435"
+      },
+      "recipe": {
+        "res://addons/player_runtime/item_icons.gd": "13a4623cab97ddffb79bd1f1a8d714634ecfcbeea6fee7c6d7dcded50ba32f7a",
+        "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
+        "res://tests/bake_item_icons.gd": "785866e321c05aadc57f76f063d63ed1c3042563fea5790a34014187ad4b9742",
+        "res://tools/item_icon_cache.gd": "2b53a87de4f9bb824b1bc4ae45f08cbb3fccd8c807756768ec73046ad49f9358"
+      }
+    }
+  }
+}
