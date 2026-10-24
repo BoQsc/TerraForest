@@ -7,6 +7,7 @@ const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
 const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
 const PICKAXE_PULLBACK = preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
+const PICKAXE_FRESH = preload("res://addons/characters/runtime/assets/Human.pickaxe_fresh.res")
 const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
 const EQUIPMENT = {3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
@@ -25,13 +26,13 @@ var swing_clip:=""
 var contact_seconds:=0.0
 var contact_sent:=false
 # Contact poses in the authored clips (seconds on the animation timeline).
-const CONTACTS={"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
+const CONTACTS={"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
 @export var diagonal_pickaxe := true
-@export_enum("pullback", "diagonal") var pickaxe_swing := "pullback"
+@export_enum("fresh", "pullback", "diagonal") var pickaxe_swing := "fresh"
 
 func _ready() -> void:
 	# Inverse of the source viewer's FP camera (0, 1.65, .03), facing +Z.
@@ -55,6 +56,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("placement", PLACEMENT)
 	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
 	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
+	animation_player.add_animation_library("pickaxe_fresh", PICKAXE_FRESH)
 	animation_player.add_animation_library("hammer", HAMMER)
 	animation_player.add_animation_library("shovel", SHOVEL)
 	for clip in animation_player.get_animation_list():
@@ -107,6 +109,10 @@ func _sync_equipment() -> void:
 
 func _motion_clip(action: String) -> String:
 	if current==0 and action=="Swing":return "FP_Place_Relaxed"
+	if current == 1 and diagonal_pickaxe and pickaxe_swing == "fresh":
+		# Keep the approved fixed grip during movement and recovery. The old
+		# locomotion clips place the hands at different stations on the shaft.
+		return "FP_Pickaxe_Fresh_Swing" if action == "Swing" else "FP_Pickaxe_Fresh_Idle"
 	if current == 1 and diagonal_pickaxe and action == "Swing" and pickaxe_swing == "pullback":
 		return "FP_Pickaxe_SidePullback_Swing"
 	if current == 1 and diagonal_pickaxe and clips.has("FP_Pickaxe_Diagonal_" + action):

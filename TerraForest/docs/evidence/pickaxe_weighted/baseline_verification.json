@@ -1,0 +1,46 @@
+{
+  "addons/characters/authoring/Human.pickaxe_side_pullback.blend": {
+    "sha256": "dc965a87b04ae4b91b3efbb9bff74e14fded13157bf16a0e9c1ce9753bc7dfbf",
+    "unchanged": true
+  },
+  "addons/characters/authoring/Human.pickaxe_side_pullback.glb": {
+    "sha256": "cdad74d27a31a40b4fdbea0d87568183c028c30b2e7ae5af0b2ca37a2c5e0405",
+    "unchanged": true
+  },
+  "addons/characters/authoring/Human.pickaxe_side_pullback.json": {
+    "sha256": "8027b191411f18d20a47717993c5ee550a4db12aab4456ad5d19db1b7fc1622b",
+    "unchanged": true
+  },
+  "addons/characters/runtime/assets/Human.pickaxe_side_pullback.res": {
+    "sha256": "28cd60421097dc2f1ef1fc2909a6adbc9e5e87453224392926718a9322477864",
+    "unchanged": true
+  },
+  "addons/characters/runtime/assets/Human.r11.glb": {
+    "sha256": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+    "unchanged": true
+  },
+  "addons/characters/runtime/human_view.gd": {
+    "sha256": "0c1d76903de2b6a2af4d88e8b30e012718fb6f1bc1987d8ba514b3f157c1732e",
+    "unchanged": true
+  },
+  "addons/player_runtime/tool_view.gd": {
+    "sha256": "66dcbbd41a1f77b1a531789861f0bdb96610fe656805cff55b9df2efed479a10",
+    "unchanged": true
+  },
+  "tools/author_pickaxe_side_pullback.py": {
+    "sha256": "ed957fe11d3651dc6cb1842d3e3eec40ae5dd28e4909805b80c5a10799fca9cd",
+    "unchanged": true
+  },
+  "tools/author_pickaxe_side_strike.py": {
+    "sha256": "a711f92950cfee2482d7d287d1fc1bf1fb20cc58ff3ac2b13586882bc4738105",
+    "unchanged": true
+  },
+  "addons/characters/authoring/Human.pickaxe_arc_swing.blend": {
+    "sha256": "dc9f6909976e4b5c5ae7615bf3f7d1c62c990e43dbe6dcb215714ba93b30e532",
+    "unchanged": true
+  },
+  "addons/characters/runtime/assets/Human.pickaxe_arc_swing.res": {
+    "sha256": "75f88884be7fe4c9154f7745cdd042711f91174feb1e9cc6344f7aebdf658f0e",
+    "unchanged": true
+  }
+}

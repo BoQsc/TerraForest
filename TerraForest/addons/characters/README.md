@@ -34,8 +34,9 @@ See the [editable source and rebuild steps](authoring/Zombie.drag_walk.README.md
 and [current gait verification](../../docs/evidence/zombie_weighted_limp/README.md).
 
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
-selection drives equipment visibility; native motor velocity drives authored
-pickaxe/axe walk/run/jump presentation. Empty hands keep the original idle pose
+selection drives equipment visibility; the pickaxe keeps its approved fixed
+hold during movement, while native motor velocity drives axe walk/run/jump
+presentation. Empty hands keep the original idle pose
 between actions, including while moving. Head, mouth, eyes and hair are hidden in first-person view. The
 source full body remains available for later third-person presentation. Existing
 hammer, assembly tool and water bucket previews remain available.
@@ -144,22 +145,26 @@ door-destruction save/reopen gate is still required.
 
 ## Pickaxe presentation and alternates
 
-The selected pickaxe action is the deeper-pullback side strike the user reviewed
-as better (`FP_Pickaxe_SidePullback_Swing`). Diagonal Idle/Walk/Run/Jump holds keep
-the left hand lower and right hand higher. The 1.2-second swing returns to that
-ready grip after the action. Empty hands continue to rest between deliberate
-actions. The original model, 71 source clips, axe and placement gesture remain.
+The selected pickaxe action is the fresh downward stroke accepted in a live
+playtest on 2026-10-24 (`FP_Pickaxe_Fresh_Swing`). Both hands keep fixed transforms
+on the shaft through its 1.7-second cycle. Contact occurs at frame 50 of 60 FPS
+(0.833 seconds), and recovery returns to `FP_Pickaxe_Fresh_Idle`. That same hold
+stays active during movement to avoid switching hand stations. Dedicated lower
+body locomotion is a documented follow-up. Empty hands continue to rest between
+deliberate actions. The original model, 71 source clips, axe and placement remain.
 
+`pickaxe_swing="pullback"` selects the former default;
 `pickaxe_swing="diagonal"` selects the earlier forward strike for comparison;
 `diagonal_pickaxe=false` selects the original pickaxe presentation. The side-strike
 and latest five-degree-right arc-swing libraries are retained as optional review
 alternates, with Blender sources, videos and test tools. The arc swing has not
 received user visual acceptance and is not the default.
 
-The user explicitly authorized committing and syncing this work on 2026-10-23.
-Earlier evidence files saying “uncommitted” or “do not commit” describe their
-historical review state; the selected default and integration decision are
-recorded in [release evidence](../../docs/evidence/pickaxe_integration/README.md).
+The user explicitly approved the fixed-grip version as better and requested
+default selection and a commit on 2026-10-24. Earlier evidence files saying
+“uncommitted” or “do not commit” describe historical review states. See
+[fixed-grip evidence](../../docs/evidence/pickaxe_fresh/README.md) for the current
+decision and [previous release evidence](../../docs/evidence/pickaxe_integration/README.md).
 
 ## Relaxed placement animation
 

@@ -1,0 +1,37 @@
+{
+  "status": "ROUGH BLOCKOUT; pending user visual acceptance; current default untouched",
+  "videos": [
+    {
+      "video": "Pickaxe.fresh-blockout.mp4",
+      "size": [
+        2560,
+        860
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "f5f95a194fc9842832f85c95095972864dd932cbff651021717a3aa1fec471fa"
+    },
+    {
+      "video": "Pickaxe.current-vs-fresh.mp4",
+      "size": [
+        2560,
+        860
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "368f0d81e0ebbd426aab1a0d787d567037f827a78ef77f7cbe47b461278a70be"
+    },
+    {
+      "video": "Pickaxe.fresh-first-person.mp4",
+      "size": [
+        1280,
+        720
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "881fb9a37fa2cf384ca7313a1218f4b094350c84181e8e081c26c283816f2a9d"
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing. Comparison preserves each action duration without retiming.",
+  "scope": "Actual runtime rig in an isolated studio; new motion on neutral R11, not a derivative of earlier swing actions. No live gameplay or visual-acceptance claim."
+}

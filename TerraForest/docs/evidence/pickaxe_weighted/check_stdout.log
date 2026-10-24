@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS normal gameplay still selects current pullback
+PASS new study is not loaded by normal gameplay
+PASS isolated hit and miss are both 1.2-second one-shot actions
+PASS study contains bone/morph animation only, without gameplay or method events
+PASS both actions begin and end on the exact current ready pose for all 59 bones
+PASS both fitted hand stations stay attached to the handle throughout
+PASS root, lower body and camera remain stationary
+PASS no discontinuous bone rotation or elbow flips across sampled poses
+PASS hit and miss share every bone pose through contact
+PASS actual sharpened mesh point reaches the current target at frame 32
+PASS solid contact stays planted while the arms absorb the impact
+PASS solid-hit recovery draws the point out before returning
+PASS miss continues through a distinct follow-through without a planted stop
+PASS head accelerates into contact instead of easing to a halt before impact
+PASS regular swing still uses the current animation and contact timing after reviewing the trial
+PICKAXE_WEIGHTED checks=15 failures=0

@@ -1,0 +1,12 @@
+{
+  "checks": 11,
+  "failures": 0,
+  "fixed_error": 0.00000105619699297677,
+  "grip_error": 0.000000914966506115888,
+  "largest_bone_step_degrees": 10.2827157529917,
+  "right_hand_slide_m": 0.00000107288360595703,
+  "scope": "Runtime skeleton, mesh and default selection integrity. World contact is checked separately by pickaxe_fresh_world.",
+  "seam_error": 0.000000160490415623826,
+  "status": "USER ACCEPTED fixed-grip default, 2026-10-24",
+  "tip_descent_m": 0.71368682384491
+}

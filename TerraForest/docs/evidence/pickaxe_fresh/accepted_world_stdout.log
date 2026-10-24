@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS ordinary temporary world becomes playable
+PASS ordinary equipment path selects the accepted hold and full cycle
+PASS loaded native terrain provides a real target
+PASS pickaxe targets terrain through the normal reach query
+PICKAXE_INPUT {"admitted":true,"focused":true,"item":1,"mouse":2,"pending":{"contacted":false,"epoch":0,"identity":1,"item":1,"repairing":false,"slot":0},"profile":{"clip":"FP_Pickaxe_Fresh_Swing","contact":0.833333333333333,"duration":1.70000004768372},"slot":0,"ui":false,"visible":true}
+PASS real mouse input starts the new default through world attack
+PASS old contact time cannot dig or consume durability during the new windup
+PASS one real excavation is accepted at authored frame 50 even across a long frame
+PASS native terrain publishes excavation and mining reward processing
+PASS one strike consumes durability exactly once
+PASS full recovery releases the attack and returns to the same grip
+PASS the next stroke is admitted after recovery
+PASS switching tools cancels an uncontacted stroke without an extra hit
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world closes with edits settled
+PICKAXE_FRESH_WORLD checks=13 failures=0

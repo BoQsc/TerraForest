@@ -1,0 +1,28 @@
+{
+  "approval": "REJECTED by user on 2026-10-24; assets scrapped; retained as historical evidence only",
+  "encoder": "Blender 5.2.3 LTS",
+  "videos": [
+    {
+      "video": "Pickaxe.current-vs-weighted.mp4",
+      "fps": 30,
+      "frames": 372,
+      "size": [
+        2560,
+        900
+      ],
+      "sha256": "ba7106e1204aa8d8188a942ec792e46a214876ed90984a2bb4a3185d7cf9af92"
+    },
+    {
+      "video": "Pickaxe.weighted-preview.mp4",
+      "fps": 30,
+      "frames": 372,
+      "size": [
+        1280,
+        720
+      ],
+      "sha256": "6ef3e8f810afcaa21dc9060c27ee2cf55f1aef7fffc08d600e26cb52c154da5c"
+    }
+  ],
+  "timeline": "0-4s two full-speed solid hits; 4-7.2s half-speed solid hit; 7.2-9.2s full-speed miss; 9.2-12.4s half-speed miss",
+  "scope": "Identical actual R11 runtime camera/rig in a fixed studio. Hit/miss branches selected by preview only; no live collision or gameplay routing."
+}

@@ -75,6 +75,7 @@ class PackageTests(unittest.TestCase):
                          'addons/characters/runtime/assets/Human.placement.res',
                          'addons/characters/runtime/assets/Human.pickaxe_diagonal.res',
                          'addons/characters/runtime/assets/Human.pickaxe_side_pullback.res',
+                         'addons/characters/runtime/assets/Human.pickaxe_fresh.res',
                          'addons/characters/runtime/assets/Zombie.drag_walk.res',
                          'addons/characters/runtime/assets/Zombie.r4.glb',
                          'addons/characters/runtime/assets/Zombie.r4.behavior.json',

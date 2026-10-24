@@ -49,6 +49,59 @@ is unqualified. Existing world-quality/navigation gates remain open.
 [Grounded revision evidence](evidence/impact_effects_grounded/README.md) and
 [original baseline evidence and retained failures](evidence/impact_effects/README.md).
 
+## Fixed-grip pickaxe - accepted default, 2026-10-24
+
+After rejecting the weighted derivative, the user authorized a fresh motion
+blockout. New body/weapon poses start from the original neutral R11 rig, with
+only its static fitted finger closure reused. The new 1.7-second stroke lifts
+to the shoulder, strikes downward and returns with both hands firmly fixed
+on the shaft. The user rejected the initial sliding hand as annoying for the
+player; its previews are retained only as rejected evidence. Both hand stations
+and closed finger poses now stay constant through the swing and recovery.
+No prior swing keys or rejected derivative were used as motion source.
+The first-person/body preview and current-vs-new comparison preserve the new
+timing instead of fitting it to the existing swing.
+
+After playing the fixed-grip version, the user explicitly called it better and
+requested making it default and committing. Ordinary runtime selection now uses
+that exact hold and stroke, with contact at frame 50 (0.833 s), a 1.7 s cycle and
+the same hold during movement. The former pullback remains an explicit alternate.
+The temporary-world launcher uses ordinary runtime routing. Eleven skeleton,
+mesh and selection checks and thirteen graphical input/mining checks pass,
+including frame-50 excavation, single wear, recovery and cancellation. The
+headless input attempt was invalid because it cannot capture the mouse; the
+graphical retry's unsupported hide call was removed before the clean final run.
+Acceptance applies to the motion tested in play.
+
+Broader verification remains partial: the placement suite passes the changed
+pickaxe assertions but fails two placement/fill-policy checks during concurrent
+placement work. The package suite has seven bundle/dependency failures reproduced
+with its unchanged HEAD test; the targeted character bundle check passes. Keep
+these open for their owning placement/packaging work and require clean reruns to
+close them. They are not hidden by the passing pickaxe-specific checks.
+
+The raised head leaves the first-person frame and the low grip is partly cropped.
+Further wrist/sleeve finish and framing changes are deferred until requested
+after playing the accepted motion. Dedicated lower-body locomotion still needs
+clips that preserve the fixed upper-body grip, plus movement/third-person visual
+review. Precise physical mesh-tip alignment with arbitrary target distances is
+not established by the ray-based contact test. Keep that distinction visible
+if contact alignment is revisited; it needs rendered target-impact evidence.
+[Fresh pickaxe blockout evidence](evidence/pickaxe_fresh/README.md).
+
+## Weighted pickaxe comparison - rejected and scrapped, 2026-10-24
+
+The user rejected this derivative as unnatural, cartoonish and worse than the
+current animation, and requested scrapping it completely. Its new authoring
+assets, runtime library, generation/import/preview scripts and dedicated test
+have been removed. Rejected preview evidence is retained only as a record.
+The original rig and prior pullback remain intact as source/alternate assets.
+Fifteen technical checks had passed; they did not establish visual quality.
+
+The independent fixed-grip replacement above was subsequently accepted in play.
+The rejected animation is not a motion source for that work and stays discarded.
+[Rejected weighted pickaxe evidence](evidence/pickaxe_weighted/README.md).
+
 ## Three boulder fracture stages - motion revision, 2026-10-24
 
 Mining now splits boulders into halves, quarters and eight final rubble pieces.

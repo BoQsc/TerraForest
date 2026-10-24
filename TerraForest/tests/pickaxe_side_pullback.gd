@@ -7,7 +7,8 @@ func run()->void:
 	var tools:=preload("res://addons/player_runtime/tool_view.gd").new();camera.add_child(tools)
 	tools.equip(1);tools.set_process(false)
 	var view:Node3D=tools.human;view.set_process(false)
-	check(view.clips.size()==78 and view.active_clip=="FP_Pickaxe_Diagonal_Idle","selected pullback coexists with kept diagonal holds")
+	view.pickaxe_swing="pullback";view.equip(1)
+	check(view.clips.has("FP_Pickaxe_Fresh_Swing") and view.active_clip=="FP_Pickaxe_Diagonal_Idle","explicit pullback alternate coexists with new default and kept diagonal holds")
 	var kept:=preload("res://addons/characters/runtime/assets/Human.pickaxe_side_strike.res")
 	var trial:=preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
 	for entry in [["kept_side",kept],["pullback",trial]]:
@@ -55,7 +56,7 @@ func run()->void:
 	view._play("FP_Pickaxe_SidePullback_Swing",true);view._process(1.3)
 	check(view.action_remaining==0 and view.active_clip=="FP_Pickaxe_Diagonal_Idle","trial returns to the preserved idle after the action")
 	view.swing()
-	check(view.active_clip=="FP_Pickaxe_SidePullback_Swing","normal game retains the selected pullback after comparison")
+	check(view.active_clip=="FP_Pickaxe_SidePullback_Swing","explicit pullback alternate remains selected after comparison")
 	var folder:="res://reports/pickaxe_side_pullback";DirAccess.make_dir_recursive_absolute(folder)
 	FileAccess.open(folder+"/result.json",FileAccess.WRITE).store_string(JSON.stringify({"approval":"PENDING USER VISUAL REVIEW; do not commit","checks":checks,"failures":failures,"preserved_pose_error":preserved_error,"body_error":body_error,"tool_basis_error":orientation_error,"grip_error":grip_error,"lateral_error":lateral_error,"peak_extra_pullback_m":extra_peak,"samples":rows,"scope":"Comparison of both imported animations on actual runtime rig and evaluated sharpened-point mesh in an isolated camera fixture. No visual acceptance, gameplay collision or performance claim."},"  "))
 	stage.free();print("PICKAXE_SIDE_PULLBACK checks=",checks," failures=",failures);quit(1 if failures else 0)

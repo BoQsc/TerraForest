@@ -1,0 +1,37 @@
+{
+  "status": "FIRM FIXED GRIP BLOCKOUT; pending user visual acceptance; current default untouched",
+  "videos": [
+    {
+      "video": "Pickaxe.firm-grip-blockout.mp4",
+      "size": [
+        2560,
+        860
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "9cb5cf9a3c44595deed0ea7560aa113ab4f8edc2c7610ec87b128a6426f023d6"
+    },
+    {
+      "video": "Pickaxe.current-vs-firm-grip.mp4",
+      "size": [
+        2560,
+        860
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "ad95aadf17010474580e8ede77e3ed38f2eff86d389b4ccb0664b147e1ed0277"
+    },
+    {
+      "video": "Pickaxe.firm-grip-first-person.mp4",
+      "size": [
+        1280,
+        720
+      ],
+      "fps": 30,
+      "frames": 300,
+      "sha256": "404c1bf7e58454dfbd7dd1ef82bf5e2abc85619a07d21adc81d47b5ea5ad7936"
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing. Comparison preserves each action duration without retiming.",
+  "scope": "Actual runtime rig in an isolated studio; new motion on neutral R11, not a derivative of earlier swing actions. No live gameplay or visual-acceptance claim."
+}

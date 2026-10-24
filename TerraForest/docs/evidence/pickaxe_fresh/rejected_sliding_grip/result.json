@@ -1,0 +1,12 @@
+{
+  "checks": 9,
+  "failures": 0,
+  "fixed_error": 0.00000105619699297677,
+  "grip_error": 0.00000112432201149204,
+  "largest_bone_step_degrees": 8.23454180393813,
+  "right_hand_slide_m": 0.245000004768372,
+  "scope": "Runtime skeleton and mesh integrity in isolated fixture only. Does not establish realism, visual approval or gameplay integration.",
+  "seam_error": 0.000000160490415623826,
+  "status": "ROUGH BLOCKOUT; visual acceptance pending",
+  "tip_descent_m": 0.71368682384491
+}

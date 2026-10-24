@@ -1,0 +1,8 @@
+{
+  "addons/characters/Human_R11_Complete_Repost/Human.r11.blend": "8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3",
+  "addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+  "addons/characters/authoring/Human.pickaxe_side_pullback.blend": "dc965a87b04ae4b91b3efbb9bff74e14fded13157bf16a0e9c1ce9753bc7dfbf",
+  "addons/characters/runtime/assets/Human.pickaxe_side_pullback.res": "28cd60421097dc2f1ef1fc2909a6adbc9e5e87453224392926718a9322477864",
+  "addons/characters/runtime/human_view.gd": "0c1d76903de2b6a2af4d88e8b30e012718fb6f1bc1987d8ba514b3f157c1732e",
+  "addons/player_runtime/tool_view.gd": "66dcbbd41a1f77b1a531789861f0bdb96610fe656805cff55b9df2efed479a10"
+}

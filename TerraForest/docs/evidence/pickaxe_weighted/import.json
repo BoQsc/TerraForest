@@ -1,0 +1,22 @@
+{
+  "actions": {
+    "FP_Pickaxe_Weighted_Hit": {
+      "duration": 1.20000004768372,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    },
+    "FP_Pickaxe_Weighted_Miss": {
+      "duration": 1.20000004768372,
+      "loop": 0,
+      "neutral_morphs": 530,
+      "tracks": 707
+    }
+  },
+  "approval": "REJECTED by user on 2026-10-24; assets scrapped; retained as historical evidence only",
+  "bones": 59,
+  "original_clips": 71,
+  "rest_error": 2.40274005136598E-07,
+  "save_error": 0,
+  "scope": "Blender bone animation on unchanged R11 runtime model; clears original pose-specific morph correctives; no methods, gameplay events, root motion or body integration."
+}

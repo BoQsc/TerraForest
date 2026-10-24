@@ -46,7 +46,7 @@ func run()->void:
 	game.set_physics_process(false);game._clear_motion();game.zombies.clear();game.session_menu.set_open(false)
 	var view:Node3D=game.tool_view.human;view.pickaxe_swing="diagonal";view.set_process(false);game.player_hud.equip(0)
 	check(view.body==game.player and view.active_clip=="FP_Pickaxe_Diagonal_Idle","real belt selects the diagonal hold on the existing player body")
-	check(view.clips.size()==78 and view.clips.has("FP_Pickaxe_Swing") and view.clips.has("FP_Place_Relaxed"),"original clips, placement, diagonal clips and pullback alternate coexist")
+	check(view.clips.has_all(["FP_Pickaxe_Swing","FP_Place_Relaxed","FP_Pickaxe_Fresh_Swing","FP_Pickaxe_SidePullback_Swing"]),"original clips, placement and pickaxe alternatives coexist with the fixed-grip default")
 	var animation:Animation=view.animation_player.get_animation(view.clips.FP_Pickaxe_Diagonal_Swing)
 	check(is_equal_approx(animation.length,1.2) and animation.loop_mode==Animation.LOOP_NONE,"diagonal strike is a 1.2-second one-shot matching the melee cooldown")
 	var animation_only:=true

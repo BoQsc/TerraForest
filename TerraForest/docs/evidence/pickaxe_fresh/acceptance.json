@@ -1,0 +1,29 @@
+{
+  "idle": "FP_Pickaxe_Fresh_Idle",
+  "passed": [
+    "pickaxe_fresh: 11 checks",
+    "pickaxe_fresh_world: 13 checks",
+    "ordinary tool-view contact, completion and axe routing",
+    "character_runtime",
+    "pickaxe_side_pullback: 9 checks",
+    "pickaxe_side_strike: 12 checks",
+    "pickaxe_arc_swing: 12 checks",
+    "targeted character package bundle"
+  ],
+  "broader_failures": [
+    "human_placement: 2 placement/fill-policy failures; changed pickaxe assertions pass",
+    "full package suite: 7 bundle/dependency failures, also present with HEAD test source"
+  ],
+  "default": "FP_Pickaxe_Fresh_Swing",
+  "duration_seconds": 1.7,
+  "contact_seconds": 0.8333333333333334,
+  "approval": "User accepted the fixed-grip motion after live play and explicitly requested default selection and commit.",
+  "animation_sha256": "4430afc81d17a4191e724badbb7a4c588bb46284d126fc235fe01fb68c9865e4",
+  "limitations": [
+    "Hold remains static during locomotion, including lower body",
+    "Physical mesh-tip alignment at arbitrary target distances is not established",
+    "Historical preview/source metadata predates user acceptance"
+  ],
+  "date": "2026-10-24",
+  "blender_sha256": "a5856b1e8e5669558d85f2f56a37d5ce49ec24733c8ddbb21c1156503c2dbd23"
+}

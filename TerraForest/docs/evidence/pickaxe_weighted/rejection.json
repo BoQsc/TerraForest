@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-24",
+  "status": "REJECTED AND SCRAPPED",
+  "reason": "User found the derivative unnatural, cartoonish and worse than the current animation. They expected substantially new motion, not an iteration on the existing swing.",
+  "default_unchanged": true,
+  "retained": "Rejected preview evidence only",
+  "removed": [
+    "addons/characters/authoring/Human.pickaxe_weighted.README.md",
+    "addons/characters/authoring/Human.pickaxe_weighted.blend",
+    "addons/characters/authoring/Human.pickaxe_weighted.blend1",
+    "addons/characters/authoring/Human.pickaxe_weighted.glb",
+    "addons/characters/authoring/Human.pickaxe_weighted.json",
+    "addons/characters/runtime/assets/Human.pickaxe_weighted.res",
+    "tests/pickaxe_weighted.gd",
+    "tests/pickaxe_weighted.gd.uid",
+    "tools/author_pickaxe_weighted.py",
+    "tools/encode_pickaxe_weighted_preview.py",
+    "tools/import_pickaxe_weighted.gd",
+    "tools/import_pickaxe_weighted.gd.uid",
+    "tools/preview_pickaxe_weighted.gd",
+    "tools/preview_pickaxe_weighted.gd.uid",
+    "reports/pickaxe_weighted/"
+  ],
+  "future_requirement": "Fresh motion blockout; do not reuse the rejected motion; explicit acceptance before default selection"
+}

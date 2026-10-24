@@ -1,0 +1,13 @@
+{
+  "approval": "REJECTED by user on 2026-10-24; assets scrapped; retained as historical evidence only",
+  "checks": 15,
+  "failures": 0,
+  "fixed_error": 1.81318725367419E-07,
+  "grip_error": 1.35666050482541E-06,
+  "largest_bone_step_degrees": 9.59083125044778,
+  "late_to_early_tip_travel_ratio": 1.63970823237277,
+  "planted_error_m": 7.27719964288553E-07,
+  "scope": "Imported animation on actual R11 runtime skeleton and evaluated cutting mesh. Studio animation verification; no live hit/miss routing, mining or performance claim.",
+  "seam_error": 6.76978629599034E-07,
+  "shared_precontact_error": 3.42402614705861E-07
+}

@@ -11,7 +11,8 @@ func run()->void:
 	var tools:=preload("res://addons/player_runtime/tool_view.gd").new();camera.add_child(tools)
 	tools.equip(1);tools.set_process(false)
 	var view:Node3D=tools.human;view.set_process(false)
-	check(view.clips.size()==78 and view.active_clip=="FP_Pickaxe_Diagonal_Idle","arc-swing test remains separate from the selected pullback action")
+	view.pickaxe_swing="pullback";view.equip(1)
+	check(view.clips.has("FP_Pickaxe_Fresh_Swing") and view.active_clip=="FP_Pickaxe_Diagonal_Idle","arc-swing comparison explicitly selects the prior pullback alternate")
 	var kept:=preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
 	var trial:=preload("res://addons/characters/runtime/assets/Human.pickaxe_arc_swing.res")
 	for entry in [["kept_pullback",kept],["arc_swing",trial]]:
@@ -80,7 +81,7 @@ func run()->void:
 	check(follow.z<-.95 and follow.x>-.10 and points[32].y-follow.y>.05,"follow-through stays forward with a bounded left/down continuation")
 	view._play("FP_Pickaxe_ArcSwing_Swing",true);view._process(1.3)
 	check(view.active_clip=="FP_Pickaxe_Diagonal_Idle" and view.action_remaining==0,"test action returns to the kept idle")
-	view.swing();check(view.active_clip=="FP_Pickaxe_SidePullback_Swing","normal game selects the liked pullback candidate")
+	view.swing();check(view.active_clip=="FP_Pickaxe_SidePullback_Swing","explicit pullback alternate remains selected after comparison")
 	var folder:="res://reports/pickaxe_arc_swing";DirAccess.make_dir_recursive_absolute(folder)
 	FileAccess.open(folder+"/result.json",FileAccess.WRITE).store_string(JSON.stringify({"approval":"PENDING USER VISUAL REVIEW; do not commit","checks":checks,"failures":failures,"body_error":body_error,"grip_error":grip_error,"seam_error":seam_error,"extra_right_contact_tilt_degrees":contact_lean-old_lean,"hand_forward_m":hand_forward,"previous_hand_forward_m":old_hand_forward,"tip_forward_m":tip_forward,"angular_stroke_degrees":angular_stroke,"grip_curve_deviation_m":{"windup":windup_curve,"strike":strike_curve,"recovery":recovery_curve},"samples":rows,"scope":"Actual rig, evaluated cutting-point mesh and view controller in an isolated camera fixture. Engineering checks do not approve animation appearance or world collision/mining/performance."},"  "))
 	stage.free();print("PICKAXE_ARC_SWING checks=",checks," failures=",failures);quit(1 if failures else 0)
