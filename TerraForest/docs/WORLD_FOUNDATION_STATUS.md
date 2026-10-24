@@ -1,23 +1,26 @@
-## Optional material impact particles - 2026-10-24
+## Material impact particles - preserved baseline and grounded style, 2026-10-24
 
-Accepted tool contacts now emit GPU metal sparks or small material-colored chips,
-oval dirt/stone fragments and wood splinters. Successful destruction/excavation
-can add a larger burst. ESC > Session has persistent master and breakup toggles.
-The module is removable, and disabling it immediately clears particles without
-changing damage, excavation, inventory rewards or tool wear.
+The user accepted the original impact feel as a fallback, but judged its appearance
+too cartoonish. Commit `b245d563` is tagged `impact-effects-baseline-v1`; its
+original shaders, palette, geometry and tuning remain selectable in-game.
+ESC > Session > Impact appearance now offers Grounded (default) and Original
+baseline, alongside the existing master and breakup switches. All preferences
+persist; changing styles retires current particles without changing gameplay.
 
-The source integration passed 34 checks before final size/color tuning; the final
-exported build passes the same 34 checks. An omitted-module packaged run passes
-five checks. GPU motion captures and exported in-world contact/menu images were
-inspected. Export/startup passes. The initial shader compile failure and fixture
-inventory API error are retained with the successful subsequent checks.
+Grounded uses small baked irregular chips with mineral surface texture, muted
+colors, sparse soft dust, damped spin on contact and thin cooling spark ribbons.
+Both profiles retain eight pooled GPU emitters and 384 total slots; dust shares
+that budget. The module remains optional/removable, with no CPU debris bodies
+or per-particle GDScript processing.
 
-Experimental visual acceptance remains open until the user tries the sparks and
-fragments in normal play. Local-plane bounce and natural-material fallback are
-cosmetic approximations. Low-end GPU/sustained performance has not been measured;
-the fixed 384-slot budget is not a frame-rate certification. Existing world-quality
-and navigation gates are unchanged. Details and reproducible evidence:
-[impact effects](evidence/impact_effects/README.md).
+Both source profiles pass 39 integrated checks; the final grounded exported build
+passes 39. GPU fixture motion, baseline/grounded in-world images and the ESC
+selector were inspected. Export/startup passes. New-style visual acceptance
+remains open until the user compares it in play. Local-plane bounce and fallback
+material classification remain approximations; sustained/low-end performance
+is unqualified. Existing world-quality/navigation gates remain open.
+[Grounded revision evidence](evidence/impact_effects_grounded/README.md) and
+[original baseline evidence and retained failures](evidence/impact_effects/README.md).
 
 ## Three boulder fracture stages - motion revision, 2026-10-24
 

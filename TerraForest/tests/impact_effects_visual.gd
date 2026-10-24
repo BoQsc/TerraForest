@@ -13,6 +13,7 @@ func run()->void:
 	var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-55,-20,0);sun.light_energy=1.7;scene.add_child(sun)
 	var camera:=Camera3D.new();scene.add_child(camera);camera.position=Vector3(0,2.6,4.5);camera.look_at(Vector3(0,.5,0));camera.fov=48;camera.make_current()
 	var effects=load("res://addons/impact_effects/impact_effects.gd").new();effects.settings_path="";scene.add_child(effects)
+	if "--effects-baseline" in OS.get_cmdline_user_args():effects.set_style(1,false)
 	var positions:Array[Vector3]=[Vector3(-1.5,.65,0),Vector3(0,.1,0),Vector3(1.5,.1,0)]
 	var materials:=["metal","soil","stone"]
 	for i in 3:

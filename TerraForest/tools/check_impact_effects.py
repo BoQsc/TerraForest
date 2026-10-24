@@ -12,14 +12,17 @@ from play_checkpoint import revision_metadata
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--pack', action='store_true')
 parser.add_argument('--off', action='store_true')
+parser.add_argument('--baseline', action='store_true')
 options = parser.parse_args()
 config, _ = parse_args([])
 stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-folder = ROOT/'reports/checks'/(stamp+'_impact_effects'+('_pack' if options.pack else '_source')+('_off' if options.off else ''))
+folder = ROOT/'reports/checks'/(stamp+'_impact_effects'+('_pack' if options.pack else '_source')+('_off' if options.off else '')+('_baseline' if options.baseline else ''))
 folder.mkdir(parents=True)
 extra = ['--gameplay-construction', '--ground-cover', '--no-zombies', '--effects-evidence='+str(folder/'captures')]
 if options.off:
     extra.append('--no-impact-effects')
+if options.baseline:
+    extra.append('--effects-baseline')
 command, cache = command_for(config.godot, 'impact_effects_world', folder, extra)
 if options.pack:
     driver = folder/'impact_external.gd'

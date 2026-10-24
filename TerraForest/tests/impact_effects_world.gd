@@ -53,6 +53,9 @@ func run()->void:
 	if no_module:
 		verify(game.session_menu.impact_toggle==null and await strike() and attack.durability.damage(attack.block_key(base),180)==30,"module omitted: menu and ordinary attack still work")
 		await finish();return
+	var original:bool="--effects-baseline" in OS.get_cmdline_user_args()
+	verify(effects.style==0,"old settings without a style default to grounded")
+	if original:effects.set_style(1,false)
 	verify(effects.pool.is_empty(),"no emitters allocated before first impact")
 	verify(attack.target().material_id==3 and attack.target().has("position") and attack.target().has("normal"),"metal material and surface pose survive actual target query")
 	game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
@@ -102,14 +105,24 @@ func run()->void:
 	verify(not effects.burst(game.camera.global_position,Vector3.UP,"metal") and effects.statistics().particle_capacity==384,"saturated pool drops cosmetic overflow at 384 GPU slots")
 	verify(await wait_for(func():return effects.statistics().active==0,4),"one-shot GPU emitters finish and retire")
 	verify(effects.burst(game.camera.global_position+Vector3.DOWN,Vector3.UP,"soil") and effects.pool.size()==8,"retired emitter reused without allocation")
+	verify(effects.pool[0].draw_passes==(1 if original else 2),"selected style supplies baseline meshes or textured chips plus dust")
+	# Exercise the actual ESC signal; switching must retire active resources.
+	game.session_menu.impact_style.item_selected.emit(1)
+	verify(effects.style==1 and game.session_menu.impact_style.selected==1,"ESC selects original baseline immediately")
+	game.session_menu.impact_style.item_selected.emit(0)
+	verify(effects.style==0 and effects.pool.is_empty() and game.session_menu.impact_style.selected==0,"switch to grounded clears old live emitters")
+	effects.burst(game.camera.global_position+Vector3.DOWN,Vector3.UP,"soil")
+	game.session_menu.impact_style.item_selected.emit(1)
+	verify(effects.style==1 and effects.pool.is_empty(),"switch back to baseline also clears live resources")
 	# Isolate saved preferences from the player's real settings.
 	var path:="user://impact_test_"+str(Time.get_ticks_usec())+".cfg"
 	effects.settings_path=path;effects.set_enabled(false);effects.set_breakup_enabled(false)
 	var config:=ConfigFile.new();verify(config.load(path)==OK and config.get_value("effects","enabled")==false and config.get_value("effects","breakup")==false,"both settings persist independently")
 	var again=load("res://addons/impact_effects/impact_effects.gd").new();again.settings_path=path;game.add_child(again);again.attach(game)
-	verify(not again.enabled and not again.breakup_enabled,"new module restores saved preferences")
+	verify(not again.enabled and not again.breakup_enabled and again.style==1,"new module restores saved toggles and baseline style")
 	again.free();DirAccess.remove_absolute(ProjectSettings.globalize_path(path));effects.settings_path=""
 	effects.set_enabled(true,false);effects.set_breakup_enabled(true,false)
+	effects.set_style(1 if original else 0,false)
 	game.session_menu.set_open(true);await process_frame;await capture("esc_settings")
 	await finish()
 func finish()->void:

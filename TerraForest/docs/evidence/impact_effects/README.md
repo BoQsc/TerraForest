@@ -1,5 +1,11 @@
 # Optional material impact particles — 2026-10-24
 
+The user subsequently accepted this feel as a fallback baseline, while requesting
+a less cartoonish appearance. This version is preserved at tag
+`impact-effects-baseline-v1` (`b245d563`) and as **Original baseline** in the live
+ESC appearance selector. The new default is documented in
+[the grounded revision](../impact_effects_grounded/README.md).
+
 The experimental addon emits sparks on metal blocks, metal props, vehicles and
 native metal terrain. Dirt/topsoil, rock, brick, concrete, wood, sand, snow and
 ore have small colored fragments. These use shared low-poly oval/box meshes with

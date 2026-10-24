@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary world reaches playable state
+PASS optional module startup matches launch setting
+PASS metal block has real published collision
+PASS old settings without a style default to grounded
+PASS no emitters allocated before first impact
+PASS metal material and surface pose survive actual target query
+PASS windup produces no particles
+PASS authored contact emits one metal spark burst
+PASS one contact: one damage event and one cosmetic burst
+PASS ESC master toggle clears active particles immediately
+PASS disabled effects preserve damage and tool wear
+PASS cancellation check starts real swing
+PASS cancelled swing has no particles
+PASS accepted metal destruction gets the optional larger burst
+PASS breakup toggle retains small hit splinters on destruction
+PASS nearby terrain available for excavation
+PASS native worker supplies material plus depth within bounded prefetch
+PASS terrain visual material classified independently of damage
+PASS shovel contact emits debris
+PASS cosmetic debris preserves native excavation and mining rewards
+PASS dig uses the sampled surface material and excavation burst
+PASS bounded pool accepts burst 0
+PASS bounded pool accepts burst 1
+PASS bounded pool accepts burst 2
+PASS bounded pool accepts burst 3
+PASS bounded pool accepts burst 4
+PASS bounded pool accepts burst 5
+PASS bounded pool accepts burst 6
+PASS bounded pool accepts burst 7
+PASS saturated pool drops cosmetic overflow at 384 GPU slots
+PASS one-shot GPU emitters finish and retire
+PASS retired emitter reused without allocation
+PASS selected style supplies baseline meshes or textured chips plus dust
+PASS ESC selects original baseline immediately
+PASS switch to grounded clears old live emitters
+PASS switch back to baseline also clears live resources
+PASS both settings persist independently
+PASS new module restores saved toggles and baseline style
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world shuts down consistently
+IMPACT_EFFECTS_WORLD checks=39 failures=0
