@@ -29,7 +29,8 @@ var current_page:="Session"
 var scroll: ScrollContainer
 var content: VBoxContainer
 var ready_to_dock:=false
-const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Building hammer: left mouse attacks the aimed target; right mouse builds the selected shape.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object."}
+var spawner:RefCounted
+const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
 func label(parent: Node,text: String) -> Label:
@@ -48,6 +49,7 @@ func _ready() -> void:
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
+	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"Destinations",show_page.bind("World"))
 	button(sidebar,"Resume  ·  Esc",func():set_open(false))
 	scroll=ScrollContainer.new();scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(scroll)
@@ -60,6 +62,10 @@ func _ready() -> void:
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	mode_button=button(session,"Development mode",toggle_developer)
+	var target_toggle:=CheckButton.new();target_toggle.text="Show targeting visuals for all tools / weapons (testing)"
+	target_toggle.button_pressed=game.target_overlay.enabled
+	target_toggle.toggled.connect(game.target_overlay.set_enabled);session.add_child(target_toggle)
+	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Developer"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
 	session_message=label(root,"")
@@ -96,14 +102,15 @@ func show_page(title: String) -> void:
 	current_page=title;refresh();sync_panels()
 func open_tool_page(title:String) -> void:
 	if not ready_to_dock or not tool_workspace.pages.has(title):return
+	if title=="Building" and not developer and game.equipped_tool not in game.player_hud.MATERIALS:return
 	if title in ["Terrain","Roads","World tools","Actors","Water"] and not developer:return
 	if game.world_vehicle.driving:message.text="Exit the vehicle before configuring tools.";return
 	if game.loading_active or game.shutdown_requested:return
 	if title in ["Building","Objects"]:
 		set_open(false)
 		if developer:activate_developer_slot(3 if title=="Building" else 4)
-		elif game.equipped_tool!=(3 if title=="Building" else 4) and not game.player_hud.equip_item(3 if title=="Building" else 4):
-			game._show_lake_notice("Equip an owned building hammer or assembly tool first.");return
+		elif title=="Objects" and game.equipped_tool!=4 and not game.player_hud.equip_item(4):
+			game._show_lake_notice("Equip an owned assembly tool first.");return
 	elif developer:
 		var slot:int={"Terrain":game.player_hud.developer_slot if game.player_hud.developer_slot in [0,1,2] else 0,"Vegetation":5,"Roads":6,"World tools":7,"Water":7,"Actors":8}[title]
 		if title!="Terrain" or not game.editor_tool_active or game.player_hud.developer_slot not in [0,1,2]:activate_developer_slot(slot)
@@ -146,6 +153,7 @@ func toggle_developer() -> void:
 	if game.loading_active or game.shutdown_requested or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or not game.road_authoring.phase.is_empty() or game.terrain.pending_edit or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
 		message.text="Wait for the current world edit to finish.";return
 	if not developer:gameplay_slot=game.player_hud.active_slot
+	session_message.text=""
 	developer=not developer
 	game.construction_inventory.gameplay=not developer;game.model_tool.gameplay=not developer;game.player_hud.gameplay_construction=not developer;game.mining_rewards.enabled=not developer
 	if not developer:game.fly=false
@@ -228,6 +236,7 @@ func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
 func _input(event: InputEvent) -> void:
+	if game.vehicle_radial.consume(event):get_viewport().set_input_as_handled();return
 	if world_map!=null and world_map.opened:
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)
 		# GUI retains mouse events for pan/zoom/buttons. Block gameplay keys here.

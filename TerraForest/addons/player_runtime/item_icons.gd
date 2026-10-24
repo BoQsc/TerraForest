@@ -6,6 +6,7 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
+	if str(key)=="501":return preload("res://addons/vehicle_runtime/vehicle_icon.svg")
 	if str(key).is_valid_int() and int(key)>=401 and int(key)<=411:
 		if bucket_icon==null:
 			var image:=Image.new()

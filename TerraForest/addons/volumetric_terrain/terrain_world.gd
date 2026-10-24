@@ -6,6 +6,7 @@ signal surface_batch_ready(token: int, points: PackedVector3Array, normals: Pack
 signal region_changed(bounds: AABB, revision: int)
 signal region_invalidated(bounds: AABB)
 signal solid_deposited(bounds: AABB)
+signal edit_resolved(outcome: Dictionary)
 signal material_edit_ready(result: Dictionary)
 signal lake_slice_ready(token: int, status: int, epoch_id: int, revision: int)
 signal lake_cache_result(event: String, identity: String)
@@ -191,7 +192,9 @@ func _receive(result: Dictionary) -> void:
 		surface_batch_ready.emit(result["token"], result["points"], result["normals"], result["epoch"], result["revision"])
 		return
 	super._receive(result)
-	if tracks_edit: last_edit_outcome["revision"]=density_revision
+	if tracks_edit:
+		last_edit_outcome["revision"]=density_revision
+		edit_resolved.emit(last_edit_outcome.duplicate(true))
 
 func _commit_batch() -> void:
 	super._commit_batch()
@@ -250,12 +253,14 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 				cap_rise=0.25*(distance+width+shoulder)
 			safe_lo=safe_lo.min(a.min(b)-Vector3(width+shoulder+5,depth+cap_rise+5,width+shoulder+5))
 			safe_hi=safe_hi.max(a.max(b)+Vector3(width+shoulder+5,clearance+cap_rise+5,width+shoulder+5))
-		elif kind == 3 and packet.size() == 20:
+		elif kind in [3,38] and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
-			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or packet.decode_u32(16) > 3:
+			var material:int=packet.decode_u32(16)
+			if cell.x < 0 or cell.x >= 2000 or cell.z < 0 or cell.z >= 2000 or cell.y < 2 or cell.y >= 255 or (material not in [1,8,9,10] if kind==38 else material>3):
 				return false
-			safe_lo = safe_lo.min(Vector3(cell) - Vector3.ONE * 2.0)
-			safe_hi = safe_hi.max(Vector3(cell) + Vector3.ONE * 3.0)
+			if kind==38 and (cell.x<1 or cell.z<1 or cell.y<4 or cell.y>=254):return false
+			safe_lo = safe_lo.min(Vector3(cell) - Vector3.ONE * (6.0 if kind==38 else 2.0))
+			safe_hi = safe_hi.max(Vector3(cell) + Vector3.ONE * (6.0 if kind==38 else 3.0))
 		else:
 			return false
 	if water_edit_admission.is_valid() and not water_edit_admission.call(AABB(safe_lo,safe_hi-safe_lo),selected): return false
@@ -264,7 +269,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if accepted:
 		for packet:PackedByteArray in selected:
 			var kind:int=packet.decode_u32(0)
-			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind==28:
+			if (kind==2 and packet.decode_u32(36)!=0) or (kind==3 and packet.decode_u32(16)!=0) or kind in [28,38]:
 				solid_deposited.emit(AABB(safe_lo,safe_hi-safe_lo));break
 		region_invalidated.emit(AABB(safe_lo, safe_hi - safe_lo))
 	return accepted

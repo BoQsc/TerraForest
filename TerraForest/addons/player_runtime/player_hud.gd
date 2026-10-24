@@ -10,7 +10,7 @@ signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
 signal drop_requested(slot: int, revision: int, count: int)
-const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool"}
+const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 # UI metadata is local so this addon remains independently loadable.
 # woodland_accents checks it against the ecosystem catalog.
@@ -19,7 +19,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210,212]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102,212]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs","Woody bush"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -108,6 +108,7 @@ func prepare() -> bool:
 		inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
+	inventory.register_durable(501,preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle)
 	equipment=ClassDB.instantiate("NativeContainerStore")
 	if not equipment.configure(inventory,1):return false
 	for id: int in CATALOG: inventory.grant(id,1,inventory.snapshot().revision)
@@ -221,7 +222,7 @@ func _ready() -> void:
 func refresh() -> void:
 	deliver_mining_rewards()
 	if action_hint!=null:
-		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Building hammer | Right mouse: build | Left mouse: attack | Hold Alt: tool settings",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS else " | G drop | E interact"))
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)

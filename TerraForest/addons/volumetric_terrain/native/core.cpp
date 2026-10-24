@@ -471,7 +471,7 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
  }
  return mx(edge,mx(p.y-top,top-depth-p.y));
 }
-bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples,const float *curve,int curve_count,int curve_index){
+bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&hi,int&changes,float depth,float clearance,float shoulder,u32 *removed_samples,const float *curve,int curve_count,int curve_index,bool paid_sample){
  if(removed_samples)zero_bytes(removed_samples,16*sizeof(u32));
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
@@ -506,6 +506,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
    bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
+   if(paid_sample&&previous<0)continue; // Never repaint or deepen existing solid resources.
    if(q==previous&&!repaint)continue;
    if(!present){
     int at=new_keys.push(key);planned.put(key,at);if(tr_oom){discard();return false;}
@@ -1226,6 +1227,14 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
  else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;u32 removed[16]{};bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);}
+ else if(cmd==38){ // One paid lattice unit; the radius cannot create a second solid sample.
+  int x=int(r.u()),y=int(r.u()),z=int(r.u()),material=int(r.u());
+  if(!r.good||n!=20||x<1||x>=WORLD||z<1||z>=WORLD||y<4||y>=254||(material!=1&&material!=8&&material!=9&&material!=10)){out.p[8]=1;return;}
+  V3 center={float(x),float(y),float(z)},lo=center,hi=center;int changes=0;
+  bool ok=true;
+  if(w.sample(x,y,z)>=0)ok=w.edit(center,center,.75f,0,true,u8(material),lo,hi,changes,1.f,0.f,0.f,nullptr,nullptr,0,0,true);
+  if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
+ }
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
   float coefficients[256];int curve_count=0,curve_index=0;

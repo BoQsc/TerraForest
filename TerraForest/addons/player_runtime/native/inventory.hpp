@@ -37,6 +37,7 @@ public:
     bool register_item(int64_t item,int64_t limit);
     godot::Dictionary snapshot() const;
     godot::Dictionary grant(int64_t item,int64_t count,int64_t expected);
+    godot::Dictionary grant_durable(int64_t item,int64_t wear,int64_t expected);
     godot::Dictionary grant_items(const godot::PackedInt64Array &items,int64_t expected);
     godot::Dictionary can_receive(const godot::PackedInt64Array &items,int64_t expected);
     godot::Dictionary exchange_items(const godot::PackedInt64Array &costs,const godot::PackedInt64Array &outputs,int64_t expected);

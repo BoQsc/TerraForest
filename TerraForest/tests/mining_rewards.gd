@@ -55,6 +55,21 @@ func run() -> void:
 	Engine.max_fps=60
 	check(await open_world(),"gameplay mining and persistence initialize")
 	if not terrain.world_ready: close_nodes();quit(1);return
+	var fill:=Vector3i(800,90,1310)
+	hud.inventory.grant(211,4,hud.inventory.snapshot().revision)
+	var soil_slot:=-1
+	for i:int in range(32):
+		if hud.inventory.snapshot().slots[i].item==211:soil_slot=i;break
+	check(not terrain.edit(Codec.command(38,[fill.x,fill.y,fill.z,10]),Vector3(fill),Vector3(fill)),"unpaid terrain stamp rejected before mutation")
+	check(rewards.place(fill,211,soil_slot),"carried soil admits a paid native terrain stamp")
+	await wait_edit()
+	check(hud.inventory.snapshot().slots[soil_slot].count==3 and rewards.payment.is_empty(),"published terrain consumes exactly one soil unit")
+	check(rewards.place(fill,211,soil_slot),"occupied terrain stamp settles through normal worker path")
+	await wait_edit()
+	check(hud.inventory.snapshot().slots[soil_slot].count==3 and hud.reward_inbox.get_pending().is_empty(),"no-op placement returns material without duplication")
+	check(dig(Vector3(fill)),"placed soil can be mined")
+	await wait_edit()
+	check(hud.inventory.snapshot().slots[soil_slot].count==4,"mining placed soil recovers exactly the paid unit")
 	var center:=Vector3(800,30,1310)
 	check(not terrain.edit(Codec.brush(center,center,2,0,true,1),center-Vector3.ONE*8,center+Vector3.ONE*8),"gameplay blocks free terrain creation before mutation")
 	check(dig(center),"gameplay excavation accepted")

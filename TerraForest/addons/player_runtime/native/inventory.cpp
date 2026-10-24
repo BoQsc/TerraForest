@@ -10,6 +10,7 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("exchange_bucket","slot","pour","revision","litres"),&NativePlayerInventory::exchange_bucket,DEFVAL(1));
     ClassDB::bind_method(D_METHOD("register_durable","item","maximum"),&NativePlayerInventory::register_durable);
     ClassDB::bind_method(D_METHOD("wear_tool","slot","amount","expected_revision"),&NativePlayerInventory::wear_tool);
+    ClassDB::bind_method(D_METHOD("grant_durable","item","wear","expected_revision"),&NativePlayerInventory::grant_durable);
     ClassDB::bind_method(D_METHOD("register_item","item","limit"),&NativePlayerInventory::register_item);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativePlayerInventory::snapshot);
     ClassDB::bind_method(D_METHOD("grant","item","count","expected_revision"),&NativePlayerInventory::grant);
@@ -188,6 +189,13 @@ Dictionary NativePlayerInventory::restore(const Dictionary &data,int64_t expecte
         candidate[i]={id,n,w,ml};
     }
     slots=candidate;++revision;return result(true,"");
+}
+Dictionary NativePlayerInventory::grant_durable(int64_t item,int64_t wear,int64_t expected){
+    if(expected!=revision)return result(false,"stale_revision");
+    auto limit=catalog().find(item);int64_t maximum=max_durability(item);
+    if(limit==catalog().end()||limit->second!=1||!maximum||wear<0||wear>=maximum)return result(false,"invalid_wear");
+    for(int i=0;i<32;++i)if(!slots[i].item){slots[i]={item,1,wear,0};++revision;return result(true,"");}
+    return result(false,"inventory_full");
 }
 namespace {
 uint32_t read_u32(const uint8_t *p) {

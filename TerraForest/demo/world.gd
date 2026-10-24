@@ -39,6 +39,9 @@ var destination_guide=preload("res://addons/player_runtime/destination_guide.gd"
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
 var world_interaction=preload("res://demo/world_interaction.gd").new()
+var terrain_placement=preload("res://addons/player_runtime/terrain_placement.gd").new()
+var target_overlay=preload("res://addons/player_runtime/target_overlay.gd").new()
+var vehicle_radial=preload("res://addons/vehicle_runtime/vehicle_radial.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var equipped_tool:=0
@@ -249,6 +252,8 @@ func _ready() -> void:
 	add_child(player_hud)
 	add_child(storage)
 	session_menu.world_page_factory=_make_world_locations
+	target_overlay.game=self;add_child(target_overlay)
+	vehicle_radial.game=self;add_child(vehicle_radial)
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
 	session_menu.world_map=world_map;world_map.game=self;add_child(world_map)
 	destination_guide.game=self;add_child(destination_guide)
@@ -644,10 +649,10 @@ func _cancel_edit_input()->void:
 func _equip_player_tool(item: int) -> void:
 	if world_vehicle.driving:return
 	editor_tool_active=false;equipped_tool=item
-	_set_player_tool_mode(item in [3,4] or item in player_hud.MATERIALS,item==4,3)
+	_set_player_tool_mode(item==4 or item in player_hud.MATERIALS,item==4,3)
 	if item in player_hud.MATERIALS:
 		structure_shape=1;structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
-	if item in player_hud.GROUND_ITEMS:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
+	if item in player_hud.GROUND_ITEMS and item!=201:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false
 	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0)
@@ -813,7 +818,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				if world_vehicle.safe_exit_position(self).is_finite(): terrain.save_world()
 				else: _show_lake_notice("Cannot save here · move beside clear, loaded ground")
 			elif event.physical_keycode==KEY_E:
-				_show_lake_notice(world_vehicle.exit_vehicle(self));_clear_motion()
+				_clear_motion();_show_lake_notice(world_vehicle.exit_vehicle(self))
 			elif event.physical_keycode==KEY_ESCAPE:
 				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 		return
@@ -834,6 +839,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.pressed:world_attack.attack()
 		return
+	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if equipped_tool==3:
+			if event.pressed:world_attack.attack(true)
+			return
+		if equipped_tool in mining_rewards.TERRAIN_ITEMS:
+			if event.pressed:terrain_placement.place(self)
+			return
+		if equipped_tool==501:
+			if event.pressed:_show_lake_notice(world_vehicle.spawn(self,player_hud.active_slot))
+			return
 	if ground_enabled and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_F7:
 		if ground_cover.set_grass_texture(not ground_cover.grass_texture_enabled):
 			_show_lake_notice("Grass texture: "+("subtle" if ground_cover.grass_texture_enabled else "off"))
@@ -860,18 +875,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				_show_lake_notice(result.reason)
 			return
 	if event is InputEventKey and event.pressed and not event.echo and not loading_active and not shutdown_requested and app_focused and not fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-		if event.physical_keycode==KEY_V:
+		if event.physical_keycode==KEY_V and session_menu.developer:
 			_show_lake_notice(world_vehicle.spawn(self));return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_E and not fly:
 		if not loading_active and not shutdown_requested and app_focused and terrain.world_ready and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-			# Directly aimed interactions take priority over proximity-based entry.
-			if world_interaction.interact(self): return
-			if world_vehicle.enter(self):
-				_clear_motion();_show_lake_notice("Driving · E exit when stopped · Space brake");return
-			# Attacks exclusively use left mouse; E remains interaction.
-			var collected: Dictionary=pickups.collect_near(player.global_position+Vector3(0,0.5,0),player_hud.inventory,_pickup_reachable)
-			if collected.ok: player_hud.refresh()
-			_show_lake_notice(collected.reason)
+			_interact_on_foot()
 		return
 	if not loading_active and not benchmark_enabled:
 		if event is InputEventKey and event.pressed and not event.echo:
@@ -936,6 +944,7 @@ func _update_edit(delta: float) -> void:
 		if input_vector!=Vector3.ZERO:terrain.note_interaction()
 		pointer.hide();terrain.set_brush_active(false)
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):world_attack.attack()
+		elif equipped_tool==3 and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):world_attack.attack(true)
 		return
 	if not editor_tool_active:
 		pointer.hide();terrain.set_brush_active(false);return
@@ -1420,7 +1429,7 @@ func _process(delta: float) -> void:
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
 		if world_vehicle.driving:
-			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit when stopped" % world_vehicle.car.speed_kph
+			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit" % world_vehicle.car.speed_kph
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 		if actors.pool!=null and actor_authoring.selected_identity!=0:
 			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
@@ -1481,7 +1490,16 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	return removed
 
 func _model_edit_available() -> bool:
-	return not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit
+	return vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit
+
+func _interact_on_foot()->void:
+	if not _model_edit_available() or session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:return
+	if world_interaction.interact(self):return
+	if world_vehicle.enter(self):
+		_clear_motion();_show_lake_notice("Driving · E exit · Space brake");return
+	var collected:Dictionary=pickups.collect_near(player.global_position+Vector3(0,.5,0),player_hud.inventory,_pickup_reachable)
+	if collected.ok:player_hud.refresh()
+	_show_lake_notice(collected.reason)
 
 func _vehicle_interaction_available() -> bool:
 	return not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED

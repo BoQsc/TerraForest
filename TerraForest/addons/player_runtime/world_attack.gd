@@ -63,14 +63,15 @@ func target() -> Dictionary:
 		var cell:=Vector3i((hit.position-hit.normal*0.05).floor())
 		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}
 	return {}
-func attack() -> bool:
+func attack(repairing:bool=false) -> bool:
 	if not pending.is_empty() or game.session_menu.developer or not TOOLS.has(game.equipped_tool) or not game._model_edit_available() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED or game.session_menu.visible_ui():return false
+	if repairing and game.equipped_tool!=3:return false
 	var now:=Time.get_ticks_msec()
 	if now<next_attack:return false
 	var profile:Dictionary=game.tool_view.attack_profile()
 	if profile.is_empty():return false
 	sequence+=1;last_hit=false
-	pending={"identity":sequence,"item":game.equipped_tool,"slot":game.player_hud.active_slot,"epoch":game.terrain.epoch,"contacted":false}
+	pending={"identity":sequence,"item":game.equipped_tool,"slot":game.player_hud.active_slot,"epoch":game.terrain.epoch,"contacted":false,"repairing":repairing}
 	if not game.tool_view.begin_attack(sequence):pending={};return false
 	# Recovery is owned by the actual animation; retain the minimum input debounce.
 	next_attack=now+250;game.terrain.note_interaction()
@@ -88,7 +89,7 @@ func resolve_contact(identity:int)->void:
 	# Resolve the live occlusion/reach query once, on the visible contact pose.
 	var selected:=target()
 	if selected.get("kind")=="terrain":game.terrain.set_interaction_target(selected.position)
-	last_hit=not selected.is_empty() and apply_target(selected)
+	last_hit=not selected.is_empty() and (repair_target(selected) if pending.repairing else apply_target(selected))
 	impact_resolved.emit(identity,last_hit)
 func cancel()->void:
 	if pending.is_empty():return
@@ -97,6 +98,17 @@ func finish_swing(identity:int,cancelled:bool)->void:
 	if pending.is_empty() or pending.identity!=identity:return
 	if cancelled and not pending.contacted:next_attack=0
 	pending={}
+func repair_target(t:Dictionary)->bool:
+	if game.equipped_tool!=3 or t.kind not in ["block","model","vehicle"]:return false
+	var result:Dictionary=durability.repair(t.key,t.health,25)
+	if not result.ok:
+		game._show_lake_notice(result.get("reason","Repair unavailable"));return false
+	var hud=game.player_hud
+	hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
+	game.terrain.changed_since_save=true;hud.refresh()
+	hud.show_target_damage(t.name,result.remaining,result.maximum)
+	game._show_lake_notice("Repaired %s · %d / %d durability"%[t.name,result.remaining,result.maximum])
+	return true
 func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool

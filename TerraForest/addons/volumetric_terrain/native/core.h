@@ -94,7 +94,7 @@ struct World {
  float base(V3 p,float h)const;
  float sample(int x,int y,int z,u8*mat=nullptr)const;
  Page *ensure(int px,int py,int pz);
- bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes,float depth=1.f,float clearance=0.f,float shoulder=0.f,u32 *removed_samples=nullptr,const float *curve=nullptr,int curve_count=0,int curve_index=0);
+ bool edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3 &lo,V3 &hi,int &changes,float depth=1.f,float clearance=0.f,float shoulder=0.f,u32 *removed_samples=nullptr,const float *curve=nullptr,int curve_count=0,int curve_index=0,bool paid_sample=false);
  // Bounded CSG material edit, excluding the authoritative solid field.
  bool material_box(const World &solid,V3 minimum,V3 maximum,bool add,V3 &lo,V3 &hi,int &changes);
  void serialize(Bytes &out,bool fast_checksum=false)const;bool deserialize(const u8*p,int n);

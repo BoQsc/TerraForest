@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
+class SnapshotTerrain extends Node:
+ var prepared_snapshot_components:Dictionary={}
+ var snapshot_restore_ok:=true
 var failures:=0
 var checks:=0
 func check(ok:bool,label:String)->bool:
@@ -12,6 +15,7 @@ func run()->void:
  Engine.max_fps=60
  var scene:=Node3D.new();root.add_child(scene)
  var provider=preload("res://addons/world_runtime/world_persistence.gd").new()
+ var terrain:=SnapshotTerrain.new();scene.add_child(terrain)
  var pickups=preload("res://addons/world_runtime/material_pickups.gd").new();scene.add_child(pickups)
  var hud=preload("res://addons/player_runtime/player_hud.gd").new()
  if not check(hud.prepare() and pickups.prepare(provider),"bundled inventory, pickup schemas and every dropped model initialize"):
@@ -41,6 +45,7 @@ func run()->void:
  for item:int in ids:
   check(pickups.collect_near(points[item],hud.inventory,func(_p):return true).ok and pickups.stores[item].resolve_identity(ids[item])==0,"collect item %d without respawn"%item)
  var after:Dictionary=provider._capture().sections
+ provider._terrain=terrain
  provider._restore(before,1)
  check(provider._capture().sections==before,"compound restore exactly recovers uncollected items and inventory")
  provider._restore(after,2)

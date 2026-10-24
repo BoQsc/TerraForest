@@ -3,7 +3,7 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket"}
+const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",212:"Woody bush",501:"Vehicle"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
 var stacks: Dictionary = {}
@@ -57,6 +57,7 @@ func prepare(persistence: RefCounted) -> bool:
 	for item: int in ITEMS:
 		schema.register_item(item,1 if item<100 or item>=301 else 999)
 		if item in [1,2,3,4]:schema.register_durable(item,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[item])
+		if item==501:schema.register_durable(item,300)
 	var next_stacks:Dictionary={};var next_stores:Dictionary={};var next_renderers:Dictionary={}
 	var components:Array[Dictionary]=[]
 	for item: int in ITEMS:
@@ -68,7 +69,7 @@ func prepare(persistence: RefCounted) -> bool:
 		if not store.configure(4096): _discard_renderers(next_renderers);return false
 		next_stores[item] = store
 		components.append({"name":"pickups_%d"%item,"capture":store.capture_storage_snapshot,"restore":_restore.bind(item),"validator":store,"empty":store.capture_storage_snapshot()})
-		var mesh: Mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh() if item==401 else load("res://addons/player_runtime/art/drops/%d.res"%item)
+		var mesh: Mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh() if item==401 else (preload("res://addons/vehicle_runtime/vehicle_item.gd").mesh() if item==501 else load("res://addons/player_runtime/art/drops/%d.res"%item))
 		if mesh==null:_discard_renderers(next_renderers);return false
 		var renderer: MultiMeshInstance3D = ClassDB.instantiate("NativeEntityRenderer")
 		if not renderer.configure(store, mesh, 256):

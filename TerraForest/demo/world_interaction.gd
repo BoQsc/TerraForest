@@ -42,7 +42,9 @@ func update(game: Node, delta: float) -> void:
 	if remaining>0.0:return
 	# One native scene ray at most every 100 ms, never a catch-up loop.
 	remaining=0.1
-	game.player_hud.show_interaction_hint(describe(game,hit(game)))
+	var hint:=describe(game,hit(game))
+	if hint.is_empty() and game.world_vehicle.candidate(game)>0:hint="E · Enter vehicle  /  Hold E · Vehicle actions"
+	game.player_hud.show_interaction_hint(hint)
 func interact(game: Node) -> bool:
 	if not available(game):return false
 	# Re-pick at the input event: the presentation cache is never authoritative.

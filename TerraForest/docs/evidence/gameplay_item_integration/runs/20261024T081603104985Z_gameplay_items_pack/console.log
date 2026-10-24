@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable world and session menu ready
+PASS paid gameplay is active
+PASS repair hammer has no building mode or tool-settings panel
+PASS repair windup does not mutate durability
+PASS repair applies exactly once at hammer contact and costs wear
+PASS fully repaired targets consume no hammer wear
+PASS global targeting overlay works for item 1
+PASS global targeting overlay works for item 2
+PASS global targeting overlay works for item 3
+PASS global targeting overlay works for item 4
+PASS targeting overlay can be disabled for repair hammer
+PASS held mined soil right-click submits a paid terrain edit
+PASS soil publishes through normal streamed terrain
+PASS gameplay cannot use the developer spawner
+SPAWNER_RESULT Dropped 7 Topsoil
+PASS developer click creates a world pickup without granting inventory
+PASS spawned native pickup collects the chosen stack count: { "ok": true, "item": 211, "reason": "Collected Topsoil" }
+PASS vehicle fleet resource ready
+PASS vehicle fixture has real ground
+Visual vehicle dents repaired.
+PASS fleet activates its actual vehicle body
+PASS vehicle action candidate passes range and line of sight
+PASS E press waits for tap versus hold
+PASS E tap keeps default enter action
+PASS E exits at driving speed immediately and preserves vehicle/player momentum
+PASS hold-E begins vehicle actions
+PASS holding E opens radial without entering
+PASS cancel restores aim without entering or picking up
+PASS moving out of range while radial is open cancels pickup without creating an item
+PASS full inventory leaves the vehicle in the world
+PASS pickup replaces exactly one parked vehicle with one carried item
+PASS carried vehicle preserves structural damage
+PASS vehicle deposits into ordinary storage with its damage
+PASS saved vehicle storage withdraws without repairing or duplicating
+PASS vehicle inventory item drops through ordinary native stack transfer
+PASS recollecting vehicle cannot repair it
+Visual vehicle dents repaired.
+PASS right-click redeploys carried vehicle with the same damage and no duplicate item
+[TerrainRewrite] Temporary test world: save skipped
+PASS compound world closes consistently
+GAMEPLAY_ITEMS failures=0

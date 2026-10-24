@@ -87,24 +87,31 @@ func place(world: Node,pose: Transform3D) -> String:
 	var id: int=owner.fleet.spawn(pose)
 	if id==0:return "Vehicle storage rejected placement."
 	if parked_view==null:
-		timer=0;return "Vehicle placed; preparing visuals · F5 saves world"
+		owner.last_spawn_identity=id;timer=0;return "Vehicle placed; preparing visuals · F5 saves world"
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
+	owner.last_spawn_identity=id
 	return "Vehicle placed · E nearby to enter · F5 saves world"
-func select_for_entry(point: Vector3) -> void:
+func select_for_entry(point: Vector3,expected:int=0) -> void:
 	if parked_view==null:
 		owner.car=null;owner.car_identity=0;timer=0;return
 	var query: Dictionary=owner.fleet.query_near(point,3.5,1,4096)
+	if expected>0:
+		var record:Dictionary=owner.fleet.get_record(expected)
+		query={"ok":record.present,"complete":true,"ids":PackedInt64Array([expected]) if record.present and record.pose.origin.distance_to(point)<=3.5 else PackedInt64Array()}
 	if query.ok and query.complete and not query.ids.is_empty() and not residents.has(query.ids[0]):
 		if sync_records():
 			if residents.size()>=CAPACITY:
 				var farthest:=0;var distance:=-1.0
 				for id: int in residents:
+					if owner.coasting.has(id):continue
 					var candidate: float=residents[id].global_position.distance_squared_to(point)
 					if candidate>distance:distance=candidate;farthest=id
+				if farthest==0:return
 				retire(farthest)
 			admit(owner._world,query.ids[0]);refresh_parked(owner._world)
 	var nearest:=3.5;var chosen:=0
 	for id: int in residents:
+		if expected>0 and id!=expected:continue
 		var distance: float=residents[id].global_position.distance_to(point)
 		if distance<nearest or (is_equal_approx(distance,nearest) and (chosen==0 or id<chosen)):nearest=distance;chosen=id
 	owner.car=residents.get(chosen);owner.car_identity=chosen
@@ -127,9 +134,14 @@ func update(world: Node,delta: float) -> void:
 	status=owner.fleet.query_near(world.terrain.focus,64,CAPACITY,4096)
 	if not status.ok or not status.complete:return
 	var wanted: PackedInt64Array=status.ids
-	if owner.driving and not wanted.has(owner.car_identity):
-		if wanted.size()>=CAPACITY:wanted.resize(CAPACITY-1)
-		wanted.append(owner.car_identity)
+	var pinned:Array=owner.coasting.keys()
+	if owner.driving:pinned.append(owner.car_identity)
+	for id:int in pinned:
+		if wanted.has(id):continue
+		if wanted.size()>=CAPACITY:
+			for index in range(wanted.size()-1,-1,-1):
+				if not pinned.has(wanted[index]):wanted.remove_at(index);break
+		if wanted.size()<CAPACITY:wanted.append(id)
 	for id: int in residents.keys():
 		if not wanted.has(id):retire(id)
 	# At most one expensive model instantiation/admission per selection tick.

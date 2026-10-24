@@ -1,0 +1,88 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS world ready
+PASS every registered model has an explicit durability profile: []
+PASS target durability is idle until an accepted hit
+PASS wood block fixture 0
+PASS tool 0 targets nearest block
+PASS tool 0 starts a visible swing
+PASS windup rejection does not refresh target feedback
+PASS tool 0 damages block and wears only at contact
+PASS block hit displays exact native target durability
+PASS durability stays near and above the crosshair without covering it
+PASS feedback expires without polling or mutating surviving target health
+PASS tool 0 eventually destroys block
+PASS fatal block hit clears feedback synchronously
+PASS wood block fixture 1
+PASS tool 1 targets nearest block
+PASS tool 1 starts a visible swing
+PASS windup rejection does not refresh target feedback
+PASS tool 1 damages block and wears only at contact
+PASS block hit displays exact native target durability
+PASS tool 1 eventually destroys block
+PASS fatal block hit clears feedback synchronously
+PASS wood block fixture 2
+PASS tool 2 targets nearest block
+PASS tool 2 starts a visible swing
+PASS windup rejection does not refresh target feedback
+PASS tool 2 damages block and wears only at contact
+PASS block hit displays exact native target durability
+PASS tool 2 eventually destroys block
+PASS fatal block hit clears feedback synchronously
+PASS wood block fixture 3
+PASS tool 3 targets nearest block
+PASS tool 3 starts a visible swing
+PASS windup rejection does not refresh target feedback
+PASS tool 3 damages block and wears only at contact
+PASS block hit displays exact native target durability
+PASS tool 3 eventually destroys block
+PASS fatal block hit clears feedback synchronously
+PASS placeable material never attacks
+PASS pickaxe damages a real tree without immediate harvest
+PASS axe finishes the same damaged tree
+PASS fatal tree hit clears feedback synchronously
+PASS furniture participates in shared nearest hit query
+PASS protected container/object consumes no wear or items
+PASS protected target does not produce damage feedback
+PASS object uses its own native health and target name
+PASS inventory clears target feedback
+PASS next hit refreshes the same reusable display
+PASS escape menu clears target feedback
+PASS shared attack destroys furniture through salvage transaction
+PASS fatal furniture hit clears feedback synchronously
+PASS actor pool enables for damage fixture
+PASS active actor resolves stable damage target
+PASS actor destruction retires persistent entity
+PASS fatal actor hit clears feedback synchronously
+PASS vehicle damage fixture installs
+PASS vehicle resolves stable damage target
+PASS vehicle destruction removes body and saved identity
+PASS fatal vehicle hit clears feedback synchronously
+PASS world save includes sparse durability
+PASS worn tool drops into world
+PASS recollecting tool cannot repair it
+PASS natural ground-cover damage fixture available
+PASS natural ground cover participates in nearest-target attack
+PASS ground-cover destruction persists removal
+PASS fatal ground-cover hit clears feedback synchronously
+PASS tool 0 can aim at terrain
+PASS tool 0 submits excavation through shared attack
+PASS excavation publishes
+PASS tool 1 can aim at terrain
+PASS tool 1 submits excavation through shared attack
+PASS excavation publishes
+PASS tool 2 can aim at terrain
+PASS tool 2 submits excavation through shared attack
+PASS excavation publishes
+PASS tool 3 can aim at terrain
+PASS tool 3 submits excavation through shared attack
+PASS excavation publishes
+PASS replacement pickaxe crafts without a metal dependency
+PASS empty development slot disables terrain editing
+PASS persistent context HUD follows selected developer tool
+PASS F1 hides development panel
+PASS Alt exposes mouse for on-screen controls
+PASS Alt release returns to aiming
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_ATTACK checks=83 failures=0

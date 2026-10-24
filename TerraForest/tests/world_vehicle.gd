@@ -59,7 +59,9 @@ func run() -> void:
 	session.interaction_available=func(): return true
 	session.car.set_physics_process(false)
 	session.car.linear_velocity=Vector3(0,0,10)
-	check(session.exit_vehicle(world)=="Stop the vehicle before exiting" and session.driving,"moving exit rejected")
+	check(session.exit_vehicle(world).begins_with("On foot") and not session.driving and not session.car.freeze,"moving exit is immediate and leaves unoccupied physics running")
+	world.player.position=session.car.position+Vector3.RIGHT*2.8
+	check(session.enter(world),"can reenter after moving exit")
 	session.car.linear_velocity=Vector3.ZERO;world.structures.available=false
 	check(session.exit_vehicle(world)=="No clear, loaded exit beside the vehicle" and session.driving,"exit rejects unloaded building collision")
 	world.structures.available=true
@@ -84,4 +86,5 @@ func run() -> void:
 	session.car.position.x=-1
 	check(not session.fleet.validate_snapshot(session.capture_snapshot()),"invalid live pose rejects save instead of removing vehicle")
 	check(session.restore_snapshot(PackedByteArray()) and session.car==null,"absent section removes old vehicle")
+	print("WORLD_VEHICLE failures=",failures)
 	world.free();quit(0 if failures==0 else 1)

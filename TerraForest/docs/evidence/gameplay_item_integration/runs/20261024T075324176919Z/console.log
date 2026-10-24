@@ -1,0 +1,132 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+SCRIPT ERROR: Parse Error: Preload file "res://addons/vehicle_runtime/vehicle_icon.svg" has no resource loaders (unrecognized file extension).
+   at: GDScript::reload (res://addons/player_runtime/item_icons.gd:9)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/player_runtime/inventory_slot.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/player_runtime/player_hud.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://tests/bundle_pickups.gd:0)
+ERROR: Failed to load script "res://tests/bundle_pickups.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+PASS bundled inventory, pickup schemas and every dropped model initialize
+PASS inventory and pickups share snapshot registration
+PASS drop item 1 through native stack transfer
+PASS drop item 2 through native stack transfer
+PASS drop item 3 through native stack transfer
+PASS drop item 4 through native stack transfer
+PASS grant fixture item 101
+PASS drop item 101 through native stack transfer
+PASS grant fixture item 102
+PASS drop item 102 through native stack transfer
+PASS grant fixture item 103
+PASS drop item 103 through native stack transfer
+PASS grant fixture item 104
+PASS drop item 104 through native stack transfer
+PASS grant fixture item 201
+PASS drop item 201 through native stack transfer
+PASS grant fixture item 202
+PASS drop item 202 through native stack transfer
+PASS grant fixture item 203
+PASS drop item 203 through native stack transfer
+PASS grant fixture item 204
+PASS drop item 204 through native stack transfer
+PASS grant fixture item 205
+PASS drop item 205 through native stack transfer
+PASS grant fixture item 206
+PASS drop item 206 through native stack transfer
+PASS grant fixture item 207
+PASS drop item 207 through native stack transfer
+PASS grant fixture item 208
+PASS drop item 208 through native stack transfer
+PASS grant fixture item 209
+PASS drop item 209 through native stack transfer
+PASS grant fixture item 210
+PASS drop item 210 through native stack transfer
+PASS grant fixture item 211
+PASS drop item 211 through native stack transfer
+PASS grant fixture item 301
+PASS drop item 301 through native stack transfer
+PASS grant fixture item 302
+PASS drop item 302 through native stack transfer
+PASS grant fixture item 303
+PASS drop item 303 through native stack transfer
+PASS drop item 401 through native stack transfer
+PASS grant fixture item 212
+PASS drop item 212 through native stack transfer
+PASS grant fixture item 501
+PASS drop item 501 through native stack transfer
+PASS batched item 1 has actual visible geometry
+PASS batched item 2 has actual visible geometry
+PASS batched item 3 has actual visible geometry
+PASS batched item 4 has actual visible geometry
+PASS batched item 101 has actual visible geometry
+PASS batched item 102 has actual visible geometry
+PASS batched item 103 has actual visible geometry
+PASS batched item 104 has actual visible geometry
+PASS batched item 201 has actual visible geometry
+PASS batched item 202 has actual visible geometry
+PASS batched item 203 has actual visible geometry
+PASS batched item 204 has actual visible geometry
+PASS batched item 205 has actual visible geometry
+PASS batched item 206 has actual visible geometry
+PASS batched item 207 has actual visible geometry
+PASS batched item 208 has actual visible geometry
+PASS batched item 209 has actual visible geometry
+PASS batched item 210 has actual visible geometry
+PASS batched item 211 has actual visible geometry
+PASS batched item 301 has actual visible geometry
+PASS batched item 302 has actual visible geometry
+PASS batched item 303 has actual visible geometry
+PASS batched item 401 has actual visible geometry
+PASS batched item 212 has actual visible geometry
+PASS batched item 501 has actual visible geometry
+PASS occluded ore cannot be collected
+PASS collect item 1 without respawn
+PASS collect item 2 without respawn
+PASS collect item 3 without respawn
+PASS collect item 4 without respawn
+PASS collect item 101 without respawn
+PASS collect item 102 without respawn
+PASS collect item 103 without respawn
+PASS collect item 104 without respawn
+PASS collect item 201 without respawn
+PASS collect item 202 without respawn
+PASS collect item 203 without respawn
+PASS collect item 204 without respawn
+PASS collect item 205 without respawn
+PASS collect item 206 without respawn
+PASS collect item 207 without respawn
+PASS collect item 208 without respawn
+PASS collect item 209 without respawn
+PASS collect item 210 without respawn
+PASS collect item 211 without respawn
+PASS collect item 301 without respawn
+PASS collect item 302 without respawn
+PASS collect item 303 without respawn
+PASS collect item 401 without respawn
+PASS collect item 212 without respawn
+PASS collect item 501 without respawn
+SCRIPT ERROR: Invalid access to property or key 'prepared_snapshot_components' on a base object of type 'Nil'.
+   at: _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+   GDScript backtrace (most recent call first):
+       [0] _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+       [1] _restore (res://addons/world_runtime/world_persistence.gd:110)
+       [2] run (res://tests/bundle_pickups.gd:44)
+FAIL compound restore exactly recovers uncollected items and inventory
+SCRIPT ERROR: Invalid access to property or key 'prepared_snapshot_components' on a base object of type 'Nil'.
+   at: _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+   GDScript backtrace (most recent call first):
+       [0] _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+       [1] _restore (res://addons/world_runtime/world_persistence.gd:110)
+       [2] run (res://tests/bundle_pickups.gd:46)
+FAIL compound restore exactly recovers collected items and tool wear
+SCRIPT ERROR: Invalid access to property or key 'prepared_snapshot_components' on a base object of type 'Nil'.
+   at: _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+   GDScript backtrace (most recent call first):
+       [0] _advance_restore (res://addons/world_runtime/world_persistence.gd:98)
+       [1] _restore (res://addons/world_runtime/world_persistence.gd:110)
+       [2] run (res://tests/bundle_pickups.gd:48)
+BUNDLE_PICKUPS failures=2

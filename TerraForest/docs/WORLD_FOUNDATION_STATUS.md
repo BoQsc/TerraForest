@@ -1,3 +1,31 @@
+## Carried terrain, repair hammer and vehicle actions - 2026-10-24
+
+Mined topsoil, stone and ores now place paid native terrain samples with right
+mouse. One carried unit creates one recoverable sample; occupied stamps refund
+through the saved native inbox. Neighboring solid material is preserved. Item 3
+keeps its saved identity and is now the repair hammer: left mouse attacks, right
+mouse repairs damaged blocks/objects/vehicles at animation contact. It no longer
+selects construction controls. Session offers a saved, optional targeting outline
+for every held tool/weapon. Building materials retain their own placement controls.
+
+ESC / Developer lists searchable physical item pickups and an actual vehicle
+spawn action; free spawning requires development mode. Vehicle item 501 uses the
+ordinary native inventory, dropped-stack and container formats, preserving
+structural damage through pickup/storage/deployment. Tap E retains entry; hold E
+opens Enter / Pick up actions with live identity/range/occlusion checks. E exits
+at any speed when an exit capsule fits in loaded space. Unoccupied vehicles keep
+physics/momentum, remain resident while coasting and park once grounded/stopped.
+
+Debug/release builds, native conservation/save checks, real input/UI/vehicle
+integration, package runtime and grass continuity pass. Retained failures,
+reproduction and inspected captures: [item integration evidence](evidence/gameplay_item_integration/README.md).
+This closes the requested interaction implementation. It does not qualify total
+frame cost, large-scale terraforming, vehicle cosmetic-dent persistence or final
+interaction feel. Existing dents were already transient; structural durability is
+preserved. Revisit balance/hold duration on play feedback and measure combined
+travel/streaming/coasting costs before performance acceptance. Existing world
+quality and navigation requirements below remain open.
+
 ## Grass continuity during placement and mining - 2026-10-24
 
 The recurring edit-triggered grass blink had a separate native path from the

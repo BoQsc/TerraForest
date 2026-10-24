@@ -126,7 +126,7 @@ func run() -> void:
 
 
 	# Empty slots and resources are equipment states, never editor mode selectors.
-	check(game.player_hud.CATALOG=={1:"Pickaxe",2:"Hatchet",3:"Building hammer",4:"Assembly tool"},"saved item IDs now identify four distinct gameplay tools")
+	check(game.player_hud.CATALOG=={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool"},"saved item IDs retain four distinct gameplay tools")
 	check(inv.transfer(9,30,1,inv.snapshot().revision).ok,"move equipped pickaxe out of belt")
 	game.player_hud.refresh()
 	check(game.equipped_tool==0 and game.tool_view.current==0,"moving the equipped tool away puts it down")
@@ -157,6 +157,8 @@ func run() -> void:
 	belt_alt=InputEventKey.new();belt_alt.physical_keycode=KEY_ALT;Input.parse_input_event(belt_alt);await process_frame
 	check(game.player_hud.active_slot==9 and game.equipped_tool==0 and not game.session_menu.visible_ui(),"clicking empty belt slot selects empty hands")
 	game.player_hud.equip_item(3);await process_frame
+	check(not game.structure_mode and game.session_menu.developer_hud.context_slot()==-1,"repair hammer has no construction controls")
+	game.player_hud.equip_item(101);await process_frame
 	var alt:=InputEventKey.new();alt.pressed=true;alt.physical_keycode=KEY_ALT;Input.parse_input_event(alt);await process_frame
 	var detailed:Button
 	for control in game.session_menu.developer_hud.content.get_children():
@@ -164,7 +166,7 @@ func run() -> void:
 	check(detailed!=null,"building tool owns its detailed settings action")
 	if detailed!=null:await click_control(detailed)
 	alt=InputEventKey.new();alt.physical_keycode=KEY_ALT;Input.parse_input_event(alt);await process_frame
-	check(game.session_menu.workspace and game.equipped_tool==3 and game.structure_mode and not game.player_hud.inventory_open,"Building page equips owned hammer and exposes paid controls")
+	check(game.session_menu.workspace and game.equipped_tool==101 and game.structure_mode and not game.player_hud.inventory_open,"Building page keeps owned building material and exposes paid controls")
 	check(game.construction_palette.panel.is_visible_in_tree() and not game.construction_palette.frontage_button.is_visible_in_tree(),"gameplay building shows shape/material/rotation/prefab without editor generation")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/unified_tools/building.png")

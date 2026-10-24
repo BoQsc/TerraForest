@@ -10,7 +10,7 @@ var displayed_developer:=false
 var title: Label
 func context_slot()->int:
 	if game.session_menu.developer:return game.player_hud.developer_slot
-	if game.equipped_tool==3:return 3
+	if game.equipped_tool in game.player_hud.MATERIALS:return 3
 	if game.equipped_tool==4:return 4
 	if game.ground_mode:return 5
 	return -1

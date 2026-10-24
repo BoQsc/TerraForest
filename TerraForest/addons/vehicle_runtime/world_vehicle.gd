@@ -21,6 +21,8 @@ var _scene_requested:=false
 var profile_install:=false
 var install_timings: Dictionary={}
 var interaction_available: Callable
+var last_spawn_identity:=0
+var coasting:Dictionary={}
 func can_interact() -> bool:
 	return not interaction_available.is_valid() or interaction_available.call()
 func request_scene() -> void:
@@ -57,6 +59,7 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=storage.decode_fleet(data)
 	if not decoded.ok:return false
 	if not fleet.restore_storage_snapshot(data):return false
+	coasting.clear()
 	if driving:
 		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
 		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
@@ -106,7 +109,27 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	# This includes the support immediately beneath the parked vehicle.
 	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
-func spawn(world: Node) -> String:
+func spawn(world: Node,carried_slot:int=-1) -> String:
+	last_spawn_identity=0
+	if not can_interact():return "Vehicle interaction unavailable"
+	var inventory:RefCounted
+	var state:Dictionary={}
+	if carried_slot<0:
+		if "session_menu" in world and not world.session_menu.developer:return "Equip an owned vehicle item to place it"
+	else:
+		inventory=world.player_hud.inventory;state=inventory.snapshot()
+		if carried_slot>=32 or state.slots[carried_slot].item!=501:return "Equip an owned vehicle item to place it"
+	var message:=_spawn(world)
+	if last_spawn_identity==0:return message
+	if carried_slot>=0:
+		var row:Dictionary=state.slots[carried_slot]
+		if not inventory.consume(carried_slot,1,state.revision).ok:
+			remove_vehicle(last_spawn_identity);return "Inventory changed; vehicle placement cancelled"
+		if row.wear>0:world.world_attack.durability.hit("vehicle:%d"%last_spawn_identity,300,row.wear)
+	if "changed_since_save" in world.terrain:world.terrain.changed_since_save=true
+	if "player_hud" in world:world.player_hud.refresh()
+	return message
+func _spawn(world: Node) -> String:
 	if not can_interact(): return "Vehicle interaction unavailable"
 	if not fleet_enabled and is_instance_valid(car): return "Vehicle already placed · E nearby to enter"
 	request_scene()
@@ -130,10 +153,56 @@ func spawn(world: Node) -> String:
 	if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): return "Vehicle space is obstructed"
 	if fleet_enabled:return activation.place(world,Transform3D(heading,at))
 	if not _install_vehicle(world,Transform3D(heading,at)): return "Vehicle resource could not be loaded"
+	last_spawn_identity=car_identity
 	return "Vehicle placed · E nearby to enter · F5 saves world"
-func enter(world: Node) -> bool:
+func candidate(world:Node)->int:
+	if driving or not can_interact():return 0
+	var result:Dictionary=fleet.query_near(world.player.global_position,3.5,16,4096)
+	if not result.ok or not result.complete or result.get("truncated",false):return 0
+	for id:int in result.ids:
+		if reachable(world,id):return id
+	return 0
+func reachable(world:Node,id:int)->bool:
+	var record:Dictionary=fleet.get_record(id)
+	if not record.get("present",false):return false
+	var at:Vector3=record.pose.origin
+	var body:RigidBody3D=activation.residents.get(id) if fleet_enabled else car
+	if is_instance_valid(body):at=body.global_position
+	if world.player.global_position.distance_to(at)>3.5:return false
+	var exclusions:Array[RID]=[world.player.get_rid()]
+	if is_instance_valid(body):exclusions.append(body.get_rid())
+	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,at,7,exclusions)
+	var hit:Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
+	if hit.is_empty():return true
+	return fleet_enabled and hit.collider==activation.parked_view and activation.parked_view.identity_for_body(hit.rid)==id
+func remove_vehicle(id:int)->bool:
+	if not fleet.remove(id):return false
+	coasting.erase(id)
+	if fleet_enabled:
+		if activation.residents.has(id):activation.retire(id)
+		activation.refresh_parked(_world)
+	elif car_identity==id:
+		car.collision_layer=0;car.collision_mask=0;car.freeze=true;car.queue_free();car=null;car_identity=0
+	return true
+func pickup(world:Node,id:int)->String:
+	if driving or not can_interact() or not reachable(world,id):return "Vehicle is no longer reachable"
+	var body:RigidBody3D=activation.residents.get(id) if fleet_enabled else car
+	if is_instance_valid(body) and body.linear_velocity.length()>.5:return "Wait for the vehicle to stop before picking it up"
+	var inventory:RefCounted=world.player_hud.inventory
+	var state:Dictionary=inventory.snapshot()
+	var key:="vehicle:%d"%id
+	var wear:int=world.world_attack.durability.damage(key,300)
+	if not inventory.grant_durable(501,wear,state.revision).ok:return "Make an empty inventory slot for the vehicle"
+	if not remove_vehicle(id):
+		inventory.restore(state,inventory.snapshot().revision);return "Vehicle pickup cancelled"
+	world.world_attack.durability.forget(key)
+	world.terrain.changed_since_save=true;world.player_hud.refresh()
+	return "Vehicle picked up · equip it and right mouse to place"
+func enter(world: Node,expected:int=0) -> bool:
 	if not can_interact(): return false
-	if fleet_enabled and not driving:activation.select_for_entry(world.player.global_position)
+	if expected>0 and not reachable(world,expected):return false
+	if fleet_enabled and not driving:activation.select_for_entry(world.player.global_position,expected)
+	if expected>0 and car_identity!=expected:return false
 	if driving or not is_instance_valid(car) or world.player.global_position.distance_to(car.position)>3.5: return false
 	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,car.position,7,[world.player.get_rid(),car.get_rid()])
 	if not world.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(): return false
@@ -142,13 +211,13 @@ func enter(world: Node) -> bool:
 	_player_layer=world.player.collision_layer;_player_mask=world.player.collision_mask
 	world.player.collision_layer=0;world.player.collision_mask=0
 	world.player.velocity=Vector3.ZERO
-	car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
+	coasting.erase(car_identity);car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
 	driving=true
 	return true
 func safe_exit_position(world: Node) -> Vector3:
 	if not is_instance_valid(car): return Vector3.INF
-	for side in [1.0,-1.0]:
-		var desired: Vector3=car.position+car.global_basis.x*side*2.8
+	for offset:Vector3 in [Vector3(2.8,0,0),Vector3(-2.8,0,0),Vector3(0,0,-3.8),Vector3(3.8,0,0),Vector3(-3.8,0,0)]:
+		var desired: Vector3=car.position+car.global_basis*offset
 		var ray:=PhysicsRayQueryParameters3D.create(desired+Vector3.UP*2,desired-Vector3.UP*3,3,[car.get_rid()])
 		var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
 		if hit.is_empty() or hit.normal.dot(Vector3.UP)<0.7: continue
@@ -163,11 +232,10 @@ func safe_exit_position(world: Node) -> Vector3:
 func exit_vehicle(world: Node) -> String:
 	if not can_interact(): return "Vehicle interaction unavailable"
 	if not driving: return ""
-	if car.linear_velocity.length()>1.5: return "Stop the vehicle before exiting"
 	var feet:=safe_exit_position(world)
 	if not feet.is_finite(): return "No clear, loaded exit beside the vehicle"
-	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
-	world.player.position=feet;world.player.velocity=Vector3.ZERO
+	car.set_controls_enabled(false);coasting[car_identity]=car
+	world.player.position=feet;world.player.velocity=car.linear_velocity
 	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
 	world.camera.transform=_camera_local;driving=false
 	Engine.physics_ticks_per_second=_physics_ticks
@@ -179,6 +247,11 @@ func _exit_tree() -> void:
 	_take_requested_scene()
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:
+	for id:int in coasting.keys():
+		var body:RigidBody3D=coasting[id]
+		if not is_instance_valid(body):coasting.erase(id);continue
+		if body.sleeping or (body.loaded_wheels>=2 and body.linear_velocity.length()<.15 and body.angular_velocity.length()<.1):
+			body.freeze=true;body.set_physics_process(false);coasting.erase(id)
 	if fleet_enabled:activation.update(world,delta)
 	elif is_instance_valid(car):
 		_obstacle_sync_time-=delta

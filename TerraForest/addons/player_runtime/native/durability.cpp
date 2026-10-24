@@ -7,6 +7,8 @@ namespace terraforest {
 using namespace godot;
 void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("hit","key","maximum","amount"),&NativeWorldDurability::hit);
+    ClassDB::bind_method(D_METHOD("repair","key","maximum","amount"),&NativeWorldDurability::repair);
+    ClassDB::bind_method(D_METHOD("damage","key","maximum"),&NativeWorldDurability::damage);
     ClassDB::bind_method(D_METHOD("forget","key"),&NativeWorldDurability::forget);
     ClassDB::bind_method(D_METHOD("record_count"),&NativeWorldDurability::record_count);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeWorldDurability::capture_storage_snapshot);
@@ -22,6 +24,19 @@ Dictionary NativeWorldDurability::hit(String key,int64_t maximum,int64_t amount)
     e.damage=std::min(e.health,e.damage+int(amount));out["ok"]=true;out["remaining"]=e.health-e.damage;out["maximum"]=e.health;out["destroyed"]=e.damage==e.health;return out;
 }
 void NativeWorldDurability::forget(String key){damaged.erase(key.utf8().get_data());}
+int64_t NativeWorldDurability::damage(String key,int64_t maximum) const {
+    auto at=damaged.find(key.utf8().get_data());
+    return at==damaged.end()||at->second.health!=maximum?0:at->second.damage;
+}
+Dictionary NativeWorldDurability::repair(String key,int64_t maximum,int64_t amount){
+    Dictionary out;out["ok"]=false;std::string k=key.utf8().get_data();
+    if(!valid(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
+    auto at=damaged.find(k);
+    if(at==damaged.end()||at->second.health!=maximum){out["reason"]="Already fully repaired";return out;}
+    int restored=std::min(at->second.damage,int(amount));at->second.damage-=restored;
+    out["ok"]=true;out["restored"]=restored;out["remaining"]=maximum-at->second.damage;out["maximum"]=maximum;
+    if(!at->second.damage)damaged.erase(at);return out;
+}
 PackedByteArray NativeWorldDurability::capture_storage_snapshot() const {
     int64_t size=8;for(const auto &e:damaged)size+=12+e.first.size();
     PackedByteArray b;b.resize(size);b.encode_u32(0,0x31444654);b.encode_u32(4,damaged.size());int64_t at=8;

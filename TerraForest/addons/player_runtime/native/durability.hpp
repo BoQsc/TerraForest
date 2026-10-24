@@ -14,6 +14,8 @@ class NativeWorldDurability : public godot::RefCounted {
 protected: static void _bind_methods();
 public:
     godot::Dictionary hit(godot::String key,int64_t maximum,int64_t amount);
+    godot::Dictionary repair(godot::String key,int64_t maximum,int64_t amount);
+    int64_t damage(godot::String key,int64_t maximum) const;
     void forget(godot::String key);
     int64_t record_count() const {return damaged.size();}
     godot::PackedByteArray capture_storage_snapshot() const;

@@ -12,7 +12,7 @@ const RECIPES=[
 	{"title":"Woven footwraps","costs":[204,3],"outputs":[303,1]},
 	{"title":"Pickaxe","costs":[201,3,102,2],"outputs":[1,1]},
 	{"title":"Hatchet","costs":[201,2,102,2],"outputs":[2,1]},
-	{"title":"Building hammer","costs":[201,2,102,3],"outputs":[3,1]},
+	{"title":"Repair hammer","costs":[201,2,102,3],"outputs":[3,1]},
 	{"title":"Assembly tool","costs":[201,2,102,2],"outputs":[4,1]},
 	{"title":"Water bucket · 2 metal","costs":[104,2],"outputs":[401,1]}
 ]

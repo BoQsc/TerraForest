@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS world scripts parse
+PASS native tool wear
+PASS stale wear rejected
+PASS wear moves with belt to backpack drag
+PASS worn tool deposits
+PASS chest save restores wear
+PASS withdraw preserves wear
+PASS same-type worn tools swap without repairing
+PASS legacy tools load at full durability
+PASS legacy chest migrates without loss
+PASS invalid wear rejected atomically
+PASS exhausted tool breaks and clears slot
+PASS untouched world allocates no health records
+PASS independent target durability
+PASS partial damage survives save
+PASS lethal hit requests destruction
+PASS destroyed target releases record
+PASS bad damage save preserves live state
+PASS ten thousand damaged targets persist sparsely
+DAMAGE_1000_HITS_AT_10000_RECORDS_US=2435
+PASS damage capacity fails without erasing existing health
+PASS existing targets remain damageable at capacity
+ATTACK_DURABILITY checks=21 failures=0
