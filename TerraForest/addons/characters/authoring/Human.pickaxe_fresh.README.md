@@ -37,9 +37,10 @@ The blockout is an authored interpretation for a high working target, not
 motion capture or a claim of physical/visual realism. Realism needs user review.
 
 Ordinary gameplay loads this library by default, using its 1.7 s duration and
-frame-50 contact. The same hold remains active while moving. The temporary-world
+frame-50 contact. A separate `Human.pickaxe_locomotion.res` now supplies movement
+with the same fixed grip; see `Human.pickaxe_locomotion.README.md`. The temporary-world
 launcher now uses normal runtime routing with no replacement subclass.
-Dedicated lower-body locomotion, precise mesh-tip/target alignment and further
+Locomotion appearance review, precise mesh-tip/target alignment and further
 view/framing or finger/sleeve polish remain follow-ups, rather than changes to
 the motion the user accepted.
 At the raised pose, the tool head passes above the first-person camera frame;

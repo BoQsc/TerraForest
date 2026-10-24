@@ -44,11 +44,11 @@ hammer, assembly tool and water bucket previews remain available.
 Empty toolbelt slots now use `FP_Unarmed_Idle` and a separate
 `FP_Unarmed_Punch`. The right fist closes before extension, contacts at 0.467 s and
 returns to neutral over a 1.133 s cycle. The resting hands turn inward with
-loosely curved fingers. Empty-hand reach is 0.72 m, matching the visible arm-length stroke;
+loosely curved fingers. Empty-hand reach is 1.65 m as a gameplay allowance;
 equipped tools retain their existing 3.5 m reach. Both hands use repaired finger skin weights
 while empty; equipping a tool restores the original mesh and grip weights. The
 first two punches were rejected for broken deformation and then an instant,
-flat-screen feel. This revision is awaiting appearance review. Left mouse keeps the existing bare-hand
+flat-screen feel. The current revision is accepted for now. Left mouse keeps the existing bare-hand
 damage/target rules and consumes no tool wear. Placement remains a separate
 gesture. Original third-person body locomotion is retained while moving.
 See [unarmed authoring](authoring/Human.unarmed.README.md) for rebuild and review.
@@ -160,9 +160,10 @@ door-destruction save/reopen gate is still required.
 The selected pickaxe action is the fresh downward stroke accepted in a live
 playtest on 2026-10-24 (`FP_Pickaxe_Fresh_Swing`). Both hands keep fixed transforms
 on the shaft through its 1.7-second cycle. Contact occurs at frame 50 of 60 FPS
-(0.833 seconds), and recovery returns to `FP_Pickaxe_Fresh_Idle`. That same hold
-stays active during movement to avoid switching hand stations. Dedicated lower
-body locomotion is a documented follow-up. Empty hands continue to rest between
+(0.833 seconds), and recovery returns to `FP_Pickaxe_Fresh_Idle`. Separate
+`Human.pickaxe_locomotion.res` clips now add walking/running/jumping while keeping
+both hands at the accepted shaft stations. Movement appearance awaits playtest.
+Empty hands continue to rest between
 deliberate actions. The original model, 71 source clips, axe and placement remain.
 
 `pickaxe_swing="pullback"` selects the former default;

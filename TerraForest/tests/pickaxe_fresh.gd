@@ -48,7 +48,7 @@ func run()->void:
 	view.action_remaining=0;view.swing(271)
 	check(view.active_clip=="FP_Pickaxe_Fresh_Swing","ordinary swing uses the accepted default after pose evaluation")
 	view.cancel_swing()
-	check(view._motion_clip("Walk")=="FP_Pickaxe_Fresh_Idle" and view._motion_clip("Run")=="FP_Pickaxe_Fresh_Idle" and view._motion_clip("Jump")=="FP_Pickaxe_Fresh_Idle","movement retains the approved hold without changing hand stations")
+	check(view._motion_clip("Walk")=="FP_Pickaxe_Fresh_Walk" and view._motion_clip("Run")=="FP_Pickaxe_Fresh_Run" and view._motion_clip("Jump")=="FP_Pickaxe_Fresh_Jump","movement selects dedicated fixed-grip locomotion clips")
 	view.pickaxe_swing="pullback";view.equip(1)
 	check(view.swing_profile().clip=="FP_Pickaxe_SidePullback_Swing","previous pullback remains available as an explicit alternate")
 	var report:={"status":"USER ACCEPTED fixed-grip default, 2026-10-24","checks":checks,"failures":failures,"grip_error":grip_error,"fixed_error":fixed_error,"seam_error":seam_error,"largest_bone_step_degrees":largest_step,"right_hand_slide_m":station_travel,"tip_descent_m":tips[32].y-tips[50].y,"scope":"Runtime skeleton, mesh and default selection integrity. World contact is checked separately by pickaxe_fresh_world."}

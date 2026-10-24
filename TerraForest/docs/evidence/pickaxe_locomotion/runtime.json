@@ -1,0 +1,34 @@
+{
+  "blend_angle_degrees": 0.978788092734218,
+  "blend_grip_error": 0.0168481674045324,
+  "blend_position_error_m": 0.00433382019400597,
+  "checks": 24,
+  "clips": {
+    "Jump": {
+      "finger_error": 0.000000669060455038561,
+      "grip_error": 0.00000250857851824549,
+      "head_travel": "(0.0, 0.036665, 0.005645)",
+      "max_half_frame_rotation_degrees": 5.08584679467706,
+      "root_error": 0.0,
+      "seam_error": 0.0
+    },
+    "Run": {
+      "finger_error": 0.000000517104638220189,
+      "grip_error": 0.0000350437294400763,
+      "head_travel": "(0.075087, 0.053319, 0.013841)",
+      "max_half_frame_rotation_degrees": 7.0214656295112,
+      "root_error": 0.0,
+      "seam_error": 0.0000000843759764279639
+    },
+    "Walk": {
+      "finger_error": 0.000000596337429215055,
+      "grip_error": 0.00000843238558445591,
+      "head_travel": "(0.046932, 0.033162, 0.008659)",
+      "max_half_frame_rotation_degrees": 4.26590392915818,
+      "root_error": 0.0,
+      "seam_error": 0.0
+    }
+  },
+  "failures": 0,
+  "scope": "Rig, interpolation and velocity dispatch. Appearance needs playtest; world motor checked separately."
+}

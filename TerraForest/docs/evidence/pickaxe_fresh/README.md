@@ -3,7 +3,8 @@
 After trying this version in the live temporary world, the user said it was
 definitely better and explicitly requested default selection and a commit.
 The default is now `FP_Pickaxe_Fresh_Swing` with its matching hold, 1.7-second
-cycle and frame-50 (0.833 s) contact. Movement retains that fixed hold. The old
+cycle and frame-50 (0.833 s) contact. A subsequent separate locomotion library adds
+movement without changing this accepted idle/swing library or hand stations. The old
 pullback remains an explicit alternate. Historical "pending", "current default"
 and "do not commit" labels below/in the retained media describe the earlier
 review stage; this acceptance supersedes them.
@@ -55,7 +56,7 @@ shoulder-side placement were revised before the delivered render. The final
 raised head still goes above the first-person frame, and the lower grip falls
 below the low hold/contact frame. The side view exposes the full movement.
 The user accepted the movement after hands-on review. Further wrist/sleeve finish,
-camera composition and dedicated lower-body locomotion are documented follow-ups;
+camera composition and user review of the new locomotion are documented follow-ups;
 they were not silently added to the version the user accepted.
 
 The original nine runtime integrity checks covered default isolation, independent clip duration,

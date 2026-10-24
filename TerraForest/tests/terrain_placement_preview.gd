@@ -52,6 +52,23 @@ func run()->void:
 	check(preview.visible and preview.caption.visible and not game.target_overlay.enabled and preview.global_position==preview.result.position,"placement preview works with optional debug overlay disabled and follows the resolved target")
 	check((preview.global_position-preview.result.surface).dot(preview.result.normal)>=.35 and preview.global_position.distance_to(Vector3(cell))<=.36,"compact marker stays outside terrain without moving its paid lattice sample")
 	check(preview.mesh.surface_get_array_len(0)==24 and preview.mesh.get_aabb().size.is_equal_approx(Vector3.ONE*.7) and game.terrain_placement.STAMP_RADIUS==.75,"compact octahedron has eight faces without shrinking the actual terrain stamp")
+	var steady_surface:Vector3=preview.result.surface
+	var ready_frames:=0;var reason_counts:Dictionary={};var requests_before:int=game.terrain_placement.sequence
+	for frame in 60:
+		game.camera.look_at(steady_surface+Vector3(sin(frame*.8)*.22,0,cos(frame*.8)*.22))
+		var moving:Dictionary=game.terrain_placement.target(game)
+		if moving.get("ok",false):ready_frames+=1
+		else:
+			var reason:String=moving.get("reason","Hidden");reason_counts[reason]=int(reason_counts.get(reason,0))+1
+		await process_frame
+	print("MOVING_TERRAIN_TARGET ",JSON.stringify({"ready":ready_frames,"frames":60,"new_queries":game.terrain_placement.sequence-requests_before,"reasons":reason_counts}))
+	check(ready_frames>=58 and game.terrain_placement.sequence==requests_before,"continuous aim movement keeps a warm terrain target green without worker roundtrips")
+	game.camera.look_at(steady_surface)
+	await wait_for(func():return game.terrain_placement.target(game).get("ok",false),3)
+	refresh();cell=preview.result.cell
+	for field in ["epoch","revision","ticket"]:
+		var stale:Dictionary=game.terrain_placement.cached.duplicate(true);stale[field]-=1
+		check(not game.terrain_placement.matches(stale,game.terrain),"cached mask invalidates on changed "+field)
 	var inventory:PackedByteArray=hud.inventory.capture_storage_snapshot();var revision:int=game.terrain.density_revision
 	for i in 10:refresh()
 	check(inventory==hud.inventory.capture_storage_snapshot() and revision==game.terrain.density_revision and not game.terrain.pending_edit,"preview probing never spends material or edits terrain")
@@ -61,12 +78,32 @@ func run()->void:
 	hud.equip_item(211);refresh();await capture("topsoil_ready")
 	var before:=amount(211)
 	var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_RIGHT;click.pressed=true
+	var placement=game.terrain_placement
+	for cancellation in ["focus","slot","aim","timeout","world"]:
+		placement.cached={}
+		game._unhandled_input(click)
+		check(not placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"cold click buffers once without early payment: "+cancellation)
+		var camera_basis:Basis=game.camera.global_basis
+		match cancellation:
+			"focus":game.app_focused=false
+			"slot":hud.equip_item(201)
+			"aim":game.camera.rotate_y(.2)
+			"timeout":placement.queued.deadline=Time.get_ticks_msec()-1
+			"world":placement.queued.epoch-=1
+		placement.update(game)
+		check(placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"changed context cancels the buffered click without spending: "+cancellation)
+		game.app_focused=true;hud.equip_item(211);game.camera.global_basis=camera_basis
+	placement.cached={}
 	game._unhandled_input(click)
+	check(not placement.queued.is_empty() and amount(211)==before,"first click while the terrain query is pending is retained")
+	check(await wait_for(func():return not game.mining_rewards.payment.is_empty(),3),"buffered first click submits automatically when its target resolves")
 	var payment:Dictionary=game.mining_rewards.payment
 	check(not payment.is_empty() and Vector3i(payment.packet.decode_s32(4),payment.packet.decode_s32(8),payment.packet.decode_s32(12))==cell and amount(211)==before-1,"real right click submits exactly the displayed cell and debits one topsoil")
 	refresh();check(not preview.visible and not preview.caption.visible,"preview hides while terrain edit is pending")
 	check(await wait_for(func():return not game.terrain.pending_edit,20) and not game.mining_rewards.failed,"paid terrain edit publishes normally")
 	check(amount(211)==before-1 and game.terrain.density_revision>revision,"the previewed placement adds terrain and spends exactly one unit")
+	for frame in 10:await process_frame
+	check(placement.queued.is_empty() and amount(211)==before-1,"buffered placement cannot repeat or charge twice")
 	game.terrain.density_ray_received.connect(func(value:Dictionary):if value.get("token")==91234:reply=value)
 	# Sample inside this lattice column, not directly on its X/Z edge where
 	# the existing floor-based material probe can read the neighbouring sample.
@@ -86,6 +123,20 @@ func run()->void:
 		game._unhandled_input(click)
 		check(await wait_for(func():return not game.terrain.pending_edit,20) and amount(211)==before-1 and game.terrain.density_revision>previous_revision,"right click grows player-placed topsoil without a no-op refund")
 		last_cell=stacked
+	game.player.position=Vector3(last_cell)+Vector3(0,0,2.5)
+	game.camera.global_position=Vector3(last_cell)+Vector3(0,2.8,.2);game.camera.look_at(Vector3(last_cell))
+	if check(await wait_for(func():return placement.target(game).get("ok",false),5),"rapid stacking starts from a valid topsoil target"):
+		var rapid_cell:Vector3i=placement.target(game).cell
+		before=amount(211)
+		game._unhandled_input(click)
+		game._unhandled_input(click)
+		check(game.terrain.pending_edit and not placement.queued.is_empty() and amount(211)==before-1,"second explicit click is retained while the first stamp publishes")
+		check(await wait_for(func():return amount(211)==before-2 and not game.terrain.pending_edit and placement.queued.is_empty(),20),"two quick clicks publish exactly two paid stamps without retrying input")
+		for frame in 10:await process_frame
+		check(amount(211)==before-2 and game.mining_rewards.payment.is_empty(),"rapid stacking does not repeat its buffered second click")
+		last_cell=rapid_cell+Vector3i.UP
+	game.camera.global_position=Vector3(last_cell)+Vector3(0,2.8,.2);game.camera.look_at(Vector3(last_cell))
+	await wait_for(func():return placement.target(game).get("ok",false),3);refresh()
 	await capture("topsoil_stack")
 	hud.inventory.grant(101,4,hud.inventory.snapshot().revision);hud.refresh();hud.equip_item(101)
 	game.camera.global_position=Vector3(last_cell)+Vector3(.15,2.8,.2);game.camera.look_at(Vector3(last_cell)+Vector3(.15,0,.15))
@@ -103,6 +154,7 @@ func run()->void:
 	game.camera.global_position=prop.global_position+Vector3(0,0,2.5)
 	for i in 3:await physics_frame
 	game.camera.look_at(prop.global_position);refresh()
+	await wait_for(func():return game.terrain_placement.target(game).get("reason")!="Checking terrain",3);refresh()
 	print("PLACEMENT_OBSTRUCTION ",JSON.stringify(preview.result))
 	inventory=hud.inventory.capture_storage_snapshot()
 	var notice:String=game._lake_notice;var notice_until:int=game._lake_notice_until

@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native terrain material 1 stamps
+PASS occupied stamp cannot repaint or deepen terrain
+PASS placed terrain retains material identity
+PASS native density/material binary roundtrip
+PASS re-mining 1 recovers one unit, never more
+PASS native terrain material 8 stamps
+PASS occupied stamp cannot repaint or deepen terrain
+PASS placed terrain retains material identity
+PASS native density/material binary roundtrip
+PASS re-mining 8 recovers one unit, never more
+PASS native terrain material 9 stamps
+PASS occupied stamp cannot repaint or deepen terrain
+PASS placed terrain retains material identity
+PASS native density/material binary roundtrip
+PASS re-mining 9 recovers one unit, never more
+PASS native terrain material 10 stamps
+PASS occupied stamp cannot repaint or deepen terrain
+PASS placed terrain retains material identity
+PASS native density/material binary roundtrip
+PASS re-mining 10 recovers one unit, never more
+PASS native carried vehicle retains damage
+PASS invalid vehicle damage cannot create an item
+PASS repair restores bounded native durability
+PASS full repair releases sparse record and cannot repeat
+TERRAIN_MATERIAL_ITEMS failures=0

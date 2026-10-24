@@ -31,6 +31,7 @@ func _ready()->void:
 func clear()->void:
 	hide();caption.hide();result={};remaining=0.0;last_item=-1
 func update(game:Node,delta:float)->void:
+	game.terrain_placement.update(game)
 	if not game.terrain_placement.active(game):clear();return
 	if last_item!=game.equipped_tool:remaining=0;last_item=game.equipped_tool
 	remaining-=delta

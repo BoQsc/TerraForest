@@ -1,3 +1,45 @@
+## Current work accepted as baseline, 2026-10-24
+
+After launching the updated playtest, the user explicitly accepted everything as
+the baseline and requested committing and pushing the current work. This includes
+terrain targeting responsiveness, buffered placement clicks, the compact marker,
+unarmed reach and the pickaxe locomotion follow-up with its source assets/tests.
+Earlier pending-review labels describe the previous review state; this acceptance
+supersedes them for the included baseline, not the documented technical backlog.
+Existing failures, limitations and unfinished world-quality work remain recorded.
+The terrain-placement approval prerequisite for road work is now satisfied;
+road adjustments are the next separate task, not part of this checkpoint.
+
+Checkpoint validation also exposed existing standalone add-on packaging failures:
+six bundle subcases omit the `demo/world.tscn` reference, and the dependency check
+misses `structures` in the world-generation dependency closure. The previous
+HEAD test source reproduces the same seven failures; the failing reference files
+and package implementation are unchanged. Exported-game verification above is
+separate from standalone add-on packaging. Retain this packaging backlog rather
+than altering the accepted runtime during the checkpoint. Revisit before the next
+standalone add-on distribution; close it with complete dependency/resource closure
+and all seven package test methods passing.
+[Reproduction](evidence/terrain_placement_responsiveness/baseline_package_check.json).
+
+## Moving terrain placement - accepted baseline, 2026-10-24
+
+Baseline `8249e0c0` includes the requested current-work checkpoint and 1.65 m
+unarmed reach. Subsequent terrain responsiveness changes are included in the
+new accepted baseline. The reported non-green octahedron is reproduced: an 8 cm cache threshold
+caused 46 worker queries and zero ready frames during 60 frames of moving aim.
+Native local empty-sample-mask reuse yields 60/60 ready frames with no new queries
+in the same test, without bypassing field freshness or collision checks.
+
+One explicit cold/pending-edit click is buffered briefly and revalidated before
+payment; changing focus, slot, aim, world or expiry cancels it. Native debug/release
+each pass 76 checks; the source and exported worlds pass 54, including two quick paid stamps,
+stacking and a grid block on the added soil. Planner/material/payment regressions
+pass. Export/startup and all 76 packaged native checks pass; source/package DLLs
+match. Ready/blocked and packaged-stack images were inspected. This is scoped engineering
+evidence, not a promise of gap-free terrain. The user has now accepted this
+baseline; road work can resume separately under the existing world-building rules.
+[Evidence, retained failures and limits](evidence/terrain_placement_responsiveness/README.md).
+
 ## Requested baseline and punch reach correction, 2026-10-24
 
 The user requested committing the current work as a baseline after correcting
@@ -119,7 +161,7 @@ is unqualified. Existing world-quality/navigation gates remain open.
 [Grounded revision evidence](evidence/impact_effects_grounded/README.md) and
 [original baseline evidence and retained failures](evidence/impact_effects/README.md).
 
-## Neutral hands and punch - third revision, not accepted, 2026-10-24
+## Neutral hands and punch - accepted for now, 2026-10-24
 
 Empty toolbelt slots now select a dedicated relaxed hand pose and straight right
 punch, replacing the placement gesture previously used for unarmed attacks.
@@ -155,13 +197,12 @@ and rest frames were inspected; the new preview shows normal and half speed.
 This block fixture does not qualify zombie/terrain appearance across all target
 distances and camera pitches. Earlier second-version evidence remains unaccepted.
 
-User appearance review of this revision remains open. Close third-person views
-still show coarse knuckle creases and shirt/shoulder clipping; they are not marked
-finished by the engineering tests. Close the motion/hand requirement after user
-review in play and the new preview; further mesh/wardrobe corrections require
-inspection from the affected angles before claiming that quality gate. The user
-subsequently authorized including this work in the baseline checkpoint, not closing
-these appearance requirements. The reach correction passes 19 real-world checks,
+The user subsequently said, "We accepted this for now," before requesting the
+pickaxe walking fix. This accepts the current empty-hand/punch baseline including
+the 1.65 m gameplay reach. Close third-person views still show coarse knuckle
+creases and shirt/shoulder clipping. Further mesh/wardrobe polish remains a known
+limitation; revisit when requested and inspect the affected angles before claiming
+it corrected. The reach correction passes 19 real-world checks,
 including comfortable-distance damage and out-of-range rejection, plus shared timing.
 [Unarmed preview and checks](evidence/human_unarmed/README.md).
 
@@ -181,7 +222,7 @@ timing instead of fitting it to the existing swing.
 After playing the fixed-grip version, the user explicitly called it better and
 requested making it default and committing. Ordinary runtime selection now uses
 that exact hold and stroke, with contact at frame 50 (0.833 s), a 1.7 s cycle and
-the same hold during movement. The former pullback remains an explicit alternate.
+initially a static hold during movement. The former pullback remains an explicit alternate.
 The temporary-world launcher uses ordinary runtime routing. Eleven skeleton,
 mesh and selection checks and thirteen graphical input/mining checks pass,
 including frame-50 excavation, single wear, recovery and cancellation. The
@@ -198,12 +239,35 @@ close them. They are not hidden by the passing pickaxe-specific checks.
 
 The raised head leaves the first-person frame and the low grip is partly cropped.
 Further wrist/sleeve finish and framing changes are deferred until requested
-after playing the accepted motion. Dedicated lower-body locomotion still needs
-clips that preserve the fixed upper-body grip, plus movement/third-person visual
-review. Precise physical mesh-tip alignment with arbitrary target distances is
+after playing the accepted motion. The walking follow-up below adds dedicated
+movement clips with the same fixed grip. Precise physical mesh-tip alignment with arbitrary target distances is
 not established by the ray-based contact test. Keep that distinction visible
 if contact alignment is revisited; it needs rendered target-impact evidence.
 [Fresh pickaxe blockout evidence](evidence/pickaxe_fresh/README.md).
+
+## Pickaxe walking motion - accepted baseline, 2026-10-24
+
+The accepted pickaxe's runtime route returned its static idle for Walk, Run and
+Jump, suppressing movement that the axe already displayed. A separate Blender
+library now supplies those three clips from the accepted hold, with restrained
+carriage motion and the original in-place lower-body gaits. Both hands and finger
+wraps remain fixed to the shaft. The accepted idle/swing files, contact timing
+and native body integration are unchanged.
+
+Twenty-four runtime checks pass for motion, seamless loops, fixed grips including
+between keys, velocity selection, stop/recovery and unchanged axe routing. Eight
+native-world checks confirm walking at 5.5 m/s, sprinting at 9.9 m/s, distinct
+movement selection and stopping at the accepted idle. Eleven accepted-swing and
+27 shared timing checks also pass, as do character runtime and the targeted bundle
+check. First/third-person runtime frames were inspected and a six-second preview
+was rendered. The 0.1-second crossfades have measured grip interpolation deviations
+up to 4.4 mm/one degree; within-clip grip transforms stay fixed. An initial world
+attempt failed due to an invalid temporary slot name; corrected runs pass.
+The user has now accepted the current work as the baseline, including these
+movement clips. The measured grip-blend deviation and existing rig finish remain
+documented limitations rather than new blockers for this checkpoint.
+See [locomotion authoring](../addons/characters/authoring/Human.pickaxe_locomotion.README.md).
+The preview and verification records are in [locomotion evidence](evidence/pickaxe_locomotion/README.md).
 
 ## Weighted pickaxe comparison - rejected and scrapped, 2026-10-24
 

@@ -1,4 +1,5 @@
 #include "terrain_planner.hpp"
+#include "terrain_placement_query.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/vector3i.hpp>
@@ -160,6 +161,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
 }
 }
 void NativeTerrainPlanner::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("placement_target","point","normal","origin","empty"),&NativeTerrainPlanner::placement_target);
     ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_navigation);
     ClassDB::bind_method(D_METHOD("requests_travel","focus","require_collision","velocity","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_travel);
     ClassDB::bind_method(D_METHOD("collision_region_ready","bounds","active_leaves"),&NativeTerrainPlanner::collision_region_ready);
@@ -168,6 +170,17 @@ void NativeTerrainPlanner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("coverage","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage);
     ClassDB::bind_method(D_METHOD("coverage_available","tiles","split_state","visible_cut"),&NativeTerrainPlanner::coverage_available);
     ClassDB::bind_method(D_METHOD("eviction_candidates","tiles","visible_cut","requested_keys"),&NativeTerrainPlanner::eviction_candidates);
+}
+Dictionary NativeTerrainPlanner::placement_target(Vector3 point,Vector3 normal,Vector3i origin,const PackedByteArray &empty) const {
+    Dictionary result;result["status"]="outside";
+    if(empty.size()!=16||origin.x<-2||origin.x>2000||origin.z<-2||origin.z>2000||origin.y<-2||origin.y>256)return result;
+    uint32_t mask[4];for(int index=0;index<4;index++)mask[index]=uint32_t(empty.decode_u32(index*4));
+    float coordinates[3]={point.x,point.y,point.z},direction[3]={normal.x,normal.y,normal.z};
+    int base[3]={origin.x,origin.y,origin.z},cell[3]{};
+    int status=select_terrain_placement(coordinates,direction,base,mask,cell);
+    if(status>=0)result["status"]=status==1?"hit":"miss";
+    if(status==1)result["cell"]=Vector3i(cell[0],cell[1],cell[2]);
+    return result;
 }
 bool NativeTerrainPlanner::collision_region_ready(AABB bounds,const Dictionary &active_leaves) const {
     Vector3 start=bounds.position,end=bounds.position+bounds.size;

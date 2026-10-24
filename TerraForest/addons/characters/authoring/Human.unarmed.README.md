@@ -6,7 +6,8 @@ hand deformation. Its evidence is retained under
 `unaccepted_v2/`: the user called the empty hands a useful baseline but explicitly
 did not accept them, and rejected the punch as instant, awkward and flat, like
 hitting UI. This third revision changes the rest pose, timing, body contribution
-and bare-hand interaction distance. User appearance acceptance is still pending.
+and bare-hand interaction distance. The user accepted the current baseline for now
+on 2026-10-24, including the subsequent 1.65 m gameplay reach adjustment.
 
 Blender-authored actions on the unchanged 59-bone R11 skeleton:
 
@@ -46,8 +47,9 @@ any tool restores the exact original body mesh. The accepted pickaxe is unchange
 
 Selecting an empty inventory/toolbelt slot equips item 0 and this neutral hold.
 Left mouse uses the existing world-attack pipeline with the new punch contact.
-Bare hands previously inherited the tools' 3.5 m query. Their reach is now 0.72 m,
-matching the visible fist surface at roughly 0.64 m with a small contact allowance.
+Bare hands previously inherited the tools' 3.5 m query. The first v3 reach of
+0.72 m was too close in play; current reach is 1.65 m as a gameplay allowance.
+The authored arm is unchanged and does not physically span that entire distance.
 The shared nearest-surface and occlusion query still checks the live target at
 impact for blocks, zombies, terrain and other eligible targets. Tool reach stays
 3.5 m; damage values and target permissions are unchanged. Empty hands do not

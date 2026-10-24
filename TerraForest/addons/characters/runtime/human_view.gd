@@ -10,6 +10,7 @@ const UNARMED_BODY = preload("res://addons/characters/runtime/assets/Human.unarm
 const PICKAXE_DIAGONAL = preload("res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res")
 const PICKAXE_PULLBACK = preload("res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res")
 const PICKAXE_FRESH = preload("res://addons/characters/runtime/assets/Human.pickaxe_fresh.res")
+const PICKAXE_LOCOMOTION = preload("res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res")
 const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
 const EQUIPMENT = {3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
@@ -63,6 +64,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("pickaxe_diagonal", PICKAXE_DIAGONAL)
 	animation_player.add_animation_library("pickaxe_pullback", PICKAXE_PULLBACK)
 	animation_player.add_animation_library("pickaxe_fresh", PICKAXE_FRESH)
+	animation_player.add_animation_library("pickaxe_locomotion", PICKAXE_LOCOMOTION)
 	animation_player.add_animation_library("hammer", HAMMER)
 	animation_player.add_animation_library("shovel", SHOVEL)
 	for clip in animation_player.get_animation_list():
@@ -126,9 +128,8 @@ func _motion_clip(action: String) -> String:
 		if third_person and action in ["Walk","Run","Jump"]:return action
 		return "FP_Unarmed_Punch" if action=="Swing" else "FP_Unarmed_Idle"
 	if current == 1 and diagonal_pickaxe and pickaxe_swing == "fresh":
-		# Keep the approved fixed grip during movement and recovery. The old
-		# locomotion clips place the hands at different stations on the shaft.
-		return "FP_Pickaxe_Fresh_Swing" if action == "Swing" else "FP_Pickaxe_Fresh_Idle"
+		# Movement clips share the approved hold's exact hand-to-shaft transforms.
+		return "FP_Pickaxe_Fresh_" + action if clips.has("FP_Pickaxe_Fresh_" + action) else "FP_Pickaxe_Fresh_Idle"
 	if current == 1 and diagonal_pickaxe and action == "Swing" and pickaxe_swing == "pullback":
 		return "FP_Pickaxe_SidePullback_Swing"
 	if current == 1 and diagonal_pickaxe and clips.has("FP_Pickaxe_Diagonal_" + action):
@@ -212,6 +213,9 @@ func _process(delta: float) -> void:
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"
 		elif speed > 0.15:
-			motion = "Run" if speed > 5.0 else "Walk"
+			# Native ground speeds are 5.5 walking / 9.9 sprinting. Preserve the
+			# other tools' cadence while selecting the new pickaxe walk correctly.
+			var run_speed:=6.5 if current==1 and diagonal_pickaxe and pickaxe_swing=="fresh" else 5.0
+			motion = "Run" if speed > run_speed else "Walk"
 	_play(_motion_clip(motion))
 	animation_player.advance(delta)

@@ -1,11 +1,12 @@
-# Empty hands and punching - third revision baseline
+# Empty hands and punching - accepted baseline for now
 
 The user requested a commit of current work as a baseline on 2026-10-24, after
 reporting that 0.72 m punching reach was impractically close. Reach is now 1.65 m;
 contact timing/damage and the tools' 3.5 m reach remain unchanged. This deliberate
 gameplay allowance does not extend the authored arm or claim physical contact at
 all allowed distances. Historical 0.72 m measurements below describe the preceding
-revision. Motion/mesh appearance gates remain open despite baseline authorization.
+revision. The user subsequently stated "We accepted this for now" on 2026-10-24.
+This accepts the current baseline; the known close-up mesh limitations below remain.
 
 The first delivery was rejected for unnatural motion/keying and broken hand
 deformation; its evidence is in `rejected_v1/`. The second was described as a
@@ -46,9 +47,7 @@ close-range selection and a distant air punch that cannot damage the block.
 The recorded block scenario does not certify zombie/terrain motion quality at
 all camera pitches or target distances.
 
-This revision is still awaiting user review. Functional passes and rendered
-frames do not establish natural motion or approve the rest pose. Coarse knuckle
-creases and shirt/shoulder clipping remain visible in close third-person views;
-wardrobe deformation has not been marked finished. The subsequent baseline commit
-was requested explicitly; it does not mark these appearance requirements finished.
+The current revision is accepted for now by the user. Coarse knuckle creases and
+shirt/shoulder clipping remain visible in close third-person views; this acceptance
+does not claim those mesh/wardrobe limitations were corrected.
 Rebuild details are in `addons/characters/authoring/Human.unarmed.README.md`.

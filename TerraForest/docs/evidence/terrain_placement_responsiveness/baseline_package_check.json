@@ -1,0 +1,15 @@
+{
+  "revision": "8249e0c019f5f7dbdeb37524073ea205435b78e8",
+  "scope": "HEAD test source against current checkout; package.py and failing world_runtime reference files are unchanged from HEAD.",
+  "tests": 7,
+  "failures": [
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='player_runtime')",
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='characters')",
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='world_runtime')",
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='volumetric_terrain')",
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='structures')",
+    "baseline_package_check.PackageTests.test_all_declared_bundles_cover_existing_literal_resources (addon='world_ecosystem')",
+    "baseline_package_check.PackageTests.test_dynamic_asset_paths_have_declared_addon_dependencies"
+  ],
+  "errors": []
+}

@@ -1,5 +1,9 @@
 # Topsoil targeting correction - review pending, 2026-10-24
 
+This page records the pre-responsiveness baseline. The follow-up replaces the
+stable-aim-only cache with a native neighbourhood mask and buffers cold clicks;
+see [moving-aim evidence](../terrain_placement_responsiveness/README.md).
+
 The accepted build-friendly generator was committed separately as `b31e7137`.
 The user requested this correction be committed as a baseline, but reported that
 the marker is too often not green in normal play. Responsiveness remains rejected

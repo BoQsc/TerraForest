@@ -1,0 +1,80 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native placed material supplies a surface 10/0
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 10/1
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 10/2
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 10/3
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 1/0
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 1/1
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 1/2
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 1/3
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 8/0
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 8/1
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 8/2
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 8/3
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 9/0
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 9/1
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 9/2
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS native placed material supplies a surface 9/3
+PASS native target resolves above placed material
+PASS next target is the adjacent empty sample without skipping a layer
+PASS consecutive paid stamp changes terrain instead of refunding a filled sample
+PASS low meshed crown reproduces the old occupied-sample rounding
+PASS low crown resolves to the next empty sample instead of a no-op
+PASS 125 empty samples fit in a fixed sixteen-byte mask
+PASS moving point and normal reuse the mask with exact authoritative selector parity
+PASS moving outside full mask coverage requires a fresh query
+PASS cached selection rejects invalid surface normals
+PASS truncated masks never authorize a placement
+PASS fully occupied masks cannot invent an empty sample
+PASS shoulder sweep reproduces embedded old markers and resolves exposed empty targets
+PASS stale field revision cannot authorize a target
+PASS invalid normal is rejected without a target
+PASS placement queries never modify authoritative terrain
+TERRAIN_PLACEMENT_TARGET checks=76 failures=0 old_embedded=68 old_occupied=0
+

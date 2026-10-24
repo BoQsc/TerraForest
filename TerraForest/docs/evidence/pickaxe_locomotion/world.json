@@ -1,0 +1,26 @@
+{
+  "checks": 8,
+  "failures": 0,
+  "movement": [
+    {
+      "clips": [
+        "FP_Pickaxe_Fresh_Walk",
+        "FP_Pickaxe_Fresh_Jump"
+      ],
+      "displacement": 5.500244140625,
+      "maximum_speed": 5.5,
+      "sprint": false,
+      "weapon_travel": 0.0263590645045042
+    },
+    {
+      "clips": [
+        "FP_Pickaxe_Fresh_Run"
+      ],
+      "displacement": 9.8966064453125,
+      "maximum_speed": 9.89999961853027,
+      "sprint": true,
+      "weapon_travel": 0.0512960068881512
+    }
+  ],
+  "scope": "Temporary ordinary world, native player motor, actual velocity and pickaxe animation dispatch; walk/sprint/stop. No saved-world changes or impact-alignment claim."
+}

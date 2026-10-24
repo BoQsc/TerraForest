@@ -1541,8 +1541,8 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	model_tool.placement_failure="Object removed; no salvage recipe" if removed else "Object removal rejected"
 	return removed
 
-func _model_edit_available() -> bool:
-	return vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit
+func _model_edit_available(allow_pending:bool=false) -> bool:
+	return vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
 
 func _interact_on_foot()->void:
 	if not _model_edit_available() or session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:return

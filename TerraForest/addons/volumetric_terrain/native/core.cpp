@@ -3,6 +3,7 @@
 #include "geology.hpp"
 #include "density_surface.hpp"
 #include "terrain_checksum.hpp"
+#include "terrain_placement_query.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -1276,21 +1277,19 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   float magnitude=length(direction);
   if(!r.good||n!=36||!(point.x>=0&&point.x<=WORLD&&point.z>=0&&point.z<=WORLD&&point.y>=0&&point.y<=WORLD_Y&&magnitude>.5f&&magnitude<1.5f)){out.p[8]=1;return;}
   if(revision!=w.revision||cancelled(w,epoch)){out.p[8]=4;return;}
-  direction=direction*(1.f/magnitude);
-  int origin_x=fl(point.x+.5f),origin_y=fl(point.y+.5f),origin_z=fl(point.z+.5f);
-  V3 selected{};float best=1e30f;bool found=false;
-  for(int offset_z=-1;offset_z<=1;offset_z++)for(int offset_y=-1;offset_y<=1;offset_y++)for(int offset_x=-1;offset_x<=1;offset_x++){
-   int cell_x=origin_x+offset_x,cell_y=origin_y+offset_y,cell_z=origin_z+offset_z;
-   if(cell_x<1||cell_x>=WORLD||cell_z<1||cell_z>=WORLD||cell_y<4||cell_y>=254)continue;
-   V3 candidate={float(cell_x),float(cell_y),float(cell_z)},offset=candidate-point;
-   float outward=dot(offset,direction),distance_squared=dot(offset,offset);
-   if(outward<.04f||distance_squared>2.5f)continue;
-   float score=2.f*distance_squared-outward*outward;
-   if(score>=best||!(w.sample(cell_x,cell_y,cell_z)>=0))continue;
-   best=score;selected=candidate;found=true;
+  int origin[3]={fl(point.x+.5f)-2,fl(point.y+.5f)-2,fl(point.z+.5f)-2},selected[3]{};
+  u32 empty[4]{};
+  for(int local_z=0;local_z<5;local_z++)for(int local_y=0;local_y<5;local_y++)for(int local_x=0;local_x<5;local_x++){
+   int cell_x=origin[0]+local_x,cell_y=origin[1]+local_y,cell_z=origin[2]+local_z;
+   if(cell_x<1||cell_x>=WORLD||cell_z<1||cell_z>=WORLD||cell_y<4||cell_y>=254||!(w.sample(cell_x,cell_y,cell_z)>=0))continue;
+   int index=local_x+5*(local_y+5*local_z);empty[index/32]|=u32(1)<<(index%32);
   }
+  float coordinates[3]={point.x,point.y,point.z},normal[3]={direction.x,direction.y,direction.z};
+  int found=terraforest::select_terrain_placement(coordinates,normal,origin,empty,selected);
   if(cancelled(w,epoch)){out.p[8]=4;return;}
-  out.u(w.revision);out.u(found?1:0);out.vec(selected);
+  out.u(w.revision);out.u(found==1?1:0);out.vec({float(selected[0]),float(selected[1]),float(selected[2])});
+  for(int coordinate:origin)out.u(u32(coordinate));
+  for(u32 bits:empty)out.u(bits);
  }
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);

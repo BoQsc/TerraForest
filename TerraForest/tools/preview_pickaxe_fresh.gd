@@ -22,7 +22,7 @@ func panel(kind:String)->Dictionary:
 	var camera:=Camera3D.new();camera.fov=75;camera.near=.035;camera.position=Vector3(0,1.65,0);camera.current=true;stage.add_child(camera)
 	var tools:=preload("res://addons/player_runtime/tool_view.gd").new();camera.add_child(tools)
 	tools.equip(1);tools.set_process(false);var view:Node3D=tools.human;view.set_process(false)
-	if kind!="current":
+	if kind!="current" and not view.clips.has("FP_Pickaxe_Fresh_Swing"):
 		view.animation_player.add_animation_library("fresh_review",LIBRARY)
 		for name in LIBRARY.get_animation_list():view.clips[String(name)]="fresh_review/"+String(name)
 	if kind=="side":
