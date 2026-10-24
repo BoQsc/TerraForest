@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-"""Blender authoring: a slow, looping left-led walk with right toe drag."""
+"""Blender authoring: planted support, weak-side collapse and a delayed toe scrape."""
 import hashlib
 import json
 import math
@@ -26,7 +26,8 @@ for prefix,side in [('Left','L'),('Right','R')]:
     mesh=bpy.data.objects['Z_Foot_'+side]
     vertices=[mesh.matrix_world@v.co for v in mesh.data.vertices]
     low=min(v.z for v in vertices);sole=[v for v in vertices if v.z<low+.025]
-    feet[prefix]={'sole':sole,'pivot':Vector((sum(v.x for v in sole)/len(sole),min(v.y for v in sole)+.025,low))}
+    feet[prefix]={'sole':sole,'toe':Vector((sum(v.x for v in sole)/len(sole),min(v.y for v in sole),low)),
+                  'heel':Vector((sum(v.x for v in sole)/len(sole),max(v.y for v in sole),low))}
 for obj in bpy.data.objects:
     obj.animation_data_clear()
     if obj.type=='MESH' and obj.data.shape_keys:
@@ -59,11 +60,16 @@ def solve_leg(prefix,target):
         rig.pose.bones[name].matrix=mat;bpy.context.view_layer.update()
     return target,(target-(start+ray)).length
 
-def foot(prefix,y,pitch,lift):
-    data=feet[prefix];rotation=Quaternion((1,0,0),math.radians(pitch));pivot=data['pivot']
+def foot(prefix,y,pitch,lift,x=0):
+    data=feet[prefix]
+    # Roll around the loaded edge of the boot, rather than its ankle. The
+    # stance translation cancels 0.45 m/s of travel even while the heel rolls.
+    yaw=4 if prefix=='Left' else -8
+    rotation=Quaternion((0,0,1),math.radians(yaw))@Quaternion((1,0,0),math.radians(pitch))
+    pivot=data['toe' if pitch>=0 else 'heel']
     points=[rotation@(p-pivot)+pivot for p in data['sole']]
-    z=.003+lift-min(p.z for p in points)
-    ankle=rotation@(rest[prefix+'Foot'].translation-pivot)+pivot+Vector((0,y,z))
+    z=.002+lift-min(p.z for p in points)
+    ankle=rotation@(rest[prefix+'Foot'].translation-pivot)+pivot+Vector((x,y,z))
     target,error=solve_leg(prefix,ankle)
     mat=(rotation.to_matrix()@rest[prefix+'Foot'].to_3x3()).to_4x4();mat.translation=target
     rig.pose.bones[prefix+'Foot'].matrix=mat;bpy.context.view_layer.update()
@@ -75,6 +81,22 @@ def sample(t,keys):
         if a<=t<=b:return x+(y-x)*smooth((t-a)/(b-a))
     return keys[-1][1]
 
+def recovery(t,start,end,a,b):
+    """Hermite return with the same foot velocity as the adjacent stance."""
+    u=(t-start)/(end-start);m=.9*(end-start)
+    return (2*u**3-3*u*u+1)*a+(u**3-2*u*u+u)*m+(-2*u**3+3*u*u)*b+(u**3-u*u)*m
+
+def rotate_local(name,x=0,y=0,z=0):
+    bone=rig.pose.bones[name]
+    for axis,angle in [((1,0,0),x),((0,1,0),y),((0,0,1),z)]:
+        bone.rotation_quaternion=bone.rotation_quaternion@Quaternion(axis,math.radians(angle))
+
+def aim(name,direction):
+    bone=rig.pose.bones[name];matrix=bone.matrix.copy()
+    rotation=matrix.to_3x3().col[1].normalized().rotation_difference(direction.normalized())
+    oriented=(rotation.to_matrix()@matrix.to_3x3()).to_4x4();oriented.translation=matrix.translation
+    bone.matrix=oriented;bpy.context.view_layer.update()
+
 NAME='Zombie_Walk_Drag_Right'
 action=bpy.data.actions.new(NAME);rig.animation_data_create();rig.animation_data.action=action
 scene.render.fps=60;scene.frame_start=0;scene.frame_end=120
@@ -84,29 +106,52 @@ for n in range(121):
     t=(n%120)/120.0
     for b in rig.pose.bones:
         b.rotation_mode='QUATERNION';b.matrix_basis=base[b.name]
-    # Left foot supports 62% of the loop; right toe stays low throughout its
-    # delayed catch-up. Their cycles are intentionally not half-phase mirrors.
-    if t<=.62:left_y=-.28+(.56/.62)*t
-    else:left_y=.28-.56*smooth((t-.62)/.38)
-    left_lift=0 if t<=.62 else .115*math.sin(math.pi*(t-.62)/.38)**1.3
-    left_pitch=sample(t,[(0,-6),(.1,0),(.48,0),(.62,14),(.79,-9),(1,-6)])
-    right_y=sample(t,[(0,.16),(.16,.23),(.26,.22),(.73,-.13),(1,.16)])
-    right_pitch=sample(t,[(0,12),(.22,21),(.70,18),(.84,7),(1,12)])
-    weight=math.sin(math.pi*min(t/.62,1)) if t<.62 else 0
+    # The strong leg supports 68% of a cycle. The weak foot supports the
+    # recovery step across the loop seam, then scrapes forward late. Both
+    # support trajectories cancel the full 0.9 m of travel per two-second loop.
+    left_y=-.30+.9*t if t<=.68 else recovery(t,.68,1,.312,-.30)
+    left_lift=0 if t<=.68 else .095*math.sin(math.pi*(t-.68)/.32)**2
+    left_pitch=sample(t,[(0,-9),(.055,0),(.55,0),(.64,13),(.68,22),(.76,10),(.85,-6),(.95,-12),(1,-9)])
+    right_y=-.16+.9*(t-.60 if t>=.60 else t+.40) if t<=.14 or t>=.60 else recovery(t,.14,.60,.326,-.16)
+    right_pitch=sample(t,[(0,9),(.14,15),(.25,23),(.45,21),(.60,12),(.70,8),(.95,8),(1,9)])
+    right_lift=.0015*math.sin(math.pi*(t-.14)/.46)**2 if .14<t<.60 else 0
+    sway=sample(t,[(0,.010),(.10,.043),(.32,.060),(.52,.040),(.63,-.005),(.75,-.042),(.86,-.025),(1,.010)])
+    drop=sample(t,[(0,-.012),(.055,-.038),(.31,-.002),(.54,-.012),(.71,-.065),(.81,-.043),(1,-.012)])
+    surge=sample(t,[(0,-.025),(.10,-.047),(.34,.008),(.56,-.010),(.73,-.050),(.87,-.020),(1,-.025)])
+    roll=sample(t,[(0,-1),(.20,-4),(.46,-3),(.72,5),(.84,3),(1,-1)])
+    twist=sample(t,[(0,-3),(.30,4),(.56,2),(.78,-5),(1,-3)])
     hip=base_global['Hips'].copy()
-    hip.translation+=Vector((.018+.017*weight,0,-.022-.025*weight))
-    hip=Matrix.Translation(hip.translation)@Quaternion((0,1,0),math.radians(-2.0-1.4*weight)).to_matrix().to_4x4()@Matrix.Translation(-hip.translation)@hip
+    hip.translation+=Vector((sway,surge,drop))
+    rotation=Quaternion((0,0,1),math.radians(twist))@Quaternion((0,1,0),math.radians(roll))@Quaternion((1,0,0),math.radians(3))
+    hip=Matrix.Translation(hip.translation)@rotation.to_matrix().to_4x4()@Matrix.Translation(-hip.translation)@hip
     rig.pose.bones['Hips'].matrix=hip;bpy.context.view_layer.update()
-    for name,amplitude,offset in [('LeftArm',3,0),('RightArm',7,.5),('Spine2',2,.15),('Head',1.5,.3)]:
-        b=rig.pose.bones[name]
-        b.rotation_quaternion=b.rotation_quaternion@Quaternion((1,0,0),math.radians(amplitude*math.sin(math.tau*(t+offset))))
+    # Distribute the hunch through the spine. Loading shocks travel upward
+    # with delays, instead of moving every body part as one rigid pendulum.
+    loading=sample((t-.045)%1,[(0,0),(.07,3),(.30,-1),(.55,0),(.73,5),(.85,2),(1,0)])
+    rotate_local('Spine',4+loading*.35,y=-twist*.35,z=roll*.25)
+    rotate_local('Spine1',3+loading*.35,y=-twist*.30,z=roll*.30)
+    rotate_local('Spine2',2+loading*.30,y=-twist*.25,z=roll*.20)
+    rotate_local('Neck',-3+2*math.sin(math.tau*(t-.10)),z=2*math.sin(math.tau*(t-.16)))
+    rotate_local('Head',-2+2.5*math.sin(math.tau*(t-.15)),y=1.5*math.sin(math.tau*(t-.23)))
     bpy.context.view_layer.update()
-    errors=[foot('Left',left_y,left_pitch,left_lift),foot('Right',right_y,right_pitch,.0015*(.5-.5*math.cos(math.tau*t)))]
+    for prefix,side in [('Left',1),('Right',-1)]:
+        delay=.10 if prefix=='Left' else .22
+        swing=math.sin(math.tau*(t-delay))
+        shoulder=rig.pose.bones[prefix+'Shoulder']
+        follow=shoulder.matrix.to_3x3()@base_global[prefix+'Shoulder'].to_3x3().inverted()
+        # Uneven hanging arms, soft elbows and lagging wrists replace the
+        # fixed, parallel forearms inherited from the original idle action.
+        aim(prefix+'Arm',follow@Vector((side*.060,-.035+(.040 if side==1 else -.055)*swing,-.270)))
+        aim(prefix+'ForeArm',follow@Vector((side*-.025,-(.190 if side==1 else .100)+.035*math.sin(math.tau*(t-delay-.07)),-(.145 if side==1 else .210))))
+        rotate_local(prefix+'Hand',x=4*math.sin(math.tau*(t-delay-.13)),z=3*math.sin(math.tau*(t-delay-.18)))
+    bpy.context.view_layer.update()
+    errors=[foot('Left',left_y,left_pitch,left_lift),foot('Right',right_y,right_pitch,right_lift)]
     for b in rig.pose.bones:
         b.keyframe_insert('location',frame=n,group=b.name)
         b.keyframe_insert('rotation_quaternion',frame=n,group=b.name)
         b.keyframe_insert('scale',frame=n,group=b.name)
-    records.append({'frame':n,'left_lift':left_lift,'right_lift':.0015*(.5-.5*math.cos(math.tau*t)),
+    records.append({'frame':n,'left_lift':left_lift,'right_lift':right_lift,
+                    'hips':list(rig.pose.bones['Hips'].head),'left_stance':t<=.68,'right_stance':t<=.14 or t>=.60,
                     'left_ankle':list(rig.pose.bones['LeftFoot'].head),'right_ankle':list(rig.pose.bones['RightFoot'].head),
                     'max_target_error':max(errors)})
 for layer in action.layers:
@@ -115,7 +160,7 @@ for layer in action.layers:
             for curve in bag.fcurves:
                 for key in curve.keyframe_points:key.interpolation='LINEAR'
 action.use_fake_user=True
-rig['drag_walk_description']='Slow two-second asymmetric walk: left weight-bearing stride, right leg trails and toe scrapes forward. In place; native controller owns translation.'
+rig['drag_walk_description']='Weighted two-second limp: planted left stance, delayed right toe scrape, weak-side collapse, spinal follow-through and uneven hanging arms. In place; native controller owns translation.'
 for obj in bpy.data.objects:
     if obj.name.startswith('Z_Cap_'):obj.hide_render=True
     if obj.type=='LIGHT' or obj.type=='CAMERA' or obj.name.startswith('Preview.'):bpy.data.objects.remove(obj,do_unlink=True)
@@ -146,7 +191,8 @@ scene.render.resolution_x=1280;scene.render.resolution_y=900;scene.render.resolu
 scene.render.image_settings.file_format='PNG';scene.frame_set(42)
 metadata={'action':NAME,'blender':bpy.app.version_string,'source':str(SOURCE.relative_to(ROOT)),
  'source_sha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'frames':[0,120],'fps':60,'seconds':2,
- 'reference_speed_mps':.45,'dragging_leg':'right','support_leg':'left','bones':len(rig.data.bones),
+ 'reference_speed_mps':.45,'revision':'weighted_limp_v2','dragging_leg':'right','support_leg':'left','bones':len(rig.data.bones),
+ 'left_stance_phase':[0,.68],'right_stance_phase':[[0,.14],[.60,1]],'cycle_travel_m':.9,
  'maximum_solver_error_m':max(r['max_target_error'] for r in records),'samples':records,
  'scope':'Authored in-place bone motion. Flat-floor visual gait; no terrain foot IK, root translation, traversal permission or limb-loss rule.'}
 (OUTPUT/'Zombie.drag_walk.json').write_text(json.dumps(metadata,indent=2))

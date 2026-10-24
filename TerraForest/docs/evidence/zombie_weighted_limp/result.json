@@ -1,0 +1,83 @@
+{
+  "checks": 24,
+  "failures": 0,
+  "left_boot_drift_m": 0.00000468664666186669,
+  "left_sole_max": 0.0969782173633575,
+  "left_sole_min": 0.00199682707898319,
+  "native_peak_work": 48,
+  "pelvis_range": "(0.101988, 0.06298, 0.057947)",
+  "right_arm_swing_m": 0.0870712511241436,
+  "right_boot_drift_m": 0.00000181096629603417,
+  "right_sole_max": 0.00349916517734528,
+  "right_sole_min": 0.00199906341731548,
+  "samples": [
+    {
+      "frame": 0,
+      "left_sole_y": 0.00200125388801098,
+      "right_sole_y": 0.00200053863227367
+    },
+    {
+      "frame": 10,
+      "left_sole_y": 0.0020001232624054,
+      "right_sole_y": 0.00200031697750092
+    },
+    {
+      "frame": 20,
+      "left_sole_y": 0.0019996736664325,
+      "right_sole_y": 0.00204971432685852
+    },
+    {
+      "frame": 30,
+      "left_sole_y": 0.00199850532226264,
+      "right_sole_y": 0.00269927829504013
+    },
+    {
+      "frame": 40,
+      "left_sole_y": 0.00199840776622295,
+      "right_sole_y": 0.00340797007083893
+    },
+    {
+      "frame": 50,
+      "left_sole_y": 0.00199776026420295,
+      "right_sole_y": 0.00335251167416573
+    },
+    {
+      "frame": 60,
+      "left_sole_y": 0.0019972596783191,
+      "right_sole_y": 0.00259744003415108
+    },
+    {
+      "frame": 70,
+      "left_sole_y": 0.0019972394220531,
+      "right_sole_y": 0.00201921910047531
+    },
+    {
+      "frame": 80,
+      "left_sole_y": 0.00199722498655319,
+      "right_sole_y": 0.00199906341731548
+    },
+    {
+      "frame": 90,
+      "left_sole_y": 0.0402311533689499,
+      "right_sole_y": 0.00199930183589458
+    },
+    {
+      "frame": 100,
+      "left_sole_y": 0.0965971127152443,
+      "right_sole_y": 0.00199976935982704
+    },
+    {
+      "frame": 110,
+      "left_sole_y": 0.0526107475161552,
+      "right_sole_y": 0.0019999835640192
+    },
+    {
+      "frame": 120,
+      "left_sole_y": 0.00200125388801098,
+      "right_sole_y": 0.00200053863227367
+    }
+  ],
+  "scope": "Flat-floor evaluated skin and live shared-navigation controller lifecycle; no terrain foot IK or complete-world traversal claim.",
+  "seam_error": 0.000000169244657399759,
+  "stance_drift_m": 0.000000256597995740293
+}

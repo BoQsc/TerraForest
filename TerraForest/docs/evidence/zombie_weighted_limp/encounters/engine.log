@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS crowd fixture admits supported zombie
+PASS per-tick encounter updates let attack windups reach contact
+PASS autonomous attacks finish through manager updates
+PASS crowd attacks actually reach player damage adapter
+PASS zombie movement capsules never interpenetrate
+PASS queued zombies spread around peers and join melee
+PASS zombies stop at player capsule instead of entering it
+PASS paused encounters cannot land strikes
+PASS resuming encounters restores completed attack contacts
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS leg-loss fixture admits supported zombie
+Zombie severed shin_l: ["shin_l", "foot_l"]
+PASS manager ticks preserve living crawl transition
+PASS crawler can bite a solid player without walking through its capsule
+ZOMBIE_ENCOUNTERS checks=17 failures=0

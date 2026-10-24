@@ -1,0 +1,13 @@
+{
+  "addons/characters/authoring/Zombie.drag_walk.blend": "c7db827d395ab3e3ff30f46ff1f7e3a64d0611b1f8055564b3ea0512ee680e7c",
+  "addons/characters/authoring/Zombie.drag_walk.glb": "3c0a2425b2709a3467f89a2d0e63c0e419cf376640dee7282c5f53a675c79298",
+  "addons/characters/authoring/Zombie.drag_walk.json": "8f3c9dd7421e0b211b5677a409e64afa633952d79ae9315e7f7e6fb7a7e94a22",
+  "addons/characters/runtime/assets/Zombie.drag_walk.res": "47ac7f95ff5a655106c16912e2b98719a798eaf7ad636bab09403923e00dacb9",
+  "addons/characters/runtime/assets/Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+  "addons/characters/runtime/zombie.gd": "ef67fb479c6e1af20d267c9cbf2bee290b4f71ae6ea33300cb424184790b59f2",
+  "tools/author_zombie_drag_walk.py": "c57a9d4edcce65dd222f3b6c3e556f0d2e3c3f62b21cde46b736802179fe656b",
+  "tests/zombie_drag_walk.gd": "6640b55fa312b418f71339cba2d255a655bbb2e073398507c5739d4413741439",
+  "tools/preview_zombie_drag_walk.gd": "693347b2361e3adcf776db35b0d2c955a7e698968bf7adb80f2a72073076f9fb",
+  "tools/encode_zombie_drag_walk_preview.py": "3b5320df5d6ed65b2193690a27f4e54fa086a3c85e81cef25ba6b326cb921dd8",
+  "docs/evidence/zombie_weighted_limp/Zombie.weighted_limp.mp4": "749fe182528763046162628a372076990d307ca2a1a76173eb617c14e46a13c6"
+}

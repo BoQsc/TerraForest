@@ -1,5 +1,10 @@
 # Slow limping zombie walk — 2026-10-23
 
+Historical revision 1 evidence. On 2026-10-24 the user rejected this gait as stiff
+and floaty. The [weighted revision 2](../zombie_weighted_limp/README.md) supersedes
+its animation and playback presentation. The measurements and journeys below
+describe the original revision, not acceptance of the revised visual result.
+
 `Zombie_Walk_Drag_Right` is authored in Steam Blender 5.2.3 LTS on the unchanged
 R4 skeleton. The left leg carries weight and takes a lifted recovery step; the
 right leg trails with its heel raised and toe scraping forward. A small uneven

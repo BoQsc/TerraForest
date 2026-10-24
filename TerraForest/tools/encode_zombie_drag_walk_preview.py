@@ -7,7 +7,7 @@ import bpy
 root=Path(__file__).resolve().parents[1]
 folder=root/'reports/zombie_drag_walk'
 frames=sorted((folder/'preview_frames').glob('*.png'))
-assert len(frames)==240,'Capture all four gait cycles first'
+assert len(frames)==360,'Capture normal and half-speed review sections first'
 scene=bpy.context.scene
 scene.render.resolution_x,scene.render.resolution_y=1920,1080
 scene.render.resolution_percentage=100;scene.render.fps=30
@@ -20,7 +20,7 @@ scene.render.image_settings.media_type='VIDEO';scene.render.image_settings.file_
 scene.render.ffmpeg.format='MPEG4';scene.render.ffmpeg.codec='H264';scene.render.ffmpeg.constant_rate_factor='MEDIUM';scene.render.ffmpeg.ffmpeg_preset='GOOD'
 video=folder/'Zombie.drag_walk.mp4';scene.render.filepath=str(video)
 bpy.ops.render.render(animation=True)
-(folder/'video.json').write_text(json.dumps({'encoder':'Blender '+bpy.app.version_string,'fps':30,'frames':240,
+(folder/'video.json').write_text(json.dumps({'encoder':'Blender '+bpy.app.version_string,'fps':30,'frames':360,
  'sha256':hashlib.sha256(video.read_bytes()).hexdigest(),
- 'scope':'Four deterministic cycles on the unchanged runtime rig, with studio-only translation at 0.45 m/s; visual gait review, not live physics or FPS evidence.'},indent=2))
+ 'scope':'Four normal-speed cycles plus one half-speed cycle on the unchanged runtime rig, with studio-only translation matched to 0.45 m/s; visual gait review, not live physics or FPS evidence.'},indent=2))
 print('ZOMBIE_DRAG_VIDEO',video)

@@ -1,0 +1,7 @@
+{
+  "encoder": "Blender 5.2.3 LTS",
+  "fps": 30,
+  "frames": 360,
+  "sha256": "749fe182528763046162628a372076990d307ca2a1a76173eb617c14e46a13c6",
+  "scope": "Four normal-speed cycles plus one half-speed cycle on the unchanged runtime rig, with studio-only translation matched to 0.45 m/s; visual gait review, not live physics or FPS evidence."
+}

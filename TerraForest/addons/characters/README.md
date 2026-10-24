@@ -26,10 +26,12 @@ The free editor has no encounters unless requested. Existing saves remain valid.
 
 Standing zombies now use the Blender-authored `Zombie_Walk_Drag_Right`: a slow
 two-second limp with the right toe dragging and the left leg bearing weight.
-The default body speed is 0.45 m/s, with playback matched to movement speed.
+Revision 2 adds a longer planted stance, weak-side compression, a forward hunch
+and uneven hanging arms with delayed follow-through. The default body speed is
+0.45 m/s; playback follows measured body travel and holds when collision stops it.
 The original walk is preserved and selectable with `dragging_walk=false`.
 See the [editable source and rebuild steps](authoring/Zombie.drag_walk.README.md)
-and [gait verification](../../docs/evidence/zombie_drag_walk/README.md).
+and [current gait verification](../../docs/evidence/zombie_weighted_limp/README.md).
 
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
 selection drives equipment visibility; native motor velocity drives authored

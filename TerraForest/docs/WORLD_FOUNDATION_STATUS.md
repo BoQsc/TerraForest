@@ -353,8 +353,19 @@ The zombie dragging-walk follow-up adds an in-place Blender-authored right-leg
 drag with a weight-bearing left step and a continuous two-second loop. Standing
 pursuit defaults to 0.45 m/s with matched playback; original R4 actions and
 severed-leg crawling remain available. Flat-floor evaluated-skin checks and real
-controller transitions are in [gait evidence](evidence/zombie_drag_walk/README.md).
-The selected tower/door/upper-floor round trip also passes at this slower speed
+controller transitions for that original draft are in
+[gait evidence](evidence/zombie_drag_walk/README.md). The user rejected its stiff,
+floaty presentation on 2026-10-24. The current **revision 2** rebuilds
+support/recovery timing, heel/toe roll, weak-side collapse,
+spinal follow-through and uneven hanging arms. Playback now follows measured
+body travel, including holding the gait when collision stops the body. Its 24
+gait checks, 17 encounter checks, nine rendered actual-world combat checks and
+two slope cases pass. Normal/half-speed review media, sampled sole-contact
+measurements and initial failed runs are in
+[revision 2 evidence](evidence/zombie_weighted_limp/README.md). Visual acceptance
+remains open for user review of that preview; passing checks do not establish
+realistic presentation on uneven terrain.
+The previous selected tower/door/upper-floor round trip also passes at this slower speed
 with all 210 source files unchanged. Cold paths in that uncontrolled run take
 20.3/40.2s and cooperative planning overruns remain; the animation does not close
 the existing navigation timing requirement.

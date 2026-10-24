@@ -923,10 +923,18 @@ func _physics_r4(delta: float) -> void:
 	else:
 		state = "crawl_idle" if _crawling else "idle"
 		_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
+	var movement_start := global_position
 	if navigation_motor!=null and not _crawling:
 		navigation_motor.move_grounded(self,delta)
 	else:
 		move_and_slide()
+	if dragging_walk and not _crawling and state == "shamble" and _current_clip == _animation_key("Zombie_Walk_Drag_Right"):
+		# The next pose advances by the distance the body actually travelled.
+		# Collision/route guards can reduce a requested step to zero. Advancing
+		# at the requested speed would make the planted boots skate in place.
+		var travelled := global_position - movement_start
+		travelled.y = 0.0
+		animation_player.speed_scale = travelled.length() / maxf(delta * DRAG_WALK_REFERENCE_SPEED, 0.000001)
 
 
 func _face_target(delta: float, factor: float = 1.0) -> void:

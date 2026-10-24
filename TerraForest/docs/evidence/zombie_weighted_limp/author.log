@@ -1,0 +1,15 @@
+00:00.546  blend            | Read blend: "C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\addons\characters\ZombieLab\source\Zombie.r4.blend"
+INFO Draco is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files (x86)\Steam\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+08:57:32 | INFO: Starting glTF 2.0 export
+08:57:32 | INFO: Extracting primitive: Zombie.Authored.Surface.019
+08:57:32 | INFO: Primitives created: 1
+08:57:33 | INFO: Finished glTF 2.0 export in 0.5383291244506836 s
+00:20.921  render           | Saved: 'C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\reports\zombie_drag_walk\blender\three_quarter.png'
+00:34.109  render           | Saved: 'C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\reports\zombie_drag_walk\blender\side.png'
+
+Info: Saved as "Zombie.drag_walk.blend"
+ZOMBIE_DRAG_WALK_AUTHORED Zombie_Walk_Drag_Right solver_error 1.228781230931777e-07
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+
+Blender quit
