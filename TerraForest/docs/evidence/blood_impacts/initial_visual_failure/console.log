@@ -1,0 +1,152 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie bodies classify as flesh
+PASS explicit flesh marker does not require changing damage material
+PASS external flesh contact adapters are supported
+PASS unknown actors do not automatically bleed
+PASS nonflesh material routing is unchanged
+PASS invalid contacts cannot allocate emitters
+PASS missing pose and repair contacts do not bleed
+PASS pooled emitter accepts stone in style 0
+PASS successive material changes reuse the existing emitter
+PASS transient stone particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts flesh in style 0
+PASS successive material changes reuse the existing emitter
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: get_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:309)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/blood_effects.gd:39)
+PASS blood replaces debris and dust without extra particle slots
+PASS transient flesh particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts metal in style 0
+PASS successive material changes reuse the existing emitter
+PASS transient metal particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts flesh in style 0
+PASS successive material changes reuse the existing emitter
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: get_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:309)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/blood_effects.gd:39)
+PASS blood replaces debris and dust without extra particle slots
+PASS transient flesh particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts stone in style 1
+PASS successive material changes reuse the existing emitter
+PASS transient stone particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts flesh in style 1
+PASS successive material changes reuse the existing emitter
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: get_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:309)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/blood_effects.gd:39)
+PASS blood replaces debris and dust without extra particle slots
+PASS transient flesh particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts metal in style 1
+PASS successive material changes reuse the existing emitter
+PASS transient metal particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:37)
+PASS pooled emitter accepts flesh in style 1
+PASS successive material changes reuse the existing emitter
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: get_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:309)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/blood_effects.gd:39)
+PASS blood replaces debris and dust without extra particle slots
+PASS transient flesh particles retire
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:43)
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:45)
+PASS blood has fully expired within one second
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 0
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 1
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 2
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 3
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 4
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 5
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 6
+ERROR: Index p_pass = 1 is out of bounds (draw_passes.size() = 1).
+   at: set_draw_pass_mesh (scene/3d/gpu_particles_3d.cpp:285)
+   GDScript backtrace (most recent call first):
+       [0] burst (res://addons/impact_effects/impact_effects.gd:142)
+       [1] run (res://tests/blood_effects.gd:52)
+PASS shared pool accepts burst 7
+PASS blood shares the existing 384-slot hard limit
+PASS master toggle immediately clears and suppresses blood
+BLOOD_EFFECTS checks=46 failures=0

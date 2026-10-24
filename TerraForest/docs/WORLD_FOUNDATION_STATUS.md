@@ -1,3 +1,21 @@
+## Flesh hit blood, 2026-10-24
+
+Accepted flesh hits now produce a short dark-red GPU droplet/mist spray at the
+surface contact. Zombies classify automatically; other damageable objects use
+an explicit cosmetic flesh marker, independently of damage material. No health,
+wear, save or animation timing changes. Blood respects the existing impact master
+toggle and appearance modes and shares their eight-emitter/384-slot budget.
+No persistent decals, CPU particle loops or physics debris are added.
+The 46 focused effect checks and both 39-check impact appearance regressions
+pass; inspected captures show the localized spray and fade. All 20 real-world
+zombie, corpse and tagged-prop contact checks pass in source and exported builds,
+including unchanged damage/wear and rejection of repair/missed/cancelled effects.
+Export/startup passes and the playable package is updated.
+Player visual acceptance and low-end performance remain unqualified; revisit
+appearance if playtesting requests it. Existing ragdoll settling and world-quality
+gaps below are not closed by these cosmetic checks.
+[Implementation scope and verification](evidence/blood_impacts/README.md).
+
 ## Shared zombie health and increased severing follow-up, 2026-10-24
 
 The user's follow-up makes shared 180 HP the primary combat bar, without removing

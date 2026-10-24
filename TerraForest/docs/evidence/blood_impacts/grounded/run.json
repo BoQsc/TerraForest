@@ -1,0 +1,50 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T193417520784Z_impact_effects_source\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/impact_effects_world.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_f0b5a2ca350e4fe9a805747547b97973",
+    "--derived-cache=user://impact_effects_world_f0b5a2ca350e4fe9a805747547b97973",
+    "--gameplay-construction",
+    "--ground-cover",
+    "--no-zombies",
+    "--effects-evidence=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261024T193417520784Z_impact_effects_source\\captures"
+  ],
+  "cache": "user://impact_effects_world_f0b5a2ca350e4fe9a805747547b97973",
+  "utc": "20261024T193417520784Z",
+  "test_sha256": "578e2decfc640de4b9749a667b4e185a100ce7dabd6945acf8ae37499e1c3224",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "revision": "69f515f0c4f8ff1c2ebb125addb7d2600a7553a7",
+  "worktree_changes": [
+    " M TerraForest/addons/impact_effects/README.md",
+    " M TerraForest/addons/impact_effects/impact_effects.gd",
+    " M TerraForest/addons/player_runtime/world_attack.gd",
+    "?? TerraForest/addons/impact_effects/blood.gdshader",
+    "?? TerraForest/addons/impact_effects/blood_motion.gdshader",
+    "?? TerraForest/tests/blood_effects.gd",
+    "?? TerraForest/tests/blood_effects_world.gd"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 79572,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 22.925051200028975,
+    "passed": true
+  }
+}

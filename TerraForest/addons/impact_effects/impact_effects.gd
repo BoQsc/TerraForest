@@ -7,7 +7,7 @@ const PARTICLES:=48
 const GROUNDED=preload("res://addons/impact_effects/grounded_style.gd")
 const STYLES=["grounded","baseline"]
 const GROUNDED_COLORS={"soil":Color("817565"),"stone":Color("989a94"),"brick":Color("8c6a58"),"wood":Color("94816a"),"foliage":Color("777d60")}
-const PALETTE={"metal":Color("ffae48"),"soil":Color("705039"),"stone":Color("90918c"),"brick":Color("995744"),"concrete":Color("a7a39a"),"wood":Color("a17b4e"),"asphalt":Color("444746"),"iron":Color("697473"),"copper":Color("946c4b"),"foliage":Color("687c45"),"sand":Color("bea779"),"snow":Color("dbe2e0")}
+const PALETTE={"metal":Color("ffae48"),"soil":Color("705039"),"stone":Color("90918c"),"brick":Color("995744"),"concrete":Color("a7a39a"),"wood":Color("a17b4e"),"asphalt":Color("444746"),"iron":Color("697473"),"copper":Color("946c4b"),"foliage":Color("687c45"),"sand":Color("bea779"),"snow":Color("dbe2e0"),"flesh":Color("921b23")}
 var game:Node
 var enabled:=true
 var breakup_enabled:=true
@@ -73,7 +73,9 @@ func receive_sample(reply:Dictionary)->void:
 	if enabled and reply.get("token") == sample_token and reply.get("status")=="hit" and reply.has("surface_material"):sample=reply
 
 func material_for(target:Dictionary)->String:
+	if target.get("impact_material",target.get("material",""))=="flesh":return "flesh"
 	match target.get("kind",""):
+		"zombie":return "flesh"
 		"block":return ["brick","wood","concrete","metal"][clampi(int(target.get("material_id",0)),0,3)]
 		"vehicle":return "metal"
 		"tree":return "wood"
@@ -100,7 +102,7 @@ func material_for(target:Dictionary)->String:
 func contact(target:Dictionary)->void:
 	if not enabled or not target.has("position") or not target.has("normal"):return
 	var material:=material_for(target)
-	if material.is_empty():return
+	if material.is_empty() or (material=="flesh" and target.get("repairing",false)):return
 	burst(target.position,target.normal,material,target.get("destroyed",false) and breakup_enabled)
 
 func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
@@ -113,14 +115,20 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 		emitter=GPUParticles3D.new();emitter.emitting=false;emitter.one_shot=true;emitter.explosiveness=1.0;emitter.amount=PARTICLES
 		emitter.local_coords=false;emitter.fixed_fps=60;emitter.interpolate=true;emitter.fract_delta=true
 		emitter.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;emitter.visibility_aabb=AABB(Vector3(-3,-3,-3),Vector3(6,6,6))
-		var process:=ShaderMaterial.new();process.shader=preload("res://addons/impact_effects/motion.gdshader") if style==1 else preload("res://addons/impact_effects/grounded_motion.gdshader");emitter.process_material=process
+		emitter.process_material=ShaderMaterial.new()
 		emitter.finished.connect(func():if is_instance_valid(emitter):emitter.set_meta("busy",false);emitter.hide())
 		add_child(emitter);pool.append(emitter)
 	var spark:=material=="metal"
-	var shape:="spark" if spark else ("wood" if material=="wood" else "oval")
+	var flesh:=material=="flesh"
+	var shape:="blood" if flesh else ("spark" if spark else ("wood" if material=="wood" else "oval"))
 	if style==0 and shape=="oval":shape="soil" if material in ["soil","sand","snow","foliage"] else "stone"
 	if not meshes.has(shape):
-		if style==0:meshes[shape]=GROUNDED.fragment_mesh(shape)
+		if flesh:
+			var mesh:=QuadMesh.new();mesh.size=Vector2.ONE
+			var render:=ShaderMaterial.new();render.shader=preload("res://addons/impact_effects/blood.gdshader")
+			render.set_shader_parameter("noise_map",preload("res://addons/impact_effects/art/dust_noise.tres"))
+			mesh.material=render;meshes[shape]=mesh
+		elif style==0:meshes[shape]=GROUNDED.fragment_mesh(shape)
 		else:
 			# Baseline geometry/materials/motion remain byte-for-byte equivalent
 			# to b245d563. Keep this path available for instant A/B and rollback.
@@ -130,7 +138,7 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 			else:mesh=BoxMesh.new()
 			var render:=ShaderMaterial.new();render.shader=preload("res://addons/impact_effects/fragments.gdshader");render.set_shader_parameter("emission_strength",2.8 if spark else 0.0)
 			mesh.material=render;meshes[shape]=mesh
-	emitter.draw_passes=2 if style==0 and not spark else 1
+	emitter.draw_passes=2 if style==0 and not spark and not flesh else 1
 	if emitter.draw_passes==2:
 		if not meshes.has("dust"):meshes["dust"]=GROUNDED.dust_mesh()
 		emitter.draw_pass_2=meshes.dust
@@ -138,15 +146,20 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 	emitter.amount_ratio=(.85 if broken else .46) if spark else (.75 if broken else .29)
 	emitter.global_position=point+normal.normalized()*.035
 	var process:ShaderMaterial=emitter.process_material
-	process.set_shader_parameter("spark",spark);process.set_shader_parameter("surface_normal",normal.normalized())
+	process.shader=preload("res://addons/impact_effects/blood_motion.gdshader") if flesh else (preload("res://addons/impact_effects/motion.gdshader") if style==1 else preload("res://addons/impact_effects/grounded_motion.gdshader"))
+	process.set_shader_parameter("surface_normal",normal.normalized())
 	var tint:Color=GROUNDED_COLORS.get(material,PALETTE[material]) if style==0 else PALETTE[material]
 	process.set_shader_parameter("tint",tint.srgb_to_linear())
-	process.set_shader_parameter("piece_scale",Vector3(.0035,.0035,.055) if spark else (Vector3(.015,.018,.06) if shape=="wood" else Vector3(.042,.030,.037)))
-	if style==0:
-		emitter.lifetime=.40 if spark else .95
-		process.set_shader_parameter("piece_scale",Vector3(.003,.003,.07) if spark else (Vector3(.009,.012,.045) if shape=="wood" else Vector3(.040,.034,.038)))
-		process.set_shader_parameter("dust_count",0 if spark else (6 if broken else 3))
-	process.set_shader_parameter("breakup",broken)
+	if flesh:
+		emitter.lifetime=.65;emitter.amount_ratio=.46
+	else:
+		process.set_shader_parameter("spark",spark)
+		process.set_shader_parameter("piece_scale",Vector3(.0035,.0035,.055) if spark else (Vector3(.015,.018,.06) if shape=="wood" else Vector3(.042,.030,.037)))
+		if style==0:
+			emitter.lifetime=.40 if spark else .95
+			process.set_shader_parameter("piece_scale",Vector3(.003,.003,.07) if spark else (Vector3(.009,.012,.045) if shape=="wood" else Vector3(.040,.034,.038)))
+			process.set_shader_parameter("dust_count",0 if spark else (6 if broken else 3))
+		process.set_shader_parameter("breakup",broken)
 	process.set_shader_parameter("burst_count",int(ceil(PARTICLES*emitter.amount_ratio)))
 	var plane:=Vector4(0,1,0,-point.y);var floor_found:=normal.y>.65
 	if floor_found:plane=Vector4(normal.x,normal.y,normal.z,-normal.dot(point))

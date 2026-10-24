@@ -52,12 +52,12 @@ func target() -> Dictionary:
 		if collider==collection:
 			var id: int=collection.placement_for_body(hit.rid)
 			var profile:Dictionary=Durability.model_profile(asset)
-			if id>0:return surface_target({"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"asset":asset,"health":profile.health,"material":profile.material,"name":profile.name},hit)
+			if id>0:return surface_target({"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"asset":asset,"health":profile.health,"material":profile.material,"impact_material":profile.get("impact_material",""),"name":profile.name},hit)
 	if collider!=null and game.actors.pool!=null and collider.get_parent()==game.actors.pool:
 		var handle: int=collider.entity_handle(game.actors.store)
 		if handle!=0:
 			var id: int=game.actors.store.persistent_id(handle)
-			return {"kind":"actor","key":"actor:%d"%id,"id":id,"handle":handle,"health":Durability.WORLD.actor,"material":"other","name":"Actor"}
+			return surface_target({"kind":"actor","key":"actor:%d"%id,"id":id,"handle":handle,"health":Durability.WORLD.actor,"material":"other","name":"Actor"},hit)
 	var vehicles=game.world_vehicle
 	var vehicle_id: int=vehicles.car_identity if collider!=null and collider==vehicles.car else 0
 	if vehicles.fleet_enabled and collider!=null:
@@ -70,6 +70,8 @@ func target() -> Dictionary:
 		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}
 	return {}
 func surface_target(data:Dictionary,hit:Dictionary)->Dictionary:
+	var collider=hit.get("collider")
+	if is_instance_valid(collider) and collider.has_meta("impact_material"):data.impact_material=collider.get_meta("impact_material")
 	if hit.has("position"):
 		data.position=hit.position
 		data.normal=hit.get("normal",(game.camera.global_position-hit.position).normalized())
@@ -102,7 +104,9 @@ func resolve_contact(identity:int)->void:
 	var selected:=target()
 	if selected.get("kind")=="terrain":game.terrain.set_interaction_target(selected.position)
 	last_hit=not selected.is_empty() and (repair_target(selected) if pending.repairing else apply_target(selected))
-	if last_hit:contact_effect.emit(selected)
+	if last_hit:
+		selected.repairing=pending.repairing
+		contact_effect.emit(selected)
 	impact_resolved.emit(identity,last_hit)
 func cancel()->void:
 	if pending.is_empty():return

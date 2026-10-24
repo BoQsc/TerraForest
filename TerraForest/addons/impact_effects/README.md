@@ -28,6 +28,24 @@ brick, wood and other terrain surfaces use colored chips, small oval clods or
 splinters. Successful excavation/destruction may use a larger burst. No effect
 spawns loot, changes damage, creates physics bodies, or survives in a save.
 
+Flesh contacts use a short dark-red spray: 19 gravity-driven droplets and four
+soft, noise-shaped mist sheets, fading within 0.65 seconds. Blood uses one draw
+pass and the same eight-emitter/384-slot pool as all other impacts, in either
+appearance mode. Its GPU motion stops droplets at the sampled floor instead of
+bouncing them. There are no persistent blood decals, physics bodies or CPU
+particle loops. The existing master toggle also disables blood immediately.
+
+Zombie surface hits classify as flesh automatically, including accepted corpse
+hits. Other destructible objects opt in with `impact_material = "flesh"` in a
+model durability profile or `impact_material` metadata on their hit collider
+(a native model collection tags all instances of that asset). Keep the ordinary
+damage `material` as `stone`, `wood` or `other`; the cosmetic marker does not
+change durability or tool effectiveness. External contact adapters can provide
+the marker directly with the actual world-space `position` and `normal`.
+Unknown actors are not assumed to be flesh. Blood runs only after accepted
+damage at the authored animation contact, never on windup, cancellation, misses,
+rejected damage or repairs. No new items or flesh-object assets are introduced.
+
 The world attack adapter emits an optional windup query and an accepted-contact
 signal at the existing authored tool contact frame. A bounded native terrain
 density query prefetches material/depth on the existing worker. Late, mismatched
@@ -57,6 +75,10 @@ Godot imports their shared GPU buffers. No mesh generation runs on tool contact.
 
 Checks: `tests/impact_effects_world.gd` exercises actual tool contacts, excavation,
 settings and pool bounds; `tests/impact_effects_visual.gd` captures GPU motion.
+`tests/blood_effects.gd` checks classification, shared-pool reuse across materials
+and both styles, retirement and toggles, with timed visual captures.
+`tests/blood_effects_world.gd` exercises real zombie and tagged-prop tool contacts,
+preserved damage/wear, misses, cancellation, rejected damage and repairs.
 Run the world check with `--no-impact-effects` to exercise omitted-module gameplay.
 Use `python tools/check_impact_effects.py --baseline` for the preserved profile;
 `--pack` checks either profile against the exported game.
