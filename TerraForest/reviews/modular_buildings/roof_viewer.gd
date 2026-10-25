@@ -16,7 +16,7 @@ func _ready() -> void:
 		for column in range(-2,2):
 			for height in [1,2]:records.append_array(PackedInt32Array([origin.x+column,height,10,structures.blocks.encode_block(9,12,3)]))
 		if not structures.blocks.set_cells(records):ready_ok=false;return
-		var label:=Label3D.new();label.text="A0 / ORIGINAL\nUNCHANGED" if side==0 else "A2 / THIN ROOF\nAWAITING APPROVAL"
+		var label:=Label3D.new();label.text="A0 / ORIGINAL\nUNCHANGED" if side==0 else "A2 / THIN ROOF\nAPPROVED DEFAULT"
 		label.position=Vector3(origin)+Vector3(0,2,11.015);label.font_size=48;label.pixel_size=.006
 		label.modulate=Color("8ce8c1") if side==0 else Color("ffd38a");label.outline_size=10;add_child(label)
 	structures.blocks.flush_bakes()

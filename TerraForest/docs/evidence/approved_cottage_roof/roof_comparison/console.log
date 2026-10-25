@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS A0 and A2 native buildings and signs load
+PASS existing walls and stairs unchanged; only thin roof-edge seam cells added below eaves, no A1 porch
+PASS doors, windows, furniture and storage remain exact originals
+PASS historical A2 review asset now shows its explicit approval
+PASS baked A2 matches reproducible offline recipe
+PASS roof uses independent native phase shape 15
+PASS roof uses independent native phase shape 16
+PASS roof uses independent native phase shape 17
+PASS roof uses independent native phase shape 18
+PASS review button removes exactly one roof grid block
+PASS original roof untouched while candidate has an actual hole
+PASS restoring that block preserves exact compound bytes
+PASS native player walks steps, door and interior aisle COTTAGE ROOF A2 side 0
+WALK_END COTTAGE ROOF A2 side=0 position=(0.5, 2.008868, -3.015191)
+PASS native player exits and descends to approach COTTAGE ROOF A2 side 0
+PASS native player walks steps, door and interior aisle COTTAGE ROOF A2 side 1
+WALK_END COTTAGE ROOF A2 side=1 position=(0.5, 2.008868, -3.015195)
+PASS native player exits and descends to approach COTTAGE ROOF A2 side 1
+COTTAGE_ROOF_REVIEW checks=16 failures=0

@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS preflight agrees with composed blocks/objects: seed 0 streets 1
+PASS preflight agrees with composed blocks/objects: seed 0 streets 2
+PASS preflight agrees with composed blocks/objects: seed 0 streets 3
+PASS preflight agrees with composed blocks/objects: seed 1703 streets 1
+PASS preflight agrees with composed blocks/objects: seed 1703 streets 2
+PASS preflight agrees with composed blocks/objects: seed 1703 streets 3
+PASS preflight agrees with composed blocks/objects: seed 4294967295 streets 1
+PASS preflight agrees with composed blocks/objects: seed 4294967295 streets 2
+PASS preflight agrees with composed blocks/objects: seed 4294967295 streets 3
+FAIL attached object limit rejects independently of block limit
+PASS block limit reports exact oversized count
+PASS invalid preflight rejected
+PASS invalid preflight rejected
+PASS invalid preflight rejected
+PASS invalid preflight rejected
+PASS over-capacity library request starts no worker and writes no asset
+SETTLEMENT_CAPACITY failures=1

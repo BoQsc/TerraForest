@@ -95,6 +95,13 @@ Cottage A R1 and the old cottage's chunky roof appearance; keeping that original
 unchanged does not mark its roof accepted. Shop B R1 alone is approved as an
 additional design, not permission to replace originals or approve other roofs.
 
+Subsequent explicit approval, 2026-10-25: Cottage roof A2 R2 is approved as the
+enclosed-cottage default. Preserve its exact reviewed thin slopes, seam blocks and
+timber gables, as well as its original rooms and attached objects. This approval
+does not cover A1, other house redesigns or automatic migration of saved buildings.
+The historical A0 comparison remains unchanged; settlement terrain-fit and
+populated-world acceptance are separate from this roof approval.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

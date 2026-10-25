@@ -34,7 +34,7 @@ func run() -> void:
 			retained=retained and cell.y==5 and absi(cell.x)==4 and absi(cell.z)==6 and blocks.decode_block(candidate[cell]).shape==16
 	check(retained,"existing walls and stairs unchanged; only thin roof-edge seam cells added below eaves, no A1 porch")
 	check(design.candidate.get_model_attachments()==design.original.get_model_attachments(),"doors, windows, furniture and storage remain exact originals")
-	check(design.candidate.get_meta("review_only",false) and design.candidate.get_meta("review_revision")==2 and viewer.candidate_label.text=="PROPOSAL / NOT APPROVED","A2 is a separately identified unapproved revision")
+	check(design.candidate.get_meta("review_only",false) and design.candidate.get_meta("review_revision")==2 and viewer.candidate_label.text=="APPROVED / COTTAGE DEFAULT","historical A2 review asset now shows its explicit approval")
 	check(Roof.build(blocks).get_records()==design.candidate.get_records(),"baked A2 matches reproducible offline recipe")
 	for shape_id in range(15,19):
 		var found:=false
@@ -57,7 +57,7 @@ func run() -> void:
 	press("Open / close doors")
 	for frame in 8:await physics_frame
 	await walk_designs()
-	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"cells":design.candidate.get_cell_count(),"scope":"A2 roof-only review, no production building replacement or world migration"},"  "))
+	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"cells":design.candidate.get_cell_count(),"scope":"approved A2 roof comparison; no saved-world migration"},"  "))
 	viewer.free();await process_frame
 	print("COTTAGE_ROOF_REVIEW checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

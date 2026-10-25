@@ -108,7 +108,7 @@ func _hud() -> void:
 		["Shops / B0 and B1",func():select_view(1,0);set_paused(false)],["Whole scene / fly",func():overview();set_paused(false)],
 		["Close review",func():get_tree().quit()]]:
 		var button:=Button.new();button.text=entry[0];button.pressed.connect(entry[1]);menu.add_child(button)
-	menu.add_child(_label("B1 / Shop B R1 is the only approved addition.\nA1 is rejected. A0 roof rework is still pending.",16,Color("ffd38a")))
+	menu.add_child(_label("B1 / Shop B R1 is the approved additional shop.\nA1 is rejected. A2 roof approved; A0 here is the historical original.",16,Color("ffd38a")))
 	pause_panel.hide()
 
 func select_view(design_index: int, _view_index: int, _from_tour: bool = false) -> void:
@@ -136,7 +136,7 @@ func set_paused(value: bool) -> void:
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value or not focused else Input.MOUSE_MODE_CAPTURED
 
 func _update_location() -> void:
-	var row: String="A / A0 original cottage (roof rework pending)" if player.position.z> -15 else "B / B0 original shop, B1 approved addition"
+	var row: String="A / A0 historical original cottage (A2 roof approved separately)" if player.position.z> -15 else "B / B0 original shop, B1 approved addition"
 	if fly and player.position.y>12:row="Whole site / A0 cottage / B0 original shop / B1 approved addition"
 	location_label.text=row+(" / FLY (no collision)" if fly else " / WALK")
 

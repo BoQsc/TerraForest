@@ -1,0 +1,33 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_cottage_roof_pack\\engine.log",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\approved_cottage_roof.gd",
+    "--",
+    "--temporary",
+    "--world-slot=approved_cottage_roof_pack_check",
+    "--derived-cache=user://approved_cottage_roof_pack_20261025",
+    "--approved-reference=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reviews\\modular_buildings\\baked\\cottage_roof_a2.tres"
+  ],
+  "utc": "2026-10-25T13:18:38.543810+00:00",
+  "pack_sha256": "c8d47da11860cd8d218b643cdfe9c8ce1803a3e181ea2fd6dba26e4176db2a3b",
+  "test_sha256": "6c7be63084a701494ed6764a23f30374f109c33025abbbd55b261bcb868a39ed",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 80536,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 6.939102999982424,
+    "passed": true
+  }
+}

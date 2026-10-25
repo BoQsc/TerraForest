@@ -1,0 +1,29 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_cottage_roof\\settlement_presets_legacy\\engine.log",
+    "--resolution",
+    "1920x1080",
+    "--script",
+    "res://reports/approved_cottage_roof/settlement_presets_legacy.gd",
+    "--",
+    "--temporary"
+  ],
+  "scope": "Unchanged suite using explicit historical A0 rather than new A2",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 63672,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL preset matches verified mixed neighborhood blocks and attachments"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 1.3702156000072137,
+    "passed": false
+  }
+}

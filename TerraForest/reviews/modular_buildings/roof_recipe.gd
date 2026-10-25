@@ -4,7 +4,7 @@ const Recipes = preload("res://reviews/modular_buildings/recipes.gd")
 const PATH := "res://reviews/modular_buildings/baked/cottage_roof_a2.tres"
 
 static func build(blocks: Node3D) -> Resource:
-	var source: Resource=Recipes.Furniture.enclosed_cottage()
+	var source: Resource=Recipes.Furniture.legacy_enclosed_cottage()
 	var cells:=Recipes.cells_of(source)
 	for cell: Vector3i in cells.keys():
 		if cell.y>=6:cells.erase(cell)
@@ -25,9 +25,9 @@ static func build(blocks: Node3D) -> Resource:
 	return result
 
 static func entry() -> Dictionary:
-	return {"title":"COTTAGE ROOF A2", "decision":"pending", "original":Recipes.Furniture.enclosed_cottage(),
+	return {"title":"COTTAGE ROOF A2", "decision":"approved_default", "original":Recipes.Furniture.legacy_enclosed_cottage(),
 		"candidate":load(PATH), "base":Vector3i.ZERO,
-		"details":"A0 original on left / A2 roof-only proposal on right / continuous thin slopes / unchanged doors, rooms and stairs",
+		"details":"A0 original on left / approved A2 roof on right / continuous thin slopes / unchanged doors, rooms and stairs",
 		"eye":Vector3(15,10,23), "aim":Vector3(.5,5,.5),
 		"inside":Vector3(.5,3.65,3.8), "inside_aim":Vector3(-2,7,-1),
 		"feature_eye":Vector3(2,8.5,13), "feature_aim":Vector3(-1.7,8.4,5.7),

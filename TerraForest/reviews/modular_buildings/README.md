@@ -1,6 +1,6 @@
-# Building reviews — A2 roof pending, Shop B approved
+# Building reviews — A2 roof and Shop B approved
 
-## A0 roof revision A2 — awaiting approval
+## A0 roof revision A2 — approved cottage default
 
 Run `python tools/review_modular_buildings.py --roof` for the dedicated comparison:
 unchanged A0 on the left, new A2 on the right, with matching cameras and signs.
@@ -13,8 +13,10 @@ storage. Only the roof assembly changes: thin native slope/ridge cells with
 separate grid-contained seam infill, and continuous timber gable backing above
 the eaves instead of the old brick/wood staircase edge. No A1 porch is reused.
 `roof_recipe.gd` is offline authoring for `baked/cottage_roof_a2.tres`; runtime
-loads the baked native resource. A2 is not a production prefab or generation
-default and does not alter existing saves. Approval of B1 does not approve A2.
+loads the baked native resource. Following explicit user approval on 2026-10-25,
+an exact production copy at `addons/structures/prefabs/cottage_thin_roof_a2.tres`
+is the default for new enclosed cottages. Existing saves are not rewritten.
+The historical A0 recipe remains explicit and independent of this new default.
 
 Evidence: `../../docs/evidence/cottage_roof_a2/README.md`.
 
@@ -38,6 +40,8 @@ closed. Escape/Close exits; nothing is saved to the player's world.
 
 ## Decisions — 2026-10-25
 
+- **Cottage roof A2 R2: approved.** Exact reviewed thin slope/ridge/seam blocks and
+  timber gable backing become the enclosed-cottage default, without the A1 porch.
 - **Cottage A R1: rejected.** The existing furnished brick cottage, with a multi-block timber
   porch arch and roof, supported side pedestals, flush timber gables, peaked ridge
   and a thin timber ceiling. The center stair route remains open.
@@ -54,16 +58,16 @@ separate supporting building parts. Neither is a complete architectural mesh.
 `recipes.gd` retains reproducible offline authoring; the test checks the baked
 records and attached objects against those recipes. The approved B1 has an exact
 production copy at `addons/structures/prefabs/village_shop_hipped_r1.tres`, appended
-to the construction palette. Original recipes and existing saves remain unchanged.
+to the construction palette. Historical originals and existing saves remain unchanged;
+new enclosed-cottage recipes now use the separately approved A2 roof.
 The historical review assets and `reviews/*` remain excluded from game exports.
 
 ## Acceptance
 
 B1 is the only approved addition; A1 must not enter the production catalogue.
-The old cottage roof is not visually accepted either: the next roof proposal must
-show continuous-looking slopes and clean thin edges, not diagonal block steps.
-The separate A2 review now supplies native thin 45-degree roof assemblies; it is
-not yet approved. Arbitrary/shallow pitches remain outside this revision.
+The old cottage roof is not visually accepted: the separately approved A2 replaces
+its diagonal block steps with continuous-looking thin 45-degree slopes for new
+enclosed cottages. Arbitrary/shallow pitches remain outside this revision.
 Approval of B1 does not authorize replacement of an original or automatic adoption
 by generation. Terrain fitting and integrated-world checks precede that step.
 

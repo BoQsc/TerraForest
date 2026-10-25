@@ -74,9 +74,10 @@ sides, including legacy/modular joins, without raising the whole chunk's voxel
 resolution. Rendering batches never replace individual cell ownership.
 
 The thin panel is flat. IDs 15–18 solve continuous 45-degree roof assemblies, not
-arbitrary/shallow pitches or every upstream variant. A0's roof-only A2 review is
-separate from the original house and still needs explicit approval; no generation
-recipe or existing save is replaced. Validation and scope:
+arbitrary/shallow pitches or every upstream variant. The explicitly approved A2
+roof is the default for newly constructed enclosed cottages, loaded from
+`prefabs/cottage_thin_roof_a2.tres`. Historical A0 uses `legacy_enclosed_cottage()`;
+existing saved structures are not migrated. Validation and scope:
 `../../docs/evidence/modular_blocks/README.md` and
 `../../docs/evidence/cottage_roof_a2/README.md`.
 

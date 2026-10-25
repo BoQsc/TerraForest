@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS mixed central seed=0 choice={ "ok": true, "seed": 0, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=1 choice={ "ok": true, "seed": 1, "buildings": 8 } doors=8 rails=35
+PASS mixed central seed=42 choice={ "ok": true, "seed": 42, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=50 choice={ "ok": true, "seed": 51, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=141 choice={ "ok": true, "seed": 142, "buildings": 8 } doors=8 rails=25
+PASS mixed central seed=155 choice={ "ok": true, "seed": 156, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=285 choice={ "ok": true, "seed": 286, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=348 choice={ "ok": true, "seed": 349, "buildings": 8 } doors=8 rails=30
+PASS mixed central seed=350 choice={ "ok": true, "seed": 351, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=454 choice={ "ok": true, "seed": 455, "buildings": 8 } doors=8 rails=20
+PASS mixed central seed=789 choice={ "ok": true, "seed": 790, "buildings": 8 } doors=8 rails=10
+PASS mixed central seed=1703 choice={ "ok": true, "seed": 1703, "buildings": 8 } doors=8 rails=15
+PASS mixed central seed=2147483647 choice={ "ok": true, "seed": 2147483647, "buildings": 8 } doors=8 rails=5
+MIXED_REGIONAL_RECIPE failures=0

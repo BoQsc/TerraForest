@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+var failures:=0
+func check(ok: bool,message: String) -> void:
+	print("PASS " if ok else "FAIL ",message)
+	if not ok:failures+=1
+func _initialize() -> void:run.call_deferred()
+func run() -> void:
+	GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+	var catalog=preload("res://addons/structures/furniture_catalog.gd")
+	var cottage: Resource=catalog.legacy_enclosed_cottage();var tower: Resource=catalog.furnished_tower()
+	var counter: Resource=ClassDB.instantiate("NativeBlockPrefab")
+	for seed in [0,1703,4294967295]:
+		for streets in [1,2,3]:
+			var counts: Dictionary=counter.layout_counts([cottage,tower],2,seed,streets)
+			var actual: Resource=ClassDB.instantiate("NativeBlockPrefab")
+			var ok: bool=actual.compose_frontage([cottage,tower],2,8,3,seed) if streets==1 else actual.compose_settlement([cottage,tower],2,8,3,seed,streets)
+			check(ok and counts.ok and counts.blocks==actual.get_cell_count() and counts.models==actual.get_model_attachments().size(),"preflight agrees with composed blocks/objects: seed %d streets %d"%[seed,streets])
+	var models: Dictionary=counter.layout_counts([tower],32,1703,1)
+	check(not models.ok and models.models==4224 and models.blocks<262144 and "4096" in models.reason,"attached object limit rejects independently of block limit")
+	var blocks: Dictionary=counter.layout_counts([cottage],64,1703,8)
+	check(not blocks.ok and blocks.blocks>262144 and "262144" in blocks.reason,"block limit reports exact oversized count")
+	for args in [[[],1,0,1],[[cottage],0,0,1],[[cottage],1,-1,1],[[cottage],1,0,9]]:
+		check(not counter.layout_counts(args[0],args[1],args[2],args[3]).ok,"invalid preflight rejected")
+	var library=preload("res://addons/structures/prefab_library.gd").new()
+	library.directory="user://capacity_rejected_%d"%Time.get_ticks_usec()
+	var result: Dictionary=library.begin_frontage_sources([tower],32,8,3,1703,"Oversized attached objects")
+	check(not result.ok and not library._frontage_thread.is_started() and not DirAccess.dir_exists_absolute(library.directory),"over-capacity library request starts no worker and writes no asset")
+	print("SETTLEMENT_CAPACITY failures=",failures);quit(1 if failures else 0)

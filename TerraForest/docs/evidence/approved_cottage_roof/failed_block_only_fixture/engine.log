@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS production cottage and user-reviewed reference load
+PASS production exactly matches the 555 approved blocks and 13 attached objects
+PASS approved assembly counts
+PASS production records specific default approval
+PASS preset lookup name remains stable
+PASS historical A0 stays separate with identical attached objects
+PASS unchanged placement envelope rotation 0
+PASS unchanged foundation samples rotation 0
+PASS unchanged placement envelope rotation 1
+PASS unchanged foundation samples rotation 1
+PASS unchanged placement envelope rotation 2
+PASS unchanged foundation samples rotation 2
+PASS unchanged placement envelope rotation 3
+PASS unchanged foundation samples rotation 3
+PASS callers receive independent native prefab resources
+PASS mutating one instance cannot corrupt future cottages
+FAIL legacy cottage still places
+FAIL old and approved roofs coexist
+PASS saved legacy cells restore byte-for-byte, without roof migration
+PASS generation recipe uses exact approved cottages: 4
+PASS generation recipe uses exact approved cottages: 3
+PASS cached plans reconstruct production prefabs
+PASS generation recipe uses exact approved cottages: 4
+PASS generation recipe uses exact approved cottages: 3
+PASS both derived placement caches invalidate pre-approval recipes
+PASS actual temporary gameplay world finishes loading
+PASS existing enclosed-cottage palette index now uses exact approved A2
+PASS normal developer building tool activates
+PASS normal construction UI selects the approved cottage
+PASS approved cottage places through actual gameplay native compound transaction
+PASS one approved roof block removes without deleting its neighbor
+PASS actual gameplay compound save restores approved roof and all attachments exactly
+[TerrainRewrite] Temporary test world: save skipped
+APPROVED_COTTAGE_ROOF checks=32 failures=2

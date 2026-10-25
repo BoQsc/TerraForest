@@ -35,6 +35,10 @@ static func salvage_recipes() -> Dictionary:
 	return {"furniture/table/v1":PackedInt64Array([102,3]),"furniture/chair/v1":PackedInt64Array([102,1]),"furniture/shelf/v1":PackedInt64Array([102,4])}
 
 static func enclosed_cottage() -> Resource:
+	var approved: Resource=load("res://addons/structures/prefabs/cottage_thin_roof_a2.tres")
+	return approved.duplicate() if approved!=null else null
+
+static func legacy_enclosed_cottage() -> Resource:
 	var asset: Resource=furnished_cottage(true)
 	if asset==null:return null
 	var attachments: Array=asset.get_model_attachments()

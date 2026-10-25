@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS approved shop and exact user-reviewed reference load
+PASS approved B1 geometry and attachments copied exactly, not redesigned
+PASS production prefab records addition-only approval
+PASS original shop remains a distinct unchanged recipe
+PASS approved shop retains original doors, windows, furniture and storage
+PASS actual temporary gameplay world finishes loading
+PASS B1 appended exactly once without shifting existing prefab indices
+PASS no rejected cottage or review-only prefab in gameplay palette
+PASS legacy cottage retained and approved enclosed cottage keeps its palette index
+PASS construction UI names the new shop separately
+PASS normal developer building tool activates
+PASS normal UI selection selects the approved shop
+[TerrainRewrite] Temporary test world: save skipped
+APPROVED_SHOP_ADDITION checks=12 failures=0

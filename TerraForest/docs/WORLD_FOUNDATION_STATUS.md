@@ -1,11 +1,15 @@
-## A0 thin-roof revision A2 ready for review, not adopted — 2026-10-25
+## A0 thin-roof revision A2 approved as cottage default — 2026-10-25
 
-The user requested fixing A0's diagonal block-looking roof and comparing it with
-the unchanged original before replacement. A2 is a separate baked review prefab,
-not a rewrite of the production cottage. Launch the signed, matching-camera
-comparison with `python tools/review_modular_buildings.py --roof`: A0 original on
-the left, A2 pending approval on the right. Exterior, underside/interior and edge
-detail views include an individual roof-block removal/restoration demonstration.
+The user explicitly approved A2: "I approve this roof, seems better."
+The exact reviewed blocks and attachments are now copied into the production
+`cottage_thin_roof_a2.tres`. New enclosed cottages, including recipes that compose
+that cottage, use A2; raw legacy templates and already saved buildings are not
+rewritten. The public prefab name and construction-palette index remain stable.
+Both derived placement-plan cache versions advance to 4; canonical world storage
+does not change. The historical comparison explicitly uses the preserved A0 recipe,
+so neither A0 nor rejected A1 silently changes when the production default changes.
+Launch `python tools/review_modular_buildings.py --roof` for A0 on the left and
+approved A2 on the right, including an individual roof-block removal demonstration.
 
 Four new native shapes (IDs 15–18) form a continuous 45-degree shell: thin slope,
 slope seam infill, thin ridge and ridge seam infill. The 1/8-metre vertical skin
@@ -22,12 +26,24 @@ cells complete the overhangs; the original solid walls are not replaced with
 those slivers. There is no A1 porch or unrelated house redesign.
 
 Engineering and inspected comparison evidence: `evidence/cottage_roof_a2/README.md`.
-**Still pending:** explicit user approval of A2 before replacement or generation
-use. Generated terrain fit, populated-world routes and performance remain separate
-acceptance requirements. This solves the reviewed 45-degree shell assembly, not
-arbitrary/shallow roof pitches, automatic structural collapse or whole-city quality.
-The earlier pending roof-geometry item below is revisited by this implementation;
-its visual approval and actual-world adoption gates are not silently closed.
+Approval/default integration evidence: `evidence/approved_cottage_roof/README.md`.
+The explicit roof-design approval gate is closed. Generated terrain fit,
+populated-world routes and sustained performance remain separate acceptance
+requirements, not implied by adopting this roof in future cottage recipes.
+Return to those checks before declaring generated settlements accepted; require
+street-to-interior traversal and populated-world frame-time evidence.
+This solves the reviewed 45-degree shell, not arbitrary/shallow pitches,
+automatic structural collapse or whole-city quality.
+
+**Verification:** 32 approval/default checks pass in both source and exported
+game, including exact approved geometry, independent instances, rotated footprint,
+native placement and compound restore. Custom recipe cold/warm caches and both
+historical comparisons pass. Two older fixed-count settlement suites remain
+failing, including when rerun against historical A0: the tower-only attachment
+count in `settlement_capacity` and mixed-layout count in `settlement_presets`.
+Their failures and the corrected new-fixture failures are retained in the approval
+evidence. Reconcile the old expected counts with current tower/preset recipes and
+rerun those suites separately; do not claim a fully green settlement test suite.
 
 ## Building review decision: Shop B addition only; cottage rejected — 2026-10-25
 
@@ -52,10 +68,10 @@ saves and stay excluded from exports. Native cells own the buildings, signs and
 trusted plate paths; native grounded movement handles the review character.
 
 **Roof work updated:** A2 above implements native 45-degree thin roof/transition
-pieces with a separate signed house comparison. This supersedes the geometry
-deferral, not the user's approval gate. Exterior/underside/join/removal, collision
-and save evidence accompanies A2; no production cottage replacement is authorized
-until the user approves that revision. Shallow-pitch families remain unfinished.
+pieces and is explicitly approved as the new enclosed-cottage default.
+Exterior/underside/join/removal, collision and save evidence accompanies A2;
+existing saved buildings and historical A0 comparisons remain intact.
+Shallow-pitch families and settlement-wide acceptance remain unfinished.
 
 Verification and retained failures are recorded in
 `evidence/approved_shop_review/README.md`. The first walk-scene test exposed an

@@ -41,7 +41,7 @@ func run() -> void:
 		check(approved_count==1 and approved_index==game.structure_prefabs.size()-1,"B1 appended exactly once without shifting existing prefab indices")
 		check(rejected_count==0,"no rejected cottage or review-only prefab in gameplay palette")
 		var furniture: Script=load("res://addons/structures/furniture_catalog.gd")
-		check(game.structure_prefabs[0].resource_path=="res://addons/structures/prefabs/brick_cottage.tres" and game.structure_prefabs[6].get_records()==furniture.enclosed_cottage().get_records(),"existing cottage choices and indices remain unchanged")
+		check(game.structure_prefabs[0].resource_path=="res://addons/structures/prefabs/brick_cottage.tres" and game.structure_prefabs[6].get_records()==furniture.enclosed_cottage().get_records(),"legacy cottage retained and approved enclosed cottage keeps its palette index")
 		if approved_index>=0:
 			var palette: Node=game.construction_palette
 			check(palette.prefab.get_item_text(approved_index+1)==approved.resource_name,"construction UI names the new shop separately")

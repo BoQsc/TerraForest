@@ -135,6 +135,7 @@ func select_view(design_index: int, view_index: int, from_tour: bool = false) ->
 	match design.decision:
 		"rejected":candidate_label.text="REJECTED / ARCHIVED R1"
 		"approved_addition":candidate_label.text="APPROVED / ADDITION ONLY"
+		"approved_default":candidate_label.text="APPROVED / COTTAGE DEFAULT"
 		_:candidate_label.text="PROPOSAL / NOT APPROVED"
 	heading.text=design.title+"  /  "+["EXTERIOR","INTERIOR","DETAIL"][current_view]
 	details.text=design.details

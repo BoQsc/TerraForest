@@ -23,7 +23,7 @@ static func finish(source: Resource, cells: Dictionary, title: String) -> Resour
 	return asset
 
 static func cottage(blocks: Node) -> Resource:
-	var source: Resource = Furniture.enclosed_cottage()
+	var source: Resource = Furniture.legacy_enclosed_cottage()
 	var cells := cells_of(source)
 	for cell: Vector3i in cells.keys():
 		if cell.y >= 6: cells.erase(cell)
@@ -80,7 +80,7 @@ static func shop(blocks: Node) -> Resource:
 
 static func entries() -> Array[Dictionary]:
 	return [
-		{"title":"COTTAGE A", "decision":"rejected", "original":Furniture.enclosed_cottage(), "candidate":load("res://reviews/modular_buildings/baked/cottage_a.tres"), "base":Vector3i.ZERO,
+		{"title":"COTTAGE A", "decision":"rejected", "original":Furniture.legacy_enclosed_cottage(), "candidate":load("res://reviews/modular_buildings/baked/cottage_a.tres"), "base":Vector3i.ZERO,
 		"details":"Segmented timber porch arch  /  pointed ridge blocks  /  thin timber gables and ceiling",
 		"eye":Vector3(17,12,24), "aim":Vector3(.5,4.7,.5), "inside":Vector3(.5,3.65,3.8), "inside_aim":Vector3(-.3,3.3,-2),
 		"feature_eye":Vector3(5,5.5,13), "feature_aim":Vector3(.5,3.5,6), "remove":Vector3i(-1,4,7), "floor":2.0, "approach":10.0},

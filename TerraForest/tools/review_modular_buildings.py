@@ -27,8 +27,8 @@ def main():
     details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
                    notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
     if options.roof:
-        details.update(label='A0 original vs A2 thin roof / awaiting approval',
-                       notes='Roof-only proposal next to unchanged A0. A2 is not approved or installed in generation or the production prefab catalogue. No player saves are read or written.')
+        details.update(label='A0 original vs A2 thin roof / approved cottage default',
+                       notes='Approved A2 roof next to historical A0. New enclosed cottages use this exact A2 design; existing saved buildings are not rewritten. No player saves are read or written by this comparison.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0

@@ -1,0 +1,28 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_cottage_roof\\settlement_capacity_legacy\\engine.log",
+    "--headless",
+    "--script",
+    "res://reports/approved_cottage_roof/settlement_capacity_legacy.gd",
+    "--",
+    "--temporary"
+  ],
+  "scope": "Unchanged suite using explicit historical A0 rather than new A2",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 53532,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL attached object limit rejects independently of block limit"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 0.37709399999585,
+    "passed": false
+  }
+}

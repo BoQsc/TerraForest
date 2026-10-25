@@ -1,0 +1,186 @@
+{
+  "base_revision": "f55b9adf9fe1c780a7a6b844f0d26a21e79ef3ce",
+  "scope": "User-approved A2 default for new enclosed cottages; saved structures unchanged; not settlement quality acceptance",
+  "runs": {
+    "source": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 84620,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 8.088651600060984,
+      "passed": true
+    },
+    "mixed_recipe": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 83824,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.37093360000289977,
+      "passed": true
+    },
+    "world_recipe": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 82052,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 6.021892199991271,
+      "passed": true
+    },
+    "historical_comparison": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 22724,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 21.484094500076026,
+      "passed": true
+    },
+    "shop_regression": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 73132,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 7.868437899975106,
+      "passed": true
+    },
+    "roof_comparison": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80476,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 10.204500000108965,
+      "passed": true
+    },
+    "roof_restore": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 62476,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.5695211000274867,
+      "passed": true
+    },
+    "pack": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80536,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 6.939102999982424,
+      "passed": true
+    },
+    "failed_initial_fixture": {
+      "timed_out": true,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 77220,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL legacy cottage still places",
+        "FAIL old and approved roofs coexist",
+        "SCRIPT ERROR: Invalid call. Nonexistent function 'set_cell' in base 'NativeBlockWorld'."
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 120.10016969998833,
+      "passed": false
+    },
+    "failed_block_only_fixture": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79580,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL legacy cottage still places",
+        "FAIL old and approved roofs coexist"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 8.077828800072894,
+      "passed": false
+    },
+    "known_capacity_failure": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79968,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL attached object limit rejects independently of block limit"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 0.37056539999321103,
+      "passed": false
+    },
+    "known_preset_failure": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 56520,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL preset matches current approved building counts and unchanged attachments"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 1.5414365999167785,
+      "passed": false
+    },
+    "legacy_capacity_failure": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 53532,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL attached object limit rejects independently of block limit"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 0.37709399999585,
+      "passed": false
+    },
+    "legacy_preset_failure": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 63672,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL preset matches verified mixed neighborhood blocks and attachments"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 1.3702156000072137,
+      "passed": false
+    }
+  },
+  "files": {
+    "addons/structures/furniture_catalog.gd": "a5320889e9ef1a4639003d0930d096f421e17990e69a5914c3294752c6647742",
+    "addons/structures/prefabs/cottage_thin_roof_a2.tres": "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30",
+    "reviews/modular_buildings/baked/cottage_roof_a2.tres": "a7a7aaf835fd0ef5ee7706405bfd81d8feba459d94a5865afc69411bf3db6b82",
+    "addons/structures/prefabs/brick_cottage.tres": "cebf08cc87372370eb0efb9c4d63b385fb132775e2a204473b518377f21815b6",
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "addons/world_runtime/custom_world_plan.gd": "ddc8c8ce80ac02d62a94879e47d83ffb2bb4b1603ef99d6136b5216ff7523615",
+    "addons/world_runtime/world_generation_plan.gd": "581d6e00bf22e72f20ad00b17eb1cd82d60dbf9b138d93e522fec02f3195742d",
+    "tests/approved_cottage_roof.gd": "6c7be63084a701494ed6764a23f30374f109c33025abbbd55b261bcb868a39ed",
+    "dist/TerraForest.pck": "c8d47da11860cd8d218b643cdfe9c8ce1803a3e181ea2fd6dba26e4176db2a3b"
+  }
+}
