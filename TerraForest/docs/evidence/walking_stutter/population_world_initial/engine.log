@@ -1,0 +1,57 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 302.56 ms at 41669
+[terrain-hitch] base controller 304.36 ms at 41671
+[terrain-hitch] controller process 306.39 ms at 41673
+[terrain-hitch] world process 308.25 ms at 41674
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual world becomes playable with inhabitants loaded
+PASS zombies already exist on the first playable frame
+PASS loading barrier waits for initial population admission
+PASS initial residents have stable identities, safety distance and independent awareness
+Zombie severed shin_l: ["shin_l", "foot_l"]
+Zombie ragdoll started with 15 physical bones.
+PASS death immediately retires its persistent population identity
+PASS waiting after a death does not refill the encounter pool
+PASS scene reload restores population and existing corpse storage
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS reload has no duplicate or resurrected residents
+PASS real zombie keeps body and limb injuries through unload/reload
+PASS restored missing legs still produce a crawling zombie
+PASS restored crawler mesh is already prone before any simulation tick
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS travel loads world residents at the destination before returning input
+PASS travel retires old scene bodies and admits destination identities
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+[terrain-hitch] controller loading 52.13 ms at 48118
+[terrain-hitch] base controller 53.14 ms at 48119
+[terrain-hitch] controller process 54.26 ms at 48120
+[terrain-hitch] world process 55.38 ms at 48121
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS return travel completes the inhabitants loading stage
+PASS travel never resurrects the killed world resident
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_POPULATION_WORLD checks=15 failures=0

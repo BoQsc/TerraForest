@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 143.75 ms at 36788
+[terrain-hitch] base controller 145.35 ms at 36790
+[terrain-hitch] controller process 146.97 ms at 36791
+[terrain-hitch] world process 148.71 ms at 36793
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS real terrain world becomes ready
+PASS fixture keeps real world physics and encounter updates active
+PASS real native player motor collides with zombie capsules
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS close-range zombie admits on actual streamed collision
+PASS unmodified world physics allows autonomous attack contacts
+PASS actual player adapter receives zombie attack damage
+PASS actual host updates preserve attack windup
+PASS real Escape menu suspends attack contacts
+PASS closing real Escape menu restores completed attacks
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_WORLD_COMBAT checks=9 failures=0

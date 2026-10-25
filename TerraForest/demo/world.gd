@@ -1415,11 +1415,17 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	return obstacle
 
 func _physics_process(delta: float) -> void:
+	var measured_begin:=Time.get_ticks_usec()
 	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
+	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
+	measured_begin=Time.get_ticks_usec()
 	actors.update_simulation(delta,terrain.focus,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
+	terrain._record_stage("actor update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
+	measured_begin=Time.get_ticks_usec()
 	super._physics_process(delta)
+	terrain._record_stage("player physics",(Time.get_ticks_usec()-measured_begin)/1000.0)
 
 func _process(delta: float) -> void:
 	var frame_begin:=Time.get_ticks_usec()

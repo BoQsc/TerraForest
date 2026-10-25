@@ -1,0 +1,51 @@
+{
+  "checks": 30,
+  "failures": 0,
+  "initialization_us": [
+    {
+      "anatomy": 3489,
+      "animation": 1760,
+      "hit areas": 9393,
+      "parts": 326,
+      "ragdoll": 793,
+      "scene": 117501,
+      "shape fit": 10755
+    },
+    {
+      "anatomy": 342,
+      "animation": 1673,
+      "hit areas": 675,
+      "parts": 356,
+      "ragdoll": 1628,
+      "scene": 1372,
+      "shape fit": 31
+    },
+    {
+      "anatomy": 152,
+      "animation": 679,
+      "hit areas": 185,
+      "parts": 136,
+      "ragdoll": 479,
+      "scene": 9857,
+      "shape fit": 14
+    },
+    {
+      "anatomy": 2189,
+      "animation": 767,
+      "hit areas": 8524,
+      "parts": 164,
+      "ragdoll": 526,
+      "scene": 521,
+      "shape fit": 8629
+    },
+    {
+      "anatomy": 136,
+      "animation": 632,
+      "hit areas": 172,
+      "parts": 123,
+      "ragdoll": 441,
+      "scene": 483,
+      "shape fit": 13
+    }
+  ]
+}

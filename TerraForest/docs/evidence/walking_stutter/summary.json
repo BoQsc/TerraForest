@@ -1,0 +1,438 @@
+{
+  "hardware": {
+    "cpu": "Intel Core i5-12450H",
+    "cores": 8,
+    "threads": 12,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "resolution": "1920x1080",
+    "fps_cap": 60
+  },
+  "profiles": {
+    "source_before": {
+      "distance": 246.53630065918,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "frames_sha256": "968d1adbb003cbb9c0df916042b7c45b20cf0aa8dbd51714fe53797e14ed97dc",
+      "phases": {
+        "idle": {
+          "count": 481,
+          "p95_ms": 18.583,
+          "p99_ms": 19.589,
+          "max_ms": 25.454,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "walking": {
+          "count": 2593,
+          "p95_ms": 20.456,
+          "p99_ms": 26.342,
+          "max_ms": 229.745,
+          "frames_over_33_4_ms": 15,
+          "frames_over_50_ms": 15
+        },
+        "recovery": {
+          "count": 480,
+          "p95_ms": 17.407,
+          "p99_ms": 18.014,
+          "max_ms": 20.242,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        }
+      },
+      "walking_admissions": {
+        "count": 16,
+        "min_ms": 98.794,
+        "max_ms": 146.672
+      }
+    },
+    "source_after_geometry": {
+      "distance": 247.084732055664,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "frames_sha256": "77eb70c2e4dc0758db4de5f480062537520b5b0ebff8f220456a229aab4eea41",
+      "phases": {
+        "idle": {
+          "count": 481,
+          "p95_ms": 17.115,
+          "p99_ms": 17.265,
+          "max_ms": 17.53,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "walking": {
+          "count": 2700,
+          "p95_ms": 17.249,
+          "p99_ms": 17.558,
+          "max_ms": 24.909,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "recovery": {
+          "count": 480,
+          "p95_ms": 17.206,
+          "p99_ms": 17.419,
+          "max_ms": 17.55,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        }
+      },
+      "walking_admissions": {
+        "count": 15,
+        "min_ms": 2.721,
+        "max_ms": 3.267
+      }
+    },
+    "saved_blocked_fixture": {
+      "distance": 39.2926445007324,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "frames_sha256": "ecd6a1f12c6903900cacdd0fca81f4e3c9bf8e82c20b297267f36abc990481c5",
+      "phases": {
+        "idle": {
+          "count": 480,
+          "p95_ms": 19.385,
+          "p99_ms": 21.406,
+          "max_ms": 42.75,
+          "frames_over_33_4_ms": 5,
+          "frames_over_50_ms": 0
+        },
+        "walking": {
+          "count": 2701,
+          "p95_ms": 18.034,
+          "p99_ms": 19.908,
+          "max_ms": 24.628,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "recovery": {
+          "count": 481,
+          "p95_ms": 17.201,
+          "p99_ms": 17.377,
+          "max_ms": 34.535,
+          "frames_over_33_4_ms": 1,
+          "frames_over_50_ms": 0
+        }
+      },
+      "walking_admissions": {
+        "count": 1,
+        "min_ms": 2.93,
+        "max_ms": 2.93
+      }
+    },
+    "package_fresh": {
+      "distance": 247.178726196289,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "frames_sha256": "4be7df03a7706791b535460f1b3fdf2b4c55dc947c78c3999663c9ab5a89bb87",
+      "phases": {
+        "idle": {
+          "count": 481,
+          "p95_ms": 18.633,
+          "p99_ms": 19.646,
+          "max_ms": 21.083,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "walking": {
+          "count": 2701,
+          "p95_ms": 20.38,
+          "p99_ms": 23.92,
+          "max_ms": 30.352,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "recovery": {
+          "count": 480,
+          "p95_ms": 17.324,
+          "p99_ms": 17.435,
+          "max_ms": 17.975,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        }
+      },
+      "walking_admissions": {
+        "count": 15,
+        "min_ms": 2.728,
+        "max_ms": 3.783
+      }
+    },
+    "package_saved": {
+      "distance": 247.084716796875,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "frames_sha256": "61be0ce7f3c2edbed6761fc6f6fd6ea4caec3e3d0344b5fe24b2e7688708292c",
+      "phases": {
+        "idle": {
+          "count": 480,
+          "p95_ms": 17.151,
+          "p99_ms": 17.26,
+          "max_ms": 17.466,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "walking": {
+          "count": 2700,
+          "p95_ms": 17.173,
+          "p99_ms": 17.543,
+          "max_ms": 26.034,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        },
+        "recovery": {
+          "count": 481,
+          "p95_ms": 17.048,
+          "p99_ms": 17.316,
+          "max_ms": 17.997,
+          "frames_over_33_4_ms": 0,
+          "frames_over_50_ms": 0
+        }
+      },
+      "walking_admissions": {
+        "count": 14,
+        "min_ms": 2.573,
+        "max_ms": 3.163
+      }
+    }
+  },
+  "checks": {
+    "source_before": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 74932,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 101.6258119000122,
+      "passed": true
+    },
+    "source_after_geometry": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79628,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 100.13511339994147,
+      "passed": true
+    },
+    "anatomy": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 67552,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.4433177999453619,
+      "passed": true
+    },
+    "population": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80516,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.4274477999424562,
+      "passed": true
+    },
+    "population_world_initial": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 32732,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 49.06417340005282,
+      "passed": true
+    },
+    "geometry_final": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 78048,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.6491744000231847,
+      "passed": true
+    },
+    "combat_regions": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 75692,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 21.208621499943547,
+      "passed": true
+    },
+    "world_attacks": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 77608,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 51.72389690007549,
+      "passed": true
+    },
+    "forest_rest_failure_1": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 56252,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL forest corpse and detached arm settle with animation disabled"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 51.48351640009787,
+      "passed": false
+    },
+    "forest_rest_failure_2": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 85700,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL forest corpse and detached arm settle with animation disabled"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 51.898161499993876,
+      "passed": false
+    },
+    "legacy_geometry_rest_failure": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 13424,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL forest corpse and detached arm settle with animation disabled"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 49.704742500092834,
+      "passed": false
+    },
+    "incomplete_save_fixture": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 59436,
+      "exit_code": 1,
+      "diagnostics": [
+        "\nERROR: Native TerrainCore failed to load. Run run_tests.bat and read logs. Error 22",
+        "ERROR: The object does not have any 'meta' values with the key 'terraforest_scene_task'.",
+        "ERROR: Travel profile did not finish loading"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 95.61542419996113,
+      "passed": false
+    },
+    "saved_blocked_fixture": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 77744,
+      "exit_code": 1,
+      "diagnostics": [],
+      "required_text_found": false,
+      "elapsed_seconds": 78.74480929994024,
+      "passed": false
+    },
+    "package_fresh": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 83040,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 100.5154646000592,
+      "passed": true
+    },
+    "package_saved": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 82060,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 88.40882240002975,
+      "passed": true
+    },
+    "population_world_final": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 82560,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 41.83525520004332,
+      "passed": true
+    }
+  },
+  "release_checks": [
+    {
+      "test": "zombie_geometry_cache",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\travel_release_5r5lmtno",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_geometry_cache\\engine.log",
+        "--script",
+        "res://tests/zombie_geometry_cache.gd",
+        "--",
+        "--zombie-combat-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_geometry_cache\\captures"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 85252,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.6428027000511065,
+        "passed": true
+      }
+    },
+    {
+      "test": "zombie_combat_regions",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\travel_release_5r5lmtno",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_combat_regions\\engine.log",
+        "--script",
+        "res://tests/zombie_combat_regions.gd",
+        "--",
+        "--zombie-combat-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_combat_regions\\captures"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 11908,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 19.107773200026713,
+        "passed": true
+      }
+    }
+  ]
+}

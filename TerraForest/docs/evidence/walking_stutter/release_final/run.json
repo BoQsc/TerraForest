@@ -1,0 +1,91 @@
+{
+  "scope": "Clean imported rig, release world/player libraries only.",
+  "inputs": {
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d0b61347f063c6d8ecedccdfaa28579bfd02566efd76b644c8e99310d4297e0a",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "0e13cb793eee7ebf1a91732041ca8d73c231e613932dacfee74716a3b7540f6e",
+    "addons\\characters\\runtime\\zombie.gd": "dc0489c2e59694421943ae320f237ade617f23fdffe96e177353dcb8dbc6e4bc",
+    "addons\\characters\\runtime\\zombie_world.gd": "42a1b6fe760475ee45cc9b62e631f0706fed0d173465e85dc2aa2a595cab2e88",
+    "addons\\characters\\runtime\\zombie_population.gd": "ccecbc1cf757e1afb0852fa19e57a3044fe1ab228133da3bbc427f91d024f9c4",
+    "addons\\characters\\runtime\\assets\\Zombie.r4.glb": "6b6021c6ab97191c5a438807998845cf05a645ba693798060b73c5d963d58fbf",
+    "addons\\characters\\runtime\\assets\\Zombie.r4.behavior.json": "712cccca48685db700977a631ad93535330245b5393e15eec587ffa7ef6a2be4",
+    "addons\\characters\\runtime\\assets\\Zombie.drag_walk.res": "47ac7f95ff5a655106c16912e2b98719a798eaf7ad636bab09403923e00dacb9",
+    "tests\\zombie_geometry_cache.gd": "08a51c58ca9edc3f9eab8fa87afcdfe7e54b63e321a378dee8b7d51305bee9ec",
+    "tests\\zombie_combat_regions.gd": "5e1562d9ab4b26b859472390b1e8a019a1f3f2e1597c123d4a847595268b4d11"
+  },
+  "outcomes": [
+    {
+      "test": "zombie_geometry_cache",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\travel_release_5r5lmtno",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_geometry_cache\\engine.log",
+        "--script",
+        "res://tests/zombie_geometry_cache.gd",
+        "--",
+        "--zombie-combat-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_geometry_cache\\captures"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 85252,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.6428027000511065,
+        "passed": true
+      }
+    },
+    {
+      "test": "zombie_combat_regions",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\travel_release_5r5lmtno",
+        "--max-fps",
+        "60",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_combat_regions\\engine.log",
+        "--script",
+        "res://tests/zombie_combat_regions.gd",
+        "--",
+        "--zombie-combat-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_release_final\\zombie_combat_regions\\captures"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 11908,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 19.107773200026713,
+        "passed": true
+      }
+    }
+  ],
+  "revision": "0ff221bb35ea5fdb4d50f44a1635bd831294d0e5",
+  "worktree_changes": [
+    " M TerraForest/addons/characters/runtime/zombie.gd",
+    " M TerraForest/addons/characters/runtime/zombie_world.gd",
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/player_runtime/corpse_loot.gd",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/zombie_anatomy.cpp",
+    " M TerraForest/addons/world_runtime/native/zombie_anatomy.hpp",
+    " M TerraForest/demo/world.gd",
+    "?? TerraForest/addons/world_runtime/native/zombie_geometry.cpp",
+    "?? TerraForest/tests/runtime_travel_profile.gd",
+    "?? TerraForest/tests/runtime_travel_profile.gd.uid",
+    "?? TerraForest/tests/zombie_geometry_cache.gd",
+    "?? TerraForest/tests/zombie_geometry_cache.gd.uid"
+  ],
+  "git_metadata_available": true
+}

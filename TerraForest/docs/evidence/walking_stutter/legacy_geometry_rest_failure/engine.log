@@ -1,0 +1,70 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 140.22 ms at 35031
+[terrain-hitch] base controller 141.89 ms at 35033
+[terrain-hitch] controller process 143.81 ms at 35035
+[terrain-hitch] world process 145.57 ms at 35037
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS playable world ready
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits on real streamed forest terrain
+PASS healthy roaming, pursuit and crawl speeds improve over the previous defaults
+PASS actual held-tool ray resolves the visible forearm, strike 0
+PASS actual tool animation starts, strike 0
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, increased cutting trauma and exactly one tool wear
+PASS combat HUD keeps overall health primary and exact limb health secondary
+PASS actual held-tool ray resolves the visible forearm, strike 1
+PASS actual tool animation starts, strike 1
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, increased cutting trauma and exactly one tool wear
+PASS actual held-tool ray resolves the visible forearm, strike 2
+PASS actual tool animation starts, strike 2
+PASS windup cannot apply damage before animation contact
+PASS animation contact resolves a live zombie hit
+PASS contact applies full shared damage, increased cutting trauma and exactly one tool wear
+PASS three ordinary hatchet strikes no longer sever the forearm
+PASS live tool ray selects another visible region: torso
+PASS animation contacts the selected region: torso
+PASS changing regions continues the same health and charges one tool wear: torso
+PASS secondary health follows the actual hit limb without changing overall health: torso
+PASS live tool ray selects another visible region: upper_arm_r
+PASS animation contacts the selected region: upper_arm_r
+PASS changing regions continues the same health and charges one tool wear: upper_arm_r
+PASS secondary health follows the actual hit limb without changing overall health: upper_arm_r
+PASS live tool ray selects another visible region: head
+PASS animation contacts the selected region: head
+PASS changing regions continues the same health and charges one tool wear: head
+PASS secondary health follows the actual hit limb without changing overall health: head
+Zombie severed forearm_l: ["forearm_l", "hand_l"]
+PASS strong damage still detaches the injured forearm and its hand
+PASS live anatomy changes available zombie attacks in the playable world
+Zombie severed head: ["head"]
+Zombie ragdoll started with 12 physical bones.
+PASS firearm head destruction enters the real physical corpse path
+FOREST_SETTLE 1 {"bodies":15,"groups":3,"maximum_angular_speed":6.34441757202148,"maximum_linear_speed":2.04671192169189,"resting":0,"settle_events":0,"sleeping":0}
+FOREST_SETTLE 2 {"bodies":15,"groups":3,"maximum_angular_speed":16.6434917449951,"maximum_linear_speed":3.48114228248596,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 3 {"bodies":15,"groups":3,"maximum_angular_speed":2.58878397941589,"maximum_linear_speed":0.179561108350754,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 4 {"bodies":15,"groups":3,"maximum_angular_speed":15.5548934936523,"maximum_linear_speed":1.03990161418915,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 5 {"bodies":15,"groups":3,"maximum_angular_speed":8.26378345489502,"maximum_linear_speed":1.15844798088074,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_SETTLE 6 {"bodies":15,"groups":3,"maximum_angular_speed":1.77991914749146,"maximum_linear_speed":0.145503088831902,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_CORPSE {"bodies":15,"groups":3,"maximum_angular_speed":1.77991914749146,"maximum_linear_speed":0.145503088831902,"resting":2,"settle_events":1,"sleeping":0}
+FOREST_CONTACTS {"awake":["Physical_Hips","Physical_Spine2","Physical_LeftArm","Physical_RightArm","Physical_RightForeArm","Physical_RightHand","Physical_LeftUpLeg","Physical_LeftLeg","Physical_LeftFoot","Physical_RightUpLeg","Physical_RightLeg","Physical_RightFoot","Detached_forearm_l","Detached_hand_l","Detached_head"],"contacts":{"239930971198":"MatchingCollision:StaticBody3D","252614547727":"MatchingCollision:StaticBody3D","253285636363":"MatchingCollision:StaticBody3D","257983256783":"MatchingCollision:StaticBody3D"},"no_sleep":[],"world_physics_enabled":false}
+FAIL forest corpse and detached arm settle with animation disabled
+PASS normal host update leaves the corpse passive
+PASS nearby world edits restore corpse constraints, gravity and swept collision
+PASS encounter anatomy remains session-local without changing saved world schemas
+PASS severed head and arm save with valid poses and a missing-parts mask
+PASS corpse snapshot restores without resurrecting missing limbs or losing loot identity
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_COMBAT_WORLD checks=41 failures=1

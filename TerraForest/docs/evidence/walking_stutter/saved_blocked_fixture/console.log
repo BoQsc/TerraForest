@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 144.7 ms at 14053
+[terrain-hitch] base controller 146.54 ms at 14055
+[terrain-hitch] controller process 148.51 ms at 14057
+[terrain-hitch] world process 150.45 ms at 14059
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ragdoll started with 15 physical bones.
+[terrain-hitch] zombie update 82.27 ms at 14264
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+TRAVEL_PROFILE distance=39.2926445007324 frames=3662
+[TerrainRewrite] Temporary test world: save skipped
+TRAVEL_PROFILE FAIL

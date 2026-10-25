@@ -2,6 +2,7 @@
 #include "zombie_anatomy.hpp"
 #include "zombie_rest_body.hpp"
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/callable_method_pointer.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/skin.hpp>
@@ -31,7 +32,12 @@ bool triangle(Vector3 from,Vector3 direction,Vector3 a,Vector3 b,Vector3 c,doubl
 }
 void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","definitions"),&NativeZombieAnatomy::configure);
-    ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes"),&NativeZombieAnatomy::set_hit_meshes);
+    ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes","geometry"),&NativeZombieAnatomy::set_hit_meshes,DEFVAL(Ref<NativeZombieAnatomy>()));
+    ClassDB::bind_method(D_METHOD("sample_vertices","part","to_local"),&NativeZombieAnatomy::sample_vertices);
+    ClassDB::bind_method(D_METHOD("hand_groups","part","to_local"),&NativeZombieAnatomy::hand_groups);
+    ClassDB::bind_method(D_METHOD("closest_contact","part","target","use_point","shapes","mouth"),&NativeZombieAnatomy::closest_contact);
+    ClassDB::bind_method(D_METHOD("fit_collision_shapes"),&NativeZombieAnatomy::fit_collision_shapes);
+    ClassDB::bind_method(D_METHOD("geometry_stats"),&NativeZombieAnatomy::geometry_stats);
     ClassDB::bind_method(D_METHOD("hit","part","damage","force_sever","impact"),&NativeZombieAnatomy::hit,DEFVAL(false),DEFVAL(String("melee")));
     ClassDB::bind_method(D_METHOD("detach","part"),&NativeZombieAnatomy::detach);
     ClassDB::bind_method(D_METHOD("kill"),&NativeZombieAnatomy::kill);
@@ -57,13 +63,40 @@ bool NativeZombieAnatomy::configure(const Dictionary &definitions){
     }
     parts_=std::move(next);maximum_=health_=parts_[0].maximum;configured_=true;return true;
 }
-bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &meshes){
+bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &meshes,const Ref<NativeZombieAnatomy> &geometry){
     if(!configured_||skeleton_||!skeleton||skeleton->get_bone_count()>256||meshes.size()!=14)return false;
+    geometry_names_.clear();geometry_rest_.clear();geometry_pose_.clear();geometry_mesh_transforms_.clear();
+    for(auto &morphs:geometry_morphs_)morphs.clear();
+    const int bone_count=skeleton->get_bone_count();
+    bool reuse=geometry.is_valid()&&geometry.ptr()!=this&&geometry->geometry_valid_&&int(geometry->geometry_names_.size())==bone_count;
+    bool reuse_shapes=reuse&&!geometry->fitted_shapes_.is_empty();
+    for(int bone=0;bone<bone_count;bone++){
+        geometry_names_.push_back(skeleton->get_bone_name(bone));
+        geometry_rest_.push_back(skeleton->get_bone_global_rest(bone));
+        geometry_pose_.push_back(skeleton->get_bone_global_pose(bone));
+        if(reuse&&(geometry_names_.back()!=geometry->geometry_names_[bone]||geometry_rest_.back()!=geometry->geometry_rest_[bone]))reuse=false;
+        if(reuse_shapes&&!geometry_pose_.back().is_equal_approx(geometry->geometry_pose_[bone]))reuse_shapes=false;
+    }
+    for(int index=0;index<14;index++){
+        auto *node=Object::cast_to<MeshInstance3D>(meshes.get(NAMES[index],Variant()));
+        if(!node||node->get_mesh().is_null())return false;
+        auto *asset=Object::cast_to<ArrayMesh>(node->get_mesh().ptr());if(!asset||asset->get_blend_shape_count()>16)return false;
+        geometry_mesh_transforms_.push_back(skeleton->get_global_transform().affine_inverse()*node->get_global_transform());
+        for(int morph=0;morph<asset->get_blend_shape_count();morph++)geometry_morphs_[index].push_back(node->get_blend_shape_value(morph));
+        if(reuse&&(node->get_mesh()!=geometry->parts_[index].asset||node->get_skin()!=geometry->parts_[index].skin))reuse=false;
+        if(reuse_shapes&&(!geometry_mesh_transforms_.back().is_equal_approx(geometry->geometry_mesh_transforms_[index])||geometry_morphs_[index]!=geometry->geometry_morphs_[index]))reuse_shapes=false;
+    }
+    reuse_shapes=reuse_shapes&&reuse;
     auto next=parts_;int vertices=0,triangles=0;
     for(int i=0;i<14;i++){
         auto *node=Object::cast_to<MeshInstance3D>(meshes.get(NAMES[i],Variant()));
         if(!node||node->get_mesh().is_null())return false;
         auto &part=next[i];part.mesh=node->get_instance_id();Ref<Mesh> mesh=node->get_mesh();Ref<Skin> skin=node->get_skin();
+        part.asset=mesh;part.skin=skin;
+        if(reuse){
+            part.bone_ids=geometry->parts_[i].bone_ids;part.binds=geometry->parts_[i].binds;part.surfaces=geometry->parts_[i].surfaces;
+            continue;
+        }
         auto *array_mesh=Object::cast_to<ArrayMesh>(mesh.ptr());
         if(!array_mesh||mesh->get_surface_count()>8)return false;
         if(skin.is_valid())for(int j=0;j<skin->get_bind_count();j++){
@@ -94,7 +127,15 @@ bool NativeZombieAnatomy::set_hit_meshes(Skeleton3D *skeleton,const Dictionary &
             part.surfaces.push_back(std::move(surface));
         }
     }
-    parts_=std::move(next);skeleton_=skeleton->get_instance_id();vertices_=vertices;triangles_=triangles;return true;
+    parts_=std::move(next);skeleton_=skeleton->get_instance_id();vertices_=reuse?geometry->vertices_:vertices;triangles_=reuse?geometry->triangles_:triangles;
+    geometry_valid_=true;geometry_reused_=reuse;shapes_reused_=reuse_shapes;
+    if(reuse_shapes)fitted_shapes_=geometry->fitted_shapes_.duplicate(true);
+    Callable changed=callable_mp(this,&NativeZombieAnatomy::invalidate_geometry);
+    for(const auto &part:parts_){
+        if(!part.asset->is_connected("changed",changed))part.asset->connect("changed",changed);
+        if(part.skin.is_valid()&&!part.skin->is_connected("changed",changed))part.skin->connect("changed",changed);
+    }
+    return true;
 }
 Dictionary NativeZombieAnatomy::hit(const String &name,double damage,bool force_sever,const String &impact){
     Dictionary out;out["ok"]=false;int index=part_index(name);

@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS cold initialization builds all fourteen limb proxies plus pelvis
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS translated resident reuses validated geometry and fitted collision
+PASS residents share identical immutable shape resources
+PASS geometry reuse never copies wounds or missing limbs
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS cache survives retirement without retaining scene nodes
+PASS native points match independent skin/morph reference: idle error=0.00000075394576
+PASS native points match independent skin/morph reference: Zombie_Attack_Left error=0.00000054628561
+PASS native points match independent skin/morph reference: Zombie_Attack_Bite error=0.00000068480523
+PASS native points match independent skin/morph reference: Zombie_Crawl_Bite error=0.00000071525574
+PASS native contact preserves nearest visible surface and mouth mask: hand_l shapes=0 point=true
+PASS native contact preserves nearest visible surface and mouth mask: hand_l shapes=0 point=false
+PASS native contact preserves nearest visible surface and mouth mask: hand_l shapes=2 point=false
+PASS native contact preserves nearest visible surface and mouth mask: hand_l shapes=2 point=false
+PASS native contact preserves nearest visible surface and mouth mask: hand_r shapes=0 point=true
+PASS native contact preserves nearest visible surface and mouth mask: hand_r shapes=0 point=false
+PASS native contact preserves nearest visible surface and mouth mask: hand_r shapes=2 point=false
+PASS native contact preserves nearest visible surface and mouth mask: hand_r shapes=2 point=false
+PASS native contact preserves nearest visible surface and mouth mask: head shapes=0 point=true
+PASS native contact preserves nearest visible surface and mouth mask: head shapes=0 point=false
+PASS native contact preserves nearest visible surface and mouth mask: head shapes=2 point=false
+PASS native contact preserves nearest visible surface and mouth mask: head shapes=2 point=false
+PASS native compound preserves palm, finger groups and seam vertices: hand_l
+PASS native compound preserves palm, finger groups and seam vertices: hand_r
+PASS invalid sample requests fail without returning malformed geometry
+PASS resource changes invalidate every cached geometry owner
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS changed asset is revalidated and refitted instead of reusing stale geometry
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS subsequent admissions reuse the newly validated asset
+PASS a replacement mesh cannot borrow another asset's collision data
+PASS a changed skeleton rest cannot reuse another rig's bind mapping
+PASS a rejected partial mesh set can be retried without poisoning the cache signature
+ZOMBIE_GEOMETRY_CACHE checks=30 failures=0

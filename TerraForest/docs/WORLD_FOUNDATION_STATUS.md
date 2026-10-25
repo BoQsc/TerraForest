@@ -1,3 +1,38 @@
+## Regular walking hitch fix — measured source and package, 2026-10-25
+
+Reproduced 15 walking frames above 50 ms in 45 seconds, worst 229.745 ms, each
+coinciding with resident zombie geometry construction. Native validated mesh
+and convex-shape reuse replaces repeated surface extraction and GDScript
+skinning/fitting; native contact sampling and hand grouping remove additional
+temporary ArrayMesh/readback work during attacks and corpse handling. Cached
+geometry is scoped to the world, invalidated on resource changes and never
+copies health or missing limbs. Population, visual density and collision are
+not reduced. This bottleneck needs avoided work, not extra GPU/CPU dispatches.
+
+Matched source traversal: 246.54/247.08 m before/after, worst frame
+229.745/24.909 ms, p99 26.342/17.558 ms, 15/0 frames above 33.4 ms. Final packed
+fresh and read-only Hidden_Grove-copy walks each cover 247 m with zero frames
+above 33.4 ms; maxima 30.352 and 26.034 ms. Subsequent resident construction is
+2.57–3.78 ms. Core i5-12450H/RTX 4050 Laptop GPU, 1080p60, warm renderer.
+Original and copied world roots/companion stores remain byte-identical.
+
+Geometry/reference/contact checks pass 30/30; clean release geometry and
+anatomical/physical-region checks pass 30/30 and 39/39. Actual world attack and
+population restoration evidence is retained. The forest player-strike suite
+passes 40/41: its six-second all-bodies-sleep assertion still fails, also with
+the historical script geometry/hand implementation and unchanged native rest
+solver. Keep that terrain corpse-rest defect open; do not weaken the assertion.
+The incomplete saved-world-copy and boulder-blocked walking probes are retained
+as failed fixtures rather than counted as successful traversal. Arrival and
+physical-corpse images were inspected. Evidence: `evidence/walking_stutter/`.
+
+Remaining qualification: cold first-use asset/shader work, lower-end/endurance
+travel, edit-heavy play and large saved populations. Actual severed visual mesh
+baking remains script-based. Return with separate frame traces for those paths;
+the terrain corpse-rest requirement needs a physical-support investigation and
+the unchanged integrated rest gate. This is a measured hitch fix, not a claim
+that all world rewrite/performance requirements are complete.
+
 ## Water bucket hands/use - original rejected, revision 2 awaiting review, 2026-10-25
 
 The user rejected the original hands and filling/pouring gestures. Revision 2
@@ -188,11 +223,16 @@ requested the wrong success marker; the correctly configured rerun passes.
 Further world-quality qualification remains: representative generated towns,
 coasts, caves and seeds; population density/pacing; long travel on lower-end
 hardware. Current dormant residents are not an offscreen whole-world simulation.
-Existing zombie scene construction costs approximately 130–245 ms per admission
-in the rendered test (mostly now hidden by loading); travel-time construction
-still needs profiling and pooling/staged construction if it causes visible
-hitches. Revisit with traversal frame-time captures and a bounded pool/animation
-initialization design, not by increasing actor caps or returning timed spawns.
+The travel-time scene-construction concern was reproduced and addressed on
+2026-10-25: repeated surface extraction and script skinning/convex fitting caused
+15 walking frames above 50 ms (worst 230 ms). World-scoped native geometry/shape
+reuse reduces subsequent resident initialization from 99–147 ms to about 3 ms;
+the matched 247 m source walk has no frames above 33.4 ms (worst 24.91 ms).
+Attack contact sampling and corpse re-admission now use that same native data.
+See the walking-stutter evidence below for package checks, limitations and the
+retained terrain-ragdoll failure. This is not an all-hardware performance gate;
+keep lower-end/endurance traversal and cold first-use construction open, without
+increasing actor caps or returning timed spawns.
 Broader route/crawler gates in NAVIGATION_STANDARD remain unqualified. Evidence:
 `evidence/zombie_population/`. This is verified residency/persistence behavior,
 not acceptance of all generated-world placement, gameplay balance or performance.

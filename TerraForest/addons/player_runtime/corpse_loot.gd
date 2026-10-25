@@ -98,7 +98,9 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		var record:Dictionary=store.corpse(id);var point:Vector3=record.position
 		if record.pose.size()==180:point=Vector3(record.pose[3],record.pose[7],record.pose[11])
 		if point.distance_to(focus)>80.0 or not game._actor_collision_ready(AABB(point-Vector3(2,1,2),Vector3(4,3,4))):continue
-		var zombie=Zombie.new();zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
+		var zombie=Zombie.new();zombie.geometry_template=game.zombies.geometry_template;zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
+		if not zombie.initialized:zombie.queue_free();break
+		game.zombies.geometry_template=zombie.anatomy
 		zombie.set_meta("corpse_identity",id);active[id]=zombie;zombie.die()
 		if record.pose.size()==180:
 			var index:=0

@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 194.98 ms at 36403
+[terrain-hitch] base controller 196.54 ms at 36405
+[terrain-hitch] controller process 198.25 ms at 36407
+[terrain-hitch] world process 199.83 ms at 36408
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 107.76 ms at 36524
+[terrain-hitch] base controller 109.49 ms at 36525
+[terrain-hitch] controller process 111.32 ms at 36527
+[terrain-hitch] world process 113.33 ms at 36529
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 111.48 ms at 36657
+[terrain-hitch] base controller 112.73 ms at 36658
+[terrain-hitch] controller process 113.64 ms at 36659
+[terrain-hitch] world process 114.6 ms at 36660
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 113.69 ms at 36782
+[terrain-hitch] base controller 114.59 ms at 36783
+[terrain-hitch] controller process 115.55 ms at 36784
+[terrain-hitch] world process 116.53 ms at 36785
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 117.29 ms at 36920
+[terrain-hitch] base controller 118.42 ms at 36921
+[terrain-hitch] controller process 119.48 ms at 36923
+[terrain-hitch] world process 120.49 ms at 36924
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 112.47 ms at 37046
+[terrain-hitch] base controller 113.41 ms at 37047
+[terrain-hitch] controller process 114.39 ms at 37048
+[terrain-hitch] world process 115.42 ms at 37049
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 118.69 ms at 56048
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 148.54 ms at 59035
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 109.37 ms at 59153
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 118.32 ms at 61998
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 113.96 ms at 70645
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 108.12 ms at 70761
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 112.09 ms at 73547
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 126.49 ms at 76464
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 104.22 ms at 76579
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 100.08 ms at 76687
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 114.77 ms at 79496
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 114.73 ms at 82480
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 108.79 ms at 82598
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 121.92 ms at 88240
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 113.28 ms at 88362
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] zombie update 122.08 ms at 91145
+TRAVEL_PROFILE distance=246.53630065918 frames=3554
+[TerrainRewrite] Temporary test world: save skipped
+TRAVEL_PROFILE PASS

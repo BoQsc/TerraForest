@@ -84,6 +84,7 @@ var state := "idle"
 var health := 180.0
 var limb_health: Dictionary = {}
 var anatomy:RefCounted
+var geometry_template:RefCounted
 var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
 var caps: Dictionary = {}
@@ -134,6 +135,7 @@ var _crawl_shape_fraction := 0.0
 var _contact_standoff := INF
 var _tracked_target_id := 0
 var _animation_cursor_valid := false
+var initialization_us:Dictionary={}
 
 
 func _ready() -> void:
@@ -143,6 +145,7 @@ func _ready() -> void:
 func configure(scene: PackedScene = null) -> void:
 	if initialized:
 		return
+	var measured_begin:=Time.get_ticks_usec()
 	if scene == null:
 		scene = load(model_path) as PackedScene
 	if scene == null:
@@ -159,6 +162,7 @@ func configure(scene: PackedScene = null) -> void:
 	if skeleton == null:
 		push_error("Zombie model requires a Skeleton3D.")
 		return
+	initialization_us["scene"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	for part: String in PARTS:
 		var spec: Dictionary = PARTS[part]
 		limb_health[part] = float(spec.health)
@@ -188,18 +192,27 @@ func configure(scene: PackedScene = null) -> void:
 	capsule.shape = shape
 	capsule.position.y = shape.height * 0.5
 	add_child(capsule)
+	initialization_us["parts"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	anatomy=ClassDB.instantiate("NativeZombieAnatomy")
-	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes):
+	if anatomy==null or not anatomy.configure(PARTS) or not anatomy.set_hit_meshes(skeleton,part_meshes,geometry_template):
 		push_error("Zombie native anatomy initialization failed");return
+	geometry_template=null
+	initialization_us["anatomy"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	_fit_collision_shapes()
+	if _shape_cache.size()!=15:
+		push_error("Zombie collision geometry initialization failed");return
+	initialization_us["shape fit"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	_build_hit_areas()
+	initialization_us["hit areas"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	_build_ragdoll()
+	initialization_us["ragdoll"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	initialized = true
 	_load_behavior_contract()
 	_model_origin = model.position
 	_play_animation("Zombie_Idle")
 	if animation_player != null:
 		animation_player.advance(0.0)
+	initialization_us["animation"]=Time.get_ticks_usec()-measured_begin
 	print("Zombie ready: ", part_meshes.size(), " parts, ", hit_areas.size(), " hit regions, ", physical_bones.size(), " physical bones.")
 
 
@@ -260,62 +273,7 @@ func _shape_spec(part: String) -> Dictionary:
 
 
 func _fit_collision_shapes() -> void:
-	# One convex proxy per rigid segment follows the supplied visible geometry,
-	# including palms, fingers and clothing that the old narrow capsules missed.
-	# The torso mesh includes the pelvis, so divide that mesh between its two
-	# physical bones with a small overlap at their directly connected waist.
-	var hips_rest := skeleton.get_bone_global_rest(skeleton.find_bone("Hips"))
-	var waist_y := hips_rest.origin.y + 0.14
-	for part: String in PARTS:
-		if not part_meshes.has(part):
-			continue
-		var source: MeshInstance3D = part_meshes[part]
-		var baked := _bake_cpu(source, skeleton.global_transform.affine_inverse())
-		var points := PackedVector3Array()
-		for surface in baked.get_surface_count():
-			var arrays := baked.surface_get_arrays(surface)
-			points.append_array(arrays[Mesh.ARRAY_VERTEX])
-		var bone_name := String(PARTS[part].bone)
-		if part == "torso":
-			var chest_points := PackedVector3Array()
-			var pelvis_points := PackedVector3Array()
-			var chest_indices := PackedInt32Array()
-			var pelvis_indices := PackedInt32Array()
-			for index in points.size():
-				var point := points[index]
-				if point.y >= waist_y - 0.045:
-					chest_points.append(point)
-					chest_indices.append(index)
-				if point.y <= waist_y + 0.045:
-					pelvis_points.append(point)
-					pelvis_indices.append(index)
-			_shape_cache[part] = _convex_spec(chest_points, bone_name)
-			_shape_cache["pelvis"] = _convex_spec(pelvis_points, "Hips")
-			_shape_cache[part]["source_indices"] = chest_indices
-			_shape_cache["pelvis"]["source_indices"] = pelvis_indices
-		else:
-			_shape_cache[part] = _convex_spec(points, bone_name)
-
-
-func _convex_spec(skeleton_points: PackedVector3Array, bone_name: String) -> Dictionary:
-	var inverse_rest := skeleton.get_bone_global_rest(skeleton.find_bone(bone_name)).affine_inverse()
-	var points := PackedVector3Array()
-	var bounds := AABB()
-	for point: Vector3 in skeleton_points:
-		var local := inverse_rest * point
-		if points.is_empty():
-			bounds = AABB(local, Vector3.ZERO)
-		else:
-			bounds = bounds.expand(local)
-		points.append(local)
-	var center := bounds.get_center()
-	for index in points.size():
-		points[index] -= center
-	var shape := ConvexPolygonShape3D.new()
-	shape.points = points
-	shape.margin = 0.003
-	shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
-	return {"shape": shape, "offset": Transform3D(Basis.IDENTITY, center), "length": bounds.size.y, "mesh_fit_bounds": bounds}
+	_shape_cache=anatomy.fit_collision_shapes()
 
 
 func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
@@ -326,11 +284,7 @@ func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
 	var bone_name := "Hips" if pelvis else String(PARTS[part].bone)
 	var index := skeleton.find_bone(bone_name)
 	var body_world := skeleton.global_transform * _current_bone_pose(index) * Transform3D(info.offset)
-	var baked := _bake_cpu(part_meshes[part], body_world.affine_inverse())
-	var all_points := PackedVector3Array()
-	for surface in baked.get_surface_count():
-		var arrays := baked.surface_get_arrays(surface)
-		all_points.append_array(arrays[Mesh.ARRAY_VERTEX])
+	var all_points:PackedVector3Array=anatomy.sample_vertices(part,body_world.affine_inverse())
 	var points := PackedVector3Array()
 	if info.has("source_indices"):
 		for vertex: int in info.source_indices:
@@ -372,48 +326,7 @@ func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transfo
 	# A single hull fills the opening between a curled palm and its fingers.
 	# Around a ladder rung that creates a deep fictitious intersection. Keep
 	# the real grip opening with native hulls per palm/finger bone segment.
-	var source: MeshInstance3D = part_meshes[part]
-	var baked := _bake_cpu(source, to_local)
-	var groups: Dictionary = {}
-	var skin := source.skin
-	var prefix := "LeftHand" if part == "hand_l" else "RightHand"
-	var bind_names: Array[String] = []
-	if skin != null:
-		for bind in skin.get_bind_count():
-			var name := String(skin.get_bind_name(bind))
-			if name.is_empty() and skin.get_bind_bone(bind) >= 0:
-				name = String(skeleton.get_bone_name(skin.get_bind_bone(bind)))
-			bind_names.append(name)
-	for surface in baked.get_surface_count():
-		var raw := source.mesh.surface_get_arrays(surface)
-		var points: PackedVector3Array = baked.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
-		var bones: PackedInt32Array = raw[Mesh.ARRAY_BONES] if raw[Mesh.ARRAY_BONES] != null else PackedInt32Array()
-		var weights: PackedFloat32Array = raw[Mesh.ARRAY_WEIGHTS] if raw[Mesh.ARRAY_WEIGHTS] != null else PackedFloat32Array()
-		var influences := int(bones.size() / points.size()) if not points.is_empty() else 0
-		for vertex in points.size():
-			var group := "Palm"
-			var maximum_weight := 0.0
-			for influence in influences:
-				var slot := vertex * influences + influence
-				var bind := bones[slot]
-				if weights[slot] <= maximum_weight or bind < 0 or bind >= bind_names.size():
-					continue
-				maximum_weight = weights[slot]
-				var bone_name := bind_names[bind]
-				group = bone_name.trim_prefix(prefix) if bone_name.begins_with(prefix) and bone_name != prefix else "Palm"
-			if not groups.has(group):
-				groups[group] = PackedVector3Array()
-			var cloud: PackedVector3Array = groups[group]
-			cloud.append(points[vertex])
-			groups[group] = cloud
-	# A tiny seam-only group cannot define a volume. Merge it into the palm
-	# rather than dropping its geometry or creating a degenerate hull.
-	var palm: PackedVector3Array = groups.get("Palm", PackedVector3Array())
-	for group: String in groups.keys():
-		if group != "Palm" and (groups[group] as PackedVector3Array).size() < 4:
-			palm.append_array(groups[group])
-			groups.erase(group)
-	groups["Palm"] = palm
+	var groups:Dictionary=anatomy.hand_groups(part,to_local)
 	for child in body.get_children():
 		if child is CollisionShape3D:
 			body.remove_child(child)
@@ -1126,40 +1039,9 @@ func _find_attack_contact(action: String) -> Dictionary:
 	for part: String in R4_ATTACKS[action].parts:
 		if not part_meshes.has(part) or missing.get(part, false):
 			continue
-		var source: MeshInstance3D = part_meshes[part]
-		var baked := _bake_cpu(source, Transform3D.IDENTITY)
-		for surface in baked.get_surface_count():
-			var vertices: PackedVector3Array = baked.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
-			var bind_vertices: PackedVector3Array = source.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
-			for vertex in vertices.size():
-				if part == "head":
-					# Select lips/teeth in the immutable bind mesh, then use their
-					# fully morphed and skinned positions for the actual strike.
-					# Hair, forehead and chin therefore cannot register as bites.
-					var bind := bind_vertices[vertex]
-					if bind.x < mouth_min.x or bind.y < mouth_min.y or bind.z < mouth_min.z or bind.x > mouth_max.x or bind.y > mouth_max.y or bind.z > mouth_max.z:
-						continue
-				var point := vertices[vertex]
-				if contact_shapes.is_empty():
-					var closest := target_point if use_point else Vector3(target_point.x, clampf(point.y, target_point.y + 0.20, target_point.y + 1.65), target_point.z)
-					var distance := point.distance_to(closest)
-					if distance < best_distance:
-						best_distance = distance
-						best_point = point
-						best_target = closest
-				else:
-					for shape in contact_shapes:
-						if not shape is Dictionary:
-							continue
-						var surface_point := _closest_target_surface(shape, point)
-						if surface_point.is_empty():
-							continue
-						var closest: Vector3 = surface_point.point
-						var distance := point.distance_to(closest)
-						if distance < best_distance:
-							best_distance = distance
-							best_point = point
-							best_target = closest
+		var contact:Dictionary=anatomy.closest_contact(part,target_point,use_point,contact_shapes,AABB(mouth_min,mouth_max-mouth_min))
+		if not contact.is_empty() and contact.distance<best_distance:
+			best_distance=contact.distance;best_point=contact.point;best_target=contact.target
 	# A small swept-contact allowance covers the interval between integer pose
 	# samples without extending the character's actual reach by another arm.
 	if best_distance > (radius if contact_shapes.is_empty() else 0.0) + 0.055:

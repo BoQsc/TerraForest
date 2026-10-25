@@ -1,0 +1,136 @@
+{
+  "checks": 39,
+  "failures": 0,
+  "trace": [
+    {
+      "hips": "(-0.320037, 0.363428, 0.488056)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 5.46083784103394,
+        "maximum_linear_speed": 3.65449690818787,
+        "resting": 0,
+        "settle_events": 0,
+        "sleeping": 0
+      },
+      "second": 1
+    },
+    {
+      "hips": "(-0.235348, 0.187736, 0.712305)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 3.03978657722473,
+        "maximum_linear_speed": 0.163168236613274,
+        "resting": 0,
+        "settle_events": 0,
+        "sleeping": 0
+      },
+      "second": 2
+    },
+    {
+      "hips": "(-0.23165, 0.187797, 0.710044)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 4.48831701278687,
+        "maximum_linear_speed": 0.401907742023468,
+        "resting": 0,
+        "settle_events": 0,
+        "sleeping": 0
+      },
+      "second": 3
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 4
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 5
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 6
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 7
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 8
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 9
+    },
+    {
+      "hips": "(-0.231674, 0.187807, 0.70998)",
+      "rig": {
+        "bodies": 15,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 15,
+        "settle_events": 1,
+        "sleeping": 15
+      },
+      "second": 10
+    }
+  ]
+}

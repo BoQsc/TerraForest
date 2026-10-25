@@ -1,0 +1,57 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\travel_legacy_combat\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://reports/travel_legacy_combat/check.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_d8273cdb6244400ab9ec9cf3f8e385a2",
+    "--derived-cache=user://zombie_combat_world_d8273cdb6244400ab9ec9cf3f8e385a2",
+    "--gameplay-construction",
+    "--ground-cover",
+    "--vehicle-fleet",
+    "--world-generator=21",
+    "--world-seed=1703"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 13424,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL forest corpse and detached arm settle with animation disabled"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 49.704742500092834,
+    "passed": false
+  },
+  "scope": "HEAD zombie.gd fitted shapes/skin/hand compounds with current unchanged native ragdoll solver; replacement admitted at same valid position; not a full HEAD build.",
+  "revision": "0ff221bb35ea5fdb4d50f44a1635bd831294d0e5",
+  "worktree_changes": [
+    " M TerraForest/addons/characters/runtime/zombie.gd",
+    " M TerraForest/addons/characters/runtime/zombie_world.gd",
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/player_runtime/corpse_loot.gd",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/world_runtime/native/zombie_anatomy.cpp",
+    " M TerraForest/addons/world_runtime/native/zombie_anatomy.hpp",
+    " M TerraForest/demo/world.gd",
+    "?? TerraForest/addons/world_runtime/native/zombie_geometry.cpp",
+    "?? TerraForest/tests/runtime_travel_profile.gd",
+    "?? TerraForest/tests/runtime_travel_profile.gd.uid",
+    "?? TerraForest/tests/zombie_geometry_cache.gd",
+    "?? TerraForest/tests/zombie_geometry_cache.gd.uid"
+  ],
+  "git_metadata_available": true
+}

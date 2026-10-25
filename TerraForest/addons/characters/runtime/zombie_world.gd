@@ -33,6 +33,7 @@ var _navigation_exclusions: Array[RID]=[]
 var residents: Array = []
 var _corpse_age: Dictionary = {}
 var _capsule: CapsuleShape3D
+var geometry_template:RefCounted
 
 func prepare(owner_game: Node, persistence: RefCounted) -> bool:
 	population = preload("res://addons/characters/runtime/zombie_population.gd").new()
@@ -269,6 +270,7 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	if not supported.is_finite():
 		return null
 	var zombie := Zombie.new()
+	zombie.geometry_template=geometry_template
 	zombie.position = to_local(supported)
 	zombie.target = target if force_pursuit else null
 	zombie.behavior_enabled = true
@@ -280,6 +282,9 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	if excluded!=_navigation_exclusions:
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
 	add_child(zombie)
+	if not zombie.initialized:
+		zombie.queue_free();return null
+	geometry_template=zombie.anatomy
 	residents.append(zombie)
 	if is_instance_valid(corpse_host):zombie.died.connect(func():corpse_host.retain(zombie))
 	var id:int=zombie.get_instance_id()
