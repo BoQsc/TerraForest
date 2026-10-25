@@ -1,25 +1,28 @@
-## Native frontage-road preview — optional, awaiting review — 2026-10-25
+## Original behavior restored; frontage experiment rejected — 2026-10-25
 
-The generation-only preview now co-plans two 52 m near-level streets, smooth end
-transitions and four unchanged approved buildings, with existing individual
-sidewalk plates. Normal placement has no overrides: one brick, no extra support,
-no terrain edit, unchanged grid. F6 regenerates baseline/proposal in one window;
-F7 visits the other street. Run `python tools/review_road_grades.py`.
+The user rejected the frontage preview as a solution to terrain/block mismatch
+and requested the original game and removal of its preview label. The temporary
+review was closed normally. Its scene, banner, launcher and tests were removed;
+native generation source and both terrain DLLs were restored to the pre-preview
+baseline. Normal roads, placement, accepted buildings and the installed gameplay
+pack remain unchanged. All 291 Wild_Hills source files were unchanged when the
+interactive preview closed.
 
-Integrated frontage contact improves from 203/312 to 312/312 footprints within
-15 cm, but 87/624 whole-road footprints still exceed 50 cm on transition areas.
-This is not an all-roads solution, approved layout or generation default. The
-128 m / eight-house attempts did not fit the retained earthwork/entrance limits;
-the delivered comparison is explicitly a four-house scene, not a completed
-replacement market. Existing player saves and accepted house assets are untouched.
+The near-level street approach may be relevant later as a local town road type,
+not a general fix and not an approved default. Evidence remains archived in
+`evidence/road_frontage_trial/README.md`; implementation can be recovered from
+commit `bdb1c501` only if explicitly revisited. Passing contact measurements did
+not establish user acceptance. Do not launch or promote that preview again as
+the requested solution.
 
-See `evidence/road_frontage_trial/README.md` for measurements, inspected renders,
-native bounds, increased bake cost and retained failed checks. The earlier
-frontage-aware preview requirement is now represented by this limited real-terrain
-comparison; human quality approval, complete settlement/network co-planning,
-reservation checks, connected traversal, full-world reload, multi-seed coverage
-and performance remain open. Revisit those after the user reviews this scene,
-before introducing any production generation option or migration.
+The user's new preference is some submergence rather than large floating gaps.
+No new burial/targeting rule is silently enabled during this restoration. A
+future explicit placement preview should compare lower existing grid cells with
+the current upward choice, retain exact grid adjacency and intentional floating
+builds, and show burial depth across slopes/terrain joins before approval.
+Automatic supports and placement-triggered terrain filling remain rejected.
+The mismatch is still unresolved; the prior whole-world, traversal, reload and
+performance gates remain open rather than being satisfied by the rejected trial.
 
 ## Road-grid preview and loaded-world HUD identity — 2026-10-25
 
@@ -37,10 +40,10 @@ confirmed all 291 source-save files unchanged. Those checks do not override the
 user's rejection. A small in-memory near-level road sample in that run is not a
 frontage-aware generator implementation or approval of the road layout.
 
-Generation-side planning continues in the limited frontage-road preview above.
-It remains optional and separate from existing saves. The terrain-fit, multi-seed,
-traversal, reload and performance gates remain open; no automatic-foundation
-follow-up is planned.
+The subsequent frontage-road preview was also rejected as a general solution;
+see the restoration and updated placement preference above. Terrain-fit,
+multi-seed, traversal, reload and performance gates remain open; no
+automatic-foundation follow-up is planned.
 
 Follow-up long-rise study: a native 1 m rise spread across 100 m still leaves a
 42.6 cm midpoint gap under the unchanged grid rules. A 100 m near-level stretch

@@ -1,6 +1,18 @@
 {
   "date": "2026-10-25",
-  "scope": "Optional generation-side four-building preview. Not approved, not a generation default, not an all-roads solution.",
+  "scope": "Historical four-building preview, rejected by the user as a solution. Active implementation and UI removed; native source and DLLs restored to the pre-preview baseline.",
+  "active": false,
+  "human_review": "Rejected as a general block-contact solution; potentially a future local town road type only.",
+  "implementation_commit": "bdb1c501",
+  "interactive_preview_closed_normally": true,
+  "interactive_source_files_unchanged": 291,
+  "restoration": {
+    "baseline_commit": "ad189a48",
+    "native_source_and_both_dlls_match_exactly": true,
+    "placement_support_check": "reports/checks/20261025T174458500303Z",
+    "world_recipe_check": "reports/checks/20261025T174459391385Z",
+    "checks_passed": true
+  },
   "native_debug_sha256": "1b6a55eb8554ed317836928c0289738b78831b8e63172bfb15f062a4bb4db80c",
   "native_release_sha256": "14b33a17f1d185ef7fcdfc8f816abf897bacaaeba6417d71b8d61fc6dc730ed9",
   "checks": [

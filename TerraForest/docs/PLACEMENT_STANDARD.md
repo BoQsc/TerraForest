@@ -5,6 +5,14 @@ player construction. **Floating builds remain allowed.** The extra ground-contac
 admission experiment and its ESC switch were removed following user clarification.
 Do not reintroduce them as a solution to terrain/grid mismatch.
 
+User clarification, 2026-10-25: the near-level frontage-road preview was rejected
+as a general solution; at most it is a future local town road type. Original
+behavior is restored. The preferred next direction is some block submergence
+rather than large floating gaps. This records a design preference, not approval
+of a new global burial limit or an already implemented placement fix. Any future
+comparison must keep the integer lattice and intentional floating builds, expose
+the burial trade-off, and add neither automatic supports nor terrain fill.
+
 ## Coordinate and generation contract
 
 One world unit is one metre. Blocks retain their exact integer-metre lattice and

@@ -1,10 +1,21 @@
-# Generation-side frontage-road preview — not approved or default
+# Archived frontage-road experiment — rejected as a solution
+
+The user rejected this preview on 2026-10-25 and requested the original game
+without its preview label. The active scene, launcher, tests and native changes
+were removed; source and both DLLs are back at the pre-preview baseline. The
+interactive session closed normally and all 291 Wild_Hills files were unchanged.
+The commands and implementation described below are historical evidence from
+`bdb1c501`, not available current launch instructions. Preserve the evidence,
+but do not promote these passing measurements over the user's rejection.
+At most this is a future local town road type, not a solution to general block
+gaps. The next design preference is some submergence over large floating gaps;
+no new placement policy was enabled as part of the rollback.
 
 2026-10-25. This replaces the rejected automatic-support direction with a
 generation-only comparison. No placement override, support blocks, per-block
 terrain edits, changed lattice, new building shapes or redesigned houses.
 
-## What can be tried
+## Historical preview
 
 Run `python tools/review_road_grades.py` from TerraForest. One game process/window
 generates a temporary seed-1703, profile-21 comparison. F6 closes the in-memory
@@ -124,9 +135,11 @@ Failed local checks are retained, not counted as passes:
   word incorrectly. It now asks the existing native encoder; production plate
   geometry and encoding were not changed to satisfy the test.
 
-## Open gates before any default integration
+## Rejected direction and remaining gates
 
-Human review of banks, roads, approaches and building experience comes first.
+Human review rejected this as the requested solution. It is not awaiting approval
+for default integration; reconsider it only as a separately requested local road
+type. The remaining historical qualification limits are recorded below.
 Four-house evidence does not qualify the eight-house market, larger towns or
 regional highways. Return to co-planning complete settlements after this review;
 retain cut/fill budgets and move/reorient/divide unsuitable layouts rather than
