@@ -1,5 +1,18 @@
 # Building reviews — A2 roof and Shop B approved
 
+## B0 roof revision B2 — awaiting approval
+
+Run `python tools/review_modular_buildings.py --shop-roof` for unchanged B0 on the
+left and the B2 thin-gable-roof trial on the right. This reuses A2's native thin
+slope/ridge/seam blocks, with timber gable backing and one-cell front/back
+overhangs. Exterior, Interior, Detail and single-block removal/restoration are
+available. The floor, walls below the eaves, store partition, steps, doors, windows,
+counters, shelving and storage remain unchanged. B1 retains its own approved
+hipped roof. B2 is review-only and does not alter any saved or generated building.
+Its roof overhang changes the above-ground placement envelope, so adopting it
+later requires checking that envelope as well as the unchanged foundation.
+Evidence and inspected comparison images: `../../docs/evidence/shop_roof_b2/`.
+
 ## A0 roof revision A2 — approved cottage default
 
 Run `python tools/review_modular_buildings.py --roof` for the dedicated comparison:

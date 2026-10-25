@@ -13,6 +13,7 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--comparison', action='store_true', help='Use the earlier split-screen comparison instead of walking')
     mode.add_argument('--roof', action='store_true', help='Compare the untouched A0 cottage with the new A2 thin roof')
+    mode.add_argument('--shop-roof', action='store_true', help='Compare original B0 with the B2 thin gable roof trial')
     parser.add_argument('--dry-run', action='store_true')
     options = parser.parse_args()
     config, _ = parse_args(['--godot', options.godot] if options.godot else [])
@@ -23,12 +24,16 @@ def main():
                '--script', 'res://tools/review_modular_buildings.gd', '--', '--temporary',
                *(['--comparison'] if options.comparison else []),
                *(['--roof'] if options.roof else []),
+               *(['--shop-roof'] if options.shop_roof else []),
                *(['--guided-tour'] if options.comparison and not options.no_tour else [])]
     details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
                    notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
     if options.roof:
         details.update(label='A0 original vs A2 thin roof / approved cottage default',
                        notes='Approved A2 roof next to historical A0. New enclosed cottages use this exact A2 design; existing saved buildings are not rewritten. No player saves are read or written by this comparison.')
+    if options.shop_roof:
+        details.update(label='B0 original vs B2 thin gable roof / awaiting approval',
+                       notes='Roof-only B2 proposal using the A2 native thin roof system. B0 and approved B1 remain unchanged; no generation recipe or player save is modified.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0

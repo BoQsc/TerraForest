@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS B0 and B2 native buildings and signs load
+PASS fresh process restores shop comparison after roof removal
+PASS fresh process reproduces exact shop and attachment bytes
+SHOP_ROOF_RESTORE checks=3 failures=0

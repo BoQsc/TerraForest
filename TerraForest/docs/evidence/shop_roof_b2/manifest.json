@@ -1,0 +1,56 @@
+{
+  "base_revision": "01119fd0773bd290bc4b152e660ce75f934f0b62",
+  "scope": "B2 roof-only proposal; user approval and B1 generation integration remain pending",
+  "runs": {
+    "comparison": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79744,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 14.919313900056295,
+      "passed": true
+    },
+    "restore": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 83752,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.5973731999984011,
+      "passed": true
+    },
+    "a2_regression": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 67540,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 10.48178419994656,
+      "passed": true
+    }
+  },
+  "sources": {
+    "reviews/modular_buildings/shop_roof_recipe.gd": "a079c511b661a8fb43204da1632eb552b7c646d5941a02ad4ffe4640bc2613e9",
+    "reviews/modular_buildings/shop_roof_viewer.gd": "c6fa9dba6e1f30af9d12ae46141a3a1710fbc67b5fb6fe52263c278e79760575",
+    "reviews/modular_buildings/roof_viewer.gd": "440f4d34239fee01a8f7db067e5ac4bf705aa67aea798870a5fda1a17cf8bc33",
+    "reviews/modular_buildings/baked/shop_roof_b2.tres": "6b04c553c24abc22c31e989e076137c349a7b2cf7b58b43716f1d1b98b1022a4",
+    "tests/shop_roof_review.gd": "cb43a71f4e9bb72f1c0e3631a0493639e10cae219b161b20bad263275c96fc6f"
+  },
+  "unchanged_production": {
+    "addons/structures/workshop_catalog.gd": "f8ee1a573bbaa8b6b6c23004da1facd63ff0aef1c54f305ef290081f5c2022c6",
+    "addons/structures/furniture_catalog.gd": "a5320889e9ef1a4639003d0930d096f421e17990e69a5914c3294752c6647742",
+    "addons/structures/prefabs/cottage_thin_roof_a2.tres": "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30",
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "addons/structures/central_market.gd": "0217f7bb1e338522c10ea3cad53e10c20ce85b36030dba44c9f1689a781200b8",
+    "addons/structures/northern_lots.gd": "9c63612211205c6682da52aaac22999f9a6954281b2ad178dfe8dacd73fe519e",
+    "addons/world_runtime/world_generation_plan.gd": "581d6e00bf22e72f20ad00b17eb1cd82d60dbf9b138d93e522fec02f3195742d",
+    "addons/world_runtime/custom_world_plan.gd": "ddc8c8ce80ac02d62a94879e47d83ffb2bb4b1603ef99d6136b5216ff7523615"
+  }
+}

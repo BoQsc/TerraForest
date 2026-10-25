@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS bake review-only B2 roof prefab
+PASS B0 and B2 native buildings and signs load
+PASS walls below eaves, floor, partitions and steps unchanged; only thin overhang seam cells added
+PASS doors, windows, counters, shelves and chests remain exact originals
+PASS B2 explicitly remains unapproved and review-only
+PASS baked B2 matches reproducible offline recipe
+PASS approved B1 remains identical to its own reviewed design
+PASS unchanged foundation samples rotation 0
+PASS unchanged foundation samples rotation 1
+PASS unchanged foundation samples rotation 2
+PASS unchanged foundation samples rotation 3
+PASS shop roof uses independent native thin roof shape 15
+PASS shop roof uses independent native thin roof shape 16
+PASS shop roof uses independent native thin roof shape 17
+PASS shop roof uses independent native thin roof shape 18
+PASS capture exterior
+PASS capture interior
+PASS capture edge_detail
+PASS button removes exactly one shop roof grid block
+PASS capture one_block_removed
+PASS original shop untouched while B2 has an actual roof hole
+PASS restoring that block preserves exact compound bytes
+PASS native player walks steps, door and interior aisle SHOP ROOF B2 side 0
+WALK_END SHOP ROOF B2 side=0 position=(0.5, 1.008299, -3.024987)
+PASS native player exits and descends to approach SHOP ROOF B2 side 0
+PASS native player walks steps, door and interior aisle SHOP ROOF B2 side 1
+WALK_END SHOP ROOF B2 side=1 position=(0.5, 1.008299, -3.024992)
+PASS native player exits and descends to approach SHOP ROOF B2 side 1
+SHOP_ROOF_REVIEW checks=26 failures=0

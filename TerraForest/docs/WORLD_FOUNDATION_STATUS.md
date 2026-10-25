@@ -1,3 +1,29 @@
+## B0 roof-only B2 trial requested; B1 generation hookup pending — 2026-10-25
+
+The user requested trying the approved A2 thin-roof method on B0, keeping the shop
+otherwise unchanged. B2 is a separate review-only prefab, not a replacement for
+B0 or approved B1. The comparison uses the original B0 recipe on the left and B2
+on the right. Walls below the eaves, floor, partitions, steps and attached objects
+stay unchanged. Thin native slope/ridge/seam blocks replace the chunky roof/ridge;
+the upper gable backing follows A2's timber construction. Front/back roof overhangs
+extend one grid cell, but the foundation is unchanged. Every roof piece retains
+independent grid ownership. Explicit B2 approval is required before adoption.
+
+Evidence: `evidence/shop_roof_b2/README.md`. The graphical comparison passes
+26 checks, fresh-process compound restore passes 3, and A2 comparison regression
+passes 16. Exterior, underside, edge and one-block-removal images were inspected.
+These verify the isolated review, not terrain integration or populated performance.
+Launch `python tools/review_modular_buildings.py --shop-roof` for the comparison.
+
+The preceding request also explicitly authorized adding B1 to generation.
+**Not done yet:** the user switched to this B0 roof trial during inspection, before
+any generation recipe was edited. B1 remains in the construction catalogue, not
+automatic generation. Resume that hookup after the B2 demonstration: retain B0,
+add B1 as a market variant, invalidate derived plans, then verify actual native
+placement, terrain fit, saved-world publication, street/interior access and scoped
+populated performance. Do not imply a palette entry or this roof preview completes
+that generation work.
+
 ## A0 thin-roof revision A2 approved as cottage default — 2026-10-25
 
 The user explicitly approved A2: "I approve this roof, seems better."
