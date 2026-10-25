@@ -1,0 +1,11 @@
+{
+  "checks": 20,
+  "failures": 0,
+  "tree_counts": [
+    13574,
+    7594,
+    2035
+  ],
+  "variant": "template_release",
+  "library": "world_runtime.windows.template_release.x86_64.dll"
+}

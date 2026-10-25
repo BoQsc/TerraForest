@@ -19,6 +19,10 @@ func run()->void:
  check(modern_bytes.size()==32 and codec.decode(modern_bytes)==modern,"native road preference roundtrip retains v1 compatibility")
  var invalid_road:=modern_bytes.duplicate();invalid_road.encode_u32(28,2)
  check(not codec.validate_snapshot(invalid_road),"invalid road preference rejected")
+ modern.road_grid=2
+ var connected:PackedByteArray=codec.encode(modern)
+ check(connected.size()==32 and connected.decode_u32(4)==3 and codec.decode(connected)==modern,"connected grading has separate durable recipe identity")
+ check(not codec.validate_snapshot(modern_bytes.slice(0,28)),"truncated version-two recipe cannot masquerade as legacy")
  for offset in range(0,28,4):
   var corrupt:=bytes.duplicate();corrupt.encode_u32(offset,0xffffffff)
   check(not codec.restore_snapshot(corrupt) and codec.capture_snapshot()==bytes,"malformed recipe field cannot mutate live state")

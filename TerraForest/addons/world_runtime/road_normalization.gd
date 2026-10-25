@@ -10,7 +10,7 @@ static func protected_areas(sites:Array)->Array:
 			var finish:Vector3=entrance.finish
 			result.append(Rect2(Vector2(minf(start.x,finish.x),minf(start.z,finish.z)),Vector2(absf(start.x-finish.x),absf(start.z-finish.z))).grow(float(entrance.half_width)+.25))
 	return result
-static func apply(core:RefCounted,sites:Array,network:Dictionary)->Dictionary:
+static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=false)->Dictionary:
 	var roads:Array=[]
 	for index in sites.size():
 		for road:Dictionary in sites[index].roads:
@@ -19,8 +19,12 @@ static func apply(core:RefCounted,sites:Array,network:Dictionary)->Dictionary:
 		var road:Dictionary=network.segments[index]
 		if int(road.material)!=4:continue
 		var record:=road.duplicate();record["normalization_owner"]=-index-1;roads.append(record)
-	var result:Dictionary=core.normalize_roads(roads,protected_areas(sites))
-	if not result.get("ok",false):return result
+	var result:Dictionary=core.fit_road_network(roads,protected_areas(sites)) if connected else core.normalize_roads(roads,protected_areas(sites))
+	if not result.get("ok",false):
+		var failed:int=int(result.get("road",-1))
+		if connected and failed>=0 and failed<roads.size() and int(roads[failed].normalization_owner)<0:
+			result["reroute_position"]=result.get("position",(roads[failed].start+roads[failed].finish)*.5)
+		return result
 	var groups:Dictionary={}
 	for road:Dictionary in result.segments:
 		var owner:int=road.normalization_owner
@@ -44,5 +48,14 @@ static func apply(core:RefCounted,sites:Array,network:Dictionary)->Dictionary:
 				support.bounds=original.bounds.grow(.55)
 				regional.append(support)
 	network.segments=regional
+	if connected:
+		var surfaces:Dictionary={};var navigation:Array=[];var bounds:=AABB()
+		for index in regional.size():
+			var road:Dictionary=regional[index]
+			bounds=road.bounds if index==0 else bounds.merge(road.bounds)
+			if int(road.material)==4:surfaces[[road.start,road.finish]]=true;navigation.append({"a":road.start,"b":road.finish,"width":float(road.half_width)*2})
+		for road:Dictionary in regional:
+			if int(road.material)==1 and not surfaces.has([road.start,road.finish]):navigation.append({"a":road.start,"b":road.finish,"width":float(road.half_width)*2})
+		network["grid_navigation"]=navigation;network.bounds=bounds
 	result.erase("segments")
 	return result

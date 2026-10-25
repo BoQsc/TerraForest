@@ -1,4 +1,39 @@
-## Grid preference rejected outside old-case fixtures — 2026-10-25
+## Connected road grading implemented; broader fit still incomplete — 2026-10-25
+
+The audit-only stopping point below is superseded by working native generation
+changes, not a targeting adjustment. A bounded graph solve now chooses adjoining
+road heights together, surveys the full road width, and constrains the resulting
+cubics to 20% grade and 0.04/m curvature. Infeasible adjustable regional corridors
+request up to four alternate native routes instead of silently keeping the failed
+road. Seed 9137 exercises that route replacement. Protected lots/entrances and
+trusted plate cells remain unchanged; existing saves are never regraded.
+
+New worlds use durable recipe v3 / road_grid=2 when the existing road preference
+toggle is on. Off is unchanged. Legacy recipe v1 and v2 retain their identities
+and algorithms. Terrain preference remains the existing separate 22/23 option;
+no per-placement terrain modification, foundation supports, lattice offsets or
+larger burial allowance are introduced.
+
+Three-seed planning and debug/release native checks pass. At the exact 2,037
+seed-1703 audit footprints, unfit cells decrease from 1,009 under the previous
+normalizer to 646 (unmodified roads: 1,136). Regional failures decrease 782 to 406;
+settlement failures increase 227 to 240, still better than unmodified 265. Do not
+hide that regression or claim every location improves. Seed 42 improves 688 to
+470 against unmodified roads. Seed 9137 requires a new route: fresh coverage is
+634/2,009 unfit, versus original 973/1,874; the changed route must not be presented
+as a like-for-like count of the same cells. Native collision tests additionally
+cover 1,209 rays across three lanes of the reported regional corridor.
+
+The universal shallow-contact requirement remains incomplete. Smooth changes
+between integer elevations still have non-fitting intervals; protected entrances,
+shoulders, crossings, offroads and broader natural-terrain coverage need further
+work. Human visual acceptance is pending. Return trigger: this connected solver
+is now available, so continue with transition/settlement-fit improvements measured
+against the same footprint contract, plus actual baked collision and on-foot
+review. Do not increase burial limits or treat skipped/missing samples as success.
+Evidence and current playtest details: `evidence/connected_grid_roads/README.md`.
+
+## Prior grid-preference rejection and diagnosis — 2026-10-25
 
 The user supplied another failing regional-road screenshot from the default-on
 GridPreference_1703_f3de49d9 playtest. Read-only reproduction at the saved position
@@ -26,18 +61,14 @@ Both source saves remain byte-identical. A new independent audit records explici
 quality rejection instead of treating a successful diagnostic run as quality PASS.
 Evidence: `evidence/grid_network_audit/README.md`.
 
-Unfinished: replace post-fit correction/fallback with a corridor-level grade
-strategy evaluated against the same footprint contact contract, shared junctions,
-actual earthworks and final baked collision. Never silently accept skipped roads,
-increase burial to hide the failure, regrade saved worlds, or shift the lattice.
-Before implementing another default, resolve the transition trade-off: a continuous
-rise between integer heights necessarily crosses intermediate non-fitting heights;
-making it longer does not eliminate them. The user already rejected flat frontage
-terraces as a general answer. A candidate must demonstrate acceptable transitions
-and landscape character across the full network, not just the two old fixtures.
-Return trigger: a transition strategy respecting those constraints, then multi-seed
-coverage plus rendered/on-foot review including this saved failure. Until then,
-the broader requirement remains rejected/incomplete, not an approved default.
+Follow-through: the connected native grade solver and bounded rerouting described
+above now replace this fallback for new road_grid=2 worlds. Shared-node solving,
+multi-seed footprint screening and baked collision are implemented. This closes
+the missing-implementation item, not the remaining world-quality requirement.
+Continuous rises still cross non-fitting heights; making them longer alone cannot
+remove that limitation. Flat frontage terraces remain rejected as a general answer.
+Full-network transition quality, protected settlement fit and landscape character
+remain incomplete and require review beyond the original fixtures.
 
 ## Bidirectional grid preference; visual acceptance still open — 2026-10-25
 

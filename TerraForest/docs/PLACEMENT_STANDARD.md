@@ -109,3 +109,14 @@ normal player placement/payment, not a special terrain-altering building rule.
 Existing worlds are not migrated. Regional connecting roads remain smooth editable
 terrain; arbitrary slopes are not guaranteed to fit every block footprint.
 Verification and remaining review scope are tracked in `WORLD_FOUNDATION_STATUS.md`.
+
+New-world road preference now selects connected native grading (road_grid=2,
+32-byte recipe v3). Road_grid=1 retains the prior segment normalizer and its
+32-byte v2 identity; the five-field legacy recipe remains 28-byte v1. Jointly
+bounded heights/tangents replace independent endpoint-fixed correction. Adjustable
+roads survey cut/fill before baking and can request an alternate native corridor;
+exhaustion fails explicitly rather than accepting the failed road unchanged.
+The road option stays independent of terrain shaping, and both remain toggleable.
+This improves measured footprint coverage without changing placement rules, but
+does not guarantee shallow contact everywhere. See
+`evidence/connected_grid_roads/README.md` for remaining failures and comparisons.

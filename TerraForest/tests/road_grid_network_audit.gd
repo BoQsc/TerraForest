@@ -15,14 +15,14 @@ func wait_for(predicate:Callable,seconds:int=90)->bool:
 	var deadline:=Time.get_ticks_msec()+seconds*1000
 	while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
 	return predicate.call()
-func profile_height(road:Dictionary,point:Vector2)->float:
+static func profile_height(road:Dictionary,point:Vector2)->float:
 	var start:Vector3=road.start;var finish:Vector3=road.finish
 	var axis:=Vector2(finish.x-start.x,finish.z-start.z)
 	var fraction:=Vector2(point.x-start.x,point.y-start.z).dot(axis)/axis.length_squared()
 	if not road.has("coefficients"):return lerpf(start.y,finish.y,fraction)
 	var curve:PackedFloat64Array=road.coefficients;var offset:int=int(road.curve_index)*4
 	return ((curve[offset]*fraction+curve[offset+1])*fraction+curve[offset+2])*fraction+curve[offset+3]
-func contact(minimum:float,maximum:float)->Dictionary:
+static func contact(minimum:float,maximum:float)->Dictionary:
 	var lowest:=ceili(maximum-BurialLimit-.00001)
 	var highest:=floori(minimum+GapLimit+.00001)
 	var best:Dictionary={};var best_cost:=INF
@@ -31,7 +31,7 @@ func contact(minimum:float,maximum:float)->Dictionary:
 		var cost:=maxf(0,gap-GapLimit)+maxf(0,burial-BurialLimit)
 		if cost<best_cost:best_cost=cost;best={"bottom":bottom,"gap":gap,"burial":burial}
 	return {"fits_any_integer_cell":lowest<=highest,"minimum":minimum,"maximum":maximum,"best":best}
-func roads_for(plan:Dictionary)->Array:
+static func roads_for(plan:Dictionary)->Array:
 	var result:Array=[]
 	for site:Dictionary in plan.sites:
 		for road:Dictionary in site.roads:
@@ -40,7 +40,7 @@ func roads_for(plan:Dictionary)->Array:
 		if int(road.material)!=4:continue
 		var record:=road.duplicate();record["category"]="regional";result.append(record)
 	return result
-func coverage(roads:Array,queries:Dictionary={})->Dictionary:
+static func coverage(roads:Array,queries:Dictionary={})->Dictionary:
 	var cells:Dictionary=queries.duplicate(true)
 	var categories:Dictionary={}
 	var worst:Array=[]

@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=8
+const VERSION:=9
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -87,10 +87,20 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var network:Dictionary=core.plan_region_network(exits,reserved,options.network==1,options.trails,seed_value,streets)
  if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
  var normalization:Dictionary={"enabled":false}
- if int(options.get("road_grid",0))==1:
+ if int(options.get("road_grid",0))>0:
   if progress!=null:progress.record("Normalizing roads toward the building grid",0,0,"Native bounded profiles / protected entrances / full-width cut and fill survey")
-  normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network)
-  if not normalization.get("ok",false):return normalization
+  var connected:bool=int(options.road_grid)==2
+  var exclusions:=reserved.duplicate()
+  for attempt in range(5):
+   normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network,connected)
+   if normalization.get("ok",false):break
+   if not connected or not normalization.has("reroute_position") or attempt==4:return normalization
+   var failed:Vector3=normalization.reroute_position
+   exclusions.append(Rect2(Vector2(failed.x-4,failed.z-4),Vector2(8,8)))
+   if progress!=null:progress.record("Replanning a road that failed its terrain limits",attempt+1,4,"Connected grades / alternate native corridor / no silent fallback")
+   network=core.plan_region_network(exits,exclusions,options.network==1,options.trails,seed_value,streets)
+   if not network.get("ok",false):return network
+  normalization["reroute_exclusions"]=exclusions.size()-reserved.size()
   normalization["enabled"]=true
   works={"ok":true,"segments":[],"bounds":AABB()}
   for site:Dictionary in sites:
@@ -135,6 +145,8 @@ static func navigation_metadata(sites:Array,network:Dictionary)->Dictionary:
   var site:Dictionary=sites[index]
   var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"Settlement %d / District %d"%[site.town+1,site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
   metadata.places.append_array(district.places);metadata.roads.append_array(district.roads)
- for link:Dictionary in network.links:
-  for index in range(1,link.points.size()):metadata.roads.append({"a":link.points[index-1],"b":link.points[index],"width":5.0 if link.trail else 8.0})
+ if network.has("grid_navigation"):metadata.roads.append_array(network.grid_navigation)
+ else:
+  for link:Dictionary in network.links:
+   for index in range(1,link.points.size()):metadata.roads.append({"a":link.points[index-1],"b":link.points[index],"width":5.0 if link.trail else 8.0})
  return metadata

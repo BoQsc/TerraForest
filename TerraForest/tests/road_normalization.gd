@@ -13,7 +13,8 @@ func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	var codec:=Recipe.codec()
 	var options:Dictionary=Recipe.DEFAULTS.duplicate()
-	check(options.road_grid==1,"new roads default to grid preference")
+	check(options.road_grid==2,"new roads default to connected grid planning")
+	options.road_grid=1
 	var bytes:=Recipe.encode(options)
 	check(bytes.size()==32 and bytes.decode_u32(4)==2 and codec.decode(bytes)==options,"version-two binary recipe roundtrip")
 	var legacy:=options.duplicate();legacy.erase("road_grid")

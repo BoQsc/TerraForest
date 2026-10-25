@@ -30,12 +30,14 @@ public:
             if(value<0||value>4)return {};
             bytes.encode_u32(8+index*4,uint32_t(value));
         }
+        if(count==6&&bytes.decode_u32(28)==2)bytes.encode_u32(4,3);
         return validate_snapshot(bytes)?bytes:godot::PackedByteArray();
     }
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {
         if(bytes.is_empty())return true;
         if((bytes.size()!=28&&bytes.size()!=32)||bytes.decode_u32(0)!=0x31504352)return false;
-        if(bytes.decode_u32(4)!=(bytes.size()==28?1:2)||(bytes.size()==32&&bytes.decode_u32(28)>1))return false;
+        if(bytes.size()==28&&bytes.decode_u32(4)!=1)return false;
+        if(bytes.size()==32&&(bytes.decode_u32(28)>2||bytes.decode_u32(4)!=(bytes.decode_u32(28)==2?3:2)))return false;
         const auto settlements=bytes.decode_u32(12),districts=bytes.decode_u32(16);
         return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=2
             &&settlements*districts<=6&&bytes.decode_u32(20)<=1&&bytes.decode_u32(24)<=2;
