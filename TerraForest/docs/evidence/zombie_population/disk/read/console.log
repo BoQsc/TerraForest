@@ -1,0 +1,43 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+[terrain-hitch] controller loading 266.53 ms at 6773
+[terrain-hitch] base controller 268.65 ms at 6775
+[terrain-hitch] controller process 270.54 ms at 6777
+[terrain-hitch] world process 272.27 ms at 6779
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 139.3 ms at 6936
+[terrain-hitch] base controller 141.47 ms at 6938
+[terrain-hitch] controller process 143.23 ms at 6940
+[terrain-hitch] world process 145.01 ms at 6941
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 119.42 ms at 7069
+[terrain-hitch] base controller 120.48 ms at 7070
+[terrain-hitch] controller process 121.4 ms at 7071
+[terrain-hitch] world process 122.33 ms at 7072
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 129.99 ms at 7219
+[terrain-hitch] base controller 130.83 ms at 7220
+[terrain-hitch] controller process 131.66 ms at 7220
+[terrain-hitch] world process 132.76 ms at 7222
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 138.1 ms at 7369
+[terrain-hitch] base controller 139.19 ms at 7370
+[terrain-hitch] controller process 140.08 ms at 7371
+[terrain-hitch] world process 140.97 ms at 7372
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 148.0 ms at 7537
+[terrain-hitch] base controller 148.88 ms at 7538
+[terrain-hitch] controller process 149.79 ms at 7539
+[terrain-hitch] world process 150.76 ms at 7540
+PASS actual world becomes playable with inhabitants loaded
+PASS zombies already exist on the first playable frame
+PASS loading barrier waits for initial population admission
+PASS fresh world process restores exact body and limb health
+PASS fresh world process activates same saved survivor
+PASS fresh world process never resurrects saved death
+PASS fresh world process restores corpse loot alongside death record
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+ZOMBIE_POPULATION_WORLD checks=7 failures=0

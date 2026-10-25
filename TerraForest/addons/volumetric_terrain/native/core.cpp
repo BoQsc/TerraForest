@@ -1382,12 +1382,17 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    points[i]=r.vec();V3 p=points[i];
    if(!r.good||!(p.x>=2&&p.x<1998&&p.z>=2&&p.z<1998&&ab(p.y)<=10000)){out.p[8]=1;return;}
   }
-  auto density=[&](V3 p,bool *paved=nullptr){
+  auto density=[&](V3 p,bool *paved=nullptr,bool original=false){
    int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z,value=0;
    for(int k=0;k<8;k++){
     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
     if(weight<=0)continue;
-    u8 material=0;float sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr);
+    u8 material=0;float sample;
+    if(original){
+     V3 corner={float(x+(k&1)),float(y+((k>>1)&1)),float(z+((k>>2)&1))};
+     float height=w.height(corner.x,corner.z);sample=w.base(corner,height);
+     if(paved)material=w.base_material(corner,height);
+    }else sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr);
     // Match meshing quantization even before a neighboring edit allocates a page.
     sample=float(quant(sample))/SDF_SCALE;
     value+=sample*weight;
@@ -1395,30 +1400,39 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    }
    return value;
   };
+  auto support=[&](V3 &point,bool original){
+   bool paved=false;
+   if(!(density(point+V3{0,-.35f,0},&paved,original)<0)||paved||!(density(point+V3{0,.35f,0},nullptr,original)>0))return V3{};
+   float low=point.y-.35f,high=point.y+.35f;
+   float below=density(V3{point.x,low,point.z},nullptr,original),above=density(V3{point.x,high,point.z},nullptr,original);
+   float boundary=float(fl(low)+1);
+   if(boundary<high){
+    float middle=density(V3{point.x,boundary,point.z},nullptr,original);
+    if(middle>0){high=boundary;above=middle;}else{low=boundary;below=middle;}
+   }
+   point.y=low+(high-low)*(-below)/(above-below);
+   const float epsilon=.05f;
+   return ::normal(V3{density(point+V3{epsilon,0,0},nullptr,original)-density(point-V3{epsilon,0,0},nullptr,original),
+    density(point+V3{0,epsilon,0},nullptr,original)-density(point-V3{0,epsilon,0},nullptr,original),
+    density(point+V3{0,0,epsilon},nullptr,original)-density(point-V3{0,0,epsilon},nullptr,original)});
+  };
   out.u(count);V3 normals[64];
   for(u32 i=0;i<count;i++){
    V3 p=points[i];int x=fl(p.x),z=fl(p.z);float dx=p.x-x,dz=p.z-z;
    float h00=w.height(float(x),float(z)),h10=w.height(float(x+1),float(z));
    float h01=w.height(float(x),float(z+1)),h11=w.height(float(x+1),float(z+1));
    p.y=(h00*(1-dx)+h10*dx)*(1-dz)+(h01*(1-dx)+h11*dx)*dz;
-   V3 normal{};bool paved=false;
-   if(density(p+V3{0,-.35f,0},&paved)<0&&!paved&&density(p+V3{0,.35f,0})>0){
-    // The support bracket is not the root. Solve the edited lattice crossing
-    // locally, without searching down into excavations and regrowing pits.
-    // Density is linear in Y per lattice interval: at most two segments here.
-    float low=p.y-.35f,high=p.y+.35f;
-    float dl=density(V3{p.x,low,p.z}),dh=density(V3{p.x,high,p.z});
-    float boundary=float(fl(low)+1);
-    if(boundary<high){
-     float dm=density(V3{p.x,boundary,p.z});
-     if(dm>0){high=boundary;dh=dm;}else{low=boundary;dl=dm;}
+   V3 original_point=p,normal=support(p,false);
+   if(normal.y>0){
+    int bottom=imx(0,fl(original_point.y-.4f)>>4),top=imn(16,(fl(original_point.y+.4f)+1)>>4);
+    u32 heights=((1u<<(top-bottom+1))-1u)<<bottom;bool authored=false;
+    for(int depth=fl(p.z-.05f)>>4;depth<=((fl(p.z+.05f)+1)>>4);++depth)
+     for(int across=fl(p.x-.05f)>>4;across<=((fl(p.x+.05f)+1)>>4);++across)
+      if(w.edit_columns[across+NP*depth]&heights)authored=true;
+    if(authored){
+     V3 original_normal=support(original_point,true);
+     if(original_normal.y<normal.y)normal=original_normal;
     }
-    p.y=low+(high-low)*(-dl)/(dh-dl);
-    // Reject steep edited banks using their actual slope, not the old hill.
-    const float e=.05f;
-    normal=::normal(V3{density(p+V3{e,0,0})-density(p-V3{e,0,0}),
-      density(p+V3{0,e,0})-density(p-V3{0,e,0}),
-      density(p+V3{0,0,e})-density(p-V3{0,0,e})});
    }
    // Dry beach grades into the woodland instead of clearing a rectangle.
    // Placement-time, deterministic grouping; no per-frame vegetation scan.

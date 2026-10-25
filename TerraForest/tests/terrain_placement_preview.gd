@@ -31,7 +31,7 @@ func run()->void:
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	if not check(await wait_for(func():return not game.loading_active and not game.needs_floor_spawn,50),"temporary forest world becomes playable"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
-	game.zombies.clear();game.zombies._spawn_clock=100000
+	game.zombies.clear();game.zombies.population_enabled=false
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false);game.target_overlay.enabled=false;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	var hud=game.player_hud;var preview=game.terrain_placement_preview

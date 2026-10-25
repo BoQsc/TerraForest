@@ -1,0 +1,11 @@
+{
+  "accepted": 64,
+  "checks": 23,
+  "failures": 0,
+  "legacy_rejections": 40,
+  "max_error": 7.31597538106143e-08,
+  "new_grass": 0,
+  "new_trees": 0,
+  "unsupported_roots": 16,
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}

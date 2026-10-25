@@ -89,8 +89,9 @@ func run() -> void:
 	for index in 8:encounters.spawn_at(Vector3(float(index)*2-7,0,-5))
 	check(encounters.residents.size()==6,"live encounter population never exceeds six")
 	encounters.clear();await process_frame
-	encounters._spawn_clock=0;encounters.update(0.1,Vector3.ZERO,true)
-	check(encounters.residents.size()==1,"automatic scheduler admits one supported encounter")
+	encounters.update(20.0,Vector3.ZERO,true)
+	check(encounters.residents.is_empty(),"elapsed player time does not create encounters")
+	encounters.spawn_at(Vector3(0,0,-5))
 	ready_gate=false;encounters.update(0.1,Vector3.ZERO,true)
 	check(encounters.residents.size()==1 and encounters.residents[0].process_mode==Node.PROCESS_MODE_DISABLED,"unknown streamed collision holds resident without deleting it")
 	ready_gate=true

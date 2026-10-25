@@ -46,7 +46,7 @@ func run() -> void:
 	camera=Camera3D.new();stage.add_child(camera);camera.position=Vector3(3,2.8,-3.6);camera.look_at(Vector3(0,0.9,-0.4));camera.current=true
 	encounters=preload("res://addons/characters/runtime/zombie_world.gd").new();stage.add_child(encounters);encounters.enabled=true;encounters.target=target
 	encounters.readiness=func(_bounds:AABB):return true
-	encounters._spawn_clock=100000.0
+	encounters.population_enabled=false
 	physics_frame.connect(_tick_encounters)
 	await physics_frame;await physics_frame
 	# All six approach from the same side, including two initially queued behind peers.
@@ -88,7 +88,7 @@ func run() -> void:
 		root.get_texture().get_image().save_png("res://reports/zombie_encounters/crowd.png")
 	# Solid player collision must not strand the source's living crawl behavior.
 	driving_updates=false;encounters.clear();await process_frame;await physics_frame
-	encounters._spawn_clock=100000.0
+	encounters.population_enabled=false
 	var crawler=encounters.spawn_at(Vector3(0,0,-1.2))
 	var crawler_state:Dictionary={}
 	check(crawler!=null,"leg-loss fixture admits supported zombie")

@@ -1,0 +1,36 @@
+{
+  "command": [
+    "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\vegetation_steep_mining.gd",
+    "--",
+    "--temporary",
+    "--world-seed=1703",
+    "--world-generator=21",
+    "--ground-cover",
+    "--no-zombies",
+    "--vegetation-evidence-dir=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\steep_mining\\baseline_world"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 64820,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL mining bare mountain terrain creates no new natural vegetation identities"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 46.15625120000914,
+    "passed": false
+  }
+}

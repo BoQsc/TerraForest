@@ -1,16 +1,14 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
-## Bounded, session-local encounters. No world generation or saved actor changes.
+## Bounded scene residency for persistent, seeded world inhabitants.
 const Zombie = preload("res://addons/characters/runtime/zombie.gd")
 const CHARACTER_LAYER := 1 << 16
 const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
 const LIMIT := 6
-const MIN_RADIUS := 40.0
-const MAX_RADIUS := 64.0
-const SPAWN_GRACE := 18.0
-const SPAWN_INTERVAL := 8.0
 const RETIRE_RADIUS := 96.0
+var population: RefCounted
+var population_enabled := true
 var enabled := false
 var target: Node3D
 var readiness: Callable
@@ -33,10 +31,12 @@ var _obstacles: Dictionary={}
 var _obstacle_clock: Dictionary={}
 var _navigation_exclusions: Array[RID]=[]
 var residents: Array = []
-var _spawn_clock := SPAWN_GRACE
-var _sequence := 0
 var _corpse_age: Dictionary = {}
 var _capsule: CapsuleShape3D
+
+func prepare(owner_game: Node, persistence: RefCounted) -> bool:
+	population = preload("res://addons/characters/runtime/zombie_population.gd").new()
+	return population.prepare(owner_game, self, persistence)
 
 func _ready() -> void:
 	_capsule = CapsuleShape3D.new()
@@ -52,6 +52,7 @@ func clear() -> void:
 	if is_instance_valid(corpse_host):corpse_host.clear_live()
 	for zombie in residents:
 		if is_instance_valid(zombie):
+			if population != null:population.sync(zombie)
 			zombie.queue_free()
 	residents.clear()
 	for obstacle in _obstacles.values():
@@ -62,7 +63,7 @@ func clear() -> void:
 	if navigator!=null:navigator.clear()
 	if navigation_interest.is_valid():navigation_interest.call(PackedVector3Array())
 	_corpse_age.clear()
-	_spawn_clock = SPAWN_GRACE
+	if population != null:population.reset_stream()
 
 func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) -> void:
 	if is_instance_valid(corpse_host):corpse_host.update(delta,focus,available)
@@ -96,25 +97,11 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		if not ready and not zombie.alive:
 			_retire(index)
 	_update_navigation(delta,available and pursue)
-	if navigation_interest.is_valid():navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
+	if navigation_interest.is_valid() and (population == null or not population.busy()):navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
 	_update_spacing()
 	if not available or not pursue:
 		return
-	_spawn_clock -= delta
-	if _spawn_clock > 0.0 or residents.size() >= LIMIT:
-		return
-	_spawn_clock = SPAWN_INTERVAL
-	# At most four candidate positions and one admission each interval.
-	for attempt in 4:
-		_sequence += 1
-		var angle := float(_sequence) * 2.39996323
-		var radius := MIN_RADIUS + float(_sequence % 7) / 6.0 * (MAX_RADIUS - MIN_RADIUS)
-		var point := supported_point(focus + Vector3(sin(angle), 0, cos(angle)) * radius)
-		var offset:=point-target.global_position;offset.y=0
-		if not point.is_finite() or offset.length()<MIN_RADIUS:continue
-		if spawn_visible.is_valid() and bool(spawn_visible.call(point+Vector3.UP)):continue
-		if spawn_at(point) != null:
-			break
+	if population != null and population_enabled:population.advance(focus, false)
 
 func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	if navigator!=null:navigator.invalidate(bounds)
@@ -242,6 +229,7 @@ func _freeze_detached(node: Node, frozen: bool) -> void:
 
 func _retire(index: int,keep_corpse:bool=false) -> void:
 	var zombie = residents[index]
+	if population != null:population.sync(zombie)
 	_corpse_age.erase(zombie.get_instance_id())
 	var id:int=zombie.get_instance_id()
 	awareness.remove_agent(id);awareness_status.erase(id);_sense_clock.erase(id);_roam_revision.erase(id)
@@ -269,7 +257,7 @@ func supported_point(around: Vector3) -> Vector3:
 	var query := PhysicsShapeQueryParameters3D.new()
 	query.shape = _capsule
 	query.transform = Transform3D(Basis.IDENTITY, point + Vector3.UP * 0.9)
-	query.collision_mask = 1 | 2 | CHARACTER_LAYER | RAGDOLL_LAYER
+	query.collision_mask = 1 | 2 | 4 | 8 | CHARACTER_LAYER | RAGDOLL_LAYER
 	if not space.intersect_shape(query, 1).is_empty():
 		return Vector3.INF
 	return point

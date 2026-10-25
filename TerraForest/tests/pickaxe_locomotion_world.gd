@@ -13,7 +13,7 @@ func run()->void:
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	if not verify(await wait_for(func():return not game.loading_active and not game.needs_floor_spawn,60),"temporary native world is ready"):
 		await finish();return
-	game.set_physics_process(false);game._clear_motion();game.zombies.clear()
+	game.set_physics_process(false);game._clear_motion();game.zombies.population_enabled=false;game.zombies.clear()
 	ProjectSettings.set_setting("terraforest/offscreen_session",false)
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false);game.app_focused=true;game.fly=false;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED

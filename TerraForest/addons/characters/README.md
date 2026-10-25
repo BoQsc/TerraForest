@@ -53,19 +53,37 @@ damage/target rules and consumes no tool wear. Placement remains a separate
 gesture. Original third-person body locomotion is retained while moving.
 See [unarmed authoring](authoring/Human.unarmed.README.md) for rebuild and review.
 
-## Zombie encounters
+## World zombie population
 
-The manager admits at most six live/corpse controllers combined. New play and
-world restore get eighteen seconds of active-play grace. Afterwards, admission
-attempts run every eight seconds, 40–64 metres from the player and outside the
-player camera's view. Four candidate probes per interval reject
-missing collision, unsupported/steep ground, water and occupied capsules. Admission
-and movement use the host's terrain/structure/vegetation collision-readiness gate.
-Controllers suspend during loading, edits, menus, inventory, driving or focus loss.
-Unknown collision holds living actors until coverage returns; distance over 96
-metres retires them. Corpses retire after 20 seconds or on suspension/unready
-collision. Detached bodies freeze during suspension and are removed
-with their owner. Encounters clear on world pose restore and are not persisted.
+Zombies are world inhabitants, not an elapsed-play-time encounter refill. Native
+seeded placement assigns stable identities to 2,500 jittered candidate locations
+across the 2 km world. Unsuitable slopes, water and the 40 m initial-arrival
+sanctuary are excluded. Terrain support is resolved on the terrain worker as
+regions become relevant; there is no world-sized physics or scene-node allocation.
+Nearby residents are instantiated behind the loading screen before input opens,
+including on reload and teleport. The loading panel exposes candidate checks,
+active count and pending terrain sampling under `Loading world inhabitants`.
+
+The native spatial index queries at most 32 candidates within 88 m when focus moves
+16 m. At most six controllers are active; outside 96 m their scene bodies retire
+but their identities, positions, yaw, shared health and individual limb damage/
+detachment persist. Dormant residents do not simulate. During ordinary travel,
+activation skips candidates in the camera frustum or within 40 m; it does not
+invent a replacement, relocate a zombie or refill merely because time passes.
+Admission still requires ready terrain/structure/tree collision, a supported
+capsule and dry ground. Simulation pauses during loading, edits, menus, inventory,
+driving and focus loss; temporarily missing collision freezes living residents.
+
+`zombie_population_v1` is a validated 210,032-byte native binary section in the
+existing compound world save. Old saves without the section initialize the seeded
+population on first load, without altering their terrain or construction. Death
+marks its identity permanently dead; the existing separate corpse inventory/pose
+store owns the lootable corpse. No automatic respawn timer exists. Reload restores
+survivors' injuries and missing limbs, including a crawler's prone capsule/pose.
+Fixtures can disable population admission with `population_enabled=false` while
+retaining explicit `spawn_at` for combat tests. `--no-zombies` still disables the
+gameplay feature. Population tests cover native binary state and integrated world
+loading/travel; this does not qualify whole-world navigation or population balance.
 
 `NativeZombieAwareness` owns bounded session intent and randomized roaming goals.
 Unaware zombies wander between short pauses. They notice an unobstructed player

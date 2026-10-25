@@ -16,7 +16,7 @@ func run() -> void:
 	if not verify(await wait_for(func(): return not game.loading_active and not game.needs_floor_spawn,60),"ordinary temporary world becomes playable"):
 		await finish(); return
 	ProjectSettings.set_setting("terraforest/offscreen_session",false)
-	game.set_physics_process(false); game._clear_motion(); game.zombies.clear()
+	game.set_physics_process(false); game._clear_motion(); game.zombies.population_enabled=false;game.zombies.clear()
 	if game.session_menu.developer: game.session_menu.toggle_developer()
 	game.session_menu.set_open(false)
 	var hud = game.player_hud; hud.equip(9)

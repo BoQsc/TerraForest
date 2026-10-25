@@ -27,7 +27,7 @@ func run()->void:
 		game._clear_motion();game.needs_floor_spawn=false;game.fly=false;game.app_focused=true
 		if game.session_menu.developer:game.session_menu.toggle_developer()
 		game.session_menu.set_open(false);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-		game.zombies.clear();await physics_frame;game.zombies._spawn_clock=100000.0
+		game.zombies.clear();await physics_frame;game.zombies.population_enabled=false
 		var centre:Vector3=game.player.global_position+Vector3.UP*6
 		box(centre-Vector3.UP*.5,Vector3(14,1,14),Color("6f7569"))
 		box(centre+Vector3(0,1.5,-2.75),Vector3(.25,3,4.5),Color("9b8868"))

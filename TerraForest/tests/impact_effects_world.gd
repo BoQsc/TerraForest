@@ -37,7 +37,7 @@ func run()->void:
 	game.player_view.settings_path="";root.add_child(game)
 	if not verify(await wait_for(func():return not game.loading_active and not game.needs_floor_spawn,50),"temporary world reaches playable state"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.ground_enabled=false
-	game.zombies.clear();game.zombies._spawn_clock=100000
+	game.zombies.clear();game.zombies.population_enabled=false
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false)
 	var effects=game.impact_effects;var attack=game.world_attack;var hud=game.player_hud

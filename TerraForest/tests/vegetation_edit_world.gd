@@ -45,7 +45,7 @@ func run()->void:
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
 	check(await until(func():return not game.loading_active,55),"actual world ready")
 	if game.loading_active:game.terrain.shutdown();game.free();quit(1);return
-	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies._spawn_clock=100000
+	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies.population_enabled=false
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	check(game.ground_enabled and await until(settled,45),"production ground owners finish publication")

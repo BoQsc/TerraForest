@@ -10,6 +10,17 @@ Queries are worker jobs with immutable positions and stamped epoch/revision. Res
 
 `reset()` invalidates pending coordinator tokens and removes owned vegetation. Native work already running finishes normally and its stale result is ignored. Resident candidates, query tokens and render owners are bounded; no travel history is accumulated. Core renderers remain usable without this addon.
 
+Natural vegetation cannot become newly slope-eligible merely because mining
+flattens a small facet. Native surface command 17 retains the edited root height
+and uses the stricter inclination of its original generated support and current
+support. This normal is vegetation eligibility data, not a replacement terrain
+lighting or collision normal. Original support is reconstructed only where the
+bounded root/normal footprint intersects authored density pages; untouched ground
+keeps its existing query path. Both samples use the same quantized lattice and
+local 0.35 m support bracket. Unsupported roots still disappear, shallow grading
+still updates valid roots, and reload derives the same result from terrain alone.
+No new saved state, candidate budget, shader or per-frame scan is introduced.
+
 Optionally assign `structures` to a `NativeBlockWorld` or the `structures_world.gd` adapter before entering the tree. The main demo uses the adapter, whose native query unions block and registered model exclusion. Queries check transformed source-tree bounds plus the maximum supported wind margin. They retain vertical separation: underground rooms and sufficiently high structures do not clear unrelated trees. Empty portions of a partial block shape are conservatively reserved as the full cell; model compound parts are tested separately to preserve their gaps.
 
 Accepted terrain samples are cached only while their placement owner is resident (at most 36 candidates per owner). Block changes coalesce into a queue, reconciled one owner per frame. Incoming terrain results check current occupancy immediately before publication. Demolition restores eligible cached candidates without a terrain query. Renderer publication removes missing IDs and replaces changed transforms while preserving unchanged rows and their LOD/fade state. At the default 169-owner cap a complete structure reconciliation can take 169 frames. The cache is released on eviction/reset. Restoring original terrain support can restore a procedural tree; persistent chopping/removal identities are not implemented by this policy.

@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS actual world becomes playable with inhabitants loaded
+PASS no-zombies mode skips population admission
+PASS disabled mode does not allocate or initialize world population
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_POPULATION_WORLD checks=3 failures=0

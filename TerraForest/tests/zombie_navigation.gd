@@ -43,7 +43,7 @@ func run()->void:
 	# is unknown. Readiness must describe the entire box, including larger probes.
 	encounters.readiness=func(bounds:AABB):return not missing_route or bounds.position.x>=-4.2 and bounds.end.x<=-.8 and bounds.position.z>=-1.7 and bounds.end.z<=1.7
 	encounters.water_depth=func(point:Vector3):return 1.0 if wet_band and absf(point.x)<0.7 and absf(point.z)<1.3 else 0.0
-	encounters._spawn_clock=100000.0
+	encounters.population_enabled=false
 	physics_frame.connect(tick_manager)
 	await ticks(3)
 	var zombie=encounters.spawn_at(Vector3(-2.5,0,0));check(zombie!=null,"routed zombie admits")
@@ -69,7 +69,7 @@ func run()->void:
 	if DisplayServer.get_name()!="headless":
 		await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/zombie_navigation/wall.png")
 	active=false;encounters.clear();await ticks(2);wall.free();await ticks(2)
-	player.position=Vector3(2.5,0,0);target.damage_received=0;wet_band=true;encounters._spawn_clock=100000.0
+	player.position=Vector3(2.5,0,0);target.damage_received=0;wet_band=true;encounters.population_enabled=false
 	zombie=encounters.spawn_at(Vector3(-2.5,0,0));active=true
 	var crossed_water:=false
 	var water_trace:Array=[]
@@ -88,7 +88,7 @@ func run()->void:
 	gates.append(box(Vector3(-4.2,1.5,0),Vector3(.2,3,2.6),Color("927953")))
 	gates.append(box(Vector3(-3,1.5,-1.2),Vector3(2.6,3,.2),Color("927953")))
 	gates.append(box(Vector3(-3,1.5,1.2),Vector3(2.6,3,.2),Color("927953")))
-	await ticks(2);encounters._spawn_clock=100000.0;zombie=encounters.spawn_at(Vector3(-3,0,0));active=true
+	await ticks(2);encounters.population_enabled=false;zombie=encounters.spawn_at(Vector3(-3,0,0));active=true
 	await ticks(Engine.physics_ticks_per_second*5)
 	var state:Dictionary=encounters.navigator.status(zombie.get_instance_id())
 	check(state.state in ["blocked","search_limit"],"sealed room reports blocked/search limit instead of direct pursuit")
@@ -100,7 +100,7 @@ func run()->void:
 	check(target.damage_received>0,"removing a blocking wall invalidates and restores traversal")
 	active=false;encounters.clear();await ticks(2)
 	for index in range(1,4):gates[index].free()
-	await ticks(2);encounters._spawn_clock=100000.0
+	await ticks(2);encounters.population_enabled=false
 	zombie=encounters.spawn_at(Vector3(-2.5,0,0));missing_route=true;active=true
 	var unavailable_seen:=false
 	for tick in Engine.physics_ticks_per_second*2:
@@ -114,7 +114,7 @@ func run()->void:
 	for index in 4:box(Vector3(-1.75+index*.5,(index+1)*.125,8),Vector3(.5,(index+1)*.25,3),Color("8e7e62"))
 	box(Vector3(1.5,.5,8),Vector3(3.5,1,3),Color("8e7e62"))
 	player.position=Vector3(2.5,1.04,8);target.damage_received=0
-	await ticks(2);encounters._spawn_clock=100000.0;zombie=encounters.spawn_at(Vector3(-3,0,8));active=true
+	await ticks(2);encounters.population_enabled=false;zombie=encounters.spawn_at(Vector3(-3,0,8));active=true
 	for tick in Engine.physics_ticks_per_second*20:
 		await physics_frame
 		if target.damage_received>0:break

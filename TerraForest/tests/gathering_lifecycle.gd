@@ -37,7 +37,7 @@ func run()->void:
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active and game.terrain.world_ready,"actual playable world and corpse save component initialize")
 	if game.loading_active:quit(1);return
-	game.set_physics_process(false);game._clear_motion();game.zombies._spawn_clock=99999;game.zombies.enabled=true;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;drive_host=true
+	game.set_physics_process(false);game._clear_motion();game.zombies.population_enabled=false;game.zombies.clear();game.zombies.enabled=true;game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED;drive_host=true
 	var inv:RefCounted=game.player_hud.inventory
 	var expected:Dictionary={}
 	if reopening:

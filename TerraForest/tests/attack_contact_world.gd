@@ -44,7 +44,7 @@ func run()->void:
 	if game.loading_active:game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.ground_enabled=false
 	if game.session_menu.developer:game.session_menu.toggle_developer()
-	game.session_menu.set_open(false);game.zombies.clear();game.zombies._spawn_clock=100000
+	game.session_menu.set_open(false);game.zombies.clear();game.zombies.population_enabled=false
 	var hud=game.player_hud;var attack=game.world_attack
 	var cell:=Vector3i(game.player.position.floor())+Vector3i(0,8,0);var other:=cell+Vector3i(4,0,0)
 	check(game.structures.blocks.set_cells(PackedInt32Array([cell.x,cell.y,cell.z,65,other.x,other.y,other.z,65])),"two real concrete targets installed")

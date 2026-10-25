@@ -21,7 +21,7 @@ func run()->void:
 		player.position=Vector3(5,5*tan(deg_to_rad(angle))+.04,0)
 		var collision:=CollisionShape3D.new();var capsule:=CapsuleShape3D.new();capsule.radius=.34;capsule.height=1.8;collision.shape=capsule;collision.position.y=.9;player.add_child(collision)
 		var target:=preload("res://addons/characters/runtime/zombie_target.gd").new();player.add_child(target)
-		encounter=preload("res://addons/characters/runtime/zombie_world.gd").new();scene.add_child(encounter);encounter.enabled=true;encounter.target=target;encounter.readiness=func(_b:AABB):return true;encounter._spawn_clock=100000
+		encounter=preload("res://addons/characters/runtime/zombie_world.gd").new();scene.add_child(encounter);encounter.enabled=true;encounter.target=target;encounter.readiness=func(_b:AABB):return true;encounter.population_enabled=false
 		await physics_frame;await physics_frame
 		encounter.force_pursuit=true # Physical slope capability, independent of perception.
 		var zombie:CharacterBody3D=encounter.spawn_at(Vector3(-1,0,0));active=true

@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native surface sampler available
+PASS bounded interpolated support query returns every sample
+PASS every accepted natural surface also passes authored interpolated support
+PASS fixture exposes floor-rounded support rejection
+PASS interpolated values match independently weighted lattice corners
+PASS stale revision rejected
+PASS empty query rejected
+PASS nonfinite coordinate rejected
+PASS oversize query rejected
+PASS integer queries retain existing payload values and layout
+PASS shallow grading fixture has supported ground
+PASS shallow road shoulder cut accepted
+PASS accepted root follows edited zero surface rather than original height
+PASS edited root placement survives native save/reload exactly
+PASS deeper mining rejects root instead of relocating vegetation into excavation
+PASS steep mountain fixture initializes current coastal terrain
+PASS ordinary pickaxe brush cuts the originally bare steep mountainside
+PASS mining cannot turn a previously bare slope into new grass or bushes
+PASS mining cannot newly admit trees across their original slope limit
+PASS excavated roots still lose unsupported vegetation
+PASS steep-slope eligibility survives reload without resident vegetation history
+PASS restoring original terrain restores the exact original support samples
+PASS deep mining preserves all original surface roots and slope eligibility
+GROUND_SUPPORT_SURFACE {"accepted":64,"checks":23,"failures":0,"legacy_rejections":40,"max_error":0.0000000731597538106143,"new_grass":0,"new_trees":0,"unsupported_roots":16}

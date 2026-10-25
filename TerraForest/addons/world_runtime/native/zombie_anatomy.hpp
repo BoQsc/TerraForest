@@ -9,6 +9,7 @@
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <array>
 #include <vector>
 namespace terraforest {
@@ -44,6 +45,8 @@ public:
     bool detach(const godot::String &part);
     void kill();
     godot::Dictionary snapshot() const;
+    godot::PackedByteArray capture_vitals() const;
+    bool restore_vitals(const godot::PackedByteArray &bytes);
     godot::Dictionary pick(godot::Vector3 from,godot::Vector3 to) const;
     bool track_ragdoll(const godot::TypedArray<godot::PhysicsBody3D> &bodies);
     void advance_ragdolls(double delta);

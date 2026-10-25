@@ -29,7 +29,7 @@ func run() -> void:
 		if game.session_menu.developer: game.session_menu.toggle_developer()
 		game.session_menu.set_open(false);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 		game.zombies.clear();await process_frame
-		game.zombies._spawn_clock=100000.0
+		game.zombies.population_enabled=false
 		check(game.is_physics_processing(),"fixture keeps real world physics and encounter updates active")
 		check((game.player.collision_mask & game.zombies.CHARACTER_LAYER)!=0,"real native player motor collides with zombie capsules")
 		var zombie: CharacterBody3D

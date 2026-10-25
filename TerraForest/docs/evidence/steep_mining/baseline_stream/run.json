@@ -1,0 +1,25 @@
+{
+  "command": [
+    "C:/Program Files (x86)/Steam/steamapps/common/Godot Engine/Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\ground_cover_stream.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 72352,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL bounded prefetched candidates maintain density through all prefetched owners"
+    ],
+    "required_text_found": true,
+    "elapsed_seconds": 1.027805499965325,
+    "passed": false
+  }
+}

@@ -36,6 +36,8 @@ void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("detach","part"),&NativeZombieAnatomy::detach);
     ClassDB::bind_method(D_METHOD("kill"),&NativeZombieAnatomy::kill);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativeZombieAnatomy::snapshot);
+    ClassDB::bind_method(D_METHOD("capture_vitals"),&NativeZombieAnatomy::capture_vitals);
+    ClassDB::bind_method(D_METHOD("restore_vitals","bytes"),&NativeZombieAnatomy::restore_vitals);
     ClassDB::bind_method(D_METHOD("pick","from","to"),&NativeZombieAnatomy::pick);
     ClassDB::bind_method(D_METHOD("track_ragdoll","bodies"),&NativeZombieAnatomy::track_ragdoll);
     ClassDB::bind_method(D_METHOD("advance_ragdolls","delta"),&NativeZombieAnatomy::advance_ragdolls);
@@ -135,6 +137,23 @@ Dictionary NativeZombieAnatomy::snapshot() const {
     Dictionary out,limbs,missing;out["health"]=health_;out["maximum"]=maximum_;out["alive"]=configured_&&health_>0;
     for(int i=0;i<14;i++){limbs[NAMES[i]]=parts_[i].health;missing[NAMES[i]]=parts_[i].missing;}
     out["limbs"]=limbs;out["missing"]=missing;out["vertices"]=vertices_;out["triangles"]=triangles_;return out;
+}
+PackedByteArray NativeZombieAnatomy::capture_vitals() const {
+    PackedByteArray out;if(!configured_)return out;out.resize(60);uint32_t missing=0;
+    for(int part=0;part<14;part++){out.encode_float(part*4,parts_[part].health);if(parts_[part].missing)missing|=1<<part;}
+    out.encode_u32(56,missing);return out;
+}
+bool NativeZombieAnatomy::restore_vitals(const PackedByteArray &bytes){
+    if(!configured_||bytes.size()!=60||bytes.decode_u32(56)>=16384)return false;
+    uint32_t missing=bytes.decode_u32(56);
+    for(int part=0;part<14;part++){
+        double health=bytes.decode_float(part*4);
+        if(!std::isfinite(health)||health<0||health>parts_[part].maximum||((missing&(1<<part))&&health!=0))return false;
+        if(parts_[part].parent>=0&&(missing&(1<<parts_[part].parent))&&!(missing&(1<<part)))return false;
+    }
+    if((missing&3)&&bytes.decode_float(0)>0)return false;
+    for(int part=0;part<14;part++){parts_[part].health=bytes.decode_float(part*4);parts_[part].missing=missing&(1<<part);}
+    health_=parts_[0].health;return true;
 }
 Dictionary NativeZombieAnatomy::pick(Vector3 from,Vector3 to) const {
     Dictionary out;auto *skeleton=Object::cast_to<Skeleton3D>(ObjectDB::get_instance(skeleton_));

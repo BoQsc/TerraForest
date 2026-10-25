@@ -23,7 +23,7 @@ func run() -> void:
 	check(game.tool_view.human.current==1,"real belt equips R11 pickaxe")
 	game.player_hud.equip(1)
 	check(game.tool_view.human.current==2,"real belt equips R11 axe")
-	game.zombies.clear();await process_frame
+	game.zombies.population_enabled=false;game.zombies.clear();await process_frame
 	# Find supported ground through the actual streamed terrain/structures/forest gate.
 	var zombie:CharacterBody3D
 	for offset in [Vector3(2,0,0),Vector3(-2,0,0),Vector3(0,0,2),Vector3(0,0,-2),Vector3(3,0,3)]:
@@ -80,7 +80,7 @@ func run() -> void:
 	check(await preload("res://tests/swing_driver.gd").strike(game) and game.structures.blocks.get_cell(base)!=0 and game.player_hud.inventory.snapshot().slots[1].wear==before+1,"R11 axe preserves existing block damage and wear")
 	game.world_attack.next_attack=0
 	check(await preload("res://tests/swing_driver.gd").strike(game) and game.structures.blocks.get_cell(base)==0,"R11 axe preserves existing block destruction")
-	check(not game.persistence._capture().sections.has("zombies"),"encounters do not change persistent world actor schema")
+	check(game.persistence._capture().sections.has("zombie_population_v1"),"world save includes the persistent zombie population section")
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame
 	print("CHARACTER_WORLD checks=",checks," failures=",failures)
 	quit(0 if failures==0 else 1)

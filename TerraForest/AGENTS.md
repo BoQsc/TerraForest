@@ -1,5 +1,13 @@
 # World-building work
 
+## Commit preference
+
+User direction, 2026-10-25: commit completed, verified work by default rather
+than waiting for another commit request. Keep commits focused, include matching
+Godot UIDs, and document remaining work without claiming it is complete. Do not
+include unrelated user changes. A later explicit no-commit instruction overrides
+this preference. Committing does not authorize pushing; push only when requested.
+
 ## Godot identity files
 
 Commit Godot `.uid` sidecars with their corresponding source files. They are

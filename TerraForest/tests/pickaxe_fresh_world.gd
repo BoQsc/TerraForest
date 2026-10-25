@@ -26,7 +26,7 @@ func run() -> void:
 	game.set_physics_process(false)
 	ProjectSettings.set_setting("terraforest/offscreen_session", false)
 	game._clear_motion()
-	game.zombies.clear()
+	game.zombies.population_enabled=false;game.zombies.clear()
 	if game.session_menu.developer: game.session_menu.toggle_developer()
 	game.session_menu.set_open(false)
 	var hud = game.player_hud

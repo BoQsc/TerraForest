@@ -1,0 +1,119 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 215.19 ms at 13102
+[terrain-hitch] base controller 216.76 ms at 13104
+[terrain-hitch] controller process 218.5 ms at 13106
+[terrain-hitch] world process 220.25 ms at 13107
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 128.01 ms at 13247
+[terrain-hitch] base controller 129.73 ms at 13249
+[terrain-hitch] controller process 131.27 ms at 13250
+[terrain-hitch] world process 133.29 ms at 13252
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 129.58 ms at 13392
+[terrain-hitch] base controller 130.62 ms at 13393
+[terrain-hitch] controller process 131.54 ms at 13394
+[terrain-hitch] world process 132.45 ms at 13395
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 126.67 ms at 13536
+[terrain-hitch] base controller 127.82 ms at 13537
+[terrain-hitch] controller process 128.82 ms at 13538
+[terrain-hitch] world process 129.81 ms at 13539
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 144.47 ms at 13694
+[terrain-hitch] base controller 145.64 ms at 13695
+[terrain-hitch] controller process 146.46 ms at 13696
+[terrain-hitch] world process 147.26 ms at 13697
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 132.21 ms at 13843
+[terrain-hitch] base controller 133.82 ms at 13845
+[terrain-hitch] controller process 134.88 ms at 13846
+[terrain-hitch] world process 136.18 ms at 13847
+PASS actual world becomes playable with inhabitants loaded
+PASS zombies already exist on the first playable frame
+PASS loading barrier waits for initial population admission
+PASS initial residents have stable identities, safety distance and independent awareness
+Zombie severed shin_l: ["shin_l", "foot_l"]
+Zombie ragdoll started with 15 physical bones.
+PASS death immediately retires its persistent population identity
+PASS waiting after a death does not refill the encounter pool
+PASS scene reload restores population and existing corpse storage
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS reload has no duplicate or resurrected residents
+PASS real zombie keeps body and limb injuries through unload/reload
+FAIL restored missing legs still produce a crawling zombie
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 198.11 ms at 20500
+[terrain-hitch] base controller 198.84 ms at 20501
+[terrain-hitch] controller process 199.67 ms at 20502
+[terrain-hitch] world process 200.57 ms at 20503
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 132.8 ms at 20641
+[terrain-hitch] base controller 133.63 ms at 20642
+[terrain-hitch] controller process 134.47 ms at 20643
+[terrain-hitch] world process 135.41 ms at 20644
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 154.71 ms at 20811
+[terrain-hitch] base controller 155.85 ms at 20812
+[terrain-hitch] controller process 156.79 ms at 20813
+[terrain-hitch] world process 157.64 ms at 20814
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 144.88 ms at 20966
+[terrain-hitch] base controller 145.72 ms at 20967
+[terrain-hitch] controller process 146.56 ms at 20968
+[terrain-hitch] world process 147.42 ms at 20969
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 153.23 ms at 21135
+[terrain-hitch] base controller 154.37 ms at 21136
+[terrain-hitch] controller process 155.24 ms at 21137
+[terrain-hitch] world process 156.03 ms at 21138
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 140.33 ms at 21286
+[terrain-hitch] base controller 141.1 ms at 21287
+[terrain-hitch] controller process 141.84 ms at 21287
+[terrain-hitch] world process 142.59 ms at 21288
+PASS travel loads world residents at the destination before returning input
+PASS travel retires old scene bodies and admits destination identities
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie severed shin_l: ["shin_l", "foot_l"]
+[terrain-hitch] controller loading 244.98 ms at 21710
+[terrain-hitch] base controller 245.89 ms at 21711
+[terrain-hitch] controller process 246.68 ms at 21712
+[terrain-hitch] world process 247.49 ms at 21713
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 151.6 ms at 21880
+[terrain-hitch] base controller 152.92 ms at 21882
+[terrain-hitch] controller process 154.53 ms at 21883
+[terrain-hitch] world process 155.62 ms at 21884
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 151.8 ms at 22047
+[terrain-hitch] base controller 152.61 ms at 22048
+[terrain-hitch] controller process 153.52 ms at 22049
+[terrain-hitch] world process 154.35 ms at 22049
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 146.56 ms at 22215
+[terrain-hitch] base controller 147.6 ms at 22216
+[terrain-hitch] controller process 148.43 ms at 22217
+[terrain-hitch] world process 149.3 ms at 22218
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 164.16 ms at 22393
+[terrain-hitch] base controller 165.11 ms at 22394
+[terrain-hitch] controller process 165.91 ms at 22395
+[terrain-hitch] world process 166.7 ms at 22396
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 164.53 ms at 22576
+[terrain-hitch] base controller 165.54 ms at 22577
+[terrain-hitch] controller process 166.36 ms at 22577
+[terrain-hitch] world process 167.11 ms at 22578
+PASS return travel completes the inhabitants loading stage
+PASS travel never resurrects the killed world resident
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_POPULATION_WORLD checks=14 failures=1

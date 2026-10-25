@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 235.37 ms at 8849
+[terrain-hitch] base controller 237.0 ms at 8850
+[terrain-hitch] controller process 238.52 ms at 8852
+[terrain-hitch] world process 240.22 ms at 8854
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 150.38 ms at 9020
+[terrain-hitch] base controller 152.35 ms at 9022
+[terrain-hitch] controller process 154.25 ms at 9024
+[terrain-hitch] world process 156.29 ms at 9026
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 145.88 ms at 9183
+[terrain-hitch] base controller 146.79 ms at 9184
+[terrain-hitch] controller process 147.71 ms at 9185
+[terrain-hitch] world process 148.66 ms at 9186
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 134.77 ms at 9336
+[terrain-hitch] base controller 135.97 ms at 9337
+[terrain-hitch] controller process 136.92 ms at 9338
+[terrain-hitch] world process 137.81 ms at 9339
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 133.58 ms at 9482
+[terrain-hitch] base controller 135.58 ms at 9484
+[terrain-hitch] controller process 137.44 ms at 9486
+[terrain-hitch] world process 139.02 ms at 9487
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 126.9 ms at 9629
+[terrain-hitch] base controller 128.01 ms at 9630
+[terrain-hitch] controller process 128.87 ms at 9631
+[terrain-hitch] world process 129.82 ms at 9631
+PASS actual world becomes playable with inhabitants loaded
+PASS zombies already exist on the first playable frame
+PASS loading barrier waits for initial population admission
+PASS initial residents have stable identities, safety distance and independent awareness
+Zombie severed shin_l: ["shin_l", "foot_l"]
+Zombie ragdoll started with 15 physical bones.
+PASS death immediately retires its persistent population identity
+PASS waiting after a death does not refill the encounter pool
+PASS real compound world save publishes population, injuries and corpse
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+ZOMBIE_POPULATION_WORLD checks=7 failures=0

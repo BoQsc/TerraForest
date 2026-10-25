@@ -1,3 +1,80 @@
+## Persistent world zombie population, 2026-10-25
+
+The requested world-present population replaces the 18-second grace / 8-second
+player-ring encounter scheduler. Native seeded identities and a spatial index
+cover the world; nearby scene residents load behind the playable-world barrier.
+The loading stage reports admission counts and pending surface sampling. Ordinary
+travel activates existing identities only; waiting or killing does not refill the
+pool. The six-controller bound, collision-readiness gate and initial 40 m safety
+sanctuary remain. Compound saves now include native binary resident positions,
+body/limb health, detachment and irreversible death state alongside corpse loot.
+Old saves gain the absent section without terrain/construction conversion.
+
+Engineering checks pass: 26 native checks in debug, isolated release and the pack;
+15 rendered world checks in source and the pack; fresh-process compound disk
+save/reload (7 + 7 checks); awareness, anatomy, behavior, crowd encounters,
+navigation, real-world combat and character runtime. Disabled-zombie loading also
+passes. The generated test save is archived under reports, not left in the world
+selector. User saves were not opened. The playable pack is updated, startup passes,
+and both packaged runtime DLL hashes match source builds. Included in the baseline
+commit requested on 2026-10-25; no push requested.
+
+Testing found a restored crawler still standing while its capsule was prone:
+first the fall transition was retained, then a normal animation blend concealed
+the restored prone pose. Restore now initializes the prone capsule and immediate
+unblended pose. The regression checks the actual head bone height before any
+simulation tick, and the final source/package images were inspected. The initial
+isolated release fixture also required explicit extension loading/report-path
+correction; its successful rerun is preserved. A character-check runner initially
+requested the wrong success marker; the correctly configured rerun passes.
+
+Further world-quality qualification remains: representative generated towns,
+coasts, caves and seeds; population density/pacing; long travel on lower-end
+hardware. Current dormant residents are not an offscreen whole-world simulation.
+Existing zombie scene construction costs approximately 130–245 ms per admission
+in the rendered test (mostly now hidden by loading); travel-time construction
+still needs profiling and pooling/staged construction if it causes visible
+hitches. Revisit with traversal frame-time captures and a bounded pool/animation
+initialization design, not by increasing actor caps or returning timed spawns.
+Broader route/crawler gates in NAVIGATION_STANDARD remain unqualified. Evidence:
+`evidence/zombie_population/`. This is verified residency/persistence behavior,
+not acceptance of all generated-world placement, gameplay balance or performance.
+
+## Mining must not populate bare slopes, 2026-10-25
+
+Reproduced in seed 1703/profile 21 with the normal pickaxe brush: a small cut
+flattens nearby density facets enough to cross vegetation slope thresholds. The
+previous native sampler tested only the edited inclination, so resampling added
+plants to originally bare mountain terrain. This is separate from the repaired
+renderer-page blinking issue; adding a fade would only conceal the wrong admission.
+
+Native command 17 now retains the edited root position but uses the stricter
+original/current support inclination for procedural placement. Original support
+uses the same quantized lattice and local bracket; reconstruction is limited to
+root/normal footprints overlapping authored density pages. Unsupported plants
+still disappear and valid shallow grading still follows the edited surface. No
+new persistent state, global density increase or per-frame work is introduced.
+
+The old packaged build creates two new plants in the actual temporary-world
+pickaxe destruction test; the fixed source build creates zero, preserves all
+60,882 resident cover records and their unaffected transforms, and passes all
+14 checks. Before/after images were inspected. All 23 native support checks pass
+in debug, release and the exported pack, including steep-slope reload, original
+terrain restoration and deep-mining continuity. Tree resampling and settlement
+earthworks pass; all nine generation-plan digests still match the trusted flat
+plate baseline. Export/startup passes and packaged/source terrain DLLs match.
+
+Retained unrelated failure: the 156-check ground-cover stream fixture has one
+stale total-count expectation; the identical failure reproduces in the old
+packaged baseline with its stub terrain. Do not report that suite green. Revisit
+its expected counts when updating ground-cover test fixtures, without changing
+production density to satisfy it. Broader mountains/seeds, repeated gameplay
+mining and lower-end sustained cost remain unqualified; require those playtests
+and measured worker/frame costs for broader acceptance. Captures/readback are not
+performance measurements. Evidence: `evidence/steep_mining/`. User saves were not
+opened or changed; the graphical checks explicitly skip saving. Included in the
+baseline commit requested on 2026-10-25.
+
 ## Flat-plate baseline restored, 2026-10-25
 
 The user rejected the shallow-ramp experiment and requested only the trusted

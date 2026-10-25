@@ -71,9 +71,45 @@ func _initialize() -> void:
 	check(Codec.reply_ok(fresh.execute(restore)) and fresh.execute(root_query)==cut,"edited root placement survives native save/reload exactly")
 	core.execute(Codec.brush(cut_point,cut_point,1.5,0,false,1))
 	check(core.execute(root_query).decode_float(32)==0.0,"deeper mining rejects root instead of relocating vegetation into excavation")
+	check(Codec.reply_ok(core.execute(Codec.command(6,[1703,21]))),"steep mountain fixture initializes current coastal terrain")
+	var mountain_query:=Codec.command(17,[1])
+	mountain_query.append_array(PackedVector3Array([Vector3(386.25,0,250.25)]).to_byte_array())
+	var mountain:PackedByteArray=core.execute(mountain_query)
+	var hit_point:=Vector3(mountain.decode_float(16),mountain.decode_float(20),mountain.decode_float(24))
+	var hit_normal:=Vector3(mountain.decode_float(28),mountain.decode_float(32),mountain.decode_float(36))
+	var nearby:=PackedVector3Array()
+	for depth in range(-3,4):
+		for across in range(-3,4):nearby.append(hit_point+Vector3(across*.25,0,depth*.25))
+	var nearby_query:=Codec.command(17,[nearby.size()]);nearby_query.append_array(nearby.to_byte_array())
+	var before_mining:PackedByteArray=core.execute(nearby_query)
+	var natural_snapshot:PackedByteArray=core.execute(Codec.command(4)).slice(12)
+	var brush_center:=hit_point-hit_normal*.35
+	check(hit_normal.y<.82 and Codec.reply_ok(core.execute(Codec.brush(brush_center,brush_center,.65,0,false,1))),"ordinary pickaxe brush cuts the originally bare steep mountainside")
+	var after_mining:PackedByteArray=core.execute(nearby_query)
+	var new_grass:=0;var new_trees:=0;var unsupported_roots:=0
+	for index in nearby.size():
+		var old_up:=before_mining.decode_float(20+nearby.size()*12+index*12)
+		var new_up:=after_mining.decode_float(20+nearby.size()*12+index*12)
+		if old_up<.82 and new_up>=.82:new_grass+=1
+		if old_up<cos(deg_to_rad(32.0)) and new_up>=cos(deg_to_rad(32.0)):new_trees+=1
+		if old_up>0 and new_up==0:unsupported_roots+=1
+	check(new_grass==0,"mining cannot turn a previously bare slope into new grass or bushes")
+	check(new_trees==0,"mining cannot newly admit trees across their original slope limit")
+	check(unsupported_roots>0,"excavated roots still lose unsupported vegetation")
+	var mined_snapshot:PackedByteArray=core.execute(Codec.command(4)).slice(12)
+	var mined_clone=ClassDB.instantiate("TerrainCore")
+	var mined_restore:=Codec.command(5);mined_restore.append_array(mined_snapshot)
+	check(Codec.reply_ok(mined_clone.execute(mined_restore)) and mined_clone.execute(nearby_query)==after_mining,"steep-slope eligibility survives reload without resident vegetation history")
+	var natural_restore:=Codec.command(5);natural_restore.append_array(natural_snapshot)
+	check(Codec.reply_ok(core.execute(natural_restore)) and core.execute(nearby_query)==before_mining,"restoring original terrain restores the exact original support samples")
+	var underground:=hit_point-Vector3.UP*16
+	check(Codec.reply_ok(core.execute(Codec.brush(underground,underground,.65,0,false,1))) and core.execute(nearby_query).slice(16)==before_mining.slice(16),"deep mining preserves all original surface roots and slope eligibility")
 	core=null
-	var result:={"checks":checks,"failures":failures,"accepted":accepted,"legacy_rejections":mismatch,"max_error":max_error}
-	DirAccess.make_dir_recursive_absolute("res://reports")
-	var file:=FileAccess.open("res://reports/ground_support_surface.json",FileAccess.WRITE);file.store_string(JSON.stringify(result));file.close()
+	var result:={"checks":checks,"failures":failures,"accepted":accepted,"legacy_rejections":mismatch,"max_error":max_error,"new_grass":new_grass,"new_trees":new_trees,"unsupported_roots":unsupported_roots}
+	var output:="res://reports/ground_support_surface.json"
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--support-output="):output=argument.trim_prefix("--support-output=")
+	DirAccess.make_dir_recursive_absolute(output.get_base_dir())
+	var file:=FileAccess.open(output,FileAccess.WRITE);file.store_string(JSON.stringify(result));file.close()
 	print("GROUND_SUPPORT_SURFACE ",JSON.stringify(result))
 	quit(1 if failures else 0)

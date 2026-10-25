@@ -35,7 +35,7 @@ func run()->void:
 	if not check(await wait_for(func():return not game.loading_active,45),"playable world ready"):await finish();return
 	await wait_for(func():return not game.needs_floor_spawn,5)
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
-	game.zombies._spawn_clock=100000;game.player_hud.equip_item(2);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	game.zombies.population_enabled=false;game.zombies.clear();game.player_hud.equip_item(2);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
 	var zombie:Node3D
 	for offset:Vector3 in [Vector3(0,0,2),Vector3(2,0,0),Vector3(-2,0,0),Vector3(0,0,-2)]:
 		zombie=game.zombies.spawn_at(game.player.global_position+offset)

@@ -1,0 +1,18 @@
+{
+  "checks": 15,
+  "failures": 0,
+  "population": {
+    "active": 6,
+    "admitted": 6,
+    "candidates": 12,
+    "examined": 6,
+    "failure": "",
+    "ready": true,
+    "sample_pending": false,
+    "world": {
+      "revision": 50,
+      "seed": 1703,
+      "slots": 2500
+    }
+  }
+}

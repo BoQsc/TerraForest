@@ -43,7 +43,7 @@ func run()->void:
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"actual temporary world becomes ready")
 	if game.loading_active:game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();quit(1);return
-	game.set_physics_process(false);game._clear_motion();game.zombies.clear();game.session_menu.set_open(false)
+	game.set_physics_process(false);game._clear_motion();game.zombies.population_enabled=false;game.zombies.clear();game.session_menu.set_open(false)
 	var view:Node3D=game.tool_view.human;view.pickaxe_swing="diagonal";view.set_process(false);game.player_hud.equip(0)
 	check(view.body==game.player and view.active_clip=="FP_Pickaxe_Diagonal_Idle","real belt selects the diagonal hold on the existing player body")
 	check(view.clips.has_all(["FP_Pickaxe_Swing","FP_Place_Relaxed","FP_Pickaxe_Fresh_Swing","FP_Pickaxe_SidePullback_Swing"]),"original clips, placement and pickaxe alternatives coexist with the fixed-grip default")

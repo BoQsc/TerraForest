@@ -84,7 +84,11 @@ Unknown collision is `unavailable` and must stop motion while preserving the
 living actor through temporary publication changes. Retry unavailable coverage
 and invalidate routes after relevant terrain, structures, doors, harvesting, water
 or vehicle-obstacle changes. Dormant or suspended actors perform no search/motion.
-Bodies beyond the encounter retirement distance may retire normally.
+Bodies beyond the 96 m zombie residency distance may retire, but must first
+preserve the resident identity, position and anatomical state in the native world
+population. Retirement is not death or a new encounter opportunity. Nearby
+residents must be admitted before loading releases player input; no elapsed-play
+spawn/refill loop is permitted. Dormant residents do not simulate navigation.
 
 ## Interaction policy
 

@@ -1640,6 +1640,24 @@ func apply_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZERO,
 	receive_hit(part, damage, world_point, impulse, force_sever, impact)
 
 
+func restore_population_vitals(bytes: PackedByteArray) -> bool:
+	var validator = ClassDB.instantiate("NativeZombieAnatomy")
+	if not validator.configure(PARTS) or not validator.restore_vitals(bytes) or not validator.snapshot().alive:return false
+	var saved: Dictionary = validator.snapshot()
+	for part: String in PARTS:
+		if saved.missing[part] and not missing.get(part, false):sever_limb(part)
+	for detached in detached_parts:
+		if is_instance_valid(detached):detached.queue_free()
+	detached_parts.clear()
+	if not anatomy.restore_vitals(bytes):return false
+	health = saved.health; limb_health = saved.limbs
+	if not _has_standing_legs():
+		_crawl_transition = false; _crawling = true; _active_action = ""; _action_time = 0.0
+		_set_crawl_capsule(1.0); _set_movement_mode("crawling")
+		state = "crawl_idle"; _play_animation("Zombie_Crawl_Idle", true)
+		animation_player.advance(0.0)
+	return true
+
 func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:
 	if not initialized or not PARTS.has(part) or missing.get(part, false):
 		return

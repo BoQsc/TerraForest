@@ -193,6 +193,7 @@ func _ready() -> void:
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
 		["corpse storage",func():return corpse_loot.prepare(self,persistence)],
+		["zombie population",func():return zombies.prepare(self,persistence)],
 		["structure catalog",func():return structures_ready],
 		["water",func():return lakes.prepare()],
 		["structure registration",func():return persistence.register_component("structures",structures.capture_storage_snapshot,storage.restore_structures,structures.snapshot_validator(),structures.empty_snapshot())],
@@ -1597,6 +1598,7 @@ func _update_loading() -> void:
 func _additional_loading_diagnostics() -> Dictionary:
 	# Constant-sized summaries. Never copy instance buffers or scan the world.
 	return {
+		"zombies":zombies.population.status() if zombies.population!=null else {},
 		"trees":vegetation.statistics(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
@@ -1625,6 +1627,11 @@ func _additional_loading_ready() -> bool:
 		loading_stage_percent=90
 		loading_work_text="Water: lakes %d/%d ready · %d regions pending · %d surfaces dirty · %d staged meshes"%[state.ready,state.lakes,state.pending_regions,state.dirty_meshes,state.staged_meshes]
 		loading_stage_text="Loading water - %d regions remaining"%int(state.pending_regions) if state.pending_regions>0 else "Building water surfaces - %d remaining"%int(state.dirty_meshes)
+		return false
+	if not zombies.population.advance(player.global_position, true):
+		var population_state: Dictionary = zombies.population.status()
+		loading_stage_percent=94;loading_stage_text="Loading world inhabitants"
+		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.LIMIT,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
 		return false
 	return true
 

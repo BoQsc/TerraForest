@@ -47,7 +47,7 @@ func run()->void:
 	var collision:=CollisionShape3D.new();collision.position.y=.9;collision.shape=capsule;player.add_child(collision)
 	target=preload("res://addons/characters/runtime/zombie_target.gd").new();player.add_child(target)
 	encounters=preload("res://addons/characters/runtime/zombie_world.gd").new();stage.add_child(encounters)
-	encounters.enabled=true;encounters.target=target;encounters.readiness=func(_bounds:AABB):return true;encounters._spawn_clock=100000
+	encounters.enabled=true;encounters.target=target;encounters.readiness=func(_bounds:AABB):return true;encounters.population_enabled=false
 	physics_frame.connect(tick);await ticks(3)
 	var zombie=encounters.spawn_at(Vector3.ZERO)
 	check(zombie!=null and zombie.target==null,"normal admission starts unaware without a player combat target")
@@ -66,7 +66,7 @@ func run()->void:
 	sample(zombie,"chase");await capture("chase")
 	# Controlled orientation for the wall and hidden-player memory case.
 	active=false;encounters.clear();await ticks(3);player.position=Vector3(0,0,8)
-	encounters._spawn_clock=100000;zombie=encounters.spawn_at(Vector3.ZERO);active=true;await ticks(30)
+	encounters.population_enabled=false;zombie=encounters.spawn_at(Vector3.ZERO);active=true;await ticks(30)
 	check(zombie.awareness_state=="chase","second fixture obtains real sight before hiding")
 	var last_seen:Vector3=encounters.awareness.status(zombie.get_instance_id()).goal
 	var wall:=box(Vector3(0,2,4),Vector3(100,4,.4));await ticks(30)
@@ -84,7 +84,7 @@ func run()->void:
 	sample(zombie,"forgotten");await capture("forgotten")
 	# A reachable last sighting must lead to an actual search, then disengage.
 	active=false;wall.free();await ticks(3);player.position=Vector3(0,0,5)
-	encounters.clear();await ticks(3);encounters._spawn_clock=100000;zombie=encounters.spawn_at(Vector3.ZERO);active=true;await ticks(30)
+	encounters.clear();await ticks(3);encounters.population_enabled=false;zombie=encounters.spawn_at(Vector3.ZERO);active=true;await ticks(30)
 	check(zombie.awareness_state=="chase","roaming can reacquire a newly visible player")
 	player.position=Vector3(60,0,0)
 	var searched:=false
@@ -95,24 +95,16 @@ func run()->void:
 	sample(zombie,"search");await capture("search")
 	await ticks(60*7)
 	check(zombie.awareness_state in ["idle","wander"],"finished physical search returns to ordinary wandering")
-	# Actual spawn policy with bounded simulated scheduler time and live collision.
 	active=false;encounters.clear();await ticks(3);player.position=Vector3.ZERO;await ticks(3)
 	encounters.spawn_visible=func(_point:Vector3):return true
-	for i in 179:encounters.update(.1,Vector3.ZERO,true)
-	check(encounters.residents.is_empty(),"newly spawned player has an eighteen-second active-play grace period")
-	for i in 3:encounters.update(.1,Vector3.ZERO,true)
-	check(encounters.residents.is_empty(),"automatic candidates in the player's view reject")
+	for i in 200:encounters.update(.1,Vector3.ZERO,true)
+	check(encounters.residents.is_empty(),"waiting does not create player-centered encounters")
 	encounters.spawn_visible=func(_point:Vector3):return false
-	encounters._spawn_clock=0;encounters.update(1.0/60,Vector3.ZERO,true)
-	check(encounters.residents.size()==1,"automatic scheduler admits one offscreen supported resident")
-	if not encounters.residents.is_empty():
-		var distance:float=encounters.residents[0].global_position.distance_to(player.global_position)
-		check(distance>=40 and distance<=64.1,"automatic spawn is forty to sixty-four metres from player")
-		check(encounters.residents[0].target==null,"automatic spawn is not born pursuing the player")
-	var count:int=encounters.residents.size();var clock:float=encounters._spawn_clock
+	for i in 200:encounters.update(.1,Vector3.ZERO,true)
+	check(encounters.residents.is_empty(),"looking away does not invent new zombies")
 	for i in 100:encounters.update(.1,Vector3.ZERO,false)
-	check(encounters.residents.size()==count and encounters._spawn_clock==clock,"suspension does not spend the spawn clock")
-	encounters.clear();check(is_equal_approx(encounters._spawn_clock,18) and encounters.awareness_status.is_empty(),"world reset clears brains and restores spawn grace")
+	check(encounters.residents.is_empty(),"suspension does not create inhabitants")
+	encounters.clear();check(encounters.awareness_status.is_empty(),"world reset clears live brains")
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"trace":trace},"  "))
 	await ticks(2);stage.free();await process_frame
 	print("ZOMBIE_BEHAVIOR checks=",checks," failures=",failures);quit(1 if failures else 0)

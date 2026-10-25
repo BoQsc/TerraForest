@@ -20,7 +20,7 @@ func run()->void:
 	check(not game.loading_active,"actual temporary world loads")
 	if game.loading_active:game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true
-	game.session_menu.set_open(false);game.zombies.clear()
+	game.session_menu.set_open(false);game.zombies.population_enabled=false;game.zombies.clear()
 	var view:Node3D=game.tool_view.human
 	game.tool_view.equip(0);view.set_process(false)
 	check(view.clips.has_all(["FP_Place_Relaxed","FP_Pickaxe_Fresh_Swing","FP_Pickaxe_Diagonal_Swing"]),"placement and prior pickaxe actions coexist with the accepted default")

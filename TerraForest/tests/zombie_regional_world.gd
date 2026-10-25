@@ -77,7 +77,7 @@ func run()->void:
 	game._clear_motion();game.needs_floor_spawn=false;game.fly=false;game.app_focused=true
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
-	game.zombies.clear();game.zombies._spawn_clock=100000
+	game.zombies.clear();game.zombies.population_enabled=false
 	var start:Vector3
 	var goal:Vector3
 	var pose:=Transform3D.IDENTITY
@@ -103,7 +103,7 @@ func run()->void:
 		if (start-door_centre).dot(door_normal)<0:door_normal=-door_normal
 	game.teleport(goal+Vector3.UP*.05,goal.y+.05)
 	if not check(await until(func():return not game.loading_active,60),"recipient's destination collision loads through normal travel"):await finish();return
-	game.needs_floor_spawn=false;game.fly=false;game.zombies.clear();game.zombies._spawn_clock=100000
+	game.needs_floor_spawn=false;game.fly=false;game.zombies.clear();game.zombies.population_enabled=false
 	game.navigation_residency.update(PackedVector3Array([start,goal]))
 	if not check(await until(func():return game._actor_collision_ready(AABB(start-Vector3(1,1,1),Vector3(2,4,2))),30),"separate pursuit start has ready terrain, model and vegetation collision"):await finish();return
 	var zombie:CharacterBody3D
