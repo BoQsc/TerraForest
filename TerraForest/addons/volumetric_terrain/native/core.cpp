@@ -208,7 +208,14 @@ float World::buildable_height(float x,float z,float original)const{
  float weight=(near_weight*(1.f-blend_z)+far_weight*blend_z)/255.f;
  float level=float(fl(original)),phase=original-level;
  float terrace=level+.08f+smooth(clampf((phase-.25f)/.5f,0.f,1.f));
- return original+(terrace-original)*weight;
+ if(generator_id>=EMBED_REGION_GENERATOR_ID)terrace=level+.08f+smooth(clampf((phase-.35f)/.3f,0.f,1.f));
+ float adjusted=original+(terrace-original)*weight;
+ if(generator_id>=EMBED_REGION_GENERATOR_ID){
+  float contact=float(fl(adjusted+.5f))+.08f,correction=contact-adjusted;
+  float influence=smooth(clampf((.30f-ab(correction))/.15f,0.f,1.f))*smooth(clampf(weight/.2f,0.f,1.f));
+  adjusted+=correction*influence;
+ }
+ return adjusted;
 }
 float World::height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);
@@ -228,7 +235,7 @@ float World::height(float x,float z,bool developed)const{
     h=shelf*(1.f-inland)+h*inland;
    }
   }
- return generator_id==BUILDABLE_REGION_GENERATOR_ID||generator_id==BUILDABLE_COAST_GENERATOR_ID?buildable_height(x,z,h):h;
+ return buildable_ground(generator_id)?buildable_height(x,z,h):h;
 }
 float World::inland_height(float x,float z,bool developed)const{
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return 0;
@@ -382,7 +389,7 @@ void World::init(int p_seed,u32 generator){
   V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
   caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
   caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
-  if(generator==BUILDABLE_REGION_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID)prepare_buildable_ground(surrounding_coast(generator));
+  if(buildable_ground(generator))prepare_buildable_ground(surrounding_coast(generator));
   generator_id=generator;return;
  }
  if(generator_id>=2){

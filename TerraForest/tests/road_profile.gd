@@ -36,6 +36,21 @@ func run() -> void:
 	check(not rejected.ok and not rejected.has("coefficients"),"uncertified route returns no partial construction profile")
 	var malformed:=flat.duplicate();malformed[1].z+=1
 	check(not planner.fit(malformed,0.25,0.008,15,3).ok,"nonuniform route rejected explicitly")
+	var curve:=PackedFloat64Array([-2,3,0,35])
+	for spacing in [14.6666667,24,48]:
+		var normalized:Dictionary=planner.normalize_grid(curve,spacing)
+		check(normalized.ok and normalized.max_shift<=.55001 and normalized.max_grade<=.20001 and normalized.max_grade_change<=.10001 and normalized.max_curvature_change<=.04001,"embedding profiles retain bounded smoothness")
+		check(normalized==planner.normalize_grid(curve,spacing),"embedding profile is deterministic")
+	var protected:Dictionary=planner.normalize_grid(curve,24,PackedFloat64Array([0,.25]))
+	var fitted:PackedFloat64Array=protected.coefficients
+	var same:=true
+	for sample in 101:
+		var fraction:=sample/400.0
+		var position:float=fraction*protected.subdivisions;var section:=mini(protected.subdivisions-1,int(position));var local:=position-section
+		var height:=((fitted[section*4]*local+fitted[section*4+1])*local+fitted[section*4+2])*local+fitted[section*4+3]
+		same=same and absf(height-((-2*fraction+3)*fraction*fraction+35))<.000001
+	check(same,"protected entrance interval retains its exact original height curve")
+	check(not planner.normalize_grid(curve,24,PackedFloat64Array([.6,.2])).ok,"invalid protected interval fails explicitly")
 	var report:={"failures":failures,"fit_us":elapsed,"profile":result,"scope":"Native cubic profile correctness only; not yet terrain construction or driving."}
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var file:=FileAccess.open("res://reports/road_profile.json",FileAccess.WRITE);file.store_string(JSON.stringify(report,"  "));file.close()

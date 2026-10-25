@@ -27,11 +27,17 @@ func run()->void:
 		await physics_frame;await physics_frame
 		var normal:Dictionary=blocks.placement_support(bounds,Vector3(.5,height,.5),true,true,[])
 		var preferred:Dictionary=blocks.placement_support(bounds,Vector3(.5,height,.5),true,true,[],true)
-		check(preferred.ok and preferred.hits==9 and is_equal_approx(preferred.bottom,0.0 if height<.6 else 1.0),"opt-in lower cell prefers moderate burial over a larger gap at %.2f"%height)
-		check(preferred.maximum-preferred.bottom<=.60001 and preferred.gap<=normal.gap+.00001,"burial trial retains visible cube height and cannot increase air gap")
+		check(preferred.ok and preferred.hits==9 and is_equal_approx(preferred.bottom,0.0 if height<.6 else 1.0),"embedding preference stays bounded at %.2f"%height)
+		check(preferred.burial<=.60001 and preferred.gap<=normal.gap+.00001,"preference cannot increase air gap or bury most of the cube")
 		var plate_bounds:=AABB(Vector3.ZERO,Vector3(1,.25,1))
 		check(blocks.placement_support(plate_bounds,Vector3(.5,height,.5),true,true,[],true)==blocks.placement_support(plate_bounds,Vector3(.5,height,.5),true,true,[]),"thin plates retain their original overlap limit")
 		check(blocks.placement_support(bounds,Vector3(.5,height,.5),false,true,[],true)==blocks.placement_support(bounds,Vector3(.5,height,.5),false,true,[]),"non-grid objects retain original targeting")
+	floor.position=Vector3(.5,.82-.25,.5)
+	for height:float in [.91,.959,.99]:
+		floor.position.y=height-.25
+		await physics_frame;await physics_frame
+		var fit:Dictionary=blocks.placement_support(bounds,Vector3(.5,height,.5),true,true,[],true)
+		check(fit.ok and fit.bottom==1 and fit.burial==0 and fit.gap<=.1,"small gap never triggers near-total burial")
 	floor.position=Vector3(.5,.82-.25,.5)
 	floor.rotation.z=deg_to_rad(10)
 	await physics_frame;await physics_frame

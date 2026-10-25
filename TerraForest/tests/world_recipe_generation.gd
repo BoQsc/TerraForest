@@ -21,13 +21,17 @@ func verify_approved_records(game:Node)->void:
   check(exact,"published world contains every approved "+revision+" block")
 
 func run()->void:
- var use_defaults:bool="--default-recipe" in OS.get_cmdline_user_args()
+ var grid_review:bool="--grid-review" in OS.get_cmdline_user_args()
+ var use_defaults:bool="--default-recipe" in OS.get_cmdline_user_args() or grid_review
  folder="res://reports/world_recipe_generation_default" if use_defaults else "res://reports/world_recipe_generation"
+ if grid_review:folder="res://reports/road_normalization/generation"
  DirAccess.make_dir_recursive_absolute(folder)
+ FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"failures":1,"state":"running","slot":""}))
  original_window=root.get_window_id();original_handle=DisplayServer.window_get_native_handle(DisplayServer.WINDOW_HANDLE,original_window)
  change_scene_to_file("res://demo/worlds.tscn");await scene_changed
  var browser=current_scene
  var slot:="recipe_generated_"+Crypto.new().generate_random_bytes(8).hex_encode();slots.append(slot)
+ if grid_review:slot="GridPreference_1703_"+Crypto.new().generate_random_bytes(4).hex_encode();slots[-1]=slot
  browser.name_field.text=slot;browser.seed_field.value=1703
  if not use_defaults:browser.biome.select(1);browser.settlement_count.select(2);browser.district_count.select(1);browser.road_network.select(1);browser.offroads.select(2)
  var options:Dictionary=browser.selected_options()
@@ -48,20 +52,20 @@ func run()->void:
  var bytes:PackedByteArray=game.world_recipe.store.capture_snapshot()
  check(bytes==Recipe.encode(options) and game.ecosystem.biome_profile==options.biome,"created world uses requested durable biome recipe")
  check(game.construction_inventory.gameplay and game.ground_enabled and game.world_vehicle.fleet_enabled and "--actors" in Options.arguments(),"normal gameplay construction, vegetation, actors and vehicles are enabled")
- var region:Dictionary=game.generated_region.describe(1703,21)
+ var region:Dictionary=game.generated_region.describe(1703,23)
  check(region.places.size()==options.settlements*options.districts and not region.roads.is_empty(),"all requested districts and regional routes publish to actual world map")
  check(game.structures.model("architecture/concrete_paving/v1").get_ids().is_empty(),"no legacy continuous decorative sidewalk meshes")
  var status:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
  var metadata:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(status.report).path_join("run.json")))
- check(metadata.validation.ok and int(metadata.validation.section_bytes.world_recipe_v1)==28,"publication verifies native binary recipe alongside terrain and structures")
+ check(metadata.validation.ok and int(metadata.validation.section_bytes.world_recipe_v1)==bytes.size(),"publication verifies native binary recipe alongside terrain and structures")
  check(metadata.phases.size()==1 and metadata.phases[0].mode=="same_window","generation introduces no second process or operating-system window")
  var worker:=Thread.new()
- worker.start(Plan.build.bind(1703,21,true,true,"user://approved_default_plan_"+slot,options))
+ worker.start(Plan.build.bind(1703,23,true,true,"user://approved_default_plan_"+slot,options))
  while worker.is_alive():await process_frame
  var planned:Dictionary=worker.wait_to_finish()
  if check(planned.get("ok",false),"reconstruct exact approved-building plan independently"):
   var expected_region:RefCounted=ClassDB.instantiate("NativeGeneratedRegion")
-  check(expected_region.set_plan(1703,21,planned.navigation.places,planned.navigation.roads) and expected_region.capture_snapshot()==game.generated_region.store.capture_snapshot(),"every published district and road matches the independently rebuilt native plan")
+  check(expected_region.set_plan(1703,23,planned.navigation.places,planned.navigation.roads) and expected_region.capture_snapshot()==game.generated_region.store.capture_snapshot(),"every published district and road matches the independently rebuilt native plan")
   for site:Dictionary in planned.sites:
    for lot:Dictionary in site.lots:
     var revision:String=lot.asset.get_meta("approved_revision","")

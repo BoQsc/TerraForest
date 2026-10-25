@@ -182,10 +182,11 @@ Dictionary NativeBlockWorld::placement_support(const AABB &bounds,Vector3 surfac
     double bottom=lattice?std::max(double(bounds.position.y),std::ceil(maximum-overlap-1e-5)):maximum-overlap;
     if(prefer_burial&&lattice&&terrain_only&&hits==9&&size.is_equal_approx(Vector3(1,1,1))){
         double lower=bottom-1,burial=maximum-lower,upper_gap=std::max(0.,bottom-minimum);
-        if(lower>=bounds.position.y-1e-5&&burial<=.60+1e-5&&burial<=upper_gap*1.5+1e-5){bottom=lower;overlap=.60;}
+        if(lower>=bounds.position.y-1e-5&&upper_gap>.10&&burial<=.60+1e-5&&burial<=upper_gap*1.5+1e-5){bottom=lower;overlap=.60;}
     }
     double shift=bottom-bounds.position.y,gap=std::max(0.,bottom-minimum);
     out["overlap_limit"]=overlap;out["bottom"]=bottom;out["offset_y"]=shift;out["gap"]=gap;
+    out["burial"]=std::max(0.,maximum-bottom);
     if((lattice&&(shift>1.001||gap>1.15))||(!lattice&&(std::abs(shift)>.8||gap>.6))){
         out["reason"]="Ground is too uneven here; aim at a flatter spot";return out;
     }

@@ -20,10 +20,11 @@ protected:
 public:
     godot::PackedByteArray encode(const godot::Dictionary &options) const {
         godot::PackedByteArray bytes;
-        const char *names[]={"biome","settlements","districts","network","trails"};
-        if(options.size()!=5)return bytes;
-        bytes.resize(28);bytes.fill(0);bytes.encode_u32(0,0x31504352);bytes.encode_u32(4,1);
-        for(int index=0;index<5;++index){
+        const char *names[]={"biome","settlements","districts","network","trails","road_grid"};
+        if(options.size()!=5&&options.size()!=6)return bytes;
+        const int count=options.size();
+        bytes.resize(8+count*4);bytes.fill(0);bytes.encode_u32(0,0x31504352);bytes.encode_u32(4,count==5?1:2);
+        for(int index=0;index<count;++index){
             if(!options.has(names[index])||options[names[index]].get_type()!=godot::Variant::INT)return {};
             const int64_t value=options[names[index]];
             if(value<0||value>4)return {};
@@ -33,7 +34,8 @@ public:
     }
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {
         if(bytes.is_empty())return true;
-        if(bytes.size()!=28||bytes.decode_u32(0)!=0x31504352||bytes.decode_u32(4)!=1)return false;
+        if((bytes.size()!=28&&bytes.size()!=32)||bytes.decode_u32(0)!=0x31504352)return false;
+        if(bytes.decode_u32(4)!=(bytes.size()==28?1:2)||(bytes.size()==32&&bytes.decode_u32(28)>1))return false;
         const auto settlements=bytes.decode_u32(12),districts=bytes.decode_u32(16);
         return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=2
             &&settlements*districts<=6&&bytes.decode_u32(20)<=1&&bytes.decode_u32(24)<=2;
@@ -43,6 +45,7 @@ public:
         if(bytes.is_empty()||!validate_snapshot(bytes))return result;
         const char *names[]={"biome","settlements","districts","network","trails"};
         for(int index=0;index<5;++index)result[names[index]]=int(bytes.decode_u32(8+index*4));
+        if(bytes.size()==32)result["road_grid"]=int(bytes.decode_u32(28));
         return result;
     }
     godot::PackedByteArray capture_snapshot() const {return state;}

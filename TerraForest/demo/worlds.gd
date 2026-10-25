@@ -8,6 +8,7 @@ var seed_field: SpinBox
 var preset: OptionButton
 var ocean:CheckBox
 var buildable_ground:CheckBox
+var buildable_roads:CheckBox
 var biome:OptionButton
 var settlement_count:OptionButton
 var district_count:OptionButton
@@ -136,10 +137,11 @@ func show_saved_details(index:int)->void:
 	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
 	if data.has("generator"):
 		var id:int=int(data.generator)
-		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
 	var options:Dictionary=data.get("world_options",{})
 	if options.has_all(["settlements","districts","biome"]) and int(options.biome) in [0,1,2]:lines.append("%d settlements · %d districts · %s"%[int(options.settlements),int(options.settlements)*int(options.districts),["Woodland","Woodland & meadow mosaic","Open grassland with groves"][int(options.biome)]])
+	if options.has("road_grid"):lines.append("Road grid preference: "+("On" if int(options.road_grid)==1 else "Off"))
 	if saved_picture.texture==null:lines.append("No cached photograph yet.")
 	lines.append("Opening uses this world's saved generation settings.")
 	saved_details.text="\n".join(lines)
@@ -286,7 +288,7 @@ func selected_preview_key()->String:
 	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func selected_options()->Dictionary:
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:return {}
-	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected}
+	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected,"road_grid":int(buildable_roads.button_pressed)}
 func update_recipe_summary()->void:
 	var towns:=settlement_count.selected+1;var districts:=district_count.selected+1
 	recipe_summary.text="%d settlements  ·  %d districts  ·  %s\nGenerate → Load → Play, in this window."%[towns,towns*districts,biome.get_item_text(biome.selected)]

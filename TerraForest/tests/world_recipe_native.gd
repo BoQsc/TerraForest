@@ -14,6 +14,11 @@ func run()->void:
  var options:Dictionary={"biome":1,"settlements":3,"districts":2,"network":1,"trails":2}
  var bytes:PackedByteArray=codec.encode(options)
  check(bytes.size()==28 and codec.decode(bytes)==options and codec.restore_snapshot(bytes),"native recipe storage round trip")
+ var modern:=options.duplicate();modern["road_grid"]=1
+ var modern_bytes:PackedByteArray=codec.encode(modern)
+ check(modern_bytes.size()==32 and codec.decode(modern_bytes)==modern,"native road preference roundtrip retains v1 compatibility")
+ var invalid_road:=modern_bytes.duplicate();invalid_road.encode_u32(28,2)
+ check(not codec.validate_snapshot(invalid_road),"invalid road preference rejected")
  for offset in range(0,28,4):
   var corrupt:=bytes.duplicate();corrupt.encode_u32(offset,0xffffffff)
   check(not codec.restore_snapshot(corrupt) and codec.capture_snapshot()==bytes,"malformed recipe field cannot mutate live state")

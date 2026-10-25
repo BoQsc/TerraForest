@@ -71,6 +71,16 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);session.add_child(third_person_toggle)
+	var burial_toggle:=CheckButton.new();burial_toggle.text="Prefer embedding when it improves block fit"
+	burial_toggle.tooltip_text="Keeps the integer grid. Never bury a cube more than 60 cm or replace a gap of 10 cm or less with deeper burial. Does not alter terrain or intentionally floating face placement."
+	var burial_settings:=ConfigFile.new()
+	var persist_burial:bool=not game.temporary_world and not ProjectSettings.get_setting("terraforest/offscreen_session",false)
+	if persist_burial and burial_settings.load("user://building_preferences.cfg")==OK:game.prefer_block_burial=bool(burial_settings.get_value("building","prefer_embedding",true))
+	burial_toggle.button_pressed=game.prefer_block_burial
+	burial_toggle.toggled.connect(func(enabled:bool):
+		game.prefer_block_burial=enabled
+		if persist_burial:burial_settings.set_value("building","prefer_embedding",enabled);burial_settings.save("user://building_preferences.cfg"))
+	session.add_child(burial_toggle)
 	var developer_page:=page("Developer")
 	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
 	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; living entities live in Dev Spawner. Selected-tool controls remain on Alt.")

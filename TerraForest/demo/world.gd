@@ -80,7 +80,7 @@ var _prefab_preview_needs_checks := false
 var _prefab_preview_asset: Resource
 var recent_action_messages: Array[String]=[]
 var log_action_messages: bool="--log-actions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
-var prefer_block_burial:=false
+var prefer_block_burial:=true
 var telemetry := Label.new()
 var world_identity := Label.new()
 var _telemetry_time: float = 0.0

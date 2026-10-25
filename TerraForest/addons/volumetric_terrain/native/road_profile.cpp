@@ -12,6 +12,7 @@ void NativeRoadProfile::_bind_methods(){
  ClassDB::bind_method(D_METHOD("fit","samples","max_grade","max_curvature","max_cut","max_fill"),&NativeRoadProfile::fit);
  ClassDB::bind_method(D_METHOD("grid_trial","coefficients","spacing"),&NativeRoadProfile::grid_trial);
  ClassDB::bind_method(D_METHOD("burial_trial","coefficients","spacing"),&NativeRoadProfile::burial_trial);
+ ClassDB::bind_method(D_METHOD("normalize_grid","coefficients","spacing","fixed_ranges"),&NativeRoadProfile::normalize_grid,DEFVAL(PackedFloat64Array()));
 }
 namespace {
 using Weights=std::array<double,65>;

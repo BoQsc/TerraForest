@@ -62,7 +62,7 @@ static func build(seed_value:int,generator:int,with_market:bool=true,with_connec
   result.erase("cache_path")
   return result
  var started:=Time.get_ticks_usec()
- if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19,20,21]:return {"ok":false,"reason":"Unsupported generation settings"}
+ if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19,20,21,22,23]:return {"ok":false,"reason":"Unsupported generation settings"}
  with_connection=with_connection or with_market
  var path:=path_for(seed_value,generator,with_market,with_connection,folder)
  var cached:=read_plan(path,seed_value,generator,with_market,with_connection)
@@ -115,10 +115,10 @@ static func water_preview(core,generator:int)->PackedByteArray:
  # Reuse the runtime's native implicit-ocean source, visibility and rasterizer.
  # No resident water regions, meshes or scene nodes are created for this preview.
  var water=ClassDB.instantiate("NativeRegionalWater")
- water.set_surrounding_ocean(generator in [19,21])
+ water.set_surrounding_ocean(generator in [19,21,23])
  var raster=ClassDB.instantiate("NativeSurfaceMapRaster")
  var cursor:=0
- while generator in [19,21] and cursor<512*512:
+ while generator in [19,21,23] and cursor<512*512:
   var source:Dictionary=water.survey_ocean(cursor,water.survey_revision_id())
   if not source.get("ok",false) or source.cursor<=cursor or not raster.offer(source.points):return PackedByteArray()
   cursor=source.cursor
@@ -139,7 +139,7 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  if progress!=null:progress.record("Surveying terrain heights and coastlines",0,0,"Native 256 × 256 overview / binary terrain cache")
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain
- if not integrated or generator not in [17,18,19,20,21]:return terrain
+ if not integrated or generator not in [17,18,19,20,21,22,23]:return terrain
  var plan:=build(seed_value,generator,with_market,with_connection,"user://generation_plans",options,progress)
  if not plan.get("ok",false):return plan
  if progress!=null:progress.record("Compositing the actual regional plan",0,0,"Terrain grades, water surfaces, vegetation biome, roads and buildings")

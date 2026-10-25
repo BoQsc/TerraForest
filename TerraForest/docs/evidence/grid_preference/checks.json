@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "cold_ms": 777.434,
+      "normalization": {
+        "changed": 31,
+        "earthwork_skips": 3,
+        "enabled": true,
+        "max_cut": 2.77419325361655,
+        "max_fill": 1.82843701854926,
+        "max_shift": 0.175295556829511,
+        "ok": true,
+        "protected_skips": 0,
+        "samples": 51652,
+        "version": 1
+      },
+      "normalized_stamps": 706,
+      "original_stamps": 314,
+      "seed": 1703
+    },
+    {
+      "cold_ms": 1014.164,
+      "normalization": {
+        "changed": 27,
+        "earthwork_skips": 0,
+        "enabled": true,
+        "max_cut": 2.61425207471839,
+        "max_fill": 1.30500379758331,
+        "max_shift": 0.277609885118731,
+        "ok": true,
+        "protected_skips": 0,
+        "samples": 36801,
+        "version": 1
+      },
+      "normalized_stamps": 620,
+      "original_stamps": 314,
+      "seed": 42
+    },
+    {
+      "cold_ms": 332.064,
+      "normalization": {
+        "changed": 19,
+        "earthwork_skips": 3,
+        "enabled": true,
+        "max_cut": 2.49826255193019,
+        "max_fill": 1.92044457421356,
+        "max_shift": 0.383386427656443,
+        "ok": true,
+        "protected_skips": 0,
+        "samples": 36318,
+        "version": 1
+      },
+      "normalized_stamps": 618,
+      "original_stamps": 360,
+      "seed": 9137
+    }
+  ],
+  "failures": 0
+}

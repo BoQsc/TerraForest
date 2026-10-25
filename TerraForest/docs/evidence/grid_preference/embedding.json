@@ -1,0 +1,101 @@
+{
+  "cases": [
+    {
+      "after": {
+        "gaps_over_10cm": 316,
+        "mean_burial": 0.118118882340572,
+        "mean_gap": 0.0771978362809983,
+        "over_60cm": 0,
+        "shallow": 951,
+        "sites": 1478,
+        "worst_burial": 0.597728729248047
+      },
+      "before": {
+        "gaps_over_10cm": 407,
+        "mean_burial": 0.134402156360095,
+        "mean_gap": 0.0906898797929529,
+        "over_60cm": 0,
+        "shallow": 756,
+        "sites": 1478,
+        "worst_burial": 0.598014831542969
+      },
+      "max_displacement": 0.500392913818359,
+      "maximum_cut": 0.34271240234375,
+      "maximum_raise": 0.500392913818359,
+      "seed": 0
+    },
+    {
+      "after": {
+        "gaps_over_10cm": 302,
+        "mean_burial": 0.118950807798159,
+        "mean_gap": 0.0741064125007683,
+        "over_60cm": 0,
+        "shallow": 933,
+        "sites": 1430,
+        "worst_burial": 0.599971771240234
+      },
+      "before": {
+        "gaps_over_10cm": 398,
+        "mean_burial": 0.134836998519364,
+        "mean_gap": 0.0874777320381645,
+        "over_60cm": 0,
+        "shallow": 723,
+        "sites": 1430,
+        "worst_burial": 0.596809387207031
+      },
+      "max_displacement": 0.499977111816406,
+      "maximum_cut": 0.343353271484375,
+      "maximum_raise": 0.499977111816406,
+      "seed": 42
+    },
+    {
+      "after": {
+        "gaps_over_10cm": 247,
+        "mean_burial": 0.115834531572478,
+        "mean_gap": 0.0770638935274047,
+        "over_60cm": 0,
+        "shallow": 817,
+        "sites": 1217,
+        "worst_burial": 0.599761962890625
+      },
+      "before": {
+        "gaps_over_10cm": 330,
+        "mean_burial": 0.133040325506456,
+        "mean_gap": 0.0884456744229294,
+        "over_60cm": 0,
+        "shallow": 624,
+        "sites": 1217,
+        "worst_burial": 0.599853515625
+      },
+      "max_displacement": 0.503013610839844,
+      "maximum_cut": 0.343166351318359,
+      "maximum_raise": 0.503013610839844,
+      "seed": 1703
+    },
+    {
+      "after": {
+        "gaps_over_10cm": 245,
+        "mean_burial": 0.117731097694877,
+        "mean_gap": 0.0818849827026154,
+        "over_60cm": 0,
+        "shallow": 740,
+        "sites": 1144,
+        "worst_burial": 0.599720001220703
+      },
+      "before": {
+        "gaps_over_10cm": 324,
+        "mean_burial": 0.129921544681896,
+        "mean_gap": 0.0962749878009716,
+        "over_60cm": 0,
+        "shallow": 590,
+        "sites": 1144,
+        "worst_burial": 0.598907470703125
+      },
+      "max_displacement": 0.504058837890625,
+      "maximum_cut": 0.342483520507813,
+      "maximum_raise": 0.504058837890625,
+      "seed": 2147483647
+    }
+  ],
+  "failures": 0
+}

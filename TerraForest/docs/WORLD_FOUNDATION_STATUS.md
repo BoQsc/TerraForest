@@ -1,4 +1,49 @@
-## Opt-in submergence and gentle road-cut prototype — 2026-10-25
+## Bidirectional grid preference; visual acceptance still open — 2026-10-25
+
+The user rejected the contact-first revision: it removed sampled gaps by burying
+some cubes almost completely. That is a failed result, not an accepted trade-off.
+Its images and measurements are retained in
+`evidence/grid_preference/rejected_contact_first/`. The unrestricted downward
+snap is removed. Small gaps must not trigger nearly one-metre burial.
+
+New-world generation now has separate default-on terrain and road controls.
+Native terrain profiles 22/23 widen smooth grid-height levels, then correct small
+remaining height errors in both directions toward integer height plus 8 cm.
+Profiles 20/21 and existing saves remain immutable. The road option uses bounded
+native cubic grading, protects entrance intervals rather than skipping whole roads,
+and retains ordinary full-width sampled cut/fill limits. Neither option alters
+terrain when a player places a block. Buildings and plates remain ordinary parts.
+
+An independent session toggle enables bounded embedding preference. It cannot
+replace a gap of 10 cm or less with deeper burial, or bury a cube more than 60 cm.
+This is a safety ceiling, not a claim that 60 cm is acceptable visual quality.
+Both gap and burial are measured in the review; provisional review thresholds are
+10 cm gap and 25 cm burial. User acceptance, not engineering pass status, decides
+whether this version is good enough. Universal shallow contact on continuous slopes
+is not established. Do not describe these defaults as perfect block fit everywhere.
+
+The latest separately generated seed-1703 review passes both contact limits at
+all 43 old-case footprints: road gaps are 0–4.50 cm (1.95 cm mean, zero burial);
+the old natural case has zero gap and 8.01 cm burial. Inspected engine renders
+show substantially better contact without hiding the cubes. An intermediate
+14-footprint road-edge failure (12.93 cm gaps) came from sidewalk-bed cuts; the
+road option now makes those cuts shallower without moving any trusted plate.
+Full generation/save/reload passes 31 checks, including all three approved
+buildings. Automatic review confirms Wild_Hills and the review save unchanged.
+
+This does not close general world quality. The wider analytic four-seed survey
+still has 1,110 of 5,269 gentle-terrain candidates with gaps over 10 cm (previously
+1,459); only 3,441 meet both limits (previously 2,693). Human acceptance remains
+pending. Remaining: qualify these transitions, other roads and edited terrain,
+and review populated on-foot/vehicle travel and long-run cost.
+Revisit any location failing either contact threshold rather than
+silently accepting floating or hidden cubes. Closing the general requirement needs
+multi-seed rendered collision/contact evidence and the user's visual acceptance.
+See `evidence/grid_preference/README.md` for the current measurements and failures.
+
+## Earlier opt-in submergence and gentle road-cut prototype — 2026-10-25
+
+Historical entry below; the current direction and controls are described above.
 
 The user asked to prefer submergence and consider gradual road corrections where
 blocks would otherwise be buried too far. This is now an isolated native preview,

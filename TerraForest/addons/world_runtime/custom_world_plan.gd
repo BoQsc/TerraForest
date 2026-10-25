@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=5
+const VERSION:=8
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -26,7 +26,7 @@ static func read_plan(path:String,key:String)->Dictionary:
 static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null)->Dictionary:
  var started:=Time.get_ticks_usec()
  var encoded:=Recipe.encode(options)
- if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21]:return {"ok":false,"reason":"Unsupported world recipe"}
+ if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
  var core=ClassDB.instantiate("TerrainCore")
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
@@ -86,9 +86,22 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
  var network:Dictionary=core.plan_region_network(exits,reserved,options.network==1,options.trails,seed_value,streets)
  if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
+ var normalization:Dictionary={"enabled":false}
+ if int(options.get("road_grid",0))==1:
+  if progress!=null:progress.record("Normalizing roads toward the building grid",0,0,"Native bounded profiles / protected entrances / full-width cut and fill survey")
+  normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network)
+  if not normalization.get("ok",false):return normalization
+  normalization["enabled"]=true
+  works={"ok":true,"segments":[],"bounds":AABB()}
+  for site:Dictionary in sites:
+   var normalized_works:=Planner.earthworks(site)
+   if not normalized_works.get("ok",false):return normalized_works
+   works.bounds=normalized_works.bounds if works.segments.is_empty() else works.bounds.merge(normalized_works.bounds)
+   works.segments.append_array(normalized_works.segments)
  if not network.links.is_empty():works.segments=network.segments+works.segments;works.bounds=works.bounds.merge(network.bounds)
  var result:Dictionary={"ok":true,"version":3,"recipe_version":VERSION,"recipe_key":key,"seed":seed_value,"generator":generator,"options":options.duplicate(),"sites":sites,"connection":network if not network.links.is_empty() else {},"works":works,"building_count":building_count,"network":network}
  result["layout_variant"]=layout_variant
+ result["road_normalization"]=normalization
  var navigation:=navigation_metadata(sites,network)
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation

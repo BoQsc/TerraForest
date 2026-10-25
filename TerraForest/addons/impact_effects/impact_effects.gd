@@ -93,7 +93,7 @@ func material_for(target:Dictionary)->String:
 				var p:Vector3=target.position
 				if game.terrain.backend.world_generator>=7:
 					if p.y>175 and target.normal.y>.8:return "snow"
-					if game.terrain.backend.world_generator in [19,21] and p.y<45 and minf(minf(p.x,p.z),minf(2000-p.x,2000-p.z))<150:return "sand"
+					if game.terrain.backend.world_generator in [19,21,23] and p.y<45 and minf(minf(p.x,p.z),minf(2000-p.x,2000-p.z))<150:return "sand"
 					return "soil"
 				return "soil" if p.x<1000 and p.z>=1000 else ("stone" if p.x<1000 else ("sand" if p.z>=1000 else "snow"))
 			return "soil" if target.normal.y>.65 else "stone"

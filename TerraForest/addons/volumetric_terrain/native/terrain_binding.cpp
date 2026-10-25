@@ -33,6 +33,7 @@ godot::Dictionary plan_regional_route(const World &,godot::Vector3,godot::Vector
 godot::Dictionary plan_region_network(const World &,const godot::Array &,const godot::Array &,bool,int,int64_t,const godot::Array &);
 godot::Dictionary plan_settlement_lots(const World &,godot::Vector3,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_street_network(const World &,const godot::Array &,const godot::PackedVector3Array &);
+godot::Dictionary normalize_generated_roads(const World &,const godot::Array &,const godot::Array &);
 godot::Dictionary fit_generated_lakes(const World &,const godot::Array &);
 godot::Dictionary survey_generated_lake_surfaces(const World &,const godot::Array &);
 class TerrainCore : public godot::RefCounted {
@@ -78,6 +79,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("plan_lots","center","lots","roads","default_streets"), &TerrainCore::plan_lots);
         godot::ClassDB::bind_method(godot::D_METHOD("fit_generated_lakes","records"), &TerrainCore::fit_lakes);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_streets","roads","junctions"), &TerrainCore::plan_streets);
+        godot::ClassDB::bind_method(godot::D_METHOD("normalize_roads","roads","protected_areas"), &TerrainCore::normalize_roads);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
@@ -104,6 +106,9 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary normalize_roads(const godot::Array &roads,const godot::Array &protected_areas){
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=normalize_generated_roads(world_,roads,protected_areas);return tr_oom?godot::Dictionary():result;
+    }
     godot::Dictionary plan_network(const godot::Array &districts,const godot::Array &reservations,bool loops,int trails,int64_t seed,const godot::Array &streets=godot::Array()){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_region_network(world_,districts,reservations,loops,trails,seed,streets);return tr_oom?godot::Dictionary():result;
     }

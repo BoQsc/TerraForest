@@ -11,7 +11,10 @@ func run()->void:
  check(load("res://demo/worlds.gd").can_instantiate(),"world browser parses")
  var codec:=Recipe.codec();var options:Dictionary=Recipe.DEFAULTS.duplicate()
  var bytes:=Recipe.encode(options)
- check(bytes.size()==28 and codec.decode(bytes)==options,"bounded binary recipe round trip")
+ check(bytes.size()==32 and codec.decode(bytes)==options,"bounded binary recipe round trip")
+ var legacy:=options.duplicate();legacy.erase("road_grid")
+ var legacy_bytes:=Recipe.encode(legacy)
+ check(legacy_bytes.size()==28 and codec.decode(legacy_bytes)==legacy and not codec.decode(legacy_bytes).has("road_grid"),"legacy recipes retain original settings without normalization")
  check(codec.restore_snapshot(bytes) and codec.capture_snapshot()==bytes,"recipe durable storage restores exactly")
  for field:String in options:
   var invalid:=options.duplicate();invalid[field]=-1

@@ -38,6 +38,14 @@ func run()->void:
 	var plan:Dictionary=asset.plan_paving(roads)
 	check(plan.get("ok",false) and plan.tiles>0 and plan.terrain_ramps==1,"native planner produces plates and preserves smooth terrain ramps")
 	check(plan==asset.plan_paving(roads),"native paving is deterministic")
+	var normalized_roads:=roads.duplicate(true)
+	for road:Dictionary in normalized_roads:road["grid_normalized"]=true
+	var normalized:Dictionary=asset.plan_paving(normalized_roads)
+	check(normalized.records==plan.records and normalized.beds.size()==plan.beds.size(),"grid preference preserves every trusted destructible plate")
+	var shallow_beds:=true
+	for index in plan.beds.size():
+		shallow_beds=shallow_beds and absf(normalized.beds[index].start.y-plan.beds[index].start.y-.07)<.00001 and absf(normalized.beds[index].finish.y-plan.beds[index].finish.y-.07)<.00001
+	check(shallow_beds,"grid preference raises shallow plate-bed cuts without moving construction")
 	var aligned:=true;var unique:Dictionary={}
 	for offset in range(0,plan.records.size(),4):
 		var cell:=Vector3i(plan.records[offset],plan.records[offset+1],plan.records[offset+2])

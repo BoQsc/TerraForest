@@ -18,7 +18,7 @@ PackedInt32Array paving_records(const PavingCells &cells){
 Dictionary NativeBlockPrefab::plan_paving(const Array &roads) const {
     auto failure=[](const char *reason){Dictionary result;result["ok"]=false;result["reason"]=reason;return result;};
     if(roads.is_empty()||roads.size()>8192)return failure("Invalid paving road count");
-    struct Road {Vector3 start,finish;double width,length;};
+    struct Road {Vector3 start,finish;double width,length;bool grid_normalized;};
     std::vector<Road> checked;std::vector<Vector3> crossings;
     for(int index=0;index<roads.size();++index){
         if(roads[index].get_type()!=Variant::DICTIONARY)return failure("Invalid paving road");
@@ -30,7 +30,7 @@ Dictionary NativeBlockPrefab::plan_paving(const Array &roads) const {
         double width=width_value,length=Vector2(finish.x-start.x,finish.z-start.z).length();
         if(!start.is_finite()||!finish.is_finite()||!std::isfinite(width)||width<1||width>16||length<.01||length>2000)return failure("Invalid paving bounds");
         for(Vector3 point:{start,finish})if(point.x<0||point.z<0||point.x>2000||point.z>2000||point.y<1||point.y>255)return failure("Paving outside world");
-        checked.push_back({start,finish,width,length});
+        checked.push_back({start,finish,width,length,bool(road.get("grid_normalized",false))});
         if(length<2)crossings.push_back((start+finish)*.5);
     }
     PavingCells cells;Array beds;int terrain_ramps=0;
@@ -45,7 +45,7 @@ Dictionary NativeBlockPrefab::plan_paving(const Array &roads) const {
         int height=int(std::round(road.start.y))-1;
         auto append_bed=[&](int first,int last,double center){
             if(first>=last)return;
-            Vector3 start,finish;start[axis]=first;finish[axis]=last;start[lateral]=finish[lateral]=center;start.y=finish.y=road.start.y-.1;
+            Vector3 start,finish;start[axis]=first;finish[axis]=last;start[lateral]=finish[lateral]=center;start.y=finish.y=road.start.y-(road.grid_normalized?.03:.1);
             double width=.75,clearance=1.;
             Dictionary bed;bed["start"]=start;bed["finish"]=finish;bed["half_width"]=width;bed["depth"]=1.;bed["clearance"]=clearance;bed["shoulder"]=0.;bed["material"]=1;
             Vector3 low=start.min(finish)-Vector3(width,1,width),high=start.max(finish)+Vector3(width,clearance,width);bed["bounds"]=AABB(low,high-low);beds.push_back(bed);

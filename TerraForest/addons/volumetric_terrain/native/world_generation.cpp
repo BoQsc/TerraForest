@@ -403,6 +403,18 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
    Vector3 shift(dx,0,dz);Vector3i origin=base+Vector3i(dx,0,dz);AABB bounds(original.position+shift,original.size);bool blocked=false;
    Rect2 footprint(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z));
    for(const auto &occupied:reserved)if(footprint.grow(2).intersects(Rect2(Vector2(occupied.position.x,occupied.position.z),Vector2(occupied.size.x,occupied.size.z)))){blocked=true;break;}
+   if(world.generator_id>=EMBED_REGION_GENERATOR_ID&&int(lot["surface_offset"])>0&&!blocked){
+    Rect2 corridor=footprint.grow(6.5);
+    for(const auto &road:road_geometry){
+     double enter=0,leave=1;
+     for(int axis=0;axis<2&&enter<=leave;++axis){
+      double origin=road.a[axis],direction=road.axis[axis],low=corridor.position[axis],high=corridor.get_end()[axis];
+      if(std::abs(direction)<1e-9){if(origin<low||origin>high)enter=2;}
+      else{double first=(low-origin)/direction,last=(high-origin)/direction;if(first>last)std::swap(first,last);enter=std::max(enter,first);leave=std::min(leave,last);}
+     }
+     if(enter<=leave){blocked=true;break;}
+    }
+   }
    if(blocked)continue;
    double low=1e30,high=-1e30;
    for(int i=0;i<points.size();i++){

@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS native recipe storage round trip
+PASS native road preference roundtrip retains v1 compatibility
+PASS invalid road preference rejected
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS malformed recipe field cannot mutate live state
+PASS reject noninteger settings
+PASS reject unknown settings
+PASS native biome map is deterministic and profile-specific
+PASS native ecology uses ordered biomes without changing retained IDs
+PASS empty road graph fails safely
+PASS native graph produces a real terrain-fitting connection
+PASS native network is deterministic
+PASS different-height crossings are rejected rather than stamped over streets
+WORLD_RECIPE_NATIVE checks=18 failures=0
+
+

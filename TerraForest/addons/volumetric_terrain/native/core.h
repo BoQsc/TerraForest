@@ -17,8 +17,11 @@ constexpr u32 LAKE_WORLD_GENERATOR_ID=12; // Regional world with one substantial
 constexpr u32 SURROUNDING_COAST_GENERATOR_ID=19; // All-side coast; prior saved fields stay immutable.
 constexpr u32 BUILDABLE_REGION_GENERATOR_ID=20;
 constexpr u32 BUILDABLE_COAST_GENERATOR_ID=21;
-constexpr u32 MAX_GENERATOR_ID=BUILDABLE_COAST_GENERATOR_ID;
-inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID;}
+constexpr u32 EMBED_REGION_GENERATOR_ID=22;
+constexpr u32 EMBED_COAST_GENERATOR_ID=23;
+constexpr u32 MAX_GENERATOR_ID=EMBED_COAST_GENERATOR_ID;
+inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID;}
+inline bool buildable_ground(u32 generator){return generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=EMBED_COAST_GENERATOR_ID;}
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.

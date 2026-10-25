@@ -5,6 +5,23 @@ player construction. **Floating builds remain allowed.** The extra ground-contac
 admission experiment and its ESC switch were removed following user clarification.
 Do not reintroduce them as a solution to terrain/grid mismatch.
 
+Current direction, 2026-10-25: generation must correct **both low and high ground**
+toward the grid. Nearly hiding a cube to eliminate a small gap was explicitly
+rejected. The current terrain and road generation preferences are independent and
+default on for new worlds; existing saves are never silently regraded. Profiles
+22/23 extend, rather than redefine, the previously accepted profiles 20/21.
+Small residual height errors receive a smooth raise or cut toward the nearest
+integer plus 8 cm. The road fitter preserves fixed entrance intervals and smooth
+joins, uses sampled full-width earthwork budgets, and does no per-frame grading.
+
+The separate session placement preference retains exact cells and a 60 cm safety
+ceiling; a gap at most 10 cm never triggers deeper placement. It does not guarantee
+shallow embedding, and user quality approval remains pending. Track both air gaps
+and burial, not one at the expense of the other. No automatic foundations,
+placement-triggered terrain mutation, hidden offsets, or bans on floating builds.
+Current evidence and unfinished acceptance: `evidence/grid_preference/README.md`.
+The following dated entries describe the earlier iterations.
+
 User clarification, 2026-10-25: the near-level frontage-road preview was rejected
 as a general solution; at most it is a future local town road type. Original
 behavior is restored. The preferred next direction is some block submergence
@@ -31,8 +48,9 @@ readiness checks stay unchanged. Generated settlements still obey
 `WORLD_BUILDING_STANDARD.md`; its supported-foundation requirement is not a ban on
 intentional player overhangs or floating structures.
 
-Create world offers **Build-friendly terrain**, accepted and enabled by default.
-It selects immutable native profile 20 (inland) or 21 (surrounding coast). Disabling
+The previously accepted **Build-friendly terrain** selected immutable native
+profile 20 (inland) or 21 (surrounding coast). The current preference selects 22/23.
+Disabling
 it selects the preceding profiles 17/19. It applies only to new worlds. Existing
 saves retain their profile, terrain edits and constructions; there is no migration.
 Preview, generation, binary save/restore, cache identity and water use the same
