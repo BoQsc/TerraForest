@@ -45,14 +45,20 @@ existing native planning iterations and earthworks bake, not a post-generation
 repair scan. Natural terrain math is extracted unchanged; it is not a new terrain
 improvement. Road/support descriptors share their actual bed widths, and native
 constraints evaluate nine-point building footprints before baking. Binary recipe
-v4 / road_grid=3 is isolated from the default mode2; old recipe identities remain.
+v4 / road_grid=3 was initially isolated from default mode2; old recipe identities remain.
 
 Targeted debug/release, three-seed plan/cache and full creation/reload checks pass.
 The separate review has 44/45 passing collision footprints, but this shoulder is
 still rejected at 30.12 cm burial (previously 39.82 cm). Same-footprint support
 coverage improves modestly across all three seeds. No quality threshold was raised.
-The candidate therefore remains optional, not a default or a finished universal
-solution. Measured added cold planning cost is 94–182 ms, with no new loading stage
+The candidate was initially kept optional. The user's subsequent explicit request
+promotes this measured improvement to the new-world default, not to a finished
+universal solution. The existing road toggle still disables it; terrain preference
+remains separate, and saved v1/v2/v3 worlds are not migrated.
+The creation UI groups both enabled controls under Building-grid fit; the existing
+placement preference has a matching group in ESC. No new toggle or placement
+behavior is introduced, and saved player preferences are respected.
+Measured added cold planning cost is 94–182 ms, with no new loading stage
 or per-frame grading. Warm plan reuse takes 51–125 ms. Evidence, rejected trials,
 remaining coverage and reproduction: `evidence/generation_contact_native/README.md`.
 Return trigger remains final composed-surface/transition treatment and multi-seed
@@ -68,8 +74,9 @@ request up to four alternate native routes instead of silently keeping the faile
 road. Seed 9137 exercises that route replacement. Protected lots/entrances and
 trusted plate cells remain unchanged; existing saves are never regraded.
 
-New worlds use durable recipe v3 / road_grid=2 when the existing road preference
-toggle is on. Off is unchanged. Legacy recipe v1 and v2 retain their identities
+Before the footprint-default approval above, new worlds used durable recipe v3 /
+road_grid=2 when the existing road preference toggle was on. Off is unchanged.
+Legacy recipe v1 and v2 retain their identities
 and algorithms. Terrain preference remains the existing separate 22/23 option;
 no per-placement terrain modification, foundation supports, lattice offsets or
 larger burial allowance are introduced.

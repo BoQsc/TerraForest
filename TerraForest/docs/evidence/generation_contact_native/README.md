@@ -1,9 +1,16 @@
 # Generation-internal contact policy — 2026-10-25
 
-Engineering integration passes. World quality remains rejected/incomplete.
-The candidate is **road_grid=3 / recipe v4**, not the normal selector default.
-The existing two independent terrain/road switches still select terrain 22/23
-and road_grid=2. No saved world is regraded and no placement rules change.
+Subsequent user decision: promote road_grid=3 to the new-world default because
+it is an improvement. The existing road checkbox still disables it independently
+of terrain preference. Existing saves and recipe identities remain unchanged.
+This approval does not close the recorded contact failures. The measurements
+and optional-candidate status below describe the original implementation review.
+
+Engineering integration passes. Universal contact quality remains incomplete.
+At the original review the candidate was **road_grid=3 / recipe v4**, while the
+selector still used road_grid=2. The subsequent approved default is road_grid=3;
+the separate terrain switch still selects 22/23. No saved world is regraded and
+no placement rules change.
 
 ## What runs where
 
@@ -70,8 +77,9 @@ is retained as a rejected case rather than hidden from the audit.
 
 ## Remaining work and rejected trials
 
-The three-seed improvement over the current default is modest, not a completed
-solution. Keep the candidate out of defaults. Return to this work with final
+The three-seed improvement over the previous default is modest, not a completed
+solution. It was held out of defaults until the user's explicit approval above.
+Return to this work with final
 composed-surface coverage and a bounded treatment of transition zones: outer
 shoulders, end caps, crossings, yards, protected entrances and the wider natural
 terrain still lack a universal contact guarantee. No support mounds, per-click

@@ -1,0 +1,13 @@
+{
+  "failures": 0,
+  "metrics": "44 BUILDINGS  ·  1.16 km regional roads  ·  1.00 km trails",
+  "options": {
+    "biome": 1,
+    "districts": 2,
+    "network": 1,
+    "road_grid": 3,
+    "settlements": 2,
+    "trails": 1
+  },
+  "status": "2 settlements / 4 districts · 4 trails · 1 alternate routes.\nPlacement plan cached for generation."
+}

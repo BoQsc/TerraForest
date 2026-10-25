@@ -37,7 +37,7 @@ func run()->void:
 		var previous_count:=0;var revised_count:=0
 		for category:Dictionary in baseline.categories.values():previous_count+=category.sampled_cells
 		for category:Dictionary in revised.categories.values():revised_count+=category.sampled_cells
-		check(previous_count==revised_count and current_bad<previous_bad,"identical full-support footprints improve over the current default")
+		check(previous_count==revised_count and current_bad<previous_bad,"identical full-support footprints improve over previous connected mode2")
 		var preserved:=true
 		for site_index in before.sites.size():
 			preserved=preserved and before.sites[site_index].block_paving.records==after.sites[site_index].block_paving.records

@@ -7,6 +7,8 @@ func _initialize()->void:run.call_deferred()
 func run()->void:
  if "--main-pack" in OS.get_cmdline_args():check(not FileAccess.file_exists("res://dist/reports/world_creation_1920x1080.png"),"pack excludes its own build and diagnostic output")
  var browser=load("res://demo/worlds.tscn").instantiate();root.add_child(browser)
+ check(browser.buildable_ground.button_pressed and browser.buildable_roads.button_pressed and browser.selected_options().road_grid==3,"improved terrain and road preferences start enabled")
+ check(browser.buildable_ground.get_parent()==browser.buildable_roads.get_parent() and browser.buildable_ground.get_parent().get_parent().name=="BuildingGridFit","related generation preferences share one named group")
  var tabs:TabContainer=browser.find_children("*","TabContainer",true,false)[0];tabs.current_tab=1
  browser.name_field.text="Alder_Reach";browser.biome.select(1);browser.district_count.select(1);browser.road_network.select(1);browser.invalidate_preview()
  browser.start_preview()
@@ -32,6 +34,12 @@ func run()->void:
    if control.text=="Quit":check(viewport.encloses(control.get_global_rect()),"quit action stays on screen at "+str(resolution))
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_creation_%dx%d.png"%[resolution.x,resolution.y])
+  var grid_scroll:ScrollContainer=browser.buildable_ground.get_parent().get_parent().get_parent().get_parent()
+  grid_scroll.ensure_control_visible(browser.buildable_ground.get_parent().get_parent())
+  for frame in 8:await process_frame
+  check(grid_scroll.get_global_rect().encloses(browser.buildable_ground.get_global_rect()) and grid_scroll.get_global_rect().encloses(browser.buildable_roads.get_global_rect()),"grouped grid controls are reachable together at "+str(resolution))
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/world_creation_grid_%dx%d.png"%[resolution.x,resolution.y])
  root.content_scale_size=Vector2i(1920,1080)
  var categories:TabContainer=browser.find_children("*","TabContainer",true,false)[1];categories.current_tab=1
  for frame in 8:await process_frame

@@ -288,7 +288,7 @@ func selected_preview_key()->String:
 	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
 func selected_options()->Dictionary:
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:return {}
-	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected,"road_grid":2 if buildable_roads.button_pressed else 0}
+	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected,"road_grid":preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.road_grid if buildable_roads.button_pressed else 0}
 func update_recipe_summary()->void:
 	var towns:=settlement_count.selected+1;var districts:=district_count.selected+1
 	recipe_summary.text="%d settlements  ·  %d districts  ·  %s\nGenerate → Load → Play, in this window."%[towns,towns*districts,biome.get_item_text(biome.selected)]

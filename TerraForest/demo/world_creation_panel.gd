@@ -65,10 +65,14 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.biome=choice(settings,"Vegetation biome",["Woodland","Woodland & meadow mosaic","Open grassland with groves"])
  paragraph(settings,"Coherent forest boundaries and open ground; the same native field drives tree placement and the preview.")
  host.ocean=CheckBox.new();host.ocean.text="Ocean coastline & beaches";host.ocean.button_pressed=true;settings.add_child(host.ocean)
- host.buildable_ground=CheckBox.new();host.buildable_ground.text="Building-grid preference · Terrain";host.buildable_ground.button_pressed=true;settings.add_child(host.buildable_ground)
+ var grid_panel:=PanelContainer.new();grid_panel.name="BuildingGridFit";grid_panel.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(grid_panel)
+ var grid_settings:=VBoxContainer.new();grid_panel.add_child(grid_settings)
+ label(grid_settings,"Building-grid fit",20,ACCENT)
+ paragraph(grid_settings,"Generation preferences · new worlds only",15)
+ host.buildable_ground=CheckBox.new();host.buildable_ground.text="Terrain";host.buildable_ground.button_pressed=true;grid_settings.add_child(host.buildable_ground)
  host.buildable_ground.tooltip_text="Softly raise low ground and lower high ground toward shallow grid contact in eligible gentle terrain. Steep slopes and protected shores stay natural. The 1 m building grid, floating construction and terrain editing stay unchanged."
- host.buildable_roads=CheckBox.new();host.buildable_roads.text="Building-grid preference · Roads";host.buildable_roads.button_pressed=true;settings.add_child(host.buildable_roads)
- host.buildable_roads.tooltip_text="Gently normalize eligible generated roads. Protect entrances and terrain-fit budgets. No automatic terrain changes when placing blocks; some slopes still leave gaps."
+ host.buildable_roads=CheckBox.new();host.buildable_roads.text="Roads & shoulders";host.buildable_roads.button_pressed=true;grid_settings.add_child(host.buildable_roads)
+ host.buildable_roads.tooltip_text="Plan roads and their support beds against building-block footprints before baking. Protect entrances and terrain-fit budgets. No terrain changes when placing blocks; gaps or deeper embedding can still occur on transitions."
  settings=category(categories,"Settlements");section(settings,"03","Settlements & connections")
  host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network"]);host.settlement_count.select(1)
  host.district_count=choice(settings,"Settlement scale",["Compact · 1 district each","Expanded · 2 districts each"])
@@ -101,6 +105,6 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.seed_field.value_changed.connect(func(_value:float):host.invalidate_preview())
  host.preset.item_selected.connect(func(_index:int):
   var supported:bool=host.preset.get_selected_id()==host.Launch.INTEGRATED_PRESET
-  host.ocean.visible=supported;host.buildable_ground.visible=supported;host.buildable_roads.visible=supported
+  host.ocean.visible=supported;grid_panel.visible=supported
   for option:OptionButton in [host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.disabled=not supported)
  host.update_recipe_summary()

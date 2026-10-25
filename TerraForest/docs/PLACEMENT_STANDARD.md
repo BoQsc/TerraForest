@@ -70,12 +70,14 @@ entrances; shared algorithms alone do not prove final-surface contact quality.
 ### Preserved lattice
 
 Generation-internal implementation, 2026-10-25: native terrain shaping and the
-experimental footprint road objective share `generation_contact.hpp`. Existing
+footprint road objective share `generation_contact.hpp`. Existing
 terrain profiles remain byte-identical; recipe v4 / road_grid=3 selects the new
-road objective only for explicit previews. It participates in the existing native
+road objective. Following explicit user approval of the improvement, it is now
+the default for new worlds when the road preference is enabled. It participates
+in the existing native
 grade solve before baking, with no final-world repair pass, placement-time edits
-or additional loading stage. The current defaults are unchanged because the
-reported shoulder still fails the diagnostic limit. Full results and bounded
+or additional loading stage. The reported shoulder still fails the diagnostic
+limit; default approval is not a claim of universal contact. Full results and bounded
 costs: `evidence/generation_contact_native/README.md`. This architectural progress
 does not supersede the incomplete final-surface contract above.
 
@@ -148,8 +150,9 @@ Existing worlds are not migrated. Regional connecting roads remain smooth editab
 terrain; arbitrary slopes are not guaranteed to fit every block footprint.
 Verification and remaining review scope are tracked in `WORLD_FOUNDATION_STATUS.md`.
 
-New-world road preference now selects connected native grading (road_grid=2,
-32-byte recipe v3). Road_grid=1 retains the prior segment normalizer and its
+New-world road preference now selects footprint-aware native grading (road_grid=3,
+32-byte recipe v4). Road_grid=2 retains connected grading and its v3 identity.
+Road_grid=1 retains the prior segment normalizer and its
 32-byte v2 identity; the five-field legacy recipe remains 28-byte v1. Jointly
 bounded heights/tangents replace independent endpoint-fixed correction. Adjustable
 roads survey cut/fill before baking and can request an alternate native corridor;

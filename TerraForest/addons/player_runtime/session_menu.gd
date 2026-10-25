@@ -71,6 +71,9 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);session.add_child(third_person_toggle)
+	var grid_settings:=VBoxContainer.new();grid_settings.name="BuildingGridFit";session.add_child(grid_settings)
+	label(grid_settings,"Building-grid fit").add_theme_font_size_override("font_size",20)
+	label(grid_settings,"Placement preference. Terrain and road generation preferences are grouped under Building-grid fit when creating a world.")
 	var burial_toggle:=CheckButton.new();burial_toggle.text="Prefer embedding when it improves block fit"
 	burial_toggle.tooltip_text="Keeps the integer grid. Never bury a cube more than 60 cm or replace a gap of 10 cm or less with deeper burial. Does not alter terrain or intentionally floating face placement."
 	var burial_settings:=ConfigFile.new()
@@ -80,7 +83,7 @@ func _ready() -> void:
 	burial_toggle.toggled.connect(func(enabled:bool):
 		game.prefer_block_burial=enabled
 		if persist_burial:burial_settings.set_value("building","prefer_embedding",enabled);burial_settings.save("user://building_preferences.cfg"))
-	session.add_child(burial_toggle)
+	grid_settings.add_child(burial_toggle)
 	var developer_page:=page("Developer")
 	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
 	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; living entities live in Dev Spawner. Selected-tool controls remain on Alt.")

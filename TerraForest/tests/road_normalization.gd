@@ -13,7 +13,10 @@ func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	var codec:=Recipe.codec()
 	var options:Dictionary=Recipe.DEFAULTS.duplicate()
-	check(options.road_grid==2,"new roads default to connected grid planning")
+	check(options.road_grid==3 and Recipe.encode(options).decode_u32(4)==4,"new roads default to native footprint planning with recipe v4")
+	var connected:=options.duplicate();connected.road_grid=2
+	var connected_bytes:=Recipe.encode(connected)
+	check(connected_bytes.decode_u32(4)==3 and codec.restore_snapshot(connected_bytes) and codec.capture_snapshot()==connected_bytes and codec.decode(connected_bytes).road_grid==2,"saved connected recipe remains v3 without default migration")
 	options.road_grid=1
 	var bytes:=Recipe.encode(options)
 	check(bytes.size()==32 and bytes.decode_u32(4)==2 and codec.decode(bytes)==options,"version-two binary recipe roundtrip")
@@ -23,9 +26,12 @@ func run()->void:
 	check(Recipe.encode(off)!=bytes,"road option has independent cache and persistence identity")
 	var browser=load("res://demo/worlds.tscn").instantiate();root.add_child(browser)
 	check(browser.buildable_ground.button_pressed and browser.buildable_roads.button_pressed,"both separate creation controls default on")
+	check(browser.selected_options()==Recipe.DEFAULTS,"browser uses the shared footprint default")
 	var identity:String=browser.selected_preview_key();browser.buildable_roads.button_pressed=false
 	check(browser.selected_preview_key()!=identity and browser.buildable_ground.button_pressed,"road toggle does not alter terrain preference")
+	check(browser.selected_options().road_grid==0,"road toggle still disables generation preference")
 	browser.buildable_roads.button_pressed=true;browser.buildable_ground.button_pressed=false
+	check(browser.selected_options().road_grid==3,"reenabling road preference restores the approved footprint default")
 	check(browser.selected_preview_key()!=identity and browser.buildable_roads.button_pressed,"terrain toggle does not alter road preference")
 	browser.free();await process_frame
 	var results:Array=[]
