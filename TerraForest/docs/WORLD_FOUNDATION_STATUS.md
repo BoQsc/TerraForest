@@ -1,3 +1,44 @@
+## Grid preference rejected outside old-case fixtures — 2026-10-25
+
+The user supplied another failing regional-road screenshot from the default-on
+GridPreference_1703_f3de49d9 playtest. Read-only reproduction at the saved position
+confirms the ordinary green cube target at (1076,47,838) is buried 42.30 cm. The
+physics surface is 47.3756–47.4230 m across its nine support samples. This is not
+a stale preview, rendering error or different save: the planned road height at the
+aim point is 47.40881 m and physics hits 47.40873 m.
+
+The relevant 101 m regional segment remained unchanged. An isolated call through
+the production normalizer reports `changed=0, earthwork_skips=1, ok=true`. The
+current algorithm falls back to the old road instead of solving/replanning that
+corridor; the separate 60 cm placement allowance then accepts deep embedding.
+It also freezes each original segment endpoint and has no building-footprint
+quality objective. Passing curvature/cut/fill tests is not a grid-fit guarantee.
+
+A whole-network analytic screening at the same 2,037 integer footprints finds
+1,009 still cannot meet both 10 cm gap and 25 cm burial limits at any integer base:
+227/769 settlement and 782/1,268 regional samples. Road normalization reduces that
+count from 1,136, but the remaining failure rate rejects general acceptance.
+This is a profile-screening result, not collision coverage of every shoulder,
+intersection or cell. Actual collision is verified at the saved player target.
+
+No new terrain, road, placement or default change is made by this diagnostic.
+Both source saves remain byte-identical. A new independent audit records explicit
+quality rejection instead of treating a successful diagnostic run as quality PASS.
+Evidence: `evidence/grid_network_audit/README.md`.
+
+Unfinished: replace post-fit correction/fallback with a corridor-level grade
+strategy evaluated against the same footprint contact contract, shared junctions,
+actual earthworks and final baked collision. Never silently accept skipped roads,
+increase burial to hide the failure, regrade saved worlds, or shift the lattice.
+Before implementing another default, resolve the transition trade-off: a continuous
+rise between integer heights necessarily crosses intermediate non-fitting heights;
+making it longer does not eliminate them. The user already rejected flat frontage
+terraces as a general answer. A candidate must demonstrate acceptable transitions
+and landscape character across the full network, not just the two old fixtures.
+Return trigger: a transition strategy respecting those constraints, then multi-seed
+coverage plus rendered/on-foot review including this saved failure. Until then,
+the broader requirement remains rejected/incomplete, not an approved default.
+
 ## Bidirectional grid preference; visual acceptance still open — 2026-10-25
 
 The user rejected the contact-first revision: it removed sampled gaps by burying

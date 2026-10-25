@@ -1,0 +1,635 @@
+{
+  "actual": {
+    "normal": "(-0.014146, 0.998999, 0.042438)",
+    "placement_ok": true,
+    "position": "(1076.823, 47.40873, 838.3824)",
+    "reason": "",
+    "support": {
+      "bottom": 47.0,
+      "burial": 0.422958374023438,
+      "gap": 0.0,
+      "hits": 9,
+      "inside": 0,
+      "maximum": 47.4229583740234,
+      "minimum": 47.3755874633789,
+      "offset_y": 0.0,
+      "ok": true,
+      "overlap_limit": 0.6,
+      "reason": "",
+      "samples": 9
+    },
+    "target": "(1076, 47, 838)"
+  },
+  "after": {
+    "categories": {
+      "regional": {
+        "fractional_endpoints": 134,
+        "sampled_cells": 1268,
+        "segments": 128,
+        "unfit_cells": 782
+      },
+      "settlement": {
+        "fractional_endpoints": 92,
+        "sampled_cells": 769,
+        "segments": 127,
+        "unfit_cells": 227
+      }
+    },
+    "segments": 255,
+    "worst": [
+      {
+        "best": {
+          "bottom": 38,
+          "burial": 0.621207192453667,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1038, 1080)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 38.6212071924537,
+        "minimum": 38.4819903218055
+      },
+      {
+        "best": {
+          "bottom": 48,
+          "burial": 0.617080178762841,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1100, 645)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 48.6170801787628,
+        "minimum": 48.5264600817145
+      },
+      {
+        "best": {
+          "bottom": 47,
+          "burial": 0.616309207268067,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1097, 629)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 47.6163092072681,
+        "minimum": 47.5294412949094
+      },
+      {
+        "best": {
+          "bottom": 47,
+          "burial": 0.616306692540618,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1103, 630)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 47.6163066925406,
+        "minimum": 47.5294382716576
+      },
+      {
+        "best": {
+          "bottom": 52,
+          "burial": 0.616160923239001,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1059, 459)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 52.616160923239,
+        "minimum": 52.5187607816068
+      },
+      {
+        "best": {
+          "bottom": 54,
+          "burial": 0.61468752181802,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1047, 430)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 54.614687521818,
+        "minimum": 54.5243596586168
+      },
+      {
+        "best": {
+          "bottom": 55,
+          "burial": 0.610024023506448,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1043, 415)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 55.6100240235064,
+        "minimum": 55.5246966083481
+      },
+      {
+        "best": {
+          "bottom": 50,
+          "burial": 0.607858035459806,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1068, 489)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 50.6078580354598,
+        "minimum": 50.5125365637203
+      },
+      {
+        "best": {
+          "bottom": 60,
+          "burial": 0.607751113175411,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1001, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 60.6077511131754,
+        "minimum": 60.5086643313132
+      },
+      {
+        "best": {
+          "bottom": 52,
+          "burial": 0.60674564756907,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1056, 460)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 52.6067456475691,
+        "minimum": 52.5087609705835
+      },
+      {
+        "best": {
+          "bottom": 37,
+          "burial": 0.602178630821477,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1033, 1105)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 37.6021786308215,
+        "minimum": 37.5317058911432
+      },
+      {
+        "best": {
+          "bottom": 55,
+          "burial": 0.601324575779479,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1040, 416)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 55.6013245757795,
+        "minimum": 55.5163483654737
+      },
+      {
+        "best": {
+          "bottom": 37,
+          "burial": 0.600717359595784,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1034, 1088)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 37.6007173595958,
+        "minimum": 37.4759906239497
+      },
+      {
+        "best": {
+          "bottom": 49,
+          "burial": 0.599314589115394,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1092, 659)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 49.5993145891154,
+        "minimum": 49.5077225800963
+      },
+      {
+        "best": {
+          "bottom": 49,
+          "burial": 0.599313153058496,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1098, 660)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 49.5993131530585,
+        "minimum": 49.5077210904506
+      },
+      {
+        "best": {
+          "bottom": 50,
+          "burial": 0.599033590361614,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1065, 490)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 50.5990335903616,
+        "minimum": 50.5023081166931
+      },
+      {
+        "best": {
+          "bottom": 51,
+          "burial": 0.599022958196798,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1088, 731)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 51.5990229581968,
+        "minimum": 51.5477971799571
+      },
+      {
+        "best": {
+          "bottom": 56,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1057, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 56.5980084988117,
+        "minimum": 56.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 58,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1057, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 58.5980084988117,
+        "minimum": 58.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 60,
+          "burial": 0.598002072293511,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1002, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 60.5980020722935,
+        "minimum": 60.5085728862091
+      }
+    ]
+  },
+  "before": {
+    "categories": {
+      "regional": {
+        "fractional_endpoints": 6,
+        "sampled_cells": 1268,
+        "segments": 9,
+        "unfit_cells": 871
+      },
+      "settlement": {
+        "fractional_endpoints": 0,
+        "sampled_cells": 769,
+        "segments": 50,
+        "unfit_cells": 265
+      }
+    },
+    "segments": 59,
+    "worst": [
+      {
+        "best": {
+          "bottom": 39,
+          "burial": 0.625440361539511,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1037, 1071)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 39.6254403615395,
+        "minimum": 39.5111907335426
+      },
+      {
+        "best": {
+          "bottom": 47,
+          "burial": 0.606160685331936,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1100, 630)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 47.6061606853319,
+        "minimum": 47.5427158399284
+      },
+      {
+        "best": {
+          "bottom": 50,
+          "burial": 0.605823703223486,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1092, 675)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 50.6058237032235,
+        "minimum": 50.5423788578199
+      },
+      {
+        "best": {
+          "bottom": 56,
+          "burial": 0.605157126776952,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1038, 400)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 56.605157126777,
+        "minimum": 56.537962749195
+      },
+      {
+        "best": {
+          "bottom": 38,
+          "burial": 0.604679526150413,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1038, 1080)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 38.6046795261504,
+        "minimum": 38.4904298981535
+      },
+      {
+        "best": {
+          "bottom": 49,
+          "burial": 0.602339312346096,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1095, 660)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 49.6023393123461,
+        "minimum": 49.5388944669425
+      },
+      {
+        "best": {
+          "bottom": 51,
+          "burial": 0.598517939360256,
+          "gap": 0.0
+        },
+        "category": "regional",
+        "cell": "(1090, 690)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 51.5985179393603,
+        "minimum": 51.5350730939567
+      },
+      {
+        "best": {
+          "bottom": 57,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1043, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 57.5980084988117,
+        "minimum": 57.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 56,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1057, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 56.5980084988117,
+        "minimum": 56.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 58,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1029, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 58.5980084988117,
+        "minimum": 58.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 58,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1072, 394)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 58.5980084988117,
+        "minimum": 58.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 55,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1071, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 55.5980084988117,
+        "minimum": 55.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 57,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1044, 394)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 57.5980084988117,
+        "minimum": 57.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 59,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1043, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 59.5980084988117,
+        "minimum": 59.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 60,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1029, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 60.5980084988117,
+        "minimum": 60.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 58,
+          "burial": 0.598008498811716,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1057, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 58.5980084988117,
+        "minimum": 58.5085663475819
+      },
+      {
+        "best": {
+          "bottom": 59,
+          "burial": 0.598002072293511,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1015, 290)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 59.5980020722935,
+        "minimum": 59.5085728862091
+      },
+      {
+        "best": {
+          "bottom": 60,
+          "burial": 0.598002072293511,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1002, 342)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 60.5980020722935,
+        "minimum": 60.5085728862091
+      },
+      {
+        "best": {
+          "bottom": 56,
+          "burial": 0.598002072293511,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1016, 394)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 56.5980020722935,
+        "minimum": 56.5085728862091
+      },
+      {
+        "best": {
+          "bottom": 56,
+          "burial": 0.598002072293511,
+          "gap": 0.0
+        },
+        "category": "settlement",
+        "cell": "(1001, 394)",
+        "covered": true,
+        "fits_any_integer_cell": false,
+        "maximum": 56.5980020722935,
+        "minimum": 56.5085728862091
+      }
+    ]
+  },
+  "failures": 0,
+  "limits": {
+    "burial": 0.25,
+    "gap": 0.1
+  },
+  "nearby_roads": [
+    {
+      "distance": 1.53381216526031,
+      "normalizer_probe": {
+        "changed": 0,
+        "earthwork_skips": 1,
+        "max_cut": 0.0,
+        "max_fill": 0.0,
+        "max_shift": 0.0,
+        "ok": true,
+        "protected_skips": 0,
+        "samples": 3241,
+        "version": 1
+      },
+      "planned_height": 47.4088111616904,
+      "road": {
+        "bounds": "[P: (1052.0, 41.50306, 796.0), S: (40.0, 11.86298, 104.0)]",
+        "category": "regional",
+        "clearance": 4.0,
+        "depth": 3.0,
+        "finish": "(1056.0, 44.6812, 896.0)",
+        "grid_normalized": true,
+        "half_width": 4.0,
+        "material": 4,
+        "shoulder": 0.0,
+        "start": "(1088.0, 49.1879, 800.0)"
+      }
+    }
+  ],
+  "normalization": {
+    "changed": 31,
+    "earthwork_skips": 3,
+    "enabled": true,
+    "max_cut": 2.77419325361655,
+    "max_fill": 1.82843701854926,
+    "max_shift": 0.175295556829511,
+    "ok": true,
+    "protected_skips": 0,
+    "samples": 51652,
+    "version": 1
+  },
+  "pose": {
+    "pitch": -0.3025,
+    "position": "(1074.452, 47.21113, 842.4988)",
+    "yaw": -0.52250000000001
+  },
+  "quality_accepted": false,
+  "scope": "Whole-network analytic profile screening at identical grid cells; actual collision contact only at the saved screenshot target. Corners, junctions, shoulders and stamp interactions require rendered collision coverage. Not an all-world pass.",
+  "slot": "GridPreference_1703_f3de49d9"
+}

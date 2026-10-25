@@ -1,0 +1,39 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\grid_network_audit\\cf3ba096be574d08bc28f3d2e4228b72\\engine.log",
+    "--script",
+    "res://tests/road_grid_network_audit.gd",
+    "--max-fps",
+    "60",
+    "--",
+    "--temporary",
+    "--snapshot-readonly",
+    "--world-slot=GridPreference_1703_f3de49d9",
+    "--no-zombies",
+    "--ground-cover",
+    "--derived-cache=user://grid_network_audit_eda5d97c442049cc8ab9798e5e27c57e"
+  ],
+  "revision": "eabcb85c9b297b5e9d27496ea6d8451e42ce52e9",
+  "worktree_changes": [
+    "?? TerraForest/tests/road_grid_network_audit.gd",
+    "?? TerraForest/tools/audit_grid_network.py"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 31156,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 16.185437300009653,
+    "passed": true
+  },
+  "saves_unchanged": true,
+  "quality_accepted": false
+}
