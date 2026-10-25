@@ -14,12 +14,10 @@ func aimed_id(hit: Dictionary) -> int:
 func try_interact(shared_hit: Variant=null) -> bool:
 	if not game._model_edit_available():return false
 	var start: Vector3=game.camera.global_position
-	var hit: Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3,7,[game.player.get_rid()]) if shared_hit==null else shared_hit
+	var hit: Dictionary=game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3,7,[game.player.get_rid()],true) if shared_hit==null else shared_hit
 	var id:=aimed_id(hit)
 	if id<=0:return false
-	# Match the player's 0.34 m collision radius, not the larger placement guard.
-	var protection:=AABB(game.player.global_position+Vector3(-0.34,0,-0.34),Vector3(0.68,1.8,0.68))
-	var result: Dictionary=state.toggle(collection,id,protection)
+	var result: Dictionary=state.toggle(collection,id,AABB())
 	if result.ok:game.terrain.changed_since_save=true
 	game._show_lake_notice(result.reason)
 	return true

@@ -124,7 +124,7 @@ Dictionary NativeBlockWorld::raycast_cells(Vector3 from,Vector3 to) const {
     }
     return result;
 }
-Dictionary NativeBlockWorld::raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude) const {
+Dictionary NativeBlockWorld::raycast_scene(Vector3 from,Vector3 to,int64_t mask,const TypedArray<RID> &exclude,bool hit_from_inside) const {
     Vector3 origin,end;
     Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
     if(mask<0||uint64_t(mask)>UINT32_MAX||exclude.size()>256||!valid_ray(frame,from,to,origin,end))return {};
@@ -137,6 +137,7 @@ Dictionary NativeBlockWorld::raycast_scene(Vector3 from,Vector3 to,int64_t mask,
     TypedArray<RID> ignored=exclude.duplicate();
     for(const auto &entry:visuals)if(entry.second.body)ignored.push_back(entry.second.body->get_rid());
     auto query=PhysicsRayQueryParameters3D::create(from,to,uint32_t(mask),ignored);
+    query->set_hit_from_inside(hit_from_inside);
     Dictionary physics=world->get_direct_space_state()->intersect_ray(query);
     if(physics.is_empty())return authored;
     if(authored.is_empty())return physics;

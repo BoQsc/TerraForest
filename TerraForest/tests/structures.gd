@@ -805,6 +805,11 @@ func check_scene_picking() -> void:
 	var exclusions: Array[RID] = []
 	exclusions.resize(257)
 	check(world.raycast_scene(from,to,3,exclusions).is_empty(),"caller exclusion count is bounded")
+	var inside: Vector3=obstacle.position
+	check(world.raycast_scene(inside,inside+Vector3.RIGHT,1).is_empty(),"existing scene-ray callers keep outside-only physics picking")
+	hit=world.raycast_scene(inside,inside+Vector3.RIGHT,1,[],true)
+	check(hit.get("collider")==obstacle and hit.position==inside,"interaction ray can identify a solid containing the camera")
+	check(world.raycast_scene(inside,inside+Vector3.RIGHT,1,[obstacle.get_rid()],true).is_empty(),"inside-origin picking still honours body exclusions")
 	obstacle.free()
 	models.free()
 	world.free()

@@ -1,3 +1,27 @@
+## Doors usable while touching/blocking the leaf — 2026-10-25
+
+Player E interaction no longer vetoes a hinge toggle because the operating
+player occupies its swing or final pose. Normal leaf collision remains enabled;
+other actors, zombies, ragdolls and vehicles retain their native occupancy guard.
+The shared interaction ray now opts into native inside-origin hits so the hint
+and E action still work if the camera is inside an open or closed leaf. Existing
+scene-ray callers retain the previous default; no object scan or extra per-frame
+query is introduced. Three-metre range and solid-wall occlusion remain intact.
+
+Source component and real-world E checks pass; final exported gameplay checks
+also pass contact from both sides, swing/final-pose overlap, inside-leaf hints
+and actions, native-player escape after overlapping closure, save-state capture,
+range and wall occlusion (including a camera inside the blocking wall). Native
+scene-ray regression passes 12/12 with debug and isolated release libraries.
+Both native variants and the packaged game are updated. Evidence:
+`evidence/door_close_interaction/`.
+
+The broad structures suite still reports 18 legacy prefab/invalid-shape failures;
+the original HEAD test and release DLL reproduce the same failures. These are
+retained, not masked or changed by the door fix. They need a separate audit of
+the shape catalogue/fixture contract before the whole structures suite can be
+called green. No player saves or unrelated icon-bake changes are included.
+
 ## Regular walking hitch fix — measured source and package, 2026-10-25
 
 Reproduced 15 walking frames above 50 ms in 45 seconds, worst 229.745 ms, each

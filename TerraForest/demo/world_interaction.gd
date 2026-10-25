@@ -6,7 +6,7 @@ func available(game: Node) -> bool:
 	return game._model_edit_available() and not game.fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and not game.session_menu.visible_ui()
 func hit(game: Node) -> Dictionary:
 	var origin: Vector3=game.camera.global_position
-	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()])
+	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()],true)
 func describe(game: Node, target: Dictionary) -> String:
 	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
 	if game.storage.aimed_id(target)>0:return "E · Open wooden chest"

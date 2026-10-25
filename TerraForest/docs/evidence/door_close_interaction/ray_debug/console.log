@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS combined query prioritizes authored block over a farther static model
+PASS fixture retains a real previous-revision block collision before rebake
+PASS combined query ignores stale block body and returns the actual model behind it
+PASS new unbaked block immediately occludes static models
+PASS nearer terrain-layer physics occludes authored blocks
+PASS combined query honours caller RID exclusions
+PASS combined query honours collision masks including authored layer two
+PASS invalid scene ray masks reject without truncation
+PASS caller exclusion count is bounded
+PASS existing scene-ray callers keep outside-only physics picking
+PASS interaction ray can identify a solid containing the camera
+PASS inside-origin picking still honours body exclusions
+DOOR_SCENE_RAY checks=12 failures=0

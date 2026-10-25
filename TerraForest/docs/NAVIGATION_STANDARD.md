@@ -57,6 +57,12 @@ settlement bodies use mask 8; zombie bodies use `1 << 16`, fitted damage regions
 occupancy must recognize both families and ragdolls. Hit regions are not movement
 support or traversal geometry.
 
+Player-operated doors ignore the operating player's own swing occupancy so E
+works while touching or blocking the leaf. Other actors, zombies, ragdolls and
+vehicles still block a swing; this does not authorize NPCs to open doors or
+disable the door's physical collision. Inside-leaf interaction picking retains
+the normal three-metre range and intervening solid occlusion.
+
 ## Runtime limits and failure states
 
 Each local route retains at most 2,048 nodes and searches within +/-16 m of its origin.

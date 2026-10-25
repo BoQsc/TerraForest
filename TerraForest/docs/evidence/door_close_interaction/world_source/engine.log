@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 513.72 ms at 36588
+[terrain-hitch] base controller 534.29 ms at 36608
+[terrain-hitch] controller process 552.37 ms at 36626
+[terrain-hitch] world process 573.05 ms at 36647
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 59.11 ms at 36855
+[terrain-hitch] base controller 64.03 ms at 36860
+[terrain-hitch] controller process 74.67 ms at 36870
+[terrain-hitch] world process 84.4 ms at 36880
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS normal world loads with door component
+PASS door inserted in normal model collection
+PASS main-world HUD shows aimed door action
+PASS normal E input opens targeted door
+PASS interaction marks world dirty
+PASS compound capture includes valid native door state
+PASS captured open door restores
+PASS main-world HUD reflects restored open hinge
+PASS normal E input closes restored door
+PASS closed door returns to original placed transform
+PASS E opens while pressed against the closed door from side -1.0
+PASS E closes while the player occupies the swing from side -1.0
+PASS E opens while pressed against the closed door from side 1.0
+PASS E closes while the player occupies the swing from side 1.0
+PASS prepare open leaf for player-overlap check
+PASS close hint remains available with the camera inside the open leaf
+PASS E closes from inside the open leaf
+PASS open hint remains available with the camera inside the closed leaf
+PASS E opens from inside the closed leaf
+PASS player overlap with the final closed leaf does not veto closing
+PASS native player movement can leave the door after overlapping closure
+[TerrainRewrite] Temporary test world: save skipped
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

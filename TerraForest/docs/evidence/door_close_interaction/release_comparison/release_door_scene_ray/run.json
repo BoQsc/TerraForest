@@ -1,0 +1,46 @@
+{
+  "mode": "release",
+  "test": "door_scene_ray",
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\door_native_neo6nrm1",
+    "--max-fps",
+    "60",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\door_close_release_baseline\\release_door_scene_ray\\engine.log",
+    "--script",
+    "res://tests/door_scene_ray.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 75244,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.35460319998674095,
+    "passed": true
+  },
+  "library_sha256": "516d5ff7f32893eaf2d549aa35ded67383e787dc84b2a4d361f87e764441f6b8",
+  "test_sha256": "333ba08a190e0cc2209a89ba89780205f45d6dcb8cc9de14504153ba037b751e",
+  "revision": "9be30fcf5bc013ce036865502a112dfe3335f21b",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/structures/door_interaction.gd",
+    " M TerraForest/addons/structures/native/block_queries.cpp",
+    " M TerraForest/addons/structures/native/block_world.cpp",
+    " M TerraForest/addons/structures/native/block_world.hpp",
+    " M TerraForest/demo/world_interaction.gd",
+    " M TerraForest/docs/NAVIGATION_STANDARD.md",
+    " M TerraForest/tests/door_world.gd",
+    " M TerraForest/tests/structures.gd",
+    "?? TerraForest/tests/door_scene_ray.gd",
+    "?? TerraForest/tests/door_scene_ray.gd.uid"
+  ],
+  "git_metadata_available": true
+}

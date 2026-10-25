@@ -1,0 +1,88 @@
+{
+  "component": {
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 83996,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 4.931591600063257,
+      "passed": true
+    },
+    "passed_assertions": 24
+  },
+  "structures_debug": {
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 85496,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL capture creates reusable asset from actual world cells",
+        "FAIL captured asset can be placed independently",
+        "FAIL invalid batch is atomic",
+        "FAIL invalid batch preserves history atomically",
+        "FAIL invalid prefab authoring is atomic",
+        "FAIL preview bounds match rotated cell extents 0",
+        "FAIL preview bounds match rotated cell extents 1",
+        "FAIL preview bounds match rotated cell extents 2",
+        "FAIL preview bounds match rotated cell extents 3",
+        "FAIL quarter-turn rotates coordinates and oriented shape 0",
+        "FAIL quarter-turn rotates coordinates and oriented shape 1",
+        "FAIL quarter-turn rotates coordinates and oriented shape 2",
+        "FAIL quarter-turn rotates coordinates and oriented shape 3",
+        "FAIL redo reproduces exact shapes and materials",
+        "FAIL reject invalid shape in batch"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 4.089800799963996,
+      "passed": false
+    },
+    "passed_assertions": 276
+  },
+  "world_source": {
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80848,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 40.70894609997049,
+      "passed": true
+    },
+    "passed_assertions": 22
+  },
+  "ray_debug": {
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 65456,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.46513179992325604,
+      "passed": true
+    },
+    "passed_assertions": 12
+  },
+  "package": {
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 75888,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 37.59538439998869,
+      "passed": true
+    },
+    "passed_assertions": 25
+  }
+}
