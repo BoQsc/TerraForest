@@ -4,6 +4,8 @@ func _initialize():run.call_deferred()
 func run():
  var viewport:=SubViewport.new();viewport.size=Vector2i(256,256);viewport.transparent_bg=true;viewport.own_world_3d=true;viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS;viewport.msaa_3d=Viewport.MSAA_4X;root.add_child(viewport)
  var environment:=WorldEnvironment.new();environment.environment=Environment.new();environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_COLOR;environment.environment.ambient_light_color=Color.WHITE;environment.environment.ambient_light_energy=0.7;viewport.add_child(environment)
+ var sky:=ProceduralSkyMaterial.new();sky.sky_top_color=Color("8297a4");sky.sky_horizon_color=Color("d7dedf");sky.ground_bottom_color=Color("343d43");sky.ground_horizon_color=Color("bfc8ca")
+ environment.environment.sky=Sky.new();environment.environment.sky.sky_material=sky;environment.environment.reflected_light_source=Environment.REFLECTION_SOURCE_SKY
  var sun:=DirectionalLight3D.new();sun.rotation_degrees=Vector3(-35,-35,0);sun.light_energy=1.6;viewport.add_child(sun)
  var item:=MeshInstance3D.new();item.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();viewport.add_child(item)
  var camera:=Camera3D.new();camera.projection=Camera3D.PROJECTION_ORTHOGONAL;viewport.add_child(camera);camera.current=true;camera.position=Vector3(0.5,0.4,0.8);camera.look_at(Vector3(0,0.05,0));camera.size=0.52

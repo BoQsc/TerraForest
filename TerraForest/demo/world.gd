@@ -682,7 +682,10 @@ func _equip_player_tool(item: int) -> void:
 	if item in player_hud.GROUND_ITEMS and item!=201:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false
-	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0)
+	var bucket_water_ml:=-1
+	if item>=401 and item<=411 and player_hud.active_slot>=0:
+		bucket_water_ml=int(player_hud.inventory.snapshot().slots[player_hud.active_slot].water_ml)
+	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0,bucket_water_ml)
 	player_hud.show_active_tool(item)
 	if session_menu.developer_hud!=null:session_menu.developer_hud.refresh()
 	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - left mouse punches, E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))

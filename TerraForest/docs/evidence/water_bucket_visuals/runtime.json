@@ -1,0 +1,44 @@
+{
+  "checks": 36,
+  "clips": {
+    "FP_Bucket_Idle": {
+      "finger_error": 0.0,
+      "grip_error": 0.0,
+      "root_error": 0.0,
+      "seam_error": 0.0
+    },
+    "FP_Bucket_Jump": {
+      "finger_error": 0.0,
+      "grip_error": 0.000000829795339996053,
+      "root_error": 0.0,
+      "seam_error": 0.0000000842937097900176
+    },
+    "FP_Bucket_Pour": {
+      "finger_error": 0.0,
+      "grip_error": 0.0000458736903965473,
+      "root_error": 0.0,
+      "seam_error": 0.000000178813934326172
+    },
+    "FP_Bucket_Run": {
+      "finger_error": 0.000000647643616957794,
+      "grip_error": 0.0000177063247974729,
+      "root_error": 0.0,
+      "seam_error": 0.000000178813934326172
+    },
+    "FP_Bucket_Scoop": {
+      "finger_error": 0.0,
+      "grip_error": 0.0000217742890527006,
+      "root_error": 0.0,
+      "seam_error": 0.000000178813934326172
+    },
+    "FP_Bucket_Walk": {
+      "finger_error": 0.000000647643616957794,
+      "grip_error": 0.00000560568105356651,
+      "root_error": 0.0,
+      "seam_error": 0.0
+    }
+  },
+  "failures": 0,
+  "scope": "Visual assets, attachment, fill state and presentation routing; water transfers verified separately.",
+  "triangles": 16700
+}

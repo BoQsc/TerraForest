@@ -13,8 +13,10 @@ const PICKAXE_FRESH = preload("res://addons/characters/runtime/assets/Human.pick
 const PICKAXE_LOCOMOTION = preload("res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res")
 const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
+const BUCKET = preload("res://addons/characters/runtime/assets/Human.bucket.res")
+const BUCKET_MODEL = preload("res://addons/volumetric_water/bucket_model.gd")
 const EQUIPMENT = {3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
-const AUTHORED_TOOLS = [0,1,2,3,5]
+const AUTHORED_TOOLS = [0,1,2,3,5,401]
 const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.gdshader")
 var model: Node3D
 var animation_player: AnimationPlayer
@@ -35,6 +37,8 @@ var contact_sent:=false
 const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
+var bucket_fill:=0.0
+var bucket_water:MeshInstance3D
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
 @export var diagonal_pickaxe := true
@@ -57,6 +61,15 @@ func _ready() -> void:
 		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
 		# attachments carry that conversion too; undo the rest basis once.
 		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
+	var bucket_attachment:=BoneAttachment3D.new();bucket_attachment.bone_name="Weapon_Axe";skeleton.add_child(bucket_attachment)
+	var bucket_root:=Node3D.new();bucket_attachment.add_child(bucket_root)
+	bucket_root.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Axe")).affine_inverse()
+	var bucket:=MeshInstance3D.new();bucket.name="Equipment_Bucket";bucket.mesh=BUCKET_MODEL.HELD;bucket_root.add_child(bucket)
+	bucket_water=MeshInstance3D.new();bucket_water.name="Equipment_Bucket_Water"
+	var water_disk:=CylinderMesh.new();water_disk.top_radius=.135;water_disk.bottom_radius=.135;water_disk.height=.001;water_disk.radial_segments=96
+	var water_material:=StandardMaterial3D.new();water_material.albedo_color=Color("284d58");water_material.roughness=.15;water_material.metallic=.15
+	water_material.clearcoat_enabled=true;water_material.clearcoat=.85;water_material.clearcoat_roughness=.1
+	water_disk.material=water_material;bucket_water.mesh=water_disk;bucket_root.add_child(bucket_water)
 	_collect(model)
 	animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	animation_player.add_animation_library("placement", PLACEMENT)
@@ -67,6 +80,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("pickaxe_locomotion", PICKAXE_LOCOMOTION)
 	animation_player.add_animation_library("hammer", HAMMER)
 	animation_player.add_animation_library("shovel", SHOVEL)
+	animation_player.add_animation_library("bucket", BUCKET)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	equip(current)
@@ -102,8 +116,11 @@ func set_third_person(value:bool)->void:
 	for mesh:MeshInstance3D in meshes:mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if value else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_sync_equipment()
 
-func equip(item: int) -> void:
+func equip(item: int, water_ml:int=-1) -> void:
 	cancel_swing()
+	bucket_fill=clampf((item-401)/10.0,0,1) if item>=401 and item<=411 else 0.0
+	if item>=401 and item<=411 and water_ml>=0:bucket_fill=clampf(water_ml/1000000.0,0,1)
+	if item>=401 and item<=411:item=401
 	current = item
 	action_remaining = 0.0
 	placement_active = false
@@ -114,16 +131,22 @@ func equip(item: int) -> void:
 
 func _sync_equipment() -> void:
 	if body_mesh!=null:
-		var selected:Mesh=unarmed_body_mesh if current==0 else original_body_mesh
+		var selected:Mesh=unarmed_body_mesh if current in [0,401] else original_body_mesh
 		if body_mesh.mesh!=selected:body_mesh.mesh=selected
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")))
+			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==401 and label.contains("bucket")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
+	if bucket_water!=null:
+		bucket_water.visible=current==401 and bucket_fill>0 and not placement_active
+		bucket_water.position.y=lerpf(-.31,-.15,bucket_fill)
+		var radius:=lerpf(.108,.137,bucket_fill)/.135
+		bucket_water.scale=Vector3(radius,1,radius)
 
 func _motion_clip(action: String) -> String:
+	if current==401:return "FP_Bucket_"+action if clips.has("FP_Bucket_"+action) else "FP_Bucket_Idle"
 	if current==0:
 		if third_person and action in ["Walk","Run","Jump"]:return action
 		return "FP_Unarmed_Punch" if action=="Swing" else "FP_Unarmed_Idle"
@@ -175,6 +198,13 @@ func place() -> bool:
 	_play("FP_Place_Relaxed", true)
 	return true
 
+func bucket_use(pouring:bool)->bool:
+	if current!=401 or action_remaining>0 or not is_visible_in_tree():return false
+	# Presentation follows the existing confirmed transfer; no attack/contact
+	# event can grant water, change inventory or mutate terrain from this clip.
+	_play("FP_Bucket_Pour" if pouring else "FP_Bucket_Scoop",true)
+	return true
+
 func _process(delta: float) -> void:
 	animation_player.active = is_visible_in_tree()
 	if not animation_player.active:
@@ -207,15 +237,15 @@ func _process(delta: float) -> void:
 	var motion := "Idle"
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
-	# Only the authored pickaxe/axe holds use locomotion presentation.
-	if (third_person or current in [1, 2, 3, 5]) and is_instance_valid(body):
+	# Authored tools use their own locomotion presentation.
+	if (third_person or current in [1, 2, 3, 5, 401]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"
 		elif speed > 0.15:
 			# Native ground speeds are 5.5 walking / 9.9 sprinting. Preserve the
-			# other tools' cadence while selecting the new pickaxe walk correctly.
-			var run_speed:=6.5 if current==1 and diagonal_pickaxe and pickaxe_swing=="fresh" else 5.0
+			# other tools' cadence while selecting pickaxe/bucket walks correctly.
+			var run_speed:=6.5 if current==401 or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
 			motion = "Run" if speed > run_speed else "Walk"
 	_play(_motion_clip(motion))
 	animation_player.advance(delta)

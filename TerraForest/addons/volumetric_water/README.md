@@ -2,6 +2,12 @@
 
 One C++ water runtime: `NativeRegionalWater`. `NativeWaterTerrainPatch` samples terrain through its existing worker and revision checks. `lake_world.gd` coordinates publication, UI and compound-world persistence. `NativeLakeCatalog` is a metadata/save compatibility codec, not another water implementation.
 
+The bucket now uses a 16,700-triangle Blender-authored metal pail with embedded
+PBR maps. `bucket_model.gd` supplies its cached pickup mesh; the character rig
+uses its matching held mesh, fixed hand grip and carry/use animations. Water
+transactions remain in the existing native path. See
+[bucket source/rebuild](../characters/authoring/Human.bucket.README.md).
+
 The static-lake and basin-network implementations are deleted. Git history retains previous versions; they are not included in the addon or built DLLs.
 
 See [current integration and limitations](../../docs/WATER_GAMEPLAY.md). Depth-aware transmission now resolves the nearest surface, removing repeated water-face tinting. Stepped shores and smaller geometry discontinuities remain unfinished. Functional tests do not establish visual acceptance or sustained 60 FPS.

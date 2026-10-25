@@ -7,6 +7,7 @@
       "files": {
         "res://addons/characters/runtime/assets/Hammer.glb": "4f38b696f22e495a77df2119ca97d7ec3c829fe5374d333674779710b77c1d54",
         "res://addons/characters/runtime/assets/Hammer.glb.import": "1c2063fe42b26e43ed3c6983e10a9bc9e490cd13060b578e39d42d196beeef3c",
+        "res://addons/characters/runtime/assets/Human.bucket.res": "1af078a6743314dba3abf813a2af6edafadddda2b5fe7ac3144b0427579b356e",
         "res://addons/characters/runtime/assets/Human.hammer.res": "a0efd00e897b9698914a112adfa3bec8f48f78385fdc67725986472ec55b67b6",
         "res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res": "8fe847638c34f31c735c2bf928aadb5722c7244853433c72ba29c9753227a291",
         "res://addons/characters/runtime/assets/Human.pickaxe_fresh.res": "4430afc81d17a4191e724badbb7a4c588bb46284d126fc235fe01fb68c9865e4",
@@ -21,9 +22,11 @@
         "res://addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
         "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "0f3003128eeb194b562a6b0b6ee7671140a50cdb8fe0acbfcd1450742ef51258",
-        "res://addons/player_runtime/tool_view.gd": "66dcbbd41a1f77b1a531789861f0bdb96610fe656805cff55b9df2efed479a10",
-        "res://addons/volumetric_water/bucket_model.gd": "6b6731e678d1e66c59f4a3930dd098f391599af34684bb30e06c8d8f4d0d90c0"
+        "res://addons/characters/runtime/human_view.gd": "ede187a86116545ca8d707eb1d2598b88e89aa5875a8e51a8b4b5408a3eb4aee",
+        "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
+        "res://addons/volumetric_water/assets/Bucket.held.res": "47949e6a296c169935ff61f7575b4213ed52c2ecf77350416a18ce58cf741501",
+        "res://addons/volumetric_water/assets/Bucket.pickup.res": "468c930ca4353645a7d0577e55f1333f4175e967e0ac650cdf6d6d6699319dd9",
+        "res://addons/volumetric_water/bucket_model.gd": "f9b4768ff986ba748b47fce45d7a48bce11c3834330679d25d0fb465d534121e"
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "ad9cac697e6ff68a266f485e9bb0f5de30ff1f9cb1ff084e82ee2dea14f2d5a9",

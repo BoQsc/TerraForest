@@ -1,0 +1,5 @@
+{
+  "checks": 11,
+  "failures": 0,
+  "scope": "Real world, native water and inventory, actual mouse collect/pour/recollect, visible fill and authored motion. No change to transfer permissions or water units."
+}

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
-# R11 animated character, with existing construction and water tool previews.
+# R11 animated character tools, with the existing assembly-tool preview.
 signal attack_contact(identity:int)
 signal attack_finished(identity:int,cancelled:bool)
 var attack_allowed:Callable
@@ -29,16 +29,15 @@ func _ready() -> void:
 		part(root,Vector3(0.045,0.42,0.045),Vector3.ZERO,Color("62472f"))
 		part(root,Vector3(0.12,0.045,0.06),Vector3(0,0.18,0),Color("939b9c"))
 		for x in [-0.05,0.05]:part(root,Vector3(0.035,0.09,0.06),Vector3(x,0.23,0),Color("939b9c"))
-func equip(id: int) -> void:
+func equip(id: int, water_ml:int=-1) -> void:
 	cancel_attack()
+	var item:=id
 	if id>=401 and id<=411:
 		id=401
-		if not tools.has(401):
-			var bucket:=MeshInstance3D.new();bucket.mesh=preload("res://addons/volumetric_water/bucket_model.gd").mesh();bucket.layers=1<<19;bucket.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;bucket.position=Vector3(0.34,-0.32,-0.65);bucket.rotation=Vector3(-0.2,0.15,-0.28);add_child(bucket);tools[401]=bucket
 
 	current=id
 	if motion!=null:motion.kill()
-	human.equip(id)
+	human.equip(item,water_ml)
 	for key in tools:
 		tools[key].visible=key==id
 		tools[key].rotation.x=-0.2
@@ -65,6 +64,7 @@ func contact_ready(identity:int)->bool:
 	if identity<=0 or identity!=attack_identity or identity!=contact_identity:return false
 	return current not in human.AUTHORED_TOOLS or (human.swing_identity==identity and human.contact_sent and human.animation_player.current_animation_position+0.00001>=human.contact_seconds)
 func _swing(identity:int) -> bool:
+	if current==401:return identity==0 and human.bucket_use(human.bucket_fill<=0)
 	if current in human.AUTHORED_TOOLS:
 		return human.swing(identity)
 	if motion!=null and motion.is_running():return false

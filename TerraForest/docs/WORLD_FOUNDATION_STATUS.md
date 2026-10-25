@@ -1,3 +1,34 @@
+## Water bucket visuals - implemented, appearance review pending, 2026-10-25
+
+The floating procedural pail is replaced by a 16,700-triangle Blender asset with
+thick hollow walls, rolled rims, a round bail, wooden sleeve and embedded 1024px
+metal/wood PBR maps. The actual character grips the handle; a separate R11 library
+adds carry/walk/run/jump and cosmetic scoop/pour recovery. Pickup and inventory
+icon share the new artwork. The bucket reuses the repaired finger-weight mesh;
+switching tools restores the original tool mesh and accepted pickaxe/axe actions.
+
+Inventory `water_ml` controls the visible interior, including modern item 401's
+empty/full states and legacy partial states. Presentation follows confirmed native
+transactions, including pending completions, and adds no combat events, reach,
+damage, water rules, save changes or body-integration owner.
+
+Thirty-six visual/runtime checks and eleven graphical world checks pass, including
+actual collect, pour, recovery and recollection. Shared attack timing (27), accepted
+pickaxe (11), pickaxe locomotion (24), character runtime, inventory drop (16) and
+the targeted character package check pass. First-person, third-person, asset,
+icon and actual-world captures were inspected. An early single-step capture
+sampled the old animation crossfade endpoint; normal frame increments corrected
+the evidence capture. The initial grip exposed old finger weights; the bucket now
+uses the repaired hand mesh and a wrapped thumb.
+
+Appearance still needs user review in play; engineering checks do not approve it.
+The lower body of the pail is cropped by first-person framing, and close-up skin
+and sleeves retain the existing character finish. The interior surface represents
+fill state without slosh or a pouring stream. Revisit these limits if the playtest
+calls for changes; close appearance review after inspecting carry, walk and use
+in game. [Source/rebuild](../addons/characters/authoring/Human.bucket.README.md) and
+[preview/evidence](evidence/water_bucket_visuals/README.md).
+
 ## Dev Bag and Dev Spawner separation, 2026-10-25
 
 ESC now separates the searchable, categorized inventory-item bag from living-entity

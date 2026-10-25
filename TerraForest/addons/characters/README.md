@@ -34,12 +34,16 @@ See the [editable source and rebuild steps](authoring/Zombie.drag_walk.README.md
 and [current gait verification](../../docs/evidence/zombie_weighted_limp/README.md).
 
 The R11 first-person rig replaces the former box hands, pickaxe and axe. Belt
-selection drives equipment visibility; the pickaxe keeps its approved fixed
-hold during movement, while native motor velocity drives axe walk/run/jump
+selection drives equipment visibility; native motor velocity drives fixed-grip
+pickaxe and axe walk/run/jump
 presentation. Empty hands use a low relaxed neutral pose
 between actions, including while moving. Head, mouth, eyes and hair are hidden in first-person view. The
 source full body remains available for later third-person presentation. Existing
-hammer, assembly tool and water bucket previews remain available.
+hammer/shovel animations and the assembly tool remain available. The water bucket
+now uses a Blender-authored PBR pail and an actual right-hand carry grip, with
+walk/run and cosmetic scoop/pour actions. Its interior reflects the inventory's
+water amount. Pickup and icon use the same model. See
+[bucket authoring](authoring/Human.bucket.README.md).
 
 Empty toolbelt slots now use `FP_Unarmed_Idle` and a separate
 `FP_Unarmed_Punch`. The right fist closes before extension, contacts at 0.467 s and
