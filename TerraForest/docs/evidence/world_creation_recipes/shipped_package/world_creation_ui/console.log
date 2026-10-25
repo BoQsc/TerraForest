@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS new recipe renders actual native plan preview
+PASS expanded towns report real building count
+PASS every visible option reaches launch recipe
+PASS settings invalidate preview and its identity
+PASS preview action stays on screen at (1920, 1080)
+PASS map stays on screen at (1920, 1080)
+PASS quit action stays on screen at (1920, 1080)
+PASS preview action stays on screen at (1280, 720)
+PASS map stays on screen at (1280, 720)
+PASS quit action stays on screen at (1280, 720)
+PASS settlement controls remain visible
+PASS settlement controls remain visible
+PASS settlement controls remain visible
+PASS settlement controls remain visible
+WORLD_CREATION_UI failures=0

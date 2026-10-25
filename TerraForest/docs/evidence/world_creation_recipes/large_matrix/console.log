@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=34 attempts=2 survey_ms=8.164 recipe_ms=10.753 fitting_ms=12.934
+RECIPE_MATRIX { "seed": 0, "generator": 19, "ok": true, "reason": "", "ms": 1138.91, "roads_m": 1879.07451343536, "trails_m": 3229.07561826706, "trails": 12, "loops": 1, "crossing_rejections": 5 }
+MARKET_PLAN_TIMINGS candidates=85 attempts=18 survey_ms=13.072 recipe_ms=89.872 fitting_ms=96.962
+RECIPE_MATRIX { "seed": 42, "generator": 19, "ok": true, "reason": "", "ms": 2213.084, "roads_m": 1650.63699817657, "trails_m": 3261.96521568298, "trails": 12, "loops": 1, "crossing_rejections": 18 }
+MARKET_PLAN_TIMINGS candidates=25 attempts=3 survey_ms=5.679 recipe_ms=17.111 fitting_ms=17.691
+RECIPE_MATRIX { "seed": 1703, "generator": 19, "ok": true, "reason": "", "ms": 1994.581, "roads_m": 1701.52659416199, "trails_m": 3066.63729476929, "trails": 12, "loops": 1, "crossing_rejections": 12 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=7.057 recipe_ms=5.414 fitting_ms=6.219
+RECIPE_MATRIX { "seed": 0, "generator": 20, "ok": true, "reason": "", "ms": 1205.539, "roads_m": 1866.99990606308, "trails_m": 3597.75455856323, "trails": 12, "loops": 1, "crossing_rejections": 5 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=16.204 recipe_ms=17.445 fitting_ms=19.37
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=42.191 recipe_ms=42.274 fitting_ms=54.375
+RECIPE_MATRIX { "seed": 42, "generator": 20, "ok": true, "reason": "", "ms": 25016.696, "roads_m": 1648.93561077118, "trails_m": 3485.01073133945, "trails": 12, "loops": 1, "crossing_rejections": 4 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=22.243 recipe_ms=41.364 fitting_ms=57.322
+RECIPE_MATRIX { "seed": 1703, "generator": 20, "ok": true, "reason": "", "ms": 3720.961, "roads_m": 1613.62452316284, "trails_m": 2980.47343254089, "trails": 11, "loops": 1, "crossing_rejections": 18 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=22.106 recipe_ms=14.184 fitting_ms=19.195
+RECIPE_MATRIX { "seed": 0, "generator": 21, "ok": true, "reason": "", "ms": 2650.774, "roads_m": 1864.29064321518, "trails_m": 3284.79307174683, "trails": 12, "loops": 1, "crossing_rejections": 2 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=42.249 recipe_ms=41.313 fitting_ms=53.667
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=14.547 recipe_ms=15.126 fitting_ms=17.68
+RECIPE_MATRIX { "seed": 42, "generator": 21, "ok": true, "reason": "", "ms": 21170.242, "roads_m": 1840.63164615631, "trails_m": 3316.19199430943, "trails": 12, "loops": 1, "crossing_rejections": 4 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=7.014 recipe_ms=15.732 fitting_ms=19.882
+RECIPE_MATRIX { "seed": 1703, "generator": 21, "ok": true, "reason": "", "ms": 1947.831, "roads_m": 1843.02952194214, "trails_m": 3024.790391922, "trails": 11, "loops": 1, "crossing_rejections": 17 }
+WORLD_RECIPE_MATRIX failures=0

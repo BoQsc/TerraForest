@@ -90,9 +90,11 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3)->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[])->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
+ for bounds:AABB in occupied:
+  protected.areas.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(12))
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12
  var candidates:Array=[]
  for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:

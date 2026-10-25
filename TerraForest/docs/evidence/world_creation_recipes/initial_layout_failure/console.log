@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=34 attempts=2 survey_ms=10.275 recipe_ms=18.782 fitting_ms=23.087
+RECIPE_MATRIX { "seed": 0, "generator": 19, "ok": true, "reason": "", "ms": 1252.199, "roads_m": 2179.28315067291, "trails_m": 3190.8339138031, "trails": 12, "loops": 1, "crossing_rejections": 1 }
+MARKET_PLAN_TIMINGS candidates=85 attempts=18 survey_ms=14.199 recipe_ms=100.673 fitting_ms=103.531
+RECIPE_MATRIX { "seed": 42, "generator": 19, "ok": true, "reason": "", "ms": 2143.011, "roads_m": 1786.13661670685, "trails_m": 3222.21938514709, "trails": 12, "loops": 1, "crossing_rejections": 6 }
+MARKET_PLAN_TIMINGS candidates=25 attempts=3 survey_ms=5.667 recipe_ms=16.886 fitting_ms=17.81
+RECIPE_MATRIX { "seed": 1703, "generator": 19, "ok": true, "reason": "", "ms": 2020.663, "roads_m": 1856.81107521057, "trails_m": 3027.27091598511, "trails": 12, "loops": 1, "crossing_rejections": 14 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=7.495 recipe_ms=6.112 fitting_ms=8.377
+RECIPE_MATRIX { "seed": 0, "generator": 20, "ok": true, "reason": "", "ms": 1240.578, "roads_m": 2003.59567165375, "trails_m": 3597.09389686584, "trails": 12, "loops": 1, "crossing_rejections": 6 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=13.581 recipe_ms=16.12 fitting_ms=18.922
+RECIPE_MATRIX { "seed": 42, "generator": 20, "ok": false, "reason": "Cannot connect every district within terrain limits; try another seed or fewer districts", "ms": 0, "roads_m": 0, "trails_m": 0, "trails": 0, "loops": 0, "crossing_rejections": 0 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=19.717 recipe_ms=41.317 fitting_ms=57.476
+RECIPE_MATRIX { "seed": 1703, "generator": 20, "ok": true, "reason": "", "ms": 4107.995, "roads_m": 1991.95069503784, "trails_m": 3091.22864437103, "trails": 11, "loops": 1, "crossing_rejections": 25 }
+MARKET_PLAN_TIMINGS candidates=33 attempts=1 survey_ms=22.269 recipe_ms=14.143 fitting_ms=18.66
+RECIPE_MATRIX { "seed": 0, "generator": 21, "ok": true, "reason": "", "ms": 2722.849, "roads_m": 2076.59521007538, "trails_m": 3284.13241004944, "trails": 12, "loops": 1, "crossing_rejections": 3 }
+MARKET_PLAN_TIMINGS candidates=86 attempts=3 survey_ms=43.566 recipe_ms=42.075 fitting_ms=54.397
+RECIPE_MATRIX { "seed": 42, "generator": 21, "ok": false, "reason": "Cannot connect every district within terrain limits; try another seed or fewer districts", "ms": 0, "roads_m": 0, "trails_m": 0, "trails": 0, "loops": 0, "crossing_rejections": 0 }
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=20.869 recipe_ms=41.501 fitting_ms=57.441
+RECIPE_MATRIX { "seed": 1703, "generator": 21, "ok": true, "reason": "", "ms": 5448.037, "roads_m": 2240.97380924225, "trails_m": 3076.37844944, "trails": 11, "loops": 1, "crossing_rejections": 10 }
+WORLD_RECIPE_MATRIX failures=2

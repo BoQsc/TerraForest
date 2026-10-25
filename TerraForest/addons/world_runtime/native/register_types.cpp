@@ -13,6 +13,7 @@
 #include "road_anchors.hpp"
 #include "generated_region.hpp"
 #include "road_editor_settings.hpp"
+#include "world_recipe.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
@@ -36,6 +37,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);
         GDREGISTER_CLASS(terraforest::NativeGeneratedRegion);
         GDREGISTER_CLASS(terraforest::NativeRoadEditorSettings);
+        GDREGISTER_CLASS(terraforest::NativeWorldRecipe);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

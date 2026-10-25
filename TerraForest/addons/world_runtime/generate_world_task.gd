@@ -9,6 +9,7 @@ var generation_screen:CanvasLayer
 var generation_cancel_path:=""
 var saved_map_stamps:Dictionary={}
 var planning_worker:Thread
+var world_options:Dictionary={}
 const Progress=preload("res://addons/world_runtime/generation_progress.gd")
 func progress(stage:String,completed:int=0,total:int=0,details:Dictionary={})->void:
  progress_changed.emit(stage,completed,total,details)
@@ -78,6 +79,9 @@ func run()->void:
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
  if generator not in [17,18,19,20,21] or seed_value<0 or seed_value>2147483647:quit(1);return
+ var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
+ if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
+ world_options=recipe.options
  var native_lakes:=not qualification and generator in [17,19,20,21]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
@@ -89,18 +93,25 @@ func run()->void:
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png(output_dir.path_join("generation_planning.png"))
  planning_worker=Thread.new()
- var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())),"--regional-connection" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
+ var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+ var plan_progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
+ var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress)
  if planning_worker.start(build)!=OK:planning_worker=null;print("WORLD_PLAN_WORKER_FAILED");quit(1);return
  var planning_frames:=0
- while planning_worker.is_alive():await process_frame;planning_frames+=1
+ var observed:Dictionary={}
+ while planning_worker.is_alive():
+  var current:Dictionary=plan_progress.snapshot()
+  if not current.is_empty() and current!=observed:progress("Planning terrain, streets and building sites",current.completed,current.total,current);observed=current
+  await process_frame;planning_frames+=1
  var prepared:Dictionary=planning_worker.wait_to_finish();planning_worker=null
  if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
  var plan:Dictionary=prepared.plan
  var works:Dictionary=prepared.works
  var market:Dictionary=prepared.market
  var connection:Dictionary=prepared.connection
+ var sites:Array=prepared.get("sites",[plan,market])
  print("WORLD_PLAN digest=",prepared.plan_digest," cache_hit=",prepared.cache_hit," ms=",prepared.worker_ms," planning_frames=",planning_frames)
- FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest}))
+ FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options}))
 
  if cancelled():quit(2);return
  var game=load("res://demo/world.tscn").instantiate()
@@ -134,6 +145,7 @@ func run()->void:
   if not game.terrain.backend.admit_initial_generation():print("OFFLINE_JOB_ADMISSION_REJECTED");game.free();quit(1);return
  var initialized:bool=await ready_world(game) if qualification else await wait_generation_data(game,60)
  if not initialized or game.terrain.backend.world_generator!=generator:print("WRONG_WORLD");quit(1);return
+ if not reopen and not world_options.is_empty() and not game.world_recipe.configure(world_options):print("WORLD_RECIPE_SAVE_FAILED");game.free();quit(1);return
  if native_lakes and not game.terrain.backend.initial_lakes_result.get("ok",false):print("OFFLINE_LAKE_DATA_FAILED ",game.terrain.backend.initial_lakes_result);game.free();quit(1);return
  progress("Loading water sources")
  if not await wait_until(func():return game.lakes.statistics().ready==game.lakes.statistics().lakes and not game.lakes.capture_snapshot().is_empty(),120):print("GENERATED_WATER_BAKE_FAILED ",game.lakes.statistics());game.free();quit(1);return
@@ -212,8 +224,8 @@ func run()->void:
    if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
    completed_edits+=runner.completed
  game.structure_mode=true;game.structure_rotation=0
- var all_lots:Array=plan.lots.duplicate()
- if not market.is_empty():all_lots.append_array(market.lots)
+ var all_lots:Array=[]
+ for site:Dictionary in sites:all_lots.append_array(site.get("lots",[]))
  var completed_buildings:=0
  progress("Placing buildings and interiors",0,all_lots.size())
  for lot:Dictionary in all_lots:
@@ -232,9 +244,10 @@ func run()->void:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
  progress("Baking streets and location metadata")
- var total_plates:int=plan.get("block_paving",{}).get("tiles",0)+market.get("block_paving",{}).get("tiles",0)
+ var total_plates:=0
+ for site:Dictionary in sites:total_plates+=site.get("block_paving",{}).get("tiles",0)
  var completed_plates:=0
- for site:Dictionary in [plan,market]:
+ for site:Dictionary in sites:
   if site.is_empty():continue
   var pavement:Dictionary=site.get("block_paving",{})
   if not pavement.get("ok",false):print("PAVING_PLAN_MISSING");quit(1);return
@@ -247,7 +260,10 @@ func run()->void:
    progress("Baking destructible sidewalk plates",completed_plates,total_plates)
    await process_frame
  if not game.generated_region.publish_neighborhood(seed_value,plan,generator):print("REGION_PUBLICATION_FAILED");quit(1);return
- if not connection.is_empty():
+ if not world_options.is_empty():
+  var metadata:Dictionary=prepared.navigation
+  if not game.generated_region.store.set_plan(seed_value,generator,metadata.places,metadata.roads):print("CUSTOM_MAP_FAILED");quit(1);return
+ elif not connection.is_empty():
   var metadata:Dictionary=game.generated_region.store.get_plan()
   for i in range(1,connection.points.size()):metadata.roads.append({"a":connection.points[i-1],"b":connection.points[i],"width":8.0})
   if market.is_empty():
@@ -268,7 +284,8 @@ func run()->void:
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true
  game.world_map.refresh_world()
- if game.world_map.places.size()!=((1 if connection.is_empty() else 2)+(1 if generator==18 else 0)) or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
+ var expected_places:int=sites.size() if not world_options.is_empty() else ((1 if connection.is_empty() else 2)+(1 if generator==18 else 0))
+ if game.world_map.places.size()!=expected_places or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
  var road:Dictionary=plan.roads[4]
  if not qualification:

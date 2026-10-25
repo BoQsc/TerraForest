@@ -3,13 +3,16 @@ extends RefCounted
 # Worker orchestration only. Native codecs validate binary fields/checkpoints;
 # creating a world never launches another rendered game to verify its storage.
 const Survey=preload("res://addons/world_runtime/survey_cache.gd")
-static func verify(path:String,seed_value:int,generator:int)->Dictionary:
+static func verify(path:String,seed_value:int,generator:int,options:Dictionary={})->Dictionary:
  var began:=Time.get_ticks_usec()
  var raw:RefCounted=ClassDB.instantiate("NativeWorldArchive")
  var canonical:PackedByteArray=raw.read(path)
  var decoded:Dictionary=raw.decode(canonical)
  if not decoded.get("ok",false):return {"ok":false,"reason":"Generated world root is invalid"}
  var sections:Dictionary=decoded.sections
+ var recipe:RefCounted=ClassDB.instantiate("NativeWorldRecipe")
+ if sections.has("world_recipe_v1") and not recipe.validate_snapshot(sections.world_recipe_v1):return {"ok":false,"reason":"Generated world recipe is invalid"}
+ if not options.is_empty() and sections.get("world_recipe_v1",PackedByteArray())!=recipe.encode(options):return {"ok":false,"reason":"Generated world recipe differs from requested settings"}
  for required:String in ["terrain","structures","generated_region","volumetric_water"]:
   if not sections.has(required):return {"ok":false,"reason":"Generated world is missing "+required}
  var region:RefCounted=ClassDB.instantiate("NativeGeneratedRegion")

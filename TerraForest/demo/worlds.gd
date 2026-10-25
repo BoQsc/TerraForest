@@ -7,7 +7,16 @@ var seed_field: SpinBox
 var preset: OptionButton
 var ocean:CheckBox
 var buildable_ground:CheckBox
-var layout_preset:OptionButton
+var biome:OptionButton
+var settlement_count:OptionButton
+var district_count:OptionButton
+var road_network:OptionButton
+var offroads:OptionButton
+var recipe_summary:Label
+var preview_metrics:Label
+var preview_empty:Label
+var preview_started:=0
+var plan_progress:RefCounted
 var gameplay: CheckBox
 var notice: Label
 var filter_field: LineEdit
@@ -53,10 +62,14 @@ func _ready() -> void:
 	get_tree().auto_accept_quit=false
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
-	var background:=ColorRect.new();background.color=Color("101e22");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
-	var panel:=VBoxContainer.new();panel.position=Vector2(160,40);panel.size=Vector2(1600,1000);panel.add_theme_constant_override("separation",12);add_child(panel)
-	heading(panel,"TERRAFOREST / WORLDS",36)
-	heading(panel,"Choose where to play. Each named world keeps its own saved progress.",20)
+	preload("res://demo/world_creation_panel.gd").apply_theme(self)
+	var background:=ColorRect.new();background.color=Color("0b171d");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
+	var margin:=MarginContainer.new();margin.add_theme_constant_override("margin_left",48);margin.add_theme_constant_override("margin_right",48);margin.add_theme_constant_override("margin_top",24);margin.add_theme_constant_override("margin_bottom",20);add_child(margin)
+	get_viewport().size_changed.connect(_fit_browser.bind(margin));_fit_browser(margin)
+	var panel:=VBoxContainer.new();panel.add_theme_constant_override("separation",14);margin.add_child(panel)
+	var branding:=HBoxContainer.new();panel.add_child(branding)
+	var title:=heading(branding,"TERRAFOREST",32);title.add_theme_color_override("font_color",Color("91d5b4"));title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	heading(branding,"WORLDS / YOUR NEXT CHAPTER",16)
 	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;panel.add_child(columns)
 	var saved:=VBoxContainer.new();saved.name="My worlds";saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
 	heading(saved,"Saved worlds")
@@ -66,10 +79,10 @@ func _ready() -> void:
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Generation drafts (developer, read-only)";show_preparation.visible="--developer-worlds" in OS.get_cmdline_user_args();show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
 	var library:=HBoxContainer.new();library.add_theme_constant_override("separation",28);library.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library)
-	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(600,300);library.add_child(worlds)
-	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=660;library.add_child(detail_column)
+	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(300,250);library.add_child(worlds)
+	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=380;detail_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;library.add_child(detail_column)
 	saved_title=heading(detail_column,"Select a world",24)
-	saved_picture=TextureRect.new();saved_picture.custom_minimum_size=Vector2(660,200);saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(saved_picture)
+	saved_picture=TextureRect.new();saved_picture.custom_minimum_size=Vector2(380,200);saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(saved_picture)
 	saved_details=heading(detail_column,"",18);saved_details.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	worlds.item_selected.connect(show_saved_details)
 	button(saved,"Open selected world",func():launch_selected(false))
@@ -78,42 +91,17 @@ func _ready() -> void:
 	photograph_button=button(library_actions,"Refresh photographs",refresh_photographs)
 	photograph_cancel=button(library_actions,"Cancel photographs",cancel_photographs);photograph_cancel.hide()
 	button(library_actions,"Recover interrupted publication",show_recovery)
-	var create_page:=HBoxContainer.new();create_page.name="Create world";create_page.add_theme_constant_override("separation",40);columns.add_child(create_page)
-	var create:=VBoxContainer.new();create.custom_minimum_size.x=600;create.add_theme_constant_override("separation",8);create_page.add_child(create)
-	heading(create,"Create a world")
-	heading(create,"World name",18);name_field=LineEdit.new();name_field.placeholder_text="Leave blank for a generated two-word name";name_field.max_length=48;create.add_child(name_field)
-	heading(create,"Landscape",18);preset=OptionButton.new();create.add_child(preset)
-	for id: int in Launch.PRESETS:
-		if id==Launch.INTEGRATED_PRESET or "--developer-worlds" in OS.get_cmdline_user_args():preset.add_item(Launch.PRESETS[id],id)
-	preset.select(0)
-	ocean=CheckBox.new();ocean.text="Surrounding ocean and beaches";ocean.button_pressed=true;create.add_child(ocean)
-	buildable_ground=CheckBox.new();buildable_ground.text="Build-friendly terrain";buildable_ground.button_pressed=true;create.add_child(buildable_ground)
-	buildable_ground.tooltip_text="Adds broader, gently connected ground levels that fit the block grid. Applies to new worlds; building rules and floating construction stay the same."
-	buildable_ground.toggled.connect(func(_value:bool):invalidate_preview())
-	preset.item_selected.connect(func(_index:int):buildable_ground.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
-	ocean.tooltip_text="Applies to new terrain-fitted worlds. Existing worlds keep their saved coastline."
-	preset.item_selected.connect(func(_index:int):ocean.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
-	layout_preset=OptionButton.new();layout_preset.add_item("Two settlements with connecting road");layout_preset.add_item("One settlement with regional road");layout_preset.add_item("One standalone settlement");create.add_child(layout_preset)
-	layout_preset.tooltip_text="Changes the actual cached placement plan used by preview and generation."
-	layout_preset.item_selected.connect(func(_index:int):invalidate_preview())
-	preset.item_selected.connect(func(_index:int):layout_preset.visible=preset.get_selected_id()==Launch.INTEGRATED_PRESET)
-	heading(create,"Seed",18);seed_field=SpinBox.new();seed_field.min_value=0;seed_field.max_value=2147483647;seed_field.step=1;seed_field.value=1703;create.add_child(seed_field)
-	var explanation:=heading(create,"Generate → Load → Play. Terrain, locations, roads, world map and loading photographs are created together. Your saved world opens automatically when generation finishes.",18);explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	var map_column:=VBoxContainer.new();map_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;create_page.add_child(map_column)
-	heading(map_column,"World preview",24)
-	preview_view=TextureRect.new();preview_view.custom_minimum_size=Vector2(560,410);preview_view.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;preview_view.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview_view.size_flags_vertical=Control.SIZE_EXPAND_FILL;map_column.add_child(preview_view)
-	preview_status=heading(map_column,"Preview terrain, fitted buildings and connected roads before baking.",18);preview_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	preview_button=button(map_column,"Preview world",start_preview)
-	seed_field.value_changed.connect(func(_value:float):invalidate_preview())
-	ocean.toggled.connect(func(_value:bool):invalidate_preview())
-	preset.item_selected.connect(func(_index:int):invalidate_preview())
-	button(create,"Generate and play",func():launch_selected(true))
-	cancel_button=button(create,"Cancel generation",cancel_preparation);cancel_button.hide()
+	preload("res://demo/world_creation_panel.gd").build(self,columns)
 	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
-	notice=heading(panel,"",18);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.custom_minimum_size.y=54
-	button(panel,"Quit",request_quit)
+	var bottom:=HBoxContainer.new();panel.add_child(bottom)
+	notice=heading(bottom,"",16);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	button(bottom,"Quit",request_quit)
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
+func _fit_browser(panel:Control)->void:
+	var available:=get_viewport_rect().size
+	var factor:=clampf(minf(available.y/900.0,available.x/1280.0),0.5,1.0)
+	panel.scale=Vector2.ONE*factor;panel.size=available/factor
 func refresh() -> void:
 	if preparation_pid>=0 or photograph_pid>=0:return
 	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed,["played","created","name"][sort_order.selected]);filter_list()
@@ -149,6 +137,8 @@ func show_saved_details(index:int)->void:
 		var id:int=int(data.generator)
 		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
+	var options:Dictionary=data.get("world_options",{})
+	if options.has_all(["settlements","districts","biome"]) and int(options.biome) in [0,1,2]:lines.append("%d settlements · %d districts · %s"%[int(options.settlements),int(options.settlements)*int(options.districts),["Woodland","Woodland & meadow mosaic","Open grassland with groves"][int(options.biome)]])
 	if saved_picture.texture==null:lines.append("No cached photograph yet.")
 	lines.append("Opening uses this world's saved generation settings.")
 	saved_details.text="\n".join(lines)
@@ -160,7 +150,8 @@ func launch_selected(create: bool) -> void:
 	if not create:
 		if worlds.get_selected_items().is_empty():notice.text="Select a saved world first.";return
 		slot=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
-	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,["connected","road","settlement"][layout_preset.selected],buildable_ground.button_pressed)
+	var layout:="connected" if settlement_count.selected>0 else "settlement"
+	var result:=Launch.command(slot,create,preset.get_selected_id(),int(seed_field.value),gameplay.button_pressed,"user://worlds",ocean.button_pressed,layout,buildable_ground.button_pressed,selected_options() if create else {})
 	if not result.ok:notice.text=result.reason;return
 	if result.get("prepare",false):
 		start_preparation(result,slot);return
@@ -291,30 +282,51 @@ func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_CLOSE_REQUEST:request_quit()
 
 func selected_preview_key()->String:
-	return "%d/%d/%d"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),layout_preset.selected] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+	return "%d/%d/%s"%[int(seed_field.value),Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed),preload("res://addons/world_runtime/world_recipe.gd").encode(selected_options()).hex_encode()] if preset.get_selected_id()==Launch.INTEGRATED_PRESET else "%d/%d"%[int(seed_field.value),preset.get_selected_id()]
+func selected_options()->Dictionary:
+	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:return {}
+	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected}
+func update_recipe_summary()->void:
+	var towns:=settlement_count.selected+1;var districts:=district_count.selected+1
+	recipe_summary.text="%d settlements  ·  %d districts  ·  %s\nGenerate → Load → Play, in this window."%[towns,towns*districts,biome.get_item_text(biome.selected)]
 func invalidate_preview()->void:
 	preview_view.texture=null
+	preview_empty.show();preview_metrics.text="SETTINGS CHANGED  ·  Preview needed";update_recipe_summary()
 	preview_status.text="Settings changed. Preview the new world plan before creating."
 func start_preview()->void:
 	if preview_worker!=null:return
 	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
-	preview_key=selected_preview_key();preview_status.text="Planning terrain, settlements and roads…";preview_button.disabled=true
+	preview_started=Time.get_ticks_msec();preview_key=selected_preview_key();preview_status.text="Surveying terrain, fitting districts and connecting roads…";preview_button.disabled=true;preview_empty.hide()
 	preview_worker=Thread.new()
-	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,layout_preset.selected==0,layout_preset.selected<2)
+	plan_progress=preload("res://addons/world_runtime/world_plan_progress.gd").new()
+	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
-	if preview_worker==null or preview_worker.is_alive():return
+	if preview_worker==null:return
+	if preview_worker.is_alive():
+		preview_metrics.text="PLANNING  ·  %.1f s elapsed  ·  Native worker / UI remains interactive"%((Time.get_ticks_msec()-preview_started)/1000.0)
+		if plan_progress!=null and preview_key==selected_preview_key():
+			var current:Dictionary=plan_progress.snapshot()
+			if not current.is_empty():preview_status.text=current.activity+"\n"+current.work
+		return
 	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=false
 	if not completed is Dictionary:preview_status.text="Terrain preview failed. Try again after checking the generator log.";return
 	var result:Dictionary=completed
-	if preview_key!=selected_preview_key():return
-	if not result.get("ok",false):preview_status.text="Terrain preview failed. No world was created.";return
+	if preview_key!=selected_preview_key():preview_metrics.text="SETTINGS CHANGED  ·  Preview needed";return
+	if not result.get("ok",false):preview_status.text=str(result.get("reason","Terrain preview failed."))+" No world was created.";preview_metrics.text="PLAN UNAVAILABLE  ·  Adjust settings or try another seed";preview_empty.show();return
+	preview_empty.hide()
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
 	if result.has("building_count"):
 		preview_status.text="World plan · north is up · 2 km × 2 km\n%d buildings · roads in gold · buildings in ivory\n"%int(result.building_count)
 		preview_status.text+="The bake reuses this cached placement plan." if result.get("plan_reusable",false) else "Cache unavailable; generation will repeat this deterministic plan."
+		var network:Dictionary=result.get("network",{})
+		preview_metrics.text="%d BUILDINGS  ·  %.2f km regional roads  ·  %.2f km trails"%[result.building_count,float(network.get("road_length_m",0))/1000,float(network.get("trail_length_m",0))/1000]
+		if result.has("options"):
+			preview_status.text="%d settlements / %d districts · %d trails · %d alternate routes.\n"%[result.options.settlements,result.options.settlements*result.options.districts,network.get("trail_count",0),network.get("loop_count",0)]+("Placement plan cached for generation." if result.get("plan_reusable",false) else "Deterministic plan ready; disk cache unavailable.")
+			if result.options.network==1 and network.get("loop_count",0)==0:preview_status.text+=" No additional inter-district route fits this plan."
+			if network.get("trail_count",0)<network.get("requested_trails",0):preview_status.text+=" Some trail candidates could not fit the terrain."
 	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:
 	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null

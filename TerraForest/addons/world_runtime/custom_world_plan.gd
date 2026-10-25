@@ -1,0 +1,127 @@
+extends RefCounted
+const VERSION:=3
+const LIMIT:=8*1024*1024
+const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
+const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
+const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
+const Lots=preload("res://addons/structures/northern_lots.gd")
+const Market=preload("res://addons/structures/central_market.gd")
+const Survey=preload("res://addons/world_runtime/survey_cache.gd")
+const Routes=preload("res://addons/structures/regional_route_planner.gd")
+static func read_plan(path:String,key:String)->Dictionary:
+ var file:=FileAccess.open(path,FileAccess.READ)
+ if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
+ var checksum:=file.get_buffer(32);var bytes:=file.get_buffer(file.get_length()-32)
+ if Survey.digest(bytes)!=checksum:return {}
+ var value=bytes_to_var(bytes)
+ if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
+ if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>6:return {}
+ for site:Dictionary in value.sites:
+  var source:Array=Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center)
+  if site.lots.size()!=source.size():return {}
+  for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
+ value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
+ value["plan_digest"]=checksum.hex_encode();value["cache_hit"]=true
+ return value
+static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null)->Dictionary:
+ var started:=Time.get_ticks_usec()
+ var encoded:=Recipe.encode(options)
+ if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21]:return {"ok":false,"reason":"Unsupported world recipe"}
+ if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
+ var core=ClassDB.instantiate("TerrainCore")
+ var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
+ var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
+ var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
+ var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
+ var cached:=read_plan(path,key)
+ if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;return cached
+ if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Native terrain initialization failed"}
+ var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
+ var sites:Array=[];var occupied:Array=[];var works:Dictionary={"ok":true,"segments":[],"bounds":AABB()}
+ var hints:Array=[3,0,1]
+ for town in options.settlements:
+  if progress!=null:progress.record("Fitting settlement %d of %d"%[town+1,options.settlements],sites.size(),options.settlements*options.districts,"Native streets, foundation samples and entrances / layout pass %d / maximum fill 2 m, cut 3 m"%[layout_variant+1])
+  var hint:Vector3=layout.sites[hints[town]].position
+  if town==2:hint+=[Vector3.ZERO,Vector3(96,0,0),Vector3(-96,0,0),Vector3(0,0,-96)][layout_variant]
+  var site:Dictionary=Market.locate(core,hint,occupied[0]) if town==1 else Planner.locate(core,hint,occupied)
+  if not site.get("ok",false):
+   site["reason"]="Settlement %d: %s"%[town+1,site.get("reason","Site fitting failed")]
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress) if town==2 else site
+  site["recipe_kind"]="market" if town==1 else "neighborhood";site["town"]=town;site["district"]=0
+  var earthworks:=Planner.earthworks(site)
+  if not earthworks.get("ok",false):return earthworks
+  occupied.append(earthworks.bounds);sites.append(site)
+  works.bounds=earthworks.bounds if sites.size()==1 else works.bounds.merge(earthworks.bounds)
+  works.segments.append_array(earthworks.segments)
+ for town in options.settlements:
+  if options.districts<2:break
+  if progress!=null:progress.record("Expanding settlement %d of %d"%[town+1,options.settlements],sites.size(),options.settlements*options.districts,"Relocating independent districts around terrain, occupied lots, water and protected sites")
+  var offset:Vector3=[Vector3(192,0,0),Vector3(0,0,192),Vector3(-192,0,0),Vector3(0,0,-192)][layout_variant]
+  var hint:Vector3=sites[town].center+offset*(1 if town%2==0 else -1)
+  var site:=Planner.locate(core,hint,occupied)
+  if not site.get("ok",false):
+   site["reason"]="Settlement %d expansion: %s"%[town+1,site.get("reason","Site fitting failed")]
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress)
+  site["recipe_kind"]="neighborhood";site["town"]=town;site["district"]=1
+  var earthworks:=Planner.earthworks(site)
+  if not earthworks.get("ok",false):return earthworks
+  occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
+ var protected:=Planner.reservations(core,layout.sites[3].position)
+ if not protected.get("ok",false):return {"ok":false,"reason":"Native route reservations unavailable"}
+ var reserved:Array=protected.areas.duplicate()
+ for town in options.settlements:
+  var hint:Dictionary=layout.sites[hints[town]]
+  reserved.erase(Rect2(Vector2(hint.position.x,hint.position.z)-Vector2.ONE*(hint.radius+32),Vector2.ONE*(hint.radius+32)*2))
+ var building_count:=0
+ for site:Dictionary in sites:
+  for lot:Dictionary in site.lots:
+   var bounds:AABB=lot.bounds
+   reserved.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(2));building_count+=1
+ var exits:Array=[];var streets:Array=[]
+ for site:Dictionary in sites:
+  var points:=PackedVector3Array(Routes.arrival_points(site,reserved,true))
+  for point:Vector3 in Routes.arrival_points(site,reserved,false):
+   if not points.has(point):points.append(point)
+  exits.append(points);streets.append_array(site.roads)
+ if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
+ var network:Dictionary=core.plan_region_network(exits,reserved,options.network==1,options.trails,seed_value,streets)
+ if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
+ if not network.links.is_empty():works.segments=network.segments+works.segments;works.bounds=works.bounds.merge(network.bounds)
+ var result:Dictionary={"ok":true,"version":3,"recipe_version":VERSION,"recipe_key":key,"seed":seed_value,"generator":generator,"options":options.duplicate(),"sites":sites,"connection":network if not network.links.is_empty() else {},"works":works,"building_count":building_count,"network":network}
+ result["layout_variant"]=layout_variant
+ var navigation:=navigation_metadata(sites,network)
+ if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
+ result["navigation"]=navigation
+ var packed:Dictionary=result.duplicate(true)
+ if progress!=null:progress.record("Validating and caching the placement plan",sites.size(),sites.size(),"%d buildings / %d districts / native binary navigation validation"%[building_count,sites.size()])
+ for site:Dictionary in packed.sites:
+  for lot:Dictionary in site.lots:lot.erase("asset")
+ var bytes:=var_to_bytes(packed);var checksum:=Survey.digest(bytes)
+ result["plan"]=sites[0];result["market"]=sites[1] if options.settlements>1 else {}
+ result["plan_digest"]=checksum.hex_encode();result["cache_hit"]=false;result["cache_persisted"]=false
+ if bytes.size()+32<=LIMIT:
+  DirAccess.make_dir_recursive_absolute(folder)
+  var temporary:=path+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
+  var file:=FileAccess.open(temporary,FileAccess.WRITE)
+  if file!=null:
+   file.store_buffer(checksum);file.store_buffer(bytes);file.close()
+   if not read_plan(temporary,key).is_empty():result.cache_persisted=DirAccess.rename_absolute(temporary,path)==OK
+   if FileAccess.file_exists(temporary):DirAccess.remove_absolute(temporary)
+ result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
+ result["cache_path"]=path
+ return result
+static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted)->Dictionary:
+ var elapsed:float=(Time.get_ticks_usec()-started)/1000.0
+ if layout_variant>=3:failure["worker_ms"]=elapsed;return failure
+ var result:=build(seed_value,generator,options,folder,layout_variant+1,progress)
+ result["worker_ms"]=float(result.get("worker_ms",0))+elapsed
+ return result
+static func navigation_metadata(sites:Array,network:Dictionary)->Dictionary:
+ var metadata:Dictionary={"places":[],"roads":[]}
+ for index in sites.size():
+  var site:Dictionary=sites[index]
+  var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"Settlement %d / District %d"%[site.town+1,site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
+  metadata.places.append_array(district.places);metadata.roads.append_array(district.roads)
+ for link:Dictionary in network.links:
+  for index in range(1,link.points.size()):metadata.roads.append({"a":link.points[index-1],"b":link.points[index],"width":5.0 if link.trail else 8.0})
+ return metadata

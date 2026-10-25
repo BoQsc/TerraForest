@@ -1,0 +1,76 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 203.42 ms at 9783
+[terrain-hitch] base controller 204.47 ms at 9785
+[terrain-hitch] controller process 205.6 ms at 9786
+[terrain-hitch] world process 206.62 ms at 9787
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 115.38 ms at 10083
+[terrain-hitch] base controller 116.33 ms at 10084
+[terrain-hitch] controller process 117.3 ms at 10085
+[terrain-hitch] world process 118.29 ms at 10086
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 113.34 ms at 10213
+[terrain-hitch] base controller 114.36 ms at 10214
+[terrain-hitch] controller process 115.44 ms at 10215
+[terrain-hitch] world process 116.51 ms at 10216
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 111.52 ms at 10343
+[terrain-hitch] base controller 112.44 ms at 10344
+[terrain-hitch] controller process 113.44 ms at 10345
+[terrain-hitch] world process 114.6 ms at 10346
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 108.78 ms at 10472
+[terrain-hitch] base controller 109.71 ms at 10473
+[terrain-hitch] controller process 110.75 ms at 10474
+[terrain-hitch] world process 112.05 ms at 10475
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 116.78 ms at 10605
+[terrain-hitch] base controller 117.94 ms at 10606
+[terrain-hitch] controller process 118.85 ms at 10607
+[terrain-hitch] world process 119.83 ms at 10608
+PASS custom world becomes playable
+PASS saved custom biome restores in packaged runtime
+PASS all custom districts restore
+PASS all world map layers finish
+[TerrainRewrite] Temporary test world: save skipped
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 189.65 ms at 20301
+[terrain-hitch] base controller 190.68 ms at 20302
+[terrain-hitch] controller process 191.66 ms at 20303
+[terrain-hitch] world process 192.69 ms at 20304
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 178.01 ms at 20646
+[terrain-hitch] base controller 178.93 ms at 20647
+[terrain-hitch] controller process 180.12 ms at 20648
+[terrain-hitch] world process 181.27 ms at 20649
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 127.93 ms at 20796
+[terrain-hitch] base controller 129.03 ms at 20797
+[terrain-hitch] controller process 130.05 ms at 20798
+[terrain-hitch] world process 131.03 ms at 20799
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 125.4 ms at 20941
+[terrain-hitch] base controller 127.39 ms at 20943
+[terrain-hitch] controller process 128.56 ms at 20944
+[terrain-hitch] world process 129.68 ms at 20945
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 114.71 ms at 21078
+[terrain-hitch] base controller 115.89 ms at 21079
+[terrain-hitch] controller process 116.95 ms at 21080
+[terrain-hitch] world process 118.22 ms at 21081
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 115.06 ms at 21209
+[terrain-hitch] base controller 116.14 ms at 21210
+[terrain-hitch] controller process 117.21 ms at 21211
+[terrain-hitch] world process 118.41 ms at 21212
+PASS custom world becomes playable
+PASS saved custom biome restores in packaged runtime
+PASS all custom districts restore
+PASS all world map layers finish
+PASS warm packaged reload reuses all four world map layers
+[TerrainRewrite] Temporary test world: save skipped
+PASS read-only checks leave canonical world unchanged
+WORLD_RECIPE_REOPEN failures=0

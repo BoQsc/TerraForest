@@ -161,6 +161,125 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
  return failure("Route refinement limit reached");
 }
 
+Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,bool loops,int trails,int64_t seed,const Array &streets){
+ if(districts.is_empty()||districts.size()>6||reservations.size()>4096||streets.size()>4096||trails<0||trails>2||seed<0||seed>0x7fffffff)return failure("Invalid regional network settings");
+ struct FittedEdge{Vector3 start,finish;bool curved;};
+ std::vector<FittedEdge> graded;
+ for(int index=0;index<streets.size();++index){
+  if(streets[index].get_type()!=Variant::DICTIONARY)return failure("Invalid fitted street");
+  Dictionary street=streets[index];
+  if(!street.has("start")||!street.has("finish")||street["start"].get_type()!=Variant::VECTOR3||street["finish"].get_type()!=Variant::VECTOR3)return failure("Missing fitted street endpoints");
+  Vector3 start=street["start"],finish=street["finish"];
+  if(!inside(start)||!inside(finish)||horizontal(finish-start)<.01)return failure("Invalid fitted street endpoints");
+  graded.push_back({start,finish,street.has("coefficients")});
+ }
+ int crossing_rejections=0;
+ auto compatible=[&](const PackedVector3Array &points){
+  for(int index=1;index<points.size();++index){
+   const Vector3 start=points[index-1],finish=points[index];
+   const Vector2 origin(start.x,start.z),axis(finish.x-start.x,finish.z-start.z);
+   for(const auto &edge:graded){
+    const Vector2 other(edge.start.x,edge.start.z),span(edge.finish.x-edge.start.x,edge.finish.z-edge.start.z),offset=other-origin;
+    auto heights_match=[&](double fraction,double other_fraction){
+     const double eased=edge.curved?other_fraction*other_fraction*(3-2*other_fraction):other_fraction;
+     return std::abs(start.y+(finish.y-start.y)*fraction-edge.start.y-(edge.finish.y-edge.start.y)*eased)<=.25;
+    };
+    const double denominator=axis.cross(span);
+    if(std::abs(denominator)>.0001){
+     const double fraction=offset.cross(span)/denominator,other_fraction=offset.cross(axis)/denominator;
+     if(fraction>=0&&fraction<=1&&other_fraction>=0&&other_fraction<=1&&!heights_match(fraction,other_fraction)){++crossing_rejections;return false;}
+    }else if(std::abs(offset.cross(axis))<.01){
+     const double lower=std::max(0.0,std::min(double(offset.dot(axis)/axis.length_squared()),double((offset+span).dot(axis)/axis.length_squared())));
+     const double upper=std::min(1.0,std::max(double(offset.dot(axis)/axis.length_squared()),double((offset+span).dot(axis)/axis.length_squared())));
+     if(lower<=upper)for(double fraction:{lower,(lower+upper)*.5,upper}){
+      const Vector2 point=origin+axis*fraction;
+      if(!heights_match(fraction,std::clamp(double((point-other).dot(span)/span.length_squared()),0.0,1.0))){++crossing_rejections;return false;}
+     }
+    }
+   }
+  }
+  return true;
+ };
+ std::vector<PackedVector3Array> exits;
+ for(int index=0;index<districts.size();++index){
+  if(districts[index].get_type()!=Variant::PACKED_VECTOR3_ARRAY)return failure("Invalid district exits");
+  PackedVector3Array points=districts[index];
+  if(points.is_empty()||points.size()>16)return failure("District has no unobstructed street exits");
+  for(int point=0;point<points.size();++point)if(!inside(points[point]))return failure("District exit outside world");
+  exits.push_back(points);
+ }
+ struct Pair{int source,target;double distance;};
+ std::vector<Pair> pairs;
+ for(int source=0;source<int(exits.size());++source)for(int target=source+1;target<int(exits.size());++target){
+  double distance=1e30;
+  for(int first=0;first<exits[source].size();++first)for(int second=0;second<exits[target].size();++second)distance=std::min(distance,double(exits[source][first].distance_squared_to(exits[target][second])));
+  pairs.push_back({source,target,distance});
+ }
+ std::stable_sort(pairs.begin(),pairs.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
+ int owners[6]={0,1,2,3,4,5};bool connected[6][6]={};
+ Array links,segments;AABB bounds;bool first_bounds=true;double road_length=0,trail_length=0;int attempts=0,loop_count=0;
+ auto append=[&](Dictionary route,int source,int target,bool trail){
+  PackedVector3Array points=route["points"];double length=0;
+  Array parts;
+  for(int point=1;point<points.size();++point){
+   length+=points[point-1].distance_to(points[point]);
+   graded.push_back({points[point-1],points[point],false});
+   if(trail)parts.push_back(segment(points[point-1],points[point],2.5,3,4,1,1));
+  }
+  if(!trail)parts=route["segments"];
+  for(int part=0;part<parts.size();++part){Dictionary value=parts[part];AABB box=value["bounds"];bounds=first_bounds?box:bounds.merge(box);first_bounds=false;segments.push_back(value);}
+  Dictionary link;link["source"]=source;link["target"]=target;link["trail"]=trail;link["points"]=points;link["length_m"]=length;links.push_back(link);
+  if(trail)trail_length+=length;else road_length+=length;
+ };
+ auto connect=[&](int source,int target){
+  std::vector<Pair> choices;
+  for(int first=0;first<exits[source].size();++first)for(int second=0;second<exits[target].size();++second)choices.push_back({first,second,double(exits[source][first].distance_squared_to(exits[target][second]))});
+  std::stable_sort(choices.begin(),choices.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
+  for(size_t choice=0;choice<std::min(size_t(64),choices.size());++choice){
+   const auto &pair=choices[choice];++attempts;
+   Dictionary route=plan_regional_route(world,exits[source][pair.source],exits[target][pair.target],reservations);
+   if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
+   append(route,source,target,false);connected[source][target]=true;return true;
+  }
+  return false;
+ };
+ for(const auto &pair:pairs){
+  if(owners[pair.source]==owners[pair.target])continue;
+  if(!connect(pair.source,pair.target))continue;
+  const int previous=owners[pair.target],replacement=owners[pair.source];
+  for(int index=0;index<int(exits.size());++index)if(owners[index]==previous)owners[index]=replacement;
+ }
+ for(int index=1;index<int(exits.size());++index)if(owners[index]!=owners[0]){
+  Dictionary result=failure("Cannot connect every district within terrain limits; try another seed or fewer districts");
+  result["isolated_district"]=index;result["route_attempts"]=attempts;result["crossing_rejections"]=crossing_rejections;return result;
+ }
+ if(loops)for(const auto &pair:pairs){
+  if(connected[pair.source][pair.target])continue;
+  if(connect(pair.source,pair.target)){++loop_count;break;}
+ }
+ const int desired_trails=trails*int(exits.size());
+ int trail_count=0;
+ for(int source=0;source<int(exits.size());++source)for(int branch=0;branch<trails;++branch){
+  for(int direction=0;direction<8;++direction){
+   const int rotation=(direction+source*3+branch*4+int(seed%8))%8;
+   const double angle=rotation*3.141592653589793/4;
+   const Vector3 start=exits[source][(branch+direction)%exits[source].size()];
+   Vector3 finish=start+Vector3(std::cos(angle)*240,0,std::sin(angle)*240);
+   if(finish.x<32||finish.x>1968||finish.z<32||finish.z>1968)continue;
+   finish.y=world.height(finish.x,finish.z,false);++attempts;
+   Dictionary route=plan_regional_route(world,start,finish,reservations);
+   if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
+   append(route,source,-1,true);++trail_count;break;
+  }
+ }
+ Dictionary result;result["ok"]=true;result["links"]=links;result["segments"]=segments;result["bounds"]=bounds;
+ result["district_count"]=int(exits.size());result["road_length_m"]=road_length;result["trail_length_m"]=trail_length;
+ result["trail_count"]=trail_count;result["requested_trails"]=desired_trails;result["loop_count"]=loop_count;result["route_attempts"]=attempts;
+ result["crossing_rejections"]=crossing_rejections;
+ if(!links.is_empty()){Dictionary link=links[0];result["points"]=link["points"];}
+ return result;
+}
+
 Dictionary plan_street_network(const World &world,const Array &roads,const PackedVector3Array &junctions){
  if(roads.is_empty()||roads.size()>256||junctions.size()>1024)return failure("Invalid street network size");
  using Key=std::pair<int,int>;

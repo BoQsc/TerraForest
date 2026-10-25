@@ -6,6 +6,7 @@ const Persistence = preload("res://addons/world_runtime/world_persistence.gd")
 const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var generated_region=preload("res://addons/world_runtime/generated_region.gd").new()
+var world_recipe=preload("res://addons/world_runtime/world_recipe.gd").new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var zombies=preload("res://addons/characters/runtime/zombie_world.gd").new()
 var zombie_target=preload("res://addons/characters/runtime/zombie_target.gd").new()
@@ -158,6 +159,8 @@ func _ready() -> void:
 	var fence: Dictionary=preload("res://addons/structures/fence_catalog.gd").register(structures)
 	structures_ready = structures_ready and not fence.is_empty()
 	player_hud.ground_tools_enabled=ground_enabled
+	if not world_recipe.prepare(persistence,ecosystem):
+		push_error("World recipe persistence initialization failed");_abort_startup(2);return
 	if not generated_region.prepare(persistence):
 		push_error("Generated region persistence initialization failed");_abort_startup(2);return
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):

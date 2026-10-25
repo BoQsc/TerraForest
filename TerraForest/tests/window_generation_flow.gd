@@ -7,7 +7,7 @@ func run()->void:
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
 	var browser=current_scene
 	var cancel_slot:="window_cancel_"+Crypto.new().generate_random_bytes(8).hex_encode()
-	browser.name_field.text=cancel_slot;browser.seed_field.value=1703;browser.layout_preset.select(2)
+	browser.name_field.text=cancel_slot;browser.seed_field.value=1703;browser.settlement_count.select(0);browser.offroads.select(0)
 	browser.launch_selected(true)
 	check(browser.preparation_pid==process_id and browser.preparation_job.task.external_stages==false,"generation coordinator belongs to the visible game process")
 	if not check(await wait_for(func():return is_instance_valid(browser.preparation_job.task.local_stage),20),"native generation starts in an offscreen viewport"):await finish();return

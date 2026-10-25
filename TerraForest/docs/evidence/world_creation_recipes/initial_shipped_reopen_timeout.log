@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 197.47 ms at 10396
+[terrain-hitch] base controller 199.6 ms at 10398
+[terrain-hitch] controller process 201.5 ms at 10400
+[terrain-hitch] world process 203.44 ms at 10402
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 108.48 ms at 10660
+[terrain-hitch] base controller 110.33 ms at 10661
+[terrain-hitch] controller process 112.13 ms at 10663
+[terrain-hitch] world process 113.98 ms at 10665
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 114.71 ms at 10796
+[terrain-hitch] base controller 115.92 ms at 10798
+[terrain-hitch] controller process 116.9 ms at 10799
+[terrain-hitch] world process 118.03 ms at 10800
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 110.26 ms at 10924
+[terrain-hitch] base controller 111.25 ms at 10925
+[terrain-hitch] controller process 112.14 ms at 10926
+[terrain-hitch] world process 113.2 ms at 10927
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 110.64 ms at 11055
+[terrain-hitch] base controller 111.75 ms at 11057
+[terrain-hitch] controller process 112.69 ms at 11057
+[terrain-hitch] world process 113.76 ms at 11059
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 111.77 ms at 11182
+[terrain-hitch] base controller 112.63 ms at 11183
+[terrain-hitch] controller process 113.45 ms at 11183
+[terrain-hitch] world process 114.39 ms at 11184
+PASS custom world becomes playable
+PASS saved custom biome restores in packaged runtime
+PASS all custom districts restore

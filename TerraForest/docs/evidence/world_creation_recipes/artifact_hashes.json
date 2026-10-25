@@ -1,0 +1,122 @@
+{
+  "base_commit": "e1b5fec7803f2d29137f7eaf86364308b33821ce",
+  "artifacts": [
+    {
+      "path": "dist/TerraForest.pck",
+      "bytes": 310728744,
+      "sha256": "c0156fc9d4f0f9092ead024a331d39c6e0aac718e1eaa5f9482e27c8a477c1bb"
+    },
+    {
+      "path": "dist/addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll",
+      "bytes": 1590272,
+      "sha256": "5d28725b1c4623cade725c073e4c468a5356c851c5b149c126e3be7298a669fb",
+      "source": "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll",
+      "source_sha256": "5d28725b1c4623cade725c073e4c468a5356c851c5b149c126e3be7298a669fb",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll",
+      "bytes": 1466880,
+      "sha256": "0e13cb793eee7ebf1a91732041ca8d73c231e613932dacfee74716a3b7540f6e",
+      "source": "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll",
+      "source_sha256": "0e13cb793eee7ebf1a91732041ca8d73c231e613932dacfee74716a3b7540f6e",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+      "bytes": 2826240,
+      "sha256": "433f7c3f63f0257a4109818f82c19549c90cb8c57e67fd9ae9bbf3abe13c6e64",
+      "source": "addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+      "source_sha256": "433f7c3f63f0257a4109818f82c19549c90cb8c57e67fd9ae9bbf3abe13c6e64",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+      "bytes": 2630656,
+      "sha256": "0db0e478cb9fb4f237f3a2d072e0b9e129272656a0c7878bc6126562d37dbe3d",
+      "source": "addons/structures/bin/structures.windows.template_release.x86_64.dll",
+      "source_sha256": "0db0e478cb9fb4f237f3a2d072e0b9e129272656a0c7878bc6126562d37dbe3d",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll",
+      "bytes": 1634304,
+      "sha256": "2d84d7564a1938a2ad3045d4f8f79b94945ca94ff216101ba1c963c2d3f00bbc",
+      "source": "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll",
+      "source_sha256": "2d84d7564a1938a2ad3045d4f8f79b94945ca94ff216101ba1c963c2d3f00bbc",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll",
+      "bytes": 1521664,
+      "sha256": "1a928fa00362862ecebc0bea871132adc90457ca12c1775e6dd62a2c000a9a36",
+      "source": "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll",
+      "source_sha256": "1a928fa00362862ecebc0bea871132adc90457ca12c1775e6dd62a2c000a9a36",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll",
+      "bytes": 1620992,
+      "sha256": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+      "source": "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll",
+      "source_sha256": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll",
+      "bytes": 1489920,
+      "sha256": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+      "source": "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll",
+      "source_sha256": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+      "bytes": 1817600,
+      "sha256": "c6d1fbafb5667730f84adf2d7af604d6b0ebfe8a49e2c51f27d1be0a0f99916b",
+      "source": "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+      "source_sha256": "c6d1fbafb5667730f84adf2d7af604d6b0ebfe8a49e2c51f27d1be0a0f99916b",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+      "bytes": 1925632,
+      "sha256": "731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5",
+      "source": "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+      "source_sha256": "731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll",
+      "bytes": 1855488,
+      "sha256": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+      "source": "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll",
+      "source_sha256": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll",
+      "bytes": 1755136,
+      "sha256": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+      "source": "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll",
+      "source_sha256": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+      "bytes": 2682880,
+      "sha256": "1bf04705ed22ec005391d2f742b3c3895343c32030ee020da09c8f016ded1e8e",
+      "source": "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll",
+      "source_sha256": "1bf04705ed22ec005391d2f742b3c3895343c32030ee020da09c8f016ded1e8e",
+      "matches_source": true
+    },
+    {
+      "path": "dist/addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+      "bytes": 2503680,
+      "sha256": "9a136215666ae6d09b7f0a64ba074b625cd1a36c7cc4f5e4f6c5e50c6f5bea05",
+      "source": "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll",
+      "source_sha256": "9a136215666ae6d09b7f0a64ba074b625cd1a36c7cc4f5e4f6c5e50c6f5bea05",
+      "matches_source": true
+    }
+  ]
+}

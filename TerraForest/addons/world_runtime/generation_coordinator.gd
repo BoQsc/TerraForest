@@ -10,6 +10,7 @@ var presentation_report:=""
 var seed_value:=42
 var generator:=19
 var settlement_layout:="connected"
+var world_options:Dictionary={}
 var status_path:=""
 var cancel_path:=""
 var report:=""
@@ -43,6 +44,9 @@ func _initialize()->void:
   if arg.begins_with("--status-file="):status_path=arg.trim_prefix("--status-file=")
   if arg.begins_with("--cancel-file="):cancel_path=arg.trim_prefix("--cancel-file=")
  if not Launch.valid_slot(destination) or seed_value<0 or seed_value>2147483647 or generator not in [13,17,19,20,21] or settlement_layout not in ["connected","road","settlement"]:finish("failed","Invalid generation settings");return
+ var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
+ if not recipe.ok or (not recipe.options.is_empty() and generator==13):finish("failed","Invalid custom world recipe");return
+ world_options=recipe.options
  var worlds:=ProjectSettings.globalize_path("user://worlds")
  DirAccess.make_dir_recursive_absolute(worlds)
  lease=ClassDB.instantiate("NativeWorldArchive")
@@ -53,6 +57,7 @@ func _initialize()->void:
  report="user://generation_reports/"+identity
  DirAccess.make_dir_recursive_absolute(report)
  metadata={"version":1,"destination":destination,"stage":stage,"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"phases":[]}
+ metadata["world_options"]=world_options
  if not cancel_path.is_empty() and FileAccess.file_exists(cancel_path):finish("cancelled","Cancelled before generation started");return
  if recovery_mode:
   status("recovering");publish_worker=Thread.new()
@@ -79,6 +84,7 @@ func start_stage(state:String)->void:
  var entry:="res://addons/world_runtime/prepare_terrain_world.gd" if review_generation else "res://addons/world_runtime/generate_world.gd"
  var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script",entry if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://derived_046"])
  if fitted:
+  if not world_options.is_empty():args.append("--world-recipe="+Marshalls.raw_to_base64(preload("res://addons/world_runtime/world_recipe.gd").encode(world_options)))
   if settlement_layout=="connected":args.append("--central-market")
   if settlement_layout!="settlement":args.append("--regional-connection")
   args.append_array(PackedStringArray(["--preparation-output="+ProjectSettings.globalize_path(report),"--save-terrain-lots" if state=="creating" else "--reopen-terrain-lots"]))
@@ -120,7 +126,7 @@ func _process(_delta:float)->void:
     var previous=JSON.parse_string(FileAccess.get_file_as_string(presentation_report.path_join("generation_plan_identity.json"))) if FileAccess.file_exists(presentation_report.path_join("generation_plan_identity.json")) else null
     if previous is Dictionary:seed_value=int(previous.get("seed",seed_value));generator=int(previous.get("generator",generator))
     var prior_run=JSON.parse_string(FileAccess.get_file_as_string(presentation_report.path_join("run.json"))) if FileAccess.file_exists(presentation_report.path_join("run.json")) else null
-    if prior_run is Dictionary:settlement_layout=str(prior_run.get("settlement_layout","unknown"))
+    if prior_run is Dictionary:settlement_layout=str(prior_run.get("settlement_layout","unknown"));world_options=prior_run.get("world_options",{})
     else:settlement_layout="unknown"
    metadata["seed"]=seed_value;metadata["generator"]=generator;metadata["settlement_layout"]=settlement_layout
    metadata["recovered_source"]=source
@@ -159,7 +165,7 @@ func _process(_delta:float)->void:
  begin_publication()
  return
 func verify_world()->Dictionary:
- return preload("res://addons/world_runtime/verify_generated_world.gd").verify(ProjectSettings.globalize_path("user://worlds/"+stage+".trw"),seed_value,generator)
+ return preload("res://addons/world_runtime/verify_generated_world.gd").verify(ProjectSettings.globalize_path("user://worlds/"+stage+".trw"),seed_value,generator,world_options)
 func begin_publication()->void:
  status("publishing");persist_metadata();publish_worker=Thread.new()
  if publish_worker.start(publish_world)!=OK:publish_worker=null;finish("failed","Cannot start publication worker")
@@ -184,7 +190,7 @@ func publish_presentation()->void:
   var image:=source_report.path_join("loading_"+name+".png")
   if FileAccess.file_exists(image) and DirAccess.copy_absolute(image,prefix+".preview/"+name+".png")==OK:count+=1
  var file:=FileAccess.open(prefix+".presentation.json",FileAccess.WRITE)
- if file!=null:file.store_string(JSON.stringify({"created":int(Time.get_unix_time_from_system()),"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"preview_count":count}));file.close()
+ if file!=null:file.store_string(JSON.stringify({"created":int(Time.get_unix_time_from_system()),"seed":seed_value,"generator":generator,"settlement_layout":settlement_layout,"world_options":world_options,"preview_count":count}));file.close()
  var identity:=source_report.path_join("generation_plan_identity.json")
  if FileAccess.file_exists(identity):DirAccess.copy_absolute(identity,prefix+".generation.json")
 func finish(state:String,reason:String="")->void:

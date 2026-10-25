@@ -42,7 +42,7 @@ static func read_plan(path:String,seed_value:int,generator:int,market:bool,conne
 static func trim_cache(folder:String,keep:String)->void:
  # Only regenerable files in this dedicated cache; never canonical world storage.
  var entries:Array=[];var total:=0
- var pattern:=RegEx.new();pattern.compile("^plan_[0-9]+_[0-9]+_[0-9]+_[01]_[01]\\.bin$")
+ var pattern:=RegEx.new();pattern.compile("^(plan_[0-9]+_[0-9]+_[0-9]+_[01]_[01]|recipe_[0-9]+_[0-9a-f]{64})\\.bin$")
  for name:String in DirAccess.get_files_at(folder):
   if pattern.search(name)==null:continue
   var path:=folder.path_join(name);var file:=FileAccess.open(path,FileAccess.READ)
@@ -55,7 +55,12 @@ static func trim_cache(folder:String,keep:String)->void:
   if count<=CACHE_ENTRIES and total<=CACHE_BYTES:break
   if entry.path==keep:continue
   if DirAccess.remove_absolute(entry.path)==OK:count-=1;total-=entry.size
-static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans")->Dictionary:
+static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans",options:Dictionary={},progress:RefCounted=null)->Dictionary:
+ if not options.is_empty():
+  var result:=preload("res://addons/world_runtime/custom_world_plan.gd").build(seed_value,generator,options,folder,0,progress)
+  if result.get("cache_persisted",false):trim_cache(folder,str(result.get("cache_path","")))
+  result.erase("cache_path")
+  return result
  var started:=Time.get_ticks_usec()
  if seed_value<0 or seed_value>2147483647 or generator not in [17,18,19,20,21]:return {"ok":false,"reason":"Unsupported generation settings"}
  with_connection=with_connection or with_market
@@ -130,15 +135,19 @@ static func water_preview(core,generator:int)->PackedByteArray:
   if not visibility.get("ok",false) or visibility.visible.is_empty() or not raster.accept_prefix(offset,visibility.visible):return PackedByteArray()
   offset+=visibility.visible.size()
  return raster.pixels(Color(54/255.0,117/255.0,140/255.0))
-static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation")->Dictionary:
+static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation",options:Dictionary={},progress:RefCounted=null)->Dictionary:
+ if progress!=null:progress.record("Surveying terrain heights and coastlines",0,0,"Native 256 × 256 overview / binary terrain cache")
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain
  if not integrated or generator not in [17,18,19,20,21]:return terrain
- var plan:=build(seed_value,generator,with_market,with_connection)
+ var plan:=build(seed_value,generator,with_market,with_connection,"user://generation_plans",options,progress)
  if not plan.get("ok",false):return plan
- var roads:Array=plan.plan.roads.duplicate();roads.append_array(plan.market.get("roads",[]));roads.append_array(plan.connection.get("segments",[]))
+ if progress!=null:progress.record("Compositing the actual regional plan",0,0,"Terrain grades, water surfaces, vegetation biome, roads and buildings")
+ var sites:Array=plan.get("sites",[plan.plan,plan.market])
+ var roads:Array=plan.connection.get("segments",[]).duplicate()
+ for site:Dictionary in sites:roads.append_array(site.get("roads",[]))
  var bounds:Array=[]
- for site:Dictionary in [plan.plan,plan.market]:
+ for site:Dictionary in sites:
   for lot:Dictionary in site.get("lots",[]):bounds.append(lot.bounds)
  var core=ClassDB.instantiate("TerrainCore")
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
@@ -146,6 +155,7 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  var terrain_binary:=FileAccess.get_sha256(library)
  var water_binary:=FileAccess.get_sha256("res://addons/volumetric_water/bin/volumetric_water.windows.%s.x86_64.dll"%suffix)
  var cache_key:String="generation-preview-v1|"+plan.plan_digest+"|"+terrain_binary+"|"+water_binary
+ if not options.is_empty():cache_key+="|"+FileAccess.get_sha256("res://addons/world_runtime/bin/world_runtime.windows.%s.x86_64.dll"%suffix)
  var cache=preload("res://addons/world_runtime/survey_patch_cache.gd")
  var cached:Dictionary=cache.read(cache_key,cache_key,preview_folder) if not terrain_binary.is_empty() and not water_binary.is_empty() else {}
  terrain["preview_cache_hit"]=cached.get("hit",false)
@@ -156,7 +166,9 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
   if not core.bake_generated_earthworks(packets).get("ok",false):return {"ok":false,"reason":"Preview earthworks unavailable"}
   var water:=water_preview(core,generator)
   if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}
+  if not options.is_empty():terrain.pixels=preload("res://addons/world_runtime/world_recipe.gd").codec().render_biomes(terrain.pixels,seed_value,options.biome)
   terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds,water)
   if not terrain_binary.is_empty() and not water_binary.is_empty():cache.write(cache_key,cache_key,terrain.pixels,preview_folder,32)
  terrain["plan_digest"]=plan.plan_digest;terrain["building_count"]=bounds.size();terrain["plan_cache_hit"]=plan.cache_hit;terrain["plan_ms"]=plan.worker_ms;terrain["plan_reusable"]=plan.get("cache_hit",false) or plan.get("cache_persisted",false)
+ if not options.is_empty():terrain["options"]=options.duplicate();terrain["network"]=plan.network
  return terrain

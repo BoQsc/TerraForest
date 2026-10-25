@@ -1,3 +1,43 @@
+## Configurable world creation and regional networks, 2026-10-25
+
+The creation screen is rebuilt around a real map preview, separate landscape and
+settlement controls, seed shuffle, measured planning stages and responsive actions.
+Controls now persist native biome coverage and generate one to three communities,
+one/two districts each, connected regional roads, optional alternate routes and
+dirt offroads. The largest tested layout has 68 buildings in six districts; it
+generates, publishes, plays and reloads in the same OS window. Native binary recipe
+storage is 28 bytes and is checked during publication. Existing worlds and the
+trusted flat-plate recipe are not regraded or replaced. No continuous sidewalk
+meshes or rejected ramp pieces are added.
+
+Nine large-layout seed/profile cases pass, including bounded relocation where the
+first road network cannot meet terrain/crossing limits. Cold planning ranges from
+roughly 1.1 to 25 seconds in that matrix; expensive failed placements still need
+profiling before claiming uniformly fast generation. The UI reports real activity
+during these passes. Native release tests, source/package UI checks, full generation
+and exact save/reload are separate from visual world acceptance. Evidence and
+the recipe/storage contract: [WORLD_GENERATION_RECIPES.md](WORLD_GENERATION_RECIPES.md),
+`evidence/world_creation_recipes/`. Initial failed checks and their corrections are
+retained there, not silently counted as passes.
+
+Map-cache reliability follow-up: one packaged reopen exceeded the outer
+180-second test deadline after becoming playable. The root cause is not established.
+The instrumented warm rerun and a forced cold-terrain rebuild both pass, with the
+latter measuring 29.6 s including loading followed by a 10.3 s warm reload. Keep
+the timeout evidence; if it recurs, capture native queue/worker state with
+`tests/world_recipe_reopen.gd` before claiming consistent cold-load performance.
+This milestone adds no speculative map-cache fix.
+
+Remaining: city zoning/continuous urban street grids, more building families,
+additional climate/asset biomes, and broad district/road entrance walking/driving
+and lower-end performance qualification. Current biome choices are woodland/meadow
+coverage profiles using existing assets, not complete new climate ecosystems.
+Cities are explicitly deferred as requested; return after this settlement/UI
+playtest with native district planning and the existing terrain-fit/access gates.
+Require representative real-world captures, traversal and frame-time/memory data
+before closing those items. Larger layouts do not override earlier rejected or
+unreviewed world-quality requirements below.
+
 ## Persistent world zombie population, 2026-10-25
 
 The requested world-present population replaces the 18-second grace / 8-second

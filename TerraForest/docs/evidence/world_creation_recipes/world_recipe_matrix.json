@@ -1,0 +1,113 @@
+{
+  "failures": 0,
+  "rows": [
+    {
+      "crossing_rejections": 5,
+      "generator": 19,
+      "loops": 1,
+      "ms": 1138.91,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1879.07451343536,
+      "seed": 0,
+      "trails": 12,
+      "trails_m": 3229.07561826706
+    },
+    {
+      "crossing_rejections": 18,
+      "generator": 19,
+      "loops": 1,
+      "ms": 2213.084,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1650.63699817657,
+      "seed": 42,
+      "trails": 12,
+      "trails_m": 3261.96521568298
+    },
+    {
+      "crossing_rejections": 12,
+      "generator": 19,
+      "loops": 1,
+      "ms": 1994.581,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1701.52659416199,
+      "seed": 1703,
+      "trails": 12,
+      "trails_m": 3066.63729476929
+    },
+    {
+      "crossing_rejections": 5,
+      "generator": 20,
+      "loops": 1,
+      "ms": 1205.539,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1866.99990606308,
+      "seed": 0,
+      "trails": 12,
+      "trails_m": 3597.75455856323
+    },
+    {
+      "crossing_rejections": 4,
+      "generator": 20,
+      "loops": 1,
+      "ms": 25016.696,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1648.93561077118,
+      "seed": 42,
+      "trails": 12,
+      "trails_m": 3485.01073133945
+    },
+    {
+      "crossing_rejections": 18,
+      "generator": 20,
+      "loops": 1,
+      "ms": 3720.961,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1613.62452316284,
+      "seed": 1703,
+      "trails": 11,
+      "trails_m": 2980.47343254089
+    },
+    {
+      "crossing_rejections": 2,
+      "generator": 21,
+      "loops": 1,
+      "ms": 2650.774,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1864.29064321518,
+      "seed": 0,
+      "trails": 12,
+      "trails_m": 3284.79307174683
+    },
+    {
+      "crossing_rejections": 4,
+      "generator": 21,
+      "loops": 1,
+      "ms": 21170.242,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1840.63164615631,
+      "seed": 42,
+      "trails": 12,
+      "trails_m": 3316.19199430943
+    },
+    {
+      "crossing_rejections": 17,
+      "generator": 21,
+      "loops": 1,
+      "ms": 1947.831,
+      "ok": true,
+      "reason": "",
+      "roads_m": 1843.02952194214,
+      "seed": 1703,
+      "trails": 11,
+      "trails_m": 3024.790391922
+    }
+  ]
+}

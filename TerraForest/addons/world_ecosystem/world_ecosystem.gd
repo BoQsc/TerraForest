@@ -187,8 +187,9 @@ func _refresh(center: Vector2i) -> void:
 		if not _wanted.has(key):
 			_resample.erase(key)
 
+var biome_profile:=0
 func _candidates(key: Vector2i) -> Dictionary:
-	return _scatter().candidates(key,seed,density,terrain!=null and terrain.backend.world_generator>=14)
+	return _scatter().candidates(key,seed,density,terrain!=null and terrain.backend.world_generator>=14,biome_profile)
 
 func _scatter() -> RefCounted:
 	if _native_scatter==null:

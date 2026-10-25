@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include "../../world_runtime/native/biome_field.hpp"
 namespace terraforest {
 using namespace godot;
 class NativeVegetationScatter : public RefCounted {
@@ -33,7 +34,7 @@ protected:
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
 
         ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit"),&NativeVegetationScatter::wanted_cells);
-        ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region"),&NativeVegetationScatter::candidates,DEFVAL(false));
+        ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region","biome_profile"),&NativeVegetationScatter::candidates,DEFVAL(false),DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
 public:
@@ -109,9 +110,9 @@ public:
         double u=x-ix,v=z-iz;u=u*u*(3-2*u);v=v*v*(3-2*v);
         return (sample(ix,iz)*(1-u)+sample(ix+1,iz)*u)*(1-v)+(sample(ix,iz+1)*(1-u)+sample(ix+1,iz+1)*u)*v;
     }
-    Dictionary candidates(Vector2i cell,int64_t seed,double density,bool natural_region=false) const {
+    Dictionary candidates(Vector2i cell,int64_t seed,double density,bool natural_region=false,int biome_profile=0) const {
         PackedVector3Array points;PackedInt64Array ids;PackedFloat32Array rotations,scales;
-        if(cell.x>=0&&cell.x<32&&cell.y>=0&&cell.y<32&&std::isfinite(density)&&density>=0&&density<=1){
+        if(cell.x>=0&&cell.x<32&&cell.y>=0&&cell.y<32&&std::isfinite(density)&&density>=0&&density<=1&&biome_profile>=0&&biome_profile<=2){
             Ref<RandomNumberGenerator> rng;rng.instantiate();
             rng->set_seed(uint64_t(seed)^uint64_t((int64_t(cell.y)*32+cell.x+1)*73856093));
             for(int z=0;z<6;++z)for(int x=0;x<6;++x){
@@ -135,6 +136,7 @@ public:
                     const double dx=px-grove.x,dz=pz-grove.z;
                     biome=std::max(biome,std::clamp((double(grove.y)-std::sqrt(dx*dx+dz*dz))/4.0,0.0,1.0));
                 }
+                if(biome_profile>0)biome=std::min(biome,biome_woodland(px,pz,uint32_t(seed),biome_profile));
                 if(roll>=density*biome||point.x<2||point.z<2||point.x>=1998||point.z>=1998)continue;
                 points.append(point);ids.append(1+(cell.y*32+cell.x)*36+z*6+x);
                 rotations.append(yaw);scales.append(scale);

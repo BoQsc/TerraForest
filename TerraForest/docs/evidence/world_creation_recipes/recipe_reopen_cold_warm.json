@@ -1,0 +1,28 @@
+{
+  "failures": 0,
+  "passes": [
+    {
+      "blocks_hits": 0,
+      "complete": true,
+      "milliseconds": 31097,
+      "models_hits": 1,
+      "pass": 0,
+      "terrain_hits": 0,
+      "terrain_patches": 474,
+      "terrain_writes": 1,
+      "water_hits": 1
+    },
+    {
+      "blocks_hits": 1,
+      "complete": true,
+      "milliseconds": 10312,
+      "models_hits": 1,
+      "pass": 1,
+      "terrain_hits": 1,
+      "terrain_patches": 0,
+      "terrain_writes": 0,
+      "water_hits": 1
+    }
+  ],
+  "slot": "recipe_generated_b3ba85cc81633732"
+}

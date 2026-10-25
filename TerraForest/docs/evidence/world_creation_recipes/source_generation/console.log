@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=6.876 recipe_ms=17.898 fitting_ms=21.029
+WORLD_PLAN digest=bc02450806a3d062d172f5bf116dcd7bb78843bab44fb50dfd5fe2984b519355 cache_hit=false ms=2070.898 planning_frames=126
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":10825728,"checkpoints":21,"completed":1247,"ok":true,"resident_high":2143,"resident_limit":16384,"revision":1247,"storage":{"region_reads":174,"reused_files":0,"reused_regions":2297,"workers":1,"written_bytes":14440888,"written_files":41},"worker_ms":2150.213}
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":1,"milliseconds":1064.456,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"status":2,"steps":902,"water_ml":13693871176}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":1.274}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=68 edits=1247
+GENERATION_JOB state=ready reason=
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 200.16 ms at 82704
+[terrain-hitch] base controller 200.92 ms at 82705
+[terrain-hitch] controller process 201.89 ms at 82706
+[terrain-hitch] world process 202.71 ms at 82707
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 110.17 ms at 82950
+[terrain-hitch] base controller 111.17 ms at 82951
+[terrain-hitch] controller process 112.01 ms at 82952
+[terrain-hitch] world process 112.9 ms at 82953
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 116.4 ms at 83080
+[terrain-hitch] base controller 117.77 ms at 83081
+[terrain-hitch] controller process 118.74 ms at 83082
+[terrain-hitch] world process 120.1 ms at 83084
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 109.03 ms at 83258
+[terrain-hitch] base controller 109.85 ms at 83259
+[terrain-hitch] controller process 110.8 ms at 83260
+[terrain-hitch] world process 111.81 ms at 83261
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 118.95 ms at 83390
+[terrain-hitch] base controller 119.86 ms at 83390
+[terrain-hitch] controller process 120.79 ms at 83391
+[terrain-hitch] world process 121.76 ms at 83392
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 114.18 ms at 83536
+[terrain-hitch] base controller 115.24 ms at 83537
+[terrain-hitch] controller process 116.22 ms at 83538
+[terrain-hitch] world process 117.12 ms at 83539
+PASS six-district production generation loads in same game window
+PASS created world uses requested durable biome recipe
+PASS all six districts and regional routes publish to actual world map
+PASS no legacy continuous decorative sidewalk meshes
+PASS publication verifies native binary recipe alongside terrain and structures
+PASS generation introduces no second process or operating-system window
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS custom world saves and returns to selector
+PASS saved custom world reopens without reapplying UI options
+PASS custom biome survives save and reload
+PASS all district and road metadata survives reload exactly
+PASS creation and reload preserve native window handle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_RECIPE_GENERATION checks=11 failures=0 slots=["recipe_generated_b3ba85cc81633732"]

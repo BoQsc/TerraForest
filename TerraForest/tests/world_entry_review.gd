@@ -11,7 +11,7 @@ func run()->void:
  var failures:=0
  if browser.preview_worker!=null or browser.preview_view.texture==null:failures+=1
  for i in 3:await process_frame
- var screen:=Rect2(Vector2.ZERO,Vector2(root.size))
+ var screen:=Rect2(Vector2.ZERO,Vector2(root.content_scale_size))
  for control:Control in browser.find_children("*","Control",true,false):
   if not control.is_visible_in_tree() or not (control is BaseButton or control is LineEdit or control==browser.preview_view or control==browser.notice):continue
   if not screen.encloses(control.get_global_rect()):failures+=1;print("OUTSIDE_SCREEN ",control.get_global_rect())
@@ -31,7 +31,7 @@ func run()->void:
   root.get_texture().get_image().save_png("res://reports/world_recovery_ui.png")
  browser.preview_worker=Thread.new();browser.preview_button.disabled=true
  browser.preview_worker.start(func():return null)
- while browser.preview_worker.is_alive():await process_frame
+ while browser.preview_worker!=null and browser.preview_worker.is_alive():await process_frame
  browser.poll_preview()
  if browser.preview_worker!=null or browser.preview_button.disabled or not browser.preview_status.text.contains("failed"):failures+=1
  browser.free();print("WORLD_ENTRY_REVIEW failures=",failures);quit(1 if failures else 0)

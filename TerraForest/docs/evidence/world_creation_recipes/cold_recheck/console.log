@@ -1,0 +1,80 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 200.14 ms at 9792
+[terrain-hitch] base controller 201.78 ms at 9793
+[terrain-hitch] controller process 203.32 ms at 9795
+[terrain-hitch] world process 205.0 ms at 9796
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 134.31 ms at 10079
+[terrain-hitch] base controller 136.28 ms at 10081
+[terrain-hitch] controller process 138.01 ms at 10082
+[terrain-hitch] world process 139.83 ms at 10084
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 107.29 ms at 10207
+[terrain-hitch] base controller 108.4 ms at 10208
+[terrain-hitch] controller process 109.28 ms at 10209
+[terrain-hitch] world process 110.29 ms at 10210
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 107.94 ms at 10334
+[terrain-hitch] base controller 108.87 ms at 10335
+[terrain-hitch] controller process 109.88 ms at 10336
+[terrain-hitch] world process 110.91 ms at 10337
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 106.42 ms at 10460
+[terrain-hitch] base controller 107.62 ms at 10461
+[terrain-hitch] controller process 108.62 ms at 10462
+[terrain-hitch] world process 109.64 ms at 10463
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 111.17 ms at 10585
+[terrain-hitch] base controller 112.1 ms at 10586
+[terrain-hitch] controller process 113.09 ms at 10587
+[terrain-hitch] world process 114.08 ms at 10588
+PASS custom world becomes playable
+PASS saved custom biome restores in packaged runtime
+PASS all custom districts restore
+MAP_REOPEN_PROGRESS { "opened": true, "terrain_dirty": 397, "terrain_pending": {  }, "terrain_identity": "bd7ff29ccaf61d634ddbbee7035d80be931348d9223ef976644b4863983ace99|731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5:88a841ddf27d51393680ad0d9dfb76af3281ffa2be35809845867c6fc34e8a7e", "terrain_patches": 77, "blocks_complete": true, "blocks_pending": false, "blocks_offset": 0, "models_complete": true, "models_pending": false, "water_complete": true, "water_pending": false }
+MAP_REOPEN_PROGRESS { "opened": true, "terrain_dirty": 373, "terrain_pending": {  }, "terrain_identity": "bd7ff29ccaf61d634ddbbee7035d80be931348d9223ef976644b4863983ace99|731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5:88a841ddf27d51393680ad0d9dfb76af3281ffa2be35809845867c6fc34e8a7e", "terrain_patches": 101, "blocks_complete": true, "blocks_pending": false, "blocks_offset": 0, "models_complete": true, "models_pending": false, "water_complete": true, "water_pending": false }
+MAP_REOPEN_PROGRESS { "opened": true, "terrain_dirty": 300, "terrain_pending": { "kind": "patch", "tile": (7, 30), "token": 901 }, "terrain_identity": "bd7ff29ccaf61d634ddbbee7035d80be931348d9223ef976644b4863983ace99|731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5:88a841ddf27d51393680ad0d9dfb76af3281ffa2be35809845867c6fc34e8a7e", "terrain_patches": 173, "blocks_complete": true, "blocks_pending": false, "blocks_offset": 0, "models_complete": true, "models_pending": false, "water_complete": true, "water_pending": false }
+MAP_REOPEN_PROGRESS { "opened": true, "terrain_dirty": 0, "terrain_pending": { "kind": "patch", "tile": (38, 27), "token": 1201 }, "terrain_identity": "bd7ff29ccaf61d634ddbbee7035d80be931348d9223ef976644b4863983ace99|731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5:88a841ddf27d51393680ad0d9dfb76af3281ffa2be35809845867c6fc34e8a7e", "terrain_patches": 473, "blocks_complete": true, "blocks_pending": false, "blocks_offset": 0, "models_complete": true, "models_pending": false, "water_complete": true, "water_pending": false }
+PASS all world map layers finish
+[TerrainRewrite] Temporary test world: save skipped
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 193.36 ms at 37935
+[terrain-hitch] base controller 194.38 ms at 37936
+[terrain-hitch] controller process 195.42 ms at 37937
+[terrain-hitch] world process 196.49 ms at 37938
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 119.67 ms at 38223
+[terrain-hitch] base controller 120.58 ms at 38223
+[terrain-hitch] controller process 121.48 ms at 38224
+[terrain-hitch] world process 122.41 ms at 38225
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 103.62 ms at 38344
+[terrain-hitch] base controller 104.63 ms at 38345
+[terrain-hitch] controller process 105.6 ms at 38346
+[terrain-hitch] world process 106.62 ms at 38347
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 108.39 ms at 38472
+[terrain-hitch] base controller 109.32 ms at 38473
+[terrain-hitch] controller process 110.33 ms at 38474
+[terrain-hitch] world process 111.46 ms at 38475
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 109.51 ms at 38594
+[terrain-hitch] base controller 110.62 ms at 38595
+[terrain-hitch] controller process 111.8 ms at 38596
+[terrain-hitch] world process 113.22 ms at 38597
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 108.98 ms at 38733
+[terrain-hitch] base controller 109.98 ms at 38734
+[terrain-hitch] controller process 111.01 ms at 38735
+[terrain-hitch] world process 112.14 ms at 38736
+PASS custom world becomes playable
+PASS saved custom biome restores in packaged runtime
+PASS all custom districts restore
+PASS all world map layers finish
+PASS warm packaged reload reuses all four world map layers
+[TerrainRewrite] Temporary test world: save skipped
+PASS read-only checks leave canonical world unchanged
+WORLD_RECIPE_REOPEN failures=0

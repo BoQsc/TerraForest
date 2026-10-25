@@ -1,0 +1,248 @@
+{
+  "slots": [
+    "recipe_generated_7c44c2960266ee78",
+    "combined_stage_3b0dd8ecea748b404742e803d16c38ff",
+    "recipe_generated_b3ba85cc81633732",
+    "combined_stage_bd39f20e143253d7fdf84d3084b7df59",
+    "recipe_generated_47c9b3a6e1b7aa52",
+    "combined_stage_cc380488b6e3424741395900b65597d1",
+    "recipe_generated_75e142b60803678d",
+    "combined_stage_73e3f587282ab4605b2f5598e8a16e50"
+  ],
+  "original_unchanged": true,
+  "original_slot": "window_generated_836c80e758d532fd",
+  "original_sha256": "1305C0EECFFDE02AE0508E2B98BC5531BB3755707CD88810DD39C0A1EF538505",
+  "archive": "reports/recipe_world_archive/worlds",
+  "moved": [
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.models",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.water",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.models",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.water",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.models",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.water",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw.models",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw.water",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.preview",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw.models",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw.water",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.preview",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.models",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.water",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.preview",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.models",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.regions",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.terrain",
+      "directory": true
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.water",
+      "directory": true
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.bak",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_3b0dd8ecea748b404742e803d16c38ff.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.bak",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_73e3f587282ab4605b2f5598e8a16e50.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.bak",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_bd39f20e143253d7fdf84d3084b7df59.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw",
+      "directory": false
+    },
+    {
+      "name": "combined_stage_cc380488b6e3424741395900b65597d1.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.generation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.presentation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_75e142b60803678d.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.generation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.presentation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.bak",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_7c44c2960266ee78.trw.lock",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.generation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.presentation.json",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.bak",
+      "directory": false
+    },
+    {
+      "name": "recipe_generated_b3ba85cc81633732.trw.lock",
+      "directory": false
+    }
+  ],
+  "statuses": [
+    "world_preparation_18792_1406813.json",
+    "world_preparation_47464_1308930.json",
+    "world_preparation_64692_1295080.json",
+    "world_preparation_74184_1303588.json"
+  ]
+}

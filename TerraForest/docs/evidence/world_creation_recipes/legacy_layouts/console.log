@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=85 attempts=18 survey_ms=15.017 recipe_ms=102.888 fitting_ms=105.807
+LAYOUT connected digest=f6aa64c23fa5f1358647c50a9b3edabd4a628571b23a25f65874094011fd1b43 buildings=20
+LAYOUT road digest=29359cfa69fea90ff87f934bfe6d8a54a134e8e3fa051d448847f55a237c8c64 buildings=12
+LAYOUT settlement digest=3af422c93910f1e9513fc1088aa9de76efa468549433d4e813bf504286b8ad3b buildings=12
+GENERATION_LAYOUT_OPTIONS failures=0
