@@ -69,6 +69,22 @@ wall. Footpaths and door approaches must connect to the street.
 
 ## Buildings create places worth entering
 
+User direction, 2026-10-25: all building fabric uses the building-block grid.
+A shape is an individual placeable/destructible building block, not a complete
+architectural feature disguised as one asset. Arches, door/window surrounds,
+roof assemblies and other complex features comprise multiple blocks: two or four
+for simple assemblies, six, eight or more where the design requires. Do not adopt
+the supplied addon's complete arch/frame meshes as single construction elements.
+Each part retains its own grid coordinate, shape/orientation, damage/removal and
+save identity. Chunk batching is only a rendering/collision optimization; it must
+never turn an assembly into one authoritative monolithic model. Do not stretch
+one block mesh across an opening or bypass the lattice to fit a house.
+
+Each redesigned house requires the user's explicit approval of that house and
+revision before it replaces an existing design or becomes a generation default.
+Shape tests, component previews and approval of another house do not grant that
+approval. Keep existing houses and saves unchanged while reviewing alternatives.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

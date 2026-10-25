@@ -1,3 +1,34 @@
+## Shape addon assessed; native integration pending — 2026-10-25
+
+The supplied block-shapes r3 archive has useful reproducible numeric geometry,
+but its synchronous GDScript/JSON world implementation is not a suitable native
+runtime replacement. A corrected portable copy fixes Windows generated-document
+line endings and passes source, actual Godot import/runtime/export and isolated-PCK
+checks (74 Python tests passed, one platform skip). Original failed gate and the
+assessment's wrong-shape-ID fixture failures remain recorded, not counted as passes.
+See `evidence/block_shapes_addon/README.md` for archives, hashes, timings and images.
+
+The construction standard now explicitly requires all architectural fabric to use
+individual grid blocks: arches, frames and roofs are 2/4/6/8-or-larger assemblies,
+never whole-feature meshes. An isolated 20-cell component proof shows four such
+assemblies, removal of exactly one arch cell and its collision, unchanged neighbors,
+and save/restore. This is not native gameplay/damage integration or a house approval.
+Visible source-rendering artifacts and shallow-panel integer-grid continuity remain
+unqualified. Existing houses, trusted road plates, generator defaults and saves are
+unchanged; every redesigned house/revision requires explicit user approval.
+
+Pending native integration: stable backward-compatible shape/rotation encoding,
+baked geometry/solid data and worker meshing, partial-face culling, collision/query
+holes, item placement/preview, per-cell damage, binary persistence and water/navigation
+consumers. Current storage is already uint16_t, but legacy word consumers cannot
+accept the upstream catalogue as-is. These compatibility and geometry prerequisites
+are the reason the addon is not installed as a second world backend. Return with
+selected modular blocks in the existing native pipeline; close with old/new save
+roundtrips, real-game removal/placement/collision tests, mixed-shape/cold/edit timings,
+and then separate per-house approval. Also resolve the existing 18 legacy structures
+failures without treating the addon pass as their replacement. No broad rewrite or
+production-shape completion is claimed by this assessment.
+
 ## Doors usable while touching/blocking the leaf — 2026-10-25
 
 Player E interaction no longer vetoes a hinge toggle because the operating

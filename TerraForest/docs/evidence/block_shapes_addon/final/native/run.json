@@ -1,0 +1,39 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\block_shapes_modular_final\\native\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\block_shapes_addon_review.gd",
+    "--",
+    "--shape-review-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\block_shapes_modular_final\\native",
+    "--native-reference"
+  ],
+  "utc": "2026-10-25T10:05:11.806304+00:00",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "84f70b5638a30d95b8d3b56247ca642ddab72c399d2ec68a078dbc58d7294941",
+  "revision": "b5b6295a8ef8310b2592ee405f58de488c4ebecd",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/docs/WORLD_BUILDING_STANDARD.md",
+    "?? TerraForest/tests/block_shapes_addon_review.gd",
+    "?? TerraForest/tests/block_shapes_addon_review.gd.uid"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 81948,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.5104806999443099,
+    "passed": true
+  }
+}

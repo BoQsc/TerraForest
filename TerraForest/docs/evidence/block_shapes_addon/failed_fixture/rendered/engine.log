@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 617.42 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS six alternating edits preserve all 4096 final cells
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.5
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.05
+PASS unit-cell door frame is not a full-height player doorway and needs a multi-cell assembly
+ERROR: Block Shapes: unknown shape id: block.h0.5.w1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] set_block (res://addons/block_shapes/world.gd:42)
+       [1] geometry_probes (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/block_shapes_addon_review.gd:64)
+ERROR: Block Shapes: unknown shape id: block.h0.5.w1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] set_block (res://addons/block_shapes/world.gd:42)
+       [1] geometry_probes (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/block_shapes_addon_review.gd:64)
+FAIL partial-height neighbor faces remain uncropped in the upstream mesher
+PASS review shape exists: ramp.h1.w1
+PASS review shape exists: panel.r0.5.t0.125.w1
+PASS review shape exists: ridge.h0.5.w1
+PASS review shape exists: corner.outer.h1
+PASS review shape exists: corner.inner.h1
+PASS review shape exists: ramp.segment.4.2
+PASS review shape exists: arch.door.t0.125.d0.5
+PASS review shape exists: window.t0.125.d0.125
+PASS review shape exists: door.t0.125.d0.125
+PASS review shape exists: beam.0.25.center
+PASS review shape exists: corner.trim.t0.125.d0.125
+PASS review shape exists: panel.r0.25.t0.0625.w1
+SHAPE_ADDON_REVIEW failures=1

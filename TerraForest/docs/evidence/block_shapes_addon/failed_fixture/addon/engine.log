@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS six alternating edits preserve all 4096 final cells
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.5
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.05
+PASS unit-cell door frame is not a full-height player doorway and needs a multi-cell assembly
+ERROR: Block Shapes: unknown shape id: block.h0.5.w1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] set_block (res://addons/block_shapes/world.gd:42)
+       [1] geometry_probes (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/block_shapes_addon_review.gd:64)
+ERROR: Block Shapes: unknown shape id: block.h0.5.w1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] set_block (res://addons/block_shapes/world.gd:42)
+       [1] geometry_probes (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/block_shapes_addon_review.gd:64)
+FAIL partial-height neighbor faces remain uncropped in the upstream mesher
+SHAPE_ADDON_REVIEW failures=1

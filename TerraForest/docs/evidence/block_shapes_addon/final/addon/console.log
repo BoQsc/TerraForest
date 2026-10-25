@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS six alternating edits preserve all 4096 final cells
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.5
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.05
+PASS unit-cell door frame is not a full-height player doorway and needs a multi-cell assembly
+PASS partial-height neighbor faces remain uncropped in the upstream mesher
+SHAPE_ADDON_REVIEW failures=0

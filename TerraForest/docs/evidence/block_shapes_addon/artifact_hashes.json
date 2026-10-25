@@ -1,0 +1,218 @@
+{
+  "created_utc": "2026-10-25T10:08:57.828158+00:00",
+  "scope": "Initial addon assessment only; no production integration or house approval. Hashes identify bytes, not authorship or legal clearance.",
+  "serialized_comparison": {
+    "before": 20,
+    "after": 19,
+    "removed": [
+      4,
+      1,
+      0
+    ],
+    "other_records_identical": true,
+    "all_coordinates_integer": true
+  },
+  "test_sha256": "84f70b5638a30d95b8d3b56247ca642ddab72c399d2ec68a078dbc58d7294941",
+  "native_reference_dll_sha256": {
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "c1b45c5b1f62a8b85eebf1c40a93d04202984f0e2e58b249214c2e855cda9a47",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "516d5ff7f32893eaf2d549aa35ded67383e787dc84b2a4d361f87e764441f6b8"
+  },
+  "files": {
+    "catalogue_analysis.json": {
+      "bytes": 970,
+      "sha256": "8b2db97a6f03efd4ea5dcfd177ac682b5f9a8e12046f10a81fb450e652cfc91e"
+    },
+    "failed_fixture/addon/addon.json": {
+      "bytes": 1002,
+      "sha256": "6bd4d17737435aa5d742689e3729f2ead546beca9129e7536ef668059f4c74b2"
+    },
+    "failed_fixture/addon/console.log": {
+      "bytes": 1379,
+      "sha256": "21c26d4bad668a848065f7367686dadb53417ca8370dbaf11b769b4893daea45"
+    },
+    "failed_fixture/addon/engine.log": {
+      "bytes": 1357,
+      "sha256": "e49901077367fe82c48c65f5c39ba2ad838e4b94c05cf3d8a1b4ce8b59e3934a"
+    },
+    "failed_fixture/addon/run.json": {
+      "bytes": 1646,
+      "sha256": "caec42c7931c1d0803a9464b05d6afb6d37fd22c1eaa0e7ea0f8e13473950b1e"
+    },
+    "failed_fixture/native/console.log": {
+      "bytes": 213,
+      "sha256": "a635ada33bae3868a164056ad3ee634826c10b4c01197e54b92738f5ddf48972"
+    },
+    "failed_fixture/native/engine.log": {
+      "bytes": 208,
+      "sha256": "33fea9e7df033edcfa8191c510456b09565a2f005f5186d2aaf8c7a883a33674"
+    },
+    "failed_fixture/native/native.json": {
+      "bytes": 1573,
+      "sha256": "c92391b03319382ac2d01517a6e533feccaa5b63239926d1ceeb4770b5583e6c"
+    },
+    "failed_fixture/native/run.json": {
+      "bytes": 1466,
+      "sha256": "e6a543644e85c56121b22258364d29813798103b63f627d70053c2cb824d5737"
+    },
+    "failed_fixture/rendered/addon.json": {
+      "bytes": 1002,
+      "sha256": "5a34c81da66e48bc23ced8ece9401044b88df575dc81a3f2640030b0c03fcf26"
+    },
+    "failed_fixture/rendered/console.log": {
+      "bytes": 2034,
+      "sha256": "1181aeb3397d39fe715645466581d24b0ec529965acd7e9cfa4ebd213feeed69"
+    },
+    "failed_fixture/rendered/engine.log": {
+      "bytes": 1999,
+      "sha256": "721ce981dc0056fb51153f57d90433636f71ec4d9e429180e5e92880dc8cd2be"
+    },
+    "failed_fixture/rendered/run.json": {
+      "bytes": 1693,
+      "sha256": "ac606788cff6f2e4f5a3daec7531ea7db0263243938727f6bcc8a5273c541d29"
+    },
+    "final/addon/addon.json": {
+      "bytes": 1019,
+      "sha256": "2131ba9b86edd8cd0c842c32893d63e07ddcd3ed2c6c1a4c3fb637ce3100a165"
+    },
+    "final/addon/console.log": {
+      "bytes": 669,
+      "sha256": "ae6187a906b78f17590c5ba335df137ed274bcac47a40a1e0bf6f9344ac80063"
+    },
+    "final/addon/engine.log": {
+      "bytes": 657,
+      "sha256": "dd435c38cbaec7bd91444a0c202dc95b29b4aa5a1b1852aa0ebad15ff5336114"
+    },
+    "final/addon/run.json": {
+      "bytes": 1596,
+      "sha256": "851b95fe361c1af1ac235fc64e4246cafff20183948a35790c0ffbb2fdfbdb07"
+    },
+    "final/native/console.log": {
+      "bytes": 213,
+      "sha256": "a635ada33bae3868a164056ad3ee634826c10b4c01197e54b92738f5ddf48972"
+    },
+    "final/native/engine.log": {
+      "bytes": 208,
+      "sha256": "33fea9e7df033edcfa8191c510456b09565a2f005f5186d2aaf8c7a883a33674"
+    },
+    "final/native/native.json": {
+      "bytes": 1589,
+      "sha256": "a251e9d1f1e1489a368acf77bd3c8ee5345523ff48a8ccbf1a7d64e09a57e928"
+    },
+    "final/native/run.json": {
+      "bytes": 1571,
+      "sha256": "759647831b0a4299b569168f984dfaeff3059dcd4a51cae7548d2814c3237987"
+    },
+    "final/rendered/addon.json": {
+      "bytes": 1018,
+      "sha256": "3eef3f85d830071abd58ec4bff85f548b9ff48ebadca4522c1df247befc5100e"
+    },
+    "final/rendered/assemblies_after.json": {
+      "bytes": 689,
+      "sha256": "7092069647f3b82705fd69ead81b19d6ece6c12f77e4db85e514329dd3b133b7"
+    },
+    "final/rendered/assemblies_before.json": {
+      "bytes": 727,
+      "sha256": "30c1c518b3f50d9cf260d70f0a5d8cd67ef014803c5e9ae364ad1a52eaaaa993"
+    },
+    "final/rendered/console.log": {
+      "bytes": 1389,
+      "sha256": "9b936aa7d25bba2a56e65df62414840cfbec5b124408ad0a3608a3ac4740d5ec"
+    },
+    "final/rendered/engine.log": {
+      "bytes": 1366,
+      "sha256": "4e351ec65c6c45287b406b640f04d6a8c103a9464b45cb2ce55fd7fbf10ae5c3"
+    },
+    "final/rendered/modular_block_removed.png": {
+      "bytes": 119113,
+      "sha256": "613201320f7ac28b9ea3ce2c5cff155a006529d0d12ee9329a8bcc78c55082d5"
+    },
+    "final/rendered/modular_blocks.png": {
+      "bytes": 123104,
+      "sha256": "6ab5706d2ac1e0f36e2b89167bc788d2f1bd24eabbae57baabf3ec1b12ab7231"
+    },
+    "final/rendered/run.json": {
+      "bytes": 1643,
+      "sha256": "d871ac67d012ac5985086dba6f5911ee975a29dce00aa271255afe05dd4531e4"
+    },
+    "initial/addon/addon.json": {
+      "bytes": 841,
+      "sha256": "2aa999be3a9eccb57b58088b05204cbab1d77e55c93e944eea334cd3eb57ab38"
+    },
+    "initial/addon/console.log": {
+      "bytes": 161,
+      "sha256": "34bd56dc040d1074e5e9b6ea3fb66ba7729fe304f5e7d64d82eb5e99817d1ee8"
+    },
+    "initial/addon/engine.log": {
+      "bytes": 157,
+      "sha256": "f83f1c7bc9d99f5561ccc877176beec09faed3a4a86bdd30370f1cc381cfc430"
+    },
+    "initial/addon/run.json": {
+      "bytes": 1416,
+      "sha256": "319e0d62e087da74f4beda6889e1d384d1da284d18c5ece9ab081481e3ad246d"
+    },
+    "initial/native/console.log": {
+      "bytes": 213,
+      "sha256": "a635ada33bae3868a164056ad3ee634826c10b4c01197e54b92738f5ddf48972"
+    },
+    "initial/native/engine.log": {
+      "bytes": 208,
+      "sha256": "33fea9e7df033edcfa8191c510456b09565a2f005f5186d2aaf8c7a883a33674"
+    },
+    "initial/native/native.json": {
+      "bytes": 1573,
+      "sha256": "97f1995279c08e602d079aab1e2a00788c9e2363582b8d1becb8754bf0869ff5"
+    },
+    "initial/native/run.json": {
+      "bytes": 1392,
+      "sha256": "6137a22b1fda7276674247c5d6dd87f329c42629a90eeef917b6819bd842e8ab"
+    },
+    "initial/rendered/addon.json": {
+      "bytes": 841,
+      "sha256": "b992eeaf0385ca1d7f2879d5831e293f2469651b3f861b17a5c40873b32e1efb"
+    },
+    "initial/rendered/console.log": {
+      "bytes": 816,
+      "sha256": "cb959871b0d85c08914d133e949969cef4f8c9de9b5dbf4b7ca96071fa5d32f8"
+    },
+    "initial/rendered/engine.log": {
+      "bytes": 799,
+      "sha256": "a71d91fac8af38d6d648c9d80e4392c738fe4174e5697003b82ea39d637773b8"
+    },
+    "initial/rendered/run.json": {
+      "bytes": 1463,
+      "sha256": "b34755b90f029e2b5db8a1cf6716334651bb34e51be91cd40ff5c73fa523cf35"
+    },
+    "logs/main_import.log": {
+      "bytes": 3321,
+      "sha256": "5c074beb588a869b02ca3805da4b948d6a6213d85cd484e600ab00e990a13c2f"
+    },
+    "logs/original_check.log": {
+      "bytes": 8847,
+      "sha256": "3c42e7a05d7ab735c948b58d3a71e87786e21a472edb0e07a70f29468fa19eba"
+    },
+    "logs/original_engine.log": {
+      "bytes": 5439,
+      "sha256": "512c037ab13d32ac706f5a19b609abe2499549ed94e490addfd2b0d0eb98441a"
+    },
+    "logs/portable_final_check.log": {
+      "bytes": 16250,
+      "sha256": "52dd228a2a3faad8c943e450a62916d74dff30db1c5fd078d911a1920f102808"
+    },
+    "README.md": {
+      "bytes": 10115,
+      "sha256": "c6d4c7cf59f18b4eca06d608ec0444d1289ea8df72c9b1c5664f2ed98413bcf5"
+    },
+    "source/block_shapes_r3_cc0_0bsd.zip": {
+      "bytes": 148612,
+      "sha256": "f55e25b8945438a64d3450bc7fefe317a3f0f4e0d2f5a1b508551237019f47cb"
+    },
+    "source/block_shapes_r3_windows_review.zip": {
+      "bytes": 153280,
+      "sha256": "e9688efa17cd0123fe7b960846e4fc8198f3ea24d351ee40f7623f9ad853fa69"
+    },
+    "source/review_changes.diff": {
+      "bytes": 5995,
+      "sha256": "8b4da82799c371c2fe5988822cc3995f795e1ad6a2d693b1519a00490f93b61e"
+    }
+  }
+}

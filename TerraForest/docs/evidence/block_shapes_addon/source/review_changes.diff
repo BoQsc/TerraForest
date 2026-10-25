@@ -1,0 +1,102 @@
+--- original/tools/generate.py
++++ windows_review/tools/generate.py
+@@ -27 +27 @@
+-    (docs / 'catalogue.summary.json').write_text(json.dumps(summary, indent=2)+'\n', encoding='utf-8')
++    (docs / 'catalogue.summary.json').write_text(json.dumps(summary, indent=2)+'\n', encoding='utf-8', newline='\n')
+@@ -38 +38 @@
+-    (docs / 'CATALOGUE.md').write_text('\n'.join(lines)+'\n', encoding='utf-8')
++    (docs / 'CATALOGUE.md').write_text('\n'.join(lines)+'\n', encoding='utf-8', newline='\n')
+--- original/tools/preview.py
++++ windows_review/tools/preview.py
+@@ -62 +62 @@
+-    (ROOT/'docs/shapes.preview.svg').write_text('\n'.join(out),encoding='utf-8')
++    (ROOT/'docs/shapes.preview.svg').write_text('\n'.join(out),encoding='utf-8',newline='\n')
+--- original/README.md
++++ windows_review/README.md
+@@ -11,4 +11,13 @@
+-Source, licence-policy and reproducibility checks were run. **Godot execution
+-was not run: a usable engine was unavailable in this environment and attempted
+-downloads failed. This is not labelled a completed, runtime-verified release.**
+-`STATUS.json` and `docs/VALIDATION.md` distinguish the results explicitly.
++This Windows review copy fixes platform-dependent line endings in the generated
++reference documents. Godot 4.7.2 Windows import, runtime, demo, export and isolated
++PCK checks have now run. Geometry and runtime remain unchanged. This is still
++**not a production-qualified TerraForest world backend or an approved house kit**.
++`STATUS.json` and `docs/VALIDATION.md` distinguish the measured scope explicitly.
++
++TerraForest's construction contract requires separate grid blocks for every
++architectural assembly. The full arch, door-frame and window-frame catalogue
++entries are upstream references, **not accepted construction blocks**. Use
++quarter-curves, trims and straight segments to make 2-, 4-, 6-, 8-block or larger
++assemblies, with independent removal and storage. The external TerraForest
++review demonstrates this separation; this archive does not integrate those
++pieces into TerraForest's native renderer, damage system, inventory or saves.
+@@ -54,2 +63,2 @@
+-altering the user's project. The export checks themselves remain unexecuted
+-here. A headless pass would still not replace visual/performance testing.
++altering the user's project. The Windows review executed those export checks.
++A headless pass still does not replace visual/performance testing.
+--- original/CHANGELOG.md
++++ windows_review/CHANGELOG.md
+@@ -4,0 +5,9 @@
++
++### Windows review correction — 2026-10-25
++
++The regenerated reference documents now explicitly use LF on every platform.
++Windows CRLF conversion previously failed the byte-identical regeneration gate
++before engine testing. Geometry, recipes, shape IDs and runtime are unchanged.
++Godot 4.7.2 Windows import/runtime/export and isolated-PCK checks were executed
++during TerraForest assessment. This does not qualify the synchronous GDScript
++world implementation for TerraForest production, or approve any house redesign.
+--- original/STATUS.json
++++ windows_review/STATUS.json
+@@ -4 +4 @@
+-  "revision": "r3",
++  "revision": "r3-windows-review-1",
+@@ -8 +8,4 @@
+-    "count": 75
++    "count": 75,
++    "passed": 74,
++    "skipped": 1,
++    "skip_reason": "Host does not permit symlink creation"
+@@ -12,3 +15,4 @@
+-  "godot_parser_runtime_export_tests": "NOT RUN",
+-  "reason": "No Godot executable available; official download attempts failed in this environment.",
+-  "core_runtime_and_geometry": "Retained from r2; no runtime-completion claim",
++  "godot_parser_runtime_export_tests": "PASS: Godot 4.7.2 Windows, source and isolated PCK",
++  "reason": "Automated standalone gates verified; TerraForest native integration, sustained performance and house approval remain pending.",
++  "core_runtime_and_geometry": "Retained from r3/r2; numeric catalogue and runtime unchanged",
++  "terraforest_building_contract": "Every architectural assembly uses independently stored and removable grid blocks; complete arch/frame entries are source references, not approved construction blocks. External 2/4/6/8-block proof passes; native gameplay integration remains pending.",
+--- original/docs/VALIDATION.md
++++ windows_review/docs/VALIDATION.md
+@@ -4 +4,26 @@
+-## Executed
++## Later Windows review
++
++The TerraForest assessment executed Godot 4.7.2 import, runtime smoke (557080
++assertions, zero failures), demo startup, export and the isolated-PCK equivalent.
++The original all-in-one gate first stopped on Windows CRLF differences in the
++generated reference documents; this review copy explicitly writes LF instead.
++The original 224-entry geometry catalogue remains byte-identical. In the Windows
++Python run, 75 tests were discovered: 74 passed and one platform-dependent case
++was skipped. Original historical claims below describe the earlier environment.
++
++A separate 4096-cube boundary-edit probe measured approximately 29-33 ms for the
++addon synchronous rebuild versus 0.21-0.55 ms for TerraForest's native reference
++on the same machine/headless engine. These are narrow CPU timings, not general
++shape performance or FPS. Native integration, save compatibility, authoritative
++concave queries and house-by-house human approval remain outstanding.
++
++The TerraForest component review also renders 2-, 4-, 6- and 8-block assemblies
++from quarter curves, straight slabs and corner trims at integer grid cells.
++Removing one arch cell leaves its neighbors intact and clears only its collision;
++the saved assembly restores all cells. This verifies standalone components, not
++integration with TerraForest damage, placement, inventory or binary persistence.
++Complete arch/frame catalogue entries remain upstream references and must not
++be used as monolithic architectural elements in TerraForest. The review is not
++approval of any house, its appearance, or the standalone rendering quality.
++
++## Original r3 report: executed
+@@ -22 +47 @@
+-## Not executed
++## Original r3 report: not executed

@@ -1,0 +1,63 @@
+{
+  "author_us": 4320,
+  "edit_flush_us": [
+    550,
+    293,
+    214,
+    369,
+    444,
+    474
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "final": {
+    "bake_lattice_16_chunks": 1,
+    "bake_lattice_32_chunks": 0,
+    "bake_lattice_64_chunks": 0,
+    "cell_bytes": 8192,
+    "cells": 4096,
+    "chunks": 1,
+    "collision_chunks": 1,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 1,
+    "published_bakes": 7,
+    "stale_bakes_rejected": 0,
+    "triangles": 12,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 7,
+    "worker_results_consumed": 7,
+    "worker_threads_started": 1
+  },
+  "initial": {
+    "bake_lattice_16_chunks": 1,
+    "bake_lattice_32_chunks": 0,
+    "bake_lattice_64_chunks": 0,
+    "cell_bytes": 8192,
+    "cells": 4096,
+    "chunks": 1,
+    "collision_chunks": 1,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 1,
+    "published_bakes": 1,
+    "stale_bakes_rejected": 0,
+    "triangles": 12,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 1,
+    "worker_results_consumed": 1,
+    "worker_threads_started": 1
+  },
+  "initial_flush_us": 133605,
+  "mode": "native_reference",
+  "scope": "Headless synchronous 16-cubed solid fill and six alternating boundary-cell edits, collision enabled. Explicit native flush includes waiting for worker completion; not frame-time or general shape performance."
+}

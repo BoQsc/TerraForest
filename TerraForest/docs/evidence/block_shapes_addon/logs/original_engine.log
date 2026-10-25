@@ -1,0 +1,83 @@
+4.7.2.stable.steam.ed1daf0bf
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (7 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | shapes.preview.svg[39m[0m
+[  50% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+RESULT: 557080 checks, 0 failures
+PASS: Godot runtime smoke
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Packing (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/catalogue.json[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/example.gd[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/exporter.gd[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/library.gd[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/MANIFEST.json[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/ORIGIN.json[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/plugin.gd[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/recipes.json[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/world.gd[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://demo/main.gd[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-254818f4b91b5a7a67310bd8a2a483f5-main.scn[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://STATUS.json[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://MANIFEST.json[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://tests/r1.compatibility.json[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://tests/godot_smoke.gd[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://demo/main.tscn.remap[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://.godot/global_script_class_cache.cfg[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://.godot/uid_cache.bin[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+RESULT: 557080 checks, 0 failures
+PASS: Godot runtime smoke
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+PASS: Godot import, runtime smoke, demo boot, resource export and isolated-pack tests.
+Headless checks do not establish visual quality or large-world performance.

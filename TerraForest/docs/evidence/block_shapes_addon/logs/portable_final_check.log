@@ -1,0 +1,246 @@
+test_01_no_engine_is_not_success (gate_test.GateTests.test_01_no_engine_is_not_success) ... ok
+test_02_explicit_source_only_is_success (gate_test.GateTests.test_02_explicit_source_only_is_success) ... ok
+test_03_engine_failure_is_not_success (gate_test.GateTests.test_03_engine_failure_is_not_success) ... ok
+test_04_exit_zero_with_script_error_is_failure (gate_test.GateTests.test_04_exit_zero_with_script_error_is_failure) ... ok
+test_05_missing_success_marker_is_failure (gate_test.GateTests.test_05_missing_success_marker_is_failure) ... ok
+test_06_genuine_completion_marker_accepted (gate_test.GateTests.test_06_genuine_completion_marker_accepted) ... ok
+test_07_nonzero_exit_is_failure (gate_test.GateTests.test_07_nonzero_exit_is_failure) ... ok
+test_08_source_gate_failure_is_failure (gate_test.GateTests.test_08_source_gate_failure_is_failure) ... ok
+test_01_ids (geometry_test.GeometryTests.test_01_ids) ... ok
+test_02_finite_unit_vertices (geometry_test.GeometryTests.test_02_finite_unit_vertices) ... ok
+test_03_nondegenerate_triangles (geometry_test.GeometryTests.test_03_nondegenerate_triangles) ... ok
+test_04_closed_two_manifold_edges (geometry_test.GeometryTests.test_04_closed_two_manifold_edges) ... ok
+test_05_consistent_winding (geometry_test.GeometryTests.test_05_consistent_winding) ... ok
+test_06_boundary_tags_and_full_faces (geometry_test.GeometryTests.test_06_boundary_tags_and_full_faces) ... ok
+test_07_twenty_four_proper_rotations (geometry_test.GeometryTests.test_07_twenty_four_proper_rotations) ... ok
+test_08_all_rotations_all_shapes (geometry_test.GeometryTests.test_08_all_rotations_all_shapes) ... ok
+test_09_adjacent_cubes (geometry_test.GeometryTests.test_09_adjacent_cubes) ... ok
+test_10_solid_chunk_surface (geometry_test.GeometryTests.test_10_solid_chunk_surface) ... ok
+test_11_opening_not_false_occluder (geometry_test.GeometryTests.test_11_opening_not_false_occluder) ... ok
+test_12_aliases (geometry_test.GeometryTests.test_12_aliases) ... ok
+test_13_plain_data_and_source_digest (geometry_test.GeometryTests.test_13_plain_data_and_source_digest) ... ok
+test_01_valid_inventory (inventory_test.InventoryTests.test_01_valid_inventory) ... ok
+test_02_modified_source_rejected (inventory_test.InventoryTests.test_02_modified_source_rejected) ... ok
+test_03_missing_source_rejected (inventory_test.InventoryTests.test_03_missing_source_rejected) ... ok
+test_04_unrecorded_extra_rejected (inventory_test.InventoryTests.test_04_unrecorded_extra_rejected) ... ok
+test_05_unmapped_license_rejected (inventory_test.InventoryTests.test_05_unmapped_license_rejected) ... ok
+test_06_software_mislabeled_as_content_rejected (inventory_test.InventoryTests.test_06_software_mislabeled_as_content_rejected) ... ok
+test_07_unknown_origin_rejected (inventory_test.InventoryTests.test_07_unknown_origin_rejected) ... ok
+test_08_path_escape_absolute_backslash_colon_rejected (inventory_test.InventoryTests.test_08_path_escape_absolute_backslash_colon_rejected) ... ok
+test_09_symlink_rejected (inventory_test.InventoryTests.test_09_symlink_rejected) ... skipped 'Host does not permit symlink creation'
+test_10_invalid_uid_file_rejected (inventory_test.InventoryTests.test_10_invalid_uid_file_rejected) ... ok
+test_11_valid_godot_cache_uid_allowed (inventory_test.InventoryTests.test_11_valid_godot_cache_uid_allowed) ... ok
+test_12_manifest_cannot_claim_self_hash (inventory_test.InventoryTests.test_12_manifest_cannot_claim_self_hash) ... ok
+test_01_licence_policy_passes (license_test.LicenseTests.test_01_licence_policy_passes) ... ok
+test_02_mit_header_rejected_even_with_0bsd_manifest (license_test.LicenseTests.test_02_mit_header_rejected_even_with_0bsd_manifest) ... ok
+test_03_missing_header_rejected (license_test.LicenseTests.test_03_missing_header_rejected) ... ok
+test_04_changed_legal_text_rejected (license_test.LicenseTests.test_04_changed_legal_text_rejected) ... ok
+test_05_third_party_python_import_rejected (license_test.LicenseTests.test_05_third_party_python_import_rejected) ... ok
+test_06_standard_library_import_accepted (license_test.LicenseTests.test_06_standard_library_import_accepted) ... ok
+test_07_dynamic_python_execution_rejected (license_test.LicenseTests.test_07_dynamic_python_execution_rejected) ... ok
+test_08_external_godot_addon_rejected (license_test.LicenseTests.test_08_external_godot_addon_rejected) ... ok
+test_09_own_godot_preload_accepted (license_test.LicenseTests.test_09_own_godot_preload_accepted) ... ok
+test_10_dynamic_resource_loading_rejected (license_test.LicenseTests.test_10_dynamic_resource_loading_rejected) ... ok
+test_11_missing_own_resource_rejected (license_test.LicenseTests.test_11_missing_own_resource_rejected) ... ok
+test_12_network_runtime_rejected (license_test.LicenseTests.test_12_network_runtime_rejected) ... ok
+test_13_comments_and_strings_do_not_load_code (license_test.LicenseTests.test_13_comments_and_strings_do_not_load_code) ... ok
+test_14_external_svg_image_rejected (license_test.LicenseTests.test_14_external_svg_image_rejected) ... ok
+test_15_svg_entity_rejected (license_test.LicenseTests.test_15_svg_entity_rejected) ... ok
+test_16_numeric_svg_accepted (license_test.LicenseTests.test_16_numeric_svg_accepted) ... ok
+test_17_foreign_binary_cannot_be_added_as_cc0 (license_test.LicenseTests.test_17_foreign_binary_cannot_be_added_as_cc0) ... ok
+test_18_conflicting_json_licence_rejected (license_test.LicenseTests.test_18_conflicting_json_licence_rejected) ... ok
+test_19_legal_reference_unchanged (license_test.LicenseTests.test_19_legal_reference_unchanged) ... ok
+test_20_embedded_binary_text_rejected (license_test.LicenseTests.test_20_embedded_binary_text_rejected) ... ok
+test_01_catalogue_reproduces_exactly (recipe_test.RecipeTests.test_01_catalogue_reproduces_exactly) ... ok
+test_02_every_shape_has_complete_recipe_hash (recipe_test.RecipeTests.test_02_every_shape_has_complete_recipe_hash) ... ok
+test_03_all_analytic_volumes (recipe_test.RecipeTests.test_03_all_analytic_volumes) ... ok
+test_04_corrected_blocks_have_requested_axes (recipe_test.RecipeTests.test_04_corrected_blocks_have_requested_axes) ... ok
+test_05_only_exact_pose_aliases (recipe_test.RecipeTests.test_05_only_exact_pose_aliases) ... ok
+test_06_original_218_ids_indices_and_geometry_preserved (recipe_test.RecipeTests.test_06_original_218_ids_indices_and_geometry_preserved) ... ok
+test_07_signature_checks_faces_and_winding (recipe_test.RecipeTests.test_07_signature_checks_faces_and_winding) ... ok
+test_08_signature_does_not_ignore_position (recipe_test.RecipeTests.test_08_signature_does_not_ignore_position) ... ok
+test_09_unknown_or_executable_operation_rejected (recipe_test.RecipeTests.test_09_unknown_or_executable_operation_rejected) ... ok
+test_10_external_asset_key_rejected (recipe_test.RecipeTests.test_10_external_asset_key_rejected) ... ok
+test_11_nonfinite_and_boolean_dimensions_rejected (recipe_test.RecipeTests.test_11_nonfinite_and_boolean_dimensions_rejected) ... ok
+test_12_missing_parameter_rejected (recipe_test.RecipeTests.test_12_missing_parameter_rejected) ... ok
+test_13_duplicate_id_rejected (recipe_test.RecipeTests.test_13_duplicate_id_rejected) ... ok
+test_14_rotated_alias_rejected (recipe_test.RecipeTests.test_14_rotated_alias_rejected) ... ok
+test_15_alias_cycle_rejected (recipe_test.RecipeTests.test_15_alias_cycle_rejected) ... ok
+test_16_json_duplicate_keys_and_nonfinite_tokens_rejected (recipe_test.RecipeTests.test_16_json_duplicate_keys_and_nonfinite_tokens_rejected) ... ok
+test_17_python_imports_are_standard_library (recipe_test.RecipeTests.test_17_python_imports_are_standard_library) ... ok
+test_18_no_dynamic_code_in_builder (recipe_test.RecipeTests.test_18_no_dynamic_code_in_builder) ... ok
+test_19_standalone_cli_reproduces_without_full_project (recipe_test.RecipeTests.test_19_standalone_cli_reproduces_without_full_project) ... ok
+test_20_no_unrecorded_geometry_fields (recipe_test.RecipeTests.test_20_no_unrecorded_geometry_fields) ... ok
+test_21_recipe_and_catalogue_ids_are_one_to_one (recipe_test.RecipeTests.test_21_recipe_and_catalogue_ids_are_one_to_one) ... ok
+test_22_operation_boundaries (recipe_test.RecipeTests.test_22_operation_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 75 tests in 1.794s
+
+OK (skipped=1)
+PASS: 54 inventoried files, hashes, sizes, licence scopes and origin records
+PASS: 19 inventoried files, hashes, sizes, licence scopes and origin records
+PASS: byte-identical catalogue from standalone recipes + builder
+PASS: byte-identical addons/block_shapes/catalogue.json
+PASS: byte-identical docs/catalogue.summary.json
+PASS: byte-identical docs/CATALOGUE.md
+PASS: byte-identical docs/shapes.preview.svg
+Integrity/reproducibility verified; not legal clearance or a signed attestation.
+PASS: 54 inventoried files, hashes, sizes, licence scopes and origin records
+{
+  "format": 1,
+  "license": "CC0-1.0",
+  "result": "PASS",
+  "scope": "Declared file licences, reviewed legal texts, static imports and source-only inventory. Not legal clearance or runtime validation.",
+  "software_0bsd": 24,
+  "content_cc0": 27,
+  "standard_legal_texts": 4,
+  "python_modules": [
+    "__future__",
+    "argparse",
+    "ast",
+    "collections",
+    "contextlib",
+    "copy",
+    "hashlib",
+    "html",
+    "importlib",
+    "io",
+    "itertools",
+    "json",
+    "math",
+    "os",
+    "pathlib",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "tempfile",
+    "unittest",
+    "xml"
+  ],
+  "godot_project_resources": [
+    "res://addons/block_shapes/exporter.gd",
+    "res://addons/block_shapes/library.gd",
+    "res://addons/block_shapes/world.gd"
+  ],
+  "bundled_external_implementation_dependencies": []
+}
+PASS: 19 inventoried files, hashes, sizes, licence scopes and origin records
+{
+  "format": 1,
+  "license": "CC0-1.0",
+  "result": "PASS",
+  "scope": "Declared file licences, reviewed legal texts, static imports and source-only inventory. Not legal clearance or runtime validation.",
+  "software_0bsd": 9,
+  "content_cc0": 9,
+  "standard_legal_texts": 2,
+  "python_modules": [
+    "__future__",
+    "argparse",
+    "ast",
+    "hashlib",
+    "importlib",
+    "itertools",
+    "json",
+    "math",
+    "os",
+    "pathlib",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "tempfile",
+    "xml"
+  ],
+  "godot_project_resources": [
+    "res://addons/block_shapes/exporter.gd",
+    "res://addons/block_shapes/library.gd",
+    "res://addons/block_shapes/world.gd"
+  ],
+  "bundled_external_implementation_dependencies": []
+}
+4.7.2.stable.steam.ed1daf0bf
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (7 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | shapes.preview.svg[39m[0m
+[  50% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+RESULT: 557080 checks, 0 failures
+PASS: Godot runtime smoke
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Packing (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/catalogue.json[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/example.gd[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/exporter.gd[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/library.gd[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/MANIFEST.json[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/ORIGIN.json[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/plugin.gd[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/recipes.json[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://addons/block_shapes/world.gd[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://demo/main.gd[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-254818f4b91b5a7a67310bd8a2a483f5-main.scn[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://STATUS.json[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://MANIFEST.json[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://tests/r1.compatibility.json[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://tests/godot_smoke.gd[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://demo/main.tscn.remap[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://.godot/global_script_class_cache.cfg[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://.godot/uid_cache.bin[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+RESULT: 557080 checks, 0 failures
+PASS: Godot runtime smoke
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+PASS: Godot import, runtime smoke, demo boot, resource export and isolated-pack tests.
+Headless checks do not establish visual quality or large-world performance.
+PASS: all requested automated gates. No legal-clearance or visual-review certification is implied.

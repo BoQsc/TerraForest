@@ -1,0 +1,35 @@
+{
+  "zip_sha256": "f55e25b8945438a64d3450bc7fefe317a3f0f4e0d2f5a1b508551237019f47cb",
+  "catalogue_sha256": "2167b3d42f72e44645175d0522bf8ed442ec2f5379f3994dbd0906998822d536",
+  "meshes": 224,
+  "total_triangles": 7656,
+  "triangle_exact_rotation_classes": 221,
+  "equivalence_scope": "Exact triangle coordinate equality under all 24 proper cube rotations; different triangulations can leave geometrically equivalent shapes in separate classes.",
+  "rotation_duplicate_groups": [
+    [
+      "beam.0.25.corner",
+      "block.h0.25.w0.25"
+    ],
+    [
+      "beam.0.5.corner",
+      "block.h0.5.w0.5"
+    ],
+    [
+      "beam.0.75.corner",
+      "block.h0.75.w0.75"
+    ]
+  ],
+  "shallow_panel_join": {
+    "id": "panel.r0.5.t0.125.w1",
+    "start_heights": [
+      0.0,
+      0.125
+    ],
+    "end_heights": [
+      0.5,
+      0.625
+    ],
+    "required_next_cell_y_offset": 0.5,
+    "integer_lattice_compatible_repetition": false
+  }
+}

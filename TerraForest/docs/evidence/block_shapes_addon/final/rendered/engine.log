@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 617.42 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS six alternating edits preserve all 4096 final cells
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: window.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.5
+PASS physical opening/jamb: door.t0.125.d0.125 x=0.05
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.5
+PASS physical opening/jamb: arch.door.t0.125.d0.5 x=0.05
+PASS unit-cell door frame is not a full-height player doorway and needs a multi-cell assembly
+PASS partial-height neighbor faces remain uncropped in the upstream mesher
+PASS all assembly rotations are grid-preserving quarter turns
+PASS 2 + 4 + 6 + 8 independently stored one-metre building blocks
+PASS save stores individual cells, shapes and orientations
+PASS arch segment has its own occupied collision geometry
+PASS remove exactly one arch block by grid coordinate
+PASS neighbor arch block, jambs and other assemblies survive removal
+PASS removed arch block also disappears from collision
+PASS save after removal preserves the other nineteen cells
+PASS individual block assembly restores
+PASS restore reconstructs the missing block without replacing an assembly model
+SHAPE_ADDON_REVIEW failures=0

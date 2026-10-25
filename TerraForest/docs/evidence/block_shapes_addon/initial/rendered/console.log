@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 617.42 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS six alternating edits preserve all 4096 final cells
+PASS review shape exists: ramp.h1.w1
+PASS review shape exists: panel.r0.5.t0.125.w1
+PASS review shape exists: ridge.h0.5.w1
+PASS review shape exists: corner.outer.h1
+PASS review shape exists: corner.inner.h1
+PASS review shape exists: ramp.segment.4.2
+PASS review shape exists: arch.door.t0.125.d0.5
+PASS review shape exists: window.t0.125.d0.125
+PASS review shape exists: door.t0.125.d0.125
+PASS review shape exists: beam.0.25.center
+PASS review shape exists: corner.trim.t0.125.d0.125
+PASS review shape exists: panel.r0.25.t0.0625.w1
+SHAPE_ADDON_REVIEW failures=0

@@ -1,0 +1,43 @@
+{
+  "author_us": 17499,
+  "display": "Windows",
+  "edit_flush_us": [
+    31791,
+    29420,
+    31505,
+    33617,
+    28856,
+    31236
+  ],
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "final": {
+    "blocks": 4096,
+    "chunks": 1,
+    "dirty_chunks": 0,
+    "triangles": 3072
+  },
+  "geometry_probes": {
+    "adjacent_half_slab_triangles": 24,
+    "culled_half_slab_target_triangles": 20,
+    "one_cell_door_frame_obstructs_player": true
+  },
+  "initial": {
+    "blocks": 4096,
+    "chunks": 1,
+    "dirty_chunks": 0,
+    "triangles": 3072
+  },
+  "initial_flush_us": 32804,
+  "mode": "upstream_addon",
+  "scope": "Synchronous 16-cubed solid fill and six alternating boundary-cell edits, collision enabled. Explicit native flush includes waiting for worker completion; not frame-time or general shape performance."
+}
