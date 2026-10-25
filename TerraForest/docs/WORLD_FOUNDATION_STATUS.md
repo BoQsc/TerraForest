@@ -1,3 +1,24 @@
+## Road-grid preview and loaded-world HUD identity — 2026-10-25
+
+The HUD now identifies the actual loaded slot and seed in one small line.
+The Wild_Hills/1703 read-only audit confirms integer street nodes do not make
+intervening ramps block-level, and base-terrain terracing does not cover baked
+roads. Existing saves and default generation remain unchanged.
+
+An explicit native road-grading experiment is available only through
+`tools/check_road_grid_preview.py`, not normal generation/loading. It reuses
+editable volumetric terrain and fixed grid targeting; no new plate kit or
+continuous sidewalk mesh. The tested left brick's 86 cm gap closes, but a
+42-footprint survey improves only from 19 to 21 footprints within 15 cm; eleven
+still exceed 50 cm. **Not accepted, not a complete road fix, not default.**
+
+See `evidence/road_grid_trial/README.md` for limits, actual engine comparisons,
+source-preservation checks, retained fixture failures and the extra bake-command
+cost. Further frontage-aware grade planning, whole-footprint earthworks validation,
+all-road/multi-seed coverage, traversal, complete-world reload and performance
+evidence are required before production integration. Return to these gates after
+reviewing the preview; do not treat this prototype or a commit as approval.
+
 ## Loading and photograph cursor ownership fixed — 2026-10-25
 
 Offscreen photograph worlds were capturing the process-global cursor when their

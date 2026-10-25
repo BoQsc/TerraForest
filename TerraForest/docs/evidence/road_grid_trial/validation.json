@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-25",
+  "base_commit": "b79f36cc",
+  "scope": "Optional native road-profile experiment, same-save collision/placement preview, and loaded-world HUD identity. Not production road acceptance.",
+  "source": {
+    "slot": "Wild_Hills",
+    "seed": 1703,
+    "generator": 21,
+    "sha256": "fea77ac567d266b4d05bb6d4236da28a5c082bef115ae19fac3471dbdaee5357",
+    "files_hashed": 291,
+    "unchanged_from_initial_closed_snapshot": true
+  },
+  "checks": [
+    {"name": "saved_road_grid_audit", "passed": true, "report": "reports/checks/20261025T150839072486Z"},
+    {"name": "road_grid_trial", "checks": 22, "passed": true, "report": "reports/checks/20261025T153151727766Z"},
+    {"name": "road_profile", "passed": true, "report": "reports/checks/20261025T153152657787Z"},
+    {"name": "terrain_road_bed", "passed": true, "report": "reports/checks/20261025T153153461866Z"},
+    {"name": "native_world_generation", "passed": true, "report": "reports/checks/20261025T153154597257Z"},
+    {"name": "world_recipe", "checks": 46, "passed": true, "report": "reports/checks/20261025T153200792565Z"},
+    {"name": "road_grid_world_preview", "checks": 128, "passed": true, "report": "reports/road_grid_trial/world_c5751cb3a2af4a45b53c224ef0a41b8c"},
+    {"name": "packed_road_grid_trial", "passed": true, "report": "reports/road_grid_trial/packed_retry"},
+    {"name": "exported_startup", "passed": true, "report": "reports/pack_smoke.log"},
+    {"name": "python_compile_and_git_diff_check", "passed": true}
+  ],
+  "not_verified": [
+    "Human appearance/playtest approval",
+    "Block-friendly contact on all roads and all terrain",
+    "Complete trial-world generation/reopen and multi-seed earthworks limits",
+    "Driving and walking all transitions/intersections",
+    "Generation cost and sustained runtime performance"
+  ],
+  "default_enabled": false,
+  "normal_generation_or_loading_calls_trial": false,
+  "human_approval": "pending"
+}

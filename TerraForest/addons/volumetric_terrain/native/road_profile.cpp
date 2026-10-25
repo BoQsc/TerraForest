@@ -8,7 +8,10 @@
 #include <algorithm>
 namespace terraforest {
 using namespace godot;
-void NativeRoadProfile::_bind_methods(){ClassDB::bind_method(D_METHOD("fit","samples","max_grade","max_curvature","max_cut","max_fill"),&NativeRoadProfile::fit);}
+void NativeRoadProfile::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("fit","samples","max_grade","max_curvature","max_cut","max_fill"),&NativeRoadProfile::fit);
+ ClassDB::bind_method(D_METHOD("grid_trial","coefficients","spacing"),&NativeRoadProfile::grid_trial);
+}
 namespace {
 using Weights=std::array<double,65>;
 struct Term{int i;double a;};

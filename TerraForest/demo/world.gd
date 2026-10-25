@@ -81,6 +81,7 @@ var _prefab_preview_asset: Resource
 var recent_action_messages: Array[String]=[]
 var log_action_messages: bool="--log-actions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var telemetry := Label.new()
+var world_identity := Label.new()
 var _telemetry_time: float = 0.0
 var _lake_notice: String = ""
 var _lake_notice_until: int = 0
@@ -670,6 +671,10 @@ func _setup_hud() -> void:
 	title.text = "Living terrain"
 	title.add_theme_font_size_override("font_size", 30)
 	box.add_child(title)
+	world_identity.add_theme_font_size_override("font_size", 13)
+	world_identity.add_theme_color_override("font_color", Color("bbcfc6"))
+	world_identity.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	box.add_child(world_identity)
 	telemetry.add_theme_font_size_override("font_size", 14)
 	telemetry.add_theme_color_override("font_color", Color("bbcfc6"))
 	box.add_child(telemetry)
@@ -1495,6 +1500,8 @@ func _process(delta: float) -> void:
 	_telemetry_time += delta
 	if _telemetry_time >= 0.5 and vegetation.ready_to_render:
 		_telemetry_time = 0.0
+		world_identity.text = "%s · Seed %d" % [terrain.save_slot, terrain.backend.world_seed]
+		world_identity.tooltip_text = world_identity.text
 		var activity: String = "Updating terrain…" if terrain.pending_edit else "Explore · Sculpt · Build"
 		var building_stream: Dictionary = structures.blocks.streaming_stats()
 		var building_collision: Dictionary = structures.blocks.collision_stats()

@@ -1,0 +1,1401 @@
+{
+  "after": [
+    {
+      "cell": "(1004, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0196990966797,
+        "minimum": 35.004524230957,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0188369750977,
+        "minimum": 35.0053024291992,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0207252502441,
+        "minimum": 35.0035095214844,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0518798828125,
+        "minimum": 35.0226669311523,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0491218566895,
+        "minimum": 35.0226669311523,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0535926818848,
+        "minimum": 35.0234222412109,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.096736907959,
+        "minimum": 35.0553703308105,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0933113098145,
+        "minimum": 35.0553703308105,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1024322509766,
+        "minimum": 35.0571670532227,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1545753479004,
+        "minimum": 35.1015129089355,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1505279541016,
+        "minimum": 35.1015129089355,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1661643981934,
+        "minimum": 35.1051864624023,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.839004516601563,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2352867126465,
+        "minimum": 35.1609954833984,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.839004516601563,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2292861938477,
+        "minimum": 35.1609954833984,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.832668304443359,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2471389770508,
+        "minimum": 35.1673316955566,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.755165100097656,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3432693481445,
+        "minimum": 35.2448348999023,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.755165100097656,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3432693481445,
+        "minimum": 35.2448348999023,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.747806549072266,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3427391052246,
+        "minimum": 35.2521934509277,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.640232086181641,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4836120605469,
+        "minimum": 35.3597679138184,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.634773254394531,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4836120605469,
+        "minimum": 35.3652267456055,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.644199371337891,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4669532775879,
+        "minimum": 35.3558006286621,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.507816314697266,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.6212959289551,
+        "minimum": 35.4921836853027,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.493236541748047,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.6212959289551,
+        "minimum": 35.506763458252,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.533409118652344,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.5958366394043,
+        "minimum": 35.4665908813477,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.378120422363281,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7384338378906,
+        "minimum": 35.6218795776367,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.358211517333984,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7384338378906,
+        "minimum": 35.641788482666,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.420192718505859,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7108001708984,
+        "minimum": 35.5798072814941,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.265281677246094,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8282051086426,
+        "minimum": 35.7347183227539,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.245231628417969,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8282051086426,
+        "minimum": 35.754768371582,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.312877655029297,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8051567077637,
+        "minimum": 35.6871223449707,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.175563812255859,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8937225341797,
+        "minimum": 35.8244361877441,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.160144805908203,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8937225341797,
+        "minimum": 35.8398551940918,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.216896057128906,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8779754638672,
+        "minimum": 35.7831039428711,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.107273101806641,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9430618286133,
+        "minimum": 35.8927268981934,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0973968505859375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9430618286133,
+        "minimum": 35.9026031494141,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.136329650878906,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9345283508301,
+        "minimum": 35.8636703491211,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.05517578125,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.976993560791,
+        "minimum": 35.94482421875,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0504074096679688,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.976993560791,
+        "minimum": 35.949592590332,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0716438293457031,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9738388061523,
+        "minimum": 35.9283561706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0204391479492188,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9970054626465,
+        "minimum": 35.9795608520508,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0190963745117188,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9970054626465,
+        "minimum": 35.9809036254883,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0270576477050781,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9958992004395,
+        "minimum": 35.9729423522949,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    }
+  ],
+  "after_summary": {
+    "cells": 42,
+    "mean_gap": 0.269995734805153,
+    "over_50cm": 11,
+    "within_15cm": 21,
+    "worst_gap": 0.839004516601563
+  },
+  "before": [
+    {
+      "cell": "(1004, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0266799926758,
+        "minimum": 35.006534576416,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0266418457031,
+        "minimum": 35.0077743530273,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0246887207031,
+        "minimum": 35.0041618347168,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.068660736084,
+        "minimum": 35.0319519042969,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.068660736084,
+        "minimum": 35.0319519042969,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.0641632080078,
+        "minimum": 35.0272598266602,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1091)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1298332214355,
+        "minimum": 35.0748138427734,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1093)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1298332214355,
+        "minimum": 35.077335357666,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1223793029785,
+        "minimum": 35.066463470459,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.864837646484375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2063751220703,
+        "minimum": 35.1351623535156,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.858837127685547,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2063751220703,
+        "minimum": 35.1411628723145,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007, 35, 1095)",
+      "support": {
+        "bottom": 35.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.1960411071777,
+        "minimum": 35.1230583190918,
+        "offset_y": 0.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.788154602050781,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2949485778809,
+        "minimum": 35.2118453979492,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.780105590820313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2949485778809,
+        "minimum": 35.2198944091797,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.805271148681641,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.2820205688477,
+        "minimum": 35.1947288513184,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.699832916259766,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3914451599121,
+        "minimum": 35.3001670837402,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.689968109130859,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3914451599121,
+        "minimum": 35.3100318908691,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.721504211425781,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.3766899108887,
+        "minimum": 35.2784957885742,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.603610992431641,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4918746948242,
+        "minimum": 35.3963890075684,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.592617034912109,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4918746948242,
+        "minimum": 35.4073829650879,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.628658294677734,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.4766235351563,
+        "minimum": 35.3713417053223,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.502937316894531,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.5926170349121,
+        "minimum": 35.4970626831055,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.491874694824219,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.5926170349121,
+        "minimum": 35.5081253051758,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.529212951660156,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.5779800415039,
+        "minimum": 35.4707870483398,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.401866912841797,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.6899681091309,
+        "minimum": 35.5981330871582,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.391445159912109,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.6899681091309,
+        "minimum": 35.6085548400879,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.427318572998047,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.6770820617676,
+        "minimum": 35.572681427002,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.303867340087891,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7801055908203,
+        "minimum": 35.6961326599121,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.294948577880859,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7801055908203,
+        "minimum": 35.7050514221191,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.326602935791016,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.7699737548828,
+        "minimum": 35.673397064209,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.213111877441406,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8588371276855,
+        "minimum": 35.7868881225586,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.206375122070313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8588371276855,
+        "minimum": 35.7936248779297,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.231334686279297,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.8518562316895,
+        "minimum": 35.7686653137207,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.134250640869141,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.922664642334,
+        "minimum": 35.8657493591309,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.129833221435547,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.922664642334,
+        "minimum": 35.8701667785645,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.147087097167969,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9188652038574,
+        "minimum": 35.852912902832,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0707778930664063,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9680480957031,
+        "minimum": 35.9292221069336,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0686607360839844,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9680480957031,
+        "minimum": 35.931339263916,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0781173706054688,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9667091369629,
+        "minimum": 35.9218826293945,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1091)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0271720886230469,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9951782226563,
+        "minimum": 35.972827911377,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1093)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.026641845703125,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9951782226563,
+        "minimum": 35.9733581542969,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017, 35, 1095)",
+      "support": {
+        "bottom": 36.0,
+        "gap": 0.0300178527832031,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9951477050781,
+        "minimum": 35.9699821472168,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    }
+  ],
+  "before_summary": {
+    "cells": 42,
+    "mean_gap": 0.311115537370954,
+    "over_50cm": 13,
+    "within_15cm": 19,
+    "worst_gap": 0.864837646484375
+  },
+  "road": {
+    "bounds": "[P: (1000.667, 33.79546, 1090.0), S: (20.66663, 6.409088, 6.0)]",
+    "clearance": 4.0,
+    "coefficients": [
+      2.0,
+      -3.0,
+      0.0,
+      36.0,
+      0.0,
+      0.0,
+      0.0,
+      35.0,
+      0.0,
+      0.0,
+      0.0,
+      35.0,
+      0.0,
+      0.0,
+      0.0,
+      35.0,
+      -2.0,
+      3.0,
+      0.0,
+      35.0,
+      -2.0,
+      3.0,
+      0.0,
+      36.0
+    ],
+    "curve_index": 4,
+    "depth": 1.0,
+    "finish": "(1018.333, 36.0, 1093.0)",
+    "half_width": 3.0,
+    "material": 4,
+    "shoulder": 0.0,
+    "start": "(1003.667, 35.0, 1093.0)"
+  }
+}
