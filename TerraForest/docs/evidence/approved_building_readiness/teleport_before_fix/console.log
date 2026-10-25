@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary world is playable
+PASS map survey is ready
+PASS Ctrl-click cannot teleport gameplay players
+PASS direct request also enforces development mode
+PASS ordinary marker clicks still track destinations
+PASS map explains Ctrl-click in development mode
+PASS plain development click does not teleport
+PASS Ctrl-drag pans without teleporting
+PASS releasing Ctrl before the click completes cancels teleport
+PASS off-world and nonfinite targets do not move the player
+PASS driving blocks teleport without ejecting or moving the vehicle
+PASS active world preparation blocks travel
+PASS teleport waits for click release
+PASS previous encounter has active navigation residency before travel
+ERROR: Native terrain scheduling rejected invalid state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://addons/volumetric_terrain/terrain_stream.gd:532)
+       [1] _plan_requests (res://addons/volumetric_terrain/terrain_stream.gd:979)
+       [2] _schedule (res://addons/volumetric_terrain/terrain_stream.gd:997)
+       [3] _process (res://addons/volumetric_terrain/terrain_stream.gd:261)
+       [4] _process (res://addons/volumetric_terrain/terrain_world.gd:66)
+[TerrainRewrite] ERROR: Native terrain scheduling rejected invalid state
+FAIL teleport clears previous encounter residency before changing terrain focus
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_MAP_TELEPORT checks=15 failures=1

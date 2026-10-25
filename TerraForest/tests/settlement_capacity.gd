@@ -17,7 +17,12 @@ func run() -> void:
 			var ok: bool=actual.compose_frontage([cottage,tower],2,8,3,seed) if streets==1 else actual.compose_settlement([cottage,tower],2,8,3,seed,streets)
 			check(ok and counts.ok and counts.blocks==actual.get_cell_count() and counts.models==actual.get_model_attachments().size(),"preflight agrees with composed blocks/objects: seed %d streets %d"%[seed,streets])
 	var models: Dictionary=counter.layout_counts([tower],32,1703,1)
-	check(not models.ok and models.models==4224 and models.blocks<262144 and "4096" in models.reason,"attached object limit rejects independently of block limit")
+	var tower_models: int=tower.get_model_attachments().size()
+	check(not models.ok and models.models==64*tower_models and models.models>4096 and models.blocks<262144 and "4096" in models.reason,"attached object limit rejects independently of block limit")
+	var safe_lots:=floori(4096.0/(2*tower_models))
+	var boundary: Dictionary=counter.layout_counts([tower],safe_lots,1703,1)
+	var overflow: Dictionary=counter.layout_counts([tower],safe_lots+1,1703,1)
+	check(boundary.ok and boundary.models==safe_lots*2*tower_models and not overflow.ok and overflow.models==(safe_lots+1)*2*tower_models and "4096" in overflow.reason,"current tower layout accepts the last safe paired lot and rejects the next")
 	var blocks: Dictionary=counter.layout_counts([cottage],64,1703,8)
 	check(not blocks.ok and blocks.blocks>262144 and "262144" in blocks.reason,"block limit reports exact oversized count")
 	for args in [[[],1,0,1],[[cottage],0,0,1],[[cottage],1,-1,1],[[cottage],1,0,9]]:

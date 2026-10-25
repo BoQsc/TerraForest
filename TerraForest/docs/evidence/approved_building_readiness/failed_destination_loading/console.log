@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS untouched world browser uses the published two-settlement defaults
+WORLD_PLAN digest=4a641bdd8ac3828e46db005c627e2af099345e0eedb64cb5c5b270182199fac3 cache_hit=true ms=46.627 planning_frames=4
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":4755456,"checkpoints":6,"completed":316,"ok":true,"resident_high":541,"resident_limit":16384,"revision":316,"storage":{"region_reads":34,"reused_files":0,"reused_regions":107,"workers":1,"written_bytes":2661804,"written_files":11},"worker_ms":405.825}
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":1,"milliseconds":861.227,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"status":2,"steps":890,"water_ml":13693871176}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":3.439}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=20 edits=316
+GENERATION_JOB state=ready reason=
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 177.34 ms at 44199
+[terrain-hitch] base controller 178.33 ms at 44200
+[terrain-hitch] controller process 179.24 ms at 44200
+[terrain-hitch] world process 180.58 ms at 44202
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS production generation loads in same game window
+PASS created world uses requested durable biome recipe
+PASS normal gameplay construction, vegetation, actors and vehicles are enabled
+PASS all requested districts and regional routes publish to actual world map
+PASS no legacy continuous decorative sidewalk meshes
+PASS publication verifies native binary recipe alongside terrain and structures
+PASS generation introduces no second process or operating-system window
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=11.404 recipe_ms=26.466 fitting_ms=27.053
+PASS reconstruct exact approved-building plan independently
+PASS every published district and road matches the independently rebuilt native plan
+PASS transform approved B2 R2 into generated lot
+PASS transform approved A2 R2 into generated lot
+PASS transform approved B1 R1 into generated lot
+PASS new world includes A2 cottage, B1 hipped shop and B2 thin-roof shop
+ERROR: Native terrain scheduling rejected invalid state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _fail (res://addons/volumetric_terrain/terrain_stream.gd:532)
+       [1] _plan_requests (res://addons/volumetric_terrain/terrain_stream.gd:979)
+       [2] _schedule (res://addons/volumetric_terrain/terrain_stream.gd:997)
+       [3] _process (res://addons/volumetric_terrain/terrain_stream.gd:261)
+       [4] _process (res://addons/volumetric_terrain/terrain_world.gd:66)
+[TerrainRewrite] ERROR: Native terrain scheduling rejected invalid state
+FAIL approved B2 R2 streams in with complete collision

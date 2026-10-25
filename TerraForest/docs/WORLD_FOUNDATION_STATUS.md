@@ -1,3 +1,29 @@
+## Approved-building readiness audit and destination-loading fix — 2026-10-25
+
+The user's interruption/readiness audit confirms A2, B1 and B2 are integrated;
+no additional unapproved building redesign is made. Default two-settlement
+generation, native road-plan identity, all three exact approved building records,
+destination streaming, saving and selector reopening pass 31 checks in one window.
+Only isolated audit saves are created; existing player worlds remain unchanged.
+See `evidence/approved_building_readiness/README.md` for commands and retained failures.
+The six-district, 68-building custom-world roundtrip also passes 30 checks.
+The pack is rebuilt; exported startup and the 25-check packed teleport regression
+pass. This qualifies the approved-building playtest path, not all historical work.
+
+The audit found a genuine loading error during travel to a distant building:
+old encounter navigation interests remained outside the native planner's budget
+after player focus changed. World teleport now clears the shared residency
+coordinator and its consumers before changing focus. The exact Ctrl-click
+regression fails before the fix and passes 25 checks after it; destination
+navigation resumes without disabling validation or changing native budgets.
+
+The previously recorded settlement-capacity/preset fixture failures are also
+closed: old assertions predated tower stair rails and later building revisions.
+Current source-count arithmetic preserves the fixed five-cottage/three-tower
+preset and adds the exact safe/overflow attachment boundary. Both suites pass;
+their original failures remain available. This closes those specific stale tests,
+not every test or every world-quality/performance milestone below.
+
 ## B2 roof approved; both shop designs integrated into generation — 2026-10-25
 
 The user explicitly approved B2: "i approve this roof." Its exact 1,028 native
@@ -78,12 +104,13 @@ automatic structural collapse or whole-city quality.
 **Verification:** 32 approval/default checks pass in both source and exported
 game, including exact approved geometry, independent instances, rotated footprint,
 native placement and compound restore. Custom recipe cold/warm caches and both
-historical comparisons pass. Two older fixed-count settlement suites remain
+historical comparisons pass. At this milestone two older fixed-count settlement suites were
 failing, including when rerun against historical A0: the tower-only attachment
 count in `settlement_capacity` and mixed-layout count in `settlement_presets`.
 Their failures and the corrected new-fixture failures are retained in the approval
-evidence. Reconcile the old expected counts with current tower/preset recipes and
-rerun those suites separately; do not claim a fully green settlement test suite.
+evidence. The subsequent approved-building readiness audit above reconciles the
+source-count expectations, strengthens the boundary checks and passes both suites.
+That does not imply every settlement test or world-quality gate is complete.
 
 ## Building review decision: Shop B addition only; cottage rejected — 2026-10-25
 

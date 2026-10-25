@@ -62,6 +62,8 @@ retroactively rewritten. Current asset/pack hashes and run outcomes are in
   the suites are not reported green or silently relaxed. The nine current
   preflight-versus-composition cases pass. Reconcile stale fixed-count fixtures
   with current tower/preset recipes separately, then rerun both suites.
+  **Follow-up:** `../approved_building_readiness/README.md` now records the
+  historical cause, stronger source-count/boundary checks and both passing suites.
 
 ## Remaining scope
 

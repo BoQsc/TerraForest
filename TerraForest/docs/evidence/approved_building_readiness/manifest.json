@@ -1,0 +1,136 @@
+{
+  "base_revision": "00794189",
+  "scope": "Approved-building new-world readiness and stale encounter residency on teleport; existing saves untouched, not whole-project acceptance",
+  "runs": {
+    "capacity": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 81408,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.3816031999886036,
+      "passed": true
+    },
+    "preset": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 52908,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 1.488032600027509,
+      "passed": true
+    },
+    "teleport": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 11192,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 13.332064399961382,
+      "passed": true
+    },
+    "default_generation": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79772,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 59.73648300010245,
+      "passed": true
+    },
+    "custom_generation": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 82448,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 109.38292750006076,
+      "passed": true
+    },
+    "pack": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 84416,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 12.898510900093243,
+      "passed": true
+    },
+    "initial_fixture": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 79964,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL all requested districts and regional routes publish to actual world map",
+        "FAIL published world contains every approved A2 R2 block",
+        "FAIL published world contains every approved B2 R2 block"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 63.613946700003,
+      "passed": false
+    },
+    "failed_destination_loading": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 67928,
+      "exit_code": 4294967295,
+      "diagnostics": [
+        "ERROR: Native terrain scheduling rejected invalid state",
+        "FAIL approved B2 R2 streams in with complete collision"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 174.51624689996243,
+      "passed": false
+    },
+    "teleport_before_fix": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 25728,
+      "exit_code": 1,
+      "diagnostics": [
+        "ERROR: Native terrain scheduling rejected invalid state",
+        "FAIL teleport clears previous encounter residency before changing terrain focus"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 11.143592299893498,
+      "passed": false
+    },
+    "pack_launch_path_failure": {
+      "timed_out": false,
+      "launch_error": "[WinError 2] The system cannot find the file specified",
+      "cancelled": false,
+      "exit_code": null,
+      "diagnostics": [],
+      "required_text_found": false,
+      "elapsed_seconds": 0.001616499968804419,
+      "passed": false
+    }
+  },
+  "files": {
+    "demo/world.gd": "e13f915f389538150fdc42ea6ea3f8c6dce8d0952d4ce349d6474bf9563ca7f4",
+    "tests/settlement_capacity.gd": "030c01aee3443e009541ae968645e223c07f734d7cc4144c565dfbdf2a8fe624",
+    "tests/settlement_presets.gd": "dbde174aa8939bb9f75461cf184dcbf7ebde1024fea64d76bfae66575ccaebcb",
+    "tests/world_map_teleport.gd": "6863f4d4f97b5bd4377c6fa2782b1da2ec2dde870b0b16578e8eb4f98b54c678",
+    "tests/world_recipe_generation.gd": "e13b2a4f006e7b42fe72784cab5a2ab5421c2fa64f7b7839af23f74893f63fea",
+    "addons/structures/prefabs/cottage_thin_roof_a2.tres": "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30",
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "addons/structures/prefabs/village_shop_thin_roof_b2.tres": "69dc99b3084e29709d42f3a603e75e04310ab725bfc9e7eda6e3a096f4f8dc06",
+    "dist/TerraForest.pck": "326c62bdff62de087eae9245969267abe3c6cffabfe0099b0f084176eb35f9c6"
+  }
+}

@@ -74,13 +74,21 @@ func run()->void:
  await capture("map_hint")
  await mouse(screen,true,true)
  check(game.spawn_token==token,"teleport waits for click release")
+ game.navigation_residency.next_refresh=0
+ game.navigation_residency.update(PackedVector3Array([game.player.global_position]))
+ check(not game.terrain.navigation_interest.is_empty(),"previous encounter has active navigation residency before travel")
  await mouse(screen,false,true)
+ if not check(game.terrain.navigation_interest.is_empty() and game.navigation_residency.last_points.is_empty(),"teleport clears previous encounter residency before changing terrain focus"):await finish();return
  check(game.spawn_token==token+1 and Vector2(game.pending_spawn.x,game.pending_spawn.z).distance_to(Vector2(target.x,target.z))<0.01,"Ctrl-click resolves the exact world point after map pan and zoom")
  check(not atlas.opened and not atlas.view.dragging and not menu.visible_ui() and game.loading_active,"map closes and starts the normal destination loading barrier")
  check(game.controls.direction()==Vector3.ZERO and game.player.velocity==Vector3.ZERO,"travel clears player movement and held actions")
  check(not atlas.teleport_to(Vector2(400,400)) and game.spawn_token==token+1,"closed map and in-progress travel reject repeat requests")
  await capture("loading")
  if not check(await until(func():return not game.loading_active and not game.waiting_spawn and not game.needs_floor_spawn,70),"destination collision and floor become playable"):await finish();return
+ check(game.terrain.latest_error.is_empty(),"destination streaming preserves valid native planning state")
+ game.navigation_residency.next_refresh=0
+ game.navigation_residency.update(PackedVector3Array([game.player.global_position]))
+ check(not game.terrain.navigation_interest.is_empty(),"navigation residency resumes normally at the destination")
  check(Vector2(game.player.position.x,game.player.position.z).distance_to(Vector2(target.x,target.z))<1.0 and game.player.position.y>0,"player arrives at the clicked horizontal position with resolved terrain height")
  check(menu.developer and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and not game.player_hud.inventory_open,"development mode and normal mouse control survive arrival")
  check(game.player_hud.inventory.capture_storage_snapshot()==inventory and game.terrain.published_revision==revision,"teleport does not mutate inventory or terrain")

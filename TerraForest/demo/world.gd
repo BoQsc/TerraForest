@@ -105,6 +105,10 @@ func _additional_motion_ready(delta: float) -> bool:
 func _player_water_depth() -> float:
 	return lakes.depth_at(player.global_position+Vector3(0,1.1,0))
 
+func teleport(point: Vector3, fixed_y: float = -1.0) -> void:
+	navigation_residency.update(PackedVector3Array())
+	super.teleport(point,fixed_y)
+
 var _initial_generation_spawn:=Vector3(800,0,1310)
 func configure_generation_spawn(point:Vector3)->bool:
 	if is_inside_tree() or not point.is_finite() or point.x<0 or point.x>2000 or point.z<0 or point.z>2000:return false

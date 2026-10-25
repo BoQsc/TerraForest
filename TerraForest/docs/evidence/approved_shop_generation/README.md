@@ -90,8 +90,9 @@ frames. The final populated run above supersedes those observations.
 The B1 generation-hookup and B2 approval gates are closed. Whole-world visual
 acceptance, denser scenes, long-distance/endurance performance, arbitrary/shallow
 roof pitches and structural collapse remain separate requirements. Earlier
-unrelated fixed-count settlement-test failures remain tracked in
-`../../WORLD_FOUNDATION_STATUS.md`; this is not a claim that every repository
+unrelated fixed-count settlement-test failures were subsequently resolved in
+`../approved_building_readiness/README.md`, which also records default-generation
+checks and a destination-loading fix. This is not a claim that every repository
 test is green.
 
 ## Reproduce

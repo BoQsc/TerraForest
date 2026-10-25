@@ -1,0 +1,51 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\godot.windows.opt.tools.64.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_readiness_pack\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\world_map_teleport.gd",
+    "--",
+    "--temporary",
+    "--world-slot=readiness_195a437413764d1da554b3d1c7fcd29a",
+    "--derived-cache=user://readiness_195a437413764d1da554b3d1c7fcd29a",
+    "--ground-cover",
+    "--actors",
+    "--no-zombies"
+  ],
+  "pack_sha256": "326c62bdff62de087eae9245969267abe3c6cffabfe0099b0f084176eb35f9c6",
+  "test_sha256": "6863f4d4f97b5bd4377c6fa2782b1da2ec2dde870b0b16578e8eb4f98b54c678",
+  "revision": "0079418925b73cf1eaa76124c1abafe5d9b5278b",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/docs/WORLD_FOUNDATION_STATUS.md",
+    " M TerraForest/docs/evidence/approved_cottage_roof/README.md",
+    " M TerraForest/docs/evidence/approved_shop_generation/README.md",
+    " M TerraForest/tests/settlement_capacity.gd",
+    " M TerraForest/tests/settlement_presets.gd",
+    " M TerraForest/tests/world_map_teleport.gd",
+    " M TerraForest/tests/world_recipe_generation.gd",
+    "?? TerraForest/docs/evidence/approved_building_readiness/"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": "[WinError 2] The system cannot find the file specified",
+    "cancelled": false,
+    "exit_code": null,
+    "diagnostics": [],
+    "required_text_found": false,
+    "elapsed_seconds": 0.001616499968804419,
+    "passed": false
+  }
+}
