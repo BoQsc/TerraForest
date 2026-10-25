@@ -17,6 +17,7 @@ var placement_results: Array[Dictionary] = []
 var viewports: Array[SubViewport] = []
 var tour_generation := 0
 var tour_button: Button
+var candidate_label: Label
 
 func _ready() -> void:
 	Engine.max_fps=60
@@ -33,9 +34,10 @@ func _ready() -> void:
 	var transaction: RefCounted=ClassDB.instantiate("NativePrefabPlacement")
 	for design in designs:
 		for side in 2:
+			if not include_building(design,side):continue
 			var asset: Resource=design.original if side==0 else design.candidate
 			if asset==null: return
-			var placed: Dictionary=transaction.place(structures.blocks,asset,design.base+Vector3i(side*PAIR_OFFSET,0,0),0,structures.model_collections(),[])
+			var placed: Dictionary=transaction.place(structures.blocks,asset,placement_origin(design,side),0,structures.model_collections(),[])
 			placement_results.append(placed)
 			if not placed.get("ok",false): return
 	structures.blocks.set_collision_radius(256)
@@ -47,6 +49,12 @@ func _ready() -> void:
 	_interface()
 	select_view(0,0)
 	ready_ok=true
+
+func placement_origin(design: Dictionary, side: int) -> Vector3i:
+	return design.base+Vector3i(side*PAIR_OFFSET,0,0)
+
+func include_building(_design: Dictionary, _side: int) -> bool:
+	return true
 
 func _lighting() -> void:
 	var environment:=Environment.new()
@@ -95,7 +103,9 @@ func _interface() -> void:
 	var pair:=HBoxContainer.new();pair.size_flags_vertical=Control.SIZE_EXPAND_FILL;pair.add_theme_constant_override("separation",16);column.add_child(pair)
 	for side in 2:
 		var section:=VBoxContainer.new();section.size_flags_horizontal=Control.SIZE_EXPAND_FILL;pair.add_child(section)
-		section.add_child(_label("EXISTING / UNCHANGED" if side==0 else "PROPOSAL / NOT APPROVED",19,Color("b7c6ce") if side==0 else Color("f1cb8f")))
+		var caption:=_label("EXISTING / UNCHANGED" if side==0 else "",19,Color("b7c6ce") if side==0 else Color("f1cb8f"))
+		section.add_child(caption)
+		if side==1:candidate_label=caption
 		var holder:=SubViewportContainer.new();holder.stretch=true;holder.size_flags_vertical=Control.SIZE_EXPAND_FILL;section.add_child(holder)
 		var viewport:=SubViewport.new();viewport.size=Vector2i(920,780);viewport.world_3d=get_world_3d();viewport.msaa_3d=Viewport.MSAA_4X
 		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS;holder.add_child(viewport);viewports.append(viewport)
@@ -117,6 +127,10 @@ func select_view(design_index: int, view_index: int, from_tour: bool = false) ->
 	if removed: toggle_block()
 	current_design=design_index;current_view=view_index
 	var design: Dictionary=designs[current_design]
+	match design.decision:
+		"rejected":candidate_label.text="REJECTED / ARCHIVED R1"
+		"approved_addition":candidate_label.text="APPROVED / ADDITION ONLY"
+		_:candidate_label.text="PROPOSAL / NOT APPROVED"
 	heading.text=design.title+"  /  "+["EXTERIOR","INTERIOR","DETAIL"][current_view]
 	details.text=design.details
 	for side in 2:

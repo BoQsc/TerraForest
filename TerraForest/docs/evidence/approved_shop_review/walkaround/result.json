@@ -1,0 +1,24 @@
+{
+  "checks": 60,
+  "failures": 0,
+  "scope": "isolated signed review scene, real native walking and door interaction; no generated terrain or NPC acceptance",
+  "stats": {
+    "bake_lattice_16_chunks": 5,
+    "bake_lattice_32_chunks": 0,
+    "bake_lattice_64_chunks": 21,
+    "cell_bytes": 212992,
+    "cells": 2984,
+    "chunks": 26,
+    "collision_chunks": 26,
+    "dirty_chunks": 26,
+    "max_chunks": 2048,
+    "mesh_chunks": 26,
+    "published_bakes": 35,
+    "stale_bakes_rejected": 0,
+    "triangles": 7510,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 35,
+    "worker_results_consumed": 35,
+    "worker_threads_started": 1
+  }
+}

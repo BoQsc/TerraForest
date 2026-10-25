@@ -1,4 +1,4 @@
-"""Open the isolated, side-by-side building proposals without loading player saves."""
+"""Open the signed walk-around building review without loading player saves."""
 import argparse
 import datetime
 import json
@@ -10,6 +10,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
     parser.add_argument('--no-tour', action='store_true')
+    parser.add_argument('--comparison', action='store_true', help='Use the earlier split-screen comparison instead of walking')
     parser.add_argument('--dry-run', action='store_true')
     options = parser.parse_args()
     config, _ = parse_args(['--godot', options.godot] if options.godot else [])
@@ -18,9 +19,10 @@ def main():
     command = [config.godot, '--path', str(ROOT), '--log-file', str(folder / 'engine.log'),
                '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
                '--script', 'res://tools/review_modular_buildings.gd', '--', '--temporary',
-               *([] if options.no_tour else ['--guided-tour'])]
-    details = dict(command=command, temporary=True, label='Building proposals R1', utc=stamp,
-                   notes='Isolated architecture comparison, not a gameplay world. Originals are unchanged; candidates are unapproved. No player saves are read or written.')
+               *(['--comparison'] if options.comparison else []),
+               *(['--guided-tour'] if options.comparison and not options.no_tour else [])]
+    details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
+                   notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0

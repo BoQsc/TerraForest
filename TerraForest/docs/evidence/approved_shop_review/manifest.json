@@ -1,0 +1,201 @@
+{
+  "base_revision": "e9f6e86e2e03d858c4b65191b445e0a21fa1814d",
+  "scope": "B1 approved as an additional construction prefab; A1 rejected; originals and generated-world recipes retained; roof rework pending",
+  "sources": {
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "addons/structures/workshop_catalog.gd": "f8ee1a573bbaa8b6b6c23004da1facd63ff0aef1c54f305ef290081f5c2022c6",
+    "demo/world.gd": "051461dbc414c35f26e6ca4fed149e74563246a1a518ce45ab98fe4abb49f1c5",
+    "reviews/modular_buildings/recipes.gd": "7ecec6773fa414b338131ba2d6bf0a251c45515d25cb425861f4d0ed48b82691",
+    "reviews/modular_buildings/viewer.gd": "0ae795ccb76fc9b1429209c7f3202f757014ffb08c7982ad90185ad04b0a6d98",
+    "reviews/modular_buildings/walkaround.gd": "6b49f342a4ee0750a3eae4a3f1834c6bfd6cb8e71ebe20b6f4535d173a3c4235",
+    "reviews/modular_buildings/walkaround.tscn": "bf83caf30502d3c44eb001b939a0d853da11b3fa2ebf63908ec524f51bbdcf39",
+    "reviews/modular_buildings/baked/cottage_a.tres": "4ecd85ea6e2a4ec4b3d83c4d1f56bf6d45909e1ad358f6a33512e77359f26efd",
+    "reviews/modular_buildings/baked/shop_b.tres": "8a0acd5b2bdb6325fb0aa459cf5e6ea92ce105cebb25de2e2861f4372cd44d8a",
+    "tests/approved_shop_addition.gd": "275757ce3ce4792f14b564a9cbb19e2ae1feb7ecc5385a6007f5a61fabdea04d",
+    "tests/modular_building_walkaround.gd": "4f26ec74ba51b6f3a85da77ef3b3c5807acf877e5499bd9d854d02c5981190ff",
+    "tests/modular_building_review.gd": "85c9c9a624ebb0897f43d89f26ad5453ec23b9aa487b5ed849169987261d5493",
+    "tools/review_modular_buildings.gd": "bd0f19430ff1bd846528f2ad04f00e9eb6f39763751c2cc1da9601c957ce9514",
+    "tools/review_modular_buildings.py": "39cd822f686a02f16b899d344d5ad65633aa94dd7464bd3a1315da9df3e96029",
+    "docs/WORLD_BUILDING_STANDARD.md": "3390a8494d0c5ce36f653e8a96112c228d1e3d9052cc47e6be27cfbd2a902193",
+    "docs/WORLD_FOUNDATION_STATUS.md": "1e5bd0aaa4d1a870cdfe3f3bb0c803417f6fcb4113dac2d3269d9ef7a39599a2"
+  },
+  "native": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "5d28725b1c4623cade725c073e4c468a5356c851c5b149c126e3be7298a669fb",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "0e13cb793eee7ebf1a91732041ca8d73c231e613932dacfee74716a3b7540f6e",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "5c7eabd35a4569095802df1a69feb7a80d0a0e75336162d314431d4ed7a42e67",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "058b30243d1b80726e6576e8190f5a3c2ebd3585e69735e58e8826eda3d3b495",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2d84d7564a1938a2ad3045d4f8f79b94945ca94ff216101ba1c963c2d3f00bbc",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "1a928fa00362862ecebc0bea871132adc90457ca12c1775e6dd62a2c000a9a36",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "c6d1fbafb5667730f84adf2d7af604d6b0ebfe8a49e2c51f27d1be0a0f99916b",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "731fecbd1f124d1b7a1cb667d30f2c04fc328bb1e2a878484d0bc8262d8e6cb5",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "6123b65d27bda42ed4977bebb5d8879520db8111a24a252785dc9ff649493d69",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d0b61347f063c6d8ecedccdfaa28579bfd02566efd76b644c8e99310d4297e0a"
+  },
+  "pack_sha256": "71f25be31d81d32f2a167061b2f84543be50f93bf2260379f9072b69b3665df9",
+  "files": {
+    "comparison\\console.log": {
+      "bytes": 2956,
+      "sha256": "babebcfad39f1464d8372d1bd2ca3a80b14e40511032266d7b0bb5a89d2b6675"
+    },
+    "comparison\\engine.log": {
+      "bytes": 2906,
+      "sha256": "10d62ae63def8d62794e1ac4f161729d2f660fb5a56301b3ea1f89cea47604b4"
+    },
+    "comparison\\review.tfbs": {
+      "bytes": 14653,
+      "sha256": "d31921ac2d8dda1dc35b9ec784d57d74aa0716e6ff5287ccd030f74c0e0f19b2"
+    },
+    "comparison\\run.json": {
+      "bytes": 5038,
+      "sha256": "ca6c731e485b98de9c25172489637dc97b06a849bc1e529f991c3260405195dd"
+    },
+    "failed_escape\\console.log": {
+      "bytes": 3081,
+      "sha256": "1cb455a20901c352adf0e66b39a15e83bd9417ddfcf856e3aac0aab800f2043a"
+    },
+    "failed_escape\\engine.log": {
+      "bytes": 3017,
+      "sha256": "840d5b3ebb05ca3ea7994d6f46d902ffaec52d4f278652c34ad565597505fc29"
+    },
+    "failed_escape\\run.json": {
+      "bytes": 4422,
+      "sha256": "0636db906458da8ae2073702e39f02f2437a64b964dff92d2a8c183c8b93c4f5"
+    },
+    "failed_key_focus\\console.log": {
+      "bytes": 2175,
+      "sha256": "9a6f9a70c0eff7adf3549d5efcd1e2866bc58ca3358526f15a4d41d645b36789"
+    },
+    "failed_key_focus\\engine.log": {
+      "bytes": 2132,
+      "sha256": "1b6fc0343ecf0ee74755b47e6ee0a641338ede12d6f8d333b288f3ef6a53e62f"
+    },
+    "failed_key_focus\\run.json": {
+      "bytes": 5301,
+      "sha256": "319f433b0f6308645e59358ac48b771cb4438eb88626975882e4a3f495ec1142"
+    },
+    "failed_key_focus_repeat\\console.log": {
+      "bytes": 2957,
+      "sha256": "41430b447226e05a8402bc291e7b47a01fd945be027859f0477cca6013fec0ea"
+    },
+    "failed_key_focus_repeat\\engine.log": {
+      "bytes": 2896,
+      "sha256": "ec0f119f1907c8bf4c6b7bda531a74c3447d3809e749fea2158d71b86a7a4166"
+    },
+    "failed_key_focus_repeat\\run.json": {
+      "bytes": 5234,
+      "sha256": "f066c523dba0722722534ff106a68fe9c29fbc09710167007fd1b579791a130d"
+    },
+    "gameplay_palette\\console.log": {
+      "bytes": 895,
+      "sha256": "483e9dd3a63139d808980b80f89f347911d92f4db4d2f13844bd714f4dfff9be"
+    },
+    "gameplay_palette\\engine.log": {
+      "bytes": 879,
+      "sha256": "8fab9b837a9dd523a9992e7f177baac3c9a78e376a1de21b1330a34b2421defe"
+    },
+    "gameplay_palette\\run.json": {
+      "bytes": 4705,
+      "sha256": "12f6242c5402fa6bf037c53661972693e14be1a6bb17059a4f3c1834a24f690f"
+    },
+    "images\\arrival.png": {
+      "bytes": 2052565,
+      "sha256": "62dad39124966b6911a1b167e77b6861a1d52594989e9e23a10e012113a13cdd"
+    },
+    "images\\cottage_sign.png": {
+      "bytes": 1743050,
+      "sha256": "1d76781095b083880a2fc84fd57f869547bc873745905504e313c13172e5a6f4"
+    },
+    "images\\interior_B1.png": {
+      "bytes": 3935997,
+      "sha256": "53d8a54c3d7387be078c52f31c2fc126f71ba7f1a13fdb8a6c1527de0a408f07"
+    },
+    "images\\overview.png": {
+      "bytes": 267609,
+      "sha256": "efa28ba5a86588e45af5c4a20194d760684a999070c2efc9ecadc25f1b405863"
+    },
+    "images\\shop_sign.png": {
+      "bytes": 1431754,
+      "sha256": "b4c310f60be40f6c1c1a13cac2bbf561faa2a5158455024a0ecc266e037ddb82"
+    },
+    "initial_fixed\\console.log": {
+      "bytes": 3456,
+      "sha256": "f25871513c9a0d86e12a603382570017998a0b9f8023b56c3d719e15529c22e9"
+    },
+    "initial_fixed\\engine.log": {
+      "bytes": 3383,
+      "sha256": "9b13b393b6bcc7a0bdb8a6e0d29cea906e2dd129e022f03b03531fa92bed15d6"
+    },
+    "initial_fixed\\run.json": {
+      "bytes": 4327,
+      "sha256": "85a7328c0a63458065583adb26a5f3a956bd8f3abcb5a6ade983151109a04af5"
+    },
+    "interrupted_refinement\\console.log": {
+      "bytes": 1949,
+      "sha256": "cd4954b1fb6981df31db457c71e274c9989524fc81cc648f084ffb15df92e8c9"
+    },
+    "interrupted_refinement\\engine.log": {
+      "bytes": 1910,
+      "sha256": "11d2fc5d6727514a43aa3414e7ee0cef116a227960afaea1c01add317a1522d7"
+    },
+    "interrupted_refinement\\run.json": {
+      "bytes": 4331,
+      "sha256": "adada7b7401bae238ecca9e66476bd043bfb03fddd7d9b6b1e098c0be68041bd"
+    },
+    "pack\\console.log": {
+      "bytes": 895,
+      "sha256": "483e9dd3a63139d808980b80f89f347911d92f4db4d2f13844bd714f4dfff9be"
+    },
+    "pack\\engine.log": {
+      "bytes": 879,
+      "sha256": "8fab9b837a9dd523a9992e7f177baac3c9a78e376a1de21b1330a34b2421defe"
+    },
+    "pack\\export.log": {
+      "bytes": 117874,
+      "sha256": "d4304e155bd5ecfb112d95442662934b5bbcc3c555a295cb1b7b7467e7e6cf26"
+    },
+    "pack\\pack_smoke.log": {
+      "bytes": 74,
+      "sha256": "57682e39b6721e14bd122bd452061771c29950a16016bf2bbfdef34387e623e3"
+    },
+    "pack\\run.json": {
+      "bytes": 2637,
+      "sha256": "7db4eacff4f54fab2297c67c6ed5e82def2f8e1a3c314d1536643dcaddb2e4a4"
+    },
+    "README.md": {
+      "bytes": 6178,
+      "sha256": "1cec936b2148501014f0b958625708b0b6eabfe71534ad6f5bfc4a27d2f67fba"
+    },
+    "restore\\console.log": {
+      "bytes": 325,
+      "sha256": "096dcf943f08880768a0d03bc85117d90b424a088b5849dd1556b65bf0670502"
+    },
+    "restore\\engine.log": {
+      "bytes": 319,
+      "sha256": "f5578bdea5d707262b420a52c5cf945d50218689b4625534489781253ac7fc17"
+    },
+    "restore\\run.json": {
+      "bytes": 5063,
+      "sha256": "dae28d6201c81a830edefe09c055eb95441543c9e5c2fa35b154d1ab020311fc"
+    },
+    "walkaround\\console.log": {
+      "bytes": 3104,
+      "sha256": "cd028c24ba0cbc56b421e942891d520220b08877e2ca9e7b1a1fbb76d97885a1"
+    },
+    "walkaround\\engine.log": {
+      "bytes": 3039,
+      "sha256": "569689f93fdef83b06607566638d08674861fef3028b041a90e73efb61e1b29e"
+    },
+    "walkaround\\result.json": {
+      "bytes": 643,
+      "sha256": "c394e897776ac7e9b01467fd371152f64fe7491ebf2ffde932fe706a73332dd7"
+    },
+    "walkaround\\run.json": {
+      "bytes": 5103,
+      "sha256": "9aa295b20889ebd2ff7ec9cf1a4d5c6d6582f72916a19088b6bf155db2ba8d03"
+    }
+  }
+}

@@ -70,3 +70,6 @@ static func village_shop()->Resource:
  if not shop.configure_model_attachments(models):return null
  shop.resource_name="Village general store"
  return shop
+
+static func hipped_shop()->Resource:
+ return load("res://addons/structures/prefabs/village_shop_hipped_r1.tres")

@@ -85,6 +85,16 @@ revision before it replaces an existing design or becomes a generation default.
 Shape tests, component previews and approval of another house do not grant that
 approval. Keep existing houses and saves unchanged while reviewing alternatives.
 
+Roof direction, 2026-10-25: a sloped roof must read as a continuous surface with
+clean, thin eaves, verges and ridge, not a diagonal staircase of chunky wedge
+blocks. Grid ownership does not require a visibly stepped roof. Solve this with
+compatible individual roof/transition pieces, not a single house-sized mesh or
+decoration concealing the same defective silhouette. Inspect exterior, underside,
+joins and local block removal before proposing a replacement. The user rejected
+Cottage A R1 and the old cottage's chunky roof appearance; keeping that original
+unchanged does not mark its roof accepted. Shop B R1 alone is approved as an
+additional design, not permission to replace originals or approve other roofs.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

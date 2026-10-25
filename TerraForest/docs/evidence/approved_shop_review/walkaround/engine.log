@@ -1,0 +1,65 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS walk-around scene loads originals and approved addition, native paths and signs
+PASS three explicit A0 B0 B1 placards
+PASS unreviewed additions are excluded unless explicitly approved
+PASS rejected A1 is not placed in the active review
+PASS review starts at approved shop comparison
+PASS building matches unchanged original/approved-R1 resource A0
+PASS sign states correct approval status A0
+PASS sign built from separate post/panel cells A0
+PASS building matches unchanged original/approved-R1 resource B0
+PASS sign states correct approval status B0
+PASS sign built from separate post/panel cells B0
+PASS building matches unchanged original/approved-R1 resource B1
+PASS sign states correct approval status B1
+PASS sign built from separate post/panel cells B1
+PASS stable identities exclude the rejected cottage
+PASS connected paths use the trusted top-plate grid cells
+PASS 2 switches to shop row on foot
+PASS 3 opens whole-scene flight overview
+PASS F safely returns to the last grounded review position
+PASS Esc releases mouse and opens review navigation
+PASS Esc resumes without an invisible input blocker
+PASS focus loss clears movement and releases pointer
+PASS focus return resumes captured controls when not paused
+PASS retain scene image cottage_row
+PASS retain scene image shop_row
+PASS retain scene image overview
+PASS retain scene image cottage_sign
+PASS retain scene image shop_sign
+PASS retain scene image arrival
+REVIEW_INPUT restoring simulated focus before key 49
+PASS 1 returns to retained original cottage
+PASS walk central path to A0
+PASS walk connected frontage to A0
+PASS climb approach toward closed door A0
+PASS normal 3m E ray targets retained door A0
+PASS E opens this door without toggling other buildings A0
+PASS walk inside through doorway and aisle A0
+PASS solid supported interior floor A0
+PASS exit house and descend to connected path A0
+PASS return to central review path A0
+PASS walk central path to B0
+PASS walk connected frontage to B0
+PASS climb approach toward closed door B0
+PASS normal 3m E ray targets retained door B0
+PASS E opens this door without toggling other buildings B0
+PASS walk inside through doorway and aisle B0
+PASS solid supported interior floor B0
+PASS exit house and descend to connected path B0
+PASS return to central review path B0
+PASS walk central path to B1
+PASS walk connected frontage to B1
+PASS climb approach toward closed door B1
+PASS normal 3m E ray targets retained door B1
+PASS E opens this door without toggling other buildings B1
+PASS walk inside through doorway and aisle B1
+PASS solid supported interior floor B1
+PASS retain scene image interior_B1
+PASS exit house and descend to connected path B1
+PASS return to central review path B1
+PASS complete circuit reaches and leaves both shop versions
+PASS scene structures retain compound storage roundtrip
+MODULAR_BUILDING_WALKAROUND checks=60 failures=0

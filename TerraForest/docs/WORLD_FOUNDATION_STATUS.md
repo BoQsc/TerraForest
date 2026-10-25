@@ -1,4 +1,46 @@
-## Two modular building proposals ready for review, not adopted — 2026-10-25
+## Building review decision: Shop B addition only; cottage rejected — 2026-10-25
+
+The user's review supersedes the pending decisions below: **Village Shop B R1
+(B1) is approved only as an addition to the existing designs. Cottage A R1 (A1)
+is rejected.** The original cottage's chunky roof is also disliked. Approval of
+B1 does not approve A1, the old cottage roof, or a replacement for either original.
+
+The exact B1 records and model attachments are copied into
+`addons/structures/prefabs/village_shop_hipped_r1.tres`, with explicit approval
+metadata, and appended to the construction palette as `Village shop B / hipped
+roof`. Old prefab indices, original recipes and existing saves are not replaced.
+The world generator still uses its existing recipes; adding B1 to generated
+settlements requires terrain-fit, placement-envelope, populated-world traversal,
+saved-world and performance evidence. This palette addition is not that evidence.
+
+The default review is now one signed walk-around scene: A0 original cottage,
+B0 original shop, B1 approved addition. It starts at the shops; A1 is not placed.
+The explicit `--comparison` mode retains the historical two-pair viewer with
+correct rejected/approved-addition labels. Review scenes do not read/write player
+saves and stay excluded from exports. Native cells own the buildings, signs and
+trusted plate paths; native grounded movement handles the review character.
+
+**Open roof work:** implement compatible thin native roof/transition pieces for
+continuous-looking planes and clean thin edges, without exposed diagonal block
+steps or monolithic architecture. No new roof geometry or replacement cottage is
+claimed here. This is deferred until a coherent multi-cell roof assembly is
+implemented and tested, rather than another cosmetic porch/verge adjustment.
+Return with exterior/underside/join/removal checks, native collision and save
+evidence, then a separately signed house revision for explicit user approval.
+
+Verification and retained failures are recorded in
+`evidence/approved_shop_review/README.md`. The first walk-scene test exposed an
+Esc-resume blocker, corrected by handling Esc before focused menu controls. A
+later visual-refinement run was interrupted and is not a pass. Neither isolated
+walking nor palette integration establishes generated-world quality acceptance.
+Two replay runs also missed injected E input while desktop focus was uncontrolled;
+their logs are retained. The final fixture explicitly restores simulated focus
+before injected keys and passes 60 checks. This qualifies input/focus handlers,
+not an operating-system Alt+Tab end-to-end test. Palette checks pass 12 assertions
+in both the source game and exported PCK; the historical comparison passes 41
+headless checks plus three exact fresh-process restore checks.
+
+## Two modular building proposals ready for review — historical, superseded
 
 The user asked for whole-building demonstrations rather than testing loose shapes.
 `reviews/modular_buildings/` now contains baked, review-only R1 alternatives to the
@@ -23,10 +65,10 @@ process passes three exact-storage restoration checks. Images were inspected; th
 first awkward cottage verge and unsupported side-upright bases were revised before
 the final review. The initial support-test failure is retained and explained.
 
-**Pending:** explicit user approval of Cottage A R1 and Shop B R1 separately. These
-are architecture proposals, not accepted settlement replacements. Once a design is
-approved, revisit placement-envelope/terrain-fit, representative populated-world
-routes, saved-world integration and performance before enabling it in generation.
+**Decision updated above:** Cottage A R1 rejected; Shop B R1 approved only as an
+addition. These are not accepted settlement replacements. For B1, revisit
+placement-envelope/terrain-fit, representative populated-world routes,
+saved-world integration and performance before enabling it in generation.
 The viewer's neutral ground plane, short capsule walk and 60 FPS cap do not qualify
 terrain integration, NPC navigation, dense-world budgets or structural collapse.
 

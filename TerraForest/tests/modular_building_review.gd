@@ -46,8 +46,10 @@ func run() -> void:
 	var originals: Array[Resource]=[Recipes.Furniture.enclosed_cottage(),Recipes.Workshop.village_shop()]
 	press("VILLAGE SHOP B");press("Interior")
 	check(viewer.current_design==1 and viewer.current_view==1,"visible shop/interior buttons select the correct comparison")
+	check(viewer.candidate_label.text=="APPROVED / ADDITION ONLY","archived shop comparison records addition-only approval")
 	press("COTTAGE A");press("Detail")
 	check(viewer.current_design==0 and viewer.current_view==2,"visible cottage/detail buttons select the correct comparison")
+	check(viewer.candidate_label.text=="REJECTED / ARCHIVED R1","archived cottage comparison records rejection")
 	press("Remove ONE arch block")
 	check(viewer.removed,"visible removal button removes the candidate block")
 	press("Exterior")
@@ -60,7 +62,7 @@ func run() -> void:
 		var design: Dictionary=viewer.designs[index]
 		check(originals[index].get_records()==design.original.get_records(),"production original unchanged "+design.title)
 		check(design.original.get_model_attachments()==design.candidate.get_model_attachments(),"working doors, windows, furniture and storage retained "+design.title)
-		check(design.candidate.get_meta("review_only",false),"candidate explicitly marked unapproved review-only")
+		check(design.candidate.get_meta("review_only",false),"historical review resource remains unchanged")
 		var authored: Resource=Recipes.cottage(blocks) if index==0 else Recipes.shop(blocks)
 		check(authored.get_records()==design.candidate.get_records() and authored.get_model_attachments()==design.candidate.get_model_attachments(),"baked review matches its reproducible authoring recipe")
 		var counts: Dictionary={}
