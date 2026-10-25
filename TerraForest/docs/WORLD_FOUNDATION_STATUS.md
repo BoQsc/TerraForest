@@ -55,6 +55,32 @@ calls for changes; close appearance review after inspecting carry, walk and use
 in game. [Source/rebuild](../addons/characters/authoring/Human.bucket.README.md) and
 [preview/evidence](evidence/water_bucket_visuals/README.md).
 
+## Development map teleport, 2026-10-25
+
+Holding Ctrl and left-clicking the world map in development mode now travels to
+the clicked world coordinate, including after panning and zooming. The gesture
+finishes on mouse release; Ctrl-drag remains pan and releasing Ctrl cancels travel.
+The request rechecks development mode, map visibility, world bounds, active edits,
+loading and vehicle state. It closes the map, clears movement and reuses the
+existing height-query/collision-loading/floor-arrival pipeline, not direct player
+placement at a guessed elevation. Gameplay and ordinary destination tracking remain
+unchanged. A development-only hint appears on the map.
+
+Evidence: `evidence/map_teleport/`; the interaction test exercises actual GUI input,
+guarded rejection, loading and arrival, unchanged terrain/inventory and recovered
+mouse control. Initial fixture failure assumed an ungenerated temporary world
+already had a destination; the fixture now explicitly adds its own map marker.
+Source and packaged teleport checks pass 21/21; the packaged map hint, loading
+screen and arrival captures were inspected. The broader legacy `world_map` check
+still fails its two road assertions: it assumes exactly four base line segments,
+but this generator produces 96. Its fixed-offset authored-road lookup also emits
+an index error. Road rendering is unchanged here; update that separate fixture
+against the current layout/segment contract and rerun it before claiming a full
+map-suite pass. Failed output is retained alongside passing teleport evidence.
+This does not qualify arbitrary edited terrain, occupied interiors or every ocean
+arrival as a safe playable location; destination landing retains the existing
+teleport policy. No terrain, navigation, population or save schema changes.
+
 ## Dev Bag and Dev Spawner separation, 2026-10-25
 
 ESC now separates the searchable, categorized inventory-item bag from living-entity

@@ -8,6 +8,7 @@ var panel:PanelContainer
 var view:Control
 var status:Label
 var position_label:Label
+var travel_hint:Label
 var destination_list:VBoxContainer
 var texture:ImageTexture
 var key:=""
@@ -45,6 +46,7 @@ func _ready()->void:
  var zoom_row:=HBoxContainer.new();sidebar.add_child(zoom_row)
  add_button(zoom_row,"− Zoom",func():view.set_zoom(view.zoom/1.5,view.size*0.5));add_button(zoom_row,"+ Zoom",func():view.set_zoom(view.zoom*1.5,view.size*0.5))
  add_label(sidebar,"Drag to pan · Wheel to zoom\nNorth is up · Mint arrow: you\nGold: roads · Blue: water\nIvory: blocks / Lilac: large objects")
+ travel_hint=add_label(sidebar,"");travel_hint.add_theme_color_override("font_color",Color("9cffe0"))
  add_label(sidebar,"PUBLIC DESTINATIONS").add_theme_font_size_override("font_size",18)
  var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;sidebar.add_child(scroll)
  destination_list=VBoxContainer.new();destination_list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(destination_list)
@@ -61,14 +63,25 @@ func set_open(value:bool)->void:
  if value:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
- opened=value;panel.visible=value;view.dragging=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
+ opened=value;panel.visible=value;view.dragging=false;view.teleport_click=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
  if not value:water_survey.pause();block_survey.pause();model_survey.pause()
  game.player_hud.inventory_open=value;game.player_hud.enabled=not value and not game.world_vehicle.driving
  game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED
  game.session_menu.refresh();game.session_menu.sync_panels()
  if value:
+  travel_hint.visible=game.session_menu.developer;travel_hint.text="DEVELOPMENT\nHold Ctrl + left-click to teleport.\nLoads terrain before resuming play."
   refresh_world();updates.recheck_identity();view.follow_player();timer.start();update_position()
  else:timer.stop()
+func teleport_to(point:Vector2)->bool:
+ if not opened or not game.session_menu.developer:return false
+ if not point.is_finite() or point.x<0 or point.x>2000 or point.y<0 or point.y>2000:
+  travel_hint.text="Choose a point inside the world map.\nHold Ctrl + left-click to teleport.";return false
+ if game.loading_active or game.shutdown_requested or not game.app_focused or game.benchmark_enabled or not game.terrain.world_ready or game.terrain.stopping:return false
+ if game.world_vehicle.driving or game.terrain.pending_edit or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or not game.road_authoring.phase.is_empty() or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
+  travel_hint.text="Finish the current world edit and\nexit the vehicle before teleporting.\nHold Ctrl + left-click to teleport.";return false
+ set_open(false)
+ game.teleport(Vector3(point.x,0,point.y))
+ return true
 func refresh_world()->void:
  var seed_value:int=game.terrain.backend.world_seed;var generator:int=game.terrain.backend.world_generator
  var baked:Dictionary=game.generated_region.describe(seed_value,generator)

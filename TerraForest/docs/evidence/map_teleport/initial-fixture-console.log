@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary world is playable
+PASS map survey is ready
+PASS Ctrl-click cannot teleport gameplay players
+PASS direct request also enforces development mode
+SCRIPT ERROR: Invalid access of index '0' on a base object of type: 'Array[Dictionary]'.
+   at: run (res://tests/world_map_teleport.gd:43)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/world_map_teleport.gd:43)
+       [1] click (res://tests/world_map_teleport.gd:19)
+       [2] mouse (res://tests/world_map_teleport.gd:17)

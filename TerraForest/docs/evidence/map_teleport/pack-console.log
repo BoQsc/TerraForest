@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS temporary world is playable
+PASS map survey is ready
+PASS Ctrl-click cannot teleport gameplay players
+PASS direct request also enforces development mode
+PASS ordinary marker clicks still track destinations
+PASS map explains Ctrl-click in development mode
+PASS plain development click does not teleport
+PASS Ctrl-drag pans without teleporting
+PASS releasing Ctrl before the click completes cancels teleport
+PASS off-world and nonfinite targets do not move the player
+PASS driving blocks teleport without ejecting or moving the vehicle
+PASS active world preparation blocks travel
+PASS teleport waits for click release
+PASS Ctrl-click resolves the exact world point after map pan and zoom
+PASS map closes and starts the normal destination loading barrier
+PASS travel clears player movement and held actions
+PASS closed map and in-progress travel reject repeat requests
+PASS destination collision and floor become playable
+PASS player arrives at the clicked horizontal position with resolved terrain height
+PASS development mode and normal mouse control survive arrival
+PASS teleport does not mutate inventory or terrain
+[TerrainRewrite] Temporary test world: save skipped
+WORLD_MAP_TELEPORT checks=21 failures=0

@@ -5,6 +5,7 @@ var atlas:Node
 var center:=Vector2(1000,1000)
 var zoom:=1.0
 var dragging:=false
+var teleport_click:=false
 var drag_distance:=0.0
 var label_boxes:Array[Rect2]=[]
 func _ready()->void:
@@ -22,12 +23,17 @@ func follow_player()->void:
 func _gui_input(event:InputEvent)->void:
  if event is InputEventMouseButton:
   if event.button_index==MOUSE_BUTTON_LEFT:
-   if event.pressed:dragging=true;drag_distance=0
+   if event.pressed:dragging=true;drag_distance=0;teleport_click=event.ctrl_pressed
    else:
+    var clicked:=dragging and drag_distance<5
     dragging=false
-    if drag_distance<5:
-     for place:Dictionary in atlas.places:
-      if world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
+    if clicked:
+     if teleport_click:
+      if event.ctrl_pressed and Rect2(Vector2.ZERO,size).has_point(event.position):atlas.teleport_to(map_to_world(event.position))
+     else:
+      for place:Dictionary in atlas.places:
+       if world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
+    teleport_click=false
    accept_event()
   elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
    set_zoom(zoom*(1.25 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 0.8),event.position);accept_event()

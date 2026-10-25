@@ -6,6 +6,14 @@ are preserved.
 
 ## Session and tools have separate controls
 
+In **development mode**, open the world map with **M**, hold **Ctrl**, and
+**left-click** a point to teleport there. The map closes and the normal destination
+loading screen resolves terrain height and collision before play resumes. Map pan
+and zoom are respected. Ctrl-drag still pans; releasing Ctrl before mouse-up
+cancels teleport. Gameplay mode cannot use this shortcut. Finish world edits and
+exit a vehicle first; clicks outside the world are rejected. Ordinary destination
+clicks continue to track rather than teleport.
+
 ### Dev Bag, Dev Spawner and Developer
 
 The ESC sidebar separates three purposes:
