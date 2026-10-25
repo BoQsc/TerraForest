@@ -1,0 +1,137 @@
+{
+  "base_revision": "7e4572a7",
+  "scope": "Root-viewport cursor ownership during normal same-window loading and offscreen photograph work; not a change to native simulation or world acceptance",
+  "runs": {
+    "before": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80424,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL background loading cannot release another scene's captured cursor",
+        "FAIL background menu cannot release another scene's captured cursor",
+        "FAIL hidden inventory cleanup cannot capture the main cursor",
+        "FAIL hidden map preparation cannot capture the main cursor",
+        "FAIL hidden menu cleanup cannot capture the main cursor",
+        "FAIL hidden preparation leaves the visible cursor at its original position",
+        "FAIL hidden world finishing loading cannot capture the main cursor"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 9.035540799959563,
+      "passed": false
+    },
+    "source": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 12844,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 9.796285499935038,
+      "passed": true
+    },
+    "focus": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 3452,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 9.851566800032742,
+      "passed": true
+    },
+    "generation": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 67844,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 49.26470969989896,
+      "passed": true
+    },
+    "session": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 43944,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 59.10008889995515,
+      "passed": true
+    },
+    "pack": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 80164,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 8.875708400039002,
+      "passed": true
+    },
+    "focus_wrong_mode": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 73096,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL tool dropdown exists"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 9.69609500002116,
+      "passed": false
+    },
+    "stationary_cursor_assumption": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 66700,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL all photograph views preserve the visible cursor without recentering"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 58.75912199995946,
+      "passed": false
+    },
+    "stationary_cursor_diagnostics": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 49604,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL all photograph views preserve the actual window and desktop cursor position"
+      ],
+      "required_text_found": true,
+      "elapsed_seconds": 58.51112080004532,
+      "passed": false
+    }
+  },
+  "files": {
+    "addons/world_runtime/mouse_ownership.gd": "adfe10f99596084278e5bf669a455881079dc054b43f3ac8cdf429b95ba772d0",
+    "addons/world_runtime/scene_job.gd": "de638ef7bbb9061dc1a9c4b53b8f063de0510a995405f085d5fc6e9b57ea274e",
+    "addons/world_runtime/generation_screen.gd": "8b476f1f62758c0d306eeebd6a3619f384c29aec8502e0c3a5a841a658778103",
+    "addons/world_runtime/world_map.gd": "04547077ebb5b3190b845bf165d90bbab5ea03e63fbe549854c0922c4727acb6",
+    "addons/player_runtime/developer_hud.gd": "63f7e05b21a5d0a8ae29dd96ae90c1f0a628d94f0382110ea0b12358adb3700f",
+    "addons/player_runtime/player_hud.gd": "923680bc135a26dcc0dad52ca562fc1bbde691097b2df9b9def2677f7efa2ab2",
+    "addons/player_runtime/session_menu.gd": "95644b13ab1f7373386719a3bedb58772ae56db9f91ff2882757bc2f112cbd7c",
+    "addons/player_runtime/storage.gd": "279691cd367a39296260fc80ec81bd8ef107ddb810a1ddf4ec92c2737b68bdf1",
+    "addons/vehicle_runtime/vehicle_radial.gd": "b1f97b9df322d2cf8d42448801633b43d31aa6fa6710d5f3913ba76694d42740",
+    "demo/controller.gd": "f75cb761cee1b3c7e9d3658051a913ed9983a039df84801b9ab2a4ad53f38b29",
+    "demo/world.gd": "424ea8fe8499afed933e5e8d05ef4e56858f5238a48eb556ac46201ff324581d",
+    "demo/worlds.gd": "ae0f759f2cfd43550bac7a55382dd4616f5baf76ee81d4f9ab9729e6334d764a",
+    "tests/loading_mouse_ownership.gd": "87d2f228360f3601aad2764173e6f6553f51eacc330a2fdd2e4ef1c12147b096",
+    "tests/window_session_flow.gd": "6a269bb55f7dd8a880873b7598480c1782d52dedc56af61a0d5c889bacaaea42",
+    "tests/window_generation_flow.gd": "4cf2fc9e8750170dbb6a02e2116d10a8c6d8576e9851078223c9b1a1a10b5265",
+    "dist/TerraForest.pck": "1e4ccf4223202413e5d0aad14981620d5fd05f412cbb6d9dceaed5a7d2e83d57"
+  }
+}

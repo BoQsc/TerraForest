@@ -10,14 +10,13 @@ var code:=-1
 var previous_arguments:PackedStringArray
 var had_override:=false
 var previous_offscreen:=false
-var previous_mouse:=Input.MOUSE_MODE_VISIBLE
 var previous_title:=""
 var previous_fps:=60
 var main_window_id:=-1
 func start(script:Script,arguments:PackedStringArray,render_world:bool=true)->void:
 	had_override=ProjectSettings.has_setting(Options.KEY);previous_arguments=Options.arguments()
 	previous_offscreen=ProjectSettings.get_setting(Options.OFFSCREEN,false)
-	previous_mouse=Input.mouse_mode;previous_title=get_tree().root.title;previous_fps=Engine.max_fps
+	previous_title=get_tree().root.title;previous_fps=Engine.max_fps
 	main_window_id=get_tree().root.get_window_id();Options.set_arguments(arguments,true)
 	if render_world:
 		viewport=SubViewport.new();viewport.size=Vector2i(1920,1080);viewport.own_world_3d=true
@@ -38,5 +37,5 @@ func _cleanup()->void:
 	if is_instance_valid(task):task.free();task=null
 	if had_override:Options.set_arguments(previous_arguments,previous_offscreen)
 	else:Options.reset()
-	get_tree().root.title=previous_title;Engine.max_fps=previous_fps;Input.mouse_mode=previous_mouse
+	get_tree().root.title=previous_title;Engine.max_fps=previous_fps
 	done=true;completed.emit(code)

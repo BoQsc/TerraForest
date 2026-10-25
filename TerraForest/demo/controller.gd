@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Presentation = preload("res://addons/presentation/fullscreen_policy.gd")
 const Stream = preload("res://addons/volumetric_terrain/terrain_world.gd")
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -219,7 +220,7 @@ func _ready() -> void:
 	gpu_timing_enabled = RenderingServer.get_current_rendering_method() != "gl_compatibility"
 	if gpu_timing_enabled:
 		RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if loading_active else Input.MOUSE_MODE_CAPTURED
+	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if loading_active else Input.MOUSE_MODE_CAPTURED)
 	if benchmark_enabled:
 		benchmark = Bench.new()
 		benchmark.host = self
@@ -367,7 +368,7 @@ func _begin_loading(reason: String) -> void:
 	loading_layer.visible = true
 	stroke_buffer.clear()
 	_clear_motion()
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
 
 func _additional_loading_diagnostics() -> Dictionary:
 	return {}
@@ -412,7 +413,7 @@ func _update_loading() -> void:
 	terrain.autosave_paused = false
 	travel_blocked_s = 0.0
 	_clear_motion()
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	Mouse.set_mode(self,Input.MOUSE_MODE_CAPTURED)
 	_message("Ready: nearby coverage/collision active; distant terrain still streaming" if terrain.nearby_first and terrain.root_coverage < terrain.roots.size() else "Ready: map coverage and local collision are active")
 	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
@@ -510,6 +511,9 @@ func _edited(_latency: float) -> void:
 	# For smooth filling, also reject the entire brush against the capsule before submission.
 	pass
 
+func _mouse_capture_allowed() -> bool:
+	return not loading_active and not shutdown_requested
+
 func _movement_input_available() -> bool:
 	return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
@@ -570,7 +574,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		match event.physical_keycode:
 			KEY_ESCAPE:
 				_clear_motion()
-				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+				Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 			KEY_1: tool = 1
 			KEY_2: tool = 2
 			KEY_3: tool = 3

@@ -69,15 +69,27 @@ func run()->void:
 	for index in browser.worlds.item_count:
 		if browser.worlds.get_item_metadata(index)==slot:browser.worlds.select(index)
 	var digest:=FileAccess.get_sha256("user://worlds/"+slot+".trw")
+	var photograph_captures:int=preload("res://addons/world_runtime/mouse_ownership.gd").captures
+	var photograph_mouse_changes:int=preload("res://addons/world_runtime/mouse_ownership.gd").mode_changes
+	var cursor:=Vector2(180,140);Input.warp_mouse(cursor)
+	await process_frame;await process_frame
+	var cursor_before:Vector2=root.get_mouse_position()
+	var native_cursor_before:Vector2i=DisplayServer.mouse_get_position()
 	browser.refresh_photographs()
 	check(browser.photograph_pid==process_id and browser.photograph_job.viewport!=null and browser.photograph_job.viewport.msaa_3d==root.msaa_3d and browser.photograph_job.viewport.size==Vector2i(1920,1080),"photographs render offscreen in the same process at full resolution and matching antialiasing")
 	await photograph("photograph_loading")
 	if not check(await wait_for(func():return browser.photograph_pid<0,140),"offscreen photograph refresh completes"):await finish();return
 	check(browser.notice.text.begins_with("Photographs refreshed") and FileAccess.file_exists("user://worlds/"+slot+".preview/north.png"),"refreshed world pictures are available to selector")
 	check(FileAccess.get_sha256("user://worlds/"+slot+".trw")==digest and not ProjectSettings.has_setting(Options.KEY),"read-only photographs preserve save bytes and restore session context")
+	var cursor_result:Dictionary={"captures":preload("res://addons/world_runtime/mouse_ownership.gd").captures-photograph_captures,"mode_changes":preload("res://addons/world_runtime/mouse_ownership.gd").mode_changes-photograph_mouse_changes,"mouse_mode":Input.mouse_mode,"before":cursor_before,"after":root.get_mouse_position(),"native_before":native_cursor_before,"native_after":DisplayServer.mouse_get_position()}
+	print("PHOTOGRAPH_MOUSE ",cursor_result)
+	FileAccess.open(folder.path_join("mouse.json"),FileAccess.WRITE).store_string(JSON.stringify(cursor_result,"  "))
+	check(cursor_result.captures==0 and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"all photograph views make zero mouse captures")
+	check(cursor_result.mode_changes==0,"photography never changes cursor ownership while allowing normal user movement")
 	browser.refresh_photographs();browser.cancel_photographs()
 	check(await wait_for(func():return browser.photograph_pid<0,40) and browser.notice.text.begins_with("Photograph capture cancelled"),"photograph cancellation tears down the offscreen task")
 	check(FileAccess.get_sha256("user://worlds/"+slot+".trw")==digest,"cancelled photographs leave saved world unchanged")
+	check(preload("res://addons/world_runtime/mouse_ownership.gd").captures==photograph_captures and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"cancelling photography does not restore a stale mouse capture")
 	var other:="window_flow_"+Crypto.new().generate_random_bytes(8).hex_encode();slots.append(other)
 	if not check(await open_world(other,true,4,42,true),"a different world opens after photography"):await finish();return
 	check(current_scene.terrain.save_slot==other and current_scene.terrain.backend.world_generator==4 and current_scene.terrain.backend.world_seed==42 and not current_scene.temporary_world,"slot, seed, generator and readonly flags do not leak across sessions")

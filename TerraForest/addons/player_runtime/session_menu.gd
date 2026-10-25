@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 # Session/global actions and input focus. Tool controls live in tool_workspace.gd.
 # Optional host-owned destination; standalone addons do not depend on demo scenes.
 var world_browser_path: String=""
@@ -121,7 +122,7 @@ func set_open(value: bool) -> void:
 	workspace=false;opened=value;panel.visible=value
 	game.player_hud.inventory_open=value;game.player_hud.enabled=not value
 	if changing_focus:game._clear_motion()
-	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if value or (developer_hud!=null and developer_hud.mouse_access) else Input.MOUSE_MODE_CAPTURED
+	Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value or (developer_hud!=null and developer_hud.mouse_access) else Input.MOUSE_MODE_CAPTURED)
 	if value:current_page="Session"
 	refresh();sync_panels()
 func show_page(title: String) -> void:
@@ -147,7 +148,7 @@ func open_tool_page(title:String) -> void:
 		var slot:int={"Terrain":game.player_hud.developer_slot if game.player_hud.developer_slot in [0,1,2] else 0,"Vegetation":5,"Roads":6,"World tools":7,"Water":7,"Actors":8}[title]
 		if title!="Terrain" or not game.editor_tool_active or game.player_hud.developer_slot not in [0,1,2]:activate_developer_slot(slot)
 	set_open(false);workspace=true;current_page=title
-	game.player_hud.enabled=false;Input.mouse_mode=Input.MOUSE_MODE_VISIBLE;game._clear_motion()
+	game.player_hud.enabled=false;Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE);game._clear_motion()
 	developer_hud.end_mouse_access();refresh();sync_panels()
 func open_current_tool() -> void:
 	var slot:int=developer_hud.context_slot()

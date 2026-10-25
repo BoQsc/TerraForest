@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 # Presentation only. Stack rules and mutations live in NativePlayerInventory.
 extends CanvasLayer
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 signal tool_requested(item: int)
 signal developer_tool_requested(slot: int)
 const DEV_TOOLS=["Sculpt sphere","Sculpt box","Voxel cube","Build blocks","Place objects","Vegetation","Roads","World tools","Actors","Empty"]
@@ -368,9 +369,9 @@ func set_open(value: bool) -> void:
 	if value:
 		if damage_feedback!=null:damage_feedback.clear()
 		previous_mouse=Input.mouse_mode
-		Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+		Mouse.set_mode(get_parent(),Input.MOUSE_MODE_VISIBLE)
 	else:
-		Input.mouse_mode=previous_mouse
+		Mouse.set_mode(get_parent(),previous_mouse)
 		selected_slot=-1
 	refresh()
 	modal.visible=value

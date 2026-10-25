@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 # E tap retains normal interaction. Holding selects a live, reachable vehicle.
 var game:Node
 var held_since:=-1
@@ -16,7 +17,7 @@ func valid_context()->bool:
 	return game.app_focused and not game.loading_active and not game.shutdown_requested and not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.world_vehicle.driving and not game.fly and game.terrain.world_ready
 func cancel()->void:
 	var restore:=opened;opened=false;held_since=-1;identity=0;choice=-1;view.hide()
-	if restore and valid_context():Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	if restore and valid_context():Mouse.set_mode(game,Input.MOUSE_MODE_CAPTURED)
 func consume(event:InputEvent)->bool:
 	if opened:
 		if event is InputEventKey and event.pressed and event.physical_keycode==KEY_ESCAPE:cancel();return true
@@ -43,8 +44,8 @@ func _process(_delta:float)->void:
 	if held_since<0:return
 	if not valid_context():cancel();return
 	if not opened and Time.get_ticks_msec()-held_since>=350:
-		opened=true;game._clear_motion();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
-		Input.warp_mouse(get_viewport().get_visible_rect().size*.5)
+		opened=true;game._clear_motion()
+		if Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE):Input.warp_mouse(get_viewport().get_visible_rect().size*.5)
 	if opened:
 		var offset:Vector2=view.get_global_mouse_position()-get_viewport().get_visible_rect().size*.5
 		choice=-1 if offset.length()<48 or offset.length()>220 else (0 if offset.y<0 else 1)

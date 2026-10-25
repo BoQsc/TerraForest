@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends Control
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Launch=preload("res://demo/world_launch.gd")
 var worlds: ItemList
 var name_field: LineEdit
@@ -61,7 +62,7 @@ func _ready() -> void:
 	session=preload("res://addons/world_runtime/world_session.gd").obtain(get_tree())
 	get_tree().auto_accept_quit=false
 	Engine.max_fps=60;DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
-	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
 	preload("res://demo/world_creation_panel.gd").apply_theme(self)
 	var background:=ColorRect.new();background.color=Color("0b171d");background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);add_child(background)
 	var margin:=MarginContainer.new();margin.add_theme_constant_override("margin_left",48);margin.add_theme_constant_override("margin_right",48);margin.add_theme_constant_override("margin_top",24);margin.add_theme_constant_override("margin_bottom",20);add_child(margin)

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 var game: Node
 var panel: PanelContainer
 var content: VBoxContainer
@@ -107,12 +108,12 @@ Hold Alt for grading and build controls.")
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.physical_keycode==KEY_ALT and not event.pressed and mouse_access:
 		end_mouse_access()
-		if not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.storage.opened:Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+		if not game.session_menu.visible_ui() and not game.player_hud.inventory_open and not game.storage.opened:Mouse.set_mode(game,Input.MOUSE_MODE_CAPTURED)
 		get_viewport().set_input_as_handled();return
 	if event is InputEventKey and event.physical_keycode==KEY_ALT and event.pressed and not event.echo and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:
 		if game.loading_active or game.storage.opened or game.world_vehicle.driving or not game.app_focused:return
 		game._cancel_edit_input()
-		mouse_access=true;Input.mouse_mode=Input.MOUSE_MODE_VISIBLE;get_viewport().set_input_as_handled();return
+		mouse_access=true;Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE);get_viewport().set_input_as_handled();return
 	if context_slot()<0:return
 	if game.session_menu.developer and event is InputEventKey and event.physical_keycode==KEY_SPACE and not game.session_menu.visible_ui() and not game.player_hud.inventory_open:
 		game.controls.set_key(KEY_SPACE,event.pressed,Time.get_ticks_usec());get_viewport().set_input_as_handled();return
@@ -136,4 +137,4 @@ func _restore_mouse_after_focus()->void:
 	if not resume_mouse_after_focus or not game.app_focused:return
 	resume_mouse_after_focus=false
 	if game.loading_active or game.shutdown_requested or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.storage.opened:return
-	Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	Mouse.set_mode(game,Input.MOUSE_MODE_CAPTURED)

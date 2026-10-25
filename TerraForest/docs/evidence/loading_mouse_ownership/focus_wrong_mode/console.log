@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS playable world ready
+PASS Alt Tab cannot open inventory, modifier flag=true
+PASS ordinary Alt release restores aiming
+PASS Alt Tab cannot open inventory, modifier flag=false
+PASS ordinary Alt release restores aiming
+PASS Alt Tab also leaves an existing inventory open
+PASS plain Tab still closes inventory
+PASS Alt grants temporary tool cursor access
+PASS focus loss clears tool access and held movement
+PASS focus return resumes aiming without Escape, application first=true
+PASS fresh movement input works immediately after focus return
+PASS mouse look works immediately after focus return
+PASS Alt grants temporary tool cursor access
+PASS focus loss clears tool access and held movement
+PASS focus return resumes aiming without Escape, application first=false
+PASS fresh movement input works immediately after focus return
+PASS mouse look works immediately after focus return
+FAIL tool dropdown exists
+PASS focus return preserves open inventory
+PASS closing inventory returns to aiming
+PASS focus return preserves open session
+PASS closing session returns to aiming
+PASS focus return preserves open tool settings
+PASS closing tool settings returns to aiming
+PASS focus return preserves open map
+PASS closing map returns to aiming
+PASS capture waits while the main game window still lacks focus
+PASS root-window focus completes deferred capture after a dialog
+[TerrainRewrite] Temporary test world: save skipped
+FOCUS_RETURN checks=28 failures=1

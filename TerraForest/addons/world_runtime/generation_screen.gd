@@ -12,6 +12,7 @@ var cancel_path:=""
 var cancel_button:Button
 var cancellation_requested:=false
 func _ready()->void:
+ preload("res://addons/world_runtime/mouse_ownership.gd").set_mode(self,Input.MOUSE_MODE_VISIBLE)
  layer=120
  background=preload("res://addons/world_runtime/loading_background.gd").new();add_child(background)
  picture=background.picture
@@ -25,7 +26,6 @@ func _ready()->void:
   var request:=FileAccess.open(cancel_path,FileAccess.WRITE)
   if request==null:detail.text="Could not request cancellation.";return
   request.store_string("cancel");request.close();panel.stop_timer("cancelling");diagnostics.observe("Cancelling generation…",{"cancel_file":cancel_path});cancellation_requested=true;cancel_button.disabled=true;detail.text="Cancelling generation…";cancel_requested.emit())
-func _process(_delta:float)->void:Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 func update_stage(stage:String,completed:int,total:int,details:Dictionary={})->void:
  if detail==null or cancellation_requested:return
  panel.show_progress("Generating your world",str(details.get("activity",stage))+("  ·  %d / %d"%[completed,total] if total>0 and not details.has("activity") else ""),Meter.generation(stage,completed,total,details))

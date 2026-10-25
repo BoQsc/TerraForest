@@ -863,7 +863,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_E:
 				_clear_motion();_show_lake_notice(world_vehicle.exit_vehicle(self))
 			elif event.physical_keycode==KEY_ESCAPE:
-				Input.mouse_mode=Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
+				Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 		return
 	if not session_menu.developer and equipped_tool>=401 and equipped_tool<=411 and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.pressed and _model_edit_available():

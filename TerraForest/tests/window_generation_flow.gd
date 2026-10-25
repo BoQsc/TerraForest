@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: 0BSD
 extends "res://tests/window_session_flow.gd"
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 func run()->void:
 	if folder=="res://reports/window_session":folder="res://reports/window_generation"
 	DirAccess.make_dir_recursive_absolute(folder)
 	original_window=root.get_window_id();original_handle=DisplayServer.window_get_native_handle(DisplayServer.WINDOW_HANDLE,original_window)
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
 	var browser=current_scene
+	var initial_captures:=Mouse.captures
 	var cancel_slot:="window_cancel_"+Crypto.new().generate_random_bytes(8).hex_encode()
 	browser.name_field.text=cancel_slot;browser.seed_field.value=1703;browser.settlement_count.select(0);browser.offroads.select(0)
 	browser.launch_selected(true)
@@ -20,8 +22,9 @@ func run()->void:
 	var lease:RefCounted=ClassDB.instantiate("NativeWorldArchive")
 	check(lease.acquire(ProjectSettings.globalize_path("user://worlds/"+cancel_slot+".prepare")),"cancellation releases the world destination lease");lease.release()
 	check(not ProjectSettings.has_setting(Options.KEY),"cancelled generation restores session options")
+	check(Mouse.captures==initial_captures and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"generation cancellation never captures the selector cursor")
 	var slot:="window_generated_"+Crypto.new().generate_random_bytes(8).hex_encode();slots.append(slot)
-	browser.name_field.text=slot;browser.launch_selected(true)
+	browser.name_field.text=slot;browser.settlement_count.select(1);browser.offroads.select(1);browser.launch_selected(true)
 	var report_path:String=browser.preparation_status
 	check(await wait_for(game_ready,600),"Generate and play completes in the original window")
 	if not game_ready():
@@ -32,9 +35,13 @@ func run()->void:
 	var local_only:=true
 	for phase:Dictionary in metadata.phases:local_only=local_only and phase.mode=="same_window" and phase.pid==process_id
 	check(local_only and metadata.phases.size()==1,"production generation spawns no renderer process or verification window")
+	var photographs=JSON.parse_string(FileAccess.get_file_as_string(str(status.report).path_join("photograph_timings.json")))
+	check(photographs is Array and photographs.size()==3,"default connected world photographs north, road and market before play")
+	check(Mouse.captures==initial_captures+1 and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED,"generation and all photographs capture the mouse only once at playable handoff")
 	await photograph("generated_playing")
 	check(await leave(),"generated world saves and returns to selector")
 	check(windows_stable and OS.get_process_id()==process_id,"generation, cancellation, play and return retain the same native window handle")
+	FileAccess.open(folder.path_join("mouse.json"),FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"capture_transitions":Mouse.captures-initial_captures,"window_stable":windows_stable,"pid":process_id},"  "))
 	await photograph("generated_selector")
 	await finish()
 func finish()->void:

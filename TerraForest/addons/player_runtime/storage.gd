@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 # Event-driven scene/UI coordination. Inventory mutation and encoding are native.
 extends CanvasLayer
+const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 var store: RefCounted
 var game: Node
 var collection: Node3D
@@ -58,12 +59,12 @@ func try_open(shared_hit: Variant=null) -> bool:
 	if id<=0: return false
 	identity=id;opened=true;prior_mouse=Input.mouse_mode
 	game._clear_motion();game.player_hud.inventory_open=true;game.player_hud.enabled=false
-	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE;panel.show();refresh();return true
+	Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE);panel.show();refresh();return true
 func close() -> void:
 	if not opened: return
 	opened=false;identity=0;panel.hide()
 	game.player_hud.inventory_open=false;game.player_hud.enabled=true;game.player_hud.refresh()
-	game._clear_motion();Input.mouse_mode=prior_mouse
+	game._clear_motion();Mouse.set_mode(game,prior_mouse)
 func _ready() -> void:
 	layer=20
 	panel=PanelContainer.new();panel.position=Vector2(390,100);panel.size=Vector2(1140,820);add_child(panel);panel.hide()

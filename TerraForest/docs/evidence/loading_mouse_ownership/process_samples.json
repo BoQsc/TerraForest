@@ -1,0 +1,26 @@
+{
+  "scope": "OS sampling during sequential automated game tests, every 250 ms; identity transitions between tests are expected",
+  "maximum_concurrent_godot_processes": 1,
+  "events": [
+    {
+      "utc": "2026-10-25T14:42:50.2868923Z",
+      "ids": [
+        73744
+      ]
+    },
+    {
+      "utc": "2026-10-25T14:43:01.3695109Z",
+      "ids": []
+    },
+    {
+      "utc": "2026-10-25T14:43:01.8980189Z",
+      "ids": [
+        66700
+      ]
+    },
+    {
+      "utc": "2026-10-25T14:44:00.5942431Z",
+      "ids": []
+    }
+  ]
+}

@@ -1,3 +1,24 @@
+## Loading and photograph cursor ownership fixed — 2026-10-25
+
+Offscreen photograph worlds were capturing the process-global cursor when their
+loading completed or their map/menu closed; the visible generation screen released
+it again each frame. This explains repeated recenters without extra Godot windows.
+All player-flow mode changes now use a root-viewport ownership boundary, ignore
+unchanged modes and reject hidden-world requests. Generation presentation no
+longer forces mouse mode each frame, and background job cleanup no longer restores
+a cursor state it never owned. No generation layout or saved-world data changes.
+
+The reproduced hidden-world failure is fixed in source and exported pack (11
+checks each). Default connected generation, all three photographs, cancellation,
+play and return pass 15 checks with exactly one capture at playable handoff.
+Three-photo refresh/normal session flow passes 24 checks with zero photograph
+mode changes; Alt-Tab and modal UI regressions pass 29 checks. Native window
+handles and job PIDs remain stable; OS sampling observed at most one concurrent
+Godot. User mouse movement remains allowed; earlier stationary-pointer fixture
+failures and their explanation are retained in
+`evidence/loading_mouse_ownership/README.md`. Broader unfinished work below remains
+unchanged; this is not whole-project or universal performance acceptance.
+
 ## Approved-building readiness audit and destination-loading fix — 2026-10-25
 
 The user's interruption/readiness audit confirms A2, B1 and B2 are integrated;
