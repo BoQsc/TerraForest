@@ -41,6 +41,34 @@ placement-triggered terrain edits. Evidence and remaining production gates are i
 
 ## Coordinate and generation contract
 
+### Feasibility and honest scope
+
+For a block with integer base `b`, and ground heights `h_min` through `h_max`
+over its footprint, maximum gap is `max(0, b - h_min)` and maximum burial is
+`max(0, h_max - b)`. A base satisfying limits `G` and `B` exists only when
+`ceil(h_max - B) <= floor(h_min + G)`. This is independent of targeting code.
+At the current diagnostic G=0.10 m and B=0.25 m, flat ground halfway between
+integer levels cannot fit. These thresholds remain diagnostic, not user approval
+of 25 cm burial as universally acceptable.
+
+A continuous rise between integer levels necessarily traverses the disallowed
+height interval. Making the ramp longer does not remove it. With these limits,
+the non-fitting height interval spans 0.65 m; a road grade capped at 20% requires
+at least 3.25 m of horizontal transition to traverse it. Full block footprints
+can make the unusable interval longer. Do not promise a perfect universal fit
+from smooth normalization alone or manufacture success by excluding bad samples.
+
+Consistent softening across final generated surfaces is still a valid unfinished
+objective. Strict universal shallow contact would require a separately approved
+design change: grid-aligned stepped surfaces, different vertical placement rules,
+or suitable foundation shapes. The user has not authorized those as substitutes
+for natural smooth terrain. Preserve the current lattice and player freedom.
+Do not treat this limit as permission to ignore avoidable errors on otherwise
+buildable ground. Validate the composed terrain, road beds/shoulders, yards and
+entrances; shared algorithms alone do not prove final-surface contact quality.
+
+### Preserved lattice
+
 One world unit is one metre. Blocks retain their exact integer-metre lattice and
 shared faces; do not introduce per-block offsets, deform blocks, or silently grade
 terrain when the player places one. Existing clearance, inventory and collision

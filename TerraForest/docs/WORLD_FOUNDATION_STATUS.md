@@ -1,3 +1,44 @@
+## New saved shoulder failure; universal contact is not achieved — 2026-10-25
+
+The user rejected another deeply embedded block in GridPreference_1703_2756a200
+and saved the exact position. Read-only reproduction at (953,35,1137) measures
+ground heights 35.298618–35.398205 m across nine collision samples. Base 35 gives
+39.82 cm maximum burial; base 36 would give 70.14 cm maximum air gap. Neither
+integer cell satisfies the existing diagnostic 10 cm gap / 25 cm burial limits.
+This is a genuine failed contact, not stale terrain, a missing toggle or a mesh bug.
+
+The aim is 3.55 m from a 3 m half-width settlement road, inside its 5.5 m soil
+support bed. Every neighboring curved stamp evaluates the same designed grade
+there, approximately 35.35 m. It lies on the smooth descent between integer-level
+streets. This particular failure is not caused by different road stages overriding
+each other: the shared grade itself passes through a non-fitting elevation.
+The earlier analytic road screening did not cover this shoulder footprint.
+
+General rules exist, but remain preferences rather than an enforced final-surface
+contact contract. Terrain eligibility fades out on slopes; road optimization has
+fixed entrance grades, curvature and earthworks constraints. Their error reduction
+does not establish universal contact. Future work must measure the final composed
+surface, including shoulders, yards, foundations, crossings and natural terrain,
+instead of substituting road-centerline success or selected screenshots for it.
+
+There is also a real feasibility limit: a smooth surface crossing a one-metre
+height interval must pass intermediate elevations that fit neither adjacent
+integer base shallowly. No amount of longer/softer interpolation removes that.
+Universal softening remains a useful objective; universal shallow contact cannot
+be promised while also retaining the exact metre lattice and continuous slopes.
+See the explicit feasibility contract in PLACEMENT_STANDARD.md. Do not conceal
+this conflict by burying blocks further, mutating terrain on placement, adding
+supports, turning the world into stairs, or changing the grid without approval.
+
+No production geometry/default change is made for this diagnosis. The saved case
+and Wild_Hills remain byte-identical. The audit now accepts an explicitly named
+review world, retains unique evidence, evaluates full piecewise stamp curves, and
+reports whether *any* integer base can meet the contact limits. Evidence:
+`evidence/connected_grid_roads/rejected_shoulder/`. The broader acceptance item
+remains open: prerequisites are an explicit feasible treatment of
+transition zones and final-surface-wide quality coverage; completion requires
+multi-seed rendered/collision evidence including this case, not another spot fix.
+
 ## Connected road grading implemented; broader fit still incomplete — 2026-10-25
 
 The audit-only stopping point below is superseded by working native generation

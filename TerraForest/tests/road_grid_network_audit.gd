@@ -31,6 +31,16 @@ static func contact(minimum:float,maximum:float)->Dictionary:
 		var cost:=maxf(0,gap-GapLimit)+maxf(0,burial-BurialLimit)
 		if cost<best_cost:best_cost=cost;best={"bottom":bottom,"gap":gap,"burial":burial}
 	return {"fits_any_integer_cell":lowest<=highest,"minimum":minimum,"maximum":maximum,"best":best}
+static func stamped_height(road:Dictionary,point:Vector2)->float:
+	if not road.has("coefficients"):return profile_height(road,point)
+	var start:Vector3=road.start;var finish:Vector3=road.finish
+	var axis:=Vector2(finish.x-start.x,finish.z-start.z)
+	var position:=Vector2(point.x-start.x,point.y-start.z).dot(axis)/axis.length_squared()+int(road.curve_index)
+	var curve:PackedFloat64Array=road.coefficients;var count:=curve.size()/4
+	var section:=clampi(floori(position),0,count-1);var offset:=section*4;var fraction:=position-section
+	if position<0:return curve[3]+curve[2]*position
+	if position>count:return curve[offset]+curve[offset+1]+curve[offset+2]+curve[offset+3]+(3*curve[offset]+2*curve[offset+1]+curve[offset+2])*(position-count)
+	return ((curve[offset]*fraction+curve[offset+1])*fraction+curve[offset+2])*fraction+curve[offset+3]
 static func roads_for(plan:Dictionary)->Array:
 	var result:Array=[]
 	for site:Dictionary in plan.sites:
@@ -85,9 +95,12 @@ static func coverage(roads:Array,queries:Dictionary={})->Dictionary:
 func run()->void:
 	var arguments:=PackedStringArray(OS.get_cmdline_user_args())
 	if not "--snapshot-readonly" in arguments or not "--temporary" in arguments:quit(2);return
+	for argument:String in arguments:
+		if argument.begins_with("--audit-evidence="):evidence=argument.trim_prefix("--audit-evidence=")
 	check(contact(47.02,47.08).fits_any_integer_cell,"shallowly embedded integer cell satisfies both limits")
 	check(contact(46.94,46.98).fits_any_integer_cell,"small gap can satisfy both limits without deep burial")
 	check(not contact(47.38,47.42).fits_any_integer_cell,"fractional road grade cannot be disguised as a fitting integer cell")
+	check(not contact(35.2986183166504,35.3982048034668).fits_any_integer_cell,"saved shoulder has no shallow-contact integer cell")
 	DirAccess.make_dir_recursive_absolute(evidence)
 	var view:=SubViewport.new();view.size=Vector2i(1920,1080);view.own_world_3d=true;view.render_target_update_mode=SubViewport.UPDATE_ALWAYS;root.add_child(view)
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";view.add_child(game)
@@ -117,8 +130,20 @@ func run()->void:
 			var probe:Dictionary=core.normalize_roads([road],reservations)
 			probe.erase("segments")
 			nearest.append({"road":road,"distance":distance,"planned_height":profile_height(road,Vector2(location.x,location.z)),"normalizer_probe":probe})
+	var influences:Array=[]
+	for segment:Dictionary in normalized.works.segments:
+		if not segment.has_all(["start","finish","half_width"]):continue
+		var start:=Vector2(segment.start.x,segment.start.z);var finish:=Vector2(segment.finish.x,segment.finish.z)
+		var axis:=finish-start
+		if axis.length_squared()<.001:continue
+		var fraction:=clampf((Vector2(location.x,location.z)-start).dot(axis)/axis.length_squared(),0,1)
+		var distance:float=(Vector2(location.x,location.z)-start-axis*fraction).length()
+		if distance<float(segment.half_width)+float(segment.get("shoulder",0))+1:
+			influences.append({"segment":segment,"distance":distance,"planned_height":stamped_height(segment,Vector2(location.x,location.z))})
 	before.erase("cells");after.erase("cells")
 	var result:={"failures":failures,"slot":game.terrain.save_slot,"pose":saved_pose,"actual":actual,"nearby_roads":nearest,"before":before,"after":after,"normalization":normalized.road_normalization,"quality_accepted":false,"scope":"Whole-network analytic profile screening at identical grid cells; actual collision contact only at the saved screenshot target. Corners, junctions, shoulders and stamp interactions require rendered collision coverage. Not an all-world pass.","limits":{"gap":GapLimit,"burial":BurialLimit}}
+	result["nearby_earthworks"]=influences
+	if actual.has("support") and actual.support.has_all(["minimum","maximum"]):result["integer_contact"]=contact(actual.support.minimum,actual.support.maximum)
 	FileAccess.open(evidence.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(result,"  "))
 	print("GRID_NETWORK_ACTUAL ",actual)
 	print("GRID_NETWORK_COVERAGE before=",before.categories," after=",after.categories)

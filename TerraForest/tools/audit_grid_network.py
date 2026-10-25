@@ -1,4 +1,5 @@
 """Audit the saved problem view and complete planned road network without saving."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -10,8 +11,13 @@ from review_grid_preference import hashes
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--slot", default="GridPreference_1703_f3de49d9")
+    arguments = parser.parse_args()
     config, _ = parse_args([])
-    slot = "GridPreference_1703_f3de49d9"
+    slot = arguments.slot
+    if not slot.startswith("GridPreference_1703_") or Path(slot).name != slot:
+        raise SystemExit("Only a named grid-preference review save may be audited.")
     worlds = Path(os.environ["APPDATA"]) / "Godot/app_userdata/TerraForest/worlds"
     if not (worlds / (slot + ".trw")).is_file():
         raise SystemExit("The saved problem review world is required; no replacement will be made.")
@@ -21,7 +27,8 @@ def main():
     command = [str(config.godot), "--path", str(ROOT), "--log-file", str(folder / "engine.log"),
                "--script", "res://tests/road_grid_network_audit.gd", "--max-fps", "60", "--",
                "--temporary", "--snapshot-readonly", "--world-slot=" + slot, "--no-zombies",
-               "--ground-cover", "--derived-cache=user://grid_network_audit_" + uuid.uuid4().hex]
+               "--ground-cover", "--audit-evidence=" + str(folder),
+               "--derived-cache=user://grid_network_audit_" + uuid.uuid4().hex]
     record = {"command": command, **revision_metadata()}
     result = execute(command, folder, 240, "GRID_NETWORK_AUDIT failures=0")
     unchanged = all(before[name] == hashes(worlds, name) for name in before)
