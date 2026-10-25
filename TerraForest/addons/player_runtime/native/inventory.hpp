@@ -21,6 +21,7 @@ class NativePlayerInventory : public godot::RefCounted {
     std::unordered_map<int64_t,int64_t> durability;
     const std::unordered_map<int64_t,int64_t> &durable_catalog() const {return catalog_owner.is_valid()?catalog_owner->durability:durability;}
     int64_t revision=0;
+    int slot_limit=32;
     godot::Dictionary result(bool ok,const char *reason) const;
     godot::Dictionary apply_costs(const godot::PackedInt64Array &costs,int64_t expected,bool commit);
     godot::Dictionary apply_grants(const godot::PackedInt64Array &items,int64_t expected,bool commit);

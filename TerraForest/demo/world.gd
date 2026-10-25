@@ -72,6 +72,8 @@ var structure_prefab_index := -1
 var prefab_preview := MeshInstance3D.new()
 var shape_preview := MeshInstance3D.new()
 var _shape_preview_material := StandardMaterial3D.new()
+var _preview_eye:=Vector3.INF
+var _preview_forward:=Vector3.ZERO
 var _prefab_preview_material := StandardMaterial3D.new()
 var _prefab_preview_timer := 0.0
 var _prefab_preview_signature: Array = []
@@ -494,6 +496,7 @@ func _setup_prefabs() -> void:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES,arrays)
 	prefab_preview.mesh = mesh
 	_prefab_preview_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_prefab_preview_material.no_depth_test=true
 	prefab_preview.material_override = _prefab_preview_material
 	prefab_preview.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	prefab_preview.hide()
@@ -529,9 +532,9 @@ func _update_prefab_preview(delta: float) -> void:
 		shape_preview.hide()
 		return
 	_prefab_preview_timer -= delta
-	if _prefab_preview_timer>0:
+	if _prefab_preview_timer>0 and camera.global_position.distance_squared_to(_preview_eye)<.0025 and (-camera.global_basis.z).dot(_preview_forward)>.9998:
 		return
-	_prefab_preview_timer=0.1
+	_prefab_preview_timer=.05;_preview_eye=camera.global_position;_preview_forward=-camera.global_basis.z
 	var hit := _structure_target(false)
 	if hit.is_empty():
 		prefab_preview.hide()
@@ -687,6 +690,7 @@ func _setup_hud() -> void:
 
 func _cancel_edit_input()->void:
 	world_attack.cancel()
+	terrain_placement.cancel()
 	super._cancel_edit_input()
 
 func _equip_player_tool(item: int) -> void:
@@ -849,7 +853,12 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	return true
 
 func _movement_input_available() -> bool:
-	return super._movement_input_available() or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
+	if session_menu!=null and session_menu.pauses_world():return false
+	return super._movement_input_available() or (world_map!=null and world_map.opened) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
+
+func _input(event:InputEvent)->void:
+	super._input(event)
+	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and not event.pressed:terrain_placement.held=false
 
 func _unhandled_input(event: InputEvent) -> void:
 	if session_menu.visible_ui():return
@@ -895,7 +904,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if event.pressed:world_attack.attack(true)
 			return
 		if equipped_tool in mining_rewards.TERRAIN_ITEMS:
-			if event.pressed:terrain_placement.place(self)
+			if event.pressed:terrain_placement.begin_hold(self)
 			return
 		if equipped_tool==501:
 			if event.pressed:_show_lake_notice(world_vehicle.spawn(self,player_hud.active_slot))
@@ -920,7 +929,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if mouse_action:
 			if _model_edit_available() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and (remove_action or event.pressed):
 				var origin:=camera.global_position
-				var endpoint:=origin-camera.global_basis.z*(2.5 if construction_inventory.gameplay else 8.0)
+				var endpoint:=origin-camera.global_basis.z*(3.5 if construction_inventory.gameplay else 8.0)
 				var result: Dictionary=ground_interaction.collect(origin,endpoint,player_hud.inventory,construction_inventory.gameplay) if remove_action or event.button_index==MOUSE_BUTTON_LEFT else ground_interaction.place(ground_species,origin,endpoint,player_hud.inventory,construction_inventory.gameplay)
 				if result.ok and result.has("id"):world_attack.durability.forget("cover:%d"%result.id)
 				_show_lake_notice(result.reason)
@@ -1443,7 +1452,7 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 
 func _physics_process(delta: float) -> void:
 	var measured_begin:=Time.get_ticks_usec()
-	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.visible_ui() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
+	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
 	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	measured_begin=Time.get_ticks_usec()
 	actors.update_simulation(delta,terrain.focus,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)

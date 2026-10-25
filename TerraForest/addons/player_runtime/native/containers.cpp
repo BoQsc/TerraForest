@@ -6,7 +6,7 @@ namespace terraforest {
 using namespace godot;
 void NativeContainerStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("drag_slots","id","player","source_chest","target_chest","from","to","count","player_revision","store_revision"),&NativeContainerStore::drag_slots);
-    ClassDB::bind_method(D_METHOD("configure","prototype","max_containers"),&NativeContainerStore::configure);
+    ClassDB::bind_method(D_METHOD("configure","prototype","max_containers","slots"),&NativeContainerStore::configure,DEFVAL(32));
     ClassDB::bind_method(D_METHOD("snapshot","id"),&NativeContainerStore::snapshot);
     ClassDB::bind_method(D_METHOD("get_ids"),&NativeContainerStore::get_ids);
     ClassDB::bind_method(D_METHOD("has_contents","id"),&NativeContainerStore::has_contents);
@@ -17,7 +17,10 @@ void NativeContainerStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","bytes"),&NativeContainerStore::restore_storage_snapshot);
 }
 Ref<NativePlayerInventory> NativeContainerStore::empty_inventory() const {
-    Ref<NativePlayerInventory> out;out.instantiate();out->catalog_owner=schema;return out;
+    Ref<NativePlayerInventory> out;out.instantiate();out->catalog_owner=schema;out->slot_limit=slot_count;return out;
+}
+int NativeContainerStore::visible_slots(const Ref<NativePlayerInventory> &inventory) const{
+    int count=slot_count;for(int index=slot_count;index<32;index++)if(inventory->slots[index].count)count=index+1;return count;
 }
 bool NativeContainerStore::initialize_contents(int64_t id,const PackedInt64Array &items){
     if(schema.is_null()||id<=0||contents.count(id)||int64_t(contents.size())>=capacity)return false;
@@ -25,9 +28,9 @@ bool NativeContainerStore::initialize_contents(int64_t id,const PackedInt64Array
     if(!bool(granted["ok"]))return false;
     ++revision;box->revision=revision;contents[id]=box;return true;
 }
-bool NativeContainerStore::configure(const Ref<NativePlayerInventory> &prototype,int64_t max_containers) {
-    if(schema.is_valid()||prototype.is_null()||prototype->catalog().empty()||max_containers<1||max_containers>65536)return false;
-    schema.instantiate();schema->limits=prototype->catalog();schema->durability=prototype->durable_catalog();capacity=max_containers;return true;
+bool NativeContainerStore::configure(const Ref<NativePlayerInventory> &prototype,int64_t max_containers,int64_t slots) {
+    if(schema.is_valid()||prototype.is_null()||prototype->catalog().empty()||max_containers<1||max_containers>65536||slots<1||slots>32)return false;
+    schema.instantiate();schema->limits=prototype->catalog();schema->durability=prototype->durable_catalog();capacity=max_containers;slot_count=int(slots);schema->slot_limit=slot_count;return true;
 }
 Dictionary NativeContainerStore::snapshot(int64_t id) const {
     Dictionary out;out["ok"]=false;if(schema.is_null()||id<=0)return out;
@@ -45,8 +48,10 @@ Dictionary NativeContainerStore::move(int64_t id,const Ref<NativePlayerInventory
     if(!depositing&&found==contents.end()){out["reason"]="empty_container";return out;}
     if(found==contents.end()&&int64_t(contents.size())>=capacity){out["reason"]="container_capacity";return out;}
     Ref<NativePlayerInventory> box=found==contents.end()?empty_inventory():found->second;
+    box->slot_limit=visible_slots(box);
     out=depositing?player->transfer_to(box,slot,count,player_revision,box->revision):box->transfer_to(player,slot,count,box->revision,player_revision);
     if(!bool(out["ok"]))return out;
+    box->slot_limit=visible_slots(box);
     bool nonempty=false;for(const auto &item:box->slots)nonempty=nonempty||item.count>0;
     ++revision;box->revision=revision;
     if(nonempty)contents[id]=box;else contents.erase(id);
@@ -60,6 +65,8 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
     if(source_chest&&found==contents.end())return out;
     if(target_chest&&found==contents.end()&&int64_t(contents.size())>=capacity){out["reason"]="container_capacity";return out;}
     auto box=found==contents.end()?empty_inventory():found->second;
+    box->slot_limit=visible_slots(box);
+    if((source_chest&&from>=box->slot_limit)||(target_chest&&to>=box->slot_limit)){out["reason"]="container_capacity";return out;}
     auto source=source_chest?box:player;auto target=target_chest?box:player;
     if(source==target) {
         out=source->transfer(from,to,count,source->revision);
@@ -83,6 +90,7 @@ Dictionary NativeContainerStore::drag_slots(int64_t id,const Ref<NativePlayerInv
         source->slots[from]=a;target->slots[to]=b;++source->revision;++target->revision;
     }
     if(source_chest||target_chest) {
+        box->slot_limit=visible_slots(box);
         bool nonempty=false;for(const auto &item:box->slots)nonempty=nonempty||item.count>0;
         ++revision;box->revision=revision;
         if(nonempty)contents[id]=box;else contents.erase(id);
@@ -119,7 +127,7 @@ bool NativeContainerStore::restore_storage_snapshot(const PackedByteArray &bytes
     decltype(contents) staged;uint64_t count=bytes.decode_u64(8);int64_t next_revision=revision+1;
     for(uint64_t i=0;i<count;++i) {
         int64_t at=16+i*stride;auto inventory=empty_inventory();
-        inventory->restore_storage_snapshot(bytes.slice(at+8,at+stride));inventory->revision=++next_revision;staged.emplace(bytes.decode_u64(at),inventory);
+        inventory->restore_storage_snapshot(bytes.slice(at+8,at+stride));inventory->slot_limit=visible_slots(inventory);inventory->revision=++next_revision;staged.emplace(bytes.decode_u64(at),inventory);
     }
     contents=std::move(staged);revision=next_revision;return true;
 }

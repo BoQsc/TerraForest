@@ -45,6 +45,7 @@ func _bind_view(view:Camera3D)->void:
 	if view==third_camera:view.environment=game.camera.environment
 	game.water_camera.update()
 func update()->void:
+	game.tool_view.human.crouched=game.crouched
 	var wanted:bool=enabled and not game.world_vehicle.driving
 	if active!=wanted:
 		active=wanted

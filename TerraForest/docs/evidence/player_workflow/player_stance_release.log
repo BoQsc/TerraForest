@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS crouch lowers capsule without moving the feet
+PASS standing is refused beneath an obstructing ceiling
+PASS crouch limits sprint and prevents jumping into the ceiling
+PASS crouched player traverses the low passage with normal collision
+PASS standing resumes after leaving the low ceiling
+PASS glancing input slides along a wall instead of locking at its edge
+WALL_SLIDE before_z=0.0 after_z=-1.63174486160278
+PASS new contact policy improves the reproduced shallow-angle movement lock
+PASS player can immediately walk away from sustained wall contact
+PASS player escapes a sharp convex apex by walking aside without destroying or crossing the object
+PLAYER_STANCE failures=0

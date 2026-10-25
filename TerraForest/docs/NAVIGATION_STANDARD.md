@@ -70,6 +70,16 @@ each obstacle/landing sweep; ordinary collision remains enabled. Corpse rest
 preserves anatomical joints. Menu/readiness suspension freezes bodies explicitly
 without removing their physics-space registration or rebuilding joint frames.
 
+Player standing/crouching capsules share a 0.34 m radius and fixed feet origin;
+height changes from 1.8 m to 1.1 m. Native standing-clearance queries use the full
+standing capsule, normal collision mask and only the player's own RID exclusion.
+Blocked standing retains crouch; crouched movement is 2.6 m/s without sprint or
+jump. Recovery margin is 4 mm, with eight slide iterations and no shallow-angle
+wall sliding dead zone. The 30 cm swept stair limit and steep-wall refusal remain.
+Do not add automatic noclip, teleport nudges or collision disabling to escape
+geometry. The map permits movement while keeping map mouse interaction separate
+from attacks/placement; ESC, inventory and action-wheel focus still block input.
+
 ## Runtime limits and failure states
 
 Each local route retains at most 2,048 nodes and searches within +/-16 m of its origin.

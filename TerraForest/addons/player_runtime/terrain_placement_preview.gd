@@ -32,7 +32,7 @@ func clear()->void:
 	hide();caption.hide();result={};remaining=0.0;last_item=-1
 func update(game:Node,delta:float)->void:
 	game.terrain_placement.update(game)
-	if not game.terrain_placement.active(game):clear();return
+	if not game.terrain_placement.active(game,true):clear();return
 	if last_item!=game.equipped_tool:remaining=0;last_item=game.equipped_tool
 	remaining-=delta
 	if remaining>0:return
@@ -40,7 +40,7 @@ func update(game:Node,delta:float)->void:
 	if result.is_empty():hide();caption.hide();return
 	global_position=result.position
 	var tint:=Color("83d9ba") if result.ok else Color("ec876e")
-	if result.reason in ["Placement area is still loading","Checking terrain"]:tint=Color("e5c273")
+	if result.reason in ["Placement area is still loading","Checking terrain","Terrain is updating"]:tint=Color("e5c273")
 	material_override.set_shader_parameter("tint",tint)
 	caption.text=game.player_hud.RESOURCES[result.item]+" · Right mouse: place" if result.ok else ""
 	caption.modulate=tint;caption.visible=result.ok;show()

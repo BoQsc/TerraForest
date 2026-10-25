@@ -14,7 +14,7 @@ func run():
  var floor_body=StaticBody3D.new();floor_body.collision_layer=1;root.add_child(floor_body);floor_body.position=Vector3(0,-.5,2)
  var floor_shape=BoxShape3D.new();floor_shape.size=Vector3(24,1,24);var floor_collider=CollisionShape3D.new();floor_collider.shape=floor_shape;floor_body.add_child(floor_collider)
  var motor=ClassDB.instantiate("NativePlayerMovement")
- var player=CharacterBody3D.new();player.collision_mask=7;player.collision_layer=8;player.floor_snap_length=.35;player.floor_max_angle=deg_to_rad(48.0);player.floor_constant_speed=true;player.safe_margin=.01
+ var player=CharacterBody3D.new();player.collision_mask=7;player.collision_layer=8;player.floor_snap_length=.35;player.floor_max_angle=deg_to_rad(48.0);player.floor_constant_speed=true;player.safe_margin=.004;player.max_slides=8;player.wall_min_slide_angle=0
  var shape=CapsuleShape3D.new();shape.radius=.34;shape.height=1.8
  var collider=CollisionShape3D.new();collider.shape=shape;collider.position.y=.9;player.add_child(collider);root.add_child(player)
  for i in 3:await physics_frame

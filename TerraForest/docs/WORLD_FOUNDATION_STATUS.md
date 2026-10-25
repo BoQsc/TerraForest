@@ -1,3 +1,40 @@
+## Player movement, map, graphics and placement workflow — 2026-10-26
+
+M map allows walking without pausing encounters or permitting map clicks to attack
+the world. ESC adds one Graphics fullscreen/windowed control and direct Save and
+quit. Hold backtick shows the fly action wheel in gameplay without changing the
+development belt. Ctrl crouches the native capsule/eye, checks standing clearance,
+and uses a cached bent-leg third-person pose rather than the GLB's standing
+"Crouch" placeholder. Sharp-contact sliding is improved without noclip/teleport
+escape; swept stair and wall/ceiling restrictions remain.
+
+Vegetation has actual-species ghosts for valid/rejected/updating spots. Moving
+block outlines no longer wait on a stale timer or disappear behind their own soil
+overlap. Hold-RMB terrain placement submits paid samples as native edits complete,
+with bounded input and an amber pending marker. This does not alter or close the
+unsolved terrain/road generation contact problem. Corpse/chest capacities are now
+8/16 native slots; old occupied overflow remains accessible without truncation.
+
+Source workflow, capacity, low-ceiling/sharp-contact, 54 terrain-preview, cottage
+stairs, map-travel and corpse save/reload checks pass. Debug/release builds and
+23/13/29 release storage/drag/transfer assertions pass. A Windows engine transition
+anomaly is reproduced: the windowed control falls back to a decorated maximized
+window when normal windowed requests re-enter exclusive fullscreen. One native
+window is retained. Evidence, packaged checks and rejected diagnostics:
+`evidence/player_workflow/README.md`.
+
+Packaged workflow/terrain checks pass 22/22 and 54/54; corpse contact retains all
+14 joints and returns all 15 bodies to sleep, and actual loot/save/reopen passes
+18/18 plus 9/9. New stance/capacity/movement fixtures also execute successfully
+against the release DLL. Final windowed-policy reapplication is idempotent, so
+scene startup does not bounce an already-windowed game through fullscreen again.
+
+Remaining qualification is aesthetic crouch-walk/attack motion, sustained
+edit-heavy/lower-end performance, and any newly reported trapped geometry case.
+Return with physical/input/rendered reproductions and measured frame traces;
+do not declare all collisions or terrain-building performance universally fixed.
+Visual/player acceptance remains separate from engineering checks.
+
 ## Corpse contact and restoration repair — 2026-10-26
 
 The intact-corpse vibration/explosion report exposed asymmetric player collision,

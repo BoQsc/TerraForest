@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS partial deposit targets exact chest slot
+PASS source and exact target amounts
+PASS matching stacks merge
+PASS different full stacks swap across inventories
+PASS swap conserves both items
+PASS partial cross swap rejects atomically
+PASS stale player revision rejects drag
+PASS stale container revision rejects drag
+PASS reorder within chest
+PASS last withdrawal targets belt slot ten and frees content row
+PASS player reorder inside chest UI does not allocate contents
+PASS invalid target rejected
+PASS invalid target rejected
+CONTAINER_DRAG {"checks":13,"failures":0}
+

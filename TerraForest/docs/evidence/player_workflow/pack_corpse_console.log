@@ -1,0 +1,67 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary streamed world is ready
+PASS real player blocks corpses without treating limbs as moving platforms
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS production zombie initializes
+Zombie ragdoll started with 15 physical bones.
+PASS corpse settles before interaction
+PASS settling retains all fourteen joints
+REACTIVATION {"anchor_error":0.00412857392802835,"angular":2.15044283866882,"corpse_contacts":18,"displacement":0.0065236990340054,"fastest_bone":"RightFoot","final":{"anchor_error":0.00224377168342471,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.900735974311829,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.4107845723629,"phase":"walk_push_(1.0, 0.0, 0.0)","player_speed":6.61059427261353,"radius":0.900824427604675}
+PASS modest corpse interaction stays connected and bounded: walk_push_(1.0, 0.0, 0.0)
+PASS sleep and contact preserve every anatomical joint: walk_push_(1.0, 0.0, 0.0)
+PUSH_CONTACTS 41
+REACTIVATION {"anchor_error":0.00224377168342471,"angular":0.0,"corpse_contacts":0,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.00224377168342471,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.900735974311829,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.0,"phase":"after_walk_(1.0, 0.0, 0.0)","player_speed":0.0,"radius":0.900735974311829}
+PASS modest corpse interaction stays connected and bounded: after_walk_(1.0, 0.0, 0.0)
+PASS sleep and contact preserve every anatomical joint: after_walk_(1.0, 0.0, 0.0)
+REACTIVATION {"anchor_error":0.00224377168342471,"angular":0.955719232559204,"corpse_contacts":451,"displacement":0.0165856368839741,"fastest_bone":"LeftLeg","final":{"anchor_error":0.000186608507647179,"angular":0.0327709913253784,"finite":true,"joints":14,"linear":0.00425794208422303,"radius":0.899910032749176,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.0533254109323025,"phase":"walk_push_(0.0, 0.0, 1.0)","player_speed":5.58780336380005,"radius":0.900735974311829}
+PASS modest corpse interaction stays connected and bounded: walk_push_(0.0, 0.0, 1.0)
+PASS sleep and contact preserve every anatomical joint: walk_push_(0.0, 0.0, 1.0)
+PUSH_CONTACTS 461
+REACTIVATION {"anchor_error":0.000204469193704426,"angular":0.0339196063578129,"corpse_contacts":0,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.000204469193704426,"angular":0.0339196063578129,"finite":true,"joints":14,"linear":0.00431609945371747,"radius":0.899910032749176,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.00431609945371747,"phase":"after_walk_(0.0, 0.0, 1.0)","player_speed":0.0,"radius":0.899910032749176}
+PASS modest corpse interaction stays connected and bounded: after_walk_(0.0, 0.0, 1.0)
+PASS sleep and contact preserve every anatomical joint: after_walk_(0.0, 0.0, 1.0)
+REACTIVATION {"anchor_error":0.000204469193704426,"angular":0.0507248230278492,"corpse_contacts":425,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.000204469193704426,"angular":0.0500661581754684,"finite":true,"joints":14,"linear":0.0057832901366055,"radius":0.899910032749176,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.00578329060226679,"phase":"walk_push_(-1.0, 0.0, 0.0)","player_speed":5.49721193313599,"radius":0.899910032749176}
+PASS modest corpse interaction stays connected and bounded: walk_push_(-1.0, 0.0, 0.0)
+PASS sleep and contact preserve every anatomical joint: walk_push_(-1.0, 0.0, 0.0)
+PUSH_CONTACTS 459
+REACTIVATION {"anchor_error":0.000190925507922657,"angular":0.0108038745820522,"corpse_contacts":0,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.000190925507922657,"angular":0.0108038745820522,"finite":true,"joints":14,"linear":0.00235609826631844,"radius":0.899914145469666,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.00235609826631844,"phase":"after_walk_(-1.0, 0.0, 0.0)","player_speed":0.0,"radius":0.899914145469666}
+PASS modest corpse interaction stays connected and bounded: after_walk_(-1.0, 0.0, 0.0)
+PASS sleep and contact preserve every anatomical joint: after_walk_(-1.0, 0.0, 0.0)
+REACTIVATION {"anchor_error":0.000190925507922657,"angular":0.0381689891219139,"corpse_contacts":218,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.000190925507922657,"angular":0.0379482954740524,"finite":true,"joints":14,"linear":0.00581158790737391,"radius":0.899914145469666,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.00581158790737391,"phase":"land_on_corpse","player_speed":6.9998927116394,"radius":0.899914145469666}
+PASS modest corpse interaction stays connected and bounded: land_on_corpse
+PASS sleep and contact preserve every anatomical joint: land_on_corpse
+PASS loot pause records authoritative physics velocities
+PASS loot pause preserves the connected bodies in their physics space
+REACTIVATION {"anchor_error":0.000190925507922657,"angular":0.0,"corpse_contacts":0,"displacement":0.00014520924014505,"fastest_bone":"","final":{"anchor_error":0.000190925507922657,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.899918258190155,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.0,"phase":"loot_resume_under_player","player_speed":0.0,"radius":0.899918258190155}
+PASS modest corpse interaction stays connected and bounded: loot_resume_under_player
+PASS sleep and contact preserve every anatomical joint: loot_resume_under_player
+REACTIVATION {"anchor_error":0.000185670374776237,"angular":0.0185741744935513,"corpse_contacts":0,"displacement":0.0,"fastest_bone":"","final":{"anchor_error":0.000185670374776237,"angular":0.0185741744935513,"finite":true,"joints":14,"linear":0.00195923051796854,"radius":0.899918258190155,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.00195923051796854,"phase":"after_landing","player_speed":0.0,"radius":0.899918258190155}
+PASS modest corpse interaction stays connected and bounded: after_landing
+PASS sleep and contact preserve every anatomical joint: after_landing
+REACTIVATION {"anchor_error":0.00543525815010071,"angular":7.26561164855957,"corpse_contacts":0,"displacement":0.0318959951400757,"fastest_bone":"LeftHand","final":{"anchor_error":0.00271108793094754,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.901252090930939,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.420431822538376,"phase":"explicit_wake_0","player_speed":0.0,"radius":0.901830613613129}
+PASS modest corpse interaction stays connected and bounded: explicit_wake_0
+PASS sleep and contact preserve every anatomical joint: explicit_wake_0
+REACTIVATION {"anchor_error":0.00256431940943003,"angular":1.93240737915039,"corpse_contacts":0,"displacement":0.00633161142468452,"fastest_bone":"LeftHand","final":{"anchor_error":0.00139233842492104,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.90100109577179,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.153638154268265,"phase":"explicit_wake_1","player_speed":0.0,"radius":0.901132047176361}
+PASS modest corpse interaction stays connected and bounded: explicit_wake_1
+PASS sleep and contact preserve every anatomical joint: explicit_wake_1
+REACTIVATION {"anchor_error":0.00423269998282194,"angular":2.02512860298157,"corpse_contacts":0,"displacement":0.011310551315546,"fastest_bone":"RightFoot","final":{"anchor_error":0.00160177773796022,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.90227073431015,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.403669357299805,"phase":"explicit_wake_2","player_speed":0.0,"radius":0.902458727359772}
+PASS modest corpse interaction stays connected and bounded: explicit_wake_2
+PASS sleep and contact preserve every anatomical joint: explicit_wake_2
+REACTIVATION {"anchor_error":0.00424248026683927,"angular":2.1537709236145,"corpse_contacts":0,"displacement":0.00711076334118843,"fastest_bone":"LeftHand","final":{"anchor_error":0.00262655410915613,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.90354061126709,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.137233853340149,"phase":"physical_push_Spine2","player_speed":0.0,"radius":0.903643012046814}
+PASS modest corpse interaction stays connected and bounded: physical_push_Spine2
+PASS sleep and contact preserve every anatomical joint: physical_push_Spine2
+PASS external physical impulse wakes and moves corpse: physical_push_Spine2
+REACTIVATION {"anchor_error":0.00492739723995328,"angular":6.72762727737427,"corpse_contacts":0,"displacement":0.0184937790036201,"fastest_bone":"Head","final":{"anchor_error":0.00271435221657157,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.904075384140015,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.449231743812561,"phase":"physical_push_Head","player_speed":0.0,"radius":0.905654788017273}
+PASS modest corpse interaction stays connected and bounded: physical_push_Head
+PASS sleep and contact preserve every anatomical joint: physical_push_Head
+PASS external physical impulse wakes and moves corpse: physical_push_Head
+REACTIVATION {"anchor_error":0.0059130722656846,"angular":4.29316902160645,"corpse_contacts":0,"displacement":0.110692195594311,"fastest_bone":"LeftFoot","final":{"anchor_error":0.0059130722656846,"angular":0.0,"finite":true,"joints":14,"linear":0.0,"radius":0.904133558273315,"resting":15,"sleeping":15},"finite":true,"joints_intact":true,"linear":0.934422552585602,"phase":"physical_push_LeftLeg","player_speed":0.0,"radius":0.904595911502838}
+PASS modest corpse interaction stays connected and bounded: physical_push_LeftLeg
+PASS sleep and contact preserve every anatomical joint: physical_push_LeftLeg
+PASS external physical impulse wakes and moves corpse: physical_push_LeftLeg
+PASS corpse returns to rest after interactions
+PASS player actually contacts the corpse
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_RAGDOLL_REACTIVATION failures=0

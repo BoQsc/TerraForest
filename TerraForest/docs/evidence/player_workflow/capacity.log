@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS small container exposes eight native slots
+PASS deposit fits bounded slot 0
+PASS deposit fits bounded slot 1
+PASS deposit fits bounded slot 2
+PASS deposit fits bounded slot 3
+PASS deposit fits bounded slot 4
+PASS deposit fits bounded slot 5
+PASS deposit fits bounded slot 6
+PASS deposit fits bounded slot 7
+PASS full compact storage rejects atomically without hidden overflow slots
+PASS direct drag cannot bypass native capacity
+PASS legacy fixture stores an item in slot thirty-two
+PASS legacy overflow remains visible and retrievable without data loss
+PASS empty legacy overflow shrinks back to the compact default
+PASS corpse loot uses compact slots without changing pose storage
+CONTAINER_CAPACITY failures=0

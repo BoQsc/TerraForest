@@ -66,8 +66,8 @@ func set_open(value:bool)->void:
   game.session_menu.developer_hud.mouse_access=false
  opened=value;panel.visible=value;view.dragging=false;view.teleport_click=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
  if not value:water_survey.pause();block_survey.pause();model_survey.pause()
- game.player_hud.inventory_open=value;game.player_hud.enabled=not value and not game.world_vehicle.driving
- game._clear_motion();Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)
+ game.player_hud.inventory_open=false;game.player_hud.enabled=not value and not game.world_vehicle.driving
+ game._cancel_edit_input();Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)
  game.session_menu.refresh();game.session_menu.sync_panels()
  if value:
   travel_hint.visible=game.session_menu.developer;travel_hint.text="DEVELOPMENT\nHold Ctrl + left-click to teleport.\nLoads terrain before resuming play."

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\player_workflow_release_fwkngtx8",
+    "--script",
+    "res://tests/container_capacity.gd"
+  ],
+  "test_sha256": "1638df51f3817a1e400c6da9cf13b154b0058bbe87e40e6bb22650d2b3bbc043",
+  "release_dll_sha256": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+  "exit_code": 0,
+  "passed": true
+}

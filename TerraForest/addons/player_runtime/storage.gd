@@ -26,7 +26,7 @@ func protect(id:int,enabled:bool)->bool:
 func prepare(owner_game: Node,persistence: RefCounted) -> bool:
 	game=owner_game;collection=game.structures.model("storage/wooden_chest/v1")
 	store=ClassDB.instantiate("NativeContainerStore")
-	if collection==null or not store.configure(game.player_hud.inventory,4096): return false
+	if collection==null or not store.configure(game.player_hud.inventory,4096,16): return false
 	return persistence.register_component("chest_contents",store.capture_storage_snapshot,stage_restore,store,store.capture_storage_snapshot())
 func stage_restore(bytes: PackedByteArray) -> bool:
 	if not store.validate_snapshot(bytes): return false
@@ -83,6 +83,7 @@ func _ready() -> void:
 	player_list.configure(self,"player");storage_list.configure(self,"chest")
 	for list: GridContainer in [player_list,storage_list]:
 		list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;list.custom_minimum_size=Vector2(500,440);row.add_child(list)
+	storage_list.custom_minimum_size.y=0;storage_list.size_flags_vertical=Control.SIZE_SHRINK_BEGIN
 	var buttons:=HBoxContainer.new();buttons.add_theme_constant_override("separation",16);column.add_child(buttons)
 	quantity=SpinBox.new();quantity.min_value=1;quantity.max_value=1000000;quantity.value=1;buttons.add_child(quantity)
 	for deposit in [true,false]:
@@ -96,6 +97,7 @@ func refresh() -> void:
 	for pair in [[player_list,player_state],[storage_list,box_state]]:
 		var list: GridContainer=pair[0];var state: Dictionary=pair[1];list.clear()
 		for i in 32:
+			list.buttons[i].visible=i<int(state.get("capacity",32))
 			var item: Dictionary=state.slots[i]
 			list.add_item("",item.count==0)
 			list.buttons[i].present(item,names.get(item.item,"Empty"),str(i+1))

@@ -18,6 +18,7 @@ var grass_material: ShaderMaterial
 var grass_texture_enabled:=false
 var foliage_materials:Array[ShaderMaterial]=[]
 var batches: Array[Node3D]=[]
+var preview_meshes:Array[Mesh]=[]
 var rock_collision:Node3D
 var fractures:Node3D
 var rock_damage:RefCounted
@@ -66,6 +67,7 @@ func _ready() -> void:
 		var batch: Node3D=ClassDB.instantiate("NativeStaticBatch")
 		add_child(batch)
 		var geometry:Mesh=_mesh(species)
+		preview_meshes.append(geometry)
 		if species==0:stone_geometry=geometry
 		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,8192):
 			push_error("Ground cover renderer initialization failed");set_process(false);return

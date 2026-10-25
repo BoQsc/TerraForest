@@ -1,0 +1,8 @@
+{
+  "pack_sha256": "ceefadd10f53c5bedb30b672519601e6371a01e6e5a7a96216c95a124c8d770b",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19"
+  },
+  "crouch_sha256": "d1c8d3ef2ffb4ddbe97c809a84901593e6d82f4407b9f2264594b3add846b304"
+}

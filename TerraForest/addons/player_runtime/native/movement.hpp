@@ -7,6 +7,9 @@
 #include <godot_cpp/classes/kinematic_collision3d.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/physics_ray_query_parameters3d.hpp>
+#include <godot_cpp/classes/collision_shape3d.hpp>
+#include <godot_cpp/classes/capsule_shape3d.hpp>
+#include <godot_cpp/classes/physics_shape_query_parameters3d.hpp>
 #include <cmath>
 #include <algorithm>
 namespace terraforest {
@@ -21,6 +24,12 @@ class NativePlayerMovement : public godot::RefCounted {
     godot::ObjectID ladder_collection_;
     double ladder_detach_=0;
     double step_radius_=.34;
+    godot::ObjectID stance_body_,stance_collider_;
+    godot::Ref<godot::CapsuleShape3D> standing_shape_;
+    godot::Ref<godot::PhysicsShapeQueryParameters3D> stance_query_;
+    godot::Vector3 standing_center_;
+    double standing_height_=1.8;
+    bool crouched_=false;
     static bool valid(double delta,const godot::Vector3 &v) {
         return std::isfinite(delta)&&delta>0&&delta<=0.25&&v.is_finite();
     }
@@ -31,6 +40,7 @@ public:
     void configure_ladders(godot::Node3D *collection);
     bool ladder_velocity(godot::CharacterBody3D *body,godot::Vector3 direction,double delta,bool jump);
     bool move_grounded(godot::CharacterBody3D *body,double delta);
+    bool update_crouch(godot::CharacterBody3D *body,bool requested);
     godot::Vector3 swimming_velocity(godot::Vector3 direction,godot::Vector3 previous,double vertical,double depth,double delta,bool sprint) const {
         if(!valid(delta,direction)||!previous.is_finite()||!std::isfinite(vertical)||!std::isfinite(depth)||depth<=0)return {};
         direction.y=0;
@@ -44,12 +54,12 @@ public:
         if(target.length_squared()>speed*speed)target=target.normalized()*godot::real_t(speed);
         return previous.lerp(target,godot::real_t(1.0-std::exp(-8.0*delta)));
     }
-    godot::Vector3 walking_velocity(godot::Vector3 direction,godot::Vector3 previous,double delta,bool sprint,bool grounded,bool jump) const {
+    godot::Vector3 walking_velocity(godot::Vector3 direction,godot::Vector3 previous,double delta,bool sprint,bool grounded,bool jump,bool crouched=false) const {
         if(!valid(delta,direction)||!previous.is_finite())return {};
         direction.y=0;
         if(direction.length_squared()>1)direction.normalize();
-        const double speed=sprint?9.9:5.5;
-        return {godot::real_t(direction.x*speed),godot::real_t(grounded?(jump?7.0:0.0):previous.y-20.0*delta),godot::real_t(direction.z*speed)};
+        const double speed=crouched?2.6:(sprint?9.9:5.5);
+        return {godot::real_t(direction.x*speed),godot::real_t(grounded?(jump&&!crouched?7.0:0.0):previous.y-20.0*delta),godot::real_t(direction.z*speed)};
     }
     godot::Vector3 flight_displacement(godot::Vector3 direction,double vertical,double delta,bool sprint) const {
         if(!valid(delta,direction)||!std::isfinite(vertical))return {};

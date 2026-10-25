@@ -63,25 +63,27 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	return {"ok":true,"reason":"Collected ground cover" if gameplay else "Ground cover removed","id":hit.id}
 
 func placement_probe(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
-	if not available() or not scene_ray.is_valid() or species<0 or species>=Catalog.COUNT or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
+	if not scene_ray.is_valid() or species<0 or species>=Catalog.COUNT or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
 	var hit: Dictionary=scene_ray.call(from,to)
-	if hit.is_empty() or not hit.position.is_finite() or not hit.normal.is_finite() or hit.normal.normalized().y<0.82: return {"ok":false,"reason":"Aim at a supported surface"}
+	if hit.is_empty() or not hit.position.is_finite() or not hit.normal.is_finite(): return {"ok":false,"reason":"Aim at a supported surface"}
 	var point: Vector3=hit.position+Vector3.UP*0.02
 	var key:=Vector2i(floori(point.x/32.0),floori(point.z/32.0))
-	if not cover.resident.has(key) or cover._dirty.has(key) or cover._pending.has(key): return {"ok":false,"reason":"Ground cover updating"}
 	var poses: Array[Transform3D]=[Transform3D(Basis.IDENTITY,point)]
+	var candidate:={"ok":false,"reason":"","pose":poses[0],"cell":key}
+	if not available() or not cover.resident.has(key) or cover._dirty.has(key) or cover._pending.has(key):candidate.reason="Ground cover updating";return candidate
+	if hit.normal.normalized().y<0.82:candidate.reason="Aim at a supported surface";return candidate
 	if cover.structures!=null:
 		var mask: PackedByteArray=cover.structures.overlap_mask(poses,AABB(Vector3(-0.4,0,-0.4),Vector3(0.8,1.1 if species==8 else 0.8,0.8)))
-		if mask.size()!=1 or mask[0]: return {"ok":false,"reason":"Placement overlaps a structure"}
+		if mask.size()!=1 or mask[0]:candidate.reason="Placement overlaps a structure";return candidate
 	if cover.water!=null:
 		var mask: PackedByteArray=cover.water.placement_mask(poses)
-		if mask.size()!=1 or mask[0]: return {"ok":false,"reason":"Placement is underwater"}
-	if cover.picker.pick(point+Vector3.UP,point-Vector3.UP*0.3).hit: return {"ok":false,"reason":"Ground cover already occupies this spot"}
+		if mask.size()!=1 or mask[0]:candidate.reason="Placement is underwater";return candidate
+	if cover.picker.pick(point+Vector3.UP,point-Vector3.UP*0.3).hit:candidate.reason="Ground cover already occupies this spot";return candidate
 	if gameplay:
 		var count:=0
 		for row: Dictionary in inventory.snapshot().slots:
 			if row.item==ITEMS[species]: count+=int(row.count)
-		if count<1: return {"ok":false,"reason":"Missing ground-cover item"}
+		if count<1:candidate.reason="Missing ground-cover item";return candidate
 	return {"ok":true,"reason":"Candidate · final support checked after placement","pose":poses[0],"cell":key}
 
 func place(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:

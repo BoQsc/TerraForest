@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\player_workflow_release_fwkngtx8",
+    "--script",
+    "res://tests/player_stance.gd"
+  ],
+  "test_sha256": "828f054fc0e34225a2a850d5c74ce096d09eb65e4dff6769ccaf90027f93d895",
+  "release_dll_sha256": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+  "exit_code": 0,
+  "passed": true
+}

@@ -16,6 +16,7 @@ var help := Label.new()
 var pointer := MeshInstance3D.new()
 var tool: int = 3
 var radius: float = 4.0
+var crouched:=false
 var edit_reach: float=120.0
 var allow_terrain_add:=true
 var material_id: int = 1
@@ -260,7 +261,9 @@ func _setup_scene() -> void:
 	player.floor_snap_length = 0.35
 	player.floor_max_angle = deg_to_rad(48.0)
 	player.floor_constant_speed = true
-	player.safe_margin = 0.01
+	player.safe_margin = 0.004
+	player.max_slides=8
+	player.wall_min_slide_angle=0.0
 	player.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	var shape := CapsuleShape3D.new()
 	shape.radius = 0.34
@@ -587,7 +590,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F:
 				radius = 4.0 if radius < 4 else (16.0 if radius < 16 else (64.0 if radius < 64 else 1.0))
 			KEY_F11:
-				Presentation.apply(get_window())
+				Presentation.set_fullscreen(get_window(),DisplayServer.window_get_mode() not in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN],not temporary_world)
 			KEY_F2: next_site()
 			KEY_F3: build_proof()
 			KEY_F4: next_biome()
@@ -668,6 +671,9 @@ func _physics_process(delta: float) -> void:
 	input_vector = input
 	var speed: float = 9.9 if controls.sprint() else 5.5
 	var direction: Vector3 = player.basis * input
+	crouched=movement.update_crouch(player,not fly and app_focused and _movement_input_available() and controls.held.has(KEY_CTRL))
+	camera.position.y=move_toward(camera.position.y,1.0 if crouched else 1.68,delta*6.0)
+	if crouched:speed=2.6
 	if not fly: terrain.travel_velocity=direction*speed
 	var before_motion: Vector3 = player.position
 	structure_motion_blocked = false
@@ -693,7 +699,7 @@ func _physics_process(delta: float) -> void:
 				var vertical: float=controls.vertical() if app_focused and _movement_input_available() else 0.0
 				player.velocity=movement.swimming_velocity(direction,player.velocity,vertical,water_depth,delta,controls.sprint())
 			else:
-				player.velocity=movement.walking_velocity(direction,player.velocity,delta,controls.sprint(),player.is_on_floor(),controls.held.has(KEY_SPACE))
+				player.velocity=movement.walking_velocity(direction,player.velocity,delta,controls.sprint(),player.is_on_floor(),controls.held.has(KEY_SPACE),crouched)
 				climbing=movement.ladder_velocity(player,direction,delta,controls.held.has(KEY_SPACE))
 			structure_motion_blocked = not _additional_motion_ready(delta)
 			if structure_motion_blocked:

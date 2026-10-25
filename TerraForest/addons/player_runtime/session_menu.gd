@@ -22,6 +22,8 @@ var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
 var third_person_toggle:CheckButton
+var fullscreen_toggle:CheckButton
+var player_actions:CanvasLayer
 var impact_toggle:CheckButton
 var breakup_toggle:CheckButton
 var impact_style:OptionButton
@@ -55,6 +57,7 @@ func _ready() -> void:
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
+	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
 	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
 	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
@@ -64,8 +67,12 @@ func _ready() -> void:
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
 	if world_page_factory.is_valid():page("World").add_child(world_page_factory.call())
 	var session:=page("Session")
+	var graphics:=page("Graphics")
+	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
+	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"
+	fullscreen_toggle.toggled.connect(func(enabled:bool):game.Presentation.set_fullscreen(game.get_window(),enabled,not game.temporary_world));graphics.add_child(fullscreen_toggle)
 	label(session,"Your session").add_theme_font_size_override("font_size",22)
-	label(session,"Tool settings belong to the selected tool: hold Alt for its controls. Tab opens inventory; M opens the world map; ~ switches the development belt.")
+	label(session,"Hold Alt for tool controls. Tab: inventory · M: map (keep moving) · Ctrl: crouch · Hold `: player actions · Tap `: development belt.")
 	button(session,"Save world",save_world)
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
@@ -107,7 +114,7 @@ func _ready() -> void:
 	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
 	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
-	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
+	button(session,"Save and quit",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST))
 	session_message=label(root,"")
 	confirmation=ConfirmationDialog.new();confirmation.confirmed.connect(func():pending_action.call());add_child(confirmation)
 	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Temporary world; changes are not saved" if game.temporary_world else "Save failed; check world status")
@@ -116,6 +123,7 @@ func _ready() -> void:
 	game.player_hud.developer_belt=developer;game.player_hud.refresh()
 	tool_workspace=preload("res://addons/player_runtime/tool_workspace.gd").new();tool_workspace.game=game;tool_workspace.menu=self;add_child(tool_workspace)
 	developer_hud=preload("res://addons/player_runtime/developer_hud.gd").new();developer_hud.game=game;add_child(developer_hud)
+	player_actions=preload("res://addons/player_runtime/player_actions.gd").new();player_actions.game=game;player_actions.menu=self;add_child(player_actions)
 	panel.hide();refresh();dock_palettes.call_deferred()
 func dock_palettes() -> void:
 	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:tool_workspace.dock(pair[0],pair[1])
@@ -127,7 +135,9 @@ func refresh_effects()->void:
 	breakup_toggle.disabled=not game.impact_effects.enabled
 	impact_style.select(game.impact_effects.style);impact_style.disabled=not game.impact_effects.enabled
 func visible_ui() -> bool:return opened or workspace or (world_map!=null and world_map.opened)
+func pauses_world()->bool:return opened or workspace or (player_actions!=null and player_actions.opened)
 func set_open(value: bool) -> void:
+	if value and player_actions!=null:player_actions.cancel()
 	if value and world_map!=null and world_map.opened:world_map.set_open(false)
 	var changing_focus: bool=value or visible_ui() or game.storage.opened or game.player_hud.inventory_open
 	if changing_focus and developer_hud!=null:developer_hud.end_mouse_access()
@@ -176,6 +186,7 @@ func sync_panels() -> void:
 	for control in game.construction_palette.editor_controls:control.visible=developer
 	if workspace:tool_workspace.show_tool(current_page)
 func refresh() -> void:
+	fullscreen_toggle.set_pressed_no_signal(DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN])
 	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
 	mode_button.text="Return to gameplay" if developer else "Enter development (~)"
 	for title in navigation:navigation[title].modulate=Color(0.65,1,0.8) if title==current_page else Color.WHITE
@@ -231,7 +242,7 @@ func activate_developer_slot(slot: int) -> void:
 	game.player_hud.refresh();refresh()
 
 func toggle_flight() -> void:
-	if not developer or game.world_vehicle.driving:return
+	if game.world_vehicle.driving or game.loading_active or game.shutdown_requested:return
 	game.fly=not game.fly;game.player.velocity=Vector3.ZERO;game._cancel_edit_input();refresh()
 func confirm(text: String,action: Callable) -> void:
 	pending_action=action;confirmation.dialog_text=text;confirmation.popup_centered(Vector2i(450,160))
@@ -289,10 +300,10 @@ func _input(event: InputEvent) -> void:
 		var focused:=get_viewport().gui_get_focus_owner()
 		if focused is LineEdit or focused is TextEdit:return
 	if game.vehicle_radial.consume(event):get_viewport().set_input_as_handled();return
+	if player_actions!=null and player_actions.consume(event):get_viewport().set_input_as_handled();return
 	if world_map!=null and world_map.opened:
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)
-		# GUI retains mouse events for pan/zoom/buttons. Block gameplay keys here.
-		if event is InputEventKey:get_viewport().set_input_as_handled()
+		if event is InputEventKey and event.physical_keycode not in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE,KEY_CTRL,KEY_SHIFT]:get_viewport().set_input_as_handled()
 		return
 	if world_map!=null and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_M and tilde_down<0:
 		world_map.set_open(true);get_viewport().set_input_as_handled();return
@@ -307,16 +318,6 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	if not event is InputEventKey or event.echo:return
-	if event.physical_keycode==KEY_QUOTELEFT:
-		if event.pressed:tilde_down=Time.get_ticks_msec();tilde_chord=false
-		elif tilde_down>=0:
-			if not tilde_chord:
-				if Time.get_ticks_msec()-tilde_down>=450:
-					if not developer:toggle_developer()
-					toggle_flight()
-				else:toggle_developer()
-			tilde_down=-1;tilde_chord=false
-		get_viewport().set_input_as_handled();return
 	# Consume chords before gameplay input; F must never reach the headlamp.
 	if tilde_down>=0:
 		# Movement releases must reach the controller while the chord is held.

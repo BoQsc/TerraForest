@@ -1,0 +1,63 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary forest world becomes playable
+PASS real forest floor supplies a reachable clear placement target
+PASS placement preview works with optional debug overlay disabled and follows the resolved target
+PASS compact marker stays outside terrain without moving its paid lattice sample
+PASS compact octahedron has eight faces without shrinking the actual terrain stamp
+MOVING_TERRAIN_TARGET {"frames":60,"new_queries":0,"ready":60,"reasons":{}}
+PASS continuous aim movement keeps a warm terrain target green without worker roundtrips
+PASS cached mask invalidates on changed epoch
+PASS cached mask invalidates on changed revision
+PASS cached mask invalidates on changed ticket
+PASS preview probing never spends material or edits terrain
+PASS preview follows carried Stone
+PASS preview follows carried Iron ore
+PASS preview follows carried Copper ore
+PASS preview follows carried Topsoil
+PASS cold click buffers once without early payment: focus
+PASS changed context cancels the buffered click without spending: focus
+PASS cold click buffers once without early payment: slot
+PASS changed context cancels the buffered click without spending: slot
+PASS cold click buffers once without early payment: aim
+PASS changed context cancels the buffered click without spending: aim
+PASS cold click buffers once without early payment: timeout
+PASS changed context cancels the buffered click without spending: timeout
+PASS cold click buffers once without early payment: world
+PASS changed context cancels the buffered click without spending: world
+PASS first click while the terrain query is pending is retained
+PASS buffered first click submits automatically when its target resolves
+PASS real right click submits exactly the displayed cell and debits one topsoil
+PASS preview remains visible and amber while terrain edit is pending
+PASS paid terrain edit publishes normally
+PASS the previewed placement adds terrain and spends exactly one unit
+PASS buffered placement cannot repeat or charge twice
+PLACEMENT_READBACK {"build_epoch":1,"cells":2,"epoch":0,"fraction":0.505663216114044,"kind":"density_ray","normal":"(0.522675, 0.673534, 0.52265)","position":"(800.2, 50.48301, 1308.2)","query_ms":0.05,"queue_ms":156.332,"requested_revision":1,"revision":1,"status":"hit","surface_depth":0.0,"surface_material":10,"token":91234,"worker_finished_us":10699469}
+PASS native readback confirms topsoil at the previewed placement
+PASS placed topsoil accepts another terrain target
+PASS stack advances exactly one layer with an exposed marker
+PASS right click grows player-placed topsoil without a no-op refund
+PASS placed topsoil accepts another terrain target
+PASS stack advances exactly one layer with an exposed marker
+PASS right click grows player-placed topsoil without a no-op refund
+PASS placed topsoil accepts another terrain target
+PASS stack advances exactly one layer with an exposed marker
+PASS right click grows player-placed topsoil without a no-op refund
+PASS rapid stacking starts from a valid topsoil target
+PASS second explicit click is retained while the first stamp publishes
+PASS two quick clicks publish exactly two paid stamps without retrying input
+PASS rapid stacking does not repeat its buffered second click
+TOPSOIL_BLOCK_TARGET {"normal":"(0.0, 1.0, 0.0)","placement_ok":true,"position":"(800.15, 55.25, 1308.155)","reason":"","support":{"bottom":56.0,"burial":0.0,"gap":0.75,"hits":1,"inside":0,"maximum":55.25,"minimum":55.25,"offset_y":1.0,"ok":true,"overlap_limit":0.2,"reason":"","samples":9},"target":"(800, 56, 1308)"}
+PASS building block can target newly placed topsoil
+PASS real block placement on topsoil preserves grid alignment and pays once
+PLACEMENT_OBSTRUCTION {"bounds":"[P: (803.15, 51.15, 1308.15), S: (1.7, 1.7, 1.7)]","cell":"(804, 52, 1309)","item":211,"normal":"(0.0, 0.0, 1.0)","ok":false,"position":"(804.0, 52.0, 1309.0)","reason":"Blocked by an object","surface":"(804.0, 52.0, 1308.5)"}
+PASS obstruction is visible and rejected without charging material
+PASS blocked target uses color without caption or click notice
+PASS ESC hides both world marker and caption
+PASS focus loss hides placement marker
+PASS no reachable support hides stale marker
+PASS switching to a weapon removes terrain preview
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world closes consistently
+TERRAIN_PLACEMENT_PREVIEW checks=54 failures=0

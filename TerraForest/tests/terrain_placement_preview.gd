@@ -23,6 +23,9 @@ func capture(name:String)->void:
 	await process_frame;await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(evidence.path_join(name+".png"))
 func refresh()->void:game.terrain_placement_preview.remaining=0;game.terrain_placement_preview.update(game,.1)
+func right_click()->void:
+	var event:=InputEventMouseButton.new();event.button_index=MOUSE_BUTTON_RIGHT;event.pressed=true;game._unhandled_input(event)
+	event=InputEventMouseButton.new();event.button_index=MOUSE_BUTTON_RIGHT;game._input(event)
 func run()->void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--preview-evidence="):evidence=arg.trim_prefix("--preview-evidence=")
@@ -77,11 +80,10 @@ func run()->void:
 		check(preview.visible and preview.result.item==item and preview.caption.text.begins_with(hud.RESOURCES[item]),"preview follows carried "+hud.RESOURCES[item])
 	hud.equip_item(211);refresh();await capture("topsoil_ready")
 	var before:=amount(211)
-	var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_RIGHT;click.pressed=true
 	var placement=game.terrain_placement
 	for cancellation in ["focus","slot","aim","timeout","world"]:
 		placement.cached={}
-		game._unhandled_input(click)
+		right_click()
 		check(not placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"cold click buffers once without early payment: "+cancellation)
 		var camera_basis:Basis=game.camera.global_basis
 		match cancellation:
@@ -94,12 +96,12 @@ func run()->void:
 		check(placement.queued.is_empty() and amount(211)==before and game.mining_rewards.payment.is_empty(),"changed context cancels the buffered click without spending: "+cancellation)
 		game.app_focused=true;hud.equip_item(211);game.camera.global_basis=camera_basis
 	placement.cached={}
-	game._unhandled_input(click)
+	right_click()
 	check(not placement.queued.is_empty() and amount(211)==before,"first click while the terrain query is pending is retained")
 	check(await wait_for(func():return not game.mining_rewards.payment.is_empty(),3),"buffered first click submits automatically when its target resolves")
 	var payment:Dictionary=game.mining_rewards.payment
 	check(not payment.is_empty() and Vector3i(payment.packet.decode_s32(4),payment.packet.decode_s32(8),payment.packet.decode_s32(12))==cell and amount(211)==before-1,"real right click submits exactly the displayed cell and debits one topsoil")
-	refresh();check(not preview.visible and not preview.caption.visible,"preview hides while terrain edit is pending")
+	refresh();check(preview.visible and not preview.caption.visible and preview.result.reason=="Terrain is updating","preview remains visible and amber while terrain edit is pending")
 	check(await wait_for(func():return not game.terrain.pending_edit,20) and not game.mining_rewards.failed,"paid terrain edit publishes normally")
 	check(amount(211)==before-1 and game.terrain.density_revision>revision,"the previewed placement adds terrain and spends exactly one unit")
 	for frame in 10:await process_frame
@@ -120,7 +122,7 @@ func run()->void:
 		refresh();var stacked:Vector3i=preview.result.cell
 		check(stacked.y==last_cell.y+1 and (preview.global_position-preview.result.surface).dot(preview.result.normal)>=.35,"stack advances exactly one layer with an exposed marker")
 		before=amount(211);var previous_revision:int=game.terrain.density_revision
-		game._unhandled_input(click)
+		right_click()
 		check(await wait_for(func():return not game.terrain.pending_edit,20) and amount(211)==before-1 and game.terrain.density_revision>previous_revision,"right click grows player-placed topsoil without a no-op refund")
 		last_cell=stacked
 	game.player.position=Vector3(last_cell)+Vector3(0,0,2.5)
@@ -128,8 +130,8 @@ func run()->void:
 	if check(await wait_for(func():return placement.target(game).get("ok",false),5),"rapid stacking starts from a valid topsoil target"):
 		var rapid_cell:Vector3i=placement.target(game).cell
 		before=amount(211)
-		game._unhandled_input(click)
-		game._unhandled_input(click)
+		right_click()
+		right_click()
 		check(game.terrain.pending_edit and not placement.queued.is_empty() and amount(211)==before-1,"second explicit click is retained while the first stamp publishes")
 		check(await wait_for(func():return amount(211)==before-2 and not game.terrain.pending_edit and placement.queued.is_empty(),20),"two quick clicks publish exactly two paid stamps without retrying input")
 		for frame in 10:await process_frame

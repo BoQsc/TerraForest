@@ -11,13 +11,15 @@ protected:
     godot::Ref<NativePlayerInventory> schema;
     std::map<int64_t,godot::Ref<NativePlayerInventory>> contents;
     int64_t capacity=0,revision=0;
+    int slot_count=32;
+    int visible_slots(const godot::Ref<NativePlayerInventory> &inventory) const;
     godot::Ref<NativePlayerInventory> empty_inventory() const;
     godot::Dictionary move(int64_t id,const godot::Ref<NativePlayerInventory> &player,int64_t slot,int64_t count,int64_t player_revision,int64_t store_revision,bool deposit);
     bool initialize_contents(int64_t id,const godot::PackedInt64Array &items);
 protected:
     static void _bind_methods();
 public:
-    bool configure(const godot::Ref<NativePlayerInventory> &prototype,int64_t max_containers);
+    bool configure(const godot::Ref<NativePlayerInventory> &prototype,int64_t max_containers,int64_t slots=32);
     godot::Dictionary snapshot(int64_t id) const;
     godot::PackedInt64Array get_ids() const;
     bool has_contents(int64_t id) const {return contents.count(id)!=0;}

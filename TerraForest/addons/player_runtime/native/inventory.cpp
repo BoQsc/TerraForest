@@ -50,17 +50,17 @@ bool NativePlayerInventory::register_item(int64_t item,int64_t limit) {
 Dictionary NativePlayerInventory::snapshot() const {
     Dictionary out;out["schema"]=1;out["revision"]=revision;Array rows;
     for(auto s:slots){Dictionary row;row["item"]=s.item;row["count"]=s.count;row["wear"]=s.wear;row["water_ml"]=s.water_ml;row["water_capacity_ml"]=water_container(s.item)?WATER_CAPACITY_ML:0;row["durability"]=max_durability(s.item)-s.wear;row["max_durability"]=max_durability(s.item);rows.push_back(row);}
-    out["slots"]=rows;return out;
+    out["slots"]=rows;out["capacity"]=slot_limit;return out;
 }
 Dictionary NativePlayerInventory::grant(int64_t item,int64_t count,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
     auto found=catalog().find(item);
     if(found==catalog().end()||count<=0)return result(false,"invalid_item_or_count");
     int64_t capacity=0;
-    for(auto s:slots)if(!s.item||s.item==item)capacity+=found->second-s.count;
+    for(int index=0;index<slot_limit;index++){auto s=slots[index];if(!s.item||s.item==item)capacity+=found->second-s.count;}
     if(count>capacity)return result(false,"full");
     // Fill existing stacks first, then empty slots. Preflight makes this atomic.
-    for(int pass=0;pass<2&&count;pass++)for(auto &s:slots) {
+    for(int pass=0;pass<2&&count;pass++)for(int index=0;index<slot_limit;index++) {auto &s=slots[index];
         if((pass==0&&s.item!=item)||(pass==1&&s.item))continue;
         int64_t amount=std::min(count,found->second-s.count);
         if(amount){s.item=item;s.water_ml=water_container(item)?(item-401)*1000:0;s.count+=amount;count-=amount;}
@@ -83,7 +83,7 @@ Dictionary NativePlayerInventory::apply_grants(const PackedInt64Array &items,int
         if(found==catalog().end()||count<=0||count>32000000)return result(false,"invalid_item_or_count");
         // Stage at most 32 rows over 32 slots. Duplicate rows see the prior
         // staged result, without summing untrusted counts or allocating stacks.
-        for(int pass=0;pass<2&&count;++pass)for(auto &slot:candidate){
+        for(int pass=0;pass<2&&count;++pass)for(int index=0;index<slot_limit;index++){auto &slot=candidate[index];
             if((pass==0&&slot.item!=item)||(pass==1&&slot.item))continue;
             const int64_t amount=std::min(count,found->second-slot.count);
             if(amount){slot.item=item;slot.water_ml=water_container(item)?(item-401)*1000:0;slot.count+=amount;count-=amount;}
@@ -132,7 +132,7 @@ Dictionary NativePlayerInventory::consume_items(const PackedInt64Array &costs,in
 Dictionary NativePlayerInventory::can_afford(const PackedInt64Array &costs,int64_t expected) { return apply_costs(costs,expected,false); }
 Dictionary NativePlayerInventory::transfer(int64_t from,int64_t to,int64_t count,int64_t expected) {
     if(expected!=revision)return result(false,"stale_revision");
-    if(from<0||from>=32||to<0||to>=32||from==to||count<=0||count>slots[from].count)return result(false,"invalid_transfer");
+    if(from<0||from>=slot_limit||to<0||to>=slot_limit||from==to||count<=0||count>slots[from].count)return result(false,"invalid_transfer");
     auto &a=slots[from];auto &b=slots[to];
     if(b.item&&(b.item!=a.item||max_durability(a.item)||water_container(a.item))){
         if(count!=a.count)return result(false,"partial_swap");
@@ -155,7 +155,7 @@ Dictionary NativePlayerInventory::transfer_to(const Ref<NativePlayerInventory> &
     const int64_t item=slots[slot].item;
     if(max_durability(item)!=target->max_durability(item))return result(false,"durability_schema_mismatch");
     int target_slot=-1;
-    if(max_durability(item)||water_container(item))for(int i=0;i<32;++i)if(!target->slots[i].item){target_slot=i;break;}
+    if(max_durability(item)||water_container(item))for(int i=0;i<target->slot_limit;++i)if(!target->slots[i].item){target_slot=i;break;}
     Dictionary granted=target->grant(item,count,expected_destination);
     if(!bool(granted["ok"])) {
         Dictionary failed=result(false,"destination_rejected");failed["detail"]=granted["reason"];return failed;
@@ -194,7 +194,7 @@ Dictionary NativePlayerInventory::grant_durable(int64_t item,int64_t wear,int64_
     if(expected!=revision)return result(false,"stale_revision");
     auto limit=catalog().find(item);int64_t maximum=max_durability(item);
     if(limit==catalog().end()||limit->second!=1||!maximum||wear<0||wear>=maximum)return result(false,"invalid_wear");
-    for(int i=0;i<32;++i)if(!slots[i].item){slots[i]={item,1,wear,0};++revision;return result(true,"");}
+    for(int i=0;i<slot_limit;++i)if(!slots[i].item){slots[i]={item,1,wear,0};++revision;return result(true,"");}
     return result(false,"inventory_full");
 }
 namespace {

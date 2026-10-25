@@ -9,7 +9,7 @@ var ui=preload("res://addons/player_runtime/storage.gd").new()
 var clock:=0.0
 func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	game=owner_game;store=ClassDB.instantiate("NativeCorpseStore")
-	if not store.configure(game.player_hud.inventory,4096):return false
+	if not store.configure(game.player_hud.inventory,4096,8):return false
 	ui.prepare_external(game,store,aimed_id)
 	return persistence.register_component("zombie_corpses_v1",capture,restore,store,store.capture_corpse_snapshot())
 func _ready()->void:add_child(ui)

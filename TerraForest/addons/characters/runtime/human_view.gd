@@ -4,6 +4,7 @@ extends Node3D
 signal swing_contact(identity:int)
 signal swing_finished(identity:int,cancelled:bool)
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
+const CROUCH=preload("res://addons/characters/runtime/assets/Human.crouch.res")
 const PLACEMENT = preload("res://addons/characters/runtime/assets/Human.placement.res")
 const UNARMED = preload("res://addons/characters/runtime/assets/Human.unarmed.res")
 const UNARMED_BODY = preload("res://addons/characters/runtime/assets/Human.unarmed_body.res")
@@ -37,6 +38,7 @@ var contact_sent:=false
 const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,"FP_Pickaxe_SidePullback_Swing":32.0/60.0,"FP_Pickaxe_Diagonal_Swing":32.0/60.0,"FP_Pickaxe_Swing":41.0/60.0,"FP_Axe_Swing":34.0/60.0,"FP_Hammer_Swing":28.0/60.0,"FP_Shovel_Swing":34.0/60.0,"FP_Place_Relaxed":13.0/30.0}
 var body: CharacterBody3D
 var third_person:=false
+var crouched:=false
 var bucket_fill:=0.0
 var bucket_previous_fill:=0.0
 var bucket_display_fill:=0.0
@@ -86,6 +88,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("hammer", HAMMER)
 	animation_player.add_animation_library("shovel", SHOVEL)
 	animation_player.add_animation_library("bucket", BUCKET)
+	animation_player.add_animation_library("crouch",CROUCH)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
 	equip(current)
@@ -164,6 +167,7 @@ func _sync_bucket_water()->void:
 	bucket_water.scale=Vector3(radius,1,radius)
 
 func _motion_clip(action: String) -> String:
+	if third_person and action=="Crouch":return "Player_Pickaxe_Crouch" if current==1 else "Player_Crouch"
 	if current==401:return "FP_Bucket_"+action if clips.has("FP_Bucket_"+action) else "FP_Bucket_Idle"
 	if current==0:
 		if third_person and action in ["Walk","Run","Jump"]:return action
@@ -267,5 +271,6 @@ func _process(delta: float) -> void:
 			# other tools' cadence while selecting pickaxe/bucket walks correctly.
 			var run_speed:=6.5 if current==401 or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
 			motion = "Run" if speed > run_speed else "Walk"
+	if third_person and crouched:motion="Crouch"
 	_play(_motion_clip(motion))
 	animation_player.advance(delta)

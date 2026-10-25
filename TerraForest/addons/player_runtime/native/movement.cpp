@@ -8,12 +8,13 @@
 namespace terraforest {
 using namespace godot;
 void NativePlayerMovement::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("update_crouch","body","requested"),&NativePlayerMovement::update_crouch);
     ClassDB::bind_method(D_METHOD("configure_ladders","collection"),&NativePlayerMovement::configure_ladders);
     ClassDB::bind_method(D_METHOD("ladder_velocity","body","direction","delta","jump"),&NativePlayerMovement::ladder_velocity);
     ClassDB::bind_method(D_METHOD("move_grounded","body","delta"),&NativePlayerMovement::move_grounded);
     ClassDB::bind_method(D_METHOD("set_step_radius","radius"),&NativePlayerMovement::set_step_radius);
     ClassDB::bind_method(D_METHOD("swimming_velocity","direction","previous","vertical","depth","delta","sprint"),&NativePlayerMovement::swimming_velocity);
-    ClassDB::bind_method(D_METHOD("walking_velocity","direction","previous","delta","sprint","grounded","jump"),&NativePlayerMovement::walking_velocity);
+    ClassDB::bind_method(D_METHOD("walking_velocity","direction","previous","delta","sprint","grounded","jump","crouched"),&NativePlayerMovement::walking_velocity,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("flight_displacement","direction","vertical","delta","sprint"),&NativePlayerMovement::flight_displacement);
 }
 void NativePlayerMovement::configure_ladders(Node3D *collection) {
@@ -66,6 +67,35 @@ bool NativePlayerMovement::ladder_velocity(CharacterBody3D *body,Vector3 directi
     // and ceilings. No teleport or collision bypass is used for the exit.
     if(local.y>3.05&&rise>0)velocity-=normal*2;
     body->set_velocity(velocity);return true;
+}
+bool NativePlayerMovement::update_crouch(CharacterBody3D *body,bool requested){
+    if(!body||!body->is_inside_tree())return false;
+    CollisionShape3D *collider=Object::cast_to<CollisionShape3D>(ObjectDB::get_instance(stance_collider_));
+    if(uint64_t(stance_body_)!=body->get_instance_id()||!collider){
+        collider=nullptr;
+        for(int child=0;child<body->get_child_count();child++){
+            auto *candidate=Object::cast_to<CollisionShape3D>(body->get_child(child));
+            if(candidate&&Object::cast_to<CapsuleShape3D>(candidate->get_shape().ptr())){collider=candidate;break;}
+        }
+        if(!collider)return false;
+        auto *capsule=Object::cast_to<CapsuleShape3D>(collider->get_shape().ptr());
+        stance_body_=body->get_instance_id();stance_collider_=collider->get_instance_id();
+        standing_height_=capsule->get_height();standing_center_=collider->get_position();crouched_=false;
+        standing_shape_.instantiate();standing_shape_->set_radius(capsule->get_radius());standing_shape_->set_height(standing_height_);
+        stance_query_.instantiate();stance_query_->set_shape(standing_shape_);
+    }
+    if(requested==crouched_)return crouched_;
+    if(!requested){
+        stance_query_->set_transform(body->get_global_transform()*Transform3D(collider->get_basis(),standing_center_));
+        stance_query_->set_collision_mask(body->get_collision_mask());
+        TypedArray<RID> excluded;excluded.push_back(body->get_rid());stance_query_->set_exclude(excluded);
+        if(!body->get_world_3d()->get_direct_space_state()->intersect_shape(stance_query_,1).is_empty())return true;
+    }
+    auto *capsule=Object::cast_to<CapsuleShape3D>(collider->get_shape().ptr());
+    if(!capsule)return crouched_;
+    double height=requested?std::max(double(capsule->get_radius())*2.,standing_height_-.7):standing_height_;
+    capsule->set_height(height);collider->set_position(standing_center_-Vector3(0,(standing_height_-height)*.5,0));
+    crouched_=requested;return crouched_;
 }
 bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     if(!body||!body->is_inside_tree()||!valid(delta,body->get_velocity()))return false;

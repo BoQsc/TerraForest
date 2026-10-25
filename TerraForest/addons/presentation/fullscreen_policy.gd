@@ -1,6 +1,7 @@
 extends RefCounted
 ## Startup/UI policy only. No simulation work or per-frame loop.
 const RESOLUTION := Vector2i(1920, 1080)
+static func settings_path()->String:return ProjectSettings.get_setting("terraforest/graphics_settings_path","user://graphics.cfg")
 
 static func apply(window: Window) -> void:
 	window.content_scale_size = RESOLUTION
@@ -10,8 +11,29 @@ static func apply(window: Window) -> void:
 	if DisplayServer.get_name() != "headless":
 		# Use Windows' composed fullscreen path, including on hybrid-GPU laptops.
 		# Apply synchronization AFTER the window transition recreates presentation.
-		if DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_FULLSCREEN:DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		var settings:=ConfigFile.new()
+		var fullscreen:=true
+		if not settings_path().is_empty() and settings.load(settings_path())==OK:fullscreen=bool(settings.get_value("graphics","fullscreen",true))
+		set_fullscreen(window,fullscreen,false)
 		restore_vsync()
+
+static func set_fullscreen(window:Window,enabled:bool,persist:bool=true)->void:
+	if DisplayServer.get_name()=="headless":return
+	var mode:=DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED
+	if DisplayServer.window_get_mode()!=mode and (enabled or DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_MAXIMIZED):
+		window.mode=Window.MODE_FULLSCREEN if enabled else Window.MODE_WINDOWED
+		if not enabled:
+			window.borderless=false
+			if DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN]:
+				window.mode=Window.MODE_MAXIMIZED
+			var usable:=DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
+			if DisplayServer.window_get_mode()==DisplayServer.WINDOW_MODE_WINDOWED:
+				window.size=Vector2i(mini(1280,usable.size.x-80),mini(720,usable.size.y-80))
+				window.position=usable.position+(usable.size-window.size)/2
+	restore_vsync()
+	if persist and not settings_path().is_empty():
+		var settings:=ConfigFile.new();settings.load(settings_path())
+		settings.set_value("graphics","fullscreen",enabled);settings.save(settings_path())
 
 static func restore_vsync() -> void:
 	# Focus returns from embedded dialogs too. Reapplying an unchanged mode can
