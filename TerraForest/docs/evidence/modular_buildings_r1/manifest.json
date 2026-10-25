@@ -1,0 +1,127 @@
+{
+  "base_revision": "43190ef7d6e98e7c154461fdab2e04880427dbf9",
+  "scope": "Two baked, unapproved architecture proposals, not adopted into world generation",
+  "sources": {
+    "export_presets.cfg": "6c89d18e227c7a67f08b7ceab79ceea645e89f8b0a58c7d9c8107470522b8b73",
+    "reviews/modular_buildings/README.md": "e1f8f2b874d50f43f0bad6bcad826651f2e054aab7eda422f455c37552012cbf",
+    "reviews/modular_buildings/baked/cottage_a.tres": "4ecd85ea6e2a4ec4b3d83c4d1f56bf6d45909e1ad358f6a33512e77359f26efd",
+    "reviews/modular_buildings/baked/shop_b.tres": "8a0acd5b2bdb6325fb0aa459cf5e6ea92ce105cebb25de2e2861f4372cd44d8a",
+    "reviews/modular_buildings/recipes.gd": "96b7dad4fc4132d505e0f6b620afedc502020a6d413d1e03fddb356a5a3cad86",
+    "reviews/modular_buildings/recipes.gd.uid": "bdb0b4e40d1f5d843708014fd7bb96cfb03f9a8d850985e29c8e6f69b01d0b0a",
+    "reviews/modular_buildings/viewer.gd": "d6f35e7c101c20978a4f806758658b4a87a8afdf51a63e21c96616dd7d8d2a3b",
+    "reviews/modular_buildings/viewer.gd.uid": "3e37dfb9fe79d55c1d6d4cf1c7d5d19b0621925c143979d18e79514a093eef78",
+    "tests/modular_building_review.gd": "d57c01b22bc5f83faa936b8ad68645676f5d6d12250ea85f8c1eba35aaa8a518",
+    "tests/modular_building_review.gd.uid": "6e86bc8bd6921af0db8d1c606822dc321b2715eaec201b2895e1b9320c46d68d",
+    "tools/review_modular_buildings.gd": "93db8665f85ea5f142e61b49472b33983d963553c82cefc1d45d2ee350d61325",
+    "tools/review_modular_buildings.gd.uid": "ebe3f420d1391e6b264e4bc98219fa6c074a9a1588b93288180b2ebccf319ab4",
+    "tools/review_modular_buildings.py": "dd6866d1cd64e590ec61a0dd78d664abc6ff5de68bb5efff03f41d73dc8a0f11"
+  },
+  "unchanged_originals": {
+    "addons/structures/furniture_catalog.gd": "bf2a4b0febcde8e53a86ae86e6aadb297490bb3980a6cd9c34782ee6fe0b7f9a",
+    "addons/structures/workshop_catalog.gd": "6525496b3875f20ca967ce02bae20d8009625a65d964955dd971dca225e9ccbf",
+    "addons/structures/prefabs/brick_cottage.tres": "cebf08cc87372370eb0efb9c4d63b385fb132775e2a204473b518377f21815b6",
+    "demo/world.gd": "734ef3ff8b87a9eb8ee174ee8fd17729fdf7274efa7eb2bea3a303fbcad89b65"
+  },
+  "files": {
+    "failed_support_probe/console.log": {
+      "bytes": 2719,
+      "sha256": "35202b86003d9f87455dc69b84a569d7de508d118643d8c7707b142cc6cca10a"
+    },
+    "failed_support_probe/engine.log": {
+      "bytes": 2670,
+      "sha256": "3adf61d1c95077c7d4457be37a4db9cdff946d689a38a1618630c4570fe41c30"
+    },
+    "failed_support_probe/run.json": {
+      "bytes": 4171,
+      "sha256": "4d9df02aebe8d72b37c3c6b13f479b60b61035115ca9084906d52f6abbc74c43"
+    },
+    "graphical/console.log": {
+      "bytes": 3174,
+      "sha256": "1eacca8085b11f9ced5f93ea9b4ea4cbef4ced9f7e585f2342fb306b000c9e48"
+    },
+    "graphical/engine.log": {
+      "bytes": 3117,
+      "sha256": "d800c45c1c57d8f16378398b091bf78c51ea612b4cdb971ff9d3dc8a53a85c56"
+    },
+    "graphical/run.json": {
+      "bytes": 4320,
+      "sha256": "95848553643174c31c436dc6c606c9df8d3cf4a4e52266f15698fae62da4eb68"
+    },
+    "images/cottage_detail.png": {
+      "bytes": 2099948,
+      "sha256": "30525cf0d4c0f549f9fa6bf45ff7799cda101e5638866e899b6ccb43e488b72e"
+    },
+    "images/cottage_exterior.png": {
+      "bytes": 487228,
+      "sha256": "b0fe25874ce1abcf5a44f1b9321c596692ea8822f414107ca6697b64505da944"
+    },
+    "images/cottage_interior.png": {
+      "bytes": 1858730,
+      "sha256": "3114198f432e4de7aa3b7d493b15f508a09fd9312bb85c7471afd0e970e4e017"
+    },
+    "images/cottage_removed.png": {
+      "bytes": 2082375,
+      "sha256": "13c4d8dfe7e12ac6b76133ac7707febc18e19f2f85a95e0c7916e5e1f7e4a65b"
+    },
+    "images/shop_detail.png": {
+      "bytes": 1027913,
+      "sha256": "ac6896cace8c803e286de70ecdeb1125079492ae011437c2d750cc57d753509c"
+    },
+    "images/shop_exterior.png": {
+      "bytes": 480689,
+      "sha256": "d504ab29531019f8587e6b51604eb68aaddba79f2adbece04374de3d286d60d3"
+    },
+    "images/shop_interior.png": {
+      "bytes": 1804037,
+      "sha256": "0fd524f008aaf5de013fc0fa2011bc40adee4aea85b30768c7ca29a76933a4f4"
+    },
+    "images/shop_removed.png": {
+      "bytes": 1801561,
+      "sha256": "06c54a53454058a4671bfed4fe7a29769dea8e681d249f22134ea483ba2f77ab"
+    },
+    "initial/console.log": {
+      "bytes": 2236,
+      "sha256": "90dbd32ab2eb8158e4ca56c6843af75557a4f924b64cb1adac2f0df4ecc7a40e"
+    },
+    "initial/cottage_detail.png": {
+      "bytes": 2018885,
+      "sha256": "b6e471596be9b29446c271890232b0535d8ddba28901390f547825369e563546"
+    },
+    "initial/cottage_exterior.png": {
+      "bytes": 561033,
+      "sha256": "7ab0eb83687b40ee08972f71a078d6b2ec577cc955f320dda558d99ac5c6a7be"
+    },
+    "initial/engine.log": {
+      "bytes": 2194,
+      "sha256": "27976e73ac30000ca3422e15cae83fdcf824ba9382702c15647873a0088dee16"
+    },
+    "initial/run.json": {
+      "bytes": 4095,
+      "sha256": "4ec1e3cfd5710f49435fd7bbf94a18d235afcb6c3c8c3b5be5ea32f353c85645"
+    },
+    "README.md": {
+      "bytes": 5211,
+      "sha256": "a9bec4b5a8a97e8342194851d1ce305a3015f38c305b32d86fc8afbf3d3533b6"
+    },
+    "restore/console.log": {
+      "bytes": 325,
+      "sha256": "096dcf943f08880768a0d03bc85117d90b424a088b5849dd1556b65bf0670502"
+    },
+    "restore/engine.log": {
+      "bytes": 319,
+      "sha256": "f5578bdea5d707262b420a52c5cf945d50218689b4625534489781253ac7fc17"
+    },
+    "restore/run.json": {
+      "bytes": 4303,
+      "sha256": "6b12022ac0a264ca6b928e7c04676b021fcf8ef853d760e30697522b129437f4"
+    },
+    "result.json": {
+      "bytes": 627,
+      "sha256": "1761d7aec1f624352a879fe5f340baba62a1162d7c36a52f3ab60899f94b75c1"
+    },
+    "review.tfbs": {
+      "bytes": 14653,
+      "sha256": "d31921ac2d8dda1dc35b9ec784d57d74aa0716e6ff5287ccd030f74c0e0f19b2"
+    }
+  }
+}

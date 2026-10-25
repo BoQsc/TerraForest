@@ -1,3 +1,35 @@
+## Two modular building proposals ready for review, not adopted — 2026-10-25
+
+The user asked for whole-building demonstrations rather than testing loose shapes.
+`reviews/modular_buildings/` now contains baked, review-only R1 alternatives to the
+existing furnished cottage and village general store. The comparison viewer shows
+unchanged originals on the left and candidates on the right, with matching cameras,
+exterior/interior/detail views, a 45-second guided tour and independent arch-block
+removal/restoration. Launch with `python tools/review_modular_buildings.py`.
+The review folder is excluded from game exports. No production prefab, generation
+recipe or user save is modified; the demonstration is not a new gameplay world.
+
+Cottage A adds a block-built porch arch with level side pedestals, closes the front
+roof edge, replaces the ridge with peaked blocks and adds thin timber gables/ceiling.
+Shop B changes the tall gable silhouette to a hipped roof with individual corner
+blocks and adds a ceiling and segmented internal stores arch. Existing attached
+doors, windows, furniture and storage remain unchanged. Neither design uses a
+complete arch/frame mesh or a block stretched outside its grid cell.
+
+Evidence: `evidence/modular_buildings_r1/README.md`. The final graphical suite passes
+47 checks, including actual native player movement through each entrance/aisle and
+back out, GUI actions, block removal, baked assets and compound storage. A separate
+process passes three exact-storage restoration checks. Images were inspected; the
+first awkward cottage verge and unsupported side-upright bases were revised before
+the final review. The initial support-test failure is retained and explained.
+
+**Pending:** explicit user approval of Cottage A R1 and Shop B R1 separately. These
+are architecture proposals, not accepted settlement replacements. Once a design is
+approved, revisit placement-envelope/terrain-fit, representative populated-world
+routes, saved-world integration and performance before enabling it in generation.
+The viewer's neutral ground plane, short capsule walk and 60 FPS cap do not qualify
+terrain integration, NPC navigation, dense-world budgets or structural collapse.
+
 ## Native modular building blocks integrated — 2026-10-25
 
 Six selected shapes are now native individual grid cells: thin panel, frame corner,

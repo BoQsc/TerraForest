@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS four complete native prefabs and attached models publish atomically
+PASS production original unchanged COTTAGE A
+PASS working doors, windows, furniture and storage retained COTTAGE A
+PASS candidate explicitly marked unapproved review-only
+PASS real building uses separate arch, panel and ridge blocks
+BUILDING_COUNTS COTTAGE A { 1: 319, 4: 104, 9: 108, 3: 6, 11: 2, 12: 13 }
+PASS bake native prefab review asset
+PASS capture cottage_exterior
+PASS capture cottage_interior
+PASS capture cottage_detail
+PASS demonstration removes exactly one arch block COTTAGE A
+PASS capture cottage_removed
+PASS restoring that cell restores exact building bytes
+PASS production original unchanged VILLAGE SHOP B
+PASS working doors, windows, furniture and storage retained VILLAGE SHOP B
+PASS candidate explicitly marked unapproved review-only
+PASS real building uses separate arch, panel and ridge blocks
+BUILDING_COUNTS VILLAGE SHOP B { 13: 28, 4: 252, 1: 515, 9: 158, 3: 3, 11: 2, 12: 5 }
+PASS bake native prefab review asset
+PASS capture shop_exterior
+PASS capture shop_interior
+PASS capture shop_detail
+PASS demonstration removes exactly one arch block VILLAGE SHOP B
+PASS capture shop_removed
+PASS restoring that cell restores exact building bytes
+PASS combined block/model storage roundtrip
+PASS retained entrance door opens
+PASS retained entrance door opens
+PASS retained entrance door opens
+PASS retained entrance door opens
+PASS native player walks steps, door and interior aisle COTTAGE A side 0
+WALK_END COTTAGE A side=0 position=(0.5, 2.008867, -3.015195)
+PASS native player walks steps, door and interior aisle COTTAGE A side 1
+WALK_END COTTAGE A side=1 position=(0.5, 2.008868, -3.015191)
+PASS native player walks steps, door and interior aisle VILLAGE SHOP B side 0
+WALK_END VILLAGE SHOP B side=0 position=(0.499792, 1.008639, -3.033375)
+PASS native player walks steps, door and interior aisle VILLAGE SHOP B side 1
+WALK_END VILLAGE SHOP B side=1 position=(0.499859, 1.008842, -3.033386)
+MODULAR_BUILDING_REVIEW checks=32 failures=0

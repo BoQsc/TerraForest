@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS four complete native prefabs and attached models publish atomically
+PASS fresh process restores saved building/model data after a local edit
+PASS fresh process preserves exact compound storage bytes
+MODULAR_BUILDING_RESTORE checks=3 failures=0

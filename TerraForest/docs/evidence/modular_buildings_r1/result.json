@@ -1,0 +1,24 @@
+{
+  "checks": 47,
+  "failures": 0,
+  "scope": "isolated architecture comparison and native player traversal; not terrain or settlement approval",
+  "stats": {
+    "bake_lattice_16_chunks": 6,
+    "bake_lattice_32_chunks": 2,
+    "bake_lattice_64_chunks": 8,
+    "cell_bytes": 131072,
+    "cells": 2804,
+    "chunks": 16,
+    "collision_chunks": 16,
+    "dirty_chunks": 0,
+    "max_chunks": 2048,
+    "mesh_chunks": 16,
+    "published_bakes": 47,
+    "stale_bakes_rejected": 0,
+    "triangles": 9430,
+    "worker_jobs": 0,
+    "worker_jobs_submitted": 47,
+    "worker_results_consumed": 47,
+    "worker_threads_started": 1
+  }
+}
