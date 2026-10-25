@@ -1,3 +1,26 @@
+## Native frontage-road preview — optional, awaiting review — 2026-10-25
+
+The generation-only preview now co-plans two 52 m near-level streets, smooth end
+transitions and four unchanged approved buildings, with existing individual
+sidewalk plates. Normal placement has no overrides: one brick, no extra support,
+no terrain edit, unchanged grid. F6 regenerates baseline/proposal in one window;
+F7 visits the other street. Run `python tools/review_road_grades.py`.
+
+Integrated frontage contact improves from 203/312 to 312/312 footprints within
+15 cm, but 87/624 whole-road footprints still exceed 50 cm on transition areas.
+This is not an all-roads solution, approved layout or generation default. The
+128 m / eight-house attempts did not fit the retained earthwork/entrance limits;
+the delivered comparison is explicitly a four-house scene, not a completed
+replacement market. Existing player saves and accepted house assets are untouched.
+
+See `evidence/road_frontage_trial/README.md` for measurements, inspected renders,
+native bounds, increased bake cost and retained failed checks. The earlier
+frontage-aware preview requirement is now represented by this limited real-terrain
+comparison; human quality approval, complete settlement/network co-planning,
+reservation checks, connected traversal, full-world reload, multi-seed coverage
+and performance remain open. Revisit those after the user reviews this scene,
+before introducing any production generation option or migration.
+
 ## Road-grid preview and loaded-world HUD identity — 2026-10-25
 
 The user rejected automatic foundation blocks beneath player-placed blocks as
@@ -14,11 +37,10 @@ confirmed all 291 source-save files unchanged. Those checks do not override the
 user's rejection. A small in-memory near-level road sample in that run is not a
 frontage-aware generator implementation or approval of the road layout.
 
-Return to generation-side planning: long near-level building streets slightly
-above integer grades, with deliberate smooth elevation transitions and connected
-shoulders/entrances. Keep the next real-world layout preview optional and off
-existing saves until reviewed. The terrain-fit, multi-seed, traversal, reload and
-performance gates below remain open; no automatic-foundation follow-up is planned.
+Generation-side planning continues in the limited frontage-road preview above.
+It remains optional and separate from existing saves. The terrain-fit, multi-seed,
+traversal, reload and performance gates remain open; no automatic-foundation
+follow-up is planned.
 
 Follow-up long-rise study: a native 1 m rise spread across 100 m still leaves a
 42.6 cm midpoint gap under the unchanged grid rules. A 100 m near-level stretch
@@ -26,9 +48,9 @@ varying only 10 cm above an integer grade instead gives all 99 sampled footprint
 contact, with at most 15.04 cm burial. See
 `evidence/road_grid_trial/long_rise_study.md` and its four-panel engine render.
 This supports planning long near-level building streets, not claiming that a
-gentle continuous climb solves fractional heights. The frontage-aware real-world
-layout preview remains pending; generation defaults, saves and the earlier
-experiment are unchanged by this tests-only follow-up.
+gentle continuous climb solves fractional heights. The subsequent four-house
+frontage preview is tracked above; generation defaults, saves and the earlier
+experiment remain unchanged.
 
 The HUD now identifies the actual loaded slot and seed in one small line.
 The Wild_Hills/1703 read-only audit confirms integer street nodes do not make

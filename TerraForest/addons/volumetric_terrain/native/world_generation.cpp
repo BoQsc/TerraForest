@@ -280,16 +280,131 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
  return result;
 }
 
+Dictionary frontage_street_proposal(const World &world,const Array &roads,const Array &baseline){
+ Survey survey{world};Array segments,frontages;int source_index=0;double maximum_grade=0,maximum_cut=0,maximum_fill=0,total=0;int samples=0;
+ for(int road_index=0;road_index<roads.size();++road_index){
+  Dictionary road=roads[road_index];Vector3 original_start=road["start"],original_finish=road["finish"];
+  double length=horizontal(original_finish-original_start);
+  int original_count=std::max(2,int(std::floor(length/25))*2);
+  Dictionary first=baseline[source_index],last=baseline[source_index+original_count-1];source_index+=original_count;
+  Vector3 start=first["start"],finish=last["finish"];start.y+=.08;finish.y+=.08;
+  Variant frontage_value=road.get("building_frontage",true);
+  if(frontage_value.get_type()!=Variant::BOOL)return failure("Invalid frontage classification");
+  bool frontage=frontage_value;
+  if(length<16||length>256||(frontage&&length<64))return failure("Frontage trial needs longer street corridors");
+  Vector3 axis=(original_finish-original_start);axis.y=0;axis=axis.normalized();Vector3 across(-axis.z,0,axis.x);
+  struct Probe{double fraction,height;};std::vector<Probe> probes;
+  int steps=int(std::ceil((length+15)*2));
+  for(int step=0;step<=steps;++step){
+   double distance=-7.5+(length+15)*step/steps,fraction=std::clamp(distance/length,0.,1.);
+   for(int lateral=-15;lateral<=15;++lateral){
+    Vector3 point=original_start+axis*distance+across*(lateral*.5);
+    if(!inside(point))return failure("Frontage survey outside terrain");
+    probes.push_back({fraction,survey.height(point)});
+   }
+  }
+  auto evaluate=[&](double fraction,double grade){
+   auto blend=[](double position){return position*position*(3-2*position);};
+   if(!frontage)return double(start.y)+(finish.y-start.y)*blend(fraction);
+   if(fraction<.25)return double(start.y)+(grade-start.y)*blend(fraction*4);
+   if(fraction>.75)return grade+(finish.y-grade)*blend((fraction-.75)*4);
+   return grade;
+  };
+  double best_cost=1e30,best_grade=0,best_cut=0,best_fill=0,best_slope=0;
+  int lower=int(std::floor(std::min(start.y,finish.y)))-3,upper=int(std::ceil(std::max(start.y,finish.y)))+3;
+  for(int candidate=lower;candidate<=upper;++candidate){
+   double grade=candidate+.08;
+   double slope=frontage?6*std::max(std::abs(grade-start.y),std::abs(finish.y-grade))/length:1.5*std::abs(finish.y-start.y)/length;
+   if(slope>.060001)continue;
+   double cost=0,cut=0,fill=0;bool valid=true;
+   for(const auto &probe:probes){
+    double shift=evaluate(probe.fraction,grade)-probe.height;
+    if(shift>2||shift< -3){valid=false;break;}
+    cost+=std::abs(shift);cut=std::max(cut,-shift);fill=std::max(fill,shift);
+   }
+   if(valid&&cost<best_cost){best_cost=cost;best_grade=grade;best_cut=cut;best_fill=fill;best_slope=slope;}
+   if(!frontage)break;
+  }
+  if(best_cost==1e30){Dictionary result=failure("Relocate frontage: no long landing within cut/fill and six-percent grade limits");result["road_index"]=road_index;result["start"]=start;result["finish"]=finish;return result;}
+  maximum_grade=std::max(maximum_grade,best_slope);maximum_cut=std::max(maximum_cut,best_cut);maximum_fill=std::max(maximum_fill,best_fill);total+=best_cost;samples+=int(probes.size());
+  int count=frontage?8:4;PackedFloat64Array coefficients;
+  auto derivative=[&](double fraction){
+   if(!frontage)return double(finish.y-start.y)*6*fraction*(1-fraction);
+   if(fraction<.25){double position=fraction*4;return (best_grade-start.y)*24*position*(1-position);}
+   if(fraction>.75){double position=(fraction-.75)*4;return (finish.y-best_grade)*24*position*(1-position);}
+   return 0.;
+  };
+  for(int section=0;section<count;++section){
+   double begin=double(section)/count,end=double(section+1)/count;
+   double height=evaluate(begin,best_grade),delta=evaluate(end,best_grade)-height;
+   double first_slope=derivative(begin)/count,last_slope=derivative(end)/count;
+   for(double value:{-2*delta+first_slope+last_slope,3*delta-2*first_slope-last_slope,first_slope,height})coefficients.push_back(value);
+  }
+  for(int section=0;section<count;++section){
+   Vector3 begin=start.lerp(finish,double(section)/count),end=start.lerp(finish,double(section+1)/count);
+   begin.y=evaluate(double(section)/count,best_grade);end.y=evaluate(double(section+1)/count,best_grade);
+   Dictionary part=segment(begin,end,3,1,4,0,4);part["coefficients"]=coefficients;part["curve_index"]=section;segments.push_back(part);
+  }
+  if(frontage){Dictionary landing;Vector3 begin=start.lerp(finish,.25),end=start.lerp(finish,.75);begin.y=end.y=best_grade;landing["start"]=begin;landing["finish"]=end;landing["length"]=length*.5;frontages.push_back(landing);}
+ }
+ for(int index=source_index;index<baseline.size();++index){
+  Dictionary original=baseline[index];Vector3 start=original["start"],finish=original["finish"];start.y+=.08;finish.y+=.08;
+  Vector3 center=(start+finish)*.5;
+  for(int across=-15;across<=15;++across)for(int depth=-15;depth<=15;++depth){
+   Vector3 point=center+Vector3(across*.5,0,depth*.5);if(!inside(point))return failure("Frontage junction outside terrain");
+   double shift=center.y-survey.height(point);if(shift>2||shift< -3)return failure("Frontage junction exceeds earthworks budget");
+   maximum_cut=std::max(maximum_cut,-shift);maximum_fill=std::max(maximum_fill,shift);total+=std::abs(shift);++samples;
+  }
+  Dictionary part=segment(start,finish,3,3,4,2,4);PackedFloat64Array coefficients;for(double value:{0.,0.,0.,double(start.y)})coefficients.push_back(value);
+  part["coefficients"]=coefficients;part["curve_index"]=0;segments.push_back(part);
+ }
+ Dictionary result;result["ok"]=true;result["segments"]=segments;result["frontages"]=frontages;result["max_grade"]=maximum_grade;result["max_cut"]=maximum_cut;result["max_fill"]=maximum_fill;result["mean_earthwork"]=total/std::max(1,samples);result["height_samples"]=survey.samples;result["planner_version"]=1;result["frontage_trial"]=true;return result;
+}
+Dictionary frontage_street_trial(const World &world,const Array &roads,const Array &baseline){
+ if(roads.size()>8)return failure("Frontage trial street budget exceeded");
+ std::vector<Vector3> junctions;
+ for(int index=0;index<roads.size();++index){Dictionary road=roads[index];Vector3 start=road["start"],finish=road["finish"];
+  if(std::abs(start.x-finish.x)>.001&&std::abs(start.z-finish.z)>.001)return failure("Frontage trial requires axis-aligned streets");
+  for(Vector3 point:{start,finish})if(std::find(junctions.begin(),junctions.end(),point)==junctions.end())junctions.push_back(point);
+ }
+ if(junctions.size()>5)return failure("Frontage trial junction search budget exceeded");
+ for(int index=0;index<roads.size();++index){Dictionary road=roads[index];Vector3 start=road["start"],finish=road["finish"];Vector2 origin(start.x,start.z),axis(finish.x-start.x,finish.z-start.z);
+  for(Vector3 point:junctions){Vector2 offset(point.x-start.x,point.z-start.z);double fraction=offset.dot(axis)/axis.length_squared();if(fraction>.001&&fraction<.999&&std::abs(offset.cross(axis))<.01)return failure("Split streets at interior junctions before frontage planning");}
+  for(int other=index+1;other<roads.size();++other){Dictionary adjacent=roads[other];Vector3 other_start=adjacent["start"],other_finish=adjacent["finish"];Vector2 offset(other_start.x-start.x,other_start.z-start.z),span(other_finish.x-other_start.x,other_finish.z-other_start.z);double denominator=axis.cross(span);
+   if(std::abs(denominator)<.001)continue;double fraction=offset.cross(span)/denominator,other_fraction=offset.cross(axis)/denominator;
+   if(fraction>.001&&fraction<.999&&other_fraction>.001&&other_fraction<.999)return failure("Split crossing streets before frontage planning");
+  }
+ }
+ int combinations=1;for(size_t index=0;index<junctions.size();++index)combinations*=3;
+ Dictionary rejected;
+ for(int attempt=0;attempt<combinations;++attempt){
+  int encoded=attempt;std::vector<int> shifts;
+  for(size_t index=0;index<junctions.size();++index){int choice=encoded%3;encoded/=3;shifts.push_back(choice==0?0:(choice==1?-1:1));}
+  Array adjusted=baseline.duplicate(true);
+  for(int index=0;index<adjusted.size();++index){Dictionary part=adjusted[index];Vector3 start=part["start"],finish=part["finish"];
+   for(size_t junction=0;junction<junctions.size();++junction){Vector3 point=junctions[junction];
+    if(horizontal(start-point)<.01)start.y+=shifts[junction];
+    if(horizontal(finish-point)<.01)finish.y+=shifts[junction];
+    if(horizontal((start+finish)*.5-point)<.01&&horizontal(finish-start)<2){start.y+=shifts[junction];finish.y+=shifts[junction];}
+   }part["start"]=start;part["finish"]=finish;
+  }
+  Dictionary result=frontage_street_proposal(world,roads,adjusted);
+  if(bool(result.get("ok",false))){result["junction_attempts"]=attempt+1;return result;}
+  if(attempt==0)rejected=result;
+ }
+ rejected["junction_attempts"]=combinations;return rejected;
+}
 Dictionary plan_street_network(const World &world,const Array &roads,const PackedVector3Array &junctions){
  if(roads.is_empty()||roads.size()>256||junctions.size()>1024)return failure("Invalid street network size");
  using Key=std::pair<int,int>;
  auto key=[](Vector3 p){return Key(int(std::round(p.x*100)),int(std::round(p.z*100)));};
  struct Vertex{Vector3 p;double lo,hi;};
  struct Edge{Key a,b;double length;int begin,count;};
- std::map<Key,Vertex> vertices;std::vector<Edge> edges;Survey survey{world};
+ std::map<Key,Vertex> vertices;std::vector<Edge> edges;Survey survey{world};int trial_roads=0;
  for(int r=0;r<roads.size();r++){
   if(roads[r].get_type()!=Variant::DICTIONARY)return failure("Invalid road");
   Dictionary road=roads[r];if(!road.has("start")||!road.has("finish"))return failure("Missing road endpoints");
+  Variant trial=road.get("frontage_trial",false);if(trial.get_type()!=Variant::BOOL)return failure("Invalid frontage trial flag");trial_roads+=bool(trial)?1:0;
   Vector3 start=road["start"],finish=road["finish"];
   if(!inside(start)||!inside(finish)||horizontal(finish-start)<.01)return failure("Invalid street endpoints");
   int count=std::max(2,int(std::floor(horizontal(finish-start)/25))*2),begin=int(edges.size());
@@ -354,6 +469,7 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
   Dictionary s=segment(p-Vector3(.5,0,0),p+Vector3(.5,0,0),3,3,4,2,4);PackedFloat64Array c;for(double value:{0.,0.,0.,double(p.y)})c.push_back(value);
   s["coefficients"]=c;s["curve_index"]=0;segments.push_back(s);
  }
+ if(trial_roads){if(trial_roads!=roads.size())return failure("Frontage trial must plan the complete connected street layout");return frontage_street_trial(world,roads,segments);}
  Dictionary d;d["ok"]=true;d["segments"]=segments;d["max_fill"]=max_fill;d["max_cut"]=max_cut;d["mean_earthwork"]=sum/std::max(1,samples);d["height_samples"]=survey.samples;d["planner_version"]=2;return d;
 }
 }
@@ -393,6 +509,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
   for(int j=0;j<samples.size();j++)if(!inside(samples[j]))return failure("Invalid foundation sample");
   AABB b=l["bounds"];Vector3 entrance=l["entrance_local"];
   if(!b.position.is_finite()||!b.size.is_finite()||!entrance.is_finite()||!std::isfinite(double(l["street_z"])))return failure("Invalid lot geometry");
+  if(l.has("frontage_x")){if(l["frontage_x"].get_type()!=Variant::VECTOR2)return failure("Invalid frontage interval");Vector2 interval=l["frontage_x"];if(!interval.is_finite()||interval.x>=interval.y)return failure("Invalid frontage interval");}
  }
  Survey survey{world};Array fitted,rejected;std::vector<AABB> reserved;
  const int offsets[]={0,-3,3,-6,6,-9,9};
@@ -401,6 +518,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
   Vector3i base=lot["origin"];AABB original=lot["bounds"];PackedVector3Array points=lot["samples"];
   for(int dx:offsets)for(int dz:offsets){
    Vector3 shift(dx,0,dz);Vector3i origin=base+Vector3i(dx,0,dz);AABB bounds(original.position+shift,original.size);bool blocked=false;
+   if(lot.has("frontage_x")){Vector2 interval=lot["frontage_x"];Vector3 entrance=lot["entrance_local"];double endpoint=origin.x+entrance.x;if(endpoint<interval.x||endpoint>interval.y)continue;}
    Rect2 footprint(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z));
    for(const auto &occupied:reserved)if(footprint.grow(2).intersects(Rect2(Vector2(occupied.position.x,occupied.position.z),Vector2(occupied.size.x,occupied.size.z)))){blocked=true;break;}
    if(blocked)continue;

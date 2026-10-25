@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-25",
+  "scope": "Optional generation-side four-building preview. Not approved, not a generation default, not an all-roads solution.",
+  "native_debug_sha256": "1b6a55eb8554ed317836928c0289738b78831b8e63172bfb15f062a4bb4db80c",
+  "native_release_sha256": "14b33a17f1d185ef7fcdfc8f816abf897bacaaeba6417d71b8d61fc6dc730ed9",
+  "checks": [
+    {"name": "native frontage plan, cubic continuity, flags, plates, binary roundtrip", "run": "reports/checks/20261025T165441214539Z", "passed": true},
+    {"name": "existing world recipe regression", "run": "reports/checks/20261025T165442305114Z", "passed": true},
+    {"name": "existing paving regression", "run": "reports/checks/20261025T164706993932Z", "passed": true},
+    {"name": "existing seven-seed lot-planner regression", "run": "reports/checks/20261025T164708226997Z", "passed": true},
+    {"name": "integrated graphical generation/collision/placement and same-process mode regeneration", "run": "reports/road_frontage_review/127ab2e69dec401d82adbf4bef690fa6", "passed": true, "elapsed_seconds": 74.98918749997392, "engine_diagnostics": [], "source_save_files": 291, "source_unchanged": true}
+  ],
+  "source_save": "Wild_Hills",
+  "preview_seed": 1703,
+  "preview_generator": 21,
+  "preview_center": [977, 35, 1105],
+  "frontage_length_each_m": 52,
+  "maximum_grade": 0.0576924133300782,
+  "maximum_sampled_road_cut_m": 2.44368743896484,
+  "maximum_sampled_road_fill_m": 1.42785984524608,
+  "baseline_master_stamps": 98,
+  "proposed_master_stamps": 138,
+  "human_approval": false,
+  "full_world_traversal_qualified": false,
+  "performance_qualified": false,
+  "reservation_aware_complete_network_qualified": false,
+  "installed_gameplay_pack_changed": false
+}
