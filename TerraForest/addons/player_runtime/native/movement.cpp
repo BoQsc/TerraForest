@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/world3d.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/physics_direct_space_state3d.hpp>
+#include <godot_cpp/classes/physics_server3d.hpp>
 namespace terraforest {
 using namespace godot;
 void NativePlayerMovement::_bind_methods() {
@@ -68,6 +69,18 @@ bool NativePlayerMovement::ladder_velocity(CharacterBody3D *body,Vector3 directi
 }
 bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     if(!body||!body->is_inside_tree()||!valid(delta,body->get_velocity()))return false;
+    constexpr uint32_t ragdoll_layer=1<<18;
+    auto *server=PhysicsServer3D::get_singleton();
+    auto hits_ragdoll=[](const Ref<KinematicCollision3D> &collision){
+        for(int contact=0;contact<collision->get_collision_count();contact++){
+            auto *collider=Object::cast_to<PhysicsBody3D>(collision->get_collider(contact));
+            if(collider&&(collider->get_collision_layer()&(1<<18)))return true;
+        }
+        return false;
+    };
+    for(int contact=0;contact<body->get_slide_collision_count();contact++){
+        if(hits_ragdoll(body->get_slide_collision(contact))){body->move_and_slide();return false;}
+    }
     const Vector3 velocity=body->get_velocity();
     const Vector3 horizontal=Vector3(velocity.x,0,velocity.z)*real_t(delta);
     bool stepped=false;
@@ -86,7 +99,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
         step_support_->set_collision_mask(body->get_collision_mask());
         TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
         Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
-        if(!hit.is_empty()&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
+        if(!hit.is_empty()&&!(server->body_get_collision_layer(hit["rid"])&ragdoll_layer)&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
            !body->test_move(body->get_global_transform(),horizontal,{},body->get_safe_margin())){
             body->set_velocity(Vector3(velocity.x,0,velocity.z));body->move_and_slide();body->apply_floor_snap();
             step_frame_=frame;return false;
@@ -97,7 +110,9 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
         const float margin=body->get_safe_margin();
         // Four bounded sweeps: obstacle, head clearance, raised travel, landing.
         // Refuse jumping, oversized tick travel, tall walls and unsupported gaps.
-        if(body->test_move(start,horizontal,{},margin)&&!body->test_move(start,Vector3(0,0.3,0),{},margin)) {
+        if(step_collision_.is_null())step_collision_.instantiate();
+        if(body->test_move(start,horizontal,step_collision_,margin,false,4)&&!body->test_move(start,Vector3(0,0.3,0),{},margin)) {
+            if(hits_ragdoll(step_collision_)){body->move_and_slide();return false;}
             // A rounded capsule can lose is_on_floor while touching a riser,
             // including a tick without an attempted step. Require nearby actual
             // walkable support instead of allowing that transient flag to
@@ -117,7 +132,8 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
             if(!body->test_move(raised,horizontal,{},margin)) {
                 raised.origin+=horizontal;
                 if(step_collision_.is_null())step_collision_.instantiate();
-                if(body->test_move(raised,Vector3(0,-0.35,0),step_collision_,margin)) {
+                if(body->test_move(raised,Vector3(0,-0.35,0),step_collision_,margin,false,4)) {
+                    if(hits_ragdoll(step_collision_)){body->move_and_slide();return false;}
                     bool supported=step_collision_->get_normal().y>=std::cos(body->get_floor_max_angle());
                     // Capsule/riser corner normals differ from tread normals.
                     // Confirm the tread under the front of the 0.34 m capsule;

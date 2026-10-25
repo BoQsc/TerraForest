@@ -1,0 +1,25 @@
+{
+  "pack_sha256": "a374bfebb7e72c0f0a77785d53a16803ac32f63a09375508a9e14c62c6a4e0a5",
+  "libraries": {
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": {
+      "source": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+      "exported": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+      "match": true
+    },
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": {
+      "source": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff",
+      "exported": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff",
+      "match": true
+    },
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": {
+      "source": "9a567a9bac4d76d185c9d9efb3ebd4ffc8d28b765b11f961493415ac3a1edce8",
+      "exported": "9a567a9bac4d76d185c9d9efb3ebd4ffc8d28b765b11f961493415ac3a1edce8",
+      "match": true
+    },
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": {
+      "source": "3de96705529e4c261050d77daf2681854b1f596e85fd5251a08414fe9c925b8c",
+      "exported": "3de96705529e4c261050d77daf2681854b1f596e85fd5251a08414fe9c925b8c",
+      "match": true
+    }
+  }
+}

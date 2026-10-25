@@ -26,7 +26,10 @@ func aim_part(zombie:Node3D,part:String)->bool:
 	return false
 func screenshot(name:String)->void:
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(evidence.path_join(name+".png"))
+func record_swing(identity:int,cancelled:bool)->void:
+	print("COMBAT_SWING ",JSON.stringify({"identity":identity,"cancelled":cancelled,"focused":game.app_focused,"mouse_mode":Input.mouse_mode,"available":game._model_edit_available(),"hit":game.world_attack.last_hit}))
 func run()->void:
+	if DisplayServer.get_name()=="headless":push_error("Zombie world combat requires a graphical viewport and captured input");quit(2);return
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--zombie-world-evidence="):evidence=argument.trim_prefix("--zombie-world-evidence=")
 		if argument=="--zombie-health-only":health_only=true
@@ -36,6 +39,7 @@ func run()->void:
 	await wait_for(func():return not game.needs_floor_spawn,5)
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	game.zombies.population_enabled=false;game.zombies.clear();game.player_hud.equip_item(2);Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	game.tool_view.attack_finished.connect(record_swing)
 	var zombie:Node3D
 	for offset:Vector3 in [Vector3(0,0,2),Vector3(2,0,0),Vector3(-2,0,0),Vector3(0,0,-2)]:
 		zombie=game.zombies.spawn_at(game.player.global_position+offset)
@@ -127,6 +131,14 @@ func run()->void:
 	check(corpse_id>0 and saved.missing&26==26 and saved.pose.size()==180 and game.corpse_loot.store.validate_corpse_snapshot(corpse_bytes),"severed head and arm save with valid poses and a missing-parts mask")
 	var restored:RefCounted=ClassDB.instantiate("NativeCorpseStore")
 	check(restored.configure(game.player_hud.inventory,4096) and restored.restore_corpse_snapshot(corpse_bytes) and restored.corpse(corpse_id).missing==saved.missing and restored.corpse(corpse_id).pose==saved.pose,"corpse snapshot restores without resurrecting missing limbs or losing loot identity")
+	game.zombies.clear();await process_frame;await process_frame
+	game.corpse_loot.clock=0;game.corpse_loot.update(.1,game.player.global_position,true)
+	for frame in 360:await physics_frame
+	var restored_corpse:Node3D=game.corpse_loot.active.get(corpse_id)
+	check(is_instance_valid(restored_corpse) and restored_corpse.is_visible_in_tree() and restored_corpse.missing.head and restored_corpse.missing.forearm_l and restored_corpse.missing.hand_l and restored_corpse.physical_bones.size()==12,"real corpse restoration preserves the severed head and arm mask")
+	if is_instance_valid(restored_corpse):
+		var rest:Dictionary=restored_corpse.anatomy.ragdoll_stats()
+		check(rest.bodies==12 and rest.sleeping==12,"restored severed corpse settles without recreating removed fragments")
 	await finish()
 func finish()->void:
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame

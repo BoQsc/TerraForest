@@ -55,7 +55,7 @@ func set_frozen(zombie:Node3D,frozen:bool)->void:
 		var modes:Dictionary={}
 		for bone:String in zombie.physical_bones:
 			var body:PhysicalBone3D=zombie.physical_bones[bone];var rid:RID=body.get_rid()
-			modes[bone]=[PhysicsServer3D.body_get_mode(rid),body.linear_velocity,body.angular_velocity]
+			modes[bone]=[PhysicsServer3D.body_get_mode(rid),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY),PhysicsServer3D.body_get_state(rid,PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY)]
 			PhysicsServer3D.body_set_mode(rid,PhysicsServer3D.BODY_MODE_STATIC)
 		zombie.set_meta("corpse_body_modes",modes)
 	else:
@@ -101,17 +101,34 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		var zombie=Zombie.new();zombie.geometry_template=game.zombies.geometry_template;zombie.position=record.position;zombie.rotation.y=record.yaw;zombie.hide();game.zombies.add_child(zombie)
 		if not zombie.initialized:zombie.queue_free();break
 		game.zombies.geometry_template=zombie.anatomy
-		zombie.set_meta("corpse_identity",id);active[id]=zombie;zombie.die()
+		zombie.set_meta("corpse_identity",id);active[id]=zombie
 		if record.pose.size()==180:
+			zombie.animation_player.stop(true);zombie.animation_player.active=false
+			zombie.skeleton.force_update_all_bone_transforms()
+			var original:Array[Transform3D]=[]
+			for bone_index in zombie.skeleton.get_bone_count():original.append(zombie.skeleton.get_bone_global_pose(bone_index))
+			var restored:Dictionary={}
 			var index:=0
 			var bones:Array=[]
 			for part:String in zombie.PARTS:bones.append(zombie.PARTS[part].bone)
 			bones.append("Hips")
 			for bone:String in bones:
-				var j:=index*12;var values:PackedFloat32Array=record.pose
-				var pose:=Transform3D(Basis(Vector3(values[j],values[j+4],values[j+8]),Vector3(values[j+1],values[j+5],values[j+9]),Vector3(values[j+2],values[j+6],values[j+10])),Vector3(values[j+3],values[j+7],values[j+11]))
-				var body:PhysicalBone3D=zombie.physical_bones[bone]
-				zombie._death_pose[zombie.skeleton.find_bone(bone)]=zombie.skeleton.global_transform.affine_inverse()*pose*body.body_offset.affine_inverse();index+=1
+				if index==14 or (record.missing&(1<<index))==0:
+					var offset:=index*12;var values:PackedFloat32Array=record.pose
+					var pose:=Transform3D(Basis(Vector3(values[offset],values[offset+4],values[offset+8]),Vector3(values[offset+1],values[offset+5],values[offset+9]),Vector3(values[offset+2],values[offset+6],values[offset+10])),Vector3(values[offset+3],values[offset+7],values[offset+11]))
+					var body:PhysicalBone3D=zombie.physical_bones[bone]
+					restored[zombie.skeleton.find_bone(bone)]=zombie.skeleton.global_transform.affine_inverse()*pose*body.body_offset.affine_inverse()
+				index+=1
+			var poses:Array[Transform3D]=original.duplicate()
+			for bone_index in poses.size():
+				var ancestor:int=bone_index
+				while ancestor>=0 and not restored.has(ancestor):ancestor=zombie.skeleton.get_bone_parent(ancestor)
+				if ancestor>=0:poses[bone_index]=restored[ancestor]*original[ancestor].affine_inverse()*original[bone_index]
+			for bone_index in poses.size():
+				var parent:int=zombie.skeleton.get_bone_parent(bone_index)
+				zombie.skeleton.set_bone_pose(bone_index,poses[bone_index] if parent<0 else poses[parent].affine_inverse()*poses[bone_index])
+			zombie.skeleton.force_update_all_bone_transforms()
+		zombie.die()
 		finish_restore.call_deferred(zombie,record.missing)
 		break
 func finish_restore(zombie:Node3D,missing:int)->void:

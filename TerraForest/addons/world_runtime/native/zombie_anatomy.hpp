@@ -31,8 +31,7 @@ class NativeZombieAnatomy : public godot::RefCounted {
         godot::Ref<godot::Skin> skin;
         std::vector<godot::Transform3D> binds;std::vector<Surface> surfaces;
     };
-    struct JointState {uint64_t node=0,body_b=0;int type=0;bool physical=false;godot::Dictionary properties;godot::Transform3D frame_b;};
-    struct Ragdoll {std::vector<uint64_t> bodies;std::vector<JointState> joints;double quiet=0;bool ground_damped=false,parked=false;};
+    struct Ragdoll {std::vector<uint64_t> bodies;std::vector<godot::Transform3D> still_poses;double quiet=0,still=0;bool ground_damped=false,resting=false;};
     std::array<Part,14> parts_;
     std::vector<Ragdoll> ragdolls_;
     std::vector<godot::Transform3D> death_poses_;
@@ -44,7 +43,6 @@ class NativeZombieAnatomy : public godot::RefCounted {
     uint64_t skeleton_=0;double health_=180,maximum_=180,ragdoll_clock_=0;
     int vertices_=0,triangles_=0,settle_events_=0;bool configured_=false;
     static int part_index(const godot::String &part);
-    void park_constraints(Ragdoll &group,bool park);
     void invalidate_geometry();
     std::vector<godot::Transform3D> evaluated_poses() const;
 protected:

@@ -1,0 +1,198 @@
+{
+  "failures": 11,
+  "final": {
+    "bodies": 15,
+    "groups": 1,
+    "maximum_angular_speed": 0.0,
+    "maximum_linear_speed": 0.0,
+    "resting": 15,
+    "settle_events": 1,
+    "sleeping": 15
+  },
+  "rows": [
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 63.0302314758301,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "LeftHand",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 6.30615329742432,
+      "phase": "walk_push_(1.0, 0.0, 0.0)",
+      "player_speed": 5.54074907302856,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 0.0,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 0.0,
+      "phase": "after_walk_(1.0, 0.0, 0.0)",
+      "player_speed": 0.0,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 43.4649887084961,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "LeftHand",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 5.97372484207153,
+      "phase": "walk_push_(0.0, 0.0, 1.0)",
+      "player_speed": 6.25214052200317,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 0.0,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 0.0,
+      "phase": "after_walk_(0.0, 0.0, 1.0)",
+      "player_speed": 0.0,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 57.450569152832,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "LeftHand",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 7.26906156539917,
+      "phase": "walk_push_(-1.0, 0.0, 0.0)",
+      "player_speed": 5.54074907302856,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 0.0,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 0.0,
+      "phase": "after_walk_(-1.0, 0.0, 0.0)",
+      "player_speed": 0.0,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 176819040.0,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "LeftHand",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 176819040.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 14016254.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 0
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 14016254.0,
+      "phase": "land_on_corpse",
+      "player_speed": 8.00010681152344,
+      "radius": 0.946260154247284
+    },
+    {
+      "anchor_error": 0.00423959782347083,
+      "angular": 0.0,
+      "corpse_contacts": 0,
+      "displacement": 0.0,
+      "fastest_bone": "",
+      "final": {
+        "anchor_error": 0.00423959782347083,
+        "angular": 0.0,
+        "finite": true,
+        "joints": 0,
+        "linear": 0.0,
+        "radius": 0.946260154247284,
+        "resting": 15,
+        "sleeping": 15
+      },
+      "finite": true,
+      "joints_intact": false,
+      "linear": 0.0,
+      "phase": "after_landing",
+      "player_speed": 0.0,
+      "radius": 0.946260154247284
+    }
+  ]
+}

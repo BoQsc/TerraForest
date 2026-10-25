@@ -63,6 +63,13 @@ vehicles still block a swing; this does not authorize NPCs to open doors or
 disable the door's physical collision. Inside-leaf interaction picking retains
 the normal three-metre range and intervening solid occlusion.
 
+Player collision includes ragdolls even when living encounters are disabled.
+Articulated limbs are not moving platforms or automatic stair treads. Native
+step assistance rejects existing ragdoll contacts and up to four contacts from
+each obstacle/landing sweep; ordinary collision remains enabled. Corpse rest
+preserves anatomical joints. Menu/readiness suspension freezes bodies explicitly
+without removing their physics-space registration or rebuilding joint frames.
+
 ## Runtime limits and failure states
 
 Each local route retains at most 2,048 nodes and searches within +/-16 m of its origin.

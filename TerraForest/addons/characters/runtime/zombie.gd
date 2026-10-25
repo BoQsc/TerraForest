@@ -459,6 +459,7 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 	if index < 0:
 		return
 	var physical:PhysicalBone3D=ClassDB.instantiate("NativeZombiePhysicalBone")
+	physical.disable_mode=CollisionObject3D.DISABLE_MODE_KEEP_ACTIVE
 	physical.name = "Physical_" + bone_name
 	physical.collision_layer = 0
 	physical.collision_mask = 0
@@ -550,7 +551,7 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 				physical.set(prefix + "angular_limit_softness", 0.85)
 				physical.set(prefix + "angular_restitution", 0.0)
 				physical.set(prefix + "angular_damping", 1.0)
-				physical.set(prefix + "erp", 0.5)
+				physical.set(prefix + "erp", 0.15)
 	physical_bones[bone_name] = physical
 	_body_specs[bone_name] = {"part": part, "offset": physical.body_offset}
 
@@ -1709,6 +1710,7 @@ func _current_bone_pose(index: int) -> Transform3D:
 
 func _new_detached_body(part: String) -> RigidBody3D:
 	var body:RigidBody3D=ClassDB.instantiate("NativeZombieRigidPart")
+	body.disable_mode=CollisionObject3D.DISABLE_MODE_KEEP_ACTIVE
 	body.name = "Detached_" + part
 	body.set_meta("limb_key", part)
 	body.collision_layer = RAGDOLL_LAYER
@@ -1752,7 +1754,7 @@ func _new_detached_joint(part: String) -> Joint3D:
 			joint.set(angular + "softness", 0.85)
 			joint.set(angular + "restitution", 0.0)
 			joint.set(angular + "damping", 1.0)
-			joint.set(angular + "erp", 0.5)
+			joint.set(angular + "erp", 0.15)
 		for property:Dictionary in joint.get_property_list():
 			var key:=String(property.name)
 			if (key.contains("motor") or key.contains("spring")) and key.ends_with("enabled"):joint.set(key,false)

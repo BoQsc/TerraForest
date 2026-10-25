@@ -232,6 +232,8 @@ func _ready() -> void:
 	add_child(zombies)
 	zombies.corpse_host=corpse_loot
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+	player.collision_mask |= zombies.RAGDOLL_LAYER
+	player.platform_floor_layers &= ~zombies.RAGDOLL_LAYER
 	if zombies.enabled:player.collision_mask |= zombies.CHARACTER_LAYER
 	zombies.target=zombie_target
 	zombies.world_geometry=structures.blocks

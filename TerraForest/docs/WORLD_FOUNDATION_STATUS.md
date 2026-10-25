@@ -1,3 +1,39 @@
+## Corpse contact and restoration repair — 2026-10-26
+
+The intact-corpse vibration/explosion report exposed asymmetric player collision,
+ragdoll joints deleted during sleep and joint-frame disturbance across menu
+suspension. Native rest now keeps joints connected, wakes the articulated group
+on real contact/impulses, and recognizes supported stationary poses without an
+unconditional timeout or velocity clamp. Player stair assistance cannot treat
+limbs as treads; corpses are not moving platforms. Active CCD remains enabled.
+Six-axis angular recovery is gentler; linear locks and disabled death motors stay.
+Loot freezing retains physics-space registration and authoritative velocities.
+
+Fresh-process inspection also caught a saved-corpse defect missed by the old
+byte/residency-only test: native collision fitted the standing skeleton while the
+script used the saved lying pose. Restoring the skeleton before native death
+capture/fitting fixes the offset and sinking without changing save schemas.
+Missing limbs stay missing. Existing player saves remain untouched.
+
+Native debug/release builds, 50 release anatomy checks, 39 physical-region checks,
+alternate-pose reactivation, source forest contact/landing/loot/wake cycles,
+ladder/cottage/zombie stair regressions, 43 source world-combat checks and 18/9
+source lifecycle checks pass. The lifecycle now also verifies visible targeting,
+rest and physical reactivation after reopening; severed-corpse restoration retains
+and settles twelve bodies. The final package passes all fifteen contact phases
+(14 joints retained, 15 bodies asleep, peak anchor error 5.409 mm), 43 world-combat
+checks and 18/9 lifecycle checks. Export/startup passes with matching native DLLs.
+The restored-corpse capture was inspected. Evidence and retained failed runs:
+`evidence/zombie_corpse_contact/README.md`.
+
+This supersedes the old six-second forest settling failure for the tested fixture,
+not all varied-terrain/endurance coverage. Earlier animated-hit failures (6 and 11
+assertions in two packaged runs) remain retained; later traced graphical checks
+pass, but their earlier cause is not assigned. Return if those failures recur with
+the new cancellation/focus trace. Wider corpse-pile, extreme-impact, varied-pose/
+terrain and lower-end/endurance qualification remains open; close only with
+repeatable physical/contact/rendered evidence. Player acceptance is still separate.
+
 ## New saved shoulder failure; universal contact is not achieved — 2026-10-25
 
 The user rejected another deeply embedded block in GridPreference_1703_2756a200
@@ -615,6 +651,9 @@ population restoration evidence is retained. The forest player-strike suite
 passes 40/41: its six-second all-bodies-sleep assertion still fails, also with
 the historical script geometry/hand implementation and unchanged native rest
 solver. Keep that terrain corpse-rest defect open; do not weaken the assertion.
+The 2026-10-26 corpse-contact repair now passes this unchanged six-second gate
+and adds restored-corpse/contact tests; see `evidence/zombie_corpse_contact/`.
+This supersedes the fixture failure, not broader terrain/endurance qualification.
 The incomplete saved-world-copy and boulder-blocked walking probes are retained
 as failed fixtures rather than counted as successful traversal. Arrival and
 physical-corpse images were inspected. Evidence: `evidence/walking_stutter/`.
@@ -622,8 +661,8 @@ physical-corpse images were inspected. Evidence: `evidence/walking_stutter/`.
 Remaining qualification: cold first-use asset/shader work, lower-end/endurance
 travel, edit-heavy play and large saved populations. Actual severed visual mesh
 baking remains script-based. Return with separate frame traces for those paths;
-the terrain corpse-rest requirement needs a physical-support investigation and
-the unchanged integrated rest gate. This is a measured hitch fix, not a claim
+the broader terrain corpse-rest requirement needs varied-support/endurance
+coverage beyond the now-passing integrated rest gate. This is a measured hitch fix, not a claim
 that all world rewrite/performance requirements are complete.
 
 ## Water bucket hands/use - original rejected, revision 2 awaiting review, 2026-10-25
@@ -985,6 +1024,11 @@ all-pieces-asleep criterion despite all health and corpse-data checks passing;
 the overall suite is therefore not green. Keep this settling variability open for
 a separate varied-pose/terrain investigation and isolated/endurance retesting;
 close only with reproducible passive settling evidence, not a health-test pass.
+Update 2026-10-26: the corpse-contact repair passes the unchanged integrated
+six-second rest gate in source and graphical packaged checks. It also preserves
+joints through pushes/loot pause and tests saved-corpse reactivation. The retained
+failures and broader unqualified terrain/endurance scope are documented in
+`evidence/zombie_corpse_contact/`; the old logs remain unchanged.
 After playtesting, the user requested higher dismemberment frequency for now and
 committing/pushing all current work. The increased trauma above replaces the
 earlier 10%/25% tuning: a hatchet now needs four focused hand hits instead of
@@ -1435,9 +1479,10 @@ cooldown remain enforced. The existing native navigator owns routes; there is
 still one physical integration owner and no direct-pursuit fallback.
 
 Animation and joint drives remain off after death. Native contact-island checks
-apply passive damping after support, then park quiet grounded constraints and let
-physical bodies sleep. Impacts, damage, support loss and nearby world edits restore
-simulation and constraints. Airborne bodies keep falling. Support verification
+apply passive damping after support, then let quiet grounded bodies sleep.
+The 2026-10-26 repair keeps joints connected rather than parking/recreating them.
+Impacts, damage, support loss and nearby world edits restore ordinary simulation.
+Airborne bodies keep falling. Support verification
 also restores parked rigid fragments' gravity and swept collision settings;
 parked sleep is committed after scene/contact synchronization.
 Support verification

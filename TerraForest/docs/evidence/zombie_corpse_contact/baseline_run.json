@@ -1,0 +1,62 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\zombie_ragdoll_reactivation\\pack_baseline_isolated\\engine.log",
+    "--max-fps",
+    "60",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\zombie_ragdoll_reactivation.gd",
+    "--",
+    "--temporary",
+    "--push-only",
+    "--one-way-contact",
+    "--reactivation-evidence=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/zombie_ragdoll_reactivation/pack_baseline_isolated"
+  ],
+  "pack_sha256": "25eae3515a24253ab0dc580313c156f540b4d68aa91f5e93e364d67bd922a1cc",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "5d28725b1c4623cade725c073e4c468a5356c851c5b149c126e3be7298a669fb",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "0e13cb793eee7ebf1a91732041ca8d73c231e613932dacfee74716a3b7540f6e",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "eb262736b91fa9c68e6d2bd3e655e4707f8d3bab0fd244f5d273a6c03ddb17a9",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "039ebec03848c81f9041affbf25129301f9b833d7e4dc1cd20f3b08352ae5992",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2d84d7564a1938a2ad3045d4f8f79b94945ca94ff216101ba1c963c2d3f00bbc",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "1a928fa00362862ecebc0bea871132adc90457ca12c1775e6dd62a2c000a9a36",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "abf3038d99feb704e419373da9f51c7c0539f2f81eddcfd73346931bb2e51dbb",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "15ced31c364c6bc10f6bc79da0b99aebac5cfc6214db44a0faffee706c91d17a",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "92a853f2b0b1614d4731b60ca0232eb0aecd5fdce4954f0de966f7b71353d0dc",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "f519a75101e5eae1e400d1b6b2fec11567b5bdf0cb5ef4ff6e1cf34d5e95130d"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 82668,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL modest corpse interaction stays connected and bounded: land_on_corpse",
+      "FAIL player actually contacts the corpse",
+      "FAIL settling retains all fourteen joints",
+      "FAIL sleep and contact preserve every anatomical joint: after_landing",
+      "FAIL sleep and contact preserve every anatomical joint: after_walk_(-1.0, 0.0, 0.0)",
+      "FAIL sleep and contact preserve every anatomical joint: after_walk_(0.0, 0.0, 1.0)",
+      "FAIL sleep and contact preserve every anatomical joint: after_walk_(1.0, 0.0, 0.0)",
+      "FAIL sleep and contact preserve every anatomical joint: land_on_corpse",
+      "FAIL sleep and contact preserve every anatomical joint: walk_push_(-1.0, 0.0, 0.0)",
+      "FAIL sleep and contact preserve every anatomical joint: walk_push_(0.0, 0.0, 1.0)",
+      "FAIL sleep and contact preserve every anatomical joint: walk_push_(1.0, 0.0, 0.0)"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 38.60740450001322,
+    "passed": false
+  },
+  "test_sha256": "10f23467158123d139bcb777c2569348c5a12c5e00b6c359cbb816f3e64e729b"
+}

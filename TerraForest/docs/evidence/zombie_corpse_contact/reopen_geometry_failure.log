@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 201.26 ms at 6360
+[terrain-hitch] base controller 203.5 ms at 6362
+[terrain-hitch] controller process 205.88 ms at 6364
+[terrain-hitch] world process 207.67 ms at 6366
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual playable world and corpse save component initialize
+PASS fresh process restores exact corpse records, poses and inventories
+PASS fresh process restores matching player inventory
+PASS felled tree and mined boulder stay harvested after reopening
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ragdoll started with 15 physical bones.
+PASS saved corpse rematerializes near the player
+CORPSE_RESTORED {"camera":"(803.0902, 49.86945, 1312.953)","mode":0,"stats":{"bodies":15,"groups":1,"maximum_angular_speed":7.27682876586914,"maximum_linear_speed":2.51787543296814,"resting":0,"settle_events":0,"sleeping":0},"target":0,"torso":"(803.0902, 48.36945, 1310.753)","visible":true}
+CORPSE_RESTORED_GEOMETRY {"ground":"(803.0902, 49.45953, 1310.753)","mesh_center":"(803.0902, 49.14802, 1311.028)","root":"(803.0, 49.52094, 1310.0)","saved":"[0.94323891401291, 0.32177948951721, 0.08220877498388, 802.829040527344, 0.16253508627415, -0.23138745129108, -0.95918834209442, 49.7070274353027, -0.28962501883507, 0.91810554265976, -0.27055412530899, 1311.21691894531]"}
+FAIL restored corpse is visible and targetable through its real skinned body
+[TerrainRewrite] Temporary test world: save skipped
+PASS normal world shutdown drains
+GATHERING_LIFECYCLE checks=7 failures=1 reopen=true

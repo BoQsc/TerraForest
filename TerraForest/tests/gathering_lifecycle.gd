@@ -64,7 +64,23 @@ func run()->void:
 		if not game.corpse_loot.active.is_empty():
 			var zombie:Node3D=game.corpse_loot.active.values()[0]
 			for i in 60:await physics_frame
-			aim(zombie.physical_bones[zombie.PARTS.torso.bone].global_position,Vector3(0,1.5,2.2));await picture("corpse_restored")
+			var torso:Vector3=zombie.physical_bones[zombie.PARTS.torso.bone].global_position
+			aim(torso,Vector3(0,1.5,2.2));await picture("corpse_restored")
+			print("CORPSE_RESTORED ",JSON.stringify({"visible":zombie.is_visible_in_tree(),"mode":zombie.process_mode,"torso":str(torso),"camera":str(game.camera.global_position),"target":game.corpse_loot.aimed_id(),"stats":zombie.anatomy.ragdoll_stats()}))
+			var floor_query:=PhysicsRayQueryParameters3D.create(torso+Vector3.UP*3,torso-Vector3.UP*3,1)
+			var floor_hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(floor_query)
+			print("CORPSE_RESTORED_GEOMETRY ",JSON.stringify({"mesh_center":str(zombie._bake_cpu(zombie.part_meshes.torso,Transform3D.IDENTITY).get_aabb().get_center()),"ground":str(floor_hit.get("position",Vector3.ZERO)),"root":str(zombie.global_position),"saved":str(game.corpse_loot.store.corpse(int(zombie.get_meta("corpse_identity",0))).pose.slice(0,12))}))
+			check(zombie.is_visible_in_tree() and game.corpse_loot.aimed_id()==int(zombie.get_meta("corpse_identity",0)),"restored corpse is visible and targetable through its real skinned body")
+			for frame in 300:await physics_frame
+			check(zombie.anatomy.ragdoll_stats().sleeping==15,"restored intact corpse settles with all physical limbs present")
+			var initial:Vector3=zombie.physical_bones.Spine2.global_position
+			zombie.physical_bones.Spine2.apply_central_impulse(Vector3(6,1,0))
+			var displacement:=0.0;var bounded:=true
+			for frame in 360:
+				await physics_frame
+				displacement=maxf(displacement,zombie.physical_bones.Spine2.global_position.distance_to(initial))
+				for body:PhysicalBone3D in zombie.physical_bones.values():bounded=bounded and body.global_transform.is_finite() and body.global_position.distance_to(zombie.physical_bones.Hips.global_position)<2.5
+			check(bounded and displacement>.001 and displacement<2.5 and zombie.anatomy.ragdoll_stats().sleeping==15,"restored corpse responds to a physical push without exploding and settles again")
 	else:
 		var native:RefCounted=ClassDB.instantiate("NativeGroundCover")
 		var rock:Dictionary={};var rock_cell:=Vector2i.ZERO
