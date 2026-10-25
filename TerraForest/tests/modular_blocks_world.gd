@@ -6,6 +6,7 @@ var checks := 0
 var output := "res://reports/modular_blocks_world"
 var pictures: Dictionary = {}
 var driver_path := "res://tests/swing_driver.gd"
+const MODULAR_COUNT = 10
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -98,14 +99,14 @@ func run() -> void:
 	var base:=Vector3i(game.player.position.floor())+Vector3i(0,32,-8)
 	var targets: Array[Vector3i]=[]
 	var supports:=PackedInt32Array()
-	for index in 6:
+	for index in MODULAR_COUNT:
 		var support:=base+Vector3i(index*3,0,0)
 		supports.append_array(PackedInt32Array([support.x,support.y,support.z,65]))
 		targets.append(support+Vector3i.UP)
 	check(blocks.set_cells(supports),"isolated test supports do not replace any house")
 	blocks.set_focus(Vector3(base))
 	var start_material:int=material_count(hud.inventory,102)
-	for index in 6:
+	for index in MODULAR_COUNT:
 		var target:=targets[index]
 		hud.equip(wood_slot)
 		await key(KEY_ALT,true)
@@ -139,19 +140,19 @@ func run() -> void:
 			game.camera.look_at(Vector3(target)+Vector3(.45,.5,.5))
 			for frame in 20:await process_frame
 			await picture("quarter_arch.png")
-	check(material_count(hud.inventory,102)==start_material-6,"six placements charge exactly six wood blocks")
+	check(material_count(hud.inventory,102)==start_material-MODULAR_COUNT,"modular placements each charge exactly one wood block")
 	var saved:PackedByteArray=game.structures.capture_storage_snapshot()
 	check(not saved.is_empty(),"real structures storage captures new shapes")
 	FileAccess.open(output.path_join("blocks.tfbl"),FileAccess.WRITE).store_buffer(blocks.capture_snapshot())
 	var placed_records:Array=[]
 	for target in targets:placed_records.append([target.x,target.y,target.z,blocks.get_cell(target)])
 	FileAccess.open(output.path_join("placed_records.json"),FileAccess.WRITE).store_string(JSON.stringify(placed_records))
-	game.camera.global_position=Vector3(base)+Vector3(8,6,17)
-	game.camera.look_at(Vector3(base)+Vector3(8,1,.5))
+	game.camera.global_position=Vector3(base)+Vector3(14,8,25)
+	game.camera.look_at(Vector3(base)+Vector3(14,1,.5))
 	for frame in 30:await process_frame
 	await picture("placed_shapes.png")
-	var points:Array[Vector3]=[Vector3(.5,.06,.5),Vector3(.06,.5,.5),Vector3(.66,.66,.5),Vector3(.5,.25,.5),Vector3(.8,.6,.8),Vector3(.8,.6,.2)]
-	for index in 6:
+	var points:Array[Vector3]=[Vector3(.5,.06,.5),Vector3(.06,.5,.5),Vector3(.66,.66,.5),Vector3(.5,.25,.5),Vector3(.8,.6,.8),Vector3(.8,.6,.2),Vector3(.5,.45,.5),Vector3(.04,.96,.5),Vector3(.5,.44,.5),Vector3(.04,.96,.5)]
+	for index in MODULAR_COUNT:
 		var target:=targets[index]
 		hud.equip(axe_slot)
 		game.player.position=Vector3(target)+Vector3(.5,0,3)
@@ -168,7 +169,7 @@ func run() -> void:
 		check(await swing.strike(game) and blocks.get_cell(target)==0,"second axe contact destroys only selected block")
 		check(blocks.get_cell(target-Vector3i.UP)==65,"support block survives destruction")
 	check(game.structures.restore_storage_snapshot(saved),"native structures storage restores destroyed modular blocks")
-	for index in 6:
+	for index in MODULAR_COUNT:
 		check(blocks.get_cell(targets[index])==blocks.encode_block(index+9,0,1),"restored shape identity and material %d"%(index+9))
 	check(game.persistence._capture().sections.has("structures"),"normal world persistence includes integrated structures")
 	var path:=output.path_join("structures.tfbs")

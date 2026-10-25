@@ -35,7 +35,7 @@ func run() -> void:
 			for material in 4:
 				var expected: int = (128 if shape_id==8 else shape_id) + rotation*8 + material*32
 				check(blocks.encode_block(shape_id, rotation, material)==expected, "legacy word unchanged %d/%d/%d" % [shape_id,rotation,material])
-	check(Catalog.NAMES.size()==14 and blocks.encode_block(15,0,0)==-1 and blocks.encode_block(9,24,0)==-1 and blocks.encode_block(8,4,0)==-1, "catalogue bounds reject unsupported shapes and rotations")
+	check(Catalog.NAMES.size()==18 and blocks.encode_block(19,0,0)==-1 and blocks.encode_block(9,24,0)==-1 and blocks.encode_block(8,4,0)==-1, "catalogue bounds reject unsupported shapes and rotations")
 	var bases: Array[Basis] = []
 	for rotation in 24:
 		var orientation: Basis = blocks.shape_orientation(rotation)
@@ -47,10 +47,14 @@ func run() -> void:
 		[Vector3(.66,.66,.5),Vector3(.3,.3,.5)],
 		[Vector3(.5,.25,.5),Vector3(.05,.4,.5)],
 		[Vector3(.8,.6,.8),Vector3(.2,.5,.8)],
-		[Vector3(.8,.6,.2),Vector3(.2,.5,.2)]]
+		[Vector3(.8,.6,.2),Vector3(.2,.5,.2)],
+		[Vector3(.5,.45,.5),Vector3(.5,.3,.5)],
+		[Vector3(.04,.96,.5),Vector3(.4,.96,.5)],
+		[Vector3(.5,.44,.5),Vector3(.5,.2,.5)],
+		[Vector3(.04,.96,.5),Vector3(.5,.96,.5)]]
 	var records := PackedInt32Array()
 	var physics_probes: Array[Dictionary] = []
-	for shape_id in range(9,15):
+	for shape_id in range(9,19):
 		for rotation in 24:
 			var material: int = rotation%4
 			var word: int = blocks.encode_block(shape_id,rotation,material)
@@ -88,7 +92,7 @@ func run() -> void:
 			records.append_array(PackedInt32Array([origin.x,origin.y,origin.z,word]))
 			var direction: Vector3 = bases[rotation]*Vector3.BACK
 			physics_probes.append({"from":Vector3(origin)+solid+direction*2,"to":Vector3(origin)+solid-direction*2,"cell":origin})
-	check(blocks.restore_snapshot(empty) and blocks.set_cells(records), "144 rotated independently stored blocks")
+	check(blocks.restore_snapshot(empty) and blocks.set_cells(records), "240 rotated independently stored blocks")
 	blocks.set_collision_radius(256)
 	blocks.flush_bakes()
 	for frame in 4:
@@ -100,7 +104,7 @@ func run() -> void:
 		check(authored.get("cell")==probe.cell and not physics.is_empty() and authored.position.distance_to(physics.position)<.002, "physical collider matches exact authored surface %s" % probe.cell)
 	var saved: PackedByteArray = blocks.capture_snapshot()
 	check(saved.decode_u32(4)==2 and blocks.restore_snapshot(saved) and blocks.capture_snapshot()==saved, "version-two binary snapshot exact roundtrip")
-	for invalid in [256,32792,32896,34304,65536,-1]:
+	for invalid in [256,32792,32896,35328,65536,-1]:
 		check(not blocks.set_cells(PackedInt32Array([1,1,1,invalid])) and blocks.capture_snapshot()==saved, "invalid extended word is atomic %d" % invalid)
 	var packet: PackedByteArray = blocks.capture_region(Vector3i.ZERO)
 	check(blocks.validate_region_snapshot(packet) and blocks.unload_region(packet) and blocks.restore_region(packet,PackedByteArray()), "binary region paging preserves modular words")
@@ -164,7 +168,7 @@ func run() -> void:
 	var palette := preload("res://addons/structures/construction_palette.gd").new()
 	root.add_child(palette)
 	palette.synchronize(true,11,2,23,-1)
-	check(palette.shape.item_count==14 and palette.rotation_choice.item_count==24 and palette.rotation_choice.selected==23, "ALT palette exposes new shapes and all 24 orientations")
+	check(palette.shape.item_count==18 and palette.rotation_choice.item_count==24 and palette.rotation_choice.selected==23, "ALT palette exposes new shapes and all 24 orientations")
 	palette.synchronize(true,1,0,0,-1)
 	check(palette.rotation_choice.item_count==4, "legacy blocks retain their four rotations")
 	palette.free()

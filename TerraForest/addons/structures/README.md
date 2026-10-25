@@ -35,9 +35,20 @@ ALT controls and the development building tool: **9 thin panel** (1/8 m),
 from separate cells; there are no complete arch/door/window-frame block types.
 Existing houses and generation defaults are unchanged.
 
+Thin 45-degree roofs additionally use **15 thin roof slope**, **16 roof seam
+infill**, **17 thin roof ridge**, and **18 ridge seam infill**. The skin is 1/8 m
+thick vertically (about 8.8 cm normal to the slope). Place the seam piece in the
+cell immediately below its matching slope/ridge: it fills the small portion of
+the continuous skin crossing that cell boundary. Each piece stays inside its own
+cell, with independent damage/removal, material cost and save identity. No shape
+extends into its neighbor. Covered phase joins are clipped by the existing native
+worker; collision and authoritative solid/picking queries use the same templates.
+These four shapes support all 24 grid-preserving orientations. A gabled roof is
+many separate slope, seam and ridge cells, not a single architectural model.
+
 Hold a building material, hold **Alt**, and choose a shape and orientation.
 **R** turns it about the vertical axis; **Shift+R** changes its mounting direction.
-The six new shapes support 24 grid-preserving orientations. Legacy shapes keep
+The ten modular shapes support 24 grid-preserving orientations. Legacy shapes keep
 their four yaw rotations. Right-click places a block for one unit of its material;
 normal tool hits damage/destroy that cell. Development mode retains free placement
 and left-click removal. The preview uses the native shape, including its holes.
@@ -55,15 +66,19 @@ Legacy-only TFBL snapshots remain byte-compatible version 1. Snapshots containin
 new shapes use TFBL version 2 with the same 16-bit RLE records and checksum; new
 builds read both, old builds reject version 2 rather than misinterpret it. Native
 regions, history, prefab composition and placement preserve the full words.
+Builds supporting only IDs 1–14 reject snapshots containing IDs 15–18; use the
+matching updated native library when opening a save containing thin roof pieces.
 Rendering, collision, picking and water solid queries share cached native geometry
 and convex components. Worker baking clips covered cell-boundary faces on both
 sides, including legacy/modular joins, without raising the whole chunk's voxel
 resolution. Rendering batches never replace individual cell ownership.
 
-The thin panel is flat, not an unresolved shallow roof slope. Full shallow-roof
-phase pieces, all remaining upstream variants and house redesigns are not included.
-Each redesigned house needs explicit approval. Validation and scope:
-`../../docs/evidence/modular_blocks/README.md`.
+The thin panel is flat. IDs 15–18 solve continuous 45-degree roof assemblies, not
+arbitrary/shallow pitches or every upstream variant. A0's roof-only A2 review is
+separate from the original house and still needs explicit approval; no generation
+recipe or existing save is replaced. Validation and scope:
+`../../docs/evidence/modular_blocks/README.md` and
+`../../docs/evidence/cottage_roof_a2/README.md`.
 
 `NativeBlockWorld` is a Node3D with sparse 16×16×16 cell chunks. Each cell is a 16-bit word; a resident chunk's cell payload is 8 KiB. A cell is one local metre. Translation/rotation can be applied to the world node; supply focus in that node's local coordinates. Nonuniform scaling is not a supported physics configuration. There is no node per block.
 

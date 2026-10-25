@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS independent native roof-cell history enabled
+PASS 36 individually keyed shell/seam cells publish (14, 0, -1)
+WARNING: Block texture set unavailable or invalid: original. Using preserved original materials.
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/thin_roof.gd:37)
+PASS continuous top and underside across slope, ridge and negative/positive chunk seams
+PASS physical and authoritative roof rays match both skin surfaces
+PASS all covered phase/cell caps culled, exact thin-shell exterior area
+PASS one roof block removal preserves its neighboring slope
+PASS removing one cell makes a real opening, not an intact cosmetic roof
+PASS undo restores exact roof bytes
+PASS redo and binary restore preserve all roof identities
+PASS clear isolated fixture before next chunk seam
+PASS 36 individually keyed shell/seam cells publish (-17, 0, 15)
+PASS continuous top and underside across slope, ridge and negative/positive chunk seams
+PASS physical and authoritative roof rays match both skin surfaces
+PASS all covered phase/cell caps culled, exact thin-shell exterior area
+PASS one roof block removal preserves its neighboring slope
+PASS removing one cell makes a real opening, not an intact cosmetic roof
+PASS undo restores exact roof bytes
+PASS redo and binary restore preserve all roof identities
+PASS clear isolated fixture before next chunk seam
+THIN_ROOF checks=19 failures=0

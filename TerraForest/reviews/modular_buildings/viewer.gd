@@ -18,10 +18,11 @@ var viewports: Array[SubViewport] = []
 var tour_generation := 0
 var tour_button: Button
 var candidate_label: Label
+var review_revision := "R1"
 
 func _ready() -> void:
 	Engine.max_fps=60
-	DisplayServer.window_set_title("TerraForest | Building review R1 | originals unchanged")
+	DisplayServer.window_set_title("TerraForest | Building review "+review_revision+" | originals unchanged")
 	structures=preload("res://addons/structures/structures_world.gd").new()
 	add_child(structures)
 	if not structures.prepare(): return
@@ -30,7 +31,7 @@ func _ready() -> void:
 	preload("res://addons/structures/storage_catalog.gd").register(structures)
 	preload("res://addons/structures/door_catalog.gd").register(structures)
 	preload("res://addons/structures/window_catalog.gd").register(structures)
-	designs=Recipes.entries()
+	designs=review_designs()
 	var transaction: RefCounted=ClassDB.instantiate("NativePrefabPlacement")
 	for design in designs:
 		for side in 2:
@@ -49,6 +50,9 @@ func _ready() -> void:
 	_interface()
 	select_view(0,0)
 	ready_ok=true
+
+func review_designs() -> Array[Dictionary]:
+	return Recipes.entries()
 
 func placement_origin(design: Dictionary, side: int) -> Vector3i:
 	return design.base+Vector3i(side*PAIR_OFFSET,0,0)
@@ -92,7 +96,7 @@ func _interface() -> void:
 	for edge in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+edge,24)
 	canvas.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",12);margin.add_child(column)
-	column.add_child(_label("T E R R A F O R E S T   /   ARCHITECTURE REVIEW   /   R1",18,Color("8fd5bd")))
+	column.add_child(_label("T E R R A F O R E S T   /   ARCHITECTURE REVIEW   /   "+review_revision,18,Color("8fd5bd")))
 	var toolbar:=HBoxContainer.new();toolbar.add_theme_constant_override("separation",12);column.add_child(toolbar)
 	heading=_label("",28);heading.size_flags_horizontal=Control.SIZE_EXPAND_FILL;toolbar.add_child(heading)
 	for index in designs.size():
@@ -127,6 +131,7 @@ func select_view(design_index: int, view_index: int, from_tour: bool = false) ->
 	if removed: toggle_block()
 	current_design=design_index;current_view=view_index
 	var design: Dictionary=designs[current_design]
+	removal_button.text=design.get("remove_label","Remove ONE arch block")
 	match design.decision:
 		"rejected":candidate_label.text="REJECTED / ARCHIVED R1"
 		"approved_addition":candidate_label.text="APPROVED / ADDITION ONLY"
@@ -141,23 +146,25 @@ func select_view(design_index: int, view_index: int, from_tour: bool = false) ->
 	structures.set_model_focus(Vector3(design.base)+Vector3(PAIR_OFFSET*.5,3,0))
 
 func toggle_block() -> void:
-	if not removed and current_view!=(2 if current_design==0 else 1):select_view(current_design,2 if current_design==0 else 1)
 	var design: Dictionary=designs[current_design]
+	var removal_view: int=design.get("remove_view",2 if current_design==0 else 1)
+	if not removed and current_view!=removal_view:select_view(current_design,removal_view)
 	var local_cell: Vector3i=design.remove
 	var target: Vector3i=local_cell+design.base+Vector3i(PAIR_OFFSET,0,0)
 	var original: int=Recipes.cells_of(design.candidate)[local_cell]
 	if structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,original if removed else 0])):
 		removed=not removed
-		removal_button.text="Restore that arch block" if removed else "Remove ONE arch block"
+		removal_button.text="Restore that block" if removed else design.get("remove_label","Remove ONE arch block")
 
 func guided_tour() -> void:
 	tour_generation+=1
 	var token:=tour_generation
 	tour_button.text="Tour running / click any view to stop"
-	for stage in [[0,0],[0,2],[0,1],[1,0],[1,2],[1,1]]:
-		if token!=tour_generation:return
-		select_view(stage[0],stage[1],true)
-		await get_tree().create_timer(7.5).timeout
+	for design_index in designs.size():
+		for view_index in [0,2,1]:
+			if token!=tour_generation:return
+			select_view(design_index,view_index,true)
+			await get_tree().create_timer(7.5).timeout
 	if token==tour_generation:
 		tour_button.text="Replay guided tour"
 

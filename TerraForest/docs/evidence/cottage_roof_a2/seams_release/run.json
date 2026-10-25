@@ -1,0 +1,25 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\modular_release_check",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\thin_roof_release\\thin_roof\\engine.log",
+    "--script",
+    "res://tests/thin_roof.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 81104,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.35764559998642653,
+    "passed": true
+  },
+  "library_sha256": "95ae4e3aa7ed9bd08b27d1041c3a610490d05b8b3dc07bad0bf17cee085d8bb8",
+  "test_sha256": "c9fa79d706b197670d28a324f8813462a1b6d1103259e63f94d417a378b32181"
+}

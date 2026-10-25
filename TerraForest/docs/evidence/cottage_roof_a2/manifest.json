@@ -1,0 +1,269 @@
+{
+  "base_revision": "d432eaa2c4729fe0ec5b9d171dec36bfc31583a8",
+  "scope": "A0 versus A2 thin roof, pending explicit approval; no production house replacement",
+  "sources": {
+    "addons/structures/native/block_word.hpp": "78b306163a86198c3bf6ec97e764486ad1cbdafad8c47be5015604ae21801704",
+    "addons/structures/native/modular_shapes.hpp": "a4b647e71e5d4e2923b159846150ba535d75659f8e74c0190e5ab9c979204be7",
+    "addons/structures/shape_catalog.gd": "8d4aec3e37cec67d6970568a2b0532f5c143c95fc671b3ff57d4fcb3bbd8f1dc",
+    "reviews/modular_buildings/viewer.gd": "e7260a6e67b94394ffce18e2ac255b9c9f20edc8fd3c5b443b1622bce4c1d4b7",
+    "reviews/modular_buildings/roof_recipe.gd": "dec5c3375e0a24345130acc4fa5e5079de0c25da74170ec1374a6bb51c2f2903",
+    "reviews/modular_buildings/roof_viewer.gd": "3964d9dff72addbc464122b33791d72fc2ca4419d476b72a74e55eb439fa4e28",
+    "reviews/modular_buildings/baked/cottage_roof_a2.tres": "a7a7aaf835fd0ef5ee7706405bfd81d8feba459d94a5865afc69411bf3db6b82",
+    "tests/modular_blocks.gd": "92aac0026de9c59f4c2883fa17a8d0efb06f9a9147fe5fd08c116d5110e7b162",
+    "tests/modular_blocks_world.gd": "e7dd1b43648dbe72a37da4ef77a17ccb3db7f673c5fd2964c79bfd0eafa59d1d",
+    "tests/thin_roof.gd": "c9fa79d706b197670d28a324f8813462a1b6d1103259e63f94d417a378b32181",
+    "tests/cottage_roof_review.gd": "8bddadb3a0d719fe8d6ada7981b2a44234cb7ca08b3892f6883cca90e096d87d",
+    "tools/review_modular_buildings.gd": "53d89898bd09b263dfc48e571b2cc62603f6891ffcec61cd75044e397f8672b6",
+    "tools/review_modular_buildings.py": "bbaefc083c99073f26da2cc6eee2305312a62b258a520864a615a82bd23b2dbf"
+  },
+  "unchanged_production": {
+    "addons/structures/prefabs/brick_cottage.tres": "cebf08cc87372370eb0efb9c4d63b385fb132775e2a204473b518377f21815b6",
+    "addons/structures/furniture_catalog.gd": "bf2a4b0febcde8e53a86ae86e6aadb297490bb3980a6cd9c34782ee6fe0b7f9a",
+    "addons/structures/workshop_catalog.gd": "f8ee1a573bbaa8b6b6c23004da1facd63ff0aef1c54f305ef290081f5c2022c6",
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "demo/world.gd": "051461dbc414c35f26e6ca4fed149e74563246a1a518ce45ab98fe4abb49f1c5"
+  },
+  "native": {
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1ec409da6b02952935d72821abd81d45aa0240e009195b4f2e389dbca6ca5e6f",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "95ae4e3aa7ed9bd08b27d1041c3a610490d05b8b3dc07bad0bf17cee085d8bb8"
+  },
+  "pack_sha256": "c760b411bed98499f49a4f6a9d34d4646f5f45ebd5429dab292ef167ce8ed379",
+  "files": {
+    "build\\structures_build_template_debug.json": {
+      "bytes": 1696,
+      "sha256": "28be36d8052af7df0e680745bfb02cd4a70e85f7c9c4581dc8ddbf78fbd47833"
+    },
+    "build\\structures_build_template_release.json": {
+      "bytes": 1699,
+      "sha256": "06d8741fad7029c23f33ec41e02a28ba3e87aeb0a38760a3c4960bf626865d75"
+    },
+    "comparison\\console.log": {
+      "bytes": 1498,
+      "sha256": "4e04c69c934060a48b34657bab36fe698675b510b1d2c74363c5ff04dae30ff4"
+    },
+    "comparison\\engine.log": {
+      "bytes": 1471,
+      "sha256": "b955553352275c07565a6066ebd0e27b1ea862316cccaa3e2676c85acdb0d637"
+    },
+    "comparison\\result.json": {
+      "bytes": 140,
+      "sha256": "2401223276d4b704eb06beaac5401f1fbe4470ecbc60d8b86a8c21a654fed449"
+    },
+    "comparison\\roof.tfbs": {
+      "bytes": 6613,
+      "sha256": "f54fb063b2349fb0512e9c2a0c3bff952aef85f94b4a48cce4a5f1ee5e6eda40"
+    },
+    "comparison\\run.json": {
+      "bytes": 4756,
+      "sha256": "7ff6c3ec41c61df8eccf28ddc31e51641ab596339d36c28ae5a023738cf98c76"
+    },
+    "comparison_restore\\console.log": {
+      "bytes": 288,
+      "sha256": "21ae405318df5517598ac81b43c5f4263671f225e43ca8518c8c686ffb27a915"
+    },
+    "comparison_restore\\engine.log": {
+      "bytes": 282,
+      "sha256": "e7075286a29be025c226d8d4c488c1254ecc74ac6cb535139490aca49c28cf7d"
+    },
+    "comparison_restore\\run.json": {
+      "bytes": 5015,
+      "sha256": "6f1ff19ec020cc738b5e741732c9aab689bf9030dd424e1bad04d1cb4a0ad469"
+    },
+    "component_debug\\console.log": {
+      "bytes": 93263,
+      "sha256": "df30f9ff9fbef39f0fcdefb482cf655a63154df92dfac65cd96c1c4fd9e7b5c9"
+    },
+    "component_debug\\engine.log": {
+      "bytes": 91282,
+      "sha256": "a0ce9e9575ca4e0077058b1042bdc8fab1d3dda7350a89522842764767981ab7"
+    },
+    "component_debug\\run.json": {
+      "bytes": 4518,
+      "sha256": "de5feea142571d73ffaf5184906218728e0708626ad34ed0834e7df759c80a3e"
+    },
+    "component_release\\console.log": {
+      "bytes": 93522,
+      "sha256": "eaa78949cb97d6f67cd3fe43ff4f31d18e60f40a0b9e264e79d33cae8770d70d"
+    },
+    "component_release\\engine.log": {
+      "bytes": 91537,
+      "sha256": "80c199d45c2d98c9cc9676ab5d9042bf7e00897f6d89ec0b9f35c6a236bbca13"
+    },
+    "component_release\\run.json": {
+      "bytes": 900,
+      "sha256": "46864f555c0d106bb341e984a3d7fd73b8fad16e90310c99abbd77ae31a9a206"
+    },
+    "failed_fixture_parse\\console.log": {
+      "bytes": 727,
+      "sha256": "76d2a5ade6c6c7c36e92e89b7b44070ce9ef9d35cea35274e700f0632614ce7f"
+    },
+    "failed_fixture_parse\\engine.log": {
+      "bytes": 717,
+      "sha256": "b6b7dc25dd26c2f34ae00e74501396faa337971f3e163f9179ec8f80be82a63b"
+    },
+    "failed_fixture_parse\\run.json": {
+      "bytes": 5073,
+      "sha256": "6a6a8aef9e34460821caf530cef6e4104c3bfc11cf76767427ff9c99e9ee43f4"
+    },
+    "gameplay_pack\\blocks.tfbl": {
+      "bytes": 232,
+      "sha256": "f80fcc6a2db55788ada9576c3d16f0c48382de27edb753b6350b39eee3f28843"
+    },
+    "gameplay_pack\\console.log": {
+      "bytes": 8775,
+      "sha256": "011d0bbd277d8d046e637ee6bc47090489e4e793eea062e822438ddc47b7006c"
+    },
+    "gameplay_pack\\engine.log": {
+      "bytes": 8617,
+      "sha256": "06d58f2388b140ca11e4fdf29a26cf2c1ab5e84217e5ac1b8d6673a37e6d5737"
+    },
+    "gameplay_pack\\placed_records.json": {
+      "bytes": 201,
+      "sha256": "8380acb8c46625d1949fabb688aba6be7ca33b53042c93ddb6d882c42467ba7f"
+    },
+    "gameplay_pack\\result.json": {
+      "bytes": 36,
+      "sha256": "74efc199f74f5db3b409942f69d21ff98b6c42995b37237237ca25ea3c815a62"
+    },
+    "gameplay_pack\\run.json": {
+      "bytes": 3004,
+      "sha256": "27c0e0e6bf40a2e736e0f16a42ec30c7e3ce960bac9204199285e4852280027f"
+    },
+    "gameplay_source\\blocks.tfbl": {
+      "bytes": 232,
+      "sha256": "f80fcc6a2db55788ada9576c3d16f0c48382de27edb753b6350b39eee3f28843"
+    },
+    "gameplay_source\\console.log": {
+      "bytes": 8775,
+      "sha256": "011d0bbd277d8d046e637ee6bc47090489e4e793eea062e822438ddc47b7006c"
+    },
+    "gameplay_source\\engine.log": {
+      "bytes": 8617,
+      "sha256": "06d58f2388b140ca11e4fdf29a26cf2c1ab5e84217e5ac1b8d6673a37e6d5737"
+    },
+    "gameplay_source\\placed_records.json": {
+      "bytes": 201,
+      "sha256": "8380acb8c46625d1949fabb688aba6be7ca33b53042c93ddb6d882c42467ba7f"
+    },
+    "gameplay_source\\result.json": {
+      "bytes": 36,
+      "sha256": "74efc199f74f5db3b409942f69d21ff98b6c42995b37237237ca25ea3c815a62"
+    },
+    "gameplay_source\\run.json": {
+      "bytes": 4861,
+      "sha256": "68167b9627cadccebd0885c95421adbe8bb82fc4b297c06299ec6d1570c5bfd0"
+    },
+    "images\\edge_detail.png": {
+      "bytes": 1402443,
+      "sha256": "0964cc382bd05a2165b080af863007feab81857e318ce90c28b0dfe5cd007548"
+    },
+    "images\\exterior.png": {
+      "bytes": 559494,
+      "sha256": "6dc71b478093d698161784f243fa6b9e637ab8ca4e0a38941316d28db9f14621"
+    },
+    "images\\interior.png": {
+      "bytes": 2282519,
+      "sha256": "e042121c9a67d7353b5b87259f9e9049dfd2331eb4f47f65de45e91f9861e7ea"
+    },
+    "images\\one_block_removed.png": {
+      "bytes": 1396505,
+      "sha256": "234831595b6e9328ce10d8cf2d1aefd640309bb67475b7a3f13a770e2e5f15c5"
+    },
+    "legacy_mesh\\console.log": {
+      "bytes": 5229,
+      "sha256": "a0ebe2789c9b65248e5622f9f903bba4eecc59ad1d8d231aaa3473245208dd8a"
+    },
+    "legacy_mesh\\engine.log": {
+      "bytes": 5195,
+      "sha256": "c68278c97371e5127a1190639f32ec6d73e939c085c88ccc9ebfea3a0fdd80a7"
+    },
+    "legacy_mesh\\run.json": {
+      "bytes": 4893,
+      "sha256": "8c3fd20001f92ff7a7aa9e06283acbbeffd7107eae9e32b43f14051e3f0c614e"
+    },
+    "legacy_review\\console.log": {
+      "bytes": 2956,
+      "sha256": "babebcfad39f1464d8372d1bd2ca3a80b14e40511032266d7b0bb5a89d2b6675"
+    },
+    "legacy_review\\engine.log": {
+      "bytes": 2906,
+      "sha256": "10d62ae63def8d62794e1ac4f161729d2f660fb5a56301b3ea1f89cea47604b4"
+    },
+    "legacy_review\\run.json": {
+      "bytes": 5013,
+      "sha256": "cb707bebdc7bd84a23b68c6344c3949215723ab2138f64f91ca8de563dec4871"
+    },
+    "legacy_solids\\console.log": {
+      "bytes": 5481,
+      "sha256": "d3d9a137970738ad4aafcc40c9b9299313bb2f6212ca76c69213c1329b726ef5"
+    },
+    "legacy_solids\\engine.log": {
+      "bytes": 5357,
+      "sha256": "757cb31cf17f855653b3049be67384eab107fcf3de15684010d01b1b448d8b83"
+    },
+    "legacy_solids\\run.json": {
+      "bytes": 4902,
+      "sha256": "285c7bd6d5cbbc5bc56e302eda6c9d09084631248cf7dcf9831a5f43fc10f491"
+    },
+    "pack\\export.log": {
+      "bytes": 115488,
+      "sha256": "d14b72428cb9f7f9473889f4ea12e51b1a8c38fb6ccdfccf8441159e4026a177"
+    },
+    "pack\\pack_smoke.log": {
+      "bytes": 74,
+      "sha256": "57682e39b6721e14bd122bd452061771c29950a16016bf2bbfdef34387e623e3"
+    },
+    "pack_restore\\console.log": {
+      "bytes": 716,
+      "sha256": "a5f48ec1d241aef2d5981d18e4ae12f8b29fe992d4cd6a7c4c7fa18d32138758"
+    },
+    "pack_restore\\engine.log": {
+      "bytes": 701,
+      "sha256": "e29b032ddab96aaea3eb6367da556e51c0836defbc5b4746bf51e5d15c2fc5d5"
+    },
+    "pack_restore\\run.json": {
+      "bytes": 2993,
+      "sha256": "67a65dc39c0a5a42e0217d7b8509cbf2578c04f89f0e7c3bb0270337ef1106bc"
+    },
+    "README.md": {
+      "bytes": 6880,
+      "sha256": "cb6056842cd169cef9daa09a00c67e7e4a473c7cdfea35da809d8107d2651da3"
+    },
+    "seams_debug\\console.log": {
+      "bytes": 1312,
+      "sha256": "8d95b694ad1866f8d105ba34410a08d5b0913a15bfb3565e927459ba3af44520"
+    },
+    "seams_debug\\engine.log": {
+      "bytes": 1290,
+      "sha256": "a954222fa9f8bc371addbb7ebca9f6a1aa218fc477169af1955d1ccc06b6b6cb"
+    },
+    "seams_debug\\run.json": {
+      "bytes": 4667,
+      "sha256": "37dee2ac84679c088629d93b6d750db357e4f4832ef54455b9c46af536418e0a"
+    },
+    "seams_release\\console.log": {
+      "bytes": 1566,
+      "sha256": "21d61a540416b417881fb6cc239c4d361e60b8d6924e9e1bee9addd111af4917"
+    },
+    "seams_release\\engine.log": {
+      "bytes": 1540,
+      "sha256": "621fcf73a5b4dd320f8c84209464e69a72303c0db6b1f600a4ca60407be199df"
+    },
+    "seams_release\\run.json": {
+      "bytes": 891,
+      "sha256": "c7ff44267d680e7c7522d7094bacd21e69cb2bc65e78102f2f6d7d6beeb94b3f"
+    },
+    "structures\\console.log": {
+      "bytes": 18986,
+      "sha256": "ad14e0a27a263d1ea43d3bf58a8d78b516033d3a09aa72d448cc442bbfb6b8b5"
+    },
+    "structures\\engine.log": {
+      "bytes": 18685,
+      "sha256": "8e2ae19fd435189ca2c8226c6d39d4251269c28b4069bd529ca56cfe811cffea"
+    },
+    "structures\\run.json": {
+      "bytes": 4876,
+      "sha256": "6588e4c32b84d6f245a295ca6ccaac08d47ab321707bd80a9b06491612955acf"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Cannot infer the type of "cell" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/thin_roof.gd:32)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "removed" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/thin_roof.gd:64)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "neighbor" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://tests/thin_roof.gd:65)
+ERROR: Failed to load script "res://tests/thin_roof.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

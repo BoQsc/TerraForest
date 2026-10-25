@@ -1,6 +1,6 @@
 extends RefCounted
 
-const NAMES: Array[String] = ["Cube", "Slab", "Stairs", "Slope", "Post", "Sphere", "Round column", "Top plate", "Thin panel", "Frame corner", "Quarter arch", "Roof ridge", "Outer roof corner", "Inner roof corner"]
+const NAMES: Array[String] = ["Cube", "Slab", "Stairs", "Slope", "Post", "Sphere", "Round column", "Top plate", "Thin panel", "Frame corner", "Quarter arch", "Roof ridge", "Outer roof corner", "Inner roof corner", "Thin roof slope", "Roof seam infill", "Thin roof ridge", "Ridge seam infill"]
 const MOUNTS: Array[String] = ["Upright", "Tip forward", "Upside down", "Tip backward", "Roll left", "Roll right"]
 
 static func rotation_count(shape_id: int) -> int:

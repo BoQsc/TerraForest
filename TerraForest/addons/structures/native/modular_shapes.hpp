@@ -24,8 +24,8 @@ inline Basis block_basis(int rotation) {
     return Basis(orient_block_vector(Vector3(1,0,0),rotation),orient_block_vector(Vector3(0,1,0),rotation),orient_block_vector(Vector3(0,0,1),rotation));
 }
 inline const ModularGeometry &modular_geometry(int shape) {
-    static const std::array<ModularGeometry,6> catalogue=[] {
-        std::array<ModularGeometry,6> result;
+    static const std::array<ModularGeometry,BLOCK_SHAPE_COUNT-8> catalogue=[] {
+        std::array<ModularGeometry,BLOCK_SHAPE_COUNT-8> result;
         auto triangle=[](ModularGeometry &mesh,Vector3 first,Vector3 second,Vector3 third,Vector3 smooth_first=Vector3(),Vector3 smooth_second=Vector3(),Vector3 smooth_third=Vector3()) {
             Vector3 normal=(second-first).cross(third-first).normalized();
             int base=int(mesh.vertices.size()),axis=normal.abs().max_axis_index();
@@ -104,6 +104,22 @@ inline const ModularGeometry &modular_geometry(int shape) {
             Vector3 first=inner[face[0]],second=inner[face[1]],third=inner[face[2]];
             triangle(result[5],first,third,second);
         }
+        prism(result[6],{Vector3(0,0,0),Vector3(.125,0,0),Vector3(1,.875,0),Vector3(1,1,0)});
+        prism(result[7],{Vector3(0,.875,0),Vector3(.125,1,0),Vector3(0,1,0)});
+        auto &roof_ridge=result[8];
+        prism(roof_ridge,{Vector3(0,0,0),Vector3(.125,0,0),Vector3(.5,.375,0),Vector3(.5,.5,0)},false);
+        prism(roof_ridge,{Vector3(.5,.375,0),Vector3(.875,0,0),Vector3(1,0,0),Vector3(.5,.5,0)},false);
+        const std::array<Vector3,6> ridge_outline{Vector3(0,0,0),Vector3(.125,0,0),Vector3(.5,.375,0),Vector3(.875,0,0),Vector3(1,0,0),Vector3(.5,.5,0)};
+        for(size_t index=0;index<ridge_outline.size();++index) {
+            Vector3 first=ridge_outline[index],second=ridge_outline[(index+1)%ridge_outline.size()],depth(0,0,1);
+            triangle(roof_ridge,first,second,second+depth);triangle(roof_ridge,first,second+depth,first+depth);
+        }
+        for(auto face:std::array<std::array<int,3>,4>{{{0,1,2},{0,2,5},{2,3,4},{2,4,5}}}) {
+            triangle(roof_ridge,ridge_outline[face[0]],ridge_outline[face[2]],ridge_outline[face[1]]);
+            triangle(roof_ridge,ridge_outline[face[0]]+Vector3(0,0,1),ridge_outline[face[1]]+Vector3(0,0,1),ridge_outline[face[2]]+Vector3(0,0,1));
+        }
+        prism(result[9],{Vector3(0,.875,0),Vector3(.125,1,0),Vector3(0,1,0)});
+        prism(result[9],{Vector3(.875,1,0),Vector3(1,.875,0),Vector3(1,1,0)});
         return result;
     }();
     return catalogue[shape-9];

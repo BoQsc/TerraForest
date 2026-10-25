@@ -1,6 +1,6 @@
 #pragma once
 namespace terraforest {
-constexpr int BLOCK_SHAPE_COUNT=14;
+constexpr int BLOCK_SHAPE_COUNT=18;
 inline bool extended_block(int word) {return (word&32768)!=0;}
 inline bool valid_block_word(int word) {
     if(word&32768)return word>0 && word<=65535 && !(word&24704) && ((word>>8)&31)<BLOCK_SHAPE_COUNT-8 && (word&31)<24;

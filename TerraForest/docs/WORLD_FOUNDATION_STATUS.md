@@ -1,3 +1,34 @@
+## A0 thin-roof revision A2 ready for review, not adopted — 2026-10-25
+
+The user requested fixing A0's diagonal block-looking roof and comparing it with
+the unchanged original before replacement. A2 is a separate baked review prefab,
+not a rewrite of the production cottage. Launch the signed, matching-camera
+comparison with `python tools/review_modular_buildings.py --roof`: A0 original on
+the left, A2 pending approval on the right. Exterior, underside/interior and edge
+detail views include an individual roof-block removal/restoration demonstration.
+
+Four new native shapes (IDs 15–18) form a continuous 45-degree shell: thin slope,
+slope seam infill, thin ridge and ridge seam infill. The 1/8-metre vertical skin
+is split exactly at grid boundaries; no mesh extends out of its owning cell.
+Each part retains independent placement, damage, removal and binary save identity.
+Cached native templates and the existing worker/collision/query paths handle the
+geometry; no per-block nodes or runtime scripted roof meshes are introduced.
+Existing shape IDs and geometry, including approved B1, remain unchanged.
+
+The cottage keeps its original footprint, walls below the eaves, stairs, rooms
+and exact attached objects. The upper gable backing is rebuilt as continuous
+timber, not a staircase of alternating exposed wood wedges and brick. Tiny seam
+cells complete the overhangs; the original solid walls are not replaced with
+those slivers. There is no A1 porch or unrelated house redesign.
+
+Engineering and inspected comparison evidence: `evidence/cottage_roof_a2/README.md`.
+**Still pending:** explicit user approval of A2 before replacement or generation
+use. Generated terrain fit, populated-world routes and performance remain separate
+acceptance requirements. This solves the reviewed 45-degree shell assembly, not
+arbitrary/shallow roof pitches, automatic structural collapse or whole-city quality.
+The earlier pending roof-geometry item below is revisited by this implementation;
+its visual approval and actual-world adoption gates are not silently closed.
+
 ## Building review decision: Shop B addition only; cottage rejected — 2026-10-25
 
 The user's review supersedes the pending decisions below: **Village Shop B R1
@@ -20,13 +51,11 @@ correct rejected/approved-addition labels. Review scenes do not read/write playe
 saves and stay excluded from exports. Native cells own the buildings, signs and
 trusted plate paths; native grounded movement handles the review character.
 
-**Open roof work:** implement compatible thin native roof/transition pieces for
-continuous-looking planes and clean thin edges, without exposed diagonal block
-steps or monolithic architecture. No new roof geometry or replacement cottage is
-claimed here. This is deferred until a coherent multi-cell roof assembly is
-implemented and tested, rather than another cosmetic porch/verge adjustment.
-Return with exterior/underside/join/removal checks, native collision and save
-evidence, then a separately signed house revision for explicit user approval.
+**Roof work updated:** A2 above implements native 45-degree thin roof/transition
+pieces with a separate signed house comparison. This supersedes the geometry
+deferral, not the user's approval gate. Exterior/underside/join/removal, collision
+and save evidence accompanies A2; no production cottage replacement is authorized
+until the user approves that revision. Shallow-pitch families remain unfinished.
 
 Verification and retained failures are recorded in
 `evidence/approved_shop_review/README.md`. The first walk-scene test exposed an

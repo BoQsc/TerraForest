@@ -10,7 +10,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot')
     parser.add_argument('--no-tour', action='store_true')
-    parser.add_argument('--comparison', action='store_true', help='Use the earlier split-screen comparison instead of walking')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--comparison', action='store_true', help='Use the earlier split-screen comparison instead of walking')
+    mode.add_argument('--roof', action='store_true', help='Compare the untouched A0 cottage with the new A2 thin roof')
     parser.add_argument('--dry-run', action='store_true')
     options = parser.parse_args()
     config, _ = parse_args(['--godot', options.godot] if options.godot else [])
@@ -20,9 +22,13 @@ def main():
                '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
                '--script', 'res://tools/review_modular_buildings.gd', '--', '--temporary',
                *(['--comparison'] if options.comparison else []),
+               *(['--roof'] if options.roof else []),
                *(['--guided-tour'] if options.comparison and not options.no_tour else [])]
     details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
                    notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
+    if options.roof:
+        details.update(label='A0 original vs A2 thin roof / awaiting approval',
+                       notes='Roof-only proposal next to unchanged A0. A2 is not approved or installed in generation or the production prefab catalogue. No player saves are read or written.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0

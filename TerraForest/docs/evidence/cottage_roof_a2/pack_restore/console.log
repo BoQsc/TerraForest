@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh-process native save restore
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process preserves modular cell identity
+PASS fresh process recreates exact binary bytes
+MODULAR_BLOCKS_RESTORE failures=0

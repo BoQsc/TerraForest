@@ -1,4 +1,24 @@
-# Building review R1 — Shop B addition approved
+# Building reviews — A2 roof pending, Shop B approved
+
+## A0 roof revision A2 — awaiting approval
+
+Run `python tools/review_modular_buildings.py --roof` for the dedicated comparison:
+unchanged A0 on the left, new A2 on the right, with matching cameras and signs.
+Exterior, Interior and Detail show the continuous thin roof and underside.
+`Remove ONE roof block` demonstrates a real local hole; `Restore that block`
+restores it. The original remains untouched in either case.
+
+A2 retains the original footprint, rooms, stairs, doors, windows, furniture and
+storage. Only the roof assembly changes: thin native slope/ridge cells with
+separate grid-contained seam infill, and continuous timber gable backing above
+the eaves instead of the old brick/wood staircase edge. No A1 porch is reused.
+`roof_recipe.gd` is offline authoring for `baked/cottage_roof_a2.tres`; runtime
+loads the baked native resource. A2 is not a production prefab or generation
+default and does not alter existing saves. Approval of B1 does not approve A2.
+
+Evidence: `../../docs/evidence/cottage_roof_a2/README.md`.
+
+## Accepted designs and historical comparison
 
 Run `python tools/review_modular_buildings.py` from the TerraForest directory.
 It opens one signed, walkable Godot scene, starting at the shops. A0 is the original
@@ -42,7 +62,8 @@ The historical review assets and `reviews/*` remain excluded from game exports.
 B1 is the only approved addition; A1 must not enter the production catalogue.
 The old cottage roof is not visually accepted either: the next roof proposal must
 show continuous-looking slopes and clean thin edges, not diagonal block steps.
-Native thin roof/transition assemblies remain unfinished; no roof fix is claimed.
+The separate A2 review now supplies native thin 45-degree roof assemblies; it is
+not yet approved. Arbitrary/shallow pitches remain outside this revision.
 Approval of B1 does not authorize replacement of an original or automatic adoption
 by generation. Terrain fitting and integrated-world checks precede that step.
 
