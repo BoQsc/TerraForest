@@ -58,7 +58,7 @@ func run() -> void:
 	check(Plans.attach_assets(cached),"cached plans reconstruct production prefabs")
 	verify_lots(cached.plan.lots,approved,4)
 	verify_lots(cached.market.lots,approved,3)
-	check(Plans.VERSION==4 and preload("res://addons/world_runtime/custom_world_plan.gd").VERSION==4,"both derived placement caches invalidate pre-approval recipes")
+	check(Plans.VERSION>=4 and preload("res://addons/world_runtime/custom_world_plan.gd").VERSION>=4,"both derived placement caches invalidate pre-approval recipes")
 	var game: Node3D=load("res://demo/world.tscn").instantiate()
 	game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
 	var deadline:=Time.get_ticks_msec()+60000

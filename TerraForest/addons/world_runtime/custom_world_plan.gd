@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=4
+const VERSION:=5
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")

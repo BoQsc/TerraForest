@@ -1,0 +1,36 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_shop_world_run\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/approved_shop_world.gd",
+    "--",
+    "--temporary",
+    "--world-slot=recipe_generated_f5dfc9c5122aaf3a",
+    "--gameplay",
+    "--derived-cache=user://approved_shop_walk_20261025"
+  ],
+  "slot": "recipe_generated_f5dfc9c5122aaf3a",
+  "test_sha256": "8fd690ebfb89fba069bdd7c76e533823be8364f22190b1d43fa680f8ccbb27aa",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 33320,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL reconstruct deterministic approved-shop placement plan"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 10.129747100058012,
+    "passed": false
+  }
+}

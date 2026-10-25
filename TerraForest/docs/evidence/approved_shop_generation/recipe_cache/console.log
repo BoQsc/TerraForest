@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS production task parses
+PASS world browser parses
+PASS bounded binary recipe round trip
+PASS recipe durable storage restores exactly
+PASS reject invalid biome
+PASS reject invalid settlements
+PASS reject invalid districts
+PASS reject invalid network
+PASS reject invalid trails
+PASS invalid recipe cannot mutate live state
+PASS old worlds retain empty legacy recipe
+PASS three native woodland profiles change actual coverage
+PASS biome retains stable tree identities across profiles
+RECIPE_CASE { "biome": 0, "settlements": 1, "districts": 1, "network": 0, "trails": 0 } result=ok ms=647.626
+PASS custom plan fits { "biome": 0, "settlements": 1, "districts": 1, "network": 0, "trails": 0 }
+PASS all requested districts generated
+PASS binary plan cache reconstructs same prefab layout
+PASS every district belongs to connected native road network
+PASS native worker keeps main loop running
+PASS district retains native flat sidewalk plate plan
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=6.766 recipe_ms=19.791 fitting_ms=19.281
+RECIPE_CASE { "biome": 0, "settlements": 2, "districts": 1, "network": 0, "trails": 1 } result=ok ms=628.26
+PASS custom plan fits { "biome": 0, "settlements": 2, "districts": 1, "network": 0, "trails": 1 }
+PASS all requested districts generated
+PASS binary plan cache reconstructs same prefab layout
+PASS every district belongs to connected native road network
+PASS native worker keeps main loop running
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=6.554 recipe_ms=18.038 fitting_ms=19.904
+RECIPE_CASE { "biome": 1, "settlements": 2, "districts": 2, "network": 1, "trails": 1 } result=ok ms=1609.779
+PASS custom plan fits { "biome": 1, "settlements": 2, "districts": 2, "network": 1, "trails": 1 }
+PASS all requested districts generated
+PASS binary plan cache reconstructs same prefab layout
+PASS every district belongs to connected native road network
+PASS native worker keeps main loop running
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=7.305 recipe_ms=18.35 fitting_ms=19.476
+RECIPE_CASE { "biome": 2, "settlements": 3, "districts": 2, "network": 1, "trails": 2 } result=ok ms=2101.597
+PASS custom plan fits { "biome": 2, "settlements": 3, "districts": 2, "network": 1, "trails": 2 }
+PASS all requested districts generated
+PASS binary plan cache reconstructs same prefab layout
+PASS every district belongs to connected native road network
+PASS native worker keeps main loop running
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+PASS district retains native flat sidewalk plate plan
+WORLD_RECIPE failures=0

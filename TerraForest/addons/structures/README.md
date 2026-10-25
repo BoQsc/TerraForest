@@ -81,6 +81,12 @@ existing saved structures are not migrated. Validation and scope:
 `../../docs/evidence/modular_blocks/README.md` and
 `../../docs/evidence/cottage_roof_a2/README.md`.
 
+The approved B2 roof is the new village-shop default at
+`prefabs/village_shop_thin_roof_b2.tres`; `legacy_village_shop()` preserves B0.
+Generated markets retain that gabled shop and add the approved B1 hipped shop
+in their second shop lot. Placement-plan caches are version 5; old saves are not
+regraded or rebuilt. See `../../docs/evidence/approved_shop_generation/README.md`.
+
 `NativeBlockWorld` is a Node3D with sparse 16×16×16 cell chunks. Each cell is a 16-bit word; a resident chunk's cell payload is 8 KiB. A cell is one local metre. Translation/rotation can be applied to the world node; supply focus in that node's local coordinates. Nonuniform scaling is not a supported physics configuration. There is no node per block.
 
 `set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Legacy nonzero words encode `shape | (rotation << 3) | (material << 5)`; upper plates extend this as described below, and modular shapes use the versioned encoding above:

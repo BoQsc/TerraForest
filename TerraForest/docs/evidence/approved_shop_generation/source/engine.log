@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS production B2 and exact user-reviewed reference load
+PASS all approved B2 records and attached objects copied exactly
+PASS specific 1028-block B2 revision is approved for production
+PASS existing generation lookup name remains stable
+PASS legacy B0 remains distinct with unchanged attached objects
+PASS unchanged B0 foundation samples rotation 0
+PASS unchanged B0 foundation samples rotation 1
+PASS unchanged B0 foundation samples rotation 2
+PASS unchanged B0 foundation samples rotation 3
+PASS mutating one B2 resource cannot corrupt future shops
+PASS market retains gabled B2 and adds exact hipped B1 in the other shop lot
+PASS cached market plans reconstruct both approved shops
+PASS both derived caches invalidate pre-shop-approval plans
+PASS native compound structures store prepares
+PASS actual native compound placement Market lot 1
+PASS actual native compound placement Market lot 2
+PASS actual native compound placement Market lot 3
+PASS actual native compound placement Market lot 4
+PASS actual native compound placement Market lot 5
+PASS actual native compound placement Market lot 6
+PASS actual native compound placement Market lot 7
+PASS actual native compound placement Market lot 8
+PASS approved B2 roof remains locally destructible
+PASS both approved shops and attachments survive exact compound restore
+PASS legacy saved shop block store still loads
+PASS new default never rewrites restored legacy shop cells
+APPROVED_SHOP_GENERATION checks=26 failures=0

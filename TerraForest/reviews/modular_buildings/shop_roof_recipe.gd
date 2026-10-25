@@ -4,7 +4,7 @@ const Recipes = preload("res://reviews/modular_buildings/recipes.gd")
 const PATH := "res://reviews/modular_buildings/baked/shop_roof_b2.tres"
 
 static func build(blocks: Node3D) -> Resource:
-	var source: Resource=Recipes.Workshop.village_shop()
+	var source: Resource=Recipes.Workshop.legacy_village_shop()
 	var cells:=Recipes.cells_of(source)
 	for cell: Vector3i in cells.keys():
 		if cell.y>=6:cells.erase(cell)
@@ -25,9 +25,9 @@ static func build(blocks: Node3D) -> Resource:
 	return result
 
 static func entry() -> Dictionary:
-	return {"title":"SHOP ROOF B2", "decision":"pending", "original":Recipes.Workshop.village_shop(),
+	return {"title":"SHOP ROOF B2", "decision":"approved_default", "approval_label":"APPROVED / SHOP DEFAULT", "original":Recipes.Workshop.legacy_village_shop(),
 		"candidate":load(PATH), "base":Vector3i.ZERO,
-		"details":"B0 original left / B2 roof-only trial right / A2 thin roof system / shop layout unchanged / B1 untouched",
+		"details":"B0 original left / approved B2 roof right / A2 thin roof system / shop layout unchanged / B1 retained",
 		"eye":Vector3(22,16,30), "aim":Vector3(.5,6,.5),
 		"inside":Vector3(.5,3,6), "inside_aim":Vector3(-2,8,-2),
 		"feature_eye":Vector3(4,11,19), "feature_aim":Vector3(-2.5,10,8.5),

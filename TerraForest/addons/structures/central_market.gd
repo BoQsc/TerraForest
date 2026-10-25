@@ -6,8 +6,9 @@ static func recipe(center:Vector3)->Array:
  var cottage=preload("res://addons/structures/furniture_catalog.gd").enclosed_cottage()
  var workshop=preload("res://addons/structures/workshop_catalog.gd").workshop()
  var shop=preload("res://addons/structures/workshop_catalog.gd").village_shop()
+ var hipped_shop=preload("res://addons/structures/workshop_catalog.gd").hipped_shop()
  var cellar=preload("res://addons/structures/cellar_catalog.gd").cottage()
- var assets:Array=[cellar,shop,workshop,cottage,cottage,workshop,shop,cottage]
+ var assets:Array=[cellar,shop,workshop,cottage,cottage,workshop,hipped_shop,cottage]
  var result:Array=[]
  for street in [-24,24]:
   for side in [-1,1]:

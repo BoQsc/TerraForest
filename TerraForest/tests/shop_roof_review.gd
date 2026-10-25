@@ -34,7 +34,7 @@ func run() -> void:
 			retained=retained and cell.y==5 and absi(cell.x)==6 and absi(cell.z)==9 and blocks.decode_block(candidate[cell]).shape==16
 	check(retained,"walls below eaves, floor, partitions and steps unchanged; only thin overhang seam cells added")
 	check(design.candidate.get_model_attachments()==design.original.get_model_attachments(),"doors, windows, counters, shelves and chests remain exact originals")
-	check(design.candidate.get_meta("review_only",false) and design.candidate.get_meta("review_revision")==2 and viewer.candidate_label.text=="PROPOSAL / NOT APPROVED","B2 explicitly remains unapproved and review-only")
+	check(design.candidate.get_meta("review_only",false) and design.candidate.get_meta("review_revision")==2 and viewer.candidate_label.text=="APPROVED / SHOP DEFAULT","historical B2 review resource shows its explicit default approval")
 	check(Roof.build(blocks).get_records()==design.candidate.get_records(),"baked B2 matches reproducible offline recipe")
 	var approved_shop: Resource=Recipes.Workshop.hipped_shop()
 	var reviewed_shop: Resource=load("res://reviews/modular_buildings/baked/shop_b.tres")
@@ -62,7 +62,7 @@ func run() -> void:
 	press("Open / close doors")
 	for frame in 8:await physics_frame
 	await walk_designs()
-	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"cells":design.candidate.get_cell_count(),"scope":"B2 roof-only proposal; B0 and B1 unchanged; no production adoption or save migration"},"  "))
+	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"cells":design.candidate.get_cell_count(),"scope":"approved B2 roof comparison; historical B0 and B1 unchanged; no save migration"},"  "))
 	viewer.free();await process_frame
 	print("SHOP_ROOF_REVIEW checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

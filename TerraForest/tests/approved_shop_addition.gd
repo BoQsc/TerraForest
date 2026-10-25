@@ -22,7 +22,7 @@ func run() -> void:
 	if approved==null or reviewed==null:quit(1);return
 	check(approved.get_records()==reviewed.get_records() and approved.get_model_attachments()==reviewed.get_model_attachments(),"approved B1 geometry and attachments copied exactly, not redesigned")
 	check(approved.get_meta("approved_as_addition",false) and approved.get_meta("approved_revision","")=="B1 R1" and not approved.get_meta("review_only",false),"production prefab records addition-only approval")
-	var original: Resource=workshop.village_shop()
+	var original: Resource=workshop.legacy_village_shop()
 	check(original.resource_name=="Village general store" and original.get_records()!=approved.get_records(),"original shop remains a distinct unchanged recipe")
 	check(original.get_model_attachments()==approved.get_model_attachments(),"approved shop retains original doors, windows, furniture and storage")
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)

@@ -1,0 +1,163 @@
+{
+  "base_revision": "adfc8379b2095266a30cc0ffda483822d954cc17",
+  "scope": "Exact approved B2 default and B1 addition to generated markets, existing saves untouched; representative integrated qualification, not all-world acceptance",
+  "runs": {
+    "source": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 71784,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.6536520000081509,
+      "passed": true
+    },
+    "terrain_fit": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 57440,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 1.2052580999443308,
+      "passed": true
+    },
+    "recipe_cache": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 25276,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 5.92483099992387,
+      "passed": true
+    },
+    "world_generation": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 44620,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 86.79645189992152,
+      "passed": true
+    },
+    "restore": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 68892,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.6558663999894634,
+      "passed": true
+    },
+    "b2_review": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 28216,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 11.218684499966912,
+      "passed": true
+    },
+    "historical_comparison": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 77744,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 21.504537400091067,
+      "passed": true
+    },
+    "cottage_regression": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 74872,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 7.873271899996325,
+      "passed": true
+    },
+    "b1_palette": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 74636,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 7.597258300054818,
+      "passed": true
+    },
+    "populated_walk": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 82452,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 37.95793570007663,
+      "passed": true
+    },
+    "pack": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 70916,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.6516471999930218,
+      "passed": true
+    },
+    "failed_load_fixture": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 33320,
+      "exit_code": 1,
+      "diagnostics": [
+        "FAIL reconstruct deterministic approved-shop placement plan"
+      ],
+      "required_text_found": false,
+      "elapsed_seconds": 10.129747100058012,
+      "passed": false
+    },
+    "superseded_reduced_systems": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 14808,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 36.335012599942274,
+      "passed": true
+    }
+  },
+  "files": {
+    "addons/structures/workshop_catalog.gd": "24f7e58d89573cad2cda1c037cee1a33d0a54fcd34167546492dfbe86d48face",
+    "addons/structures/central_market.gd": "2e6345ae9608d160de6c03ea27d512cc1afb64c7d17e22229debd20fad4673e9",
+    "addons/structures/prefabs/village_shop_thin_roof_b2.tres": "69dc99b3084e29709d42f3a603e75e04310ab725bfc9e7eda6e3a096f4f8dc06",
+    "addons/structures/prefabs/village_shop_hipped_r1.tres": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "reviews/modular_buildings/baked/shop_roof_b2.tres": "6b04c553c24abc22c31e989e076137c349a7b2cf7b58b43716f1d1b98b1022a4",
+    "addons/world_runtime/world_generation_plan.gd": "38dc7d331425f0c261a716d6e1a26c38b765c89ac1bf3c4f072a5478e2664ae1",
+    "addons/world_runtime/custom_world_plan.gd": "4f194b79c2f1d3bdd176b2de1cd550e50a219e1699ab4a9538b385322bdb9c54",
+    "tests/approved_shop_generation.gd": "278a831fa71b83b3af1c84c2b2516955bd260e6d259d0416583e59fa3ef82021",
+    "tests/approved_shop_world.gd": "1f894163ce8300b5c599629c191ff6df57c3a1268d5052bd6c31fb66cf1d334b",
+    "dist/TerraForest.pck": "d9ab0739d1e651c08672cb5ce146defa304b94d495ae626f9cd9a8a4bfe8b36a"
+  }
+}

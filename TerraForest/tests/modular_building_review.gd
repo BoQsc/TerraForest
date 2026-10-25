@@ -43,7 +43,7 @@ func run() -> void:
 		viewer.free();await process_frame
 		print("MODULAR_BUILDING_RESTORE checks=",checks," failures=",failures)
 		quit(1 if failures else 0);return
-	var originals: Array[Resource]=[Recipes.Furniture.legacy_enclosed_cottage(),Recipes.Workshop.village_shop()]
+	var originals: Array[Resource]=[Recipes.Furniture.legacy_enclosed_cottage(),Recipes.Workshop.legacy_village_shop()]
 	press("VILLAGE SHOP B");press("Interior")
 	check(viewer.current_design==1 and viewer.current_view==1,"visible shop/interior buttons select the correct comparison")
 	check(viewer.candidate_label.text=="APPROVED / ADDITION ONLY","archived shop comparison records addition-only approval")

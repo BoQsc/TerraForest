@@ -1,0 +1,138 @@
+{
+  "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+  "failures": 0,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "routes": [
+    {
+      "frames": 502,
+      "ground_regions": 35,
+      "origin": "(1005, 36, 1075)",
+      "p95_ms": 17.363,
+      "quality": {
+        "grade": 36.0,
+        "issues": [],
+        "max_cut": 1.00199890136719,
+        "max_fill": 0.919044494628906,
+        "relief": 1.92104339599609,
+        "site": "Market lot 2",
+        "status": "pass"
+      },
+      "revision": "B2 R2",
+      "rotation": 0,
+      "survey": {
+        "grade": 36,
+        "max_height": 37.0019989013672,
+        "min_height": 35.0809555053711,
+        "ok": true
+      },
+      "worst_ms": 19.71
+    },
+    {
+      "frames": 461,
+      "ground_regions": 42,
+      "origin": "(970, 34, 1156)",
+      "p95_ms": 17.224,
+      "quality": {
+        "grade": 34.0,
+        "issues": [],
+        "max_cut": 0.402671813964844,
+        "max_fill": 0.0,
+        "relief": 0.322669982910156,
+        "site": "Market lot 7",
+        "status": "pass"
+      },
+      "revision": "B1 R1",
+      "rotation": 2,
+      "survey": {
+        "grade": 34,
+        "max_height": 34.4026718139648,
+        "min_height": 34.0800018310547,
+        "ok": true
+      },
+      "worst_ms": 19.934
+    }
+  ],
+  "scope": "Fresh generated-save load, exact approved cells and physical street/shop routes with normal resident systems; wall-clock frames at capped 1920x1080 exclude loading and screenshots, not an endurance or headroom guarantee",
+  "trace": [
+    {
+      "position": "(1005.5, 36.97367, 1084.382)",
+      "target": "(1005.5, 37.0, 1084.3)",
+      "ticks": 94
+    },
+    {
+      "position": "(1005.5, 37.00812, 1080.624)",
+      "target": "(1005.5, 37.0, 1080.5)",
+      "ticks": 41
+    },
+    {
+      "position": "(1005.5, 37.00812, 1075.582)",
+      "target": "(1005.5, 37.0, 1075.5)",
+      "ticks": 55
+    },
+    {
+      "position": "(1005.5, 37.00812, 1070.631)",
+      "target": "(1005.5, 37.0, 1070.5)",
+      "ticks": 54
+    },
+    {
+      "position": "(1005.5, 37.00812, 1075.398)",
+      "target": "(1005.5, 37.0, 1075.5)",
+      "ticks": 52
+    },
+    {
+      "position": "(1005.5, 37.00812, 1080.44)",
+      "target": "(1005.5, 37.0, 1080.5)",
+      "ticks": 55
+    },
+    {
+      "position": "(1005.5, 37.00812, 1084.199)",
+      "target": "(1005.5, 37.0, 1084.3)",
+      "ticks": 41
+    },
+    {
+      "position": "(1005.5, 35.05542, 1092.853)",
+      "target": "(1005.5, 35.0459, 1093.0)",
+      "ticks": 96
+    },
+    {
+      "position": "(970.5, 34.97914, 1147.63)",
+      "target": "(970.5, 35.0, 1147.7)",
+      "ticks": 75
+    },
+    {
+      "position": "(970.5, 35.00848, 1151.388)",
+      "target": "(970.5, 35.0, 1151.5)",
+      "ticks": 41
+    },
+    {
+      "position": "(970.5, 35.00848, 1156.43)",
+      "target": "(970.5, 35.0, 1156.5)",
+      "ticks": 55
+    },
+    {
+      "position": "(970.5, 35.00848, 1161.381)",
+      "target": "(970.5, 35.0, 1161.5)",
+      "ticks": 54
+    },
+    {
+      "position": "(970.5, 35.00848, 1156.614)",
+      "target": "(970.5, 35.0, 1156.5)",
+      "ticks": 52
+    },
+    {
+      "position": "(970.5, 35.00848, 1151.572)",
+      "target": "(970.5, 35.0, 1151.5)",
+      "ticks": 55
+    },
+    {
+      "position": "(970.5, 35.00848, 1147.813)",
+      "target": "(970.5, 35.0, 1147.7)",
+      "ticks": 41
+    },
+    {
+      "position": "(970.5, 35.0094, 1141.062)",
+      "target": "(970.5, 35.0, 1141.0)",
+      "ticks": 74
+    }
+  ]
+}

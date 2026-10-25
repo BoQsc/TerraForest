@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS fresh process loads the generated shop world
+PASS existing generated snapshot loads read-only with its durable recipe
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=7.357 recipe_ms=26.762 fitting_ms=24.572
+PASS reconstruct deterministic approved-shop placement plan
+PASS both approved shop variants are present in actual market plans
+PASS published and freshly loaded B2 R2 matches every approved block
+PASS street residency ready B2 R2
+PASS saved shop entrance found after residency B2 R2
+PASS generated street surface exists B2 R2
+PASS shop collision ready B2 R2
+PASS walk from generated street to shop door B2 R2
+PASS E opens generated shop door B2 R2
+PASS shop interior route B2 R2 (0.5, 0.0, -3.0)
+PASS shop interior route B2 R2 (0.5, 0.0, -8.0)
+PASS shop interior route B2 R2 (0.5, 0.0, -13.0)
+PASS shop interior route B2 R2 (0.5, 0.0, -8.0)
+PASS shop interior route B2 R2 (0.5, 0.0, -3.0)
+PASS shop interior route B2 R2 (0.5, 0.0, 0.8)
+PASS walk back to generated street B2 R2
+SHOP_WORLD_METRICS { "revision": "B2 R2", "frames": 495, "p95_ms": 16.667, "worst_ms": 68.301, "ground_regions": 0, "max_cut": 0, "max_fill": 0, "origin": (1005, 36, 1075), "rotation": 0 }
+PASS capture generated shop B2 R2
+PASS published and freshly loaded B1 R1 matches every approved block
+PASS street residency ready B1 R1
+PASS saved shop entrance found after residency B1 R1
+PASS generated street surface exists B1 R1
+PASS shop collision ready B1 R1
+PASS walk from generated street to shop door B1 R1
+PASS E opens generated shop door B1 R1
+PASS shop interior route B1 R1 (0.5, 0.0, -3.0)
+PASS shop interior route B1 R1 (0.5, 0.0, -8.0)
+PASS shop interior route B1 R1 (0.5, 0.0, -13.0)
+PASS shop interior route B1 R1 (0.5, 0.0, -8.0)
+PASS shop interior route B1 R1 (0.5, 0.0, -3.0)
+PASS shop interior route B1 R1 (0.5, 0.0, 0.8)
+PASS walk back to generated street B1 R1
+SHOP_WORLD_METRICS { "revision": "B1 R1", "frames": 461, "p95_ms": 16.666, "worst_ms": 16.705, "ground_regions": 0, "max_cut": 0, "max_fill": 0, "origin": (970, 34, 1156), "rotation": 2 }
+PASS capture generated shop B1 R1
+APPROVED_SHOP_WORLD failures=0
+[TerrainRewrite] Temporary test world: save skipped

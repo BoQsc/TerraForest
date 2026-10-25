@@ -102,6 +102,12 @@ does not cover A1, other house redesigns or automatic migration of saved buildin
 The historical A0 comparison remains unchanged; settlement terrain-fit and
 populated-world acceptance are separate from this roof approval.
 
+Subsequent shop decisions, 2026-10-25: B2 R2 is explicitly approved as B0's roof
+replacement for newly built village shops; existing saved B0 buildings remain
+intact. B1 R1 is additionally authorized for generation, alongside the gabled shop,
+not as its replacement. Keep both exact approved designs and historical comparisons.
+Their new roof envelopes must be included in planning; do not reuse stale fit caches.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

@@ -1,17 +1,20 @@
 # Building reviews — A2 roof and Shop B approved
 
-## B0 roof revision B2 — awaiting approval
+## B0 roof revision B2 — approved shop default
 
 Run `python tools/review_modular_buildings.py --shop-roof` for unchanged B0 on the
-left and the B2 thin-gable-roof trial on the right. This reuses A2's native thin
+left and the approved B2 thin gable roof on the right. This reuses A2's native thin
 slope/ridge/seam blocks, with timber gable backing and one-cell front/back
 overhangs. Exterior, Interior, Detail and single-block removal/restoration are
 available. The floor, walls below the eaves, store partition, steps, doors, windows,
 counters, shelving and storage remain unchanged. B1 retains its own approved
-hipped roof. B2 is review-only and does not alter any saved or generated building.
-Its roof overhang changes the above-ground placement envelope, so adopting it
-later requires checking that envelope as well as the unchanged foundation.
+hipped roof. The exact production copy is now the default for new village shops.
+New markets contain one B2 gabled shop and one B1 hipped shop; neighborhoods use
+B2. Existing saved buildings are not rewritten. Historical B0 uses the explicit
+legacy recipe, and historical review assets remain unmodified. Generation-plan
+cache version 5 refits the changed above-ground roof envelopes.
 Evidence and inspected comparison images: `../../docs/evidence/shop_roof_b2/`.
+Approval/integration evidence: `../../docs/evidence/approved_shop_generation/`.
 
 ## A0 roof revision A2 — approved cottage default
 
@@ -53,6 +56,8 @@ closed. Escape/Close exits; nothing is saved to the player's world.
 
 ## Decisions — 2026-10-25
 
+- **Shop roof B2 R2: approved.** Exact reviewed thin gable roof becomes the
+  village-shop default. B1 is also authorized as an additional generated market shop.
 - **Cottage roof A2 R2: approved.** Exact reviewed thin slope/ridge/seam blocks and
   timber gable backing become the enclosed-cottage default, without the A1 porch.
 - **Cottage A R1: rejected.** The existing furnished brick cottage, with a multi-block timber
@@ -81,8 +86,9 @@ B1 is the only approved addition; A1 must not enter the production catalogue.
 The old cottage roof is not visually accepted: the separately approved A2 replaces
 its diagonal block steps with continuous-looking thin 45-degree slopes for new
 enclosed cottages. Arbitrary/shallow pitches remain outside this revision.
-Approval of B1 does not authorize replacement of an original or automatic adoption
-by generation. Terrain fitting and integrated-world checks precede that step.
+B1 does not replace the gabled shop. Its later explicit generation authorization
+adds it alongside the separately approved B2 roof, with placement and generated-world
+evidence kept separately from the original isolated comparison.
 
 Evidence and known limitations are recorded in
 `../../docs/evidence/modular_buildings_r1/README.md`. This isolated comparison is

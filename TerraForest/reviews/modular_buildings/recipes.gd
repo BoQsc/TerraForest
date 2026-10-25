@@ -50,7 +50,7 @@ static func cottage(blocks: Node) -> Resource:
 	return finish(source, cells, "Cottage A / modular porch / review R1")
 
 static func shop(blocks: Node) -> Resource:
-	var source: Resource = Workshop.village_shop()
+	var source: Resource = Workshop.legacy_village_shop()
 	var cells := cells_of(source)
 	for cell: Vector3i in cells.keys():
 		if cell.y >= 6: cells.erase(cell)
@@ -84,7 +84,7 @@ static func entries() -> Array[Dictionary]:
 		"details":"Segmented timber porch arch  /  pointed ridge blocks  /  thin timber gables and ceiling",
 		"eye":Vector3(17,12,24), "aim":Vector3(.5,4.7,.5), "inside":Vector3(.5,3.65,3.8), "inside_aim":Vector3(-.3,3.3,-2),
 		"feature_eye":Vector3(5,5.5,13), "feature_aim":Vector3(.5,3.5,6), "remove":Vector3i(-1,4,7), "floor":2.0, "approach":10.0},
-		{"title":"VILLAGE SHOP B", "decision":"approved_addition", "original":Workshop.village_shop(), "candidate":load("res://reviews/modular_buildings/baked/shop_b.tres"), "base":Vector3i(0,0,-128),
+		{"title":"VILLAGE SHOP B", "decision":"approved_addition", "original":Workshop.legacy_village_shop(), "candidate":load("res://reviews/modular_buildings/baked/shop_b.tres"), "base":Vector3i(0,0,-128),
 		"details":"Four-sided hipped roof  /  individual hip-corner blocks  /  arched stores opening and ceiling",
 		"eye":Vector3(23,16,30), "aim":Vector3(.5,5,.5), "inside":Vector3(.5,2.65,6.5), "inside_aim":Vector3(.5,3,-3.5),
 		"feature_eye":Vector3(16,17,19), "feature_aim":Vector3(.5,8,.5), "remove":Vector3i(-1,4,-2), "floor":1.0, "approach":12.0}]

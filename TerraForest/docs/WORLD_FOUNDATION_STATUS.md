@@ -1,13 +1,15 @@
-## B0 roof-only B2 trial requested; B1 generation hookup pending — 2026-10-25
+## B2 roof approved; both shop designs integrated into generation — 2026-10-25
 
-The user requested trying the approved A2 thin-roof method on B0, keeping the shop
-otherwise unchanged. B2 is a separate review-only prefab, not a replacement for
-B0 or approved B1. The comparison uses the original B0 recipe on the left and B2
-on the right. Walls below the eaves, floor, partitions, steps and attached objects
+The user explicitly approved B2: "i approve this roof." Its exact 1,028 native
+block records and attached objects are copied into the production
+`village_shop_thin_roof_b2.tres`. New `village_shop()` instances use B2 with the
+same public name, while `legacy_village_shop()` preserves B0 for historical
+comparisons. Existing saved buildings are not migrated. The comparison keeps
+original B0 on the left and approved B2 on the right. Walls below eaves, floor, partitions, steps and attached objects
 stay unchanged. Thin native slope/ridge/seam blocks replace the chunky roof/ridge;
 the upper gable backing follows A2's timber construction. Front/back roof overhangs
 extend one grid cell, but the foundation is unchanged. Every roof piece retains
-independent grid ownership. Explicit B2 approval is required before adoption.
+independent grid ownership. B1's approved hipped-roof geometry remains unchanged.
 
 Evidence: `evidence/shop_roof_b2/README.md`. The graphical comparison passes
 26 checks, fresh-process compound restore passes 3, and A2 comparison regression
@@ -15,14 +17,26 @@ passes 16. Exterior, underside, edge and one-block-removal images were inspected
 These verify the isolated review, not terrain integration or populated performance.
 Launch `python tools/review_modular_buildings.py --shop-roof` for the comparison.
 
-The preceding request also explicitly authorized adding B1 to generation.
-**Not done yet:** the user switched to this B0 roof trial during inspection, before
-any generation recipe was edited. B1 remains in the construction catalogue, not
-automatic generation. Resume that hookup after the B2 demonstration: retain B0,
-add B1 as a market variant, invalidate derived plans, then verify actual native
-placement, terrain fit, saved-world publication, street/interior access and scoped
-populated performance. Do not imply a palette entry or this roof preview completes
-that generation work.
+The preceding B1 request is resumed: each newly generated market now has one
+gabled B2 shop and one hipped B1 shop, instead of two identical gabled shops.
+Neighborhood shops use B2; worlds without a market do not automatically get B1.
+Both derived placement-plan cache versions advance to 5 so enlarged roof
+envelopes are refitted. Saved-world formats and existing worlds do not change.
+Current integration evidence is recorded in `evidence/approved_shop_generation/README.md`.
+This closes the recipe hookup, not general settlement/world-quality acceptance;
+arbitrary roof pitches, structural collapse and long-run populated performance
+remain separate unfinished requirements.
+
+Integration checks pass: exact source/PCK prefab/native market placement,
+foundation/road probes, custom-plan cold/warm caches, production six-district
+generation/save/reopen, and a separate read-only populated traversal of B1 and B2.
+The latter checks every approved stored cell, opens doors through gameplay and
+walks street-to-stores-and-back. The saved root hash remains unchanged.
+Inspected final generated-world images are in the integration evidence. Short
+1920×1080 capped wall-clock samples measure p95 17.363/17.224 ms and worst
+19.710/19.934 ms (B2/B1); these are not a sustained-60-FPS or headroom guarantee.
+Initial wrong-load flags and the reduced-systems probe remain documented rather
+than being counted as populated performance evidence.
 
 ## A0 thin-roof revision A2 approved as cottage default — 2026-10-25
 
@@ -82,9 +96,10 @@ The exact B1 records and model attachments are copied into
 `addons/structures/prefabs/village_shop_hipped_r1.tres`, with explicit approval
 metadata, and appended to the construction palette as `Village shop B / hipped
 roof`. Old prefab indices, original recipes and existing saves are not replaced.
-The world generator still uses its existing recipes; adding B1 to generated
-settlements requires terrain-fit, placement-envelope, populated-world traversal,
-saved-world and performance evidence. This palette addition is not that evidence.
+At this earlier milestone B1 was a palette addition only. The subsequent B2
+approval and B1 market integration above supersede that restriction, with separate
+terrain-fit, placement, saved-world and traversal evidence. The original palette
+checks alone do not qualify generation.
 
 The default review is now one signed walk-around scene: A0 original cottage,
 B0 original shop, B1 approved addition. It starts at the shops; A1 is not placed.
@@ -136,10 +151,10 @@ process passes three exact-storage restoration checks. Images were inspected; th
 first awkward cottage verge and unsupported side-upright bases were revised before
 the final review. The initial support-test failure is retained and explained.
 
-**Decision updated above:** Cottage A R1 rejected; Shop B R1 approved only as an
-addition. These are not accepted settlement replacements. For B1, revisit
-placement-envelope/terrain-fit, representative populated-world routes,
-saved-world integration and performance before enabling it in generation.
+**Decision updated above:** Cottage A R1 rejected; Shop B R1 approved as an
+addition, with subsequent B1 market integration and B2 roof approval recorded above.
+The later integration revisits placement envelopes, terrain fit, generated-save
+restoration and representative shop access; whole-world acceptance remains open.
 The viewer's neutral ground plane, short capsule walk and 60 FPS cap do not qualify
 terrain integration, NPC navigation, dense-world budgets or structural collapse.
 

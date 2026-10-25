@@ -1,0 +1,31 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+    "--main-pack",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_shop_generation_pack\\engine.log",
+    "--script",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\approved_shop_generation.gd",
+    "--",
+    "--temporary",
+    "--approved-reference=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reviews\\modular_buildings\\baked\\shop_roof_b2.tres",
+    "--shop-output=C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_shop_generation_pack"
+  ],
+  "pack_sha256": "d9ab0739d1e651c08672cb5ce146defa304b94d495ae626f9cd9a8a4bfe8b36a",
+  "test_sha256": "278a831fa71b83b3af1c84c2b2516955bd260e6d259d0416583e59fa3ef82021",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 70916,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.6516471999930218,
+    "passed": true
+  }
+}

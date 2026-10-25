@@ -17,7 +17,7 @@ func start() -> void:
 		push_error("Building review could not place its native prefabs: "+str(viewer.placement_results))
 		quit(1)
 	else:
-		if shop_roof:print("MODULAR_SHOP_ROOF_REVIEW_READY original=B0 candidate=B2 approval=pending")
+		if shop_roof:print("MODULAR_SHOP_ROOF_REVIEW_READY original=B0 candidate=B2 approval=approved_default")
 		elif roof:print("MODULAR_ROOF_REVIEW_READY original=A0 candidate=A2 approval=approved_default")
 		else:print("MODULAR_BUILDING_VIEWER_READY" if comparison else "MODULAR_BUILDING_WALKAROUND_READY"," originals=unchanged approved_additions=1 rejected=1 review=R1")
 		if comparison and "--guided-tour" in OS.get_cmdline_user_args():viewer.guided_tour()

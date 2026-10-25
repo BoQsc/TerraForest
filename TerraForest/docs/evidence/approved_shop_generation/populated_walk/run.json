@@ -1,0 +1,43 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\approved_shop_world_wallclock_run\\engine.log",
+    "--fullscreen",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/approved_shop_world.gd",
+    "--",
+    "--temporary",
+    "--snapshot-readonly",
+    "--world-slot=recipe_generated_f5dfc9c5122aaf3a",
+    "--ground-cover",
+    "--actors",
+    "--vehicle-fleet",
+    "--gameplay-construction",
+    "--max-fps=60",
+    "--derived-cache=user://approved_shop_wallclock_20261025",
+    "--shop-world-output=res://reports/approved_shop_world_wallclock"
+  ],
+  "slot": "recipe_generated_f5dfc9c5122aaf3a",
+  "test_sha256": "1f894163ce8300b5c599629c191ff6df57c3a1268d5052bd6c31fb66cf1d334b",
+  "save_before": "dc68ec2ce07b16d697f1a8df2b78138089a8550c6cf43748874bcd75ab2bb86d",
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 82452,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 37.95793570007663,
+    "passed": true
+  },
+  "save_after": "dc68ec2ce07b16d697f1a8df2b78138089a8550c6cf43748874bcd75ab2bb86d",
+  "save_unchanged": true
+}

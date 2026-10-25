@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+MARKET_PLAN_TIMINGS candidates=28 attempts=3 survey_ms=7.513 recipe_ms=21.419 fitting_ms=19.771
+WORLD_PLAN digest=a018c735178f98165d8b4821d8c01242bae319a53f31dd0d81d715e7936f79e6 cache_hit=false ms=2137.649 planning_frames=142
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":10825728,"checkpoints":21,"completed":1247,"ok":true,"resident_high":2157,"resident_limit":16384,"revision":1247,"storage":{"region_reads":174,"reused_files":0,"reused_regions":2297,"workers":1,"written_bytes":14462232,"written_files":41},"worker_ms":2115.9324}
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":1,"milliseconds":863.501,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"status":2,"steps":890,"water_ml":13693871176}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":9.877}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=68 edits=1247
+GENERATION_JOB state=ready reason=
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 183.35 ms at 75479
+[terrain-hitch] base controller 184.26 ms at 75480
+[terrain-hitch] controller process 185.05 ms at 75481
+[terrain-hitch] world process 186.05 ms at 75482
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS six-district production generation loads in same game window
+PASS created world uses requested durable biome recipe
+PASS all six districts and regional routes publish to actual world map
+PASS no legacy continuous decorative sidewalk meshes
+PASS publication verifies native binary recipe alongside terrain and structures
+PASS generation introduces no second process or operating-system window
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS custom world saves and returns to selector
+PASS saved custom world reopens without reapplying UI options
+PASS custom biome survives save and reload
+PASS all district and road metadata survives reload exactly
+PASS creation and reload preserve native window handle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_RECIPE_GENERATION checks=11 failures=0 slots=["recipe_generated_f5dfc9c5122aaf3a"]
