@@ -30,7 +30,7 @@
 namespace terraforest {
 godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
 godot::Dictionary plan_regional_route(const World &,godot::Vector3,godot::Vector3,const godot::Array &);
-godot::Dictionary fit_generated_road_network(const World &,const godot::Array &,const godot::Array &);
+godot::Dictionary fit_generated_road_network(const World &,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_region_network(const World &,const godot::Array &,const godot::Array &,bool,int,int64_t,const godot::Array &);
 godot::Dictionary plan_settlement_lots(const World &,godot::Vector3,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_street_network(const World &,const godot::Array &,const godot::PackedVector3Array &);
@@ -81,7 +81,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("fit_generated_lakes","records"), &TerrainCore::fit_lakes);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_streets","roads","junctions"), &TerrainCore::plan_streets);
         godot::ClassDB::bind_method(godot::D_METHOD("normalize_roads","roads","protected_areas"), &TerrainCore::normalize_roads);
-        godot::ClassDB::bind_method(godot::D_METHOD("fit_road_network","roads","protected_areas"), &TerrainCore::fit_road_network);
+        godot::ClassDB::bind_method(godot::D_METHOD("fit_road_network","roads","protected_areas","footprint_policy"), &TerrainCore::fit_road_network,DEFVAL(false));
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
@@ -108,8 +108,8 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
-    godot::Dictionary fit_road_network(const godot::Array &roads,const godot::Array &protected_areas){
-        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_road_network(world_,roads,protected_areas);return tr_oom?godot::Dictionary():result;
+    godot::Dictionary fit_road_network(const godot::Array &roads,const godot::Array &protected_areas,bool footprint_policy=false){
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_road_network(world_,roads,protected_areas,footprint_policy);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary normalize_roads(const godot::Array &roads,const godot::Array &protected_areas){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=normalize_generated_roads(world_,roads,protected_areas);return tr_oom?godot::Dictionary():result;

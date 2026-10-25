@@ -4,6 +4,7 @@
 #include "density_surface.hpp"
 #include "terrain_checksum.hpp"
 #include "terrain_placement_query.hpp"
+#include "generation_contact.hpp"
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -206,16 +207,7 @@ float World::buildable_height(float x,float z,float original)const{
  float near_weight=buildable_weights[column+row*65]*(1.f-blend_x)+buildable_weights[column+1+row*65]*blend_x;
  float far_weight=buildable_weights[column+(row+1)*65]*(1.f-blend_x)+buildable_weights[column+1+(row+1)*65]*blend_x;
  float weight=(near_weight*(1.f-blend_z)+far_weight*blend_z)/255.f;
- float level=float(fl(original)),phase=original-level;
- float terrace=level+.08f+smooth(clampf((phase-.25f)/.5f,0.f,1.f));
- if(generator_id>=EMBED_REGION_GENERATOR_ID)terrace=level+.08f+smooth(clampf((phase-.35f)/.3f,0.f,1.f));
- float adjusted=original+(terrace-original)*weight;
- if(generator_id>=EMBED_REGION_GENERATOR_ID){
-  float contact=float(fl(adjusted+.5f))+.08f,correction=contact-adjusted;
-  float influence=smooth(clampf((.30f-ab(correction))/.15f,0.f,1.f))*smooth(clampf(weight/.2f,0.f,1.f));
-  adjusted+=correction*influence;
- }
- return adjusted;
+ return terraforest::generation_contact::terrain_height(original,weight,generator_id>=EMBED_REGION_GENERATOR_ID);
 }
 float World::height(float x,float z,bool developed)const{
  float h=inland_height(x,z,developed);

@@ -22,6 +22,11 @@ func run()->void:
  modern.road_grid=2
  var connected:PackedByteArray=codec.encode(modern)
  check(connected.size()==32 and connected.decode_u32(4)==3 and codec.decode(connected)==modern,"connected grading has separate durable recipe identity")
+ modern.road_grid=3
+ var footprint:PackedByteArray=codec.encode(modern)
+ check(footprint.size()==32 and footprint.decode_u32(4)==4 and codec.decode(footprint)==modern,"native footprint policy has independent generation identity")
+ var mismatched:=footprint.duplicate();mismatched.encode_u32(4,3)
+ check(not codec.validate_snapshot(mismatched),"new policy cannot masquerade as a legacy recipe")
  check(not codec.validate_snapshot(modern_bytes.slice(0,28)),"truncated version-two recipe cannot masquerade as legacy")
  for offset in range(0,28,4):
   var corrupt:=bytes.duplicate();corrupt.encode_u32(offset,0xffffffff)

@@ -10,16 +10,26 @@ static func protected_areas(sites:Array)->Array:
 			var finish:Vector3=entrance.finish
 			result.append(Rect2(Vector2(minf(start.x,finish.x),minf(start.z,finish.z)),Vector2(absf(start.x-finish.x),absf(start.z-finish.z))).grow(float(entrance.half_width)+.25))
 	return result
-static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=false)->Dictionary:
+static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=false,footprint_policy:bool=false)->Dictionary:
 	var roads:Array=[]
 	for index in sites.size():
 		for road:Dictionary in sites[index].roads:
-			var record:=road.duplicate();record["normalization_owner"]=index;roads.append(record)
+			var record:=road.duplicate();record["normalization_owner"]=index
+			if footprint_policy:
+				var support:Dictionary=preload("res://addons/structures/terrain_lot_planner.gd").road_support(road)
+				record["support_half_width"]=support.half_width;record["support_shoulder"]=support.shoulder
+			roads.append(record)
 	for index in network.segments.size():
 		var road:Dictionary=network.segments[index]
 		if int(road.material)!=4:continue
-		var record:=road.duplicate();record["normalization_owner"]=-index-1;roads.append(record)
-	var result:Dictionary=core.fit_road_network(roads,protected_areas(sites)) if connected else core.normalize_roads(roads,protected_areas(sites))
+		var record:=road.duplicate();record["normalization_owner"]=-index-1
+		if footprint_policy:
+			record["support_half_width"]=float(road.half_width);record["support_shoulder"]=float(road.shoulder)
+			for support:Dictionary in network.segments:
+				if int(support.material)==1 and support.start==road.start and support.finish==road.finish:
+					record.support_half_width=maxf(record.support_half_width,float(support.half_width));record.support_shoulder=maxf(record.support_shoulder,float(support.shoulder))
+		roads.append(record)
+	var result:Dictionary=core.fit_road_network(roads,protected_areas(sites),footprint_policy) if connected else core.normalize_roads(roads,protected_areas(sites))
 	if not result.get("ok",false):
 		var failed:int=int(result.get("road",-1))
 		if connected and failed>=0 and failed<roads.size() and int(roads[failed].normalization_owner)<0:

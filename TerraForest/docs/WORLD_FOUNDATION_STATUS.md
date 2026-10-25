@@ -30,7 +30,7 @@ See the explicit feasibility contract in PLACEMENT_STANDARD.md. Do not conceal
 this conflict by burying blocks further, mutating terrain on placement, adding
 supports, turning the world into stairs, or changing the grid without approval.
 
-No production geometry/default change is made for this diagnosis. The saved case
+No production geometry/default change was made for this diagnosis. The saved case
 and Wild_Hills remain byte-identical. The audit now accepts an explicitly named
 review world, retains unique evidence, evaluates full piecewise stamp curves, and
 reports whether *any* integer base can meet the contact limits. Evidence:
@@ -38,6 +38,25 @@ reports whether *any* integer base can meet the contact limits. Evidence:
 remains open: prerequisites are an explicit feasible treatment of
 transition zones and final-surface-wide quality coverage; completion requires
 multi-seed rendered/collision evidence including this case, not another spot fix.
+
+Following the request for generation-internal rules, a shared native contact policy
+and experimental footprint-aware road recipe are now implemented. This uses the
+existing native planning iterations and earthworks bake, not a post-generation
+repair scan. Natural terrain math is extracted unchanged; it is not a new terrain
+improvement. Road/support descriptors share their actual bed widths, and native
+constraints evaluate nine-point building footprints before baking. Binary recipe
+v4 / road_grid=3 is isolated from the default mode2; old recipe identities remain.
+
+Targeted debug/release, three-seed plan/cache and full creation/reload checks pass.
+The separate review has 44/45 passing collision footprints, but this shoulder is
+still rejected at 30.12 cm burial (previously 39.82 cm). Same-footprint support
+coverage improves modestly across all three seeds. No quality threshold was raised.
+The candidate therefore remains optional, not a default or a finished universal
+solution. Measured added cold planning cost is 94–182 ms, with no new loading stage
+or per-frame grading. Warm plan reuse takes 51–125 ms. Evidence, rejected trials,
+remaining coverage and reproduction: `evidence/generation_contact_native/README.md`.
+Return trigger remains final composed-surface/transition treatment and multi-seed
+collision/rendered acceptance. Shared code and a faster cache do not close it.
 
 ## Connected road grading implemented; broader fit still incomplete — 2026-10-25
 

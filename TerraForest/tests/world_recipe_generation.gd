@@ -21,7 +21,8 @@ func verify_approved_records(game:Node)->void:
   check(exact,"published world contains every approved "+revision+" block")
 
 func run()->void:
- var grid_review:bool="--grid-review" in OS.get_cmdline_user_args()
+ var footprint_review:bool="--footprint-review" in OS.get_cmdline_user_args()
+ var grid_review:bool="--grid-review" in OS.get_cmdline_user_args() or footprint_review
  var use_defaults:bool="--default-recipe" in OS.get_cmdline_user_args() or grid_review
  folder="res://reports/world_recipe_generation_default" if use_defaults else "res://reports/world_recipe_generation"
  if grid_review:folder="res://reports/road_normalization/generation"
@@ -36,7 +37,12 @@ func run()->void:
  if not use_defaults:browser.biome.select(1);browser.settlement_count.select(2);browser.district_count.select(1);browser.road_network.select(1);browser.offroads.select(2)
  var options:Dictionary=browser.selected_options()
  if use_defaults:check(options==Recipe.DEFAULTS,"untouched world browser uses the published two-settlement defaults")
- browser.launch_selected(true)
+ if footprint_review:
+  options.road_grid=3
+  var request:Dictionary=Launch.command(slot,true,browser.preset.get_selected_id(),1703,browser.gameplay.button_pressed,"user://worlds",browser.ocean.button_pressed,"connected",browser.buildable_ground.button_pressed,options)
+  if not check(request.get("ok",false),"experimental native policy has a valid generation request"):await finish();return
+  browser.start_preparation(request,slot)
+ else:browser.launch_selected(true)
  var status_path:String=browser.preparation_status
  await wait_for(func():
   if game_ready():return true

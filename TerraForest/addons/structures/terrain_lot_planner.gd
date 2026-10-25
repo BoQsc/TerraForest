@@ -125,6 +125,11 @@ static func locate(core,center:Vector3,occupied:Array=[])->Dictionary:
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
 
+static func road_support(road:Dictionary)->Dictionary:
+ var support:Dictionary=Lots._segment(road.start,road.finish,5.5,3,4,2,1)
+ support["coefficients"]=road.coefficients;support["curve_index"]=road.curve_index
+ return support
+
 static func earthworks(plan:Dictionary)->Dictionary:
  if not plan.get("ok",false):return {"ok":false,"reason":"Incomplete layout"}
  var segments:Array=[];var bounds:=AABB();var first:=true
@@ -139,9 +144,7 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var path:Dictionary=lot.entrance.segment
   segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
  for road:Dictionary in plan.roads:
-  var support:Dictionary=Lots._segment(road.start,road.finish,5.5,3,4,2,1)
-  support["coefficients"]=road.coefficients;support["curve_index"]=road.curve_index
-  segments.append(support)
+  segments.append(road_support(road))
  for road:Dictionary in plan.roads:
   var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,0,4)
   segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index

@@ -1,0 +1,7 @@
+{
+  "failures": 0,
+  "legacy_cases": 12,
+  "milliseconds": 79.218,
+  "points_per_case": 420,
+  "library": "terrain_core.windows.template_release.x86_64.dll"
+}

@@ -57,11 +57,26 @@ func run()->void:
 	check(not core.fit_road_network([invalid_bounds],[]).get("ok",false),"invalid bounds type rejected")
 	check(not core.fit_road_network([source],[Rect2(Vector2(NAN,0),Vector2.ONE)]).get("ok",false),"nonfinite protected bounds rejected")
 	check(not core.fit_road_network([],[]).get("ok",false),"empty request rejected")
+	var policy_source:=source.duplicate();policy_source["support_half_width"]=6.5;policy_source["support_shoulder"]=0.0
+	var policy:Dictionary=core.fit_road_network([policy_source],[],true)
+	check(policy.get("ok",false) and policy.get("footprints",0)>0 and policy.get("contact_cost_after",INF)<policy.get("contact_cost_before",0),"generation-native footprint policy improves contact before baking")
+	check(policy==core.fit_road_network([policy_source],[],true),"footprint policy is deterministic")
+	check(not policy.get("quality_complete",true),"remaining bad footprints cannot be reported as complete")
+	var policy_protected:Dictionary=core.fit_road_network([policy_source],[Rect2(Vector2(1040,780),Vector2(80,140))],true)
+	check(policy_protected.get("ok",false) and policy_protected.get("segments",[])==[policy_source],"footprint policy preserves protected grades exactly")
+	var invalid_support:=policy_source.duplicate();invalid_support.support_half_width=NAN
+	check(not core.fit_road_network([invalid_support],[],true).get("ok",false),"invalid generated support envelope rejected")
+	invalid_support.support_half_width=3.0
+	check(not core.fit_road_network([invalid_support],[],true).get("ok",false),"support envelope cannot omit paved surface")
 	var collision_report:Dictionary={}
 	if result.get("ok",false):collision_report=await inspect_collision(core,result.segments)
+	var policy_collision:Dictionary={}
+	if policy.get("ok",false):
+		core.execute(Codec.command(6,[1703,23]));policy_collision=await inspect_collision(core,policy.segments)
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	var report:=result.duplicate();report.erase("segments");report["failures"]=failures;report["variant"]=core.build_variant()
 	report["collision"]=collision_report
+	report["footprint_collision"]=policy_collision
 	FileAccess.open("res://reports/connected_road_native.json",FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
 	print("CONNECTED_ROAD_NATIVE failures=",failures);quit(1 if failures else 0)
 func inspect_collision(core:RefCounted,segments:Array)->Dictionary:

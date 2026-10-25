@@ -69,6 +69,16 @@ entrances; shared algorithms alone do not prove final-surface contact quality.
 
 ### Preserved lattice
 
+Generation-internal implementation, 2026-10-25: native terrain shaping and the
+experimental footprint road objective share `generation_contact.hpp`. Existing
+terrain profiles remain byte-identical; recipe v4 / road_grid=3 selects the new
+road objective only for explicit previews. It participates in the existing native
+grade solve before baking, with no final-world repair pass, placement-time edits
+or additional loading stage. The current defaults are unchanged because the
+reported shoulder still fails the diagnostic limit. Full results and bounded
+costs: `evidence/generation_contact_native/README.md`. This architectural progress
+does not supersede the incomplete final-surface contract above.
+
 One world unit is one metre. Blocks retain their exact integer-metre lattice and
 shared faces; do not introduce per-block offsets, deform blocks, or silently grade
 terrain when the player places one. Existing clearance, inventory and collision

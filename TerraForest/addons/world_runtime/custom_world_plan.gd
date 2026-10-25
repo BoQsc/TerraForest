@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=9
+const VERSION:=10
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -88,11 +88,11 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
-  if progress!=null:progress.record("Normalizing roads toward the building grid",0,0,"Native bounded profiles / protected entrances / full-width cut and fill survey")
-  var connected:bool=int(options.road_grid)==2
+  if progress!=null:progress.record("Planning build-friendly road grades",0,0,("Native footprint rules" if int(options.road_grid)==3 else "Native connected grades" if int(options.road_grid)==2 else "Native road normalization")+" / protected entrances / full-width cut and fill survey")
+  var connected:bool=int(options.road_grid)>=2
   var exclusions:=reserved.duplicate()
   for attempt in range(5):
-   normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network,connected)
+   normalization=preload("res://addons/world_runtime/road_normalization.gd").apply(core,sites,network,connected,int(options.road_grid)==3)
    if normalization.get("ok",false):break
    if not connected or not normalization.has("reroute_position") or attempt==4:return normalization
    var failed:Vector3=normalization.reroute_position

@@ -50,7 +50,7 @@ static func roads_for(plan:Dictionary)->Array:
 		if int(road.material)!=4:continue
 		var record:=road.duplicate();record["category"]="regional";result.append(record)
 	return result
-static func coverage(roads:Array,queries:Dictionary={})->Dictionary:
+static func coverage(roads:Array,queries:Dictionary={},full_curve:bool=false)->Dictionary:
 	var cells:Dictionary=queries.duplicate(true)
 	var categories:Dictionary={}
 	var worst:Array=[]
@@ -85,7 +85,8 @@ static func coverage(roads:Array,queries:Dictionary={})->Dictionary:
 		var minimum:=INF;var maximum:=-INF
 		for across:float in [.08,.5,.92]:
 			for along:float in [.08,.5,.92]:
-				var height:=profile_height(chosen,Vector2(cell)+Vector2(across,along))
+				var point:=Vector2(cell)+Vector2(across,along)
+				var height:=stamped_height(chosen,point) if full_curve else profile_height(chosen,point)
 				minimum=minf(minimum,height);maximum=maxf(maximum,height)
 		var fit:=contact(minimum,maximum);fit["covered"]=true;fit["category"]=chosen.category;fit["cell"]=cell
 		cells[cell]=fit;categories[chosen.category].sampled_cells+=1

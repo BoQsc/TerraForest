@@ -1,0 +1,769 @@
+{
+  "burial_correction": true,
+  "failures": 0,
+  "quality_failures": 1,
+  "quality_limits": {
+    "burial": 0.25,
+    "gap": 0.1
+  },
+  "quality_passed": false,
+  "reported_road": {
+    "bottom": 47.0,
+    "burial": 0.189094543457031,
+    "gap": 0.0,
+    "hits": 9,
+    "inside": 0,
+    "maximum": 47.189094543457,
+    "minimum": 47.1269569396973,
+    "offset_y": 0.0,
+    "ok": true,
+    "overlap_limit": 0.2,
+    "reason": "",
+    "samples": 9
+  },
+  "reported_shoulder": {
+    "bottom": 35.0,
+    "burial": 0.301185607910156,
+    "gap": 0.0,
+    "hits": 9,
+    "inside": 0,
+    "maximum": 35.3011856079102,
+    "minimum": 35.2315368652344,
+    "offset_y": 0.0,
+    "ok": true,
+    "overlap_limit": 0.6,
+    "reason": "",
+    "samples": 9
+  },
+  "road": [
+    {
+      "cell": "(1004.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.00123214721679688,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.9987678527832,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1004.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9869689941406,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1005.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1006.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1007.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1008.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1009.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1010.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1011.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1012.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1013.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1014.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1015.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1016.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.981616973877,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017.0, 35.0, 1091.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0133132934570313,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 35.986686706543,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017.0, 35.0, 1093.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.0,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 36.0,
+        "minimum": 36.0,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    },
+    {
+      "cell": "(1017.0, 35.0, 1095.0)",
+      "fit": {
+        "bottom": 36.0,
+        "burial": 0.0,
+        "gap": 0.045013427734375,
+        "hits": 9,
+        "inside": 0,
+        "maximum": 35.9862289428711,
+        "minimum": 35.9549865722656,
+        "offset_y": 1.0,
+        "ok": true,
+        "overlap_limit": 0.2,
+        "reason": "",
+        "samples": 9
+      }
+    }
+  ],
+  "slot": "GridPreference_1703_2fd72a4b",
+  "terrain": {
+    "bottom": 50.0,
+    "burial": 0.080078125,
+    "gap": 0.0,
+    "hits": 9,
+    "inside": 0,
+    "maximum": 50.080078125,
+    "minimum": 50.057071685791,
+    "offset_y": 0.0,
+    "ok": true,
+    "overlap_limit": 0.2,
+    "reason": "",
+    "samples": 9
+  }
+}
