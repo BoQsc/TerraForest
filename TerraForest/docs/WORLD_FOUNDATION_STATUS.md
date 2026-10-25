@@ -1,5 +1,15 @@
 ## Road-grid preview and loaded-world HUD identity — 2026-10-25
 
+Follow-up long-rise study: a native 1 m rise spread across 100 m still leaves a
+42.6 cm midpoint gap under the unchanged grid rules. A 100 m near-level stretch
+varying only 10 cm above an integer grade instead gives all 99 sampled footprints
+contact, with at most 15.04 cm burial. See
+`evidence/road_grid_trial/long_rise_study.md` and its four-panel engine render.
+This supports planning long near-level building streets, not claiming that a
+gentle continuous climb solves fractional heights. The frontage-aware real-world
+layout preview remains pending; generation defaults, saves and the earlier
+experiment are unchanged by this tests-only follow-up.
+
 The HUD now identifies the actual loaded slot and seed in one small line.
 The Wild_Hills/1703 read-only audit confirms integer street nodes do not make
 intervening ramps block-level, and base-terrain terracing does not cover baked

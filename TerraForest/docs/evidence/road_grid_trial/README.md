@@ -117,6 +117,11 @@ passes startup. `validation.json` records the scoped evidence.
 
 ## Open acceptance gates
 
+The subsequent [long-rise study](long_rise_study.md) directly tests the user's
+longer-elevation proposal. It supports near-level frontage planning but confirms
+that spreading a full metre rise over 100 m does not eliminate mid-level gaps.
+It does not approve or enable this earlier profile-remapping experiment.
+
 Human appearance/playtest approval is pending. Frontage-aware road planning and
 longer usable level stretches are still needed; small height remapping alone
 does not remove mid-ramp gaps. Before wiring a user-facing generation option,
