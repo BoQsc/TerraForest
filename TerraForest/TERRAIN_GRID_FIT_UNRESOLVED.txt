@@ -1,0 +1,18 @@
+TERRAIN / ROAD / BUILDING-GRID FIT - NOT SOLVED
+
+DONE
+- Soft terrain-grid preference; native footprint-aware road/support grading before baking.
+- Shared native contact policy, bounded cut/fill and smoothness, binary plan caching.
+- Improved road mode enabled by default; terrain and road toggles grouped under Building-grid fit.
+- Exact 1 m building grid, approved buildings/plates and existing saves preserved.
+- No placement-time terrain correction or automatic foundation mounds.
+- Native/release tests, generation/save/reload and packaged startup verified.
+- Reviewed collision cases: 44/45 pass; reported shoulder burial reduced from 39.82 to 30.12 cm, still failing.
+
+UNRESOLVED
+- Gaps and excessive burial remain; consistent fit across terrain, roads and transitions is not achieved.
+
+FUTURE IDEAS - NOT IMPLEMENTED
+- Explore GPU-friendly generation rules and sharper, block-aware marching-cubes terrain; "faceted sphere" as a visual reference.
+- Optional world-editor enforcement: terrain adapts softly toward the building grid during terrain-tool edits.
+- Validate appearance, collision, grid contact and performance before adopting either idea.
