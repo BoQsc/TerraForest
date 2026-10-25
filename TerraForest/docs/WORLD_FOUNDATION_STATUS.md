@@ -1,5 +1,25 @@
 ## Road-grid preview and loaded-world HUD identity — 2026-10-25
 
+The user rejected automatic foundation blocks beneath player-placed blocks as
+the wrong visual/design solution. The uncommitted review scene, placement
+override, test and launcher have been removed. Do not reintroduce automatic
+supports or terrain filling on placement as a substitute for better generated
+roads and terrain. Normal placement, the block lattice, accepted buildings and
+saved worlds remain unchanged; this experiment never entered gameplay defaults.
+
+Local diagnostic evidence remains under `reports/road_foundation_review/`:
+`78f66d8fa1bb41babdb36b3a1e08c3f6` failed on an unsupported test-fixture method;
+`0b3801c01a2d448bab47b8eb025b032f` passed the corrected interaction checks and
+confirmed all 291 source-save files unchanged. Those checks do not override the
+user's rejection. A small in-memory near-level road sample in that run is not a
+frontage-aware generator implementation or approval of the road layout.
+
+Return to generation-side planning: long near-level building streets slightly
+above integer grades, with deliberate smooth elevation transitions and connected
+shoulders/entrances. Keep the next real-world layout preview optional and off
+existing saves until reviewed. The terrain-fit, multi-seed, traversal, reload and
+performance gates below remain open; no automatic-foundation follow-up is planned.
+
 Follow-up long-rise study: a native 1 m rise spread across 100 m still leaves a
 42.6 cm midpoint gap under the unchanged grid rules. A 100 m near-level stretch
 varying only 10 cm above an integer grade instead gives all 99 sampled footprints
