@@ -126,7 +126,7 @@ Dictionary NativePrefabPlacement::advance(int64_t max_cells,int64_t max_models,i
             }
             auto &chunk=staged->second;auto &word=chunk.cells[NativeBlockWorld::index(int(x),int(y),int(z))];
             if(word)return fail("Prefab block occupied");
-            word=uint16_t((c.word&~24)|((((c.word>>3)+turns)&3)<<3));++chunk.count;
+            word=uint16_t(yaw_block(c.word,turns));++chunk.count;
             chunk.columns[(x&15)+16*(z&15)]|=uint16_t(1u<<(y&15));
             ++p.cell_at;++count;
         }

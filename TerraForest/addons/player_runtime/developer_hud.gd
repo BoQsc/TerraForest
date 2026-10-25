@@ -55,9 +55,13 @@ Right mouse: fill")
 			option("Material",["Stone","Wood","Metal"],game.material_id-1,func(i: int):game.material_id=i+1)
 		3:
 			label(("Left mouse: remove" if game.session_menu.developer else "Left mouse: attack")+"\nRight mouse: place")
-			option("Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column","Top plate"],game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
+			option("Shape",game.ShapeCatalog.NAMES,game.structure_shape-1,func(i: int):game._construction_selection("shape",i))
 			option("Material",["Brick","Wood","Concrete","Metal"],game.structure_material,func(i: int):game._construction_selection("material",i))
-			option("Rotation",["0 degrees","90 degrees","180 degrees","270 degrees"],game.structure_rotation,func(i: int):game._construction_selection("rotation",i))
+			var orientations:Array[String]=[]
+			for orientation in (4 if game.structure_prefab_index>=0 else game.ShapeCatalog.rotation_count(game.structure_shape)):
+				orientations.append(game.ShapeCatalog.rotation_name(orientation))
+			option("Rotation",orientations,game.structure_rotation,func(i: int):game._construction_selection("rotation",i))
+			label("R: turn · Shift+R: tilt modular blocks")
 			button("Prefabs / detailed settings",game.session_menu.open_current_tool)
 			label("Prefab outline: red means blocked; amber means placement checks are pending; green means block space is clear. Materials are checked when placing.")
 		4:

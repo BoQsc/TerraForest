@@ -200,7 +200,7 @@ bool NativeBlockPrefab::compose(const Array &sources,const PackedInt32Array &pla
             x+=placements[i+1];z+=placements[i+3];
             if(x<-4095||x>4095||y<-4095||y>4095||z<-4095||z>4095)return false;
             records.set(at++,int32_t(x));records.set(at++,int32_t(y));records.set(at++,int32_t(z));
-            records.set(at++,(c.word&~24)|((((c.word>>3)+turns)&3)<<3));
+            records.set(at++,yaw_block(c.word,turns));
         }
     }
     AABB composed_envelope;bool has_envelope=false;

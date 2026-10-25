@@ -1,0 +1,1313 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS legacy word unchanged 1/0/0
+PASS legacy word unchanged 1/0/1
+PASS legacy word unchanged 1/0/2
+PASS legacy word unchanged 1/0/3
+PASS legacy word unchanged 1/1/0
+PASS legacy word unchanged 1/1/1
+PASS legacy word unchanged 1/1/2
+PASS legacy word unchanged 1/1/3
+PASS legacy word unchanged 1/2/0
+PASS legacy word unchanged 1/2/1
+PASS legacy word unchanged 1/2/2
+PASS legacy word unchanged 1/2/3
+PASS legacy word unchanged 1/3/0
+PASS legacy word unchanged 1/3/1
+PASS legacy word unchanged 1/3/2
+PASS legacy word unchanged 1/3/3
+PASS legacy word unchanged 2/0/0
+PASS legacy word unchanged 2/0/1
+PASS legacy word unchanged 2/0/2
+PASS legacy word unchanged 2/0/3
+PASS legacy word unchanged 2/1/0
+PASS legacy word unchanged 2/1/1
+PASS legacy word unchanged 2/1/2
+PASS legacy word unchanged 2/1/3
+PASS legacy word unchanged 2/2/0
+PASS legacy word unchanged 2/2/1
+PASS legacy word unchanged 2/2/2
+PASS legacy word unchanged 2/2/3
+PASS legacy word unchanged 2/3/0
+PASS legacy word unchanged 2/3/1
+PASS legacy word unchanged 2/3/2
+PASS legacy word unchanged 2/3/3
+PASS legacy word unchanged 3/0/0
+PASS legacy word unchanged 3/0/1
+PASS legacy word unchanged 3/0/2
+PASS legacy word unchanged 3/0/3
+PASS legacy word unchanged 3/1/0
+PASS legacy word unchanged 3/1/1
+PASS legacy word unchanged 3/1/2
+PASS legacy word unchanged 3/1/3
+PASS legacy word unchanged 3/2/0
+PASS legacy word unchanged 3/2/1
+PASS legacy word unchanged 3/2/2
+PASS legacy word unchanged 3/2/3
+PASS legacy word unchanged 3/3/0
+PASS legacy word unchanged 3/3/1
+PASS legacy word unchanged 3/3/2
+PASS legacy word unchanged 3/3/3
+PASS legacy word unchanged 4/0/0
+PASS legacy word unchanged 4/0/1
+PASS legacy word unchanged 4/0/2
+PASS legacy word unchanged 4/0/3
+PASS legacy word unchanged 4/1/0
+PASS legacy word unchanged 4/1/1
+PASS legacy word unchanged 4/1/2
+PASS legacy word unchanged 4/1/3
+PASS legacy word unchanged 4/2/0
+PASS legacy word unchanged 4/2/1
+PASS legacy word unchanged 4/2/2
+PASS legacy word unchanged 4/2/3
+PASS legacy word unchanged 4/3/0
+PASS legacy word unchanged 4/3/1
+PASS legacy word unchanged 4/3/2
+PASS legacy word unchanged 4/3/3
+PASS legacy word unchanged 5/0/0
+PASS legacy word unchanged 5/0/1
+PASS legacy word unchanged 5/0/2
+PASS legacy word unchanged 5/0/3
+PASS legacy word unchanged 5/1/0
+PASS legacy word unchanged 5/1/1
+PASS legacy word unchanged 5/1/2
+PASS legacy word unchanged 5/1/3
+PASS legacy word unchanged 5/2/0
+PASS legacy word unchanged 5/2/1
+PASS legacy word unchanged 5/2/2
+PASS legacy word unchanged 5/2/3
+PASS legacy word unchanged 5/3/0
+PASS legacy word unchanged 5/3/1
+PASS legacy word unchanged 5/3/2
+PASS legacy word unchanged 5/3/3
+PASS legacy word unchanged 6/0/0
+PASS legacy word unchanged 6/0/1
+PASS legacy word unchanged 6/0/2
+PASS legacy word unchanged 6/0/3
+PASS legacy word unchanged 6/1/0
+PASS legacy word unchanged 6/1/1
+PASS legacy word unchanged 6/1/2
+PASS legacy word unchanged 6/1/3
+PASS legacy word unchanged 6/2/0
+PASS legacy word unchanged 6/2/1
+PASS legacy word unchanged 6/2/2
+PASS legacy word unchanged 6/2/3
+PASS legacy word unchanged 6/3/0
+PASS legacy word unchanged 6/3/1
+PASS legacy word unchanged 6/3/2
+PASS legacy word unchanged 6/3/3
+PASS legacy word unchanged 7/0/0
+PASS legacy word unchanged 7/0/1
+PASS legacy word unchanged 7/0/2
+PASS legacy word unchanged 7/0/3
+PASS legacy word unchanged 7/1/0
+PASS legacy word unchanged 7/1/1
+PASS legacy word unchanged 7/1/2
+PASS legacy word unchanged 7/1/3
+PASS legacy word unchanged 7/2/0
+PASS legacy word unchanged 7/2/1
+PASS legacy word unchanged 7/2/2
+PASS legacy word unchanged 7/2/3
+PASS legacy word unchanged 7/3/0
+PASS legacy word unchanged 7/3/1
+PASS legacy word unchanged 7/3/2
+PASS legacy word unchanged 7/3/3
+PASS legacy word unchanged 8/0/0
+PASS legacy word unchanged 8/0/1
+PASS legacy word unchanged 8/0/2
+PASS legacy word unchanged 8/0/3
+PASS legacy word unchanged 8/1/0
+PASS legacy word unchanged 8/1/1
+PASS legacy word unchanged 8/1/2
+PASS legacy word unchanged 8/1/3
+PASS legacy word unchanged 8/2/0
+PASS legacy word unchanged 8/2/1
+PASS legacy word unchanged 8/2/2
+PASS legacy word unchanged 8/2/3
+PASS legacy word unchanged 8/3/0
+PASS legacy word unchanged 8/3/1
+PASS legacy word unchanged 8/3/2
+PASS legacy word unchanged 8/3/3
+PASS catalogue bounds reject unsupported shapes and rotations
+PASS unique proper grid rotation 0
+PASS unique proper grid rotation 1
+PASS unique proper grid rotation 2
+PASS unique proper grid rotation 3
+PASS unique proper grid rotation 4
+PASS unique proper grid rotation 5
+PASS unique proper grid rotation 6
+PASS unique proper grid rotation 7
+PASS unique proper grid rotation 8
+PASS unique proper grid rotation 9
+PASS unique proper grid rotation 10
+PASS unique proper grid rotation 11
+PASS unique proper grid rotation 12
+PASS unique proper grid rotation 13
+PASS unique proper grid rotation 14
+PASS unique proper grid rotation 15
+PASS unique proper grid rotation 16
+PASS unique proper grid rotation 17
+PASS unique proper grid rotation 18
+PASS unique proper grid rotation 19
+PASS unique proper grid rotation 20
+PASS unique proper grid rotation 21
+PASS unique proper grid rotation 22
+PASS unique proper grid rotation 23
+PASS extended word roundtrip 9/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 9/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 9/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 10/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 10/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 11/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 11/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 12/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 12/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 13/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 13/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/0
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/0
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/1
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/1
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/2
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/2
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/3
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/3
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/4
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/4
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/5
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/5
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/6
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/6
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/7
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/7
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/8
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/8
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/9
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/9
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/10
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/10
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/11
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/11
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/12
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/12
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/13
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/13
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/14
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/14
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/15
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/15
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/16
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/16
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/17
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/17
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/18
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/18
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/19
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/19
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/20
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/20
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/21
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/21
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/22
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/22
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS extended word roundtrip 14/23
+PASS native cell accepts modular shape
+PASS real solid and empty volume 14/23
+PASS native water/solid hulls available
+PASS grid-bounded cached preview and outward normals
+PASS every render triangle separates exact solid and empty space
+PASS 144 rotated independently stored blocks
+WARNING: Block texture set unavailable or invalid: original. Using preserved original materials.
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/modular_blocks.gd:93)
+PASS physical collider matches exact authored surface (0, 0, 0)
+PASS physical collider matches exact authored surface (0, 0, 3)
+PASS physical collider matches exact authored surface (0, 0, 6)
+PASS physical collider matches exact authored surface (0, 0, 9)
+PASS physical collider matches exact authored surface (0, 0, 12)
+PASS physical collider matches exact authored surface (0, 0, 15)
+PASS physical collider matches exact authored surface (0, 0, 18)
+PASS physical collider matches exact authored surface (0, 0, 21)
+PASS physical collider matches exact authored surface (0, 0, 24)
+PASS physical collider matches exact authored surface (0, 0, 27)
+PASS physical collider matches exact authored surface (0, 0, 30)
+PASS physical collider matches exact authored surface (0, 0, 33)
+PASS physical collider matches exact authored surface (0, 0, 36)
+PASS physical collider matches exact authored surface (0, 0, 39)
+PASS physical collider matches exact authored surface (0, 0, 42)
+PASS physical collider matches exact authored surface (0, 0, 45)
+PASS physical collider matches exact authored surface (0, 0, 48)
+PASS physical collider matches exact authored surface (0, 0, 51)
+PASS physical collider matches exact authored surface (0, 0, 54)
+PASS physical collider matches exact authored surface (0, 0, 57)
+PASS physical collider matches exact authored surface (0, 0, 60)
+PASS physical collider matches exact authored surface (0, 0, 63)
+PASS physical collider matches exact authored surface (0, 0, 66)
+PASS physical collider matches exact authored surface (0, 0, 69)
+PASS physical collider matches exact authored surface (3, 0, 0)
+PASS physical collider matches exact authored surface (3, 0, 3)
+PASS physical collider matches exact authored surface (3, 0, 6)
+PASS physical collider matches exact authored surface (3, 0, 9)
+PASS physical collider matches exact authored surface (3, 0, 12)
+PASS physical collider matches exact authored surface (3, 0, 15)
+PASS physical collider matches exact authored surface (3, 0, 18)
+PASS physical collider matches exact authored surface (3, 0, 21)
+PASS physical collider matches exact authored surface (3, 0, 24)
+PASS physical collider matches exact authored surface (3, 0, 27)
+PASS physical collider matches exact authored surface (3, 0, 30)
+PASS physical collider matches exact authored surface (3, 0, 33)
+PASS physical collider matches exact authored surface (3, 0, 36)
+PASS physical collider matches exact authored surface (3, 0, 39)
+PASS physical collider matches exact authored surface (3, 0, 42)
+PASS physical collider matches exact authored surface (3, 0, 45)
+PASS physical collider matches exact authored surface (3, 0, 48)
+PASS physical collider matches exact authored surface (3, 0, 51)
+PASS physical collider matches exact authored surface (3, 0, 54)
+PASS physical collider matches exact authored surface (3, 0, 57)
+PASS physical collider matches exact authored surface (3, 0, 60)
+PASS physical collider matches exact authored surface (3, 0, 63)
+PASS physical collider matches exact authored surface (3, 0, 66)
+PASS physical collider matches exact authored surface (3, 0, 69)
+PASS physical collider matches exact authored surface (6, 0, 0)
+PASS physical collider matches exact authored surface (6, 0, 3)
+PASS physical collider matches exact authored surface (6, 0, 6)
+PASS physical collider matches exact authored surface (6, 0, 9)
+PASS physical collider matches exact authored surface (6, 0, 12)
+PASS physical collider matches exact authored surface (6, 0, 15)
+PASS physical collider matches exact authored surface (6, 0, 18)
+PASS physical collider matches exact authored surface (6, 0, 21)
+PASS physical collider matches exact authored surface (6, 0, 24)
+PASS physical collider matches exact authored surface (6, 0, 27)
+PASS physical collider matches exact authored surface (6, 0, 30)
+PASS physical collider matches exact authored surface (6, 0, 33)
+PASS physical collider matches exact authored surface (6, 0, 36)
+PASS physical collider matches exact authored surface (6, 0, 39)
+PASS physical collider matches exact authored surface (6, 0, 42)
+PASS physical collider matches exact authored surface (6, 0, 45)
+PASS physical collider matches exact authored surface (6, 0, 48)
+PASS physical collider matches exact authored surface (6, 0, 51)
+PASS physical collider matches exact authored surface (6, 0, 54)
+PASS physical collider matches exact authored surface (6, 0, 57)
+PASS physical collider matches exact authored surface (6, 0, 60)
+PASS physical collider matches exact authored surface (6, 0, 63)
+PASS physical collider matches exact authored surface (6, 0, 66)
+PASS physical collider matches exact authored surface (6, 0, 69)
+PASS physical collider matches exact authored surface (9, 0, 0)
+PASS physical collider matches exact authored surface (9, 0, 3)
+PASS physical collider matches exact authored surface (9, 0, 6)
+PASS physical collider matches exact authored surface (9, 0, 9)
+PASS physical collider matches exact authored surface (9, 0, 12)
+PASS physical collider matches exact authored surface (9, 0, 15)
+PASS physical collider matches exact authored surface (9, 0, 18)
+PASS physical collider matches exact authored surface (9, 0, 21)
+PASS physical collider matches exact authored surface (9, 0, 24)
+PASS physical collider matches exact authored surface (9, 0, 27)
+PASS physical collider matches exact authored surface (9, 0, 30)
+PASS physical collider matches exact authored surface (9, 0, 33)
+PASS physical collider matches exact authored surface (9, 0, 36)
+PASS physical collider matches exact authored surface (9, 0, 39)
+PASS physical collider matches exact authored surface (9, 0, 42)
+PASS physical collider matches exact authored surface (9, 0, 45)
+PASS physical collider matches exact authored surface (9, 0, 48)
+PASS physical collider matches exact authored surface (9, 0, 51)
+PASS physical collider matches exact authored surface (9, 0, 54)
+PASS physical collider matches exact authored surface (9, 0, 57)
+PASS physical collider matches exact authored surface (9, 0, 60)
+PASS physical collider matches exact authored surface (9, 0, 63)
+PASS physical collider matches exact authored surface (9, 0, 66)
+PASS physical collider matches exact authored surface (9, 0, 69)
+PASS physical collider matches exact authored surface (12, 0, 0)
+PASS physical collider matches exact authored surface (12, 0, 3)
+PASS physical collider matches exact authored surface (12, 0, 6)
+PASS physical collider matches exact authored surface (12, 0, 9)
+PASS physical collider matches exact authored surface (12, 0, 12)
+PASS physical collider matches exact authored surface (12, 0, 15)
+PASS physical collider matches exact authored surface (12, 0, 18)
+PASS physical collider matches exact authored surface (12, 0, 21)
+PASS physical collider matches exact authored surface (12, 0, 24)
+PASS physical collider matches exact authored surface (12, 0, 27)
+PASS physical collider matches exact authored surface (12, 0, 30)
+PASS physical collider matches exact authored surface (12, 0, 33)
+PASS physical collider matches exact authored surface (12, 0, 36)
+PASS physical collider matches exact authored surface (12, 0, 39)
+PASS physical collider matches exact authored surface (12, 0, 42)
+PASS physical collider matches exact authored surface (12, 0, 45)
+PASS physical collider matches exact authored surface (12, 0, 48)
+PASS physical collider matches exact authored surface (12, 0, 51)
+PASS physical collider matches exact authored surface (12, 0, 54)
+PASS physical collider matches exact authored surface (12, 0, 57)
+PASS physical collider matches exact authored surface (12, 0, 60)
+PASS physical collider matches exact authored surface (12, 0, 63)
+PASS physical collider matches exact authored surface (12, 0, 66)
+PASS physical collider matches exact authored surface (12, 0, 69)
+PASS physical collider matches exact authored surface (15, 0, 0)
+PASS physical collider matches exact authored surface (15, 0, 3)
+PASS physical collider matches exact authored surface (15, 0, 6)
+PASS physical collider matches exact authored surface (15, 0, 9)
+PASS physical collider matches exact authored surface (15, 0, 12)
+PASS physical collider matches exact authored surface (15, 0, 15)
+PASS physical collider matches exact authored surface (15, 0, 18)
+PASS physical collider matches exact authored surface (15, 0, 21)
+PASS physical collider matches exact authored surface (15, 0, 24)
+PASS physical collider matches exact authored surface (15, 0, 27)
+PASS physical collider matches exact authored surface (15, 0, 30)
+PASS physical collider matches exact authored surface (15, 0, 33)
+PASS physical collider matches exact authored surface (15, 0, 36)
+PASS physical collider matches exact authored surface (15, 0, 39)
+PASS physical collider matches exact authored surface (15, 0, 42)
+PASS physical collider matches exact authored surface (15, 0, 45)
+PASS physical collider matches exact authored surface (15, 0, 48)
+PASS physical collider matches exact authored surface (15, 0, 51)
+PASS physical collider matches exact authored surface (15, 0, 54)
+PASS physical collider matches exact authored surface (15, 0, 57)
+PASS physical collider matches exact authored surface (15, 0, 60)
+PASS physical collider matches exact authored surface (15, 0, 63)
+PASS physical collider matches exact authored surface (15, 0, 66)
+PASS physical collider matches exact authored surface (15, 0, 69)
+PASS version-two binary snapshot exact roundtrip
+PASS invalid extended word is atomic 256
+PASS invalid extended word is atomic 32792
+PASS invalid extended word is atomic 32896
+PASS invalid extended word is atomic 34304
+PASS invalid extended word is atomic 65536
+PASS invalid extended word is atomic -1
+PASS binary region paging preserves modular words
+PASS paging roundtrip preserves all block identities
+PASS modular prefab configured
+PASS prefab yaw preserves mount 0/0
+PASS prefab yaw preserves mount 0/1
+PASS prefab yaw preserves mount 0/2
+PASS prefab yaw preserves mount 0/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 1/0
+PASS prefab yaw preserves mount 1/1
+PASS prefab yaw preserves mount 1/2
+PASS prefab yaw preserves mount 1/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 2/0
+PASS prefab yaw preserves mount 2/1
+PASS prefab yaw preserves mount 2/2
+PASS prefab yaw preserves mount 2/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 3/0
+PASS prefab yaw preserves mount 3/1
+PASS prefab yaw preserves mount 3/2
+PASS prefab yaw preserves mount 3/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 4/0
+PASS prefab yaw preserves mount 4/1
+PASS prefab yaw preserves mount 4/2
+PASS prefab yaw preserves mount 4/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 5/0
+PASS prefab yaw preserves mount 5/1
+PASS prefab yaw preserves mount 5/2
+PASS prefab yaw preserves mount 5/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 6/0
+PASS prefab yaw preserves mount 6/1
+PASS prefab yaw preserves mount 6/2
+PASS prefab yaw preserves mount 6/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 7/0
+PASS prefab yaw preserves mount 7/1
+PASS prefab yaw preserves mount 7/2
+PASS prefab yaw preserves mount 7/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 8/0
+PASS prefab yaw preserves mount 8/1
+PASS prefab yaw preserves mount 8/2
+PASS prefab yaw preserves mount 8/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 9/0
+PASS prefab yaw preserves mount 9/1
+PASS prefab yaw preserves mount 9/2
+PASS prefab yaw preserves mount 9/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 10/0
+PASS prefab yaw preserves mount 10/1
+PASS prefab yaw preserves mount 10/2
+PASS prefab yaw preserves mount 10/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 11/0
+PASS prefab yaw preserves mount 11/1
+PASS prefab yaw preserves mount 11/2
+PASS prefab yaw preserves mount 11/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 12/0
+PASS prefab yaw preserves mount 12/1
+PASS prefab yaw preserves mount 12/2
+PASS prefab yaw preserves mount 12/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 13/0
+PASS prefab yaw preserves mount 13/1
+PASS prefab yaw preserves mount 13/2
+PASS prefab yaw preserves mount 13/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 14/0
+PASS prefab yaw preserves mount 14/1
+PASS prefab yaw preserves mount 14/2
+PASS prefab yaw preserves mount 14/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 15/0
+PASS prefab yaw preserves mount 15/1
+PASS prefab yaw preserves mount 15/2
+PASS prefab yaw preserves mount 15/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 16/0
+PASS prefab yaw preserves mount 16/1
+PASS prefab yaw preserves mount 16/2
+PASS prefab yaw preserves mount 16/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 17/0
+PASS prefab yaw preserves mount 17/1
+PASS prefab yaw preserves mount 17/2
+PASS prefab yaw preserves mount 17/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 18/0
+PASS prefab yaw preserves mount 18/1
+PASS prefab yaw preserves mount 18/2
+PASS prefab yaw preserves mount 18/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 19/0
+PASS prefab yaw preserves mount 19/1
+PASS prefab yaw preserves mount 19/2
+PASS prefab yaw preserves mount 19/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 20/0
+PASS prefab yaw preserves mount 20/1
+PASS prefab yaw preserves mount 20/2
+PASS prefab yaw preserves mount 20/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 21/0
+PASS prefab yaw preserves mount 21/1
+PASS prefab yaw preserves mount 21/2
+PASS prefab yaw preserves mount 21/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 22/0
+PASS prefab yaw preserves mount 22/1
+PASS prefab yaw preserves mount 22/2
+PASS prefab yaw preserves mount 22/3
+PASS modular prefab configured
+PASS prefab yaw preserves mount 23/0
+PASS prefab yaw preserves mount 23/1
+PASS prefab yaw preserves mount 23/2
+PASS prefab yaw preserves mount 23/3
+PASS native history enabled
+PASS partial faces culled both directions across seam 0/32768
+PASS partial faces culled both directions across seam 0/1
+PASS partial faces culled both directions across seam 15/32768
+PASS partial faces culled both directions across seam 15/1
+PASS partial faces culled both directions across seam -1/32768
+PASS partial faces culled both directions across seam -1/1
+PASS arch halves remove only their shared cap, retaining the opening
+PASS four-block archway clears a 1.8-metre player capsule
+PASS removing one arch block preserves the other
+PASS independent removal has exact undo and redo
+PASS legacy-only worlds retain version-one storage
+PASS mixed shapes use the existing bounded native worker
+PASS ALT palette exposes new shapes and all 24 orientations
+PASS legacy blocks retain their four rotations
+MODULAR_BLOCKS checks=1306 failures=0

@@ -28,8 +28,9 @@ void clip(Intersection &hit,Vector3 origin,Vector3 direction,Vector3 normal,doub
 }
 // -1 means the segment starts within this solid; front-face picking then rejects.
 double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
-    int rotation=(word>>3)&3,shape=block_shape(word);
-    for(int r=0;r<rotation;r++) {origin=Vector3(origin.z,origin.y,1-origin.x);direction=Vector3(direction.z,direction.y,-direction.x);}
+    int rotation=block_rotation(word),shape=block_shape(word);
+    Basis orientation=block_basis(rotation),inverse=orientation.transposed();
+    origin=inverse.xform(origin-Vector3(.5,.5,.5))+Vector3(.5,.5,.5);direction=inverse.xform(direction);
     double nearest=INF;bool inside=false;
     auto accept=[&](const Intersection &hit) {
         if(!hit.valid||hit.exit<-EPS||hit.enter>1+EPS)return;
@@ -41,7 +42,7 @@ double shape_hit(int word,Vector3 origin,Vector3 direction,Vector3 &normal) {
         [&](Vector3 n,double offset){clip(component,origin,direction,n,offset);},
         [&](){accept(component);});
     if(inside)return -1;
-    for(int r=0;r<rotation;r++)normal=Vector3(-normal.z,normal.y,normal.x);
+    normal=orientation.xform(normal);
     return nearest;
 }
 }
@@ -60,7 +61,7 @@ Dictionary NativeBlockWorld::solid_hulls(const AABB &bounds) const {
         int word=cell(x,y,z);if(!word)continue;
         PackedFloat64Array hull;Vector3 center(.5,.5,.5),translation(x,y,z);
         visit_shape_hulls(block_shape(word),[&](){hull=PackedFloat64Array();},[&](Vector3 n,double offset){
-            Vector3 rotated=n;for(int r=0;r<((word>>3)&3);++r)rotated=Vector3(-rotated.z,rotated.y,rotated.x);
+            Vector3 rotated=orient_block_vector(n,block_rotation(word));
             auto dot=[](Vector3 a,Vector3 b){return double(a.x)*b.x+double(a.y)*b.y+double(a.z)*b.z;};
             double local_offset=offset+dot(rotated,center+translation)-dot(n,center);
             Vector3 world_normal=normal_frame.xform(rotated);double length=std::sqrt(dot(world_normal,world_normal));

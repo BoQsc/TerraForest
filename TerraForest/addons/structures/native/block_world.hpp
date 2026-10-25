@@ -85,7 +85,7 @@ class NativeBlockWorld : public Node3D {
     Ref<ShaderMaterial> material;
     String texture_set;
     bool load_texture_set(const String &name);
-    std::array<Ref<Mesh>,32> preview_meshes;
+    std::array<Ref<Mesh>,BLOCK_SHAPE_COUNT*24> preview_meshes;
     Vector3 focus;
     std::vector<Vector3> navigation_interest;
     double collision_radius=48.0;
@@ -186,6 +186,9 @@ public:
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Ref<Mesh> preview_mesh(int64_t shape,int64_t rotation);
+    int encode_block(int64_t shape,int64_t rotation,int64_t material) const;
+    Dictionary decode_block(int64_t word) const;
+    Basis shape_orientation(int rotation) const;
     Dictionary stats() const;
     Dictionary collision_stats() const;
     bool is_collision_region_ready(const AABB &world_bounds) const;

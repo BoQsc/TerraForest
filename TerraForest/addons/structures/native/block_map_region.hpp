@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "block_world.hpp"
+#include "modular_shapes.hpp"
 #include <godot_cpp/core/class_db.hpp>
 namespace terraforest {
 // At most one occupied chunk (256 column samples) per call. All samples are
@@ -15,6 +16,7 @@ inline Dictionary block_map_columns(const std::map<BlockKey,BlockChunk>&chunks,B
    int y=15;while(!(column&(1u<<y)))--y;int shape=block_shape(chunk.cells[x+16*y+256*z]);
    // Vertical projection at cell centre; stair boundaries use the higher step.
    float top=shape==2?.5f:shape==3?.75f:shape==4?.5f:1.f;
+   if(shape>8){top=0;int rotation=block_rotation(chunk.cells[x+16*y+256*z]);for(const auto &vertex:modular_geometry(shape).vertices)top=std::max(top,.5f+orient_block_vector(Vector3(vertex.x-.5f,vertex.y-.5f,vertex.z-.5f),rotation).y);}
    points.push_back(Vector3(k.x*16+x+.5f,k.y*16+y+top,k.z*16+z+.5f));
   }++offset;break;
  }

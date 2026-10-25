@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+const ShapeCatalog = preload("res://addons/structures/shape_catalog.gd")
 signal selection_requested(field: String,value: int)
 signal history_requested(forward: bool)
 signal capture_requested(action: String,title: String)
@@ -55,9 +56,10 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
 	var title:=Label.new();title.text="CONSTRUCTION";title.add_theme_font_size_override("font_size",22);column.add_child(title)
-	shape=_option(column,"Shape",["Cube","Slab","Stairs","Slope","Post","Sphere","Round column","Top plate"],"shape")
+	shape=_option(column,"Shape",ShapeCatalog.NAMES,"shape")
 	material=_option(column,"Material",["Brick","Wood","Concrete","Metal"],"material")
 	rotation_choice=_option(column,"Rotation",["0°","90°","180°","270°"],"rotation")
+	rotation_choice.tooltip_text="R turns around the vertical axis. Shift+R changes the mounting direction of modular blocks."
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")
 	prefab.tooltip_text="Outline: red = blocked; amber = placement checks pending; green = block space clear. Materials are checked when placing."
 	survey_button=Button.new();survey_button.text="Survey ground for selected prefab";survey_button.focus_mode=Control.FOCUS_NONE;column.add_child(survey_button)
@@ -192,6 +194,11 @@ func _request_frontage() -> void:
 func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int,manage_visibility: bool=true) -> void:
 	if panel==null: return
 	if manage_visibility:panel.visible=active
+	var rotations: int = 4 if prefab_index>=0 else ShapeCatalog.rotation_count(shape_id)
+	if rotation_choice.item_count!=rotations:
+		rotation_choice.clear()
+		for orientation in rotations:
+			rotation_choice.add_item(ShapeCatalog.rotation_name(orientation) if rotations>4 else "%d°" % (orientation*90))
 	shape.select(shape_id-1);material.select(material_id);rotation_choice.select(quarter_turn);prefab.select(prefab_index+1)
 	shape.disabled=prefab_index>=0
 	material.disabled=prefab_index>=0

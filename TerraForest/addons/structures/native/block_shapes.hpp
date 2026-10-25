@@ -1,5 +1,6 @@
 #pragma once
 #include "block_world.hpp"
+#include "modular_shapes.hpp"
 #include <cmath>
 
 namespace terraforest {
@@ -71,6 +72,7 @@ inline const CylinderTemplate &cylinder_template() {
 // Shared allocation-free authored planes for picking and water occupancy.
 template<class Begin,class Plane,class End>
 void visit_shape_hulls(int shape,Begin begin,Plane plane,End end){
+    if(shape>=9&&shape<=BLOCK_SHAPE_COUNT){for(const auto &hull:modular_geometry(shape).hulls){begin();for(const auto &side:hull)plane(side.normal,side.offset);end();}return;}
     auto planes=[&](Vector3 lo,Vector3 hi){for(int a=0;a<3;++a){Vector3 n;n[a]=1;plane(n,double(hi[a]));n[a]=-1;plane(n,-double(lo[a]));}};
     auto box=[&](Vector3 lo,Vector3 hi){begin();planes(lo,hi);end();};
     if(shape==1)box(Vector3(),Vector3(1,1,1));

@@ -1,0 +1,15 @@
+{
+  "checks": 1306,
+  "edit_flush_ms": [
+    2.293,
+    2.551,
+    2.365,
+    2.359,
+    2.553,
+    2.54,
+    2.503,
+    2.523
+  ],
+  "failures": 0,
+  "scope": "64 mixed modular cells; synchronous explicit flush includes worker wait and collision; not frame-time"
+}

@@ -26,9 +26,48 @@ python tools/build_native.py --addon structures --target all
 
 ## Representation and editing
 
+### Modular building shapes
+
+Six additional individual grid blocks are available in both the normal player's
+ALT controls and the development building tool: **9 thin panel** (1/8 m),
+**10 frame corner**, **11 quarter arch**, **12 roof ridge** (1/2 m rise),
+**13 outer roof corner**, and **14 inner roof corner**. Assemble arches and frames
+from separate cells; there are no complete arch/door/window-frame block types.
+Existing houses and generation defaults are unchanged.
+
+Hold a building material, hold **Alt**, and choose a shape and orientation.
+**R** turns it about the vertical axis; **Shift+R** changes its mounting direction.
+The six new shapes support 24 grid-preserving orientations. Legacy shapes keep
+their four yaw rotations. Right-click places a block for one unit of its material;
+normal tool hits damage/destroy that cell. Development mode retains free placement
+and left-click removal. The preview uses the native shape, including its holes.
+
+Use `encode_block(shape, orientation, material)` rather than constructing words
+manually; it returns `-1` for invalid input. `decode_block(word)` returns the three
+fields or an empty dictionary. `shape_orientation(index)` exposes the corresponding
+grid basis. New words use `0x8000 | ((shape-9)<<8) | orientation | (material<<5)`;
+bits 7, 13 and 14 remain reserved. Material bits are unchanged. Orientations group
+four yaw turns under upright, forward-tip, inverted, backward-tip, left-roll and
+right-roll mounts. IDs and their geometry are persistent contracts, not indexes
+into the external addon's catalogue.
+
+Legacy-only TFBL snapshots remain byte-compatible version 1. Snapshots containing
+new shapes use TFBL version 2 with the same 16-bit RLE records and checksum; new
+builds read both, old builds reject version 2 rather than misinterpret it. Native
+regions, history, prefab composition and placement preserve the full words.
+Rendering, collision, picking and water solid queries share cached native geometry
+and convex components. Worker baking clips covered cell-boundary faces on both
+sides, including legacy/modular joins, without raising the whole chunk's voxel
+resolution. Rendering batches never replace individual cell ownership.
+
+The thin panel is flat, not an unresolved shallow roof slope. Full shallow-roof
+phase pieces, all remaining upstream variants and house redesigns are not included.
+Each redesigned house needs explicit approval. Validation and scope:
+`../../docs/evidence/modular_blocks/README.md`.
+
 `NativeBlockWorld` is a Node3D with sparse 16×16×16 cell chunks. Each cell is a 16-bit word; a resident chunk's cell payload is 8 KiB. A cell is one local metre. Translation/rotation can be applied to the world node; supply focus in that node's local coordinates. Nonuniform scaling is not a supported physics configuration. There is no node per block.
 
-`set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Nonzero words encode `shape | (rotation << 3) | (material << 5)`; upper plates extend this as described below:
+`set_cells(PackedInt32Array)` accepts `[x,y,z,word, ...]`, up to 262,144 records. Coordinates are signed integers in ±1,048,575. Word zero erases. Legacy nonzero words encode `shape | (rotation << 3) | (material << 5)`; upper plates extend this as described below, and modular shapes use the versioned encoding above:
 
 | Field | Values |
 | --- | --- |

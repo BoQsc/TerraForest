@@ -1,0 +1,268 @@
+{
+  "scope": "Six modular native shapes; no house redesign or generation changes. Evidence includes known standalone layout failure and unchanged baseline.",
+  "source_revision": "54d9a845a589910aec4e4c52e4062091d1c95a43",
+  "pack_sha256": "0e96a0538790a604c72b64433909265dee11fb98639b27ea7446f6eeed246464",
+  "source_files": {
+    "addons/player_runtime/developer_hud.gd": "07c70626562b6d2a979035ec936608513e957722cf3f50aaac8f1aa2762c5b2e",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "5c7eabd35a4569095802df1a69feb7a80d0a0e75336162d314431d4ed7a42e67",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "058b30243d1b80726e6576e8190f5a3c2ebd3585e69735e58e8826eda3d3b495",
+    "addons/structures/construction_palette.gd": "386d0f3429e3034efdee8727fd220762150724f1fdf7c4be101cc5da6d6c2772",
+    "addons/structures/native/block_map_region.hpp": "a3343c98767740f0205de3d9f47433a50c26f399c8c72fcf6292be7ba2e643e0",
+    "addons/structures/native/block_prefab.cpp": "fbe5466200c64122b3e68b9e64be2ef5d660b47141046ba0ab4c481578c51df7",
+    "addons/structures/native/block_queries.cpp": "94855e8cc0b0250eacf165babf6f9494197c4dd510d3184c4a4e3f4bb296aa23",
+    "addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
+    "addons/structures/native/block_word.hpp": "de3ae52cb3d56f433589510e06109a1100429560039c1ddc47bda2dd0077a691",
+    "addons/structures/native/block_world.cpp": "161ac8b48f7ef78571a23951dedd1750ce8b96ab4a506c6b581cf67baad80f79",
+    "addons/structures/native/block_world.hpp": "3ed12c47240d0e2814ce504929515587917137637afa41434eb9b8ba3a1aa2ea",
+    "addons/structures/native/modular_mesher.hpp": "2da10a606ca0d171aaf379571cd5291697cc9745db45e4f7109a3bfdade7e283",
+    "addons/structures/native/modular_shapes.hpp": "1d5758ffe43903578627484f9a9b4e4f363d37a4edb8175108b4248a8b3ef1b3",
+    "addons/structures/native/prefab_placement.cpp": "61d481e67f68ba39502a86c71ce45eb06efe036a279fa163ba4013e392172fb6",
+    "addons/structures/native/prefab_transaction.cpp": "f631af682c7d24b9344df8dcfd1ad98b104adc21762d890d56ff181311c714d9",
+    "addons/structures/shape_catalog.gd": "09631763180dccea4fcdd1a092050fc813adf9343e11b43ffa62253be02bebcf",
+    "addons/structures/shape_catalog.gd.uid": "02956c16d66eeabe6c0641bfc1bd63d914665fbdf2c25c21b049371e7d743f7f",
+    "demo/world.gd": "734ef3ff8b87a9eb8ee174ee8fd17729fdf7274efa7eb2bea3a303fbcad89b65",
+    "tests/modular_blocks.gd": "f1f742c3660935c68aa7007d3f10210fde77696f153fcf5f36e1e4f8b48f492e",
+    "tests/modular_blocks.gd.uid": "f0274c31967099b887d922bd38f2e306a1d04d4104219d4ce804067a998562ac",
+    "tests/modular_blocks_world.gd": "2cad50ba4c3b9c4650dbe4668709c9014e97b29307b6dc4b304e723f430394ef",
+    "tests/modular_blocks_world.gd.uid": "1da95b1b7814447b654c299b1fce39d7ad95e605db1c70182de876099782471a",
+    "tests/structures.gd": "decdd095415155781e4210ab637988e78380a88a70cd81f8f023314c7e1bac0d"
+  },
+  "files": {
+    "build_debug.json": {
+      "bytes": 1695,
+      "sha256": "b5c8344637dd1577d1c7a1c73aead21f591add33984aadf13cd8be9f9c41a90e"
+    },
+    "build_release.json": {
+      "bytes": 1699,
+      "sha256": "9dae2695fba41abd1896858d789184da4f991f2bc4a2b6f1706f6872a57e2098"
+    },
+    "debug/component.json": {
+      "bytes": 265,
+      "sha256": "e05a1d7610996bf32a46f68a190a997a34d548ace66023ccfb57ad0477c211a3"
+    },
+    "debug/console.log": {
+      "bytes": 60335,
+      "sha256": "d4753547db3d904a40c2235403fcc90521a53d943d5a47f41cb5b4d807cc1d87"
+    },
+    "debug/engine.log": {
+      "bytes": 59026,
+      "sha256": "ba2cb22497bfd6d4f082ff8c960d1c0fa6fa47231f4efecb7c6c34df88d2ea1b"
+    },
+    "debug/run.json": {
+      "bytes": 5247,
+      "sha256": "22adafd7d22a916b88a21c2cbd0538c21f0d51eaf40516e19acc06f2dcd1d870"
+    },
+    "inventory/console.log": {
+      "bytes": 1505,
+      "sha256": "33eecdf730fb6231d600861c6c5fdf6eae5922dcb9522df77852714e4c8824f6"
+    },
+    "inventory/engine.log": {
+      "bytes": 1478,
+      "sha256": "f3c5b870643f7f12d4b058b59e9053a7fb9cf119d18b69aca4bf217fab1c7415"
+    },
+    "inventory/run.json": {
+      "bytes": 5271,
+      "sha256": "3c5bd76b975b58390114792b5a7ddb46fbca078b3e265b541ea87567b6ffa968"
+    },
+    "layout/baseline/console.log": {
+      "bytes": 91,
+      "sha256": "a9f71b40e1e6b540232446184bfce64e0d902de3006dba22eeed532c15856933"
+    },
+    "layout/baseline/engine.log": {
+      "bytes": 88,
+      "sha256": "cd1dd57ebcc224f50e3235fbf7265e11808708f859378935c981cbb9bbedbfa2"
+    },
+    "layout/baseline/run.json": {
+      "bytes": 906,
+      "sha256": "9b71abc2212298b974541e8fc19430282b0708d2af7b43c78d6c163101c91f41"
+    },
+    "layout/final/console.log": {
+      "bytes": 91,
+      "sha256": "a9f71b40e1e6b540232446184bfce64e0d902de3006dba22eeed532c15856933"
+    },
+    "layout/final/engine.log": {
+      "bytes": 88,
+      "sha256": "cd1dd57ebcc224f50e3235fbf7265e11808708f859378935c981cbb9bbedbfa2"
+    },
+    "layout/final/run.json": {
+      "bytes": 5439,
+      "sha256": "ed41a89738373f2b76d4bcd0b8faaa1aed501d247134cbc6d06b3c8b0e979f06"
+    },
+    "layout/first_candidate/console.log": {
+      "bytes": 181,
+      "sha256": "b7e34388480a8323c3420936ffbc906eaca881698d416250408e907edf156f69"
+    },
+    "layout/first_candidate/engine.log": {
+      "bytes": 177,
+      "sha256": "444f8ffb8b1aeb64c374d2d237d1850e7cef9cc5cf516dad9e058ada941c48c0"
+    },
+    "layout/first_candidate/run.json": {
+      "bytes": 5374,
+      "sha256": "2879c80af763534710c6cb2f18b441741701332fae8efce8bd97e483d670f028"
+    },
+    "legacy_lattice/console.log": {
+      "bytes": 5229,
+      "sha256": "2dd212a5c3acd7a1284d367708507602a2916db273647fc38f981f37daf9d862"
+    },
+    "legacy_lattice/engine.log": {
+      "bytes": 5195,
+      "sha256": "eff5ff62d058f398fd5881275744275f59fb917affaceba289cbdd266e607854"
+    },
+    "legacy_lattice/run.json": {
+      "bytes": 5242,
+      "sha256": "867f7708f28ee23cbc4bd496984245ec786f09cb2ca4931097bc56fd37c6e176"
+    },
+    "legacy_solids/console.log": {
+      "bytes": 5481,
+      "sha256": "d3d9a137970738ad4aafcc40c9b9299313bb2f6212ca76c69213c1329b726ef5"
+    },
+    "legacy_solids/engine.log": {
+      "bytes": 5357,
+      "sha256": "757cb31cf17f855653b3049be67384eab107fcf3de15684010d01b1b448d8b83"
+    },
+    "legacy_solids/run.json": {
+      "bytes": 5116,
+      "sha256": "6c3beaef13403aecc39ab3e8559b7cdbcef3ff64fba6320fb5ce6f1f9cb51688"
+    },
+    "logs/build.log": {
+      "bytes": 7410,
+      "sha256": "f15cc3c33024add5fe4de9b93b07b535c1f548067bfcca9207708ba906d4a350"
+    },
+    "logs/export.log": {
+      "bytes": 283,
+      "sha256": "b6a81b066b7cc065c8ee59c233dabb5594af612325a9d0a30a5909bf6395e772"
+    },
+    "logs/import.log": {
+      "bytes": 4776,
+      "sha256": "5032892386b02d45232540606d8a24d0ce089b0de40a25733a0877f995930514"
+    },
+    "pack/blocks.tfbl": {
+      "bytes": 152,
+      "sha256": "929feba72aae93b8a664baa094aa65beea16ba27b65a04dcaae2395591b489e1"
+    },
+    "pack/console.log": {
+      "bytes": 5642,
+      "sha256": "fa7ba1c1aa3f6ea415637a9f98f3952e8d41b3ae02bbf5305ba7cefa92c3e274"
+    },
+    "pack/engine.log": {
+      "bytes": 5540,
+      "sha256": "3db1fdaa817f80c5c300bf100cfd245d95cba77afb0700090686613030968c31"
+    },
+    "pack/placed_records.json": {
+      "bytes": 121,
+      "sha256": "d89c1dd158ca74daafd490d2164c9c5cf9ec6a4c57abf12dff6adc587b043f3e"
+    },
+    "pack/placed_shapes.png": {
+      "bytes": 2680560,
+      "sha256": "0b8e7086b3893474686f6f401c7c442ea1458ffbfca78d39b01698ec598390a8"
+    },
+    "pack/quarter_arch.png": {
+      "bytes": 2768397,
+      "sha256": "08327bb5d550073c9265d5a41c62769f62d3383991fba9292f0cf53ca25eb66a"
+    },
+    "pack/result.json": {
+      "bytes": 35,
+      "sha256": "79fbbf8d91b013b825f7cc11fbaa6f899afff810c183685a2177d91d398e09cc"
+    },
+    "pack/run.json": {
+      "bytes": 3358,
+      "sha256": "c81556106734cad625753774d283b6dcb9e47e78a98efa279693344680247d27"
+    },
+    "pack_restore/console.log": {
+      "bytes": 508,
+      "sha256": "4315f92e0612d14ad3673e4eb88e8dded397f9cc7fc9de571cc0374041e07fca"
+    },
+    "pack_restore/engine.log": {
+      "bytes": 497,
+      "sha256": "0fec7819db9939d63c48328b2cd58fc1515f850f8909b3010b2a92f9df65148b"
+    },
+    "pack_restore/run.json": {
+      "bytes": 1130,
+      "sha256": "f9f87b9813f8cd52fa7eac0713f9cdd3b493e5dfd9bdb54a3b37777aed04604e"
+    },
+    "paving/console.log": {
+      "bytes": 4441,
+      "sha256": "d39b206db62e678c59a70233113adbe260372b81ddea842411d367dcf7663664"
+    },
+    "paving/engine.log": {
+      "bytes": 4355,
+      "sha256": "b8875c4d70064c9e3b847880bf9d701aa7fcf0f0f1924b9e2c98611775ccfe38"
+    },
+    "paving/run.json": {
+      "bytes": 5235,
+      "sha256": "874375e3412810c370f40e8b2dededc10a94e1f7697a0828dcc33c06049ef82b"
+    },
+    "README.md": {
+      "bytes": 7594,
+      "sha256": "c8638f3fea3d3e2f96e25032e7db5181b9652a0fc9cd5d8401b0556f46f25a6f"
+    },
+    "regions/console.log": {
+      "bytes": 2817,
+      "sha256": "82896b107fbd07b1723dfb78e7734a7961e6223b48b8682008c2ca07271f20b7"
+    },
+    "regions/engine.log": {
+      "bytes": 2772,
+      "sha256": "b39bac398b4a0b3300a6507cd66b0e2b12db90a5d405c34787f064386616b342"
+    },
+    "regions/run.json": {
+      "bytes": 5278,
+      "sha256": "caac9279ffd44daee8cf9ce427d2668197917c695ae369f59e9956f33fbf6eb4"
+    },
+    "release/component.json": {
+      "bytes": 265,
+      "sha256": "137e94d9f72b1b6e9ba88397f3528404001affab1042d9f7c37ff59da2af8ab7"
+    },
+    "release/console.log": {
+      "bytes": 60594,
+      "sha256": "66d9253f990152e8bb0ff12de688341c3ff9169af957b7b6f4df604aa440807b"
+    },
+    "release/engine.log": {
+      "bytes": 59281,
+      "sha256": "be49db716282a4b528b39e2e23dc14b5877d02704f0ddde3478b9b184a8719fd"
+    },
+    "release/run.json": {
+      "bytes": 887,
+      "sha256": "f9f3b4bd5b4466568dd1de009a4804ff80ca2460741afbe78a01c02737a8c13f"
+    },
+    "structures/console.log": {
+      "bytes": 18987,
+      "sha256": "d985821b1b74556755ef56f963db7fa22fdabb6af673a941448df1fddd7327a9"
+    },
+    "structures/engine.log": {
+      "bytes": 18686,
+      "sha256": "d510dcf20b6cc63259f1f114be547be4d31495ab15d87cd4a65e5340110dfe67"
+    },
+    "structures/run.json": {
+      "bytes": 5229,
+      "sha256": "083177cb7e58875c7db6d374324f1fa9b0d6faf1230d078f35bd517660670de9"
+    },
+    "worker/console.log": {
+      "bytes": 1545,
+      "sha256": "dfeaa230276f340802b9a66407963070c66bcd84332fe07449bee3b225491874"
+    },
+    "worker/engine.log": {
+      "bytes": 1533,
+      "sha256": "e51bf5d1b77718815ebd638ce046aab77d7e13612f1bcdce3021306bc9753366"
+    },
+    "worker/run.json": {
+      "bytes": 5084,
+      "sha256": "d51d50965ee2729b7c8f1b6c192a5a79e8f27960f400aee661808eba60d06a72"
+    },
+    "world_source/console.log": {
+      "bytes": 5642,
+      "sha256": "fa7ba1c1aa3f6ea415637a9f98f3952e8d41b3ae02bbf5305ba7cefa92c3e274"
+    },
+    "world_source/engine.log": {
+      "bytes": 5540,
+      "sha256": "3db1fdaa817f80c5c300bf100cfd245d95cba77afb0700090686613030968c31"
+    },
+    "world_source/result.json": {
+      "bytes": 35,
+      "sha256": "79fbbf8d91b013b825f7cc11fbaa6f899afff810c183685a2177d91d398e09cc"
+    },
+    "world_source/run.json": {
+      "bytes": 5386,
+      "sha256": "13c96b8b10cf079681c28ef389421d769555657a5a73b2d4ce9bb032f2511ff7"
+    }
+  }
+}

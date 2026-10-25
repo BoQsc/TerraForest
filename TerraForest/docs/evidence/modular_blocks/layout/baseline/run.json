@@ -1,0 +1,27 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\modular_palette_baseline",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\modular_palette_baseline\\engine.log",
+    "--script",
+    "res://tests/construction_palette_layout.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 11480,
+    "exit_code": 1,
+    "diagnostics": [
+      "\nFAIL panel layout"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 0.28725789999589324,
+    "passed": false
+  },
+  "baseline": "54d9a845",
+  "scope": "Unchanged HEAD palette and fixture; standalone layout, not the scrollable actual game workspace"
+}

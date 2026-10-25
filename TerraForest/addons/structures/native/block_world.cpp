@@ -1,5 +1,6 @@
 #include "block_world.hpp"
 #include "block_shapes.hpp"
+#include "modular_mesher.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/collision_shape3d.hpp>
@@ -29,6 +30,9 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_texture_set","name"),&NativeBlockWorld::set_texture_set);
     ClassDB::bind_method(D_METHOD("get_texture_set"),&NativeBlockWorld::get_texture_set);
     ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
+    ClassDB::bind_method(D_METHOD("encode_block","shape","rotation","material"),&NativeBlockWorld::encode_block);
+    ClassDB::bind_method(D_METHOD("decode_block","word"),&NativeBlockWorld::decode_block);
+    ClassDB::bind_method(D_METHOD("shape_orientation","rotation"),&NativeBlockWorld::shape_orientation);
     ClassDB::bind_method(D_METHOD("solid_hulls","world_bounds"),&NativeBlockWorld::solid_hulls);
     ClassDB::bind_method(D_METHOD("sample_solid","world_points"),&NativeBlockWorld::sample_solid);
     ClassDB::bind_method(D_METHOD("capture_region","region"),&NativeBlockWorld::capture_region);
@@ -92,8 +96,8 @@ void NativeBlockWorld::invalidate(BlockKey key) {
     dirty.insert(key); tickets[key]=++revision;
 }
 Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
-    if(shape<1||shape>8||rotation<0||rotation>3)return {};
-    auto &cached=preview_meshes[(shape-1)*4+rotation];
+    if(shape<1||shape>BLOCK_SHAPE_COUNT||rotation<0||rotation>=(shape>8?24:4))return {};
+    auto &cached=preview_meshes[(shape-1)*24+rotation];
     if(cached.is_valid())return cached;
     std::array<uint16_t,5832> halo{};
     halo[1+18*(1+18)]=uint16_t(block_word(int(shape),int(rotation)));
@@ -109,6 +113,15 @@ Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);
     cached=mesh;return cached;
 }
+int NativeBlockWorld::encode_block(int64_t shape,int64_t rotation,int64_t material) const {
+    if(shape<1||shape>BLOCK_SHAPE_COUNT||rotation<0||rotation>23||material<0||material>3)return -1;
+    return block_word(int(shape),int(rotation),int(material));
+}
+Dictionary NativeBlockWorld::decode_block(int64_t word) const {
+    Dictionary result;if(word<=0||word>65535||!valid_block_word(int(word)))return result;
+    result["shape"]=block_shape(int(word));result["rotation"]=block_rotation(int(word));result["material"]=block_material(int(word));return result;
+}
+Basis NativeBlockWorld::shape_orientation(int rotation) const {return rotation>=0&&rotation<24?block_basis(rotation):Basis();}
 bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
     bool changed=false;
     if(!apply_cells(records,true,changed))return false;
@@ -304,11 +317,12 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     BlockBake out; out.key=key; out.revision=ticket;
     // Include the halo: a neighboring stair/post can expose quarter-cell
     // fragments on an otherwise ordinary cube wall. Wedges/spheres are separate.
-    int scale=1;
+    int scale=1;bool modular=false;
     for(uint16_t word:halo) {
         const int shape=block_shape(word);
-        if(shape==3||shape==5||shape==8) {scale=4;break;}
-        if(shape==2)scale=2;
+        if(shape>8)modular=true;
+        if(shape==3||shape==5||shape==8)scale=4;
+        if(shape==2)scale=std::max(scale,2);
     }
     if(scale==1)bake_lattice<1>(out,halo);
     else if(scale==2)bake_lattice<2>(out,halo);
@@ -317,16 +331,16 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
     // Wedge boundary faces are currently conservative; see addon limitations.
     for(int z=0;z<16;z++) for(int y=0;y<16;y++) for(int x=0;x<16;x++) {
         int at=(x+1)+18*((y+1)+18*(z+1)),w=halo[at];
-        if((w&7)==6||(w&7)==7) {
-            bool enclosed=true;for(int step:{-1,1,-18,18,-324,324})if((halo[at+step]&7)!=1){enclosed=false;break;}
+        if(block_shape(w)==6||block_shape(w)==7) {
+            bool enclosed=true;for(int step:{-1,1,-18,18,-324,324})if(block_shape(halo[at+step])!=1){enclosed=false;break;}
             if(!enclosed) {
-                if((w&7)==6)curved_shape(out,Vector3(x,y,z),(w>>3)&3,w>>5,sphere_template());
-                else curved_shape(out,Vector3(x,y,z),(w>>3)&3,w>>5,cylinder_template());
+                if(block_shape(w)==6)curved_shape(out,Vector3(x,y,z),block_rotation(w),block_material(w),sphere_template());
+                else curved_shape(out,Vector3(x,y,z),block_rotation(w),block_material(w),cylinder_template());
             }
             continue;
         }
-        if((w&7)!=4) continue;
-        Vector3 origin(x,y,z); int r=(w>>3)&3,m=w>>5;
+        if(block_shape(w)!=4) continue;
+        Vector3 origin(x,y,z); int r=block_rotation(w),m=block_material(w);
         auto p=[&](float a,float b,float c){return origin+rotate_shape(Vector3(a,b,c),r);};
         auto q=[&](Vector3 a,Vector3 b,Vector3 c,Vector3 d){quad(out,{a,b,c,d},(b-a).cross(c-a).normalized(),m);};
         q(p(0,0,0),p(1,0,0),p(1,0,1),p(0,0,1));
@@ -334,6 +348,14 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
         q(p(0,0,0),p(0,1,1),p(1,1,1),p(1,0,0));
         triangle(out,p(0,0,0),p(0,0,1),p(0,1,1),m);
         triangle(out,p(1,0,0),p(1,1,1),p(1,0,1),m);
+    }
+    if(modular) {
+        size_t legacy_indices=out.indices.size();
+        for(int height=0;height<16;++height)for(int row=0;row<16;++row)for(int column=0;column<16;++column) {
+            int word=halo[column+1+18*(height+1+18*(row+1))];
+            if(extended_block(word))append_modular_shape(out,Vector3(column,height,row),word);
+        }
+        clip_modular_boundaries(out,halo,legacy_indices);
     }
     return out;
 }
@@ -541,7 +563,8 @@ PackedByteArray NativeBlockWorld::capture_snapshot() const {
     return encode_chunks(chunks);
 }
 PackedByteArray NativeBlockWorld::encode_chunks(const std::map<BlockKey,BlockChunk> &source) {
-    std::vector<uint8_t> bytes={'T','F','B','L',1,0,0,0};
+    bool extended=false;for(const auto &entry:source)for(uint16_t word:entry.second.cells)if(extended_block(word)){extended=true;break;}
+    std::vector<uint8_t> bytes={'T','F','B','L',uint8_t(extended?2:1),0,0,0};
     auto u32=[&](uint32_t v){for(int i=0;i<4;i++)bytes.push_back(uint8_t(v>>(8*i)));};
     auto u16=[&](uint16_t v){bytes.push_back(v&255);bytes.push_back(v>>8);};
     u32(uint32_t(source.size()));
@@ -552,7 +575,7 @@ PackedByteArray NativeBlockWorld::encode_chunks(const std::map<BlockKey,BlockChu
     PackedByteArray result;result.resize(bytes.size());std::memcpy(result.ptrw(),bytes.data(),bytes.size());result.append_array(sha(result));return result;
 }
 bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,BlockChunk> *out) {
-    if(bytes.size()<44||bytes.size()>34*1024*1024||std::memcmp(bytes.ptr(),"TFBL\1\0\0\0",8)) return false;
+    if(bytes.size()<44||bytes.size()>34*1024*1024||std::memcmp(bytes.ptr(),"TFBL",4)||(bytes.decode_u32(4)!=1&&bytes.decode_u32(4)!=2)) return false;
     auto payload=bytes.slice(0,bytes.size()-32); if(sha(payload)!=bytes.slice(bytes.size()-32)) return false;
     size_t p=8,n=payload.size();const uint8_t *d=payload.ptr();
     auto u32=[&](){uint32_t v=uint32_t(d[p])|uint32_t(d[p+1])<<8|uint32_t(d[p+2])<<16|uint32_t(d[p+3])<<24;p+=4;return v;};
@@ -566,7 +589,7 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
         BlockChunk chunk;int pos=0;
         while(pos<4096) {
             if(p+4>n)return false;int run=d[p]|int(d[p+1])<<8,w=d[p+2]|int(d[p+3])<<8;p+=4;
-            if(!run||run>4096-pos||!valid_word(w))return false;
+            if(!run||run>4096-pos||!valid_word(w)||(bytes.decode_u32(4)==1&&extended_block(w)))return false;
             std::fill(chunk.cells.begin()+pos,chunk.cells.begin()+pos+run,uint16_t(w));if(w)chunk.count+=run;pos+=run;
         }
         if(!chunk.count)return false;

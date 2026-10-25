@@ -1,0 +1,196 @@
+Reusing verified zig: C:\Users\windows10\AppData\Local\TerraForest\toolchains\zig-68659eb5f1e4eb14
+Reusing verified godot_cpp: C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f
+{
+  "zig": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\zig-68659eb5f1e4eb14\\zig-x86_64-windows-0.16.0\\zig.exe",
+  "zig_version": "0.16.0",
+  "godot_cpp": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\godot_cpp-599f6048cde6889f",
+  "lock_sha256": "364328cd0180feac820b894a3b7981a44fcbb0cfe7d604b37af95ce11511ecc3"
+}
+Compiling extension: block_collision.cpp
+Compiling extension: block_history.cpp
+Compiling extension: block_pager.cpp
+Compiling extension: block_prefab.cpp
+Compiling extension: block_queries.cpp
+Compiling extension: block_region_io.cpp
+Compiling extension: block_region_store.cpp
+Compiling extension: block_regions.cpp
+Compiling extension: block_streaming.cpp
+Compiling extension: block_worker.cpp
+Compiling extension: block_world.cpp
+Compiling extension: hinged_doors.cpp
+Compiling extension: model_region_io.cpp
+Compiling extension: model_region_store.cpp
+Compiling extension: model_transfer_scheduler.cpp
+Compiling extension: paving_blocks.cpp
+Compiling extension: prefab_placement.cpp
+Compiling extension: prefab_transaction.cpp
+Compiling extension: region_archive_reads.cpp
+Compiling extension: region_world_archive.cpp
+Compiling extension: register_types.cpp
+Compiling extension: showcase.cpp
+Compiling extension: static_admission.cpp
+Compiling extension: static_batch.cpp
+Compiling extension: static_collision.cpp
+Compiling extension: static_exclusion.cpp
+Compiling extension: static_history.cpp
+Compiling extension: static_regions.cpp
+Compiling extension: static_streaming.cpp
+Compiling extension: structure_queries.cpp
+Compiling extension: structures_bootstrap.cpp
+Compiling extension: structures_snapshot.cpp
+Linking extension against prebuilt: libgodot-cpp.windows.template_debug.x86_64.a
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [
+    "block_collision.cpp",
+    "block_history.cpp",
+    "block_pager.cpp",
+    "block_prefab.cpp",
+    "block_queries.cpp",
+    "block_region_io.cpp",
+    "block_region_store.cpp",
+    "block_regions.cpp",
+    "block_streaming.cpp",
+    "block_worker.cpp",
+    "block_world.cpp",
+    "hinged_doors.cpp",
+    "model_region_io.cpp",
+    "model_region_store.cpp",
+    "model_transfer_scheduler.cpp",
+    "paving_blocks.cpp",
+    "prefab_placement.cpp",
+    "prefab_transaction.cpp",
+    "region_archive_reads.cpp",
+    "region_world_archive.cpp",
+    "register_types.cpp",
+    "showcase.cpp",
+    "static_admission.cpp",
+    "static_batch.cpp",
+    "static_collision.cpp",
+    "static_exclusion.cpp",
+    "static_history.cpp",
+    "static_regions.cpp",
+    "static_streaming.cpp",
+    "structure_queries.cpp",
+    "structures_bootstrap.cpp",
+    "structures_snapshot.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 6.471259799902327,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll",
+  "sha256": "5c7eabd35a4569095802df1a69feb7a80d0a0e75336162d314431d4ed7a42e67",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "structures"
+}
+Reusing verified godot_cpp: C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f
+Reusing verified zig: C:\Users\windows10\AppData\Local\TerraForest\toolchains\zig-68659eb5f1e4eb14
+{
+  "zig": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\zig-68659eb5f1e4eb14\\zig-x86_64-windows-0.16.0\\zig.exe",
+  "zig_version": "0.16.0",
+  "godot_cpp": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\godot_cpp-599f6048cde6889f",
+  "lock_sha256": "364328cd0180feac820b894a3b7981a44fcbb0cfe7d604b37af95ce11511ecc3"
+}
+Compiling extension: block_collision.cpp
+Compiling extension: block_history.cpp
+Compiling extension: block_pager.cpp
+Compiling extension: block_prefab.cpp
+Compiling extension: block_queries.cpp
+Compiling extension: block_region_io.cpp
+Compiling extension: block_region_store.cpp
+Compiling extension: block_regions.cpp
+Compiling extension: block_streaming.cpp
+Compiling extension: block_worker.cpp
+Compiling extension: block_world.cpp
+Compiling extension: hinged_doors.cpp
+Compiling extension: model_region_io.cpp
+Compiling extension: model_region_store.cpp
+Compiling extension: model_transfer_scheduler.cpp
+Compiling extension: paving_blocks.cpp
+Compiling extension: prefab_placement.cpp
+Compiling extension: prefab_transaction.cpp
+Compiling extension: region_archive_reads.cpp
+Compiling extension: region_world_archive.cpp
+Compiling extension: register_types.cpp
+Compiling extension: showcase.cpp
+Compiling extension: static_admission.cpp
+Compiling extension: static_batch.cpp
+Compiling extension: static_collision.cpp
+Compiling extension: static_exclusion.cpp
+Compiling extension: static_history.cpp
+Compiling extension: static_regions.cpp
+Compiling extension: static_streaming.cpp
+Compiling extension: structure_queries.cpp
+Compiling extension: structures_bootstrap.cpp
+Compiling extension: structures_snapshot.cpp
+Linking extension against prebuilt: libgodot-cpp.windows.template_release.x86_64.a
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "block_collision.cpp",
+    "block_history.cpp",
+    "block_pager.cpp",
+    "block_prefab.cpp",
+    "block_queries.cpp",
+    "block_region_io.cpp",
+    "block_region_store.cpp",
+    "block_regions.cpp",
+    "block_streaming.cpp",
+    "block_worker.cpp",
+    "block_world.cpp",
+    "hinged_doors.cpp",
+    "model_region_io.cpp",
+    "model_region_store.cpp",
+    "model_transfer_scheduler.cpp",
+    "paving_blocks.cpp",
+    "prefab_placement.cpp",
+    "prefab_transaction.cpp",
+    "region_archive_reads.cpp",
+    "region_world_archive.cpp",
+    "register_types.cpp",
+    "showcase.cpp",
+    "static_admission.cpp",
+    "static_batch.cpp",
+    "static_collision.cpp",
+    "static_exclusion.cpp",
+    "static_history.cpp",
+    "static_regions.cpp",
+    "static_streaming.cpp",
+    "structure_queries.cpp",
+    "structures_bootstrap.cpp",
+    "structures_snapshot.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 6.592350200051442,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_release.x86_64.dll",
+  "sha256": "058b30243d1b80726e6576e8190f5a3c2ebd3585e69735e58e8826eda3d3b495",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "structures"
+}

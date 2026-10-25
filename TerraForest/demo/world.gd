@@ -62,6 +62,7 @@ var road_palette=preload("res://addons/volumetric_terrain/road_palette.gd").new(
 var road_authoring=preload("res://addons/volumetric_terrain/road_authoring.gd").new()
 var road_preview=preload("res://addons/volumetric_terrain/road_preview.gd").new()
 var structure_shape := 1
+const ShapeCatalog = preload("res://addons/structures/shape_catalog.gd")
 var structure_material := 0
 var structure_rotation := 0
 var structure_prefabs: Array[Resource] = []
@@ -678,7 +679,7 @@ func _equip_player_tool(item: int) -> void:
 	editor_tool_active=false;equipped_tool=item
 	_set_player_tool_mode(item==4 or item in player_hud.MATERIALS,item==4,3)
 	if item in player_hud.MATERIALS:
-		structure_shape=1;structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
+		structure_shape=1;structure_rotation%=4;structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
 	if item in player_hud.GROUND_ITEMS and item!=201:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false
@@ -705,6 +706,9 @@ func _sync_player_tool() -> void:
 
 func _sync_construction_palette() -> void:
 	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index,not session_menu.ready_to_dock)
+	if session_menu.developer_hud!=null:
+		session_menu.developer_hud.displayed_slot=-1
+		session_menu.developer_hud.refresh.call_deferred()
 	if construction_palette.archive_button!=null:
 		construction_palette.archive_button.disabled=structure_prefab_index<0 or not prefab_library.owns(structure_prefabs[structure_prefab_index])
 	session_menu.sync_panels()
@@ -797,17 +801,19 @@ func _construction_selection(field: String,value: int) -> void:
 		return
 	match field:
 		"shape":
-			if value<0 or value>=6: return
+			if value<0 or value>=ShapeCatalog.NAMES.size(): return
 			structure_shape=value+1;structure_prefab_index=-1
+			structure_rotation%=ShapeCatalog.rotation_count(structure_shape)
 		"material":
 			if value<0 or value>=4: return
 			structure_material=value
 		"rotation":
-			if value<0 or value>=4: return
+			if value<0 or value>=(4 if structure_prefab_index>=0 else ShapeCatalog.rotation_count(structure_shape)): return
 			structure_rotation=value
 		"prefab":
 			if value<0 or value>structure_prefabs.size(): return
 			structure_prefab_index=value-1
+			if structure_prefab_index>=0:structure_rotation%=4
 		_: return
 	_prefab_preview_timer=0.0
 	_sync_construction_palette()
@@ -935,6 +941,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					structure_prefab_index += 1
 					if structure_prefab_index >= structure_prefabs.size():
 						structure_prefab_index = -1
+					structure_rotation%=4
 					_prefab_preview_timer=0.0
 					_show_lake_notice("Single blocks" if structure_prefab_index<0 else "%s · R rotate · RMB place · green bounds required" % structure_prefabs[structure_prefab_index].resource_name)
 					return
@@ -942,15 +949,17 @@ func _unhandled_input(event: InputEvent) -> void:
 				if event.physical_keycode >= KEY_1 and event.physical_keycode <= KEY_6:
 					structure_prefab_index = -1
 					structure_shape = event.physical_keycode-KEY_1+1
+					structure_rotation%=4
 				elif event.physical_keycode == KEY_T:
 					structure_material = (structure_material+1)%4
 				elif event.physical_keycode == KEY_R:
-					structure_rotation = (structure_rotation+1)%4
+					structure_rotation = ShapeCatalog.turn(1 if structure_prefab_index>=0 else structure_shape,structure_rotation,event.shift_pressed)
 				else:
 					handled = false
 				if handled:
 					_prefab_preview_timer=0.0
-					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %d°" % [["Cube","Slab","Stairs","Slope","Post","Sphere","Round column","Top plate"][structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],structure_rotation*90])
+					_sync_construction_palette()
+					_show_lake_notice("%s · %d°" % [structure_prefabs[structure_prefab_index].resource_name,structure_rotation*90] if structure_prefab_index>=0 else "%s · %s · %s" % [ShapeCatalog.NAMES[structure_shape-1],["Brick","Wood","Concrete","Metal"][structure_material],ShapeCatalog.rotation_name(structure_rotation)])
 					return
 		if structure_mode and not model_tool.active and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_edit_structure(event.button_index == MOUSE_BUTTON_LEFT)
@@ -1030,6 +1039,8 @@ func _structure_target(remove: bool) -> Dictionary:
 	var result:Dictionary={"target":target,"position":hit.position,"normal":hit.normal,"placement_ok":true,"reason":""}
 	if remove or structure_prefab_index>=0:return result
 	var mesh:Mesh=structures.blocks.preview_mesh(structure_shape,structure_rotation)
+	if mesh==null:
+		result.placement_ok=false;result.reason="Selected block shape is unavailable";return result
 	var local_bounds:AABB=mesh.get_aabb()
 	var bounds:=AABB(Vector3(target)+local_bounds.position,local_bounds.size)
 	if not _placement_collision_ready(bounds):
@@ -1174,7 +1185,7 @@ func _edit_structure(remove: bool) -> void:
 	if not remove and not _block_player_clear(target):
 		_show_lake_notice("Block placement intersects the player")
 		return
-	var word := 0 if remove else (128 if structure_shape==8 else structure_shape)+(structure_rotation<<3)+(structure_material<<5)
+	var word: int = 0 if remove else structures.blocks.encode_block(structure_shape,structure_rotation,structure_material)
 	var placed := false
 	if construction_inventory.place_block(structures.blocks,player_hud.inventory,target,word):
 		placed = not remove

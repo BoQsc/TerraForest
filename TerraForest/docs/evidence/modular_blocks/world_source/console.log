@@ -1,0 +1,102 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS actual gameplay world finished loading
+PASS wood supply added through native inventory
+PASS player has building material and an axe
+PASS isolated test supports do not replace any house
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 9
+PASS actual targeting accepts grid cell for shape 9
+PASS ghost matches native selected shape
+PASS RMB places shape 9 as an independent native cell
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 10
+PASS actual targeting accepts grid cell for shape 10
+PASS ghost matches native selected shape
+PASS RMB places shape 10 as an independent native cell
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS Shift+R changes modular mounting direction
+PASS R turns within the mount and synchronizes the visible panel
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 11
+PASS actual targeting accepts grid cell for shape 11
+PASS ghost matches native selected shape
+PASS RMB places shape 11 as an independent native cell
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 12
+PASS actual targeting accepts grid cell for shape 12
+PASS ghost matches native selected shape
+PASS RMB places shape 12 as an independent native cell
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 13
+PASS actual targeting accepts grid cell for shape 13
+PASS ghost matches native selected shape
+PASS RMB places shape 13 as an independent native cell
+PASS holding ALT releases the mouse for block controls
+PASS visible ALT controls offer requested shape/orientation
+PASS visible ALT controls offer requested shape/orientation
+PASS quick panel stays synchronized and exposes all modular orientations
+PASS normal player ALT selection reaches modular shape 14
+PASS actual targeting accepts grid cell for shape 14
+PASS ghost matches native selected shape
+PASS RMB places shape 14 as an independent native cell
+PASS six placements charge exactly six wood blocks
+PASS real structures storage captures new shapes
+PASS tool targets exact modular block and material 9
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS tool targets exact modular block and material 10
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS tool targets exact modular block and material 11
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS tool targets exact modular block and material 12
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS tool targets exact modular block and material 13
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS tool targets exact modular block and material 14
+PASS animated axe contact damages modular block
+PASS first strike preserves cell, shares durability and wears tool once
+PASS second axe contact destroys only selected block
+PASS support block survives destruction
+PASS native structures storage restores destroyed modular blocks
+PASS restored shape identity and material 9
+PASS restored shape identity and material 10
+PASS restored shape identity and material 11
+PASS restored shape identity and material 12
+PASS restored shape identity and material 13
+PASS restored shape identity and material 14
+PASS normal world persistence includes integrated structures
+[TerrainRewrite] Temporary test world: save skipped
+PASS retained actual-world image quarter_arch.png
+PASS retained actual-world image placed_shapes.png
+MODULAR_BLOCKS_WORLD checks=97 failures=0

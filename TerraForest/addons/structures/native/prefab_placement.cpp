@@ -16,7 +16,7 @@ bool NativeBlockWorld::prefab_records(const Ref<NativeBlockPrefab> &prefab,Vecto
         if(unloaded_regions.count(region_for(k)))return false;
         if(!chunks.count(k))new_chunks.insert(k);
         if(chunks.size()+new_chunks.size()>2048)return false;
-        int word=(c.word&~24)|((((c.word>>3)+turns)&3)<<3);
+        int word=yaw_block(c.word,turns);
         if(out) {out->set(i++,int(x));out->set(i++,int(y));out->set(i++,int(z));out->set(i++,word);}
     }
     return true;

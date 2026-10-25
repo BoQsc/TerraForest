@@ -72,7 +72,7 @@ func check_prefabs() -> void:
 	var exposed: PackedInt32Array = prefab.get_records()
 	exposed[3]=0
 	check(prefab.get_records()==canonical,"returned prefab records cannot mutate the asset")
-	for bad in [PackedInt32Array([0,0,0,0]),PackedInt32Array([0,0,0,7]),PackedInt32Array([0,0,0,1,0,0,0,2]),PackedInt32Array([4096,0,0,1]),PackedInt32Array([0,0,0])]:
+	for bad in [PackedInt32Array([0,0,0,0]),PackedInt32Array([0,0,0,256]),PackedInt32Array([0,0,0,1,0,0,0,2]),PackedInt32Array([4096,0,0,1]),PackedInt32Array([0,0,0])]:
 		check(not prefab.configure(bad) and prefab.get_records()==canonical,"invalid prefab authoring is atomic")
 	var world := make_world()
 	var empty: PackedByteArray = world.capture_snapshot()
@@ -129,7 +129,7 @@ func check_history() -> void:
 	var history: Dictionary = world.history_stats()
 	world.set_cells(PackedInt32Array([0,0,0,1,0,0,0,0]))
 	check(world.history_stats()==history and world.can_redo(),"net-zero duplicate edits preserve redo")
-	check(not world.set_cells(PackedInt32Array([0,0,0,1,1,0,0,7])) and world.history_stats()==history,"invalid batch preserves history atomically")
+	check(not world.set_cells(PackedInt32Array([0,0,0,1,1,0,0,256])) and world.history_stats()==history,"invalid batch preserves history atomically")
 	check(world.redo() and world.capture_snapshot()==authored,"redo reproduces exact shapes and materials")
 	check(notices[-1].undo_steps==1 and notices[-1].redo_steps==0,"redo cursor is committed before change notification")
 	world.undo()
@@ -498,7 +498,7 @@ func run() -> void:
 	world.flush_bakes()
 	check(is_equal_approx(area_and_winding(world).x,14.0), "material boundary does not expose internal face")
 	var before: PackedByteArray = world.capture_snapshot()
-	check(not world.set_cells(PackedInt32Array([4,0,0,1,5,0,0,7])), "reject invalid shape in batch")
+	check(not world.set_cells(PackedInt32Array([4,0,0,1,5,0,0,256])), "reject invalid shape in batch")
 	check(world.capture_snapshot() == before, "invalid batch is atomic")
 	check(not world.set_cells(PackedInt32Array([1048576,0,0,1])), "reject out of range coordinates")
 	check(not world.set_cells(PackedInt32Array([0,0,0,129])), "reject reserved material bits")

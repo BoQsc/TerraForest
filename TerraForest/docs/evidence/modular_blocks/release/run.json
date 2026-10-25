@@ -1,0 +1,25 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--headless",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\modular_release_check",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\modular_native_release\\engine.log",
+    "--script",
+    "res://tests/modular_blocks.gd"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 63564,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 3.5180872000055388,
+    "passed": true
+  },
+  "library_sha256": "058b30243d1b80726e6576e8190f5a3c2ebd3585e69735e58e8826eda3d3b495",
+  "test_sha256": "f1f742c3660935c68aa7007d3f10210fde77696f153fcf5f36e1e4f8b48f492e"
+}

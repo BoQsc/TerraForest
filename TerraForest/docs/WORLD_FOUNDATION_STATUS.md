@@ -1,4 +1,35 @@
-## Shape addon assessed; native integration pending — 2026-10-25
+## Native modular building blocks integrated — 2026-10-25
+
+Six selected shapes are now native individual grid cells: thin panel, frame corner,
+quarter arch, ridge, outer roof corner and inner roof corner. They have 24 proper
+grid rotations, native cached previews, worker meshes and partial-boundary culling,
+matching physical/authoritative collision and convex solid queries. Normal material
+payment, timed tool damage/destruction, history, prefab yaw and binary persistence
+retain independent cell ownership. Both the ALT quick panel and detailed palette
+expose them, including R yaw and Shift+R mounting changes. Legacy-only mesh fixture
+bytes and TFBL v1 saves remain unchanged; extended cells use version 2, which older
+builds reject. No existing house, generator recipe or trusted road plate is changed.
+
+Native source/release component checks, real-game placement/destruction and separate
+process restoration are recorded in `evidence/modular_blocks/README.md`. The prior
+18 structures-suite failures were caused by three stale rejection fixtures using
+the now-valid round-column word 7. They now test reserved word 256 with the same
+atomicity assertions; all 294 checks pass. Legacy-word acceptance is also tested
+explicitly. The old standalone palette layout gate still fails on unchanged HEAD;
+the real game's quick controls and scrollable workspace are distinct from that
+standalone fixture. Keep its layout requirement open, with baseline evidence,
+rather than treating the new geometry tests as a replacement. Return with a scoped
+standalone layout repair and the original layout gate if that standalone UI is used.
+
+The initial addon assessment below is retained as history. Its selected-block
+integration prerequisite is now complete; this does not approve any house or every
+upstream variant. Remaining expansion: integer-grid phase pieces for continuous
+shallow hollow roofs, other requested shape families, dense-city/endurance budgets,
+and house-by-house design approval. Return to those with concrete modular recipes
+and real-game geometry/performance evidence; do not install the upstream
+GDScript/JSON world backend or silently broaden the block catalogue.
+
+## Initial shape addon assessment — 2026-10-25, historical
 
 The supplied block-shapes r3 archive has useful reproducible numeric geometry,
 but its synchronous GDScript/JSON world implementation is not a suitable native
@@ -17,7 +48,7 @@ Visible source-rendering artifacts and shallow-panel integer-grid continuity rem
 unqualified. Existing houses, trusted road plates, generator defaults and saves are
 unchanged; every redesigned house/revision requires explicit user approval.
 
-Pending native integration: stable backward-compatible shape/rotation encoding,
+At initial assessment, pending native integration was: stable backward-compatible shape/rotation encoding,
 baked geometry/solid data and worker meshing, partial-face culling, collision/query
 holes, item placement/preview, per-cell damage, binary persistence and water/navigation
 consumers. Current storage is already uint16_t, but legacy word consumers cannot
@@ -26,8 +57,9 @@ are the reason the addon is not installed as a second world backend. Return with
 selected modular blocks in the existing native pipeline; close with old/new save
 roundtrips, real-game removal/placement/collision tests, mixed-shape/cold/edit timings,
 and then separate per-house approval. Also resolve the existing 18 legacy structures
-failures without treating the addon pass as their replacement. No broad rewrite or
-production-shape completion is claimed by this assessment.
+failures without treating the addon pass as their replacement. The selected six-shape
+integration and stale-fixture correction are now recorded above; the full upstream
+catalogue is not adopted. No broad rewrite completion was claimed by this assessment.
 
 ## Doors usable while touching/blocking the leaf — 2026-10-25
 
