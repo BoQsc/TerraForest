@@ -51,7 +51,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("restore_storage_state","resident","keys","checksums"),&NativeBlockWorld::restore_storage_state);
     ClassDB::bind_method(D_METHOD("raycast_cells","from","to"),&NativeBlockWorld::raycast_cells);
     ClassDB::bind_method(D_METHOD("raycast_scene","from","to","collision_mask","exclude","hit_from_inside"),&NativeBlockWorld::raycast_scene,DEFVAL(3),DEFVAL(TypedArray<RID>()),DEFVAL(false));
-    ClassDB::bind_method(D_METHOD("placement_support","world_bounds","surface","lattice","terrain_only","exclude"),&NativeBlockWorld::placement_support);
+    ClassDB::bind_method(D_METHOD("placement_support","world_bounds","surface","lattice","terrain_only","exclude","prefer_burial"),&NativeBlockWorld::placement_support,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("set_edit_admission","callback"),&NativeBlockWorld::set_edit_admission);
     ClassDB::bind_method(D_METHOD("set_cells","records"),&NativeBlockWorld::set_cells);
     ClassDB::bind_method(D_METHOD("configure_history","byte_limit","step_limit"),&NativeBlockWorld::configure_history);

@@ -1,3 +1,41 @@
+## Opt-in submergence and gentle road-cut prototype — 2026-10-25
+
+The user asked to prefer submergence and consider gradual road corrections where
+blocks would otherwise be buried too far. This is now an isolated native preview,
+not a generation default or a finished Create World option. Normal gameplay stays
+on the original rules. The rejected frontage-road scene/banner remains removed.
+
+Native targeting can choose the lower existing cell for full cubes, using the
+same nine footprint rays, a provisional 0.60 m maximum burial and a burial/gap
+trade-off. Adjacent faces stay in their exact cells; thin shapes and objects are
+unchanged. No supports, offset blocks, terrain poking or retroactive block moves.
+The native generation experiment smooths bounded road cuts over several metres,
+anchors original segment joins and preserves flat sections. It is called only by
+the preview adapter/tests, before a normal density bake; no per-frame road work.
+
+At 42 actual collision footprints on the Wild_Hills/1703 road, average air gap
+falls from 31.1 cm to 8.6 cm, and gaps over 50 cm fall from 13 to zero. The cost is
+up to 57.5 cm burial; the worst remaining gap is still 43.2 cm. Most improvement
+comes from targeting. This short road's gentle correction is only 1.81 cm; it
+reduces worst burial from 59.3 to 57.5 cm, not to a shallow-contact guarantee.
+Inspected engine images show this trade-off. The existing saved floating brick is
+deliberately unchanged. All 291 original save files remain byte-identical.
+
+Engineering checks cover bounded deterministic profiles, preserved junctions and
+flat streets, binary density roundtrip, actual placement and floating/partly buried
+face adjacency, default support rules, world recipes, and trusted paving. Debug and
+release DLLs build. Human visual acceptance is **pending**, not implied by tests.
+See `evidence/road_burial_trial/README.md`, including the early failed check.
+
+Before production integration: approve/tune the visible burial allowance; validate
+full-width natural cut/fill budgets and building/plate/entrance reservations across
+multiple seeds; check traversal and fresh-process complete-world restoration;
+reduce or justify the increased bake stamps (316 to 1,178 in the trial plan); then
+add an explicit off-by-default recipe field/UI, binary persistence and cache key.
+Return to these gates after visual review. Long-run performance, all-road contact
+and terrain outside roads remain unqualified. This commit completes a testable
+prototype, not those production requirements.
+
 ## Original behavior restored; frontage experiment rejected — 2026-10-25
 
 The user rejected the frontage preview as a solution to terrain/block mismatch

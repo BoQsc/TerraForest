@@ -13,6 +13,15 @@ of a new global burial limit or an already implemented placement fix. Any future
 comparison must keep the integer lattice and intentional floating builds, expose
 the burial trade-off, and add neither automatic supports nor terrain fill.
 
+Subsequent direction: try optional, gradually corrected road generation together
+with a preference for submergence. A disabled-by-default native prototype now
+compares the original, lower-cell targeting, and lower-cell targeting plus gentle
+road cuts. Its provisional full-cube burial ceiling is 0.60 m, not an accepted
+global setting. Plates, other shapes and objects retain their existing rules.
+The normal world selector and generation remain unchanged; no save migration or
+placement-triggered terrain edits. Evidence and remaining production gates are in
+`evidence/road_burial_trial/README.md`.
+
 ## Coordinate and generation contract
 
 One world unit is one metre. Blocks retain their exact integer-metre lattice and

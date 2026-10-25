@@ -80,6 +80,7 @@ var _prefab_preview_needs_checks := false
 var _prefab_preview_asset: Resource
 var recent_action_messages: Array[String]=[]
 var log_action_messages: bool="--log-actions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var prefer_block_burial:=false
 var telemetry := Label.new()
 var world_identity := Label.new()
 var _telemetry_time: float = 0.0
@@ -1059,11 +1060,12 @@ func _structure_target(remove: bool) -> Dictionary:
 		result.placement_ok=false;result.reason="Placement area is still loading";return result
 	var collider:Node=hit.get("collider")
 	var terrain_hit:bool=collider==null or terrain.is_ancestor_of(collider)
-	var fit:Dictionary=structures.blocks.placement_support(bounds,hit.position,true,building_hit or terrain_hit,[player.get_rid()])
+	var fit:Dictionary=structures.blocks.placement_support(bounds,hit.position,true,building_hit or terrain_hit,[player.get_rid()],prefer_block_burial and not building_hit and terrain_hit and structure_shape==1)
 	if building_hit:
 		# Authored faces keep exact grid adjacency. Never silently detach a wall
 		# from the block the player aimed at just to climb surrounding soil.
-		result.placement_ok=int(fit.inside)==0 and (int(fit.hits)==0 or float(fit.maximum)-bounds.position.y<=minf(.20,bounds.size.y*.25)+.001)
+		var face_overlap:=.60 if prefer_block_burial and structure_shape==1 else minf(.20,bounds.size.y*.25)
+		result.placement_ok=int(fit.inside)==0 and (int(fit.hits)==0 or float(fit.maximum)-bounds.position.y<=face_overlap+.001)
 		if not result.placement_ok:result.reason="Terrain covers this cell; aim higher or dig it clear"
 		return result
 	result.placement_ok=fit.ok;result.reason=fit.reason;result["support"]=fit

@@ -10,5 +10,6 @@ class NativeRoadProfile : public godot::RefCounted {
 protected: static void _bind_methods();
 public: godot::Dictionary fit(const godot::PackedVector3Array &samples,double grade,double curvature,double cut,double fill) const;
  godot::Dictionary grid_trial(const godot::PackedFloat64Array &coefficients,double spacing) const;
+ godot::Dictionary burial_trial(const godot::PackedFloat64Array &coefficients,double spacing) const;
 };
 }

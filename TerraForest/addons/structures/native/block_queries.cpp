@@ -145,7 +145,7 @@ Dictionary NativeBlockWorld::raycast_scene(Vector3 from,Vector3 to,int64_t mask,
     Vector3 physics_position=physics["position"],authored_position=authored["position"];
     return from.distance_squared_to(physics_position)+1e-8<from.distance_squared_to(authored_position)?physics:authored;
 }
-Dictionary NativeBlockWorld::placement_support(const AABB &bounds,Vector3 surface,bool lattice,bool terrain_only,const TypedArray<RID> &exclude) const {
+Dictionary NativeBlockWorld::placement_support(const AABB &bounds,Vector3 surface,bool lattice,bool terrain_only,const TypedArray<RID> &exclude,bool prefer_burial) const {
     Dictionary out;out["ok"]=false;out["samples"]=0;out["hits"]=0;out["inside"]=0;
     out["reason"]="Placement surface is unavailable";
     Vector3 size=bounds.size;
@@ -180,6 +180,10 @@ Dictionary NativeBlockWorld::placement_support(const AABB &bounds,Vector3 surfac
     if(!hits){out["reason"]="Aim at a nearby supporting surface";return out;}
     double overlap=lattice?(terrain_only?std::min(.20,double(size.y)*.25):0.):std::min(.03,double(size.y)*.10);
     double bottom=lattice?std::max(double(bounds.position.y),std::ceil(maximum-overlap-1e-5)):maximum-overlap;
+    if(prefer_burial&&lattice&&terrain_only&&hits==9&&size.is_equal_approx(Vector3(1,1,1))){
+        double lower=bottom-1,burial=maximum-lower,upper_gap=std::max(0.,bottom-minimum);
+        if(lower>=bounds.position.y-1e-5&&burial<=.60+1e-5&&burial<=upper_gap*1.5+1e-5){bottom=lower;overlap=.60;}
+    }
     double shift=bottom-bounds.position.y,gap=std::max(0.,bottom-minimum);
     out["overlap_limit"]=overlap;out["bottom"]=bottom;out["offset_y"]=shift;out["gap"]=gap;
     if((lattice&&(shift>1.001||gap>1.15))||(!lattice&&(std::abs(shift)>.8||gap>.6))){

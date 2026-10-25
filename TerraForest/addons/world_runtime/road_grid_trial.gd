@@ -1,6 +1,6 @@
 extends RefCounted
 const VERSION:=1
-static func segments(source:Array)->Dictionary:
+static func segments(source:Array,burial:bool=false)->Dictionary:
 	if source.is_empty() or source.size()>4096:return {"ok":false,"reason":"Invalid trial road count"}
 	var planner:RefCounted=ClassDB.instantiate("NativeRoadProfile")
 	var result:Array=[]
@@ -20,7 +20,7 @@ static func segments(source:Array)->Dictionary:
 		if spacing<1.0:result.append(road);continue
 		var coefficients:PackedFloat64Array=road.get("coefficients",PackedFloat64Array([0,0,finish.y-start.y,start.y]))
 		if int(road.get("curve_index",0))<0 or int(road.get("curve_index",0))*4>=coefficients.size():return {"ok":false,"reason":"Invalid trial curve index"}
-		var fitted:Dictionary=planner.grid_trial(coefficients,spacing)
+		var fitted:Dictionary=planner.burial_trial(coefficients,spacing) if burial else planner.grid_trial(coefficients,spacing)
 		if not fitted.get("ok",false):return fitted
 		maximum_shift=maxf(maximum_shift,fitted.max_shift)
 		maximum_grade=maxf(maximum_grade,fitted.max_grade)

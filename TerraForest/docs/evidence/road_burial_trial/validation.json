@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-25",
+  "status": "opt-in prototype; human review pending",
+  "defaults_changed": false,
+  "production_generation_option_available": false,
+  "installed_gameplay_pack_changed": false,
+  "source_save": "Wild_Hills",
+  "seed": 1703,
+  "generator": 21,
+  "source_files_unchanged": 291,
+  "integrated_run": "reports/road_burial_trial/7f73afb42c3849648aa99bb094cf5668",
+  "integrated_passed": true,
+  "engine_diagnostics": [],
+  "image_review": "Inspected all three ground views and overview. Lower-cell cubes are visibly partly buried. The road cut is subtle. Saved floating block deliberately remains. No human approval yet.",
+  "checks": [
+    {"name": "profile, junctions, unchanged flats, plan immutability, density roundtrip", "run": "reports/road_burial_trial/7f73afb42c3849648aa99bb094cf5668/prepare", "passed": true},
+    {"name": "original and optional placement support", "run": "reports/checks/20261025T180453338247Z", "passed": true},
+    {"name": "original grid trial regression", "run": "reports/checks/20261025T180454547695Z", "passed": true},
+    {"name": "world recipe regression", "run": "reports/checks/20261025T180456220449Z", "passed": true},
+    {"name": "trusted paving 83 checks", "run": "reports/checks/20261025T180705957407Z", "passed": true},
+    {"name": "existing road profile API on release DLL", "run": "reports/road_profile_release.json", "passed": true, "scope": "Existing profile regression, not release execution of the new burial method"}
+  ],
+  "native_hashes": {
+    "structures_debug": "f4e1569698bbb35b8ceb1be3e020a2173433d7d56d0d0713a26bbc8acf58fcdb",
+    "structures_release": "23cfe0671783e80a708633b5daa499fd9511f1e6fcea8c2194bdb5315038cc67",
+    "terrain_debug": "b2814124318a7abe407eb606242c8f6dead246bf4e165ff49fa305f73a554891",
+    "terrain_release": "77f790357087c4ab8c63ed52ce652ac4d54724a44a743be8ea811bbcc6150466"
+  },
+  "footprints": 42,
+  "mean_gap_m": {"original": 0.311115537370954, "burial": 0.083557855515253, "also_grade": 0.0862217857724144},
+  "worst_gap_m": {"original": 0.864837646484375, "burial": 0.427318572998047, "also_grade": 0.432441711425781},
+  "worst_burial_m": {"original": 0.196041107177734, "burial": 0.592617034912109, "also_grade": 0.575164794921875},
+  "selected_profile_max_cut_m": 0.0181193752450207,
+  "original_plan_stamps": 316,
+  "trial_plan_stamps": 1178,
+  "whole_width_earthworks_qualified": false,
+  "complete_world_fresh_process_restore_qualified": false,
+  "traversal_qualified": false,
+  "performance_qualified": false,
+  "retained_failures": [
+    {"run": "reports/checks/20261025T175831038927Z", "reason": "Initial fit disabled the selected road correction; replaced by bounded shape-preserving and spatially smoothed cuts."},
+    {"run": "reports/checks/20261025T180502906064Z", "reason": "Wrong launcher completion marker; 83 paving assertions passed, exit zero. Correct marker rerun passed."}
+  ]
+}
