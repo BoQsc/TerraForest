@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fresh process restores population bytes
+PASS fresh process preserves every identity and injury byte
+PASS fresh process retains dead resident tombstone
+PASS fresh process retains developer-spawned resident and injuries
+ZOMBIE_POPULATION checks=4 failures=0

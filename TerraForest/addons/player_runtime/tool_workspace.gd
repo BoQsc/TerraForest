@@ -48,12 +48,9 @@ func _ready()->void:
 	var world:VBoxContainer=pages["World tools"]
 	menu.label(world,"World authoring")
 	fly_button=menu.button(world,"Flight",menu.toggle_flight)
-	menu.button(world,"Place vehicle at aim",func():menu.run_command(KEY_V))
+	menu.button(world,"Vehicles / Dev Bag",func():menu.show_page("Dev Bag"))
 	menu.button(world,"Water / lakes",func():menu.open_tool_page("Water"))
-	menu.label(world,"Diagnostics and preview")
-	var options:=GridContainer.new();options.columns=2;world.add_child(options)
-	for entry in [["Diagnostics",KEY_F3],["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
-		menu.button(options,entry[0],menu.run_command.bind(entry[1]))
+	menu.button(world,"Global diagnostics / Developer",func():menu.show_page("Developer"))
 	menu.label(world,"Reset")
 	menu.button(world,"Reset this world…",func():menu.confirm("Erase this world state and generate it again?",func():menu.set_open(false);game.terrain.reload_world(true)))
 	actors=pages.Actors;rebuild_actors()

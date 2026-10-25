@@ -6,6 +6,39 @@ are preserved.
 
 ## Session and tools have separate controls
 
+### Dev Bag, Dev Spawner and Developer
+
+The ESC sidebar separates three purposes:
+
+- **Dev Bag**: searchable, categorized icon catalog of all 36 registered inventory
+  items. Click to grant the selected quantity, without changing gameplay mode.
+  Names and IDs both match; no-result searches are explicit. Native inventory
+  capacity and stack rules apply atomically, and full inventories are not replaced.
+  Vehicle item 501 belongs here. **Place a drivable vehicle nearby** remains a
+  separate one-click action for a live vehicle, including when looking at the sky.
+- **Dev Spawner**: currently spawns zombies on nearby clear, supported, loaded dry
+  ground. They retain ordinary awareness, anatomy, combat and corpse behavior, with
+  native world identities and saved injuries. Six active zombies remain the runtime
+  limit; the UI explains when full and never silently removes existing inhabitants.
+- **Developer**: development-mode switch, global diagnostic controls, targeting
+  visualization and experimental impact settings. Session retains save/load,
+  headlamp, camera, resume and world-browser actions. Per-tool controls stay on Alt.
+
+Bag entries use the existing baked icon atlas, not real-time 3D previews. The list
+comes from the same tool/material/resource catalog that registers player inventory,
+including compatible partially filled bucket identities. Recipe-only furniture
+is not an inventory item and stays in the object-placement tool. Searching or
+editing a quantity does not invoke M/map, tilde/mode or gameplay shortcuts. ESC
+returns directly to captured mouse control.
+
+Explicit zombie additions are capped at 256 per world, including dead tombstones.
+They extend the existing binary population section to version 2 only when needed;
+unchanged 2,500-resident worlds remain byte-compatible version 1. The current build
+reads both. Builds predating this extension cannot read version-2 population data.
+Spawning enables zombie simulation for the session; an explicit `--no-zombies`
+launch still suppresses residency on a later load. Spawning never bypasses support,
+water, occupancy or collision-readiness checks.
+
 While aiming in the world, a prompt below the crosshair identifies nearby
 doors, chests, dropped items and collectible ground cover. **E** opens/closes the aimed door,
 opens the aimed chest, or collects the named plant/stone within 2.5 metres.
@@ -41,7 +74,7 @@ aiming. Another Escape then opens Session. Choosing a tool never opens a modal.
 - **Vegetation:** species selection belongs to its tool; gameplay requires an owned
   stack. E gathers ground cover independently of the selected tool.
 - **Roads:** endpoints, width, grading and build actions belong to slot 7.
-- **World tools:** slot 8 owns flight, vehicle placement, diagnostics, water/lakes
+- **World tools:** slot 8 owns flight, water/lakes, links to Dev Bag and Developer,
   and the confirmed reset action.
 - **Actors:** slot 9 owns actor placement, orders and resident authoring.
 - **Inventory/crafting:** Tab remains the entry point; its Session button opens
@@ -172,7 +205,7 @@ Switch back to gameplay to manage its belt items.
 | 5 | Place objects |
 | 6 | Vegetation |
 | 7 | Roads: hold Alt for grading/build settings |
-| 8 | World tools: hold Alt for world/water/diagnostics |
+| 8 | World tools: hold Alt for world/water controls and developer-page links |
 | 9 | Actors: hold Alt for placement/orders/residents |
 | 0 | Empty |
 

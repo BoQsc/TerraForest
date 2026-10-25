@@ -36,7 +36,7 @@ func run() -> void:
 	tap(KEY_6);check(game.ground_mode and game.editor_tool_active,"development vegetation tool")
 	tap(KEY_7);check(not game.session_menu.visible_ui() and hud.developer_slot==6,"road slot selects without interrupting movement")
 	tap(KEY_ESCAPE);check(game.session_menu.opened and not game.session_menu.workspace and game.session_menu.current_page=="Session","Escape always opens session even with Roads selected")
-	check(game.session_menu.navigation.keys()==["Session","Developer","World"] and not game.session_menu.pages.has("Building"),"session navigation retains the developer spawner without tool editors or belt copy")
+	check(game.session_menu.navigation.keys()==["Session","Dev Bag","Dev Spawner","Developer","World"] and not game.session_menu.pages.has("Building"),"session navigation separates items, entities and diagnostics without tool editors or belt copy")
 	check(not game.road_palette.panel.is_visible_in_tree(),"session does not expose road controls")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(capture_dir.path_join("session.png"))

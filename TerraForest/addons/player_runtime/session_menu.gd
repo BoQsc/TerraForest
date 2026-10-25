@@ -34,6 +34,7 @@ var scroll: ScrollContainer
 var content: VBoxContainer
 var ready_to_dock:=false
 var spawner:RefCounted
+var dev_bag:RefCounted
 const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
@@ -53,6 +54,8 @@ func _ready() -> void:
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
+	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
+	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"Destinations",show_page.bind("World"))
 	button(sidebar,"Resume  ·  Esc",func():set_open(false))
@@ -67,21 +70,28 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);session.add_child(third_person_toggle)
-	mode_button=button(session,"Development mode",toggle_developer)
+	var developer_page:=page("Developer")
+	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
+	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; living entities live in Dev Spawner. Selected-tool controls remain on Alt.")
+	mode_button=button(developer_page,"Development mode",toggle_developer)
+	var diagnostics:=GridContainer.new();diagnostics.columns=2;developer_page.add_child(diagnostics)
+	for entry in [["Diagnostics",KEY_F3],["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
+		button(diagnostics,entry[0],developer_command.bind(entry[1]))
 	var target_toggle:=CheckButton.new();target_toggle.text="Show targeting visuals for all tools / weapons (testing)"
 	target_toggle.button_pressed=game.target_overlay.enabled
-	target_toggle.toggled.connect(game.target_overlay.set_enabled);session.add_child(target_toggle)
+	target_toggle.toggled.connect(game.target_overlay.set_enabled);developer_page.add_child(target_toggle)
 	if game.get("impact_effects")!=null:
 		impact_toggle=CheckButton.new();impact_toggle.text="Impact particles (experimental)"
-		impact_toggle.toggled.connect(game.impact_effects.set_enabled);session.add_child(impact_toggle)
-		var style_row:=HBoxContainer.new();session.add_child(style_row)
+		impact_toggle.toggled.connect(game.impact_effects.set_enabled);developer_page.add_child(impact_toggle)
+		var style_row:=HBoxContainer.new();developer_page.add_child(style_row)
 		label(style_row,"Impact appearance").size_flags_horizontal=Control.SIZE_EXPAND_FILL
 		impact_style=OptionButton.new();impact_style.add_item("Grounded");impact_style.add_item("Original baseline")
 		impact_style.item_selected.connect(game.impact_effects.set_style);style_row.add_child(impact_style)
 		breakup_toggle=CheckButton.new();breakup_toggle.text="Extra particles when objects break"
-		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);session.add_child(breakup_toggle)
+		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);developer_page.add_child(breakup_toggle)
 		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
-	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Developer"))
+	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
+	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",func():confirm("Save this world and quit?",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST)))
 	session_message=label(root,"")
@@ -120,7 +130,8 @@ func show_page(title: String) -> void:
 	if title in tool_workspace.pages:open_tool_page(title);return
 	if not pages.has(title):return
 	if not opened:set_open(true)
-	current_page=title;refresh();sync_panels()
+	current_page=title;session_message.text="";scroll.set_deferred("scroll_vertical",0);refresh();sync_panels()
+	if title=="Dev Spawner":spawner.refresh()
 func open_tool_page(title:String) -> void:
 	if not ready_to_dock or not tool_workspace.pages.has(title):return
 	if title=="Building" and not developer and game.equipped_tool not in game.player_hud.MATERIALS:return
@@ -256,7 +267,13 @@ func patrol_actor() -> void:
 func run_command(key: int,shift: bool=false) -> void:
 	if not developer:return
 	set_open(false);var event:=InputEventKey.new();event.pressed=true;event.physical_keycode=key;event.shift_pressed=shift;game._unhandled_input(event)
+func developer_command(key:int)->void:
+	if not developer:message.text="Enter development mode above to use world diagnostics.";return
+	run_command(key)
 func _input(event: InputEvent) -> void:
+	if opened and event is InputEventKey and event.physical_keycode!=KEY_ESCAPE:
+		var focused:=get_viewport().gui_get_focus_owner()
+		if focused is LineEdit or focused is TextEdit:return
 	if game.vehicle_radial.consume(event):get_viewport().set_input_as_handled();return
 	if world_map!=null and world_map.opened:
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)

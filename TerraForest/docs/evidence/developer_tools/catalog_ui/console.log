@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS world and separated developer pages ready
+PASS items, entities and serious diagnostics have separate navigation
+PASS vehicles live only in the item bag, not entity spawner
+PASS typing map and developer hotkeys stays inside search
+PASS case-insensitive trimmed name search filters actual item tiles
+PASS category and text filters combine with a clear empty state
+PASS every registered inventory item can be granted from the live catalog
+PASS all bag entries reuse baked item icons without live 3D rendering
+PASS exact stack quantity is granted without closing the bag or changing gameplay mode
+PASS full inventory rejection is atomic and explained
+PASS Developer contains settings rather than item catalog
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS one click spawns an actual zombie on nearby supported ground: Zombie spawned nearby · Resume to play · Save world to keep it
+PASS explicit zombie uses persistent native identity without requiring editor mode
+PASS spawn stays clear of the player and frozen while menu is open
+PASS actual world population component restores extended binary section
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS saved developer zombie reactivates as the same world resident
+PASS reactivation preserves body and limb injuries
+PASS unloaded spawn surface rejects without adding or replacing inhabitants
+PASS Escape returns directly to play without an invisible UI blocker
+[TerrainRewrite] Temporary test world: save skipped
+DEVELOPER_TOOLS checks=19 failures=0

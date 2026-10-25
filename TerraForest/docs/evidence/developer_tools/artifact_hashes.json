@@ -1,0 +1,16 @@
+{
+  "native": [
+    {
+      "file": "world_runtime.windows.template_debug.x86_64.dll",
+      "source_sha256": "8a45d31cdd9e1f2b4382b1f24883719cb47bd21e76bb8eaa383d1ecde99f2b10",
+      "shipped_sha256": "8a45d31cdd9e1f2b4382b1f24883719cb47bd21e76bb8eaa383d1ecde99f2b10"
+    },
+    {
+      "file": "world_runtime.windows.template_release.x86_64.dll",
+      "source_sha256": "4db5701af230995a025cac7836c8664257b51505a295f36b61cabe758b531398",
+      "shipped_sha256": "4db5701af230995a025cac7836c8664257b51505a295f36b61cabe758b531398"
+    }
+  ],
+  "pack_sha256": "4cee06ca9fb0f173ad2cc548b0e048a41ce9271ff91c3a63de07db709bca225f",
+  "pack_bytes": 310733580
+}

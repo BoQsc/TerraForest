@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+ERROR: Could not create directory: 'res://reports'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] run (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/developer_vehicle_spawn.gd:23)
+PASS playable forest and player floor ready
+PASS fixture starts in ordinary gameplay without entering development mode
+PASS one click waits for the actual vehicle resource without requiring another key
+VEHICLE_MENU_RESULT Vehicle spawned nearby · E nearby to enter · F5 saves world · 
+PASS first gameplay-mode click spawns despite sky aim and unavailable ordinary placement
+PASS first click immediately shows a frozen live vehicle and closes the menu
+PASS spawning does not require or switch the player's gameplay mode
+ERROR: Can't save PNG at path: 'res://reports/developer_vehicle_spawn/nearby_vehicle.png'.
+   at: save_image (drivers/png/resource_saver_png.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] capture (C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/tests/developer_vehicle_spawn.gd:19)
+PASS vehicle item tile grants a real carried vehicle rather than also spawning a duplicate car
+[TerrainRewrite] Temporary test world: save skipped
+DEVELOPER_VEHICLE_SPAWN checks=7 failures=0

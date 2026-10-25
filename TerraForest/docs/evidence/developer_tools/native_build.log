@@ -1,0 +1,128 @@
+Reusing verified godot_cpp: C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f
+Reusing verified zig: C:\Users\windows10\AppData\Local\TerraForest\toolchains\zig-68659eb5f1e4eb14
+{
+  "zig": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\zig-68659eb5f1e4eb14\\zig-x86_64-windows-0.16.0\\zig.exe",
+  "zig_version": "0.16.0",
+  "godot_cpp": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\godot_cpp-599f6048cde6889f",
+  "lock_sha256": "364328cd0180feac820b894a3b7981a44fcbb0cfe7d604b37af95ce11511ecc3"
+}
+Compiling extension: actor_navigator.cpp
+Compiling extension: actor_route.cpp
+Compiling extension: derived_cache_index.cpp
+Compiling extension: entity_activation.cpp
+Compiling extension: entity_actor.cpp
+Compiling extension: entity_renderer.cpp
+Compiling extension: entity_storage.cpp
+Compiling extension: entity_store.cpp
+Compiling extension: regional_navigation.cpp
+Compiling extension: register_types.cpp
+Compiling extension: world_archive.cpp
+Compiling extension: world_publication.cpp
+Compiling extension: zombie_anatomy.cpp
+Compiling extension: zombie_awareness.cpp
+Compiling extension: zombie_rest_body.cpp
+Linking extension against prebuilt: libgodot-cpp.windows.template_debug.x86_64.a
+{
+  "target": "template_debug",
+  "compiled_extension_sources": [
+    "actor_navigator.cpp",
+    "actor_route.cpp",
+    "derived_cache_index.cpp",
+    "entity_activation.cpp",
+    "entity_actor.cpp",
+    "entity_renderer.cpp",
+    "entity_storage.cpp",
+    "entity_store.cpp",
+    "regional_navigation.cpp",
+    "register_types.cpp",
+    "world_archive.cpp",
+    "world_publication.cpp",
+    "zombie_anatomy.cpp",
+    "zombie_awareness.cpp",
+    "zombie_rest_body.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 11.970398399978876,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll",
+  "sha256": "8a45d31cdd9e1f2b4382b1f24883719cb47bd21e76bb8eaa383d1ecde99f2b10",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "world_runtime"
+}
+Reusing verified zig: C:\Users\windows10\AppData\Local\TerraForest\toolchains\zig-68659eb5f1e4eb14
+Reusing verified godot_cpp: C:\Users\windows10\AppData\Local\TerraForest\toolchains\godot_cpp-599f6048cde6889f
+{
+  "zig": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\zig-68659eb5f1e4eb14\\zig-x86_64-windows-0.16.0\\zig.exe",
+  "zig_version": "0.16.0",
+  "godot_cpp": "C:\\Users\\windows10\\AppData\\Local\\TerraForest\\toolchains\\godot_cpp-599f6048cde6889f",
+  "lock_sha256": "364328cd0180feac820b894a3b7981a44fcbb0cfe7d604b37af95ce11511ecc3"
+}
+Compiling extension: actor_navigator.cpp
+Compiling extension: actor_route.cpp
+Compiling extension: derived_cache_index.cpp
+Compiling extension: entity_activation.cpp
+Compiling extension: entity_actor.cpp
+Compiling extension: entity_renderer.cpp
+Compiling extension: entity_storage.cpp
+Compiling extension: entity_store.cpp
+Compiling extension: regional_navigation.cpp
+Compiling extension: register_types.cpp
+Compiling extension: world_archive.cpp
+Compiling extension: world_publication.cpp
+Compiling extension: zombie_anatomy.cpp
+Compiling extension: zombie_awareness.cpp
+Compiling extension: zombie_rest_body.cpp
+Linking extension against prebuilt: libgodot-cpp.windows.template_release.x86_64.a
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "actor_navigator.cpp",
+    "actor_route.cpp",
+    "derived_cache_index.cpp",
+    "entity_activation.cpp",
+    "entity_actor.cpp",
+    "entity_renderer.cpp",
+    "entity_storage.cpp",
+    "entity_store.cpp",
+    "regional_navigation.cpp",
+    "register_types.cpp",
+    "world_archive.cpp",
+    "world_publication.cpp",
+    "zombie_anatomy.cpp",
+    "zombie_awareness.cpp",
+    "zombie_rest_body.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 5.563306800031569,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll",
+  "sha256": "4db5701af230995a025cac7836c8664257b51505a295f36b61cabe758b531398",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "world_runtime"
+}

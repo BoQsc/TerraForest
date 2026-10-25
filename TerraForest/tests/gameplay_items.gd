@@ -43,23 +43,18 @@ func run()->void:
 	game.structures.blocks.set_cells(PackedInt32Array([base.x,base.y,base.z,0]))
 	# Exercise ordinary equipment + right-click, not only the terrain facade.
 	aim(home,home+Vector3(0,0,-2));inventory.grant(211,3,inventory.snapshot().revision);hud.refresh();hud.equip_item(211)
+	check(await wait_for(func():return game.terrain_placement.target(game).get("ok",false),5),"native soil target resolves after the fixture changes aim")
 	var right:=InputEventMouseButton.new();right.button_index=MOUSE_BUTTON_RIGHT;right.pressed=true
 	game._unhandled_input(right)
 	check(game.terrain.pending_edit and amount(211)==2,"held mined soil right-click submits a paid terrain edit")
 	check(await wait_for(func():return not game.terrain.pending_edit,15) and amount(211)==2,"soil publishes through normal streamed terrain")
 	await screenshot("placed_soil")
-	# Developer entries spawn actual collectible stacks rather than silent grants.
-	game.session_menu.set_open(true);game.session_menu.show_page("Developer")
-	var before:int=amount(211);game.session_menu.spawner.spawn(211)
-	check(amount(211)==before and game.session_menu.opened,"gameplay cannot use the developer spawner")
-	game.session_menu.toggle_developer();game.session_menu.show_page("Developer")
-	await screenshot("developer_spawner")
-	game.session_menu.spawner.count.value=7;game.session_menu.spawner.entries[211].pressed.emit()
-	print("SPAWNER_RESULT ",game._lake_notice)
-	check(not game.session_menu.opened and amount(211)==before,"developer click creates a world pickup without granting inventory")
-	var collected:Dictionary=game.pickups.collect_near(home+Vector3.UP*.5,inventory,game._pickup_reachable)
-	check(collected.ok and amount(211)==before+7,"spawned native pickup collects the chosen stack count: "+str(collected))
-	game.session_menu.toggle_developer()
+	game.session_menu.set_open(true);game.session_menu.show_page("Dev Bag")
+	var before:int=amount(211)
+	await screenshot("developer_bag")
+	game.session_menu.dev_bag.count.value=7;game.session_menu.dev_bag.entries[211].pressed.emit()
+	check(game.session_menu.opened and not game.session_menu.developer and amount(211)==before+7,"Dev Bag grants exactly the chosen inventory quantity without switching gameplay mode")
+	game.session_menu.set_open(false)
 	# A real fleet body participates in hold-E, carried damage and redeployment.
 	aim(home,home+Vector3(0,0,-6))
 	var session=game.world_vehicle

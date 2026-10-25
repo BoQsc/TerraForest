@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS older worlds accept an absent population section
+PASS seeded world population initializes
+PASS whole world has bounded native population slots before activation
+PASS same world seed produces identical world positions
+PASS different seed cannot overwrite an existing population
+PASS spatial query returns bounded local residents
+PASS world arrival sanctuary is free of generated zombies
+PASS moving focus never creates or relocates inhabitants
+PASS anatomy persistence fixture configures
+PASS shared body health and separate limb health roundtrip
+PASS invalid anatomy restore is atomic
+PASS detached limb chain roundtrips without healing
+PASS live record stores moved position and injury
+PASS native spatial index follows resident movement
+PASS death persists in the population independently of loot
+PASS dead resident is never selected for activation
+PASS dead resident cannot be resurrected by stale synchronization
+PASS injured survivor stores severed limb state
+PASS unsuitable ground excludes only its own unplaced slot
+PASS bounded binary population roundtrip preserves all records
+PASS corrupt state is rejected without replacing live records
+PASS nonfinite saved position rejects
+PASS truncated binary population rejects
+PASS population validates anatomical maximum before loading
+PASS population rejects inconsistent missing limb chains
+PASS invalid identity rejects
+PASS explicit developer zombie gets an independent saved identity even inside sanctuary
+PASS extended population roundtrip preserves added residents without changing legacy records
+PASS added resident enters native spatial index
+PASS invalid additions are atomic
+PASS oversized extended population is rejected atomically
+PASS developer additions retain a fixed 256-record budget
+PASS original version-one saves still restore byte exactly after extended use
+ZOMBIE_POPULATION checks=33 failures=0

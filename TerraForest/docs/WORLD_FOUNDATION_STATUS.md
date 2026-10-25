@@ -1,3 +1,37 @@
+## Dev Bag and Dev Spawner separation, 2026-10-25
+
+ESC now separates the searchable, categorized inventory-item bag from living-entity
+spawning and global Developer diagnostics. All 36 registered carried item types
+use their existing baked icons and native atomic inventory grants; vehicles stay
+in Dev Bag with a separate one-click live-placement action. This does not require
+switching to free-development mode. Tool-specific Alt controls remain separate.
+
+Dev Spawner currently exposes zombies, with normal support/readiness/occupancy
+checks and the existing six-active-body budget. Explicit additions receive native
+persistent identities, preserving wounds and irreversible death. At most 256 extra
+records extend the binary population section; old 2,500-record snapshots remain
+version 1, while saves containing added residents use validated version 2. No
+procedural encounter refill, actor-cap increase or silent resident replacement is
+introduced. Older builds cannot load the extended section.
+
+Evidence: `evidence/developer_tools/`; workflow details: [PLAYER_UI.md](PLAYER_UI.md).
+Checks cover all catalog grants, full inventory atomicity, search/hotkey ownership,
+one-click vehicle placement, actual zombie spawning/reactivation with injuries,
+native debug/release and fresh-process binary restore, and legacy population and
+development-belt behavior. A broader item fixture initially clicked before the
+asynchronous terrain target resolved while its game physics loop was disabled;
+it now waits explicitly for the real target, retaining all edit/payment checks.
+The initial packaged vehicle fixture also failed to create its screenshot folder
+through a virtual resource path; the fixture now resolves the filesystem path.
+Both initial failures are retained with their corrected reruns, not counted as
+passing application checks.
+
+Additional creature families can be registered once their actual controllers and
+persistence contracts exist; no placeholder spawn entries are exposed. Settlement
+actor authoring/selection remains in its existing Alt tool workspace. The earlier
+navigation, travel-time zombie construction cost and world-quality gates remain
+open; menu reorganization does not qualify those systems.
+
 ## Configurable world creation and regional networks, 2026-10-25
 
 The creation screen is rebuilt around a real map preview, separate landscape and
