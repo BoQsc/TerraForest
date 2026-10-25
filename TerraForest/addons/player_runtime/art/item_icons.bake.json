@@ -7,7 +7,7 @@
       "files": {
         "res://addons/characters/runtime/assets/Hammer.glb": "4f38b696f22e495a77df2119ca97d7ec3c829fe5374d333674779710b77c1d54",
         "res://addons/characters/runtime/assets/Hammer.glb.import": "1c2063fe42b26e43ed3c6983e10a9bc9e490cd13060b578e39d42d196beeef3c",
-        "res://addons/characters/runtime/assets/Human.bucket.res": "1af078a6743314dba3abf813a2af6edafadddda2b5fe7ac3144b0427579b356e",
+        "res://addons/characters/runtime/assets/Human.bucket.res": "ba56c05311b0de0bff339a6774684bf58004acf6711457f8659fde10932029d8",
         "res://addons/characters/runtime/assets/Human.hammer.res": "a0efd00e897b9698914a112adfa3bec8f48f78385fdc67725986472ec55b67b6",
         "res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res": "8fe847638c34f31c735c2bf928aadb5722c7244853433c72ba29c9753227a291",
         "res://addons/characters/runtime/assets/Human.pickaxe_fresh.res": "4430afc81d17a4191e724badbb7a4c588bb46284d126fc235fe01fb68c9865e4",
@@ -22,11 +22,12 @@
         "res://addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
         "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "ede187a86116545ca8d707eb1d2598b88e89aa5875a8e51a8b4b5408a3eb4aee",
+        "res://addons/characters/runtime/human_view.gd": "969c1046d5cd619fe20da6472e40c82c4b9fce60e7f3c9e9774c253c244f1417",
         "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
-        "res://addons/volumetric_water/assets/Bucket.held.res": "47949e6a296c169935ff61f7575b4213ed52c2ecf77350416a18ce58cf741501",
-        "res://addons/volumetric_water/assets/Bucket.pickup.res": "468c930ca4353645a7d0577e55f1333f4175e967e0ac650cdf6d6d6699319dd9",
-        "res://addons/volumetric_water/bucket_model.gd": "f9b4768ff986ba748b47fce45d7a48bce11c3834330679d25d0fb465d534121e"
+        "res://addons/volumetric_water/assets/Bucket.bail.res": "14d29c851b114b28e0f2bedc2d91563f6da2c54a75d0d6412b0b7e641ae93533",
+        "res://addons/volumetric_water/assets/Bucket.held.res": "d4f70fee3f4b31b208980f4a6c22bb01840b9817b6859020caf65efa2e93b532",
+        "res://addons/volumetric_water/assets/Bucket.pickup.res": "e3dbde94412c32345d226be2192cb133985b83ac25b5c0e6891389adfc30e6a0",
+        "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "ad9cac697e6ff68a266f485e9bb0f5de30ff1f9cb1ff084e82ee2dea14f2d5a9",

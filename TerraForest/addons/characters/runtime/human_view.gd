@@ -38,6 +38,8 @@ const CONTACTS={"FP_Unarmed_Punch":28.0/60.0,"FP_Pickaxe_Fresh_Swing":50.0/60.0,
 var body: CharacterBody3D
 var third_person:=false
 var bucket_fill:=0.0
+var bucket_previous_fill:=0.0
+var bucket_display_fill:=0.0
 var bucket_water:MeshInstance3D
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
@@ -61,9 +63,12 @@ func _ready() -> void:
 		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
 		# attachments carry that conversion too; undo the rest basis once.
 		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
-	var bucket_attachment:=BoneAttachment3D.new();bucket_attachment.bone_name="Weapon_Axe";skeleton.add_child(bucket_attachment)
+	var bail_attachment:=BoneAttachment3D.new();bail_attachment.bone_name="Weapon_Axe";skeleton.add_child(bail_attachment)
+	var bail:=MeshInstance3D.new();bail.name="Equipment_Bucket_Bail";bail.mesh=BUCKET_MODEL.BAIL;bail_attachment.add_child(bail)
+	bail.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Axe")).affine_inverse()
+	var bucket_attachment:=BoneAttachment3D.new();bucket_attachment.bone_name="Weapon_Pickaxe";skeleton.add_child(bucket_attachment)
 	var bucket_root:=Node3D.new();bucket_attachment.add_child(bucket_root)
-	bucket_root.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Axe")).affine_inverse()
+	bucket_root.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Pickaxe")).affine_inverse()
 	var bucket:=MeshInstance3D.new();bucket.name="Equipment_Bucket";bucket.mesh=BUCKET_MODEL.HELD;bucket_root.add_child(bucket)
 	bucket_water=MeshInstance3D.new();bucket_water.name="Equipment_Bucket_Water"
 	var water_disk:=CylinderMesh.new();water_disk.top_radius=.135;water_disk.bottom_radius=.135;water_disk.height=.001;water_disk.radial_segments=96
@@ -118,8 +123,11 @@ func set_third_person(value:bool)->void:
 
 func equip(item: int, water_ml:int=-1) -> void:
 	cancel_swing()
+	var previous_bucket_fill:=bucket_fill
+	var previous_item:=current
 	bucket_fill=clampf((item-401)/10.0,0,1) if item>=401 and item<=411 else 0.0
 	if item>=401 and item<=411 and water_ml>=0:bucket_fill=clampf(water_ml/1000000.0,0,1)
+	bucket_previous_fill=previous_bucket_fill if previous_item==401 else bucket_fill
 	if item>=401 and item<=411:item=401
 	current = item
 	action_remaining = 0.0
@@ -139,11 +147,21 @@ func _sync_equipment() -> void:
 			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==401 and label.contains("bucket")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
-	if bucket_water!=null:
-		bucket_water.visible=current==401 and bucket_fill>0 and not placement_active
-		bucket_water.position.y=lerpf(-.31,-.15,bucket_fill)
-		var radius:=lerpf(.108,.137,bucket_fill)/.135
-		bucket_water.scale=Vector3(radius,1,radius)
+	_sync_bucket_water()
+
+func _sync_bucket_water()->void:
+	if bucket_water==null:return
+	bucket_display_fill=bucket_fill
+	# Inventory already contains the confirmed result. Only the displayed fill
+	# waits for the tip/dip beat; this cannot transfer, consume or grant water.
+	if current==401 and action_remaining>0 and not placement_active:
+		var time:=animation_player.current_animation_position
+		if active_clip=="FP_Bucket_Pour":bucket_display_fill=lerpf(bucket_previous_fill,bucket_fill,smoothstep(.60,1.00,time))
+		elif active_clip=="FP_Bucket_Scoop":bucket_display_fill=lerpf(bucket_previous_fill,bucket_fill,smoothstep(1.65,1.90,time))
+	bucket_water.visible=current==401 and bucket_display_fill>.001 and not placement_active
+	bucket_water.position.y=lerpf(-.412,-.252,bucket_display_fill)
+	var radius:=lerpf(.108,.137,bucket_display_fill)/.135
+	bucket_water.scale=Vector3(radius,1,radius)
 
 func _motion_clip(action: String) -> String:
 	if current==401:return "FP_Bucket_"+action if clips.has("FP_Bucket_"+action) else "FP_Bucket_Idle"
@@ -203,6 +221,7 @@ func bucket_use(pouring:bool)->bool:
 	# Presentation follows the existing confirmed transfer; no attack/contact
 	# event can grant water, change inventory or mutate terrain from this clip.
 	_play("FP_Bucket_Pour" if pouring else "FP_Bucket_Scoop",true)
+	_sync_bucket_water()
 	return true
 
 func _process(delta: float) -> void:
@@ -226,6 +245,7 @@ func _process(delta: float) -> void:
 		if action_remaining<=0:return
 		var length:float=animation_player.get_animation(animation_player.assigned_animation).length
 		action_remaining=maxf(0,length-animation_player.current_animation_position) if animation_player.is_playing() else 0.0
+		_sync_bucket_water()
 		if action_remaining > 0.0:
 			return
 		if not swing_clip.is_empty():

@@ -1,4 +1,30 @@
-## Water bucket visuals - implemented, appearance review pending, 2026-10-25
+## Water bucket hands/use - original rejected, revision 2 awaiting review, 2026-10-25
+
+The user rejected the original hands and filling/pouring gestures. Revision 2
+replaces the vertical fist and single-pulse tip with an overhand hold, separate
+bail/pail pivots, a left palm supporting the base, and distinct 2.4-second scoop
+and 2.8-second pour sequences. The pail tips away from the eyes; the visible water
+changes during the tip or upright lift after the native transaction completes.
+A taller bail provides room for the tipped pail without passing through the arm.
+
+The revised assets pass 63 runtime checks and 13 actual-world interaction checks.
+These cover fixed grip, ear pivots, support contact, wrist angles, forearm clearance,
+actual skinned fingertips against the floor, visible fill timing, native collect/
+pour/recollect and equipment switching. Shared attack timing (27), accepted pickaxe
+(11), locomotion (24), character runtime, inventory drop (16) and character packaging
+also pass. Studio and world frames were inspected; engineering passes do not approve
+the appearance.
+
+Early candidate renders/checks exposed a sharply bent support wrist, a raised
+elbow, the pail crossing the right forearm, an interpolated arm-roll flip and
+fingertips through the floor. The final grip, elbow continuity, taller bail and
+mesh-fitted support palm correct those defects. The new appearance remains
+unaccepted until the user reviews both use motions in game. First-person framing
+still crops the lower pail/offhand; skin/sleeve finish remains the original character's.
+The water surface is a timed visual without a fluid simulation or pouring stream.
+Review the [new preview and evidence](evidence/water_bucket_visuals/README.md).
+
+## Water bucket visuals - first implementation, 2026-10-25
 
 The floating procedural pail is replaced by a 16,700-triangle Blender asset with
 thick hollow walls, rolled rims, a round bail, wooden sleeve and embedded 1024px
@@ -21,7 +47,7 @@ sampled the old animation crossfade endpoint; normal frame increments corrected
 the evidence capture. The initial grip exposed old finger weights; the bucket now
 uses the repaired hand mesh and a wrapped thumb.
 
-Appearance still needs user review in play; engineering checks do not approve it.
+The first version's hands and actions were rejected; see the active rework above.
 The lower body of the pail is cropped by first-person framing, and close-up skin
 and sleeves retain the existing character finish. The interior surface represents
 fill state without slosh or a pouring stream. Revisit these limits if the playtest

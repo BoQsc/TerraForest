@@ -4,7 +4,8 @@ One C++ water runtime: `NativeRegionalWater`. `NativeWaterTerrainPatch` samples 
 
 The bucket now uses a 16,700-triangle Blender-authored metal pail with embedded
 PBR maps. `bucket_model.gd` supplies its cached pickup mesh; the character rig
-uses its matching held mesh, fixed hand grip and carry/use animations. Water
+uses separate hinged pail/bail meshes, a fixed overhand grip and supported
+scoop/pour animations. Visible fill follows the gesture after confirmation. Water
 transactions remain in the existing native path. See
 [bucket source/rebuild](../characters/authoring/Human.bucket.README.md).
 

@@ -2,7 +2,7 @@
 extends SceneTree
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PREFIX = "FP_Bucket_"
-const DURATIONS = {"Idle":2.0,"Walk":1.0,"Run":0.8,"Jump":1.5,"Scoop":1.0,"Pour":1.2}
+const DURATIONS = {"Idle":2.0,"Walk":1.0,"Run":0.8,"Jump":1.5,"Scoop":2.4,"Pour":2.8}
 func find_type(node:Node,type:String)->Node:
 	if node.is_class(type):return node
 	for child in node.get_children():
@@ -79,18 +79,21 @@ func import_mesh()->bool:
 	if document.append_from_file("res://addons/characters/authoring/Bucket.glb",state)!=OK:return false
 	var scene:=document.generate_scene(state)
 	root.add_child(scene)
-	var node:=find_type(scene,"MeshInstance3D") as MeshInstance3D
-	if node==null:scene.free();return false
-	var held:=ArrayMesh.new();var pickup:=ArrayMesh.new()
-	for surface in node.mesh.get_surface_count():
-		for target in [held,pickup]:
-			var surface_tool:=SurfaceTool.new()
-			var at:=node.global_transform
-			if target==pickup:at.origin+=Vector3(0,.17,0)
-			surface_tool.append_from(node.mesh,surface,at)
-			surface_tool.set_material(node.mesh.surface_get_material(surface))
-			surface_tool.commit(target)
+	var held:=ArrayMesh.new();var bail:=ArrayMesh.new();var pickup:=ArrayMesh.new()
+	var nodes:=scene.find_children("*","MeshInstance3D",true,false)
+	if nodes.size()!=2:scene.free();return false
+	for node:MeshInstance3D in nodes:
+		var part:="bail" if String(node.name).to_lower().contains("bail") else "pail"
+		for surface in node.mesh.get_surface_count():
+			for target in [bail if part=="bail" else held,pickup]:
+				var surface_tool:=SurfaceTool.new()
+				var at:=node.global_transform
+				if target==pickup:at.origin+=Vector3(0,.22,0)
+				surface_tool.append_from(node.mesh,surface,at)
+				surface_tool.set_material(node.mesh.surface_get_material(surface))
+				surface_tool.commit(target)
 	var flags:=ResourceSaver.FLAG_COMPRESS|ResourceSaver.FLAG_BUNDLE_RESOURCES
 	var error:=ResourceSaver.save(held,"res://addons/volumetric_water/assets/Bucket.held.res",flags)
+	error=error|ResourceSaver.save(bail,"res://addons/volumetric_water/assets/Bucket.bail.res",flags)
 	error=error|ResourceSaver.save(pickup,"res://addons/volumetric_water/assets/Bucket.pickup.res",flags)
 	scene.free();return error==OK

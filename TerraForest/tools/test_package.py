@@ -81,6 +81,7 @@ class PackageTests(unittest.TestCase):
                          'addons/characters/runtime/assets/Human.pickaxe_locomotion.res',
                          'addons/characters/runtime/assets/Human.bucket.res',
                          'addons/volumetric_water/assets/Bucket.held.res',
+                          'addons/volumetric_water/assets/Bucket.bail.res',
                          'addons/volumetric_water/assets/Bucket.pickup.res',
                          'addons/characters/runtime/assets/Zombie.drag_walk.res',
                          'addons/characters/runtime/assets/Zombie.r4.glb',

@@ -1,41 +1,71 @@
 {
-  "checks": 36,
+  "checks": 63,
   "clips": {
     "FP_Bucket_Idle": {
       "finger_error": 0.0,
+      "forearm_clear": true,
       "grip_error": 0.0,
+      "hinge_error": 0.0,
       "root_error": 0.0,
-      "seam_error": 0.0
+      "seam_error": 0.0,
+      "support_angle_radians": 0.0,
+      "support_error_m": 0.0,
+      "wrist_bend_degrees": 26.0792434399015
     },
     "FP_Bucket_Jump": {
       "finger_error": 0.0,
-      "grip_error": 0.000000829795339996053,
+      "forearm_clear": true,
+      "grip_error": 0.000000882854521933041,
+      "hinge_error": 0.0,
       "root_error": 0.0,
-      "seam_error": 0.0000000842937097900176
+      "seam_error": 0.0000000842937097900176,
+      "support_angle_radians": 0.0,
+      "support_error_m": 0.0,
+      "wrist_bend_degrees": 26.0792434399015
     },
     "FP_Bucket_Pour": {
       "finger_error": 0.0,
-      "grip_error": 0.0000458736903965473,
+      "forearm_clear": true,
+      "grip_error": 0.0000790344638517126,
+      "hinge_error": 0.000109389126009773,
       "root_error": 0.0,
-      "seam_error": 0.000000178813934326172
+      "seam_error": 0.000000133280039449346,
+      "support_angle_radians": 0.000690533954184502,
+      "support_error_m": 0.00019717903342098,
+      "wrist_bend_degrees": 31.98815961919
     },
     "FP_Bucket_Run": {
-      "finger_error": 0.000000647643616957794,
-      "grip_error": 0.0000177063247974729,
+      "finger_error": 0.000000458331840036408,
+      "forearm_clear": true,
+      "grip_error": 0.0000153447545017116,
+      "hinge_error": 0.000000607850495271123,
       "root_error": 0.0,
-      "seam_error": 0.000000178813934326172
+      "seam_error": 0.0000001689574133934,
+      "support_angle_radians": 0.0,
+      "support_error_m": 0.0,
+      "wrist_bend_degrees": 26.0792434399015
     },
     "FP_Bucket_Scoop": {
       "finger_error": 0.0,
-      "grip_error": 0.0000217742890527006,
+      "forearm_clear": true,
+      "grip_error": 0.000088661014160607,
+      "hinge_error": 0.0000574820733163506,
       "root_error": 0.0,
-      "seam_error": 0.000000178813934326172
+      "seam_error": 0.000000133280039449346,
+      "support_angle_radians": 0.000690533954184502,
+      "support_error_m": 0.000132675559143536,
+      "wrist_bend_degrees": 34.8372705786233
     },
     "FP_Bucket_Walk": {
-      "finger_error": 0.000000647643616957794,
-      "grip_error": 0.00000560568105356651,
+      "finger_error": 0.000000453776380027193,
+      "forearm_clear": true,
+      "grip_error": 0.00000448750142822973,
+      "hinge_error": 0.000000216964181731782,
       "root_error": 0.0,
-      "seam_error": 0.0
+      "seam_error": 0.0,
+      "support_angle_radians": 0.0,
+      "support_error_m": 0.0,
+      "wrist_bend_degrees": 26.0792434399015
     }
   },
   "failures": 0,

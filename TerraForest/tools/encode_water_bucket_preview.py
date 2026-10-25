@@ -5,7 +5,7 @@ import bpy
 
 root=Path(__file__).resolve().parents[1]
 frames=sorted((root/'reports/water_bucket_visuals/frames').glob('*.png'))
-assert len(frames)==180
+assert len(frames)==300
 newest=max((root/path).stat().st_mtime for path in ['addons/characters/runtime/assets/Human.bucket.res','addons/volumetric_water/assets/Bucket.held.res','addons/characters/runtime/human_view.gd'])
 assert all(frame.stat().st_mtime>=newest for frame in frames)
 out=root/'docs/evidence/water_bucket_visuals';out.mkdir(parents=True,exist_ok=True)

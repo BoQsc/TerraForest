@@ -22,8 +22,11 @@ sys.path.insert(0,str(ROOT/'tools'))
 from unarmed_hand_weights import repair_hand
 for side in ['Left','Right']:repair_hand(bpy.data.objects['Human_Body'],rig,side)
 FPS = 60
-DURATIONS = {'Idle':2.0, 'Walk':1.0, 'Run':.8, 'Jump':1.5, 'Scoop':1.0, 'Pour':1.2}
+DURATIONS = {'Idle':2.0, 'Walk':1.0, 'Run':.8, 'Jump':1.5, 'Scoop':2.4, 'Pour':2.8}
 BONE = 'Weapon_Axe'
+PAIL_BONE = 'Weapon_Pickaxe'
+HANDLE_RISE = .102
+HINGE = Vector((0, 0, -.118-HANDLE_RISE))
 
 
 def sample(action, frame):
@@ -40,8 +43,9 @@ base = sample(bpy.data.actions['FP_Axe_Idle'], 1)
 old_tool = rig.pose.bones[BONE].matrix.copy()
 old_hand = old_tool.inverted() @ rig.pose.bones['RightHand'].matrix
 old_hand.translation.z = 0
-# The same fitted fingers wrap a horizontal wooden bail sleeve instead of a shaft.
-grip = Matrix.Rotation(math.pi/2, 4, 'Y') @ old_hand
+# An overhand carry: wrist behind the sleeve, palm down, fingers underneath.
+# The previous vertical fist put the wrist below the handle like a mug grip.
+grip = Matrix.Rotation(math.radians(65), 4, 'X') @ Matrix.Rotation(math.pi/2, 4, 'Y') @ old_hand
 fingers = {name:matrix for name,matrix in base.items() if 'RightHand' in name and name!='RightHand'}
 with bpy.data.libraries.load(str(OUT/'Human.unarmed.blend'),link=False) as (available,loaded):
     loaded.actions=['FP_Unarmed_Idle','FP_Unarmed_Punch']
@@ -165,10 +169,12 @@ for name,radius,z,thickness in [('Rolled mouth',.143,-.106,.006),('Rolled foot',
 points=[]
 for j in range(65):
     t=j/64;angle=math.pi*t
-    points.append((.153*math.cos(angle),0,-.118+.118*math.sin(angle)**.55))
-tube('Round steel bail',points,.0045,edge,16)
+    height=.118+HANDLE_RISE
+    points.append((.153*math.cos(angle),0,-height+height*math.sin(angle)**.55))
+bail_parts=[tube('Round steel bail',points,.0045,edge,16)]
 handle=lathe('Turned wooden grip',[(.001,-.052),(.014,-.052),(.018,-.046),(.019,-.035),(.020,0),(.019,.035),(.018,.046),(.014,.052),(.001,.052)],wood,64)
 handle.rotation_euler.y=math.pi/2
+bail_parts.append(handle)
 for sign in [-1,1]:
     bpy.ops.mesh.primitive_uv_sphere_add(segments=32,ring_count=12,radius=1,location=(sign*.146,0,-.128))
     ear=bpy.context.object;ear.name='Stamped bail ear';ear.scale=(.006,.021,.024);ear.data.materials.append(steel);parts.append(ear)
@@ -176,16 +182,25 @@ for sign in [-1,1]:
     bpy.ops.mesh.primitive_uv_sphere_add(segments=24,ring_count=12,radius=1,location=(sign*.152,0,-.126))
     rivet=bpy.context.object;rivet.name='Bail rivet';rivet.scale=(.004,.008,.008);rivet.data.materials.append(edge);parts.append(rivet)
     for face in rivet.data.polygons:face.use_smooth=True
+equipment=[]
+for name,objects,bone in [('Equipment.Bucket_Pail',[p for p in parts if p not in bail_parts],PAIL_BONE),
+                          ('Equipment.Bucket_Bail',bail_parts,BONE)]:
+    bpy.ops.object.select_all(action='DESELECT')
+    for obj in objects:obj.select_set(True)
+    bpy.context.view_layer.objects.active=objects[0];bpy.ops.object.join();obj=bpy.context.object
+    obj.name=name;scene.cursor.location=(0,0,0);bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+    bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+    if bone==PAIL_BONE:
+        for vertex in obj.data.vertices:vertex.co.z-=HANDLE_RISE
+    bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(island_margin=.012);bpy.ops.object.mode_set(mode='OBJECT')
+    obj.data.calc_loop_triangles();equipment.append((obj,bone))
+triangles=sum(len(obj.data.loop_triangles) for obj,bone in equipment)
 bpy.ops.object.select_all(action='DESELECT')
-for obj in parts:obj.select_set(True)
-bpy.context.view_layer.objects.active=parts[0];bpy.ops.object.join();equipment=bpy.context.object
-equipment.name='Equipment.Bucket';scene.cursor.location=(0,0,0);bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
-bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(island_margin=.012);bpy.ops.object.mode_set(mode='OBJECT')
-equipment.data.calc_loop_triangles();triangles=len(equipment.data.loop_triangles)
+for obj,bone in equipment:obj.select_set(True)
 bpy.ops.export_scene.gltf(filepath=str(OUT/'Bucket.glb'),export_format='GLB',use_selection=True,export_animations=False,export_yup=True)
-group=equipment.vertex_groups.new(name=BONE);group.add(list(range(len(equipment.data.vertices))),1,'REPLACE')
-mod=equipment.modifiers.new('Rigid bucket binding','ARMATURE');mod.object=rig;equipment.parent=rig
+for obj,bone in equipment:
+    group=obj.vertex_groups.new(name=bone);group.add(list(range(len(obj.data.vertices))),1,'REPLACE')
+    mod=obj.modifiers.new('Rigid bucket binding','ARMATURE');mod.object=rig;obj.parent=rig
 
 
 def orient(name,head,direction,reference):
@@ -193,21 +208,115 @@ def orient(name,head,direction,reference):
     rig.pose.bones[name].matrix=Matrix.LocRotScale(head,q,Vector((1,1,1)));bpy.context.view_layer.update()
 
 
-def arm(target):
-    origin=rig.pose.bones['RightArm'].head.copy();delta=target.translation-origin;distance=delta.length
-    a,b=[rig.data.bones['Right'+part].length for part in ['Arm','ForeArm']]
-    assert abs(a-b)+.001<distance<a+b-.001,(scene.frame_current,distance,a+b)
+def arm(side,target,pail_pitch=0):
+    sign=1 if side=='Left' else -1
+    shoulder=rig.pose.bones[side+'Shoulder']
+    orient(side+'Shoulder',shoulder.head.copy(),Vector((sign*.14,-.05,-.005)),rest[side+'Shoulder'])
+    origin=rig.pose.bones[side+'Arm'].head.copy();delta=target.translation-origin;distance=delta.length
+    a,b=[rig.data.bones[side+part].length for part in ['Arm','ForeArm']]
+    assert abs(a-b)+.001<distance<a+b-.001,(scene.frame_current,side,distance,a+b)
     axis=delta.normalized();along=(a*a-b*b+distance*distance)/(2*distance)
-    pole=Vector((-.43,-.06,1.19))-origin;pole=(pole-axis*pole.dot(axis)).normalized()
+    preferred=target.translation-(target.to_quaternion()@Vector((0,1,0)))*b
+    pole_height=1.33+.12*max(0,min(1,(pail_pitch-35)/65)) if side=='Right' else 1.26
+    pole=Vector((sign*.42,-.08,pole_height)).lerp(preferred,.88 if side=='Left' else .12)-origin
+    pole=(pole-axis*pole.dot(axis)).normalized()
     elbow=origin+axis*along+pole*math.sqrt(max(0,a*a-along*along))
-    orient('RightArm',origin,elbow-origin,rest['RightArm'])
-    orient('RightForeArm',elbow,target.translation-elbow,target)
-    rig.pose.bones['RightHand'].matrix=target;bpy.context.view_layer.update()
-    return distance/(a+b)
+    # Keep the wrist and forearm's width axes aligned. The upper arm follows
+    # the elbow hinge, so forearm pronation cannot collapse the wrist skin.
+    width=target.to_quaternion() @ Vector((1,0,0))
+    hinge=(elbow-origin).cross(target.translation-elbow).normalized()
+    if side in previous_hinges:
+        if hinge.dot(previous_hinges[side])<0:hinge=-hinge
+    elif hinge.x>0:hinge=-hinge
+    previous_hinges[side]=hinge.copy()
+    for name,head,direction in [(side+'Arm',origin,elbow-origin),(side+'ForeArm',elbow,target.translation-elbow)]:
+        axis=direction.normalized();across=(width-axis*width.dot(axis)).normalized()
+        if name==side+'Arm':across=hinge
+        q=Matrix((across,axis,across.cross(axis))).transposed().to_quaternion()
+        rig.pose.bones[name].matrix=Matrix.LocRotScale(head,q,Vector((1,1,1)));bpy.context.view_layer.update()
+    rig.pose.bones[side+'Hand'].matrix=target;bpy.context.view_layer.update()
+    bend=math.degrees((target.translation-elbow).angle(target.to_quaternion()@Vector((0,1,0))))
+    return {'reach':distance/(a+b),'elbow':list(elbow),'wrist':list(target.translation),'wrist_bend':bend}
+
+
+# Explicit motion beats, in seconds: handle XYZ, bail pitch, pail pitch,
+# left-hand contact amount, torso lean. Positive pail pitch tips AWAY from eyes.
+READY=(-.22,-.48,1.57)
+POSES={
+    'Pour':[
+        (0,READY,0,0,0,0),(.28,(-.16,-.40,1.55),0,0,.45,1),
+        (.55,(-.08,-.42,1.64),-8,30,1,2),(.92,(-.06,-.47,1.56),-5,65,1,3),
+        (1.22,(-.06,-.48,1.52),0,100,1,3),(1.65,(-.06,-.48,1.52),0,100,1,3),
+        (2.08,(-.08,-.43,1.64),-8,30,1,2),(2.30,(-.14,-.40,1.55),0,0,.5,1),
+        (2.8,READY,0,0,0,0)],
+    'Scoop':[
+        (0,READY,0,0,0,0),(.35,(-.14,-.40,1.56),0,5,.5,2),
+        (.6,(-.06,-.43,1.64),-8,35,1,3),(.95,(-.06,-.52,1.47),-18,75,1,6),
+        (1.25,(-.05,-.53,1.46),-15,55,1,6),(1.65,(-.07,-.43,1.64),-8,30,1,2),
+        (1.9,(-.15,-.40,1.56),0,0,.5,1),(2.4,READY,0,0,0,0)]}
+
+
+def channels(motion,time):
+    rows=POSES[motion];values=[[*row[1],*row[2:]] for row in rows]
+    def tangent(i,c):
+        if i in (0,len(rows)-1):return 0.0
+        a=(values[i][c]-values[i-1][c])/(rows[i][0]-rows[i-1][0])
+        b=(values[i+1][c]-values[i][c])/(rows[i+1][0]-rows[i][0])
+        return 2*a*b/(a+b) if a*b>0 else 0.0
+    for i,(a,b) in enumerate(zip(rows,rows[1:])):
+        if a[0]<=time<=b[0]+1e-8:
+            dt=b[0]-a[0];t=(time-a[0])/dt
+            return [(2*t**3-3*t*t+1)*values[i][c]+(t**3-2*t*t+t)*dt*tangent(i,c)
+                    +(-2*t**3+3*t*t)*values[i+1][c]+(t**3-t*t)*dt*tangent(i+1,c) for c in range(7)]
+    raise ValueError((motion,time))
+
+
+# A palm under the rear-left quarter of the floor, fingers pointing diagonally
+# inward. Once contact is established the hand stays fixed to the pail.
+support_y=Vector((-.96,-.28,0)).normalized();support_z=Vector((0,0,-1))
+support_q=Matrix((support_y.cross(support_z),support_y,support_z)).transposed().to_quaternion()
+support=Matrix.LocRotScale(Vector((.175,.02,-.357-HANDLE_RISE)),support_q,Vector((1,1,1)))
+rest_y=Vector((0,-.6,-.8));rest_x=Vector((1,0,0))
+left_rest=Matrix.LocRotScale(Vector((.28,-.16,1.13)),Matrix((rest_x,rest_y,rest_x.cross(rest_y))).transposed().to_quaternion(),Vector((1,1,1)))
+
+
+def left_fingers(contact):
+    for finger,relaxed in [('Index',(18,24,12)),('Middle',(22,28,14)),
+                           ('Ring',(26,32,16)),('Pinky',(30,36,18)),('Thumb',(12,18,10))]:
+        for joint,angle in enumerate(relaxed,1):
+            rig.pose.bones[f'LeftHand{finger}{joint}'].rotation_quaternion=Quaternion((1,0,0),-math.radians(angle))
+    bpy.context.view_layer.update()
+    hand_q=rig.pose.bones['LeftHand'].matrix.to_quaternion()
+    for finger in ['Index','Middle','Ring','Pinky','Thumb']:
+        for joint in [1,2,3]:
+            bone=rig.pose.bones[f'LeftHand{finger}{joint}'];at=bone.matrix.copy();q=at.to_quaternion()
+            # R11 rest fingers already curve. Zero local Euler flexion is not
+            # a flat support palm: aim the actual phalanges along its plane.
+            direction=Vector((0,1,0)) if finger!='Thumb' else Vector((.7,.7,0)).normalized()
+            desired=(q@Vector((0,1,0))).rotation_difference(hand_q@direction)@q
+            bone.matrix=Matrix.LocRotScale(at.translation,q.slerp(desired,contact),Vector((1,1,1)))
+            bpy.context.view_layer.update()
+
+
+# Fit the support to the deformed skin, not just bone centres. The upper skin
+# of the flat palm touches the underside; fingers and thumb cannot poke through.
+rig.pose.bones['LeftHand'].matrix=support;bpy.context.view_layer.update();left_fingers(1)
+body=bpy.data.objects['Human_Body'];names={g.index:g.name for g in body.vertex_groups}
+evaluated=body.evaluated_get(bpy.context.evaluated_depsgraph_get());skin=evaluated.to_mesh()
+assert len(skin.vertices)==len(body.data.vertices)
+heights=[]
+for vertex in body.data.vertices:
+    if sum(g.weight for g in vertex.groups if names[g.group].startswith('LeftHand'))<.8:continue
+    point=body.matrix_world@skin.vertices[vertex.index].co
+    if math.hypot(point.x,point.y)<.108:heights.append(point.z)
+evaluated.to_mesh_clear()
+assert heights
+support.translation.z+=(-.335-HANDLE_RISE-.001)-max(heights)
 
 
 actions={};records={}
 for motion,duration in DURATIONS.items():
+    previous_hinges={};previous_rotations={}
     action=bpy.data.actions.new('FP_Bucket_'+motion);action.use_fake_user=True
     rig.animation_data_create();rig.animation_data.action=action
     count=round(duration*FPS);records[motion]=[]
@@ -218,28 +327,41 @@ for motion,duration in DURATIONS.items():
             if motion in gaits and any(part in bone.name for part in ['UpLeg','Leg','Foot','Toe']):bone.matrix_basis=gaits[motion][frame][bone.name]
         bpy.context.view_layer.update()
         phase=frame/count*math.tau
-        anchor=Vector((-.24,-.38,1.58));pitch=-12.0;roll=0.0
+        anchor=Vector(READY);pitch=0.0;roll=0.0;pail_pitch=0.0;contact=0.0;lean=0.0
         if motion in ['Walk','Run']:
             strength=1 if motion=='Walk' else 1.45
             anchor+=Vector((.009*math.sin(phase),.007*math.sin(phase),.012*math.cos(2*phase)))*strength
             pitch+=1.2*math.sin(phase)*strength;roll=1.2*math.sin(phase)*strength
         elif motion=='Jump':anchor.z-=.018*math.sin(phase*.5)**2
-        elif motion in ['Scoop','Pour']:
-            pulse=math.sin(math.pi*frame/count)**2
-            anchor+=Vector((.012,-.025,-.035 if motion=='Scoop' else .012))*pulse
-            pitch+=(-20 if motion=='Scoop' else -48)*pulse
-        rotation=Quaternion((0,1,0),math.radians(roll))@Quaternion((1,0,0),math.radians(pitch))
+        elif motion in POSES:
+            data=channels(motion,frame/FPS);anchor=Vector(data[:3]);pitch,pail_pitch,contact,lean=data[3:]
+        for name in ['Spine','Spine1','Spine2']:
+            at=rig.pose.bones[name].matrix.copy()
+            rig.pose.bones[name].matrix=Matrix.LocRotScale(at.translation,Quaternion((1,0,0),math.radians(lean/3))@at.to_quaternion(),Vector((1,1,1)))
+            bpy.context.view_layer.update()
+        at=rig.pose.bones['Neck'].matrix.copy()
+        rig.pose.bones['Neck'].matrix=Matrix.LocRotScale(at.translation,Quaternion((1,0,0),math.radians(-lean))@at.to_quaternion(),Vector((1,1,1)))
+        bpy.context.view_layer.update()
+        yaw=Quaternion((0,0,1),math.radians(20))
+        rotation=yaw@Quaternion((0,1,0),math.radians(roll))@Quaternion((1,0,0),math.radians(pitch))
         tool=Matrix.LocRotScale(anchor,rotation,Vector((1,1,1)))
+        # Bail and pail rotate independently around the two existing ear pivots.
+        pail_q=yaw@Quaternion((0,1,0),math.radians(roll))@Quaternion((1,0,0),math.radians(pail_pitch))
+        pail=Matrix.LocRotScale(tool@HINGE-pail_q@HINGE,pail_q,Vector((1,1,1)))
         rig.pose.bones[BONE].matrix=tool;bpy.context.view_layer.update()
-        target=tool@grip
-        shoulder=rig.pose.bones['RightShoulder']
-        orient('RightShoulder',shoulder.head.copy(),Vector((-.14,-.055,.015)),rest['RightShoulder'])
-        reach=arm(target)
+        rig.pose.bones[PAIL_BONE].matrix=pail;bpy.context.view_layer.update()
+        arms={'Right':arm('Right',tool@grip,pail_pitch)}
+        left_target=left_rest.lerp(pail@support,contact)
+        arms['Left']=arm('Left',left_target)
+        left_fingers(contact)
         for bone in rig.pose.bones:
+            if bone.name in previous_rotations and bone.rotation_quaternion.dot(previous_rotations[bone.name])<0:
+                bone.rotation_quaternion.negate()
+            previous_rotations[bone.name]=bone.rotation_quaternion.copy()
             bone.keyframe_insert('location',frame=frame,group=bone.name)
             bone.keyframe_insert('rotation_quaternion',frame=frame,group=bone.name)
             bone.keyframe_insert('scale',frame=frame,group=bone.name)
-        records[motion].append({'frame':frame,'reach':reach,'pivot':list(anchor)})
+        records[motion].append({'frame':frame,'arms':arms,'pivot':list(anchor),'pail_pitch':pail_pitch,'bail_pitch':pitch,'left_contact':contact})
     for layer in action.layers:
         for strip in layer.strips:
             for bag in strip.channelbags:
@@ -250,16 +372,16 @@ scene.render.fps=FPS;scene.frame_start=0;scene.frame_end=60
 rig.animation_data.action=actions['Idle']
 if actions['Idle'].slots:rig.animation_data.action_slot=actions['Idle'].slots[0]
 scene.frame_set(0)
-rig['bucket_description']='Blender pail with closed fixed right-hand carry grip. Cosmetic scoop/pour follow confirmed water operations; no gameplay events in animation. Appearance review pending.'
+rig['bucket_description']='Revision 2: overhand carry, independent ear hinge, left palm supports pail; authored dip/lift and supported pour/hold/recovery. Earlier hands and gestures rejected. Appearance review pending.'
 bpy.ops.object.select_all(action='DESELECT');rig.select_set(True);bpy.data.objects['Human_Body'].select_set(True);bpy.context.view_layer.objects.active=rig
 bpy.ops.export_scene.gltf(filepath=str(OUT/'Human.bucket.glb'),export_format='GLB',use_selection=True,export_materials='NONE',export_animations=True,export_animation_mode='ACTIONS',export_frame_range=False,export_force_sampling=True,export_skins=True,export_morph=False,export_yup=True)
-report={'status':'Appearance review pending','source':str(source.relative_to(ROOT)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'neutral_source':'addons/characters/authoring/Human.unarmed.blend','neutral_source_sha256':hashlib.sha256((OUT/'Human.unarmed.blend').read_bytes()).hexdigest(),'triangles':triangles,'vertices':len(equipment.data.vertices),'fps':FPS,'durations':DURATIONS,'grip_matrix':[list(row) for row in grip],'samples':records}
+report={'status':'Previous hands/use rejected; revision 2 awaiting review','source':str(source.relative_to(ROOT)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'neutral_source':'addons/characters/authoring/Human.unarmed.blend','neutral_source_sha256':hashlib.sha256((OUT/'Human.unarmed.blend').read_bytes()).hexdigest(),'triangles':triangles,'vertices':sum(len(obj.data.vertices) for obj,bone in equipment),'fps':FPS,'durations':DURATIONS,'grip_matrix':[list(row) for row in grip],'support_matrix':[list(row) for row in support],'poses':POSES,'samples':records}
 (OUT/'Human.bucket.json').write_text(json.dumps(report,indent=2))
 for obj in bpy.data.objects:
-    if obj.type=='MESH' and obj.name.startswith('Equipment.') and obj!=equipment:
+    if obj.type=='MESH' and obj.name.startswith('Equipment.') and obj not in [entry[0] for entry in equipment]:
         obj.hide_render=True;obj.hide_set(True)
 scene.timeline_markers.clear()
-scene.timeline_markers.new('CARRY / FIXED HANDLE GRIP',frame=0)
+for label,frame in [('OVERHAND CARRY',0),('SUPPORT CONTACT',33),('TIP AWAY',55),('POUR HOLD',74),('UPRIGHT',125),('RELEASE / RECOVER',138),('CARRY',168)]:scene.timeline_markers.new(label,frame=frame)
 bpy.ops.object.select_all(action='DESELECT');rig.select_set(True);bpy.context.view_layer.objects.active=rig
 bpy.context.preferences.filepaths.save_version=0;bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'Human.bucket.blend'),compress=True)
 print('BUCKET_AUTHORED',triangles,'triangles;',DURATIONS)
