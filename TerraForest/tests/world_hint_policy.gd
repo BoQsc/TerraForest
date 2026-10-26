@@ -58,7 +58,7 @@ func run()->void:
 			adapter.loose.hit.large=true
 			adapter.update(game,1.0)
 			check(game.player_hud.interaction_hint.text.is_empty() and not game.player_hud.interaction_hint.visible,"large ground object %d stays unlabeled in %s"%[species,"gameplay" if gameplay else "editor"])
-	check(game.world_vehicle.queries==0,"hidden common targets never advertise an unrelated nearby vehicle")
+	check(game.world_vehicle.queries==0,"presenter does not invent a vehicle prompt for a resolved ground target")
 	game.construction_inventory.gameplay=true
 	for item in [1,201,501]:
 		adapter.loose={"kind":"pickup","item":item}

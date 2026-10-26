@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [World interaction hints](world-interaction-hints/README.md) | Improved / partial | User-rejected boulder instruction removed; stones/flowers and useful interactions retained |
+| [World interaction hints](world-interaction-hints/README.md) | Improved / partial | E toggles container UI; harvest-only grass no longer intercepts stone/flower pickups |
 | [Black terrain patches while mining](terrain-mining-dark-patches/README.md) | Improved / partial | 2026-10-26: recurrence gets user-approved faint cave visibility; latest images await review |
 | [Pickaxe hits without excavation](pickaxe-no-op/README.md) | Fixed for reproduced case | 2026-10-26: saved-pose checks pass; reopen for another failing contact |
 | [Terrain/road fit to building grid](terrain-road-grid-fit/README.md) | Improved / unresolved | Default improvement accepted; shoulder still fails |

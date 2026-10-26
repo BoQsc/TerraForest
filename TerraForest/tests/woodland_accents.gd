@@ -101,7 +101,7 @@ func run() -> void:
 		var before_inventory:PackedByteArray=inventory.capture_storage_snapshot()
 		var before_cover:PackedByteArray=cover.removed.capture_storage_snapshot()
 		var pickup:Dictionary=interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true)
-		check(not pickup.ok and pickup.reason.contains("Strike"),"bush %d cannot be picked up with E"%species)
+		check(not pickup.ok,"bush %d cannot be picked up with E"%species)
 		check(inventory.capture_storage_snapshot()==before_inventory and cover.removed.capture_storage_snapshot()==before_cover,"rejected bush pickup changes neither inventory nor vegetation")
 		check(not interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true,null,bush_id+1).ok,"wrong harvest identity cannot remove bush")
 		var harvested:Dictionary=interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true,null,bush_id)

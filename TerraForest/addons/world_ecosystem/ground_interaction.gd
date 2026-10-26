@@ -11,22 +11,25 @@ var busy:=false
 func available() -> bool:
 	return not busy and is_instance_valid(cover) and cover.terrain.world_ready and not cover.terrain.pending_edit and not cover.terrain.stopping and cover.removed.bind_world(cover.seed,1)
 
-func collection_probe(from: Vector3,to: Vector3,shared_hit: Variant=null) -> Dictionary:
+func collection_probe(from: Vector3,to: Vector3,shared_hit: Variant=null,species_mask:int=(1<<Catalog.COUNT)-1) -> Dictionary:
 	if not available() or not scene_ray.is_valid() or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
 	var obstruction: Dictionary=scene_ray.call(from,to) if shared_hit==null else shared_hit
 	var end: Vector3=obstruction.position if not obstruction.is_empty() and from.distance_squared_to(obstruction.position)<from.distance_squared_to(to) else to
-	var hit: Dictionary=cover.picker.pick(from,end)
+	var hit: Dictionary=cover.picker.pick_filtered(from,end,species_mask)
 	if not hit.hit: return {"ok":false,"reason":"No reachable ground cover"}
 	var key: Vector2i=hit.cell
 	if cover._dirty.has(key) or cover._pending.has(key) or not cover.resident.has(key): return {"ok":false,"reason":"Ground cover updating"}
 	return {"ok":true,"hit":hit}
 
+func pickup_probe(from:Vector3,to:Vector3,shared_hit:Variant=null)->Dictionary:
+	return collection_probe(from,to,shared_hit,Catalog.PICKUP_SPECIES_MASK)
+
 func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shared_hit: Variant=null,attack_target: int=0) -> Dictionary:
-	var candidate:=collection_probe(from,to,shared_hit)
+	var candidate:=pickup_probe(from,to,shared_hit) if gameplay and attack_target==0 else collection_probe(from,to,shared_hit)
 	if not candidate.ok:return candidate
 	var hit: Dictionary=candidate.hit
 	if attack_target!=0 and hit.id!=attack_target:return {"ok":false,"reason":"Target changed"}
-	if gameplay and Catalog.HARVEST_ONLY[hit.species] and attack_target!=hit.id:return {"ok":false,"reason":"Strike the woody bush twice to gather wood" if hit.species==8 else "Strike the bush to harvest it"}
+	if gameplay and Catalog.HARVEST_ONLY[hit.species] and attack_target!=hit.id:return {"ok":false,"reason":"Strike vegetation to harvest it"}
 	if gameplay and hit.get("large",false) and attack_target!=hit.id:return {"ok":false,"reason":"Mine the boulder with a pickaxe"}
 	var key: Vector2i=hit.cell
 	var previous: Array=cover.resident[key]

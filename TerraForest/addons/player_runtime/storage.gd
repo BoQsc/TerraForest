@@ -89,7 +89,7 @@ func _ready() -> void:
 	for deposit in [true,false]:
 		var button:=Button.new();button.text=("Store items" if deposit else "Take items") if external else ("Deposit into chest" if deposit else "Take from chest")
 		button.pressed.connect(func():move_selected(deposit));buttons.add_child(button)
-	var done:=Button.new();done.text="Close (Esc / Tab)";done.pressed.connect(close);buttons.add_child(done)
+	var done:=Button.new();done.text="Close (E / Esc / Tab)";done.pressed.connect(close);buttons.add_child(done)
 	message=Label.new();column.add_child(message)
 func refresh() -> void:
 	player_state=game.player_hud.inventory.snapshot();box_state=store.snapshot(identity)
@@ -121,7 +121,7 @@ func move_selected(deposit: bool) -> bool:
 	var explanations: Dictionary={"stale_container_view":"Contents changed. Select the stack again.","stale_revision":"Inventory changed. Select the stack again.","invalid_count_or_slot":"Choose a nonempty stack and an available quantity.","destination_rejected":"There is not enough compatible space in the destination.","container_capacity":"The world's storage limit has been reached.","empty_container":"This chest is empty."}
 	message.text=explanations.get(result.reason,"These items could not be moved.");return false
 func _input(event: InputEvent) -> void:
-	if opened and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_ESCAPE,KEY_TAB]:
+	if opened and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_E,KEY_ESCAPE,KEY_TAB]:
 		close();get_viewport().set_input_as_handled()
 
 func drag_data(side: String,slot: int) -> Dictionary:

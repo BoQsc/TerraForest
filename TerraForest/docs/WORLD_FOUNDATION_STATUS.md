@@ -1,13 +1,31 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## E container toggle and grass pickup eligibility — 2026-10-26
+
+E now closes open chest/corpse storage through the shared UI, consumes the event,
+restores mouse/HUD control and cannot reopen the container on that same press.
+Key echoes/releases are ignored; Esc/Tab remain supported. Grass joins bushes as
+harvest-only. A native species-mask query skips those proxies for E before doing
+intersection work, allowing stones/flowers/dropped items behind grass to be
+collected. Preview and action share the mask; solid occlusion and raw harvesting
+queries remain unchanged. No per-frame foliage scan or save-format change.
+
+Debug/release vegetation DLLs and the PCK are rebuilt. Native overlap tests cover
+exact rewards, unchanged grass, stale harvests, obstruction, invalid masks and
+developer removal. Actual temporary-world input checks cover chest/corpse E
+toggle, repeats, focused quantity input, no re-open and returned camera capture.
+The corpse UI fixture does not requalify zombie death/targeting. Actual animated
+grass harvesting is also checked; no player saves are selected. Latest player
+visual review remains open. [Workflow evidence](../issues/world-interaction-hints/README.md).
+
 ## Quiet interaction hints and bush harvesting — 2026-10-26
 
 Automatic ground labels remain for stones and flowers, but not grass, ferns,
 twigs, bushes or boulders. Doors, containers, corpse storage, dropped items
-and vehicles retain useful prompts. Hidden ground targets still take interaction
-priority, so aiming at grass cannot falsely advertise entering a nearby vehicle.
-Low bushes now require harvesting rather than E pickup, matching woody bushes;
+and vehicles retain useful prompts. Eligible ground targets still take interaction
+priority; harvest-only foliage is now skipped for E as described above.
+Grass and low bushes require harvesting rather than E pickup, matching woody bushes;
 existing durability, rewards, save data and developer removal remain unchanged.
 Source policy/native collection and actual-world gathering, pickup and door
 checks pass. Installed-package policy, 66 native woodland assertions and actual

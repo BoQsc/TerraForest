@@ -4,6 +4,33 @@ class NearbyVehicleProbe extends RefCounted:
 	var driving:=false
 	var attempts:=0
 	func enter(_game: Node) -> bool:attempts+=1;return true
+func check_grass_harvest()->void:
+	var candidates:Array=[]
+	var find_grass:=func()->bool:
+		for rows:Array in game.ground_cover.resident.values():
+			var grass:Dictionary=rows[2]
+			for index in grass.ids.size():
+				var values:PackedFloat32Array=grass.transforms
+				candidates.append({"id":grass.ids[index],"point":Vector3(values[index*12+3],values[index*12+7],values[index*12+11])})
+		return not candidates.is_empty()
+	if not check(await wait_for(find_grass,20),"natural grass publishes for harvesting"):return
+	candidates.sort_custom(func(first:Dictionary,second:Dictionary)->bool:return first.point.distance_squared_to(game.player.position)<second.point.distance_squared_to(game.player.position))
+	game.player_hud.equip_item(2);game._sync_player_tool()
+	var selected:Dictionary={}
+	for candidate:Dictionary in candidates.slice(0,64):
+		aim(candidate.point+Vector3(0.7,0,1),candidate.point+Vector3(0,0.2,0))
+		var target:Dictionary=game.world_attack.target()
+		if target.get("id",0)==candidate.id and target.get("species",-1)==2:selected=candidate;break
+	if not check(not selected.is_empty(),"hatchet targets actual natural grass"):return
+	var before:=amount(205)
+	use()
+	check(game.ground_cover.batches[2].get_ids().has(selected.id) and amount(205)==before,"E cannot pick up the aimed grass")
+	var active_slot:int=game.player_hud.active_slot
+	var wear:int=game.player_hud.inventory.snapshot().slots[active_slot].wear
+	if not check(game.world_attack.attack(),"actual hatchet harvest animation starts"):return
+	check(await wait_for(func():return game.world_attack.pending.is_empty(),5) and game.world_attack.last_hit,"animated contact harvests the grass")
+	check(not game.ground_cover.batches[2].get_ids().has(selected.id) and amount(205)==before+1,"one actual harvest removes exact clump and grants one grass")
+	check(game.player_hud.inventory.snapshot().slots[active_slot].wear==wear+1,"accepted grass harvest wears the hatchet once")
 func check_boulder()->void:
 	var candidates:Array=[]
 	var find_boulder:=func()->bool:
@@ -41,6 +68,8 @@ func run() -> void:
 	if not check(game.ground_enabled and game.construction_inventory.gameplay,"ground cover and gameplay enabled"):await finish();return
 	if "--boulder-hint-check" in OS.get_cmdline_user_args():
 		await check_boulder();await finish();return
+	if "--grass-harvest-check" in OS.get_cmdline_user_args():
+		await check_grass_harvest();await finish();return
 	if not check(await wait_for(func():return game.ground_interaction.available() and not game.ground_cover.resident.is_empty(),15),"ground cover publishes for interaction"):await finish();return
 	print("GROUND_HINT_COVER resident=",game.ground_cover.resident.size()," wanted=",game.ground_cover._wanted.size())
 	var nearest:=Vector3.ZERO;var distance:=INF
@@ -54,7 +83,7 @@ func run() -> void:
 	aim(nearest+Vector3(0.7,0,1),nearest+Vector3(0,0.2,0))
 	var origin: Vector3=game.camera.global_position
 	var endpoint: Vector3=origin-game.camera.global_basis.z*2.5
-	var probe: Dictionary=game.ground_interaction.collection_probe(origin,endpoint)
+	var probe: Dictionary=game.ground_interaction.pickup_probe(origin,endpoint)
 	if not check(probe.ok,"actual nearby vegetation is reachable"):await finish();return
 	var id: int=probe.hit.id;var species: int=probe.hit.species
 	var catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
@@ -71,10 +100,10 @@ func run() -> void:
 		check(root.get_texture().get_image().save_png(folder.path_join("quiet.png"))==OK,"interaction screenshot saved")
 	check(game.player_hud.capture_snapshot()==inventory_before and game.ground_cover.removed.capture_storage_snapshot()==edits_before,"prompt has no inventory or durable world mutation")
 	# A shared building ray extends farther than gathering. Never expand reach.
-	check(not game.ground_interaction.collection_probe(origin,origin+(endpoint-origin).normalized()*0.1,{"position":endpoint}).ok,"longer shared scene ray does not extend collection reach")
+	check(not game.ground_interaction.pickup_probe(origin,origin+(endpoint-origin).normalized()*0.1,{"position":endpoint}).ok,"longer shared scene ray does not extend collection reach")
 	var cell: Vector2i=probe.hit.cell
 	game.ground_cover._dirty[cell]=true
-	check(not game.ground_interaction.collection_probe(origin,endpoint).ok,"dirty owner cannot be advertised as collectible")
+	check(not game.ground_interaction.pickup_probe(origin,endpoint).ok,"dirty owner cannot be advertised as collectible")
 	game.ground_cover._dirty.erase(cell)
 	var full: RefCounted=ClassDB.instantiate("NativePlayerInventory");full.register_item(104,999)
 	check(full.grant(104,32*999,0).ok and game.player_hud.restore_snapshot(full.capture_storage_snapshot()),"full inventory fixture")
@@ -88,5 +117,5 @@ func run() -> void:
 	check(nearby.attempts==0 and game.ground_cover.removed.contains(id),"E collects aimed cover before proximity vehicle entry")
 	check(amount(reward)==before+1,"collection grants exact species reward")
 	game.world_interaction.update(game,1.0)
-	check(not game.ground_interaction.collection_probe(origin,endpoint).ok or game.ground_interaction.collection_probe(origin,endpoint).hit.id!=id,"removed identity is no longer targetable")
+	check(not game.ground_interaction.pickup_probe(origin,endpoint).ok or game.ground_interaction.pickup_probe(origin,endpoint).hit.id!=id,"removed identity is no longer targetable")
 	await finish()

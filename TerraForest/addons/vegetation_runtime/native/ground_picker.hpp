@@ -15,6 +15,7 @@ protected:
         ClassDB::bind_method(D_METHOD("remove_cell","cell"),&NativeGroundCoverPicker::remove_cell);
         ClassDB::bind_method(D_METHOD("remove_roots","cell","ids"),&NativeGroundCoverPicker::remove_roots);
         ClassDB::bind_method(D_METHOD("pick","from","to"),&NativeGroundCoverPicker::pick);
+        ClassDB::bind_method(D_METHOD("pick_filtered","from","to","species_mask"),&NativeGroundCoverPicker::pick_filtered);
     }
 public:
     bool remove_roots(Vector2i key,const PackedInt64Array &ids){
@@ -50,14 +51,18 @@ public:
     }
     void remove_cell(Vector2i key){if(valid_cell(key))cells.erase(key.y*63+key.x);}
     Dictionary pick(Vector3 from,Vector3 to) const{
+        return pick_filtered(from,to,511);
+    }
+    Dictionary pick_filtered(Vector3 from,Vector3 to,int64_t species_mask) const{
         Dictionary out;out["hit"]=false;out["tested"]=0;out["cells"]=0;
-        if(!from.is_finite()||!to.is_finite()||from.distance_squared_to(to)>64.01||from==to||std::abs(from.x)>100000||std::abs(from.z)>100000)return out;
+        if(species_mask<0||species_mask>511||!from.is_finite()||!to.is_finite()||from.distance_squared_to(to)>64.01||from==to||std::abs(from.x)>100000||std::abs(from.z)>100000)return out;
         int x0=std::max(0,int(std::floor((std::min(from.x,to.x)-8)/32))),x1=std::min(62,int(std::floor((std::max(from.x,to.x)+8)/32)));
         int z0=std::max(0,int(std::floor((std::min(from.z,to.z)-8)/32))),z1=std::min(62,int(std::floor((std::max(from.z,to.z)+8)/32)));
         double closest=2;int64_t selected=0;int selected_species=0,selected_owner=0,tested=0,visited=0;bool large=false;
         for(int z=z0;z<=z1;++z)for(int x=x0;x<=x1;++x){
             ++visited;auto found=cells.find(z*63+x);if(found==cells.end())continue;
             for(const auto &item:found->second){
+                if(!(species_mask&(int64_t(1)<<item.species)))continue;
                 ++tested;Vector3 start=item.inverse.xform(from),end=item.inverse.xform(to),direction=end-start;
                 Vector3 low(-.4,item.species==0?-.2:0,-.4),high(.4,item.species==0?.2:(item.species==8?1.1:.75),.4);
                 if(item.large){low=Vector3(-.32,-.18,-.27);high=Vector3(.32,.18,.27);}

@@ -10,12 +10,39 @@
 - No automatic target label: grass, ferns, twigs, low bushes, woody bushes, boulders.
 - Keep labels: small stones, flowers, doors, containers, corpse
   storage, dropped inventory items and vehicle interaction.
-- Both bush species require harvesting in gameplay. Low-bush health/rewards are
-  unchanged; woody bushes still take two hits. Developer removal is unchanged.
-- Grass/fern/twig collection still works. Inventory names, resource notifications
-  and feedback after an explicit action are unaffected.
-- Hiding a label does not skip the target or advertise an unrelated nearby car.
-  Existing 10 Hz bounded picking is reused; no new world scan or native bake.
+- Grass and both bush species require harvesting in gameplay. Existing health
+  and rewards are unchanged; woody bushes still take two hits. Developer removal
+  is unchanged. Ferns, twigs, small stones and flowers remain directly collectible.
+- E picking skips harvest-only foliage inside the native query, so foreground
+  grass/bushes cannot steal a stone/flower/pickup interaction. Actual solid
+  obstructions still block picking; raw tool/harvest selection is unchanged.
+- Inventory names, resource notifications and explicit action feedback are
+  unaffected. Existing 10 Hz bounded picking is reused; no new world scan or bake.
+
+## E container toggle / grass pickup follow-up
+
+Press E again to close either a chest or corpse-loot UI and restore gameplay
+control. The close event is consumed: it cannot immediately reopen the container,
+enter a vehicle or collect an item. Key-repeat and release do not close a freshly
+opened container. Esc/Tab and the close button remain available; the button now
+shows E too. The same storage UI implementation serves chests and corpses.
+
+Grass is now harvest-only. Native `pick_filtered` ignores harvest-only species
+before proxy transforms/intersections; interaction preview and actual E collection
+use the same eligibility mask. Attack/placement/developer picking retains all
+species. No terrain generation or save-format change is involved.
+
+![Corpse storage opened with E](images/corpse-open.png)
+
+![Same UI closed by pressing E again](images/corpse-closed-with-e.png)
+
+Packaged temporary-world input test, seed 1703, 1920x1080. This fixture uses real
+storage UI/native contents and a test corpse identity picker, not a new verification
+of zombie death or skinned-corpse targeting. Quantity input is focused before E
+closes the UI; mouse capture and unchanged player inventory are asserted.
+Native overlap tests prove stone/flower collection through grass and solid-wall
+occlusion. A real animated hatchet strike then harvests one natural clump, grants
+one grass and consumes one wear. [Workflow qualification](workflow-followup.json).
 
 ## Automatic-label audit / rejected exception
 

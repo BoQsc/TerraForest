@@ -24,7 +24,8 @@ func describe(game: Node, target: Dictionary) -> String:
 func ground_target(game: Node,target: Dictionary) -> Dictionary:
 	if not game.ground_enabled:return {"ok":false}
 	var origin: Vector3=game.camera.global_position
-	return game.ground_interaction.collection_probe(origin,origin-game.camera.global_basis.z*2.5,target)
+	var endpoint:Vector3=origin-game.camera.global_basis.z*2.5
+	return game.ground_interaction.pickup_probe(origin,endpoint,target) if game.construction_inventory.gameplay else game.ground_interaction.collection_probe(origin,endpoint,target)
 func pickup_end(game: Node,target: Dictionary) -> Vector3:
 	var origin: Vector3=game.camera.global_position
 	var endpoint: Vector3=origin-game.camera.global_basis.z*2.5

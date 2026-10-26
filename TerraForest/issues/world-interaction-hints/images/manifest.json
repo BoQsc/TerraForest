@@ -32,6 +32,28 @@
       "seed": 1703,
       "context": "Natural boulder verified by native picker; repair hammer held; not a matching saved-world replay.",
       "source_run": "reports/quiet_hints_boulder/boulder"
+    },
+    {
+      "file": "corpse-open.png",
+      "source": "reports\\interaction_workflow\\corpse-open.png",
+      "source_run": "reports/interaction_workflow_pack/container",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged E-toggle verification; inspected, not user-reviewed",
+      "context": "Real storage UI and native corpse contents, test identity picker; no new zombie death/targeting qualification.",
+      "modified_pixels": false,
+      "sha256": "2492a70208e850def80b103f4a545c0106681da4033357d476c997ba1fd45179"
+    },
+    {
+      "file": "corpse-closed-with-e.png",
+      "source": "reports\\interaction_workflow\\corpse-closed-with-e.png",
+      "source_run": "reports/interaction_workflow_pack/container",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged E-toggle verification; inspected, not user-reviewed",
+      "context": "Real storage UI and native corpse contents, test identity picker; no new zombie death/targeting qualification.",
+      "modified_pixels": false,
+      "sha256": "bc2016c3a00feb63e0a0047e7f9dd9304df5af6388085a5ebd553e7aa7aeddff"
     }
   ]
 }
