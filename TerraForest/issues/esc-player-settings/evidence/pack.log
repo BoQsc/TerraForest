@@ -1,0 +1,33 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 169.18 ms at 25541
+[terrain-hitch] base controller 170.73 ms at 25542
+[terrain-hitch] controller process 172.37 ms at 25544
+[terrain-hitch] world process 174.01 ms at 25546
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS temporary world is playable
+PASS ESC menu still opens on Session
+PASS Player has a dedicated sidebar entry and page
+PASS Session no longer contains the two player switches
+PASS Player navigation opens only the Player page
+PASS Player contains exactly the two moved switches
+PASS third-person switch belongs to Player
+PASS building-grid preference and explanation move together
+PASS moved camera switch still changes the actual player view
+PASS camera switch restores its original state
+PASS moved embedding switch still updates placement preference
+PASS embedding switch restores its original state
+PASS capture saved: player
+PASS Session retains save, load and quit actions
+PASS Session navigation hides Player settings
+PASS capture saved: session
+PASS ESC closes Player settings and returns camera control
+PASS fresh ESC still returns to Session
+[TerrainRewrite] Temporary test world: save skipped
+SESSION_PLAYER_PAGE checks=18 failures=0

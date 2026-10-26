@@ -57,6 +57,7 @@ func _ready() -> void:
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
+	navigation["Player"]=button(sidebar,"Player",show_page.bind("Player"))
 	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
 	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
 	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
@@ -67,6 +68,8 @@ func _ready() -> void:
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
 	if world_page_factory.is_valid():page("World").add_child(world_page_factory.call())
 	var session:=page("Session")
+	var player:=page("Player")
+	label(player,"Player").add_theme_font_size_override("font_size",22)
 	var graphics:=page("Graphics")
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"
@@ -77,8 +80,8 @@ func _ready() -> void:
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
-	third_person_toggle.toggled.connect(game.player_view.set_enabled);session.add_child(third_person_toggle)
-	var grid_settings:=VBoxContainer.new();grid_settings.name="BuildingGridFit";session.add_child(grid_settings)
+	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)
+	var grid_settings:=VBoxContainer.new();grid_settings.name="BuildingGridFit";player.add_child(grid_settings)
 	label(grid_settings,"Building-grid fit").add_theme_font_size_override("font_size",20)
 	label(grid_settings,"Placement preference. Terrain and road generation preferences are grouped under Building-grid fit when creating a world.")
 	var burial_toggle:=CheckButton.new();burial_toggle.text="Prefer embedding when it improves block fit"

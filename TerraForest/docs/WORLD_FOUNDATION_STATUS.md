@@ -1,6 +1,14 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## ESC Player settings — 2026-10-26
+
+Added Player navigation and moved Third-person camera plus the complete
+Building-grid fit preference group out of Session. Defaults, setting callbacks
+and session action buttons are unchanged. Source/package checks pass 18/18;
+export/startup passes. The generator test's UI lookup was updated without rerunning
+world generation. Human/DPI review remains open; [screenshots and scope](../issues/esc-player-settings/README.md).
+
 ## Vehicle sinks on exit — diagnosed 2026-10-26; fix pending
 
 The existing exit path reproduces a player/chassis contact during the player's

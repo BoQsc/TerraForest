@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "context": "Exported build, 1920x1080, temporary seed 1703. Original captures; user acceptance pending.",
+  "images": [
+    {
+      "file": "player.png",
+      "sha256": "b10bf5fb0646060cbfa058212d12f470d49444ecb7a1b0dc0eb7e806a7161bcf",
+      "source": "reports/checks/20261026T183514068214Z_session_player_pack/evidence/player.png",
+      "record": "../evidence/pack-run.json",
+      "caption": "Player page with exactly the two moved switches and the existing grid-fit explanation."
+    },
+    {
+      "file": "session.png",
+      "sha256": "c27d9a71dff35d7a8e6ffafe4a26efc00cc417ebb42e6f04fd1742c1a8141949",
+      "source": "reports/checks/20261026T183514068214Z_session_player_pack/evidence/session.png",
+      "record": "../evidence/pack-run.json",
+      "caption": "Session page after moving its switches; ordinary session action buttons remain."
+    }
+  ]
+}

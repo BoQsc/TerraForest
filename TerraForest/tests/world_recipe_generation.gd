@@ -55,8 +55,8 @@ func run()->void:
  if not ready:
   print("CUSTOM_GENERATION_STATUS ",FileAccess.get_file_as_string(status_path));await finish();return
  var game=current_scene
- var grid_settings:Node=game.session_menu.pages["Session"].get_node_or_null("BuildingGridFit")
- check(grid_settings!=null and grid_settings.find_children("*","CheckButton",true,false).size()==1,"placement preference belongs to the matching building-grid group")
+ var grid_settings:Node=game.session_menu.pages["Player"].get_node_or_null("BuildingGridFit")
+ check(grid_settings!=null and grid_settings.find_children("*","CheckButton",true,false).size()==1,"placement preference belongs to the Player building-grid group")
  var bytes:PackedByteArray=game.world_recipe.store.capture_snapshot()
  check(bytes==Recipe.encode(options) and game.ecosystem.biome_profile==options.biome,"created world uses requested durable biome recipe")
  check(game.construction_inventory.gameplay and game.ground_enabled and game.world_vehicle.fleet_enabled and "--actors" in Options.arguments(),"normal gameplay construction, vegetation, actors and vehicles are enabled")
