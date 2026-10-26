@@ -1,6 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Vehicle sinks on exit — diagnosed 2026-10-26; fix pending
+
+The existing exit path reproduces a player/chassis contact during the player's
+kinematic relocation, while its scene position is already beside the car.
+Twelve flat/slope diagnostic comparisons isolate this contact from the physics
+rate change, wheel rays and parking. A one-step car/player pair exclusion prevents
+the shove while retaining ground collision. Six real-world E-input cases reproduce
+it stopped and at 0.3/3 m/s, with matched collision-disabled controls remaining
+stable. Stale pre-impact support/motion readings can then freeze the penetrated car.
+
+Production code remains unchanged: the user requested diagnosis before repair.
+Resume by implementing a synchronized exit/contact lifecycle and fresh settling
+observations, then qualify repeated/blocked/unloaded exits, re-entry, persistence
+and actor/streaming regressions. The original saved pose and normal full-foliage
+visual acceptance remain unverified. Diagnostic passes prove the known defect,
+not a fix. [Reproduction, measured evidence and remaining work](../issues/vehicle-exit-terrain/README.md).
+
 ## Fly wheel stationary selection — 2026-10-26
 
 The single-action backtick wheel no longer excludes its own centred Fly label
