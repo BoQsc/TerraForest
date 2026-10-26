@@ -1140,10 +1140,31 @@ static V3 visibility_origin(RoofCache&roof,const Vertex&v){
  V3 p=v.p+v.n*.06f;
  if(v.material>=5.f)return p;
  for(int j=0;j<8;j++){
-  float f=interpolated_sample(roof,p);if(f>.015f)break;
-  float ahead=interpolated_sample(roof,p+v.n*.10f);
+  int cell_x=fl(p.x),cell_y=fl(p.y),cell_z=fl(p.z);float samples[8];
+  for(int corner=0;corner<8;corner++)samples[corner]=roof.sample(cell_x+(corner&1),cell_y+((corner>>1)&1),cell_z+((corner>>2)&1));
+  float f=trilerp(samples,{p.x-cell_x,p.y-cell_y,p.z-cell_z});if(f>=0.f)break;
+  V3 direction=terraforest::density_surface_normal(samples,{p.x-cell_x,p.y-cell_y,p.z-cell_z});
+  float ahead=interpolated_sample(roof,p+direction*.10f);
   float slope=mx(.10f,(ahead-f)*10.f);
-  p=p+v.n*clampf((.02f-f)/slope,.015f,.20f);
+  float advance=clampf((.02f-f)/slope,.015f,.20f);
+  float boundary=exit_time(p,direction,cell_x,cell_y,cell_z,1.f);
+  if(boundary>1e-5f)advance=mn(advance,boundary);
+  p=p+direction*advance;
+ }
+ if(interpolated_sample(roof,p)<0.f){
+  int cell_x=v.mask?v.cx:fl(v.p.x),cell_y=v.mask?v.cy:fl(v.p.y),cell_z=v.mask?v.cz:fl(v.p.z);
+  float nearest=1e30f;
+  for(int corner=0;corner<8;corner++){
+   if(v.mask){
+    bool connected=false;
+    for(int axis=0;axis<3;axis++)if(v.mask&(1u<<(8+terraforest::density_edge_index(corner&~(1<<axis),axis))))connected=true;
+    if(!connected)continue;
+   }
+   V3 candidate={float(cell_x+(corner&1)),float(cell_y+((corner>>1)&1)),float(cell_z+((corner>>2)&1))};
+   if(roof.sample(int(candidate.x),int(candidate.y),int(candidate.z))<0.f)continue;
+   float distance=dot(candidate-v.p,candidate-v.p);
+   if(distance<nearest){nearest=distance;p=candidate;}
+  }
  }
  return p;
 }
@@ -1161,7 +1182,7 @@ static bool connected_air(const World&w,RoofCache&roof,V3 a,V3 b){
   if(span<1e-6f){t+=.00001f;continue;}
   float d[8];for(int k=0;k<8;k++)d[k]=roof.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1));
   V3 q={p.x-x,p.y-y,p.z-z};
-  if(segment_minimum(d,q,q+dir*span)<.003f)return false;
+  if(segment_minimum(d,q,q+dir*span)<0.f)return false;
   t+=span+.00001f;
  }
  return t>=distance;
@@ -1204,7 +1225,7 @@ void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
    for(int j=0;j<7;j++){
     int bx=fl(pp.x),by=fl(pp.y),bz=fl(pp.z);
     if(bx<0||bz<0||bx>=WORLD||bz>=WORLD||by<1||by>=255)break;
-    if(interpolated_sample(roof,pp)>.015f&&w.blocks.get(block_key(bx,by,bz))<0){air=true;break;}
+    if(interpolated_sample(roof,pp)>=0.f&&w.blocks.get(block_key(bx,by,bz))<0){air=true;break;}
     pp=pp+axis_n*.25f;
    }
    float value=-1;

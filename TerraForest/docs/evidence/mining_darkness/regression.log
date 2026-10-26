@@ -1,0 +1,10 @@
+PASS solid excavation fixture
+PASS native exact-zero excavation mesh
+MINING_PROBES old_inside=44 repaired=44 zero_starts=49 zero_drift=0
+PASS previously buried lighting probes stay in excavated air
+PASS exact-zero mined air stops projection immediately
+PASS zero-density cleared cells can reuse connected sky probes
+PASS solid wall forbids cross-wall light reuse
+PASS cold and warm lighting builds are deterministic
+PASS lighting never changes saved density
+MINING_LIGHT_REGRESSION failures=0

@@ -1,0 +1,24 @@
+PASS build above-ground sphere
+PASS hollow sphere remains a sealed chamber
+LIGHT closed sky 0.0000 sun 0.0000
+PASS closed hollow sphere is not given uniform daylight
+PASS create side opening without removing complete overhead roof
+LIGHT side-open sky 0.0769 sun 0.0000 vertical_roof 1
+PASS side-open test still has a real roof directly overhead
+PASS open-sided excavation receives diffuse sky while under a roof
+PASS light channels stay normalized
+PASS sky lighting is deterministic, independent of camera history
+PASS LOD comparison excavation accepted
+PASS reference finest surface builds
+PASS coarse-requested patch builds with protected edits
+LOD protected_vertices=959 missing=0 changed=0 triangles fine=11552 coarse=11552
+PASS edited surface positions normals and light preserved at coarse LOD
+PASS all excavation triangles survive coarse request without hole shrinking
+PASS new mesh caches explicitly use version 5
+CPU 48 changing swept edits: edit p95 0.041 ms; single 16m build p95 2.326 ms; pages 11 -> 11
+PASS 48 actually changing swept edits and local rebuilds finish
+PASS same-region stroke does not append history-dependent field storage
+PASS existing v1 world format roundtrips after new light/LOD caches
+PASS save/load retains edited page count and edit revision
+PASS no native allocation failure
+RELEASE_044_RESULT 19 checks / 0 failures

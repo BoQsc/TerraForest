@@ -1,3 +1,22 @@
+## Black mining-face lighting repair — 2026-10-26
+
+Reproduced the Wild_Ridge excavation in an isolated read-only copy. The faces and
+textures were present; cached sky visibility was falsely zero. Lighting treated
+exact-zero excavated samples as solid during probe placement and followed a fixed
+smoothed normal into neighboring rock. Native projection now follows the local
+density gradient, stops at cleared zero samples/cell boundaries, and has a bounded
+same-surface air-corner fallback. Connected-probe reuse uses the same air convention.
+No terrain geometry, save schema, global brightness or per-frame shader work changed.
+
+The saved view is repaired in source and packaged checks. Native regression repairs
+44 previously buried probes and preserves 49 zero-air starts; 19/21 existing
+lighting/LOD/cache assertions pass, including sealed caves remaining dark. Both
+native builds and the package are installed; source-save hashes remain unchanged.
+Evidence: `evidence/mining_darkness/README.md`. This closes the reproduced black
+patch, not every possible cave-lighting artifact: the existing sparse direct-sky
+approximation is still not bounced GI. Revisit with a saved viewpoint if another
+false-black face appears; user visual acceptance remains separate.
+
 ## Player movement, map, graphics and placement workflow — 2026-10-26
 
 M map allows walking without pausing encounters or permitting map clicks to attack

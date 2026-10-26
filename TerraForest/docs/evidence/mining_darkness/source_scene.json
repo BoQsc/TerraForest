@@ -1,0 +1,20 @@
+{
+  "camera": "[X: (0.105599, 0.0, 0.994409), Y: (0.670518, 0.738469, -0.071204), Z: (-0.73434, 0.674288, 0.077982), O: (990.1828, 34.00577, 1081.846)]",
+  "captures": [
+    "01_saved_pose",
+    "02_torch",
+    "03_torch_no_shadows",
+    "debug_3",
+    "debug_4",
+    "debug_5",
+    "debug_6",
+    "04_torch_at_eye",
+    "05_torch_small_bias"
+  ],
+  "lamp_default_visible": false,
+  "lamp_position": "(990.2325, 33.80927, 1081.961)",
+  "position": "(990.1828, 32.32577, 1081.846)",
+  "sun_shadow_bias": 0.100000001490116,
+  "torch_bias": 0.100000001490116,
+  "torch_normal_bias": 2.0
+}

@@ -1,0 +1,25 @@
+PASS engine-layout attribute pack produces only requested interleaved bytes
+PASS UV visibility UV2 identity and material-alpha bytes retained
+PASS overlapping GPU offsets rejected instead of corrupting mesh
+PASS truncated attribute packet rejected
+PASS exhausted ray is distinguishable from blocked and visible rays
+PASS sky ray still classified visible
+LIGHT_CACHE cold 76.847 ms / repeat 28.382 ms / samples 18802 / unresolved 0
+PASS cached patch visibility equals cold output byte-for-byte
+PASS neighbor/repeated patch uses revision-local probes
+PASS actual change invalidates derived light cache
+PASS cache marked invalid immediately after field edit
+PASS lighting cache rebuilt at current field revision
+PASS derived cache never changes saved world bytes
+PASS isolated floating sphere fixture created
+PASS fitted style keeps cell topology and valid finite geometry
+FITTED mean field residual 0.004319 -> 0.000046; vertex radial error 0.0317m (1160 vertices)
+PASS fitting reduces sampled-field surface residual
+PASS isolated radius-eight fitted vertices within 0.12m of analytic sphere
+PASS fitted mode preserves identical neighboring patch boundary positions
+PASS optional reconstruction mode does not alter save format or field pages
+PASS deep local-edit fixture accepted
+LOD remote surface triangles before=1002 after deep edit=1002
+PASS deep edit no longer pins unrelated high surface in same XZ columns
+PASS no native allocation failure
+RELEASE_045_RESULT 21 checks / 0 failures
