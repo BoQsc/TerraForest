@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated region store opens
+PASS fixture page group 0
+PASS fixture page group 1
+PASS fixture page group 2
+PASS fixture page group 3
+PASS fixture page group 4
+PASS fixture page group 5
+PASS fixture page group 6
+PASS fixture page group 7
+PASS fixture page group 8
+PASS fixture page group 9
+PASS fixture page group 10
+PASS fixture page group 11
+PASS real ordered worker starts
+PASS checkpoint mounts with deliberately small page budget
+PASS failing edit submitted through worker
+PASS worker reports rejection
+PASS pinned-page capacity rejection remains recoverable
+PASS rejection preserves all authored density bytes
+PASS small retry admitted
+PASS small excavation publishes after oversized paged stroke
+[TerrainRewrite] Temporary test world: save skipped
+PASS real ordered worker starts
+PASS checkpoint mounts with deliberately small page budget
+PASS failing edit submitted through worker
+PASS worker reports rejection
+PASS corrupt authoritative storage remains fatal, not a retryable capacity error
+PASS rejection preserves all authored density bytes
+[TerrainRewrite] Temporary test world: save skipped
+TERRAIN_EDIT_PAGED_RECOVERY failures=0

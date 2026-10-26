@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS history fixture owns compound archive lease
+PASS actual publisher saves 2048 distributed excavations
+PASS large edit history has bounded small compound root
+PASS all distant edits reconstruct exactly from selected regions
+PASS serial storage comparison uses an explicit bounded worker configuration
+PASS parallel and serial encoding produce identical checkpoint bytes
+PASS worker count respects hardware cap and cannot change during publication ownership
+PASS unchanged history save publishes no terrain pack or index bytes
+PASS production unchanged capture copies no historical field samples
+PASS local excavation after large history remains admissible
+PASS one later excavation publishes only a small changed pack and checkpoint index
+PASS production later capture copies only locally dirty page samples
+PASS production reopen preserves every old and new edited page
+PASS production reopen establishes a clean native checkpoint baseline
+PASS prior checkpoint remains available through exact canonical backup
+TERRAIN_HISTORY_STORAGE failures=0

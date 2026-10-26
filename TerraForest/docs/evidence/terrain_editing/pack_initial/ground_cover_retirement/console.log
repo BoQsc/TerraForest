@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS one frame retires at most two native cover owners
+PASS returning to a wanted owner cancels its pending retirement
+PASS deferred native retirement drains without losing wanted owners
+PASS retirement releases matching derived owner bookkeeping
+GROUND_COVER_RETIREMENT failures=0

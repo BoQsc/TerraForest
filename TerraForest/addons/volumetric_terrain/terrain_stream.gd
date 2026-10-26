@@ -492,6 +492,14 @@ func _receive(result: Dictionary) -> void:
 		_read_stats(result["stats"])
 		if not Codec.reply_ok(result["reply"]):
 			pending_edit = false
+			if result.get("recoverable",false):
+				_rollback_dirty()
+				var record:=_edit_measurement(false)
+				record["rejected"]=true
+				_emit_member_measurements(record,0)
+				schedule_timer=0.0
+				message_changed.emit("Terrain stroke rejected: invalid tool bounds or road profile." if result.reply.decode_u32(8)==1 else "Stroke not applied: outside terrain or edit memory limit. Try a smaller in-world brush, or save to release edit memory.")
+				return
 			_fail("Edit rejected by native core (invalid request, capacity, or allocation failure)")
 			return
 		if bool(result.get("no_change", false)):
@@ -948,7 +956,7 @@ func _schedule_urgent_collision() -> void:
 	_cancel_unrequested_meshes()
 	var available: int = maxi(0, 2 - backend.queued())
 	for key: Vector3i in requests:
-		var interactive: bool=backend.region_terrain and key.z==16 and activation_keys.has(key)
+		var interactive: bool=key.z==16 and activation_keys.has(key)
 		if available <= 0 and not interactive: continue
 		if not activation_keys.has(key) and (key.z > 32 or _distance(key) > 24.0):
 			continue
@@ -967,9 +975,9 @@ func _schedule_urgent_collision() -> void:
 func _plan_requests() -> Array[Vector3i]:
 	var plan: Dictionary
 	if not navigation_interest.is_empty():
-		var target:Vector3=interaction_target if backend.region_terrain and Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
+		var target:Vector3=interaction_target if Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
 		plan=planner.requests_navigation(focus,require_collision,travel_velocity,target,navigation_interest,tiles,split_state,visible_cut)
-	elif backend.region_terrain and interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
+	elif interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
 		plan=planner.requests_targeted(focus,require_collision,interaction_target,tiles,split_state,visible_cut)
 	elif travel_velocity.is_finite() and travel_velocity.length_squared()>0.01:
 		plan=planner.requests_travel(focus,require_collision,travel_velocity,tiles,split_state,visible_cut)
@@ -1355,7 +1363,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	if not accepted:
 		pending_edit = false
 		_rollback_dirty()
-		_fail("Bounded edit queue is full; edit was not submitted")
+		message_changed.emit("Terrain is busy; this stroke was not submitted. Try again when the current work finishes.")
 	else:
 		_cancel_density_requests("stale")
 	return accepted

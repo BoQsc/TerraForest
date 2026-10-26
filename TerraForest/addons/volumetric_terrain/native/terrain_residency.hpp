@@ -12,7 +12,7 @@ class TerrainResidency final : public PageAccess {
  godot::Ref<NativeTerrainRegionStore> store_;
  godot::PackedByteArray reference_;
  int limit_,count_=0,high_=0,head_=-1,tail_=-1;
- int64_t faults_=0,evictions_=0,failed_=0,scan_high_=0;
+ int64_t faults_=0,evictions_=0,failed_=0,storage_failed_=0,scan_high_=0;
  double fault_us_=0,fault_max_us_=0;
  void detach(World&w,int i){
   Page&p=w.pages[i];if(p.resident_previous>=0)w.pages[p.resident_previous].resident_next=p.resident_next;else head_=p.resident_next;
@@ -50,7 +50,7 @@ public:
   const auto started=w.profile_mesh?std::chrono::steady_clock::now():std::chrono::steady_clock::time_point{};
   if(!admit(w)){tr_oom=true;return false;}
   godot::PackedByteArray bytes=store_->read_page(reference_,w.pages[i].key);
-  if(bytes.size()!=PAGE_SAMPLES*3){++failed_;tr_oom=true;return false;}
+  if(bytes.size()!=PAGE_SAMPLES*3){++failed_;++storage_failed_;tr_oom=true;return false;}
   i16*d=static_cast<i16*>(tr_alloc(PAGE_SAMPLES*2));u8*m=static_cast<u8*>(tr_alloc(PAGE_SAMPLES));
   if(!d||!m){if(d)tr_free(d);if(m)tr_free(m);++failed_;tr_oom=true;return false;}
   copy_bytes(d,bytes.ptr(),PAGE_SAMPLES*2);copy_bytes(m,bytes.ptr()+PAGE_SAMPLES*2,PAGE_SAMPLES);
@@ -59,7 +59,7 @@ public:
   return true;
  }
  godot::Dictionary stats(const World&w)const{
-  godot::Dictionary d;d["active"]=true;d["catalog_pages"]=w.pages.n;d["resident_pages"]=count_;d["resident_high"]=high_;d["resident_limit"]=limit_;d["sample_bytes"]=int64_t(count_)*PAGE_SAMPLES*3;d["faults"]=faults_;d["evictions"]=evictions_;d["failures"]=failed_;d["eviction_scan_high"]=scan_high_;d["profiled_fault_us"]=fault_us_;d["profiled_fault_max_us"]=fault_max_us_;return d;
+  godot::Dictionary d;d["active"]=true;d["catalog_pages"]=w.pages.n;d["resident_pages"]=count_;d["resident_high"]=high_;d["resident_limit"]=limit_;d["sample_bytes"]=int64_t(count_)*PAGE_SAMPLES*3;d["faults"]=faults_;d["evictions"]=evictions_;d["failures"]=failed_;d["storage_failures"]=storage_failed_;d["eviction_scan_high"]=scan_high_;d["profiled_fault_us"]=fault_us_;d["profiled_fault_max_us"]=fault_max_us_;return d;
  }
  // An atomic edit may allocate new pages and then roll back on admission/OOM.
  void removed(World&w,int i)override{detach(w,i);--count_;}

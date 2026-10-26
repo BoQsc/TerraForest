@@ -98,7 +98,11 @@ func run() -> void:
 		previous_rebuilds=game.road_preview.rebuilds
 		for frame in 3: await process_frame
 		check(game.road_preview.rebuilds==previous_rebuilds,"unchanged selection does not rebuild preview each frame")
-		check(panel.panel.visible and panel.panel.get_global_rect().end.y<900,"road panel visible and fits above toolbelt at 1080p")
+		game.session_menu.open_tool_page("Roads")
+		for frame in 3:await process_frame
+		var workspace=game.session_menu.tool_workspace
+		check(workspace.panel.is_visible_in_tree() and panel.panel.is_visible_in_tree(),"road controls are visible in their current tool workspace")
+		check(workspace.panel.get_global_rect().end.y<=game.player_hud.belt[0].get_global_rect().position.y,"road workspace fits above the actual toolbelt")
 		if DisplayServer.get_name()!="headless":
 			game.camera.global_position=Vector3(440,205,428)
 			game.camera.look_at(Vector3(416,181,400))

@@ -1,0 +1,113 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS fullscreen 1920x1080 at full render scale
+PASS production ground cover participates in terrain edits
+PASS detailed terrain controls use native minimum radius
+PASS ALT terrain controls use native minimum radius
+FOUNDATION_PHASE held_tool_3_fill
+PASS tool 3 fill changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":8,"max_ms":12.135,"median_ms":5.044,"over_50ms":0,"p95_ms":12.135,"p99_ms":12.135},"frames":{"count":121,"max_ms":21.855,"median_ms":16.663,"over_50ms":0,"p95_ms":16.941,"p99_ms":16.974},"latency":{"count":8,"max_ms":35.549,"median_ms":18.705,"over_50ms":0,"p95_ms":35.549,"p99_ms":35.549},"pages":4,"phase":"held_tool_3_fill"}
+FOUNDATION_PHASE held_tool_3_dig
+PASS tool 3 dig changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":30,"max_ms":8.346,"median_ms":4.148,"over_50ms":0,"p95_ms":7.178,"p99_ms":8.346},"frames":{"count":121,"max_ms":17.143,"median_ms":16.666,"over_50ms":0,"p95_ms":16.988,"p99_ms":17.096},"latency":{"count":30,"max_ms":19.828,"median_ms":18.376,"over_50ms":0,"p95_ms":19.715,"p99_ms":19.828},"pages":10,"phase":"held_tool_3_dig"}
+FOUNDATION_PHASE held_tool_2_fill
+PASS tool 2 fill changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":6,"max_ms":8.213,"median_ms":7.252,"over_50ms":0,"p95_ms":8.213,"p99_ms":8.213},"frames":{"count":121,"max_ms":17.576,"median_ms":16.666,"over_50ms":0,"p95_ms":16.905,"p99_ms":17.332},"latency":{"count":6,"max_ms":34.431,"median_ms":19.613,"over_50ms":0,"p95_ms":34.431,"p99_ms":34.431},"pages":18,"phase":"held_tool_2_fill"}
+FOUNDATION_PHASE held_tool_2_dig
+PASS tool 2 dig changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":30,"max_ms":12.218,"median_ms":7.403,"over_50ms":0,"p95_ms":12.103,"p99_ms":12.218},"frames":{"count":121,"max_ms":17.159,"median_ms":16.66,"over_50ms":0,"p95_ms":17.046,"p99_ms":17.129},"latency":{"count":30,"max_ms":35.535,"median_ms":19.222,"over_50ms":0,"p95_ms":34.268,"p99_ms":35.535},"pages":30,"phase":"held_tool_2_dig"}
+FOUNDATION_PHASE held_tool_4_fill
+PASS tool 4 fill changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":6,"max_ms":7.938,"median_ms":7.755,"over_50ms":0,"p95_ms":7.938,"p99_ms":7.938},"frames":{"count":121,"max_ms":19.275,"median_ms":16.667,"over_50ms":0,"p95_ms":16.938,"p99_ms":16.969},"latency":{"count":6,"max_ms":19.429,"median_ms":18.808,"over_50ms":0,"p95_ms":19.429,"p99_ms":19.429},"pages":38,"phase":"held_tool_4_fill"}
+FOUNDATION_PHASE held_tool_4_dig
+PASS tool 4 dig changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":30,"max_ms":12.969,"median_ms":8.32,"over_50ms":0,"p95_ms":12.713,"p99_ms":12.969},"frames":{"count":121,"max_ms":17.161,"median_ms":16.658,"over_50ms":0,"p95_ms":17.047,"p99_ms":17.14},"latency":{"count":30,"max_ms":50.7,"median_ms":19.444,"over_50ms":1,"p95_ms":35.347,"p99_ms":50.7},"pages":52,"phase":"held_tool_4_dig"}
+FOUNDATION_PHASE held_tool_1_fill
+PASS tool 1 fill changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":20,"max_ms":3.618,"median_ms":1.582,"over_50ms":0,"p95_ms":3.618,"p99_ms":3.618},"frames":{"count":121,"max_ms":19.145,"median_ms":16.67,"over_50ms":0,"p95_ms":16.939,"p99_ms":17.251},"latency":{"count":20,"max_ms":18.561,"median_ms":17.892,"over_50ms":0,"p95_ms":18.561,"p99_ms":18.561},"pages":52,"phase":"held_tool_1_fill"}
+FOUNDATION_PHASE held_tool_1_dig
+PASS tool 1 dig changes terrain and drains bounded queue
+FOUNDATION_RESULT {"build":{"count":24,"max_ms":5.138,"median_ms":1.801,"over_50ms":0,"p95_ms":4.28,"p99_ms":5.138},"frames":{"count":121,"max_ms":17.085,"median_ms":16.666,"over_50ms":0,"p95_ms":16.934,"p99_ms":17.053},"latency":{"count":24,"max_ms":19.459,"median_ms":17.929,"over_50ms":0,"p95_ms":18.733,"p99_ms":19.459},"pages":54,"phase":"held_tool_1_dig"}
+FOUNDATION_PHASE large_volume_api
+FOUNDATION_RESULT {"build":{"count":16,"max_ms":829.978,"median_ms":239.047,"over_50ms":16,"p95_ms":829.978,"p99_ms":829.978},"frames":{"count":345,"max_ms":40.492,"median_ms":16.663,"over_50ms":0,"p95_ms":16.754,"p99_ms":16.855},"latency":{"count":16,"max_ms":918.012,"median_ms":250.677,"over_50ms":16,"p95_ms":918.012,"p99_ms":918.012},"pages":954,"phase":"large_volume_api"}
+PASS all 8/16/32/64 m sphere and box add/remove edits publish
+FOUNDATION_PHASE mixed_history_0
+PASS 400 mixed sphere/box additions and excavations finish in round 0
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":35.159,"median_ms":11.88,"over_50ms":0,"p95_ms":20.597,"p99_ms":27.51},"frames":{"count":913,"max_ms":17.096,"median_ms":16.665,"over_50ms":0,"p95_ms":16.728,"p99_ms":16.862},"latency":{"count":400,"max_ms":67.711,"median_ms":19.443,"over_50ms":10,"p95_ms":35.796,"p99_ms":51.579},"pages":966,"phase":"mixed_history_0"}
+FOUNDATION_PHASE mixed_history_1
+PASS 400 mixed sphere/box additions and excavations finish in round 1
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":57.175,"median_ms":14.229,"over_50ms":2,"p95_ms":24.832,"p99_ms":45.008},"frames":{"count":1011,"max_ms":18.786,"median_ms":16.665,"over_50ms":0,"p95_ms":16.789,"p99_ms":18.178},"latency":{"count":400,"max_ms":85.486,"median_ms":33.793,"over_50ms":28,"p95_ms":50.808,"p99_ms":65.944},"pages":966,"phase":"mixed_history_1"}
+FOUNDATION_PHASE mixed_history_2
+PASS 400 mixed sphere/box additions and excavations finish in round 2
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":35.305,"median_ms":13.872,"over_50ms":0,"p95_ms":22.678,"p99_ms":27.901},"frames":{"count":984,"max_ms":35.591,"median_ms":16.664,"over_50ms":0,"p95_ms":16.797,"p99_ms":17.031},"latency":{"count":400,"max_ms":66.878,"median_ms":20.28,"over_50ms":16,"p95_ms":36.928,"p99_ms":52.419},"pages":966,"phase":"mixed_history_2"}
+FOUNDATION_PHASE mixed_history_3
+PASS 400 mixed sphere/box additions and excavations finish in round 3
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":31.752,"median_ms":13.702,"over_50ms":0,"p95_ms":21.919,"p99_ms":25.966},"frames":{"count":961,"max_ms":17.412,"median_ms":16.665,"over_50ms":0,"p95_ms":16.764,"p99_ms":16.867},"latency":{"count":400,"max_ms":52.065,"median_ms":20.055,"over_50ms":13,"p95_ms":36.033,"p99_ms":51.58},"pages":966,"phase":"mixed_history_3"}
+FOUNDATION_PHASE mixed_history_4
+PASS 400 mixed sphere/box additions and excavations finish in round 4
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":29.881,"median_ms":13.271,"over_50ms":0,"p95_ms":21.611,"p99_ms":26.958},"frames":{"count":945,"max_ms":17.405,"median_ms":16.665,"over_50ms":0,"p95_ms":16.776,"p99_ms":16.845},"latency":{"count":400,"max_ms":53.51,"median_ms":20.042,"over_50ms":7,"p95_ms":35.936,"p99_ms":51.654},"pages":966,"phase":"mixed_history_4"}
+FOUNDATION_PHASE mixed_history_5
+PASS 400 mixed sphere/box additions and excavations finish in round 5
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":31.684,"median_ms":13.309,"over_50ms":0,"p95_ms":21.34,"p99_ms":24.946},"frames":{"count":954,"max_ms":16.911,"median_ms":16.666,"over_50ms":0,"p95_ms":16.77,"p99_ms":16.841},"latency":{"count":400,"max_ms":52.815,"median_ms":20.113,"over_50ms":9,"p95_ms":35.982,"p99_ms":51.028},"pages":966,"phase":"mixed_history_5"}
+FOUNDATION_PHASE mixed_history_6
+PASS 400 mixed sphere/box additions and excavations finish in round 6
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":27.886,"median_ms":13.095,"over_50ms":0,"p95_ms":21.078,"p99_ms":25.24},"frames":{"count":935,"max_ms":17.349,"median_ms":16.665,"over_50ms":0,"p95_ms":16.771,"p99_ms":16.83},"latency":{"count":400,"max_ms":52.122,"median_ms":19.964,"over_50ms":6,"p95_ms":35.519,"p99_ms":50.74},"pages":966,"phase":"mixed_history_6"}
+FOUNDATION_PHASE mixed_history_7
+PASS 400 mixed sphere/box additions and excavations finish in round 7
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":39.592,"median_ms":13.325,"over_50ms":0,"p95_ms":21.436,"p99_ms":28.822},"frames":{"count":946,"max_ms":17.287,"median_ms":16.666,"over_50ms":0,"p95_ms":16.721,"p99_ms":16.822},"latency":{"count":400,"max_ms":67.108,"median_ms":20.023,"over_50ms":10,"p95_ms":35.86,"p99_ms":51.504},"pages":966,"phase":"mixed_history_7"}
+FOUNDATION_PHASE mixed_history_8
+PASS 400 mixed sphere/box additions and excavations finish in round 8
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":38.775,"median_ms":13.436,"over_50ms":0,"p95_ms":20.808,"p99_ms":27.184},"frames":{"count":957,"max_ms":17.171,"median_ms":16.666,"over_50ms":0,"p95_ms":16.786,"p99_ms":16.915},"latency":{"count":400,"max_ms":53.76,"median_ms":20.211,"over_50ms":9,"p95_ms":35.817,"p99_ms":51.235},"pages":966,"phase":"mixed_history_8"}
+FOUNDATION_PHASE mixed_history_9
+PASS 400 mixed sphere/box additions and excavations finish in round 9
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":39.502,"median_ms":13.384,"over_50ms":0,"p95_ms":22.452,"p99_ms":28.293},"frames":{"count":994,"max_ms":21.801,"median_ms":16.665,"over_50ms":0,"p95_ms":16.785,"p99_ms":16.925},"latency":{"count":400,"max_ms":84.297,"median_ms":20.56,"over_50ms":15,"p95_ms":36.407,"p99_ms":51.906},"pages":966,"phase":"mixed_history_9"}
+FOUNDATION_PHASE mixed_history_10
+PASS 400 mixed sphere/box additions and excavations finish in round 10
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":38.852,"median_ms":13.486,"over_50ms":0,"p95_ms":22.428,"p99_ms":29.885},"frames":{"count":999,"max_ms":23.842,"median_ms":16.666,"over_50ms":0,"p95_ms":16.889,"p99_ms":17.228},"latency":{"count":400,"max_ms":68.56,"median_ms":33.786,"over_50ms":13,"p95_ms":36.266,"p99_ms":51.283},"pages":966,"phase":"mixed_history_10"}
+FOUNDATION_PHASE mixed_history_11
+PASS 400 mixed sphere/box additions and excavations finish in round 11
+FOUNDATION_RESULT {"build":{"count":400,"max_ms":36.387,"median_ms":13.824,"over_50ms":0,"p95_ms":23.554,"p99_ms":31.137},"frames":{"count":968,"max_ms":17.928,"median_ms":16.664,"over_50ms":0,"p95_ms":17.19,"p99_ms":17.498},"latency":{"count":400,"max_ms":68.718,"median_ms":20.24,"over_50ms":16,"p95_ms":36.371,"p99_ms":52.849},"pages":966,"phase":"mixed_history_11"}
+FOUNDATION_PHASE idle_recovery
+FOUNDATION_RESULT {"build":{},"frames":{"count":600,"max_ms":25.949,"median_ms":16.672,"over_50ms":0,"p95_ms":17.192,"p99_ms":17.438},"latency":{},"pages":966,"phase":"idle_recovery"}
+PASS held_tool_3_fill: p99 frame <=20ms and no >50ms stall
+PASS held_tool_3_dig: p99 frame <=20ms and no >50ms stall
+PASS held_tool_2_fill: p99 frame <=20ms and no >50ms stall
+PASS held_tool_2_dig: p99 frame <=20ms and no >50ms stall
+PASS held_tool_4_fill: p99 frame <=20ms and no >50ms stall
+PASS held_tool_4_dig: p99 frame <=20ms and no >50ms stall
+PASS held_tool_1_fill: p99 frame <=20ms and no >50ms stall
+PASS held_tool_1_dig: p99 frame <=20ms and no >50ms stall
+PASS large_volume_api: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_0: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_0: ordinary edit publication p95 <=150ms
+PASS mixed_history_1: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_1: ordinary edit publication p95 <=150ms
+PASS mixed_history_2: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_2: ordinary edit publication p95 <=150ms
+PASS mixed_history_3: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_3: ordinary edit publication p95 <=150ms
+PASS mixed_history_4: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_4: ordinary edit publication p95 <=150ms
+PASS mixed_history_5: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_5: ordinary edit publication p95 <=150ms
+PASS mixed_history_6: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_6: ordinary edit publication p95 <=150ms
+PASS mixed_history_7: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_7: ordinary edit publication p95 <=150ms
+PASS mixed_history_8: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_8: ordinary edit publication p95 <=150ms
+PASS mixed_history_9: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_9: ordinary edit publication p95 <=150ms
+PASS mixed_history_10: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_10: ordinary edit publication p95 <=150ms
+PASS mixed_history_11: p99 frame <=20ms and no >50ms stall
+PASS mixed_history_11: ordinary edit publication p95 <=150ms
+PASS idle_recovery: p99 frame <=20ms and no >50ms stall
+PASS whole workload including tool switches and phase boundaries meets frame budget
+PASS resident mesh entries remain bounded after recovery
+PASS all measured frame samples retained
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary endurance world closes consistently
+TERRAIN_TOOLS_ENDURANCE failures=0

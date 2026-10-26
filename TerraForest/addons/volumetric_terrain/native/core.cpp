@@ -452,7 +452,17 @@ struct EditPagePin {
 static u32 block_key(int x,int y,int z){return 1+u32(x|(z<<11)|(y<<22));}
 static void decode_block(u32 key,int&x,int&y,int&z){u32 k=key-1;x=k&2047;z=(k>>11)&2047;y=(k>>22)&511;}
 bool World::set_block(u32 key,int material){
- int old=blocks.get(key);if(old!=material)lighting_revision=-1;if(old<0){if(blocks.n>=2000000)return false;int x,y,z;decode_block(key,x,y,z);block_columns[(x>>5)+64*(z>>5)].push(key);}blocks.put(key,material);return !tr_oom;
+ int previous=blocks.get(key);List<u32>*column=nullptr;
+ if(previous<0){
+  if(blocks.n>=2000000)return false;
+  int cell_x,cell_y,cell_z;decode_block(key,cell_x,cell_y,cell_z);
+  column=&block_columns[(cell_x>>5)+64*(cell_z>>5)];
+  if(!column->reserve(column->n+1))return false;
+ }
+ blocks.put(key,material);if(tr_oom)return false;
+ if(column)column->push(key);
+ if(previous!=material)lighting_revision=-1;
+ return true;
 }
 void World::erase_block(u32 key){
  if(blocks.get(key)<0)return;lighting_revision=-1;int x,y,z;decode_block(key,x,y,z);auto&column=block_columns[(x>>5)+64*(z>>5)];for(int i=0;i<column.n;i++)if(column[i]==key){column[i]=column[column.n-1];column.n--;break;}blocks.erase(key);

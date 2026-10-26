@@ -253,13 +253,14 @@ func refresh() -> void:
 			slots[i].present(row,item_name)
 		if i<10:
 			belt[i].disabled=false
-			belt[i].present(row,item_name,str((i+1)%10))
-			belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
 			if developer_belt:
 				belt[i].clear_presentation()
 				belt[i].text="%d\n%s"%[(i+1)%10,DEV_TOOLS[i]]
 				belt[i].tooltip_text=DEV_TOOLS[i]
 				belt[i].set_appearance(i==9,i==developer_slot,false)
+			else:
+				belt[i].present(row,item_name,str((i+1)%10))
+				belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
 	_refresh_ground_hint()
 
 	_refresh_recipes()

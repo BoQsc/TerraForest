@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent terrain backend starts
+PASS startup completes
+PASS query admitted 0
+PASS query admitted 1
+PASS query admitted 2
+PASS query admitted 3
+PASS query admitted 4
+PASS query admitted 5
+PASS query admitted 6
+PASS query admitted 7
+PASS ninth unconsumed query rejected
+PASS every admitted query completes
+PASS typed query outcome 0
+PASS typed query outcome 1
+PASS typed query outcome 2
+PASS typed query outcome 3
+PASS typed query outcome 4
+PASS typed query outcome 5
+PASS typed query outcome 6
+PASS typed query outcome 7
+PASS caller mutation cannot alter queued request identity
+PASS mutation queued before queries
+PASS query admitted with priority request behind mutation
+PASS query requesting next revision admitted
+PASS mutation ordering and revision rejection preserved
+PASS invalid query rejected before queue admission
+PASS nonfinite query rejected
+PASS malformed reply cannot become a miss
+PASS shutdown query admitted 0
+PASS shutdown query admitted 1
+PASS shutdown query admitted 2
+PASS shutdown query admitted 3
+PASS shutdown query admitted 4
+PASS shutdown query admitted 5
+PASS shutdown query admitted 6
+PASS shutdown query admitted 7
+[TerrainRewrite] Temporary test world: save skipped
+PASS shutdown accounts for all accepted queries
+PASS stopped backend rejects new query

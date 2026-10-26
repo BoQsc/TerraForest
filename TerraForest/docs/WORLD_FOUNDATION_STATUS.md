@@ -1,3 +1,39 @@
+## Terrain editing stress campaign — 2026-10-26
+
+Fixed the unsupported 0.25 m developer brush control, nonmutating rejections that
+disabled the terrain world, and allocator-failure corruption of voxel-column
+membership / paid-stamp replies. All 704 allocator attempts pass with unchanged
+successful fixture hashes. Corrupt storage and partially applied groups remain
+fatal save-protection cases, not falsely claimed rollback successes.
+
+Native volume/history checks cover 7,251 operations, exact saves, capacity and
+smaller-edit recovery; integrated tests cover held sphere/box/sculpt/voxel tools,
+paid materials, road grading, terrain/water interactions and vegetation. Target
+mesh priority now works in the default renderer. Ground-cover owner retirement
+is bounded across frames; development tool refresh no longer draws and discards
+inventory presentation. Evidence and retained failures:
+`evidence/terrain_editing/README.md`.
+
+The final source suite passes 25 cases and retains the first-arrival failure.
+The 4,800-edit rendered run (grass/trees active, entities disabled) passes unchanged
+frame gates including tool switches: p99 17.171 ms, maximum 40.484 ms, no >50 ms
+frames. Ordinary edit-publication p95 is 35.52–50.81 ms; all twelve rounds retain
+966 authored pages. Native release volume/history checks pass. These are finite
+current-laptop measurements, not multi-hour or universal performance acceptance.
+Packaged core/54 placement/37 developer-belt checks pass. A quiet 1,200-edit PCK
+run also passes frame gates (p99 16.995 ms, maximum 45.505 ms), but two earlier
+PCK runs retain 105.619/81.805 ms draw-span stalls whose root cause is unassigned.
+Keep render/presentation profiling open; the later pass does not erase them.
+
+This does not close the existing first-visible mining gap after flight, finite
+unsaved-page limits, multi-hour/populated/cold-save or lower-end performance
+qualification. Large 64 m edits remain asynchronous but can take roughly a second
+to publish. Continue bounded local-owner replacement with exact joins/collision,
+then repeat unchanged 150 ms input-to-visible and frame gates. Revisit broader
+qualification with staged histories, explicit storage ownership and retained
+frame traces; do not call all terrain editing universally fixed. Player saves
+are untouched; terrain-grid generation/contact remains separately unresolved.
+
 ## Black mining-face lighting repair — 2026-10-26
 
 Reproduced the Wild_Ridge excavation in an isolated read-only copy. The faces and
@@ -1917,6 +1953,9 @@ Arrival needs bounded local owner replacement, preserving distant representation
 joins and collision, then the unchanged 150 ms response/gap gates. Prefetch remains
 required for cold-storage admission; it cannot resolve the measured whole-parent
 rebuild. The optional regional renderer is not automatically production-qualified.
+The 2026-10-26 editing campaign enables bounded target priority in the default
+renderer, but its first-arrival visible-gap check still fails. The newer traces
+in `evidence/terrain_editing/README.md` supplement rather than close this entry.
 
 ## Block placement forest exclusion corrected - 2026-10-23
 

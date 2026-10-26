@@ -35,7 +35,7 @@ func _ready()->void:
 	for name in ["Terrain","Building","Objects","Vegetation","Roads","World tools","Actors","Water"]:
 		var page:=VBoxContainer.new();page.add_theme_constant_override("separation",12);content.add_child(page);pages[name]=page;page.hide()
 	menu.label(pages.Terrain,"Brush settings")
-	radius=SpinBox.new();radius.min_value=0.25;radius.max_value=64;radius.step=0.25;radius.prefix="Radius (m)  ";pages.Terrain.add_child(radius)
+	radius=SpinBox.new();radius.min_value=0.5;radius.max_value=64;radius.step=0.25;radius.prefix="Radius (m)  ";pages.Terrain.add_child(radius)
 	radius.value_changed.connect(func(value:float):game.radius=value)
 	box_mode=OptionButton.new();box_mode.add_item("Grid box");box_mode.add_item("Sculpt box");pages.Terrain.add_child(box_mode)
 	box_mode.item_selected.connect(func(index:int):game._set_player_tool_mode(false,false,2 if index==0 else 4);menu.developer_hud.displayed_slot=-1)

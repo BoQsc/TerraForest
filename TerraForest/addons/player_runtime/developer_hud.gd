@@ -52,7 +52,7 @@ F1 hide / show this panel")
 			label("Left mouse: remove
 Right mouse: fill")
 			if slot==1:option("Box mode",["Grid box","Sculpt box"],1 if game.tool==4 else 0,func(i:int):game._set_player_tool_mode(false,false,2 if i==0 else 4))
-			if slot!=2:number("Radius (m)",game.radius,0.25,64,0.25,func(v: float):game.radius=v)
+			if slot!=2:number("Radius (m)",game.radius,0.5,64,0.25,func(v: float):game.radius=v)
 			option("Material",["Stone","Wood","Metal"],game.material_id-1,func(i: int):game.material_id=i+1)
 		3:
 			label(("Left mouse: remove" if game.session_menu.developer else "Left mouse: attack")+"\nRight mouse: place")

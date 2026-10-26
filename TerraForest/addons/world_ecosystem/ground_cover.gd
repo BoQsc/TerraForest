@@ -41,6 +41,7 @@ var _reset_active:=false
 var _reset_batch:=0
 var _reset_native_started:=false
 var _reset_keys:Array=[]
+var _retiring:Dictionary={}
 func _layers(key:Vector2i)->int:
 	# Maintain cover density through the full resident area; mesh LOD reduces cost.
 	return 16
@@ -129,7 +130,7 @@ func _advance_reset(budget_us:int)->int:
 		var key:Vector2i=_reset_keys.pop_back()
 		picker.remove_cell(key);resident.erase(key)
 		if budget_us>0 and Time.get_ticks_usec()-began>=budget_us:return 0
-	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear()
+	resident.clear();_wanted.clear();_dirty.clear();_pending.clear();_requests.clear();_support_job.clear();_retiring.clear()
 	_scatter_job.clear();_resident_layers.clear();_last_cell=Vector2i(-999,-999)
 	for batch:Node3D in batches:batch.visible=true
 	_reset_active=false
@@ -147,6 +148,16 @@ func _retire(key: Vector2i) -> void:
 	if fractures!=null:fractures.remove_rows(native.boulder_rows(resident[key][0]).ids)
 	for species in range(Catalog.COUNT):
 		batches[species].remove_instances(render_row(resident[key][species],species).ids)
+
+func _advance_retirement()->void:
+	var began:=Time.get_ticks_usec()
+	var processed:=0
+	for key:Vector2i in _retiring.keys():
+		_retiring.erase(key)
+		if _wanted.has(key) or not resident.has(key):continue
+		_retire(key);resident.erase(key);_dirty.erase(key);_resident_layers.erase(key)
+		processed+=1
+		if processed>=2 or Time.get_ticks_usec()-began>=2000:break
 
 func render_row(row:Dictionary,species:int)->Dictionary:
 	return native.boulder_rows(row,false) if species==0 else row
@@ -201,7 +212,8 @@ func _measured_step(_delta:float)->void:
 			if not _wanted.has(key):_dirty.erase(key)
 		for key in resident.keys():
 			if not _wanted.has(key):
-				_retire(key);resident.erase(key);_dirty.erase(key);_resident_layers.erase(key)
+				_retiring[key]=true
+	_advance_retirement()
 	for key in resident:
 		if _resident_layers.get(key,1)!=_layers(key):_dirty[key]=true
 	if terrain.pending_edit or _requests.size()>=1: return

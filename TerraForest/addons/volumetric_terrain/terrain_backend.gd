@@ -506,6 +506,14 @@ func _push(result: Dictionary) -> void:
 func _call(data: PackedByteArray) -> PackedByteArray:
 	return native.call("execute", data)
 
+func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:PackedByteArray,after:PackedByteArray)->bool:
+	if reply.size()<12 or reply.decode_u32(0)!=Codec.REPLY_MAGIC or reply.decode_u32(4) not in [2,3,28,38] or reply.decode_u32(8) not in [1,2,3]:return false
+	if not Codec.reply_ok(before) or not Codec.reply_ok(after) or before.size()<16 or after.size()<16 or before.decode_u32(12)!=after.decode_u32(12):return false
+	for command:PackedByteArray in commands:
+		if command.size()<4 or command.decode_u32(0) not in [2,3,28,38]:return false
+	var residency:Dictionary=native.residency_stats()
+	return not residency.get("active",false) or residency.get("storage_failures",1)==0
+
 # Called only by the ordered load/save worker or frozen publication worker.
 # The outer archive selects the checkpoint atomically with all other components.
 func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,profile:Dictionary={})->Dictionary:
@@ -1250,6 +1258,7 @@ func _run() -> void:
 		# All meshing modes serve bounded queries before taking another background
 		# job. The selector cannot cross an already queued mutation or save.
 		_service_density_query()
+		_service_interaction_mesh()
 		# Whole-column meshing also admits one bounded water slice here.
 		# Selection preserves mutation/save barriers; region builds retain
 		# their finer cooperative points inside _build_regions.
@@ -1352,19 +1361,21 @@ func _run() -> void:
 				member_changed.push_back(revision_after != revision_before)
 				revision_before = revision_after
 				if not Codec.reply_ok(reply):
-					# A failed multi-command group is not claimed rollback-atomic.
-					# Stop publishing/saving rather than overwrite the last valid save.
-					write_allowed = false
-					cache_valid = false
 					removed_samples.fill(0)
 					break
 			var edit_ms: float = float(Time.get_ticks_usec() - begin) / 1000.0
 			var after_stats: PackedByteArray = _call(Codec.command(0))
+			var recoverable:=false
+			if not Codec.reply_ok(reply):
+				recoverable=_recoverable_edit_rejection(commands,reply,before_stats,after_stats)
+				if not recoverable:
+					write_allowed=false
+					cache_valid=false
 			var no_change: bool = Codec.reply_ok(reply) and before_stats.decode_u32(12) == after_stats.decode_u32(12)
 			if not Codec.reply_ok(reply) or no_change:
 				_push({"kind": "edit", "chunks": [], "reply": reply, "epoch": job["epoch"],
 					"ticket": job["ticket"], "edit_ms": edit_ms, "stats": after_stats,
-					"queue_ms": queue_ms, "no_change": no_change, "member_changed": member_changed, "removed_samples":removed_samples, "worker_finished_us": Time.get_ticks_usec()})
+					"queue_ms": queue_ms, "no_change": no_change, "recoverable":recoverable, "member_changed": member_changed, "removed_samples":removed_samples, "worker_finished_us": Time.get_ticks_usec()})
 			else:
 				cache_valid = false
 				latest_packets.clear()

@@ -36,7 +36,7 @@ func run() -> void:
 	tap(KEY_6);check(game.ground_mode and game.editor_tool_active,"development vegetation tool")
 	tap(KEY_7);check(not game.session_menu.visible_ui() and hud.developer_slot==6,"road slot selects without interrupting movement")
 	tap(KEY_ESCAPE);check(game.session_menu.opened and not game.session_menu.workspace and game.session_menu.current_page=="Session","Escape always opens session even with Roads selected")
-	check(game.session_menu.navigation.keys()==["Session","Dev Bag","Dev Spawner","Developer","World"] and not game.session_menu.pages.has("Building"),"session navigation separates items, entities and diagnostics without tool editors or belt copy")
+	check(game.session_menu.navigation.keys()==["Session","Graphics","Dev Bag","Dev Spawner","Developer","World"] and not game.session_menu.pages.has("Building"),"session navigation separates items, entities and diagnostics without tool editors or belt copy")
 	check(not game.road_palette.panel.is_visible_in_tree(),"session does not expose road controls")
 	for i in 3:await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(capture_dir.path_join("session.png"))
@@ -77,7 +77,8 @@ func run() -> void:
 	check(hud.capture_snapshot()==before,"editor actions do not mutate carried inventory")
 	tap(KEY_QUOTELEFT);check(hud.developer_slot==1 and game.tool==2,"returning to dev restores its previous selection")
 	tap(KEY_QUOTELEFT);key(KEY_W,false)
-	hud.equip_item(101);key(KEY_ALT,true)
+	check(hud.inventory.grant_items(PackedInt64Array([101,1]),hud.inventory.snapshot().revision).ok,"temporary fixture grants an owned building material")
+	hud.refresh();check(hud.equip_item(101),"gameplay material is equipped from carried inventory");key(KEY_ALT,true)
 	check(game.session_menu.developer_hud.panel.visible and game.session_menu.developer_hud.mouse_access,"gameplay building tool exposes its own Alt controls")
 	game.session_menu.open_current_tool();key(KEY_ALT,false)
 	check(game.session_menu.workspace and game.equipped_tool==101 and not game.construction_palette.frontage_button.is_visible_in_tree(),"gameplay tool settings retain owned tool and hide free authoring")

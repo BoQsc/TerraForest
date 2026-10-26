@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS capacity store opens
+PASS empty field mounts bounded pager
+PASS authored history grows beyond former 16384-page capacity
+PASS resident samples remain capped at 1024 through growth
+PASS earliest and latest placed fields retain identical hits and normals
+PASS fresh process owner mounts history beyond old cap with 32 resident pages
+PASS cold distant density and mesh-content identity retained
+PASS 33 distributed cold probes preserve exact edits under the 32-page bound
+PASS large checkpoint verifies and unchanged capture has no sample copy
+TERRAIN_RESIDENCY_CAPACITY failures=0

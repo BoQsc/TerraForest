@@ -457,7 +457,7 @@ func _consume_stroke() -> void:
 	if commands.is_empty():
 		return
 	if not terrain.edit(commands[0], lo, hi, int(members[0]["captured_us"]), commands, members):
-		_message("Brush not submitted: " + terrain.latest_error)
+		if not terrain.latest_error.is_empty():_message("Brush not submitted: " + terrain.latest_error)
 	elif contains_addition:
 		_terrain_placement_feedback()
 

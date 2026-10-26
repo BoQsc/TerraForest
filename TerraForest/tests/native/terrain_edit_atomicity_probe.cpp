@@ -68,6 +68,26 @@ static bool allocation_sweep(){
  printf("{\"case\":\"allocation_and_reallocation_sweep\",\"passed\":%s,\"attempts\":%d,\"forced_failures\":%d}\n",passed?"true":"false",attempts,forced);
  return passed;
 }
+static bool small_edit_sweep(){
+ bool passed=true;int attempts=0,forced=0;
+ auto setup=[](World &world){world.init(1703,5);for(int index=0;index<44;index++)world.set_block(1+u32((100+index)|(100<<11)|(64<<22)),1);};
+ for(int command:{3,38})for(int allocator=0;allocator<2;allocator++)for(int fault=1;fault<=48;fault++){
+  int retained=live_allocations;World world;setup(world);Bytes before;world.serialize(before,true);
+  int column_count=0;for(int index=0;index<world.block_columns.n;index++)column_count+=world.block_columns[index].n;
+  Bytes request,response;request.u(command);request.u(command==3?144:128);request.u(64);request.u(command==3?100:128);request.u(command==3?2:10);
+  allocation=0;deny=fault;deny_reallocation=allocator;tr_oom=false;
+  process_request(world,request.p,request.n,response);
+  bool hit=allocation>=fault,accepted=response.n>=12&&response.p[8]==0;forced+=hit;
+  deny=0;tr_oom=false;Bytes after;world.serialize(after,true);
+  int after_columns=0;for(int index=0;index<world.block_columns.n;index++)after_columns+=world.block_columns[index].n;
+  bool exact=hit?(!accepted&&equal(before,after)&&after_columns==column_count):accepted;
+  before.release();after.release();request.release();response.release();world.release();exact&=live_allocations==retained;
+  if(!exact)printf("{\"case\":\"small_edit_rollback_failure\",\"passed\":false,\"command\":%d,\"allocator\":%d,\"fault\":%d}\n",command,allocator,fault);
+  passed&=exact;attempts++;
+ }
+ printf("{\"case\":\"voxel_and_paid_stamp_allocation_sweep\",\"passed\":%s,\"attempts\":%d,\"forced_failures\":%d}\n",passed?"true":"false",attempts,forced);
+ return passed;
+}
 int main(){
  tr_alloc=allocate;tr_realloc=reallocate;tr_free=release;int failures=0;
  bool fixtures=parity_fields();printf("{\"case\":\"successful_edit_fields\",\"passed\":%s}\n",fixtures?"true":"false");failures+=!fixtures;
@@ -84,6 +104,7 @@ int main(){
   failures+=!passed;before.release();after.release();w.release();
  }
  failures+=!allocation_sweep();
+ failures+=!small_edit_sweep();
  printf("{\"case\":\"allocation_balance\",\"passed\":%s,\"live\":%d}\n",live_allocations==0?"true":"false",live_allocations);
  failures+=live_allocations!=0;
  return failures?1:0;
