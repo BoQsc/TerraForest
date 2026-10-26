@@ -3,7 +3,7 @@ extends "res://tools/preview_pickaxe_fresh.gd"
 const CROSSCUT=preload("res://addons/characters/runtime/assets/Human.pickaxe_crosscut.res")
 const OUTPUT="res://reports/pickaxe_crosscut"
 func setup(candidate:bool,side:bool=false)->Dictionary:
-	var data:=panel("side" if side else "fresh");data.viewport.size=Vector2i(960,720)
+	var data:=panel("side" if side else "fresh");data.viewport.size=Vector2i(1280,720)
 	for node in data.viewport.get_children():
 		if node is Label:node.queue_free()
 	data.candidate=candidate
@@ -15,9 +15,8 @@ func setup(candidate:bool,side:bool=false)->Dictionary:
 		if node is MeshInstance3D:
 			count+=1
 			if count>1:node.queue_free()
-	var info:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://addons/characters/authoring/Human.pickaxe_crosscut.json"))
-	var tip:Array=info.samples.Swing[int(info.contact_frame)].working_tip
-	var point:=Vector3(-tip[0],tip[2],tip[1]+.03)
+	# Fixed target on the camera centerline, independent of the authored tip.
+	var point:=Vector3(0,1.65,-.95)
 	var target:=MeshInstance3D.new();var box:=BoxMesh.new();box.size=Vector3(.72,.7,.24)
 	target.mesh=box;target.material_override=mat(Color("6a7478"));target.position=point+Vector3(0,0,-.12);data.camera.get_parent().add_child(target)
 	for axis in 2:
@@ -25,18 +24,21 @@ func setup(candidate:bool,side:bool=false)->Dictionary:
 		mark.mesh=bar;mark.material_override=mat(Color("ead3a0"));mark.position=point+Vector3(0,0,.003);data.camera.get_parent().add_child(mark)
 	if side:
 		data.camera.position=Vector3(1.9,1.7,-2.0);data.camera.look_at(Vector3(0,1.25,-.38));data.camera.fov=54
+	else:
+		for size in [Vector2(14,2),Vector2(2,14)]:
+			var cross:=ColorRect.new();cross.color=Color("fff1c7");cross.size=size;cross.position=Vector2(640,360)-size*.5;data.viewport.add_child(cross)
 	return data
 func board(left:Dictionary,right:Dictionary,heading:String,right_heading:String)->Dictionary:
-	var canvas:=SubViewport.new();canvas.size=Vector2i(1920,820);canvas.render_target_update_mode=SubViewport.UPDATE_ALWAYS;root.add_child(canvas)
+	var canvas:=SubViewport.new();canvas.size=Vector2i(2560,820);canvas.render_target_update_mode=SubViewport.UPDATE_ALWAYS;root.add_child(canvas)
 	var bg:=ColorRect.new();bg.size=canvas.size;bg.color=Color("202930");canvas.add_child(bg)
-	label(canvas,heading,Vector2(24,15),25);label(canvas,right_heading,Vector2(984,15),25,Color("e5c99b"))
+	label(canvas,heading,Vector2(24,15),25);label(canvas,right_heading,Vector2(1304,15),25,Color("e5c99b"))
 	for index in 2:
-		var picture:=TextureRect.new();picture.texture=([left,right][index] as Dictionary).viewport.get_texture();picture.position=Vector2(index*960,60);picture.size=Vector2(960,720);canvas.add_child(picture)
+		var picture:=TextureRect.new();picture.texture=([left,right][index] as Dictionary).viewport.get_texture();picture.position=Vector2(index*1280,60);picture.size=Vector2(1280,720);canvas.add_child(picture)
 	return {"viewport":canvas,"note":label(canvas,"",Vector2(24,787),19)}
 func run()->void:
 	for folder in ["comparison_frames","body_frames"]:DirAccess.make_dir_recursive_absolute(OUTPUT+"/"+folder)
 	var current:=setup(false);var candidate:=setup(true);var side:=setup(true,true)
-	var comparison:=board(current,candidate,"CURRENT DEFAULT / accepted fixed grip","SEPARATE CANDIDATE / upper right to lower left")
+	var comparison:=board(current,candidate,"CURRENT DEFAULT / accepted fixed grip","SEPARATE CANDIDATE / raised hold, strike toward cursor")
 	var body_review:=board(candidate,side,"CANDIDATE / first person","CANDIDATE / body and grip mechanics")
 	var stills:="--stills" in OS.get_cmdline_user_args()
 	var snapshots:={0:"hold",29:"right_load",34:"approach",36:"contact",40:"left_follow",52:"return",67:"hold_again",280:"walk"}

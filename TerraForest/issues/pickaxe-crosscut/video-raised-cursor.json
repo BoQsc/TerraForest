@@ -1,0 +1,26 @@
+{
+  "status": "Raised hold / cursor-centered candidate; not approved or selected as default",
+  "videos": [
+    {
+      "file": "Pickaxe.raised-cursor.comparison.mp4",
+      "sha256": "1e470ccf4413d504ff80de768d22357f6e2a57f65a583e6d1ec87892f2da2bdd",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    },
+    {
+      "file": "Pickaxe.raised-cursor.body.mp4",
+      "sha256": "29983c808e455aa1f018278851c5dff2ebb7c315fe8c82dd35a062450eb04879",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved."
+}

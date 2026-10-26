@@ -6,7 +6,7 @@ class ReviewControls extends CanvasLayer:
 	func _ready()->void:
 		note=Label.new();note.position=Vector2(24,170);note.add_theme_font_size_override("font_size",20);add_child(note);refresh()
 	func refresh()->void:
-		var state:="UPPER RIGHT → LOWER LEFT CANDIDATE" if game.tool_view.human.candidate_enabled else "ACCEPTED DEFAULT"
+		var state:="RAISED HOLD / CURSOR STRIKE CANDIDATE" if game.tool_view.human.candidate_enabled else "ACCEPTED DEFAULT"
 		note.text=state+"\nF6: compare versions · temporary world · no default change"
 		DisplayServer.window_set_title("TerraForest — pickaxe comparison — "+state)
 	func _input(event:InputEvent)->void:

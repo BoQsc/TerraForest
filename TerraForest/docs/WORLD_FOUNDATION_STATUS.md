@@ -6,12 +6,15 @@ This file retains the wider backlog; the tracker initially covers three cases.
 User requested a more diagonal hold and a new right-to-left animation, with
 default promotion only after approval. The first candidate was rejected for
 missing the intended motion; the user clarified upper right to lower left.
-The revision descends across the target while keeping the shaft slanted and
-both hands at fixed stations. Separate 120 Hz Blender/library assets and an
+That revision was not accepted after playtesting: the hold was too low and
+the cutting point passed below the cursor. The latest revision raises the
+hold into the upper-right quadrant and aligns contact with the camera
+centerline, retaining fixed grips and a descending follow-through. It also
+removes a raised-arm roll singularity. Separate 120 Hz Blender/library assets and an
 explicit temporary-world launcher provide F6 candidate/default comparison.
 Ordinary runtime selection and accepted pickaxe assets remain unchanged.
 
-Candidate mechanics pass 24 checks across 1,902 key/half-key poses; 13 actual
+Candidate mechanics pass 26 checks across 1,902 key/half-key poses; 13 actual
 world checks cover input, frame-timed excavation, wear and cancellation. The
 accepted pickaxe's 11 checks and locomotion's 24 still pass. These do not imply
 visual acceptance. User review of trajectory, hold, weight, grip and framing is

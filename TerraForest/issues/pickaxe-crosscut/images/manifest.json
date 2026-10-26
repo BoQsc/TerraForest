@@ -25,47 +25,107 @@
     "comparison-hold.png": {
       "source": "reports/pickaxe_crosscut/comparison_hold.png",
       "sha256": "57df00c53b77506a6e27053cd9aff0ce70a85b542f7c78790402c6f0a853b666",
-      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "status": "Second candidate not accepted after playtest: low hold / below-cursor strike",
       "dimensions": [
         1920,
         820
-      ]
+      ],
+      "source_revision": "241a4b88"
     },
     "revised-load.png": {
       "source": "reports/pickaxe_crosscut/body_right_load.png",
       "sha256": "ffc66a0685a581a831b988543245e6138b546ee37587779083378e1b94fb2d19",
-      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "status": "Second candidate not accepted after playtest: low hold / below-cursor strike",
       "dimensions": [
         1920,
         820
-      ]
+      ],
+      "source_revision": "241a4b88"
     },
     "revised-contact.png": {
       "source": "reports/pickaxe_crosscut/body_contact.png",
       "sha256": "00a6b472a3d5e837792d9825b2e0f0af581a6aeac6e5be50d6461a7807b8223d",
-      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "status": "Second candidate not accepted after playtest: low hold / below-cursor strike",
       "dimensions": [
         1920,
         820
-      ]
+      ],
+      "source_revision": "241a4b88"
     },
     "revised-follow.png": {
       "source": "reports/pickaxe_crosscut/body_left_follow.png",
       "sha256": "f30a4f8a0b8f976749effa50361eb6efa615ac6c61b21748ceee345c1ed8090e",
-      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "status": "Second candidate not accepted after playtest: low hold / below-cursor strike",
       "dimensions": [
         1920,
         820
-      ]
+      ],
+      "source_revision": "241a4b88"
     },
     "revised-return.png": {
       "source": "reports/pickaxe_crosscut/body_return.png",
       "sha256": "078bb020796231b4cc75b6be3dcc08da272a0ee01e111ea54bb6e471e7dd2509",
-      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "status": "Second candidate not accepted after playtest: low hold / below-cursor strike",
       "dimensions": [
         1920,
         820
+      ],
+      "source_revision": "241a4b88"
+    },
+    "raised-hold.png": {
+      "source": "reports/pickaxe_crosscut/comparison_hold.png",
+      "sha256": "bbdf4d1af36e5b60d46f9b8cdab44f4bd1d58c50d0075c53e12544986df6812c",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "raised-load.png": {
+      "source": "reports/pickaxe_crosscut/body_right_load.png",
+      "sha256": "49bcf67d78838969fbb07dbf6abc57923b9e2f4ec9595a2cfe71434d645898e9",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "raised-contact.png": {
+      "source": "reports/pickaxe_crosscut/body_contact.png",
+      "sha256": "010ad5bf585d3b4a2450fdf9e1804a0c6a7089fe099af2753adb5729f6ce8e79",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "raised-follow.png": {
+      "source": "reports/pickaxe_crosscut/body_left_follow.png",
+      "sha256": "14ca8e79fc3ef3c3c2e2dd744d7bf1e892a274d72ae96b0a8e6b7b5f8dbd6c6b",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "raised-return.png": {
+      "source": "reports/pickaxe_crosscut/body_return.png",
+      "sha256": "1ba82c718ba9e8ad9745bc89044552fef7530035d5c2cb5ee631d4fdb335f773",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "raised-walk.png": {
+      "source": "reports/pickaxe_crosscut/comparison_walk.png",
+      "sha256": "228f12ddb85991becbe7108f8e4fede4e0e626c89f40da69efe5a46e8c689073",
+      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "dimensions": [
+        2560,
+        820
       ]
     }
-  }
+  },
+  "latest_camera": "16:9 1280x720 panels, 75-degree vertical FOV; fixed target and screen-center crosshair independent of animation"
 }

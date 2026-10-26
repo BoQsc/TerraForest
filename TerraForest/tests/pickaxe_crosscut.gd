@@ -11,6 +11,8 @@ func run()->void:
 	var skeleton:Skeleton3D=view.model.find_child("Skeleton3D",true,false);var mesh:MeshInstance3D=view.model.find_child("Equipment_Pickaxe",true,false)
 	var weapon:=skeleton.find_bone("Weapon_Pickaxe");var hands:={};var fingers:={};var roots:={}
 	pose(view,"FP_Pickaxe_Crosscut_Idle",0)
+	var ready_head:Vector3=camera.global_transform.affine_inverse()*tool_head(mesh,skeleton)
+	check(ready_head.x>.4 and ready_head.y>.2 and ready_head.y<.5,"ready pickaxe head is raised into the upper-right quadrant")
 	for side:String in ["Left","Right"]:hands[side]=skeleton.get_bone_global_pose(weapon).affine_inverse()*skeleton.get_bone_global_pose(skeleton.find_bone(side+"Hand"))
 	for bone in skeleton.get_bone_count():
 		var name:=String(skeleton.get_bone_name(bone))
@@ -46,7 +48,8 @@ func run()->void:
 	var start:=swing_tips[112];var hit:=swing_tips[168];var follow:=swing_tips[200];var descending:=true
 	for index in range(113,201):descending=descending and swing_tips[index].x<swing_tips[index-1].x+.0001 and swing_tips[index].y<swing_tips[index-1].y+.0001
 	check(start.x>0 and start.y>0 and follow.x<0 and follow.y<0 and descending,"actual cutting point travels from upper right to lower left through impact")
-	check(start.x-follow.x>.8 and start.y-follow.y>.4 and hit.z<start.z-.1,"descending strike has substantial leftward travel and forward depth")
+	check(start.x-follow.x>.45 and start.y-follow.y>.35 and hit.z<start.z-.08,"descending strike travels across the cursor with forward depth")
+	check(Vector2(hit.x,hit.y).length()<.015 and hit.z<-.85,"actual cutting point reaches the cursor centerline at the gameplay contact time")
 	var contacts:Array=[];var finishes:Array=[]
 	tool.attack_contact.connect(func(identity:int):contacts.append([identity,view.animation_player.current_animation_position]))
 	tool.attack_finished.connect(func(identity:int,cancelled:bool):finishes.append([identity,cancelled]))
@@ -61,5 +64,5 @@ func run()->void:
 	view.set_candidate(true);check(tool.attack_profile().clip=="FP_Pickaxe_Crosscut_Swing","A/B switch restores the separate candidate")
 	tool.equip(2);check(tool.attack_profile().clip=="FP_Axe_Swing","other tools retain their ordinary animation")
 	DirAccess.make_dir_recursive_absolute("res://reports/pickaxe_crosscut")
-	FileAccess.open("res://reports/pickaxe_crosscut/runtime.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"clips":records,"tip_load":[start.x,start.y,start.z],"tip_contact":[hit.x,hit.y,hit.z],"tip_follow":[follow.x,follow.y,follow.z]},"  "))
+	FileAccess.open("res://reports/pickaxe_crosscut/runtime.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"clips":records,"ready_head":[ready_head.x,ready_head.y,ready_head.z],"tip_load":[start.x,start.y,start.z],"tip_contact":[hit.x,hit.y,hit.z],"tip_follow":[follow.x,follow.y,follow.z]},"  "))
 	ordinary.free();camera.free();print("PICKAXE_CROSSCUT checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -1,6 +1,10 @@
 Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
 Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
 
+[terrain-hitch] controller loading 52.83 ms at 9733
+[terrain-hitch] base controller 56.32 ms at 9736
+[terrain-hitch] controller process 59.51 ms at 9739
+[terrain-hitch] world process 62.56 ms at 9742
 PASS ordinary temporary world becomes playable
 PASS ordinary equipment path selects the separate diagonal hold and full cycle
 PASS loaded native terrain provides a real target

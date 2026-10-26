@@ -20,6 +20,7 @@ FPS, END, CONTACT = 120, 192, 84
 DURATIONS = {"Idle":2.0,"Swing":1.6,"Walk":1.0,"Run":.8,"Jump":1.5}
 TIP = Vector((-.326, 0, .535))
 GRIP_STATIONS = {'Left': -.22, 'Right': .11}
+GRIP_ROLL = {'Left': 0, 'Right': 30}
 
 # Only static finger closure and hand-to-shaft orientation are reused. No body
 # pose, ready transform, timing, path, or swing keys are copied from any action.
@@ -32,6 +33,12 @@ bpy.context.view_layer.update()
 source_tool = rig.pose.bones['Weapon_Pickaxe'].matrix.copy()
 grip_shapes = {side: source_tool.inverted() @ rig.pose.bones[side+'Hand'].matrix for side in ['Left', 'Right']}
 forearm_roll = {side: source_tool.inverted() @ rig.pose.bones[side+'ForeArm'].matrix for side in ['Left', 'Right']}
+for side, angle in GRIP_ROLL.items():
+    # Re-seat the closed hand around the cylindrical shaft once, not during
+    # the animation. This lets the raised right wrist lead from a lower elbow.
+    around_shaft = Matrix.Rotation(math.radians(angle),4,'Z')
+    grip_shapes[side] = around_shaft @ grip_shapes[side]
+    forearm_roll[side] = around_shaft @ forearm_roll[side]
 finger_shapes = {b.name: b.matrix_basis.copy() for b in rig.pose.bones
                  if any(part in b.name for part in ['HandIndex', 'HandMiddle', 'HandRing', 'HandPinky', 'HandThumb'])}
 
@@ -65,21 +72,23 @@ for side, shift in [('Left', (.045, -.05, 0)), ('Right', (-.045, .055, 0))]:
 
 # Pose-table frame at 60 Hz (baked at 120 Hz), lower wrist XYZ, shaft forward pitch, right lean, blade-plane yaw,
 # torso forward pitch, torso yaw, pelvis Z. Blender -X is player right; -Y forward.
-# The blade travels in depth through the target as the shaft sweeps right to left.
+# Raised ready pose: head near camera (+.56, +.31, -.69). At contact the
+# working tip is on the camera centerline (0, 0, -.95), then follows down-left.
+# Keep the original rig, camera and hand stations; solve the motion in the rig.
 POSES = [
- (0,  ( .040,-.28,1.20), 16,65, 15,  5, -3,-.022),
- (10, ( .025,-.25,1.29),  5,65, 18,  3, -8,-.018),
- (22, ( .010,-.24,1.38), -2,62, 20,  2,-14,-.014),
- (28, ( .000,-.24,1.42), -4,61, 20,  2,-15,-.014),
- (33, ( .020,-.26,1.34),  8,62, 18,  4, -8,-.025),
- (38, ( .030,-.25,1.25), 30,62, 18,  6,  0,-.040),
- (42, ( .090,-.14,1.18), 46,60, 18,  8,  8,-.050),
- (46, ( .125,-.035,1.15),52,60, 28, 10, 14,-.070),
- (50, ( .160, .00,1.13),55,58, 32, 12, 16,-.085),
- (57, ( .120,-.01,1.14),51,62, 28, 10, 13,-.070),
- (69, ( .070,-.14,1.17),32,65, 22,  7,  5,-.040),
- (83, ( .040,-.28,1.20), 18,65, 15,  5, -2,-.023),
- (96, ( .040,-.28,1.20), 16,65, 15,  5, -3,-.022),
+ (0, (-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
+ (10,(-.03432161,-.25425443,1.52649641),13,50,17,2,-7,-.016),
+ (22,(-.01004905,-.20659295,1.53383720), 8,50,20,2,-12,-.014),
+ (28,(-.01004905,-.18659291,1.53383720), 8,50,20,2,-12,-.014),
+ (33,( .04197210,-.19180411,1.56805599),14,55,18,3,-8,-.020),
+ (38,( .16642500,-.19859922,1.52081239),22,60,16,4,-1,-.025),
+ (42,( .23358697,-.16472000,1.51675391),30,65,15,5, 4,-.030),
+ (46,( .20316312,-.11304516,1.47717214),39,65,15,6, 7,-.035),
+ (50,( .18150240,-.08339185,1.45278859),45,65,15,6, 8,-.035),
+ (57,( .20877364,-.07557851,1.45076895),43,65,15,6, 8,-.035),
+ (69,( .09534030,-.12909424,1.50202966),32,60,15,5, 2,-.025),
+ (83,(-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
+ (96,(-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
 ]
 
 
@@ -116,8 +125,18 @@ def solve_pair(upper_name, lower_name, end_name, target, pole_point, upper_ref, 
     pole = pole_point-origin
     pole = (pole-axis*pole.dot(axis)).normalized()
     elbow = origin+axis*along+pole*math.sqrt(max(0,upper*upper-along*along))
-    orient(upper_name,origin,elbow-origin,upper_ref)
-    orient(lower_name,elbow,target.translation-elbow,lower_ref)
+    if end_name == 'LeftHand':
+        # Match arm roll across the actual elbow bend. Using the rest arm or
+        # the unaligned hand axis can cross a 180-degree singularity on a high
+        # cross-body pose, spinning the upper arm or pinching the elbow skin.
+        orient(lower_name,elbow,target.translation-elbow,lower_ref)
+        forearm_pose = rig.pose.bones[lower_name].matrix.copy()
+        orient(upper_name,origin,elbow-origin,forearm_pose)
+        rig.pose.bones[lower_name].matrix = forearm_pose
+        bpy.context.view_layer.update()
+    else:
+        orient(upper_name,origin,elbow-origin,upper_ref)
+        orient(lower_name,elbow,target.translation-elbow,lower_ref)
     rig.pose.bones[end_name].matrix = target
     bpy.context.view_layer.update()
     return {'reach':length/(upper+lower),'endpoint_error_m':(rig.pose.bones[end_name].head-target.translation).length,'joint':list(elbow),'wrist_bend':math.degrees((target.translation-elbow).angle(target.to_quaternion()@Vector((0,1,0)))) if end_name.endswith('Hand') else 0}
@@ -234,9 +253,9 @@ else:
         export_materials='NONE',export_animations=True,export_animation_mode='ACTIONS',export_frame_range=False,
         export_force_sampling=True,export_skins=True,export_morph=False,export_yup=True)
     report={'status':'Separate candidate; user approval required before default promotion',
-            'grip_stations':GRIP_STATIONS,'source':str(source.relative_to(ROOT)),
+            'grip_stations':GRIP_STATIONS,'fixed_grip_roll_degrees':GRIP_ROLL,'source':str(source.relative_to(ROOT)),
             'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
-            'motion_source':'New diagonal carry and right-to-left pose table on original rest rig; original static finger wraps only. No earlier swing keys copied.',
+            'motion_source':'Raised upper-right hold and cursor-centered descending stroke, revised after user playtest. Original static finger wraps only. No accepted swing keys copied.',
             'fps':FPS,'durations':DURATIONS,'contact_frame':CONTACT,'poses':POSES,'samples':samples}
     (OUT/'Human.pickaxe_crosscut.json').write_text(json.dumps(report,indent=2))
     bpy.context.preferences.filepaths.save_version=0

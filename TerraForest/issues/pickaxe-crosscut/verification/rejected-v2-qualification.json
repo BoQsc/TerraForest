@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-26",
+  "status": "Revised separate candidate; user approval required for default promotion",
+  "user_correction": "Upper right to lower left; first candidate rejected",
+  "checkout_head": "e5a42bb63cb40b2a7f3182f0c0cb854f7bfd4079",
+  "preserved_default_sha256": {
+    "addons/characters/runtime/human_view.gd": "fe349c9ec07cec4184063980b64fb3af119a76fb36a0a7b93072bbf0e39ef15f",
+    "addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
+    "addons/characters/runtime/assets/Human.pickaxe_fresh.res": "4430afc81d17a4191e724badbb7a4c588bb46284d126fc235fe01fb68c9865e4",
+    "addons/characters/runtime/assets/Human.pickaxe_locomotion.res": "6fb004a440021dfdd4d010e0f3c2e3b52b877c82f48f53df5c95721214f06a28",
+    "addons/characters/authoring/Human.pickaxe_fresh.blend": "a5856b1e8e5669558d85f2f56a37d5ce49ec24733c8ddbb21c1156503c2dbd23"
+  },
+  "candidate_sha256": {
+    "addons/characters/authoring/Human.pickaxe_crosscut.blend": "c43903afa857ecd9777046fc879838deb7ec6b0a17e3547b67c958d72e96dedc",
+    "addons/characters/authoring/Human.pickaxe_crosscut.glb": "63294186944141de811f7540ddf12c9c6388640521ebd856365de8b57586f6bc",
+    "addons/characters/authoring/Human.pickaxe_crosscut.json": "ec327ffc43019db962598177af55716fb206f58255191c2cb2275f23b7984096",
+    "addons/characters/runtime/assets/Human.pickaxe_crosscut.res": "5f9213dc643f12e87ec98d5553dfe933adb38898b52e9b4de9aee5de87efb1f1",
+    "addons/characters/experiments/pickaxe_crosscut_tools.gd": "93e311dfc07e78ab10afcde79ce54c346e4b7f522eea7c2c8f8c75b501a12c56",
+    "addons/characters/experiments/pickaxe_crosscut_view.gd": "2a782330936b6360b0670dfa9105eca3846417f6c80f79ffaddc5d18ace8f665",
+    "tools/author_pickaxe_crosscut.py": "1f4e2884f79e38087779d9a938bf834ca3ac7db65f46371af3d252479f2ba1a6",
+    "tools/import_pickaxe_crosscut.gd": "de0108dd45f45001cfd1623c5c87d253bbc89ae6b715869e15ebebf73ec5c95f",
+    "tools/playtest_pickaxe_crosscut.gd": "b2d7a985b6fbc65d0c24abe54aeebd10e589738ca14312729c8ec3bff21beebe",
+    "tests/pickaxe_crosscut.gd": "55a4d937d95c2fdd8bfcaf76d0f259715122512e4a90074f8a88ae5b620572e7",
+    "tests/pickaxe_crosscut_world.gd": "0a23efebd10ce3d3c12fe2bd79b045d3b11ff306ca28d478c4c09c38ae20cb28"
+  },
+  "checks": {
+    "candidate": 24,
+    "temporary_world": 13,
+    "accepted_default": 11,
+    "accepted_locomotion": 24
+  },
+  "pose_samples": 1902,
+  "bake_hz": 120,
+  "audit_hz": 240,
+  "contact_seconds": 0.7,
+  "duration_seconds": 1.6,
+  "metrics": {
+    "Crouch": {
+      "angle_error": 0.0,
+      "finger_error": 3.39494704348908e-07,
+      "grip_error": 4.71275001245886e-07,
+      "joint_step": 0.0559529096807445,
+      "key_error": 4.71275001245886e-07,
+      "position_error": 2.44397227788795e-07,
+      "root_error": 0.0,
+      "wrist_degrees": 14.807250771488
+    },
+    "Idle": {
+      "angle_error": 0.0,
+      "finger_error": 0.0,
+      "grip_error": 0.0,
+      "joint_step": 0.0559529096807445,
+      "key_error": 0.0,
+      "position_error": 0.0,
+      "root_error": 0.0,
+      "wrist_degrees": 14.8072405262042
+    },
+    "Jump": {
+      "angle_error": 0.0395646811852521,
+      "finger_error": 0.0,
+      "grip_error": 9.22940216696588e-07,
+      "joint_step": 0.0559529096807445,
+      "key_error": 9.22940216696588e-07,
+      "position_error": 4.29815202096506e-07,
+      "root_error": 0.0,
+      "wrist_degrees": 16.1202197431868
+    },
+    "Run": {
+      "angle_error": 0.0395646811852521,
+      "finger_error": 3.8165595128703e-07,
+      "grip_error": 5.2436816986301e-06,
+      "joint_step": 0.395647592254995,
+      "key_error": 1.10067037439876e-06,
+      "position_error": 3.67427696801315e-06,
+      "root_error": 0.0,
+      "wrist_degrees": 17.4231039405761
+    },
+    "Swing": {
+      "angle_error": 0.0559529096807445,
+      "finger_error": 0.0,
+      "grip_error": 0.000771359598729759,
+      "joint_step": 3.6248245080949,
+      "key_error": 1.36742005452106e-06,
+      "position_error": 0.000305099209072068,
+      "root_error": 6.70048757456243e-06,
+      "wrist_degrees": 32.6585768371726
+    },
+    "Walk": {
+      "angle_error": 0.0559529096807445,
+      "finger_error": 4.78754145660787e-07,
+      "grip_error": 1.97141071112128e-06,
+      "joint_step": 0.197823502642807,
+      "key_error": 1.10429573396686e-06,
+      "position_error": 1.0599743518469e-06,
+      "root_error": 0.0,
+      "wrist_degrees": 16.3661014306654
+    }
+  },
+  "actual_cutting_point_in_camera": {
+    "tip_load": [
+      0.551523387432098,
+      0.093030571937561,
+      -0.78316456079483
+    ],
+    "tip_contact": [
+      -0.121296763420105,
+      -0.408150672912598,
+      -0.965709984302521
+    ],
+    "tip_follow": [
+      -0.508092939853668,
+      -0.519792795181274,
+      -0.754777491092682
+    ]
+  },
+  "world": {
+    "slot": "pickaxe_crosscut_review_20261026",
+    "temporary": true,
+    "saved": false
+  },
+  "prior_failures": [
+    "User rejected first candidate: it straightened at impact and read as a forward chop. Retained in rejected_v1 snapshot and issue images.",
+    "Early source poses exceeded arm reach; revised hand path within fixed limb lengths.",
+    "Crouch import ran before scene initialization; deferred import now preserves complete grip.",
+    "60 Hz fast-stroke interpolation drift reached 1.19 mm. Baking at 120 Hz reduces the measured error to 0.31 mm."
+  ],
+  "remaining": "User visual review and explicit acceptance before default promotion. Lower hand/shaft partly leave the first-person frame; source finger/skin/clothing finish retained."
+}
