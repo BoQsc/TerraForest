@@ -1,0 +1,12 @@
+{
+  "tools\\preview_block_loop.gd": "e7c7ccc59a7bf331a9c0adc6ad571f9a58b3a2ac45b02c391524132458be7519",
+  "tools\\preview_block_loop.gd.uid": "eded3f80182037895b7447299af34ad5f387cb62ae394d5cc50d45937adc1710",
+  "addons\\structures\\native\\modular_shapes.hpp": "a4b647e71e5d4e2923b159846150ba535d75659f8e74c0190e5ab9c979204be7",
+  "addons\\structures\\native\\block_word.hpp": "78b306163a86198c3bf6ec97e764486ad1cbdafad8c47be5015604ae21801704",
+  "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+  "docs\\evidence\\block_loop_trial\\octagonal_loop.png": "61f46d8fab7855270af6b46999986eb04380e33357d56262ed6c94445bb0b4ee",
+  "docs\\evidence\\block_loop_trial\\octagonal_loop_front.png": "f115dcdc532e67965b99cd972817bb06f9292d98a96ebbd40d91101ec1e418a1",
+  "docs\\evidence\\block_loop_trial\\rounded_rectangle_loop.png": "0bf0e87b0f9f89cf4c85071f3714d4384d9844aedd4e80ee2accb086b349107a",
+  "docs\\evidence\\block_loop_trial\\octagonal_loop.tfbl": "855995259bac30e7b40fa3088679166177507ede0cf15587ec3236ba873e6c91",
+  "docs\\evidence\\block_loop_trial\\rounded_rectangle_loop.tfbl": "2348fcdc20e883e566faa0e2aee330880d45c234b391a19ca777bd7202bd5b1e"
+}

@@ -1,0 +1,84 @@
+{
+  "engine": {
+    "build": "steam",
+    "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+    "hex": 263938,
+    "major": 4,
+    "minor": 7,
+    "patch": 2,
+    "status": "stable",
+    "string": "4.7.2-stable (steam)",
+    "timestamp": 0
+  },
+  "failures": [],
+  "scope": "Static native block assembly and image capture. All track and supports use existing shape IDs, integer cell positions, grid rotations and identity world scale. Existing game materials. Ground plane and the existing vehicle are presentation/scale references. No vehicle traversal or new shape implementation.",
+  "variants": [
+    {
+      "cells": 1148,
+      "identity_transform": true,
+      "name": "octagonal_loop",
+      "native_snapshot_roundtrip": true,
+      "shape_counts": {
+        "1": 110,
+        "15": 189,
+        "16": 171,
+        "7": 42,
+        "8": 42,
+        "9": 594
+      },
+      "stats": {
+        "bake_lattice_16_chunks": 4,
+        "bake_lattice_32_chunks": 0,
+        "bake_lattice_64_chunks": 10,
+        "cell_bytes": 114688,
+        "cells": 1148,
+        "chunks": 14,
+        "collision_chunks": 14,
+        "dirty_chunks": 0,
+        "max_chunks": 2048,
+        "mesh_chunks": 14,
+        "published_bakes": 28,
+        "stale_bakes_rejected": 0,
+        "triangles": 8058,
+        "worker_jobs": 0,
+        "worker_jobs_submitted": 28,
+        "worker_results_consumed": 28,
+        "worker_threads_started": 1
+      }
+    },
+    {
+      "cells": 1100,
+      "identity_transform": true,
+      "name": "rounded_rectangle_loop",
+      "native_snapshot_roundtrip": true,
+      "shape_counts": {
+        "1": 96,
+        "11": 32,
+        "15": 29,
+        "16": 27,
+        "7": 42,
+        "8": 42,
+        "9": 832
+      },
+      "stats": {
+        "bake_lattice_16_chunks": 4,
+        "bake_lattice_32_chunks": 0,
+        "bake_lattice_64_chunks": 10,
+        "cell_bytes": 114688,
+        "cells": 1100,
+        "chunks": 14,
+        "collision_chunks": 14,
+        "dirty_chunks": 0,
+        "max_chunks": 2048,
+        "mesh_chunks": 14,
+        "published_bakes": 28,
+        "stale_bakes_rejected": 0,
+        "triangles": 9123,
+        "worker_jobs": 0,
+        "worker_jobs_submitted": 28,
+        "worker_results_consumed": 28,
+        "worker_threads_started": 1
+      }
+    }
+  ]
+}
