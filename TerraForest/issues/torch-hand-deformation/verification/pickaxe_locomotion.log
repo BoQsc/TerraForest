@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Walk: both hand transforms and finger wraps stay fixed on the shaft
+PASS Walk: presentation adds no root motion or gameplay events
+PASS Walk: endpoints form a seamless cycle
+PASS Walk: no abrupt joint rotation between samples
+PASS Walk: visible but restrained tool movement
+PASS Run: both hand transforms and finger wraps stay fixed on the shaft
+PASS Run: presentation adds no root motion or gameplay events
+PASS Run: endpoints form a seamless cycle
+PASS Run: no abrupt joint rotation between samples
+PASS Run: visible but restrained tool movement
+PASS Jump: both hand transforms and finger wraps stay fixed on the shaft
+PASS Jump: presentation adds no root motion or gameplay events
+PASS Jump: endpoints form a seamless cycle
+PASS Jump: no abrupt joint rotation between samples
+PASS Jump: visible but restrained tool movement
+PASS actual velocity selects Walk
+PASS actual velocity selects Run
+PASS actual velocity selects Jump
+PASS actual velocity selects Idle
+PASS animation does not integrate or alter player movement
+PASS brief idle/walk/run crossfades keep hands within 5 mm and 2 degrees of the shaft grip
+PASS approved swing takes priority while moving
+PASS movement resumes after the complete approved swing
+PASS axe locomotion remains unchanged
+PICKAXE_LOCOMOTION checks=24 failures=0

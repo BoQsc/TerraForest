@@ -28,8 +28,15 @@ complete gameplay inventory UI 33 checks pass; package dependency and icon recei
 checks pass. The outdated fixed recipe-count fixture was updated for the catalog.
 [Preview, evidence and limits](evidence/wooden_torch/README.md);
 [editable Blender source notes](../addons/characters/authoring/WOODEN_TORCH.md).
-Visual quality is unreviewed: player feedback on proportions, grip and flame style
-is the return trigger; inspect the video and in-game carry before acceptance.
+The user rejected the hands as completely broken. The original fixed-grip
+checks missed a 105–107-degree wrist bend and skin intersecting the shaft.
+The repair rebuilds both wrists and every finger, keys the arm solve at 60 Hz,
+adds a continuous equip raise and attaches the torch to the final blended hand.
+Per-key/half-key skin and joint checks, comparison images and revised preview
+are tracked in [torch hand deformation](../issues/torch-hand-deformation/README.md).
+Revised hands remain unaccepted: player review of carry, free hand and equip is
+the return trigger. Reproduce any remaining bad pose by clip/time and inspect
+the deformed surface before closing the issue. Original evidence is retained.
 Fuel depletion, ignition controls, underwater extinguishing, fire spread/damage,
 melee and sound are outside this item-authoring pass and need separate gameplay
 requirements if requested. Dropped torches are unlit collectible meshes.

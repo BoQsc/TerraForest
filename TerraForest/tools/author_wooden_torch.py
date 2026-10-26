@@ -23,7 +23,7 @@ sys.path.insert(0,str(ROOT/'tools'))
 from unarmed_hand_weights import repair_hand
 for side in ['Left','Right']:repair_hand(bpy.data.objects['Human_Body'],rig,side)
 FPS=60
-DURATIONS={'Idle':3.0,'Walk':1.0,'Run':.8,'Jump':1.5}
+DURATIONS={'Idle':3.0,'Walk':1.0,'Run':.8,'Jump':1.5,'Equip':.45}
 BONE='Weapon_Axe'
 
 def sample(action,frame):
@@ -37,11 +37,13 @@ grip=rig.pose.bones[BONE].matrix.inverted()@rig.pose.bones['RightHand'].matrix
 grip.translation.z=0
 fingers={n:m for n,m in base.items() if 'RightHand' in n and n!='RightHand'}
 with bpy.data.libraries.load(str(OUT/'Human.unarmed.blend'),link=False) as (_,loaded):
-    loaded.actions=['FP_Unarmed_Idle','FP_Unarmed_Punch']
+    loaded.actions=['FP_Unarmed_Idle']
 neutral=sample(bpy.data.actions['FP_Unarmed_Idle'],0)
-closed=sample(bpy.data.actions['FP_Unarmed_Punch'],28)
-for name,matrix in closed.items():
-    if 'RightHandThumb' in name:fingers[name]=matrix
+from torch_hand_pose import fit_grip
+grip,fingers,grip_fit=fit_grip(rig,bpy.data.objects['Human_Body'],grip,fingers)
+# Put the wrist behind the shaft, in line with the forearm. The old axe-facing
+# orientation put it beside the shaft and forced a 105-degree sideways bend.
+grip=Matrix.Rotation(math.pi/2,4,'Z')@grip
 gaits={}
 for motion in ['Walk','Run','Jump']:
     action=bpy.data.actions[motion];start,end=action.frame_range;count=round(DURATIONS[motion]*FPS)
@@ -168,23 +170,42 @@ def arm(side,target):
     a,b=[rig.data.bones[side+part].length for part in ['Arm','ForeArm']]
     assert abs(a-b)+.001<distance<a+b-.001,(distance,a+b)
     axis=delta.normalized();along=(a*a-b*b+distance*distance)/(2*distance)
-    pole=Vector((sign*.46,-.04,1.12))-origin;pole=(pole-axis*pole.dot(axis)).normalized()
+    # Choose the reachable elbow nearest a straight wrist, with a small natural
+    # outward bias. Solve and key both arms at every frame, not just endpoints.
+    preferred=target.translation-(target.to_quaternion()@Vector((0,1,0)))*b
+    pole=Vector((sign*.42,-.05,1.23)).lerp(preferred,.90)-origin
+    pole=(pole-axis*pole.dot(axis)).normalized()
     elbow=origin+axis*along+pole*math.sqrt(max(0,a*a-along*along))
     width=target.to_quaternion()@Vector((1,0,0));hinge=(elbow-origin).cross(target.translation-elbow).normalized()
-    if hinge.x>0:hinge=-hinge
+    # Keep the same elbow-frame handedness through the whole raise. Choosing
+    # its sign from world X flips 180 degrees as the elbow crosses that plane.
+    if side=='Left':hinge=-hinge
     for name,head,direction in [(side+'Arm',origin,elbow-origin),(side+'ForeArm',elbow,target.translation-elbow)]:
         axis=direction.normalized();across=(width-axis*width.dot(axis)).normalized()
         if name==side+'Arm':across=hinge
         q=Matrix((across,axis,across.cross(axis))).transposed().to_quaternion()
         rig.pose.bones[name].matrix=Matrix.LocRotScale(head,q,Vector((1,1,1)));bpy.context.view_layer.update()
     rig.pose.bones[side+'Hand'].matrix=target;bpy.context.view_layer.update()
-    return distance/(a+b)
+    bend=math.degrees((target.translation-elbow).angle(target.to_quaternion()@Vector((0,1,0))))
+    return {'reach_fraction':distance/(a+b),'wrist_bend':bend,'elbow':list(elbow),'wrist':list(target.translation)}
+
+def relaxed_left_fingers():
+    # R11's rest fingers already curve. Aim the actual phalanges into a gentle
+    # relaxed arc instead of adding another set of fist-like local rotations.
+    hand=rig.pose.bones['LeftHand'].matrix.to_quaternion()
+    for finger,curls in [('Index',(8,18,27)),('Middle',(11,23,34)),('Ring',(15,28,40)),('Pinky',(19,33,46)),('Thumb',(6,15,25))]:
+        for joint,angle in enumerate(curls,1):
+            bone=rig.pose.bones[f'LeftHand{finger}{joint}'];at=bone.matrix.copy();q=at.to_quaternion()
+            direction=Vector((0,math.cos(math.radians(angle)),-math.sin(math.radians(angle))))
+            if finger=='Thumb':direction=Vector((.45,.87,-.10-joint*.04)).normalized()
+            desired=(q@Vector((0,1,0))).rotation_difference(hand@direction)@q
+            bone.matrix=Matrix.LocRotScale(at.translation,desired,Vector((1,1,1)));bpy.context.view_layer.update()
 
 actions={};records={}
 for motion,duration in DURATIONS.items():
     action=bpy.data.actions.new('FP_Torch_'+motion);action.use_fake_user=True
     rig.animation_data_create();rig.animation_data.action=action;count=round(duration*FPS)
-    previous={};max_reach=0
+    previous={};max_reach=0;frame_records=[]
     for frame in range(count+1):
         scene.frame_set(frame)
         for bone in rig.pose.bones:
@@ -197,13 +218,18 @@ for motion,duration in DURATIONS.items():
             strength=1 if motion=='Walk' else 1.6
             at+=Vector((.007*math.sin(phase),.008*math.sin(phase),.009*math.cos(2*phase)))*strength
             pitch+=1.5*math.sin(phase)*strength;roll+=1.2*math.sin(phase)*strength
-        else:at.z-=.025*math.sin(phase*.5)**2
+        elif motion=='Jump':at.z-=.025*math.sin(phase*.5)**2
+        elif motion=='Equip':
+            t=frame/count;t=t*t*(3-2*t)
+            at=Vector((-.30,-.24,1.13)).lerp(at,t);pitch=65+(pitch-65)*t
         q=Quaternion((0,1,0),math.radians(roll))@Quaternion((1,0,0),math.radians(pitch))
         tool=Matrix.LocRotScale(at,q,Vector((1,1,1)))
-        rig.pose.bones[BONE].matrix=tool;bpy.context.view_layer.update();max_reach=max(max_reach,arm('Right',tool@grip))
-        left_y=Vector((0,-.6,-.8));left_x=Vector((1,0,0))
+        rig.pose.bones[BONE].matrix=tool;bpy.context.view_layer.update()
+        right=arm('Right',tool@grip);max_reach=max(max_reach,right['reach_fraction'])
+        left_y=Vector((0,-.2,-.98)).normalized();left_x=Vector((-1,0,0))
         left=Matrix.LocRotScale(Vector((.28,-.16,1.13)),Matrix((left_x,left_y,left_x.cross(left_y))).transposed().to_quaternion(),Vector((1,1,1)))
-        arm('Left',left)
+        left_arm=arm('Left',left);relaxed_left_fingers()
+        frame_records.append({'frame':frame,'Right':right,'Left':left_arm})
         for bone in rig.pose.bones:
             if bone.name in previous and bone.rotation_quaternion.dot(previous[bone.name])<0:bone.rotation_quaternion.negate()
             previous[bone.name]=bone.rotation_quaternion.copy()
@@ -214,7 +240,7 @@ for motion,duration in DURATIONS.items():
                 for curve in bag.fcurves:
                     for key in curve.keyframe_points:key.interpolation='LINEAR'
     action.use_frame_range=True;action.frame_start=0;action.frame_end=count;actions[motion]=action
-    records[motion]={'seconds':duration,'frames':count,'max_reach_fraction':max_reach}
+    records[motion]={'seconds':duration,'frames':count,'max_reach_fraction':max_reach,'samples':frame_records}
 scene.render.fps=FPS;scene.frame_start=0;scene.frame_end=180
 rig.animation_data.action=actions['Idle']
 if actions['Idle'].slots:rig.animation_data.action_slot=actions['Idle'].slots[0]
@@ -224,5 +250,5 @@ bpy.ops.export_scene.gltf(filepath=str(OUT/'Human.torch.glb'),export_format='GLB
 for obj in bpy.data.objects:
     if obj.type=='MESH' and obj.name.startswith('Equipment.') and obj!=equipment:obj.hide_render=True;obj.hide_set(True)
 bpy.context.preferences.filepaths.save_version=0;bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'Human.torch.blend'),compress=True)
-(OUT/'Human.torch.json').write_text(json.dumps({'status':'First torch draft; visual approval pending','source':str(source.relative_to(ROOT)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'triangles':triangles,'vertices':len(equipment.data.vertices),'fps':FPS,'actions':records,'grip':[list(row) for row in grip]},indent=2)+'\n')
-print('TORCH_AUTHORED',triangles,'triangles;',records)
+(OUT/'Human.torch.json').write_text(json.dumps({'status':'Hands reauthored after rejection; visual approval pending','source':str(source.relative_to(ROOT)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'triangles':triangles,'vertices':len(equipment.data.vertices),'fps':FPS,'actions':records,'grip':[list(row) for row in grip],'grip_fit':grip_fit},indent=2)+'\n')
+print('TORCH_AUTHORED',triangles,'triangles; grip fit:',grip_fit)

@@ -13,7 +13,7 @@ func run()->void:
 	for bone in skeleton.get_bone_count():
 		if String(skeleton.get_bone_name(bone)).begins_with("RightHand") and bone!=hand:fingers[bone]=skeleton.get_bone_pose(bone)
 	var records:={}
-	for suffix:String in ["Idle","Walk","Run","Jump","Crouch"]:
+	for suffix:String in ["Idle","Walk","Run","Jump","Crouch","Equip"]:
 		var clip:="FP_Torch_"+suffix;var animation:Animation=view.animation_player.get_animation(view.clips[clip])
 		var grip_error:=0.0;var finger_error:=0.0;var previous:Quaternion;var max_step:=0.0;var events_free:=true
 		for track in animation.get_track_count():events_free=events_free and animation.track_get_type(track) in [Animation.TYPE_POSITION_3D,Animation.TYPE_ROTATION_3D,Animation.TYPE_SCALE_3D,Animation.TYPE_BLEND_SHAPE]
@@ -29,6 +29,7 @@ func run()->void:
 		check(events_free and max_step<5,suffix+": smooth presentation without gameplay event tracks")
 		records[suffix]={"grip_error":grip_error,"finger_error":finger_error,"maximum_hand_step_degrees":max_step}
 	tools.equip(6)
+	for frame in 60:view._process(1.0/120)
 	check(tools.attack_profile().is_empty() and not tools.begin_attack(91),"torch does not silently punch, mine or damage targets")
 	check(view.body_mesh.mesh==view.unarmed_body_mesh,"torch uses corrected hand skin weights")
 	for row in [[Vector3(0,0,5.5),"Walk"],[Vector3(0,0,9.9),"Run"],[Vector3(0,4,3),"Jump"],[Vector3.ZERO,"Idle"]]:

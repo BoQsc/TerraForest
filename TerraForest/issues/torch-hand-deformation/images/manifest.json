@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-26",
+  "renderer": "Godot 4.7.2 Forward+ / RTX 4050",
+  "scene": "Controlled neutral stage, except world.png: temporary native seed 1703, torch_hands_20261026",
+  "captures": {
+    "before-idle.png": {
+      "source": "reports/torch_hands/before_Idle.png",
+      "sha256": "f7f8cbe98809a8a5106f10fb02acdd64f5549ef489c81fb52bf91eb6ae467c67",
+      "status": "rejected original hands",
+      "animation_revision": "6aa2f563"
+    },
+    "before-run.png": {
+      "source": "reports/torch_hands/before_Run.png",
+      "sha256": "22cfed690faa0c32792181b268ff9f201872b6eb67048d1c23f6697a7845442a",
+      "status": "rejected original hands",
+      "animation_revision": "6aa2f563"
+    },
+    "after-idle.png": {
+      "source": "reports/torch_hands/final_Idle.png",
+      "sha256": "3f83e92cc87f60899bbd56a29c6b14df127da4f19929602fb75c3259dd1d0ca6",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "after-walk.png": {
+      "source": "reports/torch_hands/final_Walk.png",
+      "sha256": "c0813bae078c69342110a6b63db32171140aeb7794cc6449ae9932f65c07257a",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "after-run.png": {
+      "source": "reports/torch_hands/final_Run.png",
+      "sha256": "16c9ceeeaaa61442e02d8dbc472fd0e05284730a533ac18d9d20fe2d3e3ddcd7",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "after-jump.png": {
+      "source": "reports/torch_hands/final_Jump.png",
+      "sha256": "af3e2724c5498bd59d8a0c98d483bfd4597fbf0e9cc779e009ba9c4ea83decc8",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "after-crouch.png": {
+      "source": "reports/torch_hands/final_Crouch.png",
+      "sha256": "f01ef9bf6240d9b8c84ecdc6acb9173d6def04968ef24c0fea8421705802d7a4",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "after-equip.png": {
+      "source": "reports/torch_hands/final_Equip.png",
+      "sha256": "98cd6bb3cf3994d0355862fbc0a2f8120a0be3c0aeb055672c93329185ad92f1",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "first-person.png": {
+      "source": "reports/torch_hands/motion_030.png",
+      "sha256": "756aaf2c4c69f7d8cac66aa87d3e75885318dbfea94f8b593de22647d6c33f57",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    },
+    "world.png": {
+      "source": "reports/wooden_torch/world.png",
+      "sha256": "c9972747a23d0cbbf256f0ed96058065406108f4f5bc10fd6f57a8821958989d",
+      "status": "revised hands awaiting player review",
+      "animation_revision": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e"
+    }
+  }
+}

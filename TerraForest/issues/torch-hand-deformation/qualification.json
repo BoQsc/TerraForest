@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-26",
+  "baseline": "6aa2f563",
+  "checkout_head_at_verification": "28005b4f4ce44c032308601a0142e8b7a4687d66",
+  "status": "Scoped engineering checks passed; revised hands await user review",
+  "authoring": "Blender 5.2.3 LTS; original R11 rig and body mesh preserved",
+  "artifacts": {
+    "addons/characters/authoring/Human.torch.blend": "ca1a562c8092f070b3322855ea6b2f4ef18fd886cc2c5fee1127662b8c196d3c",
+    "addons/characters/authoring/Human.torch.glb": "cf07af605f580536ba99ed1265e0c1516e34ad0d06b2ba01ee6677a53f338704",
+    "addons/characters/authoring/Human.torch.json": "f2257b9ab6c22065d581683919f9dc50536982063131594f2f29f14ec85fe5ef",
+    "addons/characters/runtime/assets/Human.torch.res": "232d727d602c95b382101a73b715c60209b23609214f6fe429aa0e8e5072802e",
+    "addons/characters/runtime/assets/Torch.glb": "b1346e6731614c7b727dd41f54bdc455f3c8c4f0e152535fe10b08e4aadf2ff6",
+    "addons/characters/runtime/human_view.gd": "fe349c9ec07cec4184063980b64fb3af119a76fb36a0a7b93072bbf0e39ef15f",
+    "tools/author_wooden_torch.py": "73af0bd73a30a51d339c38d1539ed048dcdd4d16df91f5dd6dbde31b0e8b8893",
+    "tools/torch_hand_pose.py": "84389e40e4444287d2c36bd1bbe4764b3775bee118c18e4820642c0dd2b031dc",
+    "tools/import_wooden_torch.gd": "434b59900199f9458c0d196e62c0a8c45e544e146bf66e9670550c8e1912f19b",
+    "tests/torch_hand_deformation.gd": "692f869385c443df443a6b04a8b3a7a1a33674270f89273823d56ffc72171e09",
+    "addons/player_runtime/art/item_icons.bake.json": "505fdbb5e6645b8aca7f502dbe1adcedbf0025b764395dc8b33740687de268f8"
+  },
+  "checks": {
+    "hand_deformation": 36,
+    "torch_presentation": 28,
+    "torch_world": 16,
+    "pickaxe_locomotion": 24,
+    "bucket_presentation": 63,
+    "attack_timing": 27,
+    "icon_receipt": "current"
+  },
+  "audit": {
+    "skin_vertices": 1091,
+    "key_and_half_key_samples": 936,
+    "sample_hz": 120,
+    "clips": {
+      "Crouch": {
+        "samples": 121,
+        "maximum_right_wrist_degrees": 7.22392054736001,
+        "maximum_left_wrist_degrees": 21.6830895108185,
+        "minimum_vertex_shaft_clearance_m": 0.000223227844791687,
+        "maximum_joint_step_degrees": 0.0559529096807445
+      },
+      "Equip": {
+        "samples": 55,
+        "maximum_right_wrist_degrees": 8.6755457743047,
+        "maximum_left_wrist_degrees": 21.6830912183658,
+        "minimum_vertex_shaft_clearance_m": 0.000223210968556518,
+        "maximum_joint_step_degrees": 1.7182833893831
+      },
+      "Idle": {
+        "samples": 361,
+        "maximum_right_wrist_degrees": 7.38837186578006,
+        "maximum_left_wrist_degrees": 21.6830912183658,
+        "minimum_vertex_shaft_clearance_m": 0.000223120876612925,
+        "maximum_joint_step_degrees": 0.0559529096807445
+      },
+      "Jump": {
+        "samples": 181,
+        "maximum_right_wrist_degrees": 7.22392908509648,
+        "maximum_left_wrist_degrees": 21.6830912183658,
+        "minimum_vertex_shaft_clearance_m": 0.000223073342605153,
+        "maximum_joint_step_degrees": 0.104678325291172
+      },
+      "Run": {
+        "samples": 97,
+        "maximum_right_wrist_degrees": 10.2671275537585,
+        "maximum_left_wrist_degrees": 21.6830912183658,
+        "minimum_vertex_shaft_clearance_m": 0.000223049460381257,
+        "maximum_joint_step_degrees": 0.662047461484986
+      },
+      "Walk": {
+        "samples": 121,
+        "maximum_right_wrist_degrees": 9.10875991392287,
+        "maximum_left_wrist_degrees": 21.6830912183658,
+        "minimum_vertex_shaft_clearance_m": 0.000223102025290581,
+        "maximum_joint_step_degrees": 0.333378411778428
+      }
+    },
+    "equip_from_items": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      401
+    ],
+    "movement_blends": [
+      "Idle to Walk",
+      "Walk to Run",
+      "Run to Jump",
+      "Jump to Idle",
+      "Idle to Crouch",
+      "Crouch to Idle"
+    ]
+  },
+  "video": {
+    "file": "Torch-hands.preview.mp4",
+    "sha256": "0024364e06544321c9ddeaa94cf9708b755d44a8758812868f50ba79a670bd70",
+    "frames": 300,
+    "fps": 30,
+    "dimensions": [
+      1600,
+      820
+    ]
+  },
+  "world": {
+    "temporary": true,
+    "seed": 1703,
+    "slot": "torch_hands_20261026",
+    "user_save_written": false,
+    "zombies_enabled": false,
+    "shared_checkout_note": "Other concurrent zombie/native work present, excluded from this commit."
+  },
+  "prior_nonpasses": [
+    "Original grip consistency passed but missed the 105-107 degree wrist bend and skin penetration; user rejected those hands.",
+    "First repair fit placed the palm too far from the handle; second still intersected the little finger.",
+    "Equip elbow basis sign flipped 180 degrees at frame 9-10; fixed consistent handedness.",
+    "Independent weapon/hand animation crossfades drifted; replaced torch attachment with a fitted RightHand mount.",
+    "The synchronous attachment audit initially read deferred node transforms; now invokes the normal on_skeleton_update callback before evaluating the actual attached mesh transform."
+  ],
+  "remaining": "Player visual review of revised hands and equip. Vertex clearance samples do not prove universal mesh/anatomical correctness; original low-poly skin/clothing retained.",
+  "package_dependency_test": {
+    "command": "python -m unittest test_package.PackageTests.test_character_runtime_bundle_and_player_dependency",
+    "working_directory": "tools",
+    "result": "1 passed"
+  }
+}

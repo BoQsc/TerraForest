@@ -1,7 +1,12 @@
 # Wooden torch — first draft for review
 
+**Hands rejected by the user on 2026-10-26.** This original evidence is preserved.
+Its grip-consistency checks missed the folded wrist and shaft intersections.
+The [hand repair record](../../../issues/torch-hand-deformation/README.md)
+contains the revised poses, stronger checks and new preview awaiting review.
+
 Captured 2026-10-26 in Godot 4.7.2 Forward+ on RTX 4050. Blender 5.2.3 authored
-the geometry and motion on the existing R11 skeleton. Visual acceptance pending.
+the geometry and motion on the existing R11 skeleton. Original hands rejected.
 
 ![Carry preview](preview.png)
 

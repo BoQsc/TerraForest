@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+[terrain-hitch] restore volumetric_water 56.52 ms at 11668
+[terrain-hitch] restore frame 60.1 ms at 11670
+[terrain-hitch] controller loading 1201.31 ms at 32702
+[terrain-hitch] base controller 1205.19 ms at 32706
+[terrain-hitch] controller process 1209.02 ms at 32709
+[terrain-hitch] world process 1211.8 ms at 32712
+PASS temporary native world ready
+PASS existing starter inventory is not topped up with a torch
+PASS temporary fixture supplies crafting ingredients
+PASS native crafting consumes one wood and two plant fibre for one torch
+PASS old inventory restores without torch grants
+PASS crafted torch survives inventory save/restore
+PASS ordinary inventory selection holds and lights the torch
+PASS torch cannot trigger a hidden combat or digging action
+PASS torch drops into the native collectible store
+PASS torch recollects once
+PASS dropped ownership snapshot restores
+PASS restored torch recollects without duplication
+PASS inventory icon and batched drop model are registered
+TORCH_LIGHT night_off terrain_brightness=0.0786838478897
+TORCH_LIGHT night_on terrain_brightness=0.10155512717756
+PASS held torch measurably illuminates real terrain in the dark fixture
+PASS normal slot switch turns the torch off
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary world shuts down without saving user data
+WOODEN_TORCH_WORLD checks=16 failures=0

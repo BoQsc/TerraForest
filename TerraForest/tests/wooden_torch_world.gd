@@ -36,7 +36,7 @@ func run()->void:
 	verify(game.pickups.collect_near(point,inventory,func(_p):return true).ok and amount(6)==1 and not game.pickups.collect_near(point,inventory,func(_p):return true).ok,"restored torch recollects without duplication")
 	hud.refresh();hud.equip_item(6)
 	verify(preload("res://addons/player_runtime/item_icons.gd").texture(6)!=null and game.pickups.renderers.has(6),"inventory icon and batched drop model are registered")
-	for frame in 20:view._process(1.0/60)
+	for frame in 40:view._process(1.0/60)
 	if DisplayServer.get_name()!="headless":
 		await process_frame;RenderingServer.force_draw(false);RenderingServer.force_draw(false)
 		root.get_texture().get_image().save_png("res://reports/wooden_torch/world.png")

@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Torch hand deformation](torch-hand-deformation/README.md) | Improved / partial | Rebuilt wrists and finger wrap at 60 Hz, locked runtime grip; revised hands await player review |
 | [ESC UI priority](escape-ui-priority/README.md) | Fixed for current UI / scoped checks | Close active UI first; a fresh ESC opens pause only after returning to gameplay |
 | [Backpack/toolbelt separation](inventory-backpack-separation/README.md) | Implemented / scoped checks | Container inventories show backpack slots only, not duplicated toolbelt contents |
 | [World interaction hints](world-interaction-hints/README.md) | Improved / partial | E toggles container UI; harvest-only grass no longer intercepts stone/flower pickups |

@@ -2,7 +2,7 @@
 extends SceneTree
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
 const PREFIX = "FP_Torch_"
-const DURATIONS = {"Idle":3.0,"Walk":1.0,"Run":0.8,"Jump":1.5}
+const DURATIONS = {"Idle":3.0,"Walk":1.0,"Run":0.8,"Jump":1.5,"Equip":.45}
 func find_type(node:Node,type:String)->Node:
 	if node.is_class(type):return node
 	for child in node.get_children():
@@ -79,6 +79,10 @@ func add_crouch(_model:Node,target:AnimationPlayer,skeleton:Skeleton3D,library:A
 	target.play("torch_author/FP_Torch_Idle");target.advance(0);skeleton.force_update_all_bone_transforms()
 	var original:Array[Transform3D]=[]
 	for bone in skeleton.get_bone_count():original.append(skeleton.get_bone_global_pose(bone))
+	# A rigid hand attachment preserves this authored grip when AnimationPlayer
+	# blends the arm hierarchy and the independent weapon track differently.
+	var hand:=skeleton.find_bone("RightHand");var weapon:=skeleton.find_bone("Weapon_Axe")
+	library.set_meta("hand_to_torch",original[hand].affine_inverse()*original[weapon]*skeleton.get_bone_global_rest(weapon).affine_inverse())
 	target.add_animation_library("crouch_author",preload("res://addons/characters/runtime/assets/Human.crouch.res"))
 	target.play("crouch_author/Player_Crouch");target.advance(0);skeleton.force_update_all_bone_transforms()
 	var shift:=skeleton.get_bone_global_pose(skeleton.find_bone("Hips")).origin-original[skeleton.find_bone("Hips")].origin

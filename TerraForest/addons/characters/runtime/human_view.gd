@@ -60,13 +60,17 @@ func _ready() -> void:
 	var skeleton:=model.find_children("*","Skeleton3D",true,false)[0] as Skeleton3D
 	for item:int in EQUIPMENT:
 		var attachment:=BoneAttachment3D.new()
-		attachment.bone_name="Weapon_Axe" if item in [3,6] else "Weapon_Pickaxe"
+		attachment.bone_name="RightHand" if item==6 else ("Weapon_Axe" if item==3 else "Weapon_Pickaxe")
 		skeleton.add_child(attachment)
 		var equipment:Node3D=EQUIPMENT[item].instantiate()
 		attachment.add_child(equipment)
 		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
 		# attachments carry that conversion too; undo the rest basis once.
-		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
+		if item==6:
+			# The rigid grip follows the final blended hand, including locomotion
+			# transitions; no separate weapon interpolation can slide the fingers.
+			equipment.transform=TORCH.get_meta("hand_to_torch")*equipment.transform
+		else:equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
 		if item==6:
 			torch_effects=preload("res://addons/characters/runtime/torch_effects.gd").new();equipment.add_child(torch_effects)
 	var bail_attachment:=BoneAttachment3D.new();bail_attachment.bone_name="Weapon_Axe";skeleton.add_child(bail_attachment)
@@ -143,7 +147,14 @@ func equip(item: int, water_ml:int=-1) -> void:
 	if model == null:
 		return
 	_sync_equipment()
-	_play(_motion_clip("Idle"))
+	if current==6 and previous_item!=6:
+		# The torch has its own keyed raise. Blending another tool's hand and
+		# weapon transforms independently can fold the wrist during equip.
+		_play("FP_Torch_Equip",true,0.0)
+		animation_player.advance(0)
+	else:
+		_play(_motion_clip("Idle"),false,0.0 if previous_item==6 else .10)
+		if previous_item==6:animation_player.advance(0)
 
 func _sync_equipment() -> void:
 	if body_mesh!=null:
@@ -189,11 +200,11 @@ func _motion_clip(action: String) -> String:
 	var prefix:String={1:"FP_Pickaxe_",2:"FP_Axe_",3:"FP_Hammer_",5:"FP_Shovel_"}.get(current,"")
 	return prefix + action if clips.has(prefix + action) else action
 
-func _play(clip: String, once: bool = false) -> void:
+func _play(clip: String, once: bool = false, blend:float=.10) -> void:
 	if not clips.has(clip):
 		return
 	if once or active_clip != clip or not animation_player.is_playing():
-		animation_player.play(clips[clip], 0.10)
+		animation_player.play(clips[clip], blend)
 		active_clip = clip
 	if once:
 		animation_player.seek(0,true)
