@@ -227,9 +227,11 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 				return false
 			if maxf(a.abs()[a.abs().max_axis_index()], b.abs()[b.abs().max_axis_index()]) > 10000.0:
 				return false
-			if packet.decode_u32(32) > 1 or packet.decode_u32(36) > 1 or packet.decode_u32(40) > 3:
+			var shape:int=packet.decode_u32(32)
+			if shape not in [0,1,Codec.CONTACT_MINING_SHAPE] or packet.decode_u32(36) > 1 or packet.decode_u32(40) > 3:
 				return false
-			var halo: Vector3 = Vector3.ONE * (radius + 5.0)
+			if shape==Codec.CONTACT_MINING_SHAPE and (packet.decode_u32(36)!=0 or radius>1.0 or a.distance_squared_to(b)>0.25):return false
+			var halo: Vector3 = Vector3.ONE * (radius + 5.0 + (Codec.CONTACT_MINING_HALO if shape==Codec.CONTACT_MINING_SHAPE else 0.0))
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
 		elif kind==28 and (packet.size() in [36,40,44,48] or packet.size()>=72):

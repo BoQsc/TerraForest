@@ -1372,10 +1372,12 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 		if command.size() == 44 and command.decode_u32(0) == 2:
 			var a := Vector3(command.decode_float(4), command.decode_float(8), command.decode_float(12))
 			var b := Vector3(command.decode_float(16), command.decode_float(20), command.decode_float(24))
-			var halo: Vector3 = Vector3.ONE * (command.decode_float(28) + 5.0)
+			var shape:int=command.decode_u32(32)
+			var halo: Vector3 = Vector3.ONE * (command.decode_float(28) + 5.0 + (Codec.CONTACT_MINING_HALO if shape==Codec.CONTACT_MINING_SHAPE else 0.0))
 			member_lo = a.min(b) - halo
 			member_hi = a.max(b) + halo
 			descriptor["radius"] = command.decode_float(28)
+			descriptor["shape"] = shape
 			descriptor["add"] = command.decode_u32(36) != 0
 			descriptor["a"] = [a.x, a.y, a.z]
 			descriptor["b"] = [b.x, b.y, b.z]

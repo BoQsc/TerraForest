@@ -68,7 +68,7 @@ func pop() -> Dictionary:
 	var a: Vector3 = sample["a"]
 	var b: Vector3 = sample["b"]
 	var radius: float = sample["radius"]
-	var margin: Vector3 = Vector3.ONE * (radius + 5.0)
+	var margin: Vector3 = Vector3.ONE * (radius + 5.0 + (Codec.CONTACT_MINING_HALO if int(sample["shape"])==Codec.CONTACT_MINING_SHAPE else 0.0))
 	return {"command": Codec.brush(a, b, radius, int(sample["shape"]), bool(sample["add"]), int(sample["material"])),
 		"lo": a.min(b) - margin, "hi": a.max(b) + margin, "sample": sample}
 

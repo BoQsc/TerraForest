@@ -171,7 +171,7 @@ func destroy(t: Dictionary) -> bool:
 			rejection_reason=collected.reason;return collected.ok
 		"terrain":
 			var center: Vector3=t.position-t.normal*0.35
-			if not game.stroke_buffer.push_sweep(center,center,0.65,0,false,game.material_id,false):return false
+			if not game.stroke_buffer.push_sweep(t.position,center,0.65,game.Codec.CONTACT_MINING_SHAPE,false,game.material_id,false):return false
 			game._consume_stroke();return game.terrain.pending_edit
 		"actor":
 			return game._remove_actor(t.id)

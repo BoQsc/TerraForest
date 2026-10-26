@@ -493,6 +493,30 @@ Page* World::ensure(int px,int py,int pz){
  int idx=pages.push(page);pages_by_key.put(key,idx);edit_columns[px+NP*pz]|=(1u<<py);if(page_access)page_access->inserted(*this,idx);return &pages[idx];
 }
 static float box_distance(V3 p,V3 c,float r){V3 q={ab(p.x-c.x)-r,ab(p.y-c.y)-r,ab(p.z-c.z)-r};return length({mx(q.x,0),mx(q.y,0),mx(q.z,0)})+mn(mx(q.x,mx(q.y,q.z)),0);}
+static bool contact_brush_center(World &world,V3 contact,V3 &center,float radius,bool &found){
+ found=false;
+ V3 low={mx(0,contact.x-3),mx(0,contact.y-3),mx(0,contact.z-3)};
+ V3 high={mn(WORLD,contact.x+3),mn(255,contact.y+3),mn(WORLD,contact.z+3)};
+ if(low.x>high.x||low.y>high.y||low.z>high.z)return true;
+ EditPagePin pin(world,low,high);if(!world.prepare_pages(low,high))return false;
+ V3 selected{};float nearest=1e9f;
+ for(int sample_z=fl(contact.z)-1;sample_z<=fl(contact.z)+2;sample_z++)
+ for(int sample_x=fl(contact.x)-1;sample_x<=fl(contact.x)+2;sample_x++)
+ for(int sample_y=fl(contact.y)-1;sample_y<=fl(contact.y)+2;sample_y++){
+  if(sample_x<=0||sample_x>=WORLD||sample_z<=0||sample_z>=WORLD||sample_y<=3||sample_y>=255)continue;
+  V3 point={float(sample_x),float(sample_y),float(sample_z)},offset=point-contact,delta=point-center;
+  float distance=dot(delta,delta);
+  if(dot(offset,offset)>1.75f*1.75f||distance>=nearest||quant(world.sample(sample_x,sample_y,sample_z))>=0)continue;
+  bool exposed=false;
+  const int neighbours[6][3]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+  for(const auto &neighbour:neighbours)
+   if(quant(world.sample(sample_x+neighbour[0],sample_y+neighbour[1],sample_z+neighbour[2]))>=0){exposed=true;break;}
+  if(exposed){selected=point;nearest=distance;found=true;}
+ }
+ if(tr_oom)return false;
+ if(found&&nearest>(radius-.125f)*(radius-.125f))center=center+(selected-center)*(1.f-(radius-.125f)/__builtin_sqrtf(nearest));
+ return true;
+}
 static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0,bool cut_shoulder=false){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
  float along=dot(offset,axis)/dot(axis,axis);
@@ -1300,7 +1324,16 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!build_patch(w,ox,oz,size,step,m,epoch,cmd==20)){out.p[8]=4;return;}
   out.u(w.revision);encode_mesh(m,ox,oz,size,step,out);m.release();
  }
- else if(cmd==2){V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());if(!r.good||!(radius>=.5f&&radius<=64.f)||shape<0||shape>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)){out.p[8]=1;return;}V3 lo,hi;int changes;u32 removed[16]{};bool ok=w.edit(a,b,radius,shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);}
+ else if(cmd==2){
+  V3 a=r.vec(),b=r.vec();float radius=r.f();int shape=int(r.u()),add=int(r.u()),mat=int(r.u());
+  bool contact=shape==3;
+  if(!r.good||n!=44||!(radius>=.5f&&radius<=64.f)||(shape!=0&&shape!=1&&!contact)||add<0||add>1||mat<0||mat>3||!(ab(a.x)<=10000&&ab(b.x)<=10000&&ab(a.y)<=10000&&ab(b.y)<=10000&&ab(a.z)<=10000&&ab(b.z)<=10000)||(contact&&(add||radius>1.f||dot(b-a,b-a)>.25f))){out.p[8]=1;return;}
+  V3 lo=a,hi=a;int changes=0;u32 removed[16]{};bool found=true;
+  bool ok=!contact||contact_brush_center(w,a,b,radius,found);
+  if(ok&&found)ok=w.edit(contact?b:a,b,radius,contact?0:shape,add!=0,u8(mat),lo,hi,changes,1.f,0.f,0.f,removed);
+  if(!ok)out.p[8]=2;
+  out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);for(u32 count:removed)out.u(ok?count:0);
+ }
  else if(cmd==38){ // One paid lattice unit; the radius cannot create a second solid sample.
   int x=int(r.u()),y=int(r.u()),z=int(r.u()),material=int(r.u());
   if(!r.good||n!=20||x<1||x>=WORLD||z<1||z>=WORLD||y<4||y>=254||(material!=1&&material!=8&&material!=9&&material!=10)){out.p[8]=1;return;}

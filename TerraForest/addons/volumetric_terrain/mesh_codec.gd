@@ -6,6 +6,8 @@ const MATERIAL_FIELD_GENERATOR: int = 5
 
 const MESH_MAGIC: int = 0x324d5254
 const REPLY_MAGIC: int = 0x32505254
+const CONTACT_MINING_SHAPE: int = 3
+const CONTACT_MINING_HALO: float = 1.75
 
 static func command(number: int, integers: Array = []) -> PackedByteArray:
 	var result := PackedByteArray()

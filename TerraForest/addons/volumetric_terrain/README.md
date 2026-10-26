@@ -25,6 +25,19 @@ func _process(_delta):
 
 `sculpt_sphere(center, radius, add = false, material_id = 1) -> bool` submits a sphere edit. `set_block(cell, material_id) -> bool` writes/removes an exact cube. Both return false if not ready, busy, malformed or admission fails. Radius is 0.5–64 m. Material values are 0–3; block material 0 removes. Existing `edit(...)` supports bounded ordered groups of up to four native brush packets, with validation before mutation. Failed native multi-command groups are not rollback-atomic; saving is disabled on that failure path.
 
+Player mining uses command 2 with `CONTACT_MINING_SHAPE` (3), the visible contact
+as `a`, and the intended inward brush centre as `b` (at most 0.5 m apart).
+This removal-only mode accepts radii 0.5–1 m. The ordered native worker examines
+at most 64 nearby lattice candidates and their six axis neighbours. It selects
+an exposed solid sample within 1.75 m of the contact and moves the brush centre
+only enough to put that sample 0.125 m inside the existing sphere. This prevents
+repeated identical, sub-lattice cuts from accepting hits without changing terrain.
+Admission, support capture and geometry invalidation include that bounded offset;
+ordinary developer spheres/boxes, generation and stored-world formats are unchanged.
+Empty/protected contacts remain nonmutating; resource yield counts actual solid
+samples removed. See `tests/terrain_contact_mining.gd` and
+`tools/check_saved_mining.py --slot <saved_world>` (copies, never edits that save).
+
 `construct_road_bed(a, b, half_width = 3, depth = 2, clearance = 0) -> bool` adds a graded,
 rounded asphalt volume through the same worker. Endpoints describe top height;
 horizontal length is 1–128 m, half-width 0.5–16 m, depth 1–8 m, grade at most

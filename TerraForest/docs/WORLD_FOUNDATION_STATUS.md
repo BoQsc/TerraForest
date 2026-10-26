@@ -1,3 +1,22 @@
+## Saved pickaxe no-op — reproduced and fixed, 2026-10-26
+
+Calm_Meadow's F5 position reproduced three accepted digs with no density change.
+The small sphere repeatedly missed the remaining solid lattice samples beneath
+the visible surface. Player mining now adjusts its centre minimally in the native
+worker to include a nearby exposed sample; it does not enlarge every brush or
+change generation, developer sculpting, grid placement or save formats.
+
+The packaged saved-pose replay passes three actual animated clicks plus three
+offscreen contacts: every strike changes terrain and matching collision. Animation
+contact, single wear, resource accounting, protected/empty contacts, paged reads,
+rejection recovery and binary roundtrips pass. Native debug/release each pass
+137 assertions over 401 timed operations. Packaged saved-pose publication takes
+13.777–50.444 ms in these six strikes, not an exhaustive performance guarantee.
+Matching DLLs/PCK are installed; original save hashes remain unchanged. No new
+world is needed. Harness-only failures and corrections are retained in
+`evidence/terrain_editing/contact_mining/README.md` and `qualification.json`.
+The rendering/focus-switch follow-up below remains explicitly deferred.
+
 ## Vegetation publication follow-up — qualified finite workload, 2026-10-26
 
 Native slot/fade hash lookup, whole-group removal and bounded hidden GPU-page

@@ -1,0 +1,484 @@
+{
+  "base_commit": "cdd9702fdccfb8f3b42e116f216053f3edb33448",
+  "source_slot": "Calm_Meadow",
+  "source_unchanged": true,
+  "original_root_sha256": "2e1aeadbc8ff61d657d8768a66f1fc0fb05f3a3edebbea1ffc849f336574ef7b",
+  "original_noop_changes": [
+    false,
+    false,
+    false
+  ],
+  "final_pack_replay": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\run.json",
+  "installed_pack_sha256": "98a0f80739c2fb7ed9918e52e771abe8a3c53cc9b020f09f174770bacf69fbbe",
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "52cc96ee9229ed4b926bad85bd4a9d0553bf1da955f396ca4cc2c90d393ecb45",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "f0fcf547eb037fda534b97366f962989237e0799e70993e5a88c62c12ffda60d"
+  },
+  "test_sha256": {
+    "mining_saved_target.gd": "4d5653d3670ad6f54caeda4bde6da1e9e82229b6290d4a6100273f6fd8ad19fe",
+    "terrain_contact_mining.gd": "8f7ceb8790c50f19450184e7f086096520a1df831ace4674bf7255e6b3dbdf16"
+  },
+  "retained_evidence": [
+    {
+      "source": "reports\\mining_target\\before\\console.log",
+      "retained": "original_diagnostic\\console.log.gz",
+      "bytes": 6372,
+      "sha256": "4ac0a1a6279427a8b48f6755a4f1c8500e7f0b9ea849c1762e97447f51b97013"
+    },
+    {
+      "source": "reports\\mining_target\\before\\engine.log",
+      "retained": "original_diagnostic\\engine.log.gz",
+      "bytes": 6345,
+      "sha256": "3b78010561fe29b56154e22e6763860895b59b8b88e722b86ddb4e5f242248a7"
+    },
+    {
+      "source": "reports\\mining_target\\before\\result.json",
+      "retained": "original_diagnostic\\result.json.gz",
+      "bytes": 12979,
+      "sha256": "7583954d194bf5ced6db18bb050966b9a89810a5795ccb54ffb29211947133d7"
+    },
+    {
+      "source": "reports\\mining_target\\before\\run.json",
+      "retained": "original_diagnostic\\run.json.gz",
+      "bytes": 1095,
+      "sha256": "00116e631b5ad311333703cfca0a6cd3e7ddb4f90c723974b98f17ca1ac2afc6"
+    },
+    {
+      "source": "reports\\mining_target\\after\\console.log",
+      "retained": "first_fix_replay\\console.log.gz",
+      "bytes": 6893,
+      "sha256": "049e1bf71c9a3d3126abab7605d1d671ec9c478c6cc9bfa990088bb30542929a"
+    },
+    {
+      "source": "reports\\mining_target\\after\\engine.log",
+      "retained": "first_fix_replay\\engine.log.gz",
+      "bytes": 6854,
+      "sha256": "b7ccc1dd28e63c3d8d183011d27b20d99381279ce38d8ae3e634b4c8c1a411b2"
+    },
+    {
+      "source": "reports\\mining_target\\after\\result.json",
+      "retained": "first_fix_replay\\result.json.gz",
+      "bytes": 12652,
+      "sha256": "a2093e66414b1d4aeb46bff2384f53bff342ecd5c95f67cf04a3dee5995412d4"
+    },
+    {
+      "source": "reports\\mining_target\\after\\run.json",
+      "retained": "first_fix_replay\\run.json.gz",
+      "bytes": 1093,
+      "sha256": "cf28664c1bd2778ede19a88d6341d0e13161462a3a54b5b56b6828054cfcfd5d"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\animated\\console.log",
+      "retained": "retained_headless_failure\\animated\\console.log.gz",
+      "bytes": 7010,
+      "sha256": "d1036793cbedf32de71fe861e3fa2abe385a93fdd43ec8aa26b8d61565336fa3"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\animated\\engine.log",
+      "retained": "retained_headless_failure\\animated\\engine.log.gz",
+      "bytes": 6968,
+      "sha256": "b54aa57dddcc9a5a460b521728327c1f56977ba4cde7461ac124033f55ac1b79"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\animated\\result.json",
+      "retained": "retained_headless_failure\\animated\\result.json.gz",
+      "bytes": 10050,
+      "sha256": "8530a90bd083dd6b223742dfd3ac9d65d95027e8b14e480233eb54007a2b18ef"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\graphical\\console.log",
+      "retained": "retained_headless_failure\\graphical\\console.log.gz",
+      "bytes": 6893,
+      "sha256": "51870a82a9b31cdb83ff5bbd19c43ecb501c88dc44c934f1c7c8fd4743c6d877"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\graphical\\engine.log",
+      "retained": "retained_headless_failure\\graphical\\engine.log.gz",
+      "bytes": 6854,
+      "sha256": "19642c14da9377aa67a5267a59e2d8a72cc91535db989cde5b956c891d1f1d53"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\graphical\\result.json",
+      "retained": "retained_headless_failure\\graphical\\result.json.gz",
+      "bytes": 12663,
+      "sha256": "c98caa0afb812e1d68b636ccdbdc1494dd3f0937e3ede48f3eeb86ad87ed56de"
+    },
+    {
+      "source": "reports\\mining_target\\387e0846312b4851bd915452426052d9\\run.json",
+      "retained": "retained_headless_failure\\run.json.gz",
+      "bytes": 99080,
+      "sha256": "830241ac7a3a94785102ee9d2c63b77312a03cd715b3b8571d9a9f7b66015917"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\animated\\console.log",
+      "retained": "source_replay\\animated\\console.log.gz",
+      "bytes": 7174,
+      "sha256": "a166b945cd00cdbc44aafb0541e6a961e02d595385f37f1c21964ec7b0c199fc"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\animated\\engine.log",
+      "retained": "source_replay\\animated\\engine.log.gz",
+      "bytes": 7128,
+      "sha256": "8ad70243b813b7e2cccea18cfda7c8237ed6f5315c6c8863aa77b24c5918ab5f"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\animated\\result.json",
+      "retained": "source_replay\\animated\\result.json.gz",
+      "bytes": 12965,
+      "sha256": "8805491ce1d7bb4311af88c41a0180a41301708529ea1875d74e5d851f7daa70"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\graphical\\console.log",
+      "retained": "source_replay\\graphical\\console.log.gz",
+      "bytes": 6892,
+      "sha256": "6ed8b6f1a91918aa272db5f938606329168b8a19a003030bf5ed75b8c89d15d7"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\graphical\\engine.log",
+      "retained": "source_replay\\graphical\\engine.log.gz",
+      "bytes": 6853,
+      "sha256": "5e3a14ca8be56043f7c9887b103e78e9bc5b7737e807c6420a624a6ad7c340d7"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\graphical\\result.json",
+      "retained": "source_replay\\graphical\\result.json.gz",
+      "bytes": 12672,
+      "sha256": "f1faefe78d51f8bc56df85cf7d4a2d819895724ec8bbd11284615c097fde181e"
+    },
+    {
+      "source": "reports\\mining_target\\7051e6fb482e45eb8eabb5d36761ed0b\\run.json",
+      "retained": "source_replay\\run.json.gz",
+      "bytes": 98425,
+      "sha256": "e1c539354a77f7da08cadaf671922ec19552947aad09b69f2447d90d7e554cf8"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\animated\\console.log",
+      "retained": "pack_replay\\animated\\console.log.gz",
+      "bytes": 7357,
+      "sha256": "c300846d2c587647c2c08418a436db0f9e23d167e14392dcfdb35826459e30be"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\animated\\engine.log",
+      "retained": "pack_replay\\animated\\engine.log.gz",
+      "bytes": 7308,
+      "sha256": "d49776f219e1f54b87eeb068817c5b44e37e145ba226dd6df44abf92ff1e08e4"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\animated\\result.json",
+      "retained": "pack_replay\\animated\\result.json.gz",
+      "bytes": 12960,
+      "sha256": "b2ada73b1b8059c2c3c1ad5715758316c3a0c55611e680eb77f5ae1f91a2f066"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\graphical\\console.log",
+      "retained": "pack_replay\\graphical\\console.log.gz",
+      "bytes": 6892,
+      "sha256": "0ddab1fe894887115c5ea836fed0fb3cd00a5a51f89bcc5a076a15c6da49cc98"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\graphical\\engine.log",
+      "retained": "pack_replay\\graphical\\engine.log.gz",
+      "bytes": 6853,
+      "sha256": "8052745bb1bf78f6da7568a3846ed0f83908c76b47a76ac16bd389a8cd437a02"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\graphical\\result.json",
+      "retained": "pack_replay\\graphical\\result.json.gz",
+      "bytes": 12667,
+      "sha256": "b629684c078146f07c066b56fea8d952473c554a46096c2b0bdc2c05772a71a5"
+    },
+    {
+      "source": "reports\\mining_target\\dff92d7a00284b319f8d1f97481290d1\\run.json",
+      "retained": "pack_replay\\run.json.gz",
+      "bytes": 101092,
+      "sha256": "d3eb12d27ccaa860201bdaf583e7bc286acb6c68782b8173b1e639f618114a39"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\mining_rewards\\console.log",
+      "retained": "suites\\20261026T124059Z\\mining_rewards\\console.log.gz",
+      "bytes": 2420,
+      "sha256": "7f6ed9dfc31ce84eb9721508d5e01a65094839486176a533162a55b9b9a4c773"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\mining_rewards\\engine.log",
+      "retained": "suites\\20261026T124059Z\\mining_rewards\\engine.log.gz",
+      "bytes": 2378,
+      "sha256": "e6b4d7164324d0501e387568da0fef5d9533c8d8f4065d2228c031f7cd315749"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\suite.json",
+      "retained": "suites\\20261026T124059Z\\suite.json.gz",
+      "bytes": 10424,
+      "sha256": "1426b9c1b07f8a443acccdc896e7e89552bea50949e532239828bc2f6e38f36d"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_contact_mining\\console.log",
+      "retained": "suites\\20261026T124059Z\\terrain_contact_mining\\console.log.gz",
+      "bytes": 7860,
+      "sha256": "d7acb453f829ee3cdbbcb3cd7d4ae837fc612ad54f19ffd91273bc201bf7e92a"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_contact_mining\\engine.log",
+      "retained": "suites\\20261026T124059Z\\terrain_contact_mining\\engine.log.gz",
+      "bytes": 7719,
+      "sha256": "1274c987ffe44484ed778ab2131e73ee8293d77b2900cf5620bef1919c316d6b"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_edit_paged_recovery\\console.log",
+      "retained": "suites\\20261026T124059Z\\terrain_edit_paged_recovery\\console.log.gz",
+      "bytes": 1248,
+      "sha256": "1ccb6cc839282b4cef813ed9ae3454c9dbf227d7ca37517b0b92c6aaf80415cb"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_edit_paged_recovery\\engine.log",
+      "retained": "suites\\20261026T124059Z\\terrain_edit_paged_recovery\\engine.log.gz",
+      "bytes": 1216,
+      "sha256": "3de6ba3b1f776a14a2e49d8f7f0ef4fc72d7cf9bbc80b2707c8ed100a3cb30b8"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_edit_recovery\\console.log",
+      "retained": "suites\\20261026T124059Z\\terrain_edit_recovery\\console.log.gz",
+      "bytes": 1181,
+      "sha256": "086032db5f7d96492387639b9bb701abadebdd9662374777fe3d2381b0869736"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_edit_recovery\\engine.log",
+      "retained": "suites\\20261026T124059Z\\terrain_edit_recovery\\engine.log.gz",
+      "bytes": 1158,
+      "sha256": "b8b1a72d76ee9fa2d033203351026c97b429fd005933cab3d56aa40b89278da3"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_history_storage\\console.log",
+      "retained": "suites\\20261026T124059Z\\terrain_history_storage\\console.log.gz",
+      "bytes": 1138,
+      "sha256": "de0d534428e2f1db370ab49699fd617e82e3c9457938fad5f66f1da302c36d6b"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_history_storage\\engine.log",
+      "retained": "suites\\20261026T124059Z\\terrain_history_storage\\engine.log.gz",
+      "bytes": 1120,
+      "sha256": "0acfc4e31eaa7f856fddf4f3f3777c2d60dda7fe0f4dfd74ef92dec6d4e4255c"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_history_storage\\measurements.json",
+      "retained": "suites\\20261026T124059Z\\terrain_history_storage\\measurements.json.gz",
+      "bytes": 3112,
+      "sha256": "d1087c8b654a97108c2869c4ea3154f47f5c30c87437ca5aa850f555df942605"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_material_items\\console.log",
+      "retained": "suites\\20261026T124059Z\\terrain_material_items\\console.log.gz",
+      "bytes": 1251,
+      "sha256": "e0c181027d14f4d9a9f708a632a9a42be5c92f27bbb9a6bc42d5a1b213ac09c0"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T124059Z\\terrain_material_items\\engine.log",
+      "retained": "suites\\20261026T124059Z\\terrain_material_items\\engine.log.gz",
+      "bytes": 1224,
+      "sha256": "acf1eeec9aedf30023c71441e9fd68d5d3420e16c8cd389fb56b51ab4002d079"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\mining_rewards\\console.log",
+      "retained": "suites\\20261026T125027Z\\mining_rewards\\console.log.gz",
+      "bytes": 2420,
+      "sha256": "7f6ed9dfc31ce84eb9721508d5e01a65094839486176a533162a55b9b9a4c773"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\mining_rewards\\engine.log",
+      "retained": "suites\\20261026T125027Z\\mining_rewards\\engine.log.gz",
+      "bytes": 2378,
+      "sha256": "e6b4d7164324d0501e387568da0fef5d9533c8d8f4065d2228c031f7cd315749"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\suite.json",
+      "retained": "suites\\20261026T125027Z\\suite.json.gz",
+      "bytes": 13828,
+      "sha256": "1d5f2063c2a489896b48c575159d58fe321913f6c422e27c0929ad097a280477"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_contact_mining\\console.log",
+      "retained": "suites\\20261026T125027Z\\terrain_contact_mining\\console.log.gz",
+      "bytes": 8085,
+      "sha256": "b922b23e979a22886ce1007af0f2b1e0110c35627a2e47a8ca1ac8e39a0f2384"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_contact_mining\\engine.log",
+      "retained": "suites\\20261026T125027Z\\terrain_contact_mining\\engine.log.gz",
+      "bytes": 7940,
+      "sha256": "440a0b93cf9a6d2a6dbb927af6eff1c78b16eb47847dc41fafbfbe5fe0f52117"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_contact_mining\\measurements.json",
+      "retained": "suites\\20261026T125027Z\\terrain_contact_mining\\measurements.json.gz",
+      "bytes": 255,
+      "sha256": "a4f25b8ce7feaaf38a4851e263763b3cd215e19982eeadce04a65f5532274578"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_edit_paged_recovery\\console.log",
+      "retained": "suites\\20261026T125027Z\\terrain_edit_paged_recovery\\console.log.gz",
+      "bytes": 1248,
+      "sha256": "1ccb6cc839282b4cef813ed9ae3454c9dbf227d7ca37517b0b92c6aaf80415cb"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_edit_paged_recovery\\engine.log",
+      "retained": "suites\\20261026T125027Z\\terrain_edit_paged_recovery\\engine.log.gz",
+      "bytes": 1216,
+      "sha256": "3de6ba3b1f776a14a2e49d8f7f0ef4fc72d7cf9bbc80b2707c8ed100a3cb30b8"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_edit_recovery\\console.log",
+      "retained": "suites\\20261026T125027Z\\terrain_edit_recovery\\console.log.gz",
+      "bytes": 1181,
+      "sha256": "086032db5f7d96492387639b9bb701abadebdd9662374777fe3d2381b0869736"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_edit_recovery\\engine.log",
+      "retained": "suites\\20261026T125027Z\\terrain_edit_recovery\\engine.log.gz",
+      "bytes": 1158,
+      "sha256": "b8b1a72d76ee9fa2d033203351026c97b429fd005933cab3d56aa40b89278da3"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_history_storage\\console.log",
+      "retained": "suites\\20261026T125027Z\\terrain_history_storage\\console.log.gz",
+      "bytes": 1138,
+      "sha256": "de0d534428e2f1db370ab49699fd617e82e3c9457938fad5f66f1da302c36d6b"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_history_storage\\engine.log",
+      "retained": "suites\\20261026T125027Z\\terrain_history_storage\\engine.log.gz",
+      "bytes": 1120,
+      "sha256": "0acfc4e31eaa7f856fddf4f3f3777c2d60dda7fe0f4dfd74ef92dec6d4e4255c"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_history_storage\\measurements.json",
+      "retained": "suites\\20261026T125027Z\\terrain_history_storage\\measurements.json.gz",
+      "bytes": 3110,
+      "sha256": "473ab7d0110c5073e253d437043dffe3f65bd1eadceade2409b25b6309fe49d0"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_material_items\\console.log",
+      "retained": "suites\\20261026T125027Z\\terrain_material_items\\console.log.gz",
+      "bytes": 1251,
+      "sha256": "e0c181027d14f4d9a9f708a632a9a42be5c92f27bbb9a6bc42d5a1b213ac09c0"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125027Z\\terrain_material_items\\engine.log",
+      "retained": "suites\\20261026T125027Z\\terrain_material_items\\engine.log.gz",
+      "bytes": 1224,
+      "sha256": "acf1eeec9aedf30023c71441e9fd68d5d3420e16c8cd389fb56b51ab4002d079"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125222Z\\suite.json",
+      "retained": "suites\\20261026T125222Z\\suite.json.gz",
+      "bytes": 6591,
+      "sha256": "a73b4f9fdf244d87d9e0733247cbdc68e4f1497e19e95bce2cb1c6f622f6517b"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125222Z\\terrain_contact_mining\\console.log",
+      "retained": "suites\\20261026T125222Z\\terrain_contact_mining\\console.log.gz",
+      "bytes": 7860,
+      "sha256": "1a3d410724ecce7c30f71caac8e259fd85d3446eecf14433f455c276967923b3"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125222Z\\terrain_contact_mining\\engine.log",
+      "retained": "suites\\20261026T125222Z\\terrain_contact_mining\\engine.log.gz",
+      "bytes": 7719,
+      "sha256": "430ba137c7b6667cda75a2c071ba8b318aae3bb6c249a96ab5ed81f9813e6688"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125222Z\\terrain_contact_mining\\measurements.json",
+      "retained": "suites\\20261026T125222Z\\terrain_contact_mining\\measurements.json.gz",
+      "bytes": 255,
+      "sha256": "5a3d9d046b726a1d691e83fd54442b4cfbb3b43d27a14c6ce68374ee9a201c0d"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125223Z\\suite.json",
+      "retained": "suites\\20261026T125223Z\\suite.json.gz",
+      "bytes": 4197,
+      "sha256": "e7189cbfdc28e99ea2f391ebc87db7f4ec36097f3d911a7ac082f2c8bea171f8"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125223Z\\terrain_contact_mining\\console.log",
+      "retained": "suites\\20261026T125223Z\\terrain_contact_mining\\console.log.gz",
+      "bytes": 7860,
+      "sha256": "e6e38b2adea0635160690d5c868a7857835de321320781ae31ece2372a5234ab"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125223Z\\terrain_contact_mining\\engine.log",
+      "retained": "suites\\20261026T125223Z\\terrain_contact_mining\\engine.log.gz",
+      "bytes": 7719,
+      "sha256": "54dc9c1a80257f00e13478ad4b6656566b550080a66bab7ce77aa2ece52950b0"
+    },
+    {
+      "source": "reports\\terrain_editing\\20261026T125223Z\\terrain_contact_mining\\measurements.json",
+      "retained": "suites\\20261026T125223Z\\terrain_contact_mining\\measurements.json.gz",
+      "bytes": 255,
+      "sha256": "a2af4996397981dfc506af7811128716b8e2d53ec5ae85a5aac953d45677305a"
+    },
+    {
+      "source": "reports\\mining_target\\build_final.log",
+      "retained": "build_and_control\\build_final.log.gz",
+      "bytes": 3024,
+      "sha256": "9334426cd25ff93849afa7a9bc4c4d608aa840ec1930f8696758ba76cc881238"
+    },
+    {
+      "source": "reports\\mining_target\\release.log",
+      "retained": "build_and_control\\release.log.gz",
+      "bytes": 8913,
+      "sha256": "144197f2c1fe7e5e222442d7521a562f9cacec6f9a5321bc2de47aaf7d00562d"
+    },
+    {
+      "source": "reports\\mining_target\\release_final.log",
+      "retained": "build_and_control\\release_final.log.gz",
+      "bytes": 7864,
+      "sha256": "f7b9def6c8bf0f3c28c8d34ec5755e5142a8c995882c4e685fdbe98659ac5833"
+    },
+    {
+      "source": "reports\\mining_target\\release_verified.log",
+      "retained": "build_and_control\\release_verified.log.gz",
+      "bytes": 7864,
+      "sha256": "894793b994b56f347a9a944b7958fd4063f0f3e91000eff931128d443a218b2f"
+    },
+    {
+      "source": "reports\\mining_target\\export.log",
+      "retained": "build_and_control\\export.log.gz",
+      "bytes": 283,
+      "sha256": "5b0b82582e92238df14724cca52fd64f5372c0b8492b69bfbb8a4b79be039867"
+    },
+    {
+      "source": "reports\\mining_target\\source.json",
+      "retained": "build_and_control\\source.json.gz",
+      "bytes": 92181,
+      "sha256": "4af272af6439826bf2bcb95092b736f780233ed0cd3932d0c9f82762a8013703"
+    },
+    {
+      "source": "reports\\terrain_contact_mining_release.json",
+      "retained": "build_and_control\\release_verified.json.gz",
+      "bytes": 329,
+      "sha256": "e0f7f85198f2fa1ccedb3030dd587ece3a099236222bc09eafcad8ba1d279989"
+    },
+    {
+      "source": "reports\\volumetric_terrain_build_template_debug.json",
+      "retained": "build_and_control\\template_debug.json.gz",
+      "bytes": 813,
+      "sha256": "fca2ab30890759067d2009086f619b7a67f8d6daa5ed1d119128a8f849266798"
+    },
+    {
+      "source": "reports\\volumetric_terrain_build_template_release.json",
+      "retained": "build_and_control\\template_release.json.gz",
+      "bytes": 833,
+      "sha256": "02e3a1314c96b7f0ddce502790d761307cf3b9f06db7f520ecc2d241d9ee6cc3"
+    },
+    {
+      "source": "reports/mining_target/before/before.png",
+      "retained": "before.png",
+      "sha256": "2eed3cc65ba8b3f75427227efe1b98904b2b66cbe879a76ef0faad3b30896043"
+    },
+    {
+      "source": "reports/mining_target/dff92d7a00284b319f8d1f97481290d1/graphical/after.png",
+      "retained": "after.png",
+      "sha256": "d372bba63183e38aafec7ef395251ccf319fe1116bbf104e5a5be7748b43df04"
+    }
+  ],
+  "scope": "Exact saved-pose before/after, three animated input strikes plus three offscreen contacts, finite native and storage regressions. No exhaustive hardware or performance claim. Original player saves untouched."
+}

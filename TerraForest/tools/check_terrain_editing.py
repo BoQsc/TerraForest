@@ -42,6 +42,7 @@ def main():
         ("terrain_residency", "TERRAIN_RESIDENCY failures=0"),
         ("terrain_residency_capacity", "TERRAIN_RESIDENCY_CAPACITY failures=0"),
         ("terrain_material_items", "TERRAIN_MATERIAL_ITEMS failures=0"),
+        ("terrain_contact_mining", "TERRAIN_CONTACT_MINING checks="),
         ("mining_rewards", "MINING_REWARDS"),
         ("terrain_density_backend_probe", "shutdown accounts for all accepted queries"),
         ("terrain_target_readiness_probe", "TARGET_READINESS"),
