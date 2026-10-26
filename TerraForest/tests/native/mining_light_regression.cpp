@@ -60,6 +60,37 @@ int main(){
     check(equal,"cold and warm lighting builds are deterministic");
     check(before.n==after.n&&std::memcmp(before.p,after.p,before.n)==0,"lighting never changes saved density");
     before.release();after.release();repeat.release();mesh.release();world.release();
+    World shaft;shaft.init(1703,5);
+    check(brush(shaft,{320,32,320},6,1,true),"narrow sky fixture has a solid roof");
+    check(brush(shaft,{320,32,320},2,0,false),"narrow sky fixture has a chamber");
+    RoofCache closed_roof(shaft);
+    V3 origin={320,32,320};
+    check(diffuse_sky_visibility(shaft,closed_roof,origin,terrain_build_epoch(&shaft))==0,"refinement does not brighten a sealed chamber");
+    V3 minimum,maximum;int changed=0;
+    check(shaft.edit({321,32,320},{321,40,320},.8f,0,false,1,minimum,maximum,changed),"narrow steep shaft opens to daylight");
+    RoofCache open_roof(shaft);
+    const V3 original_directions[12]={
+        {.80f,.60f,0},{-.80f,.60f,0},{0,.60f,.80f},{0,.60f,-.80f},
+        {.9837f,.18f,0},{-.9837f,.18f,0},{0,.18f,.9837f},{0,.18f,-.9837f},
+        {.6956f,.18f,.6956f},{-.6956f,.18f,.6956f},
+        {.6956f,.18f,-.6956f},{-.6956f,.18f,-.6956f}};
+    int original_visible=0;
+    for(const V3 &direction:original_directions)original_visible+=!trace_occluded(shaft,origin,direction,&open_roof);
+    check(original_visible==0,"original twelve directions miss the steep opening");
+    u64 rays_before=shaft.light_rays;
+    float refined=diffuse_sky_visibility(shaft,open_roof,origin,terrain_build_epoch(&shaft));
+    u64 refined_rays=shaft.light_rays-rays_before;
+    printf("NARROW_SKY visibility=%.6f rays=%llu\n",refined,(unsigned long long)refined_rays);
+    check(refined==1.f/64.f,"narrow shaft receives restrained nonzero sky fill");
+    check(refined_rays==76,"refinement has a fixed maximum of 76 visibility rays");
+    rays_before=shaft.light_rays;
+    check(diffuse_sky_visibility(shaft,open_roof,origin,terrain_build_epoch(&shaft))==refined&&shaft.light_rays==rays_before,"exact-point cache preserves bits without retracing");
+    check(shaft.light_exact_probes.n==32768,"exact-point cache has bounded entry storage");
+    check(diffuse_sky_visibility(shaft,open_roof,{319,32,320},terrain_build_epoch(&shaft))==0,"adjacent occluded point stays dark despite air connectivity");
+    check(brush(shaft,{321,37,320},2,1,true),"shaft can be sealed again");
+    RoofCache resealed_roof(shaft);
+    check(diffuse_sky_visibility(shaft,resealed_roof,origin,terrain_build_epoch(&shaft))==0,"resealed chamber loses its daylight");
+    shaft.release();
     printf("MINING_LIGHT_REGRESSION failures=%d\n",failures);
     return failures?1:0;
 }

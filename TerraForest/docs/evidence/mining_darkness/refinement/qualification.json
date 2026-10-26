@@ -1,0 +1,356 @@
+{
+  "baseline_revision": "72951f9e",
+  "runs": {
+    "before": {
+      "token": "7d3bf0a6a4204a59",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 82420,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 32.989927800023,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "density_sha256": "bc4cff2357c12fceb71dd8d2e7fe379b45cb9d330ef47adef677b77661eb35cb"
+    },
+    "source": {
+      "token": "7cd14639952f459a",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 84200,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 32.95489950000774,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "density_sha256": "bc4cff2357c12fceb71dd8d2e7fe379b45cb9d330ef47adef677b77661eb35cb"
+    },
+    "previous_repair": {
+      "token": "855d9d37d1084fcc",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 45336,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 33.566177000058815,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "density_sha256": "f53cc7578a6b6e54b1f1a659fcee0ad8d16f2ee7be01768cc900154330932bd5"
+    },
+    "pack": {
+      "token": "1519ad98557b4e2a",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 15388,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 32.931299900054,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "density_sha256": "bc4cff2357c12fceb71dd8d2e7fe379b45cb9d330ef47adef677b77661eb35cb"
+    }
+  },
+  "comparison": {
+    "crop_xyxy": [
+      500,
+      420,
+      950,
+      780
+    ],
+    "pixels": 162000,
+    "definition": "Maximum of RGB channels <= threshold, 8-bit sRGB; same camera, headlamp off, avoids HUD and held tool. Local image comparison, not a universal lighting requirement.",
+    "thresholds": [
+      {
+        "maximum_rgb": 2,
+        "before": 8387,
+        "after": 0
+      },
+      {
+        "maximum_rgb": 4,
+        "before": 106498,
+        "after": 64
+      },
+      {
+        "maximum_rgb": 8,
+        "before": 107005,
+        "after": 13307
+      },
+      {
+        "maximum_rgb": 12,
+        "before": 108022,
+        "after": 55717
+      }
+    ]
+  },
+  "runtime_frames": {
+    "count": 5207,
+    "max_ms": 24.309,
+    "median_ms": 16.655,
+    "over_50ms": 0,
+    "p95_ms": 16.828,
+    "p99_ms": 17.103
+  },
+  "endurance_scope": "Actual held mouse/controller input for all four dev terrain modes, maximum sphere/box volume publication, 400 mixed API edits per round, idle recovery. Full rendering/collision/vegetation active; entities disabled. Native-volume and storage checks cover separate long histories and archive reopen. Not multi-hour endurance or all hardware.",
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "e622b37d83c720f9475d6ea6bdc799c955d5aec5d693281ba6c8bc559410a600",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8320b12807395e75fcb98bb7a29adbf37b3640c46638d4e0ea52a8f87e04b81a"
+  },
+  "source_sha256": {
+    "addons\\volumetric_terrain\\native\\core.cpp": "5f11a621fed9e9f1bbe6c9b818982e4a3db65de2a0bb3ab8bd09dd40423bcdfa",
+    "addons\\volumetric_terrain\\native\\core.h": "c478e77802435a089f158cc607bcdb534dccf26fc05ceef6dd6628caf12bfd1e",
+    "tests\\native\\mining_light_regression.cpp": "f023c3bb0253ae063842490aaf82cb534ba70c86e93f03f25ea091b0459005d8",
+    "tests\\native\\mining_light_benchmark.cpp": "fdaa274c5b12e0ff6e57811b71d9b5e097933f4199c3f70bc78c8a7955d95088"
+  },
+  "rejected_trials": [
+    "Unrestricted refinement: failed cache reuse assertion and 1442.984/1133.123ms cold/warm cave cost.",
+    "Initial narrow-shaft fixture expected light at a truly occluded point; it is now a retained dark control."
+  ],
+  "limitations": [
+    "Finite sky sampling, not multi-bounce GI.",
+    "Extra rays restricted to edited density-page neighborhoods; untouched caves retain earlier approximation.",
+    "Visual inspection of final captures is not user approval.",
+    "Native saved-patch timings and finite current-hardware editing workload, not universal performance.",
+    "Startup is excluded from runtime frame gates; it retains four >50ms frames, up to 85.974ms. Final diagnostic shutdown overlapped early endurance startup; measured editing ran after shutdown.",
+    "Earlier render/focus-stall investigation remains deferred."
+  ],
+  "artifacts": [
+    {
+      "file": "before_run.json.gz",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\run.json",
+      "sha256": "6eb52c9d6383fa173413dd862dff378a5a85b4e976a99899677eca9a873cb1d4",
+      "source_sha256": "9f7f49036dd71746a8681c88c04e8d7c182f8dbb2a373263dc85210739cdbe9a"
+    },
+    {
+      "file": "before_scene.json.gz",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\scene.json",
+      "sha256": "c45a17c8d5164d30b3c396acd01c08a590cfc988736f27d0c4e6b84c8a240b62",
+      "source_sha256": "4c2806994f94aa9502a7d95e0d04e3df8ebb1bc189e909db4039f552d2022893"
+    },
+    {
+      "file": "before_console.log.gz",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\console.log",
+      "sha256": "86ade99a784f71f14df6c4274dc8b416f3efdf2bd6cbe95757c91f4cbeb5d622",
+      "source_sha256": "89cb59149b70e2c77c69f7ec06f3058eef5d47d9cab9a7351cbf3f320518143b"
+    },
+    {
+      "file": "source_run.json.gz",
+      "source": "reports\\mining_darkness\\7cd14639952f459a\\run.json",
+      "sha256": "656cb50c8debc08c91455025c47d981aa4f07fbe3e5fb1bcc8b4958a3b8afc4f",
+      "source_sha256": "4c92e2d1bc1f9e629209025e5920b466774cd0c919b45c9c625e52d58b16ee90"
+    },
+    {
+      "file": "source_scene.json.gz",
+      "source": "reports\\mining_darkness\\7cd14639952f459a\\scene.json",
+      "sha256": "c45a17c8d5164d30b3c396acd01c08a590cfc988736f27d0c4e6b84c8a240b62",
+      "source_sha256": "4c2806994f94aa9502a7d95e0d04e3df8ebb1bc189e909db4039f552d2022893"
+    },
+    {
+      "file": "source_console.log.gz",
+      "source": "reports\\mining_darkness\\7cd14639952f459a\\console.log",
+      "sha256": "86ade99a784f71f14df6c4274dc8b416f3efdf2bd6cbe95757c91f4cbeb5d622",
+      "source_sha256": "89cb59149b70e2c77c69f7ec06f3058eef5d47d9cab9a7351cbf3f320518143b"
+    },
+    {
+      "file": "previous_repair_run.json.gz",
+      "source": "reports\\mining_darkness\\855d9d37d1084fcc\\run.json",
+      "sha256": "fcfff3dc665c06fa916ad1459efbefe1c6c0528313930d03300739f9a2ca5039",
+      "source_sha256": "f6cf9c17e7b8d49593686bb4f6479f8c318bfd849cf890d82290d4ec1c2097f5"
+    },
+    {
+      "file": "previous_repair_scene.json.gz",
+      "source": "reports\\mining_darkness\\855d9d37d1084fcc\\scene.json",
+      "sha256": "76baf9b76ffb2e4fcac9dbffccbbd6f2c2878db102aac5c9ffd81f1ae721a0b5",
+      "source_sha256": "43a8fc7137faa93a267fc086f4a1880a0b59f33d5af0f1040e9ede3d5124b0a1"
+    },
+    {
+      "file": "previous_repair_console.log.gz",
+      "source": "reports\\mining_darkness\\855d9d37d1084fcc\\console.log",
+      "sha256": "86ade99a784f71f14df6c4274dc8b416f3efdf2bd6cbe95757c91f4cbeb5d622",
+      "source_sha256": "89cb59149b70e2c77c69f7ec06f3058eef5d47d9cab9a7351cbf3f320518143b"
+    },
+    {
+      "file": "pack_run.json.gz",
+      "source": "reports\\mining_darkness\\1519ad98557b4e2a\\run.json",
+      "sha256": "01e1569d71e9eadfe7403a494506e65a26342bb07cf6443cc97c49434cfdd484",
+      "source_sha256": "f40730175411a7ed635d5cd24152ed3a3572bd876d818510ab9a9abf5fd11d4b"
+    },
+    {
+      "file": "pack_scene.json.gz",
+      "source": "reports\\mining_darkness\\1519ad98557b4e2a\\scene.json",
+      "sha256": "c45a17c8d5164d30b3c396acd01c08a590cfc988736f27d0c4e6b84c8a240b62",
+      "source_sha256": "4c2806994f94aa9502a7d95e0d04e3df8ebb1bc189e909db4039f552d2022893"
+    },
+    {
+      "file": "pack_console.log.gz",
+      "source": "reports\\mining_darkness\\1519ad98557b4e2a\\console.log",
+      "sha256": "86ade99a784f71f14df6c4274dc8b416f3efdf2bd6cbe95757c91f4cbeb5d622",
+      "source_sha256": "89cb59149b70e2c77c69f7ec06f3058eef5d47d9cab9a7351cbf3f320518143b"
+    },
+    {
+      "file": "before.png",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\00_no_lamp.png",
+      "sha256": "24f0400133f61a9113ceea1f7ebabac374207ae87075d5571c89d99eb5661c44",
+      "source_sha256": "24f0400133f61a9113ceea1f7ebabac374207ae87075d5571c89d99eb5661c44"
+    },
+    {
+      "file": "sky_before.png",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\debug_4.png",
+      "sha256": "83f15fbc9334a00d261d2830e3798c1702bf198c28f2ff01fcca1ec4062d5d0c",
+      "source_sha256": "83f15fbc9334a00d261d2830e3798c1702bf198c28f2ff01fcca1ec4062d5d0c"
+    },
+    {
+      "file": "after.png",
+      "source": "reports\\mining_darkness\\1519ad98557b4e2a\\00_no_lamp.png",
+      "sha256": "9905f98353d13492715fad09469e9277e39945d7fd9c22575b3e34fe0dfe1344",
+      "source_sha256": "9905f98353d13492715fad09469e9277e39945d7fd9c22575b3e34fe0dfe1344"
+    },
+    {
+      "file": "sky_after.png",
+      "source": "reports\\mining_darkness\\1519ad98557b4e2a\\debug_4.png",
+      "sha256": "d91127058f8c72fa4112b6ec1fc149a4406ffc3d56811e3726da1f57729342a1",
+      "source_sha256": "d91127058f8c72fa4112b6ec1fc149a4406ffc3d56811e3726da1f57729342a1"
+    },
+    {
+      "file": "mining_light_regression_O2.log.gz",
+      "source": "reports\\mining_darkness\\mining_light_regression_O2.log",
+      "sha256": "86a87d98d8633aa4d8801b85957d4fb576953304816c758b08ac980dcd4a3777",
+      "source_sha256": "23b3334a93b3a6d24355e20928de478a17749474a8a878a8aeadadb7931cfc54"
+    },
+    {
+      "file": "mining_light_regression_O3.log.gz",
+      "source": "reports\\mining_darkness\\mining_light_regression_O3.log",
+      "sha256": "86a87d98d8633aa4d8801b85957d4fb576953304816c758b08ac980dcd4a3777",
+      "source_sha256": "23b3334a93b3a6d24355e20928de478a17749474a8a878a8aeadadb7931cfc54"
+    },
+    {
+      "file": "regression_044_bounded.log.gz",
+      "source": "reports\\mining_darkness\\regression_044_bounded.log",
+      "sha256": "c964698c75720be9a251642a7c945fe1924161363e43f8a5a2478bf1c3a71847",
+      "source_sha256": "fc56d6a1c51e0454b823c731c7aeea2b7e2aadd12ca4bd4f1df585aaa24f1863"
+    },
+    {
+      "file": "regression_045_bounded.log.gz",
+      "source": "reports\\mining_darkness\\regression_045_bounded.log",
+      "sha256": "bc2a801e1e9056ef83a3fc8acdf4098856abad4407706a092c5b3b078129e027",
+      "source_sha256": "9a229ca2ac0860d7092f88d96f96deff1d2694da4aa50ff7482182277be31e90"
+    },
+    {
+      "file": "regression_044_baseline.log.gz",
+      "source": "reports\\mining_darkness\\regression_044_baseline.log",
+      "sha256": "a4c1798ac2b8e608b1b60f54cbca96bfa015cdf3314536d87d01d3fcce50b280",
+      "source_sha256": "ecf68c73de791f917ebbf73c46b32e7d1ae0a588b5f6044283b1acbc2a8c3c9d"
+    },
+    {
+      "file": "regression_045_baseline.log.gz",
+      "source": "reports\\mining_darkness\\regression_045_baseline.log",
+      "sha256": "a96cfb107546bcfe9b4b452bf73beed68de0b1fe5342bdea28bd5af1cb863f61",
+      "source_sha256": "6ee4456e020465d4034f00a7413f497d7d3960d6bc736ad48b2d660a09c52baa"
+    },
+    {
+      "file": "saved_benchmark_baseline.log.gz",
+      "source": "reports\\mining_darkness\\saved_benchmark_baseline.log",
+      "sha256": "679c4cfbd661d0a31253a60337f9515d57dd295128dd61111e80b799cc4ae7d2",
+      "source_sha256": "02365925a7f9ea61675a76019592cc6b8d7339baec8dd65231a2992cdf76f5fb"
+    },
+    {
+      "file": "saved_benchmark_bounded.log.gz",
+      "source": "reports\\mining_darkness\\saved_benchmark_bounded.log",
+      "sha256": "b653051ff7f5fd811eaf965319f92c98a16ec4503f88d412befbeb7ce5dd0757",
+      "source_sha256": "8851c897040b5e38d01e327de2209e74a7ea43cc703ba9bdbfa25836c44f10dd"
+    },
+    {
+      "file": "refinement_regression.log.gz",
+      "source": "reports\\mining_darkness\\refinement_regression.log",
+      "sha256": "8ceeb1c09c3ed4b7806c3d78a4ba1eae9018a100e65486fa70ff03728f0e45bf",
+      "source_sha256": "8914e38ec1dd4d197f6a8e871f0bf1948abf85f8225d9dda9e7c373fcb22861c"
+    },
+    {
+      "file": "refinement_search.log.gz",
+      "source": "reports\\mining_darkness\\refinement_search.log",
+      "sha256": "e9fcc78e6729e5dd1dfea24acd66d0ef38e257767048ea7e864bf7dde4f27abb",
+      "source_sha256": "eed8fb61fdfd6ad3a487253c6291fcea6a9c3eafa778686264c914ec78e5acb4"
+    },
+    {
+      "file": "final_build.log.gz",
+      "source": "reports\\mining_darkness\\final_build.log",
+      "sha256": "6817223d86d68688245d55a5b0dfd84d074ddad2dd98f328141fb2a68ac6d08d",
+      "source_sha256": "fd78a9e150ccebac401b00aa5f2d701dedb2077201cbf4b4cde7c0bf89bb39aa"
+    },
+    {
+      "file": "final_export.log.gz",
+      "source": "reports\\mining_darkness\\final_export.log",
+      "sha256": "7ecc22318ea91f9308736d5dea3010e3e7562e6c88925e52180adeef97f6155c",
+      "source_sha256": "5b0b82582e92238df14724cca52fd64f5372c0b8492b69bfbb8a4b79be039867"
+    },
+    {
+      "file": "rejected_unrestricted_regression_045.log.gz",
+      "source": "reports\\mining_darkness\\regression_045_final.log",
+      "sha256": "9ab8a963912c40a44f59b102eb97a4717b81f58cb52b99bd3552835421b19b6a",
+      "source_sha256": "7077736ea82a2fb5f1449cdefdfd6804294a247100859d7344f1b718ee0ca94a"
+    },
+    {
+      "file": "baseline_dense_probe.log.gz",
+      "source": "reports\\mining_darkness\\7d3bf0a6a4204a59\\adaptive_probe.log",
+      "sha256": "02371c9126fffb011c677d7fbcacf69cffbf12c963829917d2333356c444fe89",
+      "source_sha256": "9339b8b09d695515b507c40afacf4248453cabb7e13d4c196b0916df70b10e8d"
+    },
+    {
+      "file": "template_debug_build.json.gz",
+      "source": "reports\\volumetric_terrain_build_template_debug.json",
+      "sha256": "341f573c44413c2e399629fa56882151a64b5fd7972d0fc70411f50deccfadae",
+      "source_sha256": "e9b782d3efe17f7756376f4a0ee9ed4c99d34daf2c6002173e0d4d8f55dc6363"
+    },
+    {
+      "file": "template_release_build.json.gz",
+      "source": "reports\\volumetric_terrain_build_template_release.json",
+      "sha256": "5d018053415d20553e4b25e66de50dec0b807e8d46782ee5b1436fb9915ece58",
+      "source_sha256": "977843204a4441701140cf453c0fcf5051184ee82e1fd5440f43e07f79c72b0b"
+    },
+    {
+      "file": "editing_suite.json.gz",
+      "source": "reports\\terrain_editing\\20261026T132749Z\\suite.json",
+      "sha256": "234d7547ec200e706fa5c4b380c54674a52323e1853bf42e1f87b158d4046d7f",
+      "source_sha256": "d2da0e8c7a686c2eb08674b54b866070325d32e8ca9be84cc56e2d46bc27bc47"
+    },
+    {
+      "file": "contact_mining.log.gz",
+      "source": "reports\\terrain_editing\\20261026T132749Z\\terrain_contact_mining\\console.log",
+      "sha256": "88634ba715c0ac38f433edf800235176689673311692a231d3ec984d3144ede0",
+      "source_sha256": "326746023f8aa21c703e699c2245ed9af027a139f7c00526a442d3293c604ae6"
+    },
+    {
+      "file": "endurance_console.log.gz",
+      "source": "reports\\terrain_editing\\20261026T132749Z\\terrain_tools_endurance\\console.log",
+      "sha256": "d113f55605f55789b6d69a5c3d49a1778d4e782bf75935c2bc2c10b2b5b78231",
+      "source_sha256": "2ad5b91e0f30c18eb83ef65ea14ae51938d5c689f39ce4e9cc0f1f866ecc1a17"
+    },
+    {
+      "file": "endurance_frames.csv.gz",
+      "source": "reports\\terrain_editing\\20261026T132749Z\\terrain_tools_endurance\\frames.csv",
+      "sha256": "890c97ab238ad4c2d5a9b32a792271cc0fe370f364d458766088a05fa218a4fb",
+      "source_sha256": "42ff2018ad7c93ea5ac2450f05706bcab580f72d38c67efd75bf7d64b9684c77"
+    },
+    {
+      "file": "endurance_measurements.json.gz",
+      "source": "reports\\terrain_editing\\20261026T132749Z\\terrain_tools_endurance\\measurements.json",
+      "sha256": "54762e46fc9d6d8f6114e161196efc983bd371b13051363f041501816a6749e0",
+      "source_sha256": "e2179e7cbfecfd5c552abdae33f83215f07f0f6fe6c1f775e5c602c7d79f380a"
+    }
+  ]
+}

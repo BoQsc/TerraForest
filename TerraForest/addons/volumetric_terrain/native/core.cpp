@@ -5,6 +5,7 @@
 #include "terrain_checksum.hpp"
 #include "terrain_placement_query.hpp"
 #include "generation_contact.hpp"
+#include <array>
 #if defined(TERRAFOREST_TYPED_BRIDGE)
 #include <chrono>
 #endif
@@ -427,7 +428,7 @@ void World::init(int p_seed,u32 generator){
  caves.push({{990,60,975},{1090,49,900},7});caves.push({{1090,49,900},{1090,49,900},17});
  V3 e2={480,height(480,800)-2,800};caves.push({e2,{460,54,690},6});caves.push({{460,54,690},{430,52,575},8});caves.push({{430,52,575},{420,52,550},18});
 }
-void World::release(){owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
+void World::release(){owned_heights.release();release_geometry_cache(*this);light_roofs.release();light_samples.release();light_tops.release();light_probe_ids.release();light_probes.release();light_exact_probes.release();lighting_revision=-1;for(int i=0;i<pages.n;i++){if(pages[i].d)tr_free(pages[i].d);if(pages[i].mat)tr_free(pages[i].mat);}pages.release();pages_by_key.release();blocks.release();caves.release();for(int i=0;i<block_columns.n;i++)block_columns[i].release();block_columns.release();if(edit_columns)tr_free(edit_columns);edit_columns=nullptr;}
 static u32 page_key(int x,int y,int z){return u32(x+NP*(z+NP*y))+1;}
 static void decode_page(u32 k,int&x,int&y,int&z){int v=int(k-1);x=v%NP;v/=NP;z=v%NP;y=v/NP;}
 const Page *World::resident_page(int index)const{
@@ -1038,7 +1039,7 @@ struct RoofCache {
  const World&w;Map &ids,&samples;List<float> &tops;
  explicit RoofCache(const World&world):w(world),ids(world.light_roofs),samples(world.light_samples),tops(world.light_tops){
   if(w.lighting_revision!=w.revision || samples.n>300000 || ids.n>65536 || w.light_probes.n>32768){
-   ids.release();samples.release();tops.release();w.light_probe_ids.release();w.light_probes.release();
+   ids.release();samples.release();tops.release();w.light_probe_ids.release();w.light_probes.release();w.light_exact_probes.release();
    w.lighting_revision=w.revision;
   }
  }
@@ -1228,17 +1229,62 @@ static bool connected_air(const World&w,RoofCache&roof,V3 a,V3 b){
  }
  return t>=distance;
 }
-void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
- const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
- const V3 toward_sun={-0.3141378f,0.7431448f,0.5908073f};
- // A vertical roof test alone classifies the open side of an excavation as
- // sealed. Sample the upper hemisphere only where cover can actually exist.
- // This is diffuse sky visibility, NOT indirect multi-bounce GI.
+static bool edited_sky_neighborhood(const World &world,V3 origin){
+ for(int page_z=imx(0,fl(origin.z-2)>>4);page_z<=imn(WORLD>>4,fl(origin.z+2)>>4);page_z++)
+  for(int page_y=imx(0,fl(origin.y-2)>>4);page_y<=imn(WORLD_Y>>4,fl(origin.y+2)>>4);page_y++)
+   for(int page_x=imx(0,fl(origin.x-2)>>4);page_x<=imn(WORLD>>4,fl(origin.x+2)>>4);page_x++)
+    if(world.pages_by_key.get(page_key(page_x,page_y,page_z))>=0)return true;
+ return false;
+}
+static float sample_diffuse_sky(const World &world,RoofCache &roof,V3 origin,u32 epoch,bool refine){
  static const V3 sky_dirs[12]={
   {.80f,.60f,0},{-.80f,.60f,0},{0,.60f,.80f},{0,.60f,-.80f},
   {.9837f,.18f,0},{-.9837f,.18f,0},{0,.18f,.9837f},{0,.18f,-.9837f},
   {.6956f,.18f,.6956f},{-.6956f,.18f,.6956f},
   {.6956f,.18f,-.6956f},{-.6956f,.18f,-.6956f}};
+ float visible=0;
+ for(const V3 &direction:sky_dirs){
+  if(cancelled(world,epoch))return 0;
+  if(!trace_occluded(world,origin,direction,&roof))visible+=1.f;
+ }
+ if(visible>0||!refine)return visible/13.f;
+ static const auto refinement=[](){
+  std::array<V3,64> directions{};
+  for(int ray=0;ray<64;ray++){
+   float height=(ray+.5f)/64.f,angle=ray*2.39996323f,radius=__builtin_sqrtf(1-height*height);
+   directions[ray]={__builtin_cosf(angle)*radius,height,__builtin_sinf(angle)*radius};
+  }
+  return directions;
+ }();
+ for(const V3 &direction:refinement){
+  if(cancelled(world,epoch))return 0;
+  if(!trace_occluded(world,origin,direction,&roof))visible+=1.f;
+ }
+ return visible/64.f;
+}
+static float diffuse_sky_visibility(const World &world,RoofCache &roof,V3 origin,u32 epoch){
+ constexpr int capacity=32768;
+ u32 bits[3];copy_bytes(bits,&origin,sizeof(bits));
+ u32 slot=hash32(bits[0]^hash32(bits[1])^hash32(bits[2]))&(capacity-1);
+ auto &cache=world.light_exact_probes;
+ if(cache.n==capacity){
+  const auto &probe=cache[slot];
+  if(probe.sky_bits>0&&probe.origin.x==origin.x&&probe.origin.y==origin.y&&probe.origin.z==origin.z){
+   u32 stored=probe.sky_bits-1;float value;copy_bytes(&value,&stored,sizeof(value));
+   world.light_probe_hits++;return value;
+  }
+ }
+ float value=sample_diffuse_sky(world,roof,origin,epoch,edited_sky_neighborhood(world,origin));
+ if(!cancelled(world,epoch)&&!tr_oom){
+  if(cache.n!=capacity)cache.resize(capacity);
+  u32 stored;copy_bytes(&stored,&value,sizeof(stored));
+  if(cache.n==capacity)cache[slot]={origin,stored+1};
+ }
+ return value;
+}
+void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
+ const u32 epoch=expected_epoch==0xffffffffu?terrain_build_epoch(&w):expected_epoch;
+ const V3 toward_sun={-0.3141378f,0.7431448f,0.5908073f};
  RoofCache roof(w);Map &probe_ids=w.light_probe_ids;List<SkyProbe>&probes=w.light_probes;
  for(int i=0;i<m.v.n;i++){
   if((i&7)==0&&cancelled(w,epoch))break;
@@ -1273,21 +1319,15 @@ void shade_visibility(const World&w,Mesh&m,u32 expected_epoch){
    if(air){
     if(pp.y>=roof.top_at(pp.x,pp.z)-.002f)value=1;
     else{
-     value=0;for(int ray=0;ray<12;ray++)if(!trace_occluded(w,pp,sky_dirs[ray],&roof))value+=1.f/13.f;
+     value=diffuse_sky_visibility(w,roof,pp,epoch);
     }
    }
    at=probes.n;probe_ids.put(key,at);probes.push({pp,axis_n,value});
   }
-  bool reused=probes[at].sky>=0.f&&connected_air(w,roof,start,probes[at].p);
+  bool reusable=probes[at].sky>0.f||(probes[at].sky==0.f&&!edited_sky_neighborhood(w,start));
+  bool reused=reusable&&connected_air(w,roof,start,probes[at].p);
   if(reused){v.sky=probes[at].sky;w.light_probe_hits++;}
-  else{
-   float visible=0.f;
-   for(int ray=0;ray<12;ray++){
-    if(cancelled(w,epoch))break;
-    if(!trace_occluded(w,start,sky_dirs[ray],&roof))visible+=1.f;
-   }
-   v.sky=visible/13.f;
-  }
+  else v.sky=diffuse_sky_visibility(w,roof,start,epoch);
   // Keep directional shadowing per-vertex: a shared sky probe must not move
   // the edge of a small direct-sun shaft.
   v.sun=dot(v.n,toward_sun)>0.001f?(trace_occluded(w,start,toward_sun,&roof)?0.f:1.f):0.f;

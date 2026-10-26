@@ -4,7 +4,7 @@
 #include "../../addons/volumetric_terrain/native/core.cpp"
 
 int main(int count, char **arguments) {
-    if (count != 2) return 2;
+    if (count != 2 && count != 5) return 2;
     tr_alloc=malloc;tr_realloc=realloc;tr_free=free;
     FILE *input=fopen(arguments[1],"rb");
     if (!input) return 2;
@@ -15,14 +15,15 @@ int main(int count, char **arguments) {
     if (!world.deserialize(bytes.p,bytes.n)) return 3;
     bytes.release();
     Mesh mesh;
-    bool built=build_owned_region(world,976,1072,16,1,32,64,mesh,terrain_build_epoch(&world));
+    V3 focus=count==5?V3{float(atof(arguments[2])),float(atof(arguments[3])),float(atof(arguments[4]))}:V3{992,33,1082};
+    bool built=build_patch(world,fl((focus.x-4)/16)*16,fl((focus.z-4)/16)*16,32,1,mesh,terrain_build_epoch(&world));
     printf("MESH ok=%d vertices=%d seed=%d generator=%u pages=%d\n",built,mesh.v.n,world.seed,world.generator_id,world.pages.n);
     RoofCache roof(world);
     for (int index=0;index<mesh.v.n;index++) {
         const Vertex &vertex=mesh.v[index];
-        if (vertex.p.x<989 || vertex.p.x>995 || vertex.p.z<1079 || vertex.p.z>1085 || vertex.p.y<30 || vertex.p.y>37) continue;
+        if (ab(vertex.p.x-focus.x)>4 || ab(vertex.p.z-focus.z)>4 || ab(vertex.p.y-focus.y)>4) continue;
         V3 start=visibility_origin(roof,vertex);
-        int visible=0,unresolved=0;
+        int visible=0,unresolved=0,adaptive=0;
         for (int ray=0;ray<256;ray++) {
             float height=(ray+.5f)/256.f;
             float azimuth=ray*2.39996323f;
@@ -30,7 +31,12 @@ int main(int count, char **arguments) {
             int result=trace_visibility(world,start,{std::cos(azimuth)*radius,height,std::sin(azimuth)*radius},&roof);
             visible+=result==0;unresolved+=result==2;
         }
+        for(int ray=0;ray<64;ray++){
+            float height=(ray+.5f)/64.f,azimuth=ray*2.39996323f,radius=std::sqrt(1-height*height);
+            adaptive+=trace_visibility(world,start,{std::cos(azimuth)*radius,height,std::sin(azimuth)*radius},&roof)==0;
+        }
         printf("VERTEX %.5f %.5f %.5f sky %.5f field %.5f start %.5f %.5f %.5f field %.5f top %.5f dense %d unresolved %d normal %.3f %.3f %.3f\n",vertex.p.x,vertex.p.y,vertex.p.z,vertex.sky,interpolated_sample(roof,vertex.p),start.x,start.y,start.z,interpolated_sample(roof,start),roof.top_at(start.x,start.z),visible,unresolved,vertex.n.x,vertex.n.y,vertex.n.z);
+        printf("ADAPTIVE sky %.5f dense %d adaptive %d\n",vertex.sky,visible,adaptive);
     }
     mesh.release();world.release();
     return tr_oom?1:0;

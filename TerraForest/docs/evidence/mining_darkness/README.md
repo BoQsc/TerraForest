@@ -1,5 +1,9 @@
 # Mining black-face diagnosis — 2026-10-26
 
+This records the initial Wild_Ridge probe-origin repair. The later Hidden_Hills
+report exposed a separate narrow-opening sampling/cache failure, now addressed
+in [the refinement follow-up](refinement/README.md). Both repairs remain active.
+
 ## Reproduction
 
 Wild_Ridge, seed 1703, saved player position (990.1828, 32.32577, 1081.846).
@@ -57,7 +61,8 @@ rock), immediate nearest-edge projection (over-darkened other faces), and gradie
 projection without boundary/fallback safeguards (failed 28 synthetic cases).
 The final bounded implementation passes those cases. Early probe/capture outputs
 remain under ignored `reports/mining_darkness`; full private world copies are not
-committed. The standalone probe is specific to this report's neighborhood.
+committed. The standalone probe defaults to this report's neighborhood; optional
+X/Y/Z arguments select another saved location.
 
 ## Re-run
 

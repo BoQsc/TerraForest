@@ -47,6 +47,7 @@ struct Cave {V3 a,b;float r;float floor_drop=0;};
 struct Basin {float x,z,level;};
 struct RegionalSite {V3 position;float radius;};
 struct SkyProbe {V3 p,n;float sky;};
+struct ExactSkyProbe {V3 origin;u32 sky_bits=0;};
 // Stable owner storage outside World, so reset/load cannot reset cancellation.
 struct BuildControl {u32 epoch=0;};
 struct GeometryCache;
@@ -91,6 +92,7 @@ struct World {
  mutable Map light_roofs,light_samples,light_probe_ids;
  mutable List<float> light_tops;
  mutable List<SkyProbe> light_probes;
+ mutable List<ExactSkyProbe> light_exact_probes;
  mutable u64 light_rays=0,light_steps=0,light_unresolved=0,light_probe_hits=0;
  void init(int p_seed=1703,u32 generator=1);void release();
  bool set_block(u32 key,int material);void erase_block(u32 key);

@@ -7,7 +7,7 @@ import uuid
 from pathlib import Path
 
 from run import ROOT, parse_args
-from run_godot_check import execute, revision_metadata
+from run_godot_check import execute, revision_metadata, verify_pack_native
 
 
 def hashes(paths):
@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--slot', default='Wild_Ridge')
     parser.add_argument('--pack', action='store_true')
     args = parser.parse_args()
+    native = verify_pack_native() if args.pack else None
     if not args.slot.isidentifier():
         parser.error('Slot must be an identifier')
     config, _ = parse_args([])
@@ -42,7 +43,7 @@ def main():
     if before != hashes(files):
         raise RuntimeError('Save changed while copying; no diagnostic launched')
     command = [str(config.godot), '--path', str(ROOT), '--log-file', str(folder / 'engine.log'),
-               '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
+               '--minimized', '--resolution', '1920x1080', '--max-fps', '60',
                '--script', 'res://tests/mining_darkness.gd', '--', '--temporary',
                '--snapshot-readonly', '--world-slot=' + slot, '--ground-cover', '--no-zombies',
                '--nearby-first', '--gameplay-construction', '--derived-cache=user://' + slot,
@@ -52,7 +53,7 @@ def main():
     result = execute(command, folder, 180, 'MINING_DARKNESS failures=0')
     unchanged = before == hashes(files)
     record = dict(result=result, source_unchanged=unchanged, source_files=before,
-                  copied_slot=slot, command=command, **revision_metadata())
+                  copied_slot=slot, command=command, matching_pack_native=native, **revision_metadata())
     record['native_sha256'] = hashes(sorted((ROOT / ('dist/addons' if args.pack else 'addons') / 'volumetric_terrain/bin').glob('*.dll')))
     record['test_sha256'] = hashes([ROOT / 'tests/mining_darkness.gd'])
     if args.pack:

@@ -29,6 +29,8 @@ func run()->void:
 	game.shape_preview.hide();game.prefab_preview.hide()
 	var metadata:={"position":str(game.player.position),"camera":str(game.camera.global_transform),"lamp_position":str(game.flashlight.global_position),"lamp_default_visible":game.flashlight.visible,"sun_shadow_bias":game.sun.shadow_bias,"torch_bias":game.flashlight.shadow_bias,"torch_normal_bias":game.flashlight.shadow_normal_bias,"captures":captures}
 	await picture("01_saved_pose")
+	game.flashlight.visible=false
+	await picture("00_no_lamp")
 	game.flashlight.visible=true
 	await picture("02_torch")
 	game.flashlight.shadow_enabled=false

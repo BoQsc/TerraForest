@@ -164,10 +164,31 @@ The saved view is repaired in source and packaged checks. Native regression repa
 44 previously buried probes and preserves 49 zero-air starts; 19/21 existing
 lighting/LOD/cache assertions pass, including sealed caves remaining dark. Both
 native builds and the package are installed; source-save hashes remain unchanged.
-Evidence: `evidence/mining_darkness/README.md`. This closes the reproduced black
-patch, not every possible cave-lighting artifact: the existing sparse direct-sky
-approximation is still not bounced GI. Revisit with a saved viewpoint if another
-false-black face appears; user visual acceptance remains separate.
+Evidence: `evidence/mining_darkness/README.md`.
+
+The later Hidden_Hills F5 report exposed a separate failure: twelve sky directions
+miss narrow steep openings, and a dark shared probe suppresses nearby visible sky.
+Near edited density pages, all-blocked samples now refine with 64 hemisphere rays;
+zero sky is reused only at the identical origin. A bounded exact-position cache
+retains bit-identical results and is invalidated by edits. Untouched cave regions
+keep the existing budget; ordinary open-air terrain keeps its fast path. This is
+native worker-time baking, not new per-frame rendering or a global ambient floor.
+
+The saved black band is visibly repaired in source and matching packaged captures,
+with identical density hashes and unchanged original saves. Narrow-shaft/sealed
+chamber/cache tests pass 20 assertions at O2 and O3; existing lighting/LOD suites
+pass 19 and 21. Saved 32 m patch cold builds measure 5.49–5.60 ms versus baseline
+4.81–4.98 ms. Packaged contact mining passes 137 assertions; a 1,200-edit and sixteen
+large-volume run passes existing response/frame gates. Both DLLs/PCK are installed.
+
+The first unrestricted refinement trial was rejected for a large cold/warm cave
+cost and failed reuse check; retained in `evidence/mining_darkness/refinement/README.md`.
+This closes the reproduced false-black face, not all possible cave lighting:
+very small openings can still evade finite samples, and untouched caves retain
+the old approximation. Full bounced GI is not implemented. Revisit with a saved
+viewpoint, diagnostic sky/albedo views and unchanged performance gates if another
+false-black report appears. User visual acceptance and the separately deferred
+render/focus-stall investigation remain open.
 
 ## Player movement, map, graphics and placement workflow — 2026-10-26
 
