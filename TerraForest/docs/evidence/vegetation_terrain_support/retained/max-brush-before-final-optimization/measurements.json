@@ -1,0 +1,161 @@
+{
+  "checks": 72,
+  "failures": 1,
+  "samples": [
+    {
+      "ground_profile_us": [
+        19,
+        102,
+        302,
+        25
+      ],
+      "instances": 136,
+      "label": "terrain tool 0",
+      "support_capture_ms": 0.225,
+      "support_publish_ms": 0.517,
+      "support_worker_ms": 0.698,
+      "total_ms": 29.771
+    },
+    {
+      "ground_profile_us": [
+        38,
+        127,
+        226,
+        37
+      ],
+      "instances": 149,
+      "label": "terrain tool 1",
+      "support_capture_ms": 0.232,
+      "support_publish_ms": 0.465,
+      "support_worker_ms": 0.185,
+      "total_ms": 24.887
+    },
+    {
+      "ground_profile_us": [
+        27,
+        126,
+        310,
+        15
+      ],
+      "instances": 130,
+      "label": "terrain tool 2",
+      "support_capture_ms": 0.213,
+      "support_publish_ms": 0.529,
+      "support_worker_ms": 0.161,
+      "total_ms": 23.844
+    },
+    {
+      "ground_profile_us": [
+        52,
+        161,
+        566,
+        76
+      ],
+      "instances": 126,
+      "label": "terrain tool 3",
+      "support_capture_ms": 0.159,
+      "support_publish_ms": 0.878,
+      "support_worker_ms": 0.135,
+      "total_ms": 17.517
+    },
+    {
+      "ground_profile_us": [
+        25,
+        106,
+        234,
+        45
+      ],
+      "instances": 18,
+      "label": "terrain tool 4",
+      "support_capture_ms": 0.148,
+      "support_publish_ms": 0.438,
+      "support_worker_ms": 0.072,
+      "total_ms": 26.426
+    },
+    {
+      "ground_profile_us": [
+        27,
+        113,
+        307,
+        16
+      ],
+      "instances": 129,
+      "label": "terrain tool 5",
+      "support_capture_ms": 0.204,
+      "support_publish_ms": 0.503,
+      "support_worker_ms": 0.139,
+      "total_ms": 54.605
+    },
+    {
+      "ground_profile_us": [
+        29,
+        106,
+        299,
+        23
+      ],
+      "instances": 150,
+      "label": "authored plant mining",
+      "support_capture_ms": 0.171,
+      "support_publish_ms": 0.495,
+      "support_worker_ms": 0.153,
+      "total_ms": 48.778
+    },
+    {
+      "ground_profile_us": [
+        33,
+        124,
+        560,
+        32
+      ],
+      "instances": 164,
+      "label": "tree root mining",
+      "support_capture_ms": 0.171,
+      "support_publish_ms": 0.914,
+      "support_worker_ms": 0.642,
+      "total_ms": 27.078
+    },
+    {
+      "ground_profile_us": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instances": 129,
+      "label": "elevated trunk deposit",
+      "support_capture_ms": 0.164,
+      "support_publish_ms": 0.177,
+      "support_worker_ms": 0.509,
+      "total_ms": 29.092
+    },
+    {
+      "ground_profile_us": [
+        369,
+        545,
+        2488,
+        91
+      ],
+      "instances": 1114,
+      "label": "large excavation",
+      "support_capture_ms": 0.294,
+      "support_publish_ms": 3.54,
+      "support_worker_ms": 2.694,
+      "total_ms": 74.051
+    },
+    {
+      "ground_profile_us": [
+        4258,
+        4241,
+        15314,
+        519
+      ],
+      "instances": 18517,
+      "label": "fully populated maximum excavation",
+      "support_capture_ms": 1.734,
+      "support_publish_ms": 24.769,
+      "support_worker_ms": 72.981,
+      "total_ms": 915.124
+    }
+  ],
+  "visual": false
+}

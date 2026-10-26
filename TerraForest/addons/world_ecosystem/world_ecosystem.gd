@@ -33,6 +33,7 @@ var last_process_us: int = 0
 var harvest_state: RefCounted
 var _harvesting:=false
 var _native_scatter: RefCounted
+var _terrain_support:RefCounted
 
 func harvest_root(id: int, inventory: RefCounted,fall_direction:Vector3=Vector3.FORWARD) -> Dictionary:
 	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
@@ -101,6 +102,9 @@ func _ready() -> void:
 		return
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.region_changed.connect(_region_changed)
+	_terrain_support=ClassDB.instantiate("NativeVegetationSupport")
+	if harvest_state==null:harvest_state=ClassDB.instantiate("NativeHarvestState")
+	terrain.register_edit_support(_capture_terrain_support,_apply_terrain_support)
 	terrain.reload_started.connect(reset)
 	if structures != null:
 		structures.vegetation_changed.connect(_structure_region_changed)
@@ -302,11 +306,36 @@ func _publish_samples(key: Vector2i) -> void:
 func _region_changed(bounds: AABB, _revision: int) -> void:
 	# Preserve live rows until authoritative support samples arrive. Only owners
 	# intersecting the footprint need revalidation, including underground edits.
+	var road:bool=terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28)
 	for key in _wanted:
 		var low := Vector3(key.x * CELL_SIZE, bounds.position.y, key.y * CELL_SIZE)
 		var footprint := AABB(low, Vector3(CELL_SIZE, maxf(bounds.size.y, 1.0), CELL_SIZE))
-		if footprint.intersects(bounds):
+		if (road or not resident.has(key)) and footprint.intersects(bounds):
 			_resample[key] = true
+
+func _capture_terrain_support(bounds:AABB)->Array:
+	var snapshots:Array=[]
+	for key:Vector2i in _samples:
+		if not AABB(Vector3(key.x*CELL_SIZE,0,key.y*CELL_SIZE),Vector3(CELL_SIZE,256,CELL_SIZE)).grow(1).intersects(bounds):continue
+		var sample:Dictionary=_samples[key]
+		var snapshot:Dictionary=_terrain_support.tree_probes(sample.active,sample.active_transforms,bounds)
+		if snapshot.get("ids",PackedInt64Array()).is_empty():continue
+		snapshot["key"]=key;snapshots.append(snapshot)
+	return snapshots
+
+func _apply_terrain_support(snapshot:Dictionary,result:Dictionary)->bool:
+	var verdict:Dictionary=result.verdict if result.has("verdict") else _terrain_support.lost_roots(snapshot,result.before,result.after)
+	if not verdict.ok:return false
+	var ids:PackedInt64Array=verdict.ids
+	if ids.is_empty():return true
+	if harvest_state==null or not harvest_state.remove_roots(verdict.destroyed):return false
+	var key:Vector2i=snapshot.key
+	if not _samples.has(key):return true
+	var sample:Dictionary=_samples[key]
+	var kept:Dictionary=_terrain_support.filter_trees(sample.active,sample.active_transforms,ids)
+	if not vegetation.upsert_chunk(_owner(key),kept.ids,kept.transforms):return false
+	sample.active=kept.ids;sample.active_transforms=kept.transforms
+	return true
 
 func _exit_tree() -> void:
 	if is_instance_valid(water) and water.exclusion_changed.is_connected(_water_changed):

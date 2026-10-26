@@ -1535,7 +1535,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   for(int i=0;i<m.i.n;i++)out.u(m.i[i]);
   m.release();
  }
- else if(cmd==29||cmd==30||cmd==31||cmd==33){
+ else if(cmd==29||cmd==30||cmd==31||cmd==33||cmd==40){
   // Bounded read-only site probes. The worker owns the density field; never
   // sample it from the scene thread. Revision mismatch publishes no values.
   u32 revision=r.u(),count=r.u(),depth=cmd==30?r.u():0;
@@ -1547,21 +1547,29 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   }
   if(revision!=w.revision){out.p[8]=4;return;}
   out.u(w.revision);out.u(count);
+  float paving[512]{};
   for(u32 i=0;i<count;i++){
-   const V3 &p=points[i];float value=0;
+   const V3 &p=points[i];float value=0;bool paved=false;
    if(cmd==33){value=w.blocks.get(block_key(fl(p.x),fl(p.y),fl(p.z)))>0?1.f:0.f;}
-   else if(cmd==31){
+   else if(cmd==31||cmd==40){
     // Authored vegetation must use the same interpolated lattice as natural
     // roots (command17), not a floor-rounded nearest corner (command29).
     int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z;
     for(int k=0;k<8;k++){
      float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
-     if(weight>0)value+=weight*w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1));
+     if(weight>0){
+      u8 material=0;float sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),cmd==40?&material:nullptr);
+      if(cmd==40&&sample<0&&material==4)paved=true;
+      value+=weight*sample;
+     }
     }
    }else value=w.sample(fl(p.x),fl(p.y),fl(p.z));
    for(u32 down=1;down<=depth;down++)value=mx(value,w.sample(fl(p.x),int(mx(3.f,float(fl(p.y))-down)),fl(p.z)));
+   if(cmd==40&&w.blocks.get(block_key(fl(p.x),fl(p.y),fl(p.z)))>0)value=-mx(ab(value),.001f);
    out.f(value);
+   if(cmd==40)paving[i]=paved?1.f:0.f;
   }
+  if(cmd==40)for(u32 index=0;index<count;++index)out.f(paving[index]);
  }
  else if(cmd==35){
   if(n!=4){out.p[8]=1;return;}

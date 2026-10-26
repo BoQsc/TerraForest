@@ -1,0 +1,612 @@
+{
+  "checks": 72,
+  "failures": 1,
+  "samples": [
+    {
+      "instances": 136,
+      "label": "terrain tool 0",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 14,
+          "render_us": 186,
+          "validation_us": 11
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.227,
+      "support_publish_ms": 0.272,
+      "support_worker_ms": 0.803,
+      "total_ms": 28.887
+    },
+    {
+      "instances": 149,
+      "label": "terrain tool 1",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 34,
+          "render_us": 344,
+          "validation_us": 17
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.217,
+      "support_publish_ms": 0.241,
+      "support_worker_ms": 0.276,
+      "total_ms": 23.916
+    },
+    {
+      "instances": 130,
+      "label": "terrain tool 2",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 67,
+          "render_us": 921,
+          "validation_us": 30
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.224,
+      "support_publish_ms": 0.745,
+      "support_worker_ms": 0.404,
+      "total_ms": 30.2
+    },
+    {
+      "instances": 126,
+      "label": "terrain tool 3",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 83,
+          "render_us": 1075,
+          "validation_us": 39
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.158,
+      "support_publish_ms": 0.478,
+      "support_worker_ms": 0.293,
+      "total_ms": 16.464
+    },
+    {
+      "instances": 18,
+      "label": "terrain tool 4",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 98,
+          "render_us": 1266,
+          "validation_us": 44
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.146,
+      "support_publish_ms": 0.271,
+      "support_worker_ms": 0.19,
+      "total_ms": 24.894
+    },
+    {
+      "instances": 129,
+      "label": "terrain tool 5",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 122,
+          "render_us": 1524,
+          "validation_us": 52
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.202,
+      "support_publish_ms": 0.353,
+      "support_worker_ms": 0.231,
+      "total_ms": 49.646
+    },
+    {
+      "instances": 150,
+      "label": "authored plant mining",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 152,
+          "render_us": 1789,
+          "validation_us": 63
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.158,
+      "support_publish_ms": 0.369,
+      "support_worker_ms": 0.252,
+      "total_ms": 38.613
+    },
+    {
+      "instances": 164,
+      "label": "tree root mining",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 180,
+          "render_us": 2167,
+          "validation_us": 70
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 1
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.177,
+      "support_publish_ms": 0.633,
+      "support_worker_ms": 0.791,
+      "total_ms": 35.636
+    },
+    {
+      "instances": 129,
+      "label": "elevated trunk deposit",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 180,
+          "render_us": 2167,
+          "validation_us": 70
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 1
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        },
+        {
+          "records_us": 0,
+          "render_us": 0,
+          "validation_us": 0
+        }
+      ],
+      "support_capture_ms": 0.152,
+      "support_publish_ms": 0.129,
+      "support_worker_ms": 0.52,
+      "total_ms": 37.312
+    },
+    {
+      "instances": 1114,
+      "label": "large excavation",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 32,
+          "render_us": 60,
+          "validation_us": 13
+        },
+        {
+          "records_us": 101,
+          "render_us": 109,
+          "validation_us": 57
+        },
+        {
+          "records_us": 1293,
+          "render_us": 3417,
+          "validation_us": 451
+        },
+        {
+          "records_us": 2,
+          "render_us": 2,
+          "validation_us": 2
+        },
+        {
+          "records_us": 5,
+          "render_us": 3,
+          "validation_us": 6
+        },
+        {
+          "records_us": 2,
+          "render_us": 1,
+          "validation_us": 3
+        },
+        {
+          "records_us": 24,
+          "render_us": 16,
+          "validation_us": 16
+        },
+        {
+          "records_us": 20,
+          "render_us": 16,
+          "validation_us": 13
+        },
+        {
+          "records_us": 12,
+          "render_us": 5,
+          "validation_us": 10
+        }
+      ],
+      "support_capture_ms": 0.288,
+      "support_publish_ms": 2.305,
+      "support_worker_ms": 3.044,
+      "total_ms": 86.249
+    },
+    {
+      "instances": 18517,
+      "label": "fully populated maximum excavation",
+      "removal_native_cumulative_us": [
+        {
+          "records_us": 121,
+          "render_us": 285,
+          "validation_us": 48
+        },
+        {
+          "records_us": 560,
+          "render_us": 565,
+          "validation_us": 192
+        },
+        {
+          "records_us": 6357,
+          "render_us": 9423,
+          "validation_us": 1485
+        },
+        {
+          "records_us": 16,
+          "render_us": 34,
+          "validation_us": 11
+        },
+        {
+          "records_us": 20,
+          "render_us": 23,
+          "validation_us": 15
+        },
+        {
+          "records_us": 12,
+          "render_us": 26,
+          "validation_us": 11
+        },
+        {
+          "records_us": 121,
+          "render_us": 190,
+          "validation_us": 56
+        },
+        {
+          "records_us": 100,
+          "render_us": 138,
+          "validation_us": 44
+        },
+        {
+          "records_us": 67,
+          "render_us": 117,
+          "validation_us": 34
+        }
+      ],
+      "support_capture_ms": 1.845,
+      "support_publish_ms": 18.129,
+      "support_worker_ms": 76.608,
+      "total_ms": 954.132
+    }
+  ],
+  "visual": true
+}

@@ -74,6 +74,7 @@ class NativeStaticBatch : public Node3D {
     void fail_admission(const String &error);
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
+    std::vector<MultiMeshInstance3D*> render_pool;
     std::map<int64_t,int> slots;
     std::map<RenderKey,std::vector<int64_t>> resident_ids;
     std::map<BlockKey,std::vector<int64_t>> render_ids;
@@ -103,6 +104,7 @@ class NativeStaticBatch : public Node3D {
     bool asset_locked=false;
     uint64_t uploads=0;
     uint64_t instance_updates=0;
+    uint64_t removal_validation_us=0,removal_records_us=0,removal_render_us=0;
     uint64_t edit_revision=0;
     String survey_saved_identity;
     bool defer_change_signal=false;
@@ -135,6 +137,7 @@ class NativeStaticBatch : public Node3D {
     static bool valid_asset(const String &id);
     static bool parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out);
     void rebuild(const std::set<BlockKey> &keys,bool continuous=false);
+    void remove_render_members(const std::set<BlockKey> &keys);
     struct CollectionRetirement {
         decltype(placements) old_placements;
         decltype(groups) old_groups;

@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS isolated terrain starts
+PASS initial edit publishes
+PASS bounded queue rejects without leaving an edit pending
+PASS queue backpressure restores stamps without disabling terrain
+PASS out-of-world brush receives a worker outcome
+PASS rejected stroke does not mutate density
+PASS safe rejection keeps editing and saving available
+PASS rejection preserves every saved density byte
+PASS queue rejection and invalid edit never publish vegetation mutations
+PASS valid edit works immediately after rejection
+PASS same-edit before/after support samples publish with successful terrain
+PASS unchanged stroke cannot mutate vegetation state
+PASS inconsistent road profile is resolved by native validation
+PASS invalid road profile cannot disable unrelated terrain tools
+PASS minimum supported brush remains usable
+[TerrainRewrite] Temporary test world: save skipped
+PASS partial-batch safety backend starts
+PASS mixed batch enters real worker
+PASS partially applied batch still fails closed and protects saves
+[TerrainRewrite] Temporary test world: save skipped
+TERRAIN_EDIT_RECOVERY failures=0

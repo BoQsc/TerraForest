@@ -45,6 +45,7 @@ protected:
         ClassDB::bind_method(D_METHOD("mask","ids"),&NativeGroundCoverState::mask);
         ClassDB::bind_method(D_METHOD("add","species","transform"),&NativeGroundCoverState::add);
         ClassDB::bind_method(D_METHOD("erase","id"),&NativeGroundCoverState::erase);
+        ClassDB::bind_method(D_METHOD("remove_roots","ids"),&NativeGroundCoverState::remove_roots);
         ClassDB::bind_method(D_METHOD("query","cell"),&NativeGroundCoverState::query);
         ClassDB::bind_method(D_METHOD("sample_transforms","cell"),&NativeGroundCoverState::sample_transforms);
         ClassDB::bind_method(D_METHOD("support_points","cell"),&NativeGroundCoverState::support_points);
@@ -87,6 +88,12 @@ public:
         auto found=cells.find(key.y*63+key.x);
         if(found!=cells.end())for(auto id:found->second){const auto &p=placed.at(id);ids[p.species].append(id);for(float v:p.t)transforms[p.species].append(v);}
         for(int i=0;i<9;++i){Dictionary d;d["ids"]=ids[i];d["transforms"]=transforms[i];out.append(d);}return out;
+    }
+    bool remove_roots(const PackedInt64Array &ids){
+        if(seed<0||ids.size()>1280)return false;
+        for(int64_t identity:ids)if(identity<1||(identity>NATURAL_LIMIT&&identity<AUTHORED_FIRST)||(identity>=AUTHORED_FIRST&&!placed.count(identity)))return false;
+        for(int64_t identity:ids){if(identity<AUTHORED_FIRST)mark(identity);else erase(identity);}
+        return true;
     }
     TypedArray<Transform3D> sample_transforms(Vector2i key) const{
         TypedArray<Transform3D> out;

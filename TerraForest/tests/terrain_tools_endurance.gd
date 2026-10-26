@@ -115,7 +115,7 @@ func run()->void:
 			for add:bool in [true,false]:
 				var began:=Time.get_ticks_usec()
 				var ok:=await submit(Codec.brush(center,center,radius,shape,add,1))
-				observations.append({"radius":radius,"shape":shape,"add":add,"complete":ok,"latency_ms":(Time.get_ticks_usec()-began)/1000.0,"field_ms":game.terrain.last_edit_ms,"build_ms":game.terrain.last_total_build_ms})
+				observations.append({"radius":radius,"shape":shape,"add":add,"complete":ok,"latency_ms":(Time.get_ticks_usec()-began)/1000.0,"field_ms":game.terrain.last_edit_ms,"build_ms":game.terrain.last_total_build_ms,"support_instances":game.terrain.last_support_instances,"support_worker_ms":game.terrain.last_support_worker_ms,"support_publish_ms":game.terrain.last_support_publish_ms})
 				if not ok:check(false,"large-volume edit completes");end_phase();finish();return
 	end_phase()
 	check(true,"all 8/16/32/64 m sphere and box add/remove edits publish")

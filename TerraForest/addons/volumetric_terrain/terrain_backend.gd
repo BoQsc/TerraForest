@@ -514,6 +514,20 @@ func _recoverable_edit_rejection(commands:Array,reply:PackedByteArray,before:Pac
 	var residency:Dictionary=native.residency_stats()
 	return not residency.get("active",false) or residency.get("storage_failures",1)==0
 
+func _edit_support_samples(groups:Array,revision:int)->Array:
+	var output:Array=[]
+	for points:PackedVector3Array in groups:
+		var values:=PackedFloat32Array();var paved:=PackedFloat32Array()
+		for offset in range(0,points.size(),512):
+			var page:=points.slice(offset,mini(offset+512,points.size()))
+			var packet:=Codec.command(40,[revision,page.size()]);packet.append_array(page.to_byte_array())
+			var reply:=_call(packet)
+			if not Codec.reply_ok(reply) or reply.size()!=20+page.size()*8:return []
+			values.append_array(reply.slice(20,20+page.size()*4).to_float32_array())
+			paved.append_array(reply.slice(20+page.size()*4).to_float32_array())
+		output.append({"density":values,"paved":paved})
+	return output
+
 # Called only by the ordered load/save worker or frozen publication worker.
 # The outer archive selects the checkpoint atomically with all other components.
 func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,profile:Dictionary={})->Dictionary:
@@ -1346,6 +1360,10 @@ func _run() -> void:
 		elif kind == "edit":
 			_apply_components(job.get("component_snapshot", {}))
 			var before_stats: PackedByteArray = _call(Codec.command(0))
+			var support_started:=Time.get_ticks_usec()
+			var support_points:Array=job.get("support_points",[])
+			var support_before:=_edit_support_samples(support_points,before_stats.decode_u32(12))
+			var support_ms:float=(Time.get_ticks_usec()-support_started)/1000.0
 			var begin: int = Time.get_ticks_usec()
 			var reply := PackedByteArray()
 			var commands: Array = job.get("commands", [job["command"]])
@@ -1412,8 +1430,25 @@ func _run() -> void:
 					chunk["epoch"] = job["epoch"]
 					chunk["ticket"] = job["ticket"]
 					_push(chunk)
+				support_started=Time.get_ticks_usec()
+				var support_after:=_edit_support_samples(support_points,after_stats.decode_u32(12))
+				var support:Array=[]
+				if support_before.size()==support_points.size() and support_after.size()==support_points.size():
+					for index in support_points.size():support.append({"before":support_before[index],"after":support_after[index]})
+				var support_snapshots:Array=job.get("support_snapshots",[])
+				if support.size()==support_snapshots.size() and not support.is_empty() and ClassDB.class_exists("NativeVegetationSupport"):
+					var helper:RefCounted=ClassDB.instantiate("NativeVegetationSupport")
+					for index in support.size():
+						var snapshot:Dictionary=support_snapshots[index]
+						if not snapshot.has("offsets"):continue
+						var prepared:Dictionary=helper.lost_roots(snapshot,support_before[index],support_after[index])
+						support[index]["verdict"]=prepared
+						if prepared.ok and not prepared.ids.is_empty() and snapshot.has("rows"):
+							support[index]["survivors"]=helper.filter_ground(snapshot.rows,prepared.ids)
+							support[index]["retired"]=helper.filter_ground(snapshot.rows,prepared.ids,true)
+				support_ms+=(Time.get_ticks_usec()-support_started)/1000.0
 				_push({"kind": "edit_done", "epoch": job["epoch"], "ticket": job["ticket"],
-					"stats": after_stats, "build_total_ms": build_total, "worker_finished_us": Time.get_ticks_usec()})
+					"stats": after_stats, "build_total_ms": build_total,"support":support,"support_ms":support_ms, "worker_finished_us": Time.get_ticks_usec()})
 		elif kind == "relight":
 			var update: Dictionary = _relight(job, int(job["build_epoch"]))
 			update["key"] = job["key"]

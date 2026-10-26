@@ -1,0 +1,78 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+PASS isolated production world loaded
+PASS natural trees and all ground-cover species settled
+PASS nearby independent grass witness 0
+PASS terrain tool 0 accepted
+PASS terrain tool 0 publishes successfully
+PASS affected clump removed durably before edit completion 0
+PASS rendered identity removed in same publication 0
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 0
+PASS small stroke samples local roots, not the forest 0
+PASS nearby independent grass witness 1
+PASS terrain tool 1 accepted
+PASS terrain tool 1 publishes successfully
+PASS affected clump removed durably before edit completion 1
+PASS rendered identity removed in same publication 1
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 1
+PASS small stroke samples local roots, not the forest 1
+PASS nearby independent grass witness 2
+PASS terrain tool 2 accepted
+PASS terrain tool 2 publishes successfully
+PASS affected clump removed durably before edit completion 2
+PASS rendered identity removed in same publication 2
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 2
+PASS small stroke samples local roots, not the forest 2
+PASS nearby independent grass witness 3
+PASS terrain tool 3 accepted
+PASS terrain tool 3 publishes successfully
+PASS affected clump removed durably before edit completion 3
+PASS rendered identity removed in same publication 3
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 3
+PASS small stroke samples local roots, not the forest 3
+PASS nearby independent grass witness 4
+PASS terrain tool 4 accepted
+PASS terrain tool 4 publishes successfully
+PASS affected clump removed durably before edit completion 4
+PASS rendered identity removed in same publication 4
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 4
+PASS small stroke samples local roots, not the forest 4
+PASS nearby independent grass witness 5
+PASS terrain tool 5 accepted
+PASS terrain tool 5 publishes successfully
+PASS affected clump removed durably before edit completion 5
+PASS rendered identity removed in same publication 5
+PASS neighbouring clumps unchanged with no cell clearing or regrowth 5
+PASS small stroke samples local roots, not the forest 5
+PASS player-planted vegetation is present before excavation
+PASS authored plant mining accepted
+PASS authored plant mining publishes successfully
+PASS mining destroys authored plant state and rendering together
+PASS natural tree witness available
+PASS tree root mining accepted
+PASS tree root mining publishes successfully
+PASS unsupported tree, trunk collider and persistent identity update together
+PASS tree neighbours retain exact transforms
+PASS elevated trunk deposit accepted
+PASS elevated trunk deposit publishes successfully
+PASS terrain occupying a trunk removes that tree even when its root remains supported
+PASS camera relocation and owner retirement settle before large-edit comparison
+PASS large excavation accepted
+PASS large excavation publishes successfully
+PASS large volume removes individual intersected clumps in bulk
+PASS large edit preserves exact surrounding plants
+PASS fully populated maximum excavation accepted
+PASS fully populated maximum excavation publishes successfully
+PASS maximum brush clears thousands of resident plants, not an empty aerial fixture
+PASS maximum brush preserves every distant identity and transform
+FAIL maximum populated vegetation publication stays below 16 ms on this machine
+PASS removal history roundtrips exactly
+PASS tree removal survives fresh storage restoration
+PASS vegetation unload and deterministic regeneration completes
+PASS streaming cannot resurrect destroyed plants or trees
+PASS no rejected vegetation publication
+PASS terrain clearing grants no free harvest rewards
+[TerrainRewrite] Temporary test world: save skipped
+VEGETATION_TERRAIN_EDITS failures=1

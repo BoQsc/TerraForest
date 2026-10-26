@@ -1,3 +1,27 @@
+## Per-instance vegetation terrain response — 2026-10-26
+
+Mining and terrain building now sample resident roots/stems against the native
+field before and after the same edit, rather than waiting for whole-owner
+resampling. Excavated/buried plants and trees disappear with terrain publication;
+neighbour identities/poses/fades remain unchanged. Picking, collision and existing
+removal storage follow the same deletion without inventory rewards. Native worker
+filtering and local GPU-page reuse avoid per-frame forest scans and replacement
+of unaffected render owners. No user save or generation profile was changed.
+
+This closes the previously recorded delayed resident-vegetation reconciliation
+path, not all terrain/performance work. The 18,517-instance maximum brush improved
+from 32.514 to 17.980 ms vegetation publication in the packaged test but still missed
+the unchanged 16 ms target. All 71 functional integrated checks pass; the packaged
+1,200-edit endurance passes 35 assertions with p99 17.467 ms and no >50 ms runtime
+frame. Small tool vegetation publication measures 0.263–0.777 ms. These measurements
+exclude startup stalls and are not universal performance acceptance.
+Keep the maximum-brush gate and the earlier intermittent render
+stalls open; further bounded preparation/publication needs native phase evidence,
+exact survivor checks and unchanged frame/latency gates. Ordinary player edits,
+full save-state restoration and published render identity are tested separately.
+Packaged results, scope and retained failures:
+`evidence/vegetation_terrain_support/README.md`.
+
 ## Terrain editing stress campaign — 2026-10-26
 
 Fixed the unsupported 0.25 m developer brush control, nonmutating rejections that

@@ -1,0 +1,29 @@
+{
+  "target": "template_release",
+  "compiled_extension_sources": [
+    "boulder_fracture.cpp",
+    "flush.cpp",
+    "register_types.cpp",
+    "selection.cpp"
+  ],
+  "godot_cpp_sources_compiled": 0,
+  "linked": true,
+  "seconds": 5.643214600044303,
+  "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll",
+  "sha256": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+  "sdk": {
+    "api_version": "4.7",
+    "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+    "variant": "windows-x86_64-zig",
+    "compiler": "zig-0.16.0",
+    "platform": "windows",
+    "arch": "x86_64",
+    "targets": [
+      "template_debug",
+      "template_release"
+    ],
+    "precision": "single",
+    "created_unix": 1786965830
+  },
+  "addon": "vegetation_runtime"
+}

@@ -26,6 +26,7 @@ def main():
     folder = ROOT / "reports" / "terrain_editing" / stamp
     folder.mkdir(parents=True)
     headless = [
+        ("vegetation_terrain_support", "VEGETATION_TERRAIN_SUPPORT failures=0"),
         ("ground_cover_retirement", "GROUND_COVER_RETIREMENT failures=0"),
         ("terrain_edit_recovery", "TERRAIN_EDIT_RECOVERY failures=0"),
         ("terrain_edit_paged_recovery", "TERRAIN_EDIT_PAGED_RECOVERY failures=0"),
@@ -51,6 +52,7 @@ def main():
     if not args.native_only:
         water = ["--water-gameplay", "--water-bucket-review", "--gameplay-construction", "--no-zombies"]
         cases += [
+            ("vegetation_terrain_edits", "VEGETATION_TERRAIN_EDITS failures=0", False, ["--world-generator=23", "--ground-cover", "--no-zombies"]),
             ("developer_belt", "DEVELOPER_BELT", False, []),
             ("terrain_placement_preview", "TERRAIN_PLACEMENT_PREVIEW", False, ["--gameplay-construction"]),
             ("road_editor", "editor road completes without worker error", False, []),
@@ -75,7 +77,8 @@ def main():
         parser.error("Export the resource pack first")
     manifest = {**revision_metadata(), "engine": str(engine), "engine_sha256": hashlib.sha256(engine.read_bytes()).hexdigest(),
                 "native_sha256": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-                                  for path in sorted((resource_root / "addons/volumetric_terrain/bin").glob("*.dll"))},
+                                  for addon in ["volumetric_terrain", "vegetation_runtime", "structures"]
+                                  for path in sorted((resource_root / "addons" / addon / "bin").glob("*.dll"))},
                 "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None,
                 "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
                 "known_open_gate": "held_mining_flight: post-flight visible-change gaps can exceed 150ms", "runs": []}
@@ -87,6 +90,10 @@ def main():
             command.append("--preview-evidence=" + str(ROOT / "reports/terrain_placement_preview"))
         if name == "developer_belt":
             command.append("--tool-ui-captures=" + str(ROOT / "reports/developer_belt"))
+        if name in {"vegetation_terrain_edits", "vegetation_steep_mining"}:
+            command.append("--vegetation-evidence-dir=" + str(ROOT / "reports" / name))
+        if name == "vegetation_edit_continuity":
+            command.append("--vegetation-evidence-dir=" + str(ROOT / "reports"))
         if args.pack:
             command[1:1] = ["--main-pack", str(pack)]
         script_hash = hashlib.sha256((ROOT / "tests" / (name + ".gd")).read_bytes()).hexdigest()

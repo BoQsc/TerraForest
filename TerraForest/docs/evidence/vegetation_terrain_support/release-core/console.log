@@ -1,0 +1,56 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS g3/r0.50/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r0.50/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r0.75/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r0.75/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r1.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r1.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r4.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r4.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r16.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r16.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r32.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r32.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g3/r64.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g3/r64.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS bedrock remains solid
+PASS all sizes, shapes and boundary edits g3: exact binary density/material/block roundtrip
+PASS g23/r0.50/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r0.50/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r0.75/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r0.75/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r1.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r1.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r4.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r4.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r16.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r16.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r32.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r32.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS g23/r64.00/s0: edited mesh has finite vertices/normals and valid packet
+PASS g23/r64.00/s1: edited mesh has finite vertices/normals and valid packet
+PASS bedrock remains solid
+PASS all sizes, shapes and boundary edits g23: exact binary density/material/block roundtrip
+PASS mixed history 1000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 1000: exact binary density/material/block roundtrip
+PASS mixed history 2000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 2000: exact binary density/material/block roundtrip
+PASS mixed history 3000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 3000: exact binary density/material/block roundtrip
+PASS mixed history 4000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 4000: exact binary density/material/block roundtrip
+PASS mixed history 5000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 5000: exact binary density/material/block roundtrip
+PASS mixed history 6000: edited mesh has finite vertices/normals and valid packet
+PASS mixed history 6000: exact binary density/material/block roundtrip
+PASS mixed history, paid material and roads: exact binary density/material/block roundtrip
+PASS invalid request is nonmutating
+PASS invalid request is nonmutating
+PASS invalid request is nonmutating
+PASS invalid request is nonmutating
+PASS invalid request is nonmutating
+PASS finite resident page capacity rejects oversized history without crashing
+PASS capacity rejection preserves exact existing terrain
+PASS existing-page mining continues after capacity rejection
+TERRAIN_EDIT_VOLUMES failures=0 commands=7251

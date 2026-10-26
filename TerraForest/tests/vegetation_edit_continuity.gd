@@ -89,7 +89,15 @@ func run()->void:
 	check(batch.remove_instances(batch.get_ids()),"full collection removal")
 	for i in 3:await process_frame
 	check(rows(batch).is_empty() and batch.render_stats().resident_transform_bytes==0,"full removal leaves no stale rendered plants")
-	DirAccess.make_dir_recursive_absolute("res://reports")
-	FileAccess.open("res://reports/vegetation_edit_continuity.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"mutations":mutations,"scope":"Finite scene-call timings exclude readback and do not measure GPU completion or sustained frame cost."},"  "))
+	check(batch.render_stats().pooled_empty_batches<=16 and batch.get_child_count()<=16,"empty vegetation page cache is bounded and retains no rendered instances")
+	check(batch.upsert_transforms(PackedInt64Array([1]),[Transform3D(Basis.IDENTITY,Vector3(1,0,1))]),"removed vegetation pages can be reused")
+	for frame in 3:await process_frame
+	check(rows(batch).size()==1 and batch.render_stats().resident_instances==1,"page reuse admits exactly one fresh instance without stale slots")
+	check(batch.clear_instances() and batch.get_child_count()==0,"explicit collection clear releases the empty page cache too")
+	var folder:=ProjectSettings.globalize_path("res://reports")
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--vegetation-evidence-dir="):folder=argument.trim_prefix("--vegetation-evidence-dir=")
+	DirAccess.make_dir_recursive_absolute(folder)
+	FileAccess.open(folder.path_join("vegetation_edit_continuity.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"mutations":mutations,"scope":"Finite scene-call timings exclude readback and do not measure GPU completion or sustained frame cost."},"  "))
 	batch.free();await process_frame
 	print("VEGETATION_EDIT_CONTINUITY checks=",checks," failures=",failures);quit(1 if failures else 0)

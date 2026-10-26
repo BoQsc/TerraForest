@@ -4,6 +4,13 @@ const Backend=preload("res://addons/volumetric_terrain/terrain_backend.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 var failures:=0
 var terrain:Node
+var support_applied:=0
+var support_snapshot:Dictionary={}
+func capture_support(_bounds:AABB)->Array:
+	return [{"ids":PackedInt64Array([1]),"points":PackedVector3Array([Vector3(128,65.92,128),Vector3(128,66.08,128)])}]
+func apply_support(snapshot:Dictionary,result:Dictionary)->bool:
+	support_applied+=1;support_snapshot=result
+	return snapshot.ids==PackedInt64Array([1]) and result.before.density.size()==2 and result.after.density.size()==2
 class QueueGate extends Backend:
 	var reject_edit:=false
 	func submit(job:Dictionary,priority:bool=false)->bool:
@@ -27,6 +34,7 @@ func run()->void:
 	while not terrain.world_ready and Time.get_ticks_msec()<deadline:await process_frame
 	var center:=Vector3(128,64,128)
 	check(terrain.sculpt_sphere(center,2,true) and await settled(),"initial edit publishes")
+	terrain.register_edit_support(capture_support,apply_support)
 	var stamps:Dictionary=terrain.stamps.duplicate()
 	terrain.backend.reject_edit=true
 	check(not terrain.sculpt_sphere(center,1,false) and not terrain.pending_edit,"bounded queue rejects without leaving an edit pending")
@@ -39,7 +47,10 @@ func run()->void:
 	check(terrain.last_edit_outcome.status=="rejected" and terrain.density_revision==revision,"rejected stroke does not mutate density")
 	check(terrain.world_ready and terrain.latest_error.is_empty() and terrain.backend.write_allowed,"safe rejection keeps editing and saving available")
 	check(terrain.backend.native.execute(Codec.command(4,[3]))==before,"rejection preserves every saved density byte")
+	check(support_applied==0,"queue rejection and invalid edit never publish vegetation mutations")
 	check(terrain.sculpt_sphere(center,1,false) and await settled() and terrain.density_revision>revision,"valid edit works immediately after rejection")
+	check(support_applied==1 and support_snapshot.before.density.size()==2,"same-edit before/after support samples publish with successful terrain")
+	check(terrain.sculpt_sphere(center,1,false) and await settled() and support_applied==1,"unchanged stroke cannot mutate vegetation state")
 	if terrain.world_ready:
 		var curved:=Codec.curved_road_bed(Vector3(100,64,100),Vector3(116,64,100),4,4,8,PackedFloat64Array([0,0,0,66]),0)
 		check(terrain.edit(curved,Vector3.ZERO,Vector3.ONE) and await settled(),"inconsistent road profile is resolved by native validation")

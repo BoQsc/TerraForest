@@ -1,0 +1,27 @@
+{
+  "checks": 31,
+  "failures": 0,
+  "mutations": [
+    {
+      "operation": "bulk exclusion",
+      "scene_call_us": 247,
+      "uploaded_payload_bytes": 40896
+    },
+    {
+      "operation": "support heights",
+      "scene_call_us": 253,
+      "uploaded_payload_bytes": 16384
+    },
+    {
+      "operation": "insert",
+      "scene_call_us": 238,
+      "uploaded_payload_bytes": 0
+    },
+    {
+      "operation": "cross group",
+      "scene_call_us": 368,
+      "uploaded_payload_bytes": 9344
+    }
+  ],
+  "scope": "Finite scene-call timings exclude readback and do not measure GPU completion or sustained frame cost."
+}

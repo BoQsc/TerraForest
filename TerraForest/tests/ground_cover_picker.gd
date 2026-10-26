@@ -32,6 +32,8 @@ func run() -> void:
 	var bad:=records(PackedInt64Array([3,3]),[a,b])
 	check(not picker.replace_cell(Vector2i(30,30),bad) and picker.pick(Vector3(967,20,970),Vector3(974,20,970)).id==3,"duplicate identity rejection preserves previous owner")
 	check(not picker.replace_cell(Vector2i(29,30),rows),"misowned transforms rejected")
+	check(picker.remove_roots(Vector2i(30,30),PackedInt64Array([3])) and picker.pick(Vector3(967,20,970),Vector3(974,20,970)).id==2,"root removal retains the neighbour proxy without rebuilding its transform")
+	check(not picker.remove_roots(Vector2i(-1,30),PackedInt64Array([2])) and picker.pick(Vector3(967,20,970),Vector3(974,20,970)).id==2,"invalid root removal cannot erase another owner")
 	a.basis=Basis(Vector3.UP,0.7).scaled(Vector3(3,1,0.5))
 	check(picker.replace_cell(Vector2i(30,30),records(PackedInt64Array([7]),[a],2)),"rotated scaled grass proxy accepted")
 	var from: Vector3=a*Vector3(-2,0.3,0)

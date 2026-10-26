@@ -24,6 +24,30 @@ var latest_edit_descriptor: Dictionary = {}
 var latest_edit_members: Array[Dictionary] = []
 var latest_member_changes: Array = []
 var edit_accepted_us: int = 0
+var _edit_support_providers:Array[Dictionary]=[]
+var _edit_support_snapshots:Array[Dictionary]=[]
+var _edit_support_result:Array=[]
+var last_support_worker_ms:=0.0
+var last_support_publish_ms:=0.0
+var last_support_capture_ms:=0.0
+var last_support_instances:=0
+
+func register_edit_support(capture:Callable,apply:Callable)->void:
+	_edit_support_providers.append({"capture":capture,"apply":apply})
+
+func _capture_edit_support(bounds:AABB)->Array[PackedVector3Array]:
+	var began:=Time.get_ticks_usec()
+	_edit_support_snapshots.clear();_edit_support_result.clear();last_support_instances=0;last_support_worker_ms=0;last_support_publish_ms=0
+	var points:Array[PackedVector3Array]=[]
+	for provider:Dictionary in _edit_support_providers:
+		if not provider.capture.is_valid() or not provider.apply.is_valid():continue
+		var snapshots:Array=provider.capture.call(bounds)
+		for snapshot:Dictionary in snapshots:
+			_edit_support_snapshots.append({"apply":provider.apply,"snapshot":snapshot})
+			points.append(snapshot.points)
+			last_support_instances+=snapshot.ids.size()
+	last_support_capture_ms=(Time.get_ticks_usec()-began)/1000.0
+	return points
 
 func set_brush_active(active: bool) -> void:
 	foreground_brush = active
@@ -466,6 +490,8 @@ func _receive(result: Dictionary) -> void:
 		if not pending_edit or int(result["epoch"]) != epoch or int(result["ticket"]) != edit_ticket:
 			return
 		last_total_build_ms = float(result["build_total_ms"])
+		_edit_support_result=result.get("support",[])
+		last_support_worker_ms=result.get("support_ms",0.0)
 		last_worker_finished_us = int(result["worker_finished_us"])
 		edit_worker_done = true
 		if batch_remaining == 0:
@@ -492,6 +518,7 @@ func _receive(result: Dictionary) -> void:
 		_read_stats(result["stats"])
 		if not Codec.reply_ok(result["reply"]):
 			pending_edit = false
+			_edit_support_snapshots.clear();_edit_support_result.clear()
 			if result.get("recoverable",false):
 				_rollback_dirty()
 				var record:=_edit_measurement(false)
@@ -503,6 +530,7 @@ func _receive(result: Dictionary) -> void:
 			_fail("Edit rejected by native core (invalid request, capacity, or allocation failure)")
 			return
 		if bool(result.get("no_change", false)):
+			_edit_support_snapshots.clear();_edit_support_result.clear()
 			_rollback_dirty()
 			var record: Dictionary = _edit_measurement(false)
 			record["draw_ms"] = null
@@ -534,6 +562,7 @@ func _receive(result: Dictionary) -> void:
 			_commit_batch()
 
 func _fail(text: String) -> void:
+	_edit_support_snapshots.clear();_edit_support_result.clear()
 	latest_error = text
 	world_ready = false
 	_cancel_density_requests("cancelled")
@@ -846,6 +875,19 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 
 func _commit_batch() -> void:
 	var commit_begin: int = Time.get_ticks_usec()
+	if _edit_support_result.size()!=_edit_support_snapshots.size():
+		backend.disable_snapshot_writes("terrain support results missing")
+		_fail("Terrain vegetation support did not complete; previous save preserved")
+		return
+	for index in _edit_support_snapshots.size():
+		var provider:Dictionary=_edit_support_snapshots[index]
+		if not provider.apply.is_valid() or not provider.apply.call(provider.snapshot,_edit_support_result[index]):
+			backend.disable_snapshot_writes("terrain support publication failed")
+			_fail("Terrain vegetation publication failed; previous save preserved")
+			return
+	last_support_publish_ms=(Time.get_ticks_usec()-commit_begin)/1000.0
+	_record_stage("vegetation edit publish",last_support_publish_ms)
+	_edit_support_snapshots.clear();_edit_support_result.clear()
 	# All edited neighboring surfaces/colliders are already prepared off-screen.
 	# Publish the complete set in one main-thread turn; old colliders survive until here.
 	for key: Vector3i in staged_batch:
@@ -1358,10 +1400,14 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 	pending_edit = true
 	edit_worker_done = false
 	batch_remaining = 0
+	var support:=_capture_edit_support(AABB(geometry_lo,geometry_hi-geometry_lo))
+	var support_snapshots:Array=[]
+	for provider:Dictionary in _edit_support_snapshots:support_snapshots.append(provider.snapshot)
 	var accepted: bool = backend.submit({"kind": "edit", "command": data, "commands": commands, "tiles": affected,
-		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi}, true)
+		"epoch": epoch, "ticket": edit_ticket, "geometry_lo": geometry_lo, "geometry_hi": geometry_hi,"support_points":support,"support_snapshots":support_snapshots}, true)
 	if not accepted:
 		pending_edit = false
+		_edit_support_snapshots.clear();_edit_support_result.clear()
 		_rollback_dirty()
 		message_changed.emit("Terrain is busy; this stroke was not submitted. Try again when the current work finishes.")
 	else:
@@ -1455,6 +1501,7 @@ func reload_world(reset: bool = false) -> void:
 	staged_batch.clear()
 	staging.clear()
 	staging_versions.clear()
+	_edit_support_snapshots.clear();_edit_support_result.clear()
 	in_flight.clear()
 	stamps.clear()
 	visible_cut.clear()

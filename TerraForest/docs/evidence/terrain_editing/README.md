@@ -106,8 +106,10 @@ proof. Visual/player acceptance is separate from these engineering checks.
 The inspected large excavation and mixed-material volume remain visibly intact.
 The immediate large-edit capture shows old tree poses while support queries are
 pending; the separately settled capture confirms those unsupported trees are
-removed after reconciliation. This asynchronous transition is not claimed atomic
-with terrain publication. The steep-slope regression preserves all 60,882 cover
+removed after reconciliation. That run was not atomic with terrain publication;
+the subsequent per-instance support change closes this resident-vegetation delay
+(see `../vegetation_terrain_support/README.md` for current checks and remaining
+performance limits). The steep-slope regression preserves all 60,882 cover
 records, with no new grass/tree identities or changed distant transforms. The
 images are synthetic stress geometry, not proposed world art or house redesigns.
 

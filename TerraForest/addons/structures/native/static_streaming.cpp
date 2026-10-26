@@ -5,6 +5,55 @@
 #include <cmath>
 
 namespace terraforest {
+void NativeStaticBatch::remove_render_members(const std::set<BlockKey> &keys) {
+    std::vector<RenderKey> changed;
+    for(auto key:keys) {
+        auto &ordered=render_ids.at(key);auto group=groups.find(key);
+        if(group==groups.end())ordered.clear();
+        else {
+            size_t index=0;
+            while(index<ordered.size()) {
+                if(group->second.count(ordered[index])){++index;continue;}
+                ordered[index]=ordered.back();ordered.pop_back();
+            }
+        }
+        auto page=batches.lower_bound({key,0});
+        for(;page!=batches.end()&&!(key<page->first.first)&&!(page->first.first<key);++page) {
+            const auto &old=resident_ids.at(page->first);
+            uint64_t count=std::min(uint64_t(old.size()),render_page_size(page->first));
+            if(count!=old.size()||!std::equal(old.begin(),old.end(),ordered.begin()+uint64_t(page->first.second)*render_page_capacity()))changed.push_back(page->first);
+        }
+        if(group==groups.end()){render_bounds.erase(key);collision_bounds.erase(key);}
+    }
+    for(auto page:changed) {
+        if(!render_page_size(page))release_batch(page);
+        else for(auto identity:resident_ids.at(page))slots.erase(identity);
+    }
+    const float birth=float(Time::get_singleton()->get_ticks_msec()/1000.0);
+    for(auto page:changed) {
+        if(!batches.count(page))continue;
+        auto &resident=resident_ids.at(page);
+        uint64_t count=std::min(uint64_t(resident.size()),render_page_size(page));
+        render_bytes-=resident.size()*64;
+        const auto &ordered=render_ids.at(page.first);
+        uint64_t start=uint64_t(page.second)*render_page_capacity();
+        resident.assign(ordered.begin()+start,ordered.begin()+start+count);
+        PackedFloat32Array buffer;buffer.resize(count*16);float *values=buffer.ptrw();
+        for(uint64_t index=0;index<count;++index) {
+            int64_t identity=resident[index];slots[identity]=int(index);
+            const auto &pose=placements.at(identity);float *target=values+index*16;
+            std::copy(pose.begin(),pose.end(),target);
+            target[3]-=page.first.x*32;target[7]-=page.first.y*32;target[11]-=page.first.z*32;
+            target[12]=appearance_birth.emplace(identity,birth).first->second;
+            target[13]=1;target[14]=0;target[15]=0;
+        }
+        Ref<MultiMesh> multi=batches.at(page)->get_multimesh();
+        if(multi->get_instance_count()!=int64_t(count))multi->set_instance_count(count);
+        multi->set_buffer(buffer);render_bytes+=count*64;render_uploaded_bytes+=count*64;++uploads;
+    }
+    for(auto key:keys)if(!groups.count(key))render_ids.erase(key);
+    if(!keys.empty()){render_dirty=true;collision_dirty=true;}
+}
 uint32_t NativeStaticBatch::render_page_capacity() const {
     // Even a dense origin group uploads in small independent draw pages. Tiny
     // application budgets reduce capacity rather than making the group invisible.
@@ -23,7 +72,10 @@ void NativeStaticBatch::release_batch(RenderKey key) {
         for(auto id:ids->second){slots.erase(id);if(!placements.count(id))appearance_birth.erase(id);}
         resident_ids.erase(ids);
     }
-    memdelete(batch->second);batches.erase(batch);++render_evictions;
+    if(appearance_fade&&render_streaming&&render_pool.size()<16) {
+        batch->second->get_multimesh()->set_instance_count(0);render_pool.push_back(batch->second);
+    }else memdelete(batch->second);
+    batches.erase(batch);++render_evictions;
 }
 void NativeStaticBatch::release_group(BlockKey key) {
     auto it=batches.lower_bound({key,0});
@@ -39,7 +91,9 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
     if(batches.count(page))release_batch(page);
     const auto &ordered=render_ids.at(key);
     uint64_t start=uint64_t(page.second)*render_page_capacity();
-    Ref<MultiMesh> multi;multi.instantiate();
+    MultiMeshInstance3D *instance=nullptr;Ref<MultiMesh> multi;
+    if(!render_pool.empty()){instance=render_pool.back();render_pool.pop_back();multi=instance->get_multimesh();}
+    else{multi.instantiate();instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);add_child(instance);}
     multi->set_transform_format(MultiMesh::TRANSFORM_3D);multi->set_mesh(source_mesh);
     const int stride=appearance_fade?16:12;
     multi->set_use_custom_data(appearance_fade);
@@ -59,10 +113,9 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
         offset+=stride;
     }
     multi->set_instance_count(count);multi->set_buffer(buffer);
-    auto *instance=memnew(MultiMeshInstance3D);instance->set_multimesh(multi);
     instance->set_cast_shadows_setting(page_casts_shadows(page)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
-    add_child(instance);batches.emplace(page,instance);
+    batches.emplace(page,instance);
     render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
 }
 bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick) {
@@ -204,7 +257,10 @@ bool NativeStaticBatch::is_render_region_ready(const AABB &world_bounds) const {
     return true;
 }
 Dictionary NativeStaticBatch::render_stats() const {
+    Dictionary timing;timing["validation_us"]=int64_t(removal_validation_us);timing["records_us"]=int64_t(removal_records_us);timing["render_us"]=int64_t(removal_render_us);
     Dictionary d;d["enabled"]=render_streaming;d["shadow_distance"]=shadow_distance;
+    d["removal_timing"]=timing;
+    d["pooled_empty_batches"]=int64_t(render_pool.size());
     int shadow_pages=0;for(const auto &entry:batches)if(entry.second->get_cast_shadows_setting()!=GeometryInstance3D::SHADOW_CASTING_SETTING_OFF)++shadow_pages;d["shadow_batches"]=shadow_pages;d["casts_shadows"]=casts_shadows;d["radius"]=render_radius;
     d["batch_limit"]=render_batch_limit;d["byte_limit"]=int64_t(render_byte_limit);
     d["uploads_per_tick"]=render_upload_limit;d["bytes_per_tick"]=int64_t(render_tick_bytes);

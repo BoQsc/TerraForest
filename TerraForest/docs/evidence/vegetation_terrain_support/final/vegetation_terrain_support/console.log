@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS fused 512-point vegetation probe matches density and voxel occupancy
+PASS fused paving channel excludes solid asphalt, not air above it
+PASS fused probes reject stale and out-of-world samples
+PASS vegetation probes never mutate terrain storage
+PASS only excavated, buried or voxel-occupied roots are removed
+PASS asphalt-only exclusion remains reversible rather than pretending terrain was excavated
+PASS no-op and unrelated edits retain every root, including preexisting unsupported objects
+PASS malformed sample count fails closed
+PASS nonfinite samples cannot authorize removal
+PASS centimetre-scale selection uses each tree root, not its whole owner or canopy
+PASS tree filtering preserves exact surviving transforms
+PASS natural and player-planted clumps share exact surface anchoring
+PASS elevated deposits check the trunk without using its canopy as a clearing box
+PASS sub-owner deletion preserves the neighbouring clump byte for byte
+PASS render deletion receives only selected identities
+PASS invalid removal batch leaves persistence unchanged
+PASS natural removals and authored destruction persist without inventory rewards
+PASS fresh state restores exact removals
+PASS tree removal uses existing durable identity storage
+VEGETATION_TERRAIN_SUPPORT failures=0

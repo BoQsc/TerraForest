@@ -13,9 +13,18 @@ protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("replace_cell","cell","species"),&NativeGroundCoverPicker::replace_cell);
         ClassDB::bind_method(D_METHOD("remove_cell","cell"),&NativeGroundCoverPicker::remove_cell);
+        ClassDB::bind_method(D_METHOD("remove_roots","cell","ids"),&NativeGroundCoverPicker::remove_roots);
         ClassDB::bind_method(D_METHOD("pick","from","to"),&NativeGroundCoverPicker::pick);
     }
 public:
+    bool remove_roots(Vector2i key,const PackedInt64Array &ids){
+        if(!valid_cell(key)||ids.size()>1280)return false;
+        if(ids.is_empty())return true;
+        auto found=cells.find(key.y*63+key.x);if(found==cells.end())return ids.is_empty();
+        std::unordered_set<int64_t> removed(ids.ptr(),ids.ptr()+ids.size());
+        auto &items=found->second;
+        items.erase(std::remove_if(items.begin(),items.end(),[&](const Item &item){return removed.count(item.id)>0;}),items.end());return true;
+    }
     bool replace_cell(Vector2i key,const Array &species){
         if(!valid_cell(key)||species.size()!=9)return false;
         int owner=key.y*63+key.x;

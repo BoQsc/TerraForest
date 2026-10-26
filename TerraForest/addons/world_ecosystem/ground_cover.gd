@@ -42,6 +42,7 @@ var _reset_batch:=0
 var _reset_native_started:=false
 var _reset_keys:Array=[]
 var _retiring:Dictionary={}
+var _terrain_support:RefCounted
 func _layers(key:Vector2i)->int:
 	# Maintain cover density through the full resident area; mesh LOD reduces cost.
 	return 16
@@ -86,6 +87,8 @@ func _ready() -> void:
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)
 	terrain.region_changed.connect(_terrain_changed)
+	_terrain_support=ClassDB.instantiate("NativeVegetationSupport")
+	terrain.register_edit_support(_capture_terrain_support,_apply_terrain_support)
 	if terrain.has_method("register_reload_preparation"):
 		if not terrain.register_reload_preparation(_begin_reset,_advance_reset):push_error("Ground cover reload preparation registration failed")
 	else:terrain.reload_started.connect(reset)
@@ -378,7 +381,42 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 	var prior_boulders:Dictionary=native.boulder_rows(previous[0]) if not previous.is_empty() else {"ids":PackedInt64Array(),"transforms":PackedFloat32Array()}
 	if prior_boulders!=large:obstacles_changed.emit(AABB(Vector3(key.x*32,-4096,key.y*32),Vector3(32,8192,32)).grow(8))
 
-func _terrain_changed(bounds: AABB,_revision: int) -> void: _exclusion_changed(bounds)
+func _capture_terrain_support(bounds:AABB)->Array:
+	var snapshots:Array=[]
+	for key:Vector2i in resident:
+		if not AABB(Vector3(key.x*32,0,key.y*32),Vector3(32,256,32)).grow(1).intersects(bounds):continue
+		var snapshot:Dictionary=_terrain_support.ground_probes(resident[key],bounds)
+		if snapshot.get("ids",PackedInt64Array()).is_empty():continue
+		snapshot["key"]=key;snapshot["rows"]=resident[key];snapshots.append(snapshot)
+	return snapshots
+
+func _apply_terrain_support(snapshot:Dictionary,result:Dictionary)->bool:
+	var verdict:Dictionary=result.verdict if result.has("verdict") else _terrain_support.lost_roots(snapshot,result.before,result.after)
+	if not verdict.ok:return false
+	var ids:PackedInt64Array=verdict.ids
+	if ids.is_empty():return true
+	if not removed.remove_roots(verdict.destroyed):return false
+	var key:Vector2i=snapshot.key
+	if not resident.has(key):return true
+	var prepared:bool=result.has("survivors") and is_same(resident[key],snapshot.rows)
+	var next:Array=result.survivors if prepared else _terrain_support.filter_ground(resident[key],ids)
+	var retired:Array=result.retired if prepared else _terrain_support.filter_ground(resident[key],ids,true)
+	if next.size()!=Catalog.COUNT or retired.size()!=Catalog.COUNT or not picker.remove_roots(key,ids):return false
+	for species in Catalog.COUNT:
+		var draw:=render_row(retired[species],species)
+		if not draw.ids.is_empty() and not batches[species].remove_instances(draw.ids):return false
+	var large:Dictionary=native.boulder_rows(retired[0])
+	if not large.ids.is_empty():
+		if not rock_collision.remove_instances(large.ids):return false
+		fractures.remove_rows(large.ids)
+		obstacles_changed.emit(AABB(Vector3(key.x*32,0,key.y*32),Vector3(32,256,32)))
+	resident[key]=next
+	return true
+
+func _terrain_changed(bounds: AABB,_revision: int) -> void:
+	if terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28):_exclusion_changed(bounds);return
+	for key:Vector2i in _wanted:
+		if not resident.has(key) and AABB(Vector3(key.x*32,0,key.y*32),Vector3(32,256,32)).grow(1).intersects(bounds):_dirty[key]=true
 func _exclusion_changed(bounds: AABB) -> void:
 	for key: Vector2i in _wanted:
 		var owner:=AABB(Vector3(key.x*32,bounds.position.y,key.y*32),Vector3(32,maxf(1,bounds.size.y),32)).grow(8.0)

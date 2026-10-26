@@ -198,6 +198,7 @@ func _receive(result: Dictionary) -> void:
 
 func _commit_batch() -> void:
 	super._commit_batch()
+	if not world_ready or pending_edit:return
 	if last_edit_outcome.get("epoch",-1)==epoch and last_edit_outcome.get("ticket",-1)==edit_ticket and last_edit_outcome.get("status")=="building":
 		last_edit_outcome["status"]="published";last_edit_outcome["revision"]=density_revision
 	var low: Vector3 = geometry_lo.min(edit_lo)

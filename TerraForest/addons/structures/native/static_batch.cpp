@@ -315,6 +315,7 @@ bool NativeStaticBatch::clear_instances() {
     // Whole transient collection reset. Do not bypass persistence ownership,
     // an in-flight region transfer, or protected object contents.
     if(collection_retirement||admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty())return false;
+    for(auto *instance:render_pool)memdelete(instance);render_pool.clear();
     if(placements.empty())return true;
     // No surviving slots need repair when every page is being removed.
     // Avoid release_batch's per-instance tree lookups for this whole reset.
@@ -327,8 +328,21 @@ bool NativeStaticBatch::clear_instances() {
     publish_change();return true;
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
-    if(ids.size()>100000)return false;std::set<int64_t> unique;
-    for(int64_t id:ids)if(id<=0||removal_protected.count(id)||!placements.count(id)||unloaded_regions.count(group_for(placements.at(id)))||retirement_locks(group_for(placements.at(id)))||!unique.insert(id).second)return false;
+    auto began=Time::get_singleton()->get_ticks_usec();
+    if(ids.size()>100000)return false;
+    if(ids.is_empty())return true;
+    std::vector<int64_t> unique(ids.ptr(),ids.ptr()+ids.size());std::sort(unique.begin(),unique.end());
+    if(std::adjacent_find(unique.begin(),unique.end())!=unique.end())return false;
+    std::vector<decltype(placements)::iterator> records;records.reserve(unique.size());
+    std::set<BlockKey> touched;
+    for(int64_t identity:unique) {
+        auto record=placements.find(identity);
+        if(identity<=0||removal_protected.count(identity)||record==placements.end())return false;
+        auto key=group_for(record->second);
+        if(touched.insert(key).second&&(unloaded_regions.count(key)||retirement_locks(key)))return false;
+        records.push_back(record);
+    }
+    auto validated=Time::get_singleton()->get_ticks_usec();removal_validation_us+=validated-began;
     // Interactive single removal swaps the final member into the vacated slot.
     // Only two bounded pages can change; never retire a whole visible group.
     if(render_streaming&&!collision_only&&unique.size()==1) {
@@ -350,13 +364,17 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
         publish_change();return true;
     }
-    std::set<BlockKey> touched;
-    for(auto id:unique) {
-        invalidate_proxy(id);
-        auto old=placements.find(id);auto k=group_for(old->second);auto &g=groups.at(k);g.erase(id);if(g.empty())groups.erase(k);
-        placements.erase(old);slots.erase(id);appearance_birth.erase(id);touched.insert(k);
+    for(auto record:records) {
+        int64_t identity=record->first;auto key=group_for(record->second);
+        invalidate_proxy(identity);
+        auto group=groups.find(key);group->second.erase(identity);if(group->second.empty())groups.erase(group);
+        placements.erase(record);slots.erase(identity);appearance_birth.erase(identity);
     }
-    rebuild(touched,true);if(!touched.empty())publish_change();return true;
+    auto erased=Time::get_singleton()->get_ticks_usec();removal_records_us+=erased-validated;
+    if(render_streaming&&appearance_fade&&!collision_only)remove_render_members(touched);
+    else rebuild(touched,true);
+    removal_render_us+=Time::get_singleton()->get_ticks_usec()-erased;
+    if(!touched.empty())publish_change();return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
     if(admission||!unloaded_regions.empty()||!removal_protected.empty())return false;

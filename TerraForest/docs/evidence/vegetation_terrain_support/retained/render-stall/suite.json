@@ -1,0 +1,241 @@
+{
+  "revision": "39e951fed65e382b4b4aa9f6412cac0e8423b7ec",
+  "worktree_changes": [
+    " M TerraForest/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/vegetation_runtime/native/ground_state.hpp",
+    " M TerraForest/addons/vegetation_runtime/native/harvest_state.hpp",
+    " M TerraForest/addons/vegetation_runtime/native/register_types.cpp",
+    " M TerraForest/addons/volumetric_terrain/terrain_backend.gd",
+    " M TerraForest/addons/volumetric_terrain/terrain_stream.gd",
+    " M TerraForest/addons/volumetric_terrain/terrain_world.gd",
+    " M TerraForest/addons/world_ecosystem/ground_cover.gd",
+    " M TerraForest/addons/world_ecosystem/world_ecosystem.gd",
+    " M TerraForest/tools/check_terrain_editing.py",
+    "?? TerraForest/addons/vegetation_runtime/native/terrain_support.hpp",
+    "?? TerraForest/tests/vegetation_terrain_edits.gd",
+    "?? TerraForest/tests/vegetation_terrain_support.gd"
+  ],
+  "git_metadata_available": true,
+  "engine": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "9cb573ac7347001fb50ba305e2e73218141b38e13bc20fc7cae280a5007b326a",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e9217055a2f4628dfcabd7fc25ff818dbdb80c50ae18dddf4280234a097ecf5",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "637da4d81b8f02d92bad6809f66c69001a90f7c8d7c3cdad0f75aa1b0d9c2e23",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "453eb6119eeb577ec181b5a7cbc0fa12af8c92fcfde2770d69bd99a40a52ca7f"
+  },
+  "pack_sha256": null,
+  "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
+  "known_open_gate": "held_mining_flight: post-flight visible-change gaps can exceed 150ms",
+  "runs": [
+    {
+      "test": "vegetation_terrain_support",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\vegetation_terrain_support\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/vegetation_terrain_support.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_2a9b5e2d8d2d4e8a97cfee9fb511d97d",
+        "--derived-cache=user://vegetation_terrain_support_2a9b5e2d8d2d4e8a97cfee9fb511d97d"
+      ],
+      "cache": "user://vegetation_terrain_support_2a9b5e2d8d2d4e8a97cfee9fb511d97d",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 81124,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.2942966000409797,
+        "passed": true
+      },
+      "script_sha256": "b4b881b03a6e130fb08a8ff39bc68a1a89fa88793d02adffd87bbf59560aef00"
+    },
+    {
+      "test": "terrain_edit_recovery",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\terrain_edit_recovery\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_edit_recovery.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_30822b19d4854521a6c55f14395c1d51",
+        "--derived-cache=user://terrain_edit_recovery_30822b19d4854521a6c55f14395c1d51"
+      ],
+      "cache": "user://terrain_edit_recovery_30822b19d4854521a6c55f14395c1d51",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 75024,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.7819667999865487,
+        "passed": true
+      },
+      "script_sha256": "b4e4ee535876774c2d8ea25a1b930b6b9708bca9ac9787d0ad537581d1489c3d"
+    },
+    {
+      "test": "terrain_edit_paged_recovery",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\terrain_edit_paged_recovery\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_edit_paged_recovery.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_ff43699e488b4150938d167ec764431f",
+        "--derived-cache=user://terrain_edit_paged_recovery_ff43699e488b4150938d167ec764431f"
+      ],
+      "cache": "user://terrain_edit_paged_recovery_ff43699e488b4150938d167ec764431f",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 15272,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5641755999531597,
+        "passed": true
+      },
+      "script_sha256": "3d817704f2fe30970d1389a7e5820aba96cdfbe40142ac520115d333c3b4ff0b"
+    },
+    {
+      "test": "vegetation_steep_mining",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\vegetation_steep_mining\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/vegetation_steep_mining.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_c499834cbc08452ea26e501aea25d4bc",
+        "--derived-cache=user://vegetation_steep_mining_c499834cbc08452ea26e501aea25d4bc",
+        "--world-generator=21",
+        "--world-seed=1703",
+        "--ground-cover"
+      ],
+      "cache": "user://vegetation_steep_mining_c499834cbc08452ea26e501aea25d4bc",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 27104,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 51.546887499978766,
+        "passed": true
+      },
+      "script_sha256": "42c3ba7d8bb1bd3200387d7630ff2223762097c40693b1a45aa3751dbb27cec5"
+    },
+    {
+      "test": "vegetation_edit_continuity",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\vegetation_edit_continuity\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/vegetation_edit_continuity.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_9dd22d0cfb0e419690aaf42112bc626a",
+        "--derived-cache=user://vegetation_edit_continuity_9dd22d0cfb0e419690aaf42112bc626a"
+      ],
+      "cache": "user://vegetation_edit_continuity_9dd22d0cfb0e419690aaf42112bc626a",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 71692,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 2.4662965000607073,
+        "passed": true
+      },
+      "script_sha256": "5a1ccb068d2a27066131fc7fa73822bf2268b24d100c85789d33a3b6ea8b4f65"
+    },
+    {
+      "test": "terrain_tools_endurance",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T081648Z\\terrain_tools_endurance\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_tools_endurance.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_a2ae6c1ce79a43e6a86a653c4ad515a3",
+        "--derived-cache=user://terrain_tools_endurance_a2ae6c1ce79a43e6a86a653c4ad515a3",
+        "--world-generator=23",
+        "--ground-cover",
+        "--no-zombies",
+        "--terrain-soak-rounds=3"
+      ],
+      "cache": "user://terrain_tools_endurance_a2ae6c1ce79a43e6a86a653c4ad515a3",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 71324,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL mixed_history_1: p99 frame <=20ms and no >50ms stall",
+          "FAIL whole workload including tool switches and phase boundaries meets frame budget"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 117.91729869996198,
+        "passed": false
+      },
+      "script_sha256": "1f1aff66d8abb72f60676b69134c68920bb32824266e9dd10c22596e9a27c7d4"
+    }
+  ]
+}

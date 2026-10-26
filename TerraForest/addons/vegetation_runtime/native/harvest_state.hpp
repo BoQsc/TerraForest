@@ -21,6 +21,7 @@ protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("contains","id"),&NativeHarvestState::contains);
         ClassDB::bind_method(D_METHOD("mark","id"),&NativeHarvestState::mark);
+        ClassDB::bind_method(D_METHOD("remove_roots","ids"),&NativeHarvestState::remove_roots);
         ClassDB::bind_method(D_METHOD("unmark","id"),&NativeHarvestState::unmark);
         ClassDB::bind_method(D_METHOD("mask","ids"),&NativeHarvestState::mask);
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeHarvestState::capture_storage_snapshot);
@@ -36,6 +37,13 @@ public:
         return inserted;
     }
     bool unmark(int64_t id){const bool erased=removed.erase(id)!=0;if(erased)snapshot_dirty=true;return erased;}
+    bool remove_roots(const PackedInt64Array &ids){
+        if(ids.size()>4096)return false;
+        std::set<int64_t> additions;
+        for(int64_t identity:ids){if(identity<1||identity>32*32*36)return false;if(!contains(identity))additions.insert(identity);}
+        if(removed.size()+additions.size()>LIMIT)return false;
+        removed.insert(additions.begin(),additions.end());snapshot_dirty|=!additions.empty();return true;
+    }
     PackedByteArray mask(const PackedInt64Array &ids) const{
         PackedByteArray out;if(ids.size()>4096)return out;
         out.resize(ids.size());for(int64_t i=0;i<ids.size();++i)out.set(i,contains(ids[i])?1:0);return out;
