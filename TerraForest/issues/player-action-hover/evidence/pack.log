@@ -1,0 +1,60 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 203.79 ms at 27430
+[terrain-hitch] base controller 205.73 ms at 27432
+[terrain-hitch] controller process 207.51 ms at 27433
+[terrain-hitch] world process 209.39 ms at 27435
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS temporary world is playable
+PASS holding backtick opens the actual player action wheel
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":0,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":27743,"mouse_mode":0,"opened":true,"phase":"stationary-center"}
+PASS capture saved: stationary-center
+PASS opening selects the Fly action inside the former centre dead zone
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":0,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":27743,"mouse_mode":0,"opened":true,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":true,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS stationary release enables flight and restores camera control
+PASS holding backtick opens the actual player action wheel
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":0,"cursor":"(960.0, 540.0)","fly":true,"focused":true,"held_since":28843,"mouse_mode":0,"opened":true,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS stationary release also returns to walking
+PASS holding backtick opens the actual player action wheel
+PASS actual cursor reaches the requested wheel region
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":0,"cursor":"(1260.0, 540.0)","fly":false,"focused":true,"held_since":29218,"mouse_mode":0,"opened":true,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS release outside the wheel cancels without waiting for another process frame
+PASS holding backtick opens the actual player action wheel
+PASS actual cursor reaches the requested wheel region
+PASS moving outside clears selection
+PASS actual cursor reaches the requested wheel region
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":29615,"mouse_mode":0,"opened":true,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":true,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS moving back to the centre and releasing in the same frame selects Fly
+PASS holding backtick opens the actual player action wheel
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS clicking the centred Fly action toggles only once
+PASS holding backtick opens the actual player action wheel
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS Escape cancels the wheel without activating flight or opening pause
+PASS holding backtick opens the actual player action wheel
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 540.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS right click cancels the selected action
+PASS holding backtick opens the actual player action wheel
+PASS actual cursor reaches the requested wheel region
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 542.0)","fly":true,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 544.0)","fly":true,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS keyboard selection still works when the cursor is outside
+PASS Fly actions preserve gameplay mode and inventory
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(960.0, 550.0)","fly":false,"focused":true,"held_since":31567,"mouse_mode":2,"opened":false,"phase":"before-release"}
+PLAYER_ACTION_STATE {"available":true,"center":"(960.0, 540.0)","choice":-1,"cursor":"(959.0, 571.0)","fly":false,"focused":true,"held_since":-1,"mouse_mode":2,"opened":false,"phase":"after-release"}
+PASS a short backtick tap still toggles developer mode
+[TerrainRewrite] Temporary test world: save skipped
+PLAYER_ACTION_HOVER checks=26 failures=0

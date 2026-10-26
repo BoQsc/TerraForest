@@ -1,0 +1,13 @@
+{
+  "checks": 5,
+  "failures": 2,
+  "samples": [
+    {
+      "center": "(960.0, 540.0)",
+      "choice": -1,
+      "cursor": "(955.0, 542.0)",
+      "fly": false,
+      "phase": "stationary-center"
+    }
+  ]
+}

@@ -20,7 +20,7 @@ func consume(event:InputEvent)->bool:
 	if opened and event is InputEventKey and event.pressed and event.physical_keycode in [KEY_1,KEY_F]:choice=0;activate();return true
 	if opened and event is InputEventMouseButton:
 		if event.pressed:
-			if event.button_index==MOUSE_BUTTON_LEFT:activate()
+			if event.button_index==MOUSE_BUTTON_LEFT:_update_choice();activate()
 			elif event.button_index==MOUSE_BUTTON_RIGHT:cancel()
 		return true
 	if not event is InputEventKey or event.echo or event.physical_keycode!=KEY_QUOTELEFT:return opened
@@ -28,7 +28,7 @@ func consume(event:InputEvent)->bool:
 		if not available():return false
 		menu.tilde_down=Time.get_ticks_msec();menu.tilde_chord=false;game._cancel_edit_input();view.show()
 	elif menu.tilde_down>=0:
-		if opened:activate()
+		if opened:_update_choice();activate()
 		else:
 			var tap:bool=not menu.tilde_chord;cancel()
 			if tap:menu.toggle_developer()
@@ -39,10 +39,11 @@ func _process(_delta:float)->void:
 	if not opened and not menu.tilde_chord and Time.get_ticks_msec()-menu.tilde_down>=350:
 		opened=true;game._clear_motion()
 		if Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE):Input.warp_mouse(get_viewport().get_visible_rect().size*.5)
-	if opened:
-		var offset:=view.get_global_mouse_position()-get_viewport().get_visible_rect().size*.5
-		choice=0 if offset.length()>=48 and offset.length()<=220 else -1
+	if opened:_update_choice()
 	view.queue_redraw()
+func _update_choice()->void:
+	var offset:=view.get_global_mouse_position()-get_viewport().get_visible_rect().size*.5
+	choice=0 if offset.length_squared()<=220.0*220.0 else -1
 func activate()->void:
 	var selected:=choice;cancel()
 	if selected==0 and available():menu.toggle_flight()
@@ -53,7 +54,7 @@ func paint(canvas:Control)->void:
 	canvas.draw_circle(center,190,Color(.015,.03,.035,.94))
 	canvas.draw_arc(center,178,0,TAU,64,Color("8ce2bb") if choice==0 else Color("45665a"),8,true)
 	var font:Font=ThemeDB.fallback_font
-	for row:Array in [["1 · Return to walking" if game.fly else "1 · Enable fly",-12],["Move mouse outward to select",35],["Release ` to choose",230],["Esc / right mouse: cancel",256]]:
+	for row:Array in [["1 · Return to walking" if game.fly else "1 · Enable fly",-12],["Release to select · move away to cancel",35],["Release ` to choose",230],["Esc / right mouse: cancel",256]]:
 		var size:=22 if int(row[1])<0 else 16
 		var text:String=row[0];var width:=font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,size).x
 		canvas.draw_string(font,center+Vector2(-width*.5,row[1]),text,HORIZONTAL_ALIGNMENT_LEFT,-1,size,Color("daf4e7"))

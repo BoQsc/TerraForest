@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "review": "Both original captures inspected; human acceptance pending. Temporary test worlds, no player saves.",
+  "images": [
+    {
+      "file": "before.png",
+      "sha256": "f4b01e35cc3274d740508941c3f94f5bd9cd5191ec066b24fc1bcd5fc2ddbcd4",
+      "source": "reports/player_action_hover/before/stationary-center.png",
+      "record": "../evidence/before-run.json",
+      "context": "Source baseline, seed 1703, 1920x1080. Cursor (955,542), wheel centre (960,540), choice -1. Release fails to enable flight."
+    },
+    {
+      "file": "after.png",
+      "sha256": "3a1d6a3c66f7910f70c5b0cbc2bc2cbe16ba355d506a0b4fb0f27312cffaa7e7",
+      "source": "reports/checks/20261026T182230566600Z_player_hover_pack_retry/evidence/stationary-center.png",
+      "record": "../evidence/pack-run.json",
+      "context": "Exported fix, seed 1703, 1920x1080. Cursor and wheel centre (960,540), choice 0. All 26 interaction checks pass. Different temporary slot from baseline; not pixel-identical world coverage."
+    }
+  ]
+}

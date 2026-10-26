@@ -1,0 +1,115 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 201.11 ms at 22803
+[terrain-hitch] base controller 202.97 ms at 22805
+[terrain-hitch] controller process 204.95 ms at 22807
+[terrain-hitch] world process 206.78 ms at 22808
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS temporary world ready
+PASS native corpse contents fixture created
+PASS corpse storage opens
+PASS escape evidence saved: corpse-before-escape
+PASS Escape closes corpse storage
+PASS closing corpse storage does not also open pause menu
+PASS Escape repeat does not open pause after corpse storage
+PASS closing corpse storage restores HUD input
+PASS closing corpse storage restores camera capture
+PASS escape evidence saved: corpse-closed
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape closes inventory
+PASS closing inventory does not also open pause menu
+PASS Escape repeat does not open pause after inventory
+PASS closing inventory restores HUD input
+PASS closing inventory restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS actual chest inserted
+PASS chest storage opens
+PASS Escape closes chest storage
+PASS closing chest storage does not also open pause menu
+PASS Escape repeat does not open pause after chest storage
+PASS closing chest storage restores HUD input
+PASS closing chest storage restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS map opens
+PASS Escape closes world map
+PASS closing world map does not also open pause menu
+PASS Escape repeat does not open pause after world map
+PASS closing world map restores HUD input
+PASS closing world map restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS tool workspace opens
+PASS Escape closes tool workspace
+PASS closing tool workspace does not also open pause menu
+PASS Escape repeat does not open pause after tool workspace
+PASS closing tool workspace restores HUD input
+PASS closing tool workspace restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape closes a dropdown before its tool workspace
+PASS Escape closes workspace after dropdown
+PASS closing workspace after dropdown does not also open pause menu
+PASS Escape repeat does not open pause after workspace after dropdown
+PASS closing workspace after dropdown restores HUD input
+PASS closing workspace after dropdown restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape closes Dev Bag even when search owns focus
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Alt tool controls receive cursor access
+PASS Escape closes Alt tool controls
+PASS closing Alt tool controls does not also open pause menu
+PASS Escape repeat does not open pause after Alt tool controls
+PASS closing Alt tool controls restores HUD input
+PASS closing Alt tool controls restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS player action hold starts before wheel opens
+PASS Escape closes pending player action wheel
+PASS closing pending player action wheel does not also open pause menu
+PASS Escape repeat does not open pause after pending player action wheel
+PASS closing pending player action wheel restores HUD input
+PASS closing pending player action wheel restores camera capture
+PASS cancelled hold release cannot toggle developer mode
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS player action wheel opens
+PASS Escape closes player action wheel
+PASS closing player action wheel does not also open pause menu
+PASS Escape repeat does not open pause after player action wheel
+PASS closing player action wheel restores HUD input
+PASS closing player action wheel restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape closes pending vehicle action wheel
+PASS closing pending vehicle action wheel does not also open pause menu
+PASS Escape repeat does not open pause after pending vehicle action wheel
+PASS closing pending vehicle action wheel restores HUD input
+PASS closing pending vehicle action wheel restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape closes vehicle action wheel
+PASS closing vehicle action wheel does not also open pause menu
+PASS Escape repeat does not open pause after vehicle action wheel
+PASS closing vehicle action wheel restores HUD input
+PASS closing vehicle action wheel restores camera capture
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS Escape cancels confirmation without closing its parent menu or executing action
+PASS next Escape closes the parent menu
+PASS fresh Escape with no active UI opens the pause menu
+PASS Escape closes pause menu and returns control
+PASS escape evidence saved: pause-menu
+[TerrainRewrite] Temporary test world: save skipped
+PASS ordinary compound save completes
+COMBINED_RESOURCE_ROUTE failures=0

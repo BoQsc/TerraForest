@@ -1,6 +1,16 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Fly wheel stationary selection — 2026-10-26
+
+The single-action backtick wheel no longer excludes its own centred Fly label
+with an inner dead zone. Release/click samples the current pointer; outside,
+Escape/right-click cancellation and short-tap developer switching remain intact.
+Actual source/package interaction checks pass 26/26, packaged ESC priority and
+export/startup pass. Earlier harness failures and one unassigned cursor-state
+failure remain recorded; human/DPI review is open. No player saves or vehicle
+wheel rules change. [Evidence and images](../issues/player-action-hover/README.md).
+
 ## ESC closes active UI before opening pause — 2026-10-26
 
 Reproduced corpse storage remaining open: the session handler consumed ESC after
