@@ -1,0 +1,95 @@
+{
+  "utc": "2026-10-26T12:13:24.129311+00:00",
+  "baseline": "5b17241f",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "5829ee942ead229ea9998ba2381cc1421c1cbc8a5eccd8678965a8ea34142218",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "c6acd68eb328b786ffd7b7b34d078c4b7fab866c9aec4d35b000a97b40541b7c",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff"
+  },
+  "pack_sha256": "8e5965dd7d275b536c3c99e822a8987b9de9174bfe2fdba27a1c0a35ec0cd2aa",
+  "matrices": {
+    "final_source": {
+      "source": "reports\\terrain_editing\\20261026T115517Z",
+      "passed": [
+        "vegetation_page_retirement",
+        "vegetation_terrain_edits",
+        "vegetation_edit_continuity"
+      ],
+      "manifest_sha256": "ca0bb6de5183f9330941b3dc23a64c07cc0659e6becc732fd0bed60876d1db54"
+    },
+    "final_endurance": {
+      "source": "reports\\terrain_editing\\20261026T115836Z",
+      "passed": [
+        "terrain_tools_endurance"
+      ],
+      "manifest_sha256": "1bc02081a9e53af142ab3f5cdb634bbefcbfc34d8c0febd7dd3e173dbda22208"
+    },
+    "final_pack": {
+      "source": "reports\\terrain_editing\\20261026T120328Z",
+      "passed": [
+        "vegetation_page_retirement",
+        "vegetation_terrain_edits",
+        "vegetation_edit_continuity",
+        "held_mining_generated",
+        "held_mining_coarse"
+      ],
+      "manifest_sha256": "d36c53d6dc5a9b1f50120be5a7dbf3b29b3be79d707743b44ffa4343ed0b271d"
+    },
+    "final_repeat": {
+      "source": "reports\\terrain_editing\\20261026T120607Z",
+      "passed": [
+        "vegetation_terrain_edits"
+      ],
+      "manifest_sha256": "661854dacbbab56a0cd3108d4c067b2b273a96e2d68b6da587c181347241fff6"
+    }
+  },
+  "publication": [
+    {
+      "run": "20261026T115517Z",
+      "instances": 18517,
+      "support_publish_ms": 11.685,
+      "support_worker_ms": 72.363,
+      "total_ms": 938.476
+    },
+    {
+      "run": "20261026T120328Z",
+      "instances": 18517,
+      "support_publish_ms": 13.014,
+      "support_worker_ms": 97.335,
+      "total_ms": 1008.055
+    },
+    {
+      "run": "20261026T120607Z",
+      "instances": 18517,
+      "support_publish_ms": 11.679,
+      "support_worker_ms": 72.674,
+      "total_ms": 922.646
+    }
+  ],
+  "focused_endurance": {
+    "count": 13697,
+    "max_ms": 33.96,
+    "median_ms": 16.656,
+    "over_50ms": 0,
+    "p95_ms": 17.492,
+    "p99_ms": 17.987
+  },
+  "scope": "Finite current-machine qualification with unchanged 16ms vegetation publication, 20ms frame p99, no frames over 50ms, and 150ms mining response/continuity gates. Not universal performance or presentation/focus-switch closure.",
+  "remaining": [
+    "Intermittent render/presentation stalls; focus changes confirmed by user for earlier stress run",
+    "Platform CPU trace refused by Windows profiling policy 0xc5585011; no policy changed",
+    "Legacy fixture failures reproduced using baseline DLL; baseline control additionally failed virtual report paths",
+    "Multi-hour/populated travel and other hardware unqualified"
+  ]
+}

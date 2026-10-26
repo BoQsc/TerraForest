@@ -4,10 +4,28 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from run_godot_check import command_for, execute
+from run_godot_check import command_for, execute, verify_pack_native
 
 
 class CheckLauncherTests(unittest.TestCase):
+    def test_pack_rejects_missing_or_mismatched_external_libraries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with self.assertRaises(ValueError):
+                verify_pack_native(root)
+            source = root / "addons/structures/bin/native.dll"
+            packaged = root / "dist/addons/structures/bin/native.dll"
+            source.parent.mkdir(parents=True)
+            source.write_bytes(b"current")
+            with self.assertRaises(ValueError):
+                verify_pack_native(root)
+            packaged.parent.mkdir(parents=True)
+            packaged.write_bytes(b"old")
+            with self.assertRaises(ValueError):
+                verify_pack_native(root)
+            packaged.write_bytes(source.read_bytes())
+            self.assertEqual(len(verify_pack_native(root)), 1)
+
     def test_fresh_cache_and_override_rejection(self):
         first, cache = command_for("godot", "cache_eviction_world", Path("reports"), [])
         second, other = command_for("godot", "cache_eviction_world", Path("reports"), [])

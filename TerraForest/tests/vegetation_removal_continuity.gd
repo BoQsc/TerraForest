@@ -8,7 +8,7 @@ func _initialize()->void:run.call_deferred()
 func visible_rows(batch:Node)->Dictionary:
  var result:Dictionary={}
  for child in batch.get_children():
-  if child is MultiMeshInstance3D:
+  if child is MultiMeshInstance3D and child.visible:
    for i in child.multimesh.instance_count:
     var pose:Transform3D=child.multimesh.get_instance_transform(i)
     var id:=roundi(pose.origin.x*32)+1

@@ -55,6 +55,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_render_focus","focus"),&NativeStaticBatch::set_render_focus);
     ClassDB::bind_method(D_METHOD("set_render_radius","radius"),&NativeStaticBatch::set_render_radius);
     ClassDB::bind_method(D_METHOD("render_stats"),&NativeStaticBatch::render_stats);
+    ClassDB::bind_method(D_METHOD("render_frame_profile"),&NativeStaticBatch::render_frame_profile);
     ClassDB::bind_method(D_METHOD("is_render_region_ready","world_bounds"),&NativeStaticBatch::is_render_region_ready);
     ClassDB::bind_method(D_METHOD("configure_appearance_fade"),&NativeStaticBatch::configure_appearance_fade);
     ClassDB::bind_method(D_METHOD("set_casts_shadows","enabled"),&NativeStaticBatch::set_casts_shadows);
@@ -290,6 +291,7 @@ Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_
     Dictionary result;result["ok"]=false;result["complete"]=false;
     if(max_records<1||max_records>16384||max_usec<1||max_usec>10000)return result;
     const auto began=Time::get_singleton()->get_ticks_usec();int64_t processed=0;
+    drain_render_retirement(uint64_t(max_usec));
     auto erase_one=[](auto &values){if(values.empty())return false;values.erase(values.begin());return true;};
     while(collection_retirement&&processed<max_records&&(processed==0||Time::get_singleton()->get_ticks_usec()-began<uint64_t(max_usec))) {
         auto &r=*collection_retirement;
@@ -307,14 +309,15 @@ Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_
         --r.units;++processed;
         if(!r.units)collection_retirement.reset();
     }
-    result["ok"]=true;result["complete"]=!collection_retirement;result["processed"]=processed;
-    result["remaining"]=int64_t(collection_retirement?collection_retirement->units:0);
+    result["ok"]=true;result["complete"]=!collection_retirement&&retired_render_pages.empty();result["processed"]=processed;
+    result["remaining"]=int64_t((collection_retirement?collection_retirement->units:0)+retired_render_pages.size());
     result["elapsed_us"]=int64_t(Time::get_singleton()->get_ticks_usec()-began);return result;
 }
 bool NativeStaticBatch::clear_instances() {
     // Whole transient collection reset. Do not bypass persistence ownership,
     // an in-flight region transfer, or protected object contents.
     if(collection_retirement||admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty())return false;
+    drain_render_retirement(0);
     for(auto *instance:render_pool)memdelete(instance);render_pool.clear();
     if(placements.empty())return true;
     // No surviving slots need repair when every page is being removed.
@@ -335,11 +338,13 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(std::adjacent_find(unique.begin(),unique.end())!=unique.end())return false;
     std::vector<decltype(placements)::iterator> records;records.reserve(unique.size());
     std::set<BlockKey> touched;
+    std::map<BlockKey,size_t> removed_counts;
     for(int64_t identity:unique) {
         auto record=placements.find(identity);
         if(identity<=0||removal_protected.count(identity)||record==placements.end())return false;
         auto key=group_for(record->second);
         if(touched.insert(key).second&&(unloaded_regions.count(key)||retirement_locks(key)))return false;
+        ++removed_counts[key];
         records.push_back(record);
     }
     auto validated=Time::get_singleton()->get_ticks_usec();removal_validation_us+=validated-began;
@@ -364,10 +369,14 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
         publish_change();return true;
     }
+    for(const auto &entry:removed_counts) {
+        auto group=groups.find(entry.first);
+        if(group->second.size()==entry.second)groups.erase(group);
+    }
     for(auto record:records) {
         int64_t identity=record->first;auto key=group_for(record->second);
         invalidate_proxy(identity);
-        auto group=groups.find(key);group->second.erase(identity);if(group->second.empty())groups.erase(group);
+        auto group=groups.find(key);if(group!=groups.end())group->second.erase(identity);
         placements.erase(record);slots.erase(identity);appearance_birth.erase(identity);
     }
     auto erased=Time::get_singleton()->get_ticks_usec();removal_records_us+=erased-validated;

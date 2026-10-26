@@ -58,14 +58,24 @@ failed on a read-only `res://reports` directory diagnostic. Absolute output path
 fix the harness; `final-report-path-rerun` passes both cases without loosening
 assertions. The original failures remain in `final/`.
 
-## Limits and retained failures
+## Follow-up qualification
 
-- The strict populated-maximum publication target remains 16 ms, unchanged.
-  Initial publication was 32.514 ms; native filtering, worker preparation and
+The native page-retirement follow-up passes all 72 assertions: maximum populated
+vegetation publication is 11.685 ms in source and 13.014 / 11.679 ms in packaged
+repeats, without changing the 16 ms gate or delaying visible removal. Focused
+4,800-edit endurance also passes. See
+`../terrain_editing/vegetation_pages/README.md` for the native changes, exact
+ownership tests, final evidence and still-unresolved presentation stalls.
+
+## Historical limits and retained failures
+
+- The strict populated-maximum publication target remains 16 ms, unchanged;
+  the follow-up above now qualifies it on this machine. At this earlier checkpoint,
+  initial publication was 32.514 ms; native filtering, worker preparation and
   page reuse reduced the source measurement to 17.415 ms. Do not label this
   maximum-brush performance gate passed unless the recorded run actually passes.
-  Return with native removal-phase timings and a bounded prepare/commit design;
-  keep exact survivors and atomic visible publication while reducing the cost.
+  The follow-up keeps exact survivors and atomic visible publication while reducing
+  the native removal cost; these earlier failing measurements remain unchanged.
 - `retained/render-stall` records a 72.921 ms frame; `retained/held-phase-tail`
   retains a held-tool p99 failure. A later quiet run is not a fix for those
   intermittent render/presentation stalls or the existing cold-arrival mining gap.

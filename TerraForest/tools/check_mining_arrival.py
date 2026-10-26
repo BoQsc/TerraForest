@@ -9,7 +9,7 @@ import uuid
 from pathlib import Path
 
 from run import ROOT, parse_args
-from run_godot_check import command_for, execute, revision_metadata
+from run_godot_check import command_for, execute, revision_metadata, verify_pack_native
 
 
 def fingerprints(paths):
@@ -45,10 +45,16 @@ def main():
     before = fingerprints(source_files)
     resource_root = ROOT / "dist" if args.pack else ROOT
     pack = resource_root / "TerraForest.pck"
+    try:
+        external_native = verify_pack_native() if args.pack else None
+    except ValueError as error:
+        parser.error(str(error))
     manifest = {**revision_metadata(), "arguments": vars(args), "source_files": before,
+                "matching_external_native_sha256": external_native,
                 "engine_sha256": hashlib.sha256(Path(config.godot).read_bytes()).hexdigest(),
                 "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None,
-                "native_sha256": fingerprints(sorted((resource_root / "addons/volumetric_terrain/bin").glob("*.dll"))),
+                "native_sha256": fingerprints(sorted(path for addon in ["volumetric_terrain", "vegetation_runtime", "structures"]
+                                                     for path in (resource_root / "addons" / addon / "bin").glob("*.dll"))),
                 "test_sha256": fingerprints([ROOT / "tests/held_mining_flight.gd", ROOT / "tests/foundation_mining.gd"]),
                 "runs": [], "scope": "Two real-held-input arrivals per run; fresh cache. Optional save copies never modify the source. Visual readback is not performance acceptance."}
     for iteration in range(args.repeat):

@@ -16,7 +16,7 @@ func check(ok:bool,label:String)->void:
 func rows(batch:Node)->Dictionary:
 	var out:Dictionary={}
 	for child in batch.get_children():
-		if child is MultiMeshInstance3D:
+		if child is MultiMeshInstance3D and child.visible:
 			for slot in child.multimesh.instance_count:
 				var pose:Transform3D=child.multimesh.get_instance_transform(slot);pose.origin+=child.position
 				out[roundi(pose.origin.x*32)+1]={"pose":pose,"fade":child.multimesh.get_instance_custom_data(slot)}

@@ -7,7 +7,7 @@ func wood()->int:
  return total
 func run()->void:
  DirAccess.make_dir_recursive_absolute("res://reports/vegetation_collect_continuity")
- game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.max_fps=60;root.add_child(game)
+ game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.max_fps=60;game.player_view.settings_path="";root.add_child(game)
  if not check(await wait_for(func():return not game.loading_active,60),"world ready"):await done();return
  var center:Vector3=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(game.terrain.backend.world_seed,game.terrain.backend.world_generator).sites[4].position
  game.teleport(center+Vector3(28,0,32))
@@ -59,7 +59,7 @@ func run()->void:
 func rendered(batch:Node,group:Vector3)->Dictionary:
  var result:Dictionary={}
  for child in batch.get_children():
-  if child is MultiMeshInstance3D and child.position==group:
+  if child is MultiMeshInstance3D and child.visible and child.position==group:
    for i in child.multimesh.instance_count:
     var transform:Transform3D=child.multimesh.get_instance_transform(i)
     result[str(transform)]=child.multimesh.get_instance_custom_data(i)

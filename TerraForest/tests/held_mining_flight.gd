@@ -107,6 +107,7 @@ func run() -> void:
 		row["resident"]={"terrain_triangles":game.terrain.total_triangles,"tiles":game.terrain.tiles.size(),"cache_bytes":game.terrain.cache_bytes,"engine_static_bytes":int(Performance.get_monitor(Performance.MEMORY_STATIC)),"draw_calls":int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),"render_primitives":int(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))}
 		row["coarse_arrival_fixture"]=coarse_arrival
 		row["stages"]=stage_totals.duplicate(true)
+		row["slow_frames"]=slow_frames.filter(func(sample:Dictionary):return sample.phase==phase)
 		if coarse_arrival and reports.is_empty():
 			check(work.any(func(entry:Dictionary):return entry.get("kind","")=="edit_chunk" and entry.get("key",[]).size()==3 and int(entry.key[2])==256),"held arrival edits existing coarse parent before refinement")
 		reports.append(row)

@@ -26,7 +26,7 @@ void NativeStaticBatch::remove_render_members(const std::set<BlockKey> &keys) {
         if(group==groups.end()){render_bounds.erase(key);collision_bounds.erase(key);}
     }
     for(auto page:changed) {
-        if(!render_page_size(page))release_batch(page);
+        if(!render_page_size(page))release_batch(page,true,true);
         else for(auto identity:resident_ids.at(page))slots.erase(identity);
     }
     const float birth=float(Time::get_singleton()->get_ticks_msec()/1000.0);
@@ -64,15 +64,30 @@ uint64_t NativeStaticBatch::render_page_size(RenderKey key) const {
     uint64_t start=uint64_t(key.second)*render_page_capacity();
     return start>=group->second.size()?0:std::min(uint64_t(render_page_capacity()),group->second.size()-start);
 }
-void NativeStaticBatch::release_batch(RenderKey key) {
+void NativeStaticBatch::drain_render_retirement(uint64_t budget_usec) {
+    const uint64_t started=Time::get_singleton()->get_ticks_usec();
+    while(!retired_render_pages.empty()) {
+        const auto retired=retired_render_pages.back();retired_render_pages.pop_back();
+        if(render_pool.size()<16) {
+            retired.node->get_multimesh()->set_instance_count(0);render_pool.push_back(retired.node);
+        }else memdelete(retired.node);
+        retired_render_bytes-=retired.bytes;
+        if(budget_usec&&Time::get_singleton()->get_ticks_usec()-started>=budget_usec)break;
+    }
+}
+void NativeStaticBatch::release_batch(RenderKey key,bool deferred,bool appearance_pruned) {
     auto batch=batches.find(key);if(batch==batches.end())return;
     auto ids=resident_ids.find(key);
+    uint64_t bytes=0;
     if(ids!=resident_ids.end()) {
-        render_bytes-=ids->second.size()*render_stride_bytes();
-        for(auto id:ids->second){slots.erase(id);if(!placements.count(id))appearance_birth.erase(id);}
+        bytes=ids->second.size()*render_stride_bytes();render_bytes-=bytes;
+        for(auto id:ids->second){slots.erase(id);if(!appearance_pruned&&!placements.count(id))appearance_birth.erase(id);}
         resident_ids.erase(ids);
     }
-    if(appearance_fade&&render_streaming&&render_pool.size()<16) {
+    if(deferred&&appearance_fade&&render_streaming) {
+        batch->second->set_visible(false);
+        retired_render_pages.push_back({batch->second,bytes});retired_render_bytes+=bytes;
+    }else if(appearance_fade&&render_streaming&&render_pool.size()<16) {
         batch->second->get_multimesh()->set_instance_count(0);render_pool.push_back(batch->second);
     }else memdelete(batch->second);
     batches.erase(batch);++render_evictions;
@@ -115,6 +130,7 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
     multi->set_instance_count(count);multi->set_buffer(buffer);
     instance->set_cast_shadows_setting(page_casts_shadows(page)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     instance->set_position(Vector3(key.x*32,key.y*32,key.z*32));
+    instance->set_visible(true);
     batches.emplace(page,instance);
     render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
 }
@@ -126,6 +142,7 @@ bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,in
     // Reconfiguration evicts immediately, so lower budgets cannot leave a stale
     // over-budget frame. Authored placements, proxies and journals are unchanged.
     while(!batches.empty())release_batch(batches.begin()->first);
+    drain_render_retirement(0);
     render_pending.clear();render_streaming=enabled;render_radius=radius;
     render_batch_limit=int(batch_limit);render_byte_limit=uint64_t(byte_limit);
     render_upload_limit=int(uploads_per_tick);render_tick_bytes=uint64_t(bytes_per_tick);
@@ -183,23 +200,41 @@ void NativeStaticBatch::select_render_batches() {
     }
     std::vector<RenderKey> evict;
     for(const auto &batch:batches)if(!wanted.count(batch.first))evict.push_back(batch.first);
-    for(auto key:evict)release_batch(key);
+    for(auto key:evict)release_batch(key,true);
     for(auto &entry:batches)entry.second->set_cast_shadows_setting(page_casts_shadows(entry.first)?GeometryInstance3D::SHADOW_CASTING_SETTING_ON:GeometryInstance3D::SHADOW_CASTING_SETTING_OFF);
     render_pending.clear();
     for(auto it=ordered.rbegin();it!=ordered.rend();++it)
         if(!batches.count(*it)||resident_ids.at(*it).size()!=render_page_size(*it))render_pending.push_back(*it);
 }
 void NativeStaticBatch::_process(double) {
+    const uint64_t started=Time::get_singleton()->get_ticks_usec();
+    render_process_us=render_selection_us=render_cleanup_us=render_upload_us=0;
+    drain_render_retirement(350);
+    render_cleanup_us=Time::get_singleton()->get_ticks_usec()-started;
+    render_process_us=render_cleanup_us;
     if(collection_retirement)return; // Retired GPU pages count against the collection budget.
     if(collision_only)return;
     if(!render_streaming||!is_inside_tree())return;
+    const uint64_t selection_started=Time::get_singleton()->get_ticks_usec();
     if(render_dirty)select_render_batches();
+    render_selection_us=Time::get_singleton()->get_ticks_usec()-selection_started;
+    const uint64_t upload_started=Time::get_singleton()->get_ticks_usec();
     uint64_t uploaded=0;int count=0;
     while(!render_pending.empty()&&count<render_upload_limit) {
         RenderKey key=render_pending.back();uint64_t cost=render_page_size(key)*render_stride_bytes();
         if(uploaded+cost>render_tick_bytes)break;
+        const auto existing=resident_ids.find(key);
+        const uint64_t replaced=existing==resident_ids.end()?0:existing->second.size()*render_stride_bytes();
+        if(render_bytes+retired_render_bytes-replaced+cost>render_byte_limit||
+           (existing==resident_ids.end()&&batches.size()+retired_render_pages.size()>=size_t(render_batch_limit)))break;
         render_pending.pop_back();upload_batch(key);uploaded+=cost;++count;
     }
+    render_upload_us=Time::get_singleton()->get_ticks_usec()-upload_started;
+    render_process_us=Time::get_singleton()->get_ticks_usec()-started;
+}
+Dictionary NativeStaticBatch::render_frame_profile() const {
+    Dictionary result;result["process_us"]=int64_t(render_process_us);result["selection_us"]=int64_t(render_selection_us);
+    result["cleanup_us"]=int64_t(render_cleanup_us);result["upload_us"]=int64_t(render_upload_us);return result;
 }
 bool NativeStaticBatch::configure_appearance_fade() {
     // Opt-in before data admission; default static props retain their 48-byte layout.
@@ -265,9 +300,9 @@ Dictionary NativeStaticBatch::render_stats() const {
     d["batch_limit"]=render_batch_limit;d["byte_limit"]=int64_t(render_byte_limit);
     d["uploads_per_tick"]=render_upload_limit;d["bytes_per_tick"]=int64_t(render_tick_bytes);
     d["resident_batches"]=int(batches.size());d["resident_instances"]=int(slots.size());
-    d["retired_batches"]=int64_t(collection_retirement?collection_retirement->old_batches.size():0);
-    d["retired_render_bytes"]=int64_t(collection_retirement?collection_retirement->render_bytes:0);
-    d["retained_render_bytes"]=int64_t(render_bytes+(collection_retirement?collection_retirement->render_bytes:0));
+    d["retired_batches"]=int64_t(retired_render_pages.size()+(collection_retirement?collection_retirement->old_batches.size():0));
+    d["retired_render_bytes"]=int64_t(retired_render_bytes+(collection_retirement?collection_retirement->render_bytes:0));
+    d["retained_render_bytes"]=int64_t(render_bytes+retired_render_bytes+(collection_retirement?collection_retirement->render_bytes:0));
     d["resident_transform_bytes"]=int64_t(render_bytes);d["authored_groups"]=int(groups.size());
     d["candidate_batches"]=render_candidates;d["budget_deferred"]=render_blocked;
     d["pending_batches"]=int(render_pending.size());d["selection_pending"]=render_dirty;

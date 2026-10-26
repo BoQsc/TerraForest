@@ -18,6 +18,7 @@ var height_token := 900000
 var height_value := NAN
 var phase_begin := 0
 var stage_totals: Dictionary = {}
+var frame_stages: Dictionary = {}
 class ReportWriter extends RefCounted:
 	var thread:=Thread.new()
 	var mutex:=Mutex.new()
@@ -74,6 +75,7 @@ var frame_batch: Array[PackedStringArray]=[]
 var captured_frames:=0
 var workload_scale := 1
 var work: Array[Dictionary] = []
+var slow_frames:Array[Dictionary]=[]
 
 func _initialize() -> void:
 	run.call_deferred()
@@ -83,12 +85,19 @@ func frame() -> void:
 	if previous_us > 0:
 		var elapsed := (now-previous_us)/1000.0
 		frames.append(elapsed)
+		if elapsed>20 and phase!="startup":
+			var batches:Array=[]
+			for batch:Node in game.ground_cover.batches:
+				if batch.has_method("render_frame_profile"):batches.append(batch.render_frame_profile())
+			slow_frames.append({"time_us":now,"phase":phase,"frame_ms":elapsed,"focused":game.app_focused,"ground_us":game.ground_cover.last_process_us,"water_us":game.lakes.last_process_us,"native_cover":batches,"draw_span_ms":draw_span_ms,"process_span_ms":process_span_ms,"pipelines_draw":Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW),"pipelines_specialization":Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION)})
+			slow_frames.back()["stages"]=frame_stages.duplicate()
 		captured_frames+=1
 		var viewport: RID=root.get_viewport_rid()
 		frame_batch.append(PackedStringArray([phase,str(now),str(elapsed),str(game.terrain.backend.queued()),str(game.terrain.sdf_pages),str(Performance.get_monitor(Performance.MEMORY_STATIC)),str(Performance.get_monitor(Performance.TIME_PROCESS)*1000),str(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000),str(game.vegetation.renderer.stats.get("update_us",0)),str(process_span_ms),str(draw_span_ms),str(RenderingServer.viewport_get_measured_render_time_cpu(viewport)),str(RenderingServer.viewport_get_measured_render_time_gpu(viewport)),str(game.ecosystem.last_process_us),str(game.terrain.last_publish_frame_ms),str(observer_ms)]))
 		if frame_batch.size()>=256:
 			writer.submit({"rows":frame_batch})
 			frame_batch=[]
+	frame_stages.clear()
 	previous_us=now
 	observer_ms=(Time.get_ticks_usec()-now)/1000.0
 
@@ -100,6 +109,7 @@ func post_draw() -> void:
 	draw_span_ms=(Time.get_ticks_usec()-draw_begin_us)/1000.0
 
 func stage(label: String, elapsed: float) -> void:
+	frame_stages[label]=float(frame_stages.get(label,0.0))+elapsed
 	var row: Dictionary=stage_totals.get(label,{"calls":0,"total_ms":0.0,"max_ms":0.0})
 	row.calls+=1
 	row.total_ms+=elapsed
@@ -147,6 +157,7 @@ func end_phase() -> void:
 	# Event dictionaries are immutable after capture. Copy only the array so the
 	# next phase can clear its live buffer without deep-copying the entire trace.
 	var record := {"phase":phase,"elapsed_ms":Time.get_ticks_msec()-phase_begin,"frames":summary(frames),"edit_latency":summary(latency),"build":summary(builds),"worker_queue":summary(queue),"changed_edits":changed,"edits":edits.duplicate(),"stages":stage_totals.duplicate(true),"sdf_pages":game.terrain.sdf_pages,"triangles":game.terrain.total_triangles,"tiles":game.terrain.tiles.size(),"cache_bytes":game.terrain.cache_bytes,"engine_static_bytes":int(Performance.get_monitor(Performance.MEMORY_STATIC)),"trees":game.vegetation.renderer.roots.size()}
+	record["slow_frames"]=slow_frames.filter(func(sample:Dictionary)->bool:return sample.phase==phase)
 	phases.append(record)
 	record["patch_work"]=work.duplicate()
 	checkpoint(false)

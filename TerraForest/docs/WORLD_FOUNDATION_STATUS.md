@@ -1,3 +1,30 @@
+## Vegetation publication follow-up — qualified finite workload, 2026-10-26
+
+Native slot/fade hash lookup, whole-group removal and bounded hidden GPU-page
+retirement reduce the populated maximum-brush vegetation commit to 11.685 ms in
+source and 13.014 / 11.679 ms in packaged repeats. All 72 integrated assertions
+pass the unchanged 16 ms target. Removal is still immediate and exact; hidden
+buffers count against the existing byte/page caps until actually released.
+Complete maximum-volume terrain publication remains approximately one second,
+not 11–13 ms. No generation, density, save-format or user-save change is involved.
+
+Focused packaged 4,800 mixed edits plus sixteen large volumes pass: frame p99
+17.987 ms, maximum 33.960 ms, zero runtime frames over 50 ms. Final ordinary and
+coarse-parent arrivals pass unchanged 150 ms response/continuity and 20/50 ms
+frame gates; maximum response gap is 104.790 ms. Release ownership, 235 placement
+and 56 incremental-retirement assertions pass. Matching DLLs/PCK are installed.
+
+Not universally resolved: the intermediate run retains a 21.290 ms vegetation
+miss, a 20.287 ms arrival p99 miss and a 66.552 ms draw/presentation stall during
+confirmed window switching. Another draw stall has no demonstrated cause.
+Windows refused WPR profiling policy; no security setting was changed. Return
+with a focused reproduction/permitted platform trace, correlate native and
+world-stage timings, and retain unchanged performance gates. Multi-hour,
+populated travel and other hardware remain unqualified. Two older vegetation
+fixtures also fail against the baseline DLL and need current-contract refresh;
+their controls and output-path errors are retained, not counted as passes.
+Details and reproducible evidence: `evidence/terrain_editing/vegetation_pages/README.md`.
+
 ## Post-travel mining response — reproduced paths fixed, 2026-10-26
 
 The recorded ~289 ms generator-1 case reproduces at 294.134 ms. The target mesh
@@ -40,8 +67,9 @@ response; frame p99 at most 18.436 ms), without explaining away that earlier mis
 
 This closes the reproduced arrival paths, not instantaneous whole-world loading
 or universal performance acceptance. Multi-hour/populated travel, large cold
-histories, other seeds/hardware, maximum-brush vegetation publication and earlier
-intermittent render stalls remain open. Retained failures, qualification and
+histories, other seeds/hardware and earlier intermittent render stalls remain open.
+The maximum-brush vegetation gate is qualified by the follow-up above.
+Retained failures, qualification and
 reproducible commands: `evidence/terrain_editing/README.md`.
 
 ## Per-instance vegetation terrain response — 2026-10-26
@@ -61,9 +89,9 @@ the unchanged 16 ms target. All 71 functional integrated checks pass; the packag
 1,200-edit endurance passes 35 assertions with p99 17.467 ms and no >50 ms runtime
 frame. Small tool vegetation publication measures 0.263–0.777 ms. These measurements
 exclude startup stalls and are not universal performance acceptance.
-Keep the maximum-brush gate and the earlier intermittent render
-stalls open; further bounded preparation/publication needs native phase evidence,
-exact survivor checks and unchanged frame/latency gates. Ordinary player edits,
+The later follow-up above passes the maximum-brush gate with exact survivor and
+byte-ownership checks. Earlier intermittent render stalls remain open; further
+attribution needs native/platform evidence and unchanged frame/latency gates. Ordinary player edits,
 full save-state restoration and published render identity are tested separately.
 Packaged results, scope and retained failures:
 `evidence/vegetation_terrain_support/README.md`.

@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 from run import ROOT, parse_args
-from run_godot_check import command_for, execute, revision_metadata
+from run_godot_check import command_for, execute, revision_metadata, verify_pack_native
 
 
 def main():
@@ -58,6 +58,7 @@ def main():
     if not args.native_only:
         water = ["--water-gameplay", "--water-bucket-review", "--gameplay-construction", "--no-zombies"]
         cases += [
+            ("vegetation_page_retirement", "VEGETATION_PAGE_RETIREMENT failures=0", False, []),
             ("vegetation_terrain_edits", "VEGETATION_TERRAIN_EDITS failures=0", False, ["--world-generator=23", "--ground-cover", "--no-zombies"]),
             ("developer_belt", "DEVELOPER_BELT", False, []),
             ("terrain_placement_preview", "TERRAIN_PLACEMENT_PREVIEW", False, ["--gameplay-construction"]),
@@ -84,14 +85,19 @@ def main():
     pack = resource_root / "TerraForest.pck"
     if args.pack and not pack.is_file():
         parser.error("Export the resource pack first")
+    try:
+        external_native = verify_pack_native() if args.pack else None
+    except ValueError as error:
+        parser.error(str(error))
     manifest = {**revision_metadata(), "engine": str(engine), "engine_sha256": hashlib.sha256(engine.read_bytes()).hexdigest(),
+                "matching_external_native_sha256": external_native,
                 "native_sha256": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                                   for addon in ["volumetric_terrain", "vegetation_runtime", "structures"]
                                   for path in sorted((resource_root / "addons" / addon / "bin").glob("*.dll"))},
                 "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None,
                 "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
                 "continuity_gate": "held_mining_flight: maximum input-to-first-draw and subsequent visible-change gaps <=150ms",
-                "known_open_gate": "Maximum populated vegetation publication still exceeds 16ms; multi-hour/populated travel and earlier intermittent render stalls remain unqualified. See docs/evidence/terrain_editing/README.md", "runs": []}
+                "known_open_gate": "Intermittent render/presentation stalls, focus transitions, multi-hour/populated travel and other hardware remain unqualified. See docs/evidence/terrain_editing/vegetation_pages/README.md", "runs": []}
     for name, marker, headless_mode, extra in cases:
         destination = folder / name
         destination.mkdir()

@@ -67,7 +67,7 @@ func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--vegetation-evidence-dir="):folder=argument.trim_prefix("--vegetation-evidence-dir=")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
-	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
+	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	if not check(await until(func():return not game.loading_active,60),"isolated production world loaded"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies.population_enabled=false
 	if not check(game.ground_enabled and await until(settled,55),"natural trees and all ground-cover species settled"):await finish();return

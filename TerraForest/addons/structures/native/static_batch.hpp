@@ -8,6 +8,7 @@
 #include "block_world.hpp"
 #include "model_bounds_index.hpp"
 #include <map>
+#include <unordered_map>
 #include <set>
 #include <vector>
 #include <memory>
@@ -75,7 +76,11 @@ class NativeStaticBatch : public Node3D {
     using RenderKey = std::pair<BlockKey,uint32_t>;
     std::map<RenderKey,MultiMeshInstance3D*> batches;
     std::vector<MultiMeshInstance3D*> render_pool;
-    std::map<int64_t,int> slots;
+    struct RetiredRenderPage {MultiMeshInstance3D *node;uint64_t bytes;};
+    std::vector<RetiredRenderPage> retired_render_pages;
+    uint64_t retired_render_bytes=0;
+    uint64_t render_process_us=0,render_selection_us=0,render_cleanup_us=0,render_upload_us=0;
+    std::unordered_map<int64_t,int> slots;
     std::map<RenderKey,std::vector<int64_t>> resident_ids;
     std::map<BlockKey,std::vector<int64_t>> render_ids;
     std::map<BlockKey,AABB> render_bounds;
@@ -86,7 +91,7 @@ class NativeStaticBatch : public Node3D {
     double shadow_distance=0;
     bool page_casts_shadows(RenderKey key) const;
     bool appearance_fade=false;
-    std::map<int64_t,float> appearance_birth;
+    std::unordered_map<int64_t,float> appearance_birth;
     uint64_t render_stride_bytes() const { return appearance_fade?64:48; }
     Vector3 render_focus,render_selection_focus;
     double render_radius=384;
@@ -95,7 +100,8 @@ class NativeStaticBatch : public Node3D {
     uint64_t render_bytes=0,render_evictions=0,render_queries=0,render_uploaded_bytes=0;
     uint32_t render_page_capacity() const;
     uint64_t render_page_size(RenderKey key) const;
-    void release_batch(RenderKey key);
+    void release_batch(RenderKey key,bool deferred=false,bool appearance_pruned=false);
+    void drain_render_retirement(uint64_t budget_usec);
     void release_group(BlockKey key);
     void upload_batch(RenderKey key,uint64_t limit=uint64_t(-1));
     void select_render_batches();
@@ -191,6 +197,7 @@ public:
     void set_render_focus(Vector3 focus);
     bool set_render_radius(double radius);
     Dictionary render_stats() const;
+    Dictionary render_frame_profile() const;
     bool is_render_region_ready(const AABB &world_bounds) const;
     void set_casts_shadows(bool enabled);
     bool set_shadow_distance(double radius);

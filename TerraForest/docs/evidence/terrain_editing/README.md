@@ -1,5 +1,11 @@
 # Terrain editing reliability and endurance — 2026-10-26
 
+Latest follow-up: [native vegetation page retirement](vegetation_pages/README.md)
+qualifies the previously failing 16 ms maximum-brush vegetation gate in finite
+source/packaged tests (11.679–13.014 ms), with a passing focused 4,800-edit run.
+Focus-switch/presentation stalls and older fixture failures remain explicitly
+tracked there; historical failures below are retained, not retroactively passed.
+
 ## Reproduced defects and fixes
 
 - ALT and detailed terrain controls offered a 0.25 m brush, below the native

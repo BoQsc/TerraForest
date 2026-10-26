@@ -24,7 +24,7 @@ func settled()->bool:
 func rows()->Dictionary:
 	var out:Dictionary={}
 	for child in game.ground_cover.batches[2].get_children():
-		if child is MultiMeshInstance3D and child.position==group:
+		if child is MultiMeshInstance3D and child.visible and child.position==group:
 			for i in child.multimesh.instance_count:
 				var pose:Transform3D=child.multimesh.get_instance_transform(i);pose.origin+=child.position
 				if pose.origin.distance_to(point)>6:out[str(pose)]=child.multimesh.get_instance_custom_data(i)
@@ -42,7 +42,7 @@ func run()->void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--vegetation-evidence-dir="):folder=arg.trim_prefix("--vegetation-evidence-dir=")
 	DirAccess.make_dir_recursive_absolute(folder)
-	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
+	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	check(await until(func():return not game.loading_active,55),"actual world ready")
 	if game.loading_active:game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies.population_enabled=false

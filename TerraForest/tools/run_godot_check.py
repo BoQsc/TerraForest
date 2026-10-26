@@ -17,6 +17,16 @@ from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 
 
+def verify_pack_native(root=ROOT):
+    def hashes(folder):
+        return {str(path.relative_to(folder)): hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in sorted((folder / "addons").glob("*/bin/*.dll"))}
+    source = hashes(root)
+    if not source or source != hashes(root / "dist"):
+        raise ValueError("External test scripts resolve native libraries from the project; re-export matching dist libraries before packaged validation")
+    return source
+
+
 def command_for(engine, test, folder, extra, headless=False, persistent=False):
     if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", test):
         raise ValueError("Test must be a simple repository test name")

@@ -8,7 +8,7 @@ func _initialize()->void:run.call_deferred()
 func rows(batch:Node)->Dictionary:
  var result:Dictionary={}
  for child in batch.get_children():
-  if child is MultiMeshInstance3D:
+  if child is MultiMeshInstance3D and child.visible:
    for i in child.multimesh.instance_count:
     var t:Transform3D=child.multimesh.get_instance_transform(i)
     result[roundi(t.origin.x+child.position.x)]=child.multimesh.get_instance_custom_data(i)
