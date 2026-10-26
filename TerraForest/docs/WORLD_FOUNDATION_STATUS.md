@@ -1,3 +1,6 @@
+Visual summaries and comparison images: [issue tracker](../issues/README.md).
+This file retains the wider backlog; the tracker initially covers three cases.
+
 ## Saved pickaxe no-op — reproduced and fixed, 2026-10-26
 
 Calm_Meadow's F5 position reproduced three accepted digs with no density change.
@@ -187,8 +190,10 @@ This closes the reproduced false-black face, not all possible cave lighting:
 very small openings can still evade finite samples, and untouched caves retain
 the old approximation. Full bounced GI is not implemented. Revisit with a saved
 viewpoint, diagnostic sky/albedo views and unchanged performance gates if another
-false-black report appears. User visual acceptance and the separately deferred
-render/focus-stall investigation remain open.
+false-black report appears. The user reported improved appearance on 2026-10-26
+("I think it's better"), not universal cave-lighting acceptance. The separately
+deferred render/focus-stall investigation remains open. Current visual summary:
+[terrain mining dark patches](../issues/terrain-mining-dark-patches/README.md).
 
 ## Player movement, map, graphics and placement workflow — 2026-10-26
 

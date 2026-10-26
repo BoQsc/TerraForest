@@ -1,0 +1,33 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "before-72951f9e.png",
+      "role": "baseline",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Baseline 72951f9e; diagnostic run 7d3bf0a6a4204a59; same saved view; headlamp off.",
+      "sha256": "24f0400133f61a9113ceea1f7ebabac374207ae87075d5571c89d99eb5661c44",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_project_path": "docs/evidence/mining_darkness/refinement/before.png"
+    },
+    {
+      "file": "after-f28859c2.png",
+      "role": "improvement",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Installed fix f28859c2; packaged run 1519ad98557b4e2a; same saved view; headlamp off.",
+      "sha256": "9905f98353d13492715fad09469e9277e39945d7fd9c22575b3e34fe0dfe1344",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_project_path": "docs/evidence/mining_darkness/refinement/after.png"
+    }
+  ]
+}

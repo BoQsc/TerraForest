@@ -1,0 +1,33 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "before.png",
+      "role": "baseline",
+      "world": "Calm_Meadow",
+      "seed": 1703,
+      "context": "Pre-fix saved aim; three accepted digs made no density change; baseline cdd9702f.",
+      "sha256": "2eed3cc65ba8b3f75427227efe1b98904b2b66cbe879a76ef0faad3b30896043",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_project_path": "docs/evidence/terrain_editing/contact_mining/before.png"
+    },
+    {
+      "file": "after.png",
+      "role": "improvement",
+      "world": "Calm_Meadow",
+      "seed": 1703,
+      "context": "Packaged replay dff92d7a00284b319f8d1f97481290d1; contact correction committed in 72951f9e; same saved aim.",
+      "sha256": "d372bba63183e38aafec7ef395251ccf319fe1116bbf104e5a5be7748b43df04",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_project_path": "docs/evidence/terrain_editing/contact_mining/after.png"
+    }
+  ]
+}

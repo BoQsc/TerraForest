@@ -32,6 +32,18 @@ When a prerequisite is completed, revisit dependent work; update the existing en
 instead of letting a newer progress note imply the old requirement is resolved.
 Deferral is not completion. Do not expand excluded features to clear a backlog.
 
+## Visual issue tracker
+
+Use `issues/README.md` for player-visible bugs and partial fixes. Maintain one stable
+`issues/<descriptive-name>/` folder per issue, following `issues/TEMPLATE.md`. Keep
+status, remaining work, reproduction, code/commits, captioned images and provenance.
+Preserve earlier/rejected comparisons. Distinguish scoped engineering verification
+from universal resolution and user visual approval. Update the issue/index and
+linked foundation status together. Link existing logs rather than moving them.
+Keep tracker images out of Godot imports and game exports.
+
+## Design and validation
+
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.
 

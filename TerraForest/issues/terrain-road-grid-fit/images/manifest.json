@@ -1,0 +1,33 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "reported-burial.png",
+      "role": "user_report",
+      "world": "GridPreference_1703_2756a200",
+      "seed": 1703,
+      "context": "Historical attachment; exact screenshot date/build unknown. Not a pixel-matched comparison with the later review.",
+      "sha256": "8a9a21d30ea985644e095216c384d3678632fe5f9e732ac93bb112bd7b926424",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_attachment_name": "codex-clipboard-c7eb8fc5-8bcc-468e-b621-76f54478dbfa.png"
+    },
+    {
+      "file": "shoulder-review-2026-10-25.png",
+      "role": "still_failing_review",
+      "world": "GridPreference_1703_2fd72a4b",
+      "seed": 1703,
+      "context": "Generation-contact review dated 2026-10-25; different camera and copied world; 30.12 cm burial remains a failure.",
+      "sha256": "1bf381103ed783b85ab0932658b176e3746a1935a581915e0f7001a8e4c43afa",
+      "size": [
+        1920,
+        1080
+      ],
+      "modified_pixels": false,
+      "source_project_path": "docs/evidence/generation_contact_native/reported_shoulder.png"
+    }
+  ]
+}

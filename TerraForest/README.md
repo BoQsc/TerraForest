@@ -2,6 +2,9 @@
 
 See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current milestones, original-scope gaps and explicit return points for deferred work. Historical validation documents describe their recorded builds, not completion of the whole project.
 
+See the [visual issue tracker](issues/README.md) for solved and partly solved
+problems, relevant screenshots, remaining work and where to resume investigation.
+
 ## Start here
 
 `Worlds.cmd` is the single normal launcher. The library supports last-played and
