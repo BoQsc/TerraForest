@@ -66,7 +66,7 @@ func run() -> void:
 	check(session.exit_vehicle(world)=="No clear, loaded exit beside the vehicle" and session.driving,"exit rejects unloaded building collision")
 	world.structures.available=true
 	check(session.exit_vehicle(world).begins_with("On foot") and not session.driving,"clear loaded exit restores walking")
-	check(world.camera.transform==original_camera and Engine.physics_ticks_per_second==old_ticks and world.player.collision_mask==1,"camera physics rate and collision restored")
+	check(world.camera.transform.is_equal_approx(original_camera) and Engine.physics_ticks_per_second==old_ticks and world.player.collision_mask==1,"camera physics rate and collision restored")
 	session.car.position=Vector3(400,50,400);session.car.rotation=Vector3(.1,.3,.2)
 	var saved: PackedByteArray=session.capture_snapshot()
 	var pose: Transform3D=session.car.transform

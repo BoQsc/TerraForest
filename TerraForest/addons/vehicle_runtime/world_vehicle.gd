@@ -255,7 +255,18 @@ func exit_vehicle(world: Node) -> String:
 	set_physics_process(true)
 	world.player.position=feet;world.player.velocity=car.linear_velocity
 	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
-	world.camera.transform=_camera_local;driving=false
+	world.camera.transform=_camera_local
+	# Vehicle forward is +Z; walking/view forward is -Z. Keep the character
+	# upright and retain look pitch, while aligning both view and input heading.
+	var forward:Vector3=car.global_basis.z;forward.y=0
+	if forward.length_squared()<.0001:forward=car.global_basis.x.cross(Vector3.UP)
+	var heading:=atan2(-forward.x,-forward.z)
+	world.player.rotation=Vector3(0,heading,0)
+	var look_pitch:=clampf(world.camera.rotation.x,-1.53,1.53)
+	world.camera.rotation=Vector3(look_pitch,0,0)
+	if "yaw" in world:world.yaw=heading
+	if "pitch" in world:world.pitch=look_pitch
+	driving=false
 	Engine.physics_ticks_per_second=_physics_ticks
 	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
 	return "On foot · E nearby to enter vehicle"

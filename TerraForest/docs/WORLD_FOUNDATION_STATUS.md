@@ -1,6 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Vehicle exit facing — corrected 2026-10-26; user review pending
+
+Confirmed 90/180-degree body/view mismatches after turning the car: exit restored
+the old local camera but retained pre-entry player yaw. Accepted E exits now align
+the upright player and eye view with the car's horizontal +Z front, synchronize
+mouse-look yaw/pitch, retain look pitch and use a right-axis fallback for vertical
+vehicle fronts. Denied/unloaded exits leave facing intact; hosts without optional
+yaw/pitch fields remain compatible. No native hot-path change is needed.
+
+Sixty-five fixture checks and 45 actual-world first/third-person checks pass,
+including the next real mouse event and actual on-foot save capture. Existing
+world adapter, 13 contact/lifecycle cases and nine repeated moving exits pass.
+Inspected first/third-person captures are retained with baseline evidence and
+earlier harness/comparison failures. Ordinary player visual review remains open;
+revisit if a pose or view/input sequence still exits facing away. This does not
+close the separate unconfirmed high-speed return report.
+[Implementation, receipts and images](../issues/vehicle-exit-facing/README.md).
+
 ## Reported vehicle return after fast travel and exit — unconfirmed 2026-10-26
 
 A modder reportedly sees the car return to an earlier position after a distant,

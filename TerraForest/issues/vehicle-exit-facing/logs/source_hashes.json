@@ -1,0 +1,6 @@
+{
+  "addons/vehicle_runtime/world_vehicle.gd": "8be499028ad23d2b22c0827bc44692b3924ec5fef4216c7b9b1e4030cc1a0acc",
+  "tests/vehicle_exit_facing.gd": "7cd2a0a14b905d862882803287d9e0374d538952dc5e3b0963f810b9a83b4885",
+  "tests/vehicle_exit_facing_world.gd": "8b7e03c23f4337d4d84cf7d214657d23982bf925360114130b6b2c24e64f1f5a",
+  "tests/world_vehicle.gd": "ed977109f75278f6f99b62fe73777852abaef86c7467b9cfa35ebaafb34134bc"
+}

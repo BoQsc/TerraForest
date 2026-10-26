@@ -1,0 +1,14 @@
+[
+  {
+    "file": "first_person.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_facing_first_person.png",
+    "sha256": "a5c69e2c36b91dcd0aec6755c3dbab6ce1de0921c78f1807747e327c740bdf4b",
+    "caption": "Actual first-person view after E exit from a vehicle set to 90 degrees world yaw, following a different entry-facing direction; temporary generator 1 / seed 1703, normal vegetation/collision, Godot 4.7.2 Forward+ 1920x1080. No user camera preference written."
+  },
+  {
+    "file": "third_person.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_facing_third_person.png",
+    "sha256": "46859173c904a718f23aab966da8fbf32de5ab95e8c810dc0fd13bab94e19acf",
+    "caption": "Actual third-person view after E exit from a vehicle set to 90 degrees world yaw, following a different entry-facing direction; temporary generator 1 / seed 1703, normal vegetation/collision, Godot 4.7.2 Forward+ 1920x1080. No user camera preference written."
+  }
+]
