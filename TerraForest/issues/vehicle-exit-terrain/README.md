@@ -1,15 +1,70 @@
 # Vehicle sinks into terrain on exit
 
-- Status: Investigated / reproduced; production fix **not implemented**.
-- Updated: 2026-10-26. Diagnosis uses the existing gameplay/native binaries.
-- User review: User reports intermittent sinking on exit, including possible slow movement. User requested reproduction and diagnosis before fixes.
+- Status: Fixed for the reproduced exit failure / scoped engineering checks; user review pending.
+- Updated: 2026-10-26. Script correction implemented after the separate diagnosis commit `f1446eb4`; native binaries unchanged.
+- User review: User reported intermittent sinking, then authorized the repair after diagnosis. Corrected gameplay has not yet been reviewed by the user.
 - Symptom: Exiting can drive the chassis below the surface, then leave it frozen there or falling until automatic reset.
 
-## Confirmed mechanism
+## Implemented correction and verification
 
-`world_vehicle.update()` keeps the player's disabled collision body at the car's
-origin while seated. `exit_vehicle()` finds a clear capsule position beside the
-car, changes the player's scene position and immediately restores collision.
+The accepted exit temporarily excludes only the exiting player/car collision pair.
+The player keeps normal collision layers/masks for ground, objects and actors.
+The exception expires by physics-frame count after the kinematic relocation has
+completed, including exits initiated inside a physics callback. Rapid re-entry
+refreshes the same owned transition; restore, removal and teardown clean it up.
+Existing host-owned collision exceptions are preserved.
+
+Parking now runs after the vehicle's physics callback and requires this tick's
+successful wheel samples, support on both axles, low linear/angular velocity and
+**0.25 seconds** of consecutive stable observations. Render updates cannot freeze
+the car from seated readings. Loading holds and skipped contact passes reset the
+quiet window. The session physics callback stops when no transition/coasting
+work remains. Native suspension still samples/applies its forces once per tick.
+
+| Final check | Result / retained evidence |
+| --- | --- |
+| 13 flat/slope/unequal-height support cases | No exit shove; includes rapid re-entry, loading holds, host-owned exceptions, removal/restore and actual walking into the parked car after contact resumes. [Receipt](logs/fix/fixture_run.json.gz), [measurements](logs/fix/fixture_measurements.json.gz) |
+| 9 repeated real-world exits, generator 1 / seed 1703 | Three exits each at 0, 0.3 and 3 m/s; zero player/car contacts, maximum height loss under 8 mm, collision restored and car settles. [Receipt](logs/fix/world_default_run.json.gz), [measurements](logs/fix/world_default_measurements.json.gz) |
+| 9 repeated real-world exits, generator 4 / seed 1703 | Same outcomes and height bound with the mountain/lake terrain preset. [Receipt](logs/fix/world_generator4_run.json.gz), [measurements](logs/fix/world_generator4_measurements.json.gz) |
+| Existing world adapter, streaming, braking and persistence | Pass; braking has 24 assertions; disk persistence reopens an independent world instance. [Adapter](logs/fix/adapter_run.json.gz), [streaming](logs/fix/streaming_run.json.gz), [braking](logs/fix/braking_run.json.gz), [persistence](logs/fix/persistence_run.json.gz) |
+| Actor exit occupancy and vehicle route invalidation | Pass after correcting an older fixture's two-exit assumption. [Receipt](logs/fix/actors_run.json.gz) |
+
+The original actor fixture failed identically against the pre-fix car/session
+scripts: it blocked two side positions, then incorrectly required all five exit
+candidates to be unavailable. It now occupies each remaining supported candidate
+before asserting refusal; actor collision and route invalidation assertions remain.
+The [original failure](logs/fix/actor_old_fixture_failure_run.json.gz) and
+[baseline failure](logs/fix/actor_baseline_old_fixture_failure_run.json.gz) are retained.
+An initial baseline-copy harness doubled CRLF and could not parse; its failed
+receipt/logs are also retained, followed by the normalized baseline check.
+The first braking run executed all 24 checks successfully but its launcher was
+given a 28-check completion string; that receipt is retained as a harness error,
+and the rerun with the correct marker passes.
+
+All gameplay checks use temporary or test-owned unique worlds. Existing player
+saves are untouched. These are correctness checks, with no frame-rate guarantee.
+[Source hashes](logs/fix/source_hashes.json) identify the corrected runtime/tests.
+
+![Corrected stopped exit](images/fixed-stopped-clear-view.png)
+
+Actual corrected state after a stopped exit, temporary generator 4 / seed 1703,
+Godot 4.7.2 Steam / Forward+ / 1920x1080. Foliage is hidden only for this capture;
+the car pose is not replayed and no freeze is injected. Same camera arrangement
+as the historical clear comparison, but a different terrain preset. Full-foliage
+gameplay was also inspected: [capture](images/fixed-stopped-full-foliage.png).
+The existing first-person character presentation is unchanged.
+
+![Corrected moving exit](images/fixed-moving-clear-view.png)
+
+Actual final state after exiting at 3 m/s in the same fixture; foliage hidden for
+capture. The car brakes and parks through the ordinary corrected host loop.
+
+## Confirmed baseline mechanism
+
+Before correction, `world_vehicle.update()` kept the player's disabled collision
+body at the car's origin while seated. `exit_vehicle()` found a clear capsule
+position beside the car, changed the player's scene position and immediately
+restored collision without guarding the car/player pair.
 The physics body's kinematic position still occupies the seated location for the
 pending physics step. The car/player pair becomes active during that transition,
 producing a severe contact instead of an ordinary stationary dismount.
@@ -28,15 +83,15 @@ from displacement divided by the physics timestep. Both recorded physics/scene
 positions and the collision A/B controls support the diagnosis; it is not inferred
 from the screenshot alone.
 
-A second problem can preserve the bad pose. `world_vehicle.update()` parks a
-coasting car when loaded-wheel counts and velocities appear settled. On the
-exit frame those readings can predate the contact. In the flat-floor reproduction
+A second problem could preserve the bad pose. `world_vehicle.update()` parked a
+coasting car when loaded-wheel counts and velocities appeared settled. On the
+exit frame those readings could predate the contact. In the flat-floor reproduction
 the car moved down **1.261 m**, then froze with the earlier four-wheel suspension
 readings and zero velocity. Removing parking allowed the initial shove but did
 not prevent it. This explains two observed outcomes, persistent burial and a
 fall/reset, without treating parking as the source of the first contact.
 
-## Controlled comparisons
+## Baseline controlled comparisons (diagnosis commit `f1446eb4`)
 
 Twelve fixture cases use unchanged production car/entry/exit code, the real
 standing capsule dimensions, flat and 0.15-radian sloped static floors.
@@ -65,7 +120,7 @@ Both final diagnostic runs completed with their expected defect/control outcomes
 and no runtime errors. Their success means the defect was reproduced and isolated,
 **not** that vehicle exits pass a corrected-behavior regression.
 
-## Images
+## Baseline images
 
 ![User report](images/user-report.png)
 
@@ -89,36 +144,32 @@ Foliage hidden for the capture. Shows the stable vehicle height; not a proposed
 player behavior. The initial tree-obstructed views remain in `images/` and are
 marked rejected in [the provenance manifest](images/manifest.json).
 
-## Evidence and reproduction
+## Baseline evidence and current regression commands
 
-- [Fixture probe](../../tests/vehicle_exit_diagnosis.gd), [measurements](logs/vehicle_exit_diagnosis.json.gz), [run receipt](logs/fixture_run.json.gz), [console](logs/fixture_console.log.gz).
-- [Integrated probe](../../tests/vehicle_exit_world_diagnosis.gd), [measurements](logs/vehicle_exit_world_diagnosis.json.gz), [run receipt](logs/world_run.json.gz), [console](logs/world_console.log.gz).
+- [Fixture regression](../../tests/vehicle_exit_diagnosis.gd); original baseline [measurements](logs/vehicle_exit_diagnosis.json.gz), [run receipt](logs/fixture_run.json.gz), [console](logs/fixture_console.log.gz).
+- [Integrated regression](../../tests/vehicle_exit_world_diagnosis.gd); original baseline [measurements](logs/vehicle_exit_world_diagnosis.json.gz), [run receipt](logs/world_run.json.gz), [console](logs/world_console.log.gz).
 - [Production enter/exit and parking adapter](../../addons/vehicle_runtime/world_vehicle.gd).
 - Both probes use disposable worlds/floors. No existing player save was opened or changed.
 - Receipts preserve engine/test/native hashes, revision and dirty-tree metadata. Other chats were running unrelated work concurrently; these are correctness observations, not performance measurements.
 - Godot generated the matching new script UIDs. The short editor scan reported pre-existing duplicate UIDs under `reports/rejected_ramp_20261025/snapshot` and scan cancellation on exit; [log](logs/uid-import.log). This is not a successful full project import claim.
 
-From the project directory:
+The scripts now assert corrected behavior. The historical receipts above refer
+to the diagnosis versions preserved at `f1446eb4`. Current commands, from the
+project directory:
 
 ```powershell
-python tools/run_godot_check.py vehicle_exit_diagnosis --headless --timeout 110 --require 'VEHICLE_EXIT_DIAGNOSIS failures=0'
-python tools/run_godot_check.py vehicle_exit_world_diagnosis --timeout 180 --require 'VEHICLE_EXIT_WORLD_DIAGNOSIS failures=0'
+python tools/run_godot_check.py vehicle_exit_diagnosis --headless --timeout 120 --require 'VEHICLE_EXIT_REGRESSION failures=0'
+python tools/run_godot_check.py vehicle_exit_world_diagnosis --timeout 180 --require 'VEHICLE_EXIT_WORLD_REGRESSION failures=0'
 ```
 
 ## Remaining / resume here
 
-1. Implement a bounded exit transition that restores car/player contact only
-   after the player's physics body has reached the validated exit, preserving
-   blocked-exit behavior and solid ground/other obstacles. The one-step pair
-   exclusion is a diagnostic result, not yet a complete lifecycle design.
-2. Require fresh post-integration support/motion observations before freezing a
-   car; do not park from stale pre-impact readings.
-3. Replace the known-defect expectations with corrected-behavior regressions;
-   exercise repeated stationary/slow/moving exits, both sides, rough/dug terrain,
-   blocked/unloaded exits, re-entry and save/restore, including actors.
-4. Run the existing relevant vehicle/actor/streaming checks and inspect normal
-   full-foliage gameplay captures. Obtain user visual review before resolution.
-
-The original saved location has not been replayed, and the experiments do not
-claim to explain every possible terrain collision failure. The confirmed exit
-failure is sufficient to direct the first production repair.
+- The bounded contact transition, fresh settling window and corrected-behavior
+  regressions are implemented; the originally listed engineering gates above pass.
+- The original saved depression/location has not been replayed. Unequal wheel
+  supports and generated terrain are covered, but arbitrary excavations, fleet
+  travel and extreme-speed dismounts are not qualified by these runs. Reopen with
+  a failing pose or reproduction if sinking recurs.
+- User review of ordinary exits in the existing world is pending. Preserve this
+  scoped status until the user checks the original workflow; no claim that every
+  terrain collision problem is resolved.

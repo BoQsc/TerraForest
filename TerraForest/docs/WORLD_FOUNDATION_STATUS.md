@@ -9,22 +9,34 @@ and session action buttons are unchanged. Source/package checks pass 18/18;
 export/startup passes. The generator test's UI lookup was updated without rerunning
 world generation. Human/DPI review remains open; [screenshots and scope](../issues/esc-player-settings/README.md).
 
-## Vehicle sinks on exit — diagnosed 2026-10-26; fix pending
+## Vehicle sinks on exit — corrected 2026-10-26; user review pending
 
-The existing exit path reproduces a player/chassis contact during the player's
-kinematic relocation, while its scene position is already beside the car.
-Twelve flat/slope diagnostic comparisons isolate this contact from the physics
+The baseline exit path reproduced a player/chassis contact during the player's
+kinematic relocation, while its scene position was already beside the car.
+Twelve flat/slope diagnostic comparisons isolated this contact from the physics
 rate change, wheel rays and parking. A one-step car/player pair exclusion prevents
-the shove while retaining ground collision. Six real-world E-input cases reproduce
+the shove while retaining ground collision. Six real-world E-input cases reproduced
 it stopped and at 0.3/3 m/s, with matched collision-disabled controls remaining
-stable. Stale pre-impact support/motion readings can then freeze the penetrated car.
+stable. Stale pre-impact support/motion readings could then freeze the penetrated car.
 
-Production code remains unchanged: the user requested diagnosis before repair.
-Resume by implementing a synchronized exit/contact lifecycle and fresh settling
-observations, then qualify repeated/blocked/unloaded exits, re-entry, persistence
-and actor/streaming regressions. The original saved pose and normal full-foliage
-visual acceptance remain unverified. Diagnostic passes prove the known defect,
-not a fix. [Reproduction, measured evidence and remaining work](../issues/vehicle-exit-terrain/README.md).
+After the user authorized repair, the exit now guards only the car/player pair
+until the kinematic transition has completed. Player world collision stays active.
+Parking requires current-tick suspension support and 0.25 seconds of stable motion
+in the physics loop; loading holds cannot become parked state. Guard ownership,
+rapid re-entry, removal and restore are covered. Native force application is
+unchanged and the session physics callback stops when no transition/coasting work
+remains.
+
+Thirteen flat/slope/unequal-support cases and 18 repeated actual-world exits at
+0/0.3/3 m/s across generators 1 and 4 pass; world cases have zero player/car contacts
+and under 8 mm height loss. Existing adapter/streaming/braking/persistence and actor
+occupancy/route checks pass. The actor fixture's older two-exit assumption failed
+against baseline code too; it now covers all supported candidate positions.
+Failed harness/fixture receipts and original diagnosis evidence remain visible.
+Corrected full-foliage and clear-view captures were inspected. The original saved
+depression and user visual review remain open; arbitrary excavations, fleet travel
+and extreme-speed dismounts are not qualified. Revisit if the original workflow
+still sinks a car. [Correction, evidence and remaining scope](../issues/vehicle-exit-terrain/README.md).
 
 ## Fly wheel stationary selection — 2026-10-26
 

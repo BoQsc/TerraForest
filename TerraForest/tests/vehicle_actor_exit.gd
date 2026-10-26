@@ -17,7 +17,15 @@ func run()->void:
  if not check(second.is_finite() and second.distance_to(first)>1,"occupied exit is rejected in favour of other side"):await finish();return
  game.actors.spawn(second+Vector3.UP*.93);game.actors.select_near(first)
  for frame in 3:await physics_frame
- check(not session.safe_exit_position(game).is_finite(),"both actor-occupied exits refuse player placement")
+ # There are five exit candidates, including the rear and wider side offsets.
+ # Two occupied sides must not imply that every other supported exit is blocked.
+ for candidate in 3:
+  var remaining:Vector3=session.safe_exit_position(game)
+  if not remaining.is_finite():break
+  check(remaining.distance_to(first)>.7 and remaining.distance_to(second)>.7,"additional exit avoids the already occupied sides")
+  game.actors.spawn(remaining+Vector3.UP*.93);game.actors.select_near(first)
+  for frame in 3:await physics_frame
+ check(not session.safe_exit_position(game).is_finite(),"all actor-occupied exits refuse player placement")
  check(session.car.collision_mask==15,"single vehicle chassis includes actor collision")
  check((session.car.wheel_rays[0].collision_mask & 8)==0,"wheel support rays exclude actors")
  var handle:int=game.actors.pool.active_handles()[0]

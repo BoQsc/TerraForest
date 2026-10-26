@@ -1,0 +1,7 @@
+{
+  "addons/vehicle_runtime/world_vehicle.gd": "67384a13d84c850d61231948384293c972821479209e19abce3793b73616b828",
+  "vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55",
+  "tests/vehicle_exit_diagnosis.gd": "ae8c41298fdd15260df6c60646a68618499d63f90420387262a50382ba27d527",
+  "tests/vehicle_exit_world_diagnosis.gd": "5080b7fe78e2138d80792eae4d2c9699426f5efc04eefcdf9d9cdc7e682c45fe",
+  "tests/vehicle_actor_exit.gd": "5d17bc43fe522fc79ff117fc4dda393aa4334186c671d66e4916ed6a7373024a"
+}

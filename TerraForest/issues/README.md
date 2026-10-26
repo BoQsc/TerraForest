@@ -6,7 +6,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
 | [ESC Player settings](esc-player-settings/README.md) | Implemented / scoped checks | Third-person and embedding switches move from Session into Player; session actions stay unchanged |
-| [Vehicle sinks on exit](vehicle-exit-terrain/README.md) | Investigated / reproduced; fix pending | Exit restores player contact before its kinematic transition completes; stale parking readings can freeze the displaced car |
+| [Vehicle sinks on exit](vehicle-exit-terrain/README.md) | Fixed for reproduced failure / scoped checks | Exit contact transition and fresh parking observations pass 18 repeated world exits; original-save user review pending |
 | [Fly wheel initial hover](player-action-hover/README.md) | Fixed for reproduced case | Holding backtick selects the centred Fly action; release no longer needs a mouse wiggle |
 | [Zombie ragdoll stability](zombie-ragdoll-stability/README.md) | Improved / partial | Support edits and shared contact islands repaired; impact/stretch stress failures remain open |
 | [Torch hand deformation](torch-hand-deformation/README.md) | Improved / partial | Rebuilt wrists and finger wrap at 60 Hz, locked runtime grip; revised hands await player review |

@@ -6,6 +6,7 @@ var suspension: RefCounted
 var visual_damage: RefCounted
 var accessories: RefCounted
 var streaming: RefCounted
+var contact_physics_frame: int=-1
 var profile_setup:=false
 var setup_timings: Dictionary={}
 var visual_timings: Dictionary={}
@@ -87,6 +88,7 @@ func _update_wheel_contacts() -> void:
 		_contact_normals[i]=Vector3(samples[offset+7],samples[offset+8],samples[offset+9])
 		if _contact_active[i]: grounded_wheels+=1
 		if _load_active[i]: loaded_wheels+=1
+	contact_physics_frame=Engine.get_physics_frames()
 func _apply_suspension_forces() -> void:
 	pass # Applied by the native contact pass exactly once per physics tick.
 func _apply_vehicle_motion(throttle: float,reverse_brake: float,handbrake: bool,parked: bool,delta: float) -> void:
@@ -110,6 +112,7 @@ func reset_vehicle() -> void:
 	if streaming!=null: streaming.discard_motion(self)
 func restore_parked(pose: Transform3D) -> void:
 	set_controls_enabled(false);set_physics_process(false)
+	contact_physics_frame=-1
 	_spawn_transform=pose
 	reset_vehicle()
 	global_transform=pose # Interactive reset adds clearance; saved poses are exact.

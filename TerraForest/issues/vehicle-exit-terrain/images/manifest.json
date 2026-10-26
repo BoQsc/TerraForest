@@ -28,5 +28,23 @@
     "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_world_normal_0_0_after.png",
     "sha256": "5e9dccb6516425ad5ff0e31c773135270794d380314d8de2d7fa82d3feae7e73",
     "caption": "Initial full-foliage after view; rejected as a visual comparison because a tree hides the car and automatic reset obscures the transient failure."
+  },
+  {
+    "file": "fixed-stopped-clear-view.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_world_fixed_0_0_repeat_0_clear_view.png",
+    "sha256": "2cdf24374cf69c43e0a6783c7988366c6fa32a9a29c247c468fe7f6837a86ec8",
+    "caption": "Actual corrected final state after stopped exit, temporary generator 4 / seed 1703; foliage hidden only for capture, no pose replay or injected freeze; first-person character art remains active."
+  },
+  {
+    "file": "fixed-stopped-full-foliage.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_world_fixed_0_0_repeat_0_full_foliage.png",
+    "sha256": "523c2961bc85f6d927538454f40ff965e9a52652475d79bfa9ed39df6edc91bb",
+    "caption": "Actual corrected stopped exit, temporary generator 4 / seed 1703, full foliage. Different closer camera from clear comparison; trees partly obscure the chassis."
+  },
+  {
+    "file": "fixed-moving-clear-view.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_exit_world_fixed_3_0_repeat_0_clear_view.png",
+    "sha256": "05bc53c365b0e7fd8d062c86363ffe3e86f5c9356f3e77afe6b0e7dd7ba28cef",
+    "caption": "Actual corrected final state after exit at 3 m/s, temporary generator 4 / seed 1703; foliage hidden for capture, no pose replay or injected freeze."
   }
 ]

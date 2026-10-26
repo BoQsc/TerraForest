@@ -23,6 +23,13 @@ var install_timings: Dictionary={}
 var interaction_available: Callable
 var last_spawn_identity:=0
 var coasting:Dictionary={}
+var _coast_quiet:Dictionary={}
+var _exit_contacts:Dictionary={}
+const PARK_QUIET_SECONDS:=0.25
+func _ready() -> void:
+	# Observe this tick's suspension samples after the vehicle's physics pass.
+	process_physics_priority=1
+	set_physics_process(false)
 func can_interact() -> bool:
 	return not interaction_available.is_valid() or interaction_available.call()
 func request_scene() -> void:
@@ -60,6 +67,7 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 	if not decoded.ok:return false
 	if not fleet.restore_storage_snapshot(data):return false
 	coasting.clear()
+	_coast_quiet.clear();_clear_exit_contacts();set_physics_process(false)
 	if driving:
 		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
 		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
@@ -216,7 +224,8 @@ func enter(world: Node,expected:int=0) -> bool:
 	_player_layer=world.player.collision_layer;_player_mask=world.player.collision_mask
 	world.player.collision_layer=0;world.player.collision_mask=0
 	world.player.velocity=Vector3.ZERO
-	coasting.erase(car_identity);car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
+	coasting.erase(car_identity);_coast_quiet.erase(car_identity)
+	car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
 	driving=true
 	return true
 func safe_exit_position(world: Node) -> Vector3:
@@ -239,24 +248,52 @@ func exit_vehicle(world: Node) -> String:
 	if not driving: return ""
 	var feet:=safe_exit_position(world)
 	if not feet.is_finite(): return "No clear, loaded exit beside the vehicle"
-	car.set_controls_enabled(false);coasting[car_identity]=car
+	# CharacterBody relocation is a kinematic target, consumed by the next
+	# physics step. Do not let the still-seated proxy hit the chassis en route.
+	_guard_exit_contact(world.player)
+	car.set_controls_enabled(false);coasting[car_identity]=car;_coast_quiet[car_identity]=0.0
+	set_physics_process(true)
 	world.player.position=feet;world.player.velocity=car.linear_velocity
 	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
 	world.camera.transform=_camera_local;driving=false
 	Engine.physics_ticks_per_second=_physics_ticks
 	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
 	return "On foot · E nearby to enter vehicle"
+func _guard_exit_contact(player:PhysicsBody3D) -> void:
+	var key:=car.get_instance_id()
+	# An existing host-owned exception must survive our temporary transition.
+	if not _exit_contacts.has(key) and player in car.get_collision_exceptions():return
+	car.add_collision_exception_with(player)
+	_exit_contacts[key]={"body":car,"player":player,"release_frame":Engine.get_physics_frames()+2}
+func _release_exit_contact(key:int) -> void:
+	var pending:Dictionary=_exit_contacts[key]
+	if is_instance_valid(pending.body) and is_instance_valid(pending.player):
+		pending.body.remove_collision_exception_with(pending.player)
+	_exit_contacts.erase(key)
+func _clear_exit_contacts() -> void:
+	for key:int in _exit_contacts.keys():_release_exit_contact(key)
+func _physics_process(delta:float) -> void:
+	var frame:=Engine.get_physics_frames()
+	for key:int in _exit_contacts.keys():
+		if frame>=_exit_contacts[key].release_frame:_release_exit_contact(key)
+	for id:int in _coast_quiet.keys():
+		if not coasting.has(id):_coast_quiet.erase(id)
+	for id:int in coasting.keys():
+		var body:RigidBody3D=coasting[id]
+		if not is_instance_valid(body):coasting.erase(id);_coast_quiet.erase(id);continue
+		# A readiness hold or a skipped suspension pass cannot count as resting.
+		var quiet:bool=not body.freeze and body.contact_physics_frame==frame and body.loaded_wheels>=2 and body._has_drive_support() and body.linear_velocity.length()<.15 and body.angular_velocity.length()<.1
+		_coast_quiet[id]=float(_coast_quiet.get(id,0.0))+delta if quiet else 0.0
+		if _coast_quiet[id]>=PARK_QUIET_SECONDS:
+			body.freeze=true;body.set_physics_process(false);coasting.erase(id);_coast_quiet.erase(id)
+	set_physics_process(not coasting.is_empty() or not _exit_contacts.is_empty())
 func _exit_tree() -> void:
 	# Every accepted threaded request needs a matching get, even if the player
 	# never places a vehicle. On early exit this can wait for the pending load.
 	_take_requested_scene()
+	_clear_exit_contacts()
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:
-	for id:int in coasting.keys():
-		var body:RigidBody3D=coasting[id]
-		if not is_instance_valid(body):coasting.erase(id);continue
-		if body.sleeping or (body.loaded_wheels>=2 and body.linear_velocity.length()<.15 and body.angular_velocity.length()<.1):
-			body.freeze=true;body.set_physics_process(false);coasting.erase(id)
 	if fleet_enabled:activation.update(world,delta)
 	elif is_instance_valid(car):
 		_obstacle_sync_time-=delta
