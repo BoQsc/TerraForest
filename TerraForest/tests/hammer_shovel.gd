@@ -23,7 +23,9 @@ func run()->void:
 	var hud=game.player_hud;var inventory:RefCounted=hud.inventory;var attack=game.world_attack
 	verify(hud.CATALOG[3]=="Repair hammer" and hud.CATALOG[4]=="Assembly tool" and hud.CATALOG[5]=="Shovel","existing item IDs preserved; shovel is item 5")
 	var initial:PackedByteArray=inventory.capture_storage_snapshot()
-	var recipe:int=hud.Crafting.RECIPES.size()-1
+	var recipe:=-1
+	for index in hud.Crafting.RECIPES.size():
+		if hud.Crafting.RECIPES[index].outputs==[5,1]:recipe=index
 	var wood:=amount(102);var metal:=amount(104)
 	verify(hud.Crafting.craft(inventory,recipe,1,inventory.snapshot().revision).ok and amount(5)==1 and amount(102)==wood-2 and amount(104)==metal-2,"crafting makes one durable shovel for two wood and two metal")
 	var crafted:PackedByteArray=inventory.capture_storage_snapshot()

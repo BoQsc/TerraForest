@@ -1,0 +1,33 @@
+{
+  "checks": 26,
+  "clips": {
+    "Crouch": {
+      "finger_error": 0.000000252881079632061,
+      "grip_error": 0.000000544300462479441,
+      "maximum_hand_step_degrees": 0.0
+    },
+    "Idle": {
+      "finger_error": 0.0,
+      "grip_error": 0.00000107373693936097,
+      "maximum_hand_step_degrees": 0.0395646811852521
+    },
+    "Jump": {
+      "finger_error": 0.0,
+      "grip_error": 0.00000102159935977397,
+      "maximum_hand_step_degrees": 0.0395646811852521
+    },
+    "Run": {
+      "finger_error": 0.000000268220901489258,
+      "grip_error": 0.00000994620131677948,
+      "maximum_hand_step_degrees": 0.201741189760977
+    },
+    "Walk": {
+      "finger_error": 0.000000343131404179076,
+      "grip_error": 0.00000277761796496634,
+      "maximum_hand_step_degrees": 0.111905832701702
+    }
+  },
+  "failures": 0,
+  "mapped_materials": 3,
+  "triangles": 40032
+}

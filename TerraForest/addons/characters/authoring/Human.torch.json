@@ -1,0 +1,56 @@
+{
+  "status": "First torch draft; visual approval pending",
+  "source": "addons\\characters\\Human_R11_Complete_Repost\\Human.r11.blend",
+  "source_sha256": "8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3",
+  "triangles": 40032,
+  "vertices": 20230,
+  "fps": 60,
+  "actions": {
+    "Idle": {
+      "seconds": 3.0,
+      "frames": 180,
+      "max_reach_fraction": 0.7954650965906773
+    },
+    "Walk": {
+      "seconds": 1.0,
+      "frames": 60,
+      "max_reach_fraction": 0.812971978595499
+    },
+    "Run": {
+      "seconds": 0.8,
+      "frames": 48,
+      "max_reach_fraction": 0.8241580063551985
+    },
+    "Jump": {
+      "seconds": 1.5,
+      "frames": 90,
+      "max_reach_fraction": 0.8051269199931882
+    }
+  },
+  "grip": [
+    [
+      -0.09916730225086212,
+      -0.9883642196655273,
+      -0.11533533036708832,
+      0.08997324854135513
+    ],
+    [
+      -0.011514483019709587,
+      -0.11475912481546402,
+      0.9933266639709473,
+      0.04467511922121048
+    ],
+    [
+      -0.9950045347213745,
+      0.09983350336551666,
+      -2.8189806045020305e-08,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

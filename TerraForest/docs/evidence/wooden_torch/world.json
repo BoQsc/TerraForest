@@ -1,0 +1,5 @@
+{
+  "checks": 16,
+  "failures": 0,
+  "scope": "Temporary world; real inventory, crafting, equip, native pickup persistence, no user saves modified."
+}

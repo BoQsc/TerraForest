@@ -38,7 +38,7 @@ var content: VBoxContainer
 var ready_to_dock:=false
 var spawner:RefCounted
 var dev_bag:RefCounted
-const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift."}
+const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift.",6:"Wooden torch: a burning survival light. Equip to carry it; switch slots to put it away. G drops it."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
 func label(parent: Node,text: String) -> Label:

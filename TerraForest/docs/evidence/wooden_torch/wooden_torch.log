@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS Idle: firm shaft grip and finger wrap at 120 Hz
+PASS Idle: smooth presentation without gameplay event tracks
+PASS Walk: firm shaft grip and finger wrap at 120 Hz
+PASS Walk: smooth presentation without gameplay event tracks
+PASS Run: firm shaft grip and finger wrap at 120 Hz
+PASS Run: smooth presentation without gameplay event tracks
+PASS Jump: firm shaft grip and finger wrap at 120 Hz
+PASS Jump: smooth presentation without gameplay event tracks
+PASS Crouch: firm shaft grip and finger wrap at 120 Hz
+PASS Crouch: smooth presentation without gameplay event tracks
+PASS torch does not silently punch, mine or damage targets
+PASS torch uses corrected hand skin weights
+PASS velocity dispatches torch Walk
+PASS velocity dispatches torch Run
+PASS velocity dispatches torch Jump
+PASS velocity dispatches torch Idle
+PASS third-person crouch retains the torch grip
+PASS equipped torch has burning effects and shadowed local light
+PASS light flicker remains gentle and bounded
+PASS hidden player/tool extinguishes local lighting
+PASS visible held torch resumes lighting
+PASS placement hides fire as well as the shaft
+PASS carry flame returns after placement
+PASS switching slots stops all torch processing and lighting
+PASS accepted pickaxe remains the default
+PASS torch has detailed winding geometry and three embedded PBR materials
+WOODEN_TORCH checks=26 failures=0

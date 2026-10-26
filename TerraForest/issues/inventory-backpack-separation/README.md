@@ -46,3 +46,13 @@ wrong native cell. Compare inventory snapshots before/after, including belt cell
 0–9. Player saves must stay intact; latest visual review remains open.
 After torch recipe integration, update that older fixture's recipe-count contract
 and rerun its complete UI suite; it is not counted as a passing qualification.
+
+## Torch integration follow-up, 2026-10-26
+
+The previously failing recipe-count fixture now compares with the declared
+recipe catalog. The complete gameplay inventory UI passes 33/33; its earlier
+32/33 run remains historical evidence. An initial rerun without gameplay mode
+is also retained as a wrong-mode diagnostic, not a gameplay regression.
+[Final UI log](../../docs/evidence/wooden_torch/inventory_ui.log) and
+[qualification](../../docs/evidence/wooden_torch/qualification.json).
+This closes the fixture follow-up above; player visual review remains open.

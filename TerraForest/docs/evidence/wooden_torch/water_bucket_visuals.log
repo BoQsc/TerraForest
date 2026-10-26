@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bucket uses the character rig and no floating procedural preview
+PASS bucket uses the repaired finger weights
+PASS empty bucket has no water surface
+PASS current item 401 water metadata displays the full surface
+PASS older partial metadata displays its fill level
+PASS legacy filled item IDs still normalize to the same visual
+PASS dense hollow bucket has UVs and embedded metal base-color/roughness/normal maps
+PASS world pickup combines both articulated parts
+PASS FP_Bucket_Idle preserves closed grip through keys and interpolation
+PASS FP_Bucket_Idle is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Idle returns cleanly to its starting pose
+PASS FP_Bucket_Idle keeps both bail ears attached through rotation
+PASS FP_Bucket_Idle holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Idle keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS FP_Bucket_Jump preserves closed grip through keys and interpolation
+PASS FP_Bucket_Jump is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Jump returns cleanly to its starting pose
+PASS FP_Bucket_Jump keeps both bail ears attached through rotation
+PASS FP_Bucket_Jump holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Jump keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS FP_Bucket_Pour preserves closed grip through keys and interpolation
+PASS FP_Bucket_Pour is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Pour returns cleanly to its starting pose
+PASS FP_Bucket_Pour keeps both bail ears attached through rotation
+PASS FP_Bucket_Pour holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Pour keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS FP_Bucket_Run preserves closed grip through keys and interpolation
+PASS FP_Bucket_Run is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Run returns cleanly to its starting pose
+PASS FP_Bucket_Run keeps both bail ears attached through rotation
+PASS FP_Bucket_Run holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Run keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS FP_Bucket_Scoop preserves closed grip through keys and interpolation
+PASS FP_Bucket_Scoop is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Scoop returns cleanly to its starting pose
+PASS FP_Bucket_Scoop keeps both bail ears attached through rotation
+PASS FP_Bucket_Scoop holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Scoop keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS FP_Bucket_Walk preserves closed grip through keys and interpolation
+PASS FP_Bucket_Walk is presentation only, without root motion or gameplay events
+PASS FP_Bucket_Walk returns cleanly to its starting pose
+PASS FP_Bucket_Walk keeps both bail ears attached through rotation
+PASS FP_Bucket_Walk holds the supporting palm without a reversed wrist
+PASS FP_Bucket_Walk keeps forearm centres and a 25 mm clearance outside the pail volume
+PASS Pour 0.800 keeps the actual supporting skin underneath and against the floor
+PASS Pour 1.208 keeps the actual supporting skin underneath and against the floor
+PASS Pour 1.900 keeps the actual supporting skin underneath and against the floor
+PASS Scoop 0.900 keeps the actual supporting skin underneath and against the floor
+PASS Scoop 1.308 keeps the actual supporting skin underneath and against the floor
+PASS bucket use cannot start a combat attack or leave a pending contact
+PASS completed emptying selects the authored pour
+PASS confirmed empty inventory retains water visually until tipping
+PASS pour reaches the empty tipped hold before recovering
+PASS pour recovers to carry pose
+PASS completed filling selects the authored scoop
+PASS confirmed full inventory keeps the dipping pail visually empty
+PASS water appears during the lift before scoop recovery
+PASS switching restores the accepted pickaxe and hides every bucket surface
+PASS placement hides bucket and water together
+PASS placement recovery restores bucket presentation
+PASS actual velocity selects bucket Walk
+PASS actual velocity selects bucket Run
+PASS actual velocity selects bucket Idle
+WATER_BUCKET_VISUALS checks=63 failures=0

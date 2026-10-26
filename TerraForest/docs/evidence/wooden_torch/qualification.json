@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-26",
+  "base_revision": "2ac8ab0eab5b687abb39a7b6e09e4c73bd0a9e24",
+  "status": "Engineering checks passed; first draft awaits user visual review",
+  "engine": "Godot 4.7.2 Steam Forward+ / RTX 4050",
+  "authoring": "Blender 5.2.3 LTS",
+  "artifacts": {
+    "addons/characters/authoring/Human.torch.blend": "8530f7e802e7c562c07c471384038e5fe3f9e0dcc0aea6df37a401f93ed9b12a",
+    "addons/characters/authoring/Human.torch.glb": "95bf7c1ff5597f85bce91dd75424f64a23e4cf46f23e90f6a40b861e6c5cb0f7",
+    "addons/characters/runtime/assets/Torch.glb": "b1346e6731614c7b727dd41f54bdc455f3c8c4f0e152535fe10b08e4aadf2ff6",
+    "addons/characters/runtime/assets/Human.torch.res": "5fcd72db0386a769ff5749477cd0c865bd77a20b0218ee361ffbd6bf77d98896",
+    "addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
+    "addons/characters/runtime/torch_flame.gdshader": "aae22bc72dc6b4ed82d5e1b35a613c6671cd0d0a75f17cf2b6689b62477aa4ac",
+    "addons/characters/runtime/torch_motes.gdshader": "aaf342821a39daa812268951abdefca3f5e0f25c5d5c55d080fba1a569ff54a5"
+  },
+  "captures": {
+    "icon.png": "15eee434e43e9e7955010f4bc38b79e9e1071b18482ad250f11e4fbaeca9d321",
+    "night_off.png": "d2c1a8b3d41cb1bff79d3b01fa338815df778cac5efc7b60a2406d6c9e61f72e",
+    "night_on.png": "9622e9a009438d1f1383721f6d934d1abfb72fd4b9cdd384c53ce5834bb3c6b5",
+    "preview.png": "dbf105018e0779dad010a3f4a4332cd55ccb2ef6c4f2626481a2a96fc2366817",
+    "Wooden-torch.preview.mp4": "ec0e99ae7e0e8e01e40b711323370030ee95b3d9f8a4d6b912efd4080d6bec40",
+    "world.png": "602060f553715248f4c293b4fee55360e6c99df2728ac178e9cad9e7de3a990b"
+  },
+  "checks": {
+    "torch_runtime": 26,
+    "torch_world": 16,
+    "pickaxe_locomotion": 24,
+    "water_bucket_visuals": 63,
+    "inventory_crafting": 15,
+    "inventory_drop": 16,
+    "inventory_presentation": 33,
+    "package_dependencies": 1,
+    "icon_receipt": "current"
+  },
+  "commands": [
+    "Blender --background addons/characters/Human_R11_Complete_Repost/Human.r11.blend --python tools/author_wooden_torch.py",
+    "Godot --headless --path . --script res://tools/import_wooden_torch.gd",
+    "Godot --headless --path . --editor --import",
+    "Godot --path . --script res://tests/bake_item_icons.gd -- --icons-only --icon-items=1,2,3,5,6,501",
+    "Godot --path . --disable-render-loop --script res://tools/preview_wooden_torch.gd -- --video",
+    "Blender --background --python tools/encode_wooden_torch_preview.py",
+    "Godot --path . --script res://tests/wooden_torch_world.gd -- --temporary --world-slot=torch_review_20261026 --derived-cache=user://torch_review_20261026 --gameplay-construction --no-zombies",
+    "Godot --path . --script res://tests/inventory_presentation.gd -- --temporary --world-slot=torch_ui_20261026 --derived-cache=user://torch_ui_20261026 --gameplay-construction --no-zombies",
+    "python -m unittest test_package.PackageTests.test_character_runtime_bundle_and_player_dependency"
+  ],
+  "lighting_fixture": {
+    "sun_energy": 0,
+    "ambient_energy": 0.08,
+    "flashlight": false,
+    "fog": false,
+    "terrain_mean_off": 0.07816074504808,
+    "terrain_mean_on": 0.08615990587687
+  },
+  "prior_nonpasses": [
+    "Inventory UI first invocation omitted --gameplay-construction; 11 checks used the developer belt and failed. Retained in inventory_ui_wrong_mode.log. Correct gameplay invocation passes 33/33.",
+    "Earlier backpack work recorded an obsolete fixed eleven-recipe assertion. Fixture now compares against the complete recipe catalog; full gameplay UI suite passes."
+  ],
+  "remaining": "User visual review of flame style, torch proportions and grip. No fuel depletion, ignition controls, underwater extinguishing, fire spread/damage, melee or sound in this authoring pass."
+}

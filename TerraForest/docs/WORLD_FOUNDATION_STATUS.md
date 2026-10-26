@@ -1,6 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Wooden torch — 2026-10-26
+
+New craftable item 6: authored wooden shaft, layered linen and charred crown,
+packed PBR maps, firm carry grip, idle/walk/run/jump/crouch, flame/embers/smoke
+and warm local light. Native inventory, drop/pickup and snapshot ownership work;
+old loadouts receive no free grants. Craft with one Wood + two Plant or use Dev Bag.
+26 presentation checks and 16 real-world checks pass, including terrain lighting
+in a temporary dark fixture. Pickaxe 24, bucket 63, crafting 15, drop 16 and the
+complete gameplay inventory UI 33 checks pass; package dependency and icon receipt
+checks pass. The outdated fixed recipe-count fixture was updated for the catalog.
+[Preview, evidence and limits](evidence/wooden_torch/README.md);
+[editable Blender source notes](../addons/characters/authoring/WOODEN_TORCH.md).
+Visual quality is unreviewed: player feedback on proportions, grip and flame style
+is the return trigger; inspect the video and in-game carry before acceptance.
+Fuel depletion, ignition controls, underwater extinguishing, fire spread/damage,
+melee and sound are outside this item-authoring pass and need separate gameplay
+requirements if requested. Dropped torches are unlit collectible meshes.
+
 ## Backpack excludes toolbelt in container screens — 2026-10-26
 
 Chest/corpse player grids now display only the 22 backpack slots (native indices
@@ -12,10 +30,10 @@ Source checks cover same-type stacks on belt/backpack, first/last backpack slots
 exact deposits/drags, untouched belt data and compact/legacy container views.
 Packaged backpack and actual chest/corpse input checks pass; rendered corpse UI
 shows 22 empty backpack cells while the occupied toolbelt remains separate.
-The broader source inventory-presentation check retains one unrelated non-pass:
-its hardcoded eleven-recipe expectation conflicts with the concurrent torch
-recipe addition. Its other 32 checks pass. That fixture is left untouched here;
-refresh its recipe contract after the torch work is integrated, then rerun.
+Follow-up with torch integration: the obsolete eleven-recipe assertion now uses
+the declared recipe catalog; the full gameplay inventory UI passes 33/33.
+The prior non-pass and wrong-mode invocation logs remain in the evidence;
+[latest UI qualification](evidence/wooden_torch/qualification.json).
 Evidence and latest visual status: [backpack separation](../issues/inventory-backpack-separation/README.md).
 
 ## E container toggle and grass pickup eligibility — 2026-10-26

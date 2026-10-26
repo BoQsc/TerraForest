@@ -4,7 +4,7 @@ extends RefCounted
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
 const ATLAS="res://addons/player_runtime/art/item_icons.trtex"
 const RECEIPT="res://addons/player_runtime/art/item_icons.bake.json"
-const GROUPS={"tools":["1","2","3","5"],"vehicle":["501"]}
+const GROUPS={"tools":["1","2","3","5","6"],"vehicle":["501"]}
 const ROOTS={"tools":["res://addons/player_runtime/tool_view.gd"],"vehicle":["res://vehicle_demo/scenes/car.tscn"]}
 const RECIPE=["res://tests/bake_item_icons.gd","res://addons/player_runtime/item_icons.gd","res://tools/item_icon_cache.gd","res://project.godot"]
 

@@ -14,10 +14,11 @@ const PICKAXE_FRESH = preload("res://addons/characters/runtime/assets/Human.pick
 const PICKAXE_LOCOMOTION = preload("res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res")
 const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res")
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
+const TORCH = preload("res://addons/characters/runtime/assets/Human.torch.res")
 const BUCKET = preload("res://addons/characters/runtime/assets/Human.bucket.res")
 const BUCKET_MODEL = preload("res://addons/volumetric_water/bucket_model.gd")
-const EQUIPMENT = {3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
-const AUTHORED_TOOLS = [0,1,2,3,5,401]
+const EQUIPMENT = {6:preload("res://addons/characters/runtime/assets/Torch.glb"),3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
+const AUTHORED_TOOLS = [0,1,2,3,5,6,401]
 const HIDDEN_SURFACE = preload("res://addons/characters/runtime/hidden_surface.gdshader")
 var model: Node3D
 var animation_player: AnimationPlayer
@@ -42,6 +43,7 @@ var crouched:=false
 var bucket_fill:=0.0
 var bucket_previous_fill:=0.0
 var bucket_display_fill:=0.0
+var torch_effects:Node3D
 var bucket_water:MeshInstance3D
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
@@ -58,13 +60,15 @@ func _ready() -> void:
 	var skeleton:=model.find_children("*","Skeleton3D",true,false)[0] as Skeleton3D
 	for item:int in EQUIPMENT:
 		var attachment:=BoneAttachment3D.new()
-		attachment.bone_name="Weapon_Axe" if item==3 else "Weapon_Pickaxe"
+		attachment.bone_name="Weapon_Axe" if item in [3,6] else "Weapon_Pickaxe"
 		skeleton.add_child(attachment)
 		var equipment:Node3D=EQUIPMENT[item].instantiate()
 		attachment.add_child(equipment)
 		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
 		# attachments carry that conversion too; undo the rest basis once.
 		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(attachment.bone_name)).affine_inverse()*equipment.transform
+		if item==6:
+			torch_effects=preload("res://addons/characters/runtime/torch_effects.gd").new();equipment.add_child(torch_effects)
 	var bail_attachment:=BoneAttachment3D.new();bail_attachment.bone_name="Weapon_Axe";skeleton.add_child(bail_attachment)
 	var bail:=MeshInstance3D.new();bail.name="Equipment_Bucket_Bail";bail.mesh=BUCKET_MODEL.BAIL;bail_attachment.add_child(bail)
 	bail.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Axe")).affine_inverse()
@@ -88,6 +92,7 @@ func _ready() -> void:
 	animation_player.add_animation_library("hammer", HAMMER)
 	animation_player.add_animation_library("shovel", SHOVEL)
 	animation_player.add_animation_library("bucket", BUCKET)
+	animation_player.add_animation_library("torch", TORCH)
 	animation_player.add_animation_library("crouch",CROUCH)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
@@ -142,15 +147,16 @@ func equip(item: int, water_ml:int=-1) -> void:
 
 func _sync_equipment() -> void:
 	if body_mesh!=null:
-		var selected:Mesh=unarmed_body_mesh if current in [0,401] else original_body_mesh
+		var selected:Mesh=unarmed_body_mesh if current in [0,6,401] else original_body_mesh
 		if body_mesh.mesh!=selected:body_mesh.mesh=selected
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==401 and label.contains("bucket")))
+			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==6 and label.contains("torch")) or (current==401 and label.contains("bucket")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 	_sync_bucket_water()
+	if torch_effects!=null:torch_effects.set_burning(current==6 and not placement_active)
 
 func _sync_bucket_water()->void:
 	if bucket_water==null:return
@@ -167,6 +173,7 @@ func _sync_bucket_water()->void:
 	bucket_water.scale=Vector3(radius,1,radius)
 
 func _motion_clip(action: String) -> String:
+	if current==6:return "FP_Torch_"+action if clips.has("FP_Torch_"+action) else "FP_Torch_Idle"
 	if third_person and action=="Crouch":return "Player_Pickaxe_Crouch" if current==1 else "Player_Crouch"
 	if current==401:return "FP_Bucket_"+action if clips.has("FP_Bucket_"+action) else "FP_Bucket_Idle"
 	if current==0:
@@ -262,14 +269,14 @@ func _process(delta: float) -> void:
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
 	# Authored tools use their own locomotion presentation.
-	if (third_person or current in [1, 2, 3, 5, 401]) and is_instance_valid(body):
+	if (third_person or current in [1, 2, 3, 5, 6, 401]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"
 		elif speed > 0.15:
 			# Native ground speeds are 5.5 walking / 9.9 sprinting. Preserve the
 			# other tools' cadence while selecting pickaxe/bucket walks correctly.
-			var run_speed:=6.5 if current==401 or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
+			var run_speed:=6.5 if current in [6,401] or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
 			motion = "Run" if speed > run_speed else "Walk"
 	if third_person and crouched:motion="Crouch"
 	_play(_motion_clip(motion))

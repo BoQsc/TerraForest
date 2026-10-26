@@ -15,7 +15,8 @@ const RECIPES=[
 	{"title":"Repair hammer","costs":[201,2,102,3],"outputs":[3,1]},
 	{"title":"Assembly tool","costs":[201,2,102,2],"outputs":[4,1]},
 	{"title":"Water bucket · 2 metal","costs":[104,2],"outputs":[401,1]},
-	{"title":"Shovel · 2 wood + 2 metal","costs":[102,2,104,2],"outputs":[5,1]}
+	{"title":"Shovel · 2 wood + 2 metal","costs":[102,2,104,2],"outputs":[5,1]},
+	{"title":"Wooden torch · 1 wood + 2 plant fibre","costs":[102,1,204,2],"outputs":[6,1]}
 ]
 static func craft(inventory: RefCounted, recipe: int, batches: int, revision: int) -> Dictionary:
 	if recipe<0 or recipe>=RECIPES.size() or batches<1 or batches>1000: return {"ok":false,"reason":"invalid_recipe_or_quantity"}

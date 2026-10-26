@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS main world ready
+PASS backpack excludes all ten belt slots
+PASS every carried item has a baked icon
+PASS icons share cached regions and one atlas
+FAIL occupied icon and empty slot presentation
+FAIL low durability red bar
+FAIL hover identifies tool and exact remaining durability
+PASS medium durability amber bar
+PASS full durability green bar
+PASS developer presentation clears icon and durability
+PASS empty belt slots are translucent
+PASS only equipped slot has prominent active border
+FAIL empty slot remains selectable
+PASS all catalog recipe cards reflect available ingredients
+PASS recipe shows owned and required amounts
+PASS equipped and selected slots have distinct highlights
+PASS crafting is separate left panel and both fit 1080p
+PASS one real mouse click crafts exactly one batch
+PASS craft updates all recipe availability immediately
+PASS disabled recipe click cannot consume materials
+PASS stale revision refuses craft and refreshes without losing inputs
+PASS another recipe crafts directly without selecting a dropdown
+PASS no fullscreen dimmer or input-blocking overlay
+FAIL real belt-to-inventory drag puts away equipped tool
+FAIL drag transfers icon and durability without stale source presentation
+FAIL real inventory-to-belt drag restores equipped tool
+FAIL occupied belt drop swaps items through native transaction
+FAIL Shift-drag splits belt stack into inventory
+FAIL inventory-to-belt merge preserves total materials
+FAIL equipping backpack item moves it into empty belt slot
+PASS closing inventory removes selection styling from equipped belt slot
+PASS closing inventory closes crafting and restores gameplay capture
+PASS fullscreen 1920x1080
+[TerrainRewrite] Temporary test world: save skipped
+INVENTORY_PRESENTATION checks=33 failures=11

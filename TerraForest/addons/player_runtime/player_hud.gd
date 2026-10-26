@@ -11,7 +11,7 @@ signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
 signal drop_requested(slot: int, revision: int, count: int)
-const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel"}
+const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
 # UI metadata is local so this addon remains independently loadable.
 # woodland_accents checks it against the ecosystem catalog.
@@ -108,7 +108,7 @@ func prepare() -> bool:
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	for id: int in CATALOG:
 		inventory.register_item(id,1)
-		inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
+		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
 	for id: int in MATERIALS: inventory.register_item(id,999)
 	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
 	inventory.register_durable(501,preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle)
@@ -231,7 +231,7 @@ func _ready() -> void:
 func refresh() -> void:
 	deliver_mining_rewards()
 	if action_hint!=null:
-		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings",5:"Shovel | Hold left mouse: dig / attack | G drop"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
+		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings",5:"Shovel | Hold left mouse: dig / attack | G drop",6:"Wooden torch | Lights while held | G drop | E interact"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
 	var latest: Dictionary=inventory.snapshot()
 	if resource_feed!=null:resource_feed.observe(latest,equipment.snapshot(1))

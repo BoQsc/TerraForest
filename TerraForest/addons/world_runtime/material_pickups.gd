@@ -3,7 +3,7 @@ extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
 ## Static authored supplies; no per-pickup nodes or active rigid bodies.
-const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",212:"Woody bush",501:"Vehicle"}
+const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",212:"Woody bush",501:"Vehicle"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 var stores: Dictionary = {}
 var stacks: Dictionary = {}

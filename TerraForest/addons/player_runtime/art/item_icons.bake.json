@@ -1,5 +1,5 @@
 {
-  "atlas_sha256": "afec12f2e636c4116009170338cecf5ab20b68b65cf92b38f9ee4a634dfbc369",
+  "atlas_sha256": "0f3f1dde2a63c6153c28975d42697f3411049680baa24f3917d48dab4def7942",
   "schema": 1,
   "sources": {
     "tools": {
@@ -18,12 +18,36 @@
         "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
         "res://addons/characters/runtime/assets/Human.r11.glb.import": "25bb9993391ba7a4afb8225ea88a425c0f2b4d21cc01bb3c40df5193a5975439",
         "res://addons/characters/runtime/assets/Human.shovel.res": "04b03d5b435607298f7785f37343f66cff0b1a1d6bb42f8756b467449a91c9d7",
+        "res://addons/characters/runtime/assets/Human.torch.res": "5fcd72db0386a769ff5749477cd0c865bd77a20b0218ee361ffbd6bf77d98896",
         "res://addons/characters/runtime/assets/Human.unarmed.res": "faaf0015ac1feef189ffb11b6ecf923c1f2c8a1f3752b64b798a15c0e7b66385",
         "res://addons/characters/runtime/assets/Human.unarmed_body.res": "21d8dd7fe576b98eaa23a17e216d0d61c10af2f74910f7d34a85313d37763248",
         "res://addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
         "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
+        "res://addons/characters/runtime/assets/Torch.glb": "b1346e6731614c7b727dd41f54bdc455f3c8c4f0e152535fe10b08e4aadf2ff6",
+        "res://addons/characters/runtime/assets/Torch.glb.import": "eb942c7e6d02667b523ed66e1c215b08596bed4e1ce6bba5671cc28a75c1e106",
+        "res://addons/characters/runtime/assets/Torch_Torch.png": "c08f0d23b1186a060891499f9135e41c8fe30e5c85562cac2edb31480fe70bae",
+        "res://addons/characters/runtime/assets/Torch_Torch.png.import": "d075032896ccb30176c169395b56c04cdeb326cd6ce975f15caf0f47ce269dd0",
+        "res://addons/characters/runtime/assets/Torch_Torch_1.png": "5990617cdfbe17cc792b9d57c435c02a55ade69d61313f05d4d6d85dc9b76ad1",
+        "res://addons/characters/runtime/assets/Torch_Torch_1.png.import": "cec4378b6379d37147ea649fbf53e47a69cb8e8851da371f56508fdda3ea4b8c",
+        "res://addons/characters/runtime/assets/Torch_Torch_2.png": "d18fd88e575cb5426ecd7350b4143b398cdeb7abc01fbf365959f991d992362b",
+        "res://addons/characters/runtime/assets/Torch_Torch_2.png.import": "21ecb388294bb36e8e3e2d4707c3d2a3273d260559e1c3d3108e46590bfe9576",
+        "res://addons/characters/runtime/assets/Torch_Torch_3.png": "290feb6fd33775393ce083af27d9ea5bb6aa39d1a8dfa419f6a267dd0ca54645",
+        "res://addons/characters/runtime/assets/Torch_Torch_3.png.import": "a3a3e155a19e39e23d12562553eb05f2081c6d338b6ce59c4662ba4117a939fd",
+        "res://addons/characters/runtime/assets/Torch_Torch_4.png": "19bd51b34949379b26ef0cf429565fe2bfe4f38486f563bc859a7cbcdd50d6b5",
+        "res://addons/characters/runtime/assets/Torch_Torch_4.png.import": "71ca7540d915ec62ea40089f079a81eb225207afd9f02853ff9cc0b6278096e5",
+        "res://addons/characters/runtime/assets/Torch_Torch_5.png": "cf736832cfc5f6b1a0d4bdf83b7e3be9658789726fa126c278e4f59ee4710385",
+        "res://addons/characters/runtime/assets/Torch_Torch_5.png.import": "d806bd0a7c46ae438cb1c0715d99817e81e587ba54c1dd7b2ceb4f0a84e1b97c",
+        "res://addons/characters/runtime/assets/Torch_Torch_6.png": "0080e2192efef96a04de90691770d05d38d288d4de43fab801fbbd41374fc548",
+        "res://addons/characters/runtime/assets/Torch_Torch_6.png.import": "f9470ad1fc9f85f1a280bd060dfc24508e2ae5a1dc4e27e69e6d7f9f6d966a52",
+        "res://addons/characters/runtime/assets/Torch_Torch_7.png": "c6d73f07a5b8b12aec95fb817837743e443909423bde90d71b58cf2f105c9260",
+        "res://addons/characters/runtime/assets/Torch_Torch_7.png.import": "ad6dcfdf052d35a64e2039e5e453d1eff58002ba4ea8e2074c67542205c864a8",
+        "res://addons/characters/runtime/assets/Torch_Torch_8.png": "cf736832cfc5f6b1a0d4bdf83b7e3be9658789726fa126c278e4f59ee4710385",
+        "res://addons/characters/runtime/assets/Torch_Torch_8.png.import": "e3b1d5f799dc615e3e01a915c2e7a188b45c422b0a68690962920af241ed0fa5",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "dc5dcb6d3aec7b1e15c908821acad297ac8d6ba6587ae8e912bcf39a2547758b",
+        "res://addons/characters/runtime/human_view.gd": "b783b96430f66b4a97e090350a5e61f165448a1fd2a37d40ed66669cda589cf8",
+        "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
+        "res://addons/characters/runtime/torch_flame.gdshader": "aae22bc72dc6b4ed82d5e1b35a613c6671cd0d0a75f17cf2b6689b62477aa4ac",
+        "res://addons/characters/runtime/torch_motes.gdshader": "aaf342821a39daa812268951abdefca3f5e0f25c5d5c55d080fba1a569ff54a5",
         "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
         "res://addons/volumetric_water/assets/Bucket.bail.res": "14d29c851b114b28e0f2bedc2d91563f6da2c54a75d0d6412b0b7e641ae93533",
         "res://addons/volumetric_water/assets/Bucket.held.res": "4ec59e95169282b775ee9c9ecc4e774ff3f2f312722f515b29a2cb47ba7aa4c4",
@@ -31,10 +55,10 @@
         "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "ad9cac697e6ff68a266f485e9bb0f5de30ff1f9cb1ff084e82ee2dea14f2d5a9",
+        "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
         "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
-        "res://tests/bake_item_icons.gd": "8cafa148c6795a03a5db4290a80a5017a5875f739614727f7ed7e5fe3f48979c",
-        "res://tools/item_icon_cache.gd": "7d9c038ea09640ba7638627f6e02343c762c66eae6ee8a71cc5c72af9bb51dbf"
+        "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
+        "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }
     },
     "vehicle": {
@@ -57,10 +81,10 @@
         "res://vehicle_demo/scripts/car_native.gd": "7f2aab4faa2d2402062070066a8b8ea7a8105cec1a8b9c44b4556cbf771b2435"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "ad9cac697e6ff68a266f485e9bb0f5de30ff1f9cb1ff084e82ee2dea14f2d5a9",
+        "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
         "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
-        "res://tests/bake_item_icons.gd": "8cafa148c6795a03a5db4290a80a5017a5875f739614727f7ed7e5fe3f48979c",
-        "res://tools/item_icon_cache.gd": "7d9c038ea09640ba7638627f6e02343c762c66eae6ee8a71cc5c72af9bb51dbf"
+        "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
+        "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }
     }
   }
