@@ -72,8 +72,8 @@ takes **918.012 ms** without an equivalent main-thread stall.
 
 The original campaign retained arrival gaps of **289.073 / 83.331 ms** despite
 passing frame and post-capture latency gates. The follow-up below fixes a
-publication dependency in that generator-1 fixture, but does not close the
-separate generated-world coarse-owner reconstruction problem. Waiting to obtain
+publication dependency in that generator-1 fixture. The later coarse-column
+follow-up also closes the reproduced generated-world reconstruction case. Waiting to obtain
 a usable visible target remains included in the 150 ms player-response gate.
 
 Packaged validation: native recovery, paged rejection/corruption, volume history,
@@ -137,25 +137,26 @@ Native shared boundary representatives and physical collision on both sides are
 tested separately. The visual diagnostic uses intrusive GPU readback and fails
 frame gates; it is not counted as a performance pass.
 
-### Still open: generated-world coarse owner
+### Retained failure: generated-world coarse owner
 
-A fresh generator-23 / seed-1703 run with ground cover still fails: first change
+A fresh generator-23 / seed-1703 run before the coarse-column fix fails: first change
 **243.948 ms**, largest visible gap **320.786 ms**. Frame gates pass. Its first
 edit rebuilds the already-visible **256 m** owner `(1280,1024,256)` for
 **182.766 ms** on the worker; subsequent early builds reach **223.114 ms**.
 Unlike the fixed absent-root case, exposing a fine tile by hiding that parent
 would discard existing coverage. This change deliberately does not do that.
 
-The remaining requirement is bounded local replacement of an already-visible
+The requirement was bounded local replacement of an already-visible
 coarse owner, preserving outer geometry, joins, collision and atomic publication.
 Do not enable the experimental renderer globally, cut holes, skip distant edits
 or weaken gates to claim completion. Return with the retained generator-23 trace
 and the existing native regional-owner implementation; require actual-input
 first-response/continuity <=150 ms plus distant, collision and rendered checks.
-Cold persisted checkpoints, long histories and populated travel remain separate
-qualification. No player saves were used or changed.
+The coarse-column follow-up below meets the reproduced-case requirement; a
+Wild_Ridge copy adds saved-world evidence, not all cold-checkpoint qualification.
+Long histories and populated travel remain separate. No original save was changed.
 
-Reproduce the remaining case:
+Reproduce the unconditioned generated-world arrival (current default):
 
 ```powershell
 python tools/run_godot_check.py held_mining_flight --timeout 180 --require "bounded observer writer retains all frames and progress reports" -- --world-generator=23 --world-seed=1703 --ground-cover --no-zombies
@@ -172,6 +173,106 @@ meshing convention. `original_policy_regression` is the intentional red control.
 The ordinary generator-1 continuity check now runs in the default regression
 matrix instead of requiring an opt-in flag. Reports record first-visible time
 separately from maximum gap and identify generator/renderer/ground-cover settings.
+
+## Coarse-column arrival follow-up — 2026-10-26
+
+`coarse_columns/` preserves manifests, compressed measurements/frame traces and
+the unsuccessful diagnostics. The default uses native 32 m-wide full-height
+columns only inside coarse terrain tiles. Fine 16/32 m terrain is unchanged.
+This is not the 512-slab experimental renderer: a 256 m parent has 64 columns,
+with the same Surface Nets shared-boundary rules and a distinct cache namespace.
+Edits preserve unaffected geometry/collision and publish replacements atomically.
+
+The first unconditioned generated-world runs passed, but the distant parent had
+not yet loaded. Those passes did **not** prove existing-parent locality. The new
+`--coarse-arrival` fixture waits for that distant coarse parent at the original
+player position, then teleports and immediately holds the real tool. It does not
+wait for fine destination geometry. An assertion requires a 256 m edit result
+during the first burst; the original 150 ms input-to-first-draw / maximum-gap and
+20 ms p99 / no >50 ms frame gates are unchanged.
+
+That stricter test exposed a second defect: integer rounding selected a neighbour
+whose affected-column list was empty. Empty was interpreted as a full build,
+causing 64 columns to be loaded/rebuilt and gaps over 150 ms. Empty selections now
+explicitly retain geometry and advance the stamp, without reconstruction or disk
+reads. A native-worker regression verifies all retained attributes against fresh
+geometry, not just timing or node counts.
+
+Current-laptop results, fullscreen 1920x1080 / full scale / cap 60:
+
+| Fixture | First response ms | Maximum visible gap ms | Frame p99 ms | Maximum frame ms |
+| --- | ---: | ---: | ---: | ---: |
+| Source existing-parent, three runs | 81.125–85.199 | 100.371 | 17.778 | 28.405 |
+| Packaged existing-parent, three runs | 82.227–98.075 | 109.311 | 17.983 | 36.875 |
+| Source Wild_Ridge read-only copy | 88.822 | 100.129 | 17.531 | 28.042 |
+| Packaged Wild_Ridge read-only copy | 82.999 | 100.227 | 17.883 | 30.330 |
+| Packaged unconditioned arrival, three repeats | 84.501–104.220 | 104.220 | 18.436 | 35.762 |
+
+Every second arrival also passes. First source unconditioned generated-world
+repeats pass at 92.320–108.525 ms. Save-copy manifests hash every copied source
+file before/after; the original Wild_Ridge is unchanged. These tests use its real
+saved terrain/history but keep entities disabled and do not cover arbitrary cold
+histories, seeds or hardware.
+
+Geometry coverage includes generators 1/23, excavation, world borders, LOD 1/2/4/8,
+exact fine-mesh equality, coarse/fine edge equality, native cancellation and
+unchanged authoritative bytes. Cache tests compare all geometry/material channels
+after cold, warm and restarted workers. A coarse corner edit replaces 4 columns
+and retains 60; the rounded empty halo retains all 64. Debug and release real-worker
+tests cover old/new physical collision, preemption, atomic publication and distant
+coarsening. The source 4,800-edit run passes 13,863 frame samples (p99 17.405 ms,
+maximum 47.566 ms), with ordinary edit p95 35.509–50.840 ms; this preceded the final
+empty-selection fix. Final packaged qualification is recorded separately.
+
+The final packaged 4,800-edit run passes 14,046 runtime frames including switches:
+p99 **17.661 ms**, maximum **33.760 ms**, zero frames over 50 ms. It also completes
+16 maximum-volume operations (4,816 API commands total). Ordinary edit p95 ranges
+from **35.461 to 51.285 ms**. At recovery it reports 326 mesh entries, 966 authored
+pages and 179,635,336 cached terrain bytes; this is finite-run accounting, not a
+whole-process memory plateau claim. The packaged generator-1 arrival also passes
+at **107.508 ms**, preserving the earlier ~289 ms fixture fix.
+
+The final packaged matrix is **11 passes / 1 non-pass**, not a clean suite:
+unconditioned generator-23 arrival meets every 150 ms response gate (106.539 ms
+maximum gap) but misses frame p99 at **21.014 ms**, with a **24.321 ms** maximum
+and no >50 ms frame. One sample is process-span-heavy, another draw-span-heavy;
+terrain staging peaks at 4.121 ms, so this is not evidence that the old whole-parent
+rebuild persists. The frame-pacing cause remains unassigned. Keep profiling it
+with native/render/OS scheduling traces rather than weakening the 20 ms threshold
+or describing this matrix as all-green.
+Three subsequent fresh-cache unconditioned PCK repeats pass every unchanged gate;
+they establish repeatability, not an explanation or erasure of that frame miss.
+The archive index records source directories and SHA-256 of every uncompressed
+artifact. Debug/release DLL hashes match the installed pack-side libraries.
+
+Retained non-passes include the all-LOD regional prototype's 60-second initial
+readiness timeout, the first coarse fixture's incorrect refill-count assumption,
+three existing-parent gaps before the empty-list fix, and the original saved-copy
+gap. One pre-fix arrival also has a 68.141 ms process-span-heavy frame; its root
+cause is not independently established. The maximum populated vegetation check
+still takes 17.973 ms against its 16 ms gate (71 functional assertions pass).
+Those failures are not erased by later passes. Broader render-stall investigation,
+multi-hour/populated travel, large-history paging and maximum-brush vegetation
+publication remain open; this closes the reproduced arrival bottlenecks only.
+
+```powershell
+python tools/check_mining_arrival.py --pack --coarse-arrival --repeat 3
+python tools/check_mining_arrival.py --pack --slot Wild_Ridge
+python tools/check_mining_arrival.py --pack --coarse-arrival --visual
+python tools/check_terrain_editing.py --pack --case held_mining_flight --case held_mining_generated --case held_mining_coarse
+```
+
+`--whole-patch` retains the old reconstruction path for comparison. Visual GPU
+readback is diagnostic, not a performance run. New tests use temporary worlds or
+explicit copies, never the original save; player preferences are not written.
+
+Inspected packaged captures show the first crater at 89 ms and its continued
+excavation at 503 ms while the surrounding target terrain remains present. The
+second arrival also visibly excavates the grass surface. Distant unloaded terrain
+is visible **before and after** mining; this is not seamless whole-world teleport
+or world-quality acceptance. The readback run fails both p99 frame gates
+(32.275/33.402 ms), as expected from intrusive capture; only separate normal runs
+qualify performance. No image was used as FPS evidence.
 
 ## Visual and harness checks
 
@@ -217,8 +318,8 @@ python tools/check_terrain_editing.py --pack --case terrain_edit_recovery --case
 python tools/run_godot_check.py terrain_tools_endurance --require "TERRAIN_TOOLS_ENDURANCE failures=0" --timeout 300 -- --world-generator=23 --ground-cover --no-zombies --terrain-soak-rounds=1 --terrain-tools-visual
 ```
 
-The optional known-continuity case intentionally keeps the runner nonzero while
-that gate fails. Visual mode includes GPU readback and is not a performance run.
+Continuity cases now run by default; `--with-known-continuity-check` is a compatibility
+alias. Any failed gate keeps the runner nonzero. Visual mode is not a performance run.
 Every launcher selects an isolated temporary world/cache, not a player's save.
 Logs, manifests, compressed measurement/frame traces and inspected images are
 retained alongside this file; exploratory failures are not counted as passes.

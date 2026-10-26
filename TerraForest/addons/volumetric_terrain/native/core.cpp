@@ -937,12 +937,12 @@ bool build_patch(const World&w,int ox,int oz,int size,int step,Mesh&m,u32 expect
  return true;
 }
 
-bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch){
+static bool build_owned_surface(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch,bool column){
  double mark=w.profile_mesh?mesh_clock_ms():0;
  if(w.profile_mesh)zero_bytes(w.mesh_stage_ms,sizeof(w.mesh_stage_ms));
  if(ox<0||oz<0||ox>=2048||oz>=2048||(size!=16&&size!=32&&size!=64)||
     ox%size||oz%size||(step!=1&&step!=2&&step!=4&&step!=8)||
-    y_begin<0||y_end>WORLD_Y||y_begin>=y_end||y_begin%32||y_end-y_begin!=32)return false;
+    y_begin<0||y_end>WORLD_Y||y_begin>=y_end||y_begin%32||(!column&&y_end-y_begin!=32))return false;
  const int hn=size+2;
  if(w.owned_height_x!=ox||w.owned_height_z!=oz||w.owned_height_size!=size||w.owned_height_seed!=w.seed||w.owned_heights.n!=hn*hn){
   w.owned_height_size=0;
@@ -979,6 +979,13 @@ bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begi
  if(w.profile_mesh)w.mesh_stage_ms[3]=float(mesh_clock_ms()-mark);
  if(cancelled(w,epoch)||tr_oom){m.release();return false;}
  return true;
+}
+
+bool build_owned_region(const World&w,int ox,int oz,int size,int step,int y_begin,int y_end,Mesh&m,u32 epoch){
+ return build_owned_surface(w,ox,oz,size,step,y_begin,y_end,m,epoch,false);
+}
+bool build_owned_column(const World&world,int origin_x,int origin_z,int size,int step,Mesh&mesh,u32 epoch){
+ return build_owned_surface(world,origin_x,origin_z,size,step,0,WORLD_Y,mesh,epoch,true);
 }
 
 // Cached material/occlusion build. No field sampling is done in the frame shader.

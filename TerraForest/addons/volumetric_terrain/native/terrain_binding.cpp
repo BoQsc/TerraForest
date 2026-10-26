@@ -93,6 +93,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("material_box","solid","minimum","maximum","add","solid_revision","material_revision"), &TerrainCore::material_box, DEFVAL(-1));
         godot::ClassDB::bind_method(godot::D_METHOD("geometry_cache_key","x","z","size","step"), &TerrainCore::geometry_cache_key);
         godot::ClassDB::bind_method(godot::D_METHOD("build_owned_region","x","z","size","step","y_begin","y_end","epoch"), &TerrainCore::build_owned_region);
+        godot::ClassDB::bind_method(godot::D_METHOD("build_owned_column","x","z","size","step","epoch"), &TerrainCore::build_owned_column);
         godot::ClassDB::bind_method(godot::D_METHOD("supports_isolated_worlds"), &TerrainCore::supports_isolated_worlds);
         godot::ClassDB::bind_method(godot::D_METHOD("build_variant"), &TerrainCore::build_variant);
         godot::ClassDB::bind_method(godot::D_METHOD("executing_command"), &TerrainCore::executing_command);
@@ -171,6 +172,18 @@ public:
         Mesh mesh;Bytes bytes;godot::PackedByteArray result;
         if(::build_owned_region(world_,int(x),int(z),int(size),int(step),int(y_begin),int(y_end),mesh,u32(epoch))){
             encode_mesh(mesh,int(x),int(z),int(size),int(step),bytes);
+            if(!tr_oom&&terrain_build_epoch(&world_)==u32(epoch)){
+                result.resize(bytes.n);if(bytes.n)copy_bytes(result.ptrw(),bytes.p,bytes.n);
+            }
+        }
+        mesh.release();bytes.release();return result;
+    }
+    godot::PackedByteArray build_owned_column(int64_t origin_x,int64_t origin_z,int64_t size,int64_t step,int64_t epoch){
+        if(origin_x<0||origin_z<0||origin_x>=2048||origin_z>=2048||size<16||size>64||step<1||step>8||epoch<0||epoch>0xffffffffLL)return {};
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;
+        Mesh mesh;Bytes bytes;godot::PackedByteArray result;
+        if(::build_owned_column(world_,int(origin_x),int(origin_z),int(size),int(step),mesh,u32(epoch))){
+            encode_mesh(mesh,int(origin_x),int(origin_z),int(size),int(step),bytes);
             if(!tr_oom&&terrain_build_epoch(&world_)==u32(epoch)){
                 result.resize(bytes.n);if(bytes.n)copy_bytes(result.ptrw(),bytes.p,bytes.n);
             }

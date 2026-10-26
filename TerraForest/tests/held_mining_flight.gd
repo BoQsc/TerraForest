@@ -8,7 +8,7 @@ var visual: RefCounted
 func run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports"))
 	if writer.start()!=OK: quit(2);return
-	game=Scene.instantiate();game.temporary_world=true
+	game=Scene.instantiate();game.temporary_world=true;game.player_view.settings_path=""
 	game.max_fps=60;game.background_fps=60
 	root.add_child(game);game.fly=true
 	if "--visual-debug" in OS.get_cmdline_user_args():
@@ -38,6 +38,12 @@ func run() -> void:
 	game.session_menu.activate_developer_slot(0)
 	game.radius=2.5
 	check(game.editor_tool_active and game.tool==3 and not game.session_menu.visible_ui(),"current terrain tool selected through session UI")
+	var coarse_arrival:bool="--coarse-arrival" in OS.get_cmdline_user_args()
+	if coarse_arrival:
+		var parent:=Vector3i(1280,1024,256)
+		var ready:bool=await until(func():return game.terrain.visible_cut.has(parent) and not game.terrain.tiles[parent].dirty,60)
+		check(ready,"arrival starts with an intact visible 256m parent")
+		if not ready:finish();return
 	for destination in [Vector3(1308,0,1260),Vector3(1302,0,1212)]:
 		height_value=NAN;height_token+=1
 		game.terrain.request_height(destination,height_token)
@@ -98,6 +104,11 @@ func run() -> void:
 		row["input_state"]={"frames":input_frames,"eligible":eligible_frames,"ray_hit":hit_frames,"loading":loading_frames,"pending_edit":pending_frames}
 		row["readiness_trace"]=readiness_trace
 		row["patch_work"]=work.duplicate(true)
+		row["resident"]={"terrain_triangles":game.terrain.total_triangles,"tiles":game.terrain.tiles.size(),"cache_bytes":game.terrain.cache_bytes,"engine_static_bytes":int(Performance.get_monitor(Performance.MEMORY_STATIC)),"draw_calls":int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),"render_primitives":int(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))}
+		row["coarse_arrival_fixture"]=coarse_arrival
+		row["stages"]=stage_totals.duplicate(true)
+		if coarse_arrival and reports.is_empty():
+			check(work.any(func(entry:Dictionary):return entry.get("kind","")=="edit_chunk" and entry.get("key",[]).size()==3 and int(entry.key[2])==256),"held arrival edits existing coarse parent before refinement")
 		reports.append(row)
 		check(eligible_frames>=input_frames*.9,"held-input workload valid: focused, captured and pressed")
 		check(gaps.size()>=10,"held input produces repeated visible changes")
@@ -105,6 +116,6 @@ func run() -> void:
 		check(not gaps.is_empty() and summary(gaps).max_ms<=150,"no gap between visible mining changes exceeds 150ms")
 		check(not frames.is_empty() and summary(frames).p99_ms<=20 and summary(frames).over_50ms==0,"frame p99 <=20ms and no frame >50ms")
 	var file:=FileAccess.open(ProjectSettings.globalize_path("res://reports/held_mining_flight.json"),FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks":checks,"phases":reports,"presentation":Presentation.measurement(root),"world_configuration":{"generator":game.terrain.backend.world_generator,"seed":game.terrain.backend.world_seed,"ground_cover":game.ground_enabled,"regional_renderer":game.terrain.backend.region_terrain},"visual_diagnostic":visual!=null,"scope":"Two three-second held mining bursts after scripted flight arrival; real controller physics ray, capture queue and rendered draw timing. No sustained movement during each burst; not endurance acceptance. Visual mode includes intrusive GPU readback; use separate normal run for performance."},"  "));file.close()
+	file.store_string(JSON.stringify({"checks":checks,"phases":reports,"presentation":Presentation.measurement(root),"world_configuration":{"generator":game.terrain.backend.world_generator,"seed":game.terrain.backend.world_seed,"ground_cover":game.ground_enabled,"regional_renderer":game.terrain.backend.region_terrain,"local_columns":game.terrain.backend.local_terrain},"visual_diagnostic":visual!=null,"scope":"Two three-second held mining bursts after scripted flight arrival; real controller physics ray, capture queue and rendered draw timing. No sustained movement during each burst; not endurance acceptance. Visual mode includes intrusive GPU readback; use separate normal run for performance."},"  "));file.close()
 	if visual!=null: visual.finish()
 	finish()

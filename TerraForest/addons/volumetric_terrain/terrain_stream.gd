@@ -1220,13 +1220,13 @@ func _select_dirty_owners(job: Dictionary, lo: Vector3, hi: Vector3) -> void:
 			var bounds: AABB=child.region_bounds.grow(17.0 if key.z>32 else 1.0)
 			if bounds.intersects(AABB(lo,hi-lo)): bottoms.append(bottom)
 		elif bottom<=hi.y and bottom+33>=lo.y: bottoms.append(bottom)
-	if not bottoms.is_empty(): job["brick_bottoms"]=bottoms
+	job["brick_bottoms"]=bottoms
 
 func _invalidate(lo: Vector3, hi: Vector3) -> Array[Dictionary]:
 	var affected: Array[Dictionary] = []
 	var refinement: Array[Dictionary] = []
 	for size: int in [16, 32, 64, 128, 256]:
-		var halo:=17.0 if backend.region_terrain and size>32 else 0.0
+		var halo:=17.0 if (backend.region_terrain or backend.local_terrain) and size>32 else 0.0
 		var x0: int = maxi(0, floori((lo.x-halo) / float(size))) * size
 		var z0: int = maxi(0, floori((lo.z-halo) / float(size))) * size
 		var x1: int = mini(2047, ceili(hi.x+halo))

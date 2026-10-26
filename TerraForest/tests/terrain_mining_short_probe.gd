@@ -13,6 +13,7 @@ func run() -> void:
 		world=FixedCut.new();root.add_child(world);world.set_process(false)
 		world.material=StandardMaterial3D.new()
 		world.backend.region_terrain=regions
+		world.backend.local_terrain=false
 		world.backend.brick_terrain=false
 		world.backend.profile_regions=true
 		world.backend.cache_path="user://short_mining_probe/%d/%s"%[OS.get_process_id(),scenario]

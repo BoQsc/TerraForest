@@ -19,6 +19,7 @@ var _collision_piece_triangles := 1024
 var snapshot_terrain: bool = "--snapshot-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var brick_terrain: bool = "--brick-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+var local_terrain: bool = not "--whole-patch-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var profile_regions: bool = "--profile-owned-regions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var _snapshot_token: int = 0
 
@@ -1017,10 +1018,11 @@ func _service_interaction_mesh() -> void:
 		if diagnostic_enabled: diagnostic_active=prior_diagnostic
 		mutex.unlock()
 
-func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false) -> Dictionary:
+func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false, columns: bool=false) -> Dictionary:
 	var begin:=Time.get_ticks_usec()
 	var size:=mini(32,key.z)
 	var step:=maxi(1,key.z/32)
+	var height:=256 if columns else 32
 	var parts: Array[Dictionary]=[]
 	var bytes:=0
 	var triangles:=0
@@ -1029,7 +1031,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 	for z in range(key.y,key.y+key.z,size):
 		for x in range(key.x,key.x+key.z,size):
 			var dependency: String=""
-			for bottom in range(0,256,32):
+			for bottom in range(0,256,height):
 				var id: int=bottom+256*((x-key.x)/size+8*((z-key.y)/size))
 				if not selected.is_empty() and not selected.has(id): continue
 				if not foreground:
@@ -1041,7 +1043,8 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 					var mark:=Time.get_ticks_usec()
 					dependency=str(native.geometry_cache_key(x,z,size,step).get("key",""))
 					stages.key_us+=Time.get_ticks_usec()-mark
-				var content: String=("owned-region-v1:%s:%d" % [dependency,bottom]).sha256_text() if not dependency.is_empty() else ""
+				var representation: String="owned-column-v1" if columns else "owned-region-v1"
+				var content: String=("%s:%s:%d" % [representation,dependency,bottom]).sha256_text() if not dependency.is_empty() else ""
 				var owner:=Vector3i(x,z,size)
 				var packet:=PackedByteArray()
 				var mark:=Time.get_ticks_usec()
@@ -1049,7 +1052,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 				stages.read_us+=Time.get_ticks_usec()-mark
 				var cached:=not packet.is_empty()
 				mark=Time.get_ticks_usec()
-				if not cached: packet=native.build_owned_region(x,z,size,step,bottom,bottom+32,expected_build_epoch)
+				if not cached: packet=native.build_owned_column(x,z,size,step,expected_build_epoch) if columns else native.build_owned_region(x,z,size,step,bottom,bottom+height,expected_build_epoch)
 				stages.build_us+=Time.get_ticks_usec()-mark
 				if profile_regions and not cached:
 					var native_stages: PackedByteArray=_call(Codec.command(19))
@@ -1081,7 +1084,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 				part["faces"]=PackedVector3Array()
 				part["key"]=key
 				part["brick_bottom"]=id
-				part["region_bounds"]=AABB(Vector3(x,bottom,z),Vector3(size,32,size))
+				part["region_bounds"]=AABB(Vector3(x,bottom,z),Vector3(size,height,size))
 				parts.append(part)
 				bytes+=int(part.bytes)
 				triangles+=int(part.triangles)
@@ -1091,6 +1094,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 func _build(key: Vector3i, allow_base_cache: bool, expected_build_epoch: int, relight_cache: bool = false, brick_bottoms: Array = [], foreground: bool=false) -> Dictionary:
 	if not foreground and not _input_active(): disk_cache.advance_accounting()
 	if region_terrain: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground)
+	if local_terrain and key.z>32: return _build_regions(key,expected_build_epoch,brick_bottoms,foreground,true)
 	if brick_terrain and key.z<=32 and key.x+key.z<=2000 and key.y+key.z<=2000:
 		return _build_bricks(key,expected_build_epoch,brick_bottoms)
 	var begin: int = Time.get_ticks_usec()
@@ -1405,18 +1409,19 @@ func _run() -> void:
 				var build_total: float = 0.0
 				for item: Dictionary in job["tiles"]:
 					var selected: Array=item.get("brick_bottoms",[])
-					var retain_geometry:=false
+					var retain_geometry:bool=item.has("brick_bottoms") and selected.is_empty()
 					# The 17m halo protects changes to the simplifier's page-presence
 					# mask. Existing pages never disappear during an edit. If none were
 					# allocated, only the actual field/normal support can change.
-					if region_terrain and not selected.is_empty() and before_stats.decode_u32(20)==after_stats.decode_u32(20):
+					if (region_terrain or local_terrain) and not selected.is_empty() and before_stats.decode_u32(20)==after_stats.decode_u32(20):
 						var key: Vector3i=item.key
 						var owner_size:=mini(32,key.z)
+						var owner_height:=256 if local_terrain and not region_terrain and key.z>32 else 32
 						var local: Array=[]
 						var bounds:=AABB(job.geometry_lo,job.geometry_hi-job.geometry_lo)
 						for id: int in selected:
 							var column: int=id/256
-							var owner:=AABB(Vector3(key.x+(column%8)*owner_size,id%256,key.y+(column/8)*owner_size),Vector3(owner_size,32,owner_size))
+							var owner:=AABB(Vector3(key.x+(column%8)*owner_size,id%256,key.y+(column/8)*owner_size),Vector3(owner_size,owner_height,owner_size))
 							if owner.grow(1.0).intersects(bounds): local.append(id)
 						selected=local
 						retain_geometry=selected.is_empty()

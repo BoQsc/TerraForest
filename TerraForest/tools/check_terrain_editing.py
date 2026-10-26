@@ -30,6 +30,8 @@ def main():
         ("terrain_stream_coverage", "TERRAIN_STREAM_COVERAGE failures=0"),
         ("terrain_transition_probe", "transition worker joins cleanly"),
         ("terrain_worker_publication_probe", "real worker joins cleanly"),
+        ("terrain_local_columns", "TERRAIN_LOCAL_COLUMNS failures=0"),
+        ("terrain_local_column_cache", "TERRAIN_LOCAL_COLUMN_CACHE failures=0"),
         ("vegetation_terrain_support", "VEGETATION_TERRAIN_SUPPORT failures=0"),
         ("ground_cover_retirement", "GROUND_COVER_RETIREMENT failures=0"),
         ("terrain_edit_recovery", "TERRAIN_EDIT_RECOVERY failures=0"),
@@ -69,6 +71,10 @@ def main():
         cases.append(("terrain_tools_endurance", "TERRAIN_TOOLS_ENDURANCE failures=0", False,
                       ["--world-generator=23", "--ground-cover", "--no-zombies", "--terrain-soak-rounds=" + ("12" if args.extended else "3")]))
         cases.append(("held_mining_flight", "bounded observer writer retains all frames and progress reports", False, []))
+        cases.append(("held_mining_generated", "bounded observer writer retains all frames and progress reports", False,
+                      ["--world-generator=23", "--world-seed=1703", "--ground-cover", "--no-zombies"]))
+        cases.append(("held_mining_coarse", "bounded observer writer retains all frames and progress reports", False,
+                      ["--world-generator=23", "--world-seed=1703", "--ground-cover", "--no-zombies", "--coarse-arrival"]))
     if args.case:
         unknown = set(args.case) - {case[0] for case in cases}
         if unknown:
@@ -85,11 +91,12 @@ def main():
                 "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None,
                 "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
                 "continuity_gate": "held_mining_flight: maximum input-to-first-draw and subsequent visible-change gaps <=150ms",
-                "known_open_gate": "The generator-23 version with ground cover still exceeds 150ms rebuilding an existing coarse owner; see docs/evidence/terrain_editing/README.md", "runs": []}
+                "known_open_gate": "Maximum populated vegetation publication still exceeds 16ms; multi-hour/populated travel and earlier intermittent render stalls remain unqualified. See docs/evidence/terrain_editing/README.md", "runs": []}
     for name, marker, headless_mode, extra in cases:
         destination = folder / name
         destination.mkdir()
-        command, cache = command_for(engine, name, destination, extra, headless_mode)
+        script = "held_mining_flight" if name in {"held_mining_generated", "held_mining_coarse"} else name
+        command, cache = command_for(engine, script, destination, extra, headless_mode)
         if name == "terrain_placement_preview":
             command.append("--preview-evidence=" + str(ROOT / "reports/terrain_placement_preview"))
         if name == "developer_belt":
@@ -100,15 +107,15 @@ def main():
             command.append("--vegetation-evidence-dir=" + str(ROOT / "reports"))
         if args.pack:
             command[1:1] = ["--main-pack", str(pack)]
-        script_hash = hashlib.sha256((ROOT / "tests" / (name + ".gd")).read_bytes()).hexdigest()
+        script_hash = hashlib.sha256((ROOT / "tests" / (script + ".gd")).read_bytes()).hexdigest()
         began = time.time()
         result = execute(command, destination, 600 if name == "terrain_tools_endurance" else 180, marker)
-        row = {"test": name, "command": command, "cache": cache, "result": result,
+        row = {"test": name, "script": script, "command": command, "cache": cache, "result": result,
                "script_sha256": script_hash}
-        for source in [ROOT / "reports" / (name + ".json"), ROOT / "reports" / name / "result.json"]:
+        for source in [ROOT / "reports" / (script + ".json"), ROOT / "reports" / script / "result.json"]:
             if source.is_file() and source.stat().st_mtime >= began:
                 shutil.copy2(source, destination / "measurements.json")
-        if name in {"terrain_tools_endurance", "held_mining_flight"}:
+        if script in {"terrain_tools_endurance", "held_mining_flight"}:
             frames = ROOT / "reports/foundation_mining.frames.csv"
             if frames.is_file() and frames.stat().st_mtime >= began:
                 shutil.copy2(frames, destination / "frames.csv")

@@ -399,7 +399,7 @@ is still atomic; this check only closes normal walking prefetch on the tested pa
 The full rewrite and large-edit/storage/map requirements remain active.
 
 
-### Current mining diagnostic — not closed
+### Mining arrival diagnostic — reproduced paths closed
 
 The old held_mining_flight harness selected a brush number but not the current
 session development tool, so the first run performed no edits (060721814112Z).
@@ -415,11 +415,16 @@ readiness and large-edit scaling active. This is not sustained mining acceptance
 existing native available-coverage policy in the ordinary stream (packaged first
 response 92.370–108.616 ms). Its target root was previously absent, not an existing
 parent being replaced. Existing coarse coverage is deliberately preserved. A
-fresh generator-23 / ground-cover check still fails at 243.948 ms first response
+fresh generator-23 / ground-cover check then failed at 243.948 ms first response
 and 320.786 ms maximum gap, with 182.766–223.114 ms coarse-owner worker builds.
-Keep bounded replacement of already-visible owners, exact joins/collision and
-generated-checkpoint qualification open. Retained evidence and reproduction:
-`evidence/terrain_editing/README.md`, post-travel readiness follow-up.
+The subsequent native coarse-column fix replaces only affected 32 m-wide columns
+and preserves the ordinary fine mesher. Explicit empty selections retain geometry
+instead of rebuilding whole neighbours. Three actual-input existing-parent runs
+now pass (81.125–85.199 ms first response; maximum gap 100.371 ms), as does a separate
+Wild_Ridge copy. Native equality, cache restart, joins and atomic collision are
+covered separately. The global regional renderer is not enabled. Larger/cold
+histories, populated travel and large-edit scaling remain open. Retained failures,
+packaged qualification and reproduction: `evidence/terrain_editing/README.md`.
 
 
 ## Saved-world identity, photographs and progress — 2026-10-23

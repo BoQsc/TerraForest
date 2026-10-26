@@ -1,4 +1,4 @@
-## Post-travel mining response — partially resolved, 2026-10-26
+## Post-travel mining response — reproduced paths fixed, 2026-10-26
 
 The recorded ~289 ms generator-1 case reproduces at 294.134 ms. The target mesh
 was ready but hidden behind unrelated missing sibling coverage. The ordinary
@@ -9,17 +9,40 @@ remain until complete replacement; collision, atomic edits, distant transitions
 and native coverage regressions pass. A packaged 1,200-edit stress run passes
 frame gates (p99 17.136 ms, maximum 39.453 ms). The PCK is installed.
 
-This is not full closure of arrival response. A fresh generator-23 / seed-1703
-ground-cover check still takes 243.948 ms for the first change and has a 320.786 ms
-maximum gap: an already-visible 256 m owner is rebuilt for 182.766–223.114 ms.
-Replacing that owner locally without losing outer geometry/joins/collision remains
-required. Return with native owner partition/publication evidence and unchanged
-actual-input-to-draw/frame gates; do not substitute hiding the parent or switching
-the experimental renderer on globally. Current partial visibility also does not
-make the rest of a previously unloaded destination instantly appear. Generated
-checkpoints, populated travel, long histories and lower-end qualification stay
-open. Retained failures, captures and reproducible commands:
-`evidence/terrain_editing/README.md` (post-travel readiness follow-up).
+The separate generated-world failure (243.948 ms first change / 320.786 ms maximum
+gap) rebuilt an already-visible 256 m owner for 182.766–223.114 ms. Coarse tiles now
+use native 32 m-wide full-height columns; fine terrain remains unchanged. Edits
+replace only affected columns, preserving outer geometry and collision atomically.
+An empty affected-column list also now means retain, not rebuild the whole tile.
+This additional bug appeared only after requiring a visible coarse parent in the
+actual-input test; the simpler unloaded-destination pass was insufficient.
+
+Three source existing-parent runs pass unchanged 150 ms first-response/continuity
+and frame gates: first response 81.125–85.199 ms, largest gap 100.371 ms. A separate
+Wild_Ridge snapshot also passes and original save hashes remain unchanged. Exact
+fresh-geometry comparison, shared joins, cache restart, cancellation, atomic
+collision and distant coarsening pass. The experimental all-LOD slab renderer is
+still off; no generation, density or save-format change is involved.
+
+The installed PCK passes three existing-parent repeats (82.227–98.075 ms first
+response; maximum gap 109.311 ms) and the Wild_Ridge copy (82.999 ms first;
+100.227 ms maximum gap). Captures confirm local excavation without removing the
+surrounding target terrain; unloaded distant terrain remains a separate visible
+limitation. The readback run is not a performance pass.
+Final packaged 4,800-edit regression passes with p99 17.661 ms, maximum 33.760 ms
+and no runtime frame over 50 ms; ordinary edit p95 is 35.461–51.285 ms.
+The packaged matrix nevertheless retains one frame-only non-pass: unconditioned
+generator-23 arrival has a 106.539 ms maximum response gap but p99 21.014 ms against
+20 ms (maximum frame 24.321 ms). Cause is unassigned; return with native/render/OS
+scheduling traces and unchanged frame gates. Do not call the entire matrix clean.
+Three subsequent unconditioned PCK repeats pass all gates (84.501–104.220 ms first
+response; frame p99 at most 18.436 ms), without explaining away that earlier miss.
+
+This closes the reproduced arrival paths, not instantaneous whole-world loading
+or universal performance acceptance. Multi-hour/populated travel, large cold
+histories, other seeds/hardware, maximum-brush vegetation publication and earlier
+intermittent render stalls remain open. Retained failures, qualification and
+reproducible commands: `evidence/terrain_editing/README.md`.
 
 ## Per-instance vegetation terrain response — 2026-10-26
 
@@ -72,11 +95,10 @@ run also passes frame gates (p99 16.995 ms, maximum 45.505 ms), but two earlier
 PCK runs retain 105.619/81.805 ms draw-span stalls whose root cause is unassigned.
 Keep render/presentation profiling open; the later pass does not erase them.
 
-The readiness follow-up above closes the ~289 ms absent-root fixture, not the
-generated-world coarse-owner gap, finite unsaved-page limits, multi-hour/populated/
-cold-save or lower-end qualification. Large 64 m edits remain asynchronous but can
-take roughly a second to publish. Continue bounded local-owner replacement with
-exact joins/collision, then repeat unchanged 150 ms response and frame gates. Revisit broader
+The readiness and coarse-column follow-ups above close the reproduced absent-root
+and existing-parent arrival gaps, not finite unsaved-page limits, multi-hour /
+populated / larger cold-save or lower-end qualification. Large 64 m edits remain
+asynchronous but can take roughly a second to publish. Revisit broader
 qualification with staged histories, explicit storage ownership and retained
 frame traces; do not call all terrain editing universally fixed. Player saves
 are untouched; terrain-grid generation/contact remains separately unresolved.
@@ -2000,11 +2022,12 @@ Arrival needs bounded local owner replacement, preserving distant representation
 joins and collision, then the unchanged 150 ms response/gap gates. Prefetch remains
 required for cold-storage admission; it cannot resolve the measured whole-parent
 rebuild. The optional regional renderer is not automatically production-qualified.
-The 2026-10-26 readiness follow-up fixes the absent-root generator-1 delay by
-exposing ready disjoint local coverage. It does not close this coarse-owner case:
-a fresh generator-23 run still measures a 243.948 ms first response and 320.786 ms
-maximum gap. New traces in `evidence/terrain_editing/README.md` supplement this
-entry; bounded replacement of existing coarse owners remains required.
+The 2026-10-26 readiness follow-up fixes absent-root publication. Its retained
+generator-23 failure (243.948 ms first response / 320.786 ms maximum gap) led to
+the production coarse-column fix above. Explicit existing-parent arrivals now
+pass without hiding coverage; unchanged attributes/joins/collision are checked
+against fresh native geometry. Broader checkpoint/paging and populated-travel
+qualification remain required. See `evidence/terrain_editing/README.md`.
 
 ## Block placement forest exclusion corrected - 2026-10-23
 
@@ -2323,9 +2346,10 @@ canonical regional storage capacity/recovery; large-edit/mining scaling; remaini
 vegetation streaming cases; clean standalone export; populated travel/frame-cost
 checks and world visual acceptance. These remain active, not optional. Preserve
 0BSD, existing saves and accepted static water. The 2026-10-26 readiness follow-up
-closes the absent-root generator-1 150 ms fixture, but generated-world coarse-owner
-rebuilding still fails. Native fallback applies to the ordinary renderer;
-coarse-owner arrival and large-edit scaling remain open. See the follow-up above
+and subsequent coarse-column fix close the reproduced generator-1 and generator-23
+150 ms arrival fixtures, including a read-only saved-world copy. Native fallback
+applies to the ordinary renderer; broader travel and large-edit scaling remain
+open. See the follow-up above
 and WORLD_WORKFLOW_REDESIGN.md.
 
 ## Native world-generation rewrite in progress — 2026-10-22

@@ -179,7 +179,39 @@ the earlier brick run failed five gates. This change establishes reuse semantics
 not a mining fix. Large changed patches still reconstruct in full, and cache
 lookup/hash/visibility costs require further budgeting in the replacement path.
 
-### Locally replaceable Surface Nets regions — integrated, not qualified
+### Production coarse-terrain locality
+
+The default renderer uses native 32 m-wide, full-height Surface Nets columns
+inside coarse tiles (64/128/256 m). A 256 m tile has 64 logical columns, not
+512 vertical slabs. Ordinary 16/32 m fine meshes are unchanged. This reuses the
+owned extraction and shared-boundary pins below without enabling the experimental
+regional renderer globally. `--whole-patch-terrain` retains the previous coarse
+path for regression comparison; `--region-terrain` still explicitly selects the
+experimental all-LOD slab path.
+
+Edits rebuild intersecting columns and atomically transfer unaffected mesh and
+collision children. The 17 m coarse dependency halo protects simplifier changes
+when an authored page first appears; existing-page edits narrow that selection to
+field/normal support. A distinct `owned-column-v1` content key prevents reuse of
+whole-patch or slab packets. Authoritative density, generation, save encoding and
+fine collision behavior do not change. Worker reconstruction stays native;
+GDScript schedules and publishes bounded packets, not per-voxel work.
+
+An explicitly empty owner selection retains the whole existing entry without
+reconstruction; it is not the same as an unspecified selection. Integer rounding
+of the coarse halo can select a neighbouring tile without intersecting any of its
+columns. Treating that empty list as "build all" previously reread/rebuilt 64
+columns during held mining. The worker regression compares retained attributes
+against fresh native geometry and requires zero reconstruction for this case.
+
+`terrain_local_columns`, `terrain_local_column_cache` and the real worker /
+transition probes cover exact geometry, shared joins, cache restart, retention,
+atomic collision and distant coarsening. `held_mining_coarse` additionally requires
+an already-visible 256 m parent before travel and verifies that real held input
+edits it before refinement. This is separate from the initially absent-root case.
+Qualification and remaining limits: `evidence/terrain_editing/README.md`.
+
+### Experimental Surface Nets slabs — integrated, not qualified
 
 `--region-terrain` now routes every terrain LOD through bounded native Surface
 Nets reconstruction. A render tile is a container of 32x32x32 m owners (16 m wide

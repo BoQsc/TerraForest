@@ -104,7 +104,7 @@ func run() -> void:
 		for key in world.tiles:
 			for bottom in world.tiles[key].bricks: unchanged=unchanged and world.tiles[key].bricks[bottom].node.get_instance_id()==retained_ids[Vector4i(key.x,bottom,key.y,key.z)]
 		check(unchanged,"brick relighting retains meshes and collision nodes")
-	if world.backend.region_terrain:
+	if world.backend.region_terrain or world.backend.local_terrain:
 		await verify_coarse_locality(rows)
 		verify_region_seams()
 	world.shutdown()
@@ -125,13 +125,17 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	check(await pump_until(func(): return world.tiles.has(key)),"coarse container published through actual stream")
 	if not world.tiles.has(key): return
 	var before: Dictionary=world.tiles[key]
-	check(before.bricks.size()==512,"256m container has 512 bounded 32x32x32 owners")
+	var columns:bool=world.backend.local_terrain and not world.backend.region_terrain
+	var owner_count:=64 if columns else 512
+	check(before.bricks.size()==owner_count,"256m container has %d bounded owners"%owner_count)
 	var empty_without_render_instance:=0
+	var empty_valid:=true
 	var inherited_visible:=true
 	for child: Dictionary in before.bricks.values():
 		if child.triangles==0 and not child.node is MeshInstance3D: empty_without_render_instance+=1
+		if child.triangles==0 and child.node is MeshInstance3D: empty_valid=false
 		inherited_visible=inherited_visible and child.node.is_visible_in_tree()
-	check(empty_without_render_instance>0 and not before.node is MeshInstance3D,"empty owners and parent allocate no rendering instances")
+	check(empty_valid and (columns or empty_without_render_instance>0) and not before.node is MeshInstance3D,"empty owners and parent allocate no rendering instances")
 	check(inherited_visible,"published owners inherit visible parent")
 	world._set_active(before,false)
 	var inherited_hidden:=true
@@ -177,12 +181,12 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 		if child.node.get_instance_id()==ids[id]: retained+=1
 		else: replaced+=1
 		var bounds: AABB=child.region_bounds
-		var fresh_packet: PackedByteArray=world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var fresh_packet: PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
 		var fresh: Dictionary=Codec.decode_mesh(fresh_packet)
 		if fresh.has("error"): exact=false;continue
 		for channel: int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
 			if child.arrays[channel]!=fresh.arrays[channel]: exact=false
-	check(retained>0 and replaced>0 and retained+replaced==512,"coarse edit retains unaffected owners instead of rebuilding the parent")
+	check(retained>0 and replaced>0 and retained+replaced==owner_count,"coarse edit retains unaffected owners instead of rebuilding the parent")
 	check(exact,"retained plus replaced coarse geometry equals full fresh reconstruction")
 	check(bytes==int(current.bytes),"coarse partial publication accounts retained bytes once")
 	rows.append({"mode":"coarse_locality","retained":retained,"replaced":replaced,"worker_ms":world.last_total_build_ms,"publication_ms":world.last_latency_ms})
@@ -201,12 +205,39 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 		var child: Dictionary=current.bricks[id]
 		if child.node.get_instance_id()!=ids[id]: local_replaced+=1
 		var bounds: AABB=child.region_bounds
-		var fresh: Dictionary=Codec.decode_mesh(world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12)))
+		var fresh_packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var fresh: Dictionary=Codec.decode_mesh(fresh_packet)
 		if fresh.has("error"): exact=false;continue
 		for channel: int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
 			if child.arrays[channel]!=fresh.arrays[channel]: exact=false
-	check(local_replaced>0 and local_replaced<replaced,"unchanged page mask avoids rebuilding the broad simplification halo")
+	if columns:check(local_replaced==4,"corner refill rebuilds exactly its four incident columns")
+	else:check(local_replaced>0 and local_replaced<replaced,"unchanged page mask avoids rebuilding the broad simplification halo")
 	check(exact,"narrow field invalidation matches full fresh coarse reconstruction")
+	var outside:=Vector3(1408,0,1255.25)
+	reply.clear()
+	world.request_height(outside,100)
+	check(await pump_until(func():return not reply.is_empty()),"rounded halo boundary height available")
+	if reply.is_empty():return
+	outside.y=reply[0]
+	var selected:Dictionary={"key":key}
+	world._select_dirty_owners(selected,outside-Vector3.ONE*7.5,outside+Vector3.ONE*7.5)
+	check(selected.has("brick_bottoms") and selected.brick_bottoms.is_empty(),"explicit empty owner selection differs from unspecified full rebuild")
+	var original_node:int=current.node.get_instance_id()
+	check(world.edit(Codec.brush(outside,outside,2.5,0,false,1),outside-Vector3.ONE*7.5,outside+Vector3.ONE*7.5),"rounded halo false-positive edit admitted")
+	check(await pump_until(func():return not world.pending_edit),"empty-owner edit publishes without reconstructing its neighbour")
+	current=world.tiles[key]
+	check(current.node.get_instance_id()==original_node and not current.dirty,"empty selection retains the complete visible parent and advances its stamp")
+	check(world.last_total_build_ms==0.0,"rounded empty halo performs no coarse reconstruction or disk reads")
+	exact=true
+	epoch_reply=world.backend.native.execute(Codec.command(13))
+	for child:Dictionary in current.bricks.values():
+		var bounds:AABB=child.region_bounds
+		var packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var fresh:Dictionary=Codec.decode_mesh(packet)
+		if fresh.has("error"):exact=false;continue
+		for channel:int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
+			if child.arrays[channel]!=fresh.arrays[channel]:exact=false
+	check(exact,"empty-owner retention matches every attribute of fresh native geometry")
 
 func boundary_edges(packets: Array,axis: int,plane: float, interior: bool = false) -> Dictionary:
 	var counts: Dictionary={}
