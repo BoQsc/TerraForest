@@ -3,12 +3,14 @@ extends SceneTree
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var browser=load("res://demo/worlds.gd").new();root.add_child(browser)
+ browser.set_process(false)
+ var failures:=0
+ if not browser.preparation_panel.visible or browser.preparation_panel.detail.text!="Ready to generate" or browser.preparation_panel.is_processing():failures+=1
  browser.preparation_pid=OS.get_process_id();browser.preparation_slot="woodland_home"
  browser.preparation_status="user://progress_ui_%d.json"%Time.get_ticks_usec()
  browser.preparation_started_msec=Time.get_ticks_msec()
  browser.preparation_job=preload("res://addons/world_runtime/scene_job.gd").new();browser.add_child(browser.preparation_job)
  browser.world_tabs.current_tab=1;browser._set_creation_busy(true);browser.preparation_panel.show();browser.preparation_panel.reset()
- var failures:=0
  var messages:Array=[]
  for stage in ["creating","verifying","publishing","ready"]:
   var file:=FileAccess.open(browser.preparation_status,FileAccess.WRITE);file.store_string(JSON.stringify({"state":stage}));file.close()
@@ -31,11 +33,21 @@ func run()->void:
   var bounds:=Rect2(Vector2.ZERO,Vector2(resolution))
   if not bounds.encloses(browser.preparation_panel.get_global_rect()) or not bounds.encloses(browser.cancel_button.get_global_rect()):failures+=1
   if browser.preparation_panel.bar.size.y!=6 or not browser.preparation_panel.clock_label.text.contains("Elapsed"):failures+=1
-  if browser.preparation_panel.size.y>64 or browser.preparation_panel.title.visible or browser.creation_footer.visible or browser.notice.visible:failures+=1
+  if browser.preparation_panel.size.y>64 or browser.preparation_panel.title.visible or browser.notice.visible:failures+=1
   if browser.preparation_panel.detail.get_parent()!=browser.cancel_button.get_parent() or browser.preparation_panel.percentage.get_parent()!=browser.cancel_button.get_parent():failures+=1
   if browser.preparation_panel.detail.get_global_rect().end.x>browser.preparation_panel.percentage.get_global_rect().position.x:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_creation_progress_%dx%d.png"%[resolution.x,resolution.y])
+  var active_rect:Rect2=browser.preparation_panel.get_global_rect();var map_rect:Rect2=browser.preview_view.get_global_rect();var gameplay_rect:Rect2=browser.gameplay.get_global_rect();var bottom_rect:Rect2=browser.notice.get_parent().get_global_rect()
+  browser._set_creation_busy(false)
+  for frame in 8:await process_frame
+  if not browser.preparation_panel.is_visible_in_tree() or browser.preparation_panel.detail.text!="Ready to generate" or browser.generate_button.text!="Generate & play":failures+=1
+  if not browser.preparation_panel.get_global_rect().is_equal_approx(active_rect) or not browser.preview_view.get_global_rect().is_equal_approx(map_rect):
+   failures+=1;print("LAYOUT_SHIFT active=",active_rect," idle=",browser.preparation_panel.get_global_rect()," map active=",map_rect," idle=",browser.preview_view.get_global_rect()," gameplay active=",gameplay_rect," idle=",browser.gameplay.get_global_rect()," bottom active=",bottom_rect," idle=",browser.notice.get_parent().get_global_rect())
+  if browser.preparation_panel.bar.value!=0 or browser.preparation_panel.is_processing():failures+=1
+  await RenderingServer.frame_post_draw
+  root.get_texture().get_image().save_png("res://reports/world_creation_ready_%dx%d.png"%[resolution.x,resolution.y])
+  browser._set_creation_busy(true);browser.preparation_panel.reset();browser._update_preparation_notice()
  var stale:={"state":"verifying","progress":{"stage":"World generation complete","completed":0,"total":0}}
  FileAccess.open(browser.preparation_status,FileAccess.WRITE).store_string(JSON.stringify(stale));browser._update_preparation_notice()
  if not browser.notice.text.contains("Verifying saved") or browser.notice.text.contains("generation complete"):failures+=1

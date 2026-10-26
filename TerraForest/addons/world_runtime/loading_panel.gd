@@ -47,12 +47,13 @@ func _ready()->void:
   detail.autowrap_mode=TextServer.AUTOWRAP_OFF;detail.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;detail.add_theme_font_size_override("font_size",16)
   percentage.custom_minimum_size.x=40;percentage.add_theme_font_size_override("font_size",14)
   clock_label.add_theme_font_size_override("font_size",13)
-  action.custom_minimum_size=Vector2(76,28)
+  action.custom_minimum_size=Vector2(148,28)
   for state:String in ["normal","hover","pressed","disabled"]:
    var button_skin:=StyleBoxFlat.new();button_skin.bg_color=Color("29484a" if state in ["hover","pressed"] else "1b3035")
    button_skin.set_corner_radius_all(4);button_skin.content_margin_left=10;button_skin.content_margin_right=10;button_skin.content_margin_top=4;button_skin.content_margin_bottom=4
    action.add_theme_stylebox_override(state,button_skin)
   work.autowrap_mode=TextServer.AUTOWRAP_OFF;work.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;work.add_theme_font_size_override("font_size",13);work.add_theme_color_override("font_color",Color("9bafad"))
+  work.custom_minimum_size.y=18;work.show()
  var preferences:=ConfigFile.new()
  if preferences.load(preferences_path)==OK:compact_width=bool(preferences.get_value("loading","compact_width",true))
  set_compact_width(compact_width,false)
@@ -76,6 +77,11 @@ func _apply_width()->void:
 func reset(start_ms:int=0,baseline:float=0)->void:
  high_water=baseline;bar.value=baseline;percentage.text="%d%%"%int(baseline)
  timer.reset(Time.get_ticks_usec(),baseline,Timing.carried_elapsed(start_ms));next_clock_us=0;set_process(true);refresh_clock()
+func show_idle()->void:
+ reset()
+ timer.stop("idle",Time.get_ticks_usec());set_process(false)
+ title.text="Create world";detail.text="Ready to generate";detail.tooltip_text=detail.text
+ clock_label.text="Elapsed 00:00 · Est. remaining —"
 func _process(_delta:float)->void:
  if not is_visible_in_tree() or Time.get_ticks_usec()<next_clock_us:return
  next_clock_us=Time.get_ticks_usec()+250000;refresh_clock()
@@ -94,5 +100,5 @@ func show_progress(caption:String,stage:String,value:float)->void:
  if high_water>=100:refresh_clock();set_process(false)
 
 func show_work(text:String)->void:
- work.text=text;work.visible=not text.is_empty()
+ work.text=text;work.visible=embedded or not text.is_empty()
  if embedded:work.tooltip_text=text

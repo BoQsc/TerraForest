@@ -36,7 +36,6 @@ var generate_button:Button
 var shuffle_button:Button
 var world_tabs:TabContainer
 var preparation_panel:PanelContainer
-var creation_footer:HBoxContainer
 const PREVIEW_DELAY_MS:=350
 var preview_due_ms:=-1
 var slots:=PackedStringArray()
@@ -185,13 +184,13 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	preparation_pid=OS.get_process_id();preparation_started_msec=Time.get_ticks_msec()
 	world_tabs.current_tab=1;_set_creation_busy(true)
 	preview_due_ms=-1
-	preparation_panel.show();preparation_panel.reset(preparation_started_unix_ms)
+	preparation_panel.reset(preparation_started_unix_ms)
 	preparation_panel.show_progress("Generating "+slot,"Finishing the current preview…" if preview_worker!=null else "Starting world generation…",0)
-	cancel_button.show();cancel_button.disabled=false
+	cancel_button.disabled=false
 	# Reuse the finished plan without racing its cache writer or blocking the UI.
 	while preview_worker!=null:await get_tree().process_frame
 	if cancel_pending:
-		preparation_pid=-1;preparation_panel.stop_timer("cancelled");preparation_panel.hide();preparation_panel.set_process(false);_set_creation_busy(false)
+		preparation_pid=-1;_set_creation_busy(false)
 		notice.text="Generation cancelled. Existing saves are preserved."
 		if quit_pending:get_tree().quit()
 		return
@@ -201,14 +200,16 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
 func _set_creation_busy(active:bool)->void:
-	creation_footer.visible=not active;notice.visible=not active
+	notice.visible=not active
 	world_tabs.set_tab_disabled(0,active)
-	generate_button.disabled=active;shuffle_button.disabled=active;gameplay.disabled=active
+	generate_button.text="Cancel" if active else "Generate & play";generate_button.disabled=false
+	shuffle_button.disabled=active;gameplay.disabled=active
 	preview_button.disabled=active or preview_worker!=null
 	name_field.editable=not active;seed_field.editable=not active
 	for toggle:CheckBox in [ocean,buildable_ground,buildable_roads]:toggle.disabled=active
 	for option:OptionButton in [preset,biome,settlement_count,district_count,road_network,offroads]:
 		option.disabled=active or (option!=preset and preset.get_selected_id()!=Launch.INTEGRATED_PRESET)
+	if not active:preparation_panel.show_idle();update_recipe_summary()
 
 func show_recovery()->void:
 	if preparation_pid>=0 or photograph_pid>=0:return
@@ -246,7 +247,7 @@ func _process(delta:float)->void:
 	if not preparation_job.done:
 		_update_preparation_notice();return
 	preparation_pid=-1;preparation_job.queue_free();preparation_job=null;Engine.max_fps=60
-	preparation_panel.hide();preparation_panel.set_process(false);_set_creation_busy(false)
+	_set_creation_busy(false)
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	refresh()
 	if quit_pending:get_tree().quit();return
@@ -317,7 +318,8 @@ func selected_options()->Dictionary:
 	return {"biome":biome.selected,"settlements":settlement_count.selected+1,"districts":district_count.selected+1,"network":road_network.selected,"trails":offroads.selected,"road_grid":preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.road_grid if buildable_roads.button_pressed else 0}
 func update_recipe_summary()->void:
 	var towns:=settlement_count.selected+1;var districts:=district_count.selected+1
-	recipe_summary.text="%d settlements  ·  %d districts  ·  %s\nGenerate → Load → Play, in this window."%[towns,towns*districts,biome.get_item_text(biome.selected)]
+	recipe_summary.text="%d settlements · %d districts · %s"%[towns,towns*districts,biome.get_item_text(biome.selected)]
+	recipe_summary.tooltip_text=recipe_summary.text
 func invalidate_preview()->void:
 	preview_view.texture=null
 	preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS

@@ -21,7 +21,7 @@ static func apply_theme(host:Control)->void:
  theme.set_stylebox("tab_unselected","TabContainer",box(Color("15282d")))
  theme.set_stylebox("panel","ItemList",box(Color("14292e")))
  theme.set_color("font_unselected_color","TabContainer",MUTED)
- for state:String in ["normal","hover","pressed","hover_pressed"]:theme.set_stylebox(state,"CheckBox",box(Color.TRANSPARENT,Color.TRANSPARENT,0))
+ for state:String in ["normal","hover","pressed","hover_pressed","disabled"]:theme.set_stylebox(state,"CheckBox",box(Color.TRANSPARENT,Color.TRANSPARENT,0))
  theme.set_constant("separation","VBoxContainer",10);theme.set_constant("separation","HBoxContainer",12)
  host.theme=theme
 static func label(parent:Node,text:String,size:int=18,color:Color=INK)->Label:
@@ -94,12 +94,16 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.preview_metrics=label(map_column,"READY TO PLAN  ·  Native terrain fitting  ·  Cached generation",16,ACCENT);host.preview_metrics.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  host.preview_status=paragraph(map_column,"The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.",17)
  host.preparation_panel=preload("res://addons/world_runtime/loading_panel.gd").new();host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)
- host.preparation_panel.hide();host.preparation_panel.set_process(false)
- host.cancel_button=host.preparation_panel.action;host.cancel_button.text="Cancel";host.cancel_button.pressed.connect(host.cancel_preparation)
- var footer:=HBoxContainer.new();host.creation_footer=footer;page.add_child(footer)
- host.recipe_summary=label(footer,"",17,MUTED);host.recipe_summary.size_flags_horizontal=Control.SIZE_EXPAND_FILL;host.recipe_summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
- host.preview_button=host.button(footer,"Refresh preview",host.start_preview)
- host.generate_button=host.button(footer,"Generate & play",func():host.launch_selected(true));host.generate_button.add_theme_stylebox_override("normal",box(Color("3c6c59"),ACCENT))
+ host.preparation_panel.show_idle()
+ host.recipe_summary=host.preparation_panel.work
+ host.generate_button=host.preparation_panel.action;host.generate_button.text="Generate & play"
+ host.cancel_button=host.generate_button
+ host.generate_button.pressed.connect(func():
+  if host.preparation_pid>=0:host.cancel_preparation()
+  else:host.launch_selected(true))
+ var actions:HBoxContainer=host.generate_button.get_parent()
+ host.preview_button=host.generate_button.duplicate(0);host.preview_button.text="Refresh preview";host.preview_button.pressed.connect(host.start_preview)
+ actions.add_child(host.preview_button);actions.move_child(host.preview_button,host.generate_button.get_index())
  for option:OptionButton in [host.preset,host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.item_selected.connect(func(_index:int):host.invalidate_preview())
  host.ocean.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.buildable_ground.toggled.connect(func(_value:bool):host.invalidate_preview())

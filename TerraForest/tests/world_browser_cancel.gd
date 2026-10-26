@@ -8,7 +8,10 @@ func run()->void:
  var browser:=Browser.new();root.add_child(browser)
  var slot:="cancel_review_%d"%Time.get_ticks_usec()
  browser.name_field.text=slot;browser.preset.select(0);browser.seed_field.value=42
- browser.launch_selected(true)
+ browser.world_tabs.current_tab=1
+ for frame in 3:await process_frame
+ var idle_rect:Rect2=browser.preparation_panel.get_global_rect()
+ browser.generate_button.pressed.emit()
  var failures:=0;var deadline:=Time.get_ticks_msec()+15000;var creating:=false
  while browser.preparation_pid>=0 and Time.get_ticks_msec()<deadline:
   if FileAccess.file_exists(browser.preparation_status):
@@ -18,6 +21,7 @@ func run()->void:
  if not creating:failures+=1
  await create_timer(3.0).timeout
  if browser.world_tabs.current_tab!=1 or browser.generation_screen!=null or not browser.preparation_panel.is_visible_in_tree():failures+=1
+ if not browser.preparation_panel.get_global_rect().is_equal_approx(idle_rect):failures+=1
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/world_browser_generating.png")
  browser.cancel_button.pressed.emit()
@@ -26,8 +30,10 @@ func run()->void:
  var status:Variant=JSON.parse_string(FileAccess.get_file_as_string(browser.preparation_status)) if FileAccess.file_exists(browser.preparation_status) else null
  if browser.preparation_pid>=0 or browser.opened or not status is Dictionary or status.get("state","")!="cancelled":failures+=1
  if FileAccess.file_exists("user://worlds/"+slot+".trw") or FileAccess.file_exists("user://worlds/"+slot+".prepare.lock"):failures+=1
- if browser.preparation_panel.visible or browser.generate_button.disabled or Engine.max_fps!=60 or not browser.notice.text.contains("cancelled"):failures+=1
+ if not browser.preparation_panel.visible or browser.generate_button.disabled or Engine.max_fps!=60 or not browser.notice.text.contains("cancelled"):failures+=1
+ if browser.preparation_panel.detail.text!="Ready to generate" or browser.generate_button.text!="Generate & play":failures+=1
  for frame in 3:await RenderingServer.frame_post_draw
+ if not browser.preparation_panel.get_global_rect().is_equal_approx(idle_rect):failures+=1
  root.get_texture().get_image().save_png("res://reports/world_browser_cancel.png")
  FileAccess.open("res://reports/world_browser_cancel.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"slot":slot,"status":status,"stop_ms":Time.get_ticks_msec()-started,"opened":browser.opened,"notice":browser.notice.text},"  "))
  browser.free();print("WORLD_BROWSER_CANCEL failures=",failures);quit(1 if failures else 0)

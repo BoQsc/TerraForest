@@ -10,6 +10,7 @@ func run()->void:
  check(browser.buildable_ground.button_pressed and browser.buildable_roads.button_pressed and browser.selected_options().road_grid==3,"improved terrain and road preferences start enabled")
  check(browser.buildable_ground.get_parent()==browser.buildable_roads.get_parent() and browser.buildable_ground.get_parent().get_parent().name=="BuildingGridFit","related generation preferences share one named group")
  var tabs:TabContainer=browser.find_children("*","TabContainer",true,false)[0];tabs.current_tab=1
+ check(browser.preparation_panel.is_visible_in_tree() and browser.preparation_panel.detail.text=="Ready to generate","generation strip is visible before generation starts")
  browser.name_field.text="Alder_Reach";browser.biome.select(1);browser.district_count.select(1);browser.road_network.select(1);browser.invalidate_preview()
  check(browser.preview_worker==null and browser.preview_due_ms>Time.get_ticks_msec(),"recipe changes debounce the automatic preview")
  var deadline:=Time.get_ticks_msec()+90000
@@ -28,6 +29,9 @@ func run()->void:
  check(browser.preview_worker!=null and browser.preview_key!=browser.selected_preview_key(),"editing during a preview queues the newer recipe")
  while (browser.preview_worker!=null or browser.preview_due_ms>=0) and Time.get_ticks_msec()<deadline:await process_frame
  check(browser.preview_view.texture!=null and browser.preview_key==browser.selected_preview_key(),"rapid recipe changes automatically settle on the latest preview")
+ browser.preview_button.pressed.emit()
+ check(browser.preparation_pid<0 and browser.preview_worker!=null,"Refresh preview starts only a preview, without generating a world")
+ while browser.preview_worker!=null and Time.get_ticks_msec()<deadline:await process_frame
  for resolution:Vector2i in [Vector2i(1920,1080),Vector2i(1280,720)]:
   root.content_scale_size=resolution
   for frame in 8:await process_frame

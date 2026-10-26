@@ -29,14 +29,30 @@ Run using `python tools/run_godot_check.py <test> --godot <engine> --timeout <se
 The initial tall card was rejected for wasted vertical space. The compact
 revision replaces the entire card with a transparent footer strip: stage,
 percentage, timing and Cancel share one row above the bar. Work details use one
-optional clipped line with the full text in its tooltip. The repeated heading,
-disabled action footer and duplicate status message are hidden during generation.
+clipped line with the full text in its tooltip. The repeated heading and separate
+action footer are removed; the duplicate status message is hidden during generation.
 The strip is checked to remain at most 64 logical pixels high at both resolutions.
 
 Compact revision checks passed: `world_browser_progress`
 (`20261026T063709843637Z`), actual `world_browser_cancel`
 (`20261026T063721119035Z`), and unchanged regular `loading_progress_ui`
-(`20261026T063819221051Z`). The images below show this revision.
+(`20261026T063819221051Z`).
+
+The strip now stays visible from opening Create world. Its idle state says
+Ready to generate, with zero progress and a stopped clock. Generate & play and
+Cancel share one fixed-width button; Refresh preview stays in the same row. The
+recipe summary and live work details share one reserved line. The strip remains
+60 logical pixels high, with identical strip and map rectangles before generation,
+during work and after cancellation. No additional footer appears or disappears.
+
+Always-visible checks passed: `world_browser_progress`
+(`20261026T065039439823Z`), `world_creation_ui` (`20261026T065050528117Z`),
+and actual Generate/Cancel button handling in `world_browser_cancel`
+(`20261026T065307414125Z`). Initial geometry checks
+`20261026T064915818953Z` and `20261026T065017487672Z` found a 10 px shift caused by
+the disabled checkbox skin. Matching its enabled margins fixed the shift; both
+1920x1080 and 1280x720 now pass exact rectangle comparisons. The images below
+show the persistent strip.
 
 Inspected images: [actual generation](generating_1920x1080.png),
 [controlled progress at 720p](progress_1280x720.png), and
