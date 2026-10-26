@@ -1,6 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Reported vehicle return after fast travel and exit — unconfirmed 2026-10-26
+
+A modder reportedly sees the car return to an earlier position after a distant,
+very fast drive and exit. Reproduction was requested before changes. Current
+`cb209aab` gameplay was tested without a production correction: four qualified
+actual-world exits (stock boost at 128/384 m, fleet with injected 72 m/s initial
+speed, and injected 100 m/s) recorded no reset/restore or return in 12 seconds.
+Seven resident-floor cases also recorded none, including about 883 m of W+Shift
+driving and a 60 m/s exit. Speed injection is not a recreation of an unknown mod.
+
+An existing below-world recovery returns to spawn at Y below -10 m, but no valid
+run triggered it. Unmet qualification targets and invalid headless/floor harness
+attempts remain recorded and are not treated as negative/positive reproductions.
+The exact modded build, speed, route, post-exit steps and intended return position
+remain unknown. Resume with that configuration and a qualified relocation trace;
+do not close this report or make a speculative gameplay change from the current
+negative attempts. [Results, probes, evidence and return trigger](../issues/vehicle-fast-exit-return/README.md).
+
 ## ESC Player settings — 2026-10-26
 
 Added Player navigation and moved Third-person camera plus the complete

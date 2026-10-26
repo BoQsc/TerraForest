@@ -1,0 +1,14 @@
+[
+  {
+    "file": "stock-boost-no-return.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_fast_exit_world_boost_d384.png",
+    "sha256": "93d0c5d879d4f5314333e6ded4416d8a10c10adbada5b6000b6a46c1b961ad39",
+    "caption": "Unchanged production gameplay on temporary generator 1 / seed 1703; actual final state 12 seconds after accepted W+Shift exit following 384m drive. Full foliage/collision, diagnostic observer camera. No return reproduced."
+  },
+  {
+    "file": "injected-speed-no-return.png",
+    "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\vehicle_fast_exit_world_injected_100_d192.png",
+    "sha256": "3821bee44e22f170df2b1d1c0e697e4dfc7a9afe1ab1b578932316d6b6c55093",
+    "caption": "Same temporary terrain profile; initial speed injected to 100m/s, accepted exit after 192m. Actual final state after 12 seconds. No reset or return reproduced; this is not a modded build reproduction."
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "tests/vehicle_fast_exit_return.gd": "57eacbfb059a86e4329f32b9789ea73968eb92f209af0457f41b2fd68f158c7c",
+  "tests/vehicle_fast_exit_world.gd": "048a3c37b252bbad18fb6f835499fa7132a69ff2a3b29b5651c8027f5ba4542a",
+  "tests/vehicle_return_trace_car.gd": "06d9bb1dd02694e1776eddc3b36c2a0e855110a45c884daf17700bbfe7788bb5",
+  "addons/vehicle_runtime/world_vehicle.gd": "67384a13d84c850d61231948384293c972821479209e19abce3793b73616b828",
+  "addons/vehicle_runtime/vehicle_streaming.gd": "7bc2c8b88b6ade1ef8e1bf08d4cd4b18e6743047d7e57171e61b9231b2b1943b",
+  "addons/vehicle_runtime/fleet_activation.gd": "2dde6086f2f97f4db2de82dca64e8d990e9d4ee02be2a61aa92b18077b5656e4",
+  "vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
+  "vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
+}
