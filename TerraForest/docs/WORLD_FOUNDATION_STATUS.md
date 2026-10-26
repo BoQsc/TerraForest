@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## ESC closes active UI before opening pause — 2026-10-26
+
+Reproduced corpse storage remaining open: the session handler consumed ESC after
+calling the disabled backpack HUD, instead of closing corpse UI. An input-only
+priority policy now handles ESC before wheel/chord routing: close the active
+dialog/map/wheel/storage/inventory/tool interface, or resume an open session menu;
+open the pause menu only when no interactive UI is active. Repeats/releases are
+consumed without cascading, and pending holds are cancelled before their release.
+
+Packaged current-UI checks pass, including chest/corpse, focused Dev Bag search,
+map, tool dropdown/workspace, Alt controls, pending/open wheels and confirmation.
+Existing E-toggle and 29 focus-return checks also pass. No new native work or
+per-frame scans; no player saves selected. Human visual review remains open.
+Controls, images and scope: [ESC priority](../issues/escape-ui-priority/README.md).
+
 ## Wooden torch — 2026-10-26
 
 New craftable item 6: authored wooden shaft, layered linen and charred crown,

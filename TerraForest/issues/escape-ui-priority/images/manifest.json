@@ -1,0 +1,38 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "corpse-before-escape.png",
+      "source": "reports\\escape_ui_priority\\corpse-before-escape.png",
+      "source_run": "reports/escape_ui_pack/escape_ui_priority",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged ESC priority check; inspected, awaiting human review",
+      "context": "Real storage UI/native contents, test corpse picker. Pause menu frame is later at another camera position.",
+      "modified_pixels": false,
+      "sha256": "464daec4b5dabdcb0704f54faead347942ec09d93d6e9da23e7ae976c3e20e01"
+    },
+    {
+      "file": "corpse-closed.png",
+      "source": "reports\\escape_ui_priority\\corpse-closed.png",
+      "source_run": "reports/escape_ui_pack/escape_ui_priority",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged ESC priority check; inspected, awaiting human review",
+      "context": "Real storage UI/native contents, test corpse picker. Pause menu frame is later at another camera position.",
+      "modified_pixels": false,
+      "sha256": "fe886ee2fa079cb49bc384326333b62842690024abbdb42a4ec0f35dfb2837ee"
+    },
+    {
+      "file": "pause-menu.png",
+      "source": "reports\\escape_ui_priority\\pause-menu.png",
+      "source_run": "reports/escape_ui_pack/escape_ui_priority",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged ESC priority check; inspected, awaiting human review",
+      "context": "Real storage UI/native contents, test corpse picker. Pause menu frame is later at another camera position.",
+      "modified_pixels": false,
+      "sha256": "41eb1f9dcdab2a068dc54e051e55b6bfcc0ace5657142685cd12d1c02e75b76d"
+    }
+  ]
+}

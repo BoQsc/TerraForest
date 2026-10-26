@@ -1,0 +1,192 @@
+{
+  "revision": "6aa2f56384a49a4b1cb642e355de182c3de26fce",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/session_menu.gd",
+    " M TerraForest/addons/world_ecosystem/art/boulder_granite_v1.png.import",
+    "?? TerraForest/addons/player_runtime/bin/~player_runtime.windows.template_debug.x86_64.dll~RF2614a4b5.TMP",
+    "?? TerraForest/addons/player_runtime/escape_policy.gd",
+    "?? TerraForest/addons/player_runtime/escape_policy.gd.uid",
+    "?? TerraForest/addons/structures/bin/~structures.windows.template_debug.x86_64.dll~RF2614a513.TMP",
+    "?? TerraForest/addons/vegetation_runtime/bin/~vegetation_runtime.windows.template_debug.x86_64.dll~RF2614a542.TMP",
+    "?? TerraForest/addons/vehicle_runtime/bin/~vehicle_runtime.windows.template_debug.x86_64.dll~RF2614a571.TMP",
+    "?? TerraForest/addons/volumetric_terrain/bin/~terrain_core.windows.x86_64.dll~RF2614a5bf.TMP",
+    "?? TerraForest/addons/volumetric_water/bin/~volumetric_water.windows.template_debug.x86_64.dll~RF2614a5ee.TMP",
+    "?? TerraForest/addons/world_runtime/bin/~world_runtime.windows.template_debug.x86_64.dll~RF2614a63c.TMP",
+    "?? TerraForest/tests/escape_ui_priority.gd",
+    "?? TerraForest/tests/escape_ui_priority.gd.uid"
+  ],
+  "git_metadata_available": true,
+  "native": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "e622b37d83c720f9475d6ea6bdc799c955d5aec5d693281ba6c8bc559410a600",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8320b12807395e75fcb98bb7a29adbf37b3640c46638d4e0ea52a8f87e04b81a",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff"
+  },
+  "pack_sha256": "a939e60c4667f75431e4d2b355e390a71f30036ff15914aedcb01313e11f9218",
+  "runs": [
+    {
+      "test": "escape_ui_priority",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 81748,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 29.46398819994647,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\escape_ui_pack\\escape_ui_priority\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/escape_ui_priority.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_c0378c5ef4224e2aa6c625eebe8e2524",
+        "--derived-cache=user://escape_ui_priority_c0378c5ef4224e2aa6c625eebe8e2524",
+        "--gameplay-construction",
+        "--no-zombies"
+      ],
+      "script_sha256": "9b7364e9932cf9eddd411ae72d22da0b0c872d41e10c00aa95b843fb5a634066"
+    },
+    {
+      "test": "container_e_toggle",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 34392,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 24.731690000044182,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\escape_ui_pack\\container_e_toggle\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/container_e_toggle.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_6a898b84dd16439ab49bcd83a272e475",
+        "--derived-cache=user://container_e_toggle_6a898b84dd16439ab49bcd83a272e475",
+        "--gameplay-construction",
+        "--no-zombies"
+      ],
+      "script_sha256": "82702b19bcf243872424507970046c1735c815cf1767af8163a16213bbea14e1"
+    },
+    {
+      "test": "focus_return",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 38156,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 25.956496600061655,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\escape_ui_pack\\focus_return\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/focus_return.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_7406937e7e92439bb603b7486b9454b4",
+        "--derived-cache=user://focus_return_7406937e7e92439bb603b7486b9454b4",
+        "--gameplay-construction",
+        "--no-zombies"
+      ],
+      "script_sha256": "ffec16f7869d5d8917bca963717d5a78e585ad221f9e842e7aa6157be6ba7cbf"
+    }
+  ],
+  "controls": [
+    {
+      "id": "20261026T161145345058Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 84180,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL Escape closes corpse storage",
+          "FAIL closing corpse storage restores HUD input",
+          "FAIL closing corpse storage restores camera capture"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 29.356174599961378,
+        "passed": false
+      },
+      "test_sha256": "928aef41aa4989d77c4ca5a42e3bf9a25556c76431877f476b1f12e93e92a55d"
+    },
+    {
+      "id": "20261026T161344985886Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 56252,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 27.149689000099897,
+        "passed": true
+      },
+      "test_sha256": "928aef41aa4989d77c4ca5a42e3bf9a25556c76431877f476b1f12e93e92a55d"
+    }
+  ],
+  "scope": "Current interactive game UI priority. Temporary worlds; native corpse contents/UI with test identity picker; vehicle-wheel UI states are fixtures. Not a new corpse targeting, vehicle spawning, future-mod or gamepad qualification.",
+  "source_sha256": {
+    "addons/player_runtime/session_menu.gd": "0cfd409ff615c4c6e47743306205b15b635fe90a8d2293f8d012a55a326c3069",
+    "addons/player_runtime/escape_policy.gd": "07f53f61db93d3a4b06982920d3365cee4277b6c163cd056a2f4689dbd8e2f33",
+    "tests/escape_ui_priority.gd": "9b7364e9932cf9eddd411ae72d22da0b0c872d41e10c00aa95b843fb5a634066"
+  },
+  "remaining": "Latest human visual review pending; new modal interfaces must join the priority policy and input tests."
+}
