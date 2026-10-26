@@ -13,6 +13,7 @@ uniform bool show_lod = false;
 uniform bool show_material = false;
 uniform bool show_visibility = false;
 uniform vec3 sky_fill : source_color = vec3(0.30, 0.34, 0.40);
+uniform float minimum_cave_fill : hint_range(0.0,0.3,0.01) = 0.12;
 uniform float snow_reflectance = 0.68;
 uniform bool alpine_snow_enabled = false;
 uniform bool regional_temperate = false;
@@ -107,9 +108,7 @@ void fragment(){
   METALLIC=mix(METALLIC,0.15,ore);ROUGHNESS=mix(ROUGHNESS,0.85,ore);
  }
  ALBEDO=min(color,vec3(0.82));
- // There is no uniform ambient source inside sealed caves. This is a cached
- // direct-sky fill, NOT GI. The flashlight is an ordinary shadow-casting light.
- EMISSION=ALBEDO*sky_fill*sqrt(clamp(visibility.x,0.0,1.0));
+ EMISSION=ALBEDO*sky_fill*max(minimum_cave_fill,sqrt(clamp(visibility.x,0.0,1.0)));
  if(show_lod){float s=UV2.y;ALBEDO=s<1.5?vec3(0.16,0.75,0.3):(s<3.0?vec3(0.9,0.75,0.1):(s<6.0?vec3(0.95,0.36,0.1):vec3(0.15,0.38,0.95)));}
  if(show_material){ALBEDO=material_weights.rgb;EMISSION=ALBEDO;}
  if(show_visibility){ALBEDO=vec3(visibility.y,visibility.x,0.0);EMISSION=ALBEDO;}

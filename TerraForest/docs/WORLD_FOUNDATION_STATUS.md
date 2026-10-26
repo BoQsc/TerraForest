@@ -155,6 +155,28 @@ are untouched; terrain-grid generation/contact remains separately unresolved.
 
 ## Black mining-face lighting repair — 2026-10-26
 
+Latest recurrence: Hidden_Hills' backup root reproduces the new black recess;
+18 of 23 nearby zero-sky vertices also see no sky with 256 diagnostic directions.
+Disabling cached sunlight does not repair it. Local diffuse-probe trials were
+visually insufficient and reverted; native code/DLLs remain unchanged. The user
+now explicitly permits faint visibility even in sealed caves, superseding the
+strict-darkness policy described in the earlier history below.
+
+The terrain shader floors its existing fill multiplier at 0.12. This adds one
+maximum operation, no new baking, rays, textures or passes; ordinary nonzero sky
+shading above the floor, real lights and distant tree shadows remain unchanged.
+It is a gameplay readability floor, not bounced GI. Zero restores the old policy.
+Source and installed-package same-save captures show texture in the recess with
+identical density hashes and untouched saves; zero-light GPU controls pass.
+Packaged contact mining passes 137 assertions; the 1,216-command rendered workload
+passes unchanged gates (frame p99 17.084 ms, maximum 24.491 ms, no >50 ms frames).
+Latest visual acceptance and broader cave/material/hardware qualification remain
+open. Return on new dark-face reports with matched no-lamp/lamp and raw-visibility
+captures, preserving performance gates. Evidence and rejected/failed trials:
+[readability follow-up](../issues/terrain-mining-dark-patches/readability/README.md).
+
+Earlier repairs and their original qualification follow:
+
 Reproduced the Wild_Ridge excavation in an isolated read-only copy. The faces and
 textures were present; cached sky visibility was falsely zero. Lighting treated
 exact-zero excavated samples as solid during probe placement and followed a fixed

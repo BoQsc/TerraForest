@@ -59,6 +59,7 @@ def main():
     if not args.native_only:
         water = ["--water-gameplay", "--water-bucket-review", "--gameplay-construction", "--no-zombies"]
         cases += [
+            ("terrain_cave_readability", "TERRAIN_CAVE_READABILITY failures=0", False, []),
             ("vegetation_page_retirement", "VEGETATION_PAGE_RETIREMENT failures=0", False, []),
             ("vegetation_terrain_edits", "VEGETATION_TERRAIN_EDITS failures=0", False, ["--world-generator=23", "--ground-cover", "--no-zombies"]),
             ("developer_belt", "DEVELOPER_BELT", False, []),

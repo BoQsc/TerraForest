@@ -1,0 +1,222 @@
+{
+  "archived_on": "2026-10-26",
+  "baseline_commit": "86bf75b17ed810e0575d412bfe6f9bd020fc5963",
+  "scope": "User-approved faint visibility policy; matched reproduction verified, latest images not yet user-approved; no universal lighting/performance acceptance.",
+  "shader_sha256": "ae39eaae7001cada9764634af2d90d7a51d1845fa2cdbc9fdded4c3cca42c9c6",
+  "pack_sha256": "1c33af16f7b09cf46c4933c914ed6b90965dffaaa9f2acc2e3f38e5603560ee5",
+  "native_baseline_byte_identical": {
+    "addons/volumetric_terrain/native/core.cpp": true,
+    "tests/native/mining_light_regression.cpp": true,
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": true,
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": true
+  },
+  "pack_native_hashes": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "e622b37d83c720f9475d6ea6bdc799c955d5aec5d693281ba6c8bc559410a600",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8320b12807395e75fcb98bb7a29adbf37b3640c46638d4e0ea52a8f87e04b81a",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff"
+  },
+  "camera": "[X: (0.992862, 0.0, -0.119271), Y: (0.030086, 0.967663, 0.250445), Z: (0.115414, -0.252245, 0.960756), O: (986.9822, 40.67959, 1023.823)]",
+  "saved_feet": "(986.9822, 38.99959, 1023.823)",
+  "tests": [
+    {
+      "name": "terrain_contact_mining",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 62680,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.47174399998039007,
+        "passed": true
+      },
+      "script_sha256": "8f7ceb8790c50f19450184e7f086096520a1df831ace4674bf7255e6b3dbdf16"
+    },
+    {
+      "name": "terrain_cave_readability",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 65568,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 2.2450179000152275,
+        "passed": true
+      },
+      "script_sha256": "7971bc615d1afa96a70cd8f74e985bc2df4407ae083d7f289a78c3266fd36f0f"
+    },
+    {
+      "name": "terrain_tools_endurance",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 66476,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 113.56774169998243,
+        "passed": true
+      },
+      "script_sha256": "0e0a631359412e3b8ccde42b0af39a9f04a00ecb2bfd3c42099a300d0bbe22b7"
+    }
+  ],
+  "measurements": {
+    "api_commands": 1216,
+    "scope": "Actual held mouse/controller input for all four dev terrain modes, maximum sphere/box volume publication, 400 mixed API edits per round, idle recovery. Full rendering/collision/vegetation active; entities disabled. Native-volume and storage checks cover separate long histories and archive reopen. Not multi-hour endurance or all hardware.",
+    "soak_rounds": 3,
+    "presentation": {
+      "fair_graphical_sample": true,
+      "fullscreen": true,
+      "headless": false,
+      "render_scale": 1,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "window_mode": 3,
+      "window_size": [
+        1920,
+        1080
+      ]
+    },
+    "runtime_frames": {
+      "count": 5296,
+      "max_ms": 24.491,
+      "median_ms": 16.655,
+      "over_50ms": 0,
+      "p95_ms": 16.851,
+      "p99_ms": 17.084
+    }
+  },
+  "saved_view_runs": {
+    "a832022763d74e90": {
+      "result": {
+        "timed_out": true,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 73456,
+        "exit_code": 1,
+        "diagnostics": [
+          "SCRIPT ERROR: Trying to assign value of type 'Nil' to a variable of type 'bool'."
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 180.24716290005017,
+        "passed": false
+      },
+      "source_unchanged": true,
+      "selected_root": null,
+      "terrain_sha256": null
+    },
+    "bb8315e622234c79": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 82504,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 46.99643980001565,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": null,
+      "terrain_sha256": "5ef3c04c96ac489f8663698ec37e485e5c7fd8749c61240bd28bdf3bb0943c2d"
+    },
+    "1de6944dc52d4d29": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 35416,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 44.40094349998981,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\Hidden_Hills.trw.bak",
+      "terrain_sha256": "766626cab14deb7e34b019dd687047b706126612a637f333e23beb000ff0e027"
+    },
+    "9eaa3fd55e84449b": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 74060,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 36.18086890003178,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\Hidden_Hills.trw.bak",
+      "terrain_sha256": "766626cab14deb7e34b019dd687047b706126612a637f333e23beb000ff0e027"
+    },
+    "3d8561c55b634961": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 81724,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 34.54401880002115,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\Hidden_Hills.trw.bak",
+      "terrain_sha256": "766626cab14deb7e34b019dd687047b706126612a637f333e23beb000ff0e027"
+    },
+    "f38bb1da1fa54805": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 83588,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 40.690397599944845,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\Hidden_Hills.trw.bak",
+      "terrain_sha256": "766626cab14deb7e34b019dd687047b706126612a637f333e23beb000ff0e027"
+    },
+    "32d0afbaeab14f1a": {
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 72688,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 39.17881880002096,
+        "passed": true
+      },
+      "source_unchanged": true,
+      "selected_root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\worlds\\Hidden_Hills.trw.bak",
+      "terrain_sha256": "766626cab14deb7e34b019dd687047b706126612a637f333e23beb000ff0e027"
+    }
+  }
+}

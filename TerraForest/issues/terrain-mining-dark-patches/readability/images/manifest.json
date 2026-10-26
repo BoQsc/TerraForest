@@ -1,0 +1,75 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "reported.png",
+      "role": "user report",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Original screenshot; reported F5 then further digging; exact build unknown.",
+      "source": "C:\\Users\\WINDOW~1\\AppData\\Local\\Temp\\codex-clipboard-4780d448-e8b7-427b-9edd-df5b634cf287.png",
+      "sha256": "926f10347a7e1ea135e446c22f5f74fd1a4dece0584f7eabbce814bc63db6a95",
+      "modified_pixels": false
+    },
+    {
+      "file": "before.png",
+      "role": "baseline",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "86bf75b1; backup-root reproduction, headlamp off.",
+      "source": "reports\\mining_darkness\\1de6944dc52d4d29\\00_no_lamp.png",
+      "sha256": "bbe52f4700b647f76e8a8d63a380af3a694b3c9439f561f458447c073268fe2e",
+      "modified_pixels": false
+    },
+    {
+      "file": "after.png",
+      "role": "improvement awaiting user visual review",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Packaged .12 minimum fill; same backup root, headlamp off.",
+      "source": "reports\\mining_darkness\\32d0afbaeab14f1a\\00_no_lamp.png",
+      "sha256": "60d398522e5c7aff9b50b0905ed65ca80403aba66a71127339ba165c97d7c160",
+      "modified_pixels": false
+    },
+    {
+      "file": "torch.png",
+      "role": "control",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Packaged .12 minimum fill; headlamp on, real shadows enabled.",
+      "source": "reports\\mining_darkness\\32d0afbaeab14f1a\\02_torch.png",
+      "sha256": "5f7c36b1e8dc898cc522f165cf53fef6d01accc7259744459de16b2e334ed2a4",
+      "modified_pixels": false
+    },
+    {
+      "file": "sun-mask-disabled.png",
+      "role": "rejected diagnostic",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Native cached sun disabled; black sky-fill patch persists.",
+      "source": "reports\\mining_darkness\\1de6944dc52d4d29\\06_engine_sun_only.png",
+      "sha256": "650587cf8d81cd85c52e7ad6da4ef94a6c510b4c0ce25da3cbb3d12afa7c7c26",
+      "modified_pixels": false
+    },
+    {
+      "file": "unoccluded-sky.png",
+      "role": "rejected diagnostic",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Sky occlusion disabled: too bright, not shipped.",
+      "source": "reports\\mining_darkness\\1de6944dc52d4d29\\07_unoccluded_sky.png",
+      "sha256": "5f58365d7d4fb55386f623319b591bef2b60e4e092bab1653d047fca3e9eb32d",
+      "modified_pixels": false
+    },
+    {
+      "file": "diffuse-trial.png",
+      "role": "rejected prototype",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Native 27-point 4m diffuse trial; central black patch persists; code reverted.",
+      "source": "reports\\mining_darkness\\3d8561c55b634961\\00_no_lamp.png",
+      "sha256": "351a31f3c38eddae57ee33a32ade9fc2f2e830d70c50b413c8144d7f59fdb299",
+      "modified_pixels": false
+    }
+  ]
+}
