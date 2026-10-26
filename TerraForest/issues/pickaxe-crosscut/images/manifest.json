@@ -75,57 +75,203 @@
     "raised-hold.png": {
       "source": "reports/pickaxe_crosscut/comparison_hold.png",
       "sha256": "bbdf4d1af36e5b60d46f9b8cdab44f4bd1d58c50d0075c53e12544986df6812c",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "bf81f85e"
     },
     "raised-load.png": {
       "source": "reports/pickaxe_crosscut/body_right_load.png",
       "sha256": "49bcf67d78838969fbb07dbf6abc57923b9e2f4ec9595a2cfe71434d645898e9",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "bf81f85e"
     },
     "raised-contact.png": {
       "source": "reports/pickaxe_crosscut/body_contact.png",
       "sha256": "010ad5bf585d3b4a2450fdf9e1804a0c6a7089fe099af2753adb5729f6ce8e79",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "bf81f85e"
     },
     "raised-follow.png": {
       "source": "reports/pickaxe_crosscut/body_left_follow.png",
       "sha256": "14ca8e79fc3ef3c3c2e2dd744d7bf1e892a274d72ae96b0a8e6b7b5f8dbd6c6b",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "bf81f85e"
     },
     "raised-return.png": {
       "source": "reports/pickaxe_crosscut/body_return.png",
       "sha256": "1ba82c718ba9e8ad9745bc89044552fef7530035d5c2cb5ee631d4fdb335f773",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
+      "dimensions": [
+        2560,
+        820
+      ],
+      "source_revision": "bf81f85e"
+    },
+    "raised-walk.png": {
+      "source": "reports/pickaxe_crosscut/comparison_walk.png",
+      "sha256": "228f12ddb85991becbe7108f8e4fede4e0e626c89f40da69efe5a46e8c689073",
+      "status": "Third candidate rejected: foreground hand, right-heavy framing, sliding feel",
+      "dimensions": [
+        2560,
+        820
+      ],
+      "source_revision": "bf81f85e"
+    },
+    "arc-hold.png": {
+      "source": "reports/pickaxe_crosscut/comparison_hold.png",
+      "sha256": "dececd4fa42fd18a1520ba9e2ee4a202dc96b52602ff2aa931e53d5a8fb68406",
+      "status": "Rotational arc candidate, awaiting user review",
       "dimensions": [
         2560,
         820
       ]
     },
-    "raised-walk.png": {
-      "source": "reports/pickaxe_crosscut/comparison_walk.png",
-      "sha256": "228f12ddb85991becbe7108f8e4fede4e0e626c89f40da69efe5a46e8c689073",
-      "status": "Raised hold and cursor strike revision, awaiting user review",
+    "arc-load.png": {
+      "source": "reports/pickaxe_crosscut/body_right_load.png",
+      "sha256": "5db18d0fab4c27f0a4b419214cf861af3a1936a169fff3e75ec11229171dee74",
+      "status": "Rotational arc candidate, awaiting user review",
       "dimensions": [
         2560,
         820
       ]
+    },
+    "arc-contact.png": {
+      "source": "reports/pickaxe_crosscut/body_contact.png",
+      "sha256": "42b22ba7b77aa9eacfc64fceb503502c661551545023b36c78bd957aaf29f928",
+      "status": "Rotational arc candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "arc-follow.png": {
+      "source": "reports/pickaxe_crosscut/body_left_follow.png",
+      "sha256": "39620e572198ca51fa91b5e3b2d76268fdf060e272df3cb02e532e864decdb37",
+      "status": "Rotational arc candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "arc-return.png": {
+      "source": "reports/pickaxe_crosscut/body_return.png",
+      "sha256": "c8acb155d3071ad4251ead55b1316d5386239e809cf90106a6c6787ea7ef0109",
+      "status": "Rotational arc candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "arc-walk.png": {
+      "source": "reports/pickaxe_crosscut/comparison_walk.png",
+      "sha256": "41a0a3cc87f97ea5e66333eecaa62283dd1731c24c5ccaf5c39a4df29b029f40",
+      "status": "Rotational arc candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "arc-world-current.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/current_hold.png",
+      "sha256": "afd4c695f3979e530406b64d3383b962ec315a2c33da24227ee69a7b04983957",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-hold.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_hold.png",
+      "sha256": "0d6097535f8b554e23e1d46c22ae4eaa9e041dd7bb7fea1eb6be3cc5360f8f03",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-load.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_load.png",
+      "sha256": "9f7965ec43405cf265b5081a7d240b23e813e816bc2827227333bd97a0f96f8d",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-approach.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_approach.png",
+      "sha256": "ffc7ead3be69dcff1bdaea39c62772b392aa836dd7b099ea0a4718918742961f",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-contact.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_contact.png",
+      "sha256": "ac64410fa8fb8e970aa0bb2e27c5cdd4cb1bf285446fed262580630369f64f3d",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-follow.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_follow.png",
+      "sha256": "2a874f6096d997de0ab1703aa5f9ff07d6506dc294b069df5c4be117b7635b06",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "arc-world-return.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_return.png",
+      "sha256": "7da3dfc7f0df06fd063964dd2528c3dd1defea8449253e30a1c930546b1b4e39",
+      "status": "Actual temporary world, candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "rejected-v3-user-playtest.png": {
+      "source": "User attachment codex-clipboard-04cdeb16-23d5-4cf8-913a-e6c5892824b7.png",
+      "sha256": "d4506275845072281a5c12f396faa00aa1520ff722aef2e6c83accb72c1a845a",
+      "status": "User rejected raised candidate bf81f85e",
+      "dimensions": [
+        1920,
+        1080
+      ]
     }
   },
-  "latest_camera": "16:9 1280x720 panels, 75-degree vertical FOV; fixed target and screen-center crosshair independent of animation"
+  "latest_camera": "Studio 16:9 1280x720 panels, 75-degree vertical FOV; actual-world captures use ordinary player camera. World manifest records transform and output dimensions."
 }

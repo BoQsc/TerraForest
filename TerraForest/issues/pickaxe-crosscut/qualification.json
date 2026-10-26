@@ -1,8 +1,8 @@
 {
   "date": "2026-10-26",
-  "status": "Raised upper-right hold / cursor strike candidate; not accepted as default",
-  "user_correction": "Prior playtest not accepted. Hold pickaxe higher in top-right corner and strike toward cursor.",
-  "checkout_head": "241a4b883de5a080d030698262dfed5428c738b3",
+  "status": "Rotational arc / lower fixed grips candidate; not accepted as default",
+  "user_correction": "Raised candidate rejected: supporting hand at camera center, composition too far right, motion feels like tool sliding.",
+  "checkout_head": "bf81f85eb5e712cedae99b4396da5116d6830df8",
   "preserved_default_sha256": {
     "addons/characters/runtime/human_view.gd": "fe349c9ec07cec4184063980b64fb3af119a76fb36a0a7b93072bbf0e39ef15f",
     "addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
@@ -11,22 +11,23 @@
     "addons/characters/authoring/Human.pickaxe_fresh.blend": "a5856b1e8e5669558d85f2f56a37d5ce49ec24733c8ddbb21c1156503c2dbd23"
   },
   "candidate_sha256": {
-    "addons/characters/authoring/Human.pickaxe_crosscut.blend": "d4830453ea37dc73be1130a86f7c66bd947adbd8820f71f4e132963fe5aaf17e",
-    "addons/characters/authoring/Human.pickaxe_crosscut.glb": "eb1d10dd71d6e0798a27be43a90108e2368912c0aa7186fa491a446d51578f33",
-    "addons/characters/authoring/Human.pickaxe_crosscut.json": "be932e2189418ebdc0032cdef91827604dedc6a0a7cb463d3f69ff844f7b7c48",
-    "addons/characters/runtime/assets/Human.pickaxe_crosscut.res": "ec33eabc3f57fdb2158237f2d7e935a4b17b303a036a05154b351a15272b96c1",
+    "addons/characters/authoring/Human.pickaxe_crosscut.blend": "6733947f552d72c7f8257907e2bc38efdc0a07ccc99756a0916cb4c84a9c676a",
+    "addons/characters/authoring/Human.pickaxe_crosscut.glb": "29410f24ae5c8748703cd8e8f6dd8197eb8fa34fbceb766f1aa83ab380697886",
+    "addons/characters/authoring/Human.pickaxe_crosscut.json": "6efea382f9599831a2b13b70a800a0340004176d07d4f2c1b6eb6e3310c10501",
+    "addons/characters/runtime/assets/Human.pickaxe_crosscut.res": "0dc772130058a147ba9ad76eb147596fe7b193182f486c4f7c79e2361bbc00a7",
     "addons/characters/experiments/pickaxe_crosscut_tools.gd": "93e311dfc07e78ab10afcde79ce54c346e4b7f522eea7c2c8f8c75b501a12c56",
     "addons/characters/experiments/pickaxe_crosscut_view.gd": "2a782330936b6360b0670dfa9105eca3846417f6c80f79ffaddc5d18ace8f665",
-    "tools/author_pickaxe_crosscut.py": "164c337f6a8eab7387837a06bd724898b64636eb85d600bf72929c5de6c68d04",
+    "tools/author_pickaxe_crosscut.py": "82ba871f30bf689669f07ffaf562540c5c25874d9ae466a572f54eda29ccf23b",
     "tools/import_pickaxe_crosscut.gd": "de0108dd45f45001cfd1623c5c87d253bbc89ae6b715869e15ebebf73ec5c95f",
-    "tools/playtest_pickaxe_crosscut.gd": "6a2dea77a3150a99f0c6117072d2439b57e624628077f62520e6f1037e98a17a",
-    "tests/pickaxe_crosscut.gd": "36399f03de76b2d1dd3ac7ffff78dbb60b00388521f9f4f75aa3aeeaef0cfe65",
+    "tools/playtest_pickaxe_crosscut.gd": "db54ed65125266c56e3361f731ca520e30544ea0f2f1f528b217fdc06b2692b0",
+    "tests/pickaxe_crosscut.gd": "7c581eec08d2f08493235cbe9d581e9d81fc6c2b1cca15109c8a06ba1251674f",
     "tests/pickaxe_crosscut_world.gd": "0a23efebd10ce3d3c12fe2bd79b045d3b11ff306ca28d478c4c09c38ae20cb28",
-    "tools/preview_pickaxe_crosscut.gd": "786cc214ee22bfc9e279a4241c221c784611db8a98c27e16c3b04ce40a5aa0f4",
-    "tools/encode_pickaxe_crosscut_preview.py": "cbde785bdc0615867b744d0437ae6bc1d7eda4918c9e7057447cf094a8cfc351"
+    "tools/preview_pickaxe_crosscut.gd": "4869099d61c1ea4345689c83f957cca6be551ae38e72e2719f1916aeac638a23",
+    "tools/encode_pickaxe_crosscut_preview.py": "ee1c54509bdf93cf58aa212ea04e6f15c84e4f9363934cee56e318fccabae524",
+    "tools/preview_pickaxe_crosscut_world.gd": "df83b21ba41d2a875b66123e840ea2e9f182b54bf930ad75866dd53a2886f55d"
   },
   "checks": {
-    "candidate": 26,
+    "candidate": 28,
     "temporary_world": 13,
     "accepted_default": 11,
     "accepted_locomotion": 24
@@ -39,80 +40,80 @@
   "metrics": {
     "Crouch": {
       "angle_error": 0.0,
-      "finger_error": 3.33200091517938e-07,
-      "grip_error": 6.57004363802116e-07,
-      "joint_step": 0.0395646811852521,
-      "key_error": 6.57004363802116e-07,
-      "position_error": 1.69244657399759e-07,
+      "finger_error": 3.42402614705861e-07,
+      "grip_error": 5.69372559766634e-07,
+      "joint_step": 0.0,
+      "key_error": 5.69372559766634e-07,
+      "position_error": 1.60490415623826e-07,
       "root_error": 0.0,
-      "wrist_degrees": 18.998244600924
+      "wrist_degrees": 34.0515563523563
     },
     "Idle": {
-      "angle_error": 0.0395646811852521,
+      "angle_error": 0.0,
       "finger_error": 0.0,
       "grip_error": 0.0,
-      "joint_step": 0.0395646811852521,
+      "joint_step": 0.0,
       "key_error": 0.0,
       "position_error": 0.0,
       "root_error": 0.0,
-      "wrist_degrees": 18.9982582613024
+      "wrist_degrees": 34.0515392768834
     },
     "Jump": {
-      "angle_error": 0.0559529096807445,
+      "angle_error": 0.0395646811852521,
       "finger_error": 0.0,
-      "grip_error": 1.02678222901886e-06,
-      "joint_step": 0.125114538102434,
-      "key_error": 1.02678222901886e-06,
-      "position_error": 6.39883012354403e-07,
+      "grip_error": 8.16170199868793e-07,
+      "joint_step": 0.0884693258953794,
+      "key_error": 8.16170199868793e-07,
+      "position_error": 5.5275074828387e-07,
       "root_error": 0.0,
-      "wrist_degrees": 18.9982582613024
+      "wrist_degrees": 34.0515392768834
     },
     "Run": {
-      "angle_error": 0.0559529096807445,
-      "finger_error": 3.78462033268079e-07,
-      "grip_error": 6.49560752208345e-06,
-      "joint_step": 0.466462006393909,
-      "key_error": 1.130918576564e-06,
-      "position_error": 4.69109772893717e-06,
+      "angle_error": 0.0395646811852521,
+      "finger_error": 4.30847165944215e-07,
+      "grip_error": 6.97627820045454e-06,
+      "joint_step": 0.366908397383403,
+      "key_error": 1.04955381630134e-06,
+      "position_error": 2.96064740723523e-06,
       "root_error": 0.0,
-      "wrist_degrees": 22.4950606918023
+      "wrist_degrees": 37.2451649780521
     },
     "Swing": {
-      "angle_error": 0.0559529096807445,
+      "angle_error": 0.0884693258953794,
       "finger_error": 0.0,
-      "grip_error": 0.000766595418099314,
-      "joint_step": 3.71794303837063,
-      "key_error": 1.50435323575948e-06,
-      "position_error": 0.000249182368861511,
-      "root_error": 1.18770765311638e-06,
-      "wrist_degrees": 26.2405844609283
+      "grip_error": 0.00148484017699957,
+      "joint_step": 4.49222139353291,
+      "key_error": 1.30935347897321e-06,
+      "position_error": 0.000416378956288099,
+      "root_error": 2.99954126603552e-06,
+      "wrist_degrees": 34.051542691978
     },
     "Walk": {
-      "angle_error": 0.0559529096807445,
-      "finger_error": 3.74581617279546e-07,
-      "grip_error": 1.80716131126246e-06,
-      "joint_step": 0.230699911181362,
-      "key_error": 1.15125328647991e-06,
-      "position_error": 1.49606466948171e-06,
+      "angle_error": 0.0395646811852521,
+      "finger_error": 4.33928363463565e-07,
+      "grip_error": 1.68397957622801e-06,
+      "joint_step": 0.185574892387711,
+      "key_error": 9.65245703810069e-07,
+      "position_error": 9.49941693306755e-07,
       "root_error": 0.0,
-      "wrist_degrees": 20.8912161614674
+      "wrist_degrees": 35.9276897890483
     }
   },
   "actual_cutting_point_in_camera": {
     "tip_load": [
-      0.373705804347992,
-      0.279480814933777,
-      -0.826117992401123
+      0.466058313846588,
+      0.353999495506287,
+      -0.682175815105438
     ],
     "tip_contact": [
-      1.85758981388062e-05,
-      1.13248825073242e-05,
-      -0.950020432472229
+      -8.55531379784225e-06,
+      2.33650207519531e-05,
+      -1.0900171995163
     ],
     "tip_follow": [
-      -0.149987190961838,
-      -0.149990677833557,
-      -0.910025477409363
+      -0.29779252409935,
+      -0.285625219345093,
+      -1.02711498737335
     ]
   },
   "world": {
@@ -128,13 +129,35 @@
     "Second candidate 241a4b88 was not accepted after playtest: hold too low, impact approximately 41 cm below camera center.",
     "Initial raised pose exceeded fixed arm reach at a deeper contact; shortened reach while keeping cursor projection.",
     "Rest-referenced upper-arm roll spun during the raised windup (20.15 degrees per half-key). Solving upper-arm roll from the actual forearm across the elbow removes the singularity.",
-    "Projected-rest roll removed the spin but caused visible elbow skin distortion. Left arm now follows the solved elbow; the right grip is seated 30 degrees around the shaft, constant through all clips, to lower the elbow and keep it farther from the camera."
+    "Projected-rest roll removed the spin but caused visible elbow skin distortion. Left arm now follows the solved elbow; the right grip is seated 30 degrees around the shaft, constant through all clips, to lower the elbow and keep it farther from the camera.",
+    "Third candidate bf81f85e rejected: oversized foreground support hand, right-heavy composition, sliding feel. User screenshot retained. Earlier grip/contact checks did not establish visual success.",
+    "First rotational pose draft exceeded arm reach during follow-through; compacted recovery path within fixed limb lengths.",
+    "Early rotational draft had a small upward hitch during acceleration. Revised the intervening wrist height; full downstroke now passes the existing descending-path check."
   ],
-  "remaining": "User visual review of raised hold, arm/hand appearance, framing and feel. Head partly reaches top/right edge; original skin/clothing retained. Finite-length visual tip aligns with camera center at contact, not arbitrary surface distance. Explicit acceptance required for default promotion.",
-  "revision": 3,
+  "remaining": "User visual review of arc, framing, hand appearance, weight and feel. Original skin/clothing retained. Head is foreshortened near contact; finite-length visual tip aligns with camera center rather than arbitrary surface distance. Explicit acceptance required for default promotion.",
+  "revision": 4,
   "ready_head_in_camera": [
-    0.545596480369568,
-    0.303276538848877,
-    -0.712496161460876
-  ]
+    0.432959973812103,
+    0.251223921775818,
+    -0.738989472389221
+  ],
+  "framing_and_arc": {
+    "ready_head_screen": [
+      0.71474426984787,
+      0.278480350971222
+    ],
+    "ready_left_hand": [
+      6.42656239335793e-09,
+      -0.370000123977661,
+      -0.279999881982803
+    ],
+    "ready_right_hand": [
+      0.219771668314934,
+      -0.237995266914368,
+      -0.449254631996155
+    ],
+    "rotation_sweep_degrees": 101.986219516664,
+    "tip_travel_m": 1.20247816335177,
+    "grip_travel_m": 0.293314838010701
+  }
 }

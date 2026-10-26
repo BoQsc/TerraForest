@@ -19,7 +19,7 @@ scene = bpy.context.scene
 FPS, END, CONTACT = 120, 192, 84
 DURATIONS = {"Idle":2.0,"Swing":1.6,"Walk":1.0,"Run":.8,"Jump":1.5}
 TIP = Vector((-.326, 0, .535))
-GRIP_STATIONS = {'Left': -.22, 'Right': .11}
+GRIP_STATIONS = {'Left': -.28, 'Right': 0.0}
 GRIP_ROLL = {'Left': 0, 'Right': 30}
 
 # Only static finger closure and hand-to-shaft orientation are reused. No body
@@ -72,23 +72,23 @@ for side, shift in [('Left', (.045, -.05, 0)), ('Right', (-.045, .055, 0))]:
 
 # Pose-table frame at 60 Hz (baked at 120 Hz), lower wrist XYZ, shaft forward pitch, right lean, blade-plane yaw,
 # torso forward pitch, torso yaw, pelvis Z. Blender -X is player right; -Y forward.
-# Raised ready pose: head near camera (+.56, +.31, -.69). At contact the
-# working tip is on the camera centerline (0, 0, -.95), then follows down-left.
-# Keep the original rig, camera and hand stations; solve the motion in the rig.
+# The lower hand stays below the center of the view. The tool rotates through
+# a broad arc around a compact grip path, rather than translating across the
+# screen. Contact is on the camera centerline, about 1.09 m forward.
 POSES = [
- (0, (-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
- (10,(-.03432161,-.25425443,1.52649641),13,50,17,2,-7,-.016),
- (22,(-.01004905,-.20659295,1.53383720), 8,50,20,2,-12,-.014),
- (28,(-.01004905,-.18659291,1.53383720), 8,50,20,2,-12,-.014),
- (33,( .04197210,-.19180411,1.56805599),14,55,18,3,-8,-.020),
- (38,( .16642500,-.19859922,1.52081239),22,60,16,4,-1,-.025),
- (42,( .23358697,-.16472000,1.51675391),30,65,15,5, 4,-.030),
- (46,( .20316312,-.11304516,1.47717214),39,65,15,6, 7,-.035),
- (50,( .18150240,-.08339185,1.45278859),45,65,15,6, 8,-.035),
- (57,( .20877364,-.07557851,1.45076895),43,65,15,6, 8,-.035),
- (69,( .09534030,-.12909424,1.50202966),32,60,15,5, 2,-.025),
- (83,(-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
- (96,(-.03079903,-.26696229,1.51593435),16,50,15,3,-5,-.018),
+ (0, (0,-.31,1.28),5,40,30,3,-5,-.018),
+ (10,(.01,-.30,1.31),0,42,28,2,-7,-.016),
+ (22,(.035,-.30,1.35),-8,40,20,2,-14,-.014),
+ (28,(.035,-.29,1.37),-12,40,20,2,-15,-.014),
+ (33,(.015,-.30,1.35),-5,38,20,3,-10,-.018),
+ (38,(-.04,-.32,1.24),20,5,5,5,-1,-.022),
+ (42,(-.08923286,-.32191092,1.21838665),35,-20,0,7,6,-.025),
+ (46,(-.09,-.27,1.22),49,-37,14,9,12,-.035),
+ (50,(-.08,-.24,1.22),55,-42,22,10,14,-.040),
+ (57,(-.08,-.24,1.22),52,-40,20,8,11,-.035),
+ (69,(-.04,-.29,1.23),32,0,10,5,0,-.022),
+ (83,(0,-.31,1.28),5,40,30,3,-5,-.018),
+ (96,(0,-.31,1.28),5,40,30,3,-5,-.018),
 ]
 
 
@@ -255,7 +255,7 @@ else:
     report={'status':'Separate candidate; user approval required before default promotion',
             'grip_stations':GRIP_STATIONS,'fixed_grip_roll_degrees':GRIP_ROLL,'source':str(source.relative_to(ROOT)),
             'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
-            'motion_source':'Raised upper-right hold and cursor-centered descending stroke, revised after user playtest. Original static finger wraps only. No accepted swing keys copied.',
+            'motion_source':'Rotational diagonal stroke around a compact grip path; supporting hand lowered out of the central view. Original closed fingers, fixed grip stations and right-hand roll. No accepted swing keys copied.',
             'fps':FPS,'durations':DURATIONS,'contact_frame':CONTACT,'poses':POSES,'samples':samples}
     (OUT/'Human.pickaxe_crosscut.json').write_text(json.dumps(report,indent=2))
     bpy.context.preferences.filepaths.save_version=0

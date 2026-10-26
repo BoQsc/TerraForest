@@ -1,7 +1,8 @@
 Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
 
 PASS ordinary game still selects the accepted default
-PASS ready pickaxe head is raised into the upper-right quadrant
+PASS ready head stays inside the upper-right view instead of crowding its outer corner
+PASS ready grips stay low and away from the camera center
 PASS Idle: fixed keyed grips; interpolation stays under 1 mm and 0.3 degrees
 PASS Idle: wrists stay aligned and arms have no rotation flips
 PASS Swing: fixed keyed grips; interpolation stays under 1 mm and 0.3 degrees
@@ -18,6 +19,7 @@ PASS Crouch: wrists stay aligned and arms have no rotation flips
 PASS actual cutting point travels from upper right to lower left through impact
 PASS descending strike travels across the cursor with forward depth
 PASS actual cutting point reaches the cursor centerline at the gameplay contact time
+PASS stroke rotates through a broad arc with a compact grip path instead of translating the whole tool
 PASS candidate starts through normal attack signals
 PASS no impact during windup
 PASS long frame emits exactly one impact on authored frame 42
@@ -26,4 +28,4 @@ PASS interrupted stroke cannot produce an extra impact
 PASS A/B switch restores accepted hold and timing
 PASS A/B switch restores the separate candidate
 PASS other tools retain their ordinary animation
-PICKAXE_CROSSCUT checks=26 failures=0
+PICKAXE_CROSSCUT checks=28 failures=0

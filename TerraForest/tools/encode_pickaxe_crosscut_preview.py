@@ -22,8 +22,8 @@ for name in ['comparison','body']:
     scene.render.image_settings.media_type='VIDEO';scene.render.image_settings.file_format='FFMPEG'
     scene.render.ffmpeg.format,scene.render.ffmpeg.codec='MPEG4','H264'
     scene.render.ffmpeg.constant_rate_factor,scene.render.ffmpeg.ffmpeg_preset='HIGH','GOOD'
-    path=output/f'Pickaxe.raised-cursor.{name}.mp4';scene.render.filepath=str(path)
+    path=output/f'Pickaxe.rotational-arc.{name}.mp4';scene.render.filepath=str(path)
     bpy.ops.render.render(animation=True)
     records.append({'file':path.name,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'frames':300,'fps':30,'size':[2560,820]})
-(output/'video-raised-cursor.json').write_text(json.dumps({'status':'Raised hold / cursor-centered candidate; not approved or selected as default','videos':records,'timeline':'Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved.'},indent=2)+'\n')
+(output/'video-rotational-arc.json').write_text(json.dumps({'status':'Rotational arc / lower grips candidate; not approved or selected as default','videos':records,'timeline':'Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved.'},indent=2)+'\n')
 print('PICKAXE_CROSSCUT_VIDEOS',json.dumps(records))

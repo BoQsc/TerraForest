@@ -1,0 +1,26 @@
+{
+  "status": "Rotational arc / lower grips candidate; not approved or selected as default",
+  "videos": [
+    {
+      "file": "Pickaxe.rotational-arc.comparison.mp4",
+      "sha256": "4779d4629ac2378631102d88605252d374a70a4902481ec167832b7b9d8a4bb7",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    },
+    {
+      "file": "Pickaxe.rotational-arc.body.mp4",
+      "sha256": "cf39807675b489f0deaa05f36d78bc7a70b84f729b17f73624ecf12fc8dd3662",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved."
+}

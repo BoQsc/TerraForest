@@ -6,13 +6,17 @@ The user requested a more diagonal holding pose and right-to-left strike, then
 rejected the first candidate and clarified **upper right → lower left**. The
 second revision kept the shaft slanted through contact but was not accepted in
 the playtest: the user wanted the hold higher and the strike toward the cursor.
-The current revision raises the head into the upper-right quadrant and places
-the cutting tip on the camera centerline at contact, then follows down-left.
+That raised version (`bf81f85e`) was rejected for a central foreground hand,
+right-heavy framing and a sliding feel. The current version lowers the fixed
+grips and rotates through a broad arc around a compact hand path. The tip
+crosses the camera centerline at contact and follows down-left. The ready
+head stays in the upper-right quadrant, with the supporting hand below view.
 
 Original R11 rest rig, static fitted finger closure and fixed hand stations;
 new pose table, torso movement and strike trajectory. 120 Hz baked keys, 1.6 s
 swing, contact at frame 84 (0.7 s). Idle/walk/run/jump/crouch preserve the hold.
-No sliding or releasing either grip. Native player movement owns locomotion.
+Fixed stations are -28 cm and 0 cm along the shaft. No sliding or releasing
+either grip. Native player movement owns locomotion.
 The right closed hand is seated 30 degrees around the shaft for the raised
 hold; that grip rotation is fixed for every clip and frame.
 

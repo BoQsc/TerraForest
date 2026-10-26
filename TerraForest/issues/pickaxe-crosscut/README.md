@@ -1,37 +1,42 @@
 # Separate pickaxe animation study
 
-- Status: Raised-hold / cursor-strike revision, unapproved. Accepted default remains selected.
+- Status: Rotational-arc / lower-grip revision, unapproved. Accepted default remains selected.
 - Updated: 2026-10-26. Implementation/evidence: commit adding this record.
 - User review: First candidate rejected as “absolutely not what was asked or wanted.”
   User clarified the strike must travel **upper right → lower left**.
 - The resulting candidate (`241a4b88`) was also not accepted after playtesting:
   the user wanted the pickaxe held higher toward the top-right corner and the
   strike aimed toward the cursor. Its impact was about 41 cm below camera center.
+- The raised version (`bf81f85e`) was rejected for a foreground hand in the
+  center, excessive right-side framing and motion that felt like sliding.
+  The user's screenshot is retained below. Grip/contact checks missed these
+  presentation problems and are not evidence of visual acceptance.
 - Request: More diagonal holding pose and a descending strike with a firm grip;
   promote only after explicit user approval.
 
 ## Images and previews
 
-![Latest raised hold against current default](images/raised-hold.png)
+![Latest hold in the actual world](images/arc-world-hold.png)
 
-Left: accepted default. Right: latest raised diagonal carry. Matching 16:9
-first-person views, 75-degree vertical FOV and neutral lighting. The back end
-of the head reaches the top/right edge; the shaft and both grips are visible.
+Latest candidate in the ordinary temporary world, seed 1703, 75-degree FOV.
+The supporting hand is below the frame in the ready pose; the upper hand sits
+lower and the head stays in the upper-right region. The camera and model scale
+are unchanged. [Same-camera accepted hold](images/arc-world-current.png).
 
-![Latest cursor-aligned contact](images/raised-contact.png)
+![Latest contact in the actual world](images/arc-world-contact.png)
 
-The cutting point reaches the fixed central crosshair at gameplay contact.
-The target is fixed on the camera centerline, independently of the animation.
-Right pane shows the body and grip. This is a projection/alignment check;
+The tool rotates across the view and the cutting point reaches the camera
+centerline. The head is foreshortened near contact. This is a projection check;
 the finite-length model does not move to every possible gameplay hit distance.
 
-![Latest down-left follow-through](images/raised-follow.png)
+![Latest down-left follow-through](images/arc-world-follow.png)
 
-The follow-through continues below and left of the cursor. Both hands remain
-fixed; the lower hand/shaft can leave the bottom-left edge during the strike.
+The head continues down-left while both hands stay fixed on the shaft.
+This version uses a broad rotational stroke with a compact grip path instead
+of translating the high hold across the screen. Framing and weight await review.
 
-[Latest comparison video](Pickaxe.raised-cursor.comparison.mp4)
-and [latest first-person/body video](Pickaxe.raised-cursor.body.mp4).
+[Latest comparison video](Pickaxe.rotational-arc.comparison.mp4)
+and [latest first-person/body video](Pickaxe.rotational-arc.body.mp4).
 Two swings at normal speed, one at half speed, then walking. Each version keeps
 its own timing. Godot 4.7.2 Forward+, RTX 4050, 2560×820 composite. No world/seed
 for these views. Source paths, status and hashes are in `images/manifest.json`.
@@ -51,14 +56,21 @@ Second candidate carried too low and struck below the cursor. Its original
 a target placed at that candidate's contact, so their target mark was not a
 central cursor. The latest preview uses 16:9 and an independent central crosshair.
 
+![User rejection of the raised version](images/rejected-v3-user-playtest.png)
+
+Third candidate (`bf81f85e`): the supporting hand/forearm crowded the lower
+center and the motion felt like sliding. Original [comparison video](Pickaxe.raised-cursor.comparison.mp4)
+and [body video](Pickaxe.raised-cursor.body.mp4) remain intact, along with its
+[hold](images/raised-hold.png) and [contact](images/raised-contact.png).
+
 ## Implementation and verification
 
 Separate Blender source, GLB and AnimationLibrary: `Human.pickaxe_crosscut.*`.
 The pose table uses the original R11 rig and static finger wraps; no accepted
-swing keys are copied. This revision raises the ready head by about 49 cm
-relative to the second candidate and targets camera center at contact. It has
-a short descending follow-through and recovery to the raised diagonal hold.
-Both hands stay at fixed stations, -22 cm and +11 cm along the shaft.
+swing keys are copied. This revision uses a new compact hand path and broader
+rotation from the raised backswing through contact and follow-through. The
+supporting hand is lower and farther from the eye, reducing its foreground size.
+Both hands stay at fixed stations, -28 cm and 0 cm along the shaft.
 The right hand's closed grip is seated 30 degrees farther around the handle
 for this version, keeping its elbow lower and farther from the camera. That
 orientation is constant throughout the animation; neither hand slides.
@@ -74,8 +86,9 @@ Qualification results, per-frame measurements and preserved-default hashes are
 in `qualification.json` and `verification/`. They verify scoped mechanics;
 they do not establish that the new motion is visually better.
 
-26 candidate checks cover 1,902 poses sampled at 240 Hz, including the raised
-ready head and the actual skinned cutting point at the cursor centerline.
+28 candidate checks cover 1,902 poses sampled at 240 Hz, including ready-view
+framing, a broad angular sweep relative to grip travel, and the actual skinned
+cutting point at the cursor centerline. These still cannot establish good feel.
 Grip interpolation must remain below 1 mm / 0.3 degrees; arms must remain
 within the wrist/rotation bounds. Thirteen actual-world checks cover excavation and
 one durability change at contact, recovery and cancellation. The accepted
@@ -100,10 +113,12 @@ Further pose changes should be driven by the rejected/accepted moment, camera
 view and animation time. Default promotion requires an explicit acceptance;
 passing tests, committing the study or running the comparison is not acceptance.
 
-The first and second candidates' local source snapshots remain under
-`reports/pickaxe_crosscut/rejected_v1/` and `rejected_v2/`; their retained images
-are in this folder. The second revision is also recoverable from `241a4b88`.
+The first three candidates' local source snapshots remain under
+`reports/pickaxe_crosscut/rejected_v1/`, `rejected_v2/` and `rejected_v3/`;
+their retained images are in this folder. Revisions two and three are also
+recoverable from `241a4b88` and `bf81f85e`.
 Regenerate the revision using `tools/author_pickaxe_crosscut.py` on the original
 `Human.r11.blend`, then `tools/import_pickaxe_crosscut.gd`. Render with
 `tools/preview_pickaxe_crosscut.gd` (`-- --stills` for key poses), then encode
 with Blender and `tools/encode_pickaxe_crosscut_preview.py`.
+Capture the actual temporary-world poses with `tools/preview_pickaxe_crosscut_world.gd`.
