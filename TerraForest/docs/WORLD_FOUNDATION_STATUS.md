@@ -1,6 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Backpack excludes toolbelt in container screens — 2026-10-26
+
+Chest/corpse player grids now display only the 22 backpack slots (native indices
+10–31), matching the regular inventory. The separate toolbelt is not duplicated.
+Grid selection/drag retain native indices; hidden belt cells cannot be used as
+backpack cells. Container capacity stays independent, including legacy overflow.
+No item filtering by type, inventory capacity, save format or item data is changed.
+Source checks cover same-type stacks on belt/backpack, first/last backpack slots,
+exact deposits/drags, untouched belt data and compact/legacy container views.
+Packaged backpack and actual chest/corpse input checks pass; rendered corpse UI
+shows 22 empty backpack cells while the occupied toolbelt remains separate.
+The broader source inventory-presentation check retains one unrelated non-pass:
+its hardcoded eleven-recipe expectation conflicts with the concurrent torch
+recipe addition. Its other 32 checks pass. That fixture is left untouched here;
+refresh its recipe contract after the torch work is integrated, then rerun.
+Evidence and latest visual status: [backpack separation](../issues/inventory-backpack-separation/README.md).
+
 ## E container toggle and grass pickup eligibility — 2026-10-26
 
 E now closes open chest/corpse storage through the shared UI, consumes the event,

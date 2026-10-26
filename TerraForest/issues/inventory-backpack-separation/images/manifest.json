@@ -1,0 +1,16 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "corpse-backpack-only.png",
+      "source": "reports/interaction_workflow/corpse-open.png",
+      "source_run": "reports/backpack_storage_pack/container_e_toggle",
+      "world": "temporary seed-1703 world",
+      "seed": 1703,
+      "role": "packaged backpack-only correction; inspected, human review pending",
+      "context": "Real chest/corpse storage UI; corpse identity picker is a fixture. Different run from historical before image.",
+      "modified_pixels": false,
+      "sha256": "12540197969da13f9a1d8f47966bdc96cf2f9d50b2169ebfdf55d96f14b85d3f"
+    }
+  ]
+}

@@ -20,6 +20,11 @@ func picture(name:String)->void:
 func exercise(ui:CanvasLayer,label:String)->void:
 	await press(KEY_E)
 	check(ui.opened and game.player_hud.inventory_open and not game.player_hud.enabled,"E opens "+label)
+	var visible_slots:=0
+	for index in ui.player_list.buttons.size():
+		if ui.player_list.buttons[index].visible:visible_slots+=1
+		if index<10:check(not ui.player_list.buttons[index].visible,"%s inventory excludes belt slot %d"%[label,index])
+	check(visible_slots==22,"%s shows exactly 22 backpack slots"%label)
 	if label=="corpse loot":await picture("corpse-open")
 	await press(KEY_E,true)
 	check(ui.opened,"held E does not immediately close "+label)
