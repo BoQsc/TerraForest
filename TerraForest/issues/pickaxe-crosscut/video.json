@@ -1,0 +1,26 @@
+{
+  "status": "Revised candidate; not approved or selected as default",
+  "videos": [
+    {
+      "file": "Pickaxe.upper-right-to-lower-left.comparison.mp4",
+      "sha256": "b062b6ca4947ae95acdf00fdbdbbbbbbf8bff4911bc6847142e04da17dbaa05c",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        1920,
+        820
+      ]
+    },
+    {
+      "file": "Pickaxe.upper-right-to-lower-left.body.mp4",
+      "sha256": "11e5655575c6ef29019a211fdca2f5bea2741a2cfd4a64cab6e8dba324799916",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        1920,
+        820
+      ]
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved."
+}

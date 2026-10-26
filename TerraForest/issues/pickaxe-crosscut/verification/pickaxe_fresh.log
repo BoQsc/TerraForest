@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS normal game selects accepted fixed-grip hold and frame-50 contact
+PASS new hold and 1.7-second action are isolated in their own library
+PASS review library contains animation only, with no gameplay/method/audio events
+PASS new swing begins and ends at its own newly authored hold
+PASS both feet remain planted and root remains stationary during body movement
+PASS both hands maintain full fixed transforms on shaft, with no axial slide or regrip
+PASS sampled bone motion has no abrupt rotation or elbow flips
+PASS actual cutting point descends from shoulder load to contact
+PASS ordinary swing uses the accepted default after pose evaluation
+PASS movement selects dedicated fixed-grip locomotion clips
+PASS previous pullback remains available as an explicit alternate
+PICKAXE_FRESH checks=11 failures=0

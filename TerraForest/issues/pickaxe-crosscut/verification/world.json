@@ -1,0 +1,12 @@
+{
+	"checks": 13,
+	"failures": 0,
+	"impacts": [
+		{
+			"accepted": true,
+			"identity": 1,
+			"time": 0.7
+		}
+	],
+	"scope": "Ordinary scene, equipment, mouse input, native terrain and mining pipeline; no geometric tip alignment claim."
+}

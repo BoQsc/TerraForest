@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-26",
+  "engine": "Godot 4.7.2 Forward+ / RTX 4050",
+  "world": "Studio; no seed",
+  "camera": "75-degree vertical FOV first person; side camera (1.9,1.7,-2.0), FOV 54",
+  "captures": {
+    "rejected-contact.png": {
+      "source": "reports/pickaxe_crosscut/rejected_v1/body_contact.png",
+      "sha256": "b5d69a093afe5472a55bd66dcbff4bfab65aeaaa3c92256e2df1394409b08b86",
+      "status": "user rejected",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "rejected-hold.png": {
+      "source": "reports/pickaxe_crosscut/rejected_v1/comparison_hold.png",
+      "sha256": "f31e17d81a141ca703062914f71401a5632bc62bf7a2da9fcd37e484862c1f86",
+      "status": "user rejected",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "comparison-hold.png": {
+      "source": "reports/pickaxe_crosscut/comparison_hold.png",
+      "sha256": "57df00c53b77506a6e27053cd9aff0ce70a85b542f7c78790402c6f0a853b666",
+      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "revised-load.png": {
+      "source": "reports/pickaxe_crosscut/body_right_load.png",
+      "sha256": "ffc66a0685a581a831b988543245e6138b546ee37587779083378e1b94fb2d19",
+      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "revised-contact.png": {
+      "source": "reports/pickaxe_crosscut/body_contact.png",
+      "sha256": "00a6b472a3d5e837792d9825b2e0f0af581a6aeac6e5be50d6461a7807b8223d",
+      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "revised-follow.png": {
+      "source": "reports/pickaxe_crosscut/body_left_follow.png",
+      "sha256": "f30a4f8a0b8f976749effa50361eb6efa615ac6c61b21748ceee345c1ed8090e",
+      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "dimensions": [
+        1920,
+        820
+      ]
+    },
+    "revised-return.png": {
+      "source": "reports/pickaxe_crosscut/body_return.png",
+      "sha256": "078bb020796231b4cc75b6be3dcc08da272a0ee01e111ea54bb6e471e7dd2509",
+      "status": "revised after upper-right to lower-left clarification; awaiting review",
+      "dimensions": [
+        1920,
+        820
+      ]
+    }
+  }
+}
