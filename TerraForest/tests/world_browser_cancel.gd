@@ -17,13 +17,16 @@ func run()->void:
   await process_frame
  if not creating:failures+=1
  await create_timer(3.0).timeout
- browser.generation_screen.cancel_button.pressed.emit()
+ if browser.world_tabs.current_tab!=1 or browser.generation_screen!=null or not browser.preparation_panel.is_visible_in_tree():failures+=1
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("res://reports/world_browser_generating.png")
+ browser.cancel_button.pressed.emit()
  var started:=Time.get_ticks_msec();deadline=started+10000
  while browser.preparation_pid>=0 and Time.get_ticks_msec()<deadline:await process_frame
  var status:Variant=JSON.parse_string(FileAccess.get_file_as_string(browser.preparation_status)) if FileAccess.file_exists(browser.preparation_status) else null
  if browser.preparation_pid>=0 or browser.opened or not status is Dictionary or status.get("state","")!="cancelled":failures+=1
  if FileAccess.file_exists("user://worlds/"+slot+".trw") or FileAccess.file_exists("user://worlds/"+slot+".prepare.lock"):failures+=1
- if browser.cancel_button.visible or Engine.max_fps!=60 or not browser.notice.text.contains("cancelled"):failures+=1
+ if browser.preparation_panel.visible or browser.generate_button.disabled or Engine.max_fps!=60 or not browser.notice.text.contains("cancelled"):failures+=1
  for frame in 3:await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/world_browser_cancel.png")
  FileAccess.open("res://reports/world_browser_cancel.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"slot":slot,"status":status,"stop_ms":Time.get_ticks_msec()-started,"opened":browser.opened,"notice":browser.notice.text},"  "))

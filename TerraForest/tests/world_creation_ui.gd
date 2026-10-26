@@ -11,10 +11,10 @@ func run()->void:
  check(browser.buildable_ground.get_parent()==browser.buildable_roads.get_parent() and browser.buildable_ground.get_parent().get_parent().name=="BuildingGridFit","related generation preferences share one named group")
  var tabs:TabContainer=browser.find_children("*","TabContainer",true,false)[0];tabs.current_tab=1
  browser.name_field.text="Alder_Reach";browser.biome.select(1);browser.district_count.select(1);browser.road_network.select(1);browser.invalidate_preview()
- browser.start_preview()
+ check(browser.preview_worker==null and browser.preview_due_ms>Time.get_ticks_msec(),"recipe changes debounce the automatic preview")
  var deadline:=Time.get_ticks_msec()+90000
- while browser.preview_worker!=null and Time.get_ticks_msec()<deadline:await process_frame
- check(browser.preview_worker==null and browser.preview_view.texture!=null,"new recipe renders actual native plan preview")
+ while (browser.preview_worker!=null or browser.preview_due_ms>=0) and Time.get_ticks_msec()<deadline:await process_frame
+ check(browser.preview_worker==null and browser.preview_view.texture!=null,"opening Create world renders the latest recipe without pressing Preview")
  check(browser.preview_metrics.text.contains("44 BUILDINGS"),"expanded towns report real building count")
  var options:Dictionary=browser.selected_options()
  var command:=preload("res://demo/world_launch.gd").command("recipe_launch_check",true,browser.Launch.INTEGRATED_PRESET,1703,true,"user://recipe_launch_check",true,"connected",true,options)
@@ -22,8 +22,12 @@ func run()->void:
  check(decoded.ok and decoded.options==options,"every visible option reaches launch recipe")
  var old_key:String=browser.selected_preview_key();browser.offroads.select(2);browser.offroads.item_selected.emit(2)
  check(browser.preview_view.texture==null and browser.selected_preview_key()!=old_key,"settings invalidate preview and its identity")
- browser.offroads.select(1);browser.invalidate_preview();browser.start_preview()
- while browser.preview_worker!=null and Time.get_ticks_msec()<deadline:await process_frame
+ # Start the superseded recipe before editing again to exercise an in-flight result.
+ browser.start_preview()
+ browser.offroads.select(1);browser.invalidate_preview()
+ check(browser.preview_worker!=null and browser.preview_key!=browser.selected_preview_key(),"editing during a preview queues the newer recipe")
+ while (browser.preview_worker!=null or browser.preview_due_ms>=0) and Time.get_ticks_msec()<deadline:await process_frame
+ check(browser.preview_view.texture!=null and browser.preview_key==browser.selected_preview_key(),"rapid recipe changes automatically settle on the latest preview")
  for resolution:Vector2i in [Vector2i(1920,1080),Vector2i(1280,720)]:
   root.content_scale_size=resolution
   for frame in 8:await process_frame

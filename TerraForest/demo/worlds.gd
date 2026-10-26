@@ -32,6 +32,12 @@ var preview_status:Label
 var preview_worker:Thread
 var preview_key:=""
 var preview_button:Button
+var generate_button:Button
+var shuffle_button:Button
+var world_tabs:TabContainer
+var preparation_panel:PanelContainer
+const PREVIEW_DELAY_MS:=350
+var preview_due_ms:=-1
 var slots:=PackedStringArray()
 var photograph_pid:=-1
 var photograph_job:Node
@@ -73,6 +79,9 @@ func _ready() -> void:
 	var title:=heading(branding,"TERRAFOREST",32);title.add_theme_color_override("font_color",Color("91d5b4"));title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	heading(branding,"WORLDS / YOUR NEXT CHAPTER",16)
 	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;panel.add_child(columns)
+	world_tabs=columns
+	columns.tab_changed.connect(func(index:int):
+		if index==1 and preview_view!=null and preview_view.texture==null:preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS)
 	var saved:=VBoxContainer.new();saved.name="My worlds";saved.custom_minimum_size.x=850;saved.add_theme_constant_override("separation",16);columns.add_child(saved)
 	heading(saved,"Saved worlds")
 	sort_order=OptionButton.new();sort_order.add_item("Last played · newest first");sort_order.add_item("Created · newest first");sort_order.add_item("Name");sort_order.item_selected.connect(func(_index:int):refresh());saved.add_child(sort_order)
@@ -165,22 +174,39 @@ func launch_selected(create: bool) -> void:
 var preparation_started_unix_ms:=0
 
 func start_preparation(result:Dictionary,slot:String)->void:
+	if preparation_pid>=0 or photograph_pid>=0:return
 	preparation_started_unix_ms=preload("res://addons/world_runtime/loading_timer.gd").unix_milliseconds()
 	result.args.append("--loading-started-ms="+str(preparation_started_unix_ms))
 	preparation_slot=slot;preparation_gameplay=gameplay.button_pressed
 	preparation_status="user://world_preparation_%d_%d.json"%[OS.get_process_id(),Time.get_ticks_usec()]
 	preparation_cancel=preparation_status+".cancel";cancel_pending=false
 	result.args.append_array(PackedStringArray(["--status-file="+ProjectSettings.globalize_path(preparation_status),"--cancel-file="+ProjectSettings.globalize_path(preparation_cancel)]))
+	preparation_pid=OS.get_process_id();preparation_started_msec=Time.get_ticks_msec()
+	world_tabs.current_tab=1;_set_creation_busy(true)
+	preview_due_ms=-1
+	preparation_panel.show();preparation_panel.reset(preparation_started_unix_ms)
+	preparation_panel.show_progress("Generating "+slot,"Finishing the current preview…" if preview_worker!=null else "Starting world generation…",0)
+	cancel_button.show();cancel_button.disabled=false
+	# Reuse the finished plan without racing its cache writer or blocking the UI.
+	while preview_worker!=null:await get_tree().process_frame
+	if cancel_pending:
+		preparation_pid=-1;preparation_panel.stop_timer("cancelled");preparation_panel.hide();preparation_panel.set_process(false);_set_creation_busy(false)
+		notice.text="Generation cancelled. Existing saves are preserved."
+		if quit_pending:get_tree().quit()
+		return
 	preparation_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(preparation_job)
 	preparation_job.start(preload("res://addons/world_runtime/generation_coordinator.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
-	preparation_pid=OS.get_process_id()
-	cancel_button.show();cancel_button.disabled=false
-	preparation_started_msec=Time.get_ticks_msec()
 	Engine.max_fps=60
-	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=preparation_cancel;add_child(generation_screen)
-	generation_screen.panel.reset(preparation_started_unix_ms)
-	generation_screen.cancel_requested.connect(func():cancel_pending=true;cancel_button.disabled=true)
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
+
+func _set_creation_busy(active:bool)->void:
+	world_tabs.set_tab_disabled(0,active)
+	generate_button.disabled=active;shuffle_button.disabled=active;gameplay.disabled=active
+	preview_button.disabled=active or preview_worker!=null
+	name_field.editable=not active;seed_field.editable=not active
+	for toggle:CheckBox in [ocean,buildable_ground,buildable_roads]:toggle.disabled=active
+	for option:OptionButton in [preset,biome,settlement_count,district_count,road_network,offroads]:
+		option.disabled=active or (option!=preset and preset.get_selected_id()!=Launch.INTEGRATED_PRESET)
 
 func show_recovery()->void:
 	if preparation_pid>=0 or photograph_pid>=0:return
@@ -211,13 +237,14 @@ func _process(delta:float)->void:
 		if quit_pending:get_tree().quit()
 		return
 	if preparation_pid<0:return
+	if preparation_job==null:return # Waiting for an already-running preview.
 	preparation_poll-=delta
 	if preparation_poll>0:return
 	preparation_poll=0.5
 	if not preparation_job.done:
 		_update_preparation_notice();return
-	preparation_pid=-1;preparation_job.queue_free();preparation_job=null;Engine.max_fps=60;cancel_button.hide()
-	if generation_screen!=null:generation_screen.queue_free();generation_screen=null
+	preparation_pid=-1;preparation_job.queue_free();preparation_job=null;Engine.max_fps=60
+	preparation_panel.hide();preparation_panel.set_process(false);_set_creation_busy(false)
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	refresh()
 	if quit_pending:get_tree().quit();return
@@ -242,8 +269,7 @@ func _update_preparation_notice()->void:
 	var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(preparation_status)) if FileAccess.file_exists(preparation_status) else null
 	if cancel_pending:
 		notice.text="Cancelling generation…"
-		if generation_screen!=null:
-			generation_screen.cancellation_requested=true;generation_screen.panel.stop_timer("cancelling");generation_screen.detail.text=notice.text;generation_screen.cancel_button.disabled=true
+		preparation_panel.stop_timer("cancelling");preparation_panel.detail.text=notice.text;cancel_button.disabled=true
 		return
 	var stage:="Starting world generation"
 	var state:=str(result.get("state","")) if result is Dictionary else ""
@@ -261,11 +287,9 @@ func _update_preparation_notice()->void:
 		if not str(detail.get("stage","")).is_empty():
 			stage=str(detail.get("details",{}).get("activity",detail.stage))
 			if int(detail.get("total",0))>0 and not detail.get("details",{}).has("activity"):stage+=" · %d / %d"%[int(detail.get("completed",0)),int(detail.total)]
-	if generation_screen!=null:
-		generation_screen.update_status(state,stage,detail,result if result is Dictionary else {})
-		if generation_screen.picture.texture==null and result is Dictionary:
-			var photo:String=str(result.get("report","")).path_join("loading_north.png")
-			if FileAccess.file_exists(photo):generation_screen.use_photograph(photo)
+	preparation_panel.show_progress("Generating "+preparation_slot,stage,preload("res://addons/world_runtime/progress_meter.gd").coordinator(state,detail))
+	preparation_panel.show_work(str(detail.get("details",{}).get("work","")))
+	if state in ["failed","cancelled"]:preparation_panel.stop_timer(state)
 	var elapsed:int=maxi(0,Time.get_ticks_msec()-preparation_started_msec)/1000
 	notice.text="%s · %s · %d:%02d"%[preparation_slot,stage,elapsed/60,elapsed%60]
 
@@ -294,10 +318,12 @@ func update_recipe_summary()->void:
 	recipe_summary.text="%d settlements  ·  %d districts  ·  %s\nGenerate → Load → Play, in this window."%[towns,towns*districts,biome.get_item_text(biome.selected)]
 func invalidate_preview()->void:
 	preview_view.texture=null
-	preview_empty.show();preview_metrics.text="SETTINGS CHANGED  ·  Preview needed";update_recipe_summary()
-	preview_status.text="Settings changed. Preview the new world plan before creating."
+	preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS
+	preview_empty.show();preview_metrics.text="UPDATING PREVIEW…";update_recipe_summary()
+	preview_status.text="The preview updates automatically after you finish changing settings."
 func start_preview()->void:
-	if preview_worker!=null:return
+	if preview_worker!=null or preparation_pid>=0 or photograph_pid>=0:return
+	preview_due_ms=-1
 	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
@@ -307,17 +333,19 @@ func start_preview()->void:
 	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
-	if preview_worker==null:return
+	if preview_worker==null:
+		if preview_due_ms>=0 and Time.get_ticks_msec()>=preview_due_ms and world_tabs.current_tab==1:start_preview()
+		return
 	if preview_worker.is_alive():
 		preview_metrics.text="PLANNING  ·  %.1f s elapsed  ·  Native worker / UI remains interactive"%((Time.get_ticks_msec()-preview_started)/1000.0)
 		if plan_progress!=null and preview_key==selected_preview_key():
 			var current:Dictionary=plan_progress.snapshot()
 			if not current.is_empty():preview_status.text=current.activity+"\n"+current.work
 		return
-	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=false
+	var completed=preview_worker.wait_to_finish();preview_worker=null;preview_button.disabled=preparation_pid>=0
 	if not completed is Dictionary:preview_status.text="Terrain preview failed. Try again after checking the generator log.";return
 	var result:Dictionary=completed
-	if preview_key!=selected_preview_key():preview_metrics.text="SETTINGS CHANGED  ·  Preview needed";return
+	if preview_key!=selected_preview_key():return # A debounced preview of the latest recipe is pending.
 	if not result.get("ok",false):preview_status.text=str(result.get("reason","Terrain preview failed."))+" No world was created.";preview_metrics.text="PLAN UNAVAILABLE  ·  Adjust settings or try another seed";preview_empty.show();return
 	preview_empty.hide()
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
