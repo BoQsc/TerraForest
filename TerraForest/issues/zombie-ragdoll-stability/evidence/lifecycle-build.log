@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 162.0 ms at 26769
+[terrain-hitch] base controller 163.84 ms at 26770
+[terrain-hitch] controller process 165.67 ms at 26772
+[terrain-hitch] world process 167.5 ms at 26774
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 99.72 ms at 27107
+[terrain-hitch] base controller 126.4 ms at 27134
+[terrain-hitch] controller process 127.2 ms at 27135
+[terrain-hitch] world process 128.1 ms at 27136
+PASS actual playable world and corpse save component initialize
+PASS native scatter deterministically supplies very large gathering stones
+PASS native target proxy identifies the large stone
+PASS ordinary pickup cannot bypass boulder mining
+PASS mined boulder grants 24 stone and removes its saved identity
+PASS mined boulder cannot grant stone twice
+PASS natural tree is resident for actual harvest
+PASS successful harvest transfers the tree into native toppling presentation
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS real encounter zombie spawns on supported terrain
+Zombie ragdoll started with 15 physical bones.
+PASS death creates a stable native loot inventory exactly once
+PASS actual skinned corpse targeting finds its storage
+PASS normal E interaction opens corpse inventory
+PASS opening loot freezes the corpse while gameplay is paused
+PASS normal native storage transfer takes corpse loot
+PASS truncated corpse packet is rejected without mutation
+PASS normal ground-cover streaming publishes a naturally supported boulder
+PASS normal compound save publishes corpse loot and player inventory together
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS normal world shutdown drains
+GATHERING_LIFECYCLE checks=18 failures=0 reopen=false

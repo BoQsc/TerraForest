@@ -1,0 +1,131 @@
+[
+  {
+    "test": "zombie_rest_support",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 62152,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 30.368746899999678,
+    "passed": true
+  },
+  {
+    "test": "zombie_ragdoll_stress",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 85544,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL all supported pieces settle: far_origin",
+      "FAIL all supported pieces settle: ground_pile",
+      "FAIL all supported pieces settle: pile",
+      "FAIL finite bounded articulated motion: far_origin_lowered_support",
+      "FAIL finite bounded articulated motion: far_origin_settle",
+      "FAIL finite bounded articulated motion: far_origin_wake",
+      "FAIL finite bounded articulated motion: ledge_settle",
+      "FAIL finite bounded articulated motion: pile_settle"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 190.28224359999876,
+    "passed": false
+  },
+  {
+    "test": "zombie_combat_regions",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 70912,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 19.15658800001256,
+    "passed": true
+  },
+  {
+    "test": "zombie_ragdoll_reactivation",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 63632,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 74.59845990000758,
+    "passed": true
+  },
+  {
+    "test": "zombie_anatomy",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 80968,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.2771895999321714,
+    "passed": true
+  },
+  {
+    "test": "zombie_awareness",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 72244,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.4059471999062225,
+    "passed": true
+  },
+  {
+    "test": "zombie_geometry_cache",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 77792,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.680105600040406,
+    "passed": true
+  },
+  {
+    "test": "zombie_behavior",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 61360,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 43.520765899913386,
+    "passed": true
+  },
+  {
+    "test": "zombie_step_guard",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 77392,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 13.991207200102508,
+    "passed": true
+  },
+  {
+    "test": "zombie_slope_contract",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 52976,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 7.817606500000693,
+    "passed": true
+  }
+]

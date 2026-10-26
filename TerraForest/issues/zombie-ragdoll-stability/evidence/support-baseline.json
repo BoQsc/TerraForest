@@ -1,0 +1,90 @@
+{
+  "checks": 16,
+  "failures": 4,
+  "samples": [
+    {
+      "contact": {
+        "body": "(950.0, 35.1797, 1130.0)",
+        "collider": "(950.0, 35.0, 1130.0)",
+        "local": "(950.0, 34.93849, 1130.0)",
+        "normal": "(0.0, 1.0, 0.0)"
+      },
+      "drop": 0.111927032470703,
+      "initial_y": 35.189998626709,
+      "lowered_y": 35.0780715942383,
+      "shape": "sphere",
+      "stats": {
+        "bodies": 1,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.000000596046447753906,
+        "resting": 0,
+        "settle_events": 0,
+        "sleeping": 1
+      }
+    },
+    {
+      "contact": {
+        "body": "(950.0, 35.098, 1130.0)",
+        "collider": "(949.8, 35.0, 1130.3)",
+        "local": "(949.8, 34.998, 1130.3)",
+        "normal": "(0.0, 1.0, 0.0)"
+      },
+      "drop": 0.127998352050781,
+      "initial_y": 35.0979995727539,
+      "lowered_y": 34.9700012207031,
+      "shape": "box",
+      "stats": {
+        "bodies": 1,
+        "groups": 1,
+        "maximum_angular_speed": 0.000212364917388186,
+        "maximum_linear_speed": 0.0000784241419751197,
+        "resting": 0,
+        "settle_events": 0,
+        "sleeping": 1
+      }
+    },
+    {
+      "contact": {
+        "body": "(949.9716, 35.1029, 1130.0)",
+        "collider": "(950.2067, 35.0, 1130.0)",
+        "local": "(950.2067, 34.98325, 1130.0)",
+        "normal": "(0.0, 1.0, 0.0)"
+      },
+      "drop": 0.0,
+      "initial_y": 35.0693321228027,
+      "lowered_y": 35.0693321228027,
+      "shape": "capsule",
+      "stats": {
+        "bodies": 1,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 1,
+        "settle_events": 1,
+        "sleeping": 1
+      }
+    },
+    {
+      "contact": {
+        "body": "(949.9716, 35.1029, 1130.0)",
+        "collider": "(950.2067, 35.0, 1130.0)",
+        "local": "(950.2067, 34.98325, 1130.0)",
+        "normal": "(0.0, 1.0, 0.0)"
+      },
+      "drop": 0.0,
+      "initial_y": 35.0693321228027,
+      "lowered_y": 35.0693321228027,
+      "shape": "rotated_body",
+      "stats": {
+        "bodies": 1,
+        "groups": 1,
+        "maximum_angular_speed": 0.0,
+        "maximum_linear_speed": 0.0,
+        "resting": 1,
+        "settle_events": 1,
+        "sleeping": 1
+      }
+    }
+  ]
+}

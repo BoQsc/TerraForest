@@ -1,0 +1,436 @@
+{
+  "cases": [
+    {
+      "case": "flat",
+      "hz": 120,
+      "lowered": {
+        "anchor_bone": "Physical_LeftHand",
+        "anchor_error": 0.00851172581315041,
+        "anchor_frame": 60,
+        "anchor_pose": "Zombie_Idle",
+        "angular": 21.8869247436523,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(1.050978, 0.085146, -7.20137)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 3,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(0.278312, 0.08461, -1.775631)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 3,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.489406, 0.05065, 2.327758)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 3,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.127274, 0.042522, 7.41431)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 3,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 2.150874376297,
+        "phase": "flat_lowered_support",
+        "physics_ms": 7.913,
+        "radius": 0.912301898002625,
+        "sleeping": 60
+      },
+      "pushed": {
+        "anchor_bone": "Physical_LeftForeArm",
+        "anchor_error": 0.00352842593565583,
+        "anchor_frame": 84,
+        "anchor_pose": "Zombie_Idle",
+        "angular": 3.2150821685791,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(1.049512, 0.209751, -7.200861)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(0.277676, 0.209563, -1.778004)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.489827, 0.177685, 2.326737)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.132315, 0.168462, 7.406617)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 0.247278735041618,
+        "phase": "flat_wake",
+        "physics_ms": 11.836,
+        "radius": 0.906337320804596,
+        "sleeping": 60
+      },
+      "settled": {
+        "anchor_bone": "Physical_LeftHand",
+        "anchor_error": 0.0284174960106611,
+        "anchor_frame": 168,
+        "anchor_pose": "Zombie_Idle",
+        "angular": 60.6593780517578,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(1.044402, 0.210704, -7.200466)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 1,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(0.275913, 0.212045, -1.778222)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 1,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.492512, 0.178136, 2.327394)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 1,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.133603, 0.169102, 7.40662)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 1,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 1,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 5.20206165313721,
+        "phase": "flat_settle",
+        "physics_ms": 245.848,
+        "radius": 0.957373380661011,
+        "sleeping": 60
+      },
+      "support_drop_moved": 4
+    },
+    {
+      "case": "severed",
+      "hz": 120,
+      "lowered": {
+        "anchor_bone": "Physical_LeftHand",
+        "anchor_error": 0.008482800796628,
+        "anchor_frame": 18,
+        "anchor_pose": "Zombie_Walk_Drag_Right",
+        "angular": 14.4519910812378,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(0.896223, 0.085992, -7.056855)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 6,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.290745, 0.219791, -2.270898)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 2.25300931930542,
+              "maximum_linear_speed": 0.130675122141838,
+              "resting": 0,
+              "settle_events": 4,
+              "sleeping": 0
+            }
+          },
+          {
+            "hips": "(-0.58949, 0.061556, 2.419506)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.00066556065576151,
+              "maximum_linear_speed": 0.0000334477008436807,
+              "resting": 14,
+              "settle_events": 3,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.118218, 0.043681, 7.420992)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 6,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 2.51322197914124,
+        "phase": "severed_lowered_support",
+        "physics_ms": 9.104,
+        "radius": 0.936788380146027,
+        "sleeping": 45
+      },
+      "pushed": {
+        "anchor_bone": "Physical_LeftHand",
+        "anchor_error": 0.0110974442213774,
+        "anchor_frame": 84,
+        "anchor_pose": "Zombie_Walk_Drag_Right",
+        "angular": 17.9526557922363,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(0.892, 0.206325, -7.05277)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 4,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.269211, 0.325479, -2.287704)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 4,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.590704, 0.179346, 2.419234)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.00093569845193997,
+              "maximum_linear_speed": 0.0000821292924229056,
+              "resting": 14,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.126911, 0.171252, 7.429187)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 4,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 0.619699776172638,
+        "phase": "severed_wake",
+        "physics_ms": 12.079,
+        "radius": 0.936896502971649,
+        "sleeping": 60
+      },
+      "settled": {
+        "anchor_bone": "Physical_RightLeg",
+        "anchor_error": 0.0326227582991123,
+        "anchor_frame": 24,
+        "anchor_pose": "Zombie_Attack_Both",
+        "angular": 46.7556571960449,
+        "bodies": 60,
+        "ccd": true,
+        "details": [
+          {
+            "hips": "(0.885131, 0.207594, -7.046311)",
+            "pose": "Zombie_Idle",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.269491, 0.328311, -2.275069)",
+            "pose": "Zombie_Walk_Drag_Right",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.588569, 0.17894, 2.420083)",
+            "pose": "Zombie_Attack_Both",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.000986266182735562,
+              "maximum_linear_speed": 0.0000368115142919123,
+              "resting": 14,
+              "settle_events": 1,
+              "sleeping": 15
+            }
+          },
+          {
+            "hips": "(-0.129383, 0.173201, 7.430244)",
+            "pose": "Zombie_Crawl",
+            "stats": {
+              "bodies": 15,
+              "groups": 2,
+              "maximum_angular_speed": 0.0,
+              "maximum_linear_speed": 0.0,
+              "resting": 15,
+              "settle_events": 2,
+              "sleeping": 15
+            }
+          }
+        ],
+        "finite": true,
+        "joints": true,
+        "linear": 6.27465391159058,
+        "phase": "severed_settle",
+        "physics_ms": 149.594,
+        "radius": 0.942565619945526,
+        "sleeping": 60
+      },
+      "support_drop_moved": 4
+    }
+  ],
+  "failures": 0,
+  "scope": "Finite physical fixtures; instruments add observer cost, not an uninstrumented gameplay frame benchmark."
+}

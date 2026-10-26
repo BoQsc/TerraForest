@@ -378,9 +378,13 @@ This supersedes the old six-second forest settling failure for the tested fixtur
 not all varied-terrain/endurance coverage. Earlier animated-hit failures (6 and 11
 assertions in two packaged runs) remain retained; later traced graphical checks
 pass, but their earlier cause is not assigned. Return if those failures recur with
-the new cancellation/focus trace. Wider corpse-pile, extreme-impact, varied-pose/
-terrain and lower-end/endurance qualification remains open; close only with
-repeatable physical/contact/rendered evidence. Player acceptance is still separate.
+the new cancellation/focus trace. Wider qualification is now tracked in
+`../issues/zombie-ragdoll-stability/README.md`: the expanded campaign exposes
+real initial-impact stretch and dense-pile instability, not universal resolution.
+Small support withdrawals and cross-owner contact islands have native corrections;
+the new tests retain their failed gates. Close the remaining varied-pose/terrain,
+extreme-impact and lower-end/endurance scope only with repeatable physical/contact/
+rendered evidence. Player acceptance is still separate.
 
 ## New saved shoulder failure; universal contact is not achieved — 2026-10-25
 

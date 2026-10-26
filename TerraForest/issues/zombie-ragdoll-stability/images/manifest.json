@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-26",
+  "review": "Inspected engineering captures; player acceptance remains unreviewed. Original PNGs, no image editing.",
+  "images": [
+    {
+      "file": "flat-final.png",
+      "sha256": "255af0137ff3a3d8f21e4e5bd3057a4b0365e26c78bfcca2c086078b1353437a",
+      "source": "reports/checks/20261026T175333152918Z_zombies_pack/zombie_ragdoll_stress/evidence/flat-settled.png",
+      "record": "../evidence/graphical-final-run.json",
+      "context": "Final packaged 60 Hz isolated flat fixture; no world seed. Four death poses, all 60 physical bodies asleep. Improved scoped result, not universal acceptance."
+    },
+    {
+      "file": "ground-pile-unresolved.png",
+      "sha256": "c546c182ab0ddee5275bb2485e8094bb7aa7bc824512b54ddcc0cb2adc826632",
+      "source": "reports/checks/20261026T175333152918Z_zombies_pack/zombie_ragdoll_stress/evidence/ground_pile-settled.png",
+      "record": "../evidence/graphical-final-run.json",
+      "context": "Final packaged 60 Hz isolated ground-level pile; no world seed. Eight corpses, zero of 120 bodies asleep after twelve seconds. Unresolved performance/stability case despite a still screenshot."
+    },
+    {
+      "file": "corpse-reopened-final.png",
+      "sha256": "85c0ae3ddddd00b9424aae477c2a50a4f57af4c5b3c4006019da93cfe8bc86c8",
+      "source": "reports/checks/20261026T175458690220Z_gathering_lifecycle_pack/reopen/captures/corpse_restored.png",
+      "record": "../evidence/lifecycle-reopen-run.json",
+      "context": "Final packaged fresh-process read-only reopen of owned gather_lifecycle_f843c333a27a4e31b0f74425, seed 1703. Visible intact corpse; nine reopen checks pass, including rest and external physical reactivation. Not a player save."
+    },
+    {
+      "file": "forest-contact.png",
+      "sha256": "9e39f405360ffa6242d8980ac3c889a4ae1ce721d8418b32ca86ea1896d99a6e",
+      "source": "reports/checks/20261026T172657626432Z_zombies_pack/zombie_ragdoll_reactivation/evidence/after.png",
+      "record": "../evidence/forest-contact-run.json",
+      "context": "Earlier verified packaged link, temporary generated seed 1703 forest. After walking, landing, loot pause and repeated physical reactivation; all fifteen phases pass. Different pose/view from the fresh-process reopen."
+    },
+    {
+      "file": "prior-stairs-window.png",
+      "sha256": "aacdf0ac98a0d76186a35c03dc6169dffb7b5564dbb9e09ec9a4833b733e5543",
+      "source": "reports/checks/20261026T172657626432Z_zombies_pack/zombie_ragdoll_stress/evidence/stairs-settled.png",
+      "record": "../evidence/graphical-stress-run.json",
+      "context": "Earlier packaged 60 Hz isolated stairs fixture; no world seed. White diagnostic floor. Bounded motion but one corpse remains awake at eight seconds, 45/60 bodies asleep. Retained failure, not an approved pose or matching-view before/after."
+    },
+    {
+      "file": "prior-severed-window.png",
+      "sha256": "f90355e68da020d4cf9a90a878f62890923801ad10ba97187b69293c41c09b35",
+      "source": "reports/checks/20261026T172657626432Z_zombies_pack/zombie_ragdoll_stress/evidence/severed-settled.png",
+      "record": "../evidence/graphical-stress-run.json",
+      "context": "Earlier packaged 60 Hz isolated severed-chain fixture; no world seed. Four different cuts; one corpse remains awake at eight seconds, 45/60 bodies asleep. Retained failure. Camera/material differ from final gray-floor captures."
+    }
+  ]
+}

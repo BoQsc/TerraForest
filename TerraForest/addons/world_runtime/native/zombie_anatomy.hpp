@@ -31,8 +31,11 @@ class NativeZombieAnatomy : public godot::RefCounted {
         godot::Ref<godot::Skin> skin;
         std::vector<godot::Transform3D> binds;std::vector<Surface> surfaces;
     };
-    struct Ragdoll {std::vector<uint64_t> bodies;std::vector<godot::Transform3D> still_poses;double quiet=0,still=0;bool ground_damped=false,resting=false;};
+    struct Ragdoll {std::vector<uint64_t> bodies;std::vector<godot::Transform3D> still_poses;std::vector<godot::Vector2> damping;uint64_t support_body=0;godot::Vector3 support_local;double quiet=0,still=0;bool ground_damped=false,resting=false;};
     std::array<Part,14> parts_;
+    static std::vector<uint64_t> ragdoll_owners_;
+    static uint64_t ragdoll_frame_;
+    static double ragdoll_clock_;
     std::vector<Ragdoll> ragdolls_;
     std::vector<godot::Transform3D> death_poses_;
     std::vector<godot::Transform3D> geometry_rest_,geometry_pose_,geometry_mesh_transforms_;
@@ -40,7 +43,7 @@ class NativeZombieAnatomy : public godot::RefCounted {
     std::array<std::vector<double>,14> geometry_morphs_;
     godot::Dictionary fitted_shapes_;
     bool geometry_valid_=false,geometry_reused_=false,shapes_reused_=false;
-    uint64_t skeleton_=0;double health_=180,maximum_=180,ragdoll_clock_=0;
+    uint64_t skeleton_=0;double health_=180,maximum_=180;
     int vertices_=0,triangles_=0,settle_events_=0;bool configured_=false;
     static int part_index(const godot::String &part);
     void invalidate_geometry();
@@ -48,6 +51,7 @@ class NativeZombieAnatomy : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    ~NativeZombieAnatomy() override;
     bool configure(const godot::Dictionary &definitions);
     bool set_hit_meshes(godot::Skeleton3D *skeleton,const godot::Dictionary &meshes,const godot::Ref<NativeZombieAnatomy> &geometry=godot::Ref<NativeZombieAnatomy>());
     godot::PackedVector3Array sample_vertices(const godot::String &part,const godot::Transform3D &to_local) const;

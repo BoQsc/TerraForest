@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 171.72 ms at 25496
+[terrain-hitch] base controller 173.49 ms at 25498
+[terrain-hitch] controller process 175.38 ms at 25500
+[terrain-hitch] world process 177.2 ms at 25502
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual playable world and corpse save component initialize
+PASS fresh process restores exact corpse records, poses and inventories
+PASS fresh process restores matching player inventory
+PASS felled tree and mined boulder stay harvested after reopening
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ragdoll started with 15 physical bones.
+PASS saved corpse rematerializes near the player
+CORPSE_RESTORED {"camera":"(802.9752, 51.12987, 1313.317)","mode":0,"stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.737289547920227,"maximum_linear_speed":0.0253361165523529,"resting":0,"settle_events":0,"sleeping":0},"target":1,"torso":"(802.9752, 49.62987, 1311.117)","visible":true}
+CORPSE_RESTORED_GEOMETRY {"ground":"(802.9752, 49.47233, 1311.117)","mesh_center":"(802.9581, 49.64667, 1310.958)","root":"(803.0, 49.52094, 1310.0)","saved":"[0.8438720703125, 0.53427863121033, -0.04925801232457, 802.9404296875, 0.07971908152103, -0.21563889086246, -0.97321367263794, 49.6403007507324, -0.53058922290802, 0.81734091043472, -0.22456385195255, 1311.1259765625]"}
+PASS restored corpse is visible and targetable through its real skinned body
+PASS restored intact corpse settles with all physical limbs present
+PASS restored corpse responds to a physical push without exploding and settles again
+[TerrainRewrite] Temporary test world: save skipped
+PASS normal world shutdown drains
+GATHERING_LIFECYCLE checks=9 failures=0 reopen=true

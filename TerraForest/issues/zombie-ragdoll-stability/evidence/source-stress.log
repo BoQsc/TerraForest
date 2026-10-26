@@ -1,0 +1,262 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: flat
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: flat
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: flat
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: flat
+Zombie ragdoll started with 15 physical bones.
+PASS finite bounded articulated motion: flat_settle
+PASS anatomical joints retained: flat_settle
+PASS active bodies retain swept collision: flat_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightLeg","anchor_error":0.066558837890625,"anchor_frame":12,"anchor_pose":"Zombie_Attack_Both","angular":35.7922477722168,"bodies":60,"ccd":true,"details":[{"hips":"(-0.428615, 0.210788, -6.623389)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(0.339316, 0.181922, -3.244117)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.038035, 0.19823, 2.184389)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.142776, 0.163448, 7.408267)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":5.34363222122192,"phase":"flat_settle","physics_ms":228.833,"radius":0.917712211608887,"sleeping":60}
+PASS all supported pieces settle: flat
+PASS dead zombies retain zero health and no animation/behavior motor: flat
+PASS finite bounded articulated motion: flat_wake
+PASS anatomical joints retained: flat_wake
+PASS active bodies retain swept collision: flat_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0174617506563663,"anchor_frame":36,"anchor_pose":"Zombie_Idle","angular":26.1504745483398,"bodies":60,"ccd":true,"details":[{"hips":"(-0.436939, 0.207474, -6.606919)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(0.343655, 0.181348, -3.268616)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.034639, 0.201435, 2.176641)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.141962, 0.163067, 7.409187)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":1.3817126750946,"phase":"flat_wake","physics_ms":15.271,"radius":0.919624984264374,"sleeping":60}
+PASS finite bounded articulated motion: flat_lowered_support
+PASS anatomical joints retained: flat_lowered_support
+PASS active bodies retain swept collision: flat_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.016827454790473,"anchor_frame":12,"anchor_pose":"Zombie_Walk_Drag_Right","angular":16.0429782867432,"bodies":60,"ccd":true,"details":[{"hips":"(-0.445256, 0.081491, -6.606653)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.930906593799591,"maximum_linear_speed":0.0573425702750683,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(0.325988, 0.049819, -3.296407)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.56484162807465,"maximum_linear_speed":0.141559138894081,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(-0.060997, 0.077191, 2.176001)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.140204, 0.043167, 7.407524)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}}],"finite":true,"joints":true,"linear":2.11286234855652,"phase":"flat_lowered_support","physics_ms":12.6,"radius":0.920061647891998,"sleeping":30}
+PASS small support edits do not leave corpses floating: flat
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: slope
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: slope
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: slope
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: slope
+Zombie ragdoll started with 15 physical bones.
+PASS finite bounded articulated motion: slope_settle
+PASS anatomical joints retained: slope_settle
+PASS active bodies retain swept collision: slope_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftLeg","anchor_error":0.0533584542572498,"anchor_frame":12,"anchor_pose":"Zombie_Idle","angular":56.2830963134766,"bodies":60,"ccd":true,"details":[{"hips":"(-0.182362, 0.159621, -8.05337)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.316396, 0.11061, -3.194471)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.202575, 0.166918, 1.977991)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.245803, 0.159396, 7.334868)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":6.20200681686401,"phase":"slope_settle","physics_ms":124.201,"radius":1.02184915542603,"sleeping":60}
+PASS all supported pieces settle: slope
+PASS dead zombies retain zero health and no animation/behavior motor: slope
+PASS finite bounded articulated motion: slope_wake
+PASS anatomical joints retained: slope_wake
+PASS active bodies retain swept collision: slope_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightFoot","anchor_error":0.00765333650633693,"anchor_frame":24,"anchor_pose":"Zombie_Attack_Both","angular":3.590980052948,"bodies":60,"ccd":true,"details":[{"hips":"(-0.184239, 0.158888, -8.054953)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.319785, 0.109957, -3.198036)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.208306, 0.165218, 1.983664)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.247799, 0.159842, 7.337714)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":0.45817169547081,"phase":"slope_wake","physics_ms":14.462,"radius":1.00182235240936,"sleeping":60}
+PASS finite bounded articulated motion: slope_lowered_support
+PASS anatomical joints retained: slope_lowered_support
+PASS active bodies retain swept collision: slope_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightArm","anchor_error":0.014848630875349,"anchor_frame":24,"anchor_pose":"Zombie_Crawl","angular":13.5398120880127,"bodies":60,"ccd":true,"details":[{"hips":"(-0.217876, 0.024049, -8.048801)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.346046, -0.025206, -3.194369)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.237752, 0.030108, 1.993404)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.254212, 0.029101, 7.336706)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":2.1319887638092,"maximum_linear_speed":0.150999471545219,"resting":0,"settle_events":2,"sleeping":0}}],"finite":true,"joints":true,"linear":2.0413830280304,"phase":"slope_lowered_support","physics_ms":6.856,"radius":0.99663519859314,"sleeping":45}
+PASS small support edits do not leave corpses floating: slope
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: stairs
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: stairs
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: stairs
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: stairs
+Zombie ragdoll started with 15 physical bones.
+PASS finite bounded articulated motion: stairs_settle
+PASS anatomical joints retained: stairs_settle
+PASS active bodies retain swept collision: stairs_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightLeg","anchor_error":0.0605314411222935,"anchor_frame":12,"anchor_pose":"Zombie_Attack_Both","angular":38.5265769958496,"bodies":60,"ccd":true,"details":[{"hips":"(0.636155, 0.547566, -8.071688)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(0.478517, 1.585203, -3.337613)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.67726, 2.779226, 2.73659)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.083062, 3.690477, 7.331954)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":5.21240568161011,"phase":"stairs_settle","physics_ms":127.762,"radius":1.02350175380707,"sleeping":60}
+PASS all supported pieces settle: stairs
+PASS dead zombies retain zero health and no animation/behavior motor: stairs
+PASS finite bounded articulated motion: stairs_wake
+PASS anatomical joints retained: stairs_wake
+PASS active bodies retain swept collision: stairs_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightFoot","anchor_error":0.0132726803421974,"anchor_frame":36,"anchor_pose":"Zombie_Attack_Both","angular":8.21005535125732,"bodies":60,"ccd":true,"details":[{"hips":"(0.637082, 0.548005, -8.072261)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(0.502753, 1.591246, -3.386195)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.04707491397858,"maximum_linear_speed":0.120787121355534,"resting":0,"settle_events":1,"sleeping":0}},{"hips":"(-0.676628, 2.775829, 2.737414)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.08374, 3.68186, 7.319111)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":0.994656503200531,"phase":"stairs_wake","physics_ms":17.289,"radius":1.02681684494019,"sleeping":45}
+PASS finite bounded articulated motion: stairs_lowered_support
+PASS anatomical joints retained: stairs_lowered_support
+PASS active bodies retain swept collision: stairs_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftForeArm","anchor_error":0.0169173777103424,"anchor_frame":18,"anchor_pose":"Zombie_Crawl","angular":29.7207527160645,"bodies":60,"ccd":true,"details":[{"hips":"(0.639294, 0.427464, -8.074018)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.56884527206421,"maximum_linear_speed":0.145002841949463,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(0.501452, 1.472064, -3.40103)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.69564342498779,"maximum_linear_speed":0.0936815738677979,"resting":0,"settle_events":1,"sleeping":0}},{"hips":"(-0.672676, 2.647871, 2.714603)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.084249, 3.545333, 7.310637)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":29.7207527160645,"maximum_linear_speed":0.740906059741974,"resting":0,"settle_events":2,"sleeping":0}}],"finite":true,"joints":true,"linear":2.39320182800293,"phase":"stairs_lowered_support","physics_ms":6.616,"radius":1.03725576400757,"sleeping":15}
+PASS small support edits do not leave corpses floating: stairs
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: rubble
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: rubble
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: rubble
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: rubble
+Zombie ragdoll started with 15 physical bones.
+PASS finite bounded articulated motion: rubble_settle
+PASS anatomical joints retained: rubble_settle
+PASS active bodies retain swept collision: rubble_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightLeg","anchor_error":0.0701124221086502,"anchor_frame":72,"anchor_pose":"Zombie_Attack_Both","angular":38.6577453613281,"bodies":60,"ccd":true,"details":[{"hips":"(-0.14344, 0.307214, -7.991277)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.682708, 0.297121, -2.515652)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.391494, 0.379702, 2.808792)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.168828, 0.17735, 7.417074)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":6.05919599533081,"phase":"rubble_settle","physics_ms":140.92,"radius":1.06028723716736,"sleeping":60}
+PASS all supported pieces settle: rubble
+PASS dead zombies retain zero health and no animation/behavior motor: rubble
+PASS finite bounded articulated motion: rubble_wake
+PASS anatomical joints retained: rubble_wake
+PASS active bodies retain swept collision: rubble_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0290517453104258,"anchor_frame":6,"anchor_pose":"Zombie_Walk_Drag_Right","angular":5.32585430145264,"bodies":60,"ccd":true,"details":[{"hips":"(-0.138429, 0.307004, -7.99277)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.685609, 0.294662, -2.536487)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.392163, 0.378948, 2.808007)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.167935, 0.177894, 7.418877)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":0.407863050699234,"phase":"rubble_wake","physics_ms":12.038,"radius":1.04614055156708,"sleeping":60}
+PASS finite bounded articulated motion: rubble_lowered_support
+PASS anatomical joints retained: rubble_lowered_support
+PASS active bodies retain swept collision: rubble_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0234301630407572,"anchor_frame":12,"anchor_pose":"Zombie_Walk_Drag_Right","angular":20.6988773345947,"bodies":60,"ccd":true,"details":[{"hips":"(-0.130719, 0.182392, -7.996628)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.687271, 0.148563, -2.544008)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":5.1388840675354,"maximum_linear_speed":0.452353149652481,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(-0.402294, 0.256828, 2.797372)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.160858, 0.052586, 7.41957)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}}],"finite":true,"joints":true,"linear":2.02958273887634,"phase":"rubble_lowered_support","physics_ms":7.274,"radius":1.04403734207153,"sleeping":45}
+PASS small support edits do not leave corpses floating: rubble
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: corner
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: corner
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: corner
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: corner
+Zombie ragdoll started with 15 physical bones.
+PASS finite bounded articulated motion: corner_settle
+PASS anatomical joints retained: corner_settle
+PASS active bodies retain swept collision: corner_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.0730905681848526,"anchor_frame":198,"anchor_pose":"Zombie_Idle","angular":67.672119140625,"bodies":60,"ccd":true,"details":[{"hips":"(0.544837, 0.203188, -6.762333)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(0.370602, 0.197376, -3.253297)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.657841, 0.166072, 2.951756)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(-0.138, 0.162147, 7.420538)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":5.6663646697998,"phase":"corner_settle","physics_ms":127.806,"radius":0.973597168922424,"sleeping":60}
+PASS all supported pieces settle: corner
+PASS dead zombies retain zero health and no animation/behavior motor: corner
+PASS finite bounded articulated motion: corner_wake
+PASS anatomical joints retained: corner_wake
+PASS active bodies retain swept collision: corner_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.00901448260992765,"anchor_frame":42,"anchor_pose":"Zombie_Walk_Drag_Right","angular":10.2928676605225,"bodies":60,"ccd":true,"details":[{"hips":"(0.545336, 0.202736, -6.762445)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(0.357557, 0.192097, -3.280106)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.655046, 0.165634, 2.949613)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.137424, 0.162055, 7.420788)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":0.411621928215027,"phase":"corner_wake","physics_ms":14.296,"radius":0.947991371154785,"sleeping":60}
+FAIL finite bounded articulated motion: corner_lowered_support
+PASS anatomical joints retained: corner_lowered_support
+PASS active bodies retain swept collision: corner_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.140599489212036,"anchor_frame":24,"anchor_pose":"Zombie_Idle","angular":91.7861785888672,"bodies":60,"ccd":true,"details":[{"hips":"(0.456434, 0.078572, -6.730952)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.45885670185089,"maximum_linear_speed":0.118953809142113,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(0.329746, 0.060132, -3.298108)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.655749, 0.037564, 2.954047)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(-0.139301, 0.040706, 7.422936)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}}],"finite":true,"joints":true,"linear":12.7859230041504,"phase":"corner_lowered_support","physics_ms":13.953,"radius":0.949185609817505,"sleeping":45}
+PASS small support edits do not leave corpses floating: corner
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: ledge
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: ledge
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: ledge
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: ledge
+Zombie ragdoll started with 15 physical bones.
+FAIL finite bounded articulated motion: ledge_settle
+PASS anatomical joints retained: ledge_settle
+PASS active bodies retain swept collision: ledge_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.138905569911003,"anchor_frame":114,"anchor_pose":"Zombie_Idle","angular":89.2920074462891,"bodies":60,"ccd":true,"details":[{"hips":"(4.175044, 0.192537, -7.659377)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(4.507574, 0.211087, -2.974364)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.42261970043182,"maximum_linear_speed":0.0807365924119949,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(3.01186, 2.191558, 2.954592)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(3.568426, 2.159271, 7.43308)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":10.4702615737915,"phase":"ledge_settle","physics_ms":134.105,"radius":1.06265151500702,"sleeping":45}
+FAIL all supported pieces settle: ledge
+PASS dead zombies retain zero health and no animation/behavior motor: ledge
+PASS finite bounded articulated motion: ledge_wake
+PASS anatomical joints retained: ledge_wake
+PASS active bodies retain swept collision: ledge_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.0213749296963215,"anchor_frame":6,"anchor_pose":"Zombie_Walk_Drag_Right","angular":6.63552522659302,"bodies":60,"ccd":true,"details":[{"hips":"(4.173624, 0.193796, -7.657634)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(4.515102, 0.21107, -2.974404)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(3.013394, 2.187038, 2.955357)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(3.57018, 2.159085, 7.43366)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":0.489276260137558,"phase":"ledge_wake","physics_ms":13.279,"radius":0.901311576366425,"sleeping":60}
+PASS finite bounded articulated motion: ledge_lowered_support
+PASS anatomical joints retained: ledge_lowered_support
+PASS active bodies retain swept collision: ledge_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":0.0307763554155827,"anchor_frame":60,"anchor_pose":"Zombie_Walk_Drag_Right","angular":53.6865043640137,"bodies":60,"ccd":true,"details":[{"hips":"(4.166753, 0.065554, -7.64982)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(4.503329, 0.086051, -2.981558)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":2.29627346992493,"maximum_linear_speed":0.247984856367111,"resting":0,"settle_events":1,"sleeping":0}},{"hips":"(3.007446, 2.06441, 2.95445)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(3.579378, 2.039098, 7.432972)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}}],"finite":true,"joints":true,"linear":2.30484890937805,"phase":"ledge_lowered_support","physics_ms":11.455,"radius":0.903967797756195,"sleeping":45}
+PASS small support edits do not leave corpses floating: ledge
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: pile
+Zombie ragdoll started with 15 physical bones.
+FAIL finite bounded articulated motion: pile_settle
+PASS anatomical joints retained: pile_settle
+PASS active bodies retain swept collision: pile_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftHand","anchor_error":79.0799865722656,"anchor_frame":246,"anchor_pose":"Zombie_Crawl","angular":8185.533203125,"bodies":120,"ccd":true,"details":[{"hips":"(-16.4165, 0.220784, 3.852062)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(1.152869, 0.192322, 1.258829)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":4,"sleeping":15}},{"hips":"(4.725202, 7.719882, -19.46602)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1158.94494628906,"maximum_linear_speed":139.995407104492,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(0.1954, 0.174507, -0.467607)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":5,"sleeping":15}},{"hips":"(5.517548, 5.625303, 13.2109)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1199.00036621094,"maximum_linear_speed":137.544830322266,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(43.82523, 11.15987, -5.768652)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":2199.48193359375,"maximum_linear_speed":193.180923461914,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(-11.72104, 1.01778, -8.850164)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1404.79956054688,"maximum_linear_speed":212.655731201172,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(1.699234, -12.82887, -10.87785)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":916.706420898438,"maximum_linear_speed":87.9783325195313,"resting":0,"settle_events":0,"sleeping":0}}],"finite":true,"joints":true,"linear":506.915161132813,"phase":"pile_settle","physics_ms":255.467,"radius":65.5342102050781,"sleeping":45}
+FAIL all supported pieces settle: pile
+PASS dead zombies retain zero health and no animation/behavior motor: pile
+FAIL finite bounded articulated motion: pile_wake
+PASS anatomical joints retained: pile_wake
+PASS active bodies retain swept collision: pile_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_LeftForeArm","anchor_error":75.1016998291016,"anchor_frame":186,"anchor_pose":"Zombie_Idle","angular":6268.177734375,"bodies":120,"ccd":true,"details":[{"hips":"(-16.4438, 0.225899, 3.958261)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.90429174900055,"maximum_linear_speed":0.089972659945488,"resting":0,"settle_events":1,"sleeping":0}},{"hips":"(1.151228, 0.193551, 1.254967)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":6,"sleeping":15}},{"hips":"(1.68811, 8.731567, -27.77555)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1062.78198242188,"maximum_linear_speed":238.44367980957,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(0.196259, 0.174788, -0.467229)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":6,"sleeping":15}},{"hips":"(10.26078, 16.14825, -1.360187)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1155.10949707031,"maximum_linear_speed":148.03190612793,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(34.56635, 7.81782, -3.717311)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":101.557434082031,"maximum_linear_speed":14.3164348602295,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(-27.83447, -26.02656, -10.76003)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1089.40710449219,"maximum_linear_speed":91.8724594116211,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(1.853976, -38.72398, -9.52894)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":720.782775878906,"maximum_linear_speed":120.935943603516,"resting":0,"settle_events":0,"sleeping":0}}],"finite":true,"joints":true,"linear":491.690032958984,"phase":"pile_wake","physics_ms":20.662,"radius":70.4163055419922,"sleeping":30}
+FAIL finite bounded articulated motion: pile_lowered_support
+PASS anatomical joints retained: pile_lowered_support
+PASS active bodies retain swept collision: pile_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":65.1502151489258,"anchor_frame":30,"anchor_pose":"Zombie_Crawl","angular":6072.33544921875,"bodies":120,"ccd":true,"details":[{"hips":"(-16.47027, 0.110948, 4.00375)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(1.154162, 0.072473, 1.250993)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":7,"sleeping":15}},{"hips":"(3.104254, 1.411817, -26.51336)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":652.675476074219,"maximum_linear_speed":138.813491821289,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(0.196505, 0.048501, -0.466468)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":7,"sleeping":15}},{"hips":"(9.936659, 7.10479, -0.910689)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1654.64196777344,"maximum_linear_speed":160.94758605957,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(34.1866, 0.064418, -3.696934)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":7.35669946670532,"maximum_linear_speed":0.742714405059814,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(-30.53225, -39.44378, -10.37692)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":465.159698486328,"maximum_linear_speed":150.080154418945,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(3.263494, -47.75441, -12.12797)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1512.00317382813,"maximum_linear_speed":293.976989746094,"resting":0,"settle_events":0,"sleeping":0}}],"finite":true,"joints":true,"linear":456.828918457031,"phase":"pile_lowered_support","physics_ms":12.537,"radius":57.4980392456055,"sleeping":45}
+PASS small support edits do not leave corpses floating: pile
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: severed
+Zombie severed upper_arm_l: ["upper_arm_l", "forearm_l", "hand_l"]
+Zombie ragdoll started with 12 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: severed
+Zombie severed thigh_r: ["thigh_r", "shin_r", "foot_r"]
+Zombie ragdoll started with 12 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: severed
+Zombie severed head: ["head"]
+Zombie ragdoll started with 14 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: severed
+Zombie severed forearm_r: ["forearm_r", "hand_r"]
+Zombie ragdoll started with 13 physical bones.
+PASS finite bounded articulated motion: severed_settle
+PASS anatomical joints retained: severed_settle
+PASS active bodies retain swept collision: severed_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightLeg","anchor_error":0.0583201684057713,"anchor_frame":12,"anchor_pose":"Zombie_Attack_Both","angular":44.9796867370605,"bodies":60,"ccd":true,"details":[{"hips":"(0.209021, 0.197182, -6.611307)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.351475, 0.151262, -2.927849)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.684081, 0.201982, 2.834693)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(-0.150178, 0.172354, 7.390162)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":5.60514307022095,"phase":"severed_settle","physics_ms":146.329,"radius":0.925164043903351,"sleeping":60}
+PASS all supported pieces settle: severed
+PASS dead zombies retain zero health and no animation/behavior motor: severed
+PASS finite bounded articulated motion: severed_wake
+PASS anatomical joints retained: severed_wake
+PASS active bodies retain swept collision: severed_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightFoot","anchor_error":0.0119057446718216,"anchor_frame":0,"anchor_pose":"Zombie_Attack_Both","angular":8.7107458114624,"bodies":60,"ccd":true,"details":[{"hips":"(0.209535, 0.197312, -6.611645)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":4,"sleeping":15}},{"hips":"(-0.351194, 0.15247, -2.924545)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":4,"sleeping":15}},{"hips":"(-0.680395, 0.202958, 2.831422)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":4,"sleeping":15}},{"hips":"(-0.148935, 0.172577, 7.391713)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":4,"sleeping":15}}],"finite":true,"joints":true,"linear":0.455601513385773,"phase":"severed_wake","physics_ms":15.128,"radius":0.923382043838501,"sleeping":60}
+PASS finite bounded articulated motion: severed_lowered_support
+PASS anatomical joints retained: severed_lowered_support
+PASS active bodies retain swept collision: severed_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0112261967733502,"anchor_frame":42,"anchor_pose":"Zombie_Walk_Drag_Right","angular":12.6037864685059,"bodies":60,"ccd":true,"details":[{"hips":"(0.213062, 0.070112, -6.616736)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":6,"sleeping":15}},{"hips":"(-0.352983, 0.038909, -2.920234)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":6,"sleeping":15}},{"hips":"(-0.680026, 0.083175, 2.857744)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":2,"maximum_angular_speed":1.37632286548615,"maximum_linear_speed":0.196489751338959,"resting":1,"settle_events":5,"sleeping":0}},{"hips":"(-0.141759, 0.048722, 7.387352)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":2,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":6,"sleeping":15}}],"finite":true,"joints":true,"linear":2.01256608963013,"phase":"severed_lowered_support","physics_ms":7.717,"radius":0.921296775341034,"sleeping":45}
+PASS small support edits do not leave corpses floating: severed
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: far_origin
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: far_origin
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: far_origin
+Zombie ragdoll started with 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS stress zombie initialized: far_origin
+Zombie ragdoll started with 15 physical bones.
+FAIL finite bounded articulated motion: far_origin_settle
+PASS anatomical joints retained: far_origin_settle
+PASS active bodies retain swept collision: far_origin_settle
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0803604796528816,"anchor_frame":474,"anchor_pose":"Zombie_Idle","angular":110.561378479004,"bodies":60,"ccd":true,"details":[{"hips":"(1549.113, 45.2061, 1543.125)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":6.60701894760132,"maximum_linear_speed":0.664657413959503,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(1550.532, 45.18053, 1546.738)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(1549.322, 45.19989, 1552.699)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}},{"hips":"(1549.867, 45.16225, 1557.412)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":1,"sleeping":15}}],"finite":true,"joints":true,"linear":5.82029628753662,"phase":"far_origin_settle","physics_ms":130.466,"radius":0.918665111064911,"sleeping":45}
+FAIL all supported pieces settle: far_origin
+PASS dead zombies retain zero health and no animation/behavior motor: far_origin
+FAIL finite bounded articulated motion: far_origin_wake
+PASS anatomical joints retained: far_origin_wake
+PASS active bodies retain swept collision: far_origin_wake
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.0909915268421173,"anchor_frame":180,"anchor_pose":"Zombie_Idle","angular":25.200834274292,"bodies":60,"ccd":true,"details":[{"hips":"(1549.054, 45.20689, 1543.112)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":4.96924114227295,"maximum_linear_speed":0.0770436525344849,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(1550.528, 45.17698, 1546.73)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(1549.322, 45.20042, 1552.702)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}},{"hips":"(1549.868, 45.16219, 1557.413)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":2,"sleeping":15}}],"finite":true,"joints":true,"linear":1.01139438152313,"phase":"far_origin_wake","physics_ms":11.417,"radius":0.90245246887207,"sleeping":45}
+FAIL finite bounded articulated motion: far_origin_lowered_support
+PASS anatomical joints retained: far_origin_lowered_support
+PASS active bodies retain swept collision: far_origin_lowered_support
+RAGDOLL_STRESS {"anchor_bone":"Physical_RightHand","anchor_error":0.10651757568121,"anchor_frame":78,"anchor_pose":"Zombie_Idle","angular":30.090841293335,"bodies":60,"ccd":true,"details":[{"hips":"(1549.05, 45.08678, 1543.114)","pose":"Zombie_Idle","stats":{"bodies":15,"groups":1,"maximum_angular_speed":1.63411045074463,"maximum_linear_speed":0.089769683778286,"resting":0,"settle_events":0,"sleeping":0}},{"hips":"(1550.529, 45.05142, 1546.719)","pose":"Zombie_Walk_Drag_Right","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}},{"hips":"(1549.318, 45.08307, 1552.688)","pose":"Zombie_Attack_Both","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.639879286289215,"maximum_linear_speed":0.0464858040213585,"resting":0,"settle_events":2,"sleeping":0}},{"hips":"(1549.866, 45.04134, 1557.414)","pose":"Zombie_Crawl","stats":{"bodies":15,"groups":1,"maximum_angular_speed":0.0,"maximum_linear_speed":0.0,"resting":15,"settle_events":3,"sleeping":15}}],"finite":true,"joints":true,"linear":2.05239176750183,"phase":"far_origin_lowered_support","physics_ms":10.098,"radius":0.891864001750946,"sleeping":30}
+PASS small support edits do not leave corpses floating: far_origin
+ZOMBIE_RAGDOLL_STRESS failures=11
