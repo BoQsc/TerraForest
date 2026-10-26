@@ -1,6 +1,19 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Quiet interaction hints and bush harvesting — 2026-10-26
+
+Automatic ground labels remain for stones and flowers, but not grass, ferns,
+twigs or bushes. Boulder mining, doors, containers, corpse storage, dropped items
+and vehicles retain useful prompts. Hidden ground targets still take interaction
+priority, so aiming at grass cannot falsely advertise entering a nearby vehicle.
+Low bushes now require harvesting rather than E pickup, matching woody bushes;
+existing durability, rewards, save data and developer removal remain unchanged.
+Source policy/native collection and actual-world gathering, pickup and door
+checks pass. Installed-package policy, 66 native woodland assertions and actual
+gathering pass; no player saves are selected. Visual scope/evidence:
+[interaction hints](../issues/world-interaction-hints/README.md).
+
 ## Saved pickaxe no-op — reproduced and fixed, 2026-10-26
 
 Calm_Meadow's F5 position reproduced three accepted digs with no density change.

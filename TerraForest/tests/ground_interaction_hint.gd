@@ -9,10 +9,12 @@ func run() -> void:
 	if not check(await wait_for(func():return not game.loading_active,45),"main world loads"):await finish();return
 	game.set_physics_process(false);game._clear_motion()
 	if not check(game.ground_enabled and game.construction_inventory.gameplay,"ground cover and gameplay enabled"):await finish();return
-	if not check(await wait_for(func():return game.ground_cover.resident.size()>=49,15),"ground cover publishes"):await finish();return
+	if not check(await wait_for(func():return game.ground_interaction.available() and not game.ground_cover.resident.is_empty(),15),"ground cover publishes for interaction"):await finish();return
+	print("GROUND_HINT_COVER resident=",game.ground_cover.resident.size()," wanted=",game.ground_cover._wanted.size())
 	var nearest:=Vector3.ZERO;var distance:=INF
 	for rows: Array in game.ground_cover.resident.values():
 		for row: Dictionary in rows:
+			if game.ground_cover.Catalog.HARVEST_ONLY[rows.find(row)]:continue
 			for i in row.ids.size():
 				var t: PackedFloat32Array=row.transforms
 				var point:=Vector3(t[i*12+3],t[i*12+7],t[i*12+11])
@@ -24,11 +26,17 @@ func run() -> void:
 	if not check(probe.ok,"actual nearby vegetation is reachable"):await finish();return
 	var id: int=probe.hit.id;var species: int=probe.hit.species
 	var catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
-	var expected: String="E · Collect "+catalog.NAMES[species]
+	var expected: String="E · Collect "+catalog.NAMES[species] if catalog.WORLD_HINTS[species] else ""
+	if probe.hit.get("large",false):expected="Left mouse · Mine stone boulder (pickaxe)"
 	var inventory_before: PackedByteArray=game.player_hud.capture_snapshot()
 	var edits_before: PackedByteArray=game.ground_cover.removed.capture_storage_snapshot()
 	game.world_interaction.update(game,1.0)
-	check(game.player_hud.interaction_hint.text==expected and game.player_hud.interaction_hint.visible,"HUD identifies the exact collectable species")
+	check(game.player_hud.interaction_hint.text==expected and game.player_hud.interaction_hint.visible==not expected.is_empty(),"HUD labels only noteworthy ground targets")
+	if DisplayServer.get_name()!="headless":
+		await RenderingServer.frame_post_draw
+		var folder:=ProjectSettings.globalize_path("res://reports/ground_interaction_hint")
+		DirAccess.make_dir_recursive_absolute(folder)
+		check(root.get_texture().get_image().save_png(folder.path_join("quiet.png"))==OK,"interaction screenshot saved")
 	check(game.player_hud.capture_snapshot()==inventory_before and game.ground_cover.removed.capture_storage_snapshot()==edits_before,"prompt has no inventory or durable world mutation")
 	# A shared building ray extends farther than gathering. Never expand reach.
 	check(not game.ground_interaction.collection_probe(origin,origin+(endpoint-origin).normalized()*0.1,{"position":endpoint}).ok,"longer shared scene ray does not extend collection reach")

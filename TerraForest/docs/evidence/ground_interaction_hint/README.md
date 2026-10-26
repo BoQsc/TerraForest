@@ -1,5 +1,9 @@
 # Named gathering prompts and interaction priority
 
+2026-10-26 policy update: [quiet interaction hints](../../../issues/world-interaction-hints/README.md).
+Common foliage no longer displays an automatic label; stones/flowers remain, and
+bushes require harvesting. The text below records the earlier implementation.
+
 2026-10-15. The shared world interaction adapter now identifies ground-cover
 species with the existing native picker. Its 10 Hz presentation query reuses
 the building scene ray, clipped to gathering's 2.5 m reach. It does not scan

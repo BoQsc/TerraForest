@@ -81,6 +81,7 @@ func run() -> void:
 	check(Catalog.COSTS[7]==102 and Catalog.REWARDS[7]==102,"twig wood cost and reward conserve resource")
 	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var inventory=ClassDB.instantiate("NativePlayerInventory");inventory.register_item(102,999)
+	check(inventory.register_item(209,999),"bush reward registered before inventory mutations")
 	var cover:=CoverStub.new();cover.terrain=TerrainStub.new();cover.add_child(cover.terrain);root.add_child(cover)
 	cover.removed=ClassDB.instantiate("NativeGroundCoverState");cover.removed.bind_world(1703,1);cover.picker=picker
 	var twig_id: int=cover.removed.add(7,Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
@@ -93,6 +94,29 @@ func run() -> void:
 		if slot.item==102:wood+=int(slot.count)
 	check(gathered.ok and gathered.id==twig_id and wood==1 and cover.removed.profile().placed==0,"gameplay twig collection grants wood and erases exact authored record")
 	check(not interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true).ok,"same twig cannot be gathered twice")
+	check(Catalog.HARVEST_ONLY.size()==Catalog.COUNT,"every species declares harvesting policy")
+	for species in [6,8]:
+		var bush_id:int=cover.removed.add(species,Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
+		cover.resident[Vector2i(30,30)]=cover.removed.query(Vector2i(30,30));picker.replace_cell(Vector2i(30,30),cover.resident[Vector2i(30,30)])
+		var before_inventory:PackedByteArray=inventory.capture_storage_snapshot()
+		var before_cover:PackedByteArray=cover.removed.capture_storage_snapshot()
+		var pickup:Dictionary=interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true)
+		check(not pickup.ok and pickup.reason.contains("Strike"),"bush %d cannot be picked up with E"%species)
+		check(inventory.capture_storage_snapshot()==before_inventory and cover.removed.capture_storage_snapshot()==before_cover,"rejected bush pickup changes neither inventory nor vegetation")
+		check(not interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true,null,bush_id+1).ok,"wrong harvest identity cannot remove bush")
+		var harvested:Dictionary=interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true,null,bush_id)
+		print("BUSH_HARVEST species=",species," identity=",bush_id," result=",harvested)
+		check(harvested.ok and harvested.id==bush_id and cover.removed.profile().placed==0,"finished harvest removes exact bush %d"%species)
+		var reward:int=Catalog.REWARDS[species]
+		var total:=0
+		for slot:Dictionary in inventory.snapshot().slots:
+			if slot.item==reward:total+=int(slot.count)
+		check(total==(1 if species==6 else 2),"harvest grants existing species reward once")
+		check(not interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,true,null,bush_id).ok,"stale bush cannot grant another reward")
+		cover.removed.add(species,Transform3D(Basis.IDENTITY,Vector3(970,20,970)))
+		cover.resident[Vector2i(30,30)]=cover.removed.query(Vector2i(30,30));picker.replace_cell(Vector2i(30,30),cover.resident[Vector2i(30,30)])
+		before_inventory=inventory.capture_storage_snapshot()
+		check(interaction.collect(Vector3(970,22,970),Vector3(970,19,970),inventory,false).ok and inventory.capture_storage_snapshot()==before_inventory,"developer removal remains available without rewards")
 	cover.free()
 	print("WOODLAND_ACCENTS ",JSON.stringify({"checks":checks,"failures":failures,"counts":counts,"meshes":mesh_counts}))
 	quit(1 if failures else 0)

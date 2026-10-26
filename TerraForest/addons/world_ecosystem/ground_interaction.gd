@@ -26,7 +26,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	if not candidate.ok:return candidate
 	var hit: Dictionary=candidate.hit
 	if attack_target!=0 and hit.id!=attack_target:return {"ok":false,"reason":"Target changed"}
-	if gameplay and hit.species==8 and attack_target!=hit.id:return {"ok":false,"reason":"Strike the woody bush twice to gather wood"}
+	if gameplay and Catalog.HARVEST_ONLY[hit.species] and attack_target!=hit.id:return {"ok":false,"reason":"Strike the woody bush twice to gather wood" if hit.species==8 else "Strike the bush to harvest it"}
 	if gameplay and hit.get("large",false) and attack_target!=hit.id:return {"ok":false,"reason":"Mine the boulder with a pickaxe"}
 	var key: Vector2i=hit.cell
 	var previous: Array=cover.resident[key]

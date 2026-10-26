@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 # UI coordination only; picking, hinge state and storage mutations remain native.
 extends RefCounted
+const GroundCatalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 var remaining:=0.0
 func available(game: Node) -> bool:
 	return game._model_edit_available() and not game.fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and not game.session_menu.visible_ui()
@@ -16,9 +17,10 @@ func describe(game: Node, target: Dictionary) -> String:
 	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
 	if loose.get("kind")=="ground":
 		if game.construction_inventory.gameplay and loose.hit.get("large",false):return "Left mouse · Mine stone boulder (pickaxe)"
-		if game.construction_inventory.gameplay and loose.hit.species==8:return "Left mouse · Harvest woody bush (two hits)"
-		var name: String=preload("res://addons/world_ecosystem/ground_catalog.gd").NAMES[loose.hit.species]
+		if not loose.hit.get("large",false) and not GroundCatalog.WORLD_HINTS[loose.hit.species]:return ""
+		var name: String=GroundCatalog.NAMES[loose.hit.species]
 		return "E · "+("Collect " if game.construction_inventory.gameplay else "Remove ")+name
+	if game.world_vehicle.candidate(game)>0:return "E · Enter vehicle  /  Hold E · Vehicle actions"
 	return ""
 func ground_target(game: Node,target: Dictionary) -> Dictionary:
 	if not game.ground_enabled:return {"ok":false}
@@ -45,7 +47,6 @@ func update(game: Node, delta: float) -> void:
 	# One native scene ray at most every 100 ms, never a catch-up loop.
 	remaining=0.1
 	var hint:=describe(game,hit(game))
-	if hint.is_empty() and game.world_vehicle.candidate(game)>0:hint="E · Enter vehicle  /  Hold E · Vehicle actions"
 	game.player_hud.show_interaction_hint(hint)
 func interact(game: Node) -> bool:
 	if not available(game):return false

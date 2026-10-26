@@ -1,0 +1,246 @@
+{
+  "date": "2026-10-26",
+  "baseline": "e77d680b",
+  "scope": "Current species and existing interactions; no player saves selected, no universal visual or performance claim.",
+  "source_runs": [
+    {
+      "id": "20261026T145931755665Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 83856,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL ground cover publishes"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 40.757126300013624,
+        "passed": false
+      },
+      "script": "res://tests/ground_interaction_hint.gd"
+    },
+    {
+      "id": "20261026T150628841299Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 84752,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.3790072000119835,
+        "passed": true
+      },
+      "script": "res://tests/world_hint_policy.gd"
+    },
+    {
+      "id": "20261026T150629649298Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 81728,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL finished harvest removes exact bush 6",
+          "FAIL finished harvest removes exact bush 8",
+          "FAIL harvest grants existing species reward once"
+        ],
+        "required_text_found": false,
+        "elapsed_seconds": 0.58506860001944,
+        "passed": false
+      },
+      "script": "res://tests/woodland_accents.gd"
+    },
+    {
+      "id": "20261026T150729695097Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 82128,
+        "exit_code": 1,
+        "diagnostics": [
+          "FAIL finished harvest removes exact bush 6",
+          "FAIL finished harvest removes exact bush 8",
+          "FAIL harvest grants existing species reward once"
+        ],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5602221000008285,
+        "passed": false
+      },
+      "script": "res://tests/woodland_accents.gd"
+    },
+    {
+      "id": "20261026T150730700083Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 69800,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 24.58578419999685,
+        "passed": true
+      },
+      "script": "res://tests/ground_interaction_hint.gd"
+    },
+    {
+      "id": "20261026T150816284595Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 82608,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.562375899986364,
+        "passed": true
+      },
+      "script": "res://tests/woodland_accents.gd"
+    },
+    {
+      "id": "20261026T150835784205Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 54324,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 25.572346100001596,
+        "passed": true
+      },
+      "script": "res://tests/pickup_interaction_hint.gd"
+    },
+    {
+      "id": "20261026T150901815775Z",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 77624,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 25.861655100015923,
+        "passed": true
+      },
+      "script": "res://tests/door_world.gd"
+    }
+  ],
+  "packaged_runs": {
+    "quiet_hints_pack": [
+      {
+        "test": "world_hint_policy",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 26888,
+          "exit_code": 0,
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 0.7575371999992058,
+          "passed": true
+        }
+      },
+      {
+        "test": "woodland_accents",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 76984,
+          "exit_code": 0,
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 0.4552455000812188,
+          "passed": true
+        }
+      },
+      {
+        "test": "ground_interaction_hint",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 84776,
+          "exit_code": 0,
+          "diagnostics": [
+            "ERROR: Could not create directory: 'res://reports'."
+          ],
+          "required_text_found": true,
+          "elapsed_seconds": 24.20247030002065,
+          "passed": false
+        }
+      }
+    ],
+    "quiet_hints_pack_final": [
+      {
+        "test": "world_hint_policy",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 85036,
+          "exit_code": 0,
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 0.3754645000444725,
+          "passed": true
+        }
+      },
+      {
+        "test": "woodland_accents",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 72816,
+          "exit_code": 0,
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 0.45206090004649013,
+          "passed": true
+        }
+      },
+      {
+        "test": "ground_interaction_hint",
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 75200,
+          "exit_code": 0,
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 23.218685499974526,
+          "passed": true
+        }
+      }
+    ]
+  },
+  "pack_sha256": "2b96ac0e270ce208c3dce24e7d991caa2ebfc39a0ef307f3c604e93e5b160ff0",
+  "code_sha256": {
+    "addons/world_ecosystem/ground_catalog.gd": "135996ff4ab4941cd672e2777c13c6f6e9c81336834c3d89fcbd3d69e1215e4e",
+    "addons/world_ecosystem/ground_interaction.gd": "60ae280cdf71288efaf206e71bf1081259109b89c33ceced058315f47e4b405b",
+    "demo/world_interaction.gd": "6f2558fbaece6d43f8876b721e99f8afc57349c01b41de8db7682e24f69e2d22",
+    "tests/world_hint_policy.gd": "bf84866dc84f8c4045773d32acac98c454614352c5f718d51e51b440ebbbbcd6",
+    "tests/ground_interaction_hint.gd": "1c4809b954da62dd7776782e33b08a405ac451a6fa8dd5101a22118403bf39fc",
+    "tests/woodland_accents.gd": "9e71e40408dd310af5901fe0f555d52b56e9808fe31426f5bbef2e83bb5d0186"
+  },
+  "retained_failures": [
+    "Old 49-cell readiness gate; changed to require usable cover and actual picked target.",
+    "New test registered bush item after inventory mutation; corrected to register before any grants.",
+    "Export while user's editor held reload DLL locks; clean export succeeded after user closed editor.",
+    "Initial packaged capture attempted to create res://reports; corrected external test to use an absolute filesystem output path."
+  ],
+  "cleanup": "Failed editor export left seven untracked ~RF2614*.TMP DLL copies. Cleanup command was policy-blocked; files were not retried via another method and are not committed.",
+  "visual_review": "Source grass capture inspected; latest user playtest not yet reviewed."
+}

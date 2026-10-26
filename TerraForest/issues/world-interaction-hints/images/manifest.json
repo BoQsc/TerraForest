@@ -1,0 +1,16 @@
+{
+  "archived_on": "2026-10-26",
+  "images": [
+    {
+      "file": "grass-unlabeled.png",
+      "source": "reports/ground_interaction_hint/quiet.png",
+      "source_run": "reports/checks/20261026T150730700083Z",
+      "world": "temporary check_8c0bf1b206074eaebc55e5cd394c5e15",
+      "seed": 1703,
+      "baseline_commit": "e77d680b",
+      "role": "source improvement; no matched before image",
+      "modified_pixels": false,
+      "sha256": "10f71c67d976505f478cb475ef95bfa7e42a86adeaccfc8fa4039be0cb156314"
+    }
+  ]
+}
