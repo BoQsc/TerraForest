@@ -55,10 +55,11 @@ func run()->void:
 			adapter.update(game,1.0)
 			var expected:="E · "+("Collect " if gameplay else "Remove ")+Catalog.NAMES[species] if species in [0,3,4,5] else ""
 			check(game.player_hud.interaction_hint.text==expected and game.player_hud.interaction_hint.visible==not expected.is_empty(),"species %d labels only stones and flowers in %s"%[species,"gameplay" if gameplay else "editor"])
+			adapter.loose.hit.large=true
+			adapter.update(game,1.0)
+			check(game.player_hud.interaction_hint.text.is_empty() and not game.player_hud.interaction_hint.visible,"large ground object %d stays unlabeled in %s"%[species,"gameplay" if gameplay else "editor"])
 	check(game.world_vehicle.queries==0,"hidden common targets never advertise an unrelated nearby vehicle")
 	game.construction_inventory.gameplay=true
-	adapter.loose={"kind":"ground","hit":{"species":0,"large":true}}
-	check(adapter.describe(game,{})=="Left mouse · Mine stone boulder (pickaxe)","large boulder keeps useful tool instruction")
 	for item in [1,201,501]:
 		adapter.loose={"kind":"pickup","item":item}
 		check(adapter.describe(game,{})=="E · Pick up "+game.pickups.ITEMS[item],"dropped item %d retains its pickup label"%item)

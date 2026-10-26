@@ -11,6 +11,27 @@
       "role": "source improvement; no matched before image",
       "modified_pixels": false,
       "sha256": "10f71c67d976505f478cb475ef95bfa7e42a86adeaccfc8fa4039be0cb156314"
+    },
+    {
+      "file": "boulder-rejected.png",
+      "source": "C:\\Users\\WINDOW~1\\AppData\\Local\\Temp\\codex-clipboard-2ef1bd4f-6a5f-4692-a21b-c65e764304ac.png",
+      "modified_pixels": false,
+      "sha256": "992802b9c9122e03ad952de3a4241a1fa2e7857ab5c03bcb65f2e18dd377ea4c",
+      "role": "user-rejected automatic mining instruction",
+      "world": "Hidden_Hills",
+      "seed": 1703,
+      "context": "Repair hammer held; exact saved position/build unrecorded."
+    },
+    {
+      "file": "boulder-unlabeled.png",
+      "source": "reports\\ground_interaction_hint\\boulder-unlabeled.png",
+      "modified_pixels": false,
+      "sha256": "e5490c21e8d6add8881885976ee53425a31b5847803a4983f6b429d6df850f02",
+      "role": "packaged correction; inspected, awaiting user review",
+      "world": "temporary generated test world",
+      "seed": 1703,
+      "context": "Natural boulder verified by native picker; repair hammer held; not a matching saved-world replay.",
+      "source_run": "reports/quiet_hints_boulder/boulder"
     }
   ]
 }

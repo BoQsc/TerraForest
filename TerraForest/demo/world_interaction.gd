@@ -16,8 +16,7 @@ func describe(game: Node, target: Dictionary) -> String:
 	var loose:=loose_target(game,target)
 	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
 	if loose.get("kind")=="ground":
-		if game.construction_inventory.gameplay and loose.hit.get("large",false):return "Left mouse · Mine stone boulder (pickaxe)"
-		if not loose.hit.get("large",false) and not GroundCatalog.WORLD_HINTS[loose.hit.species]:return ""
+		if loose.hit.get("large",false) or not GroundCatalog.WORLD_HINTS[loose.hit.species]:return ""
 		var name: String=GroundCatalog.NAMES[loose.hit.species]
 		return "E · "+("Collect " if game.construction_inventory.gameplay else "Remove ")+name
 	if game.world_vehicle.candidate(game)>0:return "E · Enter vehicle  /  Hold E · Vehicle actions"

@@ -1,0 +1,179 @@
+{
+  "revision": "6264d5ce7e47fee3efa668f512dadc83a3288ccc",
+  "worktree_changes": [
+    " M TerraForest/addons/world_ecosystem/art/boulder_granite_v1.png.import",
+    " M TerraForest/demo/world_interaction.gd",
+    " M TerraForest/docs/WORLD_FOUNDATION_STATUS.md",
+    " M TerraForest/issues/README.md",
+    " M TerraForest/issues/world-interaction-hints/README.md",
+    " M TerraForest/tests/ground_interaction_hint.gd",
+    " M TerraForest/tests/world_hint_policy.gd",
+    "?? TerraForest/addons/player_runtime/bin/~player_runtime.windows.template_debug.x86_64.dll~RF2614a4b5.TMP",
+    "?? TerraForest/addons/structures/bin/~structures.windows.template_debug.x86_64.dll~RF2614a513.TMP",
+    "?? TerraForest/addons/vegetation_runtime/bin/~vegetation_runtime.windows.template_debug.x86_64.dll~RF2614a542.TMP",
+    "?? TerraForest/addons/vehicle_runtime/bin/~vehicle_runtime.windows.template_debug.x86_64.dll~RF2614a571.TMP",
+    "?? TerraForest/addons/volumetric_terrain/bin/~terrain_core.windows.x86_64.dll~RF2614a5bf.TMP",
+    "?? TerraForest/addons/volumetric_water/bin/~volumetric_water.windows.template_debug.x86_64.dll~RF2614a5ee.TMP",
+    "?? TerraForest/addons/world_runtime/bin/~world_runtime.windows.template_debug.x86_64.dll~RF2614a63c.TMP"
+  ],
+  "git_metadata_available": true,
+  "native": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "e622b37d83c720f9475d6ea6bdc799c955d5aec5d693281ba6c8bc559410a600",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8320b12807395e75fcb98bb7a29adbf37b3640c46638d4e0ea52a8f87e04b81a",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff"
+  },
+  "pack_sha256": "0474e305292a2239ddd6496d188a989ce490c490cc9b6aa7234fc7fd8377b031",
+  "runs": [
+    {
+      "label": "policy",
+      "test": "world_hint_policy",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 72196,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.36652770009823143,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\quiet_hints_boulder\\policy\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/world_hint_policy.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_d97c907f8a4a42eb9e1a860ba2be9b09",
+        "--derived-cache=user://world_hint_policy_d97c907f8a4a42eb9e1a860ba2be9b09"
+      ],
+      "script_sha256": "6860b8d3ccd4dab50ff14ab06e613a01d15cf15b46e2106ac3a19a3b3daa6ccd"
+    },
+    {
+      "label": "boulder",
+      "test": "ground_interaction_hint",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 60536,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 24.978381900000386,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\quiet_hints_boulder\\boulder\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/ground_interaction_hint.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_15cf7450f5644472b5408af723189b4f",
+        "--derived-cache=user://ground_interaction_hint_15cf7450f5644472b5408af723189b4f",
+        "--ground-cover",
+        "--gameplay-construction",
+        "--no-zombies",
+        "--boulder-hint-check"
+      ],
+      "script_sha256": "1557e340c4495336098d8298c6f944dc621e38add5d2f31df76983945c43ccde"
+    },
+    {
+      "label": "gathering",
+      "test": "ground_interaction_hint",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 76100,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 27.998387500061654,
+        "passed": true
+      },
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\quiet_hints_boulder\\gathering\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/ground_interaction_hint.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_ee04d043471c4be6b8e59c81dc07ad5c",
+        "--derived-cache=user://ground_interaction_hint_ee04d043471c4be6b8e59c81dc07ad5c",
+        "--ground-cover",
+        "--gameplay-construction",
+        "--no-zombies"
+      ],
+      "script_sha256": "1557e340c4495336098d8298c6f944dc621e38add5d2f31df76983945c43ccde"
+    }
+  ],
+  "scope": "Automatic world-target prompt audit and rejected boulder exception; existing save data, mining and harvesting unchanged. User screenshot preserved; temporary-world view is not the same boulder/location.",
+  "source_sha256": {
+    "demo/world_interaction.gd": "f4ef35f1eddab04d724647b9625276b5dd192172bc804bde37501e26070f0d32",
+    "tests/world_hint_policy.gd": "6860b8d3ccd4dab50ff14ab06e613a01d15cf15b46e2106ac3a19a3b3daa6ccd",
+    "tests/ground_interaction_hint.gd": "1557e340c4495336098d8298c6f944dc621e38add5d2f31df76983945c43ccde"
+  },
+  "audit": {
+    "before_categories": [
+      "corpse storage",
+      "containers",
+      "doors",
+      "dropped pickups",
+      "small stones",
+      "flowers",
+      "boulders",
+      "vehicles"
+    ],
+    "removed": [
+      "boulders"
+    ],
+    "persistent_control_hint_rows": 2,
+    "separate_from_scope": [
+      "inventory names",
+      "explicit action/damage feedback",
+      "persistent tool/control hints"
+    ]
+  }
+}
