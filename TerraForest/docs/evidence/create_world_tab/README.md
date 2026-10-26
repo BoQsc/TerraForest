@@ -26,6 +26,18 @@ Run using `python tools/run_godot_check.py <test> --godot <engine> --timeout <se
 | `world_browser_generation` | `20261026T062847619383Z` | Actual seed-50 creation, verification, publication and playable load; waits for preview, stays in Create world, preserves timing and then uses normal loading. Also rejects an injected failed publication. |
 | `world_creation_ui` | `20261026T062932265821Z` | Automatic preview, debounce, edits during active work, latest-recipe identity and layout at both resolutions. |
 
+The initial tall card was rejected for wasted vertical space. The compact
+revision replaces the entire card with a transparent footer strip: stage,
+percentage, timing and Cancel share one row above the bar. Work details use one
+optional clipped line with the full text in its tooltip. The repeated heading,
+disabled action footer and duplicate status message are hidden during generation.
+The strip is checked to remain at most 64 logical pixels high at both resolutions.
+
+Compact revision checks passed: `world_browser_progress`
+(`20261026T063709843637Z`), actual `world_browser_cancel`
+(`20261026T063721119035Z`), and unchanged regular `loading_progress_ui`
+(`20261026T063819221051Z`). The images below show this revision.
+
 Inspected images: [actual generation](generating_1920x1080.png),
 [controlled progress at 720p](progress_1280x720.png), and
 [automatic native preview at 720p](automatic_preview_1280x720.png).

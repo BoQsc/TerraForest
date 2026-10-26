@@ -95,8 +95,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.preview_status=paragraph(map_column,"The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.",17)
  host.preparation_panel=preload("res://addons/world_runtime/loading_panel.gd").new();host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)
  host.preparation_panel.hide();host.preparation_panel.set_process(false)
- host.cancel_button=host.preparation_panel.action;host.cancel_button.text="Cancel generation";host.cancel_button.pressed.connect(host.cancel_preparation)
- var footer:=HBoxContainer.new();page.add_child(footer)
+ host.cancel_button=host.preparation_panel.action;host.cancel_button.text="Cancel";host.cancel_button.pressed.connect(host.cancel_preparation)
+ var footer:=HBoxContainer.new();host.creation_footer=footer;page.add_child(footer)
  host.recipe_summary=label(footer,"",17,MUTED);host.recipe_summary.size_flags_horizontal=Control.SIZE_EXPAND_FILL;host.recipe_summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  host.preview_button=host.button(footer,"Refresh preview",host.start_preview)
  host.generate_button=host.button(footer,"Generate & play",func():host.launch_selected(true));host.generate_button.add_theme_stylebox_override("normal",box(Color("3c6c59"),ACCENT))

@@ -31,6 +31,9 @@ func run()->void:
   var bounds:=Rect2(Vector2.ZERO,Vector2(resolution))
   if not bounds.encloses(browser.preparation_panel.get_global_rect()) or not bounds.encloses(browser.cancel_button.get_global_rect()):failures+=1
   if browser.preparation_panel.bar.size.y!=6 or not browser.preparation_panel.clock_label.text.contains("Elapsed"):failures+=1
+  if browser.preparation_panel.size.y>64 or browser.preparation_panel.title.visible or browser.creation_footer.visible or browser.notice.visible:failures+=1
+  if browser.preparation_panel.detail.get_parent()!=browser.cancel_button.get_parent() or browser.preparation_panel.percentage.get_parent()!=browser.cancel_button.get_parent():failures+=1
+  if browser.preparation_panel.detail.get_global_rect().end.x>browser.preparation_panel.percentage.get_global_rect().position.x:failures+=1
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_creation_progress_%dx%d.png"%[resolution.x,resolution.y])
  var stale:={"state":"verifying","progress":{"stage":"World generation complete","completed":0,"total":0}}

@@ -36,6 +36,7 @@ var generate_button:Button
 var shuffle_button:Button
 var world_tabs:TabContainer
 var preparation_panel:PanelContainer
+var creation_footer:HBoxContainer
 const PREVIEW_DELAY_MS:=350
 var preview_due_ms:=-1
 var slots:=PackedStringArray()
@@ -104,7 +105,7 @@ func _ready() -> void:
 	button(library_actions,"Recover interrupted publication",show_recovery)
 	preload("res://demo/world_creation_panel.gd").build(self,columns)
 	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
-	var bottom:=HBoxContainer.new();panel.add_child(bottom)
+	var bottom:=HBoxContainer.new();bottom.alignment=BoxContainer.ALIGNMENT_END;panel.add_child(bottom)
 	notice=heading(bottom,"",16);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button(bottom,"Quit",request_quit)
 	refresh()
@@ -200,6 +201,7 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
 func _set_creation_busy(active:bool)->void:
+	creation_footer.visible=not active;notice.visible=not active
 	world_tabs.set_tab_disabled(0,active)
 	generate_button.disabled=active;shuffle_button.disabled=active;gameplay.disabled=active
 	preview_button.disabled=active or preview_worker!=null

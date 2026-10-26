@@ -38,6 +38,21 @@ func _ready()->void:
  var fill:=StyleBoxFlat.new();fill.bg_color=Color("6cc7aa");fill.set_corner_radius_all(4);bar.add_theme_stylebox_override("fill",fill)
  bar.tooltip_text="Overall completion estimate based on finished stages and work counts. 100% means ready to play."
  work=Label.new();work.visible=false;work.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;work.add_theme_font_size_override("font_size",14);box.add_child(work)
+ if embedded:
+  # The selector owns the surrounding layout; this is a footer strip, not a card.
+  add_theme_stylebox_override("panel",StyleBoxEmpty.new());box.add_theme_constant_override("separation",4)
+  title.hide();row.hide();detail.reparent(header);header.move_child(detail,0)
+  percentage.reparent(header);header.move_child(percentage,1)
+  header.add_theme_constant_override("separation",12)
+  detail.autowrap_mode=TextServer.AUTOWRAP_OFF;detail.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;detail.add_theme_font_size_override("font_size",16)
+  percentage.custom_minimum_size.x=40;percentage.add_theme_font_size_override("font_size",14)
+  clock_label.add_theme_font_size_override("font_size",13)
+  action.custom_minimum_size=Vector2(76,28)
+  for state:String in ["normal","hover","pressed","disabled"]:
+   var button_skin:=StyleBoxFlat.new();button_skin.bg_color=Color("29484a" if state in ["hover","pressed"] else "1b3035")
+   button_skin.set_corner_radius_all(4);button_skin.content_margin_left=10;button_skin.content_margin_right=10;button_skin.content_margin_top=4;button_skin.content_margin_bottom=4
+   action.add_theme_stylebox_override(state,button_skin)
+  work.autowrap_mode=TextServer.AUTOWRAP_OFF;work.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;work.add_theme_font_size_override("font_size",13);work.add_theme_color_override("font_color",Color("9bafad"))
  var preferences:=ConfigFile.new()
  if preferences.load(preferences_path)==OK:compact_width=bool(preferences.get_value("loading","compact_width",true))
  set_compact_width(compact_width,false)
@@ -72,6 +87,7 @@ func timing_snapshot()->Dictionary:
  return timer.snapshot(Time.get_ticks_usec())
 func show_progress(caption:String,stage:String,value:float)->void:
  title.text=caption;detail.text=stage
+ if embedded:detail.tooltip_text=stage
  high_water=maxf(high_water,clampf(value,0,100));bar.value=high_water
  percentage.text="%d%%"%int(floor(high_water))
  timer.observe(high_water,Time.get_ticks_usec())
@@ -79,3 +95,4 @@ func show_progress(caption:String,stage:String,value:float)->void:
 
 func show_work(text:String)->void:
  work.text=text;work.visible=not text.is_empty()
+ if embedded:work.tooltip_text=text
