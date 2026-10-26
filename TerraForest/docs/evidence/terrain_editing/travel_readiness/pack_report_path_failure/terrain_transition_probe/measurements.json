@@ -1,0 +1,409 @@
+{
+  "checks": [
+    {
+      "name": "transition native worker starts",
+      "pass": true
+    },
+    {
+      "name": "transition worker ready",
+      "pass": true
+    },
+    {
+      "name": "coarse parent prepared through real worker",
+      "pass": true
+    },
+    {
+      "name": "native planner activates complete parent coverage",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1408, 1280, 128)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 0",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 0",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1280, 1408, 128)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 1",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 1",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1408, 1408, 128)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 2",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 2",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1344, 1280, 64)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 3",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 3",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1280, 1344, 64)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 4",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 4",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1344, 1344, 64)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 5",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 5",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1312, 1280, 32)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 6",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 6",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1280, 1312, 32)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 7",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 7",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1312, 1312, 32)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 8",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 8",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 9",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 9",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 10",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 10",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 11",
+      "pass": true
+    },
+    {
+      "name": "incomplete descendants cannot retire parent 11",
+      "pass": true
+    },
+    {
+      "name": "replacement owner prepared (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "no absent or overlapping ownership after child 12",
+      "pass": true
+    },
+    {
+      "name": "complete mixed cut replaces parent",
+      "pass": true
+    },
+    {
+      "name": "fine collision readiness becomes available after refinement",
+      "pass": true
+    },
+    {
+      "name": "transition edit height obtained",
+      "pass": true
+    },
+    {
+      "name": "edit accepted with mixed cut active",
+      "pass": true
+    },
+    {
+      "name": "mixed-cut edit rebuilds four fine owners",
+      "pass": true
+    },
+    {
+      "name": "mixed-cut edit publishes through worker",
+      "pass": true
+    },
+    {
+      "name": "edit preserves mixed coverage and invalidates cached parent",
+      "pass": true
+    },
+    {
+      "name": "coarsening cannot resurrect obsolete hidden parent",
+      "pass": true
+    },
+    {
+      "name": "fresh coarse parent rebuilt after edit",
+      "pass": true
+    },
+    {
+      "name": "coarsening switches only to refreshed parent",
+      "pass": true
+    },
+    {
+      "name": "coarsening disables all hidden child visuals and colliders",
+      "pass": true
+    },
+    {
+      "name": "transition worker joins cleanly",
+      "pass": true
+    }
+  ],
+  "events": [
+    {
+      "kind": "startup",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 122.193
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 26.494
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 29.665
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 32.379
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 6.156
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 7.292
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 12.536
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 2.784
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 2.475
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 2.353
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.799
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.74
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 1.092
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.88
+    },
+    {
+      "kind": "height",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_begin",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 1.272
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 1,
+      "worker_ms": 1.142
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 1,
+      "worker_ms": 1.164
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 1,
+      "worker_ms": 1.029
+    },
+    {
+      "kind": "edit_done",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 117.538
+    }
+  ],
+  "failures": 0,
+  "refinement_ms": 518.523,
+  "scope": "Real worker, staging and native coverage planner on one aligned mountain root. Controlled child arrival and split flags. Exact XZ ownership coverage at planner updates, not geometric seam/shading proof. Headless; no GPU/FPS, cave qualification, automatic distance scheduling or endurance."
+}

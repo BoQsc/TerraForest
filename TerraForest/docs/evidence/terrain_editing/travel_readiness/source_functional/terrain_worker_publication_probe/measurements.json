@@ -1,0 +1,360 @@
+{
+  "checks": [
+    {
+      "name": "real native terrain worker starts",
+      "pass": true
+    },
+    {
+      "name": "real worker startup delivered",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "initial region admitted (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker meshes reach live staging and publication",
+      "pass": true
+    },
+    {
+      "name": "worker height query completes",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics completion_before_preparation (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "public stream edit accepted completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "edit invalidates exactly four visible local regions completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker completion received with staging deliberately held",
+      "pass": true
+    },
+    {
+      "name": "completion alone cannot publish unprepared batch",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker completed but original collision retained (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "completion-before-preparation keeps original physics surface",
+      "pass": true
+    },
+    {
+      "name": "local worker edit commits completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker transaction publishes exactly once completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics completion_before_preparation (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker excavation lowers all four sampled surfaces completion_before_preparation",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture original physics overlapped (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "public stream edit accepted overlapped",
+      "pass": true
+    },
+    {
+      "name": "edit invalidates exactly four visible local regions overlapped",
+      "pass": true
+    },
+    {
+      "name": "local worker edit commits overlapped",
+      "pass": true
+    },
+    {
+      "name": "worker transaction publishes exactly once overlapped",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1280, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1296, 1280, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1280, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker fixture replacement physics overlapped (1296, 1296, 16)",
+      "pass": true
+    },
+    {
+      "name": "worker excavation lowers all four sampled surfaces overlapped",
+      "pass": true
+    },
+    {
+      "name": "real worker joins cleanly",
+      "pass": true
+    }
+  ],
+  "events": [
+    {
+      "kind": "startup",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.82
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.683
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.736
+    },
+    {
+      "kind": "mesh",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.833
+    },
+    {
+      "kind": "height",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": -1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_begin",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 1.41
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 1.241
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 1.283
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 1.092
+    },
+    {
+      "kind": "edit_done",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 1,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_begin",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 0,
+      "ticket": 2,
+      "worker_ms": 0.0
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 4,
+      "ticket": 2,
+      "worker_ms": 1.33
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 2,
+      "worker_ms": 1.204
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 2,
+      "worker_ms": 1.239
+    },
+    {
+      "kind": "edit_chunk",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 2,
+      "worker_ms": 1.139
+    },
+    {
+      "kind": "edit_done",
+      "region_parts": 0,
+      "region_stages": {},
+      "remaining_before_receive": 3,
+      "ticket": 2,
+      "worker_ms": 0.0
+    }
+  ],
+  "failures": 0,
+  "rows": [
+    {
+      "after_heights": [
+        101.911865234375,
+        101.911834716797,
+        101.911865234375,
+        101.911849975586
+      ],
+      "before_heights": [
+        105.2822265625,
+        105.511215209961,
+        105.677124023438,
+        105.907928466797
+      ],
+      "elapsed_ms": 61.876,
+      "mode": "completion_before_preparation",
+      "publish_ms": 0.061,
+      "worker_build_ms": 5.026,
+      "worker_queue_ms": 0.057
+    },
+    {
+      "after_heights": [
+        99.9118804931641,
+        99.9118347167969,
+        99.9118804931641,
+        99.9118347167969
+      ],
+      "before_heights": [
+        101.911865234375,
+        101.911834716797,
+        101.911865234375,
+        101.911849975586
+      ],
+      "elapsed_ms": 26.209,
+      "mode": "overlapped",
+      "publish_ms": 0.059,
+      "worker_build_ms": 4.912,
+      "worker_queue_ms": 0.061
+    }
+  ],
+  "scope": "Real native worker, public stream edit/invalidation, collision staging and physics queries. Fixed four-region cut; no quadtree transitions, draw/GPU or endurance. Snapshot candidate selected only with --snapshot-terrain. Held mode deliberately includes observer delay; all timings are headless diagnostic only."
+}

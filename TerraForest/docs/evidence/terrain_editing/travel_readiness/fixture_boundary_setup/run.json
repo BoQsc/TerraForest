@@ -1,0 +1,67 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\checks\\20261026T093632760448Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/terrain_stream_coverage.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_31abf10cd4ea4a1e9dfd827d143dd6f8",
+    "--derived-cache=user://terrain_stream_coverage_31abf10cd4ea4a1e9dfd827d143dd6f8"
+  ],
+  "cache": "user://terrain_stream_coverage_31abf10cd4ea4a1e9dfd827d143dd6f8",
+  "utc": "20261026T093632760448Z",
+  "timeout": 90.0,
+  "required_text": "TERRAIN_STREAM_COVERAGE failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": true,
+  "revision": "a149755109c26cbcc6cc95789bdff9c37d587c70",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/terrain_stream.gd",
+    " M TerraForest/tests/foundation_mining.gd",
+    " M TerraForest/tests/held_mining_flight.gd",
+    " M TerraForest/tools/check_terrain_editing.py",
+    "?? TerraForest/tests/terrain_stream_coverage.gd"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "608e5d35a857ad6b538e87da4747abe4ab607a5f60660b560257c6ecbb86d58c",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "aec824591d2418ec14f37b3b2d04cff1c1cd5be9e503f93081619e5750dab97a",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "9b91d67409e3564539ff3be5c2a6c64e315540cddfddad08b8072fa5a8fe653a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "57a4cf77b9ab8cdc7360e952441957cda0253315ef0797edda36348ecc8112c4",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "2487c55d5817a89c99433d8d70270e77698e58129b3b061beef4de7045180584",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "0edcadf7161458b2e9ec2d753d58cf47f8014315a445ad216ff0e4e698f77f10",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "fb6fa44e633478256500bd1b447b4267dd468b952902e2ef11a3e031104285ff"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 75120,
+    "exit_code": 1,
+    "diagnostics": [
+      "FAIL both sides of the newly joined edge retain matching collision",
+      "FAIL neighbouring fine surfaces share exact native boundary vertices"
+    ],
+    "required_text_found": false,
+    "elapsed_seconds": 1.314416499924846,
+    "passed": false
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "revision": "a149755109c26cbcc6cc95789bdff9c37d587c70",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/terrain_stream.gd",
+    " M TerraForest/tests/foundation_mining.gd",
+    " M TerraForest/tests/held_mining_flight.gd",
+    " M TerraForest/tools/check_terrain_editing.py",
+    "?? TerraForest/tests/terrain_stream_coverage.gd"
+  ],
+  "git_metadata_available": true,
+  "engine": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "57a4cf77b9ab8cdc7360e952441957cda0253315ef0797edda36348ecc8112c4",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "2487c55d5817a89c99433d8d70270e77698e58129b3b061beef4de7045180584",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "aec824591d2418ec14f37b3b2d04cff1c1cd5be9e503f93081619e5750dab97a",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "9b91d67409e3564539ff3be5c2a6c64e315540cddfddad08b8072fa5a8fe653a"
+  },
+  "pack_sha256": null,
+  "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
+  "continuity_gate": "held_mining_flight: maximum input-to-first-draw and subsequent visible-change gaps <=150ms",
+  "runs": [
+    {
+      "test": "terrain_planner",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_planner\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_planner.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_8e7b4f2a68de476c93e8674f2a605023",
+        "--derived-cache=user://terrain_planner_8e7b4f2a68de476c93e8674f2a605023"
+      ],
+      "cache": "user://terrain_planner_8e7b4f2a68de476c93e8674f2a605023",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 74988,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.2002819000044838,
+        "passed": true
+      },
+      "script_sha256": "111d6102bf6b3e603923052870c8ce888c38c4d92219cb5c165771e22bc71795"
+    },
+    {
+      "test": "terrain_stream_coverage",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_stream_coverage\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_stream_coverage.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_d9221675fd534accb7ba9e3958b23865",
+        "--derived-cache=user://terrain_stream_coverage_d9221675fd534accb7ba9e3958b23865"
+      ],
+      "cache": "user://terrain_stream_coverage_d9221675fd534accb7ba9e3958b23865",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 28092,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.9353225000668317,
+        "passed": true
+      },
+      "script_sha256": "65f7ec7796647b1f6004841306886242a85786d9dd95b2f7cce6bcd1b8f20d0b"
+    },
+    {
+      "test": "terrain_transition_probe",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_transition_probe\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_transition_probe.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_58d3bc7c41d841ecba0b345f5a705a95",
+        "--derived-cache=user://terrain_transition_probe_58d3bc7c41d841ecba0b345f5a705a95"
+      ],
+      "cache": "user://terrain_transition_probe_58d3bc7c41d841ecba0b345f5a705a95",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 85196,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.5855447000358254,
+        "passed": true
+      },
+      "script_sha256": "3dc222a498073a5887fb00ec780de1442e886e2ec61b2dd4b6f7196746c1f66a"
+    },
+    {
+      "test": "terrain_worker_publication_probe",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_worker_publication_probe\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_worker_publication_probe.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_4c6f49c4680e4cf5b8e1e39e85e5ddc7",
+        "--derived-cache=user://terrain_worker_publication_probe_4c6f49c4680e4cf5b8e1e39e85e5ddc7"
+      ],
+      "cache": "user://terrain_worker_publication_probe_4c6f49c4680e4cf5b8e1e39e85e5ddc7",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 81068,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.8374866000376642,
+        "passed": true
+      },
+      "script_sha256": "056dfea1e8c5f4a4d85d3cf31943b7041519bd64e62f07ea358e0907cd0bb996"
+    },
+    {
+      "test": "terrain_target_readiness_probe",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_target_readiness_probe\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_target_readiness_probe.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_83d763e1c7694dc29e29e10361a20d1c",
+        "--derived-cache=user://terrain_target_readiness_probe_83d763e1c7694dc29e29e10361a20d1c"
+      ],
+      "cache": "user://terrain_target_readiness_probe_83d763e1c7694dc29e29e10361a20d1c",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 85188,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 2.045248999958858,
+        "passed": true
+      },
+      "script_sha256": "2d77cdca57ee25f3c5a7c784c04d971dcb8fd76147fcaf0cf19b7eb03eeae00a"
+    },
+    {
+      "test": "terrain_preparation_priority",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T093910Z\\terrain_preparation_priority\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_preparation_priority.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_112585ec3abf4012a100dcbc39cea5f9",
+        "--derived-cache=user://terrain_preparation_priority_112585ec3abf4012a100dcbc39cea5f9"
+      ],
+      "cache": "user://terrain_preparation_priority_112585ec3abf4012a100dcbc39cea5f9",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 76904,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.4673245999729261,
+        "passed": true
+      },
+      "script_sha256": "d641581771ab0007b7c3a73bb1b9a092f31e2afebb78b0d6de9ad8f425a916b5"
+    }
+  ]
+}

@@ -411,6 +411,16 @@ validated fallback on the ordinary renderer increased visible edits from18/24 to
 frame p99 pass; these do not erase the failed first-response gate. Keep arrival
 readiness and large-edit scaling active. This is not sustained mining acceptance.
 
+2026-10-26 follow-up: the ~289 ms generator-1 case now passes after enabling the
+existing native available-coverage policy in the ordinary stream (packaged first
+response 92.370–108.616 ms). Its target root was previously absent, not an existing
+parent being replaced. Existing coarse coverage is deliberately preserved. A
+fresh generator-23 / ground-cover check still fails at 243.948 ms first response
+and 320.786 ms maximum gap, with 182.766–223.114 ms coarse-owner worker builds.
+Keep bounded replacement of already-visible owners, exact joins/collision and
+generated-checkpoint qualification open. Retained evidence and reproduction:
+`evidence/terrain_editing/README.md`, post-travel readiness follow-up.
+
 
 ## Saved-world identity, photographs and progress — 2026-10-23
 

@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS default renderer is exercised without opting into regional terrain
+PASS ready target is exposed without claiming missing root coverage
+PASS ready target activates collision readiness immediately
+PASS newly exposed target has matching physical terrain
+PASS late coarse parent cannot withdraw the target or overlap its surface
+PASS in-progress edit keeps the old cut until atomic publication
+PASS ready neighbour joins without waiting for unrelated siblings
+PASS neighbouring fine surfaces share exact native boundary vertices
+PASS both sides of the grid edge are covered by published fine colliders
+PASS previously covered root remains intact until all replacement coverage is ready
+PASS complete and partial roots retain distinct loading readiness
+PASS hidden fine collision cannot falsely declare an existing coarse region ready
+PASS dirty visible parent remains live during edit preparation
+PASS stale hidden parent cannot resurrect over current fine terrain
+TERRAIN_STREAM_COVERAGE failures=0

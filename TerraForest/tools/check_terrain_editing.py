@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--pack", action="store_true", help="Exercise exported resources with external test scripts")
     parser.add_argument("--case", action="append", help="Run only named cases; repeat to select several")
     parser.add_argument("--extended", action="store_true", help="4,800 rendered mixed edits instead of 1,200")
-    parser.add_argument("--with-known-continuity-check", action="store_true", help="Also run the unresolved post-flight 150ms mining continuity gate")
+    parser.add_argument("--with-known-continuity-check", action="store_true", help="Compatibility flag; post-flight mining continuity now runs by default")
     args = parser.parse_args()
     config, _ = parse_args(["--godot", args.godot] if args.godot else [])
     engine = Path(config.godot).resolve()
@@ -26,6 +26,10 @@ def main():
     folder = ROOT / "reports" / "terrain_editing" / stamp
     folder.mkdir(parents=True)
     headless = [
+        ("terrain_planner", "TERRAIN_PLANNER_RESULT"),
+        ("terrain_stream_coverage", "TERRAIN_STREAM_COVERAGE failures=0"),
+        ("terrain_transition_probe", "transition worker joins cleanly"),
+        ("terrain_worker_publication_probe", "real worker joins cleanly"),
         ("vegetation_terrain_support", "VEGETATION_TERRAIN_SUPPORT failures=0"),
         ("ground_cover_retirement", "GROUND_COVER_RETIREMENT failures=0"),
         ("terrain_edit_recovery", "TERRAIN_EDIT_RECOVERY failures=0"),
@@ -64,8 +68,7 @@ def main():
             cases.append((name, name.upper() + " failures=0", False, water))
         cases.append(("terrain_tools_endurance", "TERRAIN_TOOLS_ENDURANCE failures=0", False,
                       ["--world-generator=23", "--ground-cover", "--no-zombies", "--terrain-soak-rounds=" + ("12" if args.extended else "3")]))
-        if args.with_known_continuity_check:
-            cases.append(("held_mining_flight", "bounded observer writer retains all frames and progress reports", False, []))
+        cases.append(("held_mining_flight", "bounded observer writer retains all frames and progress reports", False, []))
     if args.case:
         unknown = set(args.case) - {case[0] for case in cases}
         if unknown:
@@ -81,7 +84,8 @@ def main():
                                   for path in sorted((resource_root / "addons" / addon / "bin").glob("*.dll"))},
                 "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None,
                 "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
-                "known_open_gate": "held_mining_flight: post-flight visible-change gaps can exceed 150ms", "runs": []}
+                "continuity_gate": "held_mining_flight: maximum input-to-first-draw and subsequent visible-change gaps <=150ms",
+                "known_open_gate": "The generator-23 version with ground cover still exceeds 150ms rebuilding an existing coarse owner; see docs/evidence/terrain_editing/README.md", "runs": []}
     for name, marker, headless_mode, extra in cases:
         destination = folder / name
         destination.mkdir()

@@ -1,0 +1,392 @@
+{
+  "scope": "One absent-root publication dependency fixed; generated-world existing coarse-owner mining latency remains open.",
+  "pack_sha256": "9393d0ae9c31cb1af678bda89c6d2b5d875e78e72c2e1114d7f419e7dabfce7c",
+  "samples": [
+    {
+      "name": "source_repeat",
+      "world_configuration": null,
+      "failures": [],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 108.427,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 108.427,
+            "median_ms": 66.747,
+            "over_50ms": 29,
+            "p95_ms": 67.613,
+            "p99_ms": 108.427
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 33.511,
+            "median_ms": 33.126,
+            "over_50ms": 0,
+            "p95_ms": 33.498,
+            "p99_ms": 33.511
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 20.51,
+            "median_ms": 16.671,
+            "over_50ms": 0,
+            "p95_ms": 17.018,
+            "p99_ms": 19.259
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 65.185,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 83.59,
+            "median_ms": 66.645,
+            "over_50ms": 26,
+            "p95_ms": 83.509,
+            "p99_ms": 83.59
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 66.573,
+            "median_ms": 33.283,
+            "over_50ms": 3,
+            "p95_ms": 50.08,
+            "p99_ms": 66.573
+          },
+          "frames": {
+            "count": 181,
+            "max_ms": 18.255,
+            "median_ms": 16.671,
+            "over_50ms": 0,
+            "p95_ms": 17.128,
+            "p99_ms": 17.351
+          }
+        }
+      ]
+    },
+    {
+      "name": "pack_1",
+      "world_configuration": null,
+      "failures": [],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 108.616,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 108.616,
+            "median_ms": 66.718,
+            "over_50ms": 29,
+            "p95_ms": 67.466,
+            "p99_ms": 108.616
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 33.383,
+            "median_ms": 33.093,
+            "over_50ms": 0,
+            "p95_ms": 33.358,
+            "p99_ms": 33.383
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 20.35,
+            "median_ms": 16.686,
+            "over_50ms": 0,
+            "p95_ms": 17.094,
+            "p99_ms": 17.398
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 65.221,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 100.415,
+            "median_ms": 66.58,
+            "over_50ms": 24,
+            "p95_ms": 84.105,
+            "p99_ms": 100.415
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 65.952,
+            "median_ms": 49.024,
+            "over_50ms": 6,
+            "p95_ms": 50.361,
+            "p99_ms": 65.952
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 18.141,
+            "median_ms": 16.689,
+            "over_50ms": 0,
+            "p95_ms": 17.557,
+            "p99_ms": 17.845
+          }
+        }
+      ]
+    },
+    {
+      "name": "pack_2",
+      "world_configuration": null,
+      "failures": [],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 92.37,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 92.37,
+            "median_ms": 66.76,
+            "over_50ms": 29,
+            "p95_ms": 67.604,
+            "p99_ms": 92.37
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 31.618,
+            "median_ms": 30.758,
+            "over_50ms": 0,
+            "p95_ms": 31.532,
+            "p99_ms": 31.618
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 20.287,
+            "median_ms": 16.666,
+            "over_50ms": 0,
+            "p95_ms": 16.895,
+            "p99_ms": 17.012
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 64.873,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 84.195,
+            "median_ms": 66.545,
+            "over_50ms": 23,
+            "p95_ms": 83.807,
+            "p99_ms": 84.195
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 65.717,
+            "median_ms": 32.926,
+            "over_50ms": 2,
+            "p95_ms": 50.009,
+            "p99_ms": 65.717
+          },
+          "frames": {
+            "count": 181,
+            "max_ms": 22.057,
+            "median_ms": 16.671,
+            "over_50ms": 0,
+            "p95_ms": 17.122,
+            "p99_ms": 17.474
+          }
+        }
+      ]
+    },
+    {
+      "name": "pack_3",
+      "world_configuration": null,
+      "failures": [],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 105.041,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 105.041,
+            "median_ms": 66.821,
+            "over_50ms": 29,
+            "p95_ms": 83.337,
+            "p99_ms": 105.041
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 43.824,
+            "median_ms": 27.59,
+            "over_50ms": 0,
+            "p95_ms": 43.788,
+            "p99_ms": 43.824
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 18.546,
+            "median_ms": 16.666,
+            "over_50ms": 0,
+            "p95_ms": 16.867,
+            "p99_ms": 17.22
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 60.879,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 83.398,
+            "median_ms": 66.658,
+            "over_50ms": 28,
+            "p95_ms": 83.258,
+            "p99_ms": 83.398
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 46.139,
+            "median_ms": 29.7,
+            "over_50ms": 0,
+            "p95_ms": 46.059,
+            "p99_ms": 46.139
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 17.549,
+            "median_ms": 16.663,
+            "over_50ms": 0,
+            "p95_ms": 16.948,
+            "p99_ms": 17.32
+          }
+        }
+      ]
+    },
+    {
+      "name": "final_report_check",
+      "world_configuration": {
+        "generator": 1,
+        "ground_cover": false,
+        "regional_renderer": false,
+        "seed": 1703
+      },
+      "failures": [],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 104.121,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 104.121,
+            "median_ms": 66.706,
+            "over_50ms": 28,
+            "p95_ms": 99.343,
+            "p99_ms": 104.121
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 56.659,
+            "median_ms": 24.27,
+            "over_50ms": 1,
+            "p95_ms": 40.223,
+            "p99_ms": 56.659
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 17.202,
+            "median_ms": 16.667,
+            "over_50ms": 0,
+            "p95_ms": 16.895,
+            "p99_ms": 17.199
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 57.112,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 84.38,
+            "median_ms": 66.692,
+            "over_50ms": 25,
+            "p95_ms": 83.556,
+            "p99_ms": 84.38
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 43.556,
+            "median_ms": 26.978,
+            "over_50ms": 0,
+            "p95_ms": 43.418,
+            "p99_ms": 43.556
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 17.291,
+            "median_ms": 16.671,
+            "over_50ms": 0,
+            "p95_ms": 16.96,
+            "p99_ms": 17.278
+          }
+        }
+      ]
+    },
+    {
+      "name": "generator23_remaining",
+      "world_configuration": null,
+      "failures": [
+        "held capture-to-draw p95 <=150ms",
+        "no gap between visible mining changes exceeds 150ms"
+      ],
+      "phases": [
+        {
+          "phase": "held_flight_0",
+          "first_visible_ms": 243.948,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 320.786,
+            "median_ms": 67.72,
+            "over_50ms": 27,
+            "p95_ms": 294.612,
+            "p99_ms": 320.786
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 256.141,
+            "median_ms": 38.05,
+            "over_50ms": 6,
+            "p95_ms": 244.838,
+            "p99_ms": 256.141
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 44.964,
+            "median_ms": 16.67,
+            "over_50ms": 0,
+            "p95_ms": 17.009,
+            "p99_ms": 17.486
+          }
+        },
+        {
+          "phase": "held_flight_1",
+          "first_visible_ms": 54.157,
+          "visible_gaps": {
+            "count": 29,
+            "max_ms": 84.1,
+            "median_ms": 66.845,
+            "over_50ms": 28,
+            "p95_ms": 82.242,
+            "p99_ms": 84.1
+          },
+          "capture_to_draw": {
+            "count": 29,
+            "max_ms": 58.549,
+            "median_ms": 41.048,
+            "over_50ms": 3,
+            "p95_ms": 58.284,
+            "p99_ms": 58.549
+          },
+          "frames": {
+            "count": 182,
+            "max_ms": 17.367,
+            "median_ms": 16.666,
+            "over_50ms": 0,
+            "p95_ms": 17.112,
+            "p99_ms": 17.337
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "revision": "a149755109c26cbcc6cc95789bdff9c37d587c70",
+  "worktree_changes": [
+    " M TerraForest/addons/volumetric_terrain/terrain_stream.gd",
+    " M TerraForest/tests/foundation_mining.gd",
+    " M TerraForest/tests/held_mining_flight.gd",
+    " M TerraForest/tests/terrain_planner.gd",
+    " M TerraForest/tests/terrain_transition_probe.gd",
+    " M TerraForest/tests/terrain_worker_publication_probe.gd",
+    " M TerraForest/tools/check_terrain_editing.py",
+    "?? TerraForest/docs/evidence/terrain_editing/travel_readiness/",
+    "?? TerraForest/tests/terrain_stream_coverage.gd",
+    "?? TerraForest/tests/terrain_stream_coverage.gd.uid"
+  ],
+  "git_metadata_available": true,
+  "engine": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "native_sha256": {
+    "dist\\addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "57a4cf77b9ab8cdc7360e952441957cda0253315ef0797edda36348ecc8112c4",
+    "dist\\addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "2487c55d5817a89c99433d8d70270e77698e58129b3b061beef4de7045180584",
+    "dist\\addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "2809724f9919781e51514f2104d31ffd7011f4c27c59e736c623ee4e85a550d6",
+    "dist\\addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "7a56e06bc0813281180991f3e1092851184b7498c7cad1256e117defe9290a25",
+    "dist\\addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "aec824591d2418ec14f37b3b2d04cff1c1cd5be9e503f93081619e5750dab97a",
+    "dist\\addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "9b91d67409e3564539ff3be5c2a6c64e315540cddfddad08b8072fa5a8fe653a"
+  },
+  "pack_sha256": "9393d0ae9c31cb1af678bda89c6d2b5d875e78e72c2e1114d7f419e7dabfce7c",
+  "scope": "Finite isolated cases, not exhaustive or multi-hour qualification. External test scripts; graphical captures require separate inspection.",
+  "continuity_gate": "held_mining_flight: maximum input-to-first-draw and subsequent visible-change gaps <=150ms",
+  "runs": [
+    {
+      "test": "held_mining_flight",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\terrain_editing\\20261026T095251Z\\held_mining_flight\\engine.log",
+        "--fullscreen",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/held_mining_flight.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_41bae294b220464bbfcac4be46d03099",
+        "--derived-cache=user://held_mining_flight_41bae294b220464bbfcac4be46d03099"
+      ],
+      "cache": "user://held_mining_flight_41bae294b220464bbfcac4be46d03099",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 79900,
+        "exit_code": 0,
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 14.979930000030436,
+        "passed": true
+      },
+      "script_sha256": "cb8aaefe6fb1e2bd3ef3bcd8d208de72d8915c06d2e7492d06b5791ad1ea0ebc"
+    }
+  ]
+}

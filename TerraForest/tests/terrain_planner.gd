@@ -226,7 +226,7 @@ func benchmark() -> void:
 
 func finish() -> void:
 	planner=null
-	DirAccess.make_dir_recursive_absolute("res://reports")
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports"))
 	var result := {"checks":checks,"failures":failures,"timing":metrics}
 	var file := FileAccess.open("res://reports/terrain_planner.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(result,"  "))

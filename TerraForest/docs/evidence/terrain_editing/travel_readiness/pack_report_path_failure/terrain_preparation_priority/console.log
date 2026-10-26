@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS ready target bypasses unrelated scene uploads
+PASS background partial progress retained
+PASS edit can interrupt urgent preparation without losing earlier suspended work
+PASS suspended jobs remain protected from duplicate scheduling
+PASS target resumes before unrelated background work
+PASS background resumes without rebuilding completed pieces

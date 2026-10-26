@@ -1137,7 +1137,7 @@ func _commit_partition() -> void:
 func _update_cut() -> void:
 	if pending_edit:
 		return
-	var covered: Dictionary = planner.coverage_available(tiles,split_state,visible_cut) if backend.region_terrain else planner.coverage(tiles,split_state,visible_cut)
+	var covered: Dictionary = planner.coverage_available(tiles,split_state,visible_cut)
 	if not covered.ok:
 		_fail("Native terrain coverage rejected invalid state")
 		return

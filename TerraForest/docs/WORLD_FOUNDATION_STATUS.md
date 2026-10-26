@@ -1,3 +1,26 @@
+## Post-travel mining response — partially resolved, 2026-10-26
+
+The recorded ~289 ms generator-1 case reproduces at 294.134 ms. The target mesh
+was ready but hidden behind unrelated missing sibling coverage. The ordinary
+stream now uses the existing native available-coverage policy, previously gated
+to the regional renderer. Packaged first changes measure 92.370–108.616 ms in
+three repeats, within the unchanged 150 ms gate. Existing visible parents still
+remain until complete replacement; collision, atomic edits, distant transitions
+and native coverage regressions pass. A packaged 1,200-edit stress run passes
+frame gates (p99 17.136 ms, maximum 39.453 ms). The PCK is installed.
+
+This is not full closure of arrival response. A fresh generator-23 / seed-1703
+ground-cover check still takes 243.948 ms for the first change and has a 320.786 ms
+maximum gap: an already-visible 256 m owner is rebuilt for 182.766–223.114 ms.
+Replacing that owner locally without losing outer geometry/joins/collision remains
+required. Return with native owner partition/publication evidence and unchanged
+actual-input-to-draw/frame gates; do not substitute hiding the parent or switching
+the experimental renderer on globally. Current partial visibility also does not
+make the rest of a previously unloaded destination instantly appear. Generated
+checkpoints, populated travel, long histories and lower-end qualification stay
+open. Retained failures, captures and reproducible commands:
+`evidence/terrain_editing/README.md` (post-travel readiness follow-up).
+
 ## Per-instance vegetation terrain response — 2026-10-26
 
 Mining and terrain building now sample resident roots/stems against the native
@@ -49,11 +72,11 @@ run also passes frame gates (p99 16.995 ms, maximum 45.505 ms), but two earlier
 PCK runs retain 105.619/81.805 ms draw-span stalls whose root cause is unassigned.
 Keep render/presentation profiling open; the later pass does not erase them.
 
-This does not close the existing first-visible mining gap after flight, finite
-unsaved-page limits, multi-hour/populated/cold-save or lower-end performance
-qualification. Large 64 m edits remain asynchronous but can take roughly a second
-to publish. Continue bounded local-owner replacement with exact joins/collision,
-then repeat unchanged 150 ms input-to-visible and frame gates. Revisit broader
+The readiness follow-up above closes the ~289 ms absent-root fixture, not the
+generated-world coarse-owner gap, finite unsaved-page limits, multi-hour/populated/
+cold-save or lower-end qualification. Large 64 m edits remain asynchronous but can
+take roughly a second to publish. Continue bounded local-owner replacement with
+exact joins/collision, then repeat unchanged 150 ms response and frame gates. Revisit broader
 qualification with staged histories, explicit storage ownership and retained
 frame traces; do not call all terrain editing universally fixed. Player saves
 are untouched; terrain-grid generation/contact remains separately unresolved.
@@ -1977,9 +2000,11 @@ Arrival needs bounded local owner replacement, preserving distant representation
 joins and collision, then the unchanged 150 ms response/gap gates. Prefetch remains
 required for cold-storage admission; it cannot resolve the measured whole-parent
 rebuild. The optional regional renderer is not automatically production-qualified.
-The 2026-10-26 editing campaign enables bounded target priority in the default
-renderer, but its first-arrival visible-gap check still fails. The newer traces
-in `evidence/terrain_editing/README.md` supplement rather than close this entry.
+The 2026-10-26 readiness follow-up fixes the absent-root generator-1 delay by
+exposing ready disjoint local coverage. It does not close this coarse-owner case:
+a fresh generator-23 run still measures a 243.948 ms first response and 320.786 ms
+maximum gap. New traces in `evidence/terrain_editing/README.md` supplement this
+entry; bounded replacement of existing coarse owners remains required.
 
 ## Block placement forest exclusion corrected - 2026-10-23
 
@@ -2297,10 +2322,11 @@ native parallel generation/compute integration with equivalence and benefit evid
 canonical regional storage capacity/recovery; large-edit/mining scaling; remaining
 vegetation streaming cases; clean standalone export; populated travel/frame-cost
 checks and world visual acceptance. These remain active, not optional. Preserve
-0BSD, existing saves and accepted static water. Held mining after scripted arrival still fails the150ms first-visible-change
-gate after correcting its obsolete tool setup. Native fallback now applies to the
-ordinary renderer, but readiness/large-edit scaling remain open; see the exact
-failure reports in WORLD_WORKFLOW_REDESIGN.md.
+0BSD, existing saves and accepted static water. The 2026-10-26 readiness follow-up
+closes the absent-root generator-1 150 ms fixture, but generated-world coarse-owner
+rebuilding still fails. Native fallback applies to the ordinary renderer;
+coarse-owner arrival and large-edit scaling remain open. See the follow-up above
+and WORLD_WORKFLOW_REDESIGN.md.
 
 ## Native world-generation rewrite in progress — 2026-10-22
 

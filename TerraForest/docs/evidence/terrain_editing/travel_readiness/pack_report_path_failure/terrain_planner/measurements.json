@@ -1,0 +1,12 @@
+{
+  "checks": 184,
+  "failures": 0,
+  "timing": {
+    "legacy_median_ms": 3.406,
+    "legacy_p95_ms": 7.991,
+    "native_median_ms": 0.34,
+    "native_p95_ms": 0.717,
+    "scope": "Matched headless request + coverage CPU calls, 80 samples; excludes scene publication, backend locks and rendering.",
+    "tiles": 197
+  }
+}

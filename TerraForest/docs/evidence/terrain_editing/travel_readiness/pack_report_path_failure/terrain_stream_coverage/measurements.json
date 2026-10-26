@@ -1,0 +1,109 @@
+{
+  "checks": [
+    {
+      "name": "default renderer is exercised without opting into regional terrain",
+      "pass": true
+    },
+    {
+      "name": "ready target is exposed without claiming missing root coverage",
+      "pass": true
+    },
+    {
+      "name": "ready target activates collision readiness immediately",
+      "pass": true
+    },
+    {
+      "name": "newly exposed target has matching physical terrain",
+      "pass": true
+    },
+    {
+      "name": "late coarse parent cannot withdraw the target or overlap its surface",
+      "pass": true
+    },
+    {
+      "name": "in-progress edit keeps the old cut until atomic publication",
+      "pass": true
+    },
+    {
+      "name": "ready neighbour joins without waiting for unrelated siblings",
+      "pass": true
+    },
+    {
+      "name": "neighbouring fine surfaces share exact native boundary vertices",
+      "pass": true
+    },
+    {
+      "name": "both sides of the grid edge are covered by published fine colliders",
+      "pass": true
+    },
+    {
+      "name": "previously covered root remains intact until all replacement coverage is ready",
+      "pass": true
+    },
+    {
+      "name": "complete and partial roots retain distinct loading readiness",
+      "pass": true
+    },
+    {
+      "name": "hidden fine collision cannot falsely declare an existing coarse region ready",
+      "pass": true
+    },
+    {
+      "name": "dirty visible parent remains live during edit preparation",
+      "pass": true
+    },
+    {
+      "name": "stale hidden parent cannot resurrect over current fine terrain",
+      "pass": true
+    }
+  ],
+  "failures": 0,
+  "scope": "Default production stream coverage, native meshes and physics; no scheduling or rendered latency assertion.",
+  "timings": [
+    {
+      "ms": 0.82,
+      "stage": "build_decode_recipes"
+    },
+    {
+      "calls": 1,
+      "ms": 1.687,
+      "stage": "drain_staging"
+    },
+    {
+      "ms": 140.431,
+      "stage": "build_decode_recipes"
+    },
+    {
+      "calls": 2,
+      "ms": 7.366,
+      "stage": "drain_staging"
+    },
+    {
+      "ms": 0.77,
+      "stage": "build_decode_recipes"
+    },
+    {
+      "calls": 1,
+      "ms": 0.711,
+      "stage": "drain_staging"
+    },
+    {
+      "ms": 251.25,
+      "stage": "build_decode_recipes"
+    },
+    {
+      "calls": 2,
+      "ms": 7.756,
+      "stage": "drain_staging"
+    },
+    {
+      "ms": 1.538,
+      "stage": "build_decode_recipes"
+    },
+    {
+      "calls": 1,
+      "ms": 0.924,
+      "stage": "drain_staging"
+    }
+  ]
+}

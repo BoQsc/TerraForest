@@ -1,0 +1,51 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS query preserves barrier edit
+PASS query preserves barrier reset
+PASS query preserves barrier load
+PASS query preserves barrier save
+PASS query preserves barrier partition
+PASS query preserves barrier lake_slice
+PASS query preserves barrier unknown
+PASS one FIFO query per regional boundary
+PASS stopping prevents cooperative queries
+PASS local mesh preserves barrier edit
+PASS local mesh preserves barrier reset
+PASS local mesh preserves barrier load
+PASS local mesh preserves barrier save
+PASS local mesh preserves barrier partition
+PASS local mesh preserves barrier lake_slice
+PASS local mesh preserves barrier unknown
+PASS one local mesh per background boundary
+PASS shutdown prevents cooperative local builds
+PASS interactive slot accepts first bounded tile
+PASS priority submission itself cannot cross a queued mutation
+PASS interactive slot accepts second bounded tile
+PASS interactive queue refuses unbounded third tile
+PASS coarse container cannot masquerade as bounded interactive work
+PASS query world starts
+PASS query world ready
+PASS collision-independent target query admitted
+PASS target query returns
+PASS canonical field supplies target
+PASS query supplies a finite outward unit normal
+PASS query requires no published terrain or physics collision
+PASS target query including delivery stays within 150ms
+[TerrainRewrite] Temporary test world: save skipped
+PASS query world starts
+PASS query world ready
+PASS background mesh admitted
+PASS background mesh admitted
+PASS collision-independent target query admitted
+PASS target query returns
+PASS canonical field supplies target
+PASS query supplies a finite outward unit normal
+PASS query requires no published terrain or physics collision
+PASS target query including delivery stays within 150ms
+PASS local build gets bounded interactive slot
+PASS local build reaches real scene publication
+PASS local build bypasses background containers within 150ms
+PASS both background meshes finish after cooperative query
+PASS query result releases bounded query slot
+[TerrainRewrite] Temporary test world: save skipped
+TARGET_READINESS [{"background_queued":false,"build_epoch":0,"cells":82,"elapsed_ms":16.426,"epoch":0,"fraction":0.676741540431976,"kind":"density_ray","normal":"(0.082877, 0.953552, -0.289604)","position":"(1308.0, 98.79102, 1260.0)","query_ms":0.105,"queue_ms":0.047,"requested_revision":0,"revision":0,"status":"hit","token":123,"worker_finished_us":350623},{"background_queued":true,"build_epoch":0,"cells":82,"elapsed_ms":31.188,"epoch":0,"fraction":0.676741540431976,"kind":"density_ray","local_build_delivery_ms":29.507,"normal":"(0.082877, 0.953552, -0.289604)","position":"(1308.0, 98.79102, 1260.0)","query_ms":0.07,"queue_ms":12.257,"requested_revision":0,"revision":0,"status":"hit","token":123,"worker_finished_us":431627}]

@@ -6,7 +6,7 @@ var visual: RefCounted
 # Exercise controller ray hits, 50ms held capture, stroke buffer and draw events.
 # Do not replace this with serial sculpt calls that wait before capturing again.
 func run() -> void:
-	DirAccess.make_dir_recursive_absolute("res://reports")
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports"))
 	if writer.start()!=OK: quit(2);return
 	game=Scene.instantiate();game.temporary_world=true
 	game.max_fps=60;game.background_fps=60
@@ -93,6 +93,8 @@ func run() -> void:
 			if row.changed and row.current_visible_terrain: latencies.append(float(row.draw_ms))
 		end_phase()
 		var row: Dictionary={"phase":phase,"changed_draws":gaps.size(),"visible_gaps":summary(gaps),"capture_to_draw":summary(latencies),"frames":summary(frames),"edits":edits.duplicate(true),"last_hit":not game.latest_hit.is_empty()}
+		row["input_started_us"]=started
+		row["first_visible_ms"]=gaps.front() if not gaps.is_empty() else null
 		row["input_state"]={"frames":input_frames,"eligible":eligible_frames,"ray_hit":hit_frames,"loading":loading_frames,"pending_edit":pending_frames}
 		row["readiness_trace"]=readiness_trace
 		row["patch_work"]=work.duplicate(true)
@@ -102,7 +104,7 @@ func run() -> void:
 		check(not latencies.is_empty() and summary(latencies).p95_ms<=150,"held capture-to-draw p95 <=150ms")
 		check(not gaps.is_empty() and summary(gaps).max_ms<=150,"no gap between visible mining changes exceeds 150ms")
 		check(not frames.is_empty() and summary(frames).p99_ms<=20 and summary(frames).over_50ms==0,"frame p99 <=20ms and no frame >50ms")
-	var file:=FileAccess.open("res://reports/held_mining_flight.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks":checks,"phases":reports,"presentation":Presentation.measurement(root),"visual_diagnostic":visual!=null,"scope":"Two three-second held mining bursts after scripted flight arrival; real controller physics ray, capture queue and rendered draw timing. No sustained movement during each burst; not endurance acceptance. Visual mode includes intrusive GPU readback; use separate normal run for performance."},"  "));file.close()
+	var file:=FileAccess.open(ProjectSettings.globalize_path("res://reports/held_mining_flight.json"),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"checks":checks,"phases":reports,"presentation":Presentation.measurement(root),"world_configuration":{"generator":game.terrain.backend.world_generator,"seed":game.terrain.backend.world_seed,"ground_cover":game.ground_enabled,"regional_renderer":game.terrain.backend.region_terrain},"visual_diagnostic":visual!=null,"scope":"Two three-second held mining bursts after scripted flight arrival; real controller physics ray, capture queue and rendered draw timing. No sustained movement during each burst; not endurance acceptance. Visual mode includes intrusive GPU readback; use separate normal run for performance."},"  "));file.close()
 	if visual!=null: visual.finish()
 	finish()

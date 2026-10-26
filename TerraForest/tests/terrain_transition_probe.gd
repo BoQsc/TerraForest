@@ -79,7 +79,7 @@ func run() -> void:
 	check(not world.backend.thread.is_started(),"transition worker joins cleanly")
 	world.free()
 	await process_frame
-	DirAccess.make_dir_recursive_absolute("res://reports")
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports"))
 	var file := FileAccess.open("res://reports/terrain_transition_probe.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"failures":failures,"checks":checks,"events":worker_events,"refinement_ms":refinement_ms,"scope":"Real worker, staging and native coverage planner on one aligned mountain root. Controlled child arrival and split flags. Exact XZ ownership coverage at planner updates, not geometric seam/shading proof. Headless; no GPU/FPS, cave qualification, automatic distance scheduling or endurance."},"  "))
 	file.close()

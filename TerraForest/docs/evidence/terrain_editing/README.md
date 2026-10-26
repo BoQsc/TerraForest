@@ -70,14 +70,11 @@ still includes growing test trace dictionaries and settling vegetation, so this
 is not a claim of flat whole-process memory. The largest volume's publication
 takes **918.012 ms** without an equivalent main-thread stall.
 
-The first visible mining change immediately after flight still exceeds the
-unchanged 150 ms gate. Target priority improves the second arrival but does not
-replace the coarse visible parent promptly enough at the first arrival. Keep the
-existing local-owner/publication work open; require exact distant coverage,
-joins/collision and repeated actual-input-to-draw traces before closing it.
-The final two arrival gaps are **289.073 / 83.331 ms**. Both frame gates and
-post-capture draw-latency gates pass; the first gap includes waiting to obtain a
-usable visible target, which must not be excluded from player-visible response.
+The original campaign retained arrival gaps of **289.073 / 83.331 ms** despite
+passing frame and post-capture latency gates. The follow-up below fixes a
+publication dependency in that generator-1 fixture, but does not close the
+separate generated-world coarse-owner reconstruction problem. Waiting to obtain
+a usable visible target remains included in the 150 ms player-response gate.
 
 Packaged validation: native recovery, paged rejection/corruption, volume history,
 paid materials, bounded target ordering and retirement pass. All 54 placement
@@ -100,6 +97,81 @@ worlds with entities, multi-seed travel, lower-end/thermal qualification and
 unexplained earlier boundary stalls remain open. Return with the retained frame
 and stage traces; do not weaken frame/latency gates or treat screenshots as FPS
 proof. Visual/player acceptance is separate from these engineering checks.
+
+## Post-travel readiness follow-up — 2026-10-26
+
+Evidence is under `travel_readiness/`; large JSON/CSV traces use gzip. The original
+delay reproduced at **294.134 ms**. Native target geometry arrived about 60 ms
+after input, but the ordinary renderer withheld it until unrelated siblings
+completed. Contrary to the earlier coarse-parent explanation for this particular
+fixture, root `(1280,1024,256)` was absent from the initial visible cut.
+
+The production stream now always calls the existing native `coverage_available`
+planner. Previously only the experimental regional renderer used that policy.
+Ready disjoint tiles can appear in previously uncovered space. An existing
+visible parent still stays until its entire replacement is ready; dirty hidden
+parents cannot return, a late coarse mesh cannot withdraw active fine collision,
+and partial roots do not count as fully loaded. No new mesher, density sampling,
+shader, worker pool, per-frame forest scan, save format or generation change.
+
+Unchanged actual-held-input gates, fullscreen 1920x1080 Forward+ / cap 60 on the
+current RTX 4050 / i5-12450H laptop:
+
+- Source repeats: first-arrival maximum gaps **107.019 / 108.427 ms**.
+- Three packaged repeats: first changes **108.616 / 92.370 / 105.041 ms**;
+  second changes **65.221 / 64.873 / 60.879 ms**. All visible-change gaps pass
+  150 ms, frame p99 stays below 20 ms and no measured frame exceeds 50 ms.
+- Packaged 1,200-mixed-edit / 16-large-volume stress run: **4,781** runtime
+  frames, p99 **17.136 ms**, maximum **39.453 ms**, no frames above 50 ms.
+  This run uses generator 23 and ground cover; it waits for edit-site readiness,
+  so it is not evidence for the separate cold-arrival case below.
+- Native planner, real default-stream coverage/physics, complete parent-to-child
+  and distant coarsening transitions, worker atomic publication, target queue
+  barriers and suspended-upload priority pass in source and the PCK. Restoring
+  the original policy makes the new default-stream regression fail nine checks.
+
+The first changed-frame capture shows the local crater while the rest of that
+previously unloaded root is still missing; the 500 ms capture shows continuous
+surrounding terrain. This is not seamless whole-world teleport acceptance.
+Native shared boundary representatives and physical collision on both sides are
+tested separately. The visual diagnostic uses intrusive GPU readback and fails
+frame gates; it is not counted as a performance pass.
+
+### Still open: generated-world coarse owner
+
+A fresh generator-23 / seed-1703 run with ground cover still fails: first change
+**243.948 ms**, largest visible gap **320.786 ms**. Frame gates pass. Its first
+edit rebuilds the already-visible **256 m** owner `(1280,1024,256)` for
+**182.766 ms** on the worker; subsequent early builds reach **223.114 ms**.
+Unlike the fixed absent-root case, exposing a fine tile by hiding that parent
+would discard existing coverage. This change deliberately does not do that.
+
+The remaining requirement is bounded local replacement of an already-visible
+coarse owner, preserving outer geometry, joins, collision and atomic publication.
+Do not enable the experimental renderer globally, cut holes, skip distant edits
+or weaken gates to claim completion. Return with the retained generator-23 trace
+and the existing native regional-owner implementation; require actual-input
+first-response/continuity <=150 ms plus distant, collision and rendered checks.
+Cold persisted checkpoints, long histories and populated travel remain separate
+qualification. No player saves were used or changed.
+
+Reproduce the remaining case:
+
+```powershell
+python tools/run_godot_check.py held_mining_flight --timeout 180 --require "bounded observer writer retains all frames and progress reports" -- --world-generator=23 --world-seed=1703 --ground-cover --no-zombies
+```
+
+Retained non-passes: `after_2` loses focus/input validity and fails frame p99;
+its timing is not acceptance. `pack_report_path_failure` passes game assertions
+but three harnesses attempt a read-only `res://reports` mkdir; absolute directory
+paths fix those diagnostics in `pack_functional`. Early fixture-development logs
+retain a pending-edit staging setup error and an incorrect assumption that legacy
+surface-net boundaries lie on a flat grid plane. The corrected fixture compares
+shared boundary-cell vertices and published colliders rather than imposing a new
+meshing convention. `original_policy_regression` is the intentional red control.
+The ordinary generator-1 continuity check now runs in the default regression
+matrix instead of requiring an opt-in flag. Reports record first-visible time
+separately from maximum gap and identify generator/renderer/ground-cover settings.
 
 ## Visual and harness checks
 

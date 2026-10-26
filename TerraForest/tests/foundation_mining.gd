@@ -40,7 +40,7 @@ class ReportWriter extends RefCounted:
 		mutex.lock();closing=true;mutex.unlock();wake.post()
 		thread.wait_to_finish()
 	func run() -> void:
-		var file:=FileAccess.open("res://reports/foundation_mining.frames.csv",FileAccess.WRITE)
+		var file:=FileAccess.open(ProjectSettings.globalize_path("res://reports/foundation_mining.frames.csv"),FileAccess.WRITE)
 		if file==null: mark_failed();return
 		file.store_csv_line(["phase","time_us","frame_ms","queued","sdf_pages","engine_static_bytes","process_ms","physics_ms","vegetation_us","process_span_ms","draw_span_ms","render_cpu_ms","render_gpu_ms","ecosystem_us","terrain_staging_ms","observer_ms"])
 		while true:
@@ -56,7 +56,7 @@ class ReportWriter extends RefCounted:
 				rows_written+=1
 			if file.get_error()!=OK: mark_failed()
 			if job.has("report"):
-				var progress:=FileAccess.open("res://reports/foundation_mining.json",FileAccess.WRITE)
+				var progress:=FileAccess.open(ProjectSettings.globalize_path("res://reports/foundation_mining.json"),FileAccess.WRITE)
 				if progress==null: mark_failed()
 				else:
 					progress.store_string(JSON.stringify(job.report,"  "))
@@ -254,7 +254,7 @@ func checkpoint(complete: bool) -> void:
 		return
 	report["observer_io_max_ms"]=writer.io_max_ms
 	report["observer_frames"]={"captured":captured_frames,"written":writer.rows_written}
-	var file := FileAccess.open("res://reports/foundation_mining.json",FileAccess.WRITE)
+	var file := FileAccess.open(ProjectSettings.globalize_path("res://reports/foundation_mining.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"  "))
 	file.close()
 
