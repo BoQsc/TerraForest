@@ -1,0 +1,62 @@
+{
+  "checks": 69,
+  "failures": 0,
+  "profiles": [
+    {
+      "candidates": 747,
+      "count": 72,
+      "generator": 17,
+      "seed": 0,
+      "worker_ms": 1.0902
+    },
+    {
+      "candidates": 1166,
+      "count": 37,
+      "generator": 23,
+      "seed": 0,
+      "worker_ms": 1.1329
+    },
+    {
+      "candidates": 989,
+      "count": 58,
+      "generator": 17,
+      "seed": 42,
+      "worker_ms": 1.3232
+    },
+    {
+      "candidates": 1232,
+      "count": 34,
+      "generator": 23,
+      "seed": 42,
+      "worker_ms": 1.2195
+    },
+    {
+      "candidates": 927,
+      "count": 59,
+      "generator": 17,
+      "seed": 1703,
+      "worker_ms": 1.2747
+    },
+    {
+      "candidates": 1281,
+      "count": 28,
+      "generator": 23,
+      "seed": 1703,
+      "worker_ms": 1.3527
+    },
+    {
+      "candidates": 905,
+      "count": 61,
+      "generator": 17,
+      "seed": 2147483647,
+      "worker_ms": 1.2251
+    },
+    {
+      "candidates": 1316,
+      "count": 26,
+      "generator": 23,
+      "seed": 2147483647,
+      "worker_ms": 1.3202
+    }
+  ]
+}

@@ -19,6 +19,8 @@ var last_profile:Dictionary={}
 var builds:=0
 var roads:Array[Dictionary]=[]
 var places:Array[Dictionary]=[]
+var deposits:Array[Dictionary]=[]
+var show_deposits:=true
 var timer:Timer
 var updates:Node
 var water_survey:Node
@@ -47,6 +49,9 @@ func _ready()->void:
  var zoom_row:=HBoxContainer.new();sidebar.add_child(zoom_row)
  add_button(zoom_row,"− Zoom",func():view.set_zoom(view.zoom/1.5,view.size*0.5));add_button(zoom_row,"+ Zoom",func():view.set_zoom(view.zoom*1.5,view.size*0.5))
  add_label(sidebar,"Drag to pan · Wheel to zoom\nNorth is up · Mint arrow: you\nGold: roads · Blue: water\nIvory: blocks / Lilac: large objects")
+ var minerals:=CheckButton.new();minerals.text="Material veins";minerals.button_pressed=true;sidebar.add_child(minerals)
+ minerals.toggled.connect(func(value:bool):show_deposits=value;view.queue_redraw())
+ add_label(sidebar,"Steel diamond: iron · Copper diamond: copper\nDeposit locations, not remaining reserves")
  travel_hint=add_label(sidebar,"");travel_hint.add_theme_color_override("font_color",Color("9cffe0"))
  add_label(sidebar,"PUBLIC DESTINATIONS").add_theme_font_size_override("font_size",18)
  var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;sidebar.add_child(scroll)
@@ -86,9 +91,10 @@ func teleport_to(point:Vector2)->bool:
 func refresh_world()->void:
  var seed_value:int=game.terrain.backend.world_seed;var generator:int=game.terrain.backend.world_generator
  var baked:Dictionary=game.generated_region.describe(seed_value,generator)
- var next_key:="%d/%d/%d/%d"%[seed_value,generator,game.terrain.epoch,game.generated_region.revision()]
+ var next_key:="%d/%d/%d/%d/%d"%[seed_value,generator,game.terrain.epoch,game.generated_region.revision(),game.material_deposits.store.get_revision()]
  if next_key!=key:
   key=next_key;texture=null;places.clear();updates.reset()
+  deposits.assign(game.material_deposits.describe(seed_value,generator))
   var layout:Dictionary=Layout.describe(seed_value,generator)
   if not baked.is_empty():
    for place:Dictionary in baked.places:places.append(place.duplicate())

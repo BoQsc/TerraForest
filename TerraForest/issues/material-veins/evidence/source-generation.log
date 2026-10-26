@@ -1,0 +1,109 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS untouched world browser uses the published two-settlement defaults
+PASS material veins are enabled by default
+PASS material veins can be disabled independently
+MARKET_PLAN_TIMINGS candidates=24 attempts=5 survey_ms=9.934 recipe_ms=37.573 fitting_ms=39.471
+WORLD_PLAN digest=e790ef9c9f0d047167e3183c5a4ec19efa6d4bd27dbd87e03e654becdd278163 cache_hit=false ms=913.366 planning_frames=68
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":1892352,"checkpoints":17,"completed":998,"ok":true,"resident_high":553,"resident_limit":16384,"revision":998,"storage":{"region_reads":97,"reused_files":0,"reused_regions":348,"workers":1,"written_bytes":4601771,"written_files":33},"worker_ms":1019.2578}
+GENERATED_LAKE_ADMISSION accepted=1 rejected=[2, 3, 4] samples=9424
+OFFLINE_GENERATED_LAKES {"lakes":1,"milliseconds":977.548,"ok":true,"patches":872,"peak_native_state_bytes":31462480,"regions":872,"slices":872,"snapshot_bytes":13187368,"status":2,"steps":897,"water_ml":13693871176}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":1.81}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=20 edits=998
+GENERATION_JOB state=ready reason=
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 156.35 ms at 73654
+[terrain-hitch] base controller 157.26 ms at 73655
+[terrain-hitch] controller process 158.34 ms at 73656
+[terrain-hitch] world process 159.59 ms at 73658
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS production generation loads in same game window
+PASS placement preference belongs to the Player building-grid group
+PASS created world uses requested durable biome recipe
+PASS normal gameplay construction, vegetation, actors and vehicles are enabled
+PASS all requested districts and regional routes publish to actual world map
+PASS no legacy continuous decorative sidewalk meshes
+PASS publication verifies native binary recipe alongside terrain and structures
+PASS generation introduces no second process or operating-system window
+MARKET_PLAN_TIMINGS candidates=24 attempts=5 survey_ms=8.845 recipe_ms=35.783 fitting_ms=40.998
+PASS reconstruct exact approved-building plan independently
+PASS every published district and road matches the independently rebuilt native plan
+PASS transform approved B2 R2 into generated lot
+PASS transform approved A2 R2 into generated lot
+PASS transform approved B1 R1 into generated lot
+PASS new world includes A2 cottage, B1 hipped shop and B2 thin-roof shop
+PASS generated mineral metadata matches the independently planned geology
+GENERATED_MINERALS count=27 resident_placements=0 native_plan_ms=3.334
+PASS production map publishes all material deposits
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved B2 R2 streams in with complete collision
+PASS published world contains every approved B2 R2 block
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved A2 R2 streams in with complete collision
+PASS published world contains every approved A2 R2 block
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved B1 R1 streams in with complete collision
+PASS published world contains every approved B1 R1 block
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS custom world saves and returns to selector
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 137.62 ms at 89510
+[terrain-hitch] base controller 138.44 ms at 89510
+[terrain-hitch] controller process 139.37 ms at 89511
+[terrain-hitch] world process 140.33 ms at 89512
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS saved world reopens through the selector without reapplying UI options
+PASS requested biome survives save and reload
+PASS all district and road metadata survives reload exactly
+PASS material-deposit metadata survives full world save/reload exactly
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved B2 R2 streams in with complete collision
+PASS published world contains every approved B2 R2 block
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved A2 R2 streams in with complete collision
+PASS published world contains every approved A2 R2 block
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS approved B1 R1 streams in with complete collision
+PASS published world contains every approved B1 R1 block
+PASS creation and reload preserve native window handle
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_RECIPE_GENERATION checks=37 failures=0 slots=["recipe_generated_b6f8be5fff5bd161"]

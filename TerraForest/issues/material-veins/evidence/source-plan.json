@@ -1,0 +1,9 @@
+{
+  "cache_folder": "user://mineral_plan_check_599f5a6391698aa4",
+  "checks": 8,
+  "count": 27,
+  "failures": 0,
+  "native_plan_ms": 3.3569,
+  "off_digest": "3c3d81c4868eb0f1a8f04f6b05e94e42f368ca86748dd9013fd90fda3f887d81",
+  "plan_digest": "6ae260fad04cbd6d2bfb0b77987681dc3de28eeb32d624ce6e7aa0c5121abc82"
+}

@@ -1,6 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Discoverable material veins — 2026-10-26
+
+Native generation now locates real iron/copper veins under dry, gentle ground,
+outside planned road/foundation works, and caches durable surface stones plus
+binary map metadata. New-world Landscape option defaults on; disabling omits
+surface clues/markers without altering existing underground geology. Existing
+saves remain unchanged. Stones have 360 health and yield 8 matching ore; both
+the generation preview and in-game map display deposits. Separate map visibility
+toggle defaults on. No per-frame geology scanning or extra density-page bake.
+
+Source native, gameplay and complete generation/reload checks pass; 172 packaged
+checks pass across six suites. The default seed-1703 plan has 27 deposits; its
+dedicated native search measured 2.89 ms. Human stone appearance, distribution and reward
+balance review remains open. Resume after player review of a new world; long-run
+and lower-end performance need separate evidence, not a 60 FPS screenshot.
+[Images, scope, test history and return triggers](../issues/material-veins/README.md).
+
 ## Vehicle exit facing — corrected 2026-10-26; user review pending
 
 Confirmed 90/180-degree body/view mismatches after turning the car: exit restored

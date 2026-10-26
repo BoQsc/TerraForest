@@ -9,6 +9,8 @@ const BLOCK_MAXIMUM=[90,60,120,180]
 const COVER_MAXIMUM=[45,10,10,10,10,10,40,10,2]
 const TOOLS={1:200,2:200,3:200,4:200,5:200}
 const MODELS={
+	"resources/iron_outcrop/v1":{"name":"Iron-bearing stone","health":360,"material":"stone"},
+	"resources/copper_outcrop/v1":{"name":"Copper-bearing stone","health":360,"material":"stone"},
 	"furniture/table/v1":{"name":"Wooden table","health":90,"material":"wood"},
 	"furniture/chair/v1":{"name":"Wooden chair","health":90,"material":"wood"},
 	"furniture/shelf/v1":{"name":"Wooden shelf","health":90,"material":"wood"},

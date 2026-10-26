@@ -13,6 +13,11 @@ static func verify(path:String,seed_value:int,generator:int,options:Dictionary={
  var recipe:RefCounted=ClassDB.instantiate("NativeWorldRecipe")
  if sections.has("world_recipe_v1") and not recipe.validate_snapshot(sections.world_recipe_v1):return {"ok":false,"reason":"Generated world recipe is invalid"}
  if not options.is_empty() and sections.get("world_recipe_v1",PackedByteArray())!=recipe.encode(options):return {"ok":false,"reason":"Generated world recipe differs from requested settings"}
+ var minerals:RefCounted=ClassDB.instantiate("NativeGeneratedRegion")
+ if not minerals.restore_snapshot(sections.get("material_deposits_v1",PackedByteArray())):return {"ok":false,"reason":"Material deposit metadata is invalid"}
+ var mineral_plan:Dictionary=minerals.get_plan()
+ if int(options.get("material_veins",0))==1:
+  if not mineral_plan.get("present",false) or mineral_plan.seed!=seed_value or mineral_plan.generator!=generator or mineral_plan.places.is_empty():return {"ok":false,"reason":"Material deposits are missing or belong to another world"}
  for required:String in ["terrain","structures","generated_region","volumetric_water"]:
   if not sections.has(required):return {"ok":false,"reason":"Generated world is missing "+required}
  var region:RefCounted=ClassDB.instantiate("NativeGeneratedRegion")

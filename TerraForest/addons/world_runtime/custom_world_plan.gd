@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=10
+const VERSION:=12
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -22,6 +22,7 @@ static func read_plan(path:String,key:String)->Dictionary:
   for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
  value["plan_digest"]=checksum.hex_encode();value["cache_hit"]=true
+ value["mineral_plan_ms"]=0.0
  return value
 static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null)->Dictionary:
  var started:=Time.get_ticks_usec()
@@ -112,10 +113,17 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var result:Dictionary={"ok":true,"version":3,"recipe_version":VERSION,"recipe_key":key,"seed":seed_value,"generator":generator,"options":options.duplicate(),"sites":sites,"connection":network if not network.links.is_empty() else {},"works":works,"building_count":building_count,"network":network}
  result["layout_variant"]=layout_variant
  result["road_normalization"]=normalization
+ if int(options.get("material_veins",0))==1:
+  if progress!=null:progress.record("Locating material veins and surface stones",0,0,"Native geology / dry gentle ground / outside roads and construction")
+  var minerals:Dictionary=core.plan_material_deposits(works.segments)
+  if not minerals.get("ok",false):return {"ok":false,"reason":"Material deposit planning failed"}
+  result["material_deposits"]=minerals.deposits
+  result["mineral_plan_ms"]=minerals.worker_ms
  var navigation:=navigation_metadata(sites,network)
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation
  var packed:Dictionary=result.duplicate(true)
+ packed.erase("mineral_plan_ms")
  if progress!=null:progress.record("Validating and caching the placement plan",sites.size(),sites.size(),"%d buildings / %d districts / native binary navigation validation"%[building_count,sites.size()])
  for site:Dictionary in packed.sites:
   for lot:Dictionary in site.lots:lot.erase("asset")

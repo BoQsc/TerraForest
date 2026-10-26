@@ -1,0 +1,72 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bounded nonempty native plan: 0/17
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 0/23
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 42/17
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 42/23
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 1703/17
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 1703/23
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 2147483647/17
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS bounded nonempty native plan: 2147483647/23
+PASS repeat generation is deterministic
+PASS planning does not author density pages or mutate terrain
+PASS every surface marker lies directly over actual solid ore of the same material
+PASS bounded depth, stable unique identities and both materials
+PASS native binary deposit metadata accepts the exact plan
+PASS deposit metadata restores byte-exactly
+PASS road and construction earthworks exclude surface stones
+PASS incomplete exclusion fails safely
+PASS nonfinite exclusion fails safely
+PASS real vein can be mined through ordinary terrain edits
+PASS mining removes authoritative ore density
+PASS mined vein survives terrain save/reload
+MATERIAL_DEPOSITS_NATIVE checks=69 failures=0

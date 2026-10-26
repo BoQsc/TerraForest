@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Discoverable material veins](material-veins/README.md) | Implemented / scoped checks | 172 packaged checks pass; default-on ore stones and map markers identify real veins; appearance/balance await player review |
 | [Player facing after vehicle exit](vehicle-exit-facing/README.md) | Fixed for reproduced behavior / scoped checks | Player faces current car front, input yaw stays synchronized; 110 focused/world checks pass, user review pending |
 | [Reported fast-exit return](vehicle-fast-exit-return/README.md) | Unconfirmed / not reproduced | Four actual-world exits and seven resident-floor cases show no return; exact mod/build/speed and return destination needed |
 | [ESC Player settings](esc-player-settings/README.md) | Implemented / scoped checks | Third-person and embedding switches move from Session into Player; session actions stay unchanged |

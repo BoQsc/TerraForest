@@ -65,6 +65,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.biome=choice(settings,"Vegetation biome",["Woodland","Woodland & meadow mosaic","Open grassland with groves"])
  paragraph(settings,"Coherent forest boundaries and open ground; the same native field drives tree placement and the preview.")
  host.ocean=CheckBox.new();host.ocean.text="Ocean coastline & beaches";host.ocean.button_pressed=true;settings.add_child(host.ocean)
+ host.material_veins=CheckBox.new();host.material_veins.text="Material veins · surface stones & map markers";host.material_veins.button_pressed=true;settings.add_child(host.material_veins)
+ host.material_veins.tooltip_text="New worlds: durable, mineable iron/copper stones identify real underground veins. Disabling omits these surface clues and map markers; existing underground geology remains unchanged."
  var grid_panel:=PanelContainer.new();grid_panel.name="BuildingGridFit";grid_panel.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(grid_panel)
  var grid_settings:=VBoxContainer.new();grid_panel.add_child(grid_settings)
  label(grid_settings,"Building-grid fit",20,ACCENT)
@@ -91,6 +93,7 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.preview_empty=Label.new();host.preview_empty.text="YOUR WORLD STARTS HERE\n\nChoose a seed and recipe. The preview updates automatically.\nTerrain, buildings, roads and water are planned together.";host.preview_empty.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;host.preview_empty.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;host.preview_empty.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;host.preview_empty.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);host.preview_empty.add_theme_color_override("font_color",MUTED);map_space.add_child(host.preview_empty)
  var legend:=HBoxContainer.new();legend.alignment=BoxContainer.ALIGNMENT_CENTER;map_column.add_child(legend)
  label(legend,"■ Woodland",16,Color("8fb38c"));label(legend,"■ Roads / trails",16,Color("dec386"));label(legend,"■ Buildings",16,INK);label(legend,"■ Water",16,Color("76b8d0"))
+ label(legend,"◆ Iron / copper",16,Color("e5a269"))
  host.preview_metrics=label(map_column,"READY TO PLAN  ·  Native terrain fitting  ·  Cached generation",16,ACCENT);host.preview_metrics.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  host.preview_status=paragraph(map_column,"The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.",17)
  host.preparation_panel=preload("res://addons/world_runtime/loading_panel.gd").new();host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)
@@ -106,12 +109,13 @@ static func build(host:Control,tabs:TabContainer)->void:
  actions.add_child(host.preview_button);actions.move_child(host.preview_button,host.generate_button.get_index())
  for option:OptionButton in [host.preset,host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.item_selected.connect(func(_index:int):host.invalidate_preview())
  host.ocean.toggled.connect(func(_value:bool):host.invalidate_preview())
+ host.material_veins.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.buildable_ground.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.buildable_roads.toggled.connect(func(_value:bool):host.invalidate_preview())
  host.seed_field.value_changed.connect(func(_value:float):host.invalidate_preview())
  host.preset.item_selected.connect(func(_index:int):
   var supported:bool=host.preset.get_selected_id()==host.Launch.INTEGRATED_PRESET
-  host.ocean.visible=supported;grid_panel.visible=supported
+  host.ocean.visible=supported;host.material_veins.visible=supported;grid_panel.visible=supported
   for option:OptionButton in [host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]:option.disabled=not supported)
  host.update_recipe_summary()
  host.invalidate_preview()

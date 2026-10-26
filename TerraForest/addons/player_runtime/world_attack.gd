@@ -117,6 +117,7 @@ func finish_swing(identity:int,cancelled:bool)->void:
 	pending={}
 func repair_target(t:Dictionary)->bool:
 	if game.equipped_tool!=3 or t.kind not in ["block","model","vehicle"]:return false
+	if t.kind=="model" and str(t.get("asset","")).begins_with("resources/"):return false
 	var result:Dictionary=durability.repair(t.key,t.health,25)
 	if not result.ok:
 		game._show_lake_notice(result.get("reason","Repair unavailable"));return false

@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=24 attempts=5 survey_ms=7.521 recipe_ms=45.277 fitting_ms=44.641
+PASS default production plan contains native material deposits
+PASS warm generation reuses exact deposit descriptors from the binary plan cache
+MARKET_PLAN_TIMINGS candidates=24 attempts=5 survey_ms=7.458 recipe_ms=30.95 fitting_ms=36.612
+PASS disabled option generates no surface-deposit feature and has a separate cache identity
+PASS deposit option cannot change existing roads or earthworks
+FAIL actual generated roads/foundations leave every mineral stone supported at its planned surface
+PASS actual generated earthworks preserve the matching buried material under every stone
+PASS generation preview shows deposits only when enabled
+MATERIAL_DEPOSITS_PLAN checks=7 failures=1

@@ -27,6 +27,12 @@ func run()->void:
  check(footprint.size()==32 and footprint.decode_u32(4)==4 and codec.decode(footprint)==modern,"native footprint policy has independent generation identity")
  var mismatched:=footprint.duplicate();mismatched.encode_u32(4,3)
  check(not codec.validate_snapshot(mismatched),"new policy cannot masquerade as a legacy recipe")
+ for enabled in [0,1]:
+  var minerals:=modern.duplicate();minerals.material_veins=enabled
+  var mineral_bytes:PackedByteArray=codec.encode(minerals)
+  check(mineral_bytes.size()==36 and mineral_bytes.decode_u32(4)==5 and codec.decode(mineral_bytes)==minerals,"material-vein option has durable version-five identity: "+str(enabled))
+  mineral_bytes.encode_u32(32,2)
+  check(not codec.validate_snapshot(mineral_bytes),"invalid material-vein option is rejected")
  check(not codec.validate_snapshot(modern_bytes.slice(0,28)),"truncated version-two recipe cannot masquerade as legacy")
  for offset in range(0,28,4):
   var corrupt:=bytes.duplicate();corrupt.encode_u32(offset,0xffffffff)

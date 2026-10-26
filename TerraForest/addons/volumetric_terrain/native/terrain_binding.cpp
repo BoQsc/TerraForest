@@ -3,6 +3,7 @@
 #include "survey_map.hpp"
 #include "terrain_planner.hpp"
 #include "road_profile.hpp"
+#include "material_deposits.hpp"
 #include "terrain_collision.hpp"
 #include "terrain_region_store.hpp"
 #include "terrain_capture.hpp"
@@ -68,6 +69,7 @@ class TerrainCore : public godot::RefCounted {
 protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
+        godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("commit_storage_snapshot","capture","checkpoint"),&TerrainCore::commit_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_storage_checkpoint","checkpoint","checksum"),&TerrainCore::configure_storage_checkpoint);
@@ -109,6 +111,9 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary material_deposits(const godot::Array &earthworks){
+        std::lock_guard<std::mutex> lock(mutex_);return terraforest::plan_material_deposits(world_,earthworks);
+    }
     godot::Dictionary fit_road_network(const godot::Array &roads,const godot::Array &protected_areas,bool footprint_policy=false){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_road_network(world_,roads,protected_areas,footprint_policy);return tr_oom?godot::Dictionary():result;
     }

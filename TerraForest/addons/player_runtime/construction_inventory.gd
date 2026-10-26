@@ -136,6 +136,6 @@ func salvage_model(history: RefCounted, collection: Node3D, inventory: RefCounte
 	else:
 		# The direct native edit invalidates prior history. Never permit undo to
 		# recreate the rewarded object and harvest it repeatedly.
-		history.clear_history();reason="Furniture dismantled; wood collected"
+		history.clear_history();reason="Object harvested; materials collected"
 	busy=false
 	return removed

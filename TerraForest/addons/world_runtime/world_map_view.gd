@@ -31,7 +31,7 @@ func _gui_input(event:InputEvent)->void:
      if teleport_click:
       if event.ctrl_pressed and Rect2(Vector2.ZERO,size).has_point(event.position):atlas.teleport_to(map_to_world(event.position))
      else:
-      for place:Dictionary in atlas.places:
+      for place:Dictionary in atlas.places+(atlas.deposits if atlas.show_deposits else []):
        if world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
     teleport_click=false
    accept_event()
@@ -58,6 +58,18 @@ func _draw()->void:
   draw_line(a,b,Color("e7c78c"),maxf(2,road.width*pixels_per_metre()),true)
  label_boxes.clear()
  var font:=ThemeDB.fallback_font
+ for deposit:Dictionary in atlas.deposits if atlas.show_deposits else []:
+  var at:=world_to_map(deposit.position)
+  if not Rect2(Vector2.ZERO,size).grow(-8).has_point(at):continue
+  var color:=Color("a9bfd4") if deposit.title.begins_with("Iron") else Color("e5a269")
+  draw_circle(at,7,Color("10252b"))
+  draw_colored_polygon(PackedVector2Array([at+Vector2(0,-5),at+Vector2(5,0),at+Vector2(0,5),at+Vector2(-5,0)]),color)
+  if zoom>=3:
+   var title:String=deposit.title.get_slice(" ",0)+" vein"
+   var extent:=font.get_string_size(title,HORIZONTAL_ALIGNMENT_LEFT,-1,14)
+   var box:=Rect2(at+Vector2(7,-19),extent+Vector2(8,5))
+   if Rect2(Vector2.ZERO,size).encloses(box) and not label_boxes.any(func(other):return other.grow(2).intersects(box)):
+    label_boxes.append(box);draw_rect(box,Color(.02,.06,.07,.85));draw_string(font,at+Vector2(11,-4),title,HORIZONTAL_ALIGNMENT_LEFT,-1,14,color)
  for place:Dictionary in atlas.places:
   var at:=world_to_map(place.position)
   if not Rect2(Vector2.ZERO,size).grow(-8).has_point(at):continue

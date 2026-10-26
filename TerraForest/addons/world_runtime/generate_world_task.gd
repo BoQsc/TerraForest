@@ -46,6 +46,7 @@ func capture_loading_view(game:Node,name:String)->Error:
 func snapshot_signature(game:Node)->Dictionary:
  var water:PackedByteArray=game.lakes.capture_snapshot()
  var result:Dictionary={"water":preload("res://addons/world_runtime/survey_cache.gd").digest(water).hex_encode(),"blocks":block_signature(game),"region":Marshalls.raw_to_base64(game.generated_region.store.capture_snapshot())}
+ result["material_deposits"]=Marshalls.raw_to_base64(game.material_deposits.store.capture_snapshot())
  for asset:String in game.structures._models:
   result[asset]=Marshalls.raw_to_base64(game.structures.model(asset).capture_snapshot())
  return result
@@ -280,6 +281,9 @@ func run()->void:
   var region:Dictionary=game.generated_region.store.get_plan()
   region.places.append({"id":10,"title":"Western beach","detail":"First coastal inlet; offshore horizon is not navigable ocean yet.","position":preload("res://addons/volumetric_water/coastal_inlet.gd").ARRIVAL})
   if not game.generated_region.store.set_plan(seed_value,generator,region.places,region.roads):quit(1);return
+ if int(world_options.get("material_veins",0))==1:
+  progress("Placing mineral-bearing stones and map markers",0,prepared.get("material_deposits",[]).size())
+  if not game.material_deposits.publish(seed_value,generator,prepared.get("material_deposits",[]),game.structures):print("MATERIAL_DEPOSITS_FAILED");quit(1);return
  game.ecosystem._structures_changed()
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true

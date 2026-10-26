@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-26",
+  "seed": 1703,
+  "generator": 23,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "images": [
+    {
+      "name": "copper.png",
+      "sha256": "10a3f0eedc6aa4f8251c856b0697f79d756f2cb971dfed6b21301209e360737b",
+      "source": "reports/material_deposits/world/copper.png",
+      "provenance": "evidence/source-world-run.json",
+      "caption": "Copper stone in the same temporary world, at a different location.",
+      "inspection": "Inspected; player appearance/balance approval pending."
+    },
+    {
+      "name": "generated-map.png",
+      "sha256": "edad3abfef638b55c126c8cabb47759b83e057213c2c0dfd63e3cc6ef1e02daf",
+      "source": "reports/world_recipe_generation_default/material_map.png",
+      "provenance": "evidence/source-generation-run.json",
+      "caption": "Source generated world with 27 deposits and two connected settlements; dynamic layers still refreshing.",
+      "inspection": "Inspected; player appearance/balance approval pending."
+    },
+    {
+      "name": "generation.png",
+      "sha256": "c5df93b643dc7c0d49feaa321c42a8de0ad34584e8986b755499fbc4943dcb9f",
+      "source": "reports/checks/20261026T204422677137Z_minerals_pack/material_deposits_ui/evidence/generation.png",
+      "provenance": "evidence/pack-ui-run.json",
+      "caption": "Packaged generation UI, default-on checkbox and actual cached plan preview.",
+      "inspection": "Inspected; player appearance/balance approval pending."
+    },
+    {
+      "name": "iron.png",
+      "sha256": "27387457bb658717be34cded657c1da823fa60a75ea4a36b7452d3c7a2bbc730",
+      "source": "reports/material_deposits/world/iron.png",
+      "provenance": "evidence/source-world-run.json",
+      "caption": "Iron stone in a temporary world; unreviewed appearance.",
+      "inspection": "Inspected; player appearance/balance approval pending."
+    }
+  ]
+}

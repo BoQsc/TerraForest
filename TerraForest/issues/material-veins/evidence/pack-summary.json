@@ -1,0 +1,62 @@
+[
+  {
+    "test": "material_deposits_native",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 61076,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.3632299000164494,
+    "passed": true
+  },
+  {
+    "test": "world_recipe_native",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 71780,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.37129090004600585,
+    "passed": true
+  },
+  {
+    "test": "material_deposits_plan",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 336,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 3.2547074999893084,
+    "passed": true
+  },
+  {
+    "test": "material_deposits_world",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 70868,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 51.52855049993377,
+    "passed": true
+  },
+  {
+    "test": "world_recipe_generation",
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 24488,
+    "exit_code": 0,
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 87.179646100034,
+    "passed": true
+  }
+]

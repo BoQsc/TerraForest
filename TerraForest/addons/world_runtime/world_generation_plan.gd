@@ -168,6 +168,7 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
   if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}
   if not options.is_empty():terrain.pixels=preload("res://addons/world_runtime/world_recipe.gd").codec().render_biomes(terrain.pixels,seed_value,options.biome)
   terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds,water)
+  terrain.pixels=preload("res://addons/world_runtime/material_deposits.gd").preview_pixels(terrain.pixels,plan.get("material_deposits",[]))
   if not terrain_binary.is_empty() and not water_binary.is_empty():cache.write(cache_key,cache_key,terrain.pixels,preview_folder,32)
  terrain["plan_digest"]=plan.plan_digest;terrain["building_count"]=bounds.size();terrain["plan_cache_hit"]=plan.cache_hit;terrain["plan_ms"]=plan.worker_ms;terrain["plan_reusable"]=plan.get("cache_hit",false) or plan.get("cache_persisted",false)
  if not options.is_empty():terrain["options"]=options.duplicate();terrain["network"]=plan.network

@@ -7,6 +7,7 @@ const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var generated_region=preload("res://addons/world_runtime/generated_region.gd").new()
 var world_recipe=preload("res://addons/world_runtime/world_recipe.gd").new()
+var material_deposits=preload("res://addons/world_runtime/material_deposits.gd").new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var zombies=preload("res://addons/characters/runtime/zombie_world.gd").new()
 var zombie_target=preload("res://addons/characters/runtime/zombie_target.gd").new()
@@ -172,6 +173,8 @@ func _ready() -> void:
 		push_error("World recipe persistence initialization failed");_abort_startup(2);return
 	if not generated_region.prepare(persistence):
 		push_error("Generated region persistence initialization failed");_abort_startup(2);return
+	if not material_deposits.prepare(persistence,structures):
+		push_error("Material deposit initialization failed");_abort_startup(2);return
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
 		_abort_startup(2)
@@ -1582,6 +1585,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	if not _model_edit_available():
 		model_tool.placement_failure="World interaction unavailable";return false
 	var recipes: Dictionary=preload("res://addons/structures/construction_catalog.gd").salvage_recipes()
+	recipes.merge(preload("res://addons/world_runtime/material_deposits.gd").salvage_recipes())
 	for key: String in recipes:
 		if structures.model(key)==collection:
 			var removed: bool=construction_inventory.salvage_model(history,collection,player_hud.inventory,identity,recipes[key])

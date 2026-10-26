@@ -37,6 +37,10 @@ func run()->void:
  if not use_defaults:browser.biome.select(1);browser.settlement_count.select(2);browser.district_count.select(1);browser.road_network.select(1);browser.offroads.select(2)
  var options:Dictionary=browser.selected_options()
  if use_defaults:check(options==Recipe.DEFAULTS,"untouched world browser uses the published two-settlement defaults")
+ check(browser.material_veins.button_pressed and options.material_veins==1,"material veins are enabled by default")
+ browser.material_veins.button_pressed=false
+ check(browser.selected_options().material_veins==0,"material veins can be disabled independently")
+ browser.material_veins.button_pressed=true
  if footprint_review:
   options.road_grid=3
   var request:Dictionary=Launch.command(slot,true,browser.preset.get_selected_id(),1703,browser.gameplay.button_pressed,"user://worlds",browser.ocean.button_pressed,"connected",browser.buildable_ground.button_pressed,options)
@@ -83,6 +87,17 @@ func run()->void:
      approved_records[revision]=world_asset.get_records()
      approved_lots[revision]=lot
  check(approved_records.size()==3,"new world includes A2 cottage, B1 hipped shop and B2 thin-roof shop")
+ var mineral_bytes:PackedByteArray=game.material_deposits.store.capture_snapshot()
+ var deposits:Array=game.material_deposits.describe(1703,23)
+ check(not deposits.is_empty() and deposits.size()==planned.get("material_deposits",[]).size(),"generated mineral metadata matches the independently planned geology")
+ var mineral_count:=0
+ for asset:String in preload("res://addons/world_runtime/material_deposits.gd").KEYS.values():mineral_count+=game.structures.model(asset).region_stats().get("logical_instances",0)
+ check(mineral_count==deposits.size(),"every generated deposit has one persistent mineral stone, including unloaded regions")
+ print("GENERATED_MINERALS count=",deposits.size()," logical_instances=",mineral_count," native_plan_ms=",planned.get("mineral_plan_ms",-1))
+ game.world_map.set_open(true);game.world_map.view.overview()
+ check(game.world_map.deposits.size()==deposits.size(),"production map publishes all material deposits")
+ await photograph("material_map")
+ game.world_map.set_open(false)
  await verify_approved_records(game)
  game.session_menu.set_open(false)
  await photograph("custom_world_playable")
@@ -97,6 +112,7 @@ func run()->void:
  if game_ready():
   check(current_scene.world_recipe.store.capture_snapshot()==bytes and current_scene.ecosystem.biome_profile==options.biome,"requested biome survives save and reload")
   check(current_scene.generated_region.store.capture_snapshot()==region_bytes,"all district and road metadata survives reload exactly")
+  check(current_scene.material_deposits.store.capture_snapshot()==mineral_bytes,"material-deposit metadata survives full world save/reload exactly")
   await verify_approved_records(current_scene)
   await photograph("custom_world_reopened")
  check(windows_stable,"creation and reload preserve native window handle")
