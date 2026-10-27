@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [First-person world clipping](first-person-clipping/README.md) | Implemented / packaged | Default-on two-camera protection and optional world shadows; 194 checks pass; physical collision excluded by agreement; visual review pending |
+| [First-person world clipping](first-person-clipping/README.md) | Implemented / default simplified | Clipping protection on, hand shadows off by default; normal lighting retained; physical collision excluded by agreement; visual review pending |
 | [Separate diagonal pickaxe study](pickaxe-crosscut/README.md) | Tip-first alternate retained / not default | User wants to keep this version for comparison but says its feel is still weaker; isolate the unsatisfying moment before another revision |
 | [Discoverable material veins](material-veins/README.md) | Implemented / scoped checks | 172 packaged checks pass; default-on ore stones and map markers identify real veins; appearance/balance await player review |
 | [Player facing after vehicle exit](vehicle-exit-facing/README.md) | Fixed for reproduced behavior / scoped checks | Player faces current car front, input yaw stays synchronized; 110 focused/world checks pass, user review pending |

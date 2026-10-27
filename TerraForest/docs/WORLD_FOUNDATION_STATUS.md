@@ -4,13 +4,20 @@ This file retains the wider backlog; the tracker initially covers three cases.
 ## First-person clipping protection — 2026-10-27
 
 User explicitly chose two cameras/layers without retraction or new contact rules.
-Protection and optional world shadows default on under ESC > Player. One shared
+Protection defaults on; world shadows on hands/tools default off under ESC > Player.
+User clarified that clipping prevention, not hand-shadow fidelity, is the priority.
+Normal lighting and world shadows elsewhere remain unchanged. One shared
 world/skeleton; arms/items render over world depth, torso/legs remain world-tested.
 Offline mesh baking and bounded shadow references are packaged; all seven packaged
-checks pass (194 assertions), covering geometry, near walls, lighting, equipment,
+checks passed for the initial rollout (194 assertions), covering geometry, near
+walls, lighting, equipment,
 real mining contact, preferences, crouching, vehicle and view transitions. Physical
 wall intersection is not solved or claimed; user visual review and broader hardware
 qualification remain. [Evidence and alternatives](../issues/first-person-clipping/README.md).
+
+The shadows-off default passes 127 focused packaged assertions, including no
+default caster allocation, near-wall rendering, older preference fallback,
+explicit opt-in persistence and unchanged authored contact timing.
 
 ## Separate descending pickaxe candidate — 2026-10-27
 

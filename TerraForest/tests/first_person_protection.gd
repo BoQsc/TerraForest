@@ -57,6 +57,7 @@ func run()->void:
 	game.tool_view.equip(1);game.tool_view.human.animation_player.advance(0)
 	var protection:Node=game.first_person_view;protection.update()
 	check(protection.enabled and protection.active and game.session_menu.first_person_toggle.button_pressed,"clipping protection defaults on")
+	check(not protection.shadows_enabled and not protection.shadows.active and protection.shadows.mirrors.is_empty(),"world shadows default off without allocating shadow-only instances")
 	check(protection.viewport.world_3d==game.get_world_3d() and not protection.viewport.audio_listener_enable_3d,"one shared world and no second listener")
 	check(protection.camera.cull_mask==1<<18 and not (game.camera.cull_mask&(1<<18)),"separate depth pass sees only protected geometry")
 	check(protection.image.mouse_filter==Control.MOUSE_FILTER_IGNORE and protection.canvas.layer==0,"composite stays below HUD without intercepting input")
@@ -81,6 +82,9 @@ func run()->void:
 		sun.rotation_degrees=Vector3(-90,0,0);sun.shadow_enabled=true;sun.shadow_normal_bias=.1;sun.shadow_bias=.02
 		var roof:=MeshInstance3D.new();var roof_mesh:=BoxMesh.new();roof_mesh.size=Vector3(4,.2,4);roof.mesh=roof_mesh
 		game.add_child(roof);roof.position=Vector3(0,3.3,-1)
+		protection.update()
+		check(protection.shadows.mirrors.is_empty(),"a nearby shadow caster does not activate the optional shadow system")
+		protection.set_shadows_enabled(true,false)
 		protection.shadows.next_refresh=0;protection.update()
 		check(protection.shadows.mirrors.has(roof.get_instance_id()),"nearby world geometry contributes shadow-only instances")
 		var shaded:=await photo("sun_shadow_on")
@@ -103,7 +107,7 @@ func run()->void:
 		check(results.lamp_difference.changed_fraction>.003,"newly added world light and occluder affect the protected tool")
 		check(lamp.layers&(1<<18),"dynamically spawned lights are visible to the hands camera")
 		lamp.free();occluder.free();sun.light_energy=1;sun.shadow_enabled=false;sun.rotation_degrees=Vector3(-40,-25,0);environment.ambient_light_energy=.45
-		protection.set_shadows_enabled(true,false)
+		protection.set_shadows_enabled(false,false)
 		var wall:=MeshInstance3D.new();var box:=BoxMesh.new();box.size=Vector3(5,5,.12);wall.mesh=box
 		var wall_material:=StandardMaterial3D.new();wall_material.albedo_color=Color("55534a");wall.material_override=wall_material
 		game.camera.add_child(wall);wall.position=Vector3(0,0,-.25)
@@ -156,6 +160,13 @@ func run()->void:
 	game.free();await frames(2)
 	game=Fixture.new();game.config_path=config_path;game.temporary_world=false;root.add_child(game);await frames()
 	check(not game.first_person_view.enabled and not game.first_person_view.shadows_enabled and not game.first_person_view.active,"reopening reloads both saved preferences")
+	game.free();await frames(2)
+	config.erase_section_key("camera","first_person_world_shadows");config.save(config_path)
+	game=Fixture.new();game.config_path=config_path;game.temporary_world=false;root.add_child(game);await frames()
+	check(not game.first_person_view.shadows_enabled,"older camera preferences without a shadow key use the new off default")
+	game.first_person_view.set_shadows_enabled(true);game.free();await frames(2)
+	game=Fixture.new();game.config_path=config_path;game.temporary_world=false;root.add_child(game);await frames()
+	check(game.first_person_view.shadows_enabled,"an explicit optional-shadow preference still persists")
 	game.free();await frames(2)
 	results.checks=checks;results.failures=failures
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(results,"  "))

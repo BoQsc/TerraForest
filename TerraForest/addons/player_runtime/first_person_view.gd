@@ -3,7 +3,7 @@ extends Node
 const Meshes=preload("res://addons/player_runtime/first_person_meshes.gd")
 var game:Node
 var enabled:=true
-var shadows_enabled:=true
+var shadows_enabled:=false
 var active:=false
 var settings_path:="user://player_view.cfg"
 var viewport:SubViewport
@@ -37,7 +37,7 @@ func prepare(world:Node)->void:
 		var config:=ConfigFile.new()
 		if config.load(settings_path)==OK:
 			value=bool(config.get_value("camera","first_person_protection",true))
-			shadows_enabled=bool(config.get_value("camera","first_person_world_shadows",true))
+			shadows_enabled=bool(config.get_value("camera","first_person_world_shadows",false))
 	for light:Node in game.get_tree().root.find_children("*","Light3D",true,false):register_light(light.get_instance_id())
 	game.get_tree().node_added.connect(node_added)
 	set_enabled(value,false)

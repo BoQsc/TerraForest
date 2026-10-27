@@ -40,12 +40,15 @@ func run()->void:
 	await frames(12);protection.update()
 	var held:MeshInstance3D=game.tool_view.human.model.find_child("Equipment_Pickaxe",true,false)
 	check(held!=null and held.is_visible_in_tree(),"ordinary equipment path exposes the authored pickaxe mesh")
-	check(protection.active and protection.shadows_enabled,"normal gameplay starts with protection and world shadows enabled")
+	check(protection.active and not protection.shadows_enabled,"normal gameplay protects hands without world shadows")
 	var camera_transform:Transform3D=game.camera.global_transform
 	results.camera_position=camera_transform.origin
 	var original_profile:Dictionary=game.tool_view.attack_profile()
-	check(protection.shadows.mirrors.size()>0 and protection.shadows.mirrors.size()<=protection.shadows.LIMIT,"real terrain and woodland use the bounded shadow-only set")
+	check(not protection.shadows.active and protection.shadows.mirrors.is_empty(),"default gameplay does not allocate or refresh hand-shadow casters")
 	await photo("forest_on")
+	protection.set_shadows_enabled(true,false);await frames()
+	check(protection.shadows.mirrors.size()>0 and protection.shadows.mirrors.size()<=protection.shadows.LIMIT,"world shadows remain an explicit bounded opt-in")
+	await photo("forest_shadows_on");protection.set_shadows_enabled(false,false)
 	protection.set_enabled(false,false);await photo("forest_off")
 	protection.set_enabled(true,false)
 	var wall:=MeshInstance3D.new();var box:=BoxMesh.new();box.size=Vector3(5,5,.1);wall.mesh=box
@@ -58,13 +61,14 @@ func run()->void:
 	wall.free()
 	game.session_menu.set_open(true);game.session_menu.show_page("Player");await frames()
 	check(not protection.active,"ESC menu hides first-person rendering")
-	check(game.session_menu.first_person_toggle.button_pressed and game.session_menu.first_person_shadows_toggle.button_pressed,"Player menu exposes both enabled defaults")
+	check(game.session_menu.first_person_toggle.button_pressed and not game.session_menu.first_person_shadows_toggle.button_pressed,"Player menu defaults to protection on and hand shadows off")
 	game.session_menu.first_person_toggle.button_pressed=false
 	check(not protection.enabled and game.session_menu.first_person_shadows_toggle.disabled,"turning off protection disables its dependent shadow option")
 	game.session_menu.first_person_toggle.button_pressed=true
-	game.session_menu.first_person_shadows_toggle.button_pressed=false
-	check(not protection.shadows_enabled,"Player shadow checkbox changes the renderer setting")
 	game.session_menu.first_person_shadows_toggle.button_pressed=true
+	check(protection.shadows_enabled,"Player shadow checkbox explicitly enables the optional renderer")
+	game.session_menu.first_person_shadows_toggle.button_pressed=false
+	check(not protection.shadows_enabled,"turning optional shadows back off preserves clipping protection")
 	await photo("player_settings")
 	game.session_menu.set_open(false);await frames();check(protection.active,"resuming restores hands rendering")
 	game.player_view.set_enabled(true,false);await frames()

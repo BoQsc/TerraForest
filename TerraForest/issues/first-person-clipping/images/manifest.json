@@ -70,5 +70,21 @@
     "caption": "Rejected early source prototype, camera culling excluded world lights; not current rendering.",
     "pack_sha256": null,
     "edited": false
+  },
+  {
+    "file": "clipping-only-settings.png",
+    "source": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_world/evidence/player_settings.png",
+    "sha256": "aabe1db9f7d409ac5936e3a091152d9114bb51765a39e45b5e00909920972920",
+    "caption": "Current packaged default: clipping protection ON, world shadows on hands/tools OFF.",
+    "pack_sha256": "42c44e7e3b9e95ef0e1341b7db5c8efdb7c251c98dcd67415fd4208527b471d2",
+    "edited": false
+  },
+  {
+    "file": "clipping-only-close-wall.png",
+    "source": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_world/evidence/close_wall_on.png",
+    "sha256": "deb991764f93e60e01256d891d15f9fde482ba2faef28b4c62df1bba73918d78",
+    "caption": "Current packaged default, seed 1703, synthetic wall 0.25 m ahead: no hand-shadow system is needed to protect the hands and pickaxe from world-depth interference.",
+    "pack_sha256": "42c44e7e3b9e95ef0e1341b7db5c8efdb7c251c98dcd67415fd4208527b471d2",
+    "edited": false
   }
 ]

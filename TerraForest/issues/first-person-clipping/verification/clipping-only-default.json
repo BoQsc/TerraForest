@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-27",
+  "defaults": {
+    "first_person_protection": true,
+    "first_person_world_shadows": false
+  },
+  "pack_sha256": "42c44e7e3b9e95ef0e1341b7db5c8efdb7c251c98dcd67415fd4208527b471d2",
+  "total_checks": 127,
+  "tests": [
+    {
+      "test": "first_person_protection",
+      "checks": 57,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_protection"
+    },
+    {
+      "test": "first_person_world",
+      "checks": 43,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_world"
+    },
+    {
+      "test": "attack_animation_timing",
+      "checks": 27,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T063457859128Z_first_person_pack/attack_animation_timing"
+    }
+  ],
+  "user_visual_approval": false,
+  "scope": "Updated defaults, no default caster allocation, near-wall rendering, authored contact, optional shadow opt-in, settings persistence and actual temporary-world equipment/UI.",
+  "runtime_sha256": "814f7fb671e8407ecf2571e1bbca2fdb4d021d492d6544d0cfb452e96f75241f"
+}
