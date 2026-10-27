@@ -1,5 +1,18 @@
 # Building reviews — A2 roof and Shop B approved
 
+## House C1 — additional large-house proposal, not approved
+
+Run `python tools/review_modular_buildings.py --large-house` for the separate
+two-storey house, supported balcony, open garage bay and stair-accessed basement.
+The viewer has exterior, rear, balcony, room, basement and reversible cutaway views,
+door controls and right-drag orbit/wheel zoom; it does not capture the mouse.
+All 1,914 building parts are native grid cells; the smooth roofs reuse the approved
+thin slope/ridge/seam geometry. The 41 attached objects include functional doors,
+windows, worktables and storage. Bedroom platforms are simple timber block frames.
+This is not in the production catalogue or world generation. Existing designs and
+saves are unchanged. Visual approval and terrain-fit integration remain separate.
+[Images, checks and remaining work](../../issues/large-house-c1/README.md).
+
 ## B0 roof revision B2 — approved shop default
 
 Run `python tools/review_modular_buildings.py --shop-roof` for unchanged B0 on the

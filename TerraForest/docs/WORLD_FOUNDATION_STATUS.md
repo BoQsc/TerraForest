@@ -1,6 +1,15 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Additional large house C1 — 2026-10-27
+
+Separate baked proposal: two storeys, balcony, open garage, basement, native grid
+parts and approved roof-piece geometry. Scoped checks: 43 traversal/geometry/storage,
+21 fresh-process restore, 28 graphical assertions. Existing houses/saves unchanged.
+Not enabled for generation: awaits this house's visual approval, then a surveyed
+site, explicit basement excavation and integrated terrain/vehicle access checks.
+[Review images and resume point](../issues/large-house-c1/README.md).
+
 ## Developer shape catalog — 2026-10-27
 
 ESC → Dev Shapes exposes all 18 integrated native block shapes, searchable by

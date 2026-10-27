@@ -14,6 +14,7 @@ def main():
     mode.add_argument('--comparison', action='store_true', help='Use the earlier split-screen comparison instead of walking')
     mode.add_argument('--roof', action='store_true', help='Compare the untouched A0 cottage with the new A2 thin roof')
     mode.add_argument('--shop-roof', action='store_true', help='Compare historical B0 with the approved B2 thin gable roof')
+    mode.add_argument('--large-house', action='store_true', help='Inspect the additional C1 two-storey house proposal')
     parser.add_argument('--dry-run', action='store_true')
     options = parser.parse_args()
     config, _ = parse_args(['--godot', options.godot] if options.godot else [])
@@ -25,6 +26,7 @@ def main():
                *(['--comparison'] if options.comparison else []),
                *(['--roof'] if options.roof else []),
                *(['--shop-roof'] if options.shop_roof else []),
+               *(['--large-house'] if options.large_house else []),
                *(['--guided-tour'] if options.comparison and not options.no_tour else [])]
     details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
                    notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
@@ -34,6 +36,9 @@ def main():
     if options.shop_roof:
         details.update(label='B0 original vs B2 thin gable roof / approved shop default',
                        notes='Approved B2 roof next to historical B0. New village shops use B2; generated markets also include B1. This comparison does not read or write player saves.')
+    if options.large_house:
+        details.update(label='House C1 / additional two-storey proposal',
+                       notes='Isolated new house with balcony, open garage bay and basement. Not approved for generation. Existing houses and player saves remain unchanged.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0
