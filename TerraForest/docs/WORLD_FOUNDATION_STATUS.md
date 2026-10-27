@@ -28,6 +28,11 @@ the upper center rather than forced onto the exact cursor. Actual-world stills a
 comparison. Separate 120 Hz Blender/library assets and an
 explicit temporary-world launcher provide F6 candidate/default comparison.
 Ordinary runtime selection and accepted pickaxe assets remain unchanged.
+The user chose to keep this latest version as a separate alternate without
+making it the default. Its feel still falls short for a reason not yet
+identified. Resume by comparing the windup, point contact and recovery at
+normal speed and locating the specific unsatisfying pose/time; retain the
+accepted default until the user explicitly approves a replacement.
 
 Candidate mechanics pass 31 checks across 1,902 key/half-key poses, including
 point/velocity alignment, first steel contact and visible head orientation; 13 actual

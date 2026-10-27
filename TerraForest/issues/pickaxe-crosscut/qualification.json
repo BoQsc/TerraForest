@@ -1,6 +1,6 @@
 {
   "date": "2026-10-27",
-  "status": "Tip-first forward-left candidate; not accepted as default",
+  "status": "Tip-first forward-left candidate retained as an alternate; not accepted as default",
   "user_correction": "Rotational candidate rejected: appears to strike with middle of head, back rotates incorrectly, sideways sweep instead of a forward-left tip-led strike.",
   "checkout_head": "13c87bca80e0414451ddf1312585eaf1631a1058",
   "preserved_default_sha256": {
@@ -136,7 +136,8 @@
     "Fourth candidate 13c87bca rejected: head turned end-on and appeared to strike with middle while sweeping sideways. Its 102-degree screen-lean reversal and exact-cursor test rewarded the wrong working plane.",
     "First forward-plane draft exceeded right-arm reach near contact and follow-through; compacted grip path within original limb lengths before export."
   ],
-  "remaining": "User review of forward-left tip-led motion, weight, timing, hand appearance and framing. Original skin/clothing retained. Visual tool has finite reach; preview contact plane is 0.94 m from camera, while gameplay uses the existing ray-based interaction. Explicit acceptance required for default promotion.",
+  "remaining": "User says this alternate still does not feel as good, without identifying a specific moment. Compare windup, point contact, follow-through and recovery at normal speed beside the accepted default, then locate the unsatisfying pose/time before another revision. Original skin/clothing retained. Visual tool has finite reach; preview contact plane is 0.94 m from camera, while gameplay uses the existing ray-based interaction. Explicit acceptance required for default promotion.",
+  "latest_user_review": "Keep this version as a separate alternate, but do not make it the default; the feel is still unsatisfying for a reason not yet identified.",
   "revision": 5,
   "ready_head_in_camera": [
     0.432959973812103,

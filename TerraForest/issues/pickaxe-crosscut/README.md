@@ -1,6 +1,6 @@
 # Separate pickaxe animation study
 
-- Status: Tip-first forward-left revision, unapproved. Accepted default remains selected.
+- Status: Tip-first forward-left revision retained as an alternate. Accepted default remains selected.
 - Updated: 2026-10-27. Implementation/evidence: commit adding this record.
 - User review: First candidate rejected as “absolutely not what was asked or wanted.”
   User clarified the strike must travel **upper right → lower left**.
@@ -15,6 +15,9 @@
   the middle/back of the head and sweep sideways. It forced the tip onto the
   cursor while reversing screen lean, but did not qualify the working plane
   or whether the pointed end faced its impact velocity.
+- The user chose to keep the current tip-first version for comparison without
+  making it the default. It still does not feel as good to them; the specific
+  part of the motion causing that impression has not been identified.
 - Request: More diagonal holding pose and a descending strike with a firm grip;
   promote only after explicit user approval.
 
@@ -120,10 +123,11 @@ player world. Launching the game normally continues to use the accepted default.
 
 ## Remaining / resume here
 
-User review of the descending motion, raised diagonal carry, grip, framing and weight
-is required. The source character's skin/clothing finish remains visible.
-Further pose changes should be driven by the rejected/accepted moment, camera
-view and animation time. Default promotion requires an explicit acceptance;
+The user has reviewed and retained this separate version, but has not accepted
+its feel. When returning to it, inspect the normal-speed windup, point contact,
+follow-through and recovery beside the accepted default, then identify the
+specific clip time or pose before revising it. The source character's
+skin/clothing finish remains visible. Default promotion requires explicit acceptance;
 passing tests, committing the study or running the comparison is not acceptance.
 
 The first four candidates' local source snapshots remain under

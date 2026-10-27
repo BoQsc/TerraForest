@@ -12,7 +12,9 @@ was also rejected: its head turned end-on and read as striking with the middle
 while sweeping sideways. The current version drives pitch in a diagonal forward
 working plane. The pointed end leads forward-left into the upper-center target
 area; the socket and broad back stay visibly behind/right. The ready pose is
-preserved, with the supporting hand below view. This is still unapproved.
+preserved, with the supporting hand below view. The user chose to retain this
+version as an alternate but says its feel is still weaker. It is not approved
+as the default.
 
 Original R11 rest rig, static fitted finger closure and fixed hand stations;
 new pose table, torso movement and strike trajectory. 120 Hz baked keys, 1.6 s
