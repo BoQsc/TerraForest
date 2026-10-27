@@ -5,7 +5,8 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [First-person world clipping](first-person-clipping/README.md) | Native-depth replacement / installed, scoped checks | Actual pre-change checkpoint matches 13 scenes; 277 packaged assertions pass; normal shading and torch effects retained; user visual review pending |
+| [Headlamp self-lighting](headlamp-self-lighting/README.md) | Corrected / installed, scoped checks | Excludes hands/tools in all three rendering modes; world beam unchanged; 305 packaged assertions pass, user review pending |
+| [First-person world clipping](first-person-clipping/README.md) | Native-depth replacement / installed, scoped checks | Initial checkpoint comparison matched 13 scenes and 277 packaged assertions passed; later headlamp exclusion is intentional; user visual review pending |
 | [Separate diagonal pickaxe study](pickaxe-crosscut/README.md) | Tip-first alternate retained / not default | User wants to keep this version for comparison but says its feel is still weaker; isolate the unsatisfying moment before another revision |
 | [Discoverable material veins](material-veins/README.md) | Implemented / scoped checks | 172 packaged checks pass; default-on ore stones and map markers identify real veins; appearance/balance await player review |
 | [Player facing after vehicle exit](vehicle-exit-facing/README.md) | Fixed for reproduced behavior / scoped checks | Player faces current car front, input yaw stays synchronized; 110 focused/world checks pass, user review pending |

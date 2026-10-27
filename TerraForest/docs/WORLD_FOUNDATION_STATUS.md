@@ -10,17 +10,29 @@ removes its own successful-run caches and records removal while retaining logs
 and images; failed runs and explicit `--keep-cache` runs remain. Global retention
 across other runners is still pending. [Receipt, exact scope and return steps](TEST_STORAGE.md).
 
+## Headlamp self-lighting — 2026-10-27
+
+The headlamp's original all-layer mask predates clipping protection and lit the
+player's hands/tools. It now excludes both player-presentation layers, including
+the optional detailed hands camera; the world beam, shadows, range and energy
+are unchanged. The installed package passes all eight checks, 305 assertions;
+focused renders show no headlamp self-lighting in all three rendering modes and
+unchanged world illumination. User visual review remains pending.
+[Cause, images and checks](../issues/headlamp-self-lighting/README.md).
+
 ## First-person clipping protection — 2026-10-27
 
 Latest requirement: preserve the pre-work appearance and protect torch effects too.
 Native depth scaling now replaces the default separate-camera color pass, retaining
 the original renderer's lighting and shadow maps. The extra detailed-shadow camera
 remains an optional mode. Equipment-root registration covers flame, embers, smoke
-and late-added held geometry. All 13 render comparisons against actual historical
-runtime `ec05af0c` pass, including tree shade, the approved shop, all held tools,
-night torch and headlamp. The latest package is installed; all eight checks pass,
+and late-added held geometry. At `8c1ddbb3`, all 13 render comparisons against
+actual historical runtime `ec05af0c` passed, including tree shade, the approved
+shop, all held tools, night torch and headlamp. All eight packaged checks passed,
 277 assertions, including ordinary shading, torch effects, settings migration,
-third person and real mining contact. User visual review remains pending.
+third person and real mining contact. The subsequent intentional headlamp
+exclusion is tracked above; its night-headlamp view is no longer expected to
+match the old self-lighting. User visual review remains pending.
 Controlled fixtures are not exhaustive gameplay or future SSAO/SSR qualification.
 
 Earlier rollout history:

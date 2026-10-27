@@ -11,6 +11,7 @@ func _init() -> void:
 	spot_attenuation=1.2
 	light_energy=2.5
 	light_color=Color(1.0,0.95,0.86)
+	light_cull_mask&=~((1<<18)|(1<<19))
 	shadow_enabled=true
 	position=Vector3(0.12,-0.1,-0.1)
 func toggle() -> bool:

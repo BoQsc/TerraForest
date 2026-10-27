@@ -1,0 +1,26 @@
+[
+  {
+    "file": "legacy-self-lighting.png",
+    "source": "reports/checks/20261027T083537982032Z_first_person_pack/first_person_protection/evidence/headlamp_mode_1_legacy.png",
+    "sha256": "4b5c9a433a34c37b1194fbde3860f38579ee3fc4d2cd32937920d88927fdd529",
+    "pack_sha256": "97b6033ad4e59ee27d342d32093294a771e081efe2d0f77858941c280c445473",
+    "caption": "All-layer legacy mask recreated in the packaged native-depth fixture: headlamp visibly relights hands and pickaxe. This is a positive control, not a separate old-checkpoint run.",
+    "edited": false
+  },
+  {
+    "file": "excluded-self-lighting.png",
+    "source": "reports/checks/20261027T083537982032Z_first_person_pack/first_person_protection/evidence/headlamp_mode_1_on.png",
+    "sha256": "f7e2b7414817e196eb4fce0d3f3d5dde95dbfa8e35d37c0c2e7ee89d80518f8c",
+    "pack_sha256": "97b6033ad4e59ee27d342d32093294a771e081efe2d0f77858941c280c445473",
+    "caption": "Same packaged fixture, camera and pose with the corrected headlamp mask. Hands/tool retain their headlamp-off shading; dim ambient lighting is deliberate.",
+    "edited": false
+  },
+  {
+    "file": "world-beam.png",
+    "source": "reports/checks/20261027T083537982032Z_first_person_pack/first_person_protection/evidence/headlamp_world_on.png",
+    "sha256": "787a25b1cccedbf94c20ebeca237d047888aaf38c4ae527f8ab21268ff280480",
+    "pack_sha256": "97b6033ad4e59ee27d342d32093294a771e081efe2d0f77858941c280c445473",
+    "caption": "World-only packaged fixture with the corrected headlamp on: the world beam remains lit and matches the all-layer control.",
+    "edited": false
+  }
+]

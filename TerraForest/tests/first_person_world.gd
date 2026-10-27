@@ -84,6 +84,8 @@ func run()->void:
 		game.tool_view.human.animation_player.advance(.2);await frames()
 		await photo("world_tool_"+str(item))
 		check(protection.active,"world rendering covers equipment "+str(item))
+	check(game.headlamp.light_cull_mask&((1<<18)|(1<<19))==0 and game.headlamp.light_cull_mask&0x3ffff==0x3ffff,"actual headlamp lights the world but excludes player presentation")
+	check(not protection.lights.has(game.headlamp.get_instance_id()),"actual headlamp is not re-added to the optional hands camera")
 	game.headlamp.toggle();await photo("headlamp_on");game.headlamp.toggle()
 	var underwater:Environment=game.get_world_3d().environment.duplicate()
 	underwater.fog_enabled=true;underwater.fog_light_color=Color("286170");underwater.fog_density=.3

@@ -45,6 +45,40 @@ func difference(before:Image,after:Image)->Dictionary:
 			sum+=distance
 	var pixels:float=ceil(before.get_height()/2.0)*ceil(before.get_width()/2.0)
 	return {"changed_fraction":changed/pixels,"mean_error":sum/pixels}
+func verify_headlamp()->void:
+	var protection:Node=game.first_person_view
+	var lamp:=preload("res://addons/player_runtime/headlamp.gd").new();game.camera.add_child(lamp)
+	var mask:int=lamp.light_cull_mask;var original_layers:int=lamp.layers
+	await frames()
+	check(mask&((1<<18)|(1<<19))==0 and mask&0x3ffff==0x3ffff,"headlamp excludes both player presentation layers without removing world layers")
+	check(not protection.lights.has(lamp.get_instance_id()),"hands-camera registration respects the headlamp exclusion")
+	for mode in [0,1,2]:
+		protection.set_shadows_enabled(mode==2,false);protection.set_enabled(mode!=0,false)
+		lamp.visible=false;var dark:=await photo("headlamp_mode_"+str(mode)+"_off")
+		lamp.visible=true;var lit:=await photo("headlamp_mode_"+str(mode)+"_on")
+		var delta:=difference(dark,lit);results["headlamp_mode_"+str(mode)]=delta
+		check(delta.mean_error<.00001 and delta.changed_fraction<.0001,"headlamp does not relight hands or equipment in mode "+str(mode))
+		var excluded:=true
+		for node:GeometryInstance3D in protection.meshes.equipment:excluded=excluded and (node.layers&mask)==0
+		for pair:Dictionary in protection.meshes.pairs:excluded=excluded and (pair.arms.layers&mask)==0
+		check(excluded,"all registered equipment and arm layers exclude the headlamp in mode "+str(mode))
+		lamp.light_cull_mask=0xfffff;lamp.layers|=1<<18
+		var legacy:=await photo("headlamp_mode_"+str(mode)+"_legacy")
+		var legacy_delta:=difference(lit,legacy);results["headlamp_legacy_"+str(mode)]=legacy_delta
+		check(legacy_delta.mean_error>.0001,"legacy all-layer mask visibly reproduces self-lighting in mode "+str(mode))
+		lamp.layers=original_layers;lamp.light_cull_mask=mask
+	protection.set_shadows_enabled(false,false);protection.set_enabled(true,false)
+	game.tool_view.hide()
+	var wall:=MeshInstance3D.new();var mesh:=BoxMesh.new();mesh.size=Vector3(8,6,.2);wall.mesh=mesh
+	wall.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;game.camera.add_child(wall);wall.position=Vector3(0,0,-4)
+	lamp.visible=false;var world_dark:=await photo("headlamp_world_off")
+	lamp.visible=true;var world_lit:=await photo("headlamp_world_on")
+	check(difference(world_dark,world_lit).mean_error>.02,"headlamp still illuminates world geometry")
+	lamp.light_cull_mask=0xfffff;var world_legacy:=await photo("headlamp_world_legacy")
+	var world_delta:=difference(world_lit,world_legacy);results.headlamp_world_parity=world_delta
+	check(world_delta.mean_error<.00001 and world_delta.changed_fraction<.0001,"world illumination is unchanged from the original headlamp")
+	check(lamp.shadow_enabled and is_equal_approx(lamp.spot_range,24.0) and is_equal_approx(lamp.light_energy,2.5),"headlamp range, energy and world-shadow rendering remain unchanged")
+	wall.free();lamp.free();game.tool_view.show();await frames()
 func run()->void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--viewmodel-evidence="):folder=argument.trim_prefix("--viewmodel-evidence=")
@@ -113,6 +147,9 @@ func run()->void:
 		protection.set_enabled(true,false)
 		check(lamp.layers&(1<<18),"dynamically spawned lights are visible to the hands camera")
 		lamp.free();occluder.free();sun.light_energy=1;sun.shadow_enabled=false;sun.rotation_degrees=Vector3(-40,-25,0);environment.ambient_light_energy=.45
+		sun.light_energy=0;environment.ambient_light_energy=.08
+		await verify_headlamp()
+		sun.light_energy=1;environment.ambient_light_energy=.45
 		protection.set_shadows_enabled(false,false)
 		var wall:=MeshInstance3D.new();var box:=BoxMesh.new();box.size=Vector3(5,5,.12);wall.mesh=box
 		var wall_material:=StandardMaterial3D.new();wall_material.albedo_color=Color("55534a");wall.material_override=wall_material
