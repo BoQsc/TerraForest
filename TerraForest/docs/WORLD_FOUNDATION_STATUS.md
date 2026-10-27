@@ -1,6 +1,20 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Developer shape catalog — 2026-10-27
+
+ESC → Dev Shapes exposes all 18 integrated native block shapes, searchable by
+name/ID with category filters, baked thumbnails and material/quantity selection.
+One click grants normal materials and equips the native geometry without changing
+gameplay/development mode. Selected shapes survive switching tools for this session;
+placed cells use unchanged native persistence, costs and destructibility. No new
+shape-item identities or house redesigns are introduced. Every current piece is
+tested through actual placement and independent destruction; 94 focused packaged
+assertions pass. UI review remains pending. Rejected layout/parse failures and an
+older developer-belt test's two stale ESC-policy expectations remain visible for
+separate harness maintenance; this feature does not change that input policy.
+[Scope, images and cache evidence](../issues/developer-shapes/README.md).
+
 ## Progressive harvesting — 2026-10-27
 
 Natural-resource damage now grants native, damage-proportional rewards at the

@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "images": [
+    {
+      "file": "images/catalog-top.png",
+      "source": "reports/checks/20261027T105833426584Z_player_navigation_pack/developer_shapes/evidence/catalog_top.png",
+      "sha256": "85bb50057d37e6bca6d73d4d6980c11e29822d765de693aa43c7256195002f5b",
+      "status": "Implemented / user review pending",
+      "seed": 1703,
+      "generator": 23,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4"
+    },
+    {
+      "file": "images/catalog-roofs.png",
+      "source": "reports/checks/20261027T105833426584Z_player_navigation_pack/developer_shapes/evidence/catalog_roofs.png",
+      "sha256": "59c8c0213a0ef02cb557118db3c845f6c3ceae65f63143d84e4ee95089b5c96e",
+      "status": "Implemented / user review pending",
+      "seed": 1703,
+      "generator": 23,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4"
+    },
+    {
+      "file": "images/rejected-layout.png",
+      "source": "reports/checks/20261027T105151409658Z_player_navigation/developer_shapes/evidence/catalog_top.png",
+      "sha256": "ad8f800402cfb36c64f4d6827bc7d7aa01a1e195d303652ed6a60e2d290897e1",
+      "status": "Rejected / fixed label wrapping",
+      "seed": 1703,
+      "generator": 23,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pack_sha256": null
+    }
+  ]
+}

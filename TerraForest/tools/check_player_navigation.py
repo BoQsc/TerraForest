@@ -12,6 +12,7 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 
 CHECKS = {
+    "developer_shapes": (180, "DEVELOPER_SHAPES checks=", False),
     "harvest_hit_native": (45, "HARVEST_HIT_NATIVE checks=", True),
     "harvest_hits_world": (150, "HARVEST_HITS_WORLD checks=", False),
     "attack_durability": (60, "ATTACK_DURABILITY checks=", True),

@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-27",
+  "baseline_revision": "96f1a1cd",
+  "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4",
+  "total_passing_packaged_checks": 94,
+  "checks": [
+    {
+      "test": "developer_shapes",
+      "checks": 27,
+      "failures": 0,
+      "report": "reports/checks/20261027T105833426584Z_player_navigation_pack/developer_shapes",
+      "test_sha256": "7d57da5ef8705d5c09025bd6b4516a11ce5393b101ffb38c89dfbd440728549a",
+      "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4",
+      "cache_retained": false
+    },
+    {
+      "test": "developer_tools",
+      "checks": 19,
+      "failures": 0,
+      "report": "reports/checks/20261027T105833426584Z_player_navigation_pack/developer_tools",
+      "test_sha256": "8b0047f26abc9c3a3910031078ef7af536008a581f8413b4a9e1499f33897d7d",
+      "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4",
+      "cache_retained": false
+    },
+    {
+      "test": "player_navigation",
+      "checks": 48,
+      "failures": 0,
+      "report": "reports/checks/20261027T105833426584Z_player_navigation_pack/player_navigation",
+      "test_sha256": "6fc7caf33be79e95776e2aab84834ce54aeb29a12a87616aa4f86909097b4865",
+      "pack_sha256": "64a7054e6fe7da1ada42e5385f3160864610fdd1592f165116c26092e4abdcd4",
+      "cache_retained": false
+    }
+  ],
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b3ea405518a4116070cd454a2db441bf960b0ccde55548db889ef2b3d45a73df",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "f4d4b2949e85ade0644117ecf1fc59d376d954ada407dd0b2de3ea992ddaa4f6",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "source_sha256": {
+    "addons/player_runtime/developer_shapes.gd": "965ca32f833df0d5ef97afeb3d7252e0eb13d9622a65f4c3297edff48c8a7230",
+    "addons/player_runtime/shape_icons.gd": "5526ab5c97a11de33319eb6764dd7382585b51e1498216d3a8adc63afdfcb5b3",
+    "addons/player_runtime/session_menu.gd": "9485a12eab99d6e828165897fe5d48d9edfb17042fda6e6022f07b006630483f",
+    "demo/world.gd": "311f990775f2aa0d9a31f7fedd03fb0207a1e25e1b035696609048b6a1e7b27a",
+    "tools/bake_shape_icons.gd": "8e0be29a6062c8effd033ef4f376ad2f35e852c9a5e21d8fd3d9a5cef18fe097",
+    "tools/shape_icon_cache.gd": "64d4627ba5c0b303acaee990374601ee557e75497ec015f9954f4ae1556b12e1",
+    "tools/ensure_item_icons.gd": "4945c0a88e722c2fb88b293f8d015b9de8afe7c2cd6c601b5e16e78b42889a03"
+  },
+  "icon_bake": {
+    "atlas_sha256": "1928c36f7c68b9ab04c9adce150b5b1fa0db28543afa9eaa2f4b494f9ec6742a",
+    "sources": {
+      "engine": "4.7.2-stable (steam)",
+      "res://addons/player_runtime/shape_icons.gd": "5526ab5c97a11de33319eb6764dd7382585b51e1498216d3a8adc63afdfcb5b3",
+      "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+      "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
+      "res://addons/structures/native/block_world.cpp": "0ba60b388514a01830f2f07bb60580d1ceeba72045f347d9ac3abca30ada0cd6",
+      "res://addons/structures/native/modular_shapes.hpp": "a4b647e71e5d4e2923b159846150ba535d75659f8e74c0190e5ab9c979204be7",
+      "res://addons/structures/shape_catalog.gd": "8d4aec3e37cec67d6970568a2b0532f5c143c95fc671b3ff57d4fcb3bbd8f1dc",
+      "res://tools/bake_shape_icons.gd": "8e0be29a6062c8effd033ef4f376ad2f35e852c9a5e21d8fd3d9a5cef18fe097",
+      "res://tools/shape_icon_cache.gd": "64d4627ba5c0b303acaee990374601ee557e75497ec015f9954f4ae1556b12e1"
+    }
+  },
+  "warm_icon_checks": {
+    "passed": true,
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--script",
+      "res://tools/ensure_item_icons.gd",
+      "--",
+      "--check-only"
+    ],
+    "runs": [
+      {
+        "exit_code": 0,
+        "seconds": 1.162613399908878,
+        "skipped": true
+      },
+      {
+        "exit_code": 0,
+        "seconds": 1.0093844999792054,
+        "skipped": true
+      }
+    ],
+    "before": {
+      "shape_icons.trtex": "1928c36f7c68b9ab04c9adce150b5b1fa0db28543afa9eaa2f4b494f9ec6742a",
+      "shape_icons.bake.json": "25a2d653c4d2ffdac36cb96305a5d07de523b3968180aedfcf6fccf835620770"
+    },
+    "after": {
+      "shape_icons.trtex": "1928c36f7c68b9ab04c9adce150b5b1fa0db28543afa9eaa2f4b494f9ec6742a",
+      "shape_icons.bake.json": "25a2d653c4d2ffdac36cb96305a5d07de523b3968180aedfcf6fccf835620770"
+    }
+  },
+  "warm_icon_report": "reports/checks/shape_icon_warm_20261027",
+  "cold_icon_report": "reports/item_icon_refresh/shapes.log",
+  "legacy_belt_test": {
+    "passed": false,
+    "checks": 37,
+    "failures": 2,
+    "report": "reports/checks/20261027T105833426584Z_player_navigation_pack/developer_belt",
+    "reason": "Pre-existing ESC closes Alt UI first; legacy test expects pause immediately, then carries wrong state into Alt/Tab check."
+  },
+  "retained_failed_source_tests": [
+    "reports/checks/20261027T105151409658Z_player_navigation/developer_shapes",
+    "reports/checks/20261027T105327808229Z_player_navigation/developer_shapes"
+  ],
+  "player_saves_modified": false,
+  "houses_modified": false,
+  "user_review": "Pending UI review",
+  "inventory_representation": "Existing material stacks plus selected native tool geometry; shape choice memory is per-session."
+}

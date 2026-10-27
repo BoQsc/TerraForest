@@ -14,16 +14,24 @@ cancels teleport. Gameplay mode cannot use this shortcut. Finish world edits and
 exit a vehicle first; clicks outside the world are rejected. Ordinary destination
 clicks continue to track rather than teleport.
 
-### Dev Bag, Dev Spawner and Developer
+### Dev Bag, Dev Shapes, Dev Spawner and Developer
 
-The ESC sidebar separates three purposes:
+The ESC sidebar separates four purposes:
 
-- **Dev Bag**: searchable, categorized icon catalog of all 36 registered inventory
+- **Dev Bag**: searchable, categorized icon catalog of all registered inventory
   items. Click to grant the selected quantity, without changing gameplay mode.
   Names and IDs both match; no-result searches are explicit. Native inventory
   capacity and stack rules apply atomically, and full inventories are not replaced.
   Vehicle item 501 belongs here. **Place a drivable vehicle nearby** remains a
   separate one-click action for a live vehicle, including when looking at the sky.
+- **Dev Shapes**: all 18 integrated native building-block shapes, with static
+  thumbnails, name/ID search and block/frame/roof categories. Choose Brick, Wood,
+  Concrete or Metal and a quantity, then click a shape to receive those materials
+  and immediately equip that geometry. Gameplay keeps normal material costs;
+  development keeps free placement. Shapes use the ordinary material stacks,
+  not new inventory item IDs; the selected shape is remembered per material for
+  this session when switching tools. R turns; Shift+R tips modular pieces. Every
+  piece remains one independently destructible grid cell. No houses are replaced.
 - **Dev Spawner**: currently spawns zombies on nearby clear, supported, loaded dry
   ground. They retain ordinary awareness, anatomy, combat and corpse behavior, with
   native world identities and saved injuries. Six active zombies remain the runtime

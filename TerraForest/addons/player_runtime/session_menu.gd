@@ -42,6 +42,7 @@ var content: VBoxContainer
 var ready_to_dock:=false
 var spawner:RefCounted
 var dev_bag:RefCounted
+var dev_shapes:RefCounted
 const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift.",6:"Wooden torch: a burning survival light. Equip to carry it; switch slots to put it away. G drops it."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
@@ -67,6 +68,7 @@ func _ready() -> void:
 	navigation["Player"]=button(sidebar,"Player",show_page.bind("Player"))
 	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
 	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
+	navigation["Dev Shapes"]=button(sidebar,"Dev Shapes",show_page.bind("Dev Shapes"))
 	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"Destinations",show_page.bind("World"))
@@ -109,7 +111,7 @@ func _ready() -> void:
 	grid_settings.add_child(burial_toggle)
 	var developer_page:=page("Developer")
 	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
-	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; entities and live vehicles live in Dev Spawner. Selected-tool controls remain on Alt.")
+	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; block shapes live in Dev Shapes; entities and live vehicles live in Dev Spawner. Selected-tool controls remain on Alt.")
 	mode_button=button(developer_page,"Development mode",toggle_developer)
 	var diagnostics:=GridContainer.new();diagnostics.columns=2;developer_page.add_child(diagnostics)
 	for entry in [["Diagnostics",KEY_F3],["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
@@ -128,6 +130,7 @@ func _ready() -> void:
 		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);developer_page.add_child(breakup_toggle)
 		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
 	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
+	dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,page("Dev Shapes"))
 	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",save_and_quit)
@@ -174,6 +177,7 @@ func show_page(title: String) -> void:
 	if not opened:set_open(true)
 	current_page=title;session_message.text="";scroll.set_deferred("scroll_vertical",0);refresh();sync_panels()
 	if title=="Dev Spawner":spawner.refresh()
+	if title=="Dev Shapes":dev_shapes.refresh()
 func open_tool_page(title:String) -> void:
 	if not ready_to_dock or not tool_workspace.pages.has(title):return
 	if title=="Building" and not developer and game.equipped_tool not in game.player_hud.MATERIALS:return

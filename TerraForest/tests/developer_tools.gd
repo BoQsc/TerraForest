@@ -32,7 +32,7 @@ func run()->void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	var menu=game.session_menu;var bag=menu.dev_bag;var inventory:RefCounted=game.player_hud.inventory
 	var original:PackedByteArray=inventory.capture_storage_snapshot()
-	check(menu.navigation.keys()==["Session","Player","Graphics","Dev Bag","Dev Spawner","Developer","World"],"items, entities and serious diagnostics have separate navigation")
+	check(menu.navigation.keys()==["Session","Player","Graphics","Dev Bag","Dev Shapes","Dev Spawner","Developer","World"],"items, shapes, entities and serious diagnostics have separate navigation")
 	check(menu.spawner.entries.keys()==["zombie","vehicle"] and bag.entries.has(501),"live vehicle spawn belongs in Dev Spawner while carried vehicle items stay in Dev Bag")
 	menu.show_page("Dev Bag");bag.search.grab_focus()
 	type_key(KEY_M,109);type_key(KEY_QUOTELEFT,96);await process_frame

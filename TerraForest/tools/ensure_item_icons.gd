@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Cache=preload("res://tools/item_icon_cache.gd")
+const Shapes=preload("res://tools/shape_icon_cache.gd")
 const LOCK="res://reports/item_icon_refresh/lock"
 var lock_owned:=false
 func _initialize()->void:run.call_deferred()
@@ -31,14 +32,18 @@ func invoke(args:PackedStringArray,log_path:String)->int:
 	return 0
 func run()->void:
 	var plan:=Cache.plan(Cache.snapshot())
-	if plan.ids.is_empty():print("ITEM_ICONS current; bake skipped");quit();return
-	if "--check-only" in OS.get_cmdline_user_args():print("ITEM_ICONS stale ",plan.ids," ",plan.reason);quit(2);return
-	print("ITEM_ICONS refreshing ",plan.ids," (",plan.reason,")")
+	var shapes_current:=Shapes.current(Shapes.snapshot())
+	if plan.ids.is_empty() and shapes_current:print("ITEM_ICONS and SHAPE_ICONS current; bake skipped");quit();return
+	if "--check-only" in OS.get_cmdline_user_args():print("ITEM_ICONS stale ",plan.ids," SHAPE_ICONS stale=",not shapes_current);quit(2);return
+	if not plan.ids.is_empty():print("ITEM_ICONS refreshing ",plan.ids," (",plan.reason,")")
+	if not shapes_current:print("SHAPE_ICONS refreshing native geometry atlas")
 	DirAccess.make_dir_recursive_absolute("res://reports/item_icon_refresh")
 	if not await acquire_lock():finish(1);return
+	var project:=ProjectSettings.globalize_path("res://")
+	if not Shapes.current(Shapes.snapshot()):
+		if invoke(["--path",project,"--windowed","--resolution","512x512","--position","-32000,-32000","--max-fps","60","--script","res://tools/bake_shape_icons.gd"],"res://reports/item_icon_refresh/shapes.log")!=0 or not Shapes.current(Shapes.snapshot()):finish(1);return
 	plan=Cache.plan(Cache.snapshot())
 	if plan.ids.is_empty():print("ITEM_ICONS current after another refresh; bake skipped");finish();return
-	var project:=ProjectSettings.globalize_path("res://")
 	# Import changed source models/textures before rendering their current geometry.
 	if invoke(["--headless","--editor","--path",project,"--import"],"res://reports/item_icon_refresh/import.log")!=0:finish(1);return
 	plan=Cache.plan(Cache.snapshot())

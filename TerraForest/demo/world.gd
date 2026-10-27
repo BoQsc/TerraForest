@@ -707,7 +707,8 @@ func _equip_player_tool(item: int) -> void:
 	editor_tool_active=false;equipped_tool=item
 	_set_player_tool_mode(item==4 or item in player_hud.MATERIALS,item==4,3)
 	if item in player_hud.MATERIALS:
-		structure_shape=1;structure_rotation%=4;structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
+		structure_shape=session_menu.dev_shapes.shape_for_material(item) if session_menu.dev_shapes!=null else 1
+		structure_rotation%=ShapeCatalog.rotation_count(structure_shape);structure_prefab_index=-1;structure_material=item-101;_sync_construction_palette()
 	if item in player_hud.GROUND_ITEMS and item!=201:_activate_ground_tool(player_hud.GROUND_ITEMS[item])
 	if item==1:radius=0.65
 	edit_reach=3.5;allow_terrain_add=false

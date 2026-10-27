@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Dev Shapes catalog](developer-shapes/README.md) | Implemented / scoped checks | Searchable native-shape thumbnails, material grants and one-click placement setup; all 18 pieces tested; UI review pending |
 | [Progressive harvesting](progressive-harvesting/README.md) | Implemented / scoped checks | Natural resources pay on damaging contacts with larger finishing rewards; native transactions and boulder save/reload verified; balance review pending |
 | [Vegetation targeting flicker](vegetation-target-flicker/README.md) | Corrected / scoped checks | Removes running/turning preview lag and reach-edge disappearance; 70 packaged assertions pass; original-location review pending |
 | [Player navigation and menus](player-navigation-menus/README.md) | Installed / scoped checks | ESC/inventory ×, quick quit, saved map markers/compass; 129 initial assertions and 48 inventory-follow-up assertions pass; user review pending |
