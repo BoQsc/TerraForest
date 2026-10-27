@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Player navigation and menus](player-navigation-menus/README.md) | Installed / scoped checks | Dev Spawner owns live vehicles; ESC × and quick quit; saved map markers and compass; 129 packaged assertions pass, user review pending |
+| [Player navigation and menus](player-navigation-menus/README.md) | Installed / scoped checks | ESC/inventory ×, quick quit, saved map markers/compass; 129 initial assertions and 48 inventory-follow-up assertions pass; user review pending |
 | [Headlamp self-lighting](headlamp-self-lighting/README.md) | Corrected / installed, scoped checks | Excludes hands/tools in all three rendering modes; world beam unchanged; 305 packaged assertions pass, user review pending |
 | [First-person world clipping](first-person-clipping/README.md) | Native-depth replacement / installed, scoped checks | Initial checkpoint comparison matched 13 scenes and 277 packaged assertions passed; later headlamp exclusion is intentional; user visual review pending |
 | [Separate diagonal pickaxe study](pickaxe-crosscut/README.md) | Tip-first alternate retained / not default | User wants to keep this version for comparison but says its feel is still weaker; isolate the unsatisfying moment before another revision |

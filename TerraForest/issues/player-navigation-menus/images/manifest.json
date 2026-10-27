@@ -46,5 +46,13 @@
     "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
     "caption": "Packaged temporary seed-1703 gameplay fixture: compass_behind. No player save; fixed camera changes only for compass bearings.",
     "edited": false
+  },
+  {
+    "file": "inventory_header.png",
+    "source": "reports/checks/20261027T092336783216Z_player_navigation_pack/player_navigation/evidence/inventory_header.png",
+    "sha256": "6b1ac5c210fa2f8f0608ff707e573beb611c179a5cd7c05abde6e9cd31f820d3",
+    "pack_sha256": "80a420cc58d3f4ecca2ef6b4a2333b8593a9b047183c5124e61a4c610cfec0da",
+    "caption": "Inventory header follow-up, packaged temporary seed-1703 gameplay fixture: no Session action, top-right X; crafting and character tabs still close through normal inventory handling.",
+    "edited": false
   }
 ]

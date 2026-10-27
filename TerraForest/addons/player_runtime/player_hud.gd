@@ -182,8 +182,8 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
 	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
-	var actions_button:=Button.new();actions_button.text="Session";actions_button.pressed.connect(func():set_open(false);actions_requested.emit());title_row.add_child(actions_button)
-	var close_button:=Button.new();close_button.text="Close";close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
+	var close_button:=Button.new();close_button.name="InventoryClose";close_button.text="×";close_button.custom_minimum_size=Vector2(42,42);close_button.focus_mode=Control.FOCUS_NONE
+	close_button.tooltip_text="Close inventory · Tab / Esc";close_button.add_theme_font_size_override("font_size",26);close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
 	var detail:=Label.new();detail.text="Backpack: 22 slots. Toolbelt: 10 separate slots below."
 	if gameplay_construction: detail.text="Backpack and toolbelt are separate. Drag to move; Shift-drag to split."
 	column.add_child(detail)

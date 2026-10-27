@@ -13,6 +13,10 @@ including native archive disk roundtrip, right-click/pan/zoom, existing Ctrl-cli
 teleport, marker management, compass bearings and live vehicle spawning. User
 visual review remains pending. [Scope and evidence](../issues/player-navigation-menus/README.md).
 
+Inventory-header follow-up removes Session and replaces text Close with ×;
+48 packaged navigation assertions pass, including real mouse-close from Crafting
+and Character, restored gameplay capture and unchanged items. Tab/Esc remain.
+
 ## Development storage — 2026-10-27
 
 Completed the user-approved removal of 200 audited successful-test caches

@@ -57,6 +57,17 @@ func run()->void:
 	menu.show_page("Dev Bag");check(menu.dev_bag.entries.has(501),"Dev Bag still offers carried vehicle inventory items")
 	menu.set_open(false);await frames()
 	check(guide.compass.visible and not guide.compass.has_marker,"top-centre compass is present without an active destination")
+	var hud:CanvasLayer=game.player_hud;var inventory_before:PackedByteArray=hud.inventory.capture_storage_snapshot()
+	for side:String in ["Crafting","Character"]:
+		hud.set_open(true);hud.show_side(side);await frames()
+		var close:Button=hud.modal.find_child("InventoryClose",true,false)
+		if not check(close!=null and close.text=="×" and close.is_visible_in_tree(),"inventory header has an X close control on "+side):await finish();return
+		check(not hud.modal.find_children("*","Button",true,false).any(func(button):return button.text in ["Session","Close"]),"inventory does not offer Session or a text Close button")
+		check(absf(close.get_global_rect().end.x-close.get_parent().get_global_rect().end.x)<1,"inventory X stays at the right edge of the header")
+		if side=="Crafting":await capture("inventory_header")
+		await mouse(close.get_global_rect().get_center(),MOUSE_BUTTON_LEFT)
+		check(not hud.inventory_open and not hud.modal.visible and not menu.opened and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED,"inventory X closes directly to gameplay from "+side)
+	check(hud.inventory.capture_storage_snapshot()==inventory_before,"inventory header actions preserve all carried items")
 	var revision:int=game.terrain.published_revision;var inventory:PackedByteArray=game.player_hud.inventory.capture_storage_snapshot();var builds:int
 	atlas.set_open(true)
 	if not check(await until(func():return atlas.texture!=null,15),"cached world map is ready for ordinary-player markers"):await finish();return

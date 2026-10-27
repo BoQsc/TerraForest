@@ -10,6 +10,7 @@
 - Right-click the world map to place a marker and navigate. Right-click an existing marker to navigate, stop navigating without deleting it, or remove it. Left-click saved markers or select them in My markers. Creating another mark preserves older marks.
 - Top-centre compass sits 28 UI units below the top, with cardinal/intercardinal bearings, a gold destination symbol and distance. Off-screen/behind destinations get an edge direction indicator. Public destination tracking still uses the same guide. This is direct bearing, not pathfinding or auto-movement.
 - The map context menu is an embedded Control, not another operating-system window. ESC dismisses it before closing the map. Map walking and developer Ctrl-click teleport remain separate from player marking.
+- Inventory follow-up: removed its Session button and replaced text Close with a top-right ×. Tab/Esc and normal mouse-capture restoration are unchanged. The installed follow-up passes 48 packaged navigation assertions, including actual mouse-close on both Crafting and Character tabs and unchanged carried items. [Follow-up build and checks](inventory-header-verification.json); [inventory capture](images/inventory_header.png). The original 129-assertion qualification below remains historical.
 
 ## Storage and cost
 
