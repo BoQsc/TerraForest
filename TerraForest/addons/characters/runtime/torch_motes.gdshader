@@ -3,6 +3,7 @@ shader_type spatial;
 render_mode unshaded, cull_disabled, depth_draw_never, shadows_disabled;
 uniform float clock=0.0;
 uniform bool smoke=false;
+instance uniform float first_person_depth_scale=1.0;
 varying float life;
 void vertex() {
     float seed=INSTANCE_CUSTOM.x;
@@ -12,6 +13,7 @@ void vertex() {
     billboard[3].xyz+=drift;
     MODELVIEW_MATRIX=VIEW_MATRIX*billboard;
     VERTEX*=smoke ? .5+life*1.7 : 1.0-life*.5;
+    Z_CLIP_SCALE=first_person_depth_scale;
 }
 void fragment() {
     float radial=length(UV-.5)*2.0;

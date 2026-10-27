@@ -63,6 +63,7 @@ func _ready() -> void:
 		attachment.bone_name="RightHand" if item==6 else ("Weapon_Axe" if item==3 else "Weapon_Pickaxe")
 		skeleton.add_child(attachment)
 		var equipment:Node3D=EQUIPMENT[item].instantiate()
+		equipment.set_meta("first_person_equipment",true)
 		attachment.add_child(equipment)
 		# GLB mesh coordinates already include Blender's Y-up conversion. Bone
 		# attachments carry that conversion too; undo the rest basis once.
@@ -77,7 +78,7 @@ func _ready() -> void:
 	var bail:=MeshInstance3D.new();bail.name="Equipment_Bucket_Bail";bail.mesh=BUCKET_MODEL.BAIL;bail_attachment.add_child(bail)
 	bail.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Axe")).affine_inverse()
 	var bucket_attachment:=BoneAttachment3D.new();bucket_attachment.bone_name="Weapon_Pickaxe";skeleton.add_child(bucket_attachment)
-	var bucket_root:=Node3D.new();bucket_attachment.add_child(bucket_root)
+	var bucket_root:=Node3D.new();bucket_root.set_meta("first_person_equipment",true);bucket_attachment.add_child(bucket_root)
 	bucket_root.transform=skeleton.get_bone_global_rest(skeleton.find_bone("Weapon_Pickaxe")).affine_inverse()
 	var bucket:=MeshInstance3D.new();bucket.name="Equipment_Bucket";bucket.mesh=BUCKET_MODEL.HELD;bucket_root.add_child(bucket)
 	bucket_water=MeshInstance3D.new();bucket_water.name="Equipment_Bucket_Water"

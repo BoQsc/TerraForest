@@ -1,0 +1,235 @@
+{
+  "utc": "2026-10-27T08:04:16.246911+00:00",
+  "baseline_revision": "ec05af0ca2cc082c0d6d2cdb8a3e52cf0cee6934",
+  "actual_historical_runtime": true,
+  "baseline_project": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\.build\\first-person-history-20261027\\runtime-checkpoint\\TerraForest",
+  "current_project": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+  "driver_sha256": "808b3db7283f95fc24c5e4ccd0473b7c8010ea6a96742ff75883e30018cf21ec",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "historical": {
+    "captures": [
+      "outdoors_pickaxe",
+      "under_tree_pickaxe",
+      "under_tree_torch",
+      "inside_shop_1",
+      "inside_shop_2",
+      "inside_shop_3",
+      "inside_shop_4",
+      "inside_shop_5",
+      "inside_shop_6",
+      "inside_shop_406",
+      "inside_shop_0",
+      "night_torch",
+      "night_headlamp"
+    ],
+    "engine": {
+      "build": "steam",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (steam)",
+      "timestamp": 0
+    },
+    "historical_runtime": true,
+    "project": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/.build/first-person-history-20261027/runtime-checkpoint/TerraForest/",
+    "source_sha256": {
+      "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+      "res://addons/characters/runtime/human_view.gd": "fe349c9ec07cec4184063980b64fb3af119a76fb36a0a7b93072bbf0e39ef15f",
+      "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
+      "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700"
+    }
+  },
+  "current": {
+    "captures": [
+      "outdoors_pickaxe",
+      "under_tree_pickaxe",
+      "under_tree_torch",
+      "inside_shop_1",
+      "inside_shop_2",
+      "inside_shop_3",
+      "inside_shop_4",
+      "inside_shop_5",
+      "inside_shop_6",
+      "inside_shop_406",
+      "inside_shop_0",
+      "night_torch",
+      "night_headlamp"
+    ],
+    "engine": {
+      "build": "steam",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (steam)",
+      "timestamp": 0
+    },
+    "historical_runtime": false,
+    "project": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/",
+    "source_sha256": {
+      "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+      "res://addons/characters/runtime/human_view.gd": "61689d08e02a4a5e1236e4aecd237b8dd032ea4829678d57402c69911615b198",
+      "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
+      "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700"
+    }
+  },
+  "current_runtime_sha256": {
+    "addons/player_runtime/first_person_view.gd": "5e0e24b41d91ca0ef0c1dfb1b414f3bf813aa44195ac979e4e7c1b92bc30bf80",
+    "addons/player_runtime/first_person_meshes.gd": "a3522bc7b51a0ae17cc84f990373263df3ee3bf062d6f468c64a7debd5c6d467",
+    "addons/player_runtime/first_person_depth.gd": "f12d489ae011846c48d5e417c3b33560f61d44749ab5a4040f5d89fea35f89a9",
+    "addons/characters/runtime/torch_flame.gdshader": "fa3bb0bd7d95800568c281d0e211ca3adc5b89ea33f6ead0bc549da868600ea9",
+    "addons/characters/runtime/torch_motes.gdshader": "9b3787987bfc55aea2cc183e05ab4efe749cfe364aa0c07e0c3d7a9bcfb58110"
+  },
+  "runs": {
+    "before": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 77928,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 14.02574710000772,
+      "passed": true
+    },
+    "after": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 83664,
+      "exit_code": 0,
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 13.196036600042135,
+      "passed": true
+    }
+  },
+  "comparisons": [
+    {
+      "scene": "outdoors_pickaxe",
+      "mean_rgb_error": 2.1181312030985236e-07,
+      "hands_rgb_error": 1.0158668730650156e-06,
+      "before_sha256": "8f7ba4b5a21349c24afa9ce091e3724f3ca7b0801721456875221d1d3c94cd72",
+      "after_sha256": "06147314f9dbb609ceabd8f1d6e9f1cb3df46d8bb653723937b9295af75e5d42",
+      "passed": true
+    },
+    {
+      "scene": "under_tree_pickaxe",
+      "mean_rgb_error": 0.0001420623033163883,
+      "hands_rgb_error": 3.224974200206398e-07,
+      "before_sha256": "e026f232a55442ca62d8bc777635236bf9ca8bc38209079ddc37ec6fdff3fb98",
+      "after_sha256": "d0890d49405f8e52889a582c0ed37a836a977a96a763b6f4709f465b3df9c5da",
+      "passed": true
+    },
+    {
+      "scene": "under_tree_torch",
+      "mean_rgb_error": 2.937015855725006e-06,
+      "hands_rgb_error": 1.6931114551083591e-06,
+      "before_sha256": "fb0e51c9c9e8579610ce9da6b1a77fb1cbbdc0ddb95b6b3b73d55880d9bfdeaf",
+      "after_sha256": "c1db8f0331f4533df6ef27dd6d525ae76ebb59c6cb2b6680ad1600aee1986d8b",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_1",
+      "mean_rgb_error": 2.4774570321955947e-07,
+      "hands_rgb_error": 2.7412280701754384e-07,
+      "before_sha256": "8bc6a5563c9d488f04f417fe9bb5dfd52c904d94ffb75ffbeaf9efd528a8ac91",
+      "after_sha256": "e7c82aba63071ed78c4776228fa132e4748262072e5a196b74e7ea3dff52090b",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_2",
+      "mean_rgb_error": 5.1440329218107e-07,
+      "hands_rgb_error": 2.434855521155831e-06,
+      "before_sha256": "8e15d2e580637d916eb2e3b984cfd637a73ab4120c2047208917d9960d4bf913",
+      "after_sha256": "a45f4e4029584f44ab2d0ad0c6ee5d4aa6306345cb1693fe7592cf9734067ea0",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_3",
+      "mean_rgb_error": 2.0803074316146212e-07,
+      "hands_rgb_error": 3.547471620227038e-07,
+      "before_sha256": "b62ce612f846a2a8109cc69d71f031865c7a43dfbc4f12ca72605bff245bc5b9",
+      "after_sha256": "4e638d0b768f0af068fda6d425587f2153c0d8e33f0f7ff0e030cb8905209916",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_4",
+      "mean_rgb_error": 0.0,
+      "hands_rgb_error": 0.0,
+      "before_sha256": "2ba1932cf79fd0d385047fa70fe7aab1a5f09aa5d8ea87bd9932c0a71572c44b",
+      "after_sha256": "2ba1932cf79fd0d385047fa70fe7aab1a5f09aa5d8ea87bd9932c0a71572c44b",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_5",
+      "mean_rgb_error": 9.077705156136528e-08,
+      "hands_rgb_error": 3.0637254901960785e-07,
+      "before_sha256": "04d903ba20581864065c7ff8e6ee9edd6e82b4f467b65e753b015fd7d71f9513",
+      "after_sha256": "a91b8ba5463ef5676711007f78562cd6fd010251583ddba07e6260a7dedae8aa",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_6",
+      "mean_rgb_error": 4.139811788913096e-06,
+      "hands_rgb_error": 5.5469556243550054e-06,
+      "before_sha256": "3b31df69a0dab2dd3fd053947e11e119dc7ce42a1501a2c54c124103f0fc2c4a",
+      "after_sha256": "d1f4c8d3f02f79da518f488365dadd5e843af24be0f75b9d42db22f91a926429",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_406",
+      "mean_rgb_error": 4.2551742919389977e-07,
+      "hands_rgb_error": 3.56359649122807e-06,
+      "before_sha256": "3aa091bf2fd3dd60697e9529c1887141504cef3ad6217df5a5e4c1d8c0fe4bde",
+      "after_sha256": "17efccffbeb9ced13171b92bf287e74880ad0c0ef504f81a720ca5fdca88335e",
+      "passed": true
+    },
+    {
+      "scene": "inside_shop_0",
+      "mean_rgb_error": 7.942992011619462e-08,
+      "hands_rgb_error": 2.9024767801857585e-07,
+      "before_sha256": "35dc44d95b6454ca84e9f430735f1c30cfb77cec03020e2cf3e41f2fc399292b",
+      "after_sha256": "74242d82046a289754e899a31bd0bc14e293730ad8d56c1f3a64071ab06bcb8f",
+      "passed": true
+    },
+    {
+      "scene": "night_torch",
+      "mean_rgb_error": 3.884501331396756e-06,
+      "hands_rgb_error": 6.659571723426212e-06,
+      "before_sha256": "577815aaebfbc6455748ad17056ecb4ed18b697b55750b8a8a67226f4175b139",
+      "after_sha256": "efce20494ef45ffefbe852c7b5fe04aeacf0392067fe946745fbe60bcc21c39b",
+      "passed": true
+    },
+    {
+      "scene": "night_headlamp",
+      "mean_rgb_error": 2.9691660614863227e-07,
+      "hands_rgb_error": 1.2254901960784314e-06,
+      "before_sha256": "3fa76983dc77c84d9334f6d6217f4c8cf062679c6971d936dc41bb1351e165ae",
+      "after_sha256": "88b5016d1447dc6d96d73fff74839a5ab39ddae09ca87fd21c2b3def1ece5bfa",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "Same Godot binary, native libraries, driver, poses, cameras, frozen torch clocks and production assets. Actual Git checkpoint runtime versus current protected default. Current SSAO/SSR are disabled; not an exhaustive renderer qualification."
+}

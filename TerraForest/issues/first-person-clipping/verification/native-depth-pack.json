@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-27",
+  "defaults": {
+    "first_person_protection": true,
+    "first_person_detailed_shadows": false
+  },
+  "pack_sha256": "90dbce8dcb5d7ee7139ad84c4bb52d4305ed3cee47ba18b20a250ae9d9d4ab96",
+  "total_checks": 277,
+  "tests": [
+    {
+      "test": "first_person_meshes",
+      "checks": 21,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/first_person_meshes",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\first_person_meshes.gd": "bad55e75b37481890eea60827fa00ef0fcff03f13647b3cfab5650502f8dfc0e"
+      }
+    },
+    {
+      "test": "first_person_protection",
+      "checks": 59,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/first_person_protection",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\first_person_protection.gd": "e1ec922e8c909568ae20e146655bc25c84bd207502c8af6c86f385129c584c73"
+      }
+    },
+    {
+      "test": "first_person_parity",
+      "checks": 74,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/first_person_parity",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\first_person_parity.gd": "8287213913694fd9d8a6f26232be0315b39dc76ec84e37a74b89fb16d1347ed7",
+        "tests\\first_person_protection.gd": "e1ec922e8c909568ae20e146655bc25c84bd207502c8af6c86f385129c584c73"
+      }
+    },
+    {
+      "test": "first_person_world",
+      "checks": 43,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/first_person_world",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\first_person_world.gd": "a340422b9f5ca29afe8f378aaa52c9a7492b886d4336d211e9d3c1d9bfc91531"
+      }
+    },
+    {
+      "test": "attack_animation_timing",
+      "checks": 27,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/attack_animation_timing",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\attack_animation_timing.gd": "19d20bdc4c3bb0fb604d4eb2b08c555453da294ab623205400ace527e23c2d99"
+      }
+    },
+    {
+      "test": "session_player_page",
+      "checks": 18,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/session_player_page",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\session_player_page.gd": "90b38e3b8019b68342916df3376ebffc26f71c7735c1460936581ecf84725068"
+      }
+    },
+    {
+      "test": "third_person_view",
+      "checks": 22,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/third_person_view",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\third_person_view.gd": "5440bac72d8368083e9e9dc60dc4c35af65bfb390c90f92ef36454029b543539"
+      }
+    },
+    {
+      "test": "pickaxe_fresh_world",
+      "checks": 13,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T081546622815Z_first_person_pack/pickaxe_fresh_world",
+      "cache_retained": false,
+      "test_sha256": {
+        "tests\\pickaxe_fresh_world.gd": "5a33ef9ff13406e7ff0ff573fa33f60c6eab40c737bcd4b187698b74785bcfd6",
+        "tests\\combined_resource_route.gd": "2d0e15d29b926f4457bdfda3c2220c8972d15574cbbc960fc4bd570479293239"
+      }
+    }
+  ],
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "runtime_sha256": {
+    "addons/player_runtime/first_person_depth.gd": "f12d489ae011846c48d5e417c3b33560f61d44749ab5a4040f5d89fea35f89a9",
+    "addons/player_runtime/first_person_meshes.gd": "a3522bc7b51a0ae17cc84f990373263df3ee3bf062d6f468c64a7debd5c6d467",
+    "addons/player_runtime/first_person_view.gd": "5e0e24b41d91ca0ef0c1dfb1b414f3bf813aa44195ac979e4e7c1b92bc30bf80",
+    "addons/player_runtime/session_menu.gd": "a137201f07b2213f73768ef84ed03e2ce786700b8eda5fee0a69d6e841adcb10",
+    "addons/characters/runtime/human_view.gd": "61689d08e02a4a5e1236e4aecd237b8dd032ea4829678d57402c69911615b198",
+    "addons/characters/runtime/torch_flame.gdshader": "fa3bb0bd7d95800568c281d0e211ca3adc5b89ea33f6ead0bc549da868600ea9",
+    "addons/characters/runtime/torch_motes.gdshader": "9b3787987bfc55aea2cc183e05ab4efe749cfe364aa0c07e0c3d7a9bcfb58110"
+  },
+  "user_visual_approval": false,
+  "scope": "Installed native-depth default: original lighting/shadow maps, actual tree/shop assets, all held tools and torch FX, opaque/transparent clipping, settings migration/persistence, third person, crouching, vehicle transitions and real mining contact. Not exhaustive gameplay or hardware qualification."
+}

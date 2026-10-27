@@ -40,7 +40,7 @@ func run()->void:
 	await frames(12);protection.update()
 	var held:MeshInstance3D=game.tool_view.human.model.find_child("Equipment_Pickaxe",true,false)
 	check(held!=null and held.is_visible_in_tree(),"ordinary equipment path exposes the authored pickaxe mesh")
-	check(protection.active and not protection.shadows_enabled,"normal gameplay protects hands without world shadows")
+	check(protection.active and not protection.overlay_active and protection.meshes.depth.active,"normal gameplay protects depth while retaining original world shading")
 	var camera_transform:Transform3D=game.camera.global_transform
 	results.camera_position=camera_transform.origin
 	var original_profile:Dictionary=game.tool_view.attack_profile()
@@ -105,7 +105,7 @@ func run()->void:
 		for frame in 90:
 			await process_frame
 			var begin:=Time.get_ticks_usec();protection.update()
-			times.append({"main_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"hands_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(protection.viewport.get_viewport_rid()) if mode else 0.0,"sync_ms":(Time.get_ticks_usec()-begin)/1000.0,"shadow_refresh_ms":protection.shadows.refresh_ms,"casters":protection.shadows.mirrors.size()})
+			times.append({"main_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(root.get_viewport_rid()),"hands_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(protection.viewport.get_viewport_rid()) if protection.overlay_active else 0.0,"sync_ms":(Time.get_ticks_usec()-begin)/1000.0,"shadow_refresh_ms":protection.shadows.refresh_ms,"casters":protection.shadows.mirrors.size()})
 		samples.append({"mode":mode,"samples":times})
 	results.performance=samples
 	check(protection.shadows.mirrors.size()<=protection.shadows.LIMIT,"shadow references remain bounded through repeated toggles")

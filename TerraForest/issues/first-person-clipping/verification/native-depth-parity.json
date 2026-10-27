@@ -1,0 +1,92 @@
+{
+  "checks": 74,
+  "failures": 0,
+  "inside_shop_0": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.0000000983417999965173
+  },
+  "inside_shop_0_hands": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.0000000644994801596591
+  },
+  "inside_shop_1": {
+    "changed_fraction": 0.00000192901234567901,
+    "mean_error": 0.000000128600844124585
+  },
+  "inside_shop_1_hands": {
+    "changed_fraction": 0.0000164473684210526,
+    "mean_error": 0.00000109649140779909
+  },
+  "inside_shop_2": {
+    "changed_fraction": 0.00000578703703703704,
+    "mean_error": 0.0000010515009354869
+  },
+  "inside_shop_2_hands": {
+    "changed_fraction": 0.0000328947368421053,
+    "mean_error": 0.00000451496404007469
+  },
+  "inside_shop_3": {
+    "changed_fraction": 0.00000578703703703704,
+    "mean_error": 0.000000597615582569514
+  },
+  "inside_shop_3_hands": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.000000451496361117614
+  },
+  "inside_shop_4": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.0
+  },
+  "inside_shop_406": {
+    "changed_fraction": 0.00000192901234567901,
+    "mean_error": 0.000000234507383594726
+  },
+  "inside_shop_406_hands": {
+    "changed_fraction": 0.0000164473684210526,
+    "mean_error": 0.00000161248712653392
+  },
+  "inside_shop_4_hands": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.0
+  },
+  "inside_shop_5": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.000000128600815380061
+  },
+  "inside_shop_5_hands": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.000000644994801596591
+  },
+  "inside_shop_6": {
+    "changed_fraction": 0.00000964506172839506,
+    "mean_error": 0.0000014902565938731
+  },
+  "inside_shop_6_hands": {
+    "changed_fraction": 0.0,
+    "mean_error": 0.000000128998960319318
+  },
+  "outdoors_pickaxe": {
+    "changed_fraction": 0.00000192901234567901,
+    "mean_error": 0.000000438755723061385
+  },
+  "outdoors_pickaxe_hands": {
+    "changed_fraction": 0.0000164473684210526,
+    "mean_error": 0.00000354747140878125
+  },
+  "under_tree_pickaxe": {
+    "changed_fraction": 0.00175733024691358,
+    "mean_error": 0.000189935854732427
+  },
+  "under_tree_pickaxe_hands": {
+    "changed_fraction": 0.0000164473684210526,
+    "mean_error": 0.000000902992967320116
+  },
+  "under_tree_torch": {
+    "changed_fraction": 0.00000771604938271605,
+    "mean_error": 0.00000149782139083578
+  },
+  "under_tree_torch_hands": {
+    "changed_fraction": 0.0000164473684210526,
+    "mean_error": 0.00000161248700399148
+  }
+}

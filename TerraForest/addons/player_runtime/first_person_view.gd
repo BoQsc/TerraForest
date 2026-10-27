@@ -5,6 +5,7 @@ var game:Node
 var enabled:=true
 var shadows_enabled:=false
 var active:=false
+var overlay_active:=false
 var settings_path:="user://player_view.cfg"
 var viewport:SubViewport
 var camera:Camera3D
@@ -37,7 +38,7 @@ func prepare(world:Node)->void:
 		var config:=ConfigFile.new()
 		if config.load(settings_path)==OK:
 			value=bool(config.get_value("camera","first_person_protection",true))
-			shadows_enabled=bool(config.get_value("camera","first_person_world_shadows",false))
+			shadows_enabled=bool(config.get_value("camera","first_person_detailed_shadows",false))
 	for light:Node in game.get_tree().root.find_children("*","Light3D",true,false):register_light(light.get_instance_id())
 	game.get_tree().node_added.connect(node_added)
 	set_enabled(value,false)
@@ -61,7 +62,7 @@ func set_shadows_enabled(value:bool,persist:bool=true)->void:
 	shadows_enabled=value
 	if persist and can_persist():
 		var config:=ConfigFile.new();config.load(settings_path)
-		config.set_value("camera","first_person_world_shadows",shadows_enabled);config.save(settings_path)
+		config.set_value("camera","first_person_detailed_shadows",shadows_enabled);config.save(settings_path)
 	if is_instance_valid(game):game.session_menu.first_person_shadows_toggle.set_pressed_no_signal(value)
 	update()
 
@@ -89,11 +90,15 @@ func remove_light(identity:int)->void:
 func update()->void:
 	if not is_instance_valid(game) or not is_instance_valid(game.tool_view):return
 	var wanted:bool=enabled and game.camera.current and not game.player_view.active and not game.world_vehicle.driving and not game.loading_active and not game.shutdown_requested and game.tool_view.is_visible_in_tree()
+	var overlay:bool=wanted and shadows_enabled
+	meshes.set_overlay(overlay);meshes.depth.set_active(wanted and not overlay)
 	if wanted!=active:
-		active=wanted;meshes.set_active(active);canvas.visible=active
-		game.camera.cull_mask=(game.camera.cull_mask&~Meshes.ARM_LAYER)|(0 if active else original_arm_mask)
-		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS if active else SubViewport.UPDATE_DISABLED
-	shadows.set_active(active and shadows_enabled)
+		active=wanted;meshes.set_active(active)
+	if overlay!=overlay_active:
+		overlay_active=overlay;canvas.visible=overlay
+		game.camera.cull_mask=(game.camera.cull_mask&~Meshes.ARM_LAYER)|(0 if overlay else original_arm_mask)
+		viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS if overlay else SubViewport.UPDATE_DISABLED
+	shadows.set_active(overlay)
 	if not active:return
 	meshes.sync()
 	var parent_view:Viewport=game.camera.get_viewport()

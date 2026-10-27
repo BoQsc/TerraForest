@@ -84,10 +84,10 @@ func _ready() -> void:
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)
 	first_person_toggle=CheckButton.new();first_person_toggle.text="First-person clipping protection"
-	first_person_toggle.tooltip_text="Render hands and held items above world geometry. Visual only: does not change reach or allow hits through walls. Off restores the original rendering."
+	first_person_toggle.tooltip_text="Protect first-person hands, held items and effects from world clipping while keeping normal lighting and shadows. Does not change reach or allow hits through walls."
 	first_person_toggle.toggled.connect(game.first_person_view.set_enabled);player.add_child(first_person_toggle)
-	first_person_shadows_toggle=CheckButton.new();first_person_shadows_toggle.text="World shadows on hands and tools"
-	first_person_shadows_toggle.tooltip_text="Nearby world geometry casts shadows into the hands camera. Turn off to reduce shadow rendering cost; world lighting remains."
+	first_person_shadows_toggle=CheckButton.new();first_person_shadows_toggle.text="Detailed first-person shadows"
+	first_person_shadows_toggle.tooltip_text="Optional separate close-up shadow pass. Off keeps the original world lighting and shadow detail using depth-only clipping protection."
 	first_person_shadows_toggle.toggled.connect(game.first_person_view.set_shadows_enabled);player.add_child(first_person_shadows_toggle)
 	var grid_settings:=VBoxContainer.new();grid_settings.name="BuildingGridFit";player.add_child(grid_settings)
 	label(grid_settings,"Building-grid fit").add_theme_font_size_override("font_size",20)

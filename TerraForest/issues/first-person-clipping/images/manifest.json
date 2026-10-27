@@ -75,7 +75,7 @@
     "file": "clipping-only-settings.png",
     "source": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_world/evidence/player_settings.png",
     "sha256": "aabe1db9f7d409ac5936e3a091152d9114bb51765a39e45b5e00909920972920",
-    "caption": "Current packaged default: clipping protection ON, world shadows on hands/tools OFF.",
+    "caption": "Earlier shadows-off packaged default: clipping protection ON, world shadows on hands/tools OFF.",
     "pack_sha256": "42c44e7e3b9e95ef0e1341b7db5c8efdb7c251c98dcd67415fd4208527b471d2",
     "edited": false
   },
@@ -83,8 +83,79 @@
     "file": "clipping-only-close-wall.png",
     "source": "reports/checks/20261027T063457859128Z_first_person_pack/first_person_world/evidence/close_wall_on.png",
     "sha256": "deb991764f93e60e01256d891d15f9fde482ba2faef28b4c62df1bba73918d78",
-    "caption": "Current packaged default, seed 1703, synthetic wall 0.25 m ahead: no hand-shadow system is needed to protect the hands and pickaxe from world-depth interference.",
+    "caption": "Earlier shadows-off packaged default, seed 1703, synthetic wall 0.25 m ahead: no hand-shadow system is needed to protect the hands and pickaxe from world-depth interference.",
     "pack_sha256": "42c44e7e3b9e95ef0e1341b7db5c8efdb7c251c98dcd67415fd4208527b471d2",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_under_tree_pickaxe_before.png",
+    "source": ".build/first-person-history-20261027/before/under_tree_pickaxe.png",
+    "sha256": "e026f232a55442ca62d8bc777635236bf9ca8bc38209079ddc37ec6fdff3fb98",
+    "caption": "Actual pre-protection Git checkpoint ec05af0c; matching isolated production-asset fixture: under_tree_pickaxe",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_under_tree_pickaxe_after.png",
+    "source": ".build/first-person-history-20261027/after/under_tree_pickaxe.png",
+    "sha256": "d0890d49405f8e52889a582c0ed37a836a977a96a763b6f4709f465b3df9c5da",
+    "caption": "Updated native-depth default; detailed shadow option OFF; matching isolated production-asset fixture: under_tree_pickaxe",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_inside_shop_1_before.png",
+    "source": ".build/first-person-history-20261027/before/inside_shop_1.png",
+    "sha256": "8bc6a5563c9d488f04f417fe9bb5dfd52c904d94ffb75ffbeaf9efd528a8ac91",
+    "caption": "Actual pre-protection Git checkpoint ec05af0c; matching isolated production-asset fixture: inside_shop_1",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_inside_shop_1_after.png",
+    "source": ".build/first-person-history-20261027/after/inside_shop_1.png",
+    "sha256": "e7c82aba63071ed78c4776228fa132e4748262072e5a196b74e7ea3dff52090b",
+    "caption": "Updated native-depth default; detailed shadow option OFF; matching isolated production-asset fixture: inside_shop_1",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_night_torch_before.png",
+    "source": ".build/first-person-history-20261027/before/night_torch.png",
+    "sha256": "577815aaebfbc6455748ad17056ecb4ed18b697b55750b8a8a67226f4175b139",
+    "caption": "Actual pre-protection Git checkpoint ec05af0c; matching isolated production-asset fixture: night_torch",
+    "edited": false
+  },
+  {
+    "file": "checkpoint_night_torch_after.png",
+    "source": ".build/first-person-history-20261027/after/night_torch.png",
+    "sha256": "efce20494ef45ffefbe852c7b5fe04aeacf0392067fe946745fbe60bcc21c39b",
+    "caption": "Updated native-depth default; detailed shadow option OFF; matching isolated production-asset fixture: night_torch",
+    "edited": false
+  },
+  {
+    "file": "native_depth_torch_wall_off.png",
+    "source": "reports/checks/20261027T071739745350Z_first_person/first_person_parity/evidence/torch_wall_off.png",
+    "sha256": "92812e1a37958ac22d769fcb603658fbd55c555bf55b4ac54575e17a123cb275",
+    "caption": "Native depth protection validation: torch_wall_off",
+    "edited": false
+  },
+  {
+    "file": "native_depth_torch_wall_on.png",
+    "source": "reports/checks/20261027T071739745350Z_first_person/first_person_parity/evidence/torch_wall_on.png",
+    "sha256": "82684fc241592158447b36ab5203e3e89d82b79b51a8ef213757d0cf255474ec",
+    "caption": "Native depth protection validation: torch_wall_on",
+    "edited": false
+  },
+  {
+    "file": "native_depth_torch_glass_on.png",
+    "source": "reports/checks/20261027T071739745350Z_first_person/first_person_parity/evidence/torch_glass_on.png",
+    "sha256": "332c8001e40c3b564e44e91b3b83373b8fe2eaa401cbf7008367b38444012c8f",
+    "caption": "Native depth protection validation: torch_glass_on",
+    "edited": false
+  },
+  {
+    "file": "native-depth-settings.png",
+    "source": "reports/checks/20261027T081546622815Z_first_person_pack/first_person_world/evidence/player_settings.png",
+    "sha256": "93734a3d3cec2c4f19e697b3b138d37c05124879e78407a9feb4ebc646d128e1",
+    "caption": "Installed native-depth package: clipping protection ON; optional detailed shadow camera OFF. Ordinary world lighting and shadow maps are retained automatically.",
+    "pack_sha256": "90dbce8dcb5d7ee7139ad84c4bb52d4305ed3cee47ba18b20a250ae9d9d4ab96",
     "edited": false
   }
 ]

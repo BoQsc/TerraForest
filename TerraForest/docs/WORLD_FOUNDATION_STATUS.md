@@ -1,7 +1,29 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Development storage — 2026-10-27
+
+Completed the user-approved removal of 200 audited successful-test caches
+(18.37 GiB); C: had 19.03 GiB free at completion. Played worlds, Git, failed-test
+evidence and review images were excluded. The first-person check runner now
+removes its own successful-run caches and records removal while retaining logs
+and images; failed runs and explicit `--keep-cache` runs remain. Global retention
+across other runners is still pending. [Receipt, exact scope and return steps](TEST_STORAGE.md).
+
 ## First-person clipping protection — 2026-10-27
+
+Latest requirement: preserve the pre-work appearance and protect torch effects too.
+Native depth scaling now replaces the default separate-camera color pass, retaining
+the original renderer's lighting and shadow maps. The extra detailed-shadow camera
+remains an optional mode. Equipment-root registration covers flame, embers, smoke
+and late-added held geometry. All 13 render comparisons against actual historical
+runtime `ec05af0c` pass, including tree shade, the approved shop, all held tools,
+night torch and headlamp. The latest package is installed; all eight checks pass,
+277 assertions, including ordinary shading, torch effects, settings migration,
+third person and real mining contact. User visual review remains pending.
+Controlled fixtures are not exhaustive gameplay or future SSAO/SSR qualification.
+
+Earlier rollout history:
 
 User explicitly chose two cameras/layers without retraction or new contact rules.
 Protection defaults on; world shadows on hands/tools default off under ESC > Player.

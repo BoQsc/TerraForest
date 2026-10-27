@@ -8,11 +8,13 @@ from pathlib import Path
 from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
 from run_godot_check import command_for, execute, verify_pack_native
+from prune_successful_test_caches import remove_owned_temporary_cache
 
 
 CHECKS = {
     "first_person_meshes": (90, "FIRST_PERSON_MESHES_CHECK checks=", True),
     "first_person_protection": (120, "FIRST_PERSON_PROTECTION checks=", False),
+    "first_person_parity": (180, "FIRST_PERSON_PARITY checks=", False),
     "first_person_world": (180, "FIRST_PERSON_WORLD checks=", False),
     "attack_animation_timing": (60, "ATTACK_ANIMATION_TIMING checks=", True),
     "session_player_page": (120, "SESSION_PLAYER_PAGE checks=", False),
@@ -24,6 +26,7 @@ CHECKS = {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pack", action="store_true")
+    parser.add_argument("--keep-cache", action="store_true", help="Retain successful-run derived data; failures are always retained")
     parser.add_argument("--checks", nargs="+", choices=CHECKS, default=list(CHECKS))
     options = parser.parse_args()
     settings, _ = parse_args([])
@@ -53,6 +56,13 @@ def main():
                 helper = output / "combined_resource_route.gd"
                 helper.write_text(base.read_text(encoding="utf-8").replace("res://reports", (output / "evidence").as_posix()), encoding="utf-8")
                 script = script.replace('"res://tests/combined_resource_route.gd"', json.dumps(helper.as_posix()))
+        if name == "first_person_parity":
+            base = ROOT / "tests/first_person_protection.gd"
+            dependencies[str(base.relative_to(ROOT))] = hashlib.sha256(base.read_bytes()).hexdigest()
+            if options.pack:
+                helper = output / "first_person_protection.gd"
+                helper.write_text(base.read_text(encoding="utf-8"), encoding="utf-8")
+                script = script.replace('"res://tests/first_person_protection.gd"', json.dumps(helper.as_posix()))
         if options.pack:
             driver = output / (name + "_external.gd")
             driver.write_text(script, encoding="utf-8")
@@ -67,6 +77,14 @@ def main():
         manifest = output / "run.json"
         manifest.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
         record["result"] = execute(command, output, timeout, marker)
+        record["cache_retained"] = True
+        if record["result"]["passed"] and not options.keep_cache:
+            try:
+                record["removed_owned_cache"] = remove_owned_temporary_cache(cache)
+                record["cache_retained"] = False
+            except (OSError, ValueError) as error:
+                record["cache_cleanup_error"] = str(error)
+                print("WARNING cache cleanup failed: " + str(error), flush=True)
         manifest.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
         results.append(dict(test=name, **record["result"]))
         print(("PASS " if record["result"]["passed"] else "FAIL ") + str(output), flush=True)

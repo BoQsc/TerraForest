@@ -3,6 +3,7 @@ shader_type spatial;
 render_mode unshaded, cull_disabled, depth_draw_never, shadows_disabled;
 uniform float clock = 0.0;
 uniform float seed = 0.0;
+instance uniform float first_person_depth_scale = 1.0;
 float noise(vec2 p) {
     // Continuous warped turbulence avoids a visible grid in the fire silhouette.
     return .5+.5*sin(p.x*1.7+sin(p.y*1.3))*sin(p.y*1.4+cos(p.x*1.9));
@@ -10,6 +11,7 @@ float noise(vec2 p) {
 void vertex() {
     // Camera-facing tongues occupy different depths; all rise from the crown.
     MODELVIEW_MATRIX=VIEW_MATRIX*mat4(INV_VIEW_MATRIX[0],INV_VIEW_MATRIX[1],INV_VIEW_MATRIX[2],MODEL_MATRIX[3]);
+    Z_CLIP_SCALE=first_person_depth_scale;
 }
 void fragment() {
     float y=1.0-UV.y;
