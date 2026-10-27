@@ -17,6 +17,8 @@ var tilde_down:=-1
 var tilde_chord:=false
 var panel: PanelContainer
 var mode_label: Label
+var close_button:Button
+var quit_button:Button
 var session_message:Label
 var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
@@ -54,7 +56,10 @@ func _ready() -> void:
 	for edge in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(edge,24)
 	panel.add_theme_stylebox_override("panel",style)
 	var root:=VBoxContainer.new();root.add_theme_constant_override("separation",14);panel.add_child(root)
-	label(root,"TERRAFOREST / SESSION").add_theme_font_size_override("font_size",26)
+	var header:=HBoxContainer.new();root.add_child(header)
+	var title:=label(header,"TERRAFOREST / SESSION");title.add_theme_font_size_override("font_size",26);title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	close_button=button(header,"×",func():set_open(false));close_button.name="SessionClose";close_button.custom_minimum_size=Vector2(42,42);close_button.focus_mode=Control.FOCUS_NONE
+	close_button.tooltip_text="Close menu · Esc";close_button.add_theme_font_size_override("font_size",26)
 	mode_label=label(root,"")
 	var columns:=HBoxContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_theme_constant_override("separation",24);root.add_child(columns)
 	var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=220;columns.add_child(sidebar)
@@ -65,7 +70,7 @@ func _ready() -> void:
 	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"Destinations",show_page.bind("World"))
-	button(sidebar,"Resume  ·  Esc",func():set_open(false))
+	quit_button=button(sidebar,"Save and quit",save_and_quit);quit_button.name="QuickSaveAndQuit"
 	scroll=ScrollContainer.new();scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(scroll)
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
 	if world_page_factory.is_valid():page("World").add_child(world_page_factory.call())
@@ -104,7 +109,7 @@ func _ready() -> void:
 	grid_settings.add_child(burial_toggle)
 	var developer_page:=page("Developer")
 	label(developer_page,"Developer / diagnostics & experiments").add_theme_font_size_override("font_size",22)
-	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; living entities live in Dev Spawner. Selected-tool controls remain on Alt.")
+	label(developer_page,"Global debugging and experimental settings. Item grants live in Dev Bag; entities and live vehicles live in Dev Spawner. Selected-tool controls remain on Alt.")
 	mode_button=button(developer_page,"Development mode",toggle_developer)
 	var diagnostics:=GridContainer.new();diagnostics.columns=2;developer_page.add_child(diagnostics)
 	for entry in [["Diagnostics",KEY_F3],["Next test site",KEY_F2],["Next biome",KEY_F4],["LOD colours",KEY_F6],["Grass texture",KEY_F7],["Debug light",KEY_F8],["Terrain visualization",KEY_F10]]:
@@ -125,7 +130,7 @@ func _ready() -> void:
 	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
 	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
-	button(session,"Save and quit",func():game._notification(NOTIFICATION_WM_CLOSE_REQUEST))
+	button(session,"Save and quit",save_and_quit)
 	session_message=label(root,"")
 	confirmation=ConfirmationDialog.new();confirmation.confirmed.connect(func():pending_action.call());add_child(confirmation)
 	game.terrain.save_completed.connect(func(ok: bool):message.text="World saved" if ok else "Temporary world; changes are not saved" if game.temporary_world else "Save failed; check world status")
@@ -145,6 +150,8 @@ func refresh_effects()->void:
 	breakup_toggle.set_pressed_no_signal(game.impact_effects.breakup_enabled)
 	breakup_toggle.disabled=not game.impact_effects.enabled
 	impact_style.select(game.impact_effects.style);impact_style.disabled=not game.impact_effects.enabled
+func save_and_quit()->void:
+	if not leaving_world and not game.shutdown_requested:game._notification(NOTIFICATION_WM_CLOSE_REQUEST)
 func visible_ui() -> bool:return opened or workspace or (world_map!=null and world_map.opened)
 func pauses_world()->bool:return opened or workspace or (player_actions!=null and player_actions.opened)
 func set_open(value: bool) -> void:

@@ -1,12 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Player navigation and menu access — 2026-10-27
+
+Live vehicle spawn moves to Dev Spawner; carried vehicle items stay in Dev Bag.
+ESC gets a top-right × and sidebar Save and quit in place of Resume. Player map
+right-click supports persistent markers, selecting older marks, untracking and
+removal; a top-centre compass shows bearing, distance and off-screen direction.
+Markers use a bounded per-world binary archive section, not terrain edits or
+extra generation work. The installed package passes six suites, 129 assertions,
+including native archive disk roundtrip, right-click/pan/zoom, existing Ctrl-click
+teleport, marker management, compass bearings and live vehicle spawning. User
+visual review remains pending. [Scope and evidence](../issues/player-navigation-menus/README.md).
+
 ## Development storage — 2026-10-27
 
 Completed the user-approved removal of 200 audited successful-test caches
 (18.37 GiB); C: had 19.03 GiB free at completion. Played worlds, Git, failed-test
-evidence and review images were excluded. The first-person check runner now
-removes its own successful-run caches and records removal while retaining logs
+evidence and review images were excluded. The first-person and player-navigation
+check runners now remove their own successful-run caches and record removal while retaining logs
 and images; failed runs and explicit `--keep-cache` runs remain. Global retention
 across other runners is still pending. [Receipt, exact scope and return steps](TEST_STORAGE.md).
 

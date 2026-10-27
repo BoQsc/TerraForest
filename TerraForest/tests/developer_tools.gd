@@ -32,15 +32,15 @@ func run()->void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	var menu=game.session_menu;var bag=menu.dev_bag;var inventory:RefCounted=game.player_hud.inventory
 	var original:PackedByteArray=inventory.capture_storage_snapshot()
-	check(menu.navigation.keys()==["Session","Dev Bag","Dev Spawner","Developer","World"],"items, entities and serious diagnostics have separate navigation")
-	check(menu.spawner.entries.keys()==["zombie"] and bag.entries.has(501),"vehicles live only in the item bag, not entity spawner")
+	check(menu.navigation.keys()==["Session","Player","Graphics","Dev Bag","Dev Spawner","Developer","World"],"items, entities and serious diagnostics have separate navigation")
+	check(menu.spawner.entries.keys()==["zombie","vehicle"] and bag.entries.has(501),"live vehicle spawn belongs in Dev Spawner while carried vehicle items stay in Dev Bag")
 	menu.show_page("Dev Bag");bag.search.grab_focus()
 	type_key(KEY_M,109);type_key(KEY_QUOTELEFT,96);await process_frame
 	check(bag.search.text=="m`" and not game.world_map.opened and not menu.developer and menu.current_page=="Dev Bag","typing map and developer hotkeys stays inside search")
 	bag.search.text="  TOPSOIL ";bag.filter_items()
 	check(bag.entries[211].visible and not bag.entries[501].visible and not bag.empty.visible,"case-insensitive trimmed name search filters actual item tiles")
 	bag.search.text="501";bag.filter_items();bag.category.select(1);bag.filter_items()
-	check(bag.empty.visible and not bag.vehicle_button.visible,"category and text filters combine with a clear empty state")
+	check(bag.empty.visible,"category and text filters combine with a clear empty state")
 	bag.category.select(0);bag.search.clear();bag.filter_items();await capture("dev_bag")
 	var empty_state:Dictionary=inventory.snapshot()
 	for row:Dictionary in empty_state.slots:row.item=0;row.count=0;row.wear=0;row.water_ml=0

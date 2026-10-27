@@ -26,6 +26,12 @@ var updates:Node
 var water_survey:Node
 var model_survey:Node
 var block_survey:Node
+var context_menu:PanelContainer
+var context_content:VBoxContainer
+var context_actions:Dictionary={}
+var context_point:=Vector2.ZERO
+var context_marker:=0
+var marker_list:OptionButton
 func _ready()->void:
  layer=50
  updates=preload("res://addons/world_runtime/survey_updates.gd").new();updates.atlas=self;add_child(updates)
@@ -48,18 +54,65 @@ func _ready()->void:
  add_button(buttons,"Find me",view.follow_player);add_button(buttons,"Whole world",view.overview)
  var zoom_row:=HBoxContainer.new();sidebar.add_child(zoom_row)
  add_button(zoom_row,"− Zoom",func():view.set_zoom(view.zoom/1.5,view.size*0.5));add_button(zoom_row,"+ Zoom",func():view.set_zoom(view.zoom*1.5,view.size*0.5))
- add_label(sidebar,"Drag to pan · Wheel to zoom\nNorth is up · Mint arrow: you\nGold: roads · Blue: water\nIvory: blocks / Lilac: large objects")
+ add_label(sidebar,"Drag to pan · Wheel to zoom\nRight-click: place / manage markers\nNorth is up · Mint arrow: you\nGold: roads · Blue: water")
  var minerals:=CheckButton.new();minerals.text="Material veins";minerals.button_pressed=true;sidebar.add_child(minerals)
  minerals.toggled.connect(func(value:bool):show_deposits=value;view.queue_redraw())
  add_label(sidebar,"Steel diamond: iron · Copper diamond: copper\nDeposit locations, not remaining reserves")
  travel_hint=add_label(sidebar,"");travel_hint.add_theme_color_override("font_color",Color("9cffe0"))
+ add_label(sidebar,"MY MARKERS").add_theme_font_size_override("font_size",18)
+ marker_list=OptionButton.new();marker_list.custom_minimum_size.y=38;sidebar.add_child(marker_list)
+ marker_list.item_selected.connect(func(index:int):
+  var identity:=marker_list.get_item_id(index)
+  if identity==0:game.destination_guide.clear()
+  else:game.destination_guide.track(game.map_markers.describe(identity))
+  view.queue_redraw())
  add_label(sidebar,"PUBLIC DESTINATIONS").add_theme_font_size_override("font_size",18)
  var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;sidebar.add_child(scroll)
  destination_list=VBoxContainer.new();destination_list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(destination_list)
  add_button(sidebar,"Stop tracking",func():game.destination_guide.clear();view.queue_redraw())
  status=add_label(root,"Survey preparing…")
  timer=Timer.new();timer.wait_time=0.2;timer.timeout.connect(update_position);add_child(timer)
+ context_menu=PanelContainer.new();context_menu.name="MapContextMenu";context_menu.custom_minimum_size.x=270;add_child(context_menu)
+ var context_style:=StyleBoxFlat.new();context_style.bg_color=Color("10282c")
+ for side in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:context_style.set_content_margin(side,8)
+ context_menu.add_theme_stylebox_override("panel",context_style)
+ context_content=VBoxContainer.new();context_content.add_theme_constant_override("separation",6);context_menu.add_child(context_content);context_menu.hide()
+ game.map_markers.changed.connect(markers_changed);markers_changed()
  panel.hide();set_process(false)
+func markers_changed()->void:
+ if marker_list==null:return
+ marker_list.clear();marker_list.add_item("No active marker",0)
+ for marker:Dictionary in game.map_markers.markers:
+  marker_list.add_item("Marker %d"%marker.id,marker.id)
+  if marker.id==game.map_markers.active_id:marker_list.select(marker_list.item_count-1)
+ context_menu.hide();view.queue_redraw()
+func open_context(point:Vector2)->void:
+ context_menu.hide()
+ if not opened or not Rect2(Vector2.ZERO,view.size).has_point(point):return
+ context_point=view.map_to_world(point)
+ if not game.map_markers.valid_point(context_point):return
+ context_marker=view.marker_at(point);context_actions.clear()
+ for child in context_content.get_children():context_content.remove_child(child);child.queue_free()
+ if context_marker==0:
+  context_actions.mark=add_button(context_content,"Place marker and navigate",context_action.bind("mark"))
+  context_actions.mark.disabled=game.map_markers.markers.size()>=game.map_markers.LIMIT
+  context_actions.mark.tooltip_text="Up to 64 saved markers per world"
+ else:
+  add_label(context_content,"Marker %d"%context_marker)
+  var action:="untrack" if game.map_markers.active_id==context_marker else "track"
+  context_actions[action]=add_button(context_content,"Stop navigating" if action=="untrack" else "Navigate to marker",context_action.bind(action))
+  context_actions.remove=add_button(context_content,"Remove marker",context_action.bind("remove"))
+ context_menu.reset_size();context_menu.position=(view.get_global_transform_with_canvas()*point).clamp(Vector2(8,8),get_viewport().get_visible_rect().size-context_menu.get_combined_minimum_size()-Vector2(8,8));context_menu.show()
+func context_action(action:String)->void:
+ if not opened or not context_menu.visible or game.loading_active or game.shutdown_requested:return
+ match action:
+  "mark":game.map_markers.mark(context_point)
+  "track":game.destination_guide.track(game.map_markers.describe(context_marker))
+  "untrack":game.destination_guide.clear()
+  "remove":game.map_markers.unmark(context_marker)
+ context_menu.hide();view.queue_redraw()
+func _input(event:InputEvent)->void:
+ if opened and context_menu.visible and event is InputEventMouseButton and event.pressed and not context_menu.get_global_rect().has_point(event.position):context_menu.hide()
 func add_label(parent:Node,text:String)->Label:
  var label:=Label.new();label.text=text;label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(label);return label
 func add_button(parent:Node,text:String,action:Callable)->Button:
@@ -69,7 +122,7 @@ func set_open(value:bool)->void:
  if value:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
- opened=value;panel.visible=value;view.dragging=false;view.teleport_click=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
+ opened=value;panel.visible=value;context_menu.hide();view.dragging=false;view.teleport_click=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
  if not value:water_survey.pause();block_survey.pause();model_survey.pause()
  game.player_hud.inventory_open=false;game.player_hud.enabled=not value and not game.world_vehicle.driving
  game._cancel_edit_input();Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)

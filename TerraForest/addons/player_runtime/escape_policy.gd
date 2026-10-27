@@ -6,6 +6,8 @@ static func close_or_pause(menu:CanvasLayer)->void:
 	var game:Node=menu.game
 	if menu.confirmation.visible:
 		menu.confirmation.hide()
+	elif menu.world_map!=null and menu.world_map.context_menu.visible:
+		menu.world_map.context_menu.hide()
 	elif menu.world_map!=null and menu.world_map.opened:
 		menu.world_map.set_open(false)
 	elif menu.player_actions!=null and (menu.player_actions.opened or menu.tilde_down>=0):

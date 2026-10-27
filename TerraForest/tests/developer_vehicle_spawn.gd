@@ -26,12 +26,12 @@ func run()->void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.fly=false
 	var session=game.world_vehicle;var menu=game.session_menu
 	check(session.fleet_enabled and not menu.developer,"fixture starts in ordinary gameplay without entering development mode")
-	menu.set_open(true);menu.show_page("Dev Bag")
+	menu.set_open(true);menu.show_page("Dev Spawner")
 	var before:int=session.fleet.statistics().records
 	game.camera.rotation=Vector3(1.2,0,0) # Looking at sky must not reject spawning.
 	session.interaction_available=func():return false # Focus/publication gates do not cancel an explicit spawn.
-	menu.dev_bag.vehicle_button.pressed.emit()
-	check(await wait_for(func():return not menu.dev_bag.vehicle_busy,15),"one click waits for the actual vehicle resource without requiring another key")
+	menu.spawner.vehicle_button.pressed.emit()
+	check(await wait_for(func():return not menu.spawner.vehicle_busy,15),"one Dev Spawner click waits for the actual vehicle resource without requiring another key")
 	print("VEHICLE_MENU_RESULT ",game._lake_notice," · ",menu.message.text)
 	if not check(session.last_spawn_identity>0 and session.fleet.statistics().records==before+1,"first gameplay-mode click spawns despite sky aim and unavailable ordinary placement"):await capture("failure");await finish();return
 	var id:int=session.last_spawn_identity

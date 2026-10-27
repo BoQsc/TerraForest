@@ -36,6 +36,7 @@ var water_camera=preload("res://addons/volumetric_water/water_camera.gd").new()
 var structures = Structures.new()
 var player_hud=preload("res://addons/player_runtime/player_hud.gd").new()
 var world_map=preload("res://addons/world_runtime/world_map.gd").new()
+var map_markers=preload("res://addons/player_runtime/map_markers.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
@@ -176,6 +177,9 @@ func _ready() -> void:
 		push_error("Generated region persistence initialization failed");_abort_startup(2);return
 	if not material_deposits.prepare(persistence,structures):
 		push_error("Material deposit initialization failed");_abort_startup(2);return
+	if not map_markers.prepare(persistence):
+		push_error("Map marker persistence initialization failed");_abort_startup(2);return
+	map_markers.edited.connect(func():terrain.changed_since_save=true)
 	if not player_hud.prepare() or not persistence.register_component("player_loadout", player_hud.capture_snapshot, player_hud.restore_snapshot, player_hud.inventory, player_hud.default_loadout):
 		push_error("Player loadout persistence initialization failed")
 		_abort_startup(2)

@@ -20,6 +20,12 @@ func bound_center()->void:center=center.clamp(Vector2.ZERO,Vector2.ONE*2000)
 func overview()->void:center=Vector2(1000,1000);zoom=1;queue_redraw()
 func follow_player()->void:
  var at:Vector3=atlas.game.player.global_position;center=Vector2(at.x,at.z);zoom=4;bound_center();queue_redraw()
+func marker_at(point:Vector2)->int:
+ var identity:=0;var nearest:=14.0
+ for marker:Dictionary in atlas.game.map_markers.markers:
+  var distance:=world_to_map(Vector3(marker.point.x,0,marker.point.y)).distance_to(point)
+  if distance<nearest:identity=marker.id;nearest=distance
+ return identity
 func _gui_input(event:InputEvent)->void:
  if event is InputEventMouseButton:
   if event.button_index==MOUSE_BUTTON_LEFT:
@@ -31,9 +37,14 @@ func _gui_input(event:InputEvent)->void:
      if teleport_click:
       if event.ctrl_pressed and Rect2(Vector2.ZERO,size).has_point(event.position):atlas.teleport_to(map_to_world(event.position))
      else:
+      var identity:=marker_at(event.position)
+      if identity!=0:atlas.game.destination_guide.track(atlas.game.map_markers.describe(identity));queue_redraw()
       for place:Dictionary in atlas.places+(atlas.deposits if atlas.show_deposits else []):
-       if world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
+       if identity==0 and world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
     teleport_click=false
+   accept_event()
+  elif event.button_index==MOUSE_BUTTON_RIGHT:
+   if event.pressed:dragging=false;teleport_click=false;atlas.open_context(event.position)
    accept_event()
   elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
    set_zoom(zoom*(1.25 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 0.8),event.position);accept_event()
@@ -84,6 +95,14 @@ func _draw()->void:
    if atlas.places.any(func(other):return box.grow(5).has_point(world_to_map(other.position))):continue
    label_boxes.append(box);draw_rect(box,Color(0.02,0.06,0.07,0.85))
    draw_string(font,text_at,place.title,HORIZONTAL_ALIGNMENT_LEFT,-1,16,color);break
+ for marker:Dictionary in atlas.game.map_markers.markers:
+  var at:=world_to_map(Vector3(marker.point.x,0,marker.point.y))
+  if not Rect2(Vector2.ZERO,size).grow(-10).has_point(at):continue
+  var selected:bool=atlas.game.map_markers.active_id==marker.id
+  var color:=Color("f5ca78") if selected else Color("b4cac2")
+  draw_circle(at,10 if selected else 8,Color("10252b"))
+  draw_colored_polygon(PackedVector2Array([at+Vector2(0,-7),at+Vector2(6,0),at+Vector2(0,7),at+Vector2(-6,0)]),color)
+  draw_string(font,at+Vector2(11,5),str(marker.id),HORIZONTAL_ALIGNMENT_LEFT,-1,15,color)
  var player:Vector3=atlas.game.player.global_position;var p:=world_to_map(player)
  var forward:Vector3=-atlas.game.camera.global_basis.z
  var angle:=atan2(forward.x,-forward.z)

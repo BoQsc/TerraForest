@@ -1,0 +1,50 @@
+[
+  {
+    "file": "session.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/session.png",
+    "sha256": "914d4e86861fe8574c52c60caa369559e341a6714549cb2a15e2185112cc70d7",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: session. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  },
+  {
+    "file": "dev_spawner.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/dev_spawner.png",
+    "sha256": "3f1a6ad238c6bef1e523dc53bfe129285c31c6f98228915fb589de82d622fddf",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: dev_spawner. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  },
+  {
+    "file": "map_context.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/map_context.png",
+    "sha256": "a9279bef421e7c35530509f4226f48877179f6ff0f14d0b4835e67a100a3e49d",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: map_context. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  },
+  {
+    "file": "map_markers.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/map_markers.png",
+    "sha256": "ed4bb89c99b10ee21e98532d92b9d4b76cd60a2f9474a7183439bb7deec6c5d5",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: map_markers. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  },
+  {
+    "file": "compass_ahead.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/compass_ahead.png",
+    "sha256": "d02ec519815f3aeaad4c5933453bd203e5c661c13441d0db5f3bd369e635d338",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: compass_ahead. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  },
+  {
+    "file": "compass_behind.png",
+    "source": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation/evidence/compass_behind.png",
+    "sha256": "b315a45edab2cafa5233524299c98e15863063569133e4c0d2dd733cf233f271",
+    "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+    "caption": "Packaged temporary seed-1703 gameplay fixture: compass_behind. No player save; fixed camera changes only for compass bearings.",
+    "edited": false
+  }
+]

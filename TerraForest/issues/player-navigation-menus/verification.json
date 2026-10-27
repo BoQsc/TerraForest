@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-27",
+  "baseline_revision": "c7b06f5c",
+  "pack_sha256": "1bb8ea5a98bb89f26fb41d5224e58aa5727fd6227c8bb903049692dd9761061f",
+  "total_checks": 129,
+  "tests": [
+    {
+      "test": "map_marker_store",
+      "checks": 22,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T091235141750Z_player_navigation_pack/map_marker_store",
+      "test_sha256": "2c48409221f1abdfb7f1cd13cff7b36c625442f8b6a8b826390141784d1027f0",
+      "cache_retained": false
+    },
+    {
+      "test": "player_navigation",
+      "checks": 38,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T090927944447Z_player_navigation_pack/player_navigation",
+      "test_sha256": "c16ce421092c9ebe1e377443f38f376407a56a38efe693714f0723d9d7b49225",
+      "cache_retained": false
+    },
+    {
+      "test": "developer_vehicle_spawn",
+      "checks": 7,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T090927944447Z_player_navigation_pack/developer_vehicle_spawn",
+      "test_sha256": "f3fb71391283e5d9f8e3ed30bd63bfbadab65f2bedcf21240f62df7c83bb0656",
+      "cache_retained": false
+    },
+    {
+      "test": "developer_tools",
+      "checks": 19,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T090927944447Z_player_navigation_pack/developer_tools",
+      "test_sha256": "a29a2c702dd55900689e758885a142e9c21428f1ca91439bd5e18debfe8e0a40",
+      "cache_retained": false
+    },
+    {
+      "test": "session_player_page",
+      "checks": 18,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T090927944447Z_player_navigation_pack/session_player_page",
+      "test_sha256": "90b38e3b8019b68342916df3376ebffc26f71c7735c1460936581ecf84725068",
+      "cache_retained": false
+    },
+    {
+      "test": "world_map_teleport",
+      "checks": 25,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T090927944447Z_player_navigation_pack/world_map_teleport",
+      "test_sha256": "6863f4d4f97b5bd4377c6fa2782b1da2ec2dde870b0b16578e8eb4f98b54c678",
+      "cache_retained": false
+    }
+  ],
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "runtime_sha256": {
+    "addons/player_runtime/session_menu.gd": "82eed7a0a11ab1de7fef88de72084d6caf28dc44f06b280fa62325c35728f548",
+    "addons/player_runtime/developer_bag.gd": "8ce750f270b7984d295a5f63c8ee79957229d11ab73bbafbdd7bbf1f67713b34",
+    "addons/player_runtime/developer_spawn.gd": "7080c730b87697c8e5bc8ffc603f75ce172fb0267c3702486595bdf125d66b03",
+    "addons/player_runtime/map_markers.gd": "51d42d66a894bed99572b479dcbfd99c2736cff4018a83e217b5645dc2f54460",
+    "addons/player_runtime/compass.gd": "6f6a0cb1b0b4841a69663f6638175160c27d287d9c8e4a1745015937ca665cf1",
+    "addons/player_runtime/destination_guide.gd": "a05dde9b219f2a3581ad969a7b343335cefe47873cef0753f41b11a4f77b9a2c",
+    "addons/player_runtime/escape_policy.gd": "9612db83e534493497040169a80d5255d5aa4c8fac7bd11bdad48e5fbdd3de09",
+    "addons/world_runtime/world_map.gd": "5bc40d79a7765e0840e8bf31b889bd26cf00116cc68447579fdf7b7d6fc93e73",
+    "addons/world_runtime/world_map_view.gd": "2ab0beb0b6546c8031b8d8a199a57ee40051d96843ea26073c7a4fc429077b2f",
+    "demo/world.gd": "d6f9c0f9acaa4432f59932fef50a6addabbb825d15c7425661be5abf4f0d785d"
+  },
+  "user_visual_approval": false,
+  "scope": "Temporary actual-world player menu/map/compass input, binary marker validation and native archive disk roundtrip, single-click live vehicle spawn, carried vehicle grants, persistent entity spawner, Player settings and developer Ctrl-click teleport. Save-and-quit test observes forwarding to the existing normal shutdown handler; no claim of a new shutdown implementation. Not a hardware benchmark or exhaustive gameplay qualification."
+}

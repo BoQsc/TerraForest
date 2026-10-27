@@ -5,15 +5,33 @@ var menu:CanvasLayer
 var status:Label
 var entries:Dictionary={}
 var last_spawn:CharacterBody3D
+var vehicle_button:Button
+var vehicle_busy:=false
 func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	game=host;menu=session
 	menu.label(parent,"Dev Spawner").add_theme_font_size_override("font_size",24)
-	menu.label(parent,"Spawn living entities on clear, loaded ground nearby. Spawns are real world residents and are saved normally. Vehicles, tools and materials are in Dev Bag.")
+	menu.label(parent,"Spawn living entities and drivable vehicles nearby. Spawns are real world residents and are saved normally. Carried vehicle items, tools and materials remain in Dev Bag.")
 	entries["zombie"]=menu.button(parent,"Spawn zombie nearby",spawn_zombie)
+	vehicle_button=menu.button(parent,"Spawn drivable vehicle nearby",spawn_vehicle);entries["vehicle"]=vehicle_button
+	vehicle_button.tooltip_text="Spawn one live vehicle immediately. No aiming required."
 	menu.label(parent,"Zombies use normal awareness, combat, anatomy and corpse storage. Spawning enables their simulation for this session. The existing six-active-zombie budget still applies; no inhabitants are silently removed to make room.")
 	status=menu.label(parent,"");refresh()
 func refresh()->void:
 	status.text="Active zombies: %d / %d · Resume to let entities move and react"%[game.zombies.residents.size(),game.zombies.LIMIT]
+func spawn_vehicle()->void:
+	if vehicle_busy or game.loading_active or game.shutdown_requested:return
+	vehicle_busy=true;vehicle_button.disabled=true;menu.set_open(false)
+	game.world_vehicle.request_scene()
+	if not game.world_vehicle.scene_ready():game._show_lake_notice("Loading vehicle model…")
+	while is_instance_valid(game) and not game.shutdown_requested and not game.world_vehicle.scene_ready():
+		if not game.world_vehicle._scene_requested or ResourceLoader.load_threaded_get_status(game.world_vehicle.VEHICLE_SCENE_PATH)==ResourceLoader.THREAD_LOAD_FAILED:
+			vehicle_busy=false;vehicle_button.disabled=false;menu.show_page("Dev Spawner");menu.message.text="Vehicle model could not be loaded.";return
+		await game.get_tree().process_frame
+	if not is_instance_valid(game) or game.shutdown_requested:return
+	var message:String=game.world_vehicle.spawn_requested(game)
+	vehicle_busy=false;vehicle_button.disabled=false
+	if game.world_vehicle.last_spawn_identity==0:menu.show_page("Dev Spawner");menu.message.text=message
+	game._show_lake_notice(message)
 func spawn_zombie()->void:
 	last_spawn=null
 	if game.loading_active or game.shutdown_requested or game.terrain.pending_edit or game.world_vehicle.driving:
