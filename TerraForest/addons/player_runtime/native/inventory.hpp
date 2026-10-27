@@ -28,6 +28,8 @@ class NativePlayerInventory : public godot::RefCounted {
 protected:
     static void _bind_methods();
 public:
+    int64_t get_revision() const {return revision;}
+    bool has_item(int64_t item) const {return catalog().find(item)!=catalog().end();}
     static constexpr int64_t WATER_CAPACITY_ML=1000000;
     static bool water_container(int64_t item){return item>=401&&item<=411;}
     bool exchange_water(int64_t slot,bool pour,int64_t expected,int64_t millilitres);

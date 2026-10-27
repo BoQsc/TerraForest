@@ -127,6 +127,14 @@ func repair_target(t:Dictionary)->bool:
 	hud.show_target_damage(t.name,result.remaining,result.maximum)
 	game._show_lake_notice("Repaired %s · %d / %d durability"%[t.name,result.remaining,result.maximum])
 	return true
+func harvest_profile(t:Dictionary)->Dictionary:
+	if t.kind=="tree" and t.id>0 and t.id<=32*32*game.ecosystem.GRID*game.ecosystem.GRID:return {"item":102,"step":Durability.HARVEST_DAMAGE_PER_ITEM,"final":game.ecosystem.TREE_REWARD}
+	if t.kind=="model" and Durability.RESOURCE_MODELS.has(t.get("asset","")):return {"item":Durability.RESOURCE_MODELS[t.asset],"step":Durability.HARVEST_DAMAGE_PER_ITEM,"final":game.material_deposits.REWARD}
+	if t.kind=="cover" and t.id>0 and t.id<4294967296:
+		if t.species==0:return {"item":201,"step":Durability.HARVEST_DAMAGE_PER_ITEM,"final":game.ground_interaction.LARGE_REWARD if t.get("large",false) else 1}
+		if t.species in [7,8]:return {"item":102,"step":1 if t.species==8 else 5,"final":1}
+		if t.species>=0 and t.species<game.ground_interaction.Catalog.COUNT:return {"item":game.ground_interaction.Catalog.REWARDS[t.species],"step":Durability.HARVEST_DAMAGE_PER_ITEM,"final":1}
+	return {}
 func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
@@ -142,19 +150,36 @@ func apply_target(t: Dictionary) -> bool:
 		game._show_lake_notice("Zombie struck · %d / %d health"%[int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health)] if t.zombie.alive else "Zombie down")
 		return true
 	if t.kind=="actor" and (t.handle==0 or game.actors.store.resolve_identity(t.id)!=t.handle):return false
-	if t.kind=="cover" and (game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell)):return false
+	if t.kind=="tree" and (not game.vegetation.renderer.roots.has(t.id) or game.ecosystem.harvest_state.contains(t.id)):return false
+	if t.kind=="cover":
+		if game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell) or not game.ground_cover.resident.has(t.cell):return false
+		var rows:Array=game.ground_cover.resident[t.cell]
+		if t.species<0 or t.species>=rows.size() or not rows[t.species].ids.has(t.id):return false
+	if t.kind=="model" and Durability.RESOURCE_MODELS.has(t.get("asset","")) and t.collection.get_instance(t.id).is_empty():return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
 	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
-	var result: Dictionary=durability.hit(t.key,t.health,1 if t.kind=="cover" and t.get("species",-1)==8 else damage)
+	if t.kind=="cover" and t.get("species",-1)==8:damage=1
+	var harvest:=harvest_profile(t);var before:Dictionary={};var result:Dictionary
+	if not harvest.is_empty():
+		before=hud.inventory.snapshot()
+		var planned:Dictionary=durability.preview_harvest(t.key,t.health,damage,harvest.step,Durability.HARVEST_FINISHING_BONUS)
+		if not planned.ok:game._show_lake_notice(planned.get("reason","Harvest unavailable"));return false
+		if planned.destroyed and not hud.inventory.can_receive(PackedInt64Array([harvest.item,planned.reward_count+harvest.final]),before.revision).ok:
+			game._show_lake_notice("Make room in inventory for the finishing harvest");return false
+		result=durability.harvest_hit(t.key,t.health,damage,harvest.item,harvest.step,Durability.HARVEST_FINISHING_BONUS,hud.inventory,before.revision)
+	else:result=durability.hit(t.key,t.health,damage)
 	if not result.ok:game._show_lake_notice(result.get("reason","Damage unavailable"));return false
-	if t.kind=="cover" and t.get("large",false):game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	game.terrain.changed_since_save=true
 	rejection_reason=""
 	var accepted:=true
 	if result.destroyed:accepted=destroy(t)
 	if not accepted:
+		if not harvest.is_empty():
+			if result.applied>0:durability.repair(t.key,t.health,result.applied)
+			if result.reward_count>0 and not hud.inventory.restore(before,hud.inventory.snapshot().revision).ok:push_error("Harvest reward rollback failed")
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
+	if t.kind=="cover" and t.get("large",false) and not result.destroyed:game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
 	t["destroyed"]=result.destroyed
 	if result.destroyed:durability.forget(t.key)

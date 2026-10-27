@@ -8,7 +8,7 @@
 
 - Reuse the existing native iron/copper capsule field, not a disconnected decorative ore system. Each marker is directly above a real solid vein of that material, 10–38 m below the surface.
 - Native planner: at most 100 deposits, dry gentle ground, conservative lake/coast exclusion and separation from planned road/foundation earthworks. No added voxel pages or runtime geological scans.
-- Cached descriptors, native binary metadata, shared LOD meshes/materials, native model paging/collision/durability. Medium stones have 360 health (ordinary boulders: 240); a fresh pickaxe needs 12 hits. Destruction yields 8 matching ore.
+- Cached descriptors, native binary metadata, shared LOD meshes/materials, native model paging/collision/durability. Medium stones have 360 health (ordinary boulders: 240); a fresh pickaxe needs 12 hits. The original destruction payout is 8 matching ore; the 2026-10-27 [progressive-harvesting update](../progressive-harvesting/README.md) adds +1 for each surviving pickaxe hit and +10 on the final hit (21 total).
 - New-world Landscape option **Material veins · surface stones & map markers** defaults on. Off omits new surface clues/markers; existing underground geology is deliberately unchanged. Legacy recipes and existing saves do not gain stones automatically.
 - Generation preview and M map show iron/copper diamonds. Zoom reveals labels; click to track a deposit. M map also has a default-on visibility toggle. Markers denote geology, not remaining ore, and remain after mining the surface stone.
 - Plan timings are diagnostics only, excluded from the content digest. Independent cold plans and warm cache reuse retain the same identity.

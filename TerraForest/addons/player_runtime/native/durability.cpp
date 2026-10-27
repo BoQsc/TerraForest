@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "durability.hpp"
+#include "inventory.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <algorithm>
 #include <cstring>
@@ -7,6 +8,8 @@ namespace terraforest {
 using namespace godot;
 void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("hit","key","maximum","amount"),&NativeWorldDurability::hit);
+    ClassDB::bind_method(D_METHOD("preview_harvest","key","maximum","amount","damage_per_item","finishing_bonus"),&NativeWorldDurability::preview_harvest);
+    ClassDB::bind_method(D_METHOD("harvest_hit","key","maximum","amount","item","damage_per_item","finishing_bonus","inventory","expected_revision"),&NativeWorldDurability::harvest_hit);
     ClassDB::bind_method(D_METHOD("repair","key","maximum","amount"),&NativeWorldDurability::repair);
     ClassDB::bind_method(D_METHOD("damage","key","maximum"),&NativeWorldDurability::damage);
     ClassDB::bind_method(D_METHOD("forget","key"),&NativeWorldDurability::forget);
@@ -16,12 +19,36 @@ void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeWorldDurability::restore_storage_snapshot);
 }
 static bool valid(const std::string &s){if(s.empty()||s.size()>160)return false;for(unsigned char c:s)if(c<32||c>126)return false;return true;}
-Dictionary NativeWorldDurability::hit(String key,int64_t maximum,int64_t amount){
+Dictionary NativeWorldDurability::quote_hit(String key,int64_t maximum,int64_t amount) const {
     Dictionary out;out["ok"]=false;std::string k=key.utf8().get_data();
     if(!valid(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
     auto at=damaged.find(k);if(at==damaged.end()&&damaged.size()>=65536){out["reason"]="Durability capacity reached";return out;}
-    auto &e=damaged[k];if(e.health!=maximum)e={int(maximum),0};
-    e.damage=std::min(e.health,e.damage+int(amount));out["ok"]=true;out["remaining"]=e.health-e.damage;out["maximum"]=e.health;out["destroyed"]=e.damage==e.health;return out;
+    const int64_t previous=at==damaged.end()||at->second.health!=maximum?0:at->second.damage;
+    const int64_t applied=std::min(amount,maximum-previous);
+    out["ok"]=true;out["previous"]=previous;out["applied"]=applied;out["remaining"]=maximum-previous-applied;out["maximum"]=maximum;out["destroyed"]=previous+applied==maximum;return out;
+}
+Dictionary NativeWorldDurability::hit(String key,int64_t maximum,int64_t amount){
+    Dictionary out=quote_hit(key,maximum,amount);if(!bool(out["ok"]))return out;
+    damaged[key.utf8().get_data()]={int(maximum),int(maximum-int64_t(out["remaining"]))};return out;
+}
+Dictionary NativeWorldDurability::preview_harvest(String key,int64_t maximum,int64_t amount,int64_t damage_per_item,int64_t finishing_bonus) const {
+    Dictionary out;out["ok"]=false;
+    if(damage_per_item<1||damage_per_item>1000000||finishing_bonus<0||finishing_bonus>1000000)return out;
+    out=quote_hit(key,maximum,amount);if(!bool(out["ok"]))return out;
+    const int64_t previous=out["previous"],applied=out["applied"];
+    out["reward_count"]=(previous+applied)/damage_per_item-previous/damage_per_item+(applied>0&&bool(out["destroyed"])?finishing_bonus:0);return out;
+}
+Dictionary NativeWorldDurability::harvest_hit(String key,int64_t maximum,int64_t amount,int64_t item,int64_t damage_per_item,int64_t finishing_bonus,const Ref<NativePlayerInventory> &inventory,int64_t expected_revision){
+    Dictionary out;out["ok"]=false;
+    if(inventory.is_null()||item<1||item>INT32_MAX||!inventory->has_item(item)||inventory->get_revision()!=expected_revision){out["reason"]="Inventory changed; try again";return out;}
+    out=preview_harvest(key,maximum,amount,damage_per_item,finishing_bonus);if(!bool(out["ok"]))return out;
+    const int64_t count=out["reward_count"];
+    if(count>0){
+        PackedInt64Array items;items.append(item);items.append(count);
+        Dictionary granted=inventory->grant_items(items,expected_revision);
+        if(!bool(granted["ok"])){out["ok"]=false;out["reason"]="Make room in inventory before harvesting";return out;}
+    }
+    damaged[key.utf8().get_data()]={int(maximum),int(maximum-int64_t(out["remaining"]))};out["reward_item"]=item;return out;
 }
 void NativeWorldDurability::forget(String key){damaged.erase(key.utf8().get_data());}
 int64_t NativeWorldDurability::damage(String key,int64_t maximum) const {

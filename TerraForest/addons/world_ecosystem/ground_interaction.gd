@@ -3,6 +3,7 @@ extends RefCounted
 signal changed
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const ITEMS=Catalog.COSTS
+const LARGE_REWARD=24
 var cover: Node3D
 # The normal scene ray must include terrain, buildings, trunks and vehicles.
 var scene_ray: Callable
@@ -47,7 +48,7 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	var before: Dictionary={};var revision: int=-1
 	if gameplay:
 		before=inventory.snapshot()
-		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],24 if hit.get("large",false) else 1]),before.revision)
+		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],LARGE_REWARD if hit.get("large",false) else 1]),before.revision)
 		if not grant.ok: busy=false;return {"ok":false,"reason":"Make room in inventory"}
 		revision=grant.revision
 	var applied: bool=cover.picker.replace_cell(key,next)

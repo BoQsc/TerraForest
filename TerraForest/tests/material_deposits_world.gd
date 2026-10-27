@@ -59,11 +59,11 @@ func run()->void:
    var accepted:bool=game.world_attack.apply_target(target)
    timings.append((Time.get_ticks_usec()-started)/1000.0)
    if not accepted:check(false,"pickaxe strike accepted: "+str(strike));break
-  check(not collection.get_instance(deposit.id).is_empty() and count_item(material+194)==before,"stone survives eleven pickaxe strikes without premature ore reward")
+  check(not collection.get_instance(deposit.id).is_empty() and count_item(material+194)==before+11,"stone survives eleven pickaxe strikes while each strike grants one matching ore")
   saved_damage=game.world_attack.durability.capture_storage_snapshot()
   var restore_damage=ClassDB.instantiate("NativeWorldDurability")
   check(restore_damage.restore_storage_snapshot(saved_damage) and restore_damage.capture_storage_snapshot()==saved_damage,"partial mineral-stone damage restores exactly")
-  check(game.world_attack.apply_target(target) and collection.get_instance(deposit.id).is_empty() and count_item(material+194)==before+Deposits.REWARD,"twelfth pickaxe strike removes stone and grants exactly eight matching ore")
+  check(game.world_attack.apply_target(target) and collection.get_instance(deposit.id).is_empty() and count_item(material+194)==before+12+1+Deposits.REWARD,"twelfth pickaxe strike removes stone with a larger finishing ore payout")
   var saved:PackedByteArray=collection.capture_snapshot()
   check(collection.restore_snapshot(saved) and collection.get_instance(deposit.id).is_empty(),"mined stone stays absent after native model reload")
   check(game.material_deposits.store.capture_snapshot()==saved_metadata,"mining surface clue retains the real underground-deposit map location")

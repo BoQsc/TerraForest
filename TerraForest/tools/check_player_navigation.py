@@ -12,6 +12,9 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 
 CHECKS = {
+    "harvest_hit_native": (45, "HARVEST_HIT_NATIVE checks=", True),
+    "harvest_hits_world": (150, "HARVEST_HITS_WORLD checks=", False),
+    "attack_durability": (60, "ATTACK_DURABILITY checks=", True),
     "map_marker_store": (30, "MAP_MARKER_STORE checks=", True),
     "player_navigation": (120, "PLAYER_NAVIGATION checks=", False),
     "vegetation_target_motion": (140, "VEGETATION_TARGET_MOTION checks=", False),

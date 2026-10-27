@@ -1,5 +1,6 @@
 extends Node
 signal harvested
+const TREE_REWARD=4
 ## Optional coordinator; neither rendering addon imports this module.
 ## Candidate IDs and transforms depend only on world seed and cell, never visit order.
 const CELL_SIZE: float = 64.0
@@ -50,7 +51,7 @@ func harvest_root(id: int, inventory: RefCounted,fall_direction:Vector3=Vector3.
 		return {"ok":false,"reason":"Vegetation updating; try again"}
 	var before: Dictionary=inventory.snapshot()
 	var felled_pose:Transform3D=vegetation.renderer.roots[id].t
-	var wood:=PackedInt64Array([102,4])
+	var wood:=PackedInt64Array([102,TREE_REWARD])
 	if not inventory.can_receive(wood,before.revision).ok: return {"ok":false,"reason":"Make room for 4 wood"}
 	_harvesting=true
 	if not harvest_state.mark(id):

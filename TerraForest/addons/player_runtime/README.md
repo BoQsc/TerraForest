@@ -75,6 +75,25 @@ unchanged. Successful grants advance revision once. Starter supplies use this
 batch path. The caller must retain or otherwise handle an unaccepted reward;
 these operations do not create overflow storage or retry deliveries themselves.
 
+Natural-resource attacks use `NativeWorldDurability.preview_harvest` and
+`harvest_hit` for damage-proportional rewards at animation contact. A normal
+pickaxe/hatchet hit gives one matching stone/ore/wood per 30 actual damage;
+weaker hits accumulate toward the same total rather than increasing the yield.
+The lethal contact adds one extra unit plus the original destruction payout.
+Fresh-node examples: tree +1, +1, +6 wood; mineral stone eleven +1 ore hits,
+then +10; boulder seven +1 stone hits, then +26. Small natural cover uses its
+catalog item; twigs/woody bushes use their smaller damage intervals.
+
+The native operation checks inventory identity/revision/capacity before damage
+is committed. The final contact also preflights the combined destruction reward;
+failed world removal restores its provisional damage and items. Full bags refuse
+the paying hit without tool wear. Existing sparse damage and inventory snapshots
+retain progress; old partial damage does not pay retroactively. This path adds
+no ticking node, GPU job or save section. Player-authored vegetation, built blocks,
+furniture and vehicles retain their previous salvage behavior to avoid farming.
+Terrain excavation keeps its separate receipt-based rewards below. See
+[harvesting evidence and balance review](../../issues/progressive-harvesting/README.md).
+
 `NativeRewardInbox` provides bounded pending storage separately from the loadout.
 The world registers it as `pending_rewards`; older worlds receive an empty
 default. It holds at most 32 distinct item IDs and 10^12 units per item in a

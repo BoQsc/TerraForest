@@ -8,6 +8,9 @@ const BLOCK_MAXIMUM=[90,60,120,180]
 # GroundCatalog species order: stone, fern, grass, three flowers, low bush, twigs, woody bush.
 const COVER_MAXIMUM=[45,10,10,10,10,10,40,10,2]
 const TOOLS={1:200,2:200,3:200,4:200,5:200}
+const HARVEST_DAMAGE_PER_ITEM=30
+const HARVEST_FINISHING_BONUS=1
+const RESOURCE_MODELS={"resources/iron_outcrop/v1":202,"resources/copper_outcrop/v1":203}
 const MODELS={
 	"resources/iron_outcrop/v1":{"name":"Iron-bearing stone","health":360,"material":"stone"},
 	"resources/copper_outcrop/v1":{"name":"Copper-bearing stone","health":360,"material":"stone"},

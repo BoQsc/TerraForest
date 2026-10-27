@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Progressive harvesting — 2026-10-27
+
+Natural-resource damage now grants native, damage-proportional rewards at the
+existing animation contact, with larger final payouts. Matching pickaxe/hatchet
+hits give immediate stone/ore/wood; weak hits accumulate toward a whole item.
+Built/repairable objects and player-authored vegetation are excluded. Existing
+damage/inventory saves retain progress; full bags and failed removal preserve
+resources, health and wear. The installed package passes 130 focused assertions,
+including both ores, natural cover, real contact, boulder fractures and fresh-process
+save reload; the separate release DLL passes 15. Player balance review is pending.
+The broader old `world_attack` run remains 79/80 because its fixed-wait natural-cover
+fixture was unavailable; retain it for readiness-aware harness work and a full
+rerun, not as a passing check. No all-hardware or survival-economy claim follows.
+[Images, reward table, failures and evidence](../issues/progressive-harvesting/README.md).
+
 ## Vegetation placement targeting — 2026-10-27
 
 Reproduced stale camera targeting (up to 0.532 m lag at running speed) and complete

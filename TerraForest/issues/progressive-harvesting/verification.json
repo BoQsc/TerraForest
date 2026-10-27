@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-27",
+  "baseline_revision": "d21a09c9",
+  "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+  "total_packaged_checks": 130,
+  "tests": [
+    {
+      "test": "harvest_hit_native",
+      "report": "reports/checks/20261027T103340767133Z_player_navigation_pack/harvest_hit_native",
+      "checks": 15,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": "ad67bd2a2856a4eedf07f590d33fd229d8ecb6a847e9affe325e4f8bc8b2443b",
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": false
+    },
+    {
+      "test": "attack_durability",
+      "report": "reports/checks/20261027T103340767133Z_player_navigation_pack/attack_durability",
+      "checks": 21,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": "59f59077115dfa27046734a46ed7c4f5505a038abb6fe937d6973e1873331bfe",
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": false
+    },
+    {
+      "test": "harvest_hits_world",
+      "report": "reports/checks/20261027T103707836006Z_player_navigation_pack/harvest_hits_world",
+      "checks": 46,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": "aaad18c9d37b3f5ab4ea2dbf696b6a434bbe20fa8792111d0fdd5d128d1d64f1",
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": false
+    },
+    {
+      "test": "material_deposits_world",
+      "report": "reports/checks/20261027T103416045918Z_minerals_pack/material_deposits_world",
+      "checks": 26,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": {
+        "tests\\material_deposits_world.gd": "69ad8f9d72e0d451c836cc39673b0cf027ac5c66cb31bfb1b48e51ef024d94fd"
+      },
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": true
+    },
+    {
+      "test": "boulder_fracture_build",
+      "report": "reports/checks/20261027T103503476331Z_boulder_fracture_pack/build",
+      "checks": 8,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": "ea81c8d9b8026739f0f80699942811b1412e0ce51436da5f4fdd1f88cd8f104b",
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": true
+    },
+    {
+      "test": "boulder_fracture_reopen",
+      "report": "reports/checks/20261027T103503476331Z_boulder_fracture_pack/reopen",
+      "checks": 14,
+      "failures": 0,
+      "passed": true,
+      "test_sha256": "ea81c8d9b8026739f0f80699942811b1412e0ce51436da5f4fdd1f88cd8f104b",
+      "pack_sha256": "95bfb251cae1fd24bd5527dcba4b63f702dc54179a2eda9d2c860b838cbd239c",
+      "cache_retained": true
+    }
+  ],
+  "release_test": {
+    "report": "reports/harvest_hit_native_release.json",
+    "log": "reports/harvest_hit_native_release.log",
+    "test_sha256": "ad67bd2a2856a4eedf07f590d33fd229d8ecb6a847e9affe325e4f8bc8b2443b",
+    "1000_hits_at_10000_nodes_us": 68438,
+    "checks": 15,
+    "failures": 0,
+    "library": "player_runtime.windows.template_release.x86_64.dll"
+  },
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "b3ea405518a4116070cd454a2db441bf960b0ccde55548db889ef2b3d45a73df",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "f4d4b2949e85ade0644117ecf1fc59d376d954ada407dd0b2de3ea992ddaa4f6",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "source_sha256": {
+    "addons/player_runtime/world_attack.gd": "6867393cd220252c497f12f470d14d1d3fd06faf57cdaa4ac717a7bd659c418b",
+    "addons/player_runtime/durability_catalog.gd": "17132cd01e5eddebb4fc83befe156e1f91760a14fac5c0786698fa716091f55d",
+    "addons/player_runtime/native/durability.cpp": "0f221dab9081000994fc61caeb740ce0d867171a973f0417bc205b1f3cf308ec",
+    "addons/player_runtime/native/durability.hpp": "b577c6c375ec8635741a151eb1f346196a213f8c46f031736189fd5a5637dc3b",
+    "addons/player_runtime/native/inventory.hpp": "0867dfcbd1684dc3e8fb917c99e7a866bc5479bfae9aede4914fa48d430c8b7e",
+    "addons/world_ecosystem/ground_interaction.gd": "dbcab317869be9a18fb22229ec111b2099582717aa9964851c1e251930a525e2",
+    "addons/world_ecosystem/world_ecosystem.gd": "e3906925c0698bcc62f7f030f8ce46f078056b18e6ef82f4467630e038db40cf"
+  },
+  "legacy_suite": {
+    "report": "reports/checks/20261027T103155093038Z",
+    "passed": false,
+    "checks": 80,
+    "failures": 1,
+    "reason": "No available natural-cover fixture after legacy fixed wait; dedicated new cover fixtures pass."
+  },
+  "retained_failed_test_reports": [
+    "reports/checks/20261027T102538614952Z_player_navigation/harvest_hits_world",
+    "reports/checks/20261027T102609006972Z_player_navigation/harvest_hits_world",
+    "reports/checks/20261027T102742792311Z_player_navigation/harvest_hits_world"
+  ],
+  "native_build_reports": [
+    "reports/player_runtime_build_template_debug.json",
+    "reports/player_runtime_build_template_release.json"
+  ],
+  "user_review": "Pending balance/ordinary-swing playtest",
+  "player_saves_modified": false
+}

@@ -71,7 +71,7 @@ func run()->void:
 		if not reopening:
 			check(await strike() and await strike() and await strike(),"three actual pickaxe contact animations damage the aimed boulder")
 			check(game.world_attack.durability.damage("cover:%d"%identity,240)==90 and game.ground_cover.fractures.stage(identity)==1,"first damage threshold splits the boulder into halves")
-			check(stone_count()==before,"partial fractures do not duplicate the stone reward")
+			check(stone_count()==before+3,"each partial fracture hit pays one stone before the finishing reward")
 			await picture("halves")
 			var saved:Array=[];game.terrain.save_completed.connect(func(ok:bool):saved.append(ok))
 			game.terrain.changed_since_save=true;game.terrain.save_world();deadline=Time.get_ticks_msec()+20000
@@ -82,17 +82,19 @@ func run()->void:
 			check(await strike() and await strike() and await strike(),"continued mining damages the restored boulder")
 			check(game.world_attack.durability.damage("cover:%d"%identity,240)==180 and game.ground_cover.fractures.stage(identity)==2,"second threshold splits the halves into four capped pieces")
 			await picture("quarters")
-			for i in 32:
-				var slot_data:Dictionary=inventory.snapshot().slots[i]
-				if slot_data.item==0:inventory.grant(201,999,inventory.snapshot().revision)
+			var filled:Dictionary=inventory.snapshot();var spare:=false
+			for row:Dictionary in filled.slots:
+				if row.item in [0,201]:
+					row.item=201;row.count=999 if spare else 998;row.wear=0;row.water_ml=0;spare=true
+			inventory.restore(filled,inventory.snapshot().revision)
 			var full:=stone_count()
 			check(await strike() and not await strike(),"full inventory blocks the final harvest at the contact frame")
-			check(game.ground_cover.fractures.stage(identity)==2 and stone_count()==full,"blocked final hit preserves the mineable quarters and all inventory")
+			check(game.ground_cover.fractures.stage(identity)==2 and stone_count()==full+1,"penultimate hit pays once and blocked final hit preserves quarters and inventory")
 			for i in 32:
-				if inventory.snapshot().slots[i].item==201:inventory.consume(i,24,inventory.snapshot().revision);break
+				if inventory.snapshot().slots[i].item==201:inventory.consume(i,26,inventory.snapshot().revision);break
 			var space:=stone_count()
 			check(await strike(),"final hit succeeds after inventory space is available")
-			check(game.ground_cover.fractures.stage(identity)==3 and stone_count()==space+24,"third fracture produces eight debris pieces and exactly 24 stone")
+			check(game.ground_cover.fractures.stage(identity)==3 and stone_count()==space+26,"third fracture produces eight debris pieces and the larger 26-stone finishing payout")
 			await picture("eighths")
 			check(game.ground_cover.removed.mask(PackedInt64Array([identity]))[0]!=0,"completed boulder remains marked harvested")
 			var origin:Vector3=game.camera.global_position
