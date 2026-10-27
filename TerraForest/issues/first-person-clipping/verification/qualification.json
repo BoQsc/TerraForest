@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-27",
+  "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+  "engine": "Godot 4.7.2 stable Steam ed1daf0bf",
+  "hardware": "NVIDIA RTX 4050 Laptop GPU, Vulkan Forward+, 1920x1080",
+  "tests": {
+    "first_person_meshes": {
+      "checks": 21,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_meshes"
+    },
+    "first_person_protection": {
+      "checks": 53,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_protection"
+    },
+    "first_person_world": {
+      "checks": 40,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_world"
+    },
+    "attack_animation_timing": {
+      "checks": 27,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/attack_animation_timing"
+    },
+    "session_player_page": {
+      "checks": 18,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/session_player_page"
+    },
+    "third_person_view": {
+      "checks": 22,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/third_person_view"
+    },
+    "pickaxe_fresh_world": {
+      "checks": 13,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T061732444839Z_first_person_pack/pickaxe_fresh_world"
+    }
+  },
+  "total_checks": 194,
+  "camera": "(800.0, 51.83451, 1310.0)",
+  "performance": [
+    {
+      "mode": 0,
+      "medians": {
+        "casters": 48.0,
+        "hands_gpu_ms": 0.0,
+        "main_gpu_ms": 9.157499790191656,
+        "shadow_refresh_ms": 0.511,
+        "sync_ms": 0.016
+      }
+    },
+    {
+      "mode": 1,
+      "medians": {
+        "casters": 48.0,
+        "hands_gpu_ms": 0.287000000476837,
+        "main_gpu_ms": 9.434999942779541,
+        "shadow_refresh_ms": 0.511,
+        "sync_ms": 0.09
+      }
+    },
+    {
+      "mode": 2,
+      "medians": {
+        "casters": 48.0,
+        "hands_gpu_ms": 2.02300000190735,
+        "main_gpu_ms": 9.61899995803833,
+        "shadow_refresh_ms": 0.473,
+        "sync_ms": 0.094
+      }
+    },
+    {
+      "mode": 0,
+      "medians": {
+        "casters": 48.0,
+        "hands_gpu_ms": 0.0,
+        "main_gpu_ms": 9.377500057220455,
+        "shadow_refresh_ms": 0.534,
+        "sync_ms": 0.016
+      }
+    },
+    {
+      "mode": 2,
+      "medians": {
+        "casters": 48.0,
+        "hands_gpu_ms": 2.02300000190735,
+        "main_gpu_ms": 9.808000087738034,
+        "shadow_refresh_ms": 0.676,
+        "sync_ms": 0.105
+      }
+    }
+  ],
+  "scope": "Temporary seed1703 and isolated fixtures; GPU viewport timers, not total frame cost; PNG capture excluded from measured sample loops. Human visual approval pending.",
+  "source_sha256": {
+    "addons/player_runtime/first_person_view.gd": "4a9ef9691d345e8657b3193c036fc0017eec3bb8944109fab4b3a28d328e2a6f",
+    "addons/player_runtime/first_person_meshes.gd": "54704dcdd54685f67c19fedffd39f56b5ae0cb8c10e7dfb9776b922ee3a971c7",
+    "addons/player_runtime/first_person_shadows.gd": "ae656451e86c0a2c99ced01f85b8d313b79222b0572ffae71138a7e536182c9b",
+    "tools/bake_first_person_meshes.gd": "b4aa4e0e610d605512b07523d7859177baa16bea7741c3dfc633234c5a71d4b9",
+    "addons/characters/runtime/assets/first_person/bake.json": "3e0043ccaa71259ccbd28840ce00328cf5aad8afb7e2707420738ee197d4e482"
+  },
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  }
+}

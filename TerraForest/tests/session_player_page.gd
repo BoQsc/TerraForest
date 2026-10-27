@@ -36,7 +36,7 @@ func run()->void:
 	check(menu.pages.Session.find_children("*","CheckButton",true,false).is_empty(),"Session no longer contains the two player switches")
 	menu.navigation.Player.pressed.emit()
 	check(menu.current_page=="Player" and menu.pages.Player.visible and not menu.pages.Session.visible,"Player navigation opens only the Player page")
-	check(menu.pages.Player.find_children("*","CheckButton",true,false).size()==2,"Player contains exactly the two moved switches")
+	check(menu.pages.Player.find_children("*","CheckButton",true,false).size()==4,"Player contains the two moved switches and first-person rendering options")
 	check(menu.third_person_toggle.get_parent()==menu.pages.Player,"third-person switch belongs to Player")
 	var grid:Node=menu.pages.Player.get_node_or_null("BuildingGridFit")
 	if not check(grid!=null,"building-grid preference and explanation move together"):await finish();return

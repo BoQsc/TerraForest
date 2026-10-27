@@ -1,0 +1,74 @@
+[
+  {
+    "file": "close-wall-off.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_world/evidence/close_wall_off.png",
+    "sha256": "ccacc8f453ad5176d5fc2de9da2600115c5a753cbaf5feaf4b30056159d4c202",
+    "caption": "Pack, seed 1703, camera (800,51.83451,1310), synthetic wall 0.25 m ahead; protection OFF.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "close-wall-on.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_world/evidence/close_wall_on.png",
+    "sha256": "c916f1aefe13f61cc2f25c1757f9fd27bd4631d8db4a6c3185fbb00fa5bee9f6",
+    "caption": "Same camera and wall; protection ON. Wall is a clipping stress fixture, not a new world object.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "world-on.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_world/evidence/forest_on.png",
+    "sha256": "73d9e95af2bcfc2638890a0842f2d6eb7973c09790d92a0fd37b5c09d90b7603",
+    "caption": "Pack, temporary seed 1703, both options ON; accepted pickaxe hold, not the independent crosscut experiment.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "player-settings.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_world/evidence/player_settings.png",
+    "sha256": "803263417a8fe0b4b410d71572c5b994f570111f366d68548874f69525a8eadc",
+    "caption": "Pack, ESC Player page, both options ON.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "sun-shadows-on.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_protection/evidence/sun_shadow_on.png",
+    "sha256": "93afdc1aeaaf89a8347043c91406d127535efbd6d7d99f5e7eb1c79730c94beb",
+    "caption": "Pack, isolated fixture under a roof, protection and world shadows ON.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "sun-shadows-off.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_protection/evidence/sun_shadow_off.png",
+    "sha256": "ee4dd0011e4f1250388a2c96e625d2a04a0a06299414d058812accd7ae05ee73",
+    "caption": "Same fixture/camera/roof, protection ON, world shadows OFF; direct lighting remains.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "open-baseline.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_protection/evidence/open_off.png",
+    "sha256": "f2022190dda119838ce63c8f0ae4bc399199b0d7c5e8a8991b576729213731ea",
+    "caption": "Pack, isolated open-air fixture, protection OFF.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "open-protected.png",
+    "source": "reports/checks/20261027T061732444839Z_first_person_pack/first_person_protection/evidence/open_on.png",
+    "sha256": "847c404a75e6110ec2a54e77a176fa5f18c5d09faaa9ee4834cab66e2c5f4999",
+    "caption": "Same open-air fixture; corrected protection ON.",
+    "pack_sha256": "350a38bcf66f2b743942ee0e288ae4d4af306369850cb69a1ba1376b4dc1cb07",
+    "edited": false
+  },
+  {
+    "file": "rejected-dark-prototype.png",
+    "source": "reports/first_person_protection_v2/open_on.png",
+    "sha256": "ac1d722dd40210605234146499941a0cd3a8754d7e74bff10c4054c42c9499d5",
+    "caption": "Rejected early source prototype, camera culling excluded world lights; not current rendering.",
+    "pack_sha256": null,
+    "edited": false
+  }
+]

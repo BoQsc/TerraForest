@@ -1,0 +1,42 @@
+{
+  "counts": {
+    "res://addons/characters/runtime/assets/first_person/body_arms.res": {
+      "blend_shapes": 226,
+      "surfaces": 2
+    },
+    "res://addons/characters/runtime/assets/first_person/body_body.res": {
+      "blend_shapes": 228,
+      "surfaces": 3
+    },
+    "res://addons/characters/runtime/assets/first_person/shirt_arms.res": {
+      "blend_shapes": 298,
+      "surfaces": 2
+    },
+    "res://addons/characters/runtime/assets/first_person/shirt_body.res": {
+      "blend_shapes": 298,
+      "surfaces": 2
+    },
+    "res://addons/characters/runtime/assets/first_person/unarmed_arms.res": {
+      "blend_shapes": 226,
+      "surfaces": 2
+    },
+    "res://addons/characters/runtime/assets/first_person/unarmed_body.res": {
+      "blend_shapes": 228,
+      "surfaces": 3
+    }
+  },
+  "outputs": {
+    "res://addons/characters/runtime/assets/first_person/body_arms.res": "86dcfc72d0e6abc9d604b5eada73cfc441b7526d3ece18a9de9979f0bfa099a0",
+    "res://addons/characters/runtime/assets/first_person/body_body.res": "3ac7a846e1a68b67bc0c974ea6eff0e6ebf297bc3136020a5316e810b6878227",
+    "res://addons/characters/runtime/assets/first_person/shirt_arms.res": "28ceb108c651129aad8eaa0b1afa4f9292e422244d6793179a21ec9b644cf248",
+    "res://addons/characters/runtime/assets/first_person/shirt_body.res": "e922455c8c8774a6b5b733b3e0b57e7541d6dd6ab3443d641324420bdede3738",
+    "res://addons/characters/runtime/assets/first_person/unarmed_arms.res": "f59b97060bc46c085d13571ff3c7e23a2039a6726931b5ffac7b0c7846d374c8",
+    "res://addons/characters/runtime/assets/first_person/unarmed_body.res": "a25e98c28250bda559b8e94ef213dda660cd4cda3d48f23308c848c842e8107b"
+  },
+  "sources": {
+    "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+    "res://addons/characters/runtime/assets/Human.r11.glb.import": "25bb9993391ba7a4afb8225ea88a425c0f2b4d21cc01bb3c40df5193a5975439",
+    "res://addons/characters/runtime/assets/Human.unarmed_body.res": "21d8dd7fe576b98eaa23a17e216d0d61c10af2f74910f7d34a85313d37763248",
+    "res://tools/bake_first_person_meshes.gd": "b4aa4e0e610d605512b07523d7859177baa16bea7741c3dfc633234c5a71d4b9"
+  }
+}

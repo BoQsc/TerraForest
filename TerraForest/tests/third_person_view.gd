@@ -34,8 +34,9 @@ func run()->void:
 	var eye_pose:Transform3D=game.camera.transform
 	var feet:Vector3=game.player.global_position
 	game.session_menu.set_open(true)
+	game.session_menu.show_page("Player")
 	var toggle:CheckButton=game.session_menu.third_person_toggle
-	check(toggle.visible and toggle.text.contains("Third-person"),"ESC Session exposes the optional third-person checkbox")
+	check(toggle.visible and toggle.text.contains("Third-person"),"ESC Player exposes the optional third-person checkbox")
 	toggle.button_pressed=true
 	check(view.enabled and view.active and view.third_camera.current and game.session_menu.opened,"checkbox switches the actual viewport camera while leaving ESC open")
 	game.session_menu.set_open(false);await ticks(4);view.update()
@@ -97,11 +98,14 @@ func run()->void:
 	var result:String=game.world_vehicle.spawn(game,-1,true)
 	check(game.world_vehicle.last_spawn_identity>0,"vehicle fixture admits on real nearby forest ground: "+result)
 	if game.world_vehicle.last_spawn_identity>0:
-		var id:int=game.world_vehicle.last_spawn_identity;var car:RigidBody3D=game.world_vehicle.activation.residents[id]
+		var id:int=game.world_vehicle.last_spawn_identity
+		var car:RigidBody3D=game.world_vehicle.activation.residents[id] if game.world_vehicle.fleet_enabled else game.world_vehicle.car
 		game.player.global_position=car.global_position+Vector3.RIGHT*2.8
 		var entered:bool=game.world_vehicle.enter(game,id)
 		view.update()
+		game.first_person_view.update()
 		check(entered and view.enabled and not view.active and game.camera.current,"vehicle entry gives the vehicle camera control while remembering third person")
+		check(not game.first_person_view.active,"driving disables the protected hands pass")
 		if entered:
 			view.set_enabled(false);view.set_enabled(true)
 			check(game.camera.current and not view.active,"changing the preference while driving leaves the vehicle camera in control")

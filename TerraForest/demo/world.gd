@@ -53,6 +53,7 @@ var equipped_tool:=0
 var editor_tool_active:=false
 var tool_view=preload("res://addons/player_runtime/tool_view.gd").new()
 var player_view=preload("res://addons/player_runtime/player_view.gd").new()
+var first_person_view=preload("res://addons/player_runtime/first_person_view.gd").new()
 var tool_use_after:=0
 var headlamp=preload("res://addons/player_runtime/headlamp.gd").new()
 var mining_rewards=preload("res://addons/player_runtime/mining_rewards.gd").new()
@@ -393,6 +394,7 @@ func _ready() -> void:
 	lakes.lake_ready.connect(func(_id: int): _show_lake_notice("Lake ready · temporary world" if temporary_world else "Lake ready · F5 saves world"))
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
 	add_child(player_view);player_view.prepare(self)
+	add_child(first_person_view);first_person_view.prepare(self)
 
 func _show_lake_notice(text: String) -> void:
 	var sync_started:=Time.get_ticks_usec()

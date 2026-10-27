@@ -16,11 +16,14 @@ if not args.godot:
 engine=Path(args.godot)
 direct=engine.parent/'godot.windows.opt.tools.64.exe'
 if direct.exists():engine=direct
+if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/bake_first_person_meshes.gd']):
+    sys.exit(1)
 if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/ensure_item_icons.gd']):
     sys.exit(1)
 (root/'dist').mkdir(exist_ok=True)
 (root/'reports').mkdir(exist_ok=True)
-pack=root/'dist/TerraForest.pck'
+installed_pack=root/'dist/TerraForest.pck'
+pack=root/'dist/TerraForest.pending.pck'
 result=subprocess.run([str(engine),'--headless','--path',str(root),'--export-pack','Windows Desktop',str(pack)],capture_output=True,text=True,timeout=180)
 log=result.stdout+'\n'+result.stderr
 (root/'reports/export.log').write_text(log,encoding='utf-8')
@@ -52,4 +55,5 @@ smoke_log=smoke.stdout+'\n'+smoke.stderr
 print(smoke_log[-4000:])
 if smoke.returncode or 'ERROR:' in smoke_log or 'SCRIPT ERROR' in smoke_log:
     sys.exit(1)
+pack.replace(installed_pack)
 print(f'PASS exported pack starts with {len(libraries)} external native libraries; keep dist/addons beside the PCK')
