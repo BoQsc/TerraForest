@@ -14,6 +14,7 @@ from run_godot_check import command_for, execute, verify_pack_native
 CHECKS = {
     "map_marker_store": (30, "MAP_MARKER_STORE checks=", True),
     "player_navigation": (120, "PLAYER_NAVIGATION checks=", False),
+    "vegetation_target_motion": (140, "VEGETATION_TARGET_MOTION checks=", False),
     "developer_vehicle_spawn": (110, "DEVELOPER_VEHICLE_SPAWN checks=", False),
     "developer_tools": (150, "DEVELOPER_TOOLS checks=", False),
     "session_player_page": (100, "SESSION_PLAYER_PAGE checks=", False),

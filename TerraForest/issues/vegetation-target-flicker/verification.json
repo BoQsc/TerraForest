@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-27",
+  "baseline_revision": "2c8c05f8",
+  "pack_sha256": "d893060103880b0d68190e4262d6faa460fc86b21ec605e29e1214038735f143",
+  "total_checks": 70,
+  "tests": [
+    {
+      "test": "vegetation_target_motion",
+      "checks": 22,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T094707782693Z_player_navigation_pack/vegetation_target_motion",
+      "test_sha256": "d9b13a84c36e8cedd4c033d137e5d6d1d2159932cd7b53d37e5c4e3f5b12e822",
+      "cache_retained": false
+    },
+    {
+      "test": "player_navigation",
+      "checks": 48,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/checks/20261027T094707782693Z_player_navigation_pack/player_navigation",
+      "test_sha256": "6fc7caf33be79e95776e2aab84834ce54aeb29a12a87616aa4f86909097b4865",
+      "cache_retained": false
+    }
+  ],
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "d4c2772fdbcfa045a64317f6d43ebd231a643af1e8cbafac777e7e78c376762e",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "bdb0412f9ce97d12157b54f7873e009469f3aa451dc3429820beac224794ea19",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "1b1252708e41e214ab09fa8e5220ad5faa34de1e6fc3c98993c4c810e47867c6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "2c11d43dcf41b6ade9e294329b5095eb9198e8a3cd8f6fca6646d827de6a7b43",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "30347e7fd43cd5bdba46e13ef6f9d24b335851ba21cbc14f4277f70f2e087e39",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "57e708cdb0b5d708a5ed6cb401ce97a876e024639b99ed498a617c082ebb72cf",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "e0659a7a6c3c433c4c5064783521ed203dbe79b31c09bec5b6b241e8ad58a762",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "4daff770f98ba72f8c750f6226b0a7f863aafd1ea5b78bb06c963b4777ad39cb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "25167a26b3081b46b83d61ed1cbfc567ca16e0bab768f06ae38adc2568735efb",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "57dbaa3758de054e8054e8d5dd665037d4b94e2eac49d980bef7dc4e4338ace8"
+  },
+  "runtime_sha256": {
+    "addons/world_ecosystem/ground_preview.gd": "a1ff1419c1a153a4d1bdb63aa329201dea944e1f30977fa49c6869bd7c5f75fe",
+    "addons/world_ecosystem/ground_interaction.gd": "69f5301aafe7cbf5398dc2feaecace05792d268ac195cd71d5f3369dd1371d7e",
+    "demo/world.gd": "7cabc2ff3f522c48c87fa5dcac65e40871831643932f14ca0d33dc264d978ac8"
+  },
+  "baseline_metrics": {
+    "checks": 16,
+    "failures": 3,
+    "motion": {
+      "hidden": 0,
+      "matched": 30,
+      "ray_calls": 30,
+      "supported": 120,
+      "worst_error_m": 0.532371938228607
+    },
+    "probe_cpu_us": {
+      "max": 300,
+      "median": 16,
+      "p95": 269
+    },
+    "range_boundary_visible": 2,
+    "stationary_ray_calls": 30
+  },
+  "current_metrics": {
+    "checks": 22,
+    "failures": 0,
+    "look_motion": {
+      "matched": 60,
+      "supported": 60
+    },
+    "motion": {
+      "hidden": 0,
+      "matched": 120,
+      "ray_calls": 120,
+      "supported": 120,
+      "worst_error_m": 0.0001220703125
+    },
+    "probe_cpu_us": {
+      "max": 401,
+      "median": 215,
+      "p95": 281
+    },
+    "range_boundary_visible": 5,
+    "stationary_ray_calls": 30
+  },
+  "baseline_report": "reports/checks/20261027T093639022507Z_player_navigation/vegetation_target_motion",
+  "user_visual_approval": false,
+  "scope": "Real streamed-forest running-speed and look trajectories, separate synthetic-plane reach controls, solid occlusion, pending edits, species changes, stationary cadence, no preview mutations and actual native supported plant publication. Not an original-player-save replay or all-hardware/frame-time guarantee."
+}

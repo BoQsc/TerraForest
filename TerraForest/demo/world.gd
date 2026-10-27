@@ -938,7 +938,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if mouse_action:
 			if _model_edit_available() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and (remove_action or event.pressed):
 				var origin:=camera.global_position
-				var endpoint:=origin-camera.global_basis.z*(3.5 if construction_inventory.gameplay else 8.0)
+				var endpoint:=origin-camera.global_basis.z*ground_interaction.reach(construction_inventory.gameplay)
 				var result: Dictionary=ground_interaction.collect(origin,endpoint,player_hud.inventory,construction_inventory.gameplay) if remove_action or event.button_index==MOUSE_BUTTON_LEFT else ground_interaction.place(ground_species,origin,endpoint,player_hud.inventory,construction_inventory.gameplay)
 				if result.ok and result.has("id"):world_attack.durability.forget("cover:%d"%result.id)
 				_show_lake_notice(result.reason)

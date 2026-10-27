@@ -1,9 +1,13 @@
 # SPDX-License-Identifier: 0BSD
-# One bounded advisory marker; checks run only while the tool is active, at 10 Hz.
 extends MeshInstance3D
 var remaining:=0.0
 var result: Dictionary={}
 var ghost:=MeshInstance3D.new()
+var last_species:=-1
+var last_eye:=Vector3.INF
+var last_forward:=Vector3.ZERO
+var last_epoch:=-1
+var last_revision:=-1
 func _ready() -> void:
 	var lines:=PackedVector3Array()
 	var corners: Array[Vector3]=[Vector3(-0.4,0,-0.4),Vector3(0.4,0,-0.4),Vector3(0.4,0,0.4),Vector3(-0.4,0,0.4)]
@@ -22,12 +26,14 @@ func _ready() -> void:
 	hide()
 func update(game: Node,delta: float) -> void:
 	if not game.ground_mode or not game._model_edit_available(true) or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.world_vehicle.driving or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:
-		hide();remaining=0.0;result={};game.player_hud.show_ground_feedback("");return
+		hide();remaining=0.0;last_species=-1;result={};game.player_hud.show_ground_feedback("");return
 	remaining-=delta
-	if remaining>0: return
-	remaining=.05
 	var start: Vector3=game.camera.global_position
-	var end: Vector3=start-game.camera.global_basis.z*(3.5 if game.construction_inventory.gameplay else 8.0)
+	var forward:Vector3=-game.camera.global_basis.z
+	if remaining>0 and last_species==game.ground_species and last_epoch==game.terrain.epoch and last_revision==game.terrain.published_revision and start.distance_squared_to(last_eye)<.0004 and forward.dot(last_forward)>.99995:return
+	remaining=.05
+	last_eye=start;last_forward=forward;last_species=game.ground_species;last_epoch=game.terrain.epoch;last_revision=game.terrain.published_revision
+	var end: Vector3=start+forward*game.ground_interaction.reach(game.construction_inventory.gameplay)
 	result=game.ground_interaction.placement_probe(game.ground_species,start,end,game.player_hud.inventory,game.construction_inventory.gameplay)
 	visible=result.has("pose")
 	if visible:

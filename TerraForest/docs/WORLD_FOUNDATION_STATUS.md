@@ -1,6 +1,17 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Vegetation placement targeting — 2026-10-27
+
+Reproduced stale camera targeting (up to 0.532 m lag at running speed) and complete
+preview loss at the 3.5 m reach boundary. Motion/species/terrain changes now refresh
+immediately; stationary validation stays throttled. A bounded 8 m scene ray keeps
+out-of-reach ground marked red without increasing actual placement range. Clicks
+still revalidate support/occlusion and inventory. The installed package passes
+70 assertions, including real-terrain placement and existing player UI/navigation.
+Original-location user review and dense-scene/lower-end profiling remain open.
+[Measurements, images and scope](../issues/vegetation-target-flicker/README.md).
+
 ## Player navigation and menu access — 2026-10-27
 
 Live vehicle spawn moves to Dev Spawner; carried vehicle items stay in Dev Bag.

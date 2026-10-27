@@ -7,6 +7,10 @@ var cover: Node3D
 # The normal scene ray must include terrain, buildings, trunks and vehicles.
 var scene_ray: Callable
 var busy:=false
+const MAX_REACH=8.0
+
+func reach(gameplay:bool)->float:
+	return 3.5 if gameplay else MAX_REACH
 
 func available() -> bool:
 	return not busy and is_instance_valid(cover) and cover.terrain.world_ready and not cover.terrain.pending_edit and not cover.terrain.stopping and cover.removed.bind_world(cover.seed,1)
@@ -67,12 +71,15 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 
 func placement_probe(species: int,from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool) -> Dictionary:
 	if not scene_ray.is_valid() or species<0 or species>=Catalog.COUNT or not from.is_finite() or not to.is_finite() or from.distance_squared_to(to)>64.01: return {"ok":false,"reason":"World interaction unavailable"}
-	var hit: Dictionary=scene_ray.call(from,to)
+	var reach_squared:=from.distance_squared_to(to)
+	if reach_squared<.0001:return {"ok":false,"reason":"Aim at a supported surface"}
+	var hit: Dictionary=scene_ray.call(from,from+(to-from).normalized()*MAX_REACH)
 	if hit.is_empty() or not hit.position.is_finite() or not hit.normal.is_finite(): return {"ok":false,"reason":"Aim at a supported surface"}
 	var point: Vector3=hit.position+Vector3.UP*0.02
 	var key:=Vector2i(floori(point.x/32.0),floori(point.z/32.0))
 	var poses: Array[Transform3D]=[Transform3D(Basis.IDENTITY,point)]
 	var candidate:={"ok":false,"reason":"","pose":poses[0],"cell":key}
+	if from.distance_squared_to(hit.position)>reach_squared+.0001:candidate.reason="Out of reach";return candidate
 	if not available() or not cover.resident.has(key) or cover._dirty.has(key) or cover._pending.has(key):candidate.reason="Ground cover updating";return candidate
 	if hit.normal.normalized().y<0.82:candidate.reason="Aim at a supported surface";return candidate
 	if cover.structures!=null:

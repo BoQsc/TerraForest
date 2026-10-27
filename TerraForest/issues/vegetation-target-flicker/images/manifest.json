@@ -1,0 +1,26 @@
+[
+  {
+    "file": "before-running.png",
+    "source": "reports/checks/20261027T093639022507Z_player_navigation/vegetation_target_motion/evidence/running_preview.png",
+    "sha256": "28c7f5dfddfc7fb8e5f1c7eb0e70b6fdb35c8b16ded677332b3b51b3e3012d10",
+    "pack_sha256": null,
+    "caption": "Before fix, temporary seed-1703 running trajectory; marker trails the live ray. Background streaming/wind timing differs from after.",
+    "edited": false
+  },
+  {
+    "file": "after-running.png",
+    "source": "reports/checks/20261027T094707782693Z_player_navigation_pack/vegetation_target_motion/evidence/running_preview.png",
+    "sha256": "9399ac5b74eb0c8fa8e210428ba33d53a9a8145c5dff63c9822f10ab0c7a643b",
+    "pack_sha256": "d893060103880b0d68190e4262d6faa460fc86b21ec605e29e1214038735f143",
+    "caption": "Packaged correction, same final running view; current aim and marker agree. Red indicates an occupied spot.",
+    "edited": false
+  },
+  {
+    "file": "out-of-reach.png",
+    "source": "reports/checks/20261027T094707782693Z_player_navigation_pack/vegetation_target_motion/evidence/out_of_reach.png",
+    "sha256": "cb552f425b8ce78549c44f438de6536583389cfabbd50e818796230a43ccd692",
+    "pack_sha256": "d893060103880b0d68190e4262d6faa460fc86b21ec605e29e1214038735f143",
+    "caption": "Packaged 4 m synthetic-plane reach control in a temporary forest: red advisory marker, placement still rejected. Different viewpoint from baseline range control.",
+    "edited": false
+  }
+]
