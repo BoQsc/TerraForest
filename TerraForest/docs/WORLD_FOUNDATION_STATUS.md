@@ -1,7 +1,7 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
-## Separate descending pickaxe candidate — 2026-10-26
+## Separate descending pickaxe candidate — 2026-10-27
 
 User requested a more diagonal hold and a new right-to-left animation, with
 default promotion only after approval. The first candidate was rejected for
@@ -9,14 +9,17 @@ missing the intended motion; the user clarified upper right to lower left.
 The next revision struck below the cursor; the raised version (`bf81f85e`)
 was also rejected for a central foreground hand, excessive right-side framing,
 and motion that felt like sliding. Its grip/contact checks did not establish
-acceptable animation. The latest version lowers the fixed grips and uses a
-broad rotational arc around a compact hand path, with the tip crossing camera
-center and following down-left. Actual-world stills now accompany the studio
+acceptable animation. The rotational revision (`13c87bca`) was also rejected:
+the head turned end-on and appeared to hit with its middle while moving sideways.
+The latest version drives pitch in a diagonal forward working plane, with the
+point leading forward-left and the socket/back behind and right. Impact is near
+the upper center rather than forced onto the exact cursor. Actual-world stills accompany the studio
 comparison. Separate 120 Hz Blender/library assets and an
 explicit temporary-world launcher provide F6 candidate/default comparison.
 Ordinary runtime selection and accepted pickaxe assets remain unchanged.
 
-Candidate mechanics pass 28 checks across 1,902 key/half-key poses; 13 actual
+Candidate mechanics pass 31 checks across 1,902 key/half-key poses, including
+point/velocity alignment, first steel contact and visible head orientation; 13 actual
 world checks cover input, frame-timed excavation, wear and cancellation. The
 accepted pickaxe's 11 checks and locomotion's 24 still pass. These do not imply
 visual acceptance. User review of trajectory, hold, weight, grip and framing is

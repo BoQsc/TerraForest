@@ -1,8 +1,8 @@
 {
-  "date": "2026-10-26",
-  "status": "Rotational arc / lower fixed grips candidate; not accepted as default",
-  "user_correction": "Raised candidate rejected: supporting hand at camera center, composition too far right, motion feels like tool sliding.",
-  "checkout_head": "bf81f85eb5e712cedae99b4396da5116d6830df8",
+  "date": "2026-10-27",
+  "status": "Tip-first forward-left candidate; not accepted as default",
+  "user_correction": "Rotational candidate rejected: appears to strike with middle of head, back rotates incorrectly, sideways sweep instead of a forward-left tip-led strike.",
+  "checkout_head": "13c87bca80e0414451ddf1312585eaf1631a1058",
   "preserved_default_sha256": {
     "addons/characters/runtime/human_view.gd": "fe349c9ec07cec4184063980b64fb3af119a76fb36a0a7b93072bbf0e39ef15f",
     "addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
@@ -11,23 +11,23 @@
     "addons/characters/authoring/Human.pickaxe_fresh.blend": "a5856b1e8e5669558d85f2f56a37d5ce49ec24733c8ddbb21c1156503c2dbd23"
   },
   "candidate_sha256": {
-    "addons/characters/authoring/Human.pickaxe_crosscut.blend": "6733947f552d72c7f8257907e2bc38efdc0a07ccc99756a0916cb4c84a9c676a",
-    "addons/characters/authoring/Human.pickaxe_crosscut.glb": "29410f24ae5c8748703cd8e8f6dd8197eb8fa34fbceb766f1aa83ab380697886",
-    "addons/characters/authoring/Human.pickaxe_crosscut.json": "6efea382f9599831a2b13b70a800a0340004176d07d4f2c1b6eb6e3310c10501",
-    "addons/characters/runtime/assets/Human.pickaxe_crosscut.res": "0dc772130058a147ba9ad76eb147596fe7b193182f486c4f7c79e2361bbc00a7",
+    "addons/characters/authoring/Human.pickaxe_crosscut.blend": "d13bf4865112634b5e5d13c31f900981c20d6aaf513829bee526f4d62f51e230",
+    "addons/characters/authoring/Human.pickaxe_crosscut.glb": "b970873da442bd5cf79dab62ac5fddbf0adc4d2a568f131f7e2c1a1b8148d05c",
+    "addons/characters/authoring/Human.pickaxe_crosscut.json": "e7c35623d072cc7cb58a3abfcfa684afec49be20b8271110eda3c50be638ee9d",
+    "addons/characters/runtime/assets/Human.pickaxe_crosscut.res": "1c8ec6749e8561e9ed427eef82dabd9b1f9a01df7ba7b88d90e1432f1f96fcd5",
     "addons/characters/experiments/pickaxe_crosscut_tools.gd": "93e311dfc07e78ab10afcde79ce54c346e4b7f522eea7c2c8f8c75b501a12c56",
     "addons/characters/experiments/pickaxe_crosscut_view.gd": "2a782330936b6360b0670dfa9105eca3846417f6c80f79ffaddc5d18ace8f665",
-    "tools/author_pickaxe_crosscut.py": "82ba871f30bf689669f07ffaf562540c5c25874d9ae466a572f54eda29ccf23b",
+    "tools/author_pickaxe_crosscut.py": "7467eec77d4ee9e913b6489d14f1031a807c48b86e4f363d53888571625e475d",
     "tools/import_pickaxe_crosscut.gd": "de0108dd45f45001cfd1623c5c87d253bbc89ae6b715869e15ebebf73ec5c95f",
-    "tools/playtest_pickaxe_crosscut.gd": "db54ed65125266c56e3361f731ca520e30544ea0f2f1f528b217fdc06b2692b0",
-    "tests/pickaxe_crosscut.gd": "7c581eec08d2f08493235cbe9d581e9d81fc6c2b1cca15109c8a06ba1251674f",
+    "tools/playtest_pickaxe_crosscut.gd": "2eae0b90939acb7df0de5b43a92bd38b8c109bdb258890247c5f7af7662ab484",
+    "tests/pickaxe_crosscut.gd": "f15b21d7481f89e38067dc322b4cbae16206c29d2d443e34d885aab52498a3e1",
     "tests/pickaxe_crosscut_world.gd": "0a23efebd10ce3d3c12fe2bd79b045d3b11ff306ca28d478c4c09c38ae20cb28",
-    "tools/preview_pickaxe_crosscut.gd": "4869099d61c1ea4345689c83f957cca6be551ae38e72e2719f1916aeac638a23",
-    "tools/encode_pickaxe_crosscut_preview.py": "ee1c54509bdf93cf58aa212ea04e6f15c84e4f9363934cee56e318fccabae524",
+    "tools/preview_pickaxe_crosscut.gd": "3c7b01bf7041f0f76721a483ba9f011ad0ef80b4301aacfd7798b9da43bddf63",
+    "tools/encode_pickaxe_crosscut_preview.py": "b5fe73e7f817b514c774dbb92c42044562cef545b76282f069c0f10fbbfa45bd",
     "tools/preview_pickaxe_crosscut_world.gd": "df83b21ba41d2a875b66123e840ea2e9f182b54bf930ad75866dd53a2886f55d"
   },
   "checks": {
-    "candidate": 28,
+    "candidate": 31,
     "temporary_world": 13,
     "accepted_default": 11,
     "accepted_locomotion": 24
@@ -79,13 +79,13 @@
       "wrist_degrees": 37.2451649780521
     },
     "Swing": {
-      "angle_error": 0.0884693258953794,
+      "angle_error": 0.0559529096807445,
       "finger_error": 0.0,
-      "grip_error": 0.00148484017699957,
-      "joint_step": 4.49222139353291,
-      "key_error": 1.30935347897321e-06,
-      "position_error": 0.000416378956288099,
-      "root_error": 2.99954126603552e-06,
+      "grip_error": 0.000177621404873207,
+      "joint_step": 2.07188217599295,
+      "key_error": 1.1105962585134e-06,
+      "position_error": 0.000116704686661251,
+      "root_error": 2.87137481791433e-06,
       "wrist_degrees": 34.051542691978
     },
     "Walk": {
@@ -101,19 +101,19 @@
   },
   "actual_cutting_point_in_camera": {
     "tip_load": [
-      0.466058313846588,
-      0.353999495506287,
-      -0.682175815105438
+      0.562776923179626,
+      0.30553150177002,
+      -0.545144855976105
     ],
     "tip_contact": [
-      -8.55531379784225e-06,
-      2.33650207519531e-05,
-      -1.0900171995163
+      0.0428142510354519,
+      0.0635020732879639,
+      -0.942501485347748
     ],
     "tip_follow": [
-      -0.29779252409935,
-      -0.285625219345093,
-      -1.02711498737335
+      -0.118188545107841,
+      -0.0445185899734497,
+      -0.984521985054016
     ]
   },
   "world": {
@@ -132,10 +132,12 @@
     "Projected-rest roll removed the spin but caused visible elbow skin distortion. Left arm now follows the solved elbow; the right grip is seated 30 degrees around the shaft, constant through all clips, to lower the elbow and keep it farther from the camera.",
     "Third candidate bf81f85e rejected: oversized foreground support hand, right-heavy composition, sliding feel. User screenshot retained. Earlier grip/contact checks did not establish visual success.",
     "First rotational pose draft exceeded arm reach during follow-through; compacted recovery path within fixed limb lengths.",
-    "Early rotational draft had a small upward hitch during acceleration. Revised the intervening wrist height; full downstroke now passes the existing descending-path check."
+    "Early rotational draft had a small upward hitch during acceleration. Revised the intervening wrist height; full downstroke now passes the existing descending-path check.",
+    "Fourth candidate 13c87bca rejected: head turned end-on and appeared to strike with middle while sweeping sideways. Its 102-degree screen-lean reversal and exact-cursor test rewarded the wrong working plane.",
+    "First forward-plane draft exceeded right-arm reach near contact and follow-through; compacted grip path within original limb lengths before export."
   ],
-  "remaining": "User visual review of arc, framing, hand appearance, weight and feel. Original skin/clothing retained. Head is foreshortened near contact; finite-length visual tip aligns with camera center rather than arbitrary surface distance. Explicit acceptance required for default promotion.",
-  "revision": 4,
+  "remaining": "User review of forward-left tip-led motion, weight, timing, hand appearance and framing. Original skin/clothing retained. Visual tool has finite reach; preview contact plane is 0.94 m from camera, while gameplay uses the existing ray-based interaction. Explicit acceptance required for default promotion.",
+  "revision": 5,
   "ready_head_in_camera": [
     0.432959973812103,
     0.251223921775818,
@@ -156,8 +158,27 @@
       -0.237995266914368,
       -0.449254631996155
     ],
-    "rotation_sweep_degrees": 101.986219516664,
-    "tip_travel_m": 1.20247816335177,
-    "grip_travel_m": 0.293314838010701
-  }
+    "rotation_sweep_degrees": 51.1584788834215,
+    "tip_travel_m": 0.916255275951698,
+    "grip_travel_m": 0.203797630005283
+  },
+  "impact": {
+    "forward_fraction": 0.371431529521942,
+    "head": [
+      0.258297473192215,
+      0.155923247337341,
+      -0.747480392456055
+    ],
+    "point_alignment": 0.945412635803223,
+    "tip_screen": [
+      0.516650140285492,
+      0.456096887588501
+    ],
+    "velocity": [
+      -2.55836200714111,
+      -1.51298046112061,
+      -1.18905544281006
+    ]
+  },
+  "changed_checks": "Replaced exact-cursor and >75-degree sweep requirements with upper-center contact and >40-degree forward pitch. Added actual skinned tip/velocity alignment, first steel contact and socket separation in the camera view."
 }

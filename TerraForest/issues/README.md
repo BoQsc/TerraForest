@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Separate diagonal pickaxe study](pickaxe-crosscut/README.md) | Rotational-arc revision / unapproved | Raised version rejected for foreground hand and sliding feel; latest lowers grips and rotates across the cursor; actual-world framing review pending |
+| [Separate diagonal pickaxe study](pickaxe-crosscut/README.md) | Tip-first revision / unapproved | Rotational version rejected for a sideways middle-of-head strike; latest drives the point forward-left with the socket/back behind; visual review pending |
 | [Discoverable material veins](material-veins/README.md) | Implemented / scoped checks | 172 packaged checks pass; default-on ore stones and map markers identify real veins; appearance/balance await player review |
 | [Player facing after vehicle exit](vehicle-exit-facing/README.md) | Fixed for reproduced behavior / scoped checks | Player faces current car front, input yaw stays synchronized; 110 focused/world checks pass, user review pending |
 | [Reported fast-exit return](vehicle-fast-exit-return/README.md) | Unconfirmed / not reproduced | Four actual-world exits and seven resident-floor cases show no return; exact mod/build/speed and return destination needed |

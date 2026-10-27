@@ -4,6 +4,23 @@ const CANDIDATE=preload("res://addons/characters/runtime/assets/Human.pickaxe_cr
 func screen_position(point:Vector3)->Vector2:
 	var half_height:float=-point.z*tan(deg_to_rad(75.0)*.5)
 	return Vector2(.5+point.x/(2*half_height*16.0/9.0),.5-point.y/(2*half_height))
+func foremost_steel(mesh:MeshInstance3D,skeleton:Skeleton3D,camera:Camera3D)->float:
+	var depth:=INF
+	for surface in mesh.mesh.get_surface_count():
+		if not "steel" in mesh.mesh.surface_get_material(surface).resource_name.to_lower():continue
+		var arrays:=mesh.mesh.surface_get_arrays(surface)
+		var vertices:PackedVector3Array=arrays[Mesh.ARRAY_VERTEX];var bones:PackedInt32Array=arrays[Mesh.ARRAY_BONES];var weights:PackedFloat32Array=arrays[Mesh.ARRAY_WEIGHTS]
+		var influences:=bones.size()/vertices.size()
+		for vertex in vertices.size():
+			var current:=Vector3.ZERO
+			for influence in influences:
+				var offset:=vertex*influences+influence;var bind:int=bones[offset]
+				if weights[offset]<=0:continue
+				var name:=mesh.skin.get_bind_name(bind)
+				var bone:=skeleton.find_bone(name) if name!=&"" else mesh.skin.get_bind_bone(bind)
+				current+=(skeleton.get_bone_global_pose(bone)*mesh.skin.get_bind_pose(bind)*vertices[vertex])*weights[offset]
+			depth=minf(depth,(camera.global_transform.affine_inverse()*skeleton.global_transform*current).z)
+	return depth
 func run()->void:
 	var ordinary:=preload("res://addons/player_runtime/tool_view.gd").new();root.add_child(ordinary);ordinary.equip(1)
 	check(ordinary.attack_profile().clip=="FP_Pickaxe_Fresh_Swing" and ordinary.human.active_clip=="FP_Pickaxe_Fresh_Idle","ordinary game still selects the accepted default")
@@ -58,12 +75,25 @@ func run()->void:
 	var start:=swing_tips[112];var hit:=swing_tips[168];var follow:=swing_tips[200];var descending:=true
 	for index in range(113,201):descending=descending and swing_tips[index].x<swing_tips[index-1].x+.0001 and swing_tips[index].y<swing_tips[index-1].y+.0001
 	check(start.x>0 and start.y>0 and follow.x<0 and follow.y<0 and descending,"actual cutting point travels from upper right to lower left through impact")
-	check(start.x-follow.x>.45 and start.y-follow.y>.35 and hit.z<start.z-.08,"descending strike travels across the cursor with forward depth")
-	check(Vector2(hit.x,hit.y).length()<.015 and hit.z<-.85,"actual cutting point reaches the cursor centerline at the gameplay contact time")
+	check(start.x-follow.x>.45 and start.y-follow.y>.28 and hit.z<start.z-.3,"point drives forward from the upper right, then follows down-left")
+	var hit_screen:=screen_position(hit)
+	check(hit_screen.x>.45 and hit_screen.x<.56 and hit_screen.y>.40 and hit_screen.y<.49 and hit.z<-.85,"point reaches the upper-center target area without forcing the shaft onto the cursor")
 	var rotation_sweep:=rad_to_deg(swing_rotations[112].angle_to(swing_rotations[200]));var tip_travel:=0.0;var grip_travel:=0.0
 	for index in range(113,201):
 		tip_travel+=swing_tips[index].distance_to(swing_tips[index-1]);grip_travel+=swing_grips[index].distance_to(swing_grips[index-1])
-	check(rotation_sweep>75 and grip_travel<.35 and tip_travel>grip_travel*3,"stroke rotates through a broad arc with a compact grip path instead of translating the whole tool")
+	# A 100-degree reversal of screen lean passed the old test while making the
+	# head swipe sideways. Qualify the direction and leading part, not arc size.
+	check(rotation_sweep>40 and grip_travel<.35 and tip_travel>grip_travel*3,"forward pitch produces the stroke around a compact fixed grip")
+	pose(view,"FP_Pickaxe_Crosscut_Swing",.7)
+	var contact_head:=camera.global_transform.affine_inverse()*tool_head(mesh,skeleton)
+	var velocity:Vector3=(swing_tips[169]-swing_tips[167])*120
+	var direction:Vector3=(hit-contact_head).normalized()
+	var alignment:=direction.dot(velocity.normalized())
+	var forward_fraction:float=-velocity.normalized().z
+	check(alignment>.9 and forward_fraction>.3 and velocity.x<0 and velocity.y<0,"point faces its forward-left descending impact velocity")
+	check(hit.z<contact_head.z-.15 and hit.z<=foremost_steel(mesh,skeleton,camera)+.005,"sharpened point reaches the surface before the socket or broad back")
+	check(contact_head.x>hit.x+.15 and screen_position(contact_head).x-hit_screen.x>.08,"socket and back remain visibly to the right of the point at impact")
+	var impact:={"head":[contact_head.x,contact_head.y,contact_head.z],"velocity":[velocity.x,velocity.y,velocity.z],"point_alignment":alignment,"forward_fraction":forward_fraction,"tip_screen":[hit_screen.x,hit_screen.y]}
 	var contacts:Array=[];var finishes:Array=[]
 	tool.attack_contact.connect(func(identity:int):contacts.append([identity,view.animation_player.current_animation_position]))
 	tool.attack_finished.connect(func(identity:int,cancelled:bool):finishes.append([identity,cancelled]))
@@ -78,5 +108,5 @@ func run()->void:
 	view.set_candidate(true);check(tool.attack_profile().clip=="FP_Pickaxe_Crosscut_Swing","A/B switch restores the separate candidate")
 	tool.equip(2);check(tool.attack_profile().clip=="FP_Axe_Swing","other tools retain their ordinary animation")
 	DirAccess.make_dir_recursive_absolute("res://reports/pickaxe_crosscut")
-	FileAccess.open("res://reports/pickaxe_crosscut/runtime.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"clips":records,"ready_head":[ready_head.x,ready_head.y,ready_head.z],"ready_head_screen":[head_screen.x,head_screen.y],"ready_left_hand":[ready_hands.Left.x,ready_hands.Left.y,ready_hands.Left.z],"ready_right_hand":[ready_hands.Right.x,ready_hands.Right.y,ready_hands.Right.z],"rotation_sweep_degrees":rotation_sweep,"tip_travel_m":tip_travel,"grip_travel_m":grip_travel,"tip_load":[start.x,start.y,start.z],"tip_contact":[hit.x,hit.y,hit.z],"tip_follow":[follow.x,follow.y,follow.z]},"  "))
+	FileAccess.open("res://reports/pickaxe_crosscut/runtime.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"clips":records,"impact":impact,"ready_head":[ready_head.x,ready_head.y,ready_head.z],"ready_head_screen":[head_screen.x,head_screen.y],"ready_left_hand":[ready_hands.Left.x,ready_hands.Left.y,ready_hands.Left.z],"ready_right_hand":[ready_hands.Right.x,ready_hands.Right.y,ready_hands.Right.z],"rotation_sweep_degrees":rotation_sweep,"tip_travel_m":tip_travel,"grip_travel_m":grip_travel,"tip_load":[start.x,start.y,start.z],"tip_contact":[hit.x,hit.y,hit.z],"tip_follow":[follow.x,follow.y,follow.z]},"  "))
 	ordinary.free();camera.free();print("PICKAXE_CROSSCUT checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -17,9 +17,12 @@ PASS Jump: wrists stay aligned and arms have no rotation flips
 PASS Crouch: fixed keyed grips; interpolation stays under 1 mm and 0.3 degrees
 PASS Crouch: wrists stay aligned and arms have no rotation flips
 PASS actual cutting point travels from upper right to lower left through impact
-PASS descending strike travels across the cursor with forward depth
-PASS actual cutting point reaches the cursor centerline at the gameplay contact time
-PASS stroke rotates through a broad arc with a compact grip path instead of translating the whole tool
+PASS point drives forward from the upper right, then follows down-left
+PASS point reaches the upper-center target area without forcing the shaft onto the cursor
+PASS forward pitch produces the stroke around a compact fixed grip
+PASS point faces its forward-left descending impact velocity
+PASS sharpened point reaches the surface before the socket or broad back
+PASS socket and back remain visibly to the right of the point at impact
 PASS candidate starts through normal attack signals
 PASS no impact during windup
 PASS long frame emits exactly one impact on authored frame 42
@@ -28,4 +31,4 @@ PASS interrupted stroke cannot produce an extra impact
 PASS A/B switch restores accepted hold and timing
 PASS A/B switch restores the separate candidate
 PASS other tools retain their ordinary animation
-PICKAXE_CROSSCUT checks=28 failures=0
+PICKAXE_CROSSCUT checks=31 failures=0

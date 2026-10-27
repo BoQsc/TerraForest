@@ -1,0 +1,26 @@
+{
+  "status": "Tip-first forward-left candidate; not approved or selected as default",
+  "videos": [
+    {
+      "file": "Pickaxe.tip-first.comparison.mp4",
+      "sha256": "18484449830380405ffd6e72b3e9989bce27493212646b211bfec3b2a5b73cb8",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    },
+    {
+      "file": "Pickaxe.tip-first.body.mp4",
+      "sha256": "bc66a0f1c2a4631fd825b2da68f30297b8294b637dd90a190654aa1791ed5085",
+      "frames": 300,
+      "fps": 30,
+      "size": [
+        2560,
+        820
+      ]
+    }
+  ],
+  "timeline": "Two normal-speed swings, one half-speed swing, then walking. Original 1.7 s and candidate 1.6 s durations are preserved."
+}

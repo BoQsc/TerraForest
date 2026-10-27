@@ -16,7 +16,7 @@ func setup(candidate:bool,side:bool=false)->Dictionary:
 			count+=1
 			if count>1:node.queue_free()
 	# Fixed target on the camera centerline, independent of the authored tip.
-	var point:=Vector3(0,1.65,-1.09)
+	var point:=Vector3(0,1.65,-.94)
 	var target:=MeshInstance3D.new();var box:=BoxMesh.new();box.size=Vector3(.72,.7,.24)
 	target.mesh=box;target.material_override=mat(Color("6a7478"));target.position=point+Vector3(0,0,-.12);data.camera.get_parent().add_child(target)
 	for axis in 2:
@@ -38,7 +38,7 @@ func board(left:Dictionary,right:Dictionary,heading:String,right_heading:String)
 func run()->void:
 	for folder in ["comparison_frames","body_frames"]:DirAccess.make_dir_recursive_absolute(OUTPUT+"/"+folder)
 	var current:=setup(false);var candidate:=setup(true);var side:=setup(true,true)
-	var comparison:=board(current,candidate,"CURRENT DEFAULT / accepted fixed grip","SEPARATE CANDIDATE / rotational arc, lower grips")
+	var comparison:=board(current,candidate,"CURRENT DEFAULT / accepted fixed grip","SEPARATE CANDIDATE / tip-first forward-left strike")
 	var body_review:=board(candidate,side,"CANDIDATE / first person","CANDIDATE / body and grip mechanics")
 	var stills:="--stills" in OS.get_cmdline_user_args()
 	var snapshots:={0:"hold",29:"right_load",34:"approach",36:"contact",40:"left_follow",52:"return",67:"hold_again",280:"walk"}

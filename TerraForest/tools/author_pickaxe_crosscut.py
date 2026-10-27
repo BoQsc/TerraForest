@@ -72,21 +72,21 @@ for side, shift in [('Left', (.045, -.05, 0)), ('Right', (-.045, .055, 0))]:
 
 # Pose-table frame at 60 Hz (baked at 120 Hz), lower wrist XYZ, shaft forward pitch, right lean, blade-plane yaw,
 # torso forward pitch, torso yaw, pelvis Z. Blender -X is player right; -Y forward.
-# The lower hand stays below the center of the view. The tool rotates through
-# a broad arc around a compact grip path, rather than translating across the
-# screen. Contact is on the camera centerline, about 1.09 m forward.
+# Keep the pick in a diagonal forward working plane. Pitch drives the pointed
+# end into the target; reversing the shaft's screen lean swings the head sideways.
+# The point leads into the upper center, with the socket and back behind/right.
 POSES = [
  (0, (0,-.31,1.28),5,40,30,3,-5,-.018),
- (10,(.01,-.30,1.31),0,42,28,2,-7,-.016),
- (22,(.035,-.30,1.35),-8,40,20,2,-14,-.014),
- (28,(.035,-.29,1.37),-12,40,20,2,-15,-.014),
- (33,(.015,-.30,1.35),-5,38,20,3,-10,-.018),
- (38,(-.04,-.32,1.24),20,5,5,5,-1,-.022),
- (42,(-.08923286,-.32191092,1.21838665),35,-20,0,7,6,-.025),
- (46,(-.09,-.27,1.22),49,-37,14,9,12,-.035),
- (50,(-.08,-.24,1.22),55,-42,22,10,14,-.040),
- (57,(-.08,-.24,1.22),52,-40,20,8,11,-.035),
- (69,(-.04,-.29,1.23),32,0,10,5,0,-.022),
+ (10,(-.01,-.28,1.29),-4,40,30,2,-7,-.016),
+ (22,(-.025,-.24,1.30),-23,40,30,2,-13,-.014),
+ (28,(-.025,-.24,1.30),-25,40,30,2,-14,-.014),
+ (33,(-.02,-.26,1.29),-18,39,31,3,-10,-.018),
+ (38,(.015,-.26,1.21),-5,37,33,5,-1,-.022),
+ (42,(.035,-.26,1.15),10,35,35,7,6,-.025),
+ (46,(.035,-.245,1.14),19,34,36,9,9,-.035),
+ (50,(.035,-.235,1.14),22,34,36,10,10,-.040),
+ (57,(.025,-.23,1.15),20,35,35,8,8,-.035),
+ (69,(.005,-.26,1.22),10,38,32,5,0,-.022),
  (83,(0,-.31,1.28),5,40,30,3,-5,-.018),
  (96,(0,-.31,1.28),5,40,30,3,-5,-.018),
 ]
@@ -179,7 +179,7 @@ def apply_pose(frame,motion="Swing",count=END):
             anchor+=Vector((.008*math.sin(phase),.005*math.sin(2*phase),.009*math.cos(2*phase)))*strength
             lean+=.8*math.sin(phase)*strength;pitch+=.8*math.sin(2*phase)*strength
     feet = body_pose(torso,yaw,sink)
-    # Newly authored diagonal shaft and lateral strike plane.
+    # Diagonal shaft in a forward working plane; pitch drives the pick point.
     turn = Quaternion((0,0,1),math.radians(turn_yaw)) @ Quaternion((0,1,0),-math.radians(lean))
     angle = math.radians(pitch)
     shaft = turn @ Vector((0,-math.sin(angle),math.cos(angle)))
@@ -246,7 +246,7 @@ else:
     rig.animation_data.action=actions['Swing']
     if actions['Swing'].slots:rig.animation_data.action_slot=actions['Swing'].slots[0]
     scene.frame_set(0)
-    rig['pickaxe_description']='SEPARATE UNAPPROVED CANDIDATE. Diagonal hold and newly authored right-to-left stroke, both hands fixed; ordinary accepted default unchanged.'
+    rig['pickaxe_description']='SEPARATE UNAPPROVED CANDIDATE. Diagonal hold, pointed end leading a forward-left descending stroke, both hands fixed; ordinary accepted default unchanged.'
     bpy.ops.object.select_all(action='DESELECT');rig.select_set(True)
     bpy.data.objects['Human_Body'].select_set(True);bpy.context.view_layer.objects.active=rig
     bpy.ops.export_scene.gltf(filepath=str(OUT/'Human.pickaxe_crosscut.glb'),export_format='GLB',use_selection=True,
@@ -255,7 +255,7 @@ else:
     report={'status':'Separate candidate; user approval required before default promotion',
             'grip_stations':GRIP_STATIONS,'fixed_grip_roll_degrees':GRIP_ROLL,'source':str(source.relative_to(ROOT)),
             'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
-            'motion_source':'Rotational diagonal stroke around a compact grip path; supporting hand lowered out of the central view. Original closed fingers, fixed grip stations and right-hand roll. No accepted swing keys copied.',
+            'motion_source':'Forward-left descending stroke driven by pitch in the head working plane. Point leads at impact; socket and broad back stay behind/right. Original closed fingers and fixed grip stations. No accepted swing keys copied.',
             'fps':FPS,'durations':DURATIONS,'contact_frame':CONTACT,'poses':POSES,'samples':samples}
     (OUT/'Human.pickaxe_crosscut.json').write_text(json.dumps(report,indent=2))
     bpy.context.preferences.filepaths.save_version=0

@@ -135,138 +135,282 @@
     "arc-hold.png": {
       "source": "reports/pickaxe_crosscut/comparison_hold.png",
       "sha256": "dececd4fa42fd18a1520ba9e2ee4a202dc96b52602ff2aa931e53d5a8fb68406",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-load.png": {
       "source": "reports/pickaxe_crosscut/body_right_load.png",
       "sha256": "5db18d0fab4c27f0a4b419214cf861af3a1936a169fff3e75ec11229171dee74",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-contact.png": {
       "source": "reports/pickaxe_crosscut/body_contact.png",
       "sha256": "42b22ba7b77aa9eacfc64fceb503502c661551545023b36c78bd957aaf29f928",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-follow.png": {
       "source": "reports/pickaxe_crosscut/body_left_follow.png",
       "sha256": "39620e572198ca51fa91b5e3b2d76268fdf060e272df3cb02e532e864decdb37",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-return.png": {
       "source": "reports/pickaxe_crosscut/body_return.png",
       "sha256": "c8acb155d3071ad4251ead55b1316d5386239e809cf90106a6c6787ea7ef0109",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-walk.png": {
       "source": "reports/pickaxe_crosscut/comparison_walk.png",
       "sha256": "41a0a3cc87f97ea5e66333eecaa62283dd1731c24c5ccaf5c39a4df29b029f40",
-      "status": "Rotational arc candidate, awaiting user review",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "dimensions": [
         2560,
         820
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-current.png": {
       "source": "reports/pickaxe_crosscut/world_visual/current_hold.png",
       "sha256": "afd4c695f3979e530406b64d3383b962ec315a2c33da24227ee69a7b04983957",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-hold.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_hold.png",
       "sha256": "0d6097535f8b554e23e1d46c22ae4eaa9e041dd7bb7fea1eb6be3cc5360f8f03",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-load.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_load.png",
       "sha256": "9f7965ec43405cf265b5081a7d240b23e813e816bc2827227333bd97a0f96f8d",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-approach.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_approach.png",
       "sha256": "ffc7ead3be69dcff1bdaea39c62772b392aa836dd7b099ea0a4718918742961f",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-contact.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_contact.png",
       "sha256": "ac64410fa8fb8e970aa0bb2e27c5cdd4cb1bf285446fed262580630369f64f3d",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-follow.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_follow.png",
       "sha256": "2a874f6096d997de0ab1703aa5f9ff07d6506dc294b069df5c4be117b7635b06",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "arc-world-return.png": {
       "source": "reports/pickaxe_crosscut/world_visual/arc_return.png",
       "sha256": "7da3dfc7f0df06fd063964dd2528c3dd1defea8449253e30a1c930546b1b4e39",
-      "status": "Actual temporary world, candidate unapproved",
+      "status": "Fourth candidate rejected: end-on head and sideways middle-of-head strike",
       "seed": 1703,
       "fov": 75,
       "dimensions": [
         1920,
         1080
-      ]
+      ],
+      "source_revision": "13c87bca"
     },
     "rejected-v3-user-playtest.png": {
       "source": "User attachment codex-clipboard-04cdeb16-23d5-4cf8-913a-e6c5892824b7.png",
       "sha256": "d4506275845072281a5c12f396faa00aa1520ff722aef2e6c83accb72c1a845a",
       "status": "User rejected raised candidate bf81f85e",
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-hold.png": {
+      "source": "reports/pickaxe_crosscut/comparison_hold.png",
+      "sha256": "dded80a5006f192db347d63be3b57cef4bfe10ea3319b3b79861df0f2e9d906a",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-load.png": {
+      "source": "reports/pickaxe_crosscut/body_right_load.png",
+      "sha256": "03af836bd5c37478b0199227223f4b8cbe6dcddccf53e976fc0eb78c9e00fde1",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-contact.png": {
+      "source": "reports/pickaxe_crosscut/body_contact.png",
+      "sha256": "91a6cadea8cb1636a038df3b491b7b380501799d8f8cc29deab20c7eb37daf3c",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-follow.png": {
+      "source": "reports/pickaxe_crosscut/body_left_follow.png",
+      "sha256": "d09011ac582258db4545478c942c7e42bb3e701607dcb3087ccdabbeca83e636",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-return.png": {
+      "source": "reports/pickaxe_crosscut/body_return.png",
+      "sha256": "c6391f20bb6e2c61565f87b6cc620f0e991f9e7e023679dd08539fe39eef70bc",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-walk.png": {
+      "source": "reports/pickaxe_crosscut/comparison_walk.png",
+      "sha256": "459c4601d2134bdfcb6b08a77f404cf9124cb92a7644b1d5cdf7b2aa18f80496",
+      "status": "Tip-first forward-left candidate, awaiting user review",
+      "dimensions": [
+        2560,
+        820
+      ]
+    },
+    "tip-world-current.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/current_hold.png",
+      "sha256": "e3fef5f1b41b7d033ba5dd67c9e4c60932f9aa0ab0df8993ffa6807f0ee5563c",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-hold.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_hold.png",
+      "sha256": "7c79b1a26eb54ad20ec0f69164662da6341ef16fdbc8a639e6902e2be2389c0b",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-load.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_load.png",
+      "sha256": "84837d80786d7ff311bfa2e476702993a43a8993ef346b6301c58824d86329f6",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-approach.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_approach.png",
+      "sha256": "32be4b586afe018f4d01baffdc7cfaf95d2a43503d0423fd62afcfe0e720bfe0",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-contact.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_contact.png",
+      "sha256": "7e5f48b183c3f855c76cff64aedd64053673f3a68a6adbcf805624dfc9e08a36",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-follow.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_follow.png",
+      "sha256": "c5bf74f41ce458bf9ccc40dc7ad0796fa79c99e670faca83133ea23a0128911c",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
+      "dimensions": [
+        1920,
+        1080
+      ]
+    },
+    "tip-world-return.png": {
+      "source": "reports/pickaxe_crosscut/world_visual/arc_return.png",
+      "sha256": "c9c6a3f2bd58ae094430c8d43fa1d050690b7d2b986958d14924c67c788ccff7",
+      "status": "Actual temporary world, tip-first candidate unapproved",
+      "seed": 1703,
+      "fov": 75,
       "dimensions": [
         1920,
         1080
