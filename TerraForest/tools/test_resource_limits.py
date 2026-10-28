@@ -19,6 +19,7 @@ class ResourceLimitTests(unittest.TestCase):
         limits = load_budgets()
         self.assertEqual(limits['vram_limit_bytes'], 4 * 1024**3)
         self.assertEqual(limits['redistributable_limit_bytes'], 5_000_000_000)
+        self.assertEqual(limits['derived_cache_total_bytes'], 3 * 1024**3)
         self.assertEqual(evaluate()['vram']['status'], 'unavailable')
         for name, argument in [('vram', 'vram_bytes'), ('ram', 'private_bytes'), ('redistributable', 'distribution_bytes')]:
             self.assertEqual(evaluate(**{argument: limits[name + '_warning_bytes']})[name]['status'], 'warning')

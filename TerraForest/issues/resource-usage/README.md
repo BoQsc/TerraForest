@@ -3,6 +3,11 @@
 - Status: Implemented; scoped engineering checks, not user visual approval.
 - Updated: 2026-10-28. Builds on resource-budget checkpoint `3e8ae48e`.
 - Request: Inspect the sources of storage/memory usage from ESC and see limits.
+- Policy follow-up: user raised terrain-cache maintenance from 2 to 3 GiB on
+  2026-10-28. The shared policy updates Usage and maintenance together; original
+  screenshots/receipts below retain the earlier 2 GiB setting. Other limits stay unchanged.
+  Nine resource-policy unit tests and the focused installed-pack policy/Usage-label
+  check pass; logs: `reports/cache_policy_3gib/{unit,export,packed}.log`.
 
 ## Changes and verification
 

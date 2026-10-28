@@ -6,8 +6,10 @@
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
 Cleanup recovered 53.3 GiB net, leaving 54.2 GiB free; the 100 GB goal is not met.
-The 2 GiB recognized-cache quota, 423 MB content and current walking-memory gates
+The original 2 GiB recognized-cache quota, 423 MB content and walking-memory gates
 pass. World data/history/evidence remain intact. [Resource evidence](resource-budget-evidence.json).
+The user raised the provisional terrain-cache quota to 3 GiB on 2026-10-28;
+historical receipts are unchanged. Other resource thresholds stay the same.
 RAM thresholds remain provisional and physical 4 GiB hardware remains unqualified.
 
 ## Changes

@@ -9,7 +9,7 @@ has been qualified. No visual quality, world density or draw distance is reduced
 | Dedicated GPU allocation for the game process | 3.5 GiB | 4 GiB target |
 | Process private committed RAM | 4 GiB | 6 GiB, provisional |
 | Redistributable game content and bundled libraries | 4 GB | 5 GB |
-| Recognized rebuildable terrain cache, all game-data cache roots | — | 2 GiB maintenance quota |
+| Recognized rebuildable terrain cache, all game-data cache roots | — | 3 GiB maintenance quota, provisional |
 | Registered failed-check cache data | — | 1 GiB retention quota |
 | Saved worlds, backups and associated data | 10 GiB total | Warning only; never auto-delete or refuse a player save |
 | Successful unique temporary-check cache | — | Remove after the check completes |
@@ -20,6 +20,10 @@ does not include developer Git history, source, compiler/import caches, reports,
 player worlds or world backups. The current installed pack/libraries are far
 smaller than the development directories. Those directory sizes must not be
 presented as the game's install requirement.
+
+The user increased the terrain-cache quota from 2 to 3 GiB on 2026-10-28.
+This is a provisional storage policy, not a benchmark-derived optimum. Earlier
+cleanup receipts and Usage screenshots retain their original 2 GiB setting.
 
 ## Enforcement and interpretation
 
@@ -71,7 +75,7 @@ worlds. Git history and diagnostic images serve different purposes and are kept.
 
 The 2026-10-28 cleanup recovered approximately **53.3 GiB net**, leaving **54.2 GiB
 free**, not the requested 100 GB. The final read-only check finds 2,147,458,129
-recognized cache bytes, below the 2 GiB quota. One invalid 1,041-byte packet was
+recognized cache bytes, below the then-2 GiB quota. One invalid 1,041-byte packet was
 retained rather than deleting unknown data. All 11.37 GiB of world-associated data
 remains, with a warning only. Git, reports/review evidence, compiler/editor caches
 and system/app history remain intact. Compiler-cache removal was declined by the

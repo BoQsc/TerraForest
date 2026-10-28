@@ -15,15 +15,17 @@ warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record
 process RAM/GPU counters, fail observed budget violations and stop new work below
 a 10 GiB disk reserve. Successful unique test caches are removed; registered
 failed caches have a 1 GiB quota without discarding logs/images/saves.
-Offline, leased and digest-verified maintenance targets 2 GiB of recognized
+Offline, leased and digest-verified maintenance targets 3 GiB of recognized
 terrain cache across roots. [Policy, commands and limits](RESOURCE_BUDGETS.md).
+The user raised this provisional storage quota from 2 to 3 GiB on 2026-10-28;
+historical receipts/screenshots keep their original setting. Other limits are unchanged.
 Current installed-pack walking checks pass with complete telemetry: observed
 peaks 3.94 GiB private RAM / 1.65 GiB GPU; content is 423 MB. The profiler now
 preserves its launcher-owned cache argument instead of replacing it when loading
 the disposable snapshot. Real cache isolation/automatic cleanup also pass.
 Offline cleanup recovered approximately 53.3 GiB net; free space is 54.2 GiB.
 The final read-only content/cache/reserve gate passes, with recognized cache below
-2 GiB; one invalid packet remains. All world-associated bytes remain unchanged.
+the then-2 GiB quota; one invalid packet remains. All world-associated bytes remain unchanged.
 The requested 100 GB free-space goal is **not achieved**: further recovery needs
 a separate approved cleanup/archive decision outside these verified caches.
 [Receipts and scoped measurements](../issues/runtime-performance/resource-budget-evidence.json).
