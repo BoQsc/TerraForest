@@ -1,6 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## City architecture proposals — 2026-10-28
+
+Six additional review-only native prefabs: S1 warehouse, P1 police station, H1
+medical centre, R1 pharmaceutical research, F1 factory and four-storey A3 apartments.
+Offline recipes, baked cells/models, working doors, stairs, balconies, smooth modular
+industrial roofs and a signed per-floor viewer are implemented. Existing approved
+houses, saved worlds, town clustering and the packaged game are unchanged.
+[Images, engineering evidence and approval checklist](../issues/city-buildings/README.md).
+
+Remaining: individual user approval before generation integration. After approval,
+add terrain-fitting lots, appropriate district roles, street/vehicle access and
+bounded native streaming/LOD; verify exact approved resources in a populated world.
+The isolated flat review stage does not qualify city terrain fit and does not fix
+the rejected northern single-pad district. Specialized furniture, kitchens/bathrooms,
+functional services, loot balance, garage shutters and roof access remain separate
+work, not completed gameplay. Return on approval; require real-world screenshots,
+street-to-interior/NPC/vehicle routes, save/reload and performance evidence.
+
 ## Natural world map and woodland preset — 2026-10-28
 
 Follow-up: normal loading now prepares cached layers before first M; coastal water

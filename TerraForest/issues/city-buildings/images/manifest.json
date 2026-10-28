@@ -1,0 +1,115 @@
+{
+  "captured_utc": "2026-10-28",
+  "base_commit": "9872f8dd",
+  "source_kind": "unaltered Godot viewport PNG; isolated architecture stage, no world save",
+  "settings": "1920x1080; existing native materials and LOD; directional shadows; SSAO; filmic; see viewer.gd",
+  "render_report": "reports/checks/20261028T143542520020Z/run.json",
+  "candidate_hashes": {
+    "reviews/city_buildings/baked/apartments_a3.tres": "62e203756f9ff5f121806b6d55a13cc9b882c70895d77a3f94bdf3680299fc26",
+    "reviews/city_buildings/baked/factory_f1.tres": "bfda8bf7b6ab34fa80b9f726c5d797fa8f3f57db75720352bfc4835da633ad7d",
+    "reviews/city_buildings/baked/medical_h1.tres": "f6aedf45f53ed369b7e392b6350917f709d4048e067046ace4a5a53fe73cc4c0",
+    "reviews/city_buildings/baked/police_p1.tres": "513f8ea548fe41a1aae73ec3abff7f48e6897da30b09e6715a6ccb0dda710649",
+    "reviews/city_buildings/baked/research_r1.tres": "58d16865d0f1a0fa58fa67cec0f404fcbae9980f40e5c5257a11cfa4bb22b8fe",
+    "reviews/city_buildings/baked/storage_s1.tres": "061fec00beec1fea15ab4f6d15f44cc5a14c1a5d90b493824beb9108eebce687",
+    "reviews/city_buildings/recipes.gd": "086ee82b55ffa0f8e2eaa1646fd0e7b7a2a86255353f9e567da0b3d897e33321",
+    "reviews/city_buildings/viewer.gd": "a380d51ebbbdc7b91fc5169731d7ea98b09ea5aba735ad57747d26d03d049652"
+  },
+  "images": [
+{
+    "file": "rejected_factory_valley.png",
+    "source": "reports/city_buildings_r1_final_images/factory_f1_3.png",
+    "sha256": "9afdde27a502c5b75949e3e4c089b6962816590174c94abe36a2364a982aaa02",
+    "status": "rejected internal draft; overlapping gables leave open valley"
+},
+    {
+      "file": "apartments_a3_0.png",
+      "source": "reports/city_buildings_r1_release_images/apartments_a3_0.png",
+      "sha256": "f2679e27807cbe8357901fec4801fd6ab564f097985184efb52fa70ec8d9b500",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "apartments_a3_2.png",
+      "source": "reports/city_buildings_r1_release_images/apartments_a3_2.png",
+      "sha256": "d28a4fec7c77eafbb24160f9228655a917fa4fbfaed74507dfa49f7337794b5a",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "apartments_a3_floor_4.png",
+      "source": "reports/city_buildings_r1_release_images/apartments_a3_floor_4.png",
+      "sha256": "86835d84f117d1069fc012ec70742f842dde28dccf4b86b37a2e411b91316582",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "factory_f1_0.png",
+      "source": "reports/city_buildings_r1_release_images/factory_f1_0.png",
+      "sha256": "30072ce8b837b516617dbb9e471e8ecff5cf06779e0b16da79f1482127b49d26",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "factory_f1_2.png",
+      "source": "reports/city_buildings_r1_release_images/factory_f1_2.png",
+      "sha256": "aa1eec5f9234f3e69c60b641d568d5cbbaac3a21e9b35e2cfd44d4b0e08a7a60",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "factory_f1_3.png",
+      "source": "reports/city_buildings_r1_release_images/factory_f1_3.png",
+      "sha256": "545c9ac47ea5272d355d9c82dbb46991a38c0952ebafa425d881219ecfc55e67",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "medical_h1_0.png",
+      "source": "reports/city_buildings_r1_release_images/medical_h1_0.png",
+      "sha256": "51b7769e52921966e87c2935553299477bc92a7f1a72be59143cd10cb0e05169",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "medical_h1_2.png",
+      "source": "reports/city_buildings_r1_release_images/medical_h1_2.png",
+      "sha256": "9eeb000f9832a985a3359efdf02f6a26ba60311adca69dd12635349996a27cd0",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "police_p1_0.png",
+      "source": "reports/city_buildings_r1_release_images/police_p1_0.png",
+      "sha256": "638593d5f718f0d6ccfeff9695e133b90a499427a4db3e3228a5a56a0775f5ab",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "police_p1_2.png",
+      "source": "reports/city_buildings_r1_release_images/police_p1_2.png",
+      "sha256": "2a78d26242bcbb121379320d8822e5a0646f0e4a1acf31b396bd32c1027feb40",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "rejected_police_floor_gaps.png",
+      "source": "reports/city_buildings_r1_images/police_p1_0.png",
+      "sha256": "f7b6cd31f803997d8349fb7f493f9629a99d2abbddf5dc258b1e647941417337",
+      "status": "rejected internal draft; facade gaps"
+    },
+    {
+      "file": "research_r1_0.png",
+      "source": "reports/city_buildings_r1_release_images/research_r1_0.png",
+      "sha256": "8a73067a7c0fcbd4e193f5a1c2901d4a32ce1b2c93c8044d6ee45a9c2d8c1e04",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "research_r1_2.png",
+      "source": "reports/city_buildings_r1_release_images/research_r1_2.png",
+      "sha256": "44a408b95dc18389052906760306a4bb335d532e8b767130aa56789976084b07",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "storage_s1_0.png",
+      "source": "reports/city_buildings_r1_release_images/storage_s1_0.png",
+      "sha256": "f66732a90a3eb2da05f7058d238e15a84b626e4180e608215e7d8d6a15397226",
+      "status": "R1 proposal; user approval pending"
+    },
+    {
+      "file": "storage_s1_2.png",
+      "source": "reports/city_buildings_r1_release_images/storage_s1_2.png",
+      "sha256": "b94cc0d772fd74580c04b00e0d777f9a34ba0ec2b5228932916674933cb78159",
+      "status": "R1 proposal; user approval pending"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [City building proposals](city-buildings/README.md) | Review-ready / approval pending | Six native block designs: warehouse, police, medical, research, factory and apartments; isolated architecture/route checks, not yet added to generation |
 | [Building geometry LOD](building-lod/README.md) | Installed / scoped checks | Default-on native cached LOD; 24-house moving-camera comparisons, all 18 shapes, edits and collision checked; streaming-boundary transitions and player review remain open |
 | [Natural world-map presentation](natural-world-map/README.md) | Improved-partial / scoped checks | Cached water ready before first M; 1024² terrain, asphalt-first material ownership and unpainted shoulders; optional annotations; clustering/saves unchanged; finite zoom detail and shoulder geometry remain reviewable |
 | [World generator UI and city layouts](world-generator/README.md) | Installed / scoped verification | Twelve distributed lakes, four-quadrant districts and longer connections; native routing/map/water allocation improved; largest inland fit and world-quality review remain open |
