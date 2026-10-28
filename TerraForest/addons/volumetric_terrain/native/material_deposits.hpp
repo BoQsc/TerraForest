@@ -57,6 +57,10 @@ inline godot::Dictionary plan_material_deposits(const World &world,const godot::
      low=mn(low,sample);high=mx(high,sample);
     }
     if(high-low>.3f||world.ore_weight(center,surface)*(vein.material==8?1.f:-1.f)<.99f)continue;
+    for(float height=center.y;height<surface-.25f;height+=.5f){
+     if(world.base({center.x,height,center.z},surface)>=0){blocked=true;break;}
+    }
+    if(blocked)continue;
     uint32_t identity=1+uint32_t(cell_x+cell_z*63+level*63*63)*2+uint32_t(vein.material-8);
     Basis basis(Vector3(0,1,0),float(choice&65535)/65535.f*6.283185307f);
     basis=basis.scaled(Vector3(3.3f,3.8f,3.5f));

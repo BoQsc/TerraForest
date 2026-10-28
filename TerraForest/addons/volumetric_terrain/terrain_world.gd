@@ -256,6 +256,13 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 				cap_rise=0.25*(distance+width+shoulder)
 			safe_lo=safe_lo.min(a.min(b)-Vector3(width+shoulder+5,depth+cap_rise+5,width+shoulder+5))
 			safe_hi=safe_hi.max(a.max(b)+Vector3(width+shoulder+5,clearance+cap_rise+5,width+shoulder+5))
+		elif kind==41 and packet.size()==44:
+			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
+			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
+			var radius:float=packet.decode_float(28)
+			if not a.is_finite() or not b.is_finite() or not is_finite(radius) or radius<.5 or radius>2 or a.y<b.y or a.y-b.y>40 or b.y<4 or a.y>250 or absf(a.x-b.x)>.001 or absf(a.z-b.z)>.001 or a.x<8 or a.x>1992 or a.z<8 or a.z>1992 or packet.decode_u32(32)!=4 or packet.decode_u32(36)!=1 or packet.decode_u32(40) not in [8,9]:return false
+			safe_lo=safe_lo.min(a.min(b)-Vector3.ONE*(radius+5))
+			safe_hi=safe_hi.max(a.max(b)+Vector3.ONE*(radius+5))
 		elif kind in [3,38] and packet.size() == 20:
 			var cell := Vector3i(packet.decode_s32(4), packet.decode_s32(8), packet.decode_s32(12))
 			var material:int=packet.decode_u32(16)

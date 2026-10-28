@@ -350,7 +350,7 @@ public:
         for(int64_t i=0;i<packets.size();++i){
             if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
             godot::PackedByteArray packet=packets[i];total+=packet.size();
-            if(packet.size()<44||packet.size()>1080||packet.decode_u32(0)!=28||total>4*1024*1024)return result;
+            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)||total>4*1024*1024)return result;
             commands.push_back(packet);
         }
         std::lock_guard<std::mutex> lock(mutex_);
@@ -385,7 +385,7 @@ public:
         for(int64_t i=0;i<packets.size();++i){
             if(packets[i].get_type()!=godot::Variant::PACKED_BYTE_ARRAY)return result;
             godot::PackedByteArray packet=packets[i];total+=packet.size();
-            if(packet.size()<44||packet.size()>1080||packet.decode_u32(0)!=28||total>4*1024*1024)return result;
+            if(packet.size()<44||packet.size()>1080||(packet.decode_u32(0)!=28&&packet.decode_u32(0)!=41)||total>4*1024*1024)return result;
             commands.push_back(packet);
         }
         std::lock_guard<std::mutex> lock(mutex_);

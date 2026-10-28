@@ -2,7 +2,7 @@
 extends RefCounted
 # Shared preview/bake orchestration. All field, road and lot searches are native.
 # Derived plans contain plain values; prefab Resources are reconstructed from recipes.
-const VERSION:=8
+const VERSION:=9
 const CACHE_BYTES:=64*1024*1024
 const CACHE_ENTRIES:=32
 const LIMIT:=8*1024*1024
@@ -162,7 +162,7 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  if cached.get("hit",false):terrain.pixels=cached.pixels
  else:
   if not Codec.reply_ok(core.execute(Codec.command(6,[seed_value,generator]))):return {"ok":false,"reason":"Preview terrain initialization failed"}
-  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(plan.works.segments)
+  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(plan.works.segments,plan.get("material_deposits",[]))
   if not core.bake_generated_earthworks(packets).get("ok",false):return {"ok":false,"reason":"Preview earthworks unavailable"}
   var water:=water_preview(core,generator)
   if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}

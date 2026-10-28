@@ -25,16 +25,27 @@ func run()->void:
  check(off.get("works",{})==on.works,"deposit option cannot change existing roads or earthworks")
  var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[1703,23]))
  var original_core=ClassDB.instantiate("TerrainCore");original_core.execute(Codec.command(6,[1703,23]))
- var baked:Dictionary=core.bake_generated_earthworks(preload("res://addons/world_runtime/generation_earthworks.gd").packets(on.works.segments))
+ var baked:Dictionary=core.bake_generated_earthworks(preload("res://addons/world_runtime/generation_earthworks.gd").packets(on.works.segments,on.material_deposits))
  var supports:bool=baked.get("ok",false);var veins:=true
  for deposit:Dictionary in on.material_deposits:
   var original:Vector3=deposit.position
   var query:=Codec.point_command(original);var reply:PackedByteArray=core.execute(query)
-  supports=supports and reply==original_core.execute(query) and absf(reply.decode_float(12)-original.y)<.001
+  supports=supports and absf(reply.decode_float(12)-original_core.execute(query).decode_float(12))<.001 and absf(reply.decode_float(12)-original.y)<.001
   query=Codec.point_command((deposit.start+deposit.finish)*.5);query.encode_u32(0,26);reply=core.execute(query)
   veins=veins and reply.decode_u32(12)==deposit.material and reply.decode_float(16)<0
+  for depth in range(1,floori(original.y-(deposit.start.y+deposit.finish.y)*.5)+1):
+   query=Codec.point_command(original-Vector3.UP*depth);query.encode_u32(0,26);reply=core.execute(query)
+   veins=veins and reply.decode_u32(12)==deposit.material and reply.decode_float(16)<0
  check(supports,"actual generated roads/foundations leave every mineral stone supported at its planned surface")
  check(veins,"actual generated earthworks preserve the matching buried material under every stone")
+ var staged=ClassDB.instantiate("TerrainCore");staged.execute(Codec.command(6,[1703,23]))
+ var staged_result:Dictionary=staged.bake_generated_earthworks_staged(preload("res://addons/world_runtime/generation_earthworks.gd").packets(on.works.segments,on.material_deposits),ProjectSettings.globalize_path(folder+"_staged"),256,32)
+ var durable:bool=staged_result.get("ok",false)
+ print("STAGED_MINERALS ",staged_result)
+ for deposit:Dictionary in on.material_deposits:
+  var query:=Codec.point_command(deposit.position-Vector3.UP*2);query.encode_u32(0,26)
+  durable=durable and staged.execute(query)==core.execute(query)
+ check(durable,"production regional staging preserves mineral stems through bounded residency and durable checkpoints")
  var blank:=PackedByteArray();blank.resize(256*256*4);blank.fill(100)
  var preview:PackedByteArray=preload("res://addons/world_runtime/material_deposits.gd").preview_pixels(blank,on.material_deposits)
  check(preview.size()==blank.size() and preview!=blank and preload("res://addons/world_runtime/material_deposits.gd").preview_pixels(blank,[])==blank,"generation preview shows deposits only when enabled")

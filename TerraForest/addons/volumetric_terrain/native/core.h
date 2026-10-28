@@ -7,8 +7,8 @@ constexpr int MAX_AUTHORED_PAGES=WORLD_PAGE_COLUMNS*WORLD_PAGE_COLUMNS*17;
 constexpr float SDF_BAND=4.f, SDF_SCALE=1024.f;
 constexpr u32 SAVE_MAGIC=0x32575254u, MESH_MAGIC=0x324d5254u, REPLY_MAGIC=0x32505254u;
 constexpr int EDIT_REPLY_CAPACITY=128; // Complete edit receipt, reserved before mutation.
-inline bool fixed_edit_reply(u32 command){return command==2||command==3||command==28||command==38;}
-inline int fixed_edit_reply_size(u32 command){return command==2?116:(command==3?20:((command==28||command==38)?52:0));}
+inline bool fixed_edit_reply(u32 command){return command==2||command==3||command==28||command==38||command==41;}
+inline int fixed_edit_reply_size(u32 command){return command==2?116:(command==3?20:((command==28||command==38||command==41)?52:0));}
 // Identity of the immutable base field (height, caves and generated materials).
 // Legacy format-1 worlds use generator 1. New generators must keep that reader.
 constexpr u32 MATERIAL_FIELD_GENERATOR_ID=5; // Empty base for independently editable material channels.

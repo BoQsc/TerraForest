@@ -129,9 +129,9 @@ func run()->void:
  if not qualification:game.terrain.diagnostics_pause_streaming=true
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
-  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments)
+  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments,prepared.get("material_deposits",[]))
   if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest,not qualification):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
-  progress("Baking roads and foundations before terrain loading")
+  progress("Baking roads, foundations and connected mineral veins before terrain loading")
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not qualification:
   game.set_process_input(false);game.set_process_unhandled_input(false);game.set_process_unhandled_key_input(false);game.set_process_shortcut_input(false)
@@ -209,7 +209,7 @@ func run()->void:
  var last_progress_ms:=0
  if offline_grading:
   completed_edits=int(game.terrain.backend.initial_earthworks_result.get("completed",0))
-  if completed_edits!=works.segments.size():print("OFFLINE_GRADING_INCOMPLETE");game.free();quit(1);return
+  if completed_edits!=works.segments.size()+prepared.get("material_deposits",[]).size():print("OFFLINE_GRADING_INCOMPLETE");game.free();quit(1);return
   FileAccess.open(output_dir.path_join("earthworks_bake.json"),FileAccess.WRITE).store_string(JSON.stringify(game.terrain.backend.initial_earthworks_result))
  else:
   progress("Grading roads and foundations",0,works.segments.size())
@@ -224,6 +224,11 @@ func run()->void:
     await process_frame
    if runner.status!="complete":print("PREPARATION_FAILED ",runner.status," ",runner.reason);quit(1);return
    completed_edits+=runner.completed
+ if not offline_grading:
+  var mineral_packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets([],prepared.get("material_deposits",[]))
+  for packet:PackedByteArray in mineral_packets:
+   if not game.terrain.edit(packet,Vector3.ZERO,Vector3.ZERO) or not await wait_until(func():return not game.terrain.pending_edit,60):
+    print("MINERAL_CONNECTION_BAKE_FAILED");game.free();quit(1);return
  game.structure_mode=true;game.structure_rotation=0
  var all_lots:Array=[]
  for site:Dictionary in sites:all_lots.append_array(site.get("lots",[]))

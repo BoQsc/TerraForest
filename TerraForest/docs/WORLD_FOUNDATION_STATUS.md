@@ -19,7 +19,9 @@ Deferred separately at the user's direction while finishing the approved C1 addi
 resume after its verified integration commit. None is resolved by that house work.
 - Mouse: click-to-play capture implemented; 13 headless checks pass. No automatic
   loading/focus recapture. [Desktop review remains](../issues/mouse-capture/README.md).
-- Ore: verify every surface marker has a continuous mineable vein directly below it.
+- Ore: native generation now bakes continuous matching material below every marker;
+  eight seed/profile cases and generated earthworks pass. Existing saves unchanged.
+  [Verification and review limits](../issues/material-veins/README.md).
 - POI/house placement: improve terrain fit; require generated-site images and access checks.
 - Corpses: fix death vibration and easy walk-over; reproduce and test both together.
 

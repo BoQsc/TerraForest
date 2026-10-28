@@ -40,13 +40,41 @@ func run()->void:
    var exclusion:Dictionary={"start":first.position-Vector3(3,0,0),"finish":first.position+Vector3(3,0,0),"half_width":12.0,"shoulder":8.0}
    var excluded:Dictionary=core.plan_material_deposits([exclusion])
    check(excluded.ok and not excluded.deposits.any(func(deposit):return deposit.id==first.id),"road and construction earthworks exclude surface stones")
+   var samples:Dictionary={}
+   for deposit:Dictionary in result.deposits:
+    var center:Vector3=(deposit.start+deposit.finish)*.5
+    for height in range(ceili(center.y),floori(deposit.position.y)+1):
+     var sample:=Vector3(deposit.position.x,height,deposit.position.z)
+     samples[sample]=core.execute(Codec.point_command(sample)).decode_float(16)
+   var baked:Dictionary=core.bake_generated_earthworks(preload("res://addons/world_runtime/generation_earthworks.gd").packets([],result.deposits))
+   profiles[-1]["bake_ms"]=baked.get("worker_ms",0)
+   profiles[-1]["pages"]=core.execute(Codec.command(0)).decode_u32(20)
+   check(baked.get("ok",false) and baked.completed==result.deposits.size(),"native material-only bake connects every marker without additional density geometry")
+   var continuous:=true;var density_unchanged:=true
+   for deposit:Dictionary in result.deposits:
+    var center:Vector3=(deposit.start+deposit.finish)*.5
+    for height in range(ceili(center.y),floori(deposit.position.y)+1):
+     var sample:=Vector3(deposit.position.x,height,deposit.position.z)
+     var query:=Codec.point_command(sample);query.encode_u32(0,26)
+     var reply:PackedByteArray=core.execute(query)
+     var valid:bool=reply.decode_u32(12)==deposit.material and reply.decode_float(16)<0
+     valid=valid or (height==floori(deposit.position.y) and float(samples[sample])>=0 and reply.decode_float(16)>=0)
+     continuous=continuous and valid
+     density_unchanged=density_unchanged and absf(reply.decode_float(16)-float(samples[sample]))<=.001
+   check(continuous,"all solid samples from the surface down every marker column contain matching ore; boundary air stays air")
+   check(density_unchanged,"ore connection does not fill caves, change hills or alter surface height")
  check(not core.plan_material_deposits([{"start":Vector3.ZERO}]).get("ok",true),"incomplete exclusion fails safely")
  check(not core.plan_material_deposits([{"start":Vector3.ZERO,"finish":Vector3.ONE,"half_width":NAN,"shoulder":0.0}]).get("ok",true),"nonfinite exclusion fails safely")
+ var unchanged:PackedByteArray=core.execute(Codec.command(4))
+ var malformed:=Codec.brush(Vector3(100,30,100),Vector3(100,20,100),NAN,4,true,8);malformed.encode_u32(0,41)
+ check(not Codec.reply_ok(core.execute(malformed)) and core.execute(Codec.command(4))==unchanged,"invalid mineral connector leaves the entire terrain unchanged")
  core.execute(Codec.command(6,[1703,23]))
  var deposit:Dictionary=core.plan_material_deposits([]).deposits[0]
- var point:Vector3=(deposit.start+deposit.finish)*.5
+ core.bake_generated_earthworks(preload("res://addons/world_runtime/generation_earthworks.gd").packets([],[deposit]))
+ var point:Vector3=deposit.position-Vector3.UP*2
  var receipt:PackedByteArray=core.execute(Codec.brush(point,point,1.8,0,false,0))
  check(Codec.reply_ok(receipt) and receipt.decode_u32(16)>0,"real vein can be mined through ordinary terrain edits")
+ check(Codec.excavation_samples(receipt)[deposit.material]>0,"digging immediately below the marker yields its material")
  check(core.execute(Codec.point_command(point)).decode_float(16)>0,"mining removes authoritative ore density")
  var snapshot:=Codec.command(5);snapshot.append_array(core.execute(Codec.command(4)).slice(12))
  var restored=ClassDB.instantiate("TerrainCore")

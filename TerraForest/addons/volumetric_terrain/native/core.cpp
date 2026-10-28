@@ -569,6 +569,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    int py=y>>4;if(py!=lastpy){key=page_key(x>>4,py,z>>4);idx=pages_by_key.get(key);int virtual_page=idx<0?planned.get(key):-1;present=idx>=0||virtual_page>=0;reference=idx>=0?idx:-1-virtual_page;lastpy=py;}
    int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;if(idx<0&&present)old=float(quant(old))/SDF_SCALE;
    float value=add?mn(old,brush):mx(old,-brush);
+   if(shape==4)value=old;
    if(shape==2&&clearance>0)value=mx(value,-cut);
    if(y<=3)value=old; // Preserve the bottom solid slab; excavation cannot open the world underside.
    // Bedrock and exterior remain outside the writable field.
@@ -577,6 +578,10 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
    bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
+   if(shape==4){
+    if(brush>0||q>=0||y<=3)continue;
+    repaint=(idx<0?base_material(p,h):pages[idx].mat[j])!=material;
+   }
    if(paid_sample&&previous<0)continue; // Never repaint or deepen existing solid resources.
    if(q==previous&&!repaint)continue;
    if(!present){
@@ -1400,6 +1405,12 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.revision);out.u(found==1?1:0);out.vec({float(selected[0]),float(selected[1]),float(selected[2])});
   for(int coordinate:origin)out.u(u32(coordinate));
   for(u32 bits:empty)out.u(bits);
+ }
+ else if(cmd==41){
+  V3 a=r.vec(),b=r.vec();float radius=r.f();u32 shape=r.u(),add=r.u(),material=r.u();
+  if(!r.good||n!=44||shape!=4||add!=1||(material!=8&&material!=9)||!(radius>=.5f&&radius<=2.f&&a.y>=b.y&&a.y-b.y<=40.f&&b.y>=4&&a.y<=250&&ab(a.x-b.x)<.001f&&ab(a.z-b.z)<.001f&&a.x>=8&&a.z>=8&&a.x<=WORLD-8&&a.z<=WORLD-8)){out.p[8]=1;return;}
+  V3 lo,hi;int changes;bool ok=w.edit(a,b,radius,4,true,u8(material),lo,hi,changes);
+  if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);

@@ -1,5 +1,24 @@
 # Discoverable material veins
 
+## Surface continuity — 2026-10-28
+
+- Previous stones indicated a deep vein midpoint, leaving ordinary rock above it.
+- New generation bakes a 1.6 m radius matching-material stem directly beneath
+  each stone to its vein. Native material-only edits preserve density, caves and
+  terrain height, use existing binary pages and run before mesh publication.
+- Four seeds, inland/coastal profiles: all solid column samples, immediate mining
+  rewards and save/reload checked. Production planned earthworks retain every stem.
+  Evidence: `reports/checks/20261028T071327111882Z/` and `20261028T071328385017Z/`.
+- Final source checks: 95/95; full production plan plus durable regional staging
+  passes with a 256-page resident bound (`20261028T071746184151Z`). Per-profile
+  connector baking took 23–68 ms on this machine, with 108–308 authored pages.
+- Retained failures: two air-boundary samples must stay air, not become filled ore;
+  the corrected check verifies every solid sample. A 64-page whole-world fixture
+  rejected an indivisible road command before reaching connectors; production's
+  limit is unchanged, and the 256-page fixture proves bounded staged persistence.
+- Existing player saves are not silently repainted. Appearance/player review of
+  exposed stems and the broader ore distribution/balance remain separate.
+
 - Status: Implemented; scoped source/package checks pass.
 - Updated: 2026-10-26. User appearance/balance review: pending.
 - Request: find buried materials through durable, material-textured surface stones and world-map markers; default-on generation option.
