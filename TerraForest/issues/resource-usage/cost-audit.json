@@ -1,0 +1,206 @@
+{
+  "date": "2026-10-28",
+  "revision": "de4cd641",
+  "scope": "Isolated rendered Usage page; no 3D world, no mouse capture. Process deltas are not whole-game FPS qualification.",
+  "hardware": {
+    "gpu": "NVIDIA RTX 4050 Laptop",
+    "logical_processors": 12,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "frame_cap": 60
+  },
+  "pack_sha256": "96c4ab6af3f3b909f9b2082153c5c410ee8a83689afcea7f805d42c125eb0248",
+  "source_sha256": {
+    "addons/player_runtime/usage_panel.gd": "3fcaca8f9e94a292f90bae26dffbb9f5e403b1332704071171e7e021ac3b804c",
+    "addons/world_runtime/native/resource_usage.cpp": "d110ee1d374e2852e22be45cb584ea65724c2b2f69210ad388b0dda8bc1090ee"
+  },
+  "raw_reports": [
+    "reports/usage_cost/ui.json",
+    "reports/usage_cost/process.json",
+    "reports/usage_cost/empty_directory_sample.json",
+    "reports/usage_cost/profile.gd"
+  ],
+  "complete": true,
+  "entries": 650965,
+  "first_activation_us": 64811,
+  "live_refresh_us": {
+    "count": 74,
+    "max": 62835,
+    "mean": 1130.27027027027,
+    "median": 190,
+    "p95": 462
+  },
+  "scan_poll_refresh_us": {
+    "count": 282,
+    "max": 395,
+    "mean": 118.464539007092,
+    "median": 108,
+    "p95": 150
+  },
+  "row_observations_ms": {
+    "build": {
+      "complete_seen_ms": 66554.288,
+      "first_seen_ms": 66287.625
+    },
+    "cache": {
+      "complete_seen_ms": 65754.304,
+      "first_seen_ms": 5263.185
+    },
+    "content": {
+      "complete_seen_ms": 213.397,
+      "first_seen_ms": 213.397
+    },
+    "history": {
+      "complete_seen_ms": 66670.93,
+      "first_seen_ms": 66554.288
+    },
+    "imports": {
+      "complete_seen_ms": 66554.288,
+      "first_seen_ms": 66554.288
+    },
+    "logs": {
+      "complete_seen_ms": 65754.304,
+      "first_seen_ms": 65754.304
+    },
+    "reports": {
+      "complete_seen_ms": 66287.625,
+      "first_seen_ms": 65754.304
+    },
+    "worlds": {
+      "complete_seen_ms": 5263.185,
+      "first_seen_ms": 213.397
+    }
+  },
+  "process_phase_summary": {
+    "closed": {
+      "samples": 23,
+      "interval_seconds": 5.767411699984223,
+      "cpu_machine_percent": 0.6321437627460004,
+      "cpu_one_core_percent": 7.585725152952005,
+      "private_median_bytes": 718618624,
+      "private_max_bytes": 718618624,
+      "resident_median_bytes": 528556032,
+      "gpu_median_bytes": 180547584,
+      "io_delta": {
+        "read_ops": 0,
+        "write_ops": 0,
+        "other_ops": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "other_bytes": 0
+      }
+    },
+    "scanning": {
+      "samples": 265,
+      "interval_seconds": 66.49711679993197,
+      "cpu_machine_percent": 5.051910761946655,
+      "cpu_one_core_percent": 60.622929143359855,
+      "private_median_bytes": 834662400,
+      "private_max_bytes": 834838528,
+      "resident_median_bytes": 616861696,
+      "gpu_median_bytes": 214315008,
+      "io_delta": {
+        "read_ops": 40,
+        "write_ops": 0,
+        "other_ops": 2274250,
+        "read_bytes": 1622,
+        "write_bytes": 0,
+        "other_bytes": 184010100
+      }
+    },
+    "open_idle": {
+      "samples": 30,
+      "interval_seconds": 7.531940900022164,
+      "cpu_machine_percent": 0.8989493442936348,
+      "cpu_one_core_percent": 10.787392131523617,
+      "private_median_bytes": 834801664.0,
+      "private_max_bytes": 834801664,
+      "resident_median_bytes": 617144320.0,
+      "gpu_median_bytes": 214315008.0,
+      "io_delta": {
+        "read_ops": 0,
+        "write_ops": 0,
+        "other_ops": 21,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "other_bytes": 168
+      }
+    },
+    "closed_again": {
+      "samples": 25,
+      "interval_seconds": 6.271615799982101,
+      "cpu_machine_percent": 0.7681765731483557,
+      "cpu_one_core_percent": 9.218118877780269,
+      "private_median_bytes": 834801664,
+      "private_max_bytes": 834801664,
+      "resident_median_bytes": 617168896,
+      "gpu_median_bytes": 214315008,
+      "io_delta": {
+        "read_ops": 0,
+        "write_ops": 6,
+        "other_ops": 47,
+        "read_bytes": 0,
+        "write_bytes": 5888,
+        "other_bytes": 668
+      }
+    }
+  },
+  "empty_geometry_leaf_sample": {
+    "cache_roots_considered": 8,
+    "leaf_directories": 2048,
+    "empty_leaf_directories": 2048,
+    "roots_sampled": [
+      {
+        "name": "approved_cottage_roof_747bc410fd4144708cf5e7f923f2bece",
+        "leaf_directories": 198
+      },
+      {
+        "name": "approved_cottage_roof_7650274c68664758a090917b77df9753",
+        "leaf_directories": 160
+      },
+      {
+        "name": "approved_cottage_roof_pack_20261025",
+        "leaf_directories": 160
+      },
+      {
+        "name": "approved_shop_pack_20261025",
+        "leaf_directories": 161
+      },
+      {
+        "name": "approved_shop_populated_20261025",
+        "leaf_directories": 599
+      },
+      {
+        "name": "approved_shop_walk_20261025",
+        "leaf_directories": 160
+      },
+      {
+        "name": "approved_shop_walk_readonly_20261025",
+        "leaf_directories": 408
+      },
+      {
+        "name": "approved_shop_wallclock_20261025",
+        "leaf_directories": 202
+      }
+    ],
+    "limit": 2048,
+    "read_only": true,
+    "elapsed_seconds": 0.40059860004112124
+  },
+  "limitations": [
+    "One isolated rendered page, not a matched real-world FPS or incremental-memory qualification",
+    "CPU percentages include the Godot renderer; subtract baseline for an approximate page-only cost",
+    "The empty-directory audit is a capped ordered sample of eight roots, not a census or random sample",
+    "Private/GPU increases include first UI/font/driver/PDH initialization; do not present them as measured net in-game overhead",
+    "Process Other I/O counters are logical OS operations, not physical disk throughput",
+    "No runtime behavior, deletion policy, saved worlds or cache files were changed by this audit"
+  ],
+  "recommendations_not_implemented": [
+    "Do not automatically start a full directory audit just to open Usage; retain snapshots and use an explicit refresh",
+    "Stop scan-status polling once a scan finishes",
+    "Consider identity-checked empty-cache-directory cleanup only as separately requested offline maintenance",
+    "Investigate first-sample initialization if removing the one-time opening hitch is requested"
+  ]
+}

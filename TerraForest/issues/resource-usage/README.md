@@ -44,6 +44,22 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
 
 ## Remaining / resume here
 
+- Cost audit: the automatic full scan is expensive; [measurements](cost-audit.json).
+  An isolated rendered-page test visits 650,965 entries in about 67 s, with about
+  60.5 s in cache roots. All 2,048 sampled geometry-leaf directories across eight
+  roots were empty; this is a capped sample, not a census. Earlier file-only cache
+  maintenance retains directory trees. No directories were deleted by this audit.
+- On the 12-logical-processor machine, the isolated process averages 5.05% total
+  CPU scanning, 0.90% with the page settled and 0.77% hidden afterward. Typical
+  live refresh is 190 µs once/sec; scan/status refresh 108 µs four times/sec, even
+  after completion. First activation costs 64.8 ms. The isolated first-use rise
+  is about 111 MiB private / 32 MiB dedicated GPU, including fonts, renderer and
+  counter initialization; these are not measured incremental full-game figures.
+- Recommended next scope, not implemented: explicit/manual full audits with
+  retained snapshots and no completed-scan polling. Separately investigate the
+  initial counter hitch and safe empty-directory maintenance if requested. Require
+  matched game-page CPU/I/O/memory and open/close responsiveness before claiming
+  in-game performance improvement. No runtime changes were requested in this audit.
 - User review: ESC → Usage, scroll down, and try the folder buttons in normal play.
 - Folder totals are snapshots of a changing filesystem, logical bytes rather than
   allocated disk space; linked targets are not included. Large cold directories

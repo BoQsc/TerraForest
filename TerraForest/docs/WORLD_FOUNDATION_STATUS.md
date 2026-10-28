@@ -10,6 +10,13 @@ new gameplay monitoring loop. [UI verification and screenshots](../issues/resour
 User review of the page remains pending; this visibility feature does not close
 the storage-recovery or hardware-qualification work below.
 
+Usage cost audit: automatic folder enumeration remains expensive (about 67 s,
+650,965 entries in the isolated test; cache roots dominate). Settled-page counters
+are much cheaper, but first activation has a measured 65 ms delay. No runtime
+behavior changed in this read-only investigation. [Scoped costs and recommended
+follow-up](../issues/resource-usage/README.md#remaining--resume-here); require a
+matched in-game comparison before claiming those costs are resolved.
+
 User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
 warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record
 process RAM/GPU counters, fail observed budget violations and stop new work below
