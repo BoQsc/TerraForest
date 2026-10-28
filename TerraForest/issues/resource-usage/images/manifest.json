@@ -24,29 +24,5 @@
     ],
     "offscreen": true,
     "cursor_captures": 0
-  },
-  "usage-no-scan-top.png": {
-    "source": "reports/usage_no_scan/usage-top.png",
-    "sha256": "9770137729665400f41f7c81037ec30cedbb2a907f627b9cabc997b10811eba5",
-    "baseline": "507631fb plus removal of Usage directory audits",
-    "pack_sha256": "89eeda43ca3131a3ccbd1e7469e537b59c4d2582c48f97c3aae01c925d9bfc59",
-    "status": "Installed-pack verification; no directory audits; user visual review pending",
-    "resolution": [
-      1920,
-      1080
-    ],
-    "cursor_captures": 0
-  },
-  "usage-no-scan-policies.png": {
-    "source": "reports/usage_no_scan/usage-storage-policies.png",
-    "sha256": "b939d726fd30d5aefd27dddb8e06fc90055a5d1731476d20f570910f59721a55",
-    "baseline": "507631fb plus removal of Usage directory audits",
-    "pack_sha256": "89eeda43ca3131a3ccbd1e7469e537b59c4d2582c48f97c3aae01c925d9bfc59",
-    "status": "Installed-pack verification; no directory audits; user visual review pending",
-    "resolution": [
-      1920,
-      1080
-    ],
-    "cursor_captures": 0
   }
 }

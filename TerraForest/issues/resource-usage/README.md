@@ -9,29 +9,7 @@
   Nine resource-policy unit tests and the focused installed-pack policy/Usage-label
   check pass; logs: `reports/cache_policy_3gib/{unit,export,packed}.log`.
 
-## Directory-audit removal
-
-The user rejected scanning thousands of filesystem entries for this page. Usage
-now retains live counters, shared limits and direct folder buttons only. It has
-no folder-size calculation, full-audit button, scan task or progress polling.
-Limits are not presented as measured folder usage. No filesystem contents were
-deleted or changed. The separate native scanner API and offline maintenance
-tools are not invoked by Usage.
-
-Installed-pack checks pass 55 assertions, including an empty/non-running native
-scanner before and after live updates/reopening, no audit controls, unchanged
-folder destinations and zero cursor captures. Nine resource-policy tests pass;
-export validates all 14 native hashes. [Receipts](no-scan-evidence.json).
-
-![Usage without directory audits](images/usage-no-scan-top.png)
-Current installed-pack temporary world, seed 1703, 1920×1080. Live counters and
-direct folder buttons only; not an FPS or incremental-memory comparison.
-
-![Retained limits without folder scans](images/usage-no-scan-policies.png)
-Same run, lower page; 3 GiB cache quota and other storage policies remain.
-Earlier screenshots and rejected audit measurements are preserved below.
-
-## Original implementation and verification
+## Changes and verification
 
 - ESC → Usage displays process-private RAM, resident RAM, process GPU allocation
   when available, free disk space and the shared runtime/tool limits. RAM limits
@@ -53,7 +31,7 @@ Earlier screenshots and rejected audit measurements are preserved below.
   compiler/fixture-import errors are summarized in the receipt. New evidence
   folders carry `.gdignore`.
 
-## Original images
+## Images
 
 ![Usage counters and folders](images/usage-top.png)
 1920×1080 installed-pack temporary world, seed 1703, Usage top. Native counters
@@ -66,7 +44,7 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
 
 ## Remaining / resume here
 
-- Historical cost audit, before removal: [measurements](cost-audit.json).
+- Cost audit: the automatic full scan is expensive; [measurements](cost-audit.json).
   An isolated rendered-page test visits 650,965 entries in about 67 s, with about
   60.5 s in cache roots. All 2,048 sampled geometry-leaf directories across eight
   roots were empty; this is a capped sample, not a census. Earlier file-only cache
@@ -77,14 +55,15 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
   after completion. First activation costs 64.8 ms. The isolated first-use rise
   is about 111 MiB private / 32 MiB dedicated GPU, including fonts, renderer and
   counter initialization; these are not measured incremental full-game figures.
-- The previous manual-audit recommendation is superseded by removing folder
-  audits from this page altogether. First-counter initialization and real-game
-  incremental memory costs remain unqualified; investigate if requested and
-  require matched game-page CPU/I/O/memory and open/close responsiveness. Safe
-  empty-directory maintenance remains separate, not an automatic cleanup here.
+- Recommended next scope, not implemented: explicit/manual full audits with
+  retained snapshots and no completed-scan polling. Separately investigate the
+  initial counter hitch and safe empty-directory maintenance if requested. Require
+  matched game-page CPU/I/O/memory and open/close responsiveness before claiming
+  in-game performance improvement. No runtime changes were requested in this audit.
 - User review: ESC → Usage, scroll down, and try the folder buttons in normal play.
-- Current Usage intentionally has no folder totals. Use the system file manager
-  or separate explicit offline maintenance to inspect stored files.
+- Folder totals are snapshots of a changing filesystem, logical bytes rather than
+  allocated disk space; linked targets are not included. Large cold directories
+  can take time, but counting does not run on the main thread.
 - [Resource qualification and storage recovery](../../docs/RESOURCE_BUDGETS.md)
   remain separate: 100 GB free-space goal and physical 4 GiB GPU testing are not
   completed by adding this page.

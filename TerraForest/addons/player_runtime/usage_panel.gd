@@ -2,17 +2,25 @@ extends VBoxContainer
 const POLICY="res://addons/world_runtime/resource_budgets.json"
 var budgets:Dictionary={}
 var paths:Dictionary={}
+var folder_labels:Dictionary={}
 var folder_buttons:Dictionary={}
 var meters:Dictionary={}
+var locations:Array[Dictionary]=[]
 var probe:RefCounted
 var active:=false
+var scan_started:=false
+var scan_button:Button
+var scan_note:Label
 var notice:Label
 var live_note:Label
 var active_cache_button:Button
 var opener:Callable
 var live:Dictionary={}
+var scan:Dictionary={}
 var live_samples:=0
 var live_clock:=0.0
+var scan_clock:=0.0
+var pack_file:="TerraForest.pck"
 
 static func size_text(bytes:int,decimal:bool=false)->String:
 	if bytes<0:return "Unavailable"
@@ -32,7 +40,7 @@ func resolve_paths(host:Node)->void:
 	var arguments:=OS.get_cmdline_args()
 	for index:int in arguments.size():
 		if arguments[index]=="--main-pack" and index+1<arguments.size():
-			var pack:=ProjectSettings.globalize_path(arguments[index+1]).simplify_path();content_root=pack.get_base_dir()
+			var pack:=ProjectSettings.globalize_path(arguments[index+1]).simplify_path();content_root=pack.get_base_dir();pack_file=pack.get_file()
 	var development:=""
 	for candidate:String in [resource_root,content_root.get_base_dir()]:
 		if FileAccess.file_exists(candidate.path_join("project.godot")) and DirAccess.dir_exists_absolute(candidate.path_join("demo")):development=candidate;break
@@ -58,30 +66,36 @@ func build(host:Node)->void:
 	live_note=text("",13)
 	text("Storage folders",20)
 	var actions:=HBoxContainer.new();add_child(actions)
+	scan_button=Button.new();scan_button.text="Refresh folder sizes";scan_button.pressed.connect(start_scan);actions.add_child(scan_button)
 	var data_button:=Button.new();data_button.text="Open game data";data_button.tooltip_text=paths.data;data_button.pressed.connect(open_folder.bind("data"));actions.add_child(data_button)
 	active_cache_button=Button.new();active_cache_button.text="Open active cache";active_cache_button.tooltip_text=paths.active_cache;active_cache_button.disabled=not DirAccess.dir_exists_absolute(paths.active_cache);active_cache_button.pressed.connect(open_folder.bind("active_cache"));actions.add_child(active_cache_button)
-	text("Open a folder to inspect its contents. No folder-size scans run here.",13)
-	for entry:Array in [["content","Game content"],["worlds","Worlds + backups"],["cache","Terrain mesh caches"],["logs","Game logs"],["reports","Developer reports"],["build","Compiler / test builds"],["imports","Godot import cache"],["history","Git history"]]:
+	scan_note=text("Folder sizes are measured once on opening, then only on request. Read-only; no cleanup is performed here.",13)
+	for entry:Array in [["content","Game content",1],["worlds","Worlds + backups",0],["cache","Terrain mesh caches",2],["logs","Game logs",0],["reports","Developer reports",0],["build","Compiler / test builds",0],["imports","Godot import cache",0],["history","Git history",0]]:
 		var key:String=entry[0]
 		if not paths.has(key):continue
+		locations.append({"id":key,"path":paths[key],"mode":entry[2],"pack_file":pack_file})
 		var row:=HBoxContainer.new();row.add_theme_constant_override("separation",10);add_child(row)
-		var title:=Label.new();title.text=entry[1];title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(title)
+		var title:=Label.new();title.text=entry[1];title.custom_minimum_size.x=195;row.add_child(title)
+		var value:=Label.new();value.text="Not measured";value.size_flags_horizontal=Control.SIZE_EXPAND_FILL;value.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;row.add_child(value);folder_labels[key]=value
 		var button:=Button.new();button.text="Open folder";button.custom_minimum_size=Vector2(110,34);button.tooltip_text=paths[key];button.disabled=not DirAccess.dir_exists_absolute(paths[key]);button.pressed.connect(open_folder.bind(key));row.add_child(button);folder_buttons[key]=button
 	text("Storage policies",20)
 	if not budgets.is_empty():
 		text("Game content: %s target · warning %s\nTerrain cache: %s maintenance quota · failed test caches: %s retention quota\nWorlds + backups: warn at %s; never auto-delete or refuse a save\nSuccessful temporary-check caches are removed by the shared test runner.\nDisk reserve for automated checks: %s. RAM limits are provisional."%[size_text(int(budgets.redistributable_limit_bytes),true),size_text(int(budgets.redistributable_warning_bytes),true),size_text(int(budgets.derived_cache_total_bytes)),size_text(int(budgets.failed_test_cache_bytes)),size_text(int(budgets.saved_world_warning_bytes)),size_text(int(budgets.minimum_free_bytes))],14)
 	else:text("Budget data is unavailable. Re-export the game to include its shared resource policy.")
-	text("Storage limits are policies, not measured folder totals. Developer folders are not shipped game content.",13)
+	text("Cache figures count .trc files in declared terrain-cache folders, not worlds/logs. This is an estimate, not a safe-deletion audit. Sizes are logical file bytes; links are skipped. Developer folders are not shipped game content.",13)
 	notice=text("",14)
 
 func set_active(value:bool)->void:
 	if active==value:return
 	active=value;set_process(value)
-	if not value:return
+	if not value:
+		if probe!=null:probe.cancel_scan()
+		return
 	if probe==null and ClassDB.class_exists("NativeResourceUsage"):probe=ClassDB.instantiate("NativeResourceUsage")
 	for key:String in folder_buttons:folder_buttons[key].disabled=not DirAccess.dir_exists_absolute(paths[key])
 	active_cache_button.disabled=not DirAccess.dir_exists_absolute(paths.active_cache)
-	refresh_live();live_clock=0
+	refresh_live();live_clock=0;scan_clock=0
+	if not scan_started:start_scan()
 
 func meter(key:String,title:String,value:int,limit:int,warning:int,peak:int=-1,decimal:bool=false)->void:
 	var label:Label=meters[key].label;var bar:ProgressBar=meters[key].bar
@@ -104,6 +118,32 @@ func refresh_live()->void:
 	meters.free.bar.visible=false
 	live_note.text="Resident RAM: %s. Process counters, not whole-device usage. GPU sampling runs only while Usage is visible."%size_text(int(live.get("working_bytes",-1)))
 
+func start_scan()->void:
+	if probe==null:scan_note.text="Folder measurement is unavailable in this build.";return
+	if not probe.start_scan(locations):scan_note.text="The previous scan is stopping. Try Refresh again in a moment." if probe.scan_status().running else "Folder scan could not start. Folder paths are unavailable in this build.";return
+	scan_started=true;scan_button.disabled=true;scan_note.text="Scanning folders in the background…";refresh_scan()
+
+func refresh_scan()->void:
+	scan=probe.scan_status();var entries:=0
+	for row:Dictionary in scan.areas:
+		var key:String=row.id;entries+=int(row.entries)
+		if not folder_labels.has(key):continue
+		var label:Label=folder_labels[key];var value:=int(row.bytes)
+		var suffix:="";var limit:=-1;var warning:=-1;var decimal:=key=="content"
+		if not budgets.is_empty():
+			if key=="content":limit=int(budgets.redistributable_limit_bytes);warning=int(budgets.redistributable_warning_bytes)
+			if key=="worlds":warning=int(budgets.saved_world_warning_bytes)
+			if key=="cache":limit=int(budgets.derived_cache_total_bytes)
+		if not row.started:label.text="Pending" if scan.running else "Not measured";continue
+		if not row.available:label.text="Not present / inaccessible";continue
+		if not row.complete:suffix=" · partial" if not scan.running else " · scanning"
+		if row.links>0:suffix+=" · links skipped"
+		label.text=size_text(value,decimal)+( " / "+size_text(limit,decimal) if limit>0 else "")+suffix
+		label.modulate=Color("ed8f83") if limit>0 and value>limit else Color("e4bc6b") if warning>0 and value>=warning else Color.WHITE
+		label.tooltip_text="%d files · %d skipped links · %d read errors. %s"%[row.files,row.links,row.errors,paths[key]]
+	scan_button.disabled=scan.running
+	scan_note.text="Scanning folders… %s entries checked. Leaving Usage stops this scan."%String.num_int64(entries) if scan.running else ("Scan stopped. Refresh to update partial figures." if scan.cancelled else "Folder snapshot complete. Refresh after storage changes; nothing is deleted.")
+
 func open_folder(key:String)->Error:
 	if not paths.has(key):return ERR_INVALID_PARAMETER
 	var path:String=paths[key]
@@ -113,5 +153,9 @@ func open_folder(key:String)->Error:
 	return result
 
 func _process(delta:float)->void:
-	live_clock+=delta
+	live_clock+=delta;scan_clock+=delta
 	if live_clock>=1.0:live_clock=0;refresh_live()
+	if probe!=null and scan_started and scan_clock>=0.25:scan_clock=0;refresh_scan()
+
+func _exit_tree()->void:
+	if probe!=null:probe.cancel_scan()

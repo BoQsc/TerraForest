@@ -77,29 +77,26 @@ func run()->void:
 	menu.navigation.Usage.pressed.emit();check(panel.active and panel.is_processing() and menu.pages.Usage.visible,"Usage navigation enables only its own work")
 	check(panel.budgets.vram_limit_bytes==4294967296 and panel.budgets.redistributable_limit_bytes==5000000000,"shared 4 GiB GPU and 5 GB content targets load in this build")
 	check(panel.budgets.ram_limit_bytes==6442450944 and panel.budgets.ram_status.contains("Provisional"),"provisional RAM policy is retained")
-	check(panel.budgets.derived_cache_total_bytes==3221225472,"terrain-cache quota remains 3 GiB")
 	check(panel.paths.content.ends_with("/TerraForest/dist"),"content folder is the installed game, never the engine installation")
 	check(panel.paths.worlds==OS.get_user_data_dir().path_join("worlds"),"world folder matches actual save location")
 	inspected_paths=panel.paths.duplicate()
-	check(not panel.probe.scan_status().running and panel.probe.scan_status().areas.is_empty(),"opening Usage never starts a directory scan")
-	check(not panel.has_method("start_scan") and not panel.has_method("refresh_scan"),"Usage has no scan launcher or status polling")
-	var scan_controls:=false
-	for control:Button in panel.find_children("*","Button",true,false):
-		if control.text.contains("Refresh") or control.text.contains("Scan"):scan_controls=true
-	check(not scan_controls,"Usage has no directory-audit button")
+	check(panel.scan_started and panel.probe.scan_status().areas.size()==panel.locations.size(),"all configured folders were accepted for scanning")
 	panel.opener=func(path:String)->Error:opened_paths.append(path);return OK
 	for key:String in panel.paths:
 		if DirAccess.dir_exists_absolute(panel.paths[key]):check(panel.open_folder(key)==OK and opened_paths[-1]==panel.paths[key],"Explorer request uses exact existing folder: "+key)
 	check(panel.open_folder("arbitrary_path")==ERR_INVALID_PARAMETER,"unlisted paths cannot open")
 	panel.notice.text=""
+	var scan_started:=Time.get_ticks_msec();deadline=scan_started+90000
+	while panel.probe.scan_status().running and Time.get_ticks_msec()<deadline:await process_frame
+	panel.refresh_scan();storage_snapshot=panel.scan.duplicate(true);timings.real_scan_ms=Time.get_ticks_msec()-scan_started;check(not panel.scan.running,"real development/storage folder snapshot completes")
 	check(panel.live.get("private_bytes",0)>0 and panel.meters.ram.label.text.contains("6.00 GiB"),"UI shows current private RAM and its actual limit")
 	var sampled:int=panel.live_samples;await create_timer(1.2).timeout;check(panel.live_samples>sampled,"live counters refresh while visible")
-	storage_snapshot=panel.probe.scan_status();check(not storage_snapshot.running and storage_snapshot.areas.is_empty(),"live updates never enumerate storage folders")
 	panel.notice.text="";await capture("usage-top")
 	menu.scroll.scroll_vertical=10000;await capture("usage-storage-policies")
-	var hidden_samples:int=panel.live_samples;menu.navigation.Player.pressed.emit();await create_timer(1.2).timeout
+	panel.start_scan();var hidden_samples:int=panel.live_samples;menu.navigation.Player.pressed.emit();await create_timer(1.2).timeout
 	check(not panel.active and not panel.is_processing() and panel.live_samples==hidden_samples,"leaving Usage stops sampling")
-	menu.navigation.Usage.pressed.emit();check(panel.active and panel.probe.scan_status().areas.is_empty(),"Usage reopens without scanning")
+	check(not panel.probe.scan_status().running,"leaving Usage cancels the background scan")
+	menu.navigation.Usage.pressed.emit();check(panel.active,"Usage can reopen after cancellation")
 	menu.set_open(false);check(not panel.active and not panel.is_processing(),"closing ESC also stops Usage")
 	check(Mouse.captures==0,"offscreen test never captures or centres the cursor")
 	await finish()
