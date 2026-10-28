@@ -7,28 +7,49 @@ This file retains the wider backlog; the tracker initially covers three cases.
 owners, two jobs, one batch/frame. Existing tree tiers and near shadows retained.
 Distant fern/bush/twig meshes use 41–61% fewer triangles; near geometry, density,
 harvest/persistence and grass remain unchanged. Scoped geometry, renderer and
-actual-world travel checks pass. [Evidence](../issues/vegetation-lod/README.md).
+actual-world travel checks pass. Installed with the city integration; exported
+native hashes match source. [Evidence](../issues/vegetation-lod/README.md).
 Remaining: player review, weak-hardware/endurance and teleport publication checks.
 Moving-world p95 is 20.90 ms; this is not a universal smooth-60-FPS claim.
 Return on visible transitions or measured spikes, comparing the same camera/FOV.
 
 ## City architecture proposals — 2026-10-28
 
-Six additional review-only native prefabs: S1 warehouse, P1 police station, H1
+Six additional approved native prefabs: S1 warehouse, P1 police station, H1
 medical centre, R1 pharmaceutical research, F1 factory and four-storey A3 apartments.
 Offline recipes, baked cells/models, working doors, stairs, balconies, smooth modular
 industrial roofs and a signed per-floor viewer are implemented. Existing approved
-houses, saved worlds, town clustering and the packaged game are unchanged.
+houses and player saves are unchanged; larger recipes gain a mixed-use district.
 [Images, engineering evidence and approval checklist](../issues/city-buildings/README.md).
 
-Remaining: individual user approval before generation integration. After approval,
-add terrain-fitting lots, appropriate district roles, street/vehicle access and
-bounded native streaming/LOD; verify exact approved resources in a populated world.
-The isolated flat review stage does not qualify city terrain fit and does not fix
-the rejected northern single-pad district. Specialized furniture, kitchens/bathrooms,
-functional services, loot balance, garage shutters and roof access remain separate
-work, not completed gameplay. Return on approval; require real-world screenshots,
-street-to-interior/NPC/vehicle routes, save/reload and performance evidence.
+User approved all six designs on 2026-10-28. The second district of each larger
+settlement now contains the six exact designs: industrial pair, civic/research pair,
+medical/residential pair. Native full-envelope surveys retain 2 m fill / 3 m cut.
+Floors meet surveyed grade; independent five-metre loading approaches and pedestrian
+paths are baked before publication. Native sidewalk planning omits both plates and
+their excavation beds at access crossings. Default one-district villages stay intact.
+The largest recipe has 86 buildings, including 18 new city buildings; not 104 houses
+plus 18 additions. Geometry remains individual destructible cells with existing LOD.
+
+Installed integration passes 79 plan, 87 paving, 128 populated-world traversal and
+20 packed-resource assertions. All six buildings retain their exact approved cells;
+player/NPC entrances, six driven bays, upper-floor player routes and fresh-process
+restoration pass. 180-frame approaches measure p95 18.96–21.08 ms on RTX 4050 Laptop,
+not a universal 60 FPS guarantee. Gameplay-HUD repeat passes 83 checks, p95 up to
+22.16 ms. Images, native hashes and retained fixture failures are linked in the issue.
+Generated-site appearance needs player review, not another approval of the assets.
+Specialized furniture, kitchens/bathrooms, functional services, loot balance, garage
+shutters and roof access remain separate work, not completed gameplay. Legacy saved
+single-pad districts are not migrated or retrospectively accepted.
+
+## Request audit — 2026-10-28
+
+- Closed implementation gaps this pass: extended vegetation LOD and approved city-generation integration.
+- Largest inland seed 1703: nine-district plan now fits; bounded alternate search stays in the eastern half, with unchanged terrain budgets.
+- Existing player/menu/inventory/harvesting/ore/mouse work is implemented; its issue entries retain test or visual-review limits, not missing implementation claims.
+- Still partial: universal terrain/road-to-grid contact, natural-map close-up/canopy accuracy, and new climate ecosystems beyond the three temperate coverage profiles.
+- Still qualification work: weak-hardware/endurance, worst-frame spikes, full-world NPC coverage and nondefault ragdoll physics rates.
+- Explicitly separate city services/furniture and previously deferred grid/mining investigations are not silently marked done by this integration. Resume from the linked issue evidence, not a new duplicate tracker.
 
 ## Natural world map and woodland preset — 2026-10-28
 
@@ -104,12 +125,13 @@ creation, photography, map bake, play/save/reload passes 42 assertions; all 104
 clearance envelopes pass separately. Creation phase is 96.19 s on this machine.
 [Current images, hashes, timings and retained failures](../issues/world-generator/README.md).
 
-Remaining: maximum inland seed 1703 cannot fit a required eastern district under
-unchanged lot standards; custom generation fails explicitly. Resume bounded lot
-layouts rather than weakening standards, with multi-seed envelope/connectivity
-evidence. One 26/28 vegetation-readiness photograph timeout is retained, not declared
+Follow-up: maximum inland seed 1703 now fits nine districts using the approved
+six-building expansion and a bounded eastern-half fallback; cut/fill and water
+reservations are unchanged. Native plan checks and actual production save/reopen
+pass; multi-seed maximum-layout qualification remains open. One 26/28
+vegetation-readiness photograph timeout is retained, not declared
 fixed; if it recurs, capture pending coverage jobs before changing readiness policy.
-Regional city design, climate biomes, settled-map visual review, vehicle traversal
+Regional city design, climate biomes, settled-map visual review, all-district vehicle traversal
 and weak-hardware/endurance qualification remain open. Return after regional-preview
 review and require ground-level/all-district evidence, not merely successful saves.
 
@@ -131,9 +153,9 @@ checks and 56 C1 regression assertions pass separately. These are engineering
 checks, not approval of city design or all-seed/performance qualification.
 [Evidence, screenshots and remaining qualification](../issues/world-generator/README.md).
 
-Not finished cities: zoning, continuous urban street grids, broader approved
-architecture and additional climate/asset biomes still need native planning/assets
-and player design approval. Return after review of these experimental larger regions;
+City follow-up: the approved six-design district and its role pairs are now integrated
+above. Broader zoning, continuous urban street grids and additional climate/asset
+biomes remain unimplemented or unqualified. Return after review of these experimental larger regions;
 require multiple-seed ground-level access, walking/driving and endurance measurements
 before promoting world quality. The 2 km bounds and current temperate biome scope
 remain visible; larger repeated districts are not a substitute for those requirements.

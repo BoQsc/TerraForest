@@ -39,10 +39,14 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
   lot.samples=lot.asset.foundation_samples(lot.origin,lot.rotation,int(lot.asset.get_meta("site_sample_band",0)))
   lot.surface_offset=int(lot.asset.get_meta("site_surface_offset",0))
   var local_bounds:AABB=lot.asset.placement_bounds(Vector3i.ZERO,0)
-  var entrance:=Vector3(0.5,lot.surface_offset,local_bounds.end.z+0.5)
+  var entrance:Vector3=lot.asset.get_meta("site_entrance",Vector3(0.5,lot.surface_offset,local_bounds.end.z+0.5))
   for turn in lot.rotation:entrance=Vector3(1-entrance.z,entrance.y,entrance.x)
   lot.entrance_local=entrance
   lot.access_points=PackedVector3Array()
+  lot.separate_access=lot.asset.has_meta("vehicle_entrances")
+  for access:Vector3 in lot.asset.get_meta("vehicle_entrances",PackedVector3Array()):
+   for turn in lot.rotation:access=Vector3(1-access.z,access.y,access.x)
+   lot.access_points.append(access)
   if lot.asset.has_meta("garage_entrance"):
    var access:Vector3=lot.asset.get_meta("garage_entrance")
    for turn in lot.rotation:access=Vector3(1-access.z,access.y,access.x)
@@ -97,7 +101,7 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2())->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2(),recipe_provider:Callable=Callable(),street_provider:Callable=Callable(),envelope:Vector2=Vector2(150,200))->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  for bounds:AABB in occupied:
@@ -114,9 +118,9 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
    if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
    attempts+=1
    # Conservative recipe envelope includes shifted plots, paths and shoulders.
-   if not footprint_clear(AABB(candidate-Vector3(75,0,100),Vector3(150,256,200)),protected.areas):
+   if not footprint_clear(AABB(candidate-Vector3(envelope.x*.5,0,envelope.y*.5),Vector3(envelope.x,256,envelope.y)),protected.areas):
     reasons["Reserved lake, POI or neighboring site"]=int(reasons.get("Reserved lake, POI or neighboring site",0))+1;continue
-   var roads:Dictionary=streets(core,candidate)
+   var roads:Dictionary=streets(core,candidate,street_provider.call(candidate) if street_provider.is_valid() else [])
    if not roads.ok:
     reasons[roads.reason]=int(reasons.get(roads.reason,0))+1;continue
    # A permitted excavation is not necessarily a desirable location. Rank all
@@ -125,8 +129,8 @@ static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2
    candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
  for candidate:Dictionary in candidates:
-  for variant in range(12 if protected.distributed else 4):
-   var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant)
+  for variant in range(1 if recipe_provider.is_valid() else (12 if protected.distributed else 4)):
+   var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant,recipe_provider.call(candidate.center) if recipe_provider.is_valid() else [])
    best_missing=mini(best_missing,lots.rejected.size())
    if lots.ok:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
@@ -156,6 +160,8 @@ static func earthworks(plan:Dictionary)->Dictionary:
  for lot:Dictionary in plan.lots:
   var path:Dictionary=lot.entrance.segment
   segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
+  for driveway:Dictionary in lot.get("vehicle_paths",[]):
+   segments.append(Lots._segment(driveway.start,driveway.finish,driveway.half_width,3,4,1,4))
   if lot.asset.has_meta("garage_entrance"):
    var start:Vector3=lot.asset.get_meta("garage_entrance")
    for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
@@ -167,7 +173,18 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var segment:Dictionary=Lots._segment(road.start,road.finish,road.half_width,3,4,0,4)
   segment["coefficients"]=road.coefficients;segment["curve_index"]=road.curve_index
   segments.append(segment)
- var pavement:Dictionary=ClassDB.instantiate("NativeBlockPrefab").plan_paving(plan.roads)
+ var access:Array=[]
+ for lot:Dictionary in plan.lots:
+  var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
+  if lot.asset.has_meta("garage_entrance"):
+   var start:Vector3=lot.asset.get_meta("garage_entrance")
+   for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
+   paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
+  for path:Dictionary in paths:
+   var low:Vector3=path.start.min(path.finish)
+   var high:Vector3=path.start.max(path.finish)
+   access.append(Rect2(Vector2(low.x,low.z),Vector2(high.x-low.x,high.z-low.z)).grow(float(path.half_width)))
+ var pavement:Dictionary=ClassDB.instantiate("NativeBlockPrefab").plan_paving(plan.roads,access)
  if not pavement.get("ok",false):return pavement
  plan["block_paving"]=pavement
  segments.append_array(pavement.beds)

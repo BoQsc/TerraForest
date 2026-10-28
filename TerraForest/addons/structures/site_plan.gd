@@ -99,7 +99,7 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3 or not is_finite(max_strip_width) or max_strip_width<1.0 or max_strip_width>24.0:
 		return {"ok":false,"reason":"Invalid building layout"}
 	var surface_offset:int=asset.get_meta("site_surface_offset",0)
-	if surface_offset not in [0,5] or (surface_offset==5 and not asset.get_meta("cellar_clearance",false)):
+	if surface_offset not in [0,1,5] or (surface_offset==5 and not asset.get_meta("cellar_clearance",false)):
 		return {"ok":false,"reason":"Invalid underground foundation metadata"}
 	var target:=Vector3i(origin.x,grade-surface_offset,origin.z)
 	var bounds: AABB=asset.placement_bounds(target,rotation)
@@ -121,7 +121,7 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 	var protection:=AABB()
 	for row in rows:
 		for column in columns:
-			var a:=Vector3(bounds.position.x,grade,bounds.position.z)
+			var a:=Vector3(bounds.position.x,grade-.125 if surface_offset==1 else grade,bounds.position.z)
 			var b:=a
 			var start: float=length*column/columns
 			var finish: float=maxf(start+1.0,length*(column+1)/columns)

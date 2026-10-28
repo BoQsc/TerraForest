@@ -1,5 +1,6 @@
 #include "block_prefab.hpp"
 #include "block_word.hpp"
+#include <godot_cpp/variant/rect2.hpp>
 #include <algorithm>
 #include <cmath>
 #include <map>
@@ -15,9 +16,17 @@ PackedInt32Array paving_records(const PavingCells &cells){
     return records;
 }
 }
-Dictionary NativeBlockPrefab::plan_paving(const Array &roads) const {
+Dictionary NativeBlockPrefab::plan_paving(const Array &roads,const Array &access) const {
     auto failure=[](const char *reason){Dictionary result;result["ok"]=false;result["reason"]=reason;return result;};
     if(roads.is_empty()||roads.size()>8192)return failure("Invalid paving road count");
+    if(access.size()>2048)return failure("Paving access budget exceeded");
+    std::vector<Rect2> corridors;
+    for(int index=0;index<access.size();++index){
+        if(access[index].get_type()!=Variant::RECT2)return failure("Invalid paving access corridor");
+        Rect2 area=access[index];
+        if(!area.position.is_finite()||!area.size.is_finite()||area.size.x<0||area.size.y<0||area.size.x>2000||area.size.y>2000)return failure("Invalid paving access bounds");
+        corridors.push_back(area.grow(1.0));
+    }
     struct Road {Vector3 start,finish;double width,length;bool grid_normalized;};
     std::vector<Road> checked;std::vector<Vector3> crossings;
     for(int index=0;index<roads.size();++index){
@@ -58,6 +67,7 @@ Dictionary NativeBlockPrefab::plan_paving(const Array &roads) const {
                     Vector3 point;point[axis]=column+.5;point[lateral]=row+.5;
                     bool crossing=false;
                     for(Vector3 junction:crossings)if(Vector2(point.x-junction.x,point.z-junction.z).length()<road.width+3.5){crossing=true;break;}
+                    if(!crossing)for(const auto &corridor:corridors)if(corridor.has_point(Vector2(point.x,point.z))){crossing=true;break;}
                     if(crossing){append_bed(run,column,row+.5);run=column+1;continue;}
                     if(point.x<1||point.z<1||point.x>1999||point.z>1999)return failure("Paving tile outside world");
                     cells[std::make_tuple(int(std::floor(point.x)),int(std::floor(point.z)),height)]=block_word(8,0,2);

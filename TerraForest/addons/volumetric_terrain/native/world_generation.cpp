@@ -498,21 +498,25 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     double height=survey.height(sample);low=std::min(low,height);high=std::max(high,height);
    }
    if(blocked)continue;int minimum=int(std::ceil(high-3)),maximum=int(std::floor(low+2));if(minimum>maximum)continue;
-   double mid=(low+high)*.5;int grade=std::clamp(int(std::round(mid)),minimum,maximum),surface_offset=lot["surface_offset"];Dictionary entrance;
+   double mid=(low+high)*.5;int grade=std::clamp(int(std::round(mid)),minimum,maximum),surface_offset=lot["surface_offset"];Dictionary entrance;Array vehicle_paths;
    if(!roads.is_empty()){
     bool found=false;Vector3 local=lot["entrance_local"];
     for(int candidate=minimum;candidate<=maximum;candidate++){
      Vector3 a=local+Vector3(origin.x,candidate-surface_offset,origin.z);
      Dictionary path=entrance_path(survey,a,double(lot["street_z"]),road_geometry);
+     Array candidate_paths;
      if(bool(path["ok"])&&lot.has("access_points")){
       PackedVector3Array access=lot["access_points"];
       Dictionary primary=path["segment"];Vector3 target=primary["finish"];
       for(int point=0;point<access.size();point++){
        Vector3 doorway=access[point]+Vector3(origin.x,candidate-surface_offset,origin.z);
-       if(!bool(entrance_path(survey,doorway,double(lot["street_z"]),road_geometry,2.5,target.x)["ok"])){path["ok"]=false;break;}
+       const bool separate=bool(lot.get("separate_access",false));
+       Dictionary driveway=entrance_path(survey,doorway,double(lot["street_z"]),road_geometry,2.5,separate?NAN:double(target.x));
+       if(!bool(driveway["ok"])){path["ok"]=false;break;}
+       if(separate)candidate_paths.append(driveway["segment"]);
       }
      }
-     if(bool(path["ok"])&&(!found||std::abs(candidate-mid)<std::abs(grade-mid))){grade=candidate;entrance=path;found=true;}
+     if(bool(path["ok"])&&(!found||std::abs(candidate-mid)<std::abs(grade-mid))){grade=candidate;entrance=path;vehicle_paths=candidate_paths;found=true;}
     }if(!found)continue;
    }
    double cost=high-low+.04*(std::abs(dx)+std::abs(dz));if(cost>=best_cost)continue;
@@ -520,6 +524,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
    Dictionary measure;measure["ok"]=true;measure["min_height"]=low;measure["max_height"]=high;measure["grade"]=grade;
    best["asset"]=lot["asset"];best["origin"]=origin;best["rotation"]=lot["rotation"];best["label"]=lot["label"];best["street_z"]=lot["street_z"];
    best["survey"]=measure;best["sample_count"]=points.size();best["bounds"]=bounds;best["entrance"]=entrance;best_cost=cost;
+   if(bool(lot.get("separate_access",false)))best["vehicle_paths"]=vehicle_paths;
   }
   if(best.is_empty())rejected.push_back(lot["label"]);else{fitted.push_back(best);reserved.push_back(best["bounds"]);}
  }

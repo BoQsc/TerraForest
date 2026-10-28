@@ -1,0 +1,81 @@
+{
+  "captured_utc": "2026-10-28",
+  "base_commit": "e2d0e548",
+  "source_kind": "unaltered Godot viewport PNG in disposable generated world, not isolated review stage",
+  "seed": 1703,
+  "slot": "recipe_generated_34c1e3442d9a1cbd",
+  "options": {
+    "biome": 0,
+    "districts": 3,
+    "material_veins": 1,
+    "network": 2,
+    "road_grid": 3,
+    "settlements": 3,
+    "trails": 2
+  },
+  "settings": "1920x1080 Forward+; RTX 4050 Laptop GPU; 60 FPS cap; same world environment; viewmodel masked for evidence cameras; opened doors; camera poses in approved_city_world.gd",
+  "render_report": "reports/checks/20261028T161307969389Z/run.json",
+  "route_report": "reports/checks/20261028T160224631632Z/run.json",
+  "production_generation": "reports/checks/20261028T154835639010Z/console.log; generation passed, later fixture checks interrupted",
+  "pack_sha256": "2ab4bdc2f9f470d1b0ade03784f66786c834a46c11ab16f9826658f3cbafab64",
+  "source_hashes": {
+    "addons/structures/prefabs/city_apartments_a3.tres": "19a18528836cf1420b1f70d80785e8833fc79046c2e38e9a44e5f16bde24e0ce",
+    "addons/structures/prefabs/city_factory_f1.tres": "1cead31ebd94e5149b8e4944baeb46b7fc6b101a299b392a2b130dd03a190143",
+    "addons/structures/prefabs/city_medical_h1.tres": "fd3873640df9d308bcae72b4f7cab1b2f1fe909a9482083c586d2dfcd317e22b",
+    "addons/structures/prefabs/city_police_p1.tres": "d71db439427b8b98a596f5faf145a4f50b201bc0049740928ad8b9ef2f3a8796",
+    "addons/structures/prefabs/city_research_r1.tres": "d5be31c2c0cfe9ed608de603cb59245ce144f9a5ad363b8daa1d6a76c86017ee",
+    "addons/structures/prefabs/city_storage_s1.tres": "f4278e99f8930663f1ef925b202aa738ad40037d06149bfe2df09708bbd1693e",
+    "addons/structures/city_catalog.gd": "978752bc4aeb15ffc110ef6891f8a9ab7e07009a6c3dc8dc51bc6d2be13f5912",
+    "addons/structures/terrain_lot_planner.gd": "ad7ddee4722fe6877e8dad10f9ad0cc90a083c5b65029a1a1c2c85d3cd34ed0a",
+    "addons/world_runtime/custom_world_plan.gd": "842c5118478bd5c470f657af32420f3b23c1be5ca712d9f4b5128f7be301bf1a",
+    "tests/approved_city_world.gd": "b510beaa651c196636a146b490fdf5ec9962d728dfc0d3fbabe2f7de2a7d6e79",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "f3ef67da61ca04fffb6cc31993ad262aab0261b9bd3ff1abc3da910cf2afcab6",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "899a517d6449c2d19e5c8e99aff832f0359297d99bb5613a8f7128b2f940e387",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "f7cc93d8b011a3c130ff925cbe661bb5ad3cf2ee939f3fd88bdf20217a083e5d",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "3871f535f63a2e54fc564aa4cddf72f7ef63f8d388d8d1bfd5a56cd0f7b80824"
+  },
+  "images": [
+    {
+      "file": "world_apartments_a3_generated.png",
+      "source": "reports/approved_city_world/apartments_a3_generated.png",
+      "sha256": "5020ffb3b2303756d8e428724bd00baacd648a95009c1cc4a5f5eb9373fa7721",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_factory_f1_generated.png",
+      "source": "reports/approved_city_world/factory_f1_generated.png",
+      "sha256": "9502cefb60917847ee2d04dc0d5aa9f43f9561570bf10159fbc7a19aa3269e25",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_medical_h1_generated.png",
+      "source": "reports/approved_city_world/medical_h1_generated.png",
+      "sha256": "228328c1c264bce2bbb687fbb1ef9c298b05ef2455439dcdcbc796fa2cf3c504",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_medical_h1_interior.png",
+      "source": "reports/approved_city_world/medical_h1_interior.png",
+      "sha256": "f62e02544a2d5eb48d164543f75ea229858e34ea2dc840b659a3fcb5c69d1513",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_police_p1_generated.png",
+      "source": "reports/approved_city_world/police_p1_generated.png",
+      "sha256": "2a17435ad1684dc2ef4dee3e73beccc0cba9f76c48c73ba7665273bd9fc9cecd",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_research_r1_generated.png",
+      "source": "reports/approved_city_world/research_r1_generated.png",
+      "sha256": "7cbd8ac9eb27578d3c08a39841ad81797aef0f03a3cc1270075d0cc6b41854e5",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    },
+    {
+      "file": "world_storage_s1_street.png",
+      "source": "reports/approved_city_world/storage_s1_street.png",
+      "sha256": "2fea6eb5fd3ff1a2a226e138af4edf39a2e2e39d2bb764c0aa8ab8aace6ee30d",
+      "status": "inspected generated-world evidence; site appearance not user-approved"
+    }
+  ]
+}

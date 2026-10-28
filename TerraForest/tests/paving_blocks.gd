@@ -38,6 +38,17 @@ func run()->void:
 	var plan:Dictionary=asset.plan_paving(roads)
 	check(plan.get("ok",false) and plan.tiles>0 and plan.terrain_ramps==1,"native planner produces plates and preserves smooth terrain ramps")
 	check(plan==asset.plan_paving(roads),"native paving is deterministic")
+	var corridor:=Rect2(Vector2(115,90),Vector2(5,10))
+	var access_plan:Dictionary=asset.plan_paving(roads,[corridor])
+	var open:bool=access_plan.get("ok",false) and access_plan.tiles<plan.tiles and access_plan.tiles>0
+	for offset in range(0,access_plan.records.size(),4):
+		open=open and not corridor.intersects(Rect2(Vector2(access_plan.records[offset],access_plan.records[offset+2]),Vector2.ONE))
+	for bed:Dictionary in access_plan.beds:
+		var low:Vector3=bed.start.min(bed.finish)-Vector3(bed.half_width,0,bed.half_width)
+		var high:Vector3=bed.start.max(bed.finish)+Vector3(bed.half_width,0,bed.half_width)
+		open=open and not corridor.intersects(Rect2(Vector2(low.x,low.z),Vector2(high.x-low.x,high.z-low.z)))
+	check(open,"driveway cutout excludes both sidewalk cells and their terrain cuts")
+	check(not asset.plan_paving(roads,[Rect2(Vector2(NAN,0),Vector2.ONE)]).get("ok",false) and not asset.plan_paving(roads,[false]).get("ok",false),"invalid access corridors reject atomically")
 	var normalized_roads:=roads.duplicate(true)
 	for road:Dictionary in normalized_roads:road["grid_normalized"]=true
 	var normalized:Dictionary=asset.plan_paving(normalized_roads)

@@ -9,6 +9,10 @@ static func protected_areas(sites:Array)->Array:
 			var start:Vector3=entrance.start
 			var finish:Vector3=entrance.finish
 			result.append(Rect2(Vector2(minf(start.x,finish.x),minf(start.z,finish.z)),Vector2(absf(start.x-finish.x),absf(start.z-finish.z))).grow(float(entrance.half_width)+.25))
+			for driveway:Dictionary in lot.get("vehicle_paths",[]):
+				var low:Vector3=driveway.start.min(driveway.finish)
+				var high:Vector3=driveway.start.max(driveway.finish)
+				result.append(Rect2(Vector2(low.x,low.z),Vector2(high.x-low.x,high.z-low.z)).grow(float(driveway.half_width)+.25))
 	return result
 static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=false,footprint_policy:bool=false)->Dictionary:
 	var roads:Array=[]

@@ -3,7 +3,7 @@
   "sources": {
     "engine": "4.7.2-stable (steam)",
     "res://addons/player_runtime/shape_icons.gd": "5526ab5c97a11de33319eb6764dd7382585b51e1498216d3a8adc63afdfcb5b3",
-    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "9d9e04d7a5cc52f22f47806bfcc6098cb79a5ca89e956d479e002b08672ced8a",
+    "res://addons/structures/bin/structures.windows.template_debug.x86_64.dll": "f3ef67da61ca04fffb6cc31993ad262aab0261b9bd3ff1abc3da910cf2afcab6",
     "res://addons/structures/native/block_shapes.hpp": "1fd0507edee668d8040f7fea865bcf1edcf427f0092de2ab3ce3d6ac2bc039be",
     "res://addons/structures/native/block_world.cpp": "26ae4b8a67aeaa05bf0f04859f4c38634d749a71e5f89c6dfc7f58bc7752fd67",
     "res://addons/structures/native/modular_shapes.hpp": "a4b647e71e5d4e2923b159846150ba535d75659f8e74c0190e5ab9c979204be7",

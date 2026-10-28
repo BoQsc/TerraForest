@@ -5,11 +5,11 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Extended vegetation LOD](vegetation-lod/README.md) | Implemented / scoped checks | 576 m forest with native circular preload; cheaper distant fern/bush/twig meshes; near detail unchanged; long travel and player review remain |
-| [City building proposals](city-buildings/README.md) | Review-ready / approval pending | Six native block designs: warehouse, police, medical, research, factory and apartments; isolated architecture/route checks, not yet added to generation |
+| [Extended vegetation LOD](vegetation-lod/README.md) | Installed / scoped checks | 576 m forest with native circular preload; cheaper distant fern/bush/twig meshes; near detail unchanged; long travel and player review remain |
+| [City buildings](city-buildings/README.md) | Approved designs / integration installed | Six exact approved designs on surveyed lots in larger recipes; populated-world player/NPC/vehicle routes, save/reopen, LOD and packed resources checked; site visuals and broader qualification remain |
 | [Building geometry LOD](building-lod/README.md) | Installed / scoped checks | Default-on native cached LOD; 24-house moving-camera comparisons, all 18 shapes, edits and collision checked; streaming-boundary transitions and player review remain open |
 | [Natural world-map presentation](natural-world-map/README.md) | Improved-partial / scoped checks | Cached water ready before first M; 1024² terrain, asphalt-first material ownership and unpainted shoulders; optional annotations; clustering/saves unchanged; finite zoom detail and shoulder geometry remain reviewable |
-| [World generator UI and city layouts](world-generator/README.md) | Installed / scoped verification | Twelve distributed lakes, four-quadrant districts and longer connections; native routing/map/water allocation improved; largest inland fit and world-quality review remain open |
+| [World generator UI and city layouts](world-generator/README.md) | Installed / scoped verification | Twelve distributed lakes, four-quadrant districts and longer connections; reproduced maximum inland fit corrected without relaxing cut/fill; more seeds and world-quality review remain open |
 | [Building/POI terrain fit](site-terrain-fit/README.md) | Improved / scoped checks | Full-envelope/apron and driveway surveys, rectangular local pads; actual support/traversal checked; populated-site review pending |
 | [Unrequested mouse capture](mouse-capture/README.md) | Corrected / scoped checks | Click-to-play capture; loading and focus changes never reclaim the cursor; desktop review pending |
 | [Additional large house C1](large-house-c1/README.md) | Approved addition / integrated | New fitted neighborhoods and construction palette; native basement/slab preparation, multi-door publication and terrain traversal checked |

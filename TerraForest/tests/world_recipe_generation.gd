@@ -46,6 +46,7 @@ func run()->void:
  var use_defaults:bool="--default-recipe" in OS.get_cmdline_user_args() or grid_review
  folder="res://reports/world_recipe_generation_default" if use_defaults else "res://reports/world_recipe_generation"
  if city_recipe:folder="res://reports/world_generator_city"
+ if "--city-integration" in OS.get_cmdline_user_args():folder="res://reports/approved_city_world"
  if grid_review:folder="res://reports/road_normalization/generation"
  DirAccess.make_dir_recursive_absolute(folder)
  FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"failures":1,"state":"running","slot":""}))
@@ -104,12 +105,12 @@ func run()->void:
   for site:Dictionary in planned.sites:
    for lot:Dictionary in site.lots:
     var revision:String=lot.asset.get_meta("approved_revision","")
-    if revision not in ["A2 R2","B1 R1","B2 R2","C1 R1"] or approved_records.has(revision):continue
+    if revision.is_empty() or not lot.asset.get_meta("approved_as_addition",false) and revision not in ["A2 R2","B1 R1","B2 R2"] or approved_records.has(revision):continue
     var world_asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
     if check(world_asset.compose([lot.asset],PackedInt32Array([0,lot.origin.x,lot.origin.y,lot.origin.z,lot.rotation])),"transform approved "+revision+" into generated lot"):
      approved_records[revision]=world_asset.get_records()
      approved_lots[revision]=lot
- check(approved_records.size()==4,"new world includes approved A2 cottage, both shops and additional C1 house")
+ check(approved_records.size()==(10 if options.districts>1 else 4),"new world includes every approved design for the requested districts")
  var mineral_bytes:PackedByteArray=game.material_deposits.store.capture_snapshot()
  var deposits:Array=game.material_deposits.describe(1703,generator)
  check(not deposits.is_empty() and deposits.size()==planned.get("material_deposits",[]).size(),"generated mineral metadata matches the independently planned geology")

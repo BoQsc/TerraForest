@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=22
+const VERSION:=23
 const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -8,6 +8,7 @@ const Lots=preload("res://addons/structures/northern_lots.gd")
 const Market=preload("res://addons/structures/central_market.gd")
 const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Routes=preload("res://addons/structures/regional_route_planner.gd")
+const City=preload("res://addons/structures/city_catalog.gd")
 static func read_plan(path:String,key:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
@@ -17,7 +18,8 @@ static func read_plan(path:String,key:String)->Dictionary:
  if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
  if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>9:return {}
  for site:Dictionary in value.sites:
-  var source:Array=Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true)
+  if site.recipe_kind not in ["market","neighborhood","city"]:return {}
+  var source:Array=City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true))
   if site.lots.size()!=source.size():return {}
   for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
@@ -70,20 +72,23 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    hint=sites[town].center+spread
   var search_area:=Rect2()
   if distributed and options.settlements>1 and town<2 and district==1:search_area=Rect2(Vector2(1250,120 if town==0 else 1000),Vector2(630,880))
-  var site:=Planner.locate(core,hint,occupied,search_area)
+  var site:=locate_expansion(core,hint,occupied,search_area,district)
   if (options.districts==3 or distributed) and not site.get("ok",false):
    for direction in 4:
     var reach:=600 if distributed else 384
     var alternate:Vector3=[Vector3(reach,0,0),Vector3(0,0,reach),Vector3(-reach,0,0),Vector3(0,0,-reach)][(direction+layout_variant)%4]
     if search_area.has_area():alternate=Vector3(1680,0,440+direction*192 if town==0 else 1560-direction*192)-sites[town].center
     if progress!=null:progress.record("Finding space for district %d"%[district+1],direction,4,"Bounded alternate site search / unchanged 2 m fill and 3 m cut limits")
-    site=Planner.locate(core,sites[town].center+alternate,occupied,search_area)
+    site=locate_expansion(core,sites[town].center+alternate,occupied,search_area,district)
     if site.get("ok",false):break
+  if distributed and search_area.has_area() and not site.get("ok",false):
+   search_area=Rect2(Vector2(1000,120 if town==0 else 1000),Vector2(880,880))
+   site=locate_expansion(core,Vector3(1440,0,560 if town==0 else 1440),occupied,search_area,district)
   if not site.get("ok",false):
    site["reason"]="Settlement %d district %d: %s"%[town+1,district+1,site.get("reason","Site fitting failed")]
    site["hint"]=hint;site["search_area"]=search_area
    return retry(seed_value,generator,options,folder,layout_variant,started,site,progress)
-  site["recipe_kind"]="neighborhood";site["town"]=town;site["district"]=district
+  site["recipe_kind"]="city" if district==1 else "neighborhood";site["town"]=town;site["district"]=district
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
@@ -181,6 +186,9 @@ static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,
  var result:=build(seed_value,generator,options,folder,layout_variant+1,progress)
  result["worker_ms"]=float(result.get("worker_ms",0))+elapsed
  return result
+static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Rect2,district:int)->Dictionary:
+ if district==1:return Planner.locate(core,hint,occupied,area,City.recipe,City.streets,Vector2(180,224))
+ return Planner.locate(core,hint,occupied,area)
 static func navigation_metadata(sites:Array,network:Dictionary)->Dictionary:
  var metadata:Dictionary={"places":[],"roads":[]}
  for index in sites.size():

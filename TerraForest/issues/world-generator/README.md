@@ -122,16 +122,19 @@ reachability; controls scroll independently of the live map and generation actio
 
 ## Remaining / resume here
 
-- Maximum inland seed 1703 cannot fit the required eastern district within the
-  unchanged lot standards (`20261028T102435403661Z` retained trial). Use the coastal
-  largest preset; custom inland fails explicitly rather than accepting a west-only
-  cluster. Resume bounded lot-layout work and require all requested districts,
-  quadrant coverage and full-envelope/crossing checks across multiple seeds.
+- Maximum inland seed 1703 now fits nine districts / 86 buildings, including the
+  approved city additions. An eastern-half fallback replaces the failed narrower
+  search without relaxing terrain budgets or accepting a west-only cluster.
+  Plan evidence: `reports/checks/20261028T154736525012Z`; production data generation
+  and fresh loader: `20261028T153306904424Z`. The earlier failed trial remains;
+  multi-seed maximum-layout and world-quality qualification are still open.
 - Current biomes only alter temperate woodland/meadow coverage. Climate materials,
   weather and new asset ecosystems require explicit native/asset work and review.
 - Experimental city regions reuse approved buildings. Zoning, a continuous urban
-  street plan, architecture variety and all-district access are not accepted yet.
-- More seeds, weak-hardware profiling, vehicle traversal and long-play budgets need
+  street plan and all-district access are not accepted yet. Six newly approved
+  designs now form mixed-use expansion districts; [populated-world evidence](../city-buildings/README.md#generated-world-integration)
+  includes all six player/NPC approaches and six vehicle bays, not universal access.
+- More seeds, weak-hardware profiling, all-district vehicle traversal and long-play budgets need
   dedicated evidence before claiming universal generation success or city quality.
 - The earlier full-flow fixture failed to open its background map for the screenshot.
   The current fixture opens it explicitly; its inspected `material_map.png` shows

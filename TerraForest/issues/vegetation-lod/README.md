@@ -1,7 +1,7 @@
 # Extended vegetation LOD
 
-- Status: Implemented / scoped checks; player visual review pending.
-- Updated: 2026-10-28. Source/native build following `643e33d9`.
+- Status: Installed / scoped checks; player visual review pending.
+- Updated: 2026-10-28. Implementation `e2d0e548`; installed with approved-city integration.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
@@ -39,10 +39,13 @@ Provenance/hashes: `images/manifest.json`.
   `reports/vegetation_lod_world/result.json`. Screenshots excluded from timed samples.
 - Initial test-only parse errors and incorrect completion-text requirements remain
   in the 15:03/15:04 reports; corrected reruns pass, no suppressed engine errors.
+- Populated city/forest approaches also pass with 391–405 resident owners:
+  [city evidence and timings](../city-buildings/README.md#generated-world-integration).
+  Pack startup passes; all 14 exported native DLL hashes match source.
 
 ## Remaining / resume here
 
-- Longer/weak-hardware travel, teleport publication and dense city+forest comparison.
+- Longer/weak-hardware travel, teleport publication and longer city+forest comparison.
   Extra coverage increases resident roots and surface sampling; inspect spikes
   before extending range again. Current moving p95 exceeds a 16.67 ms frame.
 - Ground mesh index switches are screen-error selected, not crossfaded. Trees retain

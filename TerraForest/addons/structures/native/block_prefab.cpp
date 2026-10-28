@@ -19,7 +19,7 @@ static uint32_t frontage_choice(uint32_t seed,int ordinal,int count) {
 }
 void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("survey_surface"),&NativeBlockPrefab::survey_surface);
-    ClassDB::bind_method(D_METHOD("plan_paving","roads"),&NativeBlockPrefab::plan_paving);
+    ClassDB::bind_method(D_METHOD("plan_paving","roads","access"),&NativeBlockPrefab::plan_paving,DEFVAL(Array()));
     ClassDB::bind_method(D_METHOD("layout_counts","sources","lots_per_side","seed","streets"),&NativeBlockPrefab::layout_counts);
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
     ClassDB::bind_method(D_METHOD("compose","sources","placements"),&NativeBlockPrefab::compose);
