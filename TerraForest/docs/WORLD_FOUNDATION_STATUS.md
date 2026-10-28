@@ -17,7 +17,8 @@ separate from the approved building design; see linked evidence and limitations.
 
 Deferred separately at the user's direction while finishing the approved C1 addition;
 resume after its verified integration commit. None is resolved by that house work.
-- Mouse: minimal capture/centering fix; verify launch, loading and other-app use.
+- Mouse: click-to-play capture implemented; 13 headless checks pass. No automatic
+  loading/focus recapture. [Desktop review remains](../issues/mouse-capture/README.md).
 - Ore: verify every surface marker has a continuous mineable vein directly below it.
 - POI/house placement: improve terrain fit; require generated-site images and access checks.
 - Corpses: fix death vibration and easy walk-over; reproduce and test both together.

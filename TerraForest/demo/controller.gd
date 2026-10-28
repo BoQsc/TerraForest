@@ -103,6 +103,7 @@ var controls = ControllerState.new()
 var movement: RefCounted
 var flashlight := SpotLight3D.new()
 var app_focused: bool = true
+var mouse_capture_requested := false
 var background_fps: int = 15
 var last_frame_us: int = 0
 var last_physics_us: int = 0
@@ -221,7 +222,7 @@ func _ready() -> void:
 	gpu_timing_enabled = RenderingServer.get_current_rendering_method() != "gl_compatibility"
 	if gpu_timing_enabled:
 		RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
-	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if loading_active else Input.MOUSE_MODE_CAPTURED)
+	Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
 	if benchmark_enabled:
 		benchmark = Bench.new()
 		benchmark.host = self
@@ -364,6 +365,7 @@ func _begin_loading(reason: String) -> void:
 		loading_panel.reset(preload("res://addons/world_runtime/loading_timer.gd").requested_start() if loading_from_generation else 0,94 if loading_from_generation else 0)
 		loading_panel.show_progress("Loading your world","Reading saved world data",94 if loading_from_generation else 0)
 	loading_reason = reason
+	mouse_capture_requested = false
 	loading_started_us = Time.get_ticks_usec()
 	loading_ready_frames = 0
 	terrain.initial_loading = true
@@ -416,8 +418,7 @@ func _update_loading() -> void:
 	terrain.autosave_paused = false
 	travel_blocked_s = 0.0
 	_clear_motion()
-	Mouse.set_mode(self,Input.MOUSE_MODE_CAPTURED)
-	_message("Ready: nearby coverage/collision active; distant terrain still streaming" if terrain.nearby_first and terrain.root_coverage < terrain.roots.size() else "Ready: map coverage and local collision are active")
+	_message("Click the world to play · nearby terrain is ready")
 	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))
@@ -515,7 +516,18 @@ func _edited(_latency: float) -> void:
 	pass
 
 func _mouse_capture_allowed() -> bool:
-	return not loading_active and not shutdown_requested
+	return mouse_capture_requested and app_focused and not loading_active and not shutdown_requested
+
+func _capture_mouse_click(event: InputEvent) -> bool:
+	if loading_active or shutdown_requested or not app_focused or Input.mouse_mode!=Input.MOUSE_MODE_VISIBLE:return false
+	if not event is InputEventMouseButton or not event.pressed or event.button_index!=MOUSE_BUTTON_LEFT:return false
+	if get_viewport()!=get_tree().root or not get_window().has_focus():return false
+	mouse_capture_requested=true
+	if not Mouse.set_mode(self,Input.MOUSE_MODE_CAPTURED):
+		mouse_capture_requested=false
+		return false
+	get_viewport().set_input_as_handled()
+	return true
 
 func _movement_input_available() -> bool:
 	return Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
@@ -563,6 +575,7 @@ func _frame_drawn() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if benchmark_enabled or loading_active:
 		return
+	if _capture_mouse_click(event):return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		yaw -= event.relative.x * 0.0025
 		pitch = clampf(pitch - event.relative.y * 0.0025, -1.53, 1.53)
@@ -866,6 +879,8 @@ func _notification(what: int) -> void:
 	if ProjectSettings.get_setting("terraforest/offscreen_session",false):return
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		app_focused = false
+		mouse_capture_requested = false
+		Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE)
 		_clear_motion()
 		# Do not render 60 copies of an unfocused game window every second.
 		# No resolution change or stale motion queue. Restore the requested cap on focus.

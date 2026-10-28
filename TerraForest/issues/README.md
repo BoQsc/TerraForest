@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Unrequested mouse capture](mouse-capture/README.md) | Corrected / scoped checks | Click-to-play capture; loading and focus changes never reclaim the cursor; desktop review pending |
 | [Additional large house C1](large-house-c1/README.md) | Approved addition / integrated | New fitted neighborhoods and construction palette; native basement/slab preparation, multi-door publication and terrain traversal checked |
 | [Dev Shapes catalog](developer-shapes/README.md) | Implemented / scoped checks | Searchable native-shape thumbnails, material grants and one-click placement setup; all 18 pieces tested; UI review pending |
 | [Progressive harvesting](progressive-harvesting/README.md) | Implemented / scoped checks | Natural resources pay on damaging contacts with larger finishing rewards; native transactions and boulder save/reload verified; balance review pending |

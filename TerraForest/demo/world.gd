@@ -876,6 +876,7 @@ func _input(event:InputEvent)->void:
 func _unhandled_input(event: InputEvent) -> void:
 	if session_menu.visible_ui():return
 	if player_hud.inventory_open: return
+	if _capture_mouse_click(event):return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_K:
 		_show_lake_notice(actor_authoring.command(self,event.shift_pressed));return
 	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_J:
