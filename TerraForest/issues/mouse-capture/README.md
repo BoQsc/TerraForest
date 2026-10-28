@@ -14,3 +14,7 @@
   assumptions about captured mode/native windows unsupported by that display driver.
 - No screenshot establishes desktop input ownership. Still review actual launch,
   loading, Alt-Tab and click-to-resume on the player's desktop.
+- Installed package repeats all 13 assertions with zero diagnostics:
+  `reports/checks/20261028T082918413737Z_queued_pack/loading_mouse_ownership/`.
+  Actual production generation and read-only game reopen also leave capture
+  unauthorized: `reports/checks/20261028T081755681198Z/`.

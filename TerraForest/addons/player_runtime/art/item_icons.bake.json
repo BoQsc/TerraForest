@@ -56,7 +56,7 @@
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
-        "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
+        "res://project.godot": "0c30e42f9facc33934f982cdf84835fd364607b04bc05b6ff41a9904f8c7ece0",
         "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
         "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }
@@ -78,11 +78,11 @@
         "res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png.import": "765bb88edc32d25b6968019f469b64d4e057d7dc0fc98cbcdb49dd95ed51488e",
         "res://vehicle_demo/scenes/car.tscn": "597766cbfe0141c3118f8762027839cdd47cbd2026ed87e93c6ae3980d8ac31a",
         "res://vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
-        "res://vehicle_demo/scripts/car_native.gd": "7f2aab4faa2d2402062070066a8b8ea7a8105cec1a8b9c44b4556cbf771b2435"
+        "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
-        "res://project.godot": "f5b6afc9645961e815bb03374eafa163364045bdb9d471f999a660ca8ae3d147",
+        "res://project.godot": "0c30e42f9facc33934f982cdf84835fd364607b04bc05b6ff41a9904f8c7ece0",
         "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
         "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }

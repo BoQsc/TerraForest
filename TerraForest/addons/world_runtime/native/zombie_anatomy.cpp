@@ -314,14 +314,15 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
             if(linear.length_squared()>.22*.22||angular.length_squared()>2.5*2.5)quiet[index]=false;
             auto *state=server->body_get_direct_state(rid);
             if(state)for(int contact=0;contact<state->get_contact_count();contact++){
+                if(!ragdoll_contact_valid(state,contact))continue;
                 RID contact_body=state->get_contact_collider(contact);
                 Vector3 normal=state->get_contact_local_normal(contact),point=state->get_contact_collider_position(contact);
                 bool support=(server->body_get_collision_layer(contact_body)&7)!=0;
-                if(support&&normal.y>=.2&&(!group.resting||(state->get_contact_local_position(contact)-point).dot(normal)<=.025)){
+                if(support&&normal.y>=.2&&!group.resting){
                     ground[index]=true;
                     if(!group.resting&&point.y<support_height){support_height=point.y;group.support_body=id;group.support_local=pose.affine_inverse().xform(point);}
                 }
-                if(!(server->body_get_collision_layer(contact_body)&(1<<18))&&state->get_contact_collider_velocity_at_position(contact).length_squared()>.1*.1)moving_contact=true;
+                if(!ragdoll_player_load(state,contact)&&!(server->body_get_collision_layer(contact_body)&(1<<18))&&state->get_contact_collider_velocity_at_position(contact).length_squared()>.1*.1)moving_contact=true;
                 auto owner=owners.find(contact_body.get_id());if(owner!=owners.end()&&owner->second!=index)parents[root(index)]=root(owner->second);
             }
         }
@@ -350,7 +351,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
             }
             if(supported)break;
         }
-        held=supported&&stable&&active?held+elapsed:0;
+        held=supported&&stable?held+elapsed:0;
         bool sleep=held>=.9;
         for(int index:island){
             auto &group=*entries[index].group;
@@ -380,7 +381,7 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
                 bool was_resting=false;
                 if(auto *bone=Object::cast_to<NativeZombiePhysicalBone>(body)){was_resting=bone->is_resting();bone->set_resting(sleep);}
                 if(auto *part=Object::cast_to<NativeZombieRigidPart>(body)){was_resting=part->is_resting();part->set_resting(sleep);}
-                if(!sleep&&was_resting)server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,false);
+                if(!sleep&&(was_resting||(!supported&&bool(server->body_get_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING)))))server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,false);
             }
         }
         if(sleep){

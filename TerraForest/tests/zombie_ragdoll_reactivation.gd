@@ -47,6 +47,9 @@ func measure()->Dictionary:
 	return {"linear":stats.maximum_linear_speed,"angular":stats.maximum_angular_speed,"anchor_error":error,"radius":span,"finite":finite,"sleeping":stats.sleeping,"resting":stats.resting,"joints":joints}
 func observe(label:String,count:int)->void:
 	var peak:={"phase":label,"linear":0.0,"angular":0.0,"anchor_error":0.0,"radius":0.0,"finite":true,"joints_intact":true,"displacement":0.0,"player_speed":0.0,"fastest_bone":"","corpse_contacts":0}
+	var immediate:=measure()
+	for key:String in ["linear","angular","anchor_error","radius"]:peak[key]=immediate[key]
+	peak.finite=immediate.finite;peak.joints_intact=immediate.joints==expected_joints;peak["immediate"]=immediate
 	var initial:Dictionary={}
 	for bone:String in zombie.physical_bones:initial[bone]=zombie.physical_bones[bone].global_position
 	for frame in count:

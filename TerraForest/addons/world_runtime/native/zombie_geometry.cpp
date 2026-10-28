@@ -17,7 +17,7 @@ Dictionary fit_cloud(const PackedVector3Array &vertices,const Transform3D &inver
     AABB bounds(inverse_rest.xform(source[0]),Vector3());
     for(int vertex=0;vertex<vertices.size();vertex++){destination[vertex]=inverse_rest.xform(source[vertex]);bounds.expand_to(destination[vertex]);}
     Vector3 center=bounds.get_center();for(int vertex=0;vertex<vertices.size();vertex++)destination[vertex]-=center;
-    Ref<ConvexPolygonShape3D> shape;shape.instantiate();shape->set_points(points);shape->set_margin(.003);shape->set_custom_solver_bias(.1);
+    Ref<ConvexPolygonShape3D> shape;shape.instantiate();shape->set_points(points);shape->set_margin(.003);
     result["shape"]=shape;result["offset"]=Transform3D(Basis(),center);result["length"]=bounds.size.y;result["mesh_fit_bounds"]=bounds;
     return result;
 }

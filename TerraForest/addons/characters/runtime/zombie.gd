@@ -294,7 +294,7 @@ func _pose_shape_spec(part: String, pelvis: bool = false) -> Dictionary:
 	var shape := ConvexPolygonShape3D.new()
 	shape.points = points
 	shape.margin = 0.003
-	shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
+	if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
 	info.shape = shape
 	return info
 
@@ -339,7 +339,7 @@ func _install_hand_compound(body: PhysicsBody3D, part: String, to_local: Transfo
 		var shape := ConvexPolygonShape3D.new()
 		shape.points = points
 		shape.margin = 0.002
-		shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
+		if ProjectSettings.get_setting("physics/3d/physics_engine","")!="Jolt Physics":shape.custom_solver_bias = CONTACT_RECOVERY_BIAS
 		var collision := CollisionShape3D.new()
 		collision.name = "Grip_" + group
 		collision.shape = shape
@@ -455,6 +455,7 @@ func get_collision_policy() -> Dictionary:
 
 
 func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
+	var jolt:bool=ProjectSettings.get_setting("physics/3d/physics_engine","")=="Jolt Physics"
 	var index := skeleton.find_bone(bone_name)
 	if index < 0:
 		return
@@ -521,9 +522,10 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 			twist = 20.0
 		physical.set("joint_constraints/swing_span", swing)
 		physical.set("joint_constraints/twist_span", twist)
-		physical.set("joint_constraints/bias", 0.3)
-		physical.set("joint_constraints/softness", 0.85)
-		physical.set("joint_constraints/relaxation", 1.0)
+		if not jolt:
+			physical.set("joint_constraints/bias", 0.3)
+			physical.set("joint_constraints/softness", 0.85)
+			physical.set("joint_constraints/relaxation", 1.0)
 		if part.begins_with("hand") or part.begins_with("foot") or part.begins_with("forearm"):
 			# Lock translation when a bent forearm bears against the torso.
 			# The same constraint keeps wrists and ankles attached on impact.
@@ -538,7 +540,7 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 				physical.set(prefix + "linear_limit_enabled", true)
 				physical.set(prefix + "linear_limit_lower", 0.0)
 				physical.set(prefix + "linear_limit_upper", 0.0)
-				physical.set(prefix + "linear_limit_softness", 0.95)
+				if not jolt:physical.set(prefix + "linear_limit_softness", 0.95)
 				# Godot's 6DOF positional recovery uses this nonzero default.
 				physical.set(prefix + "linear_restitution", 0.5)
 				physical.set(prefix + "linear_damping", 1.0)
@@ -548,10 +550,10 @@ func _add_physical_bone(bone_name: String, part: String, pelvis: bool) -> void:
 					limit = 8.0 if axis == "x" else 55.0
 				physical.set(prefix + "angular_limit_lower", -limit)
 				physical.set(prefix + "angular_limit_upper", limit)
-				physical.set(prefix + "angular_limit_softness", 0.85)
+				if not jolt:physical.set(prefix + "angular_limit_softness", 0.85)
 				physical.set(prefix + "angular_restitution", 0.0)
 				physical.set(prefix + "angular_damping", 1.0)
-				physical.set(prefix + "erp", 0.15)
+				if not jolt:physical.set(prefix + "erp", 0.15)
 	physical_bones[bone_name] = physical
 	_body_specs[bone_name] = {"part": part, "offset": physical.body_offset}
 
@@ -1731,6 +1733,7 @@ func _new_detached_body(part: String) -> RigidBody3D:
 
 
 func _new_detached_joint(part: String) -> Joint3D:
+	var jolt:bool=ProjectSettings.get_setting("physics/3d/physics_engine","")=="Jolt Physics"
 	if part.begins_with("hand") or part.begins_with("foot") or part.begins_with("forearm"):
 		# Severed upper-arm chains retain the same elbow translation lock.
 		var joint := Generic6DOFJoint3D.new()
@@ -1741,7 +1744,7 @@ func _new_detached_joint(part: String) -> Joint3D:
 			joint.set(linear + "enabled", true)
 			joint.set(linear + "lower_distance", 0.0)
 			joint.set(linear + "upper_distance", 0.0)
-			joint.set(linear + "softness", 0.95)
+			if not jolt:joint.set(linear + "softness", 0.95)
 			joint.set(linear + "restitution", 0.5)
 			joint.set(linear + "damping", 1.0)
 			var angular := "angular_limit_" + axis + "/"
@@ -1751,10 +1754,10 @@ func _new_detached_joint(part: String) -> Joint3D:
 			joint.set(angular + "enabled", true)
 			joint.set(angular + "lower_angle", -deg_to_rad(degrees))
 			joint.set(angular + "upper_angle", deg_to_rad(degrees))
-			joint.set(angular + "softness", 0.85)
+			if not jolt:joint.set(angular + "softness", 0.85)
 			joint.set(angular + "restitution", 0.0)
 			joint.set(angular + "damping", 1.0)
-			joint.set(angular + "erp", 0.15)
+			if not jolt:joint.set(angular + "erp", 0.15)
 		for property:Dictionary in joint.get_property_list():
 			var key:=String(property.name)
 			if (key.contains("motor") or key.contains("spring")) and key.ends_with("enabled"):joint.set(key,false)
@@ -1763,7 +1766,7 @@ func _new_detached_joint(part: String) -> Joint3D:
 	joint.swing_span = deg_to_rad(55.0)
 	joint.twist_span = deg_to_rad(8.0)
 	joint.bias = 0.3
-	joint.softness = 0.85
+	if not jolt:joint.softness = 0.85
 	joint.relaxation = 1.0
 	return joint
 

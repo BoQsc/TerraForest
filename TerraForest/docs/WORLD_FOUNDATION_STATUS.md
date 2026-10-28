@@ -15,8 +15,8 @@ separate from the approved building design; see linked evidence and limitations.
 
 ## Queued user follow-ups — 2026-10-28
 
-Deferred separately at the user's direction while finishing the approved C1 addition;
-resume after its verified integration commit. None is resolved by that house work.
+Completed and installed after the approved C1 integration, in four focused changes.
+These scoped engineering checks do not replace player visual/feel approval.
 - Mouse: click-to-play capture implemented; 13 headless checks pass. No automatic
   loading/focus recapture. [Desktop review remains](../issues/mouse-capture/README.md).
 - Ore: native generation now bakes continuous matching material below every marker;
@@ -25,7 +25,16 @@ resume after its verified integration commit. None is resolved by that house wor
 - POI/house placement: full envelope/apron and driveway surveys plus native rectangular
   pads implemented; support, access and generated images checked. [Remaining site
   review](../issues/site-terrain-fit/README.md) is distinct from house-design approval.
-- Corpses: fix death vibration and easy walk-over; reproduce and test both together.
+- Corpses: normal Jolt integration replaces per-limb forced rest. Ten packaged
+  60 Hz stress fixtures, streamed-forest contact/loot suspension and four-direction
+  walk-over pass. [Retained limits](../issues/zombie-ragdoll-stability/README.md)
+  include alternative 30 Hz physics, endurance and new-solver save/reopen coverage.
+- Combined verification: real production data generation creates 20 buildings,
+  bakes 992 native edits, saves and reopens with continuous ore and no cursor
+  authorization. `reports/checks/20261028T081755681198Z/` skips photos/map rasters;
+  `20261028T082918413737Z_queued_pack/` repeats ore/site/mouse/walk/vehicle checks.
+  Existing saves were not regenerated or migrated. Earlier overall-rewrite and
+  world-quality backlog below remains separate from these four follow-ups.
 
 ## Developer shape catalog — 2026-10-27
 
@@ -612,6 +621,10 @@ do not declare all collisions or terrain-building performance universally fixed.
 Visual/player acceptance remains separate from engineering checks.
 
 ## Corpse contact and restoration repair — 2026-10-26
+
+Historical scope; default-solver/contact/walk-over results are superseded by the
+2026-10-28 queued follow-up above and its linked tracker. Retain the earlier
+save/reopen evidence without claiming it was repeated under the new solver.
 
 The intact-corpse vibration/explosion report exposed asymmetric player collision,
 ragdoll joints deleted during sleep and joint-frame disturbance across menu

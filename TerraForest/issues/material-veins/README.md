@@ -65,6 +65,12 @@ Seed 1703's complete default plan contains **27 deposits**; the dedicated native
 
 ## Remaining / resume here
 
+2026-10-28 installed package: all 95 continuity/native assertions pass without
+diagnostics in `reports/checks/20261028T082918413737Z_queued_pack/material_deposits_native/`.
+Production data generation and actual game reopen also preserve every marker's
+matching vertical ore column: `reports/checks/20261028T081755681198Z/`.
+That fixture skips photographs/map raster baking and leaves existing worlds intact.
+
 - Player review of stone appearance, distribution, mining duration and reward balance. Return after trying a new world with the Landscape option enabled; compare both materials and map visibility.
 - Markers are not a depletion survey. Add depletion tracking only if requested; current map explicitly states this limitation.
 - No retroactive migration of existing worlds, new mineral types, new crafting progression, or changes to base vein abundance were requested or implemented.

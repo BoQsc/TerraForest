@@ -21,7 +21,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 | [ESC Player settings](esc-player-settings/README.md) | Implemented / scoped checks | Third-person and embedding switches move from Session into Player; session actions stay unchanged |
 | [Vehicle sinks on exit](vehicle-exit-terrain/README.md) | Fixed for reproduced failure / scoped checks | Exit contact transition and fresh parking observations pass 18 repeated world exits; original-save user review pending |
 | [Fly wheel initial hover](player-action-hover/README.md) | Fixed for reproduced case | Holding backtick selects the centred Fly action; release no longer needs a mouse wiggle |
-| [Zombie ragdoll stability](zombie-ragdoll-stability/README.md) | Improved / partial | Support edits and shared contact islands repaired; impact/stretch stress failures remain open |
+| [Zombie ragdoll stability](zombie-ragdoll-stability/README.md) | Corrected at default 60 Hz / scoped checks | Ten stress fixtures, forest contact and four-direction walk-over pass; alternate 30 Hz physics and endurance remain unqualified |
 | [Torch hand deformation](torch-hand-deformation/README.md) | Improved / partial | Rebuilt wrists and finger wrap at 60 Hz, locked runtime grip; revised hands await player review |
 | [ESC UI priority](escape-ui-priority/README.md) | Fixed for current UI / scoped checks | Close active UI first; a fresh ESC opens pause only after returning to gameplay |
 | [Backpack/toolbelt separation](inventory-backpack-separation/README.md) | Implemented / scoped checks | Container inventories show backpack slots only, not duplicated toolbelt contents |

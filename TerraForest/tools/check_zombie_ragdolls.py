@@ -15,6 +15,7 @@ CHECKS = {
     "zombie_ragdoll_stress": (600, "ZOMBIE_RAGDOLL_STRESS failures=0", "--ragdoll-evidence="),
     "zombie_combat_regions": (120, "ZOMBIE_COMBAT_REGIONS checks=", "--zombie-combat-dir="),
     "zombie_ragdoll_reactivation": (150, "ZOMBIE_RAGDOLL_REACTIVATION failures=0", "--reactivation-evidence="),
+    "zombie_corpse_walk": (90, "ZOMBIE_CORPSE_WALK failures=0", ""),
     "zombie_anatomy": (60, "ZOMBIE_ANATOMY checks=", ""),
     "zombie_awareness": (60, "ZOMBIE_AWARENESS checks=", ""),
     "zombie_geometry_cache": (90, "ZOMBIE_GEOMETRY_CACHE checks=", ""),
@@ -63,7 +64,7 @@ def main():
         command, cache = command_for(engine, name, output, extra, not options.graphical)
         source = ROOT / "tests" / (name + ".gd")
         dependencies = {str(source.relative_to(ROOT)): hashlib.sha256(source.read_bytes()).hexdigest()}
-        if name == "zombie_ragdoll_stress":
+        if name in {"zombie_ragdoll_stress", "zombie_corpse_walk"}:
             base = ROOT / "tests/zombie_ragdoll_reactivation.gd"
             dependencies[str(base.relative_to(ROOT))] = hashlib.sha256(base.read_bytes()).hexdigest()
         if options.pack:
@@ -72,7 +73,7 @@ def main():
             report_root = output / "evidence"
             report_root.mkdir(exist_ok=True)
             script = script.replace("res://reports", report_root.as_posix())
-            if name == "zombie_ragdoll_stress":
+            if name in {"zombie_ragdoll_stress", "zombie_corpse_walk"}:
                 helper = output / "reactivation_base.gd"
                 helper.write_bytes((ROOT / "tests/zombie_ragdoll_reactivation.gd").read_bytes())
                 script = script.replace('"res://tests/zombie_ragdoll_reactivation.gd"', json.dumps(helper.as_posix()))

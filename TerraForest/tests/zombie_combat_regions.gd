@@ -155,7 +155,7 @@ func run()->void:
 	var fragments:Dictionary=fragment_anatomy.ragdoll_stats()
 	print("SCATTERED_FRAGMENTS ",JSON.stringify(fragments))
 	var swept_off:=true
-	for part:RigidBody3D in scattered:if part.continuous_cd or not part.custom_integrator:swept_off=false
+	for part:RigidBody3D in scattered:if part.continuous_cd or part.custom_integrator:swept_off=false
 	check(fragments.groups==6 and fragments.resting==6 and fragments.sleeping==6 and swept_off,"six scattered detached islands all retain verified physical rest with CCD parked")
 	floor.position.y=-3
 	await ticks(45)

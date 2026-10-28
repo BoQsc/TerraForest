@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-28",
+  "review": "Original unedited game PNGs inspected; player visual and motion acceptance remains pending.",
+  "images": [
+    {
+      "file": "ground-pile-jolt.png",
+      "sha256": "a85d42c1d396cbf1243f4cc6937d83fa250de740f70033dcc4008af872b2eeb2",
+      "source": "reports/checks/20261028T083141978493Z_zombie_graphical_pack/zombie_ragdoll_stress/evidence/ground_pile-settled.png",
+      "record": "../evidence/queued-graphical-stress-run.json",
+      "context": "Installed Jolt package, 60 Hz, eight intact corpses, all 120 bodies asleep. Isolated fixture, no world seed. Different poses from the historical failure."
+    },
+    {
+      "file": "severed-jolt.png",
+      "sha256": "b06cbb0776b1efa2fef3efcc1e87bc46d6aa4027305eca1c0114422d2d8e7772",
+      "source": "reports/checks/20261028T083141978493Z_zombie_graphical_pack/zombie_ragdoll_stress/evidence/severed-settled.png",
+      "record": "../evidence/queued-graphical-stress-run.json",
+      "context": "Installed Jolt package, 60 Hz, four intentionally severed death poses, 60 bodies asleep. Isolated fixture, no world seed."
+    },
+    {
+      "file": "forest-jolt.png",
+      "sha256": "121f759fe3802d03b0f513129c4585830849b4acb2bbc492ba4417d8a2462c79",
+      "source": "reports/checks/20261028T083616922828Z_forest_sample_pack/evidence/after.png",
+      "record": "../evidence/queued-forest-run.json",
+      "context": "Seed 1703 temporary streamed world, installed Jolt package, 60 Hz, all 15 bodies asleep after contact, landing, loot suspension and impulses. Tree-shadowed corpse; not a matching historical view."
+    }
+  ]
+}

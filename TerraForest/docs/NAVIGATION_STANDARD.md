@@ -64,11 +64,15 @@ disable the door's physical collision. Inside-leaf interaction picking retains
 the normal three-metre range and intervening solid occlusion.
 
 Player collision includes ragdolls even when living encounters are disabled.
-Articulated limbs are not moving platforms or automatic stair treads. Native
-step assistance rejects existing ragdoll contacts and up to four contacts from
-each obstacle/landing sweep; ordinary collision remains enabled. Corpse rest
-preserves anatomical joints. Menu/readiness suspension freezes bodies explicitly
-without removing their physics-space registration or rebuilding joint frames.
+Articulated limbs are not moving platforms. Native step assistance rejects active
+ragdolls but permits verified-resting corpses, with a corpse-only 0.55 m lift.
+Ordinary stairs retain 0.30 m; larger rises require corpse landing collision too.
+Head, forward and landing sweeps remain mandatory, including up to four contacts
+per obstacle/landing sweep. Collision remains enabled. Corpse rest preserves
+anatomical joints and normal solver integration, not per-limb forced velocities
+or gravity suppression. Real impacts and lost support restore active dynamics.
+Menu/readiness suspension freezes bodies explicitly without removing their
+physics-space registration or rebuilding joint frames.
 
 Player standing/crouching capsules share a 0.34 m radius and fixed feet origin;
 height changes from 1.8 m to 1.1 m. Native standing-clearance queries use the full

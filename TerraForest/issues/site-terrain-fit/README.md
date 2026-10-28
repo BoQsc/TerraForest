@@ -28,3 +28,8 @@ Earlier site and scooped shoulders remain in `../large-house-c1/images/`.
   corrected continuous-density probes pass without changing terrain tolerances.
 - Still review populated sites, additional POI designs, driving and landscape
   transitions. Passing fixtures do not approve all world geography or old saves.
+- Installed package repeats all 19 site assertions without diagnostics:
+  `reports/checks/20261028T082918413737Z_queued_pack/site_fit_standards/`.
+  Actual production data generation creates 20 buildings, saves and reopens through
+  the game loader: `reports/checks/20261028T081755681198Z/`. That headless fixture
+  skips photographs/map raster baking; it is not a populated visual approval.

@@ -104,7 +104,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
     auto hits_ragdoll=[](const Ref<KinematicCollision3D> &collision){
         for(int contact=0;contact<collision->get_collision_count();contact++){
             auto *collider=Object::cast_to<PhysicsBody3D>(collision->get_collider(contact));
-            if(collider&&(collider->get_collision_layer()&(1<<18)))return true;
+            if(collider&&(collider->get_collision_layer()&(1<<18))&&(!collider->has_method("is_resting")||!bool(collider->call("is_resting"))))return true;
         }
         return false;
     };
@@ -129,7 +129,9 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
         step_support_->set_collision_mask(body->get_collision_mask());
         TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
         Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
-        if(!hit.is_empty()&&!(server->body_get_collision_layer(hit["rid"])&ragdoll_layer)&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
+        Object *support=hit.get("collider",Variant());
+        bool stable=!hit.is_empty()&&(!(server->body_get_collision_layer(hit["rid"])&ragdoll_layer)||(support&&support->has_method("is_resting")&&bool(support->call("is_resting"))));
+        if(stable&&Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle())&&
            !body->test_move(body->get_global_transform(),horizontal,{},body->get_safe_margin())){
             body->set_velocity(Vector3(velocity.x,0,velocity.z));body->move_and_slide();body->apply_floor_snap();
             step_frame_=frame;return false;
@@ -141,8 +143,14 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
         // Four bounded sweeps: obstacle, head clearance, raised travel, landing.
         // Refuse jumping, oversized tick travel, tall walls and unsupported gaps.
         if(step_collision_.is_null())step_collision_.instantiate();
-        if(body->test_move(start,horizontal,step_collision_,margin,false,4)&&!body->test_move(start,Vector3(0,0.3,0),{},margin)) {
+        if(body->test_move(start,horizontal,step_collision_,margin,false,4)) {
             if(hits_ragdoll(step_collision_)){body->move_and_slide();return false;}
+            double step_height=.3;
+            for(int contact=0;contact<step_collision_->get_collision_count();contact++){
+                auto *collider=Object::cast_to<PhysicsBody3D>(step_collision_->get_collider(contact));
+                if(collider&&(collider->get_collision_layer()&ragdoll_layer))step_height=.55;
+            }
+            if(body->test_move(start,Vector3(0,step_height,0),{},margin)){body->move_and_slide();return false;}
             // A rounded capsule can lose is_on_floor while touching a riser,
             // including a tick without an attempted step. Require nearby actual
             // walkable support instead of allowing that transient flag to
@@ -158,11 +166,11 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                     body->move_and_slide();return false;
                 }
             }
-            Transform3D raised=start;raised.origin.y+=0.3;
+            Transform3D raised=start;raised.origin.y+=step_height;
             if(!body->test_move(raised,horizontal,{},margin)) {
                 raised.origin+=horizontal;
                 if(step_collision_.is_null())step_collision_.instantiate();
-                if(body->test_move(raised,Vector3(0,-0.35,0),step_collision_,margin,false,4)) {
+                if(body->test_move(raised,Vector3(0,-step_height-.05,0),step_collision_,margin,false,4)) {
                     if(hits_ragdoll(step_collision_)){body->move_and_slide();return false;}
                     bool supported=step_collision_->get_normal().y>=std::cos(body->get_floor_max_angle());
                     // Capsule/riser corner normals differ from tread normals.
@@ -172,7 +180,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                     if(!supported) {
                         if(step_support_.is_null())step_support_.instantiate();
                         Vector3 probe=raised.origin+horizontal.normalized()*real_t(step_radius_);
-                        step_support_->set_from(probe);step_support_->set_to(probe-Vector3(0,0.35,0));
+                        step_support_->set_from(probe);step_support_->set_to(probe-Vector3(0,step_height+.05,0));
                         step_support_->set_collision_mask(body->get_collision_mask());
                         TypedArray<RID> exclude;exclude.push_back(body->get_rid());step_support_->set_exclude(exclude);
                         Dictionary hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
@@ -186,7 +194,7 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                         // capsule up/travel/landing sweeps remain mandatory.
                         if(!supported){
                             step_support_->set_from(raised.origin);
-                            step_support_->set_to(raised.origin-Vector3(0,.6,0));
+                            step_support_->set_to(raised.origin-Vector3(0,step_height+.3,0));
                             hit=body->get_world_3d()->get_direct_space_state()->intersect_ray(step_support_);
                             if(hit.has("normal")){
                                 supported=Vector3(hit["normal"]).y>=std::cos(body->get_floor_max_angle());
@@ -196,10 +204,15 @@ bool NativePlayerMovement::move_grounded(CharacterBody3D *body,double delta) {
                     }
                     Vector3 landing=raised.origin+step_collision_->get_travel();
                     // Stay above the first swept contact, at the verified tread
-                    // elevation. Never exceed the already cleared 30 cm lift.
+                    // elevation. Never exceed the already cleared lift.
                     if(has_tread)landing.y=std::min(raised.origin.y,std::max(landing.y,tread.y+margin));
                     const real_t rise=landing.y-start.origin.y;
-                    if(supported&&rise>0.001&&rise<=0.301) {
+                    bool corpse_landing=false;
+                    for(int contact=0;contact<step_collision_->get_collision_count();contact++){
+                        auto *collider=Object::cast_to<PhysicsBody3D>(step_collision_->get_collider(contact));
+                        if(collider&&(collider->get_collision_layer()&ragdoll_layer))corpse_landing=true;
+                    }
+                    if(supported&&rise>0.001&&rise<=step_height+.001&&(rise<=.301||corpse_landing)) {
                         raised.origin=landing;body->set_global_transform(raised);
                         // The landing sweep already integrated the downward
                         // part of this step. A second downward velocity projects

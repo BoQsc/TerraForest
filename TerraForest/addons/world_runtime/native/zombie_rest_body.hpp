@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/physics_direct_body_state3d.hpp>
 namespace terraforest {
 bool ragdoll_rest_impact(godot::PhysicsDirectBodyState3D *state);
+bool ragdoll_player_load(godot::PhysicsDirectBodyState3D *state,int contact);
+bool ragdoll_contact_valid(godot::PhysicsDirectBodyState3D *state,int contact);
 class NativeZombiePhysicalBone : public godot::PhysicalBone3D {
     GDCLASS(NativeZombiePhysicalBone,godot::PhysicalBone3D)
     bool resting_=false;
