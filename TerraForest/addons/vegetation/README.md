@@ -27,7 +27,7 @@ Structure exclusion must use this volume. Canopy and wind bounds describe render
 coverage; using those for construction erases surrounding trees when placing a
 small block underneath branches. Rendering keeps its independent wind-safe bounds.
 
-Defaults: 448 m draw distance, 128 m shadow reach, wind 0.3. `sun_direction` points toward the sun. The renderer uses source geometry close up, fitted layered view proxies in the middle, and silhouette proxies far away. Visual and shadow transitions share stable per-tree state. Ordinary camera movement updates changed instance rows rather than rebuilding complete batches.
+Defaults: 576 m draw distance, 128 m shadow reach, wind 0.3. `sun_direction` points toward the sun. The renderer uses source geometry close up, fitted layered view proxies in the middle, and silhouette proxies far away. Visual and shadow transitions share stable per-tree state. Ordinary camera movement updates changed instance rows rather than rebuilding complete batches. The ecosystem supplies 640 m conservative circular preload coverage, beyond the visual fade; independent callers must provide their own residency margin.
 
 The included source loader is specialized to the supplied spruce asset (6,592 triangles, two surfaces, fixed proxy bake metadata). Replacing the six textures alone does not create a new compatible species. Multiple species and an arbitrary-asset authoring/bake pipeline require further work. Trees are render/shadow objects; add your own gameplay collision policy.
 

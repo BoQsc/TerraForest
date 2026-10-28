@@ -12,8 +12,8 @@ var road_regions:RefCounted
 @export var structures: Node3D
 @export var water: Node3D
 @export var seed: int = 1703
-@export_range(64.0, 768.0, 64.0) var stream_radius: float = 384.0
-@export_range(9, 625, 1) var max_resident_cells: int = 169
+@export_range(64.0, 768.0, 64.0) var stream_radius: float = 640.0
+@export_range(9, 625, 1) var max_resident_cells: int = 441
 @export_range(0.0, 1.0, 0.05) var density: float = 0.82
 @export_range(0.0, 60.0, 1.0) var max_slope_degrees: float = 32.0
 var resident: Dictionary = {}
@@ -173,7 +173,7 @@ func _step(delta: float) -> void:
 		break
 
 func _refresh(center: Vector2i) -> void:
-	var candidates: Array[Vector2i] = _scatter().wanted_cells(center, stream_radius, max_resident_cells)
+	var candidates: Array[Vector2i] = _scatter().wanted_cells(center, stream_radius, max_resident_cells, true)
 	_wanted.clear()
 	for key in candidates:
 		_wanted[key] = true

@@ -1,0 +1,17 @@
+[
+  {
+    "file": "forest_448.png",
+    "source": "reports/vegetation_lod_visual/forest_448.png",
+    "sha256": "ef98dd3f70740d0016cdb0e2b21aaca47ade44c96a90402415c58374ecd744e8"
+  },
+  {
+    "file": "forest_576.png",
+    "source": "reports/vegetation_lod_visual/forest_576.png",
+    "sha256": "73c682a07173954aaa61ec831f303189f689a92ab6f9bef122e3f35871f4ee65"
+  },
+  {
+    "file": "world_travel.png",
+    "source": "reports/vegetation_lod_world/travel.png",
+    "sha256": "7b1b151659c652e7d7318a84b139bad7807d172d4344d34e8ef6c760a625dfcf"
+  }
+]

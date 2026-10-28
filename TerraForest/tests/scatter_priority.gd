@@ -40,7 +40,7 @@ func run() -> void:
 	ecosystem.max_resident_cells = 169
 	ecosystem._refresh(Vector2i(12,20))
 	cases += 1
-	if ecosystem._wanted.keys() != legacy(Vector2i(12,20),384.0,169): failures += 1
+	if ecosystem._wanted.keys() != native.wanted_cells(Vector2i(12,20),384.0,169,true): failures += 1
 	ecosystem.free()
 	var start := Time.get_ticks_usec()
 	for i in range(1000): legacy(Vector2i(16,16),384.0,169)

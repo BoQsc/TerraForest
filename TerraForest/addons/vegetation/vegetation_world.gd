@@ -8,7 +8,7 @@ const Assets = preload("res://addons/vegetation/assets.gd")
 # trees when a single brick is placed underneath their overhanging branches.
 const TRUNK_BOUNDS := AABB(Vector3(-0.35, 0, -0.35), Vector3(0.7, 8, 0.7))
 @export var camera: Camera3D
-@export_range(64.0, 2200.0, 16.0) var draw_distance: float = 448.0
+@export_range(64.0, 2200.0, 16.0) var draw_distance: float = 576.0
 @export_range(0.0, 256.0, 8.0) var shadow_distance: float = 128.0
 @export_range(0.0, 2.0, 0.05) var wind_strength: float = 0.3
 @export var sun_direction := Vector3(-0.35, 0.75, 0.55).normalized()

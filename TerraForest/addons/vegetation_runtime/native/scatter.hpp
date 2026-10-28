@@ -33,7 +33,7 @@ protected:
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeVegetationScatter::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
 
-        ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit"),&NativeVegetationScatter::wanted_cells);
+        ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit","circular"),&NativeVegetationScatter::wanted_cells,DEFVAL(false));
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region","biome_profile"),&NativeVegetationScatter::candidates,DEFVAL(false),DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
@@ -65,11 +65,11 @@ public:
         groves.swap(staged);return true;
     }
 
-    TypedArray<Vector2i> wanted_cells(Vector2i center,double radius_world,int64_t limit) const {
+    TypedArray<Vector2i> wanted_cells(Vector2i center,double radius_world,int64_t limit,bool circular=false) const {
         TypedArray<Vector2i> out;
         // The current world has 32 x 32 owners. Bound work before allocating.
         if(!std::isfinite(radius_world)||radius_world<0||radius_world>768||limit<0||limit>625||limit==0)return out;
-        const int64_t radius=int64_t(std::ceil(radius_world/64.0));
+        const int64_t radius=int64_t(std::ceil(radius_world/64.0))+(circular?1:0);
         const int64_t x0=std::max(int64_t(0),int64_t(center.x)-radius),x1=std::min(int64_t(31),int64_t(center.x)+radius);
         const int64_t z0=std::max(int64_t(0),int64_t(center.y)-radius),z1=std::min(int64_t(31),int64_t(center.y)+radius);
         if(x0>x1||z0>z1)return out;
@@ -77,6 +77,9 @@ public:
         std::vector<Cell> cells;cells.reserve((x1-x0+1)*(z1-z0+1));
         for(int64_t z=z0;z<=z1;++z)for(int64_t x=x0;x<=x1;++x){
             const int64_t dx=x-center.x,dz=z-center.y;
+            const double gap_x=std::max(int64_t(0),std::abs(dx)-1)*64.0;
+            const double gap_z=std::max(int64_t(0),std::abs(dz)-1)*64.0;
+            if(circular&&gap_x*gap_x+gap_z*gap_z>radius_world*radius_world)continue;
             cells.push_back({Vector2i(x,z),dx*dx+dz*dz,z*32+x});
         }
         const auto count=std::min(size_t(limit),cells.size());

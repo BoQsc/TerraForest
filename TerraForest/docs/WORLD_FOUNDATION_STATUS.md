@@ -1,6 +1,17 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Extended vegetation LOD — 2026-10-28
+
+576 m forest visibility with native 640 m circular preload; at most 405 wanted
+owners, two jobs, one batch/frame. Existing tree tiers and near shadows retained.
+Distant fern/bush/twig meshes use 41–61% fewer triangles; near geometry, density,
+harvest/persistence and grass remain unchanged. Scoped geometry, renderer and
+actual-world travel checks pass. [Evidence](../issues/vegetation-lod/README.md).
+Remaining: player review, weak-hardware/endurance and teleport publication checks.
+Moving-world p95 is 20.90 ms; this is not a universal smooth-60-FPS claim.
+Return on visible transitions or measured spikes, comparing the same camera/FOV.
+
 ## City architecture proposals — 2026-10-28
 
 Six additional review-only native prefabs: S1 warehouse, P1 police station, H1

@@ -4,7 +4,7 @@ Optional integration between `TerrainWorld`, `VegetationWorld`, and a perspectiv
 
 The coordinator maintains 64 m placement cells, with a deterministic jittered 6Ã—6 candidate grid per cell. IDs depend on cell and grid position, and random variation depends on seed, so request/visit order cannot alter placement. A grassy-biome mask, slope filter and native density support reject unsuitable positions.
 
-Defaults: stream radius 384 m, at most 169 resident cells, two in-flight batches, at most one new batch per frame, 36 candidates per batch. Nearest cells are admitted first with a stable tie-break. `VegetationWorld.root_limit` independently bounds accepted roots. Keep draw distance inside the streamed coverage for expected travel speeds; the current residency boundary is cell-based and does not use a dedicated streaming fade.
+Defaults: 640 m conservative circular preload coverage, at most 441 resident cells (405 selected away from world edges), two in-flight batches, at most one new batch per frame, 36 candidates per batch. Native selection covers the entire camera-owner square, retaining at least 64 m beyond the 576 m visual cutoff even at owner corners. Nearest cells are admitted first with a stable tie-break. `VegetationWorld.root_limit` independently bounds accepted roots. Distance fading finishes before ordinary residency retirement. Publication remains asynchronous; teleport/loading continuity is not guaranteed by this geometric margin alone. A full reconciliation can take up to 441 frames; the older 169-owner measurements below are historical.
 
 Queries are worker jobs with immutable positions and stamped epoch/revision. Results are discarded after edits, reloads or travel out of residency. Terrain edits queue support revalidation for intersecting placement owners after publication. Existing trees remain visible until the replacement support result arrives. A native batch tests trilinearly interpolated density 0.35 m above and below each original surface candidate; edited-column metadata no longer excludes otherwise supported trees. Underground excavations therefore preserve surface trees. Travel/reload derives the same eligibility from saved terrain density, without a separate vegetation save file.
 
@@ -29,6 +29,13 @@ This integration covers block construction and registered static models, includi
 
 
 ## Interactive ground cover
+
+Extended understory mesh LOD is default-on: fern 1512/392/154 triangles,
+low/woody bush 638/294/154, dry twigs 372/136/80. Native renderer index selection
+adds no per-instance scripts or runtime mesh generation. Near geometry, density,
+harvest identity, shadows, grass tiers and ground-cover draw distance are unchanged.
+`woodland_mesh.build(species, true, false)` retains the previous tiers for comparison.
+See [current evidence and limits](../../issues/vegetation-lod/README.md).
 
 `ground_cover.gd` coordinates native batches with persistent interactive identities for stones, plants and grass clumps. The main world now uses `woodland_mesh.gd`: an original temperate woodland sample with a textured stone, fern-like understory plant and mixed green/dry grass tuft. Shared startup geometry and shader wind replace the earlier simple assets; there are no per-instance scripts or animation nodes. See [art source and limits](art/README.md). The earlier `ground_mesh.gd` remains for comparison fixtures.
 
