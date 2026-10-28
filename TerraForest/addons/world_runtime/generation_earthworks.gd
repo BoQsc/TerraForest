@@ -2,7 +2,7 @@
 extends RefCounted
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 static func packets(segments:Array,deposits:Array=[])->Array:
- if segments.is_empty() and deposits.is_empty() or segments.size()+deposits.size()>4096:return []
+ if segments.is_empty() and deposits.is_empty() or segments.size()+deposits.size()>16384:return []
  var result:Array=[]
  for segment:Dictionary in segments:
   var packet:PackedByteArray

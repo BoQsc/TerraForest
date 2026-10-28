@@ -234,7 +234,7 @@ func _flush_current_packets() -> void:
 
 
 func configure_initial_earthworks(packets:Array,digest:String,hold_until_admitted:bool=false)->bool:
-	if thread.is_started() or not _initial_earthworks.is_empty() or packets.is_empty() or packets.size()>4096 or digest.length()!=64:return false
+	if thread.is_started() or not _initial_earthworks.is_empty() or packets.is_empty() or packets.size()>16384 or digest.length()!=64:return false
 	for letter:String in digest:
 		if not letter in "0123456789abcdef":return false
 	var total:=0

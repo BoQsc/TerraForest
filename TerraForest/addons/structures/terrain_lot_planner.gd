@@ -126,7 +126,7 @@ static func locate(core,center:Vector3,occupied:Array=[])->Dictionary:
     var checked:Dictionary={"ok":true,"lots":lots.lots,"roads":candidate.roads.segments}
     var works:Dictionary=earthworks(checked)
     if not works.ok or not footprint_clear(works.bounds,protected.areas):continue
-    return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,
+    return {"ok":true,"center":candidate.center,"lots":lots.lots,"roads":candidate.roads.segments,"attempts":attempts,"variant":variant,"reservation_owner":protected.owner,
     "site_cost":candidate.cost,"mean_earthwork":candidate.roads.mean_earthwork,"max_cut":candidate.roads.max_cut,"max_fill":candidate.roads.max_fill,"ranked_candidates":candidates.size()}
  return {"ok":false,"reason":"No complete terrain-fitting layout in bounded search","attempts":attempts,"road_rejections":reasons,"best_missing":best_missing}
 

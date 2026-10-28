@@ -1,6 +1,31 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Generator UI and larger regions — 2026-10-28
+
+World / Landscape / Settlements tabs, five working presets, three temperate
+coverage choices and live plan counts replace the earlier two-tab form. Native
+version-six recipes support three districts per center and additional road loops.
+The maximum preset produces 104 existing-catalogue buildings across nine connected
+districts; seed 1703 has 5.14 km regional roads and 3.99 km offroads. Explicit native
+bake, footprint, navigation and cache limits now accommodate that scale. No house
+geometry, trusted plates, player saves or 2 m fill / 3 m cut limits are replaced.
+Full generation testing exposed floor-rounded clearance false rejections and a
+missing small-cellar surface band; clearance now samples the interpolated field
+while retaining support checks and genuine occupied-interior rejection.
+Installed package checks pass; the full 104-building creation/photo/map/play/reload
+flow passes 42 assertions in one window. All 104 clearance envelopes, 45 preset
+checks and 56 C1 regression assertions pass separately. These are engineering
+checks, not approval of city design or all-seed/performance qualification.
+[Evidence, screenshots and remaining qualification](../issues/world-generator/README.md).
+
+Not finished cities: zoning, continuous urban street grids, broader approved
+architecture and additional climate/asset biomes still need native planning/assets
+and player design approval. Return after review of these experimental larger regions;
+require multiple-seed ground-level access, walking/driving and endurance measurements
+before promoting world quality. The 2 km bounds and current temperate biome scope
+remain visible; larger repeated districts are not a substitute for those requirements.
+
 ## Additional large house C1 — 2026-10-27
 
 User approved C1 R1 as an addition. Exact geometry is now a production prefab and
@@ -1446,8 +1471,8 @@ Remaining: city zoning/continuous urban street grids, more building families,
 additional climate/asset biomes, and broad district/road entrance walking/driving
 and lower-end performance qualification. Current biome choices are woodland/meadow
 coverage profiles using existing assets, not complete new climate ecosystems.
-Cities are explicitly deferred as requested; return after this settlement/UI
-playtest with native district planning and the existing terrain-fit/access gates.
+The 2026-10-28 larger-region milestone above supersedes the earlier request to defer
+city work; full urban design still requires the existing terrain-fit/access gates.
 Require representative real-world captures, traversal and frame-time/memory data
 before closing those items. Larger layouts do not override earlier rejected or
 unreviewed world-quality requirements below.

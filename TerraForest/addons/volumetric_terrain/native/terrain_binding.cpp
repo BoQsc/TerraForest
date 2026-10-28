@@ -32,7 +32,7 @@ namespace terraforest {
 godot::PackedByteArray render_generation_map(const godot::PackedByteArray &,const godot::Array &,const godot::Array &,const godot::PackedByteArray &);
 godot::Dictionary plan_regional_route(const World &,godot::Vector3,godot::Vector3,const godot::Array &);
 godot::Dictionary fit_generated_road_network(const World &,const godot::Array &,const godot::Array &,bool);
-godot::Dictionary plan_region_network(const World &,const godot::Array &,const godot::Array &,bool,int,int64_t,const godot::Array &);
+godot::Dictionary plan_region_network(const World &,const godot::Array &,const godot::Array &,int,int,int64_t,const godot::Array &);
 godot::Dictionary plan_settlement_lots(const World &,godot::Vector3,const godot::Array &,const godot::Array &,bool);
 godot::Dictionary plan_street_network(const World &,const godot::Array &,const godot::PackedVector3Array &);
 godot::Dictionary normalize_generated_roads(const World &,const godot::Array &,const godot::Array &);
@@ -120,7 +120,7 @@ public:
     godot::Dictionary normalize_roads(const godot::Array &roads,const godot::Array &protected_areas){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=normalize_generated_roads(world_,roads,protected_areas);return tr_oom?godot::Dictionary():result;
     }
-    godot::Dictionary plan_network(const godot::Array &districts,const godot::Array &reservations,bool loops,int trails,int64_t seed,const godot::Array &streets=godot::Array()){
+    godot::Dictionary plan_network(const godot::Array &districts,const godot::Array &reservations,int loops,int trails,int64_t seed,const godot::Array &streets=godot::Array()){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=plan_region_network(world_,districts,reservations,loops,trails,seed,streets);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary fit_lakes(const godot::Array &records){std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_lakes(world_,records);return tr_oom?godot::Dictionary():result;}
@@ -344,7 +344,7 @@ public:
     // sequence once, before any mesh/collision or immutable snapshot is exposed.
     godot::Dictionary bake_generated_earthworks(const godot::Array &packets) {
         godot::Dictionary result;result["ok"]=false;result["completed"]=0;
-        if(packets.is_empty()||packets.size()>4096){result["reason"]="Invalid generation command count";return result;}
+        if(packets.is_empty()||packets.size()>16384){result["reason"]="Invalid generation command count";return result;}
         int64_t total=0;
         std::vector<godot::PackedByteArray> commands;
         for(int64_t i=0;i<packets.size();++i){
@@ -378,7 +378,7 @@ public:
     godot::Dictionary generation_bake_progress()const{return generation_progress_.read();}
     godot::Dictionary bake_generated_earthworks_staged(const godot::Array &packets,const godot::String &directory,int64_t limit=MAX_PAGES,int64_t batch=64,int64_t expected_epoch=-1,int64_t test_stop_at_checkpoint=-1){
         godot::Dictionary result;result["ok"]=false;result["completed"]=0;
-        if(packets.is_empty()||packets.size()>4096||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||test_stop_at_checkpoint< -1||test_stop_at_checkpoint>8193||!directory.is_absolute_path()){
+        if(packets.is_empty()||packets.size()>16384||limit<8||limit>MAX_PAGES||batch<1||batch>256||expected_epoch< -1||expected_epoch>0xffffffffll||test_stop_at_checkpoint< -1||test_stop_at_checkpoint>8193||!directory.is_absolute_path()){
             result["reason"]="Invalid staged generation bounds";return result;
         }
         std::vector<godot::PackedByteArray> commands;int64_t total=0;

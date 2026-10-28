@@ -21,11 +21,11 @@ class FieldFacade extends Node:
 	var stopping := false
 	var epoch := 0
 	var density_revision := 0
-	func request_density_scan(points: PackedVector3Array, token: int, support_depth: int) -> bool:
+	func request_density_scan(points: PackedVector3Array, token: int, support_depth: int, interpolated:bool=false) -> bool:
 		var values := PackedFloat32Array()
 		for offset in range(0, points.size(), 512):
 			var batch := points.slice(offset, mini(offset + 512, points.size()))
-			var query := Codec.command(30, [density_revision, batch.size(), support_depth])
+			var query := Codec.command(31,[density_revision,batch.size()]) if interpolated else Codec.command(30, [density_revision, batch.size(), support_depth])
 			query.append_array(batch.to_byte_array())
 			var reply: PackedByteArray = core.execute(query)
 			if not Codec.reply_ok(reply):

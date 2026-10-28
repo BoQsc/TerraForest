@@ -168,8 +168,8 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
  return failure("Route refinement limit reached");
 }
 
-Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,bool loops,int trails,int64_t seed,const Array &streets){
- if(districts.is_empty()||districts.size()>6||reservations.size()>4096||streets.size()>4096||trails<0||trails>2||seed<0||seed>0x7fffffff)return failure("Invalid regional network settings");
+Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,int loops,int trails,int64_t seed,const Array &streets){
+ if(districts.is_empty()||districts.size()>9||loops<0||loops>2||reservations.size()>4096||streets.size()>4096||trails<0||trails>2||seed<0||seed>0x7fffffff)return failure("Invalid regional network settings");
  struct FittedEdge{Vector3 start,finish;bool curved;};
  std::vector<FittedEdge> graded;
  for(int index=0;index<streets.size();++index){
@@ -223,7 +223,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
   pairs.push_back({source,target,distance});
  }
  std::stable_sort(pairs.begin(),pairs.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
- int owners[6]={0,1,2,3,4,5};bool connected[6][6]={};
+ int owners[9]={0,1,2,3,4,5,6,7,8};bool connected[9][9]={};
  Array links,segments;AABB bounds;bool first_bounds=true;double road_length=0,trail_length=0;int attempts=0,loop_count=0;
  auto append=[&](Dictionary route,int source,int target,bool trail){
   PackedVector3Array points=route["points"];double length=0;
@@ -262,7 +262,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
  }
  if(loops)for(const auto &pair:pairs){
   if(connected[pair.source][pair.target])continue;
-  if(connect(pair.source,pair.target)){++loop_count;break;}
+  if(connect(pair.source,pair.target)&&++loop_count>=(loops==2?int(exits.size()):1))break;
  }
  const int desired_trails=trails*int(exits.size());
  int trail_count=0;

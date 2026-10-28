@@ -10,8 +10,13 @@ func run()->void:
  check(browser.buildable_ground.button_pressed and browser.buildable_roads.button_pressed and browser.selected_options().road_grid==3,"improved terrain and road preferences start enabled")
  check(browser.buildable_ground.get_parent()==browser.buildable_roads.get_parent() and browser.buildable_ground.get_parent().get_parent().name=="BuildingGridFit","related generation preferences share one named group")
  var tabs:TabContainer=browser.find_children("*","TabContainer",true,false)[0];tabs.current_tab=1
+ check(browser.world_style.selected==1 and browser.world_style.item_count==6,"balanced recipe starts selected with five real presets and custom mode")
+ browser.world_style.select(3);browser.world_style.item_selected.emit(3)
+ check(browser.selected_options().districts==3 and browser.selected_options().network==2,"city preset changes actual district and road settings")
+ browser.world_style.select(1);browser.world_style.item_selected.emit(1)
  check(browser.preparation_panel.is_visible_in_tree() and browser.preparation_panel.detail.text=="Ready to generate","generation strip is visible before generation starts")
  browser.name_field.text="Alder_Reach";browser.biome.select(1);browser.district_count.select(1);browser.road_network.select(1);browser.invalidate_preview()
+ check(browser.world_style.selected==5,"manual recipe changes show Custom without changing the seed or name")
  check(browser.preview_worker==null and browser.preview_due_ms>Time.get_ticks_msec(),"recipe changes debounce the automatic preview")
  var deadline:=Time.get_ticks_msec()+90000
  while (browser.preview_worker!=null or browser.preview_due_ms>=0) and Time.get_ticks_msec()<deadline:await process_frame
@@ -42,6 +47,8 @@ func run()->void:
    if control.text=="Quit":check(viewport.encloses(control.get_global_rect()),"quit action stays on screen at "+str(resolution))
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_creation_%dx%d.png"%[resolution.x,resolution.y])
+  var categories:TabContainer=browser.find_children("*","TabContainer",true,false)[1];categories.current_tab=1
+  await process_frame
   var grid_scroll:ScrollContainer=browser.buildable_ground.get_parent().get_parent().get_parent().get_parent()
   grid_scroll.ensure_control_visible(browser.buildable_ground.get_parent().get_parent())
   for frame in 8:await process_frame
@@ -49,11 +56,19 @@ func run()->void:
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://reports/world_creation_grid_%dx%d.png"%[resolution.x,resolution.y])
  root.content_scale_size=Vector2i(1920,1080)
- var categories:TabContainer=browser.find_children("*","TabContainer",true,false)[1];categories.current_tab=1
+ var categories:TabContainer=browser.find_children("*","TabContainer",true,false)[1];categories.current_tab=2
  for frame in 8:await process_frame
  for control:Control in [browser.settlement_count,browser.district_count,browser.road_network,browser.offroads]:check(Rect2(Vector2.ZERO,Vector2(1920,1080)).encloses(control.get_global_rect()),"settlement controls remain visible")
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png("res://reports/world_creation_settlements.png")
- FileAccess.open("res://reports/world_creation_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"options":options,"metrics":browser.preview_metrics.text,"status":browser.preview_status.text},"  "))
+ browser.world_style.select(4);browser.world_style.item_selected.emit(4)
+ deadline=Time.get_ticks_msec()+120000
+ while (browser.preview_worker!=null or browser.preview_due_ms>=0) and Time.get_ticks_msec()<deadline:await process_frame
+ check(browser.preview_view.texture!=null and browser.preview_metrics.text.contains("104 BUILDINGS"),"largest recipe previews the actual nine-district region")
+ categories.current_tab=0
+ for frame in 8:await process_frame
+ await RenderingServer.frame_post_draw
+ root.get_texture().get_image().save_png("res://reports/world_creation_city.png")
+ FileAccess.open("res://reports/world_creation_ui.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"options":browser.selected_options(),"metrics":browser.preview_metrics.text,"status":browser.preview_status.text},"  "))
  print("WORLD_CREATION_UI failures=",failures)
  browser.free();quit(1 if failures else 0)

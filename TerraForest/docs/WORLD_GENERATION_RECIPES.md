@@ -1,6 +1,6 @@
 # Configurable world creation
 
-Implemented 2026-10-25. This is the integrated new-world creation UI and bounded
+Implemented 2026-10-25; expanded 2026-10-28. This is the integrated creation UI and bounded
 regional-generation recipe, not approval of finished city or world quality.
 
 ## Player workflow
@@ -18,17 +18,27 @@ The footer stays available while settings scroll on smaller displays.
 | Ocean coastline | Existing coastal/inland generator profiles; no alteration to existing saves |
 | Build-friendly terrain | Existing accepted profiles 20/21, with original profiles 17/19 available by opting out |
 | Settlements | One, two or three communities |
-| Settlement scale | One or two independently terrain-fitted districts per community |
-| Regional roads | A connected network; optionally one additional inter-district connection where it fits |
+| Settlement scale | One, two or three independently terrain-fitted districts per community; three is experimental |
+| Regional roads | Direct connections, one alternate route, or an interconnected network with up to one extra link per district |
 | Unpaved offroads | None, or up to one/two dirt trails per district, where terrain and crossing grades permit |
 
-The world remains 2 km square. Current recipes produce 12–68 buildings from the
+The world remains 2 km square. Current recipes produce 12–104 buildings from the
 existing catalogue: two expanded communities have 44 buildings; three expanded
-communities have 68 across six districts. Counts are not silently reduced when a
+communities have 68 across six districts, or 104 across nine experimental districts.
+Counts are not silently reduced when a
 layout fails. Optional trails/alternate routes are explicitly best-effort, and the
 preview reports actual quantities and omissions. Defaults retain two compact
 communities, woodland, build-friendly coastal terrain, direct roads and up to one
 trail per district. These controls apply only to newly generated worlds.
+
+The 2026-10-28 UI groups settings under World, Landscape and Settlements, with
+five starting recipes and Custom mode. Presets set the actual underlying controls;
+they do not change the name/seed or independent mineral/grid-fit preferences.
+The regional-belt preset selects inland grassland, three centers, three districts
+each, interconnected roads and up to two offroads per district. Its seed-1703
+preview has 104 buildings, 5.14 km of regional roads and 3.99 km of trails (13
+accepted trails, nine alternate links). This is a connected experimental region,
+not an approved dense city or new urban building catalogue.
 
 The biome control changes woodland coverage, not climate, terrain materials or
 asset families. It does not claim desert, tundra, tropical vegetation, weather or
@@ -49,7 +59,7 @@ navigation validation and raster composition. They do not invent progress inside
 a native search.
 
 The regional network joins all districts with distance-ordered feasible links.
-Its optional alternate route and wilderness trails use the same bounded native
+Its optional alternate routes and wilderness trails use the same bounded native
 terrain search. It tries both ends of local streets, not only the south-facing
 exits. Different-height centerline crossings and collinear overlaps exceeding
 0.25 m are rejected; it does not stamp one incompatible route over another.
@@ -66,6 +76,15 @@ Seed 42's build-friendly variants require relocation. Cold planning measured abo
 1.1–25 seconds across this matrix on the current machine; this is not a universal
 generation-time or sustained gameplay-performance guarantee.
 
+Three-district layouts additionally try four bounded outer site hints when an
+inner hint cannot fit. Route reservations honor the same placeholder-site owner
+chosen by the lot search; lakes, mines and actual building footprints stay protected.
+The larger pipeline admits at most 16,384 grading/mineral commands (still at most
+4 MiB of command bytes), 131,072 road-contact footprints (54 MiB of observations),
+and 8,192 persisted road segments (still within the 512 KiB navigation envelope).
+Native staged terrain residency/checkpoint bounds are unchanged. Generation-only
+limits are not runtime streaming budgets or permission to loosen terrain grades.
+
 Sidewalks remain the trusted individually destructible flat plates. Regional
 roads and dirt trails remain editable volumetric terrain. No experimental ramp
 kit, continuous decorative sidewalk mesh, or diagonal rotated plate is added.
@@ -73,23 +92,26 @@ kit, continuous decorative sidewalk mesh, or diagonal rotated plate is added.
 ## Storage and caching
 
 `NativeWorldRecipe` stores the authoritative recipe in the compound world section
-`world_recipe_v1`: 28 little-endian bytes, RCP1 magic, schema version 1 and five
-validated integer fields (biome, settlements, districts, network, trails).
+`world_recipe_v1`: RCP1 little-endian bytes with validated integer fields. Original
+five-field recipes remain 28-byte version 1; six-field grid-fit recipes remain
+32-byte versions 2–4; seven-field recipes including minerals remain 36-byte version
+5. Larger district/network values use 36-byte version 6. Existing valid recipes
+retain their exact bytes; the old versions do not accept the new bounds.
 Malformed fields fail without mutating live state. Missing sections restore the
 legacy biome and do not regenerate any existing world. Opening a save never
 applies the currently selected creation controls. Publication validates the exact
 requested recipe as well as terrain/building storage. Presentation JSON is only
 informational; it is not the source of the live biome setting.
 
-Custom placement plans use `recipe_3_<sha256>.bin`. Keys include seed, terrain
+Custom placement plans use `recipe_20_<sha256>.bin`. Keys include seed, terrain
 profile, canonical binary options, recipe version, and terrain/structures native
 binary fingerprints. The checksummed payload contains plain Godot binary values;
 object deserialization is disabled and prefab Resources are rebuilt from recipes.
 The successful deterministic placement variant is recorded. Changes to GDScript
-recipe geometry/schema require a custom recipe-version bump. The legacy version-3
-plan API and its original digests remain unchanged when no custom options are
-provided. Both plan families share the 32-entry / 64 MiB derived-cache bound, with
-an 8 MiB per-plan limit. Writes are staged and verified before rename; trimming
+recipe geometry/schema require a custom recipe-version bump. The legacy non-custom
+plan API remains separate when no custom options are provided. Both plan families
+share the 32-entry / 64 MiB derived-cache bound, with a 32 MiB custom-plan limit
+and an 8 MiB legacy-plan limit. Writes are staged and verified before rename; trimming
 protects the just-written entry and never touches canonical world files.
 
 Preview rasters include the plan digest and relevant native binary fingerprints.
@@ -135,10 +157,12 @@ remained unchanged. Retain the original timeout and these reruns; reproduce with
 the instrumented test and capture queue/worker state if it recurs before claiming
 uniform map-load reliability. No production map-cache workaround was added.
 
+2026-10-28 evidence and preserved failed trials: [generator UI and city layouts](../issues/world-generator/README.md).
+
 Still not complete: real city zoning/connected urban grids, substantially broader
 building variety, additional climate/asset biomes, and broad ground-level/vehicle
-quality acceptance of every district and road approach. Return to cities after
-the present settlement controls/layouts are playtested, with a native district
+quality acceptance of every district and road approach. The new experimental
+three-district option starts city work; complete it with a native district
 hierarchy and intersection/entrance contracts; do not label these repeated small
 districts as finished cities. Require representative seed/biome captures, real
 walking/driving access and long-travel frame-time/memory evidence before promoting

@@ -117,7 +117,7 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
    for(int across_cell=first_x;across_cell<last_x;++across_cell)for(int along_cell=first_z;along_cell<last_z;++along_cell){
     Vector2 offset=Vector2(across_cell+.5,along_cell+.5)-origin;double fraction=offset.dot(axis)/axis.length_squared(),lateral=std::abs(offset.cross(axis))/edge.length;
     if(fraction*edge.length<.71||(1-fraction)*edge.length<.71||lateral>edge.grade_width-.71)continue;
-    if(++footprint_count>32768)return rejected("Generation footprint budget exceeded");
+    if(++footprint_count>131072)return rejected("Generation footprint budget exceeded");
     Footprint footprint;int point_index=0;
     for(double offset_x:{.08,.5,.92})for(double offset_z:{.08,.5,.92}){
      double projected=(Vector2(across_cell+offset_x,along_cell+offset_z)-origin).dot(axis)/axis.length_squared();double location=projected*divisions;int section=std::clamp(int(location),0,divisions-1);double local=location-section,square=local*local,cube=square*local;

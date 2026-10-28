@@ -32,6 +32,7 @@ public:
         }
         if(count==6&&bytes.decode_u32(28)>=2)bytes.encode_u32(4,bytes.decode_u32(28)+1);
         if(count==7)bytes.encode_u32(4,5);
+        if(count==7&&(bytes.decode_u32(16)>2||bytes.decode_u32(20)>1))bytes.encode_u32(4,6);
         return validate_snapshot(bytes)?bytes:godot::PackedByteArray();
     }
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {
@@ -39,10 +40,11 @@ public:
         if((bytes.size()!=28&&bytes.size()!=32&&bytes.size()!=36)||bytes.decode_u32(0)!=0x31504352)return false;
         if(bytes.size()==28&&bytes.decode_u32(4)!=1)return false;
         if(bytes.size()==32&&(bytes.decode_u32(28)>3||bytes.decode_u32(4)!=(bytes.decode_u32(28)>=2?bytes.decode_u32(28)+1:2)))return false;
-        if(bytes.size()==36&&(bytes.decode_u32(4)!=5||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1))return false;
+        if(bytes.size()==36&&((bytes.decode_u32(4)!=5&&bytes.decode_u32(4)!=6)||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1))return false;
         const auto settlements=bytes.decode_u32(12),districts=bytes.decode_u32(16);
-        return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=2
-            &&settlements*districts<=6&&bytes.decode_u32(20)<=1&&bytes.decode_u32(24)<=2;
+        const bool expanded=bytes.decode_u32(4)==6;
+        return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=(expanded?3u:2u)
+            &&settlements*districts<=(expanded?9u:6u)&&bytes.decode_u32(20)<=(expanded?2u:1u)&&bytes.decode_u32(24)<=2;
     }
     godot::Dictionary decode(const godot::PackedByteArray &bytes) const {
         godot::Dictionary result;

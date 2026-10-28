@@ -40,7 +40,7 @@ func tick(terrain: Node) -> void:
 	else: batch=points.slice(offset,mini(offset+SCAN_LIMIT,points.size()))
 	# Native column maximum checks every layer through the bounded fill depth.
 	var support_depth: int=mini(8,maxi(0,checked_target.y-4)) if deep_support and not clearance else 0
-	waiting=terrain.request_density_scan(batch,token,support_depth)
+	waiting=terrain.request_density_scan(batch,token,support_depth,clearance)
 func receive(result: Dictionary) -> void:
 	if status!="checking" or not waiting or result.token!=token: return
 	waiting=false

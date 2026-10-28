@@ -9,7 +9,7 @@ namespace terraforest {
 inline godot::Dictionary plan_material_deposits(const World &world,const godot::Array &earthworks){
  using namespace godot;
  Dictionary result;result["ok"]=false;
- if(world.generator_id<17||world.generator_id>23||earthworks.size()>4096)return result;
+ if(world.generator_id<17||world.generator_id>23||earthworks.size()>16384)return result;
  struct Corridor {Vector3 start,end;float radius;};
  std::vector<Corridor> corridors;
  for(int index=0;index<earthworks.size();++index){

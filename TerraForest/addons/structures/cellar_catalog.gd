@@ -28,6 +28,7 @@ static func cottage() -> Resource:
  if not asset.configure_model_attachments(models):return null
  asset.resource_name="Cottage with cellar"
  asset.set_meta("site_surface_offset",5)
+ asset.set_meta("site_sample_band",5)
  # A bounded floor-level clearing fits inside the cellar shell. Site preparation
  # applies this after surface grading and before the combined prefab transaction.
  asset.set_meta("cellar_clearance",true)

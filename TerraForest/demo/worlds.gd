@@ -15,6 +15,8 @@ var settlement_count:OptionButton
 var district_count:OptionButton
 var road_network:OptionButton
 var offroads:OptionButton
+var world_style:OptionButton
+var style_description:Label
 var recipe_summary:Label
 var preview_metrics:Label
 var preview_empty:Label
@@ -205,6 +207,7 @@ func _set_creation_busy(active:bool)->void:
 	world_tabs.set_tab_disabled(0,active)
 	generate_button.text="Cancel" if active else "Generate & play";generate_button.disabled=false
 	shuffle_button.disabled=active;gameplay.disabled=active
+	world_style.disabled=active or preset.get_selected_id()!=Launch.INTEGRATED_PRESET
 	preview_button.disabled=active or preview_worker!=null
 	name_field.editable=not active;seed_field.editable=not active
 	for toggle:CheckBox in [ocean,buildable_ground,buildable_roads,material_veins]:toggle.disabled=active
@@ -322,6 +325,7 @@ func update_recipe_summary()->void:
 	recipe_summary.text="%d settlements · %d districts · %s"%[towns,towns*districts,biome.get_item_text(biome.selected)]
 	recipe_summary.tooltip_text=recipe_summary.text
 func invalidate_preview()->void:
+	preload("res://demo/world_creation_panel.gd").sync_style(self)
 	preview_view.texture=null
 	preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS
 	preview_empty.show();preview_metrics.text="UPDATING PREVIEW…";update_recipe_summary()
@@ -361,7 +365,7 @@ func poll_preview()->void:
 		preview_metrics.text="%d BUILDINGS  ·  %.2f km regional roads  ·  %.2f km trails"%[result.building_count,float(network.get("road_length_m",0))/1000,float(network.get("trail_length_m",0))/1000]
 		if result.has("options"):
 			preview_status.text="%d settlements / %d districts · %d trails · %d alternate routes.\n"%[result.options.settlements,result.options.settlements*result.options.districts,network.get("trail_count",0),network.get("loop_count",0)]+("Placement plan cached for generation." if result.get("plan_reusable",false) else "Deterministic plan ready; disk cache unavailable.")
-			if result.options.network==1 and network.get("loop_count",0)==0:preview_status.text+=" No additional inter-district route fits this plan."
+			if result.options.network>0 and network.get("loop_count",0)==0:preview_status.text+=" No additional inter-district route fits this plan."
 			if network.get("trail_count",0)<network.get("requested_trails",0):preview_status.text+=" Some trail candidates could not fit the terrain."
 	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:

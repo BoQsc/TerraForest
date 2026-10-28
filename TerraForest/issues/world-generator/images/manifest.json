@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-28",
+  "build": "post-8a20ba11 generator rewrite, custom plan 20; source UI test 20261028T093027047714Z_generator_ui",
+  "images": [
+    {"file":"regional-belt.png","source":"reports/world_creation_city.png","sha256":"3628c3e07462b96c720ce38c53f9e60898f7ebe6c7c9d99ec4b6c119a83609c3","seed":1703,"generator":22,"districts":9,"resolution":"1920x1080","status":"inspected UI; not player-approved world quality"},
+    {"file":"settlements.png","source":"reports/world_creation_settlements.png","sha256":"8b29c6b09ee2c6f24c2a9046af2f5d117510ae93daa37e7199b0723adeeddc05","seed":1703,"generator":23,"districts":4,"resolution":"1920x1080","status":"inspected UI; custom settings differ from regional belt"},
+    {"file":"landscape-720.png","source":"reports/world_creation_grid_1280x720.png","sha256":"13fe0bdfda9d505d1a29c4b2d0e5749a7f288b28b52cc9ff4e222be8ef2ee9cd","seed":1703,"generator":23,"districts":4,"resolution":"1280x720","status":"inspected small-window layout with settings scrolled"}
+  ]
+}

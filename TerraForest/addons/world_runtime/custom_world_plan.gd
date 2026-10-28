@@ -1,6 +1,6 @@
 extends RefCounted
-const VERSION:=17
-const LIMIT:=8*1024*1024
+const VERSION:=20
+const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
@@ -15,7 +15,7 @@ static func read_plan(path:String,key:String)->Dictionary:
  if Survey.digest(bytes)!=checksum:return {}
  var value=bytes_to_var(bytes)
  if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
- if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>6:return {}
+ if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>9:return {}
  for site:Dictionary in value.sites:
   var source:Array=Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true)
   if site.lots.size()!=source.size():return {}
@@ -54,16 +54,23 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   occupied.append(earthworks.bounds);sites.append(site)
   works.bounds=earthworks.bounds if sites.size()==1 else works.bounds.merge(earthworks.bounds)
   works.segments.append_array(earthworks.segments)
- for town in options.settlements:
-  if options.districts<2:break
+ for expansion in options.settlements*(options.districts-1):
+  var town:int=expansion%options.settlements
+  var district:int=1+expansion/options.settlements
   if progress!=null:progress.record("Expanding settlement %d of %d"%[town+1,options.settlements],sites.size(),options.settlements*options.districts,"Relocating independent districts around terrain, occupied lots, water and protected sites")
-  var offset:Vector3=[Vector3(192,0,0),Vector3(0,0,192),Vector3(-192,0,0),Vector3(0,0,-192)][layout_variant]
+  var offset:Vector3=[Vector3(192,0,0),Vector3(0,0,192),Vector3(-192,0,0),Vector3(0,0,-192)][(layout_variant+district-1)%4]
   var hint:Vector3=sites[town].center+offset*(1 if town%2==0 else -1)
   var site:=Planner.locate(core,hint,occupied)
+  if options.districts==3 and not site.get("ok",false):
+   for direction in 4:
+    var alternate:Vector3=[Vector3(384,0,0),Vector3(0,0,384),Vector3(-384,0,0),Vector3(0,0,-384)][(direction+layout_variant)%4]
+    if progress!=null:progress.record("Finding space for district %d"%[district+1],direction,4,"Bounded alternate site search / unchanged 2 m fill and 3 m cut limits")
+    site=Planner.locate(core,sites[town].center+alternate,occupied)
+    if site.get("ok",false):break
   if not site.get("ok",false):
    site["reason"]="Settlement %d expansion: %s"%[town+1,site.get("reason","Site fitting failed")]
    return retry(seed_value,generator,options,folder,layout_variant,started,site,progress)
-  site["recipe_kind"]="neighborhood";site["town"]=town;site["district"]=1
+  site["recipe_kind"]="neighborhood";site["town"]=town;site["district"]=district
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site);works.bounds=works.bounds.merge(earthworks.bounds);works.segments.append_array(earthworks.segments)
@@ -73,6 +80,11 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  for town in options.settlements:
   var hint:Dictionary=layout.sites[hints[town]]
   reserved.erase(Rect2(Vector2(hint.position.x,hint.position.z)-Vector2.ONE*(hint.radius+32),Vector2.ONE*(hint.radius+32)*2))
+ if options.districts==3:
+  for site:Dictionary in sites:
+   if not site.has("reservation_owner"):continue
+   var claimed:Dictionary=layout.sites[int(site.reservation_owner)]
+   reserved.erase(Rect2(Vector2(claimed.position.x,claimed.position.z)-Vector2.ONE*(claimed.radius+32),Vector2.ONE*(claimed.radius+32)*2))
  var building_count:=0
  for site:Dictionary in sites:
   for lot:Dictionary in site.lots:
@@ -85,7 +97,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if not points.has(point):points.append(point)
   exits.append(points);streets.append_array(site.roads)
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
- var network:Dictionary=core.plan_region_network(exits,reserved,options.network==1,options.trails,seed_value,streets)
+ var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets)
  if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
@@ -99,7 +111,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    var failed:Vector3=normalization.reroute_position
    exclusions.append(Rect2(Vector2(failed.x-4,failed.z-4),Vector2(8,8)))
    if progress!=null:progress.record("Replanning a road that failed its terrain limits",attempt+1,4,"Connected grades / alternate native corridor / no silent fallback")
-   network=core.plan_region_network(exits,exclusions,options.network==1,options.trails,seed_value,streets)
+   network=core.plan_region_network(exits,exclusions,options.network,options.trails,seed_value,streets)
    if not network.get("ok",false):return network
   normalization["reroute_exclusions"]=exclusions.size()-reserved.size()
   normalization["enabled"]=true
