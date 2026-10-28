@@ -30,13 +30,13 @@ static func heights(core,points:PackedVector3Array)->PackedFloat32Array:
  return result
 
 static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[])->Dictionary:
- var source:Array=Lots.recipe(center) if recipe.is_empty() else recipe
+ var source:Array=Lots.recipe(center,true) if recipe.is_empty() else recipe
  var descriptors:Array=[]
  for index in source.size():
   var lot:Dictionary=source[index].duplicate()
   lot.asset=source[(index+variant)%source.size()].asset
   lot.bounds=lot.asset.placement_bounds(lot.origin,lot.rotation)
-  lot.samples=lot.asset.foundation_samples(lot.origin,lot.rotation,0)
+  lot.samples=lot.asset.foundation_samples(lot.origin,lot.rotation,int(lot.asset.get_meta("site_sample_band",0)))
   lot.surface_offset=int(lot.asset.get_meta("site_surface_offset",0))
   var local_bounds:AABB=lot.asset.placement_bounds(Vector3i.ZERO,0)
   var entrance:=Vector3(0.5,lot.surface_offset,local_bounds.end.z+0.5)
@@ -143,6 +143,11 @@ static func earthworks(plan:Dictionary)->Dictionary:
  for lot:Dictionary in plan.lots:
   var path:Dictionary=lot.entrance.segment
   segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
+  if lot.asset.has_meta("garage_entrance"):
+   var start:Vector3=lot.asset.get_meta("garage_entrance")
+   for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
+   start+=Vector3(lot.origin)
+   segments.append(Lots._segment(start,path.finish,2.5,3,4,1,4))
  for road:Dictionary in plan.roads:
   segments.append(road_support(road))
  for road:Dictionary in plan.roads:

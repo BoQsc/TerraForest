@@ -108,6 +108,12 @@ intact. B1 R1 is additionally authorized for generation, alongside the gabled sh
 not as its replacement. Keep both exact approved designs and historical comparisons.
 Their new roof envelopes must be included in planning; do not reuse stale fit caches.
 
+Subsequent approval, 2026-10-27: House C1 R1 is accepted as an additional large house,
+with two storeys, balcony, open garage and basement. Preserve the exact approved
+cells and attached objects; a uniform origin shift for foundation planning is not
+a redesign. This does not authorize replacing existing houses or altering saves.
+Basement and slab excavation belongs in the native generation-time master plan.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

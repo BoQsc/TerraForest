@@ -48,6 +48,6 @@ public:
     AABB placement_bounds(Vector3i origin,int quarter_turns) const;
     PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;
     int64_t clearance_sample_count() const { return clearance_columns.empty()?0:clearance_columns.back().end; }
-    PackedVector3Array clearance_samples(Vector3i origin,int quarter_turns,int64_t offset,int limit) const;
+    PackedVector3Array clearance_samples(Vector3i origin,int quarter_turns,int64_t offset,int limit,int surface_band=0) const;
 };
 }

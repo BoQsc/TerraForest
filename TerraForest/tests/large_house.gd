@@ -37,7 +37,7 @@ func run() -> void:
 	var expected: Resource = Recipe.build(blocks)
 	check(expected.get_records() == viewer.asset.get_records(), "baked cells exactly match offline authoring recipe")
 	check(expected.get_model_attachments() == viewer.asset.get_model_attachments(), "baked attached doors, windows and furniture match recipe")
-	check(viewer.asset.get_meta("review_only", false), "proposal remains separate from generation defaults")
+	check(viewer.asset.get_meta("review_only", false), "historical reviewed resource remains separate from its production copy")
 	check(viewer.asset.get_meta("basement_excavation").size == Vector3(11, 5, 15), "explicit basement excavation envelope is retained")
 	var before: PackedByteArray = blocks.capture_snapshot()
 	var cell_count: int = blocks.stats().cells
@@ -164,7 +164,7 @@ func vehicle_clearance() -> void:
 	check(clear, "2.2 m wide, 1.8 m tall, 4.4 m long vehicle envelope clears the open garage approach")
 
 func finish() -> void:
-	var result := {"checks":checks, "failures":failures, "scope":"isolated C1 prefab, native persistence and traversal; generation and visual approval pending"}
+	var result := {"checks":checks, "failures":failures, "scope":"isolated reviewed C1 prefab, native persistence and traversal; production integration tested separately"}
 	if viewer != null and viewer.ready_ok:
 		result["cells"] = viewer.asset.get_cell_count()
 		result["attachments"] = viewer.asset.get_model_attachments().size()

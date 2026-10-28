@@ -25,7 +25,7 @@ var caption: Label
 var orbit_target := Vector3(3, 6, 1)
 
 func _ready() -> void:
-	DisplayServer.window_set_title("TerraForest | House C1 proposal | existing houses unchanged")
+	DisplayServer.window_set_title("TerraForest | House C1 approved addition | existing houses unchanged")
 	structures = preload("res://addons/structures/structures_world.gd").new()
 	add_child(structures)
 	if not structures.prepare():
@@ -111,7 +111,7 @@ func interface() -> void:
 	column.add_theme_constant_override("separation", 7)
 	panel.add_child(column)
 	var heading := Label.new()
-	heading.text = "TERRAFOREST / HOUSE C1 / NEW PROPOSAL"
+	heading.text = "TERRAFOREST / HOUSE C1 / APPROVED ADDITION"
 	heading.add_theme_font_size_override("font_size", 23)
 	heading.modulate = Color("8ce8c1")
 	column.add_child(heading)
@@ -134,7 +134,7 @@ func interface() -> void:
 	close.pressed.connect(get_tree().quit)
 	toolbar.add_child(close)
 	var help := Label.new()
-	help.text = "Separate destructible blocks · smooth roof · open garage bay · right-drag orbit / wheel zoom\nReview only: not in generation; existing houses and player saves unchanged."
+	help.text = "Separate destructible blocks · smooth roof · open garage bay · right-drag orbit / wheel zoom\nApproved C1 design. This isolated viewer does not modify player saves."
 	help.add_theme_font_size_override("font_size", 15)
 	help.modulate = Color("c2cfd4")
 	column.add_child(help)

@@ -6,14 +6,34 @@ const MAX_SEGMENTS:=256
 static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
 	var plan:=foundation(asset,origin,rotation,grade)
 	if not plan.ok: return plan
+	var profiles:Array=[]
 	if asset.get_meta("cellar_clearance",false):
-		for x in [-2,0,2]:
-			var a:=Vector3(x,1,-3);var b:=Vector3(x,1,3)
+		profiles.append({"sections":asset.get_meta("cellar_sections",[Vector2(-2,-3),Vector2(0,-3),Vector2(2,-3)]),"end":asset.get_meta("cellar_end",3.0),"height":asset.get_meta("cellar_height",5.0),"floor":asset.get_meta("cellar_floor",1.0),"width":1.5})
+	var extra_profiles:Variant=asset.get_meta("floor_profiles",[])
+	if not extra_profiles is Array:return {"ok":false,"reason":"Invalid underground floor profiles"}
+	profiles.append_array(extra_profiles)
+	if profiles.size()>8:return {"ok":false,"reason":"Too many underground floor profiles"}
+	for profile:Variant in profiles:
+		if not profile is Dictionary:return {"ok":false,"reason":"Invalid underground floor profile"}
+		var sections:Variant=profile.get("sections",[])
+		if not sections is Array:return {"ok":false,"reason":"Invalid cellar excavation sections"}
+		var end:float=float(profile.get("end",NAN))
+		var clearance:float=float(profile.get("height",NAN))
+		var floor_level:float=float(profile.get("floor",NAN))
+		var width:float=float(profile.get("width",NAN))
+		if sections.is_empty() or sections.size()>16 or not is_finite(end) or absf(end)>32 or not is_finite(clearance) or clearance<0.125 or clearance>5 or not is_finite(floor_level) or floor_level<0 or floor_level>5 or not is_finite(width) or width<0.5 or width>1.5:
+			return {"ok":false,"reason":"Invalid cellar excavation sections"}
+		for section:Variant in sections:
+			if not section is Vector2 or not section.is_finite() or absf(section.x)>32 or absf(section.y)>32 or end-section.y<1:
+				return {"ok":false,"reason":"Invalid cellar excavation geometry"}
+			var a:=Vector3(section.x,floor_level,section.y);var b:=Vector3(section.x,floor_level,end)
 			for turn in rotation:
 				a=Vector3(1-a.z,a.y,a.x);b=Vector3(1-b.z,b.y,b.x)
 			a+=Vector3(plan.target);b+=Vector3(plan.target)
-			var region:=AABB(a.min(b)-Vector3(1.5,1,1.5),a.max(b)-a.min(b)+Vector3(3,6,3))
-			plan.segments.append({"start":a,"finish":b,"half_width":1.5,"depth":1.0,"clearance":5.0,"shoulder":0.0,"material":1,"bounds":region})
+			var region:=AABB(a.min(b)-Vector3(width,1,width),a.max(b)-a.min(b)+Vector3(width*2,clearance+1,width*2))
+			if region.position.x<5 or region.position.z<5 or region.end.x>1995 or region.end.z>1995 or plan.segments.size()>=MAX_SEGMENTS:
+				return {"ok":false,"reason":"Cellar excavation outside site limits"}
+			plan.segments.append({"start":a,"finish":b,"half_width":width,"depth":1.0,"clearance":clearance,"shoulder":0.0,"material":1,"bounds":region})
 			plan.bounds=plan.bounds.merge(region)
 	plan["foundation_segments"]=plan.segments.size();plan["paving_segments"]=0
 	if not asset.has_meta("frontage_version"): return plan

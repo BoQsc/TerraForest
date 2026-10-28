@@ -496,6 +496,9 @@ func _setup_prefabs() -> void:
 	var hipped_shop: Resource=preload("res://addons/structures/workshop_catalog.gd").hipped_shop()
 	if hipped_shop!=null:
 		structure_prefabs.append(hipped_shop);hipped_shop.changed.connect(_invalidate_prefab_preview)
+	var large_house: Resource=preload("res://addons/structures/furniture_catalog.gd").large_house()
+	if large_house!=null:
+		structure_prefabs.append(large_house);large_house.changed.connect(_invalidate_prefab_preview)
 	# A single bounds outline is UI feedback, not another building simulation.
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)

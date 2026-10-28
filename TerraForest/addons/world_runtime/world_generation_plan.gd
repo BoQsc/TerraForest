@@ -2,7 +2,7 @@
 extends RefCounted
 # Shared preview/bake orchestration. All field, road and lot searches are native.
 # Derived plans contain plain values; prefab Resources are reconstructed from recipes.
-const VERSION:=5
+const VERSION:=8
 const CACHE_BYTES:=64*1024*1024
 const CACHE_ENTRIES:=32
 const LIMIT:=8*1024*1024
@@ -23,7 +23,7 @@ static func attach_assets(result:Dictionary)->bool:
   var plan:Dictionary=result.get(site,{})
   if plan.is_empty():continue
   if not plan.has("center") or not plan.has("lots"):return false
-  var recipe:Array=Lots.recipe(plan.center) if site=="plan" else Market.recipe(plan.center)
+  var recipe:Array=Lots.recipe(plan.center,true) if site=="plan" else Market.recipe(plan.center)
   if recipe.size()!=plan.lots.size():return false
   var variant:int=plan.get("variant",0)
   for i in plan.lots.size():plan.lots[i].asset=recipe[(i+variant)%recipe.size()].asset

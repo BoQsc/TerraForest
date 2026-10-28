@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Additional large house C1](large-house-c1/README.md) | Proposal / awaiting approval | Two storeys, supported balcony, open garage and basement; native traversal/persistence checked; not in generation |
+| [Additional large house C1](large-house-c1/README.md) | Approved addition / integrated | New fitted neighborhoods and construction palette; native basement/slab preparation, multi-door publication and terrain traversal checked |
 | [Dev Shapes catalog](developer-shapes/README.md) | Implemented / scoped checks | Searchable native-shape thumbnails, material grants and one-click placement setup; all 18 pieces tested; UI review pending |
 | [Progressive harvesting](progressive-harvesting/README.md) | Implemented / scoped checks | Natural resources pay on damaging contacts with larger finishing rewards; native transactions and boulder save/reload verified; balance review pending |
 | [Vegetation targeting flicker](vegetation-target-flicker/README.md) | Corrected / scoped checks | Removes running/turning preview lag and reach-edge disappearance; 70 packaged assertions pass; original-location review pending |

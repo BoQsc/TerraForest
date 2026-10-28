@@ -236,12 +236,15 @@ func run()->void:
    game._accept_composed_prefab({"ok":true,"asset":lot.asset});index=game.structure_prefab_index
   game.structure_prefab_index=index;game.structure_rotation=lot.rotation
   var doors:int=game.doors.collection.get_ids().size()
+  var expected_doors:=0
+  for attachment:Dictionary in lot.asset.get_model_attachments():
+   if attachment.model=="architecture/wooden_door/v1":expected_doors+=1
   var placed:=false
   if qualification:
    game._begin_frontage_placement(lot.asset,lot.origin,true)
    placed=await wait_until(func():return game._foundation_placement.is_empty(),20)
   else:placed=await generate_prefab(game,lot)
-  if not placed or game.doors.collection.get_ids().size()!=doors+1:
+  if not placed or game.doors.collection.get_ids().size()!=doors+expected_doors:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
  progress("Baking streets and location metadata")

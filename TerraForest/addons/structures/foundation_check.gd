@@ -19,7 +19,7 @@ var checked_rotation:=0
 var clearance_total:=0
 func begin(terrain: Node,asset: Resource,target: Vector3i,rotation: int) -> bool:
 	if status=="checking" or not terrain.world_ready or terrain.pending_edit: return false
-	points=asset.foundation_samples(target,rotation,0)
+	points=asset.foundation_samples(target,rotation,int(asset.get_meta("site_sample_band",0)))
 	if points.is_empty(): status="No foundation probes";return false
 	checked_asset=asset;checked_target=target;checked_rotation=rotation
 	clearance=false;deep_support=false;clearance_total=asset.clearance_sample_count()
@@ -36,7 +36,7 @@ func tick(terrain: Node) -> void:
 	var batch:=PackedVector3Array()
 	if clearance:
 		for page_offset in range(offset,mini(offset+SCAN_LIMIT,clearance_total),512):
-			batch.append_array(checked_asset.clearance_samples(checked_target,checked_rotation,page_offset,512))
+			batch.append_array(checked_asset.clearance_samples(checked_target,checked_rotation,page_offset,512,int(checked_asset.get_meta("site_sample_band",0))))
 	else: batch=points.slice(offset,mini(offset+SCAN_LIMIT,points.size()))
 	# Native column maximum checks every layer through the bounded fill depth.
 	var support_depth: int=mini(8,maxi(0,checked_target.y-4)) if deep_support and not clearance else 0

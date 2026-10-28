@@ -423,8 +423,11 @@ func prepare_northern_lots(center:Vector3)->bool:
   game.structure_prefab_index=index;game.structure_rotation=lot.rotation
   var doors:int=game.doors.collection.get_ids().size()
   # Support/clearance bands belong to each lot's base, not one global height.
+  var expected_doors:=0
+  for attachment:Dictionary in lot.asset.get_model_attachments():
+   if attachment.model=="architecture/wooden_door/v1":expected_doors+=1
   game._begin_frontage_placement(lot.asset,lot.origin,true)
-  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+1,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
+  if not require(await wait_until(func():return game._foundation_placement.is_empty(),20) and game.doors.collection.get_ids().size()==doors+expected_doors,"terrain-fitted building published: "+lot.label+" support="+game.foundation_check.status):return false
  if not require(game._place_combined_prefab(plan.sidewalk_asset,plan.sidewalk_origin,0),"native concrete walkways published"):return false
  if not prepare_northern_common(plan.common):return false
  var groves:=PackedVector3Array()

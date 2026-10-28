@@ -38,7 +38,7 @@ func run() -> void:
 			var asset: Resource=game.structure_prefabs[index]
 			if asset.resource_path==approved.resource_path:approved_index=index;approved_count+=1
 			if asset.resource_name.contains("Cottage A") or asset.resource_path.begins_with("res://reviews/"):rejected_count+=1
-		check(approved_count==1 and approved_index==game.structure_prefabs.size()-1,"B1 appended exactly once without shifting existing prefab indices")
+		check(approved_count==1 and approved_index==game.structure_prefabs.size()-2 and game.structure_prefabs[-1].get_meta("approved_revision","")=="C1 R1","B1 retains its palette position before the newly appended C1 house")
 		check(rejected_count==0,"no rejected cottage or review-only prefab in gameplay palette")
 		var furniture: Script=load("res://addons/structures/furniture_catalog.gd")
 		check(game.structure_prefabs[0].resource_path=="res://addons/structures/prefabs/brick_cottage.tres" and game.structure_prefabs[6].get_records()==furniture.enclosed_cottage().get_records(),"legacy cottage retained and approved enclosed cottage keeps its palette index")

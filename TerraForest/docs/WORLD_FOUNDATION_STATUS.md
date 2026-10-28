@@ -3,12 +3,24 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Additional large house C1 — 2026-10-27
 
-Separate baked proposal: two storeys, balcony, open garage, basement, native grid
-parts and approved roof-piece geometry. Scoped checks: 43 traversal/geometry/storage,
-21 fresh-process restore, 28 graphical assertions. Existing houses/saves unchanged.
-Not enabled for generation: awaits this house's visual approval, then a surveyed
-site, explicit basement excavation and integrated terrain/vehicle access checks.
+User approved C1 R1 as an addition. Exact geometry is now a production prefab and
+construction-palette entry; new terrain-fitted neighborhoods include one C1.
+Basement, garage slab recess and driveway join the native generation-time bake;
+native placement handles its surface/basement bands and generation counts all doors.
+Legacy ungraded recipes and existing saves/designs remain unchanged. Two seed
+plans, actual terrain/block stair routes, storage and default-plan cache are checked.
+Full populated-world driving/performance and player review of generated sites remain
+separate from the approved building design; see linked evidence and limitations.
 [Review images and resume point](../issues/large-house-c1/README.md).
+
+## Queued user follow-ups — 2026-10-28
+
+Deferred separately at the user's direction while finishing the approved C1 addition;
+resume after its verified integration commit. None is resolved by that house work.
+- Mouse: minimal capture/centering fix; verify launch, loading and other-app use.
+- Ore: verify every surface marker has a continuous mineable vein directly below it.
+- POI/house placement: improve terrain fit; require generated-site images and access checks.
+- Corpses: fix death vibration and easy walk-over; reproduce and test both together.
 
 ## Developer shape catalog — 2026-10-27
 

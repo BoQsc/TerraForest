@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-27",
+  "approved_design_commit": "8a61a7e8",
+  "scope": "Approved C1 addition on actual native baked terrain; bounded site fixture, not populated-world acceptance",
+  "capture": "Godot 4.7.2 Steam / Forward Plus / 1920x1080 / temperate terrain / explicit ambient daylight",
+  "seed": 1703,
+  "origin": [1007, 50, 416],
+  "rotation": 2,
+  "source_sha256": {
+    "addons/structures/prefabs/large_house_c1.tres": "b58a8813648e80f0ba0121e539a680adac0aae7d748eec304a6f3cc01575baac",
+    "addons/structures/native/block_prefab.cpp": "21ca59f911ec97f19c4961e704486e14699b9709b1436c37090e477e5b22d710",
+    "addons/structures/native/block_prefab.hpp": "1f4cff785c3569b964d6dc854edc6f809d27939b250c7708d82d9751f6fcdf04",
+    "addons/structures/site_plan.gd": "5389a04add3fc1bc7f027a05dfde36df71be9f504024e7a4ab3818f4ba6163f5",
+    "addons/structures/terrain_lot_planner.gd": "e2b55690d8dd56aa5c52e71be51925cae409fea224e6a14b8309d8f2cdfbca80",
+    "tests/approved_large_house.gd": "40a8084d5754c640679619bb17f457c0552a60a08c1f518782b0c6436e755bd4",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "9884117770f3e79148b4157decb714a8128e9dcdfd0f322ea726f7610a573187",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "0fbf76fb0350327958707e5e1920dc325349c2f926446c77771cef0162595bc7"
+  },
+  "images": [
+    {
+      "file": "generated-site.png",
+      "source": "reports/approved_large_house/verified_site/exterior.png",
+      "sha256": "ff402898634b47e8a783b9a0bce7166becb77cff250f33dd40852af4b1b5db96"
+    },
+    {
+      "file": "generated-basement.png",
+      "source": "reports/approved_large_house/verified_site/basement.png",
+      "sha256": "80e33c6c6f67bc7ac4cc0c05781880f5a3ffad440f8aad1e477a488e98424889"
+    }
+  ]
+}

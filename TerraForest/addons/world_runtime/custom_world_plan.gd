@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=12
+const VERSION:=15
 const LIMIT:=8*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -17,7 +17,7 @@ static func read_plan(path:String,key:String)->Dictionary:
  if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
  if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>6:return {}
  for site:Dictionary in value.sites:
-  var source:Array=Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center)
+  var source:Array=Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true)
   if site.lots.size()!=source.size():return {}
   for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}

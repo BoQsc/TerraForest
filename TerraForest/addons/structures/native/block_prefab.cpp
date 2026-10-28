@@ -30,7 +30,7 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_bounds","origin","quarter_turns"),&NativeBlockPrefab::placement_bounds);
     ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
     ClassDB::bind_method(D_METHOD("clearance_sample_count"),&NativeBlockPrefab::clearance_sample_count);
-    ClassDB::bind_method(D_METHOD("clearance_samples","origin","quarter_turns","offset","limit"),&NativeBlockPrefab::clearance_samples);
+    ClassDB::bind_method(D_METHOD("clearance_samples","origin","quarter_turns","offset","limit","surface_band"),&NativeBlockPrefab::clearance_samples,DEFVAL(0));
     ClassDB::bind_method(D_METHOD("configure_model_attachments","attachments"),&NativeBlockPrefab::configure_model_attachments);
     ClassDB::bind_method(D_METHOD("set_model_attachments","attachments"),&NativeBlockPrefab::set_model_attachments);
     ClassDB::bind_method(D_METHOD("get_model_attachments"),&NativeBlockPrefab::get_model_attachments);
@@ -154,9 +154,9 @@ PackedVector3Array NativeBlockPrefab::foundation_samples(Vector3i origin,int tur
     }
     return out;
 }
-PackedVector3Array NativeBlockPrefab::clearance_samples(Vector3i origin,int turns,int64_t offset,int limit) const {
+PackedVector3Array NativeBlockPrefab::clearance_samples(Vector3i origin,int turns,int64_t offset,int limit,int surface_band) const {
     PackedVector3Array out;
-    if(turns<0||turns>3||offset<0||limit<1||limit>512||offset>=clearance_sample_count())return out;
+    if(turns<0||turns>3||offset<0||limit<1||limit>512||surface_band<0||surface_band>32||offset>=clearance_sample_count())return out;
     for(int a=0;a<3;++a)if(origin[a]<-1044480||origin[a]>1044480)return out;
     const int count=int(std::min(int64_t(limit),clearance_sample_count()-offset));out.resize(count);
     auto column=std::upper_bound(clearance_columns.begin(),clearance_columns.end(),offset,
@@ -166,6 +166,12 @@ PackedVector3Array NativeBlockPrefab::clearance_samples(Vector3i origin,int turn
         int x=column->x,z=column->z;
         for(int r=0;r<turns;r++){int old=x;x=-z;z=old;}
         int y=column->high-int(column->end-1-offset);
+        if(surface_band>0&&y<surface_band){
+            const PrefabCell key{column->x,y,column->z,0};
+            auto found=std::lower_bound(cells.begin(),cells.end(),key,[](const PrefabCell &first,const PrefabCell &second){return std::tie(first.x,first.y,first.z)<std::tie(second.x,second.y,second.z);});
+            const bool wall=found!=cells.end()&&found->x==key.x&&found->y==key.y&&found->z==key.z&&block_shape(found->word)==1;
+            if(column->low>=surface_band-1||wall)y=surface_band;
+        }
         out.set(i,Vector3(origin.x+x+0.5f,origin.y+y+0.5f,origin.z+z+0.5f));
     }
     return out;

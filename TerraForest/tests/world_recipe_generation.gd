@@ -81,12 +81,12 @@ func run()->void:
   for site:Dictionary in planned.sites:
    for lot:Dictionary in site.lots:
     var revision:String=lot.asset.get_meta("approved_revision","")
-    if revision not in ["A2 R2","B1 R1","B2 R2"] or approved_records.has(revision):continue
+    if revision not in ["A2 R2","B1 R1","B2 R2","C1 R1"] or approved_records.has(revision):continue
     var world_asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
     if check(world_asset.compose([lot.asset],PackedInt32Array([0,lot.origin.x,lot.origin.y,lot.origin.z,lot.rotation])),"transform approved "+revision+" into generated lot"):
      approved_records[revision]=world_asset.get_records()
      approved_lots[revision]=lot
- check(approved_records.size()==3,"new world includes A2 cottage, B1 hipped shop and B2 thin-roof shop")
+ check(approved_records.size()==4,"new world includes approved A2 cottage, both shops and additional C1 house")
  var mineral_bytes:PackedByteArray=game.material_deposits.store.capture_snapshot()
  var deposits:Array=game.material_deposits.describe(1703,23)
  check(not deposits.is_empty() and deposits.size()==planned.get("material_deposits",[]).size(),"generated mineral metadata matches the independently planned geology")

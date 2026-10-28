@@ -38,6 +38,10 @@ static func enclosed_cottage() -> Resource:
 	var approved: Resource=load("res://addons/structures/prefabs/cottage_thin_roof_a2.tres")
 	return approved.duplicate() if approved!=null else null
 
+static func large_house() -> Resource:
+	var approved: Resource=load("res://addons/structures/prefabs/large_house_c1.tres")
+	return approved.duplicate() if approved!=null else null
+
 static func legacy_enclosed_cottage() -> Resource:
 	var asset: Resource=furnished_cottage(true)
 	if asset==null:return null
