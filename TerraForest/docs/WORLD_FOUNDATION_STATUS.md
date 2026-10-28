@@ -1,6 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Varied lakes and generated bridges — 2026-10-28
+
+New profiles 28–31 add larger curved/two-lobed lakes and small ponds; old saved
+profiles remain unchanged. Static native water and binary caches are reused.
+Surveyed grid-block timber footbridges connect banks to regional roads when safe;
+existing 12 m manual bridges remain intact. Native terrain budgets are unchanged.
+Installed; 202 field/storage, 105 bridge-plan, 46 preset, 49 legacy-field and
+51 production-world checks pass. Packaged fresh-process reopening adds 12 checks.
+The seed-1703 bridge has 436 cells over 40 m; both player/NPC directions, entrance
+contacts, block removal and persistence pass. Water bake is 2.56 s / 75.6 MiB peak;
+stationary rendered p95 is 16.94 ms, not a moving-world or weak-hardware guarantee.
+[Images, evidence and rejected trials](../issues/lakes-and-bridges/README.md).
+Remaining: player visual review, more seeds, full bank-path traversal and endurance.
+Return on player feedback or unsafe approaches; require actual-world support,
+movement, water/map persistence and bounded performance evidence. No river-flow
+simulation, every-seed bridge guarantee or player-save migration is claimed.
+
 ## Extended vegetation LOD — 2026-10-28
 
 576 m forest visibility with native 640 m circular preload; at most 405 wanted

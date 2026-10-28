@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Varied lakes and bridges](lakes-and-bridges/README.md) | Installed / scoped checks | Larger curved and two-lobed lakes; destructible timber crossings; actual-world player/NPC traversal and packaged reopen pass; user visual review remains |
 | [Extended vegetation LOD](vegetation-lod/README.md) | Installed / scoped checks | 576 m forest with native circular preload; cheaper distant fern/bush/twig meshes; near detail unchanged; long travel and player review remain |
 | [City buildings](city-buildings/README.md) | Approved designs / integration installed | Six exact approved designs on surveyed lots in larger recipes; populated-world player/NPC/vehicle routes, save/reopen, LOD and packed resources checked; site visuals and broader qualification remain |
 | [Building geometry LOD](building-lod/README.md) | Installed / scoped checks | Default-on native cached LOD; 24-house moving-camera comparisons, all 18 shapes, edits and collision checked; streaming-boundary transitions and player review remain open |

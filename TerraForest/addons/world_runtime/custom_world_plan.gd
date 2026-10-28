@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=23
+const VERSION:=24
 const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -9,6 +9,7 @@ const Market=preload("res://addons/structures/central_market.gd")
 const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Routes=preload("res://addons/structures/regional_route_planner.gd")
 const City=preload("res://addons/structures/city_catalog.gd")
+const Crossings=preload("res://addons/structures/lake_crossings.gd")
 static func read_plan(path:String,key:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
@@ -29,7 +30,7 @@ static func read_plan(path:String,key:String)->Dictionary:
 static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null)->Dictionary:
  var started:=Time.get_ticks_usec()
  var encoded:=Recipe.encode(options)
- if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27]:return {"ok":false,"reason":"Unsupported world recipe"}
+ if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
  if progress!=null:progress.record("Checking the binary placement-plan cache",0,0,"Seed %d / terrain %d / recipe v%d"%[seed_value,generator,VERSION])
  var core=ClassDB.instantiate("TerrainCore")
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
@@ -152,6 +153,16 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var result:Dictionary={"ok":true,"version":3,"recipe_version":VERSION,"recipe_key":key,"seed":seed_value,"generator":generator,"options":options.duplicate(),"sites":sites,"connection":network if not network.links.is_empty() else {},"works":works,"building_count":building_count,"network":network}
  result["layout_variant"]=layout_variant
  result["road_normalization"]=normalization
+ var bridge_navigation:=[]
+ if generator>=28:
+  if progress!=null:progress.record("Surveying lake crossings and bank paths",0,0,"Native dry-bank and slope checks / at most two destructible timber crossings")
+  var bridge_roads:Array=network.segments.duplicate()
+  for site:Dictionary in sites:bridge_roads.append_array(site.roads)
+  var bridge_plan:=Crossings.build(core,bridge_roads,reserved)
+  if not bridge_plan.get("ok",false):return bridge_plan
+  result["bridges"]=bridge_plan.bridges;result["bridge_rejections"]=bridge_plan.rejected
+  bridge_navigation=bridge_plan.navigation
+  for path_segment:Dictionary in bridge_plan.segments:works.segments.append(path_segment);works.bounds=works.bounds.merge(path_segment.bounds)
  if int(options.get("material_veins",0))==1:
   if progress!=null:progress.record("Locating material veins and surface stones",0,0,"Native geology / dry gentle ground / outside roads and construction")
   var minerals:Dictionary=core.plan_material_deposits(works.segments)
@@ -159,6 +170,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   result["material_deposits"]=minerals.deposits
   result["mineral_plan_ms"]=minerals.worker_ms
  var navigation:=navigation_metadata(sites,network)
+ navigation.roads.append_array(bridge_navigation)
+ for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation
  var packed:Dictionary=result.duplicate(true)

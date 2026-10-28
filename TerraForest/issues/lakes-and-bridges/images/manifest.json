@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-28",
+  "world": "recipe_generated_4644d8cfc8f97e43",
+  "generator": 29,
+  "pack_sha256": "f020db29437f9fef629121ae61da4829f206465f4c898639b97f10132d4b9ff9",
+  "native_sha256": {
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "0ce49e743613af2ae60a87855a757c6e43881479c8ca6a3130030242d1c2ad61",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "a1225ce32b69d3413b856d93f1a5986f51c0d633821f2d64afdc0d43f877b468",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "55f5ba389f5ba93496cad71514612adeee0661f99a1296d1a4954c9bce3e315e",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d5b94f470305ff4d68cab0e9c044de2d1e512036b8d050375283ef4393a8998d"
+  },
+  "capture": "Actual Godot Forward+ 1920x1080 frames; no image manipulation. Aerial camera differs from bridge-level camera. First-person tool hidden only for landscape inspection. Rejected first crossing is an earlier location/build, not a matched comparison.",
+  "images": [
+    {
+      "file": "bridge_overview.png",
+      "source": "reports/checks/20261028T173743016035Z_lake_pack/evidence/lake_crossing_world/bridge_overview.png",
+      "sha256": "a8e4cf98571ea67e6cc4a79829bf171e68ae41c5fe27eec5ddd5b6dc65ed2698",
+      "seed": 1703,
+      "status": "engineering checked, player review pending"
+    },
+    {
+      "file": "bridge_deck.png",
+      "source": "reports/checks/20261028T173743016035Z_lake_pack/evidence/lake_crossing_world/bridge_deck.png",
+      "sha256": "a39ca6ec407750dfd6a1c024da47a62c5f01f0ecb60b603a777e1257468cea0a",
+      "seed": 1703,
+      "status": "engineering checked, player review pending"
+    },
+    {
+      "file": "lake_overview.png",
+      "source": "reports/checks/20261028T173743016035Z_lake_pack/evidence/lake_crossing_world/lake_overview.png",
+      "sha256": "3ad08f2df39961f488d86a3710c0de6382a2ad051b9ba0be4e37e67c1e8774f1",
+      "seed": 1703,
+      "status": "engineering checked, player review pending"
+    },
+    {
+      "file": "water_clearance.png",
+      "source": "reports/checks/20261028T173743016035Z_lake_pack/evidence/lake_crossing_world/bridge_water_clearance.png",
+      "sha256": "18ac418c688bd561d7655b453b2ee0dc65465fdbe6a82115775c1eebb17a5c99",
+      "seed": 1703,
+      "status": "engineering checked, player review pending"
+    },
+    {
+      "file": "material_map.png",
+      "source": "reports/lake_crossing_world/material_map.png",
+      "sha256": "03f238ed3911319abe9447a92e7c61712ffba8eaa27b1fbcdb1d3901d547f5a3",
+      "seed": 1703,
+      "status": "engineering checked, player review pending"
+    },
+    {
+      "file": "rejected_first_crossing.png",
+      "source": "reports/lake_crossing_world/first_trial/bridge_overview.png",
+      "sha256": "01ddf0ea11adce58128640d0aa56482ab488f36524e4862e8179dd515d1763aa",
+      "seed": 1703,
+      "status": "rejected intermediate"
+    }
+  ]
+}

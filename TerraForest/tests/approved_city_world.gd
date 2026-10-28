@@ -105,14 +105,14 @@ func inspect_access(game:Node,lot:Dictionary)->void:
 	check(lod.chunks_with_lods>0 and game.ecosystem.resident.size()<=441,identity+" uses bounded forest coverage and native cached geometry LOD")
 	game.camera.transform=camera_pose;game.camera.cull_mask=camera_mask;game.set_physics_process(true)
 
-func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,finish:Vector3,label:String,npc:bool)->void:
+func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,finish:Vector3,label:String,npc:bool,max_ticks:int=1500)->void:
 	if "--city-metrics-only" in OS.get_cmdline_user_args():return
 	body.position=start;body.velocity=Vector3.ZERO
 	var nav:Node3D
 	if npc:
 		nav=ClassDB.instantiate("NativeActorNavigator");game.add_child(nav);nav.configure(1);nav.set_exclusions([body.get_rid(),game.player.get_rid()])
 	var peak_work:=0
-	for tick in 1500:
+	for tick in max_ticks:
 		await physics_frame
 		var delta:=1.0/Engine.physics_ticks_per_second
 		var target:=finish

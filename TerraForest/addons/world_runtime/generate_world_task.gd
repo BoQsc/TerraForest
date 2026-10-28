@@ -79,11 +79,11 @@ func run()->void:
   if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
- if generator not in [17,18,19,20,21,22,23,24,25,26,27] or seed_value<0 or seed_value>2147483647:quit(1);return
+ if generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31] or seed_value<0 or seed_value>2147483647:quit(1);return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
- var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27]
+ var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
@@ -252,6 +252,14 @@ func run()->void:
   if not placed or game.doors.collection.get_ids().size()!=doors+expected_doors:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
+ var crossings:Array=prepared.get("bridges",[])
+ for bridge_index in crossings.size():
+  if cancelled():game.free();quit(2);return
+  var crossing:Dictionary=crossings[bridge_index]
+  var bridge_asset:Resource=preload("res://addons/structures/lake_crossings.gd").asset(crossing)
+  progress("Placing destructible lake bridges",bridge_index,crossings.size())
+  if bridge_asset==null or not game.structures.blocks.place_prefab(bridge_asset,crossing.origin,crossing.rotation,false):print("BRIDGE_PUBLICATION_FAILED");game.free();quit(1);return
+  await process_frame
  progress("Baking streets and location metadata")
  var total_plates:=0
  for site:Dictionary in sites:total_plates+=site.get("block_paving",{}).get("tiles",0)
@@ -296,7 +304,7 @@ func run()->void:
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true
  game.world_map.refresh_world()
- var expected_places:int=sites.size() if not world_options.is_empty() else ((1 if connection.is_empty() else 2)+(1 if generator==18 else 0))
+ var expected_places:int=prepared.navigation.places.size() if not world_options.is_empty() else ((1 if connection.is_empty() else 2)+(1 if generator==18 else 0))
  if game.world_map.places.size()!=expected_places or game.world_map.roads.is_empty():print("BAKED_MAP_FAILED");quit(1);return
  game.construction_palette.survey_dialog.hide()
  var road:Dictionary=plan.roads[4]

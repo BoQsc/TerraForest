@@ -68,7 +68,7 @@ static func saved_slots(directory: String="user://worlds",include_preparation:bo
 	for row:Dictionary in rows:slots.append(row.slot)
 	return slots
 static func terrain_generator(ocean:bool,buildable:bool)->int:
-	return (25 if ocean else 24) if buildable else (27 if ocean else 26)
+	return (29 if ocean else 28) if buildable else (31 if ocean else 30)
 static func command(slot: String,create: bool,generator: int,seed: int,gameplay: bool,directory: String="user://worlds",ocean:bool=true,layout:String="connected",buildable:bool=true,options:Dictionary={}) -> Dictionary:
 	if not valid_slot(slot):return {"ok":false,"reason":"Use 1–48 letters, digits or underscores; start with a letter or underscore."}
 	var canonical:=directory.path_join(slot+".trw")

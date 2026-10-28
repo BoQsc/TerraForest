@@ -194,6 +194,12 @@ void World::prepare_buildable_ground(bool coast){
    weight*=smooth(clampf((edge-272.f)/48.f,0.f,1.f));
   }
   for(int basin=0;basin<basin_count;basin++){
+   const Basin &lake=basins[basin];
+   if(lake.half_length>0){
+    float edge_x=ab(center_x-lake.x)-(lake.along_x?lake.half_length:lake.half_width)*1.25f-48.f;
+    float edge_z=ab(center_z-lake.z)-(lake.along_x?lake.half_width:lake.half_length)*1.25f-48.f;
+    weight*=smooth(clampf(mx(edge_x,edge_z)/32.f,0.f,1.f));continue;
+   }
    float distance=length(V3{center_x-basins[basin].x,0,center_z-basins[basin].z});
    float radius=(basin==0?96.f:40.f)+48.f;
    weight*=smooth(clampf((distance-radius)/32.f,0.f,1.f));
@@ -268,6 +274,20 @@ float World::inland_height(float x,float z,bool developed)const{
   while(candidates){
    int i=__builtin_ctz(candidates);candidates&=candidates-1;
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
+   if(b.half_length>0){
+    float longitudinal=(b.along_x?dx:dz)/b.half_length;
+    if(ab(longitudinal)>=1.25f)continue;
+    float transverse=(b.along_x?dz:dx)/b.half_width;
+    if(ab(transverse)>=1.5f)continue;
+    if(b.kind==1)transverse-=.28f*mx(0.f,1.f-longitudinal*longitudinal);
+    float width=b.kind==2?.22f+.78f*smooth(clampf(ab(longitudinal)*1.4f,0,1)):1.f;
+    float irregular=.94f+.045f*noise(x/27.f,z/27.f,u32(seed)+i*71u+617u);
+    float radial=(longitudinal*longitudinal+transverse*transverse/(width*width))/(irregular*irregular);
+    if(radial>=1.5625f)continue;
+    if(radial<=1.f)return b.level-b.depth+(b.depth+2.f)*radial;
+    float blend=smooth((__builtin_sqrtf(radial)-1.f)*4.f);
+    return (b.level+2.f)*(1-blend)+h*blend;
+   }
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
     // Keep the whole irregular shore inside the existing catalog bounds.
     // Water uses this same density field for contact; no alternate water mesh.
@@ -319,39 +339,58 @@ float World::base(V3 p,float h)const{
  d=mx(d,1.f-p.y);d=mx(d,p.y-255.f);d=mx(d,-p.x);d=mx(d,p.x-WORLD);d=mx(d,-p.z);d=mx(d,p.z-WORLD);
  return clampf(d,-SDF_BAND,SDF_BAND);
 }
-void World::scatter_lakes(){
+void World::scatter_lakes(bool varied){
  for(int tile=0;tile<12;tile++){
+  u32 shape_key=hash32(u32(seed)^u32(tile*613)^0x951c32abu);
+  Basin shape{};
+  if(varied){
+   shape.half_length=tile==0?132.f:(tile==4?86.f:(tile==8?48.f:25.f+float(shape_key%9)));
+   shape.half_width=tile==0?32.f:(tile==4?36.f:(tile==8?25.f:17.f+float((shape_key>>8)%7)));
+   shape.depth=tile==0?3.2f:(tile==4?3.f:2.5f);
+   shape.kind=tile==0?1:(tile==4?2:int(shape_key%2));
+   shape.along_x=int((shape_key>>16)&1);
+  }
   float best_cost=1e20f;V3 best{};
   for(int attempt=0;attempt<48;attempt++){
    u32 key=hash32(u32(seed)^0x81a73b25u^u32(tile*991+attempt*7919));
    V3 candidate{340.f+float(tile%4)*440.f+float(int(key%161)-80),0,380.f+float(tile/4)*600.f+float(int((key>>12)%161)-80)};
+   if(varied){
+    if(tile==0||tile==4){candidate.x=320.f+float(key%1361);candidate.z=320.f+float((key>>12)%1361);}
+    float extent_x=(shape.along_x?shape.half_length:shape.half_width)*1.5f;
+    float extent_z=(shape.along_x?shape.half_width:shape.half_length)*1.5f;
+    candidate.x=clampf(candidate.x,280.f+extent_x,(tile==0||tile==4?900.f:1720.f)-extent_x);
+    candidate.z=clampf(candidate.z,280.f+extent_z,1720.f-extent_z);
+   }
    if(candidate.x<320||candidate.z<320||candidate.x>1680||candidate.z>1680)continue;
    bool clear=true;
    for(int site=0;site<site_count;site++){
     float dx=candidate.x-sites[site].position.x,dz=candidate.z-sites[site].position.z;
-    float radius=sites[site].radius+96.f;
+    float radius=sites[site].radius+(varied?shape.half_length*1.25f+16.f:96.f);
     if(dx*dx+dz*dz<radius*radius)clear=false;
    }
    for(int lake=0;lake<basin_count;lake++){
-    float dx=candidate.x-basins[lake].x,dz=candidate.z-basins[lake].z,radius=lake==0?160.f:104.f;
+    float dx=candidate.x-basins[lake].x,dz=candidate.z-basins[lake].z,radius=varied?(basins[lake].half_length+shape.half_length)*1.25f+16.f:(lake==0?160.f:104.f);
     if(dx*dx+dz*dz<radius*radius)clear=false;
    }
    for(int cave=0;cave<caves.n;cave++){
-    const auto &part=caves[cave];float margin=part.r+48.f;
+    const auto &part=caves[cave];float margin=part.r+(varied?shape.half_length*1.25f:48.f);
     if(candidate.x>mn(part.a.x,part.b.x)-margin&&candidate.x<mx(part.a.x,part.b.x)+margin&&candidate.z>mn(part.a.z,part.b.z)-margin&&candidate.z<mx(part.a.z,part.b.z)+margin)clear=false;
    }
    if(!clear)continue;
    float low=256,high=0;
-   for(int across=-1;across<=1;across++)for(int along=-1;along<=1;along++){
-    float sample=height(candidate.x+across*32.f,candidate.z+along*32.f);low=mn(low,sample);high=mx(high,sample);
+   int survey_radius=varied?2:1;
+   for(int across=-survey_radius;across<=survey_radius;across++)for(int along=-survey_radius;along<=survey_radius;along++){
+    float reach_x=varied?(shape.along_x?shape.half_length:shape.half_width):32.f;
+    float reach_z=varied?(shape.along_x?shape.half_width:shape.half_length):32.f;
+    float sample=height(candidate.x+across*reach_x/survey_radius,candidate.z+along*reach_z/survey_radius);low=mn(low,sample);high=mx(high,sample);
    }
    float cost=high-low+mx(high-75.f,0.f)*.2f;
    if(cost<best_cost){best_cost=cost;best=candidate;}
   }
-  if(best_cost<1e20f){float level=height(best.x,best.z)-3.f;basins[basin_count++]={best.x,best.z,level};}
+  if(best_cost<1e20f){shape.x=best.x;shape.z=best.z;shape.level=height(best.x,best.z)-(varied?2.f:3.f);basins[basin_count++]=shape;}
  }
  for(int lake=0;lake<basin_count;lake++){
-  float radius=lake==0?96.f:40.f;
+  float radius=varied?basins[lake].half_length*1.5f:(lake==0?96.f:40.f);
   int left=int(clampf((basins[lake].x-radius)/250.f,0,7)),right=int(clampf((basins[lake].x+radius)/250.f,0,7));
   int top=int(clampf((basins[lake].z-radius)/250.f,0,7)),bottom=int(clampf((basins[lake].z+radius)/250.f,0,7));
   for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++)basin_cells[column+8*row]|=u16(1u<<lake);
@@ -423,7 +462,7 @@ void World::init(int p_seed,u32 generator){
   V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
   caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
   caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
-  if(distributed_region(generator))scatter_lakes();
+  if(distributed_region(generator))scatter_lakes(generator>=VARIED_LAKES_GENERATOR_ID);
   if(buildable_ground(generator))prepare_buildable_ground(surrounding_coast(generator));
   generator_id=generator;return;
  }
@@ -1754,6 +1793,15 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   out.u(w.basin_count);
   for(int i=0;i<w.basin_count;i++){
    const auto &b=w.basins[i];
+   if(b.half_length>0){
+    int extent_x=int(__builtin_ceilf((b.along_x?b.half_length:b.half_width)*1.05f+2));
+    int extent_z=int(__builtin_ceilf((b.along_x?b.half_width:b.half_length)*1.05f+2));
+    float bottom=float(fl(b.level-b.depth))-1.f;
+    out.vec({b.x-extent_x,bottom,b.z-extent_z});
+    int spacing=int(__builtin_ceilf(float(mx(extent_x,extent_z)*2)/128.f));
+    out.u(int(__builtin_ceilf(float(extent_x*2)/spacing)));out.u(int(mx(3.f,__builtin_ceilf((b.level-bottom+1.f)/spacing))));out.u(int(__builtin_ceilf(float(extent_z*2)/spacing)));out.f(float(spacing));out.f(b.level);
+    out.vec({b.x,b.level-.5f,b.z});continue;
+   }
    if(w.generator_id>=LAKE_WORLD_GENERATOR_ID&&i==0){
     // Catalog spacing defines bounds only; regional water retains 0.5 m cells.
     out.vec({b.x-68.f,float(fl(b.level))-6.f,b.z-68.f});

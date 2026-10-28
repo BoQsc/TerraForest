@@ -419,9 +419,9 @@ func _receive(result: Dictionary) -> void:
 			return
 		if material is ShaderMaterial:
 			material.set_shader_parameter("coastal_inlet",backend.world_generator==18)
-			material.set_shader_parameter("surrounding_coast",backend.world_generator in [19,21,23,25,27])
-			material.set_shader_parameter("regional_temperate",backend.world_generator in [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27])
-			material.set_shader_parameter("alpine_snow_enabled",backend.world_generator in [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27])
+			material.set_shader_parameter("surrounding_coast",backend.world_generator in [19,21,23,25,27,29,31])
+			material.set_shader_parameter("regional_temperate",backend.world_generator in [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31])
+			material.set_shader_parameter("alpine_snow_enabled",backend.world_generator in [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31])
 		message_changed.emit(text)
 		initialized.emit(text)
 		schedule_timer = 0.0

@@ -46,6 +46,7 @@ func run()->void:
  var use_defaults:bool="--default-recipe" in OS.get_cmdline_user_args() or grid_review
  folder="res://reports/world_recipe_generation_default" if use_defaults else "res://reports/world_recipe_generation"
  if city_recipe:folder="res://reports/world_generator_city"
+ if "--lake-landscape" in OS.get_cmdline_user_args():folder="res://reports/lake_crossing_world"
  if "--city-integration" in OS.get_cmdline_user_args():folder="res://reports/approved_city_world"
  if grid_review:folder="res://reports/road_normalization/generation"
  DirAccess.make_dir_recursive_absolute(folder)
@@ -89,7 +90,7 @@ func run()->void:
  check(bytes==Recipe.encode(options) and game.ecosystem.biome_profile==options.biome,"created world uses requested durable biome recipe")
  check(game.construction_inventory.gameplay and game.ground_enabled and game.world_vehicle.fleet_enabled and "--actors" in Options.arguments(),"normal gameplay construction, vegetation, actors and vehicles are enabled")
  var region:Dictionary=game.generated_region.describe(1703,generator)
- check(region.places.size()==options.settlements*options.districts and not region.roads.is_empty(),"all requested districts and regional routes publish to actual world map")
+ check(region.places.filter(func(place:Dictionary):return int(place.id)<200).size()==options.settlements*options.districts and not region.roads.is_empty(),"all requested districts and regional routes publish to actual world map")
  check(game.structures.model("architecture/concrete_paving/v1").get_ids().is_empty(),"no legacy continuous decorative sidewalk meshes")
  var status:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(status_path))
  var metadata:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(str(status.report).path_join("run.json")))

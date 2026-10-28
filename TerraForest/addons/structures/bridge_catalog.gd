@@ -22,3 +22,20 @@ static func footbridge(metal_rails: bool=false) -> Resource:
   return asset
  asset.resource_name="Timber footbridge · 12 m span"
  return asset
+
+static func lake_crossing(span:int)->Resource:
+ if span<24 or span>44 or span%2!=0:return null
+ var records:=PackedInt32Array()
+ for along in span:
+  for across in 6:records.append_array(PackedInt32Array([across,0,along,33 if across in [0,5] else 160]))
+  if along not in [0,span-1]:
+   for across in [1,4]:records.append_array(PackedInt32Array([across,-1,along,33]))
+  for across in [0,5]:
+   records.append_array(PackedInt32Array([across,2,along,34]))
+   if along%3==0 or along==span-1:records.append_array(PackedInt32Array([across,1,along,37]))
+ for along in [0,span-1]:
+  for across in 6:records.append_array(PackedInt32Array([across,-1,along,65]))
+ var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not asset.configure(records):return null
+ asset.resource_name="Timber lake crossing · %d m span"%span
+ return asset

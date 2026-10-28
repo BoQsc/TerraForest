@@ -76,7 +76,7 @@ Dictionary fit_generated_lakes(const World &world,const Array &records){
   Vector3 origin=record["origin"];Vector3i cells=record["cells"];double spacing=record["spacing"];
   if(!std::isfinite(spacing)||spacing<=0||cells.x<=0||cells.z<=0)return failure("Invalid lake spacing");
   double width=cells.x*spacing,depth=cells.z*spacing;
-  if(!inside(origin)||width<4||depth<4||width>160||depth>160||!inside(origin+Vector3(width,0,depth)))return failure("Invalid lake bounds");
+  if(!inside(origin)||width<4||depth<4||width>320||depth>320||!inside(origin+Vector3(width,0,depth)))return failure("Invalid lake bounds");
   double rim=256,minimum=256;Vector3 seed;
   for(double z=0;z<=depth;z+=.5)for(double x:{0.,width})rim=std::min(rim,survey.height(origin+Vector3(x,0,z)));
   for(double x=0;x<=width;x+=.5)for(double z:{0.,depth})rim=std::min(rim,survey.height(origin+Vector3(x,0,z)));
@@ -108,7 +108,7 @@ Dictionary survey_generated_lake_surfaces(const World &world,const Array &record
   if(r["origin"].get_type()!=Variant::VECTOR3||r["cells"].get_type()!=Variant::VECTOR3I||r["seed"].get_type()!=Variant::VECTOR3)return failure("Invalid preview lake shape");
   Vector3 origin=r["origin"],seed=r["seed"];Vector3i cells=r["cells"];double spacing=r["spacing"],level=r["level"];
   double width=cells.x*spacing,depth=cells.z*spacing;
-  if(!origin.is_finite()||!seed.is_finite()||!std::isfinite(spacing)||!std::isfinite(level)||spacing<=0||width<4||depth<4||width>160||depth>160||level<1||level>254||origin.x<0||origin.z<0||origin.x+width>=1999||origin.z+depth>=1999)return failure("Invalid preview lake bounds");
+  if(!origin.is_finite()||!seed.is_finite()||!std::isfinite(spacing)||!std::isfinite(level)||spacing<=0||width<4||depth<4||width>320||depth>320||level<1||level>254||origin.x<0||origin.z<0||origin.x+width>=1999||origin.z+depth>=1999)return failure("Invalid preview lake bounds");
   int nx=int(std::ceil(width/2)),nz=int(std::ceil(depth/2));std::vector<uint8_t> wet(nx*nz),seen(nx*nz);std::vector<int> queue;
   for(int z=0;z<nz;z++)for(int x=0;x<nx;x++){
    Vector3 p(origin.x+(x+.5)*width/nx,level-.001,origin.z+(z+.5)*depth/nz);
@@ -126,6 +126,79 @@ Dictionary survey_generated_lake_surfaces(const World &world,const Array &record
   }
  }
  Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;return out;
+}
+Dictionary plan_lake_crossings(const World &world){
+ Dictionary result;result["ok"]=true;Array candidates,diagnostics;Survey survey{world};survey.cache=true;
+ for(int lake=0;lake<world.basin_count&&candidates.size()<2;lake++){
+  const Basin &basin=world.basins[lake];if(basin.half_length<48)continue;
+  Vector3 across=basin.along_x?Vector3(0,0,1):Vector3(1,0,0);
+  Vector3 along=basin.along_x?Vector3(1,0,0):Vector3(0,0,1);
+  double grade=std::ceil(basin.level+2.5);
+  bool placed=false;
+  for(double section:{0.,.65,-.65}){
+   Vector3 center=Vector3(basin.x,0,basin.z)+along*(section*basin.half_length);
+   if(basin.kind==1)center+=across*(.28*(1-section*section)*basin.half_width);
+   center.x=std::round(center.x);center.z=std::round(center.z);
+   if(survey.height(center)>basin.level-.5)continue;
+  for(int half=12;half<=22;half+=2){
+   bool valid=true;Array approaches;PackedVector3Array banks,anchors;double maximum_fill=-256,maximum_cut=-256,maximum_slope=0,minimum_dry=256;
+   for(int side:{-1,1}){
+    Vector3 bank=center+across*double(side*half);bank.y=grade;
+    Vector3 approach_start=bank;approach_start.y-=.06;
+    for(int lateral=-3;lateral<=3;lateral++)if(survey.height(bank+along*double(lateral))<basin.level+.75)valid=false;
+    Vector3 anchor=center+across*(side*(std::ceil(basin.half_width*1.05+2)+32));anchor.y=survey.height(anchor);
+    double length=horizontal(anchor-bank);
+    if(length<8||length>128){valid=false;break;}
+    std::vector<Vector3> stations{approach_start};std::vector<double> lower{approach_start.y},upper{approach_start.y};
+    for(double distance=4;;distance=std::min(length,distance+8)){
+     Vector3 point=approach_start+across*(side*distance);point.y=survey.height(point);
+     double low=-256,high=256;
+     for(int lateral=-3;lateral<=3;lateral++){double height=survey.height(point+along*double(lateral));low=std::max(low,height-3);high=std::min(high,height+2);}
+     if(distance==4)low=high=approach_start.y;
+     if(distance>=length)low=high=anchor.y;
+     stations.push_back(point);lower.push_back(low);upper.push_back(high);if(distance>=length)break;
+    }
+    for(int index=int(stations.size())-2;index>=0;--index){
+     double rise=horizontal(stations[index+1]-stations[index])*.12;
+     lower[index]=std::max(lower[index],lower[index+1]-rise);upper[index]=std::min(upper[index],upper[index+1]+rise);
+     if(lower[index]>upper[index])valid=false;
+    }
+    Vector3 previous=approach_start;
+    for(int index=1;index<int(stations.size());++index){
+     Vector3 next=stations[index];double span=horizontal(next-previous);
+     double low=std::max(lower[index],previous.y-span*.12),high=std::min(upper[index],previous.y+span*.12);
+     if(low>high){valid=false;break;}
+     next.y=std::clamp(double(next.y),low,high);
+     double slope=std::abs(next.y-previous.y)/span;maximum_slope=std::max(maximum_slope,slope);if(slope>.120001)valid=false;
+     for(int step=0;step<=int(std::ceil(span));step++)for(int lateral=-3;lateral<=3;lateral++){
+      Vector3 point=previous.lerp(next,std::min(1.,step/span))+along*double(lateral);
+      double height=survey.height(point),fill=point.y-height;
+      maximum_fill=std::max(maximum_fill,fill);maximum_cut=std::max(maximum_cut,-fill);minimum_dry=std::min(minimum_dry,height-basin.level);
+      if(fill>2||fill< -3)valid=false;
+     }
+     Vector3 bed_start=previous;
+     if(index==1){
+      bed_start-=across*double(side);
+      for(int lateral=-3;lateral<=3;lateral++){
+       double fill=bed_start.y-survey.height(bed_start+along*double(lateral));
+       if(fill>2||fill< -3)valid=false;
+      }
+     }
+     Dictionary approach=segment(bed_start,next,2.5,3,4,1,1);if(index==1)approach["rectangular"]=true;approaches.append(approach);
+     previous=next;
+    }
+    banks.push_back(bank);anchors.push_back(anchor);
+   }
+   if(!valid){Dictionary detail;detail["lake_id"]=lake+1;detail["half_span"]=half;detail["fill"]=maximum_fill;detail["cut"]=maximum_cut;detail["slope"]=maximum_slope;detail["dry"]=minimum_dry;diagnostics.append(detail);continue;}
+   Dictionary crossing;crossing["lake_id"]=lake+1;crossing["span"]=half*2;crossing["grade"]=grade;crossing["level"]=basin.level;
+   crossing["origin"]=basin.along_x?Vector3i(int(center.x)-3,int(grade)-1,int(center.z)-half):Vector3i(int(center.x)+half-1,int(grade)-1,int(center.z)-3);
+   crossing["rotation"]=basin.along_x?0:1;crossing["banks"]=banks;crossing["anchors"]=anchors;crossing["approaches"]=approaches;
+   candidates.append(crossing);placed=true;break;
+  }
+  if(placed)break;
+  }
+ }
+ result["crossings"]=candidates;result["rejected"]=diagnostics;result["height_samples"]=survey.samples;return result;
 }
 struct RegionalRouteWorkspace{Ref<AStar3D> graph;Vector3 low;int width=0,depth=0;std::vector<Vector3> points;};
 static Dictionary route_with_workspace(const World &world,Vector3 start,Vector3 finish,const Array &reservations,RegionalRouteWorkspace *shared){

@@ -23,10 +23,11 @@ constexpr u32 DISTRIBUTED_REGION_GENERATOR_ID=24;
 constexpr u32 DISTRIBUTED_COAST_GENERATOR_ID=25;
 constexpr u32 DISTRIBUTED_NATURAL_GENERATOR_ID=26;
 constexpr u32 DISTRIBUTED_NATURAL_COAST_GENERATOR_ID=27;
-constexpr u32 MAX_GENERATOR_ID=DISTRIBUTED_NATURAL_COAST_GENERATOR_ID;
+constexpr u32 VARIED_LAKES_GENERATOR_ID=28;
+constexpr u32 MAX_GENERATOR_ID=31;
 inline bool distributed_region(u32 generator){return generator>=DISTRIBUTED_REGION_GENERATOR_ID&&generator<=MAX_GENERATOR_ID;}
-inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID;}
-inline bool buildable_ground(u32 generator){return generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID;}
+inline bool surrounding_coast(u32 generator){return generator==SURROUNDING_COAST_GENERATOR_ID||generator==BUILDABLE_COAST_GENERATOR_ID||generator==EMBED_COAST_GENERATOR_ID||generator==DISTRIBUTED_COAST_GENERATOR_ID||generator==DISTRIBUTED_NATURAL_COAST_GENERATOR_ID||generator==29||generator==31;}
+inline bool buildable_ground(u32 generator){return (generator>=BUILDABLE_REGION_GENERATOR_ID&&generator<=DISTRIBUTED_COAST_GENERATOR_ID)||generator==28||generator==29;}
 constexpr u32 COASTAL_REGION_GENERATOR_ID=18; // First western coastal inlet; prior fields immutable.
 constexpr u32 UNGRADED_REGION_GENERATOR_ID=17; // Natural regional field; roads and lots must be baked as edits.
 constexpr u32 SITED_REGION_GENERATOR_ID=16; // Surveyed outer settlements with preserved approach corridors.
@@ -49,7 +50,7 @@ struct Page {
  mutable u8 geometry_digest[32]{};
 };
 struct Cave {V3 a,b;float r;float floor_drop=0;};
-struct Basin {float x,z,level;};
+struct Basin {float x,z,level;float half_length=0,half_width=0,depth=0;int kind=0,along_x=0;};
 struct RegionalSite {V3 position;float radius;};
 struct SkyProbe {V3 p,n;float sky;};
 struct ExactSkyProbe {V3 origin;u32 sky_bits=0;};
@@ -78,7 +79,7 @@ struct World {
  u32 generator_id=TERRAIN_GENERATOR_ID;
  Basin basins[12]{};int basin_count=0;
  u16 basin_cells[64]{};
- void scatter_lakes();
+ void scatter_lakes(bool varied=false);
  V3 road_points[4][25]{}; // Immutable derived routes; reconstructed from seed/version.
  void plan_roads();
  u8 buildable_weights[65*65]{};

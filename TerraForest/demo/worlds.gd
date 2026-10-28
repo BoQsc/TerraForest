@@ -149,7 +149,7 @@ func show_saved_details(index:int)->void:
 	if data.has("seed"):lines.append("Seed: "+str(int(data.seed)))
 	if data.has("generator"):
 		var id:int=int(data.generator)
-		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
+		lines.append("Landscape: "+({17:"Regional inland",18:"Regional inland",19:"Regional coast",20:"Build-friendly inland",21:"Build-friendly coast",22:"Grid-preferred inland",23:"Grid-preferred coast",28:"Varied lakes / build-friendly inland",29:"Varied lakes / build-friendly coast",30:"Varied lakes / natural inland",31:"Varied lakes / natural coast",13:"Earlier regional recipe"}.get(id,Launch.PRESETS.get(id,"Saved recipe "+str(id)))))
 	if data.has("settlement_layout"):lines.append("Layout: "+str(data.settlement_layout).capitalize())
 	var options:Dictionary=data.get("world_options",{})
 	if options.has_all(["settlements","districts","biome"]) and int(options.biome) in [0,1,2]:lines.append("%d settlements · %d districts · %s"%[int(options.settlements),int(options.settlements)*int(options.districts),["Woodland","Woodland & meadow mosaic","Open grassland with groves"][int(options.biome)]])
