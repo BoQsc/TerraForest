@@ -282,10 +282,10 @@ func _process(delta: float) -> void:
 	if schedule_timer <= 0.0 and not pending_edit and not foreground_brush and not diagnostics_pause_streaming:
 		schedule_timer = 0.025 if initial_loading else 0.10
 		var schedule_begin: int = Time.get_ticks_usec()
-		_schedule()
+		var planned_coverage:=_schedule()
 		_record_stage("LOD requests",float(Time.get_ticks_usec()-schedule_begin)/1000.0)
 		var cut_begin: int = Time.get_ticks_usec()
-		_update_cut()
+		_update_cut(planned_coverage)
 		_record_stage("LOD coverage",float(Time.get_ticks_usec()-cut_begin)/1000.0)
 		var evict_begin: int = Time.get_ticks_usec()
 		_evict()
@@ -1012,25 +1012,22 @@ func _schedule_urgent_collision() -> void:
 			"base": not _tile_modified(key), "relight_cache": _tile_light_modified(key),"interaction_mesh":interactive}, true):
 			in_flight[key] = version
 			available -= 1
-	_update_cut()
+	_update_cut(_planned_coverage)
 
+var _planned_coverage:Dictionary={}
 func _plan_requests() -> Array[Vector3i]:
-	var plan: Dictionary
-	if not navigation_interest.is_empty():
-		var target:Vector3=interaction_target if Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
-		plan=planner.requests_navigation(focus,require_collision,travel_velocity,target,navigation_interest,tiles,split_state,visible_cut)
-	elif interaction_target.is_finite() and Time.get_ticks_usec()<interaction_target_until_us:
-		plan=planner.requests_targeted(focus,require_collision,interaction_target,tiles,split_state,visible_cut)
-	elif travel_velocity.is_finite() and travel_velocity.length_squared()>0.01:
-		plan=planner.requests_travel(focus,require_collision,travel_velocity,tiles,split_state,visible_cut)
-	else:
-		plan=planner.requests(focus,require_collision,tiles,split_state,visible_cut)
+	_planned_coverage={}
+	var target:Vector3=interaction_target if Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
+	var velocity:=travel_velocity
+	if navigation_interest.is_empty() and (target.is_finite() or not velocity.is_finite() or velocity.length_squared()<=0.01):velocity=Vector3.ZERO
+	var plan:Dictionary=planner.requests_navigation(focus,require_collision,velocity,target,navigation_interest,tiles,split_state,visible_cut,true)
 	if not plan.ok:
 		_fail("Native terrain scheduling rejected invalid state")
 		return []
 	requested_keys = plan.requested_keys
 	activation_keys = plan.activation_keys
 	split_state = plan.split_state
+	_planned_coverage=plan.coverage
 	return plan.requests
 
 var navigation_interest:=PackedVector3Array()
@@ -1043,7 +1040,7 @@ func _cancel_unrequested_meshes() -> void:
 		if in_flight.get(key) == Vector2i(int(cancelled["epoch"]), int(cancelled["stamp"])):
 			in_flight.erase(key)
 
-func _schedule() -> void:
+func _schedule() -> Dictionary:
 	var requests := _plan_requests()
 	_cancel_unrequested_meshes()
 	# No walking-path backlog: the active worker plus at most four waiting builds.
@@ -1062,6 +1059,7 @@ func _schedule() -> void:
 		if accepted:
 			in_flight[key] = version
 			available -= 1
+	return _planned_coverage
 
 func request_partition(key: Vector3i) -> bool:
 	if stopping or not world_ready or pending_edit or not partition_request.is_empty() or key.z<=16 or not visible_cut.has(key) or not tiles.has(key): return false
@@ -1134,10 +1132,10 @@ func _commit_partition() -> void:
 	split_state[request.key]=true
 	_update_cut()
 
-func _update_cut() -> void:
+func _update_cut(covered:Dictionary={}) -> void:
 	if pending_edit:
 		return
-	var covered: Dictionary = planner.coverage_available(tiles,split_state,visible_cut)
+	if covered.is_empty():covered=planner.coverage_available(tiles,split_state,visible_cut)
 	if not covered.ok:
 		_fail("Native terrain coverage rejected invalid state")
 		return

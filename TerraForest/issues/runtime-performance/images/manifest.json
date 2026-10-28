@@ -1,0 +1,14 @@
+{
+  "baseline-road.png": {
+    "source": "reports/runtime_performance/20261028T175902800822Z_baseline_roads/arrival.png",
+    "sha256": "1c0c20dfbd4b6ead08f0d3ccd38af0b1989b074ba432d35cbdfed6fe4e45d6d5",
+    "revision": "5bfe87f492e2e4b3c8fb77c9c0b42d1931acca61",
+    "status": "Baseline, valid asphalt walking profile"
+  },
+  "optimized-road.png": {
+    "source": "reports/runtime_performance/20261028T180747834274Z_optimized_roads/arrival.png",
+    "sha256": "b80b681b2c0773cf0d8f25fd1a75fecbe3af68994fb010174a31801ccdf30ab8",
+    "revision": "5bfe87f4 plus runtime efficiency changes; exact native hashes in source run.json",
+    "status": "Engineering comparison, not user visual approval"
+  }
+}

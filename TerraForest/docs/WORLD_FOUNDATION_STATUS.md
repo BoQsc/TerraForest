@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Runtime efficiency pass — 2026-10-28
+
+Native fused terrain planning, indexed unloaded-model collision readiness and
+settled vegetation fast paths preserve generation, detail, collision and saves.
+Matched 248 m walking samples reduce mean forest scheduling 202→79 µs/frame,
+cover 181→153 µs/frame and terrain scheduling 2.20→1.93 ms/update.
+Frame p95 does not improve in this pair (21.48→22.20 ms); the isolated 199 ms
+baseline stall is not diagnosed. [Evidence and images](../issues/runtime-performance/README.md).
+Scoped regressions and installed-pack 248 m walking pass, with unchanged save
+hash and zero cursor captures. Pack repetition p95 21.85 ms, maximum 43.64 ms.
+Multi-hour play, large
+cities, cold arrivals, loading/generation and weak-GPU performance remain open.
+Return with repeated comparable profiles, finer zombie-stage timing and unchanged
+visual settings; lower per-subsystem CPU cost is not universal stutter resolution.
+
 ## Varied lakes and generated bridges — 2026-10-28
 
 New profiles 28–31 add larger curved/two-lobed lakes and small ponds; old saved

@@ -217,14 +217,13 @@ func _measured_step(_delta:float)->void:
 			if not _wanted.has(key):
 				_retiring[key]=true
 	_advance_retirement()
-	for key in resident:
-		if _resident_layers.get(key,1)!=_layers(key):_dirty[key]=true
 	if terrain.pending_edit or _requests.size()>=1: return
 	if not _support_job.is_empty():
 		if not _support_job.waiting:
 			_support_job.waiting=terrain.request_interpolated_density_batch(_support_job.points,_support_job.token)
 		return
 	if not _scatter_job.is_empty() and (not _wanted.has(_scatter_job.key) or _scatter_job.layers!=_layers(_scatter_job.key) or _scatter_job.revision!=terrain.published_revision or _scatter_job.exclusion!=_exclusion_revision):_scatter_job.clear()
+	if _dirty.is_empty() and _scatter_job.is_empty() and _retiring.is_empty() and resident.size()==_wanted.size():return
 	for key in _wanted:
 		if not _scatter_job.is_empty() and _scatter_job.key!=key:continue
 		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue

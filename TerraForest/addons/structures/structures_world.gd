@@ -5,6 +5,7 @@ var _block_change_bounds:=AABB()
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
+var _model_list: Array = []
 var _empty_models: Dictionary = {}
 var _empty_blocks := PackedByteArray()
 var _codec: RefCounted
@@ -163,7 +164,7 @@ func _exclusion_changed() -> void:
 func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:
 	if not prepare():
 		return PackedByteArray()
-	return _queries.overlap_mask(blocks,_models.values(),transforms,bounds)
+	return _queries.overlap_mask(blocks,_model_list,transforms,bounds)
 
 func prepare() -> bool:
 	if blocks != null:
@@ -185,7 +186,7 @@ func prepare() -> bool:
 	return true
 
 func set_model_focus(world_position: Vector3) -> void:
-	for collection: Node3D in _models.values():
+	for collection: Node3D in _model_list:
 		collection.set_collision_focus(world_position)
 		collection.set_render_focus(world_position)
 
@@ -199,6 +200,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	collection.lock_asset_identity()
 	collection.configure_render_streaming(true,384,128,4*1024*1024,2,256*1024)
 	_models[asset_id] = collection
+	_model_list.append(collection)
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)
 	collection.changed.connect(_mark_dirty)
@@ -209,12 +211,12 @@ func model(asset_id: String) -> Node3D:
 	return _models.get(asset_id)
 
 func is_model_render_region_ready(bounds: AABB) -> bool:
-	for collection in _models.values():
+	for collection in _model_list:
 		if not collection.is_render_region_ready(bounds):return false
 	return true
 
 func is_collision_region_ready(bounds: AABB) -> bool:
-	return blocks != null and _queries.is_collision_region_ready(blocks,_models.values(),bounds)
+	return blocks != null and _queries.is_collision_region_ready(blocks,_model_list,bounds)
 
 func seal() -> bool:
 	if _sealed:

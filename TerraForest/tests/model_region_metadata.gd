@@ -63,6 +63,13 @@ func run() -> void:
 	var corrupt:=metadata.duplicate();corrupt[corrupt.size()-1]^=1
 	check(not live.restore_metadata(corrupt) and live.region_stats().resident_instances==1000,"corrupt manifest fails before replacing existing resident state")
 	var first:=48+metadata.decode_u32(8)
+	var empty_region:=metadata.slice(0,first+84)
+	empty_region.encode_u32(first+44,0)
+	empty_region.append_array(metadata.slice(first+84+8000))
+	empty_region=signed_bytes(empty_region)
+	var empty_live:=batch("test/metadata")
+	check(empty_live.restore_metadata(empty_region) and empty_live.is_collision_region_ready(AABB(Vector3(-100,-1,0),Vector3.ONE)),"empty metadata regions do not block collision readiness through the bounds index")
+	empty_live.free()
 	var bad:=metadata.duplicate();bad.encode_float(first+48,NAN);bad=signed_bytes(bad)
 	check(not live.validate_metadata(bad),"valid checksum cannot admit nonfinite basis bounds")
 	bad=metadata.duplicate();bad.encode_u64(first+84+8000+84,1);bad=signed_bytes(bad)

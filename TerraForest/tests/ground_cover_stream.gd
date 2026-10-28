@@ -15,6 +15,7 @@ class Terrain extends Node3D:
 	var requests: Array=[]
 	var admission_limit:=4
 	var reverse_replies:=false
+	func register_edit_support(_capture:Callable,_apply:Callable)->bool:return true
 	func request_surface_batch(points: PackedVector3Array,token: int) -> bool:
 		if requests.size()>=admission_limit:return false
 		requests.append({"points":points,"token":token});return true
@@ -63,7 +64,11 @@ func run() -> void:
 	for batch in cover.batches:
 		count+=batch.get_ids().size()
 		check(not batch.collision_stats().enabled and batch.collision_stats().resident_bodies==0,"ground cover creates no physics bodies")
-	check(count==owner_count*1024,"bounded prefetched candidates maintain density through all prefetched owners")
+	count+=int(cover.fractures.statistics().roots)
+	check(count==owner_count*1024,"bounded prefetched candidates maintain density across ordinary batches and boulder fractures")
+	var settled_records:Array=cover.resident.values().duplicate(true)
+	for frame in 120:cover._process(1.0/60)
+	check(terrain.requests.is_empty() and cover._dirty.is_empty() and cover.resident.values()==settled_records,"settled cover skips scheduling without changing any generated record")
 	var key:=Vector2i(30,30)
 	var row: Dictionary=cover.resident[key][2]
 	var removed_id: int=row.ids[0]
@@ -86,7 +91,9 @@ func run() -> void:
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	check(not cover._dirty.has(key) and cover.batches[0].get_ids().has(authored_id),"fresh support retry preserves authored identity")
 	camera.position=Vector3(1600,3,1600);cover._process(0.0)
-	check(cover.resident.is_empty() and terrain.requests.size()==4,"teleport retires old owners and submits four destination jobs")
+	check(cover._retiring.size()>0 and terrain.requests.size()==4,"teleport queues bounded old-owner retirement and four destination jobs")
+	for frame in owner_count:cover._advance_retirement()
+	check(cover.resident.is_empty() and cover._retiring.is_empty(),"bounded retirement drains all departed owners")
 	check(not cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).hit,"unloaded owner leaves no stale interaction proxy")
 	camera.position=Vector3(960,3,960);cover._process(0.0)
 	check(terrain.requests.size()==4,"teleport preserves the four-job bound")

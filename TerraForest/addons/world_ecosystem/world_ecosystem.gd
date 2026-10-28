@@ -22,7 +22,8 @@ var _requests: Dictionary = {}
 var _pending_cells: Dictionary = {}
 const SurfaceTokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 var _token: int = 0
-var _scan_timer: float = 0.0
+var _last_radius: float = -1.0
+var _last_limit: int = -1
 var _last_cell := Vector2i(-9999, -9999)
 var _connected: bool = false
 var stale_results: int = 0
@@ -137,7 +138,7 @@ func _process(delta: float) -> void:
 	_step(delta)
 	last_process_us=Time.get_ticks_usec()-begin
 
-func _step(delta: float) -> void:
+func _step(_delta: float) -> void:
 	if not terrain.world_ready or not vegetation.ready_to_render:
 		return
 	# Coalesce edits; reconcile at most one 36-candidate owner per frame.
@@ -146,13 +147,15 @@ func _step(delta: float) -> void:
 		_reconcile.erase(key)
 		if _samples.has(key) and _wanted.has(key):
 			_publish_samples(key)
-	_scan_timer -= delta
 	var cell: Vector2i = _cell(camera.global_position)
-	if cell != _last_cell or _scan_timer <= 0.0:
-		_scan_timer = 0.5
+	if cell != _last_cell or stream_radius != _last_radius or max_resident_cells != _last_limit:
 		_last_cell = cell
+		_last_radius = stream_radius
+		_last_limit = max_resident_cells
 		_refresh(cell)
 	if terrain.pending_edit or _requests.size() >= 2:
+		return
+	if resident.size() == _wanted.size() and _resample.is_empty():
 		return
 	# One small batch submitted per frame. Queue admission is owned by TerrainWorld.
 	for key in _wanted:

@@ -44,6 +44,15 @@ func equivalent(reference: RefCounted, label: String) -> void:
 		activation_valid=activation_valid and planned.requests.has(key) and planned.requested_keys.has(key)
 	check(activation_valid,label+" activation dependencies form a prefix of existing requested work")
 	check(covered.ok and covered["keys"]==expected["keys"] and covered.hidden==hidden and covered.root_coverage==expected.root_coverage and covered.covered_roots==expected.covered_roots and unchanged,label+" coverage, dirty fallback and immutable inputs match legacy")
+	for mode in 4:
+		var velocity:=Vector3(12,0,-7) if mode>=2 else Vector3.ZERO
+		var target:Vector3=reference.focus+Vector3(8,0,4) if mode==1 else Vector3.INF
+		var interest:=PackedVector3Array([reference.focus+Vector3(28,0,16)]) if mode==3 else PackedVector3Array()
+		var separate:Dictionary=planner.requests_navigation(reference.focus,reference.require_collision,velocity,target,interest,before_tiles,before_split,before_visible)
+		var combined:Dictionary=planner.requests_navigation(reference.focus,reference.require_collision,velocity,target,interest,before_tiles,before_split,before_visible,true)
+		var coverage:Dictionary=combined.coverage
+		combined.erase("coverage")
+		check(combined==separate and coverage==planner.coverage_available(before_tiles,separate.split_state,before_visible),label+" fused planner preserves exact requests and coverage mode %d"%mode)
 	var victims: Dictionary = planner.eviction_candidates(reference.tiles,reference.visible_cut,planned.requested_keys)
 	var expected_victims := {}
 	for key: Vector3i in reference.tiles:
@@ -209,6 +218,7 @@ func benchmark() -> void:
 		if i%3!=0: reference.tiles[wanted[i]]={"dirty":i%7==0,"used":i}
 	reference.visible_cut.assign(reference.coverage()["keys"])
 	var native_times: Array[float] = []
+	var combined_times: Array[float] = []
 	var legacy_times: Array[float] = []
 	for i in range(80):
 		var begin := Time.get_ticks_usec()
@@ -217,11 +227,16 @@ func benchmark() -> void:
 		legacy_times.append(float(Time.get_ticks_usec()-begin)/1000.0)
 		begin=Time.get_ticks_usec()
 		var plan: Dictionary = planner.requests(reference.focus,true,reference.tiles,reference.split_state,reference.visible_cut)
-		planner.coverage(reference.tiles,plan.split_state,reference.visible_cut)
+		planner.coverage_available(reference.tiles,plan.split_state,reference.visible_cut)
 		native_times.append(float(Time.get_ticks_usec()-begin)/1000.0)
+		begin=Time.get_ticks_usec()
+		planner.requests_navigation(reference.focus,true,Vector3.ZERO,Vector3.INF,PackedVector3Array(),reference.tiles,reference.split_state,reference.visible_cut,true)
+		combined_times.append(float(Time.get_ticks_usec()-begin)/1000.0)
 	native_times.sort()
+	combined_times.sort()
 	legacy_times.sort()
-	metrics={"scope":"Matched headless request + coverage CPU calls, 80 samples; excludes scene publication, backend locks and rendering.","tiles":reference.tiles.size(),"native_median_ms":native_times[40],"native_p95_ms":native_times[76],"legacy_median_ms":legacy_times[40],"legacy_p95_ms":legacy_times[76]}
+	metrics={"scope":"80 samples; separate and fused native request + available-coverage CPU calls; legacy strict coverage for reference only. Excludes scene publication, backend locks and rendering.","tiles":reference.tiles.size(),"native_median_ms":native_times[40],"native_p95_ms":native_times[76],"legacy_median_ms":legacy_times[40],"legacy_p95_ms":legacy_times[76]}
+	metrics["combined_median_ms"]=combined_times[40];metrics["combined_p95_ms"]=combined_times[76]
 	print("PLANNER_TIMING ",JSON.stringify(metrics))
 
 func finish() -> void:

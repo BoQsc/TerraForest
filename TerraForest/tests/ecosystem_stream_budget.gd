@@ -1,7 +1,17 @@
 # SPDX-License-Identifier: 0BSD
 extends SceneTree
 const Ecosystem=preload("res://addons/world_ecosystem/world_ecosystem.gd")
+class CountedEcosystem extends Ecosystem:
+	var refreshes:=0
+	var publications:=0
+	func _refresh(center:Vector2i)->void:
+		refreshes+=1
+		super._refresh(center)
+	func _publish_samples(key:Vector2i)->void:
+		publications+=1
+		super._publish_samples(key)
 class Terrain extends Node3D:
+	var backend:={"world_generator":0}
 	var world_ready:=true
 	var pending_edit:=false
 	func request_surface_batch(_points, _token) -> bool: return false
@@ -18,7 +28,7 @@ func check(value: bool,label: String) -> void:
 func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
-	var world=Ecosystem.new()
+	var world=CountedEcosystem.new()
 	var terrain=Terrain.new()
 	var forest=Forest.new()
 	var camera:=Camera3D.new()
@@ -41,6 +51,23 @@ func run() -> void:
 	world.max_resident_cells=2
 	world._step(1.0/60)
 	check(world.resident.size()==2,"candidate admission preserves residency cap")
+	var refreshes:int=world.refreshes
+	for frame in 120:world._step(1.0/60)
+	check(world.refreshes==refreshes,"settled forest does not rebuild identical residency every half second")
+	var owner:Vector2i=world.resident.keys()[0]
+	var publications:int=world.publications
+	world._reconcile[owner]=true
+	world._step(1.0/60)
+	check(world.publications==publications+1 and world._reconcile.is_empty(),"settled fast path still reconciles changed vegetation")
+	world._resample[owner]=true
+	world._step(1.0/60)
+	check(not world._resample.has(owner),"settled fast path still resamples invalidated terrain support")
+	world.stream_radius=128
+	world._step(1.0/60)
+	check(world.refreshes==refreshes+1,"radius changes refresh residency without camera movement")
+	world.reset();world._step(1.0/60)
+	check(world.refreshes==refreshes+2 and world.resident.size()==1,"reload invalidates settled residency")
 	world.resident.clear()
 	world.free();terrain.free();forest.free();camera.free()
+	print("ECOSYSTEM_STREAM_BUDGET failures=",failures)
 	quit(1 if failures else 0)

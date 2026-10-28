@@ -2,6 +2,7 @@
 extends SceneTree
 var checks:=0
 var failures:=0
+var output:="res://reports"
 func check(ok: bool,label: String) -> void:
     checks+=1
     if not ok:failures+=1
@@ -59,9 +60,11 @@ func mutation_check(batch: Node3D,archive: RefCounted,asset: String,checkpoint: 
     check(valid and batch.capture_snapshot()==snapshot,"shuffled admissions remove stale bounds and preserve discovery of remaining regions and exact final data")
     source.free()
 func run() -> void:
+    for argument in OS.get_cmdline_user_args():
+        if argument.begins_with("--profile-dir="):output=argument.trim_prefix("--profile-dir=")
     GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
     GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
-    DirAccess.make_dir_recursive_absolute("res://reports")
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
     var results: Array=[]
     for spec in [[64,1,0,0,false],[4096,1,0,0,false],[4096,32,0,0,false],[4096,1,1,-2048,false],[4096,1,2,-2048,false],[4096,1,0,28672,false],[4096,1,0,0,true],[4096,32,3,-8,false]]:
         var count: int=spec[0];var asset_count: int=spec[1]
@@ -74,7 +77,7 @@ func run() -> void:
             var mesh:=BoxMesh.new()
             if extended:mesh.size=Vector3(300000,1,1)
             var batch: Node3D=ClassDB.instantiate("NativeStaticBatch");batch.configure_asset(id,mesh)
-            if extended:batch.configure_collision(AABB(Vector3(-0.1,-0.1,-0.1),Vector3(0.2,0.2,0.2)),8,4,1)
+            batch.configure_collision(AABB(Vector3(-0.1,-0.1,-0.1),Vector3(0.2,0.2,0.2)),8,4,1)
             batch.configure_render_streaming(true,16,4,65536,1,4096)
             valid=batch.restore_metadata(metadata(id,count,checkpoint,axis,offset)) and valid;batches.append(batch)
         check(valid,"valid native metadata fixture: %d regions across %d assets"%[count,asset_count])
@@ -86,7 +89,7 @@ func run() -> void:
         var codec: RefCounted=ClassDB.instantiate("NativeStructuresSnapshot");codec.configure_assets(ids)
         var raw: RefCounted=ClassDB.instantiate("NativeWorldArchive")
         var archive: RefCounted=ClassDB.instantiate("NativeRegionWorldArchive");archive.configure(raw,codec,true,true)
-        var path:=ProjectSettings.globalize_path("res://reports/discovery_%d_%d_%d_%d_%d_%d.trw"%[OS.get_process_id(),count,asset_count,axis,offset,int(extended)])
+        var path:=ProjectSettings.globalize_path(output.path_join("discovery_%d_%d_%d_%d_%d_%d.trw"%[OS.get_process_id(),count,asset_count,axis,offset,int(extended)]))
         check(archive.acquire(path),"selection fixture acquires an archive without reading region packets")
         var history: RefCounted=ClassDB.instantiate("NativeStaticHistory");history.configure(batches,1048576,128)
         var scheduler: RefCounted=ClassDB.instantiate("NativeModelTransferScheduler");scheduler.configure(archive,history,8,64*1024*1024)
@@ -98,6 +101,13 @@ func run() -> void:
         if axis==3:focus=Vector3.ONE*((15+offset)*32+16)
         else:focus[axis]=(count-1+offset)*32+16
         if extended:focus.x=-500 # Beyond every origin cell; only actual mesh bounds reach here.
+        var collision_begin:=Time.get_ticks_usec()
+        var readiness_exact:=true
+        for query in 1024:
+            readiness_exact=not batches[0].is_collision_region_ready(AABB(focus,Vector3.ONE)) and readiness_exact
+            readiness_exact=batches[0].is_collision_region_ready(AABB(Vector3(1000000,1000000,1000000),Vector3.ONE)) and readiness_exact
+        var collision_usec:=Time.get_ticks_usec()-collision_begin
+        check(readiness_exact,"indexed collision readiness preserves unavailable and empty regions")
         var begin:=Time.get_ticks_usec()
         while calls<4096:
             var state: Dictionary=scheduler.select_focus(focus,4,64,64,250)
@@ -106,6 +116,7 @@ func run() -> void:
             if state.jobs>0:queued=true;break
         var elapsed:=Time.get_ticks_usec()-begin
         results.append({"regions_per_asset":count,"assets":asset_count,"axis":axis,"offset":offset,"extended_visual_small_proxy":extended,"calls_to_first_request":calls,"visits":visits,"peak_selection_usec":peak_usec,"wall_usec":elapsed,"queued":queued,"first_request_gate_calls":4})
+        results[-1]["collision_queries"]=2048;results[-1]["collision_query_usec"]=collision_usec
         check(queued and calls<=4,"near destination discovered within four selection calls: %d regions, %d assets (actual %d)"%[count,asset_count,calls])
         scheduler.set_epoch(1);scheduler.poll(64)
         scheduler.select_focus(Vector3(1000000,1000000,1000000),4,64,64,250)
@@ -118,7 +129,7 @@ func run() -> void:
         if count==64:mutation_check(batches[0],archive,ids[0],checkpoint)
         for batch in batches:batch.free()
         archive.release()
-    var file:=FileAccess.open("res://reports/model_focus_discovery.json",FileAccess.WRITE)
+    var file:=FileAccess.open(output.path_join("model_focus_discovery.json"),FileAccess.WRITE)
     file.store_string(JSON.stringify({"checks":checks,"failures":failures,"cases":results,"scope":"Synthetic validated metadata selection only, no disk packets or scheduler ticks. Calls are not elapsed game frames; no actual arrival/FPS claim."},"  "));file.close()
     print("MODEL_FOCUS_DISCOVERY ",JSON.stringify(results))
     quit(1 if failures else 0)

@@ -16,8 +16,11 @@ bool NativeStaticBatch::is_collision_region_ready(const AABB &world_bounds) cons
     if(!current.is_finite()||!std::isfinite(determinant)||std::abs(determinant)<1e-9)return false;
     AABB local=current.affine_inverse().xform(world_bounds);
     if(!local.position.is_finite()||!local.size.is_finite()||!local.get_end().is_finite())return false;
-    for(const auto &entry:unloaded_regions)
-        if(entry.second.count&&entry.second.bounds.intersects(local))return false;
+    const auto overlaps=[&](const auto &self,const ModelBoundsIndex::Node *node)->bool {
+        if(!node||!node->bounds.intersects(local))return false;
+        return (node->box.intersects(local)&&unloaded_regions.at(node->key).count)||self(self,node->left.get())||self(self,node->right.get());
+    };
+    if(overlaps(overlaps,unloaded_bounds.root()))return false;
     // Bounds include full transformed proxy extents, even beyond origin groups.
     for(const auto &group:collision_bounds) {
         if(!group.second.intersects(local))continue;

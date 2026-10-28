@@ -4,7 +4,7 @@ const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 
 class FixedCut extends Stream:
 	# Isolate publication from the quadtree's whole-world coverage requirement.
-	func _update_cut() -> void:
+	func _update_cut(_covered:Dictionary={}) -> void:
 		pass
 
 var world: Stream

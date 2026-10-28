@@ -162,7 +162,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
 }
 void NativeTerrainPlanner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_target","point","normal","origin","empty"),&NativeTerrainPlanner::placement_target);
-    ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_navigation);
+    ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut","include_coverage"),&NativeTerrainPlanner::requests_navigation,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("requests_travel","focus","require_collision","velocity","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_travel);
     ClassDB::bind_method(D_METHOD("collision_region_ready","bounds","active_leaves"),&NativeTerrainPlanner::collision_region_ready);
     ClassDB::bind_method(D_METHOD("requests","focus","require_collision","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests);
@@ -196,7 +196,8 @@ bool NativeTerrainPlanner::collision_region_ready(AABB bounds,const Dictionary &
     }
     return true;
 }
-static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target,const std::vector<Vector3> *travel=nullptr) {
+static Dictionary coverage_from_state(State &state,const Array &visible,bool available);
+static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target,const std::vector<Vector3> *travel=nullptr,bool include_coverage=false) {
     State state;if(!focus.is_finite()||(target&&!target->is_finite())||!state.load(tiles,previous,visible))return failure();
     Dictionary split=previous.duplicate(),wanted;
     std::vector<Request> pending;pending.reserve(512);
@@ -213,18 +214,20 @@ static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &t
         keys[i]=pending[i].key;
         if(pending[i].priority<-10000)activation[pending[i].key]=true;
     }
-    Dictionary result;result["ok"]=true;result["requests"]=keys;result["requested_keys"]=wanted;result["split_state"]=split;result["activation_keys"]=activation;return result;
+    Dictionary result;result["ok"]=true;result["requests"]=keys;result["requested_keys"]=wanted;result["split_state"]=split;result["activation_keys"]=activation;
+    if(include_coverage)result["coverage"]=coverage_from_state(state,visible,true);
+    return result;
 }
 Dictionary NativeTerrainPlanner::requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     return plan_requests(focus,collision,tiles,previous,visible,nullptr);
 }
-Dictionary NativeTerrainPlanner::requests_navigation(Vector3 focus,bool collision,Vector3 velocity,Vector3 target,const PackedVector3Array &points,const Dictionary &tiles,const Dictionary &previous,const Array &visible)const{
+Dictionary NativeTerrainPlanner::requests_navigation(Vector3 focus,bool collision,Vector3 velocity,Vector3 target,const PackedVector3Array &points,const Dictionary &tiles,const Dictionary &previous,const Array &visible,bool include_coverage)const{
     if(points.size()>8||!velocity.is_finite())return failure();
     std::vector<Vector3> samples;
     velocity.y=0;const double speed=velocity.length(),length=std::min(speed*2,128.0);
     if(length>0){const int count=int(std::ceil(length/32));for(int i=1;i<=count;++i)samples.push_back(focus+velocity/real_t(speed)*real_t(length*i/count));}
     for(int i=0;i<points.size();++i){if(!points[i].is_finite()||points[i].distance_to(focus)>128)return failure();samples.push_back(points[i]);}
-    return plan_requests(focus,collision,tiles,previous,visible,target.is_finite()?&target:nullptr,&samples);
+    return plan_requests(focus,collision,tiles,previous,visible,target.is_finite()?&target:nullptr,&samples,include_coverage);
 }
 Dictionary NativeTerrainPlanner::requests_travel(Vector3 focus,bool collision,Vector3 velocity,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     if(!velocity.is_finite())return failure();
@@ -245,8 +248,7 @@ Dictionary NativeTerrainPlanner::requests_travel(Vector3 focus,bool collision,Ve
 Dictionary NativeTerrainPlanner::requests_targeted(Vector3 focus,bool collision,Vector3 target,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     return plan_requests(focus,collision,tiles,previous,visible,&target);
 }
-static Dictionary plan_coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible,bool available) {
-    State state;if(!state.load(tiles,split,visible))return failure();
+static Dictionary coverage_from_state(State &state,const Array &visible,bool available) {
     std::vector<Vector3i> covered;covered.reserve(512);int roots=0;Dictionary covered_roots;
     for(int z=0;z<2048;z+=256)for(int x=0;x<2048;x+=256) {
         Vector3i root(x,z,256);
@@ -260,6 +262,10 @@ static Dictionary plan_coverage(const Dictionary &tiles,const Dictionary &split,
     for(size_t i=0;i<covered.size();i++) {keys[i]=covered[i];state.flags[index_for(covered[i])]|=CHOSEN;}
     for(int i=0;i<visible.size();i++)if(!(state.flags[index_for(visible[i])]&CHOSEN))hidden.push_back(visible[i]);
     Dictionary result;result["ok"]=true;result["keys"]=keys;result["hidden"]=hidden;result["root_coverage"]=roots;result["covered_roots"]=covered_roots;return result;
+}
+static Dictionary plan_coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible,bool available) {
+    State state;if(!state.load(tiles,split,visible))return failure();
+    return coverage_from_state(state,visible,available);
 }
 Dictionary NativeTerrainPlanner::coverage(const Dictionary &tiles,const Dictionary &split,const Array &visible) const {
     return plan_coverage(tiles,split,visible,false);

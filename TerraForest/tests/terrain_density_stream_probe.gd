@@ -2,7 +2,7 @@ extends SceneTree
 const Stream = preload("res://addons/volumetric_terrain/terrain_stream.gd")
 const Codec = preload("res://addons/volumetric_terrain/mesh_codec.gd")
 class Fixed extends Stream:
-	func _update_cut() -> void: pass
+	func _update_cut(_covered:Dictionary={}) -> void: pass
 var world: Fixed
 var checks: Array[Dictionary]=[]
 var replies: Array[Dictionary]=[]
