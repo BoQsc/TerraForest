@@ -39,6 +39,7 @@ public:
     Dictionary layout_counts(const Array &sources,int64_t lots_per_side,int64_t seed,int64_t streets) const;
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
+    Dictionary survey_surface() const;
     int get_cell_count() const { return int(cells.size()); }
     PackedInt64Array get_material_counts() const;
     bool configure_attachment_envelope(AABB box);

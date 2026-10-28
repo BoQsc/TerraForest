@@ -41,10 +41,11 @@ func run()->void:
  check(codec.encode(invalid).is_empty(),"reject noninteger settings")
  invalid=options.duplicate();invalid["unknown"]=1
  check(codec.encode(invalid).is_empty(),"reject unknown settings")
- var pixels:=PackedByteArray();pixels.resize(256*256*4);pixels.fill(128)
- var woodland:PackedByteArray=codec.render_biomes(pixels,1703,0)
- var meadow:PackedByteArray=codec.render_biomes(pixels,1703,2)
- check(woodland.size()==pixels.size() and woodland!=meadow and meadow==codec.render_biomes(pixels,1703,2),"native biome map is deterministic and profile-specific")
+ var pixels:=Image.create(256,256,false,Image.FORMAT_RGBA8);pixels.fill(Color(.35,.48,.24))
+ var surface:=pixels.get_data()
+ var woodland:PackedByteArray=codec.render_biomes(surface,1703,0)
+ var meadow:PackedByteArray=codec.render_biomes(surface,1703,2)
+ check(woodland.size()==surface.size() and woodland!=meadow and meadow==codec.render_biomes(surface,1703,2),"native biome map is deterministic and profile-specific")
  var scatter=ClassDB.instantiate("NativeVegetationScatter")
  var totals:=[0,0,0];var stable:=true
  for row in 32:

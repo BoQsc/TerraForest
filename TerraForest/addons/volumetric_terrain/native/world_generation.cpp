@@ -14,6 +14,7 @@
 #include <set>
 #include <tuple>
 #include <vector>
+#include <godot_cpp/variant/packed_color_array.hpp>
 namespace terraforest {
 using namespace godot;
 namespace {
@@ -538,14 +539,37 @@ godot::PackedByteArray render_generation_map(const godot::PackedByteArray &base,
  for(int i=0;i<roads.size();i++){
   if(roads[i].get_type()!=Variant::DICTIONARY)return {};Dictionary road=roads[i];if(!road.has("start")||!road.has("finish"))return {};
   Vector3 a=road["start"],b=road["finish"];if(!inside(a)||!inside(b))return {};
-  int n=std::max(1,int(std::ceil(horizontal(b-a)*256/2000*2)));
-  for(int j=0;j<=n;j++){Vector3 p=a.lerp(b,double(j)/n);pixel(int(p.x*256/2000),int(p.z*256/2000),224,178,91);}
+  double radius=double(road.get("half_width",4.0));if(!std::isfinite(radius)||radius<0||radius>32)return {};
+  Vector2 start(a.x,a.z),axis(b.x-a.x,b.z-a.z);double squared=axis.length_squared();if(squared<.0001)continue;
+  int left=std::clamp(int(std::floor((std::min(a.x,b.x)-radius)*256/2000)),0,255),right=std::clamp(int(std::ceil((std::max(a.x,b.x)+radius)*256/2000)),0,255);
+  int top=std::clamp(int(std::floor((std::min(a.z,b.z)-radius)*256/2000)),0,255),bottom=std::clamp(int(std::ceil((std::max(a.z,b.z)+radius)*256/2000)),0,255);
+  bool asphalt=int(road.get("material",4))==4;Color color=asphalt?Color(.21,.22,.23):Color(.45,.40,.31);
+  for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++){
+   int covered=0;for(int sample=0;sample<16;sample++){
+    Vector2 point((column+((sample%4)+.5)/4)*2000/256,(row+((sample/4)+.5)/4)*2000/256);
+    double fraction=std::clamp(double((point-start).dot(axis))/squared,0.,1.);
+    if(point.distance_squared_to(start+axis*fraction)<=radius*radius)covered++;
+   }
+   int at=(row*256+column)*4;for(int channel=0;channel<3;channel++)pixels[at+channel]=uint8_t((pixels[at+channel]*(16-covered)+color[channel]*255*covered)/16);
+  }
  }
+ std::vector<float> surface_heights(256*256,-1e9f);
  for(int i=0;i<lots.size();i++){
+  if(lots[i].get_type()==Variant::DICTIONARY){
+   Dictionary surface=lots[i];PackedVector3Array points=surface.get("points",PackedVector3Array());PackedColorArray colors=surface.get("colors",PackedColorArray());
+   if(points.size()>65536||points.size()!=colors.size())return {};
+   for(int sample=0;sample<points.size();sample++){
+    auto point=points[sample];auto color=colors[sample];if(!point.is_finite()||!std::isfinite(color.r)||!std::isfinite(color.g)||!std::isfinite(color.b)||!std::isfinite(color.a))return {};
+    int column=int(std::floor(point.x*256/2000)),row=int(std::floor(point.z*256/2000));if(column<0||row<0||column>=256||row>=256)continue;
+    int at=row*256+column;if(point.y<surface_heights[at])continue;surface_heights[at]=point.y;
+    pixel(column,row,int(std::clamp(color.r,0.f,1.f)*255),int(std::clamp(color.g,0.f,1.f)*255),int(std::clamp(color.b,0.f,1.f)*255));
+   }
+   continue;
+  }
   if(lots[i].get_type()!=Variant::AABB)return {};AABB box=lots[i];if(!box.position.is_finite()||!box.size.is_finite())return {};
   int x0=std::clamp(int(std::floor(box.position.x*256/2000)),0,255),z0=std::clamp(int(std::floor(box.position.z*256/2000)),0,255);
   int x1=std::clamp(int(std::ceil((box.position.x+box.size.x)*256/2000)),0,255),z1=std::clamp(int(std::ceil((box.position.z+box.size.z)*256/2000)),0,255);
-  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)pixel(x,z,245,235,210);
+  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++)pixel(x,z,128,119,103);
  }
  return result;
 }

@@ -100,7 +100,19 @@ func run()->void:
  print("GENERATED_MINERALS count=",deposits.size()," logical_instances=",mineral_count," native_plan_ms=",planned.get("mineral_plan_ms",-1))
  game.app_focused=true;game.world_map.set_open(true);game.world_map.view.overview()
  check(game.world_map.deposits.size()==deposits.size(),"production map publishes all material deposits")
+ var atlas=game.world_map
+ check(await wait_for(func():return atlas.texture!=null and atlas.updates.identity_checked and atlas.updates.dirty.is_empty() and atlas.updates.pending.is_empty() and atlas.updates.io==null and atlas.water_survey.complete and atlas.block_survey.complete and atlas.model_survey.complete and atlas.water_survey.io==null and atlas.block_survey.io==null and atlas.model_survey.io==null,90),"complete generated map includes terrain, water, blocks and objects")
+ check(not atlas.show_roads and not atlas.show_deposits and not atlas.show_places and not atlas.show_grid,"generated world opens on physical map without annotations")
  await photograph("material_map")
+ game.destination_guide.track(atlas.places[0])
+ check(atlas.view.visible_destinations(atlas.places,false)==[atlas.places[0]],"tracked destination remains visible with place annotations off")
+ game.destination_guide.clear()
+ for setting:String in ["show_roads","show_deposits","show_places","show_grid"]:
+  var toggle:CheckBox=atlas.panel.find_child(setting,true,false)
+  toggle.button_pressed=true
+ check(atlas.show_roads and atlas.show_deposits and atlas.show_places and atlas.show_grid,"optional annotation controls operate independently")
+ await photograph("annotated_map")
+ for setting:String in ["show_roads","show_deposits","show_places","show_grid"]:atlas.panel.find_child(setting,true,false).button_pressed=false
  game.world_map.set_open(false)
  await verify_approved_records(game)
  game.session_menu.set_open(false)

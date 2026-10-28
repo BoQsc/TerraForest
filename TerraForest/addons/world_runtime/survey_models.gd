@@ -16,8 +16,8 @@ var projection_cursor:=Vector2i.ZERO
 var region_complete:=false
 var archived_reads:=0
 func _ready()->void:
- serial=-3000000;image_size=512;tint=Color("bba0cf");caption="Objects"
- cache_namespace="model-map-v1-512";cache_root="user://cartography/models"
+ serial=-3000000;image_size=512;tint=Color("8e8b82");caption="Objects"
+ cache_namespace="model-map-material-v2-512";cache_root="user://cartography/models"
  super._ready()
 func current_stamp()->String:
  var parts:=PackedStringArray(["%d/%d"%[terrain.epoch,terrain.density_revision]])
@@ -62,6 +62,12 @@ func source_step()->Dictionary:
  if not boxes.is_empty():
   var projected:Dictionary=raster.project_bounds(boxes,index.transform,projection_cursor)
   if not projected.ok:return projected
+  var color:=Color("898981")
+  var asset:String=assets[asset_cursor]
+  if asset.contains("iron_outcrop"):color=Color("78828f")
+  elif asset.contains("copper_outcrop"):color=Color("ad784d")
+  elif asset.contains("wood") or asset.contains("door") or asset.contains("chair") or asset.contains("chest"):color=Color("776044")
+  var colors:=PackedColorArray();colors.resize(projected.points.size());colors.fill(color);projected["colors"]=colors
   projection_cursor=projected.cursor
   if projected.complete:
    boxes=[]

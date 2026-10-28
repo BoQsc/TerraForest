@@ -81,8 +81,9 @@ func _process(_delta:float)->void:
    if not result.get("available",true):return
    if result.get("stale",false) or not result.get("ready",true):stamp="";return
    if not result.get("ok",false):fail_survey();return
-   if not raster.offer(result.points):fail_survey();return
+   if not raster.offer(result.points,result.get("colors",PackedColorArray())):fail_survey();return
    if not result.points.is_empty():source_hash.update(result.points.to_byte_array())
+   if result.has("colors") and not result.colors.is_empty():source_hash.update(result.colors.to_byte_array())
    source_done=result.complete;source_calls+=1;max_source_us=maxi(max_source_us,result.get("worker_us",0))
    if source_done or Time.get_ticks_usec()-began>=1000:break
   if source_done:source_signature=source_hash.finish().hex_encode()

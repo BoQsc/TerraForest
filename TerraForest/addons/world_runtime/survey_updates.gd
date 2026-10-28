@@ -4,6 +4,7 @@ extends Node
 var atlas:Node
 var terrain:Node
 var image:Image
+var displayed:Image
 var dirty:Dictionary={}
 var pending:Dictionary={}
 var in_flight_limit:=1
@@ -27,7 +28,7 @@ func _ready()->void:
  terrain.survey_patch_ready.connect(receive)
  set_process(false)
 func reset()->void:
- epoch=terrain.epoch;image=null;dirty.clear();pending.clear()
+ epoch=terrain.epoch;image=null;displayed=null;dirty.clear();pending.clear()
  identity_checked=false;cache_identity="";cache_revision=-1;cache_saved=false
  for cell:Vector2i in terrain.modified_columns:
   changed(AABB(Vector3(cell.x*16,0,cell.y*16),Vector3(16,256,16)),0)
@@ -45,7 +46,8 @@ func _process(_delta:float)->void:
    if result.get("persisted",false):cache_writes+=1
   elif result.get("hit",false) and image!=null and io_job.epoch==epoch and terrain.epoch==epoch and io_job.revision==terrain.density_revision and not terrain.pending_edit and io_job.identity==cache_identity:
    image=Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels)
-   dirty.clear();cache_hits+=1;cache_saved=true;atlas.texture.update(image);atlas.view.queue_redraw();atlas.status.text=description()
+   displayed=Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,atlas.surface_pixels(result.pixels))
+   dirty.clear();cache_hits+=1;cache_saved=true;atlas.texture.update(displayed);atlas.view.queue_redraw();atlas.status.text=description()
   io_job.clear()
  if not atlas.opened or image==null:return
  if epoch!=terrain.epoch:return
@@ -82,7 +84,8 @@ func receive(result:Dictionary)->void:
  if image==null:return
  var patch:=Image.create_from_data(4,4,false,Image.FORMAT_RGBA8,result.pixels)
  image.blit_rect(patch,Rect2i(0,0,4,4),tile*4)
- atlas.texture.update(image);patches+=1;max_native_ms=maxf(max_native_ms,result.generation_ms)
+ displayed.blit_rect(Image.create_from_data(4,4,false,Image.FORMAT_RGBA8,atlas.surface_pixels(result.pixels,tile*4,4)),Rect2i(0,0,4,4),tile*4)
+ atlas.texture.update(displayed);patches+=1;max_native_ms=maxf(max_native_ms,result.generation_ms)
  atlas.view.queue_redraw()
  atlas.status.text=description()
 

@@ -85,6 +85,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("normalize_roads","roads","protected_areas"), &TerrainCore::normalize_roads);
         godot::ClassDB::bind_method(godot::D_METHOD("fit_road_network","roads","protected_areas","footprint_policy"), &TerrainCore::fit_road_network,DEFVAL(false));
         godot::ClassDB::bind_method(godot::D_METHOD("survey_overview","size"), &TerrainCore::survey_overview);
+        godot::ClassDB::bind_method(godot::D_METHOD("survey_surface_map"), &TerrainCore::survey_surface_map);
         godot::ClassDB::bind_method(godot::D_METHOD("survey_water_visibility","points"), &TerrainCore::survey_water_visibility);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks","packets"), &TerrainCore::bake_generated_earthworks);
         godot::ClassDB::bind_method(godot::D_METHOD("bake_generated_earthworks_staged","packets","directory","resident_limit","checkpoint_commands","expected_epoch","test_stop_at_checkpoint"), &TerrainCore::bake_generated_earthworks_staged,DEFVAL(MAX_PAGES),DEFVAL(64),DEFVAL(-1),DEFVAL(-1));
@@ -143,6 +144,9 @@ public:
     }
     godot::Dictionary survey_overview(int64_t size){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_map(world_,size);return tr_oom?godot::Dictionary():result;
+    }
+    godot::Dictionary survey_surface_map(){
+        std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_surface(world_);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary measure_material_surface(int64_t x,int64_t z,int64_t size,int64_t y_begin,int64_t y_end){
         godot::Dictionary result;result["valid"]=false;

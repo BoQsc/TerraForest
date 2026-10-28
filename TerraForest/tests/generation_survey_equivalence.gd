@@ -13,9 +13,9 @@ func _initialize()->void:
  var path:="res://reports/generation_survey_serial.json" if "--record-serial" in OS.get_cmdline_user_args() else "res://reports/generation_survey_parallel.json"
  var failures:=0
  if not "--record-serial" in OS.get_cmdline_user_args():
-  var before:Array=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/generation_survey/serial_hashes.json"))
+  var before:Array=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/generation_survey/palette_v4.json"))
   for i in rows.size():
-   if rows[i].digest!=before[i].digest:failures+=1
+   if rows[i].digest!=before[i]:failures+=1
  var file:=FileAccess.open(path,FileAccess.WRITE);file.store_string(JSON.stringify(rows,"  "));file.close()
  print("GENERATION_SURVEY_EQUIVALENCE failures=",failures," rows=",rows)
  quit(1 if failures else 0)

@@ -20,7 +20,10 @@ var builds:=0
 var roads:Array[Dictionary]=[]
 var places:Array[Dictionary]=[]
 var deposits:Array[Dictionary]=[]
-var show_deposits:=true
+var show_deposits:=false
+var show_roads:=false
+var show_places:=false
+var show_grid:=false
 var timer:Timer
 var updates:Node
 var water_survey:Node
@@ -54,10 +57,11 @@ func _ready()->void:
  add_button(buttons,"Find me",view.follow_player);add_button(buttons,"Whole world",view.overview)
  var zoom_row:=HBoxContainer.new();sidebar.add_child(zoom_row)
  add_button(zoom_row,"− Zoom",func():view.set_zoom(view.zoom/1.5,view.size*0.5));add_button(zoom_row,"+ Zoom",func():view.set_zoom(view.zoom*1.5,view.size*0.5))
- add_label(sidebar,"Drag to pan · Wheel to zoom\nRight-click: place / manage markers\nNorth is up · Mint arrow: you\nGold: roads · Blue: water")
- var minerals:=CheckButton.new();minerals.text="Material veins";minerals.button_pressed=true;sidebar.add_child(minerals)
- minerals.toggled.connect(func(value:bool):show_deposits=value;view.queue_redraw())
- add_label(sidebar,"Steel diamond: iron · Copper diamond: copper\nDeposit locations, not remaining reserves")
+ add_label(sidebar,"Drag to pan · Wheel to zoom\nRight-click: place / manage markers\nNorth is up · Mint arrow: you")
+ var overlays:=HBoxContainer.new();sidebar.add_child(overlays)
+ for item:Array in [["Roads","show_roads","Overlay planned routes in gold; actual road surfaces remain visible when off"],["Minerals","show_deposits","Overlay mineral location symbols; visible stones keep their natural material colors"],["Places","show_places","Overlay public place names; your tracked destination stays visible"],["Grid","show_grid","Overlay coordinate lines"]]:
+  var toggle:=CheckBox.new();toggle.text=item[0];toggle.name=item[1];toggle.tooltip_text=item[2];overlays.add_child(toggle)
+  toggle.toggled.connect(func(value:bool):set(item[1],value);view.queue_redraw())
  travel_hint=add_label(sidebar,"");travel_hint.add_theme_color_override("font_color",Color("9cffe0"))
  add_label(sidebar,"MY MARKERS").add_theme_font_size_override("font_size",18)
  marker_list=OptionButton.new();marker_list.custom_minimum_size.y=38;sidebar.add_child(marker_list)
@@ -188,9 +192,12 @@ func _process(_delta:float)->void:
  if not result.get("ok",false):status.text="Survey unavailable. Close and reopen to retry.";return
  last_profile=result.duplicate();last_profile.erase("pixels")
  updates.image=Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,result.pixels)
- texture=ImageTexture.create_from_image(updates.image)
+ updates.displayed=Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,surface_pixels(result.pixels))
+ texture=ImageTexture.create_from_image(updates.displayed)
  status.text=updates.description()
  view.queue_redraw()
+func surface_pixels(pixels:PackedByteArray,origin:Vector2i=Vector2i.ZERO,width:int=256)->PackedByteArray:
+ return game.world_recipe.store.render_biomes(pixels,game.terrain.backend.world_seed,game.ecosystem.biome_profile,origin,width)
 func update_position()->void:
  if not opened:return
  if game.loading_active or game.shutdown_requested:set_open(false);return

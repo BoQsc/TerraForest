@@ -36,11 +36,13 @@ func _initialize()->void:
   FileAccess.open(REFERENCE,FileAccess.WRITE).store_string(JSON.stringify(records))
  else:
   var previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/terrain_map_reference.json"))
-  if not previous is Array or previous.size()!=records.size():failures+=1
+  var palette=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/terrain_map_palette_v4.json"))
+  if not previous is Array or previous.size()!=records.size() or not palette is Array or palette.size()!=records.size():failures+=1
   else:
    for index in records.size():
-    for key:String in ["seed","phase","visible","pixels"]:
+    for key:String in ["seed","phase","visible"]:
      if previous[index][key]!=records[index][key]:failures+=1;print("MAP_DIFFERENCE ",index," ",key)
+    if palette[index]!=records[index].pixels:failures+=1;print("MAP_PALETTE_DIFFERENCE ",index)
   DirAccess.make_dir_recursive_absolute("res://reports/map_efficiency")
   FileAccess.open("res://reports/map_efficiency/result.json",FileAccess.WRITE).store_string(JSON.stringify({"failures":failures,"before":previous,"after":records},"  "))
  print("TERRAIN_MAP_EFFICIENCY failures=",failures," records=",records);quit(1 if failures else 0)

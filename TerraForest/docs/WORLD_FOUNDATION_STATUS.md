@@ -1,6 +1,27 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Natural world map and woodland preset — 2026-10-28
+
+Terrain/material surveys replace default gold road lines and mineral symbols;
+optional annotation switches retain their diagnostic use. Native top-column
+colors replace uniform building/object tints. Creation preview reads baked terrain
+and prefab footprints; live edits retain bounded patch updates and versioned caches.
+The largest preset now selects woodland, not sparse grassland. User explicitly
+kept town clustering: no lot layout, road route, approved building or saved-world
+generation changes are included. [Evidence and limits](../issues/natural-world-map/README.md).
+Installed full 104-building generation/map/save/reload passes 46 assertions with
+zero diagnostics; ten packaged focused checks and source UI checks also pass.
+Screenshots are inspected, not user-approved. Failed intermediate runs remain linked.
+
+Remaining: coarse road aliasing, tree-exact canopy updates, additional climate
+biomes and distance-based building LOD. Current woodland coloration is a shared
+generation field, not a claim that every standing tree is mapped. Return to map
+resolution/occupancy after visual review; require edited/cut-tree comparisons and
+bounded worker/upload costs. Return to building LOD only with dense-district
+profiling and silhouette/transition/edit/collision evidence; existing greedy
+meshing and paging are not geometric LOD. These are not marked complete.
+
 ## Distributed lakes, towns and generation cost — 2026-10-28
 
 New immutable profiles 24–27 replace four lake anchors and central/west-biased

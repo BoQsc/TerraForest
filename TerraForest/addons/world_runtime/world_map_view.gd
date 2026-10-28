@@ -20,6 +20,10 @@ func bound_center()->void:center=center.clamp(Vector2.ZERO,Vector2.ONE*2000)
 func overview()->void:center=Vector2(1000,1000);zoom=1;queue_redraw()
 func follow_player()->void:
  var at:Vector3=atlas.game.player.global_position;center=Vector2(at.x,at.z);zoom=4;bound_center();queue_redraw()
+func visible_destinations(entries:Array,enabled:bool)->Array:
+ if enabled:return entries
+ var selected:Dictionary=atlas.game.destination_guide.destination
+ return entries.filter(func(entry:Dictionary):return entry.get("title","")==selected.get("title","") and entry.get("position")==selected.get("position"))
 func marker_at(point:Vector2)->int:
  var identity:=0;var nearest:=14.0
  for marker:Dictionary in atlas.game.map_markers.markers:
@@ -39,7 +43,7 @@ func _gui_input(event:InputEvent)->void:
      else:
       var identity:=marker_at(event.position)
       if identity!=0:atlas.game.destination_guide.track(atlas.game.map_markers.describe(identity));queue_redraw()
-      for place:Dictionary in atlas.places+(atlas.deposits if atlas.show_deposits else []):
+      for place:Dictionary in (atlas.places if atlas.show_places else [])+(atlas.deposits if atlas.show_deposits else []):
        if identity==0 and world_to_map(place.position).distance_to(event.position)<14:atlas.game.destination_guide.track(place);queue_redraw();break
     teleport_click=false
    accept_event()
@@ -59,17 +63,17 @@ func _draw()->void:
  if atlas.model_survey.texture!=null:draw_texture_rect(atlas.model_survey.drawing_texture,Rect2(low,edge),false)
  if atlas.block_survey.texture!=null:draw_texture_rect(atlas.block_survey.drawing_texture,Rect2(low,edge),false)
  var step:=250 if zoom<4 else 100
- for n in range(0,2001,step):
+ for n in range(0,2001,step) if atlas.show_grid else []:
   var x:=world_to_map(Vector3(n,0,0));var z:=world_to_map(Vector3(0,0,n))
   draw_line(x,x+Vector2(0,edge.y),Color(0.9,0.95,0.8,0.12))
   draw_line(z,z+Vector2(edge.x,0),Color(0.9,0.95,0.8,0.12))
- for road:Dictionary in atlas.roads:
+ for road:Dictionary in atlas.roads if atlas.show_roads else []:
   var a:=world_to_map(road.a);var b:=world_to_map(road.b)
   draw_line(a,b,Color("283439"),maxf(5,road.width*pixels_per_metre()+2),true)
   draw_line(a,b,Color("e7c78c"),maxf(2,road.width*pixels_per_metre()),true)
  label_boxes.clear()
  var font:=ThemeDB.fallback_font
- for deposit:Dictionary in atlas.deposits if atlas.show_deposits else []:
+ for deposit:Dictionary in visible_destinations(atlas.deposits,atlas.show_deposits):
   var at:=world_to_map(deposit.position)
   if not Rect2(Vector2.ZERO,size).grow(-8).has_point(at):continue
   var color:=Color("a9bfd4") if deposit.title.begins_with("Iron") else Color("e5a269")
@@ -81,7 +85,7 @@ func _draw()->void:
    var box:=Rect2(at+Vector2(7,-19),extent+Vector2(8,5))
    if Rect2(Vector2.ZERO,size).encloses(box) and not label_boxes.any(func(other):return other.grow(2).intersects(box)):
     label_boxes.append(box);draw_rect(box,Color(.02,.06,.07,.85));draw_string(font,at+Vector2(11,-4),title,HORIZONTAL_ALIGNMENT_LEFT,-1,14,color)
- for place:Dictionary in atlas.places:
+ for place:Dictionary in visible_destinations(atlas.places,atlas.show_places):
   var at:=world_to_map(place.position)
   if not Rect2(Vector2.ZERO,size).grow(-8).has_point(at):continue
   var selected:bool=atlas.game.destination_guide.destination.get("title","")==place.title

@@ -12,7 +12,7 @@ var decoded:RefCounted
 var archived_reads:=0
 func _ready()->void:
  serial=-2000000;image_size=512;tint=Color("d9c9ad");caption="Blocks"
- cache_namespace="block-map-v1-512";cache_root="user://cartography/blocks"
+ cache_namespace="block-map-material-v2-512";cache_root="user://cartography/blocks"
  super._ready()
 func current_stamp()->String:
  var source=atlas.game.structures.blocks

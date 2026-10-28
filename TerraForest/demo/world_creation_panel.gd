@@ -7,7 +7,7 @@ const STYLES:=[
  {"name":"Connected countryside","detail":"Two distant communities linked across the region, with scattered lakes and wilderness tracks.","values":[0,1,0,0,1,true]},
  {"name":"Market towns","detail":"Expanded towns in a forest-and-meadow mosaic, with alternative routes and trails.","values":[1,1,1,1,2,true]},
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
- {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts spread across a coastal region, linked by long roads and offroads. Some seeds may not fit.","values":[2,2,2,2,2,true]}
+ {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]}
 ]
 static func apply_style(host:Control,index:int)->void:
  if index<0 or index>=STYLES.size():return
@@ -93,10 +93,10 @@ static func build(host:Control,tabs:TabContainer)->void:
  for identity:int in host.Launch.PRESETS:
   if identity==host.Launch.INTEGRATED_PRESET or "--developer-worlds" in OS.get_cmdline_user_args():host.preset.add_item(host.Launch.PRESETS[identity],identity)
  host.preset.visible="--developer-worlds" in OS.get_cmdline_user_args()
- host.biome=choice(settings,"Biome pattern",["Woodland","Forest & meadow mosaic","Grassland & scattered groves"])
+ host.biome=choice(settings,"Temperate vegetation",["Woodland","Forest & meadow mosaic","Grassland & scattered groves"])
  paragraph(settings,"Controls real forest coverage and clearings. All three use the temperate biome; climate biomes are not yet generated.",15)
  host.ocean=CheckBox.new();host.ocean.text="Ocean coastline & beaches";host.ocean.button_pressed=true;settings.add_child(host.ocean)
- host.material_veins=CheckBox.new();host.material_veins.text="Material veins · surface stones & map markers";host.material_veins.button_pressed=true;settings.add_child(host.material_veins)
+ host.material_veins=CheckBox.new();host.material_veins.text="Material veins & surface stones";host.material_veins.button_pressed=true;settings.add_child(host.material_veins)
  host.material_veins.tooltip_text="New worlds: durable, mineable iron/copper stones identify real underground veins. Disabling omits these surface clues and map markers; existing underground geology remains unchanged."
  var grid_panel:=PanelContainer.new();grid_panel.name="BuildingGridFit";grid_panel.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(grid_panel)
  var grid_settings:=VBoxContainer.new();grid_panel.add_child(grid_settings)
@@ -124,8 +124,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.preview_view=TextureRect.new();host.preview_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);host.preview_view.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;host.preview_view.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;map_space.add_child(host.preview_view)
  host.preview_empty=Label.new();host.preview_empty.text="YOUR WORLD STARTS HERE\n\nChoose a seed and recipe. The preview updates automatically.\nTerrain, buildings, roads and water are planned together.";host.preview_empty.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;host.preview_empty.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;host.preview_empty.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;host.preview_empty.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);host.preview_empty.add_theme_color_override("font_color",MUTED);map_space.add_child(host.preview_empty)
  var legend:=HFlowContainer.new();legend.add_theme_constant_override("h_separation",18);map_column.add_child(legend)
- label(legend,"■ Woodland",14,Color("8fb38c"));label(legend,"■ Roads / trails",14,Color("dec386"));label(legend,"■ Buildings",14,INK);label(legend,"■ Water",14,Color("76b8d0"))
- label(legend,"◆ Minerals",14,Color("e5a269"))
+ label(legend,"■ Woodland",14,Color("4c6940"));label(legend,"■ Asphalt",14,Color("626669"));label(legend,"■ Dirt trails",14,Color("95856c"));label(legend,"■ Water",14,Color("76b8d0"))
+ label(legend,"■ Roofs / rock",14,Color("99938a"))
  host.preview_metrics=label(map_column,"READY TO PLAN  ·  Native terrain fitting  ·  Cached generation",16,ACCENT);host.preview_metrics.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  host.preview_status=paragraph(map_column,"The preview uses the actual placement plan, not a decorative map. Existing worlds are never changed.",17)
  host.preparation_panel=preload("res://addons/world_runtime/loading_panel.gd").new();host.preparation_panel.embedded=true;page.add_child(host.preparation_panel)

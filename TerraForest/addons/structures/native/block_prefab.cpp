@@ -1,5 +1,7 @@
 #include "block_prefab.hpp"
 #include "block_word.hpp"
+#include "map_material.hpp"
+#include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <algorithm>
@@ -16,6 +18,7 @@ static uint32_t frontage_choice(uint32_t seed,int ordinal,int count) {
     return h%uint32_t(count);
 }
 void NativeBlockPrefab::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("survey_surface"),&NativeBlockPrefab::survey_surface);
     ClassDB::bind_method(D_METHOD("plan_paving","roads"),&NativeBlockPrefab::plan_paving);
     ClassDB::bind_method(D_METHOD("layout_counts","sources","lots_per_side","seed","streets"),&NativeBlockPrefab::layout_counts);
     ClassDB::bind_method(D_METHOD("configure","records"),&NativeBlockPrefab::configure);
@@ -40,6 +43,16 @@ void NativeBlockPrefab::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::AABB,"attachment_envelope"),"set_attachment_envelope","get_attachment_envelope");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY,"records"),"set_records","get_records");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY,"model_attachments"),"set_model_attachments","get_model_attachments");
+}
+Dictionary NativeBlockPrefab::survey_surface() const {
+    std::map<std::pair<int,int>,PrefabCell> columns;
+    for(const auto &cell:cells){
+        auto key=std::make_pair(cell.x,cell.z);auto found=columns.find(key);
+        if(found==columns.end()||cell.y>found->second.y)columns[key]=cell;
+    }
+    PackedVector3Array points;PackedColorArray colors;
+    for(const auto &entry:columns){const auto &cell=entry.second;points.push_back(Vector3(cell.x+.5,cell.y+1,cell.z+.5));colors.push_back(block_map_material(block_material(cell.word)));}
+    Dictionary result;result["points"]=points;result["colors"]=colors;return result;
 }
 namespace {
 bool valid_attachments(const Array &items) {

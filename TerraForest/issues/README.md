@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Natural world-map presentation](natural-world-map/README.md) | Installed / scoped checks | Material-colored surfaces by default, optional annotations, woodland regional preset; town clustering unchanged; canopy-exact maps, climate biomes and building LOD remain separate |
 | [World generator UI and city layouts](world-generator/README.md) | Installed / scoped verification | Twelve distributed lakes, four-quadrant districts and longer connections; native routing/map/water allocation improved; largest inland fit and world-quality review remain open |
 | [Building/POI terrain fit](site-terrain-fit/README.md) | Improved / scoped checks | Full-envelope/apron and driveway surveys, rectangular local pads; actual support/traversal checked; populated-site review pending |
 | [Unrequested mouse capture](mouse-capture/README.md) | Corrected / scoped checks | Click-to-play capture; loading and focus changes never reclaim the cursor; desktop review pending |

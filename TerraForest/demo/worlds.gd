@@ -359,7 +359,7 @@ func poll_preview()->void:
 	preview_empty.hide()
 	preview_view.texture=ImageTexture.create_from_image(Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels))
 	if result.has("building_count"):
-		preview_status.text="World plan · north is up · 2 km × 2 km\n%d buildings · roads in gold · buildings in ivory\n"%int(result.building_count)
+		preview_status.text="World plan · north is up · 2 km × 2 km\n%d buildings · surface colors\n"%int(result.building_count)
 		preview_status.text+="The bake reuses this cached placement plan." if result.get("plan_reusable",false) else "Cache unavailable; generation will repeat this deterministic plan."
 		var network:Dictionary=result.get("network",{})
 		preview_metrics.text="%d BUILDINGS  ·  %.2f km regional roads  ·  %.2f km trails"%[result.building_count,float(network.get("road_length_m",0))/1000,float(network.get("trail_length_m",0))/1000]

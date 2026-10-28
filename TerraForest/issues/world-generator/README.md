@@ -6,6 +6,11 @@
 
 ## Images
 
+The later [natural-map update](../natural-world-map/README.md) replaces default
+gold road/mineral annotations and switches Regional belt to woodland. The images
+below retain the earlier grassland/overlay baseline. Town clustering is unchanged
+by that follow-up, as requested by the user.
+
 ![Distributed regional-belt preview](images/distributed-regional-belt.png)
 Current installed package, seed 1703, coastal grassland, twelve lakes and nine
 districts across all four quadrants. Actual plan: 104 buildings, 4.30 km regional

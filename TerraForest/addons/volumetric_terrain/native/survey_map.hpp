@@ -8,6 +8,21 @@
 #include <vector>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <chrono>
+#include <algorithm>
+static float terrain_map_smooth(float value){return value*value*(3-2*value);}
+static V3 terrain_map_color(const World &world,float x,float z,float height,float slope_x,float slope_z,int material){
+ float up=1.f/__builtin_sqrtf(1+slope_x*slope_x+slope_z*slope_z);
+ V3 color{91,115,61};
+ float rock=1-terrain_map_smooth(clampf((up-.52f)/.24f,0,1));color=color*(1-rock)+V3{127,125,116}*rock;
+ float beach=(1-terrain_map_smooth(clampf((height-42)/4,0,1)))*(1-terrain_map_smooth(clampf((mn(mn(x,z),mn(2000-x,2000-z))-130)/20,0,1)));
+ if(surrounding_coast(world.generator_id))color=color*(1-beach)+V3{177,165,130}*beach;
+ float snow=terrain_map_smooth(clampf((height-150)/35,0,1))*terrain_map_smooth(clampf((up-.60f)/.25f,0,1));
+ if(world.generator_id>=7)color=color*(1-snow)+V3{202,206,204}*snow;
+ if(material==4)color={54,57,58};else if(material==1||material==5)color={123,119,109};
+ else if(material==3||material==7)color={91,100,107};else if(material==2||material==6)color={109,83,56};
+ else if(material==8)color={81,94,107};else if(material==9)color={137,88,54};
+ return color;
+}
 // Cartographic base survey only. No density pages, meshes or renderer residency.
 // Called on an isolated TerrainCore from the map worker; never borrow the live worker.
 static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
@@ -25,10 +40,8 @@ static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
   float h=heights[x+z*size];
   float dx=(heights[mn(x+1,int(size)-1)+z*size]-heights[mx(x-1,0)+z*size])/(2*step);
   float dz=(heights[x+mn(z+1,int(size)-1)*size]-heights[x+mx(z-1,0)*size])/(2*step);
-  float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f),t=clampf((h-40)/150,0,1);
-  float r=90+t*86,g=119+t*35,b=83+t*52;
-  // Contour bands remain subtle so roads and labels keep their contrast.
-  if(h>0&&int(h)%20==0)shade*=.9f;
+  float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f);
+  V3 color=terrain_map_color(w,(x+.5f)*step,(z+.5f)*step,h,dx,dz,0);float r=color.x,g=color.y,b=color.z;
   size_t at=(x+z*size)*4;p[at]=u8(clampf(r*shade,0,255));p[at+1]=u8(clampf(g*shade,0,255));p[at+2]=u8(clampf(b*shade,0,255));p[at+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["size"]=size;out["workers"]=workers;
@@ -69,15 +82,26 @@ static godot::Dictionary terraforest_survey_patch(const World &w,int size,int ox
  godot::PackedByteArray pixels;pixels.resize(width*height*4);auto*p=pixels.ptrw();
  for(int z=0;z<height;++z)for(int x=0;x<width;++x){int at=x+1+(z+1)*stride;float h=heights[at];
   float dx=(heights[at+1]-heights[at-1])/(2*step),dz=(heights[at+stride]-heights[at-stride])/(2*step);
-  float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f),t=clampf((h-40)/150,0,1);
-  float r=90+t*86,g=119+t*35,b=83+t*52;if(h>0&&int(h)%20==0)shade*=.9f;
-  if(materials[at]==4){r=75;g=78;b=78;}else if(materials[at]==3){r=123;g=119;b=109;}
+  float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f);
+  V3 color=terrain_map_color(w,(ox+x+.5f)*step,(oz+z+.5f)*step,h,dx,dz,materials[at]);float r=color.x,g=color.y,b=color.z;
   size_t dst=(x+z*width)*4;p[dst]=u8(clampf(r*shade,0,255));p[dst+1]=u8(clampf(g*shade,0,255));p[dst+2]=u8(clampf(b*shade,0,255));p[dst+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["revision"]=w.revision;
  out["generation_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();return out;
 }
 
+static godot::Dictionary terraforest_survey_surface(const World &world){
+ godot::PackedByteArray pixels;pixels.resize(256*256*4);auto *destination=pixels.ptrw();
+ auto started=std::chrono::steady_clock::now();
+ for(int row=0;row<256;row+=4)for(int column=0;column<256;column+=4){
+  auto patch=terraforest_survey_patch(world,256,column,row,4,4);
+  if(!bool(patch.get("ok",false)))return {};
+  godot::PackedByteArray source=patch["pixels"];
+  for(int local=0;local<4;local++)std::copy_n(source.ptr()+local*16,16,destination+((row+local)*256+column)*4);
+ }
+ godot::Dictionary result;result["ok"]=true;result["pixels"]=pixels;
+ result["generation_ms"]=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();return result;
+}
 // Top-down visibility at exact water sample coordinates. Bounded to 16 points
 // on the ordered worker. Scan above the point, including cave/overhang roofs;
 // generated height alone cannot establish visibility after terrain edits.

@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/packed_color_array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/color.hpp>
 #include <godot_cpp/variant/transform3d.hpp>
@@ -22,6 +23,7 @@ class NativeSurfaceMapRaster : public godot::RefCounted {
  std::vector<godot::Vector3> samples;
  std::vector<int> keys;
  std::vector<uint8_t> visible;
+ std::vector<godot::Color> colors;
  std::unordered_map<int,int> lookup;
  int index(godot::Vector3 p)const{return int(p.x*(size*2)/2000)+size*2*int(p.z*(size*2)/2000);}
  static bool inside(godot::Vector3 p){return p.x>=0&&p.z>=0&&p.x<1999&&p.z<1999&&p.y>=0&&p.y<255;}
@@ -29,7 +31,7 @@ protected:
  static void _bind_methods(){
   godot::ClassDB::bind_method(godot::D_METHOD("configure","size"),&NativeSurfaceMapRaster::configure);
   godot::ClassDB::bind_method(godot::D_METHOD("project_bounds","boxes","transform","cursor"),&NativeSurfaceMapRaster::project_bounds);
-  godot::ClassDB::bind_method(godot::D_METHOD("offer","points"),&NativeSurfaceMapRaster::offer);
+  godot::ClassDB::bind_method(godot::D_METHOD("offer","points","colors"),&NativeSurfaceMapRaster::offer,DEFVAL(godot::PackedColorArray()));
   godot::ClassDB::bind_method(godot::D_METHOD("count"),&NativeSurfaceMapRaster::count);
   godot::ClassDB::bind_method(godot::D_METHOD("batch","offset","limit"),&NativeSurfaceMapRaster::batch,DEFVAL(16));
   godot::ClassDB::bind_method(godot::D_METHOD("accept_prefix","offset","mask"),&NativeSurfaceMapRaster::accept_prefix);
@@ -68,13 +70,15 @@ public:
   out["ok"]=true;out["points"]=points;out["cursor"]=cursor;out["complete"]=cursor.x==boxes.size();return out;
  }
  bool configure(int edge){if(!samples.empty()||(edge!=256&&edge!=512))return false;size=edge;return true;}
- bool offer(const godot::PackedVector3Array &points){
-  if(points.size()>256)return false;
+ bool offer(const godot::PackedVector3Array &points,const godot::PackedColorArray &source_colors=godot::PackedColorArray()){
+  if(points.size()>256||(!source_colors.is_empty()&&source_colors.size()!=points.size()))return false;
+  for(const auto &color:source_colors)if(!std::isfinite(color.r)||!std::isfinite(color.g)||!std::isfinite(color.b)||!std::isfinite(color.a))return false;
   for(int i=0;i<points.size();++i)if(!points[i].is_finite())return false;
   if(samples.size()+points.size()>LIMIT){std::unordered_set<int> added;for(int i=0;i<points.size();++i)if(inside(points[i])&&!lookup.count(index(points[i])))added.insert(index(points[i]));if(samples.size()+added.size()>LIMIT)return false;}
   for(int i=0;i<points.size();++i){auto p=points[i];if(!inside(p))continue;int key=index(p);auto found=lookup.find(key);
-   if(found==lookup.end()){lookup.emplace(key,int(samples.size()));keys.push_back(key);samples.push_back(p);visible.push_back(0);}
-   else if(p.y>samples[found->second].y)samples[found->second]=p;
+   auto color=source_colors.is_empty()?godot::Color(0,0,0,0):source_colors[i];
+   if(found==lookup.end()){lookup.emplace(key,int(samples.size()));keys.push_back(key);samples.push_back(p);visible.push_back(0);colors.push_back(color);}
+   else if(p.y>samples[found->second].y){samples[found->second]=p;colors[found->second]=color;}
   }return true;
  }
  int64_t count()const{return samples.size();}
@@ -94,8 +98,18 @@ public:
  }
  godot::PackedByteArray pixels(godot::Color color)const{
   godot::PackedByteArray out;out.resize(size*size*4);out.fill(0);auto*p=out.ptrw();
-  for(size_t i=0;i<samples.size();++i)if(visible[i]){int x=keys[i]%(size*2),z=keys[i]/(size*2),at=(x/2+(z/2)*size)*4;p[at+3]++;}
-  for(int i=0;i<size*size;++i){int at=i*4;p[at]=uint8_t(std::clamp(color.r,0.f,1.f)*255);p[at+1]=uint8_t(std::clamp(color.g,0.f,1.f)*255);p[at+2]=uint8_t(std::clamp(color.b,0.f,1.f)*255);p[at+3]=uint8_t(p[at+3]*255/4);}
+  std::vector<uint16_t> sums(size*size*3,0);
+  for(size_t sample=0;sample<samples.size();++sample)if(visible[sample]){
+   int column=keys[sample]%(size*2),row=keys[sample]/(size*2),pixel=column/2+(row/2)*size;
+   auto selected=colors[sample].a>0?colors[sample]:color;
+   for(int channel=0;channel<3;channel++)sums[pixel*3+channel]+=uint16_t(std::clamp(selected[channel],0.f,1.f)*255);
+   p[pixel*4+3]++;
+  }
+  for(int pixel=0;pixel<size*size;pixel++){
+   int count=p[pixel*4+3];
+   for(int channel=0;channel<3;channel++)p[pixel*4+channel]=count?sums[pixel*3+channel]/count:uint8_t(std::clamp(color[channel],0.f,1.f)*255);
+   p[pixel*4+3]=uint8_t(count*255/4);
+  }
   return out;
  }
 };

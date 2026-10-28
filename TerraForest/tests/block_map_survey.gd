@@ -26,6 +26,8 @@ func _initialize()->void:
  var region=ClassDB.instantiate("NativeBlockMapRegion")
  check(region.load_packet(packet,digest),"checksum-bound archived region decodes")
  check(collect(region.columns)==before,"archived and resident columns match")
+ var colors:PackedColorArray=blocks.survey_columns(key,0,index.revision).colors
+ check(colors==region.columns(0).colors and colors.size()==region.columns(0).points.size(),"archived and resident top material colors match")
  check(blocks.unload_region(packet),"real region unloaded")
  check(blocks.survey_cache_identity()==identity,"block unload preserves logical identity")
  check(blocks.survey_columns(key,0,index.revision).get("stale",false),"changed storage rejects old cursor revision")

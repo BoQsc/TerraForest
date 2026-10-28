@@ -2,7 +2,7 @@
 extends RefCounted
 # CPU-only derived cartography. Use an isolated native core; no live terrain lock.
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
-const VERSION:=3
+const VERSION:=4
 const SIZE:=256
 const BYTES:=SIZE*SIZE*4
 const HEADER_BYTES:=24
@@ -13,7 +13,7 @@ static func digest(data:PackedByteArray)->PackedByteArray:
 static func cache_path(seed_value:int,generator:int,cache_root:String)->String:
  return cache_root+"/survey_%d_%d_%d.bin"%[VERSION,generator,seed_value]
 static func identity(seed_value:int,generator:int)->PackedByteArray:
- var header:PackedByteArray="TFMAP003".to_utf8_buffer();header.resize(HEADER_BYTES)
+ var header:PackedByteArray="TFMAP004".to_utf8_buffer();header.resize(HEADER_BYTES)
  header.encode_s64(8,seed_value);header.encode_s32(16,generator);header.encode_u32(20,SIZE)
  return header
 static func read_pixels(path:String,header:PackedByteArray)->PackedByteArray:

@@ -144,8 +144,6 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  if not plan.get("ok",false):return plan
  if progress!=null:progress.record("Compositing the actual regional plan",0,0,"Terrain grades, water surfaces, vegetation biome, roads and buildings")
  var sites:Array=plan.get("sites",[plan.plan,plan.market])
- var roads:Array=plan.connection.get("segments",[]).duplicate()
- for site:Dictionary in sites:roads.append_array(site.get("roads",[]))
  var bounds:Array=[]
  for site:Dictionary in sites:
   for lot:Dictionary in site.get("lots",[]):bounds.append(lot.bounds)
@@ -154,7 +152,8 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  var library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
  var terrain_binary:=FileAccess.get_sha256(library)
  var water_binary:=FileAccess.get_sha256("res://addons/volumetric_water/bin/volumetric_water.windows.%s.x86_64.dll"%suffix)
- var cache_key:String="generation-preview-v1|"+plan.plan_digest+"|"+terrain_binary+"|"+water_binary
+ var structures_binary:=FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)
+ var cache_key:String="generation-preview-surface-v2|"+plan.plan_digest+"|"+terrain_binary+"|"+water_binary+"|"+structures_binary
  if not options.is_empty():cache_key+="|"+FileAccess.get_sha256("res://addons/world_runtime/bin/world_runtime.windows.%s.x86_64.dll"%suffix)
  var cache=preload("res://addons/world_runtime/survey_patch_cache.gd")
  var cached:Dictionary=cache.read(cache_key,cache_key,preview_folder) if not terrain_binary.is_empty() and not water_binary.is_empty() else {}
@@ -166,9 +165,20 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
   if not core.bake_generated_earthworks(packets).get("ok",false):return {"ok":false,"reason":"Preview earthworks unavailable"}
   var water:=water_preview(core,generator)
   if water.is_empty():return {"ok":false,"reason":"Water preview unavailable"}
+  var surveyed:Dictionary=core.survey_surface_map()
+  if not surveyed.get("ok",false):return {"ok":false,"reason":"Generated surface survey unavailable"}
+  terrain.pixels=surveyed.pixels
   if not options.is_empty():terrain.pixels=preload("res://addons/world_runtime/world_recipe.gd").codec().render_biomes(terrain.pixels,seed_value,options.biome)
-  terrain.pixels=core.render_plan_map(terrain.pixels,roads,bounds,water)
-  terrain.pixels=preload("res://addons/world_runtime/material_deposits.gd").preview_pixels(terrain.pixels,plan.get("material_deposits",[]))
+  var surfaces:Array=[];var prototypes:Dictionary={}
+  for site:Dictionary in sites:
+   for lot:Dictionary in site.get("lots",[]):
+    var identity:int=lot.asset.get_instance_id()
+    if not prototypes.has(identity):prototypes[identity]=lot.asset.survey_surface()
+    var surface:Dictionary=prototypes[identity].duplicate()
+    var rotation:=Basis(Vector3.UP,-float(lot.rotation)*PI/2)
+    var pivot:=Vector3(.5,0,.5)
+    surface.points=Transform3D(rotation,Vector3(lot.origin)+pivot-rotation*pivot)*surface.points;surfaces.append(surface)
+  terrain.pixels=core.render_plan_map(terrain.pixels,[],surfaces,water)
   if not terrain_binary.is_empty() and not water_binary.is_empty():cache.write(cache_key,cache_key,terrain.pixels,preview_folder,32)
  terrain["plan_digest"]=plan.plan_digest;terrain["building_count"]=bounds.size();terrain["plan_cache_hit"]=plan.cache_hit;terrain["plan_ms"]=plan.worker_ms;terrain["plan_reusable"]=plan.get("cache_hit",false) or plan.get("cache_persisted",false)
  if not options.is_empty():terrain["options"]=options.duplicate();terrain["network"]=plan.network
