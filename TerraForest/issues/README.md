@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Runtime performance](runtime-performance/README.md) | Improved-partial / installed | Less redundant forest, cover and terrain scheduling; spatial collision queries; matched and packaged walking CPU evidence, remaining frame spikes and endurance tracked |
+| [Runtime performance](runtime-performance/README.md) | Improved-partial / installed | Less redundant streaming work; 4 GiB GPU / 5 GB content gates; 53.3 GiB cache recovery; 100 GB free-space goal, frame spikes and endurance remain open |
 | [Varied lakes and bridges](lakes-and-bridges/README.md) | Installed / scoped checks | Larger curved and two-lobed lakes; destructible timber crossings; actual-world player/NPC traversal and packaged reopen pass; user visual review remains |
 | [Extended vegetation LOD](vegetation-lod/README.md) | Installed / scoped checks | 576 m forest with native circular preload; cheaper distant fern/bush/twig meshes; near detail unchanged; long travel and player review remain |
 | [City buildings](city-buildings/README.md) | Approved designs / integration installed | Six exact approved designs on surveyed lots in larger recipes; populated-world player/NPC/vehicle routes, save/reopen, LOD and packed resources checked; site visuals and broader qualification remain |

@@ -65,6 +65,26 @@ class MaintenanceTests(unittest.TestCase):
         self.assertFalse(cache.remove_verified(self.root, entries[0]))
         self.assertTrue(path.exists())
 
+    def test_geometry_cache_and_active_lease(self):
+        path = self.packet()
+        destination = self.root / ("a" * 64) / "geometry_v1" / ("c" * 64) / path.name
+        destination.parent.mkdir(parents=True)
+        path.rename(destination)
+        entries, _ = cache.inspect(self.root)
+        self.assertEqual([entry.path for entry in entries], [destination])
+        with cache.cache_lease(self.root):
+            if os.name == "nt":
+                with self.assertRaises(OSError), cache.cache_lease(self.root):
+                    pass
+            self.assertTrue(cache.remove_verified(self.root, entries[0]))
+        self.assertFalse(destination.exists())
+
+    def test_current_generated_snapshot_names(self):
+        for snapshot in ['new_generator_1_seed_1703', 'new_generator_31_seed_42_plan_' + 'd' * 64, 'new_seed_42']:
+            path = self.packet(snapshot=snapshot)
+            entries, _ = cache.inspect(self.root)
+            self.assertTrue(any(entry.path == path for entry in entries))
+
     def test_bad_header_key_version_length_and_namespace(self):
         path = self.packet()
         original = path.read_bytes()

@@ -6,7 +6,6 @@ import json
 import subprocess
 
 from play_checkpoint import revision_metadata
-from prune_successful_test_caches import remove_owned_temporary_cache
 from run import ROOT, parse_args
 from run_godot_check import command_for, execute, verify_pack_native
 
@@ -36,6 +35,7 @@ def main():
     parser.add_argument("--slot", required=True)
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--label", default="profile")
+    parser.add_argument("--require-resource-budget", action="store_true")
     args = parser.parse_args()
     if not args.label.isidentifier():
         parser.error("Label must be an identifier")
@@ -72,15 +72,13 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        record["result"] = execute(command, folder, 240, "TRAVEL_PROFILE PASS")
+        record["result"] = execute(command, folder, 240, "TRAVEL_PROFILE PASS", require_resource_budget=args.require_resource_budget)
     finally:
         subprocess.Popen = original
     samples = folder / "frames.json"
     if samples.exists():
         data = json.loads(samples.read_text(encoding="utf-8"))
         record["summary"] = summarize(data["frames"])
-    if record["result"]["passed"]:
-        record["removed_owned_cache"] = remove_owned_temporary_cache(cache)
     manifest.write_text(json.dumps(record, indent=2), encoding="utf-8")
     print(("PASS " if record["result"]["passed"] else "FAIL ") + str(folder))
     return 0 if record["result"]["passed"] else 1

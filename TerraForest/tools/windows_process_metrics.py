@@ -59,7 +59,9 @@ class ProcessMetrics:
                    'process_cpu_100ns': ticks(kernel)+ticks(user), 'system_idle_100ns': ticks(idle),
                    'system_total_100ns': ticks(system_kernel)+ticks(system_user)}
         result = {**current, 'logical_processors': self.logical_processors,
-                  'working_set_bytes': memory.WorkingSetSize, 'private_commit_bytes': memory.PrivateUsage}
+                  'working_set_bytes': memory.WorkingSetSize, 'private_commit_bytes': memory.PrivateUsage,
+                  'peak_working_set_bytes': memory.PeakWorkingSetSize,
+                  'peak_private_commit_bytes': memory.PeakPagefileUsage}
         if self.previous:
             elapsed = current['monotonic_s']-self.previous['monotonic_s']
             cpu_s = (current['process_cpu_100ns']-self.previous['process_cpu_100ns'])/10_000_000
@@ -73,3 +75,60 @@ class ProcessMetrics:
                               system_busy_percent=100*(total-idle_delta)/total)
         self.previous = current
         return result
+
+
+class CounterNumber(ctypes.Union):
+    _fields_ = [('integer', ctypes.c_longlong), ('floating', ctypes.c_double)]
+
+
+class CounterValue(ctypes.Structure):
+    _fields_ = [('status', wintypes.DWORD), ('number', CounterNumber)]
+
+
+class CounterItem(ctypes.Structure):
+    _fields_ = [('name', wintypes.LPWSTR), ('value', CounterValue)]
+
+
+class GpuMemoryMetrics:
+    def __init__(self, pid):
+        self.pdh = ctypes.WinDLL('pdh', use_last_error=True)
+        self.query = wintypes.HANDLE()
+        self.counter = wintypes.HANDLE()
+        self.pdh.PdhOpenQueryW.argtypes = [wintypes.LPCWSTR, ctypes.c_size_t, ctypes.POINTER(wintypes.HANDLE)]
+        self.pdh.PdhAddEnglishCounterW.argtypes = [wintypes.HANDLE, wintypes.LPCWSTR, ctypes.c_size_t, ctypes.POINTER(wintypes.HANDLE)]
+        self.pdh.PdhCollectQueryData.argtypes = [wintypes.HANDLE]
+        self.pdh.PdhGetFormattedCounterArrayW.argtypes = [wintypes.HANDLE, wintypes.DWORD,
+                                                       ctypes.POINTER(wintypes.DWORD), ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p]
+        self.pdh.PdhCloseQuery.argtypes = [wintypes.HANDLE]
+        for name in ['PdhOpenQueryW', 'PdhAddEnglishCounterW', 'PdhCollectQueryData',
+                     'PdhGetFormattedCounterArrayW', 'PdhCloseQuery']:
+            getattr(self.pdh, name).restype = wintypes.DWORD
+        status = self.pdh.PdhOpenQueryW(None, 0, ctypes.byref(self.query))
+        if status:
+            raise OSError(f'GPU counter query unavailable: {status:#x}')
+        status = self.pdh.PdhAddEnglishCounterW(self.query, rf'\GPU Process Memory(pid_{pid}_*)\Dedicated Usage',
+                                              0, ctypes.byref(self.counter))
+        if status:
+            self.close()
+            raise OSError(f'GPU memory counter unavailable: {status:#x}')
+
+    def sample(self):
+        if self.pdh.PdhCollectQueryData(self.query):
+            return None
+        size, count = wintypes.DWORD(), wintypes.DWORD()
+        status = self.pdh.PdhGetFormattedCounterArrayW(self.counter, 0x1400, ctypes.byref(size), ctypes.byref(count), None)
+        if status != 0x800007D2 or not 0 < size.value <= 4 * 1024 * 1024:
+            return None
+        buffer = ctypes.create_string_buffer(size.value)
+        status = self.pdh.PdhGetFormattedCounterArrayW(self.counter, 0x1400, ctypes.byref(size), ctypes.byref(count), buffer)
+        if status or count.value * ctypes.sizeof(CounterItem) > size.value:
+            return None
+        items = ctypes.cast(buffer, ctypes.POINTER(CounterItem))
+        values = [items[index].value.number.integer for index in range(count.value)
+                  if items[index].value.status in (0, 1) and items[index].value.number.integer >= 0]
+        return sum(values) if values else None
+
+    def close(self):
+        if self.query:
+            self.pdh.PdhCloseQuery(self.query)
+            self.query = wintypes.HANDLE()

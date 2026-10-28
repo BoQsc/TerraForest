@@ -1,5 +1,9 @@
 # Hardware change and performance comparisons
 
+Resource targets and automated gates added 2026-10-28 are recorded in
+[resource budgets](RESOURCE_BUDGETS.md). The hardware inventory below is historical,
+not a minimum-spec declaration or a promise to use all 6 GiB of this GPU.
+
 Recorded 2026-10-09 at code revision `f2df213543bbc246e0299798723ed357f63aa28b`.
 The user changed computers and reports deliberately low machine settings.
 Treat subsequent measurements as a new hardware cohort, not software speedups.

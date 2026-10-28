@@ -15,6 +15,8 @@ from pathlib import Path
 
 from play_checkpoint import revision_metadata
 from run import ROOT, parse_args
+from cache_retention import finalize_cache
+from resource_limits import ResourceMonitor, require_free_space
 
 
 def verify_pack_native(root=ROOT):
@@ -47,30 +49,35 @@ def command_for(engine, test, folder, extra, headless=False, persistent=False):
     return command, cache
 
 
-def execute(command, folder, timeout, required_text, cancel_requested=None):
+def execute(command, folder, timeout, required_text, cancel_requested=None, require_resource_budget=False):
     started = time.monotonic()
     result = {"timed_out": False, "launch_error": None, "cancelled": False}
     log_path = folder / "console.log"
+    monitor = None
+    game_process = any(name in Path(str(command[0])).name.lower() for name in ("godot", "terraforest"))
     with log_path.open("w", encoding="utf-8") as output:
         try:
+            if game_process:
+                require_free_space(ROOT)
             process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             result["pid"] = process.pid
             try:
-                if cancel_requested is None:
-                    result["exit_code"] = process.wait(timeout=timeout)
-                else:
-                    deadline = started + timeout
-                    while process.poll() is None:
-                        if cancel_requested():
-                            result["cancelled"] = True
-                            process.kill()
-                            break
-                        remaining = deadline - time.monotonic()
-                        if remaining <= 0: raise subprocess.TimeoutExpired(command, timeout)
-                        try: process.wait(timeout=min(0.2, remaining))
-                        except subprocess.TimeoutExpired: pass
-                    result["exit_code"] = process.wait()
+                if game_process:
+                    monitor = ResourceMonitor(process.pid)
+                deadline = started + timeout
+                while process.poll() is None:
+                    if cancel_requested is not None and cancel_requested():
+                        result["cancelled"] = True
+                        process.kill()
+                        break
+                    if monitor:
+                        monitor.sample()
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0: raise subprocess.TimeoutExpired(command, timeout)
+                    try: process.wait(timeout=min(0.2, remaining))
+                    except subprocess.TimeoutExpired: pass
+                result["exit_code"] = process.wait()
             except subprocess.TimeoutExpired:
                 process.kill()
                 result["exit_code"] = process.wait()
@@ -80,6 +87,9 @@ def execute(command, folder, timeout, required_text, cancel_requested=None):
                 if process.poll() is None:
                     process.kill()
                     process.wait()
+                if monitor:
+                    result["resources"] = monitor.report()
+                    monitor.close()
         except OSError as error:
             result.update(exit_code=None, launch_error=str(error))
     log = log_path.read_text(encoding="utf-8", errors="replace")
@@ -91,8 +101,19 @@ def execute(command, folder, timeout, required_text, cancel_requested=None):
         diagnostic_text)))
     result["required_text_found"] = required_text in log
     result["elapsed_seconds"] = time.monotonic() - started
+    for name, check in result.get("resources", {}).get("checks", {}).items():
+        if check["status"] in ("warning", "exceeded"):
+            print(f"RESOURCE_BUDGET {name}: {check['status']} ({check['bytes'] / 2**30:.2f} GiB)", flush=True)
     result["passed"] = (result["exit_code"] == 0 and not result["timed_out"]
-                        and not result["cancelled"] and not result["diagnostics"] and result["required_text_found"])
+                        and not result["cancelled"] and not result["diagnostics"] and result["required_text_found"]
+                        and not result.get("resources", {}).get("exceeded", False))
+    if require_resource_budget and not result.get("resources", {}).get("within_sampled_limits", False):
+        result["passed"] = False
+        result["resource_gate"] = "Complete process RAM/VRAM telemetry within limits was required"
+    try:
+        result["cache_retention"] = finalize_cache(command, result["passed"])
+    except (OSError, ValueError) as error:
+        result["cache_retention"] = {"error": str(error), "retained": True}
     return result
 
 
@@ -125,7 +146,7 @@ def main(argv=None):
     details = dict(command=command, cache=cache, utc=stamp, timeout=args.timeout,
                    required_text=args.require, headless=args.headless, persistent=args.persistent,
                    scope="Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
-                   cache_retained=True, **revision_metadata())
+                   cache_retained=None, **revision_metadata())
     details["engine_sha256"] = hashlib.sha256(engine.read_bytes()).hexdigest()
     details["test_sha256"] = hashlib.sha256((ROOT / "tests" / (args.test+".gd")).read_bytes()).hexdigest()
     details["native_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -137,6 +158,8 @@ def main(argv=None):
     manifest = folder / "run.json"
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
     details["result"] = execute(command, folder, args.timeout, args.require)
+    retention = details["result"].get("cache_retention", {})
+    details["cache_retained"] = retention.get("retained", retention.get("retained_bytes", 0) > 0) if retention.get("managed") or retention.get("error") else None
     manifest.write_text(json.dumps(details, indent=2)+"\n", encoding="utf-8")
     print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
     return 0 if details["result"]["passed"] else 1

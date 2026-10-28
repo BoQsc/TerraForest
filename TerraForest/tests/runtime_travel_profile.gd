@@ -22,6 +22,7 @@ var route:=PackedVector3Array()
 var route_index:=1
 var travelled:=0.0
 var previous_position:=Vector3.ZERO
+var expected_cache:=""
 func _initialize()->void:
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
  run.call_deferred()
@@ -66,11 +67,14 @@ func run()->void:
    var coordinates:=argument.trim_prefix("--profile-origin=").split(",")
    if coordinates.size()==3:requested_origin=Vector3(float(coordinates[0]),float(coordinates[1]),float(coordinates[2]))
   if argument.begins_with("--profile-slot="):slot=argument.trim_prefix("--profile-slot=")
+  if argument.begins_with("--derived-cache="):expected_cache=argument.trim_prefix("--derived-cache=")
  DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output))
  if not slot.is_empty():
   if not slot.begins_with("recipe_generated_") or not slot.is_valid_filename():push_error("Profile requires a disposable generated check slot");quit(1);return
   save_hash=FileAccess.get_sha256("user://worlds/"+slot+".trw")
-  preload("res://addons/world_runtime/session_options.gd").set_arguments(PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--gameplay-construction","--ground-cover","--actors","--vehicle-fleet"]),true)
+  var session_arguments:=PackedStringArray(["--world-slot="+slot,"--snapshot-readonly","--gameplay-construction","--ground-cover","--actors","--vehicle-fleet","--temporary"])
+  if not expected_cache.is_empty():session_arguments.append("--derived-cache="+expected_cache)
+  preload("res://addons/world_runtime/session_options.gd").set_arguments(session_arguments,true)
  game=ProfileWorld.new();game.name="TerraForest";game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
  if not await until(func():return not game.loading_active and not game.needs_floor_spawn,90):push_error("Travel profile did not finish loading");await finish(false);return
  var heading:=Vector3.FORWARD
@@ -119,9 +123,11 @@ func run()->void:
  var moved:float=game.player.position.distance_to(origin)
  var unchanged:=slot.is_empty() or save_hash==FileAccess.get_sha256("user://worlds/"+slot+".trw")
  var mouse_untouched:bool=preload("res://addons/world_runtime/mouse_ownership.gd").captures==0 and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
+ var cache_isolated:bool=expected_cache.is_empty() or game.terrain.backend.cache_path==expected_cache
  FileAccess.open(output.path_join("frames.json"),FileAccess.WRITE).store_string(JSON.stringify({"frames":rows,"initializations":initializations,"distance":moved,"travelled":travelled,"route":route,"adapter":RenderingServer.get_video_adapter_name(),"viewport":root.size,"slot":slot,"save_unchanged":unchanged,"mouse_untouched":mouse_untouched,"notes":"1080p capped at 60, nonactivating offscreen; wall intervals include waits, GPU timers may lag; nested stages must not be summed. Held W through real walking/physics with deterministic road-following turns, test-only movement admission without mouse capture. Not a mining or endurance benchmark."}))
  print("TRAVEL_PROFILE distance=",moved," frames=",rows.size())
- await finish(travelled>80 and rows.size()>600 and unchanged and mouse_untouched)
+ print("PROFILE_CACHE actual=",game.terrain.backend.cache_path," isolated=",cache_isolated)
+ await finish(travelled>80 and rows.size()>600 and unchanged and mouse_untouched and cache_isolated)
 func finish(success:bool)->void:
  game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame
  print("TRAVEL_PROFILE ","PASS" if success else "FAIL");quit(0 if success else 1)

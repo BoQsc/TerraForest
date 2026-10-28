@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "vram_warning_bytes": 3758096384,
+  "vram_limit_bytes": 4294967296,
+  "ram_warning_bytes": 4294967296,
+  "ram_limit_bytes": 6442450944,
+  "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+  "redistributable_warning_bytes": 4000000000,
+  "redistributable_limit_bytes": 5000000000,
+  "derived_cache_total_bytes": 2147483648,
+  "failed_test_cache_bytes": 1073741824,
+  "saved_world_warning_bytes": 10737418240,
+  "minimum_free_bytes": 10737418240,
+  "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+}

@@ -1,0 +1,151 @@
+{
+  "date": "2026-10-28",
+  "status": "Scoped resource gates and safe cleanup verified; 100 GB free-space goal not achieved",
+  "budgets": {
+    "schema": 1,
+    "vram_warning_bytes": 3758096384,
+    "vram_limit_bytes": 4294967296,
+    "ram_warning_bytes": 4294967296,
+    "ram_limit_bytes": 6442450944,
+    "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+    "redistributable_warning_bytes": 4000000000,
+    "redistributable_limit_bytes": 5000000000,
+    "derived_cache_total_bytes": 2147483648,
+    "failed_test_cache_bytes": 1073741824,
+    "saved_world_warning_bytes": 10737418240,
+    "minimum_free_bytes": 10737418240,
+    "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+  },
+  "budget_sha256": "7fbdd598b26c2db3a47bff05e2f5db90c834c184a92eb5e6baa61faa34c17238",
+  "disk": {
+    "initial_free_bytes": 997466112,
+    "final_free_bytes": 58246377472,
+    "net_recovered_bytes": 57248911360,
+    "target_free_bytes": 100000000000,
+    "target_achieved": false,
+    "measurement": "Net free-space difference; other applications can slightly affect it",
+    "saved_world_bytes_before": 12210780578,
+    "saved_world_bytes_after": 12210780578,
+    "saved_world_size_unchanged": true
+  },
+  "cleanup_receipts": [
+    {
+      "receipt": "reports\\storage_maintenance\\20261028T193046745279Z.json",
+      "removed_bytes": 30193533740,
+      "removed_files": 330959,
+      "retained_invalid_packets": 1
+    },
+    {
+      "receipt": "reports\\storage_maintenance\\20261028T194204872488Z.json",
+      "removed_bytes": 13178929752,
+      "removed_files": 66946,
+      "retained_invalid_packets": 1
+    }
+  ],
+  "successful_cache_receipt": "reports/storage_cleanup_successful_20261028.json",
+  "final_storage_gate": {
+    "distributable": {
+      "bytes": 422619887,
+      "status": "within_budget"
+    },
+    "free_bytes": 58247589888,
+    "minimum_free_bytes": 10737418240,
+    "registered_failed_cache_bytes": 0,
+    "failed_cache_budget_bytes": 1073741824,
+    "runtime": "Not measured by this static check",
+    "scope": "Installed game content, not source/history. Saved worlds and development evidence are excluded from automatic quotas.",
+    "passed": true,
+    "derived_cache": {
+      "utc": "2026-10-28T19:47:30.642610+00:00",
+      "root": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest",
+      "mode": "dry_run",
+      "budget_bytes": 2147483648,
+      "cache_roots": 426,
+      "recognized_files": 29680,
+      "recognized_bytes": 2147458129,
+      "skipped_entries": 431,
+      "planned_bytes": 0,
+      "removed_bytes": 0,
+      "removed_files": 0,
+      "failures": [],
+      "free_before": 58248409088,
+      "free_after": 58248409088,
+      "scope": "Only recognized, identity/digest-verified TRC mesh packets outside protected world/evidence folders; unknown files retained"
+    },
+    "saved_worlds": {
+      "bytes": 12210780578,
+      "warning_bytes": 10737418240,
+      "status": "warning",
+      "action": "Report only; never automatically delete or block a player save"
+    }
+  },
+  "runtime_runs": [
+    {
+      "manifest": "reports\\runtime_performance\\20261028T191224385658Z_resource_budget\\run.json",
+      "passed": true,
+      "pack_sha256": "def12e7511d80221c2b9269f785591d854cbc6a8ea66e97260501be10f3945c1",
+      "peak_private_commit_bytes": 4227915776,
+      "peak_working_set_bytes": 2348621824,
+      "peak_dedicated_gpu_bytes": 1775357952,
+      "samples": 161,
+      "gpu_samples": 160,
+      "telemetry_complete": true,
+      "within_sampled_limits": true,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "travelled_metres": 248.273537307978,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": null,
+        "retained_bytes": 0,
+        "failed_cache_bytes": 0,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    },
+    {
+      "manifest": "reports\\runtime_performance\\20261028T191713499625Z_resource_budget_isolated\\run.json",
+      "passed": true,
+      "pack_sha256": "def12e7511d80221c2b9269f785591d854cbc6a8ea66e97260501be10f3945c1",
+      "peak_private_commit_bytes": 3701592064,
+      "peak_working_set_bytes": 2127949824,
+      "peak_dedicated_gpu_bytes": 1495969792,
+      "samples": 214,
+      "gpu_samples": 214,
+      "telemetry_complete": true,
+      "within_sampled_limits": true,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "travelled_metres": 248.90967554599,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_52a5498802cf4fddab0cf69ddf69c880",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 0,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    }
+  ],
+  "unit_checks": {
+    "resource_tests": 9,
+    "cache_maintenance_tests": 11,
+    "runner_tests": 6,
+    "owned_cache_tests": 3,
+    "skipped_symlink_fixture": 1,
+    "all_other_targeted_tests_passed": true
+  },
+  "real_cache_isolation_check": "reports/checks/20261028T191712323541Z/run.json",
+  "export_log": "reports/resource_budget_export.log",
+  "remaining": [
+    "Physical 4 GiB hardware, maximum-city/generation and long-session memory qualification",
+    "Legacy/manual launchers bypassing shared checks require explicit storage audits",
+    "Existing source/addon-bundle suite has eight dependency failures in unchanged declarations",
+    "Compiler-cache removal was declined by the execution environment; compiler caches were retained",
+    "100 GB cannot be safely recovered from the verified disposable caches alone; worlds, backups, Git, review evidence and system/app history retained"
+  ]
+}

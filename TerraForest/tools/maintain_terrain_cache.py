@@ -6,6 +6,7 @@ cache owner or a transaction with the terrain worker. Unknown files are retained
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from dataclasses import dataclass
 import hashlib
 import json
@@ -16,11 +17,46 @@ import stat
 import struct
 
 HEX = re.compile(r"[0-9a-f]{64}\Z")
-SNAPSHOT = re.compile(r"(?:[0-9a-f]{64}|new_seed_1703)\Z")
+SNAPSHOT = re.compile(r"(?:[0-9a-f]{64}|new_seed_[0-9]{1,10}|new_generator_[0-9]{1,10}_seed_[0-9]{1,10}(?:_plan_[0-9a-f]{64})?)\Z")
 TILE = re.compile(r"(-?\d+)_(-?\d+)_(-?\d+)\.trc\Z")
 MAX_PACKET = 64 * 1024 * 1024
 TRC_MAGIC = 0x36435254
 MESH_MAGIC = 0x324D5254
+
+
+def valid_layout(parts):
+    return ((len(parts) == 3 and HEX.fullmatch(parts[0]) and SNAPSHOT.fullmatch(parts[1]))
+            or (len(parts) == 4 and HEX.fullmatch(parts[0]) and parts[1] == "geometry_v1"
+                and HEX.fullmatch(parts[2])))
+
+
+@contextmanager
+def cache_lease(root):
+    if not ordinary(root, True):
+        raise ValueError("Cache root is linked or unavailable")
+    path = root / ".terraforest-derived.lock"
+    if path.exists() and not ordinary(path):
+        raise ValueError("Cache lease is not an ordinary file")
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+                                      ctypes.c_void_p, wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        kernel.CreateFileW.restype = wintypes.HANDLE
+        kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+        handle = kernel.CreateFileW(str(path), 0xC0000000, 0, None, 4, 0x00200000, None)
+        if handle == wintypes.HANDLE(-1).value:
+            raise OSError("Cache is in use or its lease cannot be acquired: " + str(root))
+        try:
+            yield
+        finally:
+            kernel.CloseHandle(handle)
+    else:
+        import fcntl
+        with path.open("a+b") as lease:
+            fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            yield
 
 
 def ordinary(path: Path, directory: bool = False) -> bool:
@@ -45,21 +81,22 @@ class Entry:
         return self.stamp[2]
 
 
-def header_valid(path: Path, size: int) -> bool:
+def header_valid(path: Path, size: int, header=None) -> bool:
     match = TILE.fullmatch(path.name)
     if match is None or not 76 <= size <= MAX_PACKET + 40:
         return False
     key = tuple(int(value) for value in match.groups())
     if any(value < -(2**31) or value >= 2**31 for value in key):
         return False
-    with path.open("rb") as source:
-        header = source.read(76)
+    if header is None:
+        with path.open("rb") as source:
+            header = source.read(76)
     return (len(header) == 76
             and struct.unpack_from("<II", header) == (TRC_MAGIC, size - 40)
             and struct.unpack_from("<IIiii", header, 40) == (MESH_MAGIC, 5, *key))
 
 
-def inspect(root: Path, max_entries: int = 100_000) -> tuple[list[Entry], int]:
+def inspect(root: Path, max_entries: int = 100_000, verify_headers=True) -> tuple[list[Entry], int]:
     """Bound depth and enumeration; an incomplete scan must never delete anything."""
     if not ordinary(root, directory=True):
         raise ValueError("Cache root must be an ordinary directory, not a link/junction")
@@ -77,11 +114,15 @@ def inspect(root: Path, max_entries: int = 100_000) -> tuple[list[Entry], int]:
                 path = Path(child.path)
                 try:
                     pattern = HEX if depth == 0 else SNAPSHOT
-                    if depth < 2 and pattern.fullmatch(child.name) and ordinary(path, True):
+                    relative = path.relative_to(root).parts
+                    geometry = ((depth == 1 and child.name == "geometry_v1")
+                                or (depth == 2 and relative[1] == "geometry_v1" and HEX.fullmatch(child.name)))
+                    if ((depth < 2 and pattern.fullmatch(child.name)) or geometry) and ordinary(path, True):
                         walk(path, depth + 1)
-                    elif depth == 2 and ordinary(path) and TILE.fullmatch(child.name):
+                    elif valid_layout(relative) and ordinary(path) and TILE.fullmatch(child.name):
                         stamp = identity(path)
-                        if header_valid(path, stamp[2]) and identity(path) == stamp:
+                        if ((not verify_headers and 76 <= stamp[2] <= MAX_PACKET + 40)
+                                or (verify_headers and header_valid(path, stamp[2]) and identity(path) == stamp)):
                             found.append(Entry(path, stamp))
                         else:
                             skipped += 1
@@ -111,21 +152,27 @@ def remove_verified(root: Path, entry: Entry) -> bool:
     """Recheck paths, identity and full digest immediately before deletion."""
     try:
         relative = entry.path.relative_to(root)
-        if len(relative.parts) != 3 or not HEX.fullmatch(relative.parts[0]) or not SNAPSHOT.fullmatch(relative.parts[1]):
+        if not root.is_absolute() or not valid_layout(relative.parts):
             return False
         current = root
         for name in ("", *relative.parts[:-1]):
             current = current / name
             if not ordinary(current, True):
                 return False
-        if not ordinary(entry.path) or entry.path.resolve().parent != current.resolve():
-            return False
-        if identity(entry.path) != entry.stamp or not header_valid(entry.path, entry.size):
+        if not ordinary(entry.path):
             return False
         with entry.path.open("rb") as source:
-            expected = source.read(40)[8:40]
+            before = os.fstat(source.fileno())
+            stamp = (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns)
+            if stamp[:4] != entry.stamp[:4]:
+                return False
+            header = source.read(76)
+            if not header_valid(entry.path, entry.size, header):
+                return False
+            expected = header[8:40]
             digest = hashlib.sha256()
-            remaining = entry.size - 40
+            digest.update(header[40:])
+            remaining = entry.size - 76
             while remaining:
                 data = source.read(min(65536, remaining))
                 if not data:
@@ -134,7 +181,7 @@ def remove_verified(root: Path, entry: Entry) -> bool:
                 remaining -= len(data)
             if source.read(1) or digest.digest() != expected:
                 return False
-        if identity(entry.path) != entry.stamp:
+        if identity(entry.path)[:4] != entry.stamp[:4]:
             return False
         entry.path.unlink()
         return True

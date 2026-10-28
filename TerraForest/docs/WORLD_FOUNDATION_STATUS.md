@@ -1,6 +1,34 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Resource budgets and retained caches — 2026-10-28
+
+User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
+warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record
+process RAM/GPU counters, fail observed budget violations and stop new work below
+a 10 GiB disk reserve. Successful unique test caches are removed; registered
+failed caches have a 1 GiB quota without discarding logs/images/saves.
+Offline, leased and digest-verified maintenance targets 2 GiB of recognized
+terrain cache across roots. [Policy, commands and limits](RESOURCE_BUDGETS.md).
+Current installed-pack walking checks pass with complete telemetry: observed
+peaks 3.94 GiB private RAM / 1.65 GiB GPU; content is 423 MB. The profiler now
+preserves its launcher-owned cache argument instead of replacing it when loading
+the disposable snapshot. Real cache isolation/automatic cleanup also pass.
+Offline cleanup recovered approximately 53.3 GiB net; free space is 54.2 GiB.
+The final read-only content/cache/reserve gate passes, with recognized cache below
+2 GiB; one invalid packet remains. All world-associated bytes remain unchanged.
+The requested 100 GB free-space goal is **not achieved**: further recovery needs
+a separate approved cleanup/archive decision outside these verified caches.
+[Receipts and scoped measurements](../issues/runtime-performance/resource-budget-evidence.json).
+Remaining:
+physical 4 GiB hardware, maximum-city/loading/mining/long-session peaks, and
+legacy launchers bypassing the shared runner. Return after content/world-scale
+changes; require measured process memory, not an engine-only allocation counter.
+The separate existing source/addon-bundle suite still fails eight dependency
+assertions; unchanged packaging declarations are not qualified by this work.
+Return when shipping those standalone bundles; require a complete dependency
+manifest rather than treating the game PCK gate as addon-bundle validation.
+
 ## Runtime efficiency pass — 2026-10-28
 
 Native fused terrain planning, indexed unloaded-model collision readiness and

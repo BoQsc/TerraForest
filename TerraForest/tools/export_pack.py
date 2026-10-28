@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import sys
 import configparser
+import json
+from resource_limits import distribution_size, evaluate, load_budgets, require_free_space
 
 root=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(description=__doc__)
@@ -14,6 +16,7 @@ p.add_argument('--staging-directory',type=Path)
 args=p.parse_args()
 if not args.godot:
     p.error('Specify --godot PATH')
+require_free_space(root, load_budgets()['redistributable_limit_bytes'])
 engine=Path(args.godot)
 direct=engine.parent/'godot.windows.opt.tools.64.exe'
 if direct.exists():engine=direct
@@ -37,6 +40,21 @@ print(f'Created {pack} ({pack.stat().st_size:,} bytes)')
 # Dynamic libraries cannot be loaded from inside a PCK. Pack-only exports do not
 # copy GDExtension libraries the way full executable exports do.
 libraries=set()
+prospective_bytes = pack.stat().st_size
+for descriptor in (root/'addons').rglob('*.gdextension'):
+    config=configparser.ConfigParser()
+    config.read(descriptor,encoding='utf-8')
+    for feature,value in config.items('libraries'):
+        if feature.startswith('windows.') and feature.endswith('.x86_64'):
+            library=value.strip('"')
+            if not library.startswith('res://'):
+                raise ValueError('Expected project-local native library')
+            source=(root/library[6:]).resolve()
+            if root not in source.parents:
+                raise ValueError('Native library escapes project')
+            prospective_bytes += source.stat().st_size
+if evaluate(distribution_bytes=prospective_bytes)['redistributable']['status'] == 'exceeded':
+    raise ValueError('Prospective pack and native libraries exceed 5 GB; installed pack/libraries retained')
 for descriptor in (root/'addons').rglob('*.gdextension'):
     config=configparser.ConfigParser()
     config.read(descriptor,encoding='utf-8')
@@ -57,6 +75,13 @@ for notice in notices:
     destination=staging/notice
     destination.parent.mkdir(parents=True,exist_ok=True)
     shutil.copy2(root/notice,destination)
+size = distribution_size(staging, pack)
+budget = evaluate(distribution_bytes=size)['redistributable']
+(root/'reports/distribution_budget.json').write_text(json.dumps(dict(bytes=size, budget=budget), indent=2))
+if budget['status'] == 'exceeded':
+    raise ValueError('Distributable content exceeds the 5 GB budget; existing installed pack retained')
+if budget['status'] == 'warning':
+    print('WARNING: Distributable content has reached its size warning budget')
 smoke=subprocess.run([str(engine),'--headless','--path',str(staging),'--main-pack',str(pack),'--quit-after','180','--','--temporary'],cwd=staging,capture_output=True,text=True,timeout=60)
 smoke_log=smoke.stdout+'\n'+smoke.stderr
 (root/'reports/pack_smoke.log').write_text(smoke_log,encoding='utf-8')
