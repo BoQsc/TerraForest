@@ -14,6 +14,8 @@ and errors. Each area is bounded to 2,000,000 entries and 64 directory levels;
 `cancel_scan()` requests cancellation without waiting on the UI thread. It never
 writes, deletes or follows reparse points. Missing telemetry is absent, not zero.
 The shared policy is `resource_budgets.json`; tools and the exported UI use it.
+Usage calls only `sample`; its folder audit was removed. The scan API remains
+available to explicit diagnostic callers and is not invoked by the player UI.
 
 ```gdscript
 # Support/API calls only; every entity update is implemented in C++.

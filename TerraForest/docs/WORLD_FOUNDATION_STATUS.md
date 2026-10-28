@@ -4,18 +4,18 @@ This file retains the wider backlog; the tracker initially covers three cases.
 ## Resource budgets and retained caches — 2026-10-28
 
 ESC → Usage now exposes the same resource limits, live native process RAM/GPU
-and free storage, read-only asynchronous folder totals and system-file-manager
-buttons. Sampling/scanning stop when leaving the page. No cleanup controls or
-new gameplay monitoring loop. [UI verification and screenshots](../issues/resource-usage/README.md).
+and free storage with system-file-manager buttons. Directory audits, folder-size
+totals and scan polling were removed after user feedback; no automatic or manual
+directory walk is available on this page. Sampling stops when leaving it. No
+cleanup controls or new gameplay monitoring loop. [Verification and screenshots](../issues/resource-usage/README.md).
 User review of the page remains pending; this visibility feature does not close
 the storage-recovery or hardware-qualification work below.
 
-Usage cost audit: automatic folder enumeration remains expensive (about 67 s,
-650,965 entries in the isolated test; cache roots dominate). Settled-page counters
-are much cheaper, but first activation has a measured 65 ms delay. No runtime
-behavior changed in this read-only investigation. [Scoped costs and recommended
-follow-up](../issues/resource-usage/README.md#remaining--resume-here); require a
-matched in-game comparison before claiming those costs are resolved.
+The original cost audit measured a 67 s / 650,965-entry directory walk; that
+unnecessary UI feature is now removed rather than accelerated or hidden behind a
+manual button. The separately measured first-counter initialization delay (65 ms)
+and its in-game incremental memory cost are not resolved by removing enumeration.
+[Scoped audit and remaining work](../issues/resource-usage/README.md#remaining--resume-here).
 
 User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
 warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record

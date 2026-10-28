@@ -15,11 +15,11 @@ terrain caches and, in a development checkout, reports/build/import/history data
 **Open folder**, **Open game data** and **Open active cache** use the system file
 manager. They do not delete or create directories.
 
-The first visit starts a read-only, lower-priority native folder scan. Results
-are snapshots; **Refresh folder sizes** updates them. Leaving Usage cancels
-scanning and stops live sampling. Cache sizes are estimates within declared cache
-roots, not proof that files are safe to delete. Links are skipped; inaccessible
-or bounded scans retain explicit partial/unavailable states.
+Usage does not calculate recursive folder sizes, launch directory audits or poll
+scan progress. Folder buttons open the known locations directly; storage limits
+are policies, not current folder-size measurements. Live counters refresh once
+per second while this page is open and stop when leaving it. Offline cache
+maintenance remains a separate explicit tool, not part of opening ESC.
 
 In **development mode**, open the world map with **M**, hold **Ctrl**, and
 **left-click** a point to teleport there. The map closes and the normal destination
