@@ -3,6 +3,13 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Resource budgets and retained caches — 2026-10-28
 
+ESC → Usage now exposes the same resource limits, live native process RAM/GPU
+and free storage, read-only asynchronous folder totals and system-file-manager
+buttons. Sampling/scanning stop when leaving the page. No cleanup controls or
+new gameplay monitoring loop. [UI verification and screenshots](../issues/resource-usage/README.md).
+User review of the page remains pending; this visibility feature does not close
+the storage-recovery or hardware-qualification work below.
+
 User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
 warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record
 process RAM/GPU counters, fail observed budget violations and stop new work below

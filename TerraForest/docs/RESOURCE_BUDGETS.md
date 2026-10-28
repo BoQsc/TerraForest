@@ -1,6 +1,6 @@
 # Resource budgets
 
-Agreed 2026-10-28. Machine-readable thresholds: `tools/resource_budgets.json`.
+Agreed 2026-10-28. Machine-readable thresholds: `addons/world_runtime/resource_budgets.json`.
 These are regression gates, not claims that every workload or minimum-spec PC
 has been qualified. No visual quality, world density or draw distance is reduced.
 
@@ -26,7 +26,8 @@ presented as the game's install requirement.
 - `tools/run_godot_check.py` and callers of its shared `execute` runner sample
   Windows process-private memory, peak working set and process-specific dedicated
   GPU allocations every 0.5 s. RAM/VRAM limit violations fail the check; warnings
-  are printed and retained in its manifest. There is no in-game sampling loop.
+  are printed and retained in its manifest. In-game measurements run only while
+  ESC → Usage is visible; there is no background gameplay sampling loop.
 - `tools/profile_runtime.py --require-resource-budget` also fails if complete
   RAM/GPU telemetry is unavailable. Ordinary headless correctness checks can pass
   without GPU measurements, but are explicitly not memory-qualified evidence.

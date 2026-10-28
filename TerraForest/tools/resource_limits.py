@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_budgets():
-    limits = json.loads((ROOT / 'tools/resource_budgets.json').read_text(encoding='utf-8'))
+    limits = json.loads((ROOT / 'addons/world_runtime/resource_budgets.json').read_text(encoding='utf-8'))
     if limits.get('schema') != 1 or any(type(value) is not int or value < 0 for name, value in limits.items() if name.endswith('_bytes')):
         raise ValueError('Resource budgets require schema 1 and nonnegative integer byte thresholds')
     for name in ['ram', 'vram', 'redistributable']:

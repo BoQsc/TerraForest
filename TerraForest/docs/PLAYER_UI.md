@@ -6,6 +6,21 @@ are preserved.
 
 ## Session and tools have separate controls
 
+### Usage
+
+**ESC → Usage** shows live process RAM, GPU allocations and free game-data-drive
+space against the shared [resource budgets](RESOURCE_BUDGETS.md). RAM targets
+remain provisional. Folder rows separate shipped content, protected worlds,
+terrain caches and, in a development checkout, reports/build/import/history data.
+**Open folder**, **Open game data** and **Open active cache** use the system file
+manager. They do not delete or create directories.
+
+The first visit starts a read-only, lower-priority native folder scan. Results
+are snapshots; **Refresh folder sizes** updates them. Leaving Usage cancels
+scanning and stops live sampling. Cache sizes are estimates within declared cache
+roots, not proof that files are safe to delete. Links are skipped; inaccessible
+or bounded scans retain explicit partial/unavailable states.
+
 In **development mode**, open the world map with **M**, hold **Ctrl**, and
 **left-click** a point to teleport there. The map closes and the normal destination
 loading screen resolves terrain height and collision before play resumes. Map pan

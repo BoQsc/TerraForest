@@ -4,6 +4,17 @@ Typed C++ GDExtension built with Zig 0.16.0 and the pinned prebuilt godot-cpp AP
 
 Copy this addon directory, including `bin` and `world_runtime.gdextension`, into a Godot 4.7 Windows x86-64 **single-precision** project. Godot registers the native class when the extension is loaded. For direct script runners without an editor import, load the `.gdextension` through `GDExtensionManager` first.
 
+`NativeResourceUsage` supports the optional ESC Usage page. `sample(volume_path)`
+reads Windows process-private/resident memory, process GPU allocations when
+available and volume free space. `start_scan(locations)` accepts up to eight
+absolute local folders with `id`, `path`, optional `mode` (all files / installed
+content / declared terrain caches) and optional primary `pack_file`. A single
+lower-priority worker publishes `scan_status()` counts, completion, skipped links
+and errors. Each area is bounded to 2,000,000 entries and 64 directory levels;
+`cancel_scan()` requests cancellation without waiting on the UI thread. It never
+writes, deletes or follows reparse points. Missing telemetry is absent, not zero.
+The shared policy is `resource_budgets.json`; tools and the exported UI use it.
+
 ```gdscript
 # Support/API calls only; every entity update is implemented in C++.
 var store = ClassDB.instantiate("NativeEntityStore")

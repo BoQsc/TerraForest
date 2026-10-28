@@ -10,6 +10,7 @@
 #include "entity_renderer.hpp"
 #include "world_archive.hpp"
 #include "derived_cache_index.hpp"
+#include "resource_usage.hpp"
 #include "road_anchors.hpp"
 #include "generated_region.hpp"
 #include "road_editor_settings.hpp"
@@ -34,6 +35,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);
+        GDREGISTER_CLASS(terraforest::NativeResourceUsage);
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);
         GDREGISTER_CLASS(terraforest::NativeGeneratedRegion);
         GDREGISTER_CLASS(terraforest::NativeRoadEditorSettings);

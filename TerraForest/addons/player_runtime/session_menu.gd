@@ -44,6 +44,7 @@ var ready_to_dock:=false
 var spawner:RefCounted
 var dev_bag:RefCounted
 var dev_shapes:RefCounted
+var usage_panel:VBoxContainer
 const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift.",6:"Wooden torch: a burning survival light. Equip to carry it; switch slots to put it away. G drops it."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
@@ -68,6 +69,7 @@ func _ready() -> void:
 	navigation["Session"]=button(sidebar,"Session",show_page.bind("Session"))
 	navigation["Player"]=button(sidebar,"Player",show_page.bind("Player"))
 	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
+	navigation["Usage"]=button(sidebar,"Usage",show_page.bind("Usage"))
 	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
 	navigation["Dev Shapes"]=button(sidebar,"Dev Shapes",show_page.bind("Dev Shapes"))
 	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
@@ -78,6 +80,7 @@ func _ready() -> void:
 	content=VBoxContainer.new();content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(content)
 	if world_page_factory.is_valid():page("World").add_child(world_page_factory.call())
 	var session:=page("Session")
+	usage_panel=preload("res://addons/player_runtime/usage_panel.gd").new();page("Usage").add_child(usage_panel);usage_panel.build(game)
 	var player:=page("Player")
 	label(player,"Player").add_theme_font_size_override("font_size",22)
 	var graphics:=page("Graphics")
@@ -206,6 +209,7 @@ func open_current_tool() -> void:
 		if not title.is_empty():open_tool_page(title)
 func sync_panels() -> void:
 	for title in pages:pages[title].visible=opened and title==current_page
+	if usage_panel!=null:usage_panel.set_active(opened and current_page=="Usage")
 	if tool_workspace==null:return
 	tool_workspace.panel.visible=workspace
 	for title in tool_workspace.docked:tool_workspace.docked[title].visible=workspace and title==current_page

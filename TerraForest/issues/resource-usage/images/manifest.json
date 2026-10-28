@@ -1,0 +1,28 @@
+{
+  "usage-top.png": {
+    "source": "reports/usage_pack_final/usage-top.png",
+    "sha256": "99952ea327cc9aaf7de0949bf9363a43e111d522ca1bcb58919af7a5a07efd34",
+    "status": "Installed-pack engineering verification; user visual review pending",
+    "baseline": "3e8ae48e plus resource-usage changes",
+    "pack_sha256": "8146296b7f3743ee8be60a28cfe1b8f745ba341a3548256d0f6efb1dd6ed144d",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "offscreen": true,
+    "cursor_captures": 0
+  },
+  "usage-storage-policies.png": {
+    "source": "reports/usage_pack_final/usage-storage-policies.png",
+    "sha256": "2e69d776c89de8c23263342202b8f0fe19f159cc2072d3be3adb1cbe4ca3170a",
+    "status": "Installed-pack engineering verification; user visual review pending",
+    "baseline": "3e8ae48e plus resource-usage changes",
+    "pack_sha256": "8146296b7f3743ee8be60a28cfe1b8f745ba341a3548256d0f6efb1dd6ed144d",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "offscreen": true,
+    "cursor_captures": 0
+  }
+}

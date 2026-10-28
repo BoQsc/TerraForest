@@ -15,7 +15,7 @@ PROTECTED = {"worlds", "logs", "generation_reports", "screenshots"}
 
 
 def budgets():
-    return json.loads((ROOT / "tools/resource_budgets.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "addons/world_runtime/resource_budgets.json").read_text(encoding="utf-8"))
 
 
 def cache_roots(root):
