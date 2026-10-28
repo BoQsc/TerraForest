@@ -16,7 +16,7 @@ func _initialize()->void:
    var points:PackedVector3Array=lot.asset.foundation_samples(lot.origin,lot.rotation,0)
    var raw:PackedFloat32Array=Planner.heights(core,points)
    for h in raw:
-    if lot.origin.y-h>2.0001 or h-lot.origin.y>3.0001:failures+=1
+    if lot.survey.grade-h>2.0001 or h-lot.survey.grade>3.0001:failures+=1
    low=minf(low,lot.origin.y);high=maxf(high,lot.origin.y)
    for previous:Dictionary in original:
     if previous.label==lot.label and (previous.origin.x!=lot.origin.x or previous.origin.z!=lot.origin.z):relocated+=1
@@ -52,7 +52,7 @@ func _initialize()->void:
     var foundations:PackedVector3Array=lot.asset.foundation_samples(lot.origin,lot.rotation,0)
     var terrain:PackedFloat32Array=Planner.heights(core,foundations)
     for h in terrain:
-     if lot.origin.y-h>2.0001 or h-lot.origin.y>3.0001:failures+=1
+     if lot.survey.grade-h>2.0001 or h-lot.survey.grade>3.0001:failures+=1
    # Verify the returned geometry, not just the planner's success flags.
    for road:Dictionary in located.roads:
     var span:Vector3=road.finish-road.start

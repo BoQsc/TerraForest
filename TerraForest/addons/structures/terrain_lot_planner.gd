@@ -42,6 +42,11 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
   var entrance:=Vector3(0.5,lot.surface_offset,local_bounds.end.z+0.5)
   for turn in lot.rotation:entrance=Vector3(1-entrance.z,entrance.y,entrance.x)
   lot.entrance_local=entrance
+  lot.access_points=PackedVector3Array()
+  if lot.asset.has_meta("garage_entrance"):
+   var access:Vector3=lot.asset.get_meta("garage_entrance")
+   for turn in lot.rotation:access=Vector3(1-access.z,access.y,access.x)
+   lot.access_points.append(access)
   descriptors.append(lot)
  var result:Dictionary=core.plan_lots(center,descriptors,roads,recipe.is_empty())
  for lot:Dictionary in result.get("lots",[]):lot.quality=Quality.site(lot.survey,lot.label)
@@ -134,12 +139,14 @@ static func earthworks(plan:Dictionary)->Dictionary:
  if not plan.get("ok",false):return {"ok":false,"reason":"Incomplete layout"}
  var segments:Array=[];var bounds:=AABB();var first:=true
  for lot:Dictionary in plan.lots:
-  var foundation:Dictionary=preload("res://addons/structures/site_plan.gd").foundation(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade),4.0)
+  var foundation:Dictionary=preload("res://addons/structures/site_plan.gd").foundation(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade),24.0)
   if not foundation.ok:return foundation
   for strip:Dictionary in foundation.segments:
    # Only the surveyed 2m fill / 3m cut is needed. Keep transition shoulders
    # local so one building's foundation cannot flatten adjacent streets.
-   segments.append(Lots._segment(strip.start,strip.finish,strip.half_width,3,4,2,1))
+   var bed:Dictionary=Lots._segment(strip.start,strip.finish,strip.half_width,3,4,4,1)
+   bed["rectangular"]=true
+   segments.append(bed)
  for lot:Dictionary in plan.lots:
   var path:Dictionary=lot.entrance.segment
   segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))

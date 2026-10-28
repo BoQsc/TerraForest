@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-28",
+  "seed": 1703,
+  "origin": [
+    1052,
+    52,
+    423
+  ],
+  "rotation": 0,
+  "scope": "bounded actual native neighborhood, no vegetation/actors; different site from earlier C1 fixture",
+  "source_sha256": {
+    "addons/volumetric_terrain/native/core.cpp": "026ddb02fbd925c5a9d556860cae16d07f6df695ebc7cc203235228f59ed3330",
+    "addons/volumetric_terrain/native/world_generation.cpp": "886568c56c757c101eef1e2d15e2c8872c863fe7ec0437c6e36c48d34462564d",
+    "addons/structures/terrain_lot_planner.gd": "1060aa6a7bda7183b282c754f2f5634f120455907e813e5f4f73fd25b3a25ada",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "e4193293bed989bf56018aff719f78461be30be633870c919db593f33f652a7f",
+    "tests/site_fit_standards.gd": "cbdfc8f683251e26847b0bc8a38a6c0445d31652742871391b6487ea700f303c"
+  },
+  "images": [
+    {
+      "file": "site.png",
+      "source": "reports/site_standards/graphical/exterior.png",
+      "sha256": "e7f3f25b579fa018a20f20bf86b882e6794582d052c80caa944021cd27d3851d"
+    }
+  ]
+}

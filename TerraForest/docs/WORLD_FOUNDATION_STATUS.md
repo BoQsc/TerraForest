@@ -22,7 +22,9 @@ resume after its verified integration commit. None is resolved by that house wor
 - Ore: native generation now bakes continuous matching material below every marker;
   eight seed/profile cases and generated earthworks pass. Existing saves unchanged.
   [Verification and review limits](../issues/material-veins/README.md).
-- POI/house placement: improve terrain fit; require generated-site images and access checks.
+- POI/house placement: full envelope/apron and driveway surveys plus native rectangular
+  pads implemented; support, access and generated images checked. [Remaining site
+  review](../issues/site-terrain-fit/README.md) is distinct from house-design approval.
 - Corpses: fix death vibration and easy walk-over; reproduce and test both together.
 
 ## Developer shape catalog — 2026-10-27

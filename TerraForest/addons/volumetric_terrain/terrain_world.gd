@@ -234,7 +234,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			var halo: Vector3 = Vector3.ONE * (radius + 5.0 + (Codec.CONTACT_MINING_HALO if shape==Codec.CONTACT_MINING_SHAPE else 0.0))
 			safe_lo = safe_lo.min(a.min(b) - halo)
 			safe_hi = safe_hi.max(a.max(b) + halo)
-		elif kind==28 and (packet.size() in [36,40,44,48] or packet.size()>=72):
+		elif kind==28 and (packet.size() in [36,40,44,48,52] or packet.size()>=72):
 			var a:=Vector3(packet.decode_float(4),packet.decode_float(8),packet.decode_float(12))
 			var b:=Vector3(packet.decode_float(16),packet.decode_float(20),packet.decode_float(24))
 			var width: float=packet.decode_float(28);var depth: float=packet.decode_float(32)
@@ -244,6 +244,7 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			if not is_finite(shoulder) or shoulder<0 or shoulder>16: return false
 			if not is_finite(clearance) or clearance<0 or clearance>16 or maxf(a.y,b.y)+clearance>250: return false
 			var distance:=Vector2(b.x-a.x,b.z-a.z).length()
+			if packet.size()==52 and (packet.decode_u32(48)!=1 or absf(a.y-b.y)>.001):return false
 			if not a.is_finite() or not b.is_finite() or not is_finite(width) or not is_finite(depth) or width<0.5 or width>16 or depth<1 or depth>8 or distance<1 or distance>128 or absf(b.y-a.y)>distance*0.25: return false
 			for point: Vector3 in [a,b]:
 				if point.x<width+shoulder+5 or point.x>1995-width-shoulder or point.z<width+shoulder+5 or point.z>1995-width-shoulder or point.y<depth+4 or point.y>250: return false

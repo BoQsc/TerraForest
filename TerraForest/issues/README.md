@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Building/POI terrain fit](site-terrain-fit/README.md) | Improved / scoped checks | Full-envelope/apron and driveway surveys, rectangular local pads; actual support/traversal checked; populated-site review pending |
 | [Unrequested mouse capture](mouse-capture/README.md) | Corrected / scoped checks | Click-to-play capture; loading and focus changes never reclaim the cursor; desktop review pending |
 | [Additional large house C1](large-house-c1/README.md) | Approved addition / integrated | New fitted neighborhoods and construction palette; native basement/slab preparation, multi-door publication and terrain traversal checked |
 | [Dev Shapes catalog](developer-shapes/README.md) | Implemented / scoped checks | Searchable native-shape thumbnails, material grants and one-click placement setup; all 18 pieces tested; UI review pending |

@@ -28,6 +28,11 @@ Survey the full intended occupied footprint before edits. Include roads, entranc
 yards, transitions and the surrounding terrain in final validation; current native
 foundation samples alone do not establish all of this coverage.
 
+The 2026-10-28 fitted-lot implementation additionally surveys the whole envelope
+and a one-metre apron at one-metre intervals, including full-width garage access.
+Local rectangular preparation avoids rounded strip-end mounds. This does not
+approve unreviewed populated sites or replace the entrance/transition checks below.
+
 For ordinary inhabited sites, the initial project defaults are at most **2 m fill**
 and **3 m cut** relative to the chosen finished grade. These are deliberately modest
 design budgets, not the native edit maximum. A site exceeding them must be moved,

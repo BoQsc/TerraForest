@@ -13,6 +13,7 @@ static func packets(segments:Array,deposits:Array=[])->Array:
   else:
    packet=Codec.graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material)
    if segment.shoulder!=0.0:packet.resize(48);packet.encode_float(44,segment.shoulder)
+   if segment.get("rectangular",false):packet.resize(52);packet.encode_u32(48,1)
   result.append(packet)
  for deposit:Dictionary in deposits:
   var packet:=Codec.brush(deposit.position+Vector3.UP*.25,(deposit.start+deposit.finish)*.5,1.6,4,true,deposit.material)

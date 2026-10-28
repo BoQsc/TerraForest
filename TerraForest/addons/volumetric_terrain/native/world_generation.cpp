@@ -25,7 +25,14 @@ Dictionary segment(Vector3 a,Vector3 b,double width,double depth,double clearanc
 }
 struct Survey {
  const World &world;std::vector<Rect2> reserved;int64_t samples=0;
- double height(Vector3 p){++samples;return world.height(p.x,p.z,false);}
+ bool cache=false;std::map<std::pair<float,float>,double> heights;
+ double height(Vector3 p){
+  auto key=std::make_pair(float(p.x),float(p.z));
+  if(cache){auto found=heights.find(key);if(found!=heights.end())return found->second;}
+  ++samples;double result=world.height(p.x,p.z,false);
+  if(cache&&heights.size()<65536)heights.emplace(key,result);
+  return result;
+ }
  bool clear(Vector3 a,Vector3 b){
   int count=std::max(1,int(std::ceil(horizontal(b-a)/2)));
   for(const auto &area:reserved)for(int i=0;i<=count;i++){
@@ -360,8 +367,8 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
 namespace terraforest {
 namespace {
 struct LotRoad {Vector3 start,finish;Vector2 a,axis;double denominator;};
-Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const std::vector<LotRoad> &roads){
- Vector3 b(a.x,0,street_z);bool found=false;
+Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const std::vector<LotRoad> &roads,double width=.75,double target_x=NAN){
+ Vector3 b(std::isfinite(target_x)?target_x:a.x,0,street_z);bool found=false;
  for(int i=0;i<roads.size();i++){
   const Vector3 &start=roads[i].start,&finish=roads[i].finish;
   if(std::abs(start.z-b.z)>.001||std::abs(finish.z-b.z)>.001||b.x<std::min(start.x,finish.x)||b.x>std::max(start.x,finish.x)||std::abs(finish.x-start.x)<.001)continue;
@@ -369,11 +376,12 @@ Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const std::vec
  }
  double length=horizontal(b-a);if(!found||length<.01||std::abs(a.y-b.y)>length*.25)return failure("Entrance not connected");
  int count=int(std::ceil(length*2));if(count>4096)return failure("Entrance exceeds survey budget");
- for(int i=0;i<=count;i++)for(double dx:{-.75,0.,.75}){
-  Vector3 p=a.lerp(b,double(i)/count)+Vector3(dx,0,0);if(!inside(p))return failure("Entrance outside terrain");
+ Vector3 across=Vector3(-(b-a).z,0,(b-a).x).normalized();
+ for(int i=0;i<=count;i++)for(double dx:{-width,0.,width}){
+  Vector3 p=a.lerp(b,double(i)/count)+across*dx;if(!inside(p))return failure("Entrance outside terrain");
   double fill=p.y-survey.height(p);if(fill>2||fill< -3)return failure("Entrance exceeds earthworks budget");
  }
- Dictionary d;d["ok"]=true;d["segment"]=segment(a,b,.75,1,4,0,1);return d;
+ Dictionary d;d["ok"]=true;d["segment"]=segment(a,b,width,1,4,0,1);return d;
 }
 }
 Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &lots,const Array &roads,bool default_streets){
@@ -393,8 +401,14 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
   for(int j=0;j<samples.size();j++)if(!inside(samples[j]))return failure("Invalid foundation sample");
   AABB b=l["bounds"];Vector3 entrance=l["entrance_local"];
   if(!b.position.is_finite()||!b.size.is_finite()||!entrance.is_finite()||!std::isfinite(double(l["street_z"])))return failure("Invalid lot geometry");
+  if(b.size.x<=0||b.size.z<=0||b.size.x>128||b.size.z>128)return failure("Lot footprint exceeds bounded survey");
+  if(l.has("access_points")){
+   if(l["access_points"].get_type()!=Variant::PACKED_VECTOR3_ARRAY)return failure("Invalid access points");
+   PackedVector3Array access=l["access_points"];if(access.size()>8)return failure("Too many access points");
+   for(int point=0;point<access.size();point++)if(!access[point].is_finite())return failure("Invalid access point");
+  }
  }
- Survey survey{world};Array fitted,rejected;std::vector<AABB> reserved;
+ Survey survey{world};survey.cache=true;Array fitted,rejected;std::vector<AABB> reserved;
  const int offsets[]={0,-3,3,-6,6,-9,9};
  for(int index=0;index<lots.size();index++){
   Dictionary lot=lots[index],best;double best_cost=1e30;
@@ -432,6 +446,11 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     }
     if(blocked)break;double h=survey.height(p);low=std::min(low,h);high=std::max(high,h);
    }
+   for(int row=0;row<=int(std::ceil(bounds.size.z+2))&&!blocked;row++)for(int column=0;column<=int(std::ceil(bounds.size.x+2));column++){
+    Vector3 sample(bounds.position.x-1+std::min(double(column),double(bounds.size.x+2)),0,bounds.position.z-1+std::min(double(row),double(bounds.size.z+2)));
+    if(!inside(sample)){blocked=true;break;}
+    double height=survey.height(sample);low=std::min(low,height);high=std::max(high,height);
+   }
    if(blocked)continue;int minimum=int(std::ceil(high-3)),maximum=int(std::floor(low+2));if(minimum>maximum)continue;
    double mid=(low+high)*.5;int grade=std::clamp(int(std::round(mid)),minimum,maximum),surface_offset=lot["surface_offset"];Dictionary entrance;
    if(!roads.is_empty()){
@@ -439,6 +458,14 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     for(int candidate=minimum;candidate<=maximum;candidate++){
      Vector3 a=local+Vector3(origin.x,candidate-surface_offset,origin.z);
      Dictionary path=entrance_path(survey,a,double(lot["street_z"]),road_geometry);
+     if(bool(path["ok"])&&lot.has("access_points")){
+      PackedVector3Array access=lot["access_points"];
+      Dictionary primary=path["segment"];Vector3 target=primary["finish"];
+      for(int point=0;point<access.size();point++){
+       Vector3 doorway=access[point]+Vector3(origin.x,candidate-surface_offset,origin.z);
+       if(!bool(entrance_path(survey,doorway,double(lot["street_z"]),road_geometry,2.5,target.x)["ok"])){path["ok"]=false;break;}
+      }
+     }
      if(bool(path["ok"])&&(!found||std::abs(candidate-mid)<std::abs(grade-mid))){grade=candidate;entrance=path;found=true;}
     }if(!found)continue;
    }

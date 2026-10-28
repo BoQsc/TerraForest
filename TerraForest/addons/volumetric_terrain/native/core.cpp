@@ -518,7 +518,7 @@ static bool contact_brush_center(World &world,V3 contact,V3 &center,float radius
  if(found&&nearest>(radius-.125f)*(radius-.125f))center=center+(selected-center)*(1.f-(radius-.125f)/__builtin_sqrtf(nearest));
  return true;
 }
-static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0,bool cut_shoulder=false){
+static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float shoulder=0,const float *curve=nullptr,int curve_count=0,int curve_index=0,float curve_offset=0,bool cut_shoulder=false,bool rectangular=false){
  V3 axis={b.x-a.x,0,b.z-a.z},offset={p.x-a.x,0,p.z-a.z};
  float along=dot(offset,axis)/dot(axis,axis);
  float t=clampf(along,0.f,1.f);
@@ -534,6 +534,10 @@ static float road_bed_field(V3 p,V3 a,V3 b,float half_width,float depth,float sh
   top+=curve_offset;
  }
  float edge=length(V3{p.x-nearest.x,0,p.z-nearest.z})-half_width;
+ if(rectangular){
+  float span=length(axis),side=ab(offset.x*axis.z-offset.z*axis.x)/span;
+  edge=mx(side-half_width,mx(-along*span,(along-1.f)*span));
+ }
  if(shoulder>0){
   float drop=depth*clampf(edge/shoulder,0.f,1.f);
   // Excavation rises away from the pad; fill falls away from it.
@@ -547,8 +551,8 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  changes=0;radius=clampf(radius,0.5f,64.f);
  lo={mx(0,mn(a.x,b.x)-radius-SDF_BAND-1),mx(0,mn(a.y,b.y)-radius-SDF_BAND-1),mx(0,mn(a.z,b.z)-radius-SDF_BAND-1)};
  hi={mn(WORLD,mx(a.x,b.x)+radius+SDF_BAND+1),mn(255,mx(a.y,b.y)+radius+SDF_BAND+1),mn(WORLD,mx(a.z,b.z)+radius+SDF_BAND+1)};
- if(shape==2){float span=length(V3{b.x-a.x,0,b.z-a.z});float cap_rise=curve?.25f*(span+radius+shoulder):ab(b.y-a.y)*(radius+shoulder)/span;lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
- if(shape==2&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
+ if(shape==2||shape==5){float span=length(V3{b.x-a.x,0,b.z-a.z});float cap_rise=curve?.25f*(span+radius+shoulder):ab(b.y-a.y)*(radius+shoulder)/span;lo.y=mx(0,mn(a.y,b.y)-cap_rise-depth-SDF_BAND-1);hi.y=mn(255,mx(a.y,b.y)+cap_rise+clearance+SDF_BAND+1);}
+ if((shape==2||shape==5)&&shoulder>0){lo.x=mx(0,lo.x-shoulder);lo.z=mx(0,lo.z-shoulder);hi.x=mn(WORLD,hi.x+shoulder);hi.z=mn(WORLD,hi.z+shoulder);}
  if(lo.x>hi.x||lo.y>hi.y||lo.z>hi.z)return false;
  // Capacity check before mutation: fail the edit, never silently discard terrain.
  int need=0;for(int py=fl(lo.y)/16;py<=fl(hi.y)/16;py++)for(int pz=fl(lo.z)/16;pz<=fl(hi.z)/16;pz++)for(int px=fl(lo.x)/16;px<=fl(hi.x)/16;px++)if(pages_by_key.get(page_key(px,py,pz))<0)need++;
@@ -563,21 +567,22 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=height(float(x),float(z));int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
   for(int y=y0;y<=y1;y++){
-   V3 p={float(x),float(y),float(z)};float brush=shape==2?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
-   float cut=shape==2&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true):SDF_BAND+1;
+   bool graded=shape==2||shape==5;
+   V3 p={float(x),float(y),float(z)};float brush=graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,shape==5):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
+   float cut=graded&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,shape==5):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){key=page_key(x>>4,py,z>>4);idx=pages_by_key.get(key);int virtual_page=idx<0?planned.get(key):-1;present=idx>=0||virtual_page>=0;reference=idx>=0?idx:-1-virtual_page;lastpy=py;}
    int j=(x&15)+16*((z&15)+16*(y&15));float old=idx<0?base(p,h):float(pages[idx].d[j])/SDF_SCALE;if(idx<0&&present)old=float(quant(old))/SDF_SCALE;
    float value=add?mn(old,brush):mx(old,-brush);
    if(shape==4)value=old;
-   if(shape==2&&clearance>0)value=mx(value,-cut);
+   if(graded&&clearance>0)value=mx(value,-cut);
    if(y<=3)value=old; // Preserve the bottom solid slab; excavation cannot open the world underside.
    // Bedrock and exterior remain outside the writable field.
    if(x==0||x==WORLD||z==0||z==WORLD||y<=1||y>=255)value=mx(value,0.f);
    i16 q=quant(value),previous=quant(old);
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
-   bool repaint=shape==2&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
+   bool repaint=graded&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
    if(shape==4){
     if(brush>0||q>=0||y<=3)continue;
     repaint=(idx<0?base_material(p,h):pages[idx].mat[j])!=material;
@@ -588,7 +593,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
     int at=new_keys.push(key);planned.put(key,at);if(tr_oom){discard();return false;}
     present=true;reference=-1-at;
    }
-   u8 flags=((add||!has_geology())&&!(shape==2&&clearance>0&&brush>0))?1:0;
+   u8 flags=((add||!has_geology())&&!(graded&&clearance>0&&brush>0))?1:0;
    if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){flags|=2;if(float(y)>=h-2.f)flags|=4;}
    staged.push({reference,u16(j),q,flags});if(tr_oom){discard();return false;}
   }
@@ -1414,6 +1419,7 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
  }
  else if(cmd==28){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
+  bool rectangular=n==52&&r.u()==1;
   float coefficients[256];int curve_count=0,curve_index=0;
   if(n>=72){
    curve_count=int(r.u());curve_index=int(r.u());
@@ -1433,10 +1439,10 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    const float*c=coefficients+curve_index*4;
    if(ab(a.y-c[3])>.001f||ab(b.y-(c[0]+c[1]+c[2]+c[3]))>.001f){out.p[8]=1;return;}
   }
-  if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48&&!curve_count)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
+  if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48&&!rectangular&&!curve_count)||(rectangular&&ab(a.y-b.y)>.001f)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
      !(a.x>=width+5&&a.x<=WORLD-width-5&&b.x>=width+5&&b.x<=WORLD-width-5&&a.z>=width+5&&a.z<=WORLD-width-5&&b.z>=width+5&&b.z<=WORLD-width-5&&a.y>=depth+4&&a.y<=250&&b.y>=depth+4&&b.y<=250&&ab(b.y-a.y)<=distance*.25f)){out.p[8]=1;return;}
   if(!(a.x>=width+shoulder+5&&a.x<=WORLD-width-shoulder-5&&b.x>=width+shoulder+5&&b.x<=WORLD-width-shoulder-5&&a.z>=width+shoulder+5&&a.z<=WORLD-width-shoulder-5&&b.z>=width+shoulder+5&&b.z<=WORLD-width-shoulder-5)){out.p[8]=1;return;}
-  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,2,true,u8(material),lo,hi,changes,depth,clearance,shoulder,nullptr,curve_count?coefficients:nullptr,curve_count,curve_index);
+  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,rectangular?5:2,true,u8(material),lo,hi,changes,depth,clearance,shoulder,nullptr,curve_count?coefficients:nullptr,curve_count,curve_index);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==3){

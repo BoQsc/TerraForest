@@ -12,15 +12,9 @@ func _initialize()->void:
  var edits:Dictionary=Planner.earthworks(plan)
  if not edits.ok:print("EARTHWORKS_REJECTED ",edits);quit(1);return
  var revision:=0
- for segment:Dictionary in edits.segments:
-  var packet:=Codec.graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material)
-  packet.resize(48);packet.encode_float(44,segment.shoulder)
-  if segment.has("coefficients"):
-   packet.resize(56);packet.encode_u32(48,segment.coefficients.size()/4);packet.encode_u32(52,segment.curve_index)
-   for value:float in segment.coefficients:
-    var offset:int=packet.size();packet.resize(offset+4);packet.encode_float(offset,value)
+ for packet:PackedByteArray in preload("res://addons/world_runtime/generation_earthworks.gd").packets(edits.segments):
   var reply:PackedByteArray=core.execute(packet)
-  if not Codec.reply_ok(reply):failures+=1;print("NATIVE_EDIT_REJECT ",segment);continue
+  if not Codec.reply_ok(reply):failures+=1;print("NATIVE_EDIT_REJECT ",packet);continue
   revision=reply.decode_u32(12)
  var supports:=PackedVector3Array()
  for lot:Dictionary in plan.lots:supports.append_array(lot.asset.foundation_samples(lot.origin,lot.rotation,0))
