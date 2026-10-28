@@ -27,6 +27,7 @@ var third_person_toggle:CheckButton
 var first_person_toggle:CheckButton
 var first_person_shadows_toggle:CheckButton
 var fullscreen_toggle:CheckButton
+var building_lod_toggle:CheckButton
 var player_actions:CanvasLayer
 var impact_toggle:CheckButton
 var breakup_toggle:CheckButton
@@ -83,6 +84,9 @@ func _ready() -> void:
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"
 	fullscreen_toggle.toggled.connect(func(enabled:bool):game.Presentation.set_fullscreen(game.get_window(),enabled,not game.temporary_world));graphics.add_child(fullscreen_toggle)
+	building_lod_toggle=CheckButton.new();building_lod_toggle.text="Building distance detail (LOD)"
+	building_lod_toggle.tooltip_text="Reduce distant building geometry conservatively. Near detail, individual blocks and collision stay unchanged."
+	building_lod_toggle.toggled.connect(func(enabled:bool):preload("res://addons/structures/building_lod.gd").set_enabled(game.structures.blocks,enabled,not game.temporary_world));graphics.add_child(building_lod_toggle)
 	label(session,"Your session").add_theme_font_size_override("font_size",22)
 	label(session,"Hold Alt for tool controls. Tab: inventory · M: map (keep moving) · Ctrl: crouch · Hold `: player actions · Tap `: development belt.")
 	button(session,"Save world",save_world)
@@ -208,6 +212,7 @@ func sync_panels() -> void:
 	for control in game.construction_palette.editor_controls:control.visible=developer
 	if workspace:tool_workspace.show_tool(current_page)
 func refresh() -> void:
+	building_lod_toggle.set_pressed_no_signal(game.structures.blocks.is_geometry_lod_enabled())
 	fullscreen_toggle.set_pressed_no_signal(DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_FULLSCREEN,DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN])
 	mode_label.text=("DEVELOPMENT / free authoring" if developer else "GAMEPLAY / items and material costs")+"    |    Headlamp: "+("on" if game.headlamp.visible else "off")
 	mode_button.text="Return to gameplay" if developer else "Enter development (~)"

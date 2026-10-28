@@ -40,6 +40,7 @@ void NativeBlockWorld::worker_loop() {
         // No lock is held during expensive work. Destruction joins an active bake;
         // queued work and completed results are discarded when stopping.
         BlockBake result=bake(key,ticket,std::move(halo));
+        bake_block_lods(result);
         {
             std::lock_guard<std::mutex> lock(worker_mutex);
             if(worker_stopping)return;
@@ -55,6 +56,7 @@ bool NativeBlockWorld::take_bake(BlockBake &result,bool wait) {
     if(wait)worker_wake.wait(lock,[this]{return worker_ready||worker_stopping;});
     if(!worker_ready)return false;
     result=std::move(worker_result);worker_ready=false;
+    lod_bake_total_ms+=result.lod_ms;lod_bake_max_ms=std::max(lod_bake_max_ms,result.lod_ms);
     worker_active=false;++worker_consumed;
     return true;
 }

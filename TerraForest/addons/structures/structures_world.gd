@@ -172,6 +172,7 @@ func prepare() -> bool:
 		if GDExtensionManager.load_extension("res://addons/structures/structures.gdextension") != OK:
 			return false
 	blocks = ClassDB.instantiate("NativeBlockWorld")
+	preload("res://addons/structures/building_lod.gd").apply(blocks)
 	if not preload("res://addons/structures/material_startup.gd").prepare(blocks):
 		blocks.free();blocks=null;return false
 	blocks.name = "Blocks"

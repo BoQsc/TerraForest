@@ -26,7 +26,19 @@ struct BlockKey {
 };
 struct BlockChunk { std::array<uint16_t,4096> cells{}; std::array<uint16_t,256> columns{}; int count=0; };
 struct BlockVertex { float x,y,z,nx,ny,nz,u,v,material; };
-struct BlockBake { BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; int lattice_width=0; };
+struct BlockLod { float error=0; std::vector<int32_t> indices; };
+struct BlockBake {
+    BlockKey key; uint64_t revision=0; std::vector<BlockVertex> vertices; std::vector<int32_t> indices; int lattice_width=0;
+    std::vector<BlockLod> lods;
+    double lod_ms=0;
+    uint64_t payload_bytes(bool capacity=false) const {
+        uint64_t bytes=(capacity?vertices.capacity():vertices.size())*sizeof(BlockVertex)+(capacity?indices.capacity():indices.size())*sizeof(int32_t);
+        if(capacity)bytes+=lods.capacity()*sizeof(BlockLod);
+        for(const auto &lod:lods)bytes+=(capacity?lod.indices.capacity():lod.indices.size())*sizeof(int32_t);
+        return bytes;
+    }
+};
+void bake_block_lods(BlockBake &bake);
 struct BlockVisual {
     MeshInstance3D *mesh=nullptr; StaticBody3D *body=nullptr;
     int triangles=0; uint64_t payload_bytes=0; int lattice_width=0;
@@ -34,6 +46,8 @@ struct BlockVisual {
     PackedInt32Array collision_indices;
     int collision_at=0;
     bool collision_ready=false;
+    int lod_levels=0,lod_min_triangles=0;
+    uint64_t lod_index_bytes=0;
 };
 struct CachedBlockBake { BlockBake bake; uint64_t used=0; };
 struct BlockChange { int32_t x,y,z; uint16_t before,after; };
@@ -101,6 +115,8 @@ class NativeBlockWorld : public Node3D {
     bool collision_near(BlockKey key) const;
     void retire_collision(BlockVisual &visual);
     bool streaming=false,residency_dirty=false;
+    bool geometry_lod=true;
+    double lod_bake_total_ms=0,lod_bake_max_ms=0;
     double render_radius=384;
     int render_limit=256;
     uint64_t mesh_budget=64*1024*1024,cache_budget=32*1024*1024,mesh_bytes=0,cache_bytes=0;
@@ -196,6 +212,9 @@ public:
     bool set_navigation_interest(const PackedVector3Array &points);
     bool configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit);
     Dictionary streaming_stats() const;
+    void set_geometry_lod_enabled(bool enabled);
+    bool is_geometry_lod_enabled() const { return geometry_lod; }
+    Dictionary geometry_lod_stats() const;
     bool configure_mesh_uploads(int chunk_limit,int64_t byte_limit,int64_t time_limit_us);
     void set_collision_radius(double radius);
     bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker_active; }

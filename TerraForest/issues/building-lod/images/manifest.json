@@ -1,0 +1,29 @@
+{
+  "source_run": "reports/checks/20261028T135000186386Z_minerals_pack/building_lod_visual/run.json",
+  "base_revision": "6cad0491722e55557be63ef980602520209aac8a",
+  "pack_sha256": "0aba7d1a8f9964dddde103d9e23a6680150993b9a3590b2eb28453ea342c5e9b",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "9d9e04d7a5cc52f22f47806bfcc6098cb79a5ca89e956d479e002b08672ced8a",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "a1047b464a7cf0263ad586e180aa6a24c7baa9ebf0006b9006909f4a28c53d31",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "77ce389c71e488024746345f59702bf9c9bf3d1a08afe6096f2e9a529fccfb9a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "386f1b2dd4f61e928e5e280d692e7f24eb9fb95d4e15ea6a27310edb60f6950e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "080c52b91dde6cfafb4e59b07000df90094cf96c945a8a1989fe431f6a905521",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "a82bcb1db87c6b6bf11afbf9399a77db5f66ce038b7e5c9a65af46fd25c19e33",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "312e1fac926874d5f84fb05c7c0e9d98f29f68e759ad4b2214228697f876ff05",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "b6380f7fa54b1d1cf34737aa00f6f87887fbfebc0720c5c25d3f5b79fe5f83db"
+  },
+  "scope": "1080p offscreen, nonactivating fixture. Existing A2/B1/B2/C1 house designs with attached models; not a settlement redesign. User visual approval pending.",
+  "files": {
+    "district-full.png": "db91b50d60ef5889e95ca7e06e9e9a94340d1f67c76fd537039e611649361a1b",
+    "district-lod.png": "c2f51d93b1beb1c21822bbd7f8d6791b11e6e3e92519cee68c6fe32d286e4d6f",
+    "shapes-near.png": "be79aa0475edc10634d181215fa9cf5c5e1eccc227bc9cb040a725bd908b2d72",
+    "street-full.png": "6c6e3910d94adf34a70f9a504af2e7d1264b7ce2ca6aa1686a16faa6e863f7ca",
+    "street-lod.png": "5c453f2244f616de2f71f9c726d27de2c6d48beaec7502d85f1283d9b14e119a"
+  }
+}

@@ -73,6 +73,9 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_navigation_interest","points"),&NativeBlockWorld::set_navigation_interest);
     ClassDB::bind_method(D_METHOD("configure_streaming","enabled","radius","chunk_limit","mesh_byte_limit","cache_byte_limit"),&NativeBlockWorld::configure_streaming);
     ClassDB::bind_method(D_METHOD("streaming_stats"),&NativeBlockWorld::streaming_stats);
+    ClassDB::bind_method(D_METHOD("set_geometry_lod_enabled","enabled"),&NativeBlockWorld::set_geometry_lod_enabled);
+    ClassDB::bind_method(D_METHOD("is_geometry_lod_enabled"),&NativeBlockWorld::is_geometry_lod_enabled);
+    ClassDB::bind_method(D_METHOD("geometry_lod_stats"),&NativeBlockWorld::geometry_lod_stats);
     ClassDB::bind_method(D_METHOD("configure_mesh_uploads","chunk_limit","byte_limit","time_limit_us"),&NativeBlockWorld::configure_mesh_uploads);
     ClassDB::bind_method(D_METHOD("set_collision_radius","radius"),&NativeBlockWorld::set_collision_radius);
     ClassDB::bind_method(D_METHOD("is_idle"),&NativeBlockWorld::is_idle);
@@ -371,11 +374,11 @@ void NativeBlockWorld::launch(bool allow_cached_upload,uint64_t cached_byte_allo
         auto cached=bake_cache.find(k);
         if(cached!=bake_cache.end()&&!allow_cached_upload)return;
         if(cached!=bake_cache.end()&&!allow_oversize&&
-           cached->second.bake.vertices.size()*sizeof(BlockVertex)+cached->second.bake.indices.size()*sizeof(int32_t)>cached_byte_allowance)return;
+           cached->second.bake.payload_bytes()>cached_byte_allowance)return;
         dirty.erase(best); uint64_t ticket=tickets[k];
         if(!chunks.count(k)) { BlockBake empty;empty.key=k;empty.revision=ticket;publish(std::move(empty));continue; }
         if(cached!=bake_cache.end()) {
-            cache_bytes-=cached->second.bake.vertices.capacity()*sizeof(BlockVertex)+cached->second.bake.indices.capacity()*sizeof(int32_t);
+            cache_bytes-=cached->second.bake.payload_bytes(true);
             BlockBake restored=std::move(cached->second.bake);bake_cache.erase(cached);
             restored.revision=ticket;cache_hits++;publish(std::move(restored));return;
         }
@@ -398,7 +401,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     release_visual(b.key);
     if(!wanted.count(b.key)) {cache_bake(std::move(b));return false;}
     if(b.indices.empty()) {settled.insert(b.key);cache_bake(std::move(b));return false;}
-    uint64_t payload=b.vertices.size()*40+b.indices.size()*sizeof(int32_t);
+    uint64_t payload=b.payload_bytes();
     if(!admit_mesh(b.key,payload)) {budget_blocked.insert(b.key);cache_bake(std::move(b));return false;}
     if(measure_uploads){++upload_last_chunks;upload_last_bytes+=payload;}
     ensure_material();
@@ -407,9 +410,16 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     for(int i=0;i<count;i++) { auto &v=b.vertices[i];vertices.set(i,Vector3(v.x,v.y,v.z));normals.set(i,Vector3(v.nx,v.ny,v.nz));uv.set(i,Vector2(v.u,v.v));uv2.set(i,Vector2(v.material,0)); }
     indices.resize(b.indices.size());std::memcpy(indices.ptrw(),b.indices.data(),b.indices.size()*sizeof(int32_t));
     Array arrays; arrays.resize(Mesh::ARRAY_MAX);arrays[Mesh::ARRAY_VERTEX]=vertices;arrays[Mesh::ARRAY_NORMAL]=normals;arrays[Mesh::ARRAY_TEX_UV]=uv;arrays[Mesh::ARRAY_TEX_UV2]=uv2;arrays[Mesh::ARRAY_INDEX]=indices;
-    Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);mesh->surface_set_material(0,material);
+    Dictionary lods;
+    for(const auto &lod:b.lods) {
+        PackedInt32Array reduced;reduced.resize(lod.indices.size());std::memcpy(reduced.ptrw(),lod.indices.data(),lod.indices.size()*sizeof(int32_t));lods[lod.error]=reduced;
+    }
+    Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays,Array(),lods);mesh->surface_set_material(0,material);
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
+    instance->set_lod_bias(geometry_lod?4.f:1e8f);
     visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width,vertices,indices};mesh_bytes+=payload;
+    auto &visual=visuals[b.key];visual.lod_levels=int(b.lods.size());visual.lod_min_triangles=visual.triangles;
+    for(const auto &lod:b.lods){visual.lod_index_bytes+=lod.indices.size()*sizeof(int32_t);visual.lod_min_triangles=int(lod.indices.size()/3);}
     collision_work_pending=true;
     settled.insert(b.key);budget_blocked.erase(b.key);published++;cache_bake(std::move(b));return true;
 }

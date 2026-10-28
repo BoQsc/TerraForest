@@ -52,6 +52,11 @@ for descriptor in (root/'addons').rglob('*.gdextension'):
             destination.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(source,destination)
             libraries.add(str(library))
+notices=[Path('addons/structures/MESHOPTIMIZER_LICENSE.txt')]
+for notice in notices:
+    destination=staging/notice
+    destination.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copy2(root/notice,destination)
 smoke=subprocess.run([str(engine),'--headless','--path',str(staging),'--main-pack',str(pack),'--quit-after','180','--','--temporary'],cwd=staging,capture_output=True,text=True,timeout=60)
 smoke_log=smoke.stdout+'\n'+smoke.stderr
 (root/'reports/pack_smoke.log').write_text(smoke_log,encoding='utf-8')
@@ -65,6 +70,8 @@ if staging!=root/'dist':
         destination=root/'dist'/library
         destination.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(staging/library,destination)
+    for notice in notices:
+        shutil.copy2(staging/notice,root/'dist'/notice)
     pending=root/'dist/TerraForest.pending.pck'
     shutil.copy2(pack,pending)
     pending.replace(installed_pack)

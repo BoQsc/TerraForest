@@ -43,7 +43,7 @@ void NativeBlockWorld::release_visual(BlockKey key) {
 }
 void NativeBlockWorld::erase_cached(BlockKey key) {
     auto it=bake_cache.find(key);if(it==bake_cache.end())return;
-    cache_bytes-=it->second.bake.vertices.capacity()*sizeof(BlockVertex)+it->second.bake.indices.capacity()*sizeof(int32_t);
+    cache_bytes-=it->second.bake.payload_bytes(true);
     bake_cache.erase(it);
 }
 void NativeBlockWorld::trim_cache() {
@@ -57,7 +57,7 @@ void NativeBlockWorld::cache_bake(BlockBake &&b) {
     if(!streaming||!cache_budget||!chunks.count(b.key))return;
     auto pending=tickets.find(b.key);
     if(pending!=tickets.end()&&pending->second!=b.revision)return;
-    uint64_t bytes=b.vertices.capacity()*sizeof(BlockVertex)+b.indices.capacity()*sizeof(int32_t);
+    uint64_t bytes=b.payload_bytes(true);
     if(bytes>cache_budget)return;
     BlockKey key=b.key;erase_cached(key);
     cache_bytes+=bytes;bake_cache.emplace(key,CachedBlockBake{std::move(b),++cache_clock});trim_cache();

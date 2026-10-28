@@ -26,6 +26,28 @@ python tools/build_native.py --addon structures --target all
 
 ## Representation and editing
 
+### Building geometry LOD
+
+`NativeBlockWorld` now generates up to three conservative index-buffer LODs on
+its existing immutable bake worker. Godot selects them by projected error; no
+per-block script loop, extra nodes, whole-house replacement or dual-render fade.
+Near triangles, materials, normals, picking and full-resolution collision remain
+unchanged. Edits invalidate the same local chunks; cached return trips retain LODs.
+Integer-period UV normalization permits coplanar joins without changing texture
+alignment. Seam/material boundaries and chunk-border vertices are protected.
+
+Enabled by default, with an ESC → Graphics switch. Native API:
+`set_geometry_lod_enabled(bool)`, `is_geometry_lod_enabled()` and
+`geometry_lod_stats()`. Disabling selects full detail without rebuilding meshes.
+Additional vertices/indices count against existing mesh, cache and upload budgets.
+Already-minimal surfaces keep full detail; chunks above 65,536 triangles skip
+simplification to bound worker cost. This is geometry LOD, not longer-distance
+streaming, draw-call aggregation, impostors, or LOD for separate furniture models.
+The CPU simplifier is the pinned MIT dependency documented under
+`native/third_party/meshoptimizer`; project-owned code remains 0BSD.
+
+See [visual comparisons and qualification](../../issues/building-lod/README.md).
+
 ### Modular building shapes
 
 Six additional individual grid blocks are available in both the normal player's

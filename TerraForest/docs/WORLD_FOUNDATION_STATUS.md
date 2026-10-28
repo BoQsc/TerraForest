@@ -28,13 +28,32 @@ Installed full 104-building generation/map/save/reload passes 46 assertions with
 zero diagnostics; ten packaged focused checks and source UI checks also pass.
 Screenshots are inspected, not user-approved. Failed intermediate runs remain linked.
 
-Remaining: adaptive close-up detail, tree-exact canopy updates, additional climate
-biomes and distance-based building LOD. Current woodland coloration is a shared
+Remaining: adaptive close-up detail, tree-exact canopy updates and additional climate
+biomes. Current woodland coloration is a shared
 generation field, not a claim that every standing tree is mapped. Return to map
 occupancy after visual review; require edited/cut-tree comparisons and
-bounded worker/upload costs. Return to building LOD only with dense-district
-profiling and silhouette/transition/edit/collision evidence; existing greedy
-meshing and paging are not geometric LOD. These are not marked complete.
+bounded worker/upload costs. Building geometry LOD is now implemented separately;
+see [its evidence and remaining qualification](../issues/building-lod/README.md).
+
+## Building geometry LOD — 2026-10-28
+
+Native cached, error-controlled LOD is default-on with an ESC Graphics switch.
+Approved houses and authoritative cells/collision are unchanged. Renderer selection
+adds no per-frame GDScript work. The 24-house fixture tests actual draw counts,
+180-frame approaches, matched screenshots, edits, cache reuse and all 18 shapes.
+This replaces the previously unimplemented LOD entry, not the streaming system.
+
+Remaining: player visual approval, full populated-world/weak-hardware endurance,
+and distant streaming-boundary transitions. Chunk residency still uses its existing
+range/budgets; geometry LOD does not claim to remove visibility at that boundary.
+Over-dense chunks retain full detail rather than incur unbounded simplification.
+Return on a visible transition or measured geometry bottleneck; require same-camera
+comparisons, unchanged collision/edits and frame/GPU timings before expanding LOD.
+Separate furniture/doors remain original models. No approved house redesign.
+
+Broader checks found two C1 soil/slab clearance failures and the older headless
+session test's mouse-capture assertion. No terrain generation or mouse ownership
+changes belong to this LOD patch; retained logs are linked in the LOD issue.
 
 ## Distributed lakes, towns and generation cost — 2026-10-28
 
