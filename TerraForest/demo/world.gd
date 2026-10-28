@@ -1698,6 +1698,10 @@ func _additional_loading_ready() -> bool:
 		loading_stage_percent=94;loading_stage_text="Loading world inhabitants"
 		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.LIMIT,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
 		return false
+	if not temporary_world and not lakes.offline_preparation and not world_map.prepare_for_play():
+		loading_stage_percent=96;loading_stage_text="Preparing world map"
+		loading_work_text=world_map.updates.description()
+		return false
 	return true
 
 func _populate_settlement_actors() -> Dictionary:

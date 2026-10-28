@@ -10,7 +10,7 @@ static func path_for(slot:String,folder:String)->String:
  return folder+"/"+Survey.digest(slot.to_utf8_buffer()).hex_encode()+".bin"
 static func read(slot:String,identity:String,folder:String=ROOT,size:int=256)->Dictionary:
  var result:Dictionary={"hit":false}
- if identity.is_empty() or size not in [256,512]:return result
+ if identity.is_empty() or size not in [256,512,1024]:return result
  var file:=FileAccess.open(path_for(slot,folder),FileAccess.READ)
  if file==null or file.get_length()!=40+32+size*size*4:return result
  var expected:=header(identity)
@@ -20,7 +20,7 @@ static func read(slot:String,identity:String,folder:String=ROOT,size:int=256)->D
  return {"hit":true,"pixels":pixels}
 static func write(slot:String,identity:String,pixels:PackedByteArray,folder:String=ROOT,limit:int=64,size:int=256)->Dictionary:
  var result:Dictionary={"persisted":false}
- if identity.is_empty() or size not in [256,512] or pixels.size()!=size*size*4 or limit<1 or limit>64:return result
+ if identity.is_empty() or size not in [256,512,1024] or pixels.size()!=size*size*4 or limit<1 or limit>64:return result
  if DirAccess.make_dir_recursive_absolute(folder)!=OK:return result
  var path:=path_for(slot,folder);var temporary:=path+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
  var file:=FileAccess.open(temporary,FileAccess.WRITE)
@@ -39,8 +39,10 @@ static func promote(source:String,destination:String,folder:String=ROOT)->Dictio
  var result:Dictionary={"promoted":false}
  if source==destination:return result
  var file:=FileAccess.open(path_for(source,folder),FileAccess.READ)
- if file==null or file.get_length()!=40+32+BYTES:return result
- var h:=file.get_buffer(40);var expected:=file.get_buffer(32);var pixels:=file.get_buffer(BYTES);file.close()
+ if file==null:return result
+ var bytes:=file.get_length()-72
+ if bytes not in [BYTES,512*512*4,1024*1024*4]:return result
+ var h:=file.get_buffer(40);var expected:=file.get_buffer(32);var pixels:=file.get_buffer(bytes);file.close()
  if h.slice(0,8)!=MAGIC.to_utf8_buffer() or Survey.digest(h+pixels)!=expected:return result
  var target:=path_for(destination,folder);var pending:=target+".tmp_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
  file=FileAccess.open(pending,FileAccess.WRITE)

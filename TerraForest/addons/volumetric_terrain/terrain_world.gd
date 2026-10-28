@@ -136,10 +136,10 @@ func request_survey_identity(token: int) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>2:return false
 	return backend.submit({"kind":"survey_identity","token":token,"epoch":epoch})
 
-func request_survey_patch(rect: Rect2i, token: int) -> bool:
+func request_survey_patch(rect: Rect2i, token: int, size: int=256) -> bool:
 	if not world_ready or pending_edit or foreground_brush or stopping or backend.queued()>2:return false
-	if rect.position.x<0 or rect.position.y<0 or rect.end.x>256 or rect.end.y>256 or rect.size.x<1 or rect.size.y<1 or rect.size.x>4 or rect.size.y>4:return false
-	return backend.submit({"kind":"survey_patch","rect":rect,"token":token,"epoch":epoch,"revision":density_revision})
+	if size not in [256,1024] or rect.position.x<0 or rect.position.y<0 or rect.end.x>size or rect.end.y>size or rect.size.x<1 or rect.size.y<1 or rect.size.x>16 or rect.size.y>16:return false
+	return backend.submit({"kind":"survey_patch","rect":rect,"size":size,"token":token,"epoch":epoch,"revision":density_revision})
 
 func request_surface_batch(points: PackedVector3Array, token: int) -> bool:
 	# Admission control reserves the terrain worker for collision and interactive work.

@@ -15,7 +15,7 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("validate_snapshot","data"),&NativeWorldRecipe::validate_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_snapshot"),&NativeWorldRecipe::capture_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("restore_snapshot","data"),&NativeWorldRecipe::restore_snapshot);
-        godot::ClassDB::bind_method(godot::D_METHOD("render_biomes","pixels","seed","profile","origin","width"),&NativeWorldRecipe::render_biomes,DEFVAL(godot::Vector2i()),DEFVAL(256));
+        godot::ClassDB::bind_method(godot::D_METHOD("render_biomes","pixels","seed","profile","origin","width","size"),&NativeWorldRecipe::render_biomes,DEFVAL(godot::Vector2i()),DEFVAL(256),DEFVAL(256));
     }
 public:
     godot::PackedByteArray encode(const godot::Dictionary &options) const {
@@ -60,13 +60,13 @@ public:
         if(!validate_snapshot(bytes))return false;
         state=bytes;return true;
     }
-    godot::PackedByteArray render_biomes(const godot::PackedByteArray &pixels,int64_t seed,int profile,godot::Vector2i origin=godot::Vector2i(),int width=256) const {
-        if(width<1||width>256||pixels.is_empty()||pixels.size()%(width*4)||pixels.size()>256*256*4||origin.x<0||origin.y<0||origin.x+width>256||origin.y+pixels.size()/(width*4)>256||seed<0||seed>0x7fffffff||profile<0||profile>2)return {};
+    godot::PackedByteArray render_biomes(const godot::PackedByteArray &pixels,int64_t seed,int profile,godot::Vector2i origin=godot::Vector2i(),int width=256,int size=256) const {
+        if(size<64||size>1024||width<1||width>size||pixels.is_empty()||pixels.size()%(width*4)||pixels.size()>size*size*4||origin.x<0||origin.y<0||origin.x+width>size||origin.y+pixels.size()/(width*4)>size||seed<0||seed>0x7fffffff||profile<0||profile>2)return {};
         auto result=pixels.duplicate();auto *data=result.ptrw();
         for(int row=0;row<pixels.size()/(width*4);++row)for(int column=0;column<width;++column){
             const int offset=(row*width+column)*4;
             if(data[offset+1]<=data[offset]*1.09||data[offset+1]<=data[offset+2]*1.18)continue;
-            const double woodland=biome_woodland((origin.x+column+.5)*2000.0/256,(origin.y+row+.5)*2000.0/256,uint32_t(seed),profile);
+            const double woodland=biome_woodland((origin.x+column+.5)*2000.0/size,(origin.y+row+.5)*2000.0/size,uint32_t(seed),profile);
             const double factors[3]={1.04-.53*woodland,1.02-.39*woodland,.94-.35*woodland};
             for(int channel=0;channel<3;++channel)data[offset+channel]=uint8_t(std::clamp(data[offset+channel]*factors[channel],0.0,255.0));
         }

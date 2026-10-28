@@ -1511,7 +1511,7 @@ func _run() -> void:
 			_push({"kind":"survey_identity","token":job.token,"epoch":job.epoch,"revision":survey_stats.decode_u32(12) if Codec.reply_ok(survey_stats) else -1,"identity":snapshot_id+"|"+survey_compatibility if cache_valid and Codec.reply_ok(survey_stats) else ""})
 		elif kind == "survey_patch":
 			var rect:Rect2i=job.rect
-			var surveyed:Dictionary=native.survey_patch(256,rect.position.x,rect.position.y,rect.size.x,rect.size.y)
+			var surveyed:Dictionary=native.survey_patch(int(job.get("size",256)),rect.position.x,rect.position.y,rect.size.x,rect.size.y)
 			surveyed.merge({"kind":"survey_patch","rect":rect,"token":job.token,"epoch":job.epoch})
 			_push(surveyed)
 		elif kind == "surface_batch":

@@ -47,8 +47,9 @@ func begin_source()->void:pass
 func stop_source()->void:pass
 func source_step()->Dictionary:return {"available":false}
 func restart(value:String)->void:
+ if epoch!=terrain.epoch:texture=null;drawing_texture=null
  stop_source();stamp=value;epoch=terrain.epoch;terrain_revision=terrain.density_revision
- texture=null;drawing_texture=null;raster=ClassDB.instantiate("NativeSurfaceMapRaster");raster.configure(image_size);offset=0;source_done=false;complete=false;failed=false;pending=false;builds+=1
+ raster=ClassDB.instantiate("NativeSurfaceMapRaster");raster.configure(image_size);offset=0;source_done=false;complete=false;failed=false;pending=false;builds+=1
  source_hash=HashingContext.new();source_hash.start(HashingContext.HASH_SHA256);source_signature="";cache_checked=false;fast_checked=false;cache_key=""
  begin_source();atlas.view.queue_redraw()
 func _process(_delta:float)->void:
@@ -60,7 +61,7 @@ func _process(_delta:float)->void:
   elif reply.get("hit",false) and io_stamp==stamp and current_stamp()==stamp and not terrain.pending_edit:
    publish(reply.pixels);cache_hits+=1
    if io_kind=="fast_read":fast_cache_hits+=1
- if not atlas.opened or not terrain.world_ready or terrain.pending_edit:return
+ if not (atlas.opened or atlas.warming) or not terrain.world_ready or terrain.pending_edit:return
  var next:=current_stamp()
  if next.is_empty():return
  if next!=stamp:restart(next)
@@ -109,8 +110,6 @@ func publish(pixels:PackedByteArray)->void:
  stop_source()
  texture=ImageTexture.create_from_image(Image.create_from_data(image_size,image_size,false,Image.FORMAT_RGBA8,pixels))
  drawing_texture=texture
- if image_size==512:
-  var canvas:=CanvasTexture.new();canvas.diffuse_texture=texture;canvas.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;drawing_texture=canvas
  complete=true;atlas.view.queue_redraw();atlas.status.text=atlas.updates.description()
 func receive(result:Dictionary)->void:
  if not pending or result.get("kind","")!="survey_water_visibility" or result.token!=serial:return

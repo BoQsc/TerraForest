@@ -9,7 +9,7 @@ var teleport_click:=false
 var drag_distance:=0.0
 var label_boxes:Array[Rect2]=[]
 func _ready()->void:
- clip_contents=true;mouse_filter=Control.MOUSE_FILTER_STOP
+ clip_contents=true;mouse_filter=Control.MOUSE_FILTER_STOP;texture_filter=CanvasItem.TEXTURE_FILTER_LINEAR
 func pixels_per_metre()->float:return minf(size.x,size.y)/2000.0*zoom
 func world_to_map(point:Vector3)->Vector2:return size*0.5+(Vector2(point.x,point.z)-center)*pixels_per_metre()
 func map_to_world(point:Vector2)->Vector2:return center+(point-size*0.5)/pixels_per_metre()

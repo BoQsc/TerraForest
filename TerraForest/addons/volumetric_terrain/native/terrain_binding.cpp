@@ -139,7 +139,7 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_water_visibility(world_,points);return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary survey_patch(int64_t size,int64_t x,int64_t z,int64_t width,int64_t height){
-        if(size<64||size>512||x<0||z<0||x>=size||z>=size||width<1||height<1||width>4||height>4)return {};
+        if(size<64||size>1024||x<0||z<0||x>=size||z>=size||width<1||height<1||width>16||height>16)return {};
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=terraforest_survey_patch(world_,int(size),int(x),int(z),int(width),int(height));return tr_oom?godot::Dictionary():result;
     }
     godot::Dictionary survey_overview(int64_t size){

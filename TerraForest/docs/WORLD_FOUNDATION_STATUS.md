@@ -3,6 +3,20 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Natural world map and woodland preset — 2026-10-28
 
+Follow-up: normal loading now prepares cached layers before first M; coastal water
+retains its saved identity across procedural residency and uses certified cache reads.
+The final packaged 104-building flow opens M in 9.222 ms with zero water-source calls and
+zero terrain patches, then reloads with water ready. Runtime terrain sampling is
+1024² with four sub-samples on edited surfaces, bounded 16×16 native jobs and batched
+uploads. Generation orders support earthworks before asphalt; native pavement no
+longer paints the entire embankment/shoulder. All 5,724 seed-1703 road-center probes
+are asphalt; three seeds retain ordinary/batched/paged bake equivalence. Existing
+saved roads, town clustering and approved houses remain unchanged. Ground-level
+shoulder contours and maximum-zoom finite detail are not universally approved.
+The final flow passes 51 assertions; nine focused packaged checks pass after fixing
+an external driver's missing fixture paths. Live mining updates six local map tiles,
+maximum native call 2.131 ms. These are scoped measurements, not universal FPS claims.
+
 Terrain/material surveys replace default gold road lines and mineral symbols;
 optional annotation switches retain their diagnostic use. Native top-column
 colors replace uniform building/object tints. Creation preview reads baked terrain
@@ -14,10 +28,10 @@ Installed full 104-building generation/map/save/reload passes 46 assertions with
 zero diagnostics; ten packaged focused checks and source UI checks also pass.
 Screenshots are inspected, not user-approved. Failed intermediate runs remain linked.
 
-Remaining: coarse road aliasing, tree-exact canopy updates, additional climate
+Remaining: adaptive close-up detail, tree-exact canopy updates, additional climate
 biomes and distance-based building LOD. Current woodland coloration is a shared
 generation field, not a claim that every standing tree is mapped. Return to map
-resolution/occupancy after visual review; require edited/cut-tree comparisons and
+occupancy after visual review; require edited/cut-tree comparisons and
 bounded worker/upload costs. Return to building LOD only with dense-district
 profiling and silhouette/transition/edit/collision evidence; existing greedy
 meshing and paging are not geometric LOD. These are not marked complete.

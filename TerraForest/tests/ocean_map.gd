@@ -7,6 +7,10 @@ func check(ok:bool,label:String)->void:
  if not ok:failures+=1
 func _initialize()->void:
  var water=ClassDB.instantiate("NativeRegionalWater");water.set_surrounding_ocean(true)
+ var catalog=ClassDB.instantiate("NativeLakeCatalog")
+ check(water.restore_snapshot(water.capture_snapshot(catalog.encode([],1))),"coastal snapshot certifies its map identity")
+ var identity:String=water.survey_cache_identity()
+ check(not identity.is_empty(),"coastal certificate exists before residency changes")
  var revision:int=water.survey_revision_id();var cursor:=0;var count:=0
  var side:=[false,false,false,false]
  while true:
@@ -34,8 +38,10 @@ func _initialize()->void:
  check(water.survey_revision_id()==revision,"pristine retirement preserves logical map")
  water.update_ocean_residency(Vector3(4,40,1000),1)
  check(water.survey_revision_id()==revision,"cache restoration preserves logical map")
+ check(water.survey_cache_identity()==identity,"ocean admission, preparation, retirement and cache restore preserve the saved map certificate")
  water.brush(Vector3(6,31.8,1002),1.5,-1000000)
  check(water.survey_revision_id()!=revision and water.survey_ocean(0,revision).get("stale",false),"real water edits invalidate map continuations")
+ check(water.survey_cache_identity().is_empty(),"authored water changes invalidate the fast map certificate")
  var top=ClassDB.instantiate("NativeRegionalWater");top.set_surrounding_ocean(true)
  top.update_ocean_residency(Vector3(18,40,1002),3)
  for region in 3:

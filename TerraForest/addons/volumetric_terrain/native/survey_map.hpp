@@ -27,7 +27,7 @@ static V3 terrain_map_color(const World &world,float x,float z,float height,floa
 // Called on an isolated TerrainCore from the map worker; never borrow the live worker.
 static godot::Dictionary terraforest_survey_map(const World &w,int64_t size){
  godot::Dictionary out;out["ok"]=false;
- if(size<64||size>512)return out;
+ if(size<64||size>1024)return out;
  auto start=std::chrono::steady_clock::now();
  std::vector<float> heights(size_t(size)*size);
  float step=float(WORLD)/float(size);
@@ -63,11 +63,15 @@ static int terrain_survey_ceiling(const World &world,int across,int depth){
 }
 static godot::Dictionary terraforest_survey_patch(const World &w,int size,int ox,int oz,int width,int height){
  godot::Dictionary out;out["ok"]=false;
- if(size<64||size>512||width<1||height<1||width>4||height>4||ox<0||oz<0||ox+width>size||oz+height>size)return out;
+ if(size<64||size>1024||width<1||height<1||width>16||height>16||ox<0||oz<0||ox+width>size||oz+height>size)return out;
  auto start=std::chrono::steady_clock::now();float step=float(WORLD)/size;
- float heights[36];u8 materials[36];int stride=width+2;
+ float heights[324]{};u8 materials[1296]{};int stride=width+2;
+ int samples=size>512?4:1;
  for(int z=-1;z<=height;++z)for(int x=-1;x<=width;++x){
-  float wx=(clampf(float(ox+x),0,float(size-1))+.5f)*step,wz=(clampf(float(oz+z),0,float(size-1))+.5f)*step;
+  int at=(x+1)+(z+1)*stride;
+  for(int sample_index=0;sample_index<samples;sample_index++){
+  float fraction_x=samples==1?.5f:.25f+.5f*(sample_index&1),fraction_z=samples==1?.5f:.25f+.5f*(sample_index>>1);
+  float wx=(clampf(float(ox+x),0,float(size-1))+fraction_x)*step,wz=(clampf(float(oz+z),0,float(size-1))+fraction_z)*step;
   int ix=fl(wx),iz=fl(wz);float dx=wx-ix,dz=wz-iz;
   auto sample=[&](int y,u8 &material){float value=0,largest=-1;material=0;
    for(int k=0;k<4;++k){float weight=(k&1?dx:1-dx)*(k&2?dz:1-dz);if(weight<=0)continue;
@@ -77,13 +81,16 @@ static godot::Dictionary terraforest_survey_patch(const World &w,int size,int ox
   float top=0,above=1;u8 material=0;
   for(int y=terrain_survey_ceiling(w,ix,iz);y>=0;--y){u8 m=0;float below=sample(y,m);
    if(below<0){top=float(y)+clampf(-below/(above-below),0,1);material=m;break;}above=below;}
-  int at=(x+1)+(z+1)*stride;heights[at]=top;materials[at]=material;
+  heights[at]+=top/samples;materials[at*4+sample_index]=material;
+  }
  }
  godot::PackedByteArray pixels;pixels.resize(width*height*4);auto*p=pixels.ptrw();
  for(int z=0;z<height;++z)for(int x=0;x<width;++x){int at=x+1+(z+1)*stride;float h=heights[at];
   float dx=(heights[at+1]-heights[at-1])/(2*step),dz=(heights[at+stride]-heights[at-stride])/(2*step);
   float shade=clampf(.88f+(-dx-dz)*.22f,.52f,1.12f);
-  V3 color=terrain_map_color(w,(ox+x+.5f)*step,(oz+z+.5f)*step,h,dx,dz,materials[at]);float r=color.x,g=color.y,b=color.z;
+  V3 color{};
+  for(int sample_index=0;sample_index<samples;sample_index++)color=color+terrain_map_color(w,(ox+x+.5f)*step,(oz+z+.5f)*step,h,dx,dz,materials[at*4+sample_index])*(1.f/samples);
+  float r=color.x,g=color.y,b=color.z;
   size_t dst=(x+z*width)*4;p[dst]=u8(clampf(r*shade,0,255));p[dst+1]=u8(clampf(g*shade,0,255));p[dst+2]=u8(clampf(b*shade,0,255));p[dst+3]=255;
  }
  out["ok"]=true;out["pixels"]=pixels;out["revision"]=w.revision;

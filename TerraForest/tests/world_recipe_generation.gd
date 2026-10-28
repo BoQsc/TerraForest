@@ -4,6 +4,25 @@ const Plan=preload("res://addons/world_runtime/world_generation_plan.gd")
 var approved_records:Dictionary={}
 var approved_lots:Dictionary={}
 
+func review_road_surfaces(game:Node,planned:Dictionary)->void:
+ var candidates:Array=planned.network.segments.filter(func(road:Dictionary):return int(road.material)==4)
+ candidates.sort_custom(func(first:Dictionary,second:Dictionary):return ((first.start+first.finish)*.5-Vector3(1000,0,1000)).length_squared()<((second.start+second.finish)*.5-Vector3(1000,0,1000)).length_squared())
+ var examples:Array=[candidates[0],planned.sites[0].roads[0]]
+ var camera_local:Transform3D=game.camera.transform
+ for index in examples.size():
+  var road:Dictionary=examples[index]
+  var center:Vector3=(road.start+road.finish)*.5
+  game.teleport(center+Vector3.UP)
+  if not check(await wait_for(func():return not game.loading_active,90),"road review location streams before capture"):continue
+  game.set_physics_process(false);game._clear_motion()
+  game.camera.global_position=center+Vector3(6,5,10);game.camera.look_at(center+Vector3(0,0,-4))
+  for frame in 90:await process_frame
+  await photograph("road_surface_%d"%index)
+  game.app_focused=true;game.world_map.set_open(true)
+  game.world_map.view.center=Vector2(center.x,center.z);game.world_map.view.zoom=6;game.world_map.view.queue_redraw()
+  await photograph("road_map_detail_%d"%index)
+  game.world_map.set_open(false);game.camera.transform=camera_local;game.set_physics_process(true)
+
 func verify_approved_records(game:Node)->void:
  for revision:String in approved_records:
   var lot:Dictionary=approved_lots[revision]
@@ -98,7 +117,11 @@ func run()->void:
  for asset:String in preload("res://addons/world_runtime/material_deposits.gd").KEYS.values():mineral_count+=game.structures.model(asset).region_stats().get("logical_instances",0)
  check(mineral_count==deposits.size(),"every generated deposit has one persistent mineral stone, including unloaded regions")
  print("GENERATED_MINERALS count=",deposits.size()," logical_instances=",mineral_count," native_plan_ms=",planned.get("mineral_plan_ms",-1))
+ check(game.world_map.texture!=null and game.world_map.water_survey.complete and game.world_map.block_survey.complete and game.world_map.model_survey.complete,"all map layers already ready before the first M press")
+ var first_map_started:=Time.get_ticks_usec()
  game.app_focused=true;game.world_map.set_open(true);game.world_map.view.overview()
+ check(game.world_map.water_survey.texture!=null and game.world_map.texture.get_width()==1024,"first M shows cached water and detailed terrain immediately")
+ print("FIRST_MAP_READY synchronous_ms=",(Time.get_ticks_usec()-first_map_started)/1000.0," water_fast_hits=",game.world_map.water_survey.fast_cache_hits," water_source_calls=",game.world_map.water_survey.source_calls," terrain_patches=",game.world_map.updates.patches," max_patch_ms=",game.world_map.updates.max_native_ms)
  check(game.world_map.deposits.size()==deposits.size(),"production map publishes all material deposits")
  var atlas=game.world_map
  check(await wait_for(func():return atlas.texture!=null and atlas.updates.identity_checked and atlas.updates.dirty.is_empty() and atlas.updates.pending.is_empty() and atlas.updates.io==null and atlas.water_survey.complete and atlas.block_survey.complete and atlas.model_survey.complete and atlas.water_survey.io==null and atlas.block_survey.io==null and atlas.model_survey.io==null,90),"complete generated map includes terrain, water, blocks and objects")
@@ -114,6 +137,7 @@ func run()->void:
  await photograph("annotated_map")
  for setting:String in ["show_roads","show_deposits","show_places","show_grid"]:atlas.panel.find_child(setting,true,false).button_pressed=false
  game.world_map.set_open(false)
+ if city_recipe:await review_road_surfaces(game,planned)
  await verify_approved_records(game)
  game.session_menu.set_open(false)
  await photograph("custom_world_playable")
@@ -126,6 +150,7 @@ func run()->void:
  browser.launch_selected(false)
  check(await wait_for(game_ready,90),"saved world reopens through the selector without reapplying UI options")
  if game_ready():
+  check(current_scene.world_map.water_survey.complete and current_scene.world_map.water_survey.texture!=null and current_scene.world_map.updates.patches==0,"reloaded save has water ready and reuses terrain raster without resurvey")
   check(current_scene.world_recipe.store.capture_snapshot()==bytes and current_scene.ecosystem.biome_profile==options.biome,"requested biome survives save and reload")
   check(current_scene.generated_region.store.capture_snapshot()==region_bytes,"all district and road metadata survives reload exactly")
   check(current_scene.material_deposits.store.capture_snapshot()==mineral_bytes,"material-deposit metadata survives full world save/reload exactly")

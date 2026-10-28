@@ -4,7 +4,7 @@ const Cache=preload("res://addons/world_runtime/survey_cache.gd")
 func _initialize()->void:
  var failures:=0
  var core=ClassDB.instantiate("TerrainCore")
- for size in [0,63,513,2147483647]:
+ for size in [0,63,1025,2147483647]:
   if core.survey_overview(size).ok:failures+=1
  var path:="user://map_check_%d"%OS.get_process_id()
  var first:Dictionary=Cache.build(42,13,path)
@@ -26,6 +26,10 @@ func _initialize()->void:
  if not swapped.ok or swapped.cache_hit or swapped.pixels!=first.pixels:failures+=1
  var prepared:Dictionary=Cache.prepare(42,13,path)
  if not prepared.ok or not prepared.reopen_verified or prepared.has("pixels"):failures+=1
+ var detailed:Dictionary=Cache.build(42,13,path,1024)
+ var detailed_hit:Dictionary=Cache.build(42,13,path,1024)
+ if not detailed.ok or detailed.pixels.size()!=1024*1024*4 or detailed.cache_hit or not detailed_hit.cache_hit or detailed_hit.pixels!=detailed.pixels:failures+=1
+ if not Cache.build(42,13,path).cache_hit:failures+=1
  for name in DirAccess.get_files_at(path):DirAccess.remove_absolute(path+"/"+name)
  DirAccess.remove_absolute(path)
  print("SURVEY_MAP failures=",failures," native_ms=",first.native_ms," cold_ms=",first.worker_ms," cached_ms=",second.worker_ms)

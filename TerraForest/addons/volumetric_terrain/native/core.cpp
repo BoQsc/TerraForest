@@ -624,7 +624,9 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
    i16 q=quant(value),previous=quant(old);
    // Paving an already graded solid surface is still a material edit. Keep
    // cut walls, air and protected bedrock outside this repaint operation.
-   bool repaint=graded&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
+   bool pavement=graded&&material==4;
+   bool paved_surface=!pavement||road_bed_field(p,a,b,radius,mn(depth,1.5f),0,curve,curve_count,curve_index,0,false,shape==5)<=0;
+   bool repaint=graded&&paved_surface&&brush<=0&&q<=0&&y>3&&(!present||(idx<0?base_material(p,h):pages[idx].mat[j])!=material);
    if(shape==4){
     if(brush>0||q>=0||y<=3)continue;
     repaint=(idx<0?base_material(p,h):pages[idx].mat[j])!=material;
@@ -636,6 +638,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
     present=true;reference=-1-at;
    }
    u8 flags=((add||!has_geology())&&!(graded&&clearance>0&&brush>0))?1:0;
+   if(pavement&&!paved_surface){flags&=~1;if(previous>=0&&q<0)flags|=8;}
    if(removed_samples&&!add&&shape<2&&previous<0&&q>=0){flags|=2;if(float(y)>=h-2.f)flags|=4;}
    staged.push({reference,u16(j),q,flags});if(tr_oom){discard();return false;}
   }
@@ -662,7 +665,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  for(int i=0;i<staged.n;i++){
   auto sample=staged[i];int id=sample.page<0?original_pages-1-sample.page:sample.page;auto &page=pages[id];
   if(sample.flags&2){u8 source=page.mat[sample.sample];if(source==0&&(sample.flags&4))source=10;if(source<16)removed_samples[source]++;}
-  page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;page.geometry_digest_valid=false;page.storage_version=storage_serial;
+  page.d[sample.sample]=sample.density;if(sample.flags&1)page.mat[sample.sample]=material;else if(sample.flags&8)page.mat[sample.sample]=1;page.geometry_digest_valid=false;page.storage_version=storage_serial;
  }
  changes=staged.n;discard();
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,

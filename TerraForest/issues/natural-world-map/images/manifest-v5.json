@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-28",
+  "baseline_commit": "122cbb73",
+  "build": "Road/material/map-readiness working tree; native hashes and external driver hashes retained in run manifest",
+  "pack_sha256": "28a2b8224ed3a8a859fbd4b1e6d694e6451b25f8c3d5b83e39ce8bfc613e24fe",
+  "seed": 1703,
+  "generator": 25,
+  "recipe": {"biome": 0, "settlements": 3, "districts": 3, "network": 2, "trails": 2, "road_grid": 3, "material_veins": 1},
+  "world_slot": "recipe_generated_527227dc4f4be09a",
+  "resolution": "1920x1080",
+  "run": "reports/checks/20261028T125935325321Z_minerals_pack/world_recipe_generation/run.json",
+  "source_directory": "reports/checks/20261028T125935325321Z_minerals_pack/world_recipe_generation/evidence/world_generator_city",
+  "images": [
+    {"file": "detailed-map-v5.png", "source": "material_map.png", "sha256": "547b46252e353ce0d9bbbe239ed2c180228b2f41b5f046e228899af82e0a7339", "scope": "Whole physical map, all annotations off; first M ready without source resurvey; inspected, not user approved"},
+    {"file": "road-detail-v5.png", "source": "road_map_detail_0.png", "sha256": "8ae53c64354776b4caaa62080c27973edc49c1d97e37f30de3b14fb9d8d2a3b6", "scope": "Regional road near E1056 S1000, 6x zoom; finite-sampling limits retained, not exact surface mesh silhouettes"},
+    {"file": "road-surface-v5.png", "source": "road_surface_0.png", "sha256": "aad24680ec3f56f547da0373ef715ebce689659da6bbd6909883a477ac0a55f5", "scope": "Actual regional road geometry/material, gravel shoulder remains irregular; not an FPS benchmark or universal shoulder approval"},
+    {"file": "town-road-v5.png", "source": "road_surface_1.png", "sha256": "3b2807fdc3c188f6873a3f8ebb6636ff33b24f0a19d110cbadaa174c13b1bac2", "scope": "First district street/junction with unchanged approved house and plates; asphalt continuity review"}
+  ]
+}

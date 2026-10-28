@@ -5,6 +5,10 @@ const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Layout=preload("res://addons/volumetric_terrain/generated_layout.gd")
 var game:Node
 var opened:=false
+var warming:=false
+var warm_key:=""
+var warm_started:=0
+var warm_error:=""
 var panel:PanelContainer
 var view:Control
 var status:Label
@@ -126,15 +130,32 @@ func set_open(value:bool)->void:
  if value:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
- opened=value;panel.visible=value;context_menu.hide();view.dragging=false;view.teleport_click=false;updates.set_process(value);water_survey.set_process(value);block_survey.set_process(value);model_survey.set_process(value)
- if not value:water_survey.pause();block_survey.pause();model_survey.pause()
+ opened=value;panel.visible=value;context_menu.hide();view.dragging=false;view.teleport_click=false;set_survey_processing(value or warming)
  game.player_hud.inventory_open=false;game.player_hud.enabled=not value and not game.world_vehicle.driving
  game._cancel_edit_input();Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)
  game.session_menu.refresh();game.session_menu.sync_panels()
  if value:
   travel_hint.visible=game.session_menu.developer;travel_hint.text="DEVELOPMENT\nHold Ctrl + left-click to teleport.\nLoads terrain before resuming play."
+  for survey:Node in [water_survey,block_survey,model_survey]:
+   if survey.failed:survey.stamp=""
   refresh_world();updates.recheck_identity();view.follow_player();timer.start();update_position()
  else:timer.stop()
+func set_survey_processing(value:bool)->void:
+ for survey:Node in [updates,water_survey,block_survey,model_survey]:survey.set_process(value)
+func prepare_for_play()->bool:
+ var identity:="%d/%d"%[game.terrain.epoch,game.generated_region.revision()]
+ if warm_key!=identity:
+  warm_key=identity;warming=true;warm_started=Time.get_ticks_msec();warm_error="";refresh_world();set_survey_processing(true);updates.in_flight_limit=4
+ if not warming:return true
+ var ready:bool=texture!=null and updates.identity_checked and updates.dirty.is_empty() and updates.pending.is_empty() and updates.io==null
+ for survey:Node in [water_survey,block_survey,model_survey]:ready=ready and survey.complete and survey.io==null
+ if Time.get_ticks_msec()-warm_started>120000 or water_survey.failed or block_survey.failed or model_survey.failed or not warm_error.is_empty():
+  warm_error="Map preparation incomplete; open M to retry. "+updates.description()
+  status.text=warm_error;warming=false;updates.in_flight_limit=1;set_survey_processing(opened)
+  return true
+ if ready:
+  warming=false;updates.in_flight_limit=1;set_survey_processing(opened)
+ return ready
 func teleport_to(point:Vector2)->bool:
  if not opened or not game.session_menu.developer:return false
  if not point.is_finite() or point.x<0 or point.x>2000 or point.y<0 or point.y>2000:
@@ -179,25 +200,25 @@ func refresh_world()->void:
   if street.ends.size()==2:roads.append({"a":street.ends[0],"b":street.ends[1],"width":street.width})
  if texture==null and worker==null:
   job_key=key;worker=Thread.new();builds+=1
-  if worker.start(Survey.build.bind(seed_value,generator))==OK:set_process(true)
-  else:worker=null;status.text="Survey unavailable. Close and reopen to retry."
+  if worker.start(Survey.build.bind(seed_value,generator,"user://cartography",Survey.LIVE_SIZE))==OK:set_process(true)
+  else:worker=null;warm_error="Survey unavailable. Close and reopen to retry.";status.text=warm_error
  else:status.text=updates.description()
 func _process(_delta:float)->void:
  if worker==null:set_process(false);return
  if worker.is_alive():return
  var result:Dictionary=worker.wait_to_finish();worker=null;set_process(false)
  if job_key!=key:
-  if opened:refresh_world()
+  if opened or warming:refresh_world()
   return
- if not result.get("ok",false):status.text="Survey unavailable. Close and reopen to retry.";return
+ if not result.get("ok",false):warm_error="Survey unavailable. Close and reopen to retry.";status.text=warm_error;return
  last_profile=result.duplicate();last_profile.erase("pixels")
- updates.image=Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,result.pixels)
- updates.displayed=Image.create_from_data(Survey.SIZE,Survey.SIZE,false,Image.FORMAT_RGBA8,surface_pixels(result.pixels))
+ updates.image=Image.create_from_data(Survey.LIVE_SIZE,Survey.LIVE_SIZE,false,Image.FORMAT_RGBA8,result.pixels)
+ updates.displayed=Image.create_from_data(Survey.LIVE_SIZE,Survey.LIVE_SIZE,false,Image.FORMAT_RGBA8,surface_pixels(result.pixels))
  texture=ImageTexture.create_from_image(updates.displayed)
  status.text=updates.description()
  view.queue_redraw()
-func surface_pixels(pixels:PackedByteArray,origin:Vector2i=Vector2i.ZERO,width:int=256)->PackedByteArray:
- return game.world_recipe.store.render_biomes(pixels,game.terrain.backend.world_seed,game.ecosystem.biome_profile,origin,width)
+func surface_pixels(pixels:PackedByteArray,origin:Vector2i=Vector2i.ZERO,width:int=Survey.LIVE_SIZE)->PackedByteArray:
+ return game.world_recipe.store.render_biomes(pixels,game.terrain.backend.world_seed,game.ecosystem.biome_profile,origin,width,Survey.LIVE_SIZE)
 func update_position()->void:
  if not opened:return
  if game.loading_active or game.shutdown_requested:set_open(false);return

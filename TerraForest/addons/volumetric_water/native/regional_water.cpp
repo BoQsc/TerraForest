@@ -362,8 +362,8 @@ PackedByteArray NativeRegionalWater::ocean_publication_mask() const {
 }
 void NativeRegionalWater::request(Key k){if(request_set.insert(k).second)requests.push_back(k);}
 void NativeRegionalWater::invalidate_snapshot(bool map_changed) const {
-    if(map_changed&&!generating_ocean)++map_revision;
-    ++survey_revision;survey_saved_identity=String();
+    if(map_changed&&!generating_ocean){++map_revision;survey_saved_identity=String();}
+    ++survey_revision;
     if(!snapshot_cached&&saved_frozen.is_null())return;
     snapshot_cached=false;saved_snapshot=PackedByteArray();saved_catalog=PackedByteArray();
     saved_frozen.unref();frozen_catalog=PackedByteArray();

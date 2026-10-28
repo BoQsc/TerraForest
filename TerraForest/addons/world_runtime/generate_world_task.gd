@@ -481,14 +481,13 @@ func saved_map_certificates(backend:RefCounted)->Dictionary:
  var canonical:PackedByteArray=raw.read(path)
  var certificate:Dictionary=backend.snapshot_codec.map_certificates()
  if not certificate.get("ok",false):return {}
- if backend.world_generator not in [19,21,23,25,27]:
-  var root_data:Dictionary=raw.decode(canonical)
-  if not root_data.get("ok",false) or not root_data.sections.has("volumetric_water"):return {}
-  var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
-  if not store.open_store(path+".water"):return {}
-  var bytes:PackedByteArray=store.expand_water_snapshot(root_data.sections.volumetric_water);store.close()
-  if bytes.is_empty():return {}
-  certificate["water_identity"]="snapshot-v1|"+preload("res://addons/world_runtime/survey_cache.gd").digest(bytes).hex_encode()
+ var root_data:Dictionary=raw.decode(canonical)
+ if not root_data.get("ok",false) or not root_data.sections.has("volumetric_water"):return {}
+ var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
+ if not store.open_store(path+".water"):return {}
+ var bytes:PackedByteArray=store.expand_water_snapshot(root_data.sections.volumetric_water);store.close()
+ if bytes.is_empty():return {}
+ certificate["water_identity"]="snapshot-v1|"+preload("res://addons/world_runtime/survey_cache.gd").digest(bytes).hex_encode()
  return certificate if raw.read(path)==canonical else {}
 
 func generate_prefab(game:Node,lot:Dictionary)->bool:
