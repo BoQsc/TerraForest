@@ -138,7 +138,7 @@ Dictionary fit_generated_road_network(const World &world,const Array &source,con
   ++protected_crossings;Vector2 crossing=origin+axis*along;
   for(auto *edge:{&left,&right})for(int node:edge->nodes){
    auto &station=nodes[node];if(Vector2(station.position.x,station.position.z).distance_to(crossing)>std::max(left.width,right.width)+6)continue;
-   if(station.original<station.low-1e-5||station.original>station.high+1e-5)return rejected("Crossing requires corridor replanning",int(first));
+   if(station.original<station.low-1e-5||station.original>station.high+1e-5){auto result=rejected("Crossing requires corridor replanning",int(first));result["other_road"]=int(second);result["position"]=Vector3(crossing.x,station.original,crossing.y);return result;}
    station.low=station.high=station.height=station.original;station.fixed=true;
   }
  }

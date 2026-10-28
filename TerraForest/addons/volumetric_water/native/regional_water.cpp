@@ -1441,19 +1441,31 @@ PackedByteArray NativeWaterSnapshot::serialize_snapshot(){
 }
 Variant NativeRegionalWater::capture_storage_snapshot(const PackedByteArray &catalog) const {
     if(fill.running)return PackedByteArray();
-    if(snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
+    bool has_generated_ocean=false;
+    for(const auto &[coordinate,region]:regions)has_generated_ocean|=region.ocean_state==1;
+    if(!has_generated_ocean&&snapshot_cached&&catalog==saved_catalog){++snapshot_hits;return saved_snapshot;}
     if(saved_frozen.is_valid()&&catalog==frozen_catalog){++snapshot_hits;return saved_frozen;}
     Ref<NativeLakeCatalog> validator;validator.instantiate();if(!validator->validate_snapshot(catalog))return PackedByteArray();
     // Account retained immutable contacts conservatively too. Fail closed when
     // queued snapshots exhaust this bound; the backend retains the canonical save.
-    uint64_t bytes=catalog.size()+regions.size()*(sizeof(Region)+64)+deferred_regions.size()*128;
-    for(const auto &[k,r]:regions){bytes+=r.vacancies.size()*sizeof(uint32_t);if(r.contacts)bytes+=r.contacts->bytes;if(r.structures)bytes+=r.structures->bytes;}
+    uint64_t bytes=catalog.size()+deferred_regions.size()*128;
+    for(const auto &[coordinate,region]:regions){
+        if(region.ocean_state==1)continue;
+        bytes+=sizeof(Region)+64+region.vacancies.size()*sizeof(uint32_t);
+        if(region.contacts)bytes+=region.contacts->bytes;
+        if(region.structures)bytes+=region.structures->bytes;
+    }
     uint64_t previous=NativeWaterSnapshot::pending_bytes.load();
     do{if(bytes>128*1024*1024||previous>128*1024*1024-bytes)return PackedByteArray();}
     while(!NativeWaterSnapshot::pending_bytes.compare_exchange_weak(previous,previous+bytes));
     Ref<NativeWaterSnapshot> snapshot;snapshot.instantiate();snapshot->reserved_bytes=bytes;
     snapshot->catalog=catalog;snapshot->frozen.instantiate();
-    snapshot->frozen->regions=regions;snapshot->frozen->total=total;snapshot->frozen->deferred_regions=deferred_regions;
+    for(const auto &[coordinate,region]:regions){
+        if(region.ocean_state==1)continue;
+        snapshot->frozen->regions.emplace(coordinate,region);
+        for(auto amount:region.water)snapshot->frozen->total+=amount;
+    }
+    snapshot->frozen->deferred_regions=deferred_regions;
     saved_frozen=snapshot;frozen_catalog=catalog;
     return snapshot;
 }
@@ -1529,6 +1541,7 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
             auto contacts=std::make_shared<TerrainWaterContacts>();
             for(auto &cell:contacts->floors){if(offset+4>data.size())return false;uint32_t count=data.decode_u32(offset);offset+=4;
                 if(count>128||offset+int64_t(count)*36>data.size())return false;double area=0;
+                cell.reserve(count);
                 for(uint32_t n=0;n<count;++n){WaterCellProfile::Triangle triangle;
                     for(auto &p:triangle){p={data.decode_float(offset),data.decode_float(offset+4),data.decode_float(offset+8)};offset+=12;
                         if(!std::isfinite(p.x)||!std::isfinite(p.z)||!std::isfinite(p.y)||p.x< -1e-6||p.x>1+1e-6||p.z< -1e-6||p.z>1+1e-6||std::abs(p.y)>10000)return false;}

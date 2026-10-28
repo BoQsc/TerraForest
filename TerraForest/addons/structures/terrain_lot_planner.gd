@@ -69,13 +69,15 @@ static func reservations(core,origin:Vector3)->Dictionary:
  var sites:PackedByteArray=core.execute(Codec.command(34))
  if not Codec.reply_ok(sites) or sites.size()!=168:return {"ok":false}
  var owner:=-1;var closest:=INF
+ var description:PackedByteArray=core.execute(Codec.command(25))
+ var distributed:bool=Codec.reply_ok(description) and description.size()>=20 and description.decode_u32(12)>=24
  for i in 5:
   var at:int=16+i*20
   var point:=Vector2(sites.decode_float(at),sites.decode_float(at+8))
   var distance:float=point.distance_squared_to(Vector2(origin.x,origin.z))
   if distance<closest:closest=distance;owner=i
  for i in 5:
-  if i==owner:continue
+  if i==owner or distributed:continue
   var at:int=16+i*20
   var point:=Vector2(sites.decode_float(at),sites.decode_float(at+8))
   var radius:float=sites.decode_float(at+12)+32
@@ -87,7 +89,7 @@ static func reservations(core,origin:Vector3)->Dictionary:
  result.append(Rect2(low,high-low).grow(12))
  var entrance:=Vector2(mine.decode_float(32),mine.decode_float(40))
  result.append(Rect2(entrance-Vector2(16,16),Vector2(32,32)))
- return {"ok":true,"areas":result,"owner":owner}
+ return {"ok":true,"areas":result,"owner":owner,"distributed":distributed}
 
 static func footprint_clear(bounds:AABB,reserved:Array)->bool:
  var footprint:=Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z))
@@ -95,17 +97,21 @@ static func footprint_clear(bounds:AABB,reserved:Array)->bool:
   if footprint.intersects(area):return false
  return true
 
-static func locate(core,center:Vector3,occupied:Array=[])->Dictionary:
+static func locate(core,center:Vector3,occupied:Array=[],search_area:Rect2=Rect2())->Dictionary:
  var protected:Dictionary=reservations(core,center)
  if not protected.ok:return {"ok":false,"reason":"Native region reservations unavailable","attempts":0}
  for bounds:AABB in occupied:
   protected.areas.append(Rect2(Vector2(bounds.position.x,bounds.position.z),Vector2(bounds.size.x,bounds.size.z)).grow(12))
  var attempts:=0;var reasons:Dictionary={};var best_missing:=12
  var candidates:Array=[]
- for dx in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:
-  for dz in [0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]:
+ var offsets:Array=[0,-24,24,-48,48,-72,72,-96,96,-120,120,-144,144,-168,168,-192,192,-216,216,-240,240,-264,264,-288,288]
+ if protected.distributed:
+  for distance in range(312,433,24):offsets.append(-distance);offsets.append(distance)
+ for dx in offsets:
+  for dz in offsets:
    var candidate:=center+Vector3(dx,0,dz)
    if candidate.x<120 or candidate.z<120 or candidate.x>1880 or candidate.z>1880:continue
+   if search_area.has_area() and not search_area.has_point(Vector2(candidate.x,candidate.z)):continue
    attempts+=1
    # Conservative recipe envelope includes shifted plots, paths and shoulders.
    if not footprint_clear(AABB(candidate-Vector3(75,0,100),Vector3(150,256,200)),protected.areas):
@@ -119,7 +125,7 @@ static func locate(core,center:Vector3,occupied:Array=[])->Dictionary:
    candidates.append({"center":candidate,"roads":roads,"cost":cost,"order":attempts})
  candidates.sort_custom(func(a:Dictionary,b:Dictionary):return a.cost<b.cost if a.cost!=b.cost else a.order<b.order)
  for candidate:Dictionary in candidates:
-  for variant in [0,1,2,3]:
+  for variant in range(12 if protected.distributed else 4):
    var lots:Dictionary=plan(core,candidate.center,candidate.roads.segments,variant)
    best_missing=mini(best_missing,lots.rejected.size())
    if lots.ok:

@@ -1,7 +1,36 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
-## Generator UI and larger regions — 2026-10-28
+## Distributed lakes, towns and generation cost — 2026-10-28
+
+New immutable profiles 24–27 replace four lake anchors and central/west-biased
+town hints for newly created worlds. Three seeds × four profiles produce twelve
+lakes across four quadrants. The coastal regional-belt preset has 104 unchanged
+approved-catalogue buildings across nine districts / four quadrants, 4.30 km of
+regional links and 5.36 km of trails in seed 1703. Existing saves stay untouched.
+Native graph reuse, indexed lake queries, exact reservation intersection and
+deduplicated grading avoid repeated generation work. Native map height bounds
+and bounded generation batching preserve the nine reference rasters; aggregate
+visibility work falls from 201.188 to 8.451 ms and patch work from 267.229 to
+5.543 ms in isolated checks, not a total loading-time or FPS guarantee.
+Exact water-contact allocation fixes twelve-lake restore/capture rejection;
+new five-metre basins remain within unchanged 128 MiB frozen / 64 MiB snapshot
+limits across three seeds. Storage omits only regenerable, unmodified ocean.
+The installed pack passes recipe/distribution/map/water/UI tests. Full production
+creation, photography, map bake, play/save/reload passes 42 assertions; all 104
+clearance envelopes pass separately. Creation phase is 96.19 s on this machine.
+[Current images, hashes, timings and retained failures](../issues/world-generator/README.md).
+
+Remaining: maximum inland seed 1703 cannot fit a required eastern district under
+unchanged lot standards; custom generation fails explicitly. Resume bounded lot
+layouts rather than weakening standards, with multi-seed envelope/connectivity
+evidence. One 26/28 vegetation-readiness photograph timeout is retained, not declared
+fixed; if it recurs, capture pending coverage jobs before changing readiness policy.
+Regional city design, climate biomes, settled-map visual review, vehicle traversal
+and weak-hardware/endurance qualification remain open. Return after regional-preview
+review and require ground-level/all-district evidence, not merely successful saves.
+
+## Earlier generator UI and larger regions — 2026-10-28
 
 World / Landscape / Settlements tabs, five working presets, three temperate
 coverage choices and live plan counts replace the earlier two-tab form. Native

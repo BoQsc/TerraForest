@@ -5,12 +5,13 @@ var failures:=0
 func _initialize()->void:run.call_deferred()
 func run()->void:
  var options:=Recipe.DEFAULTS.duplicate();options.biome=2;options.settlements=3;options.districts=3;options.network=2;options.trails=2
+ var generator:=25 if "--distributed" in OS.get_cmdline_user_args() else 22
  var folder:="user://generator_clearance_"+Crypto.new().generate_random_bytes(6).hex_encode()
- var worker:=Thread.new();worker.start(preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(1703,22,true,true,folder,options))
+ var worker:=Thread.new();worker.start(preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(1703,generator,true,true,folder,options))
  while worker.is_alive():await process_frame
  var plan:Dictionary=worker.wait_to_finish()
  if not plan.get("ok",false):print("FAIL ",plan);quit(1);return
- var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[1703,22]))
+ var core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[1703,generator]))
  var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(plan.works.segments,plan.material_deposits)
  worker=Thread.new();worker.start(core.bake_generated_earthworks_staged.bind(packets,ProjectSettings.globalize_path(folder+"/bake")))
  while worker.is_alive():await process_frame

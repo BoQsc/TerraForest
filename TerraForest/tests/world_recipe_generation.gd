@@ -98,7 +98,7 @@ func run()->void:
  for asset:String in preload("res://addons/world_runtime/material_deposits.gd").KEYS.values():mineral_count+=game.structures.model(asset).region_stats().get("logical_instances",0)
  check(mineral_count==deposits.size(),"every generated deposit has one persistent mineral stone, including unloaded regions")
  print("GENERATED_MINERALS count=",deposits.size()," logical_instances=",mineral_count," native_plan_ms=",planned.get("mineral_plan_ms",-1))
- game.world_map.set_open(true);game.world_map.view.overview()
+ game.app_focused=true;game.world_map.set_open(true);game.world_map.view.overview()
  check(game.world_map.deposits.size()==deposits.size(),"production map publishes all material deposits")
  await photograph("material_map")
  game.world_map.set_open(false)

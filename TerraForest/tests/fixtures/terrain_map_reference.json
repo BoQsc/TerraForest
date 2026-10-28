@@ -1,0 +1,83 @@
+[
+  {
+    "calls": 27,
+    "patch_ms": 28.71,
+    "phase": 0,
+    "pixels": "66b794916d0b9c360eb05fe61cf696fcd0fa63c197f08a4d40b420773255d93e",
+    "seed": 0,
+    "visibility_ms": 25.191,
+    "visible": "eed6ecf5fa863f87e179f2f6e0283849f29c4c34e5dddfec6943c03c77d8f363"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 30.626,
+    "phase": 1,
+    "pixels": "df88c985d62faac0cb31d9088db2fe4757cbe631ae4fdf8560560a6d908dc5d0",
+    "seed": 0,
+    "visibility_ms": 22.931,
+    "visible": "7efd15ec32db4451e554682c927bdc26d12cf6909a2daad0675a604d51785694"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 28.369,
+    "phase": 2,
+    "pixels": "daff95fa90e1ddd4d49810ff61629354f1ac1dd0e02462679b6a2f38f7d2fb41",
+    "seed": 0,
+    "visibility_ms": 21.908,
+    "visible": "1aa8771e0f0a6b0ca564490b28296a45c208fe879f8fc4a7675975b2aec303b3"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 24.674,
+    "phase": 0,
+    "pixels": "e59bbcf21db2e58ee482a100dd0d576b7e1cd2c843f74e2b5789d449903cd273",
+    "seed": 42,
+    "visibility_ms": 22.211,
+    "visible": "bd34cf7f5ceda1394dae3f5196b65a76b1ac3f9e5162f70ad6c8d5308526b557"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 27.104,
+    "phase": 1,
+    "pixels": "54d40fcd22485190f9c41809f7828ab047f7967e36d13813d6185e26bd059fcf",
+    "seed": 42,
+    "visibility_ms": 20.833,
+    "visible": "d9f25224692d6700e1865784f2b09817e960d97fa415daaaad6c526b0868a5ea"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 29.631,
+    "phase": 2,
+    "pixels": "daaae096c494a0ef751150f2f4714378e1a0f197b697ef017a45903c24284a08",
+    "seed": 42,
+    "visibility_ms": 21.514,
+    "visible": "0ce364d27731c87dbc37fa45d2307e64f08338ee52a6de42906cbf121791a866"
+  },
+  {
+    "calls": 27,
+    "patch_ms": 31.79,
+    "phase": 0,
+    "pixels": "df5c7f4341b00f98034037446955ca792d9b7f1568061562a3e7370af544262e",
+    "seed": 1703,
+    "visibility_ms": 23.254,
+    "visible": "d3b85ace8352dcf85fbe2f210887f2658b80e4e50efd1d90eb15bb327ee90674"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 32.207,
+    "phase": 1,
+    "pixels": "f7b8abe21cad9f2b64303935d644829760abb638dd001354da03d5fd8f1069d7",
+    "seed": 1703,
+    "visibility_ms": 21.825,
+    "visible": "505387b5148c958f2ff964590f0b58fadfbeefe390a4326d6dd1ab4fb850d643"
+  },
+  {
+    "calls": 28,
+    "patch_ms": 34.118,
+    "phase": 2,
+    "pixels": "762fd78132c8b5abbada24f44888d9143e932eeea23a0e554289e3e925f708c6",
+    "seed": 1703,
+    "visibility_ms": 21.521,
+    "visible": "a8106eb4db2563e30f05555387e7fd7ddef4a636b5214d44a1ad110df4686d2b"
+  }
+]

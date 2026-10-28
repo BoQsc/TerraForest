@@ -10,10 +10,10 @@ func current_stamp()->String:
  if store==null:return ""
  return "%d/%d/%d/%d"%[terrain.epoch,terrain.density_revision,store.get_instance_id(),store.survey_revision_id()]
 func fast_identity()->String:
- return water.survey_cache_identity() if water!=null and terrain.backend.world_generator not in [19,21,23] else ""
+ return water.survey_cache_identity() if water!=null and terrain.backend.world_generator not in [19,21,23,25,27] else ""
 func begin_source()->void:
- water=atlas.game.lakes.water;water_revision=water.survey_revision_id();cursor=0;ocean_cursor=0;ocean_done=terrain.backend.world_generator not in [19,21,23]
- batch_limit=256 if not ocean_done else 16
+ water=atlas.game.lakes.water;water_revision=water.survey_revision_id();cursor=0;ocean_cursor=0;ocean_done=terrain.backend.world_generator not in [19,21,23,25,27]
+ batch_limit=256
  cache_namespace="water-map-v2"
 func source_step()->Dictionary:
  if not ocean_done:

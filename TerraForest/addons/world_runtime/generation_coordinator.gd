@@ -43,7 +43,7 @@ func _initialize()->void:
   if arg.begins_with("--generator="):generator=int(arg.trim_prefix("--generator="))
   if arg.begins_with("--status-file="):status_path=arg.trim_prefix("--status-file=")
   if arg.begins_with("--cancel-file="):cancel_path=arg.trim_prefix("--cancel-file=")
- if not Launch.valid_slot(destination) or seed_value<0 or seed_value>2147483647 or generator not in [13,17,19,20,21,22,23] or settlement_layout not in ["connected","road","settlement"]:finish("failed","Invalid generation settings");return
+ if not Launch.valid_slot(destination) or seed_value<0 or seed_value>2147483647 or generator not in [13,17,19,20,21,22,23,24,25,26,27] or settlement_layout not in ["connected","road","settlement"]:finish("failed","Invalid generation settings");return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok or (not recipe.options.is_empty() and generator==13):finish("failed","Invalid custom world recipe");return
  world_options=recipe.options
@@ -80,7 +80,7 @@ func start_stage(state:String)->void:
  progress_detail={}
  status(state)
  var folder:=report.path_join(state);DirAccess.make_dir_recursive_absolute(folder)
- var fitted:=generator in [17,19,20,21,22,23]
+ var fitted:=generator in [17,19,20,21,22,23,24,25,26,27]
  var entry:="res://addons/world_runtime/prepare_terrain_world.gd" if review_generation else "res://addons/world_runtime/generate_world.gd"
  var args:=Launch.engine_prefix()+PackedStringArray(["--fullscreen","--resolution","1920x1080","--max-fps","60","--log-file",ProjectSettings.globalize_path(folder.path_join("engine.log")),"--script",entry if fitted else "res://addons/world_runtime/prepare_combined_world.gd","--","--world-slot="+stage,"--world-generator="+str(generator),"--world-seed="+str(seed_value),"--progress-file="+ProjectSettings.globalize_path(report.path_join(state+"_progress.json")),"--ground-cover","--actors","--vehicle-fleet","--checkpoint-layout=districts","--checkpoint-report="+ProjectSettings.globalize_path(report.path_join("checkpoint.json")),"--derived-cache=user://derived_046"])
  if fitted:
@@ -150,7 +150,7 @@ func _process(_delta:float)->void:
  if cancelled():finish("cancelled","Unpublished staging retained for diagnosis");return
  var log:=FileAccess.get_file_as_string(report.path_join(phase).path_join("engine.log")) if external_stages else ""
  var token:="TERRAIN_LOT_WORLD_REVIEW failures=0" if phase=="creating" else "TERRAIN_LOT_REOPEN failures=0"
- if generator in [17,19,20,21,22,23] and not review_generation:token="WORLD_GENERATED failures=0"
+ if generator in [17,19,20,21,22,23,24,25,26,27] and not review_generation:token="WORLD_GENERATED failures=0"
  if generator==13:token="COMBINED_PREPARATION failures=0"
  metadata.phases[-1]["exit_code"]=exit_code
  metadata.phases[-1]["elapsed_usec"]=Time.get_ticks_usec()-int(metadata.phases[-1].started_usec)

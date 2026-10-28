@@ -6,6 +6,7 @@ var terrain:Node
 var image:Image
 var dirty:Dictionary={}
 var pending:Dictionary={}
+var in_flight_limit:=1
 var serial:=0
 var patches:=0
 var max_native_ms:=0.0
@@ -46,32 +47,35 @@ func _process(_delta:float)->void:
    image=Image.create_from_data(256,256,false,Image.FORMAT_RGBA8,result.pixels)
    dirty.clear();cache_hits+=1;cache_saved=true;atlas.texture.update(image);atlas.view.queue_redraw();atlas.status.text=description()
   io_job.clear()
- if not atlas.opened or image==null or not pending.is_empty():return
+ if not atlas.opened or image==null:return
  if epoch!=terrain.epoch:return
  if not identity_checked:
+  if not pending.is_empty():return
   serial+=1
-  if terrain.request_survey_identity(serial):pending={"kind":"identity","token":serial}
+  if terrain.request_survey_identity(serial):pending[serial]={"kind":"identity"}
   return
  if dirty.is_empty():
+  if not pending.is_empty():return
   if not cache_saved and not cache_identity.is_empty() and cache_revision==terrain.density_revision and not terrain.pending_edit:
    cache_saved=true;io_job={"kind":"write"};io=Thread.new()
    if io.start(Cache.write.bind(terrain.save_slot,cache_identity,image.get_data()),Thread.PRIORITY_LOW)!=OK:io=null;io_job.clear();cache_saved=false
   return
- var tile:Vector2i=dirty.keys()[0]
- var rect:=Rect2i(tile*4,Vector2i(4,4));serial+=1
- if terrain.request_survey_patch(rect,serial):
-  dirty.erase(tile);pending={"kind":"patch","tile":tile,"token":serial}
+ for tile:Vector2i in dirty.keys():
+  if pending.size()>=clampi(in_flight_limit,1,4):break
+  var rect:=Rect2i(tile*4,Vector2i(4,4));serial+=1
+  if not terrain.request_survey_patch(rect,serial):break
+  dirty.erase(tile);pending[serial]={"kind":"patch","tile":tile}
 func receive(result:Dictionary)->void:
- if pending.is_empty() or result.token!=pending.token:return
- if pending.kind=="identity":
-  pending.clear()
+ if not pending.has(result.token):return
+ var job:Dictionary=pending[result.token];pending.erase(result.token)
+ if job.kind=="identity":
   if result.epoch!=epoch or terrain.epoch!=epoch or result.revision!=terrain.density_revision or terrain.pending_edit:return
   identity_checked=true;cache_identity=result.identity;cache_revision=result.revision
   if not cache_identity.is_empty():
    io_job={"kind":"read","epoch":epoch,"revision":result.revision,"identity":cache_identity};io=Thread.new()
    if io.start(Cache.read.bind(terrain.save_slot,cache_identity),Thread.PRIORITY_LOW)!=OK:io=null;io_job.clear()
   return
- var tile:Vector2i=pending.tile;pending.clear()
+ var tile:Vector2i=job.tile
  if result.epoch!=epoch or terrain.epoch!=epoch:return
  if not result.get("ok",false) or result.get("revision",-1)!=terrain.density_revision or terrain.pending_edit:
   dirty[tile]=true;return
@@ -83,7 +87,7 @@ func receive(result:Dictionary)->void:
  atlas.status.text=description()
 
 func description()->String:
- var count:=dirty.size()+(0 if pending.is_empty() else 1)
+ var count:=dirty.size()+pending.size()
  return ("Terrain survey updating (%d areas)"%count if count>0 else "Terrain surface surveyed")+" | "+atlas.water_survey.description()+" | "+atlas.block_survey.description()+" | "+atlas.model_survey.description()
 
 func recheck_identity()->void:

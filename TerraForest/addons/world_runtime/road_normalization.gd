@@ -12,6 +12,12 @@ static func protected_areas(sites:Array)->Array:
 	return result
 static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=false,footprint_policy:bool=false)->Dictionary:
 	var roads:Array=[]
+	var supports:Dictionary={}
+	for support:Dictionary in network.segments:
+		if int(support.material)!=1:continue
+		var key:Array=[support.start,support.finish]
+		var previous:Dictionary=supports.get(key,{"half_width":0.0,"shoulder":0.0})
+		supports[key]={"half_width":maxf(previous.half_width,float(support.half_width)),"shoulder":maxf(previous.shoulder,float(support.shoulder))}
 	for index in sites.size():
 		for road:Dictionary in sites[index].roads:
 			var record:=road.duplicate();record["normalization_owner"]=index
@@ -25,13 +31,14 @@ static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=
 		var record:=road.duplicate();record["normalization_owner"]=-index-1
 		if footprint_policy:
 			record["support_half_width"]=float(road.half_width);record["support_shoulder"]=float(road.shoulder)
-			for support:Dictionary in network.segments:
-				if int(support.material)==1 and support.start==road.start and support.finish==road.finish:
-					record.support_half_width=maxf(record.support_half_width,float(support.half_width));record.support_shoulder=maxf(record.support_shoulder,float(support.shoulder))
+			var support:Dictionary=supports.get([road.start,road.finish],{})
+			if not support.is_empty():record.support_half_width=maxf(record.support_half_width,float(support.half_width));record.support_shoulder=maxf(record.support_shoulder,float(support.shoulder))
 		roads.append(record)
 	var result:Dictionary=core.fit_road_network(roads,protected_areas(sites),footprint_policy) if connected else core.normalize_roads(roads,protected_areas(sites))
 	if not result.get("ok",false):
 		var failed:int=int(result.get("road",-1))
+		var other:int=int(result.get("other_road",-1))
+		if other>=0 and other<roads.size() and int(roads[other].normalization_owner)<0:failed=other
 		if connected and failed>=0 and failed<roads.size() and int(roads[failed].normalization_owner)<0:
 			result["reroute_position"]=result.get("position",(roads[failed].start+roads[failed].finish)*.5)
 		return result

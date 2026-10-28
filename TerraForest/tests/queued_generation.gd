@@ -41,6 +41,7 @@ func wait_for(predicate:Callable,seconds:int)->bool:
 func run()->void:
 	if "--city-generation" in OS.get_cmdline_user_args():
 		recipe.biome=2;recipe.settlements=3;recipe.districts=3;recipe.network=2;recipe.trails=2;generator=22
+	if "--distributed" in OS.get_cmdline_user_args():generator=25
 	var output:="res://reports/queued_generation/"+slot
 	Options.set_arguments(PackedStringArray(["--world-slot="+slot,"--world-seed=1703","--world-generator="+str(generator),"--save-terrain-lots","--preparation-output="+output,"--world-recipe="+Marshalls.raw_to_base64(Recipe.encode(recipe))]),true)
 	var task:=DataGeneration.new();task.root=root

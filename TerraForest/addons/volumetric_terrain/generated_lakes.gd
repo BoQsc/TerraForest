@@ -5,7 +5,7 @@ static func describe(core:RefCounted,generator:int)->Dictionary:
  var definitions:PackedByteArray=core.execute(Codec.command(27))
  if not Codec.reply_ok(definitions) or definitions.size()<16:return {"ok":false}
  var count:int=definitions.decode_u32(12)
- if count>4 or definitions.size()!=16+count*44:return {"ok":false}
+ if count>16 or definitions.size()!=16+count*44:return {"ok":false}
  var records:Array=[]
  for i in count:
   var offset:=16+i*44

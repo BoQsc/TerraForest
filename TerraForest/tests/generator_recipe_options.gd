@@ -4,6 +4,8 @@ const Plan=preload("res://addons/world_runtime/world_generation_plan.gd")
 const CreationPanel=preload("res://demo/world_creation_panel.gd")
 var failures:=0
 var checks:=0
+class PlanningTrace extends RefCounted:
+ func record(stage:String,_completed:int=0,_total:int=0,detail:String="")->void:print("PLAN_STAGE ",Time.get_ticks_msec()," ",stage," ",detail)
 func _initialize()->void:run.call_deferred()
 func check(accepted:bool,message:String)->void:
  checks+=1
@@ -30,17 +32,23 @@ func run()->void:
  var folder:="user://generator_options_"+Crypto.new().generate_random_bytes(6).hex_encode()
  var reports:Array=[]
  for style:Dictionary in CreationPanel.STYLES:
-  var values:Array=style.values
+  if "--largest-only" in OS.get_cmdline_user_args() and style!=CreationPanel.STYLES[-1]:continue
+  var values:Array=style.values.duplicate()
+  if "--coastal-largest" in OS.get_cmdline_user_args():values[5]=true
   var options:=Recipe.DEFAULTS.duplicate()
   options.biome=values[0];options.settlements=values[1]+1;options.districts=values[2]+1;options.network=values[3];options.trails=values[4]
   var generator:=preload("res://demo/world_launch.gd").terrain_generator(values[5],true)
-  var worker:=Thread.new();worker.start(Plan.build.bind(1703,generator,true,true,folder,options))
+  var worker:=Thread.new();worker.start(Plan.build.bind(1703,generator,true,true,folder,options,PlanningTrace.new()))
   while worker.is_alive():await process_frame
   var result:Dictionary=worker.wait_to_finish()
   print("GENERATOR_STYLE ",style.name," ",result.get("reason","ok")," ms=",result.get("worker_ms",0))
   check(result.get("ok",false),"real plan fits preset "+style.name)
   if not result.get("ok",false):reports.append({"style":style.name,"error":result});continue
   check(result.sites.size()==options.settlements*options.districts,"all requested districts present: "+style.name)
+  if generator>=24 and result.sites.size()==9:
+   var quadrants:Dictionary={}
+   for site:Dictionary in result.sites:quadrants[Vector2i(int(site.center.x)/1000,int(site.center.z)/1000)]=true
+   check(quadrants.size()==4,"largest region includes inhabited districts in every quadrant")
   var owners:Array=[]
   for index in result.sites.size():owners.append(index)
   for link:Dictionary in result.network.links:

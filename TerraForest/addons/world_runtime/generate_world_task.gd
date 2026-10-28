@@ -79,11 +79,11 @@ func run()->void:
   if arg.begins_with("--progress-file="):progress_path=arg.trim_prefix("--progress-file=")
   if arg.begins_with("--cancel-file="):generation_cancel_path=arg.trim_prefix("--cancel-file=")
   if arg.begins_with("--preparation-output="):output_dir=arg.trim_prefix("--preparation-output=")
- if generator not in [17,18,19,20,21,22,23] or seed_value<0 or seed_value>2147483647:quit(1);return
+ if generator not in [17,18,19,20,21,22,23,24,25,26,27] or seed_value<0 or seed_value>2147483647:quit(1);return
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
- var native_lakes:=not qualification and generator in [17,19,20,21,22,23]
+ var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
   generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=generation_cancel_path;root.add_child(generation_screen)
@@ -419,6 +419,7 @@ func run()->void:
 func bake_map_layers(game:Node)->bool:
  game.app_focused=true;game.world_map.refresh_world();game.world_map.set_open(true)
  var atlas:Node=game.world_map
+ atlas.updates.in_flight_limit=4
  var ready:=false;var deadline:=Time.get_ticks_msec()+120000;var next_poll:=0
  while not ready and Time.get_ticks_msec()<deadline and not cancelled():
   var pending:=PackedStringArray()
@@ -431,6 +432,7 @@ func bake_map_layers(game:Node)->bool:
    progress("Caching the saved world map",4-pending.size(),4,{"activity":"Preparing world map layers","work":"Remaining: "+", ".join(pending) if not ready else "Map layers ready; verifying saved identities","stage_fraction":0.8*float(4-pending.size())/4.0})
   if not ready:await process_frame
  atlas.set_open(false)
+ atlas.updates.in_flight_limit=1
  if not ready:print("WORLD_MAP_GENERATION_FAILED ",atlas.status.text)
  if not ready:return false
  return await cache_for_playback(game,atlas)
@@ -479,7 +481,7 @@ func saved_map_certificates(backend:RefCounted)->Dictionary:
  var canonical:PackedByteArray=raw.read(path)
  var certificate:Dictionary=backend.snapshot_codec.map_certificates()
  if not certificate.get("ok",false):return {}
- if backend.world_generator not in [19,21,23]:
+ if backend.world_generator not in [19,21,23,25,27]:
   var root_data:Dictionary=raw.decode(canonical)
   if not root_data.get("ok",false) or not root_data.sections.has("volumetric_water"):return {}
   var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
@@ -528,13 +530,18 @@ func photograph_ready(game:Node)->bool:
   if center.distance_squared_to(eye)<96.0*96.0 and (not cover.resident.has(key) or cover._dirty.has(key)):return false
  return true
 
+static func road_photograph_view(points:PackedVector3Array)->Dictionary:
+ if points.size()<2:return {}
+ var segment:int=mini(points.size()/2,points.size()-2)
+ return {"name":"road","anchor":points[segment],"eye":points[segment]+Vector3.UP*1.7,"target":points[segment+1]+Vector3.UP*1.7}
+
 func bake_photographs(game:Node,plan:Dictionary,market:Dictionary,connection:Dictionary)->bool:
  var views:Array=[]
  var road:Dictionary=plan.roads[4]
  views.append({"name":"north","anchor":road.start,"eye":road.start+Vector3.UP*1.7,"target":road.finish+Vector3.UP*1.7})
  if not connection.is_empty():
-  var i:int=connection.points.size()/2
-  views.append({"name":"road","anchor":connection.points[i],"eye":connection.points[i]+Vector3.UP*1.7,"target":connection.points[i+1]+Vector3.UP*1.7})
+  var road_view:=road_photograph_view(connection.points)
+  if not road_view.is_empty():views.append(road_view)
  if not market.is_empty():
   var street:Dictionary=market.roads[3]
   views.append({"name":"market","anchor":street.start,"eye":street.start+Vector3.UP*1.7,"target":street.finish+Vector3.UP*1.7})

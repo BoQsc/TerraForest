@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <set>
+#include <tuple>
 #include <vector>
 namespace terraforest {
 using namespace godot;
@@ -34,6 +36,17 @@ struct Survey {
   return result;
  }
  bool clear(Vector3 a,Vector3 b){
+  if(distributed_region(world.generator_id)){
+   for(const auto &area:reserved){
+    double enter=0,leave=1;Vector2 origin(a.x,a.z),direction(b.x-a.x,b.z-a.z);
+    for(int axis=0;axis<2&&enter<=leave;axis++){
+     if(std::abs(direction[axis])<1e-9){if(origin[axis]<area.position[axis]||origin[axis]>=area.get_end()[axis])enter=2;}
+     else{double near=(area.position[axis]-origin[axis])/direction[axis],far=(area.get_end()[axis]-origin[axis])/direction[axis];if(near>far)std::swap(near,far);enter=std::max(enter,near);leave=std::min(leave,far);}
+    }
+    if(enter<=leave)return false;
+   }
+   return true;
+  }
   int count=std::max(1,int(std::ceil(horizontal(b-a)/2)));
   for(const auto &area:reserved)for(int i=0;i<=count;i++){
    Vector3 p=a.lerp(b,double(i)/count);if(area.has_point(Vector2(p.x,p.z)))return false;
@@ -80,7 +93,7 @@ Dictionary fit_generated_lakes(const World &world,const Array &records){
 // Regional preview at 2m sampling. This surveys the connected horizontal
 // surface of generated bowls, not their volume, and owns no water storage.
 Dictionary survey_generated_lake_surfaces(const World &world,const Array &records){
- if(records.size()>4)return failure("Too many preview lakes");
+ if(records.size()>16)return failure("Too many preview lakes");
  PackedVector3Array points;int samples=0;
  auto density=[&](Vector3 p){
   const int ix=int(std::floor(p.x)),iy=int(std::floor(p.y)),iz=int(std::floor(p.z));
@@ -113,7 +126,8 @@ Dictionary survey_generated_lake_surfaces(const World &world,const Array &record
  }
  Dictionary out;out["ok"]=true;out["points"]=points;out["samples"]=samples;out["spacing_m"]=2;return out;
 }
-Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,const Array &reservations){
+struct RegionalRouteWorkspace{Ref<AStar3D> graph;Vector3 low;int width=0,depth=0;std::vector<Vector3> points;};
+static Dictionary route_with_workspace(const World &world,Vector3 start,Vector3 finish,const Array &reservations,RegionalRouteWorkspace *shared){
  if(!inside(start)||!inside(finish)||reservations.size()>4096)return failure("Invalid route input");
  Survey survey{world};
  for(int i=0;i<reservations.size();i++){
@@ -122,12 +136,15 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
   survey.reserved.push_back(area.grow(6));
  }
  Vector3 lo=start.min(finish)-Vector3(256,0,256),hi=start.max(finish)+Vector3(256,0,256);
+ if(shared){lo=Vector3(16,0,16);hi=Vector3(1984,0,1984);}
  lo.x=std::max<double>(16.,std::floor(lo.x/16)*16);lo.z=std::max<double>(16.,std::floor(lo.z/16)*16);
  hi.x=std::min<double>(1984.,std::ceil(hi.x/16)*16);hi.z=std::min<double>(1984.,std::ceil(hi.z/16)*16);
  int nx=int((hi.x-lo.x)/16)+1,nz=int((hi.z-lo.z)/16)+1;
  if(nx<1||nz<1||nx*nz>15625)return failure("Route search exceeds world bound");
- Ref<AStar3D> graph;graph.instantiate();graph->reserve_space(nx*nz+2);
- std::vector<Vector3> points(nx*nz);
+ RegionalRouteWorkspace local;auto &workspace=shared?*shared:local;
+ if(workspace.graph.is_null()){
+ workspace.graph.instantiate();workspace.graph->reserve_space(nx*nz+2);workspace.low=lo;workspace.width=nx;workspace.depth=nz;workspace.points.resize(nx*nz);
+ auto graph=workspace.graph;auto &points=workspace.points;
  for(int z=0;z<nz;z++)for(int x=0;x<nx;x++){
   int id=z*nx+x;Vector3 p(lo.x+x*16,0,lo.z+z*16);p.y=survey.height(p);points[id]=p;
   if(survey.clear(p,p))graph->add_point(id,p);
@@ -140,7 +157,12 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
    if(std::abs(span.y)<=horizontal(span)*.12&&survey.clear(points[id],points[next]))graph->connect_points(id,next);
   }
  }
- int source=nx*nz,target=source+1;graph->add_point(source,start);graph->add_point(target,finish);
+ }
+ auto graph=workspace.graph;auto &points=workspace.points;
+ int source=nx*nz,target=source+1;
+ if(graph->has_point(source))graph->remove_point(source);
+ if(graph->has_point(target))graph->remove_point(target);
+ graph->add_point(source,start);graph->add_point(target,finish);
  for(int endpoint=0;endpoint<2;endpoint++){
   Vector3 p=endpoint?finish:start;int x=int(std::round((p.x-lo.x)/16)),z=int(std::round((p.z-lo.z)/16));
   for(int dz=-2;dz<=2;dz++)for(int dx=-2;dx<=2;dx++){
@@ -166,6 +188,9 @@ Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,c
   Dictionary d;d["ok"]=true;d["points"]=path;d["segments"]=segments;d["bounds"]=bounds;d["nodes"]=graph->get_point_count();d["attempts"]=attempt+1;d["height_samples"]=survey.samples;d["planner_version"]=1;return d;
  }
  return failure("Route refinement limit reached");
+}
+Dictionary plan_regional_route(const World &world,Vector3 start,Vector3 finish,const Array &reservations){
+ return route_with_workspace(world,start,finish,reservations,nullptr);
 }
 
 Dictionary plan_region_network(const World &world,const Array &districts,const Array &reservations,int loops,int trails,int64_t seed,const Array &streets){
@@ -225,6 +250,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
  std::stable_sort(pairs.begin(),pairs.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
  int owners[9]={0,1,2,3,4,5,6,7,8};bool connected[9][9]={};
  Array links,segments;AABB bounds;bool first_bounds=true;double road_length=0,trail_length=0;int attempts=0,loop_count=0;
+ std::set<std::tuple<float,float,float,float,float,float,double,double,int>> emitted;
  auto append=[&](Dictionary route,int source,int target,bool trail){
   PackedVector3Array points=route["points"];double length=0;
   Array parts;
@@ -234,25 +260,44 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
    if(trail)parts.push_back(segment(points[point-1],points[point],2.5,3,4,1,1));
   }
   if(!trail)parts=route["segments"];
-  for(int part=0;part<parts.size();++part){Dictionary value=parts[part];AABB box=value["bounds"];bounds=first_bounds?box:bounds.merge(box);first_bounds=false;segments.push_back(value);}
+  for(int part=0;part<parts.size();++part){
+   Dictionary value=parts[part];Vector3 start=value["start"],finish=value["finish"];
+   if(std::tie(start.x,start.z,start.y)>std::tie(finish.x,finish.z,finish.y))std::swap(start,finish);
+   auto key=std::make_tuple(float(start.x),float(start.y),float(start.z),float(finish.x),float(finish.y),float(finish.z),double(value["half_width"]),double(value["shoulder"]),int(value["material"]));
+   if(distributed_region(world.generator_id)&&!emitted.insert(key).second)continue;
+   AABB box=value["bounds"];bounds=first_bounds?box:bounds.merge(box);first_bounds=false;segments.push_back(value);
+  }
   Dictionary link;link["source"]=source;link["target"]=target;link["trail"]=trail;link["points"]=points;link["length_m"]=length;links.push_back(link);
   if(trail)trail_length+=length;else road_length+=length;
  };
- auto connect=[&](int source,int target){
+ RegionalRouteWorkspace workspace;
+ auto connect=[&](int source,int target,bool optional){
   std::vector<Pair> choices;
   for(int first=0;first<exits[source].size();++first)for(int second=0;second<exits[target].size();++second)choices.push_back({first,second,double(exits[source][first].distance_squared_to(exits[target][second]))});
   std::stable_sort(choices.begin(),choices.end(),[](const Pair &left,const Pair &right){return left.distance<right.distance;});
   for(size_t choice=0;choice<std::min(size_t(64),choices.size());++choice){
    const auto &pair=choices[choice];++attempts;
-   Dictionary route=plan_regional_route(world,exits[source][pair.source],exits[target][pair.target],reservations);
+   Dictionary route=route_with_workspace(world,exits[source][pair.source],exits[target][pair.target],reservations,distributed_region(world.generator_id)?&workspace:nullptr);
    if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
+   if(optional&&distributed_region(world.generator_id)){
+    PackedVector3Array points=route["points"];double novel=0,total=0;
+    for(int segment=1;segment<points.size();segment++){
+     double length=horizontal(points[segment]-points[segment-1]);int samples=std::max(1,int(std::ceil(length/8)));
+     for(int sample=0;sample<samples;sample++){
+      Vector3 position=points[segment-1].lerp(points[segment],(sample+.5)/samples);Vector2 point(position.x,position.z);bool covered=false;
+      for(const auto &edge:graded){Vector2 origin(edge.start.x,edge.start.z),axis(edge.finish.x-edge.start.x,edge.finish.z-edge.start.z);double fraction=std::clamp(double((point-origin).dot(axis)/axis.length_squared()),0.,1.);if(point.distance_squared_to(origin+axis*fraction)<16){covered=true;break;}}
+      total+=length/samples;if(!covered)novel+=length/samples;
+     }
+    }
+    if(novel<std::max(64.,total*.25))continue;
+   }
    append(route,source,target,false);connected[source][target]=true;return true;
   }
   return false;
  };
  for(const auto &pair:pairs){
   if(owners[pair.source]==owners[pair.target])continue;
-  if(!connect(pair.source,pair.target))continue;
+  if(!connect(pair.source,pair.target,false))continue;
   const int previous=owners[pair.target],replacement=owners[pair.source];
   for(int index=0;index<int(exits.size());++index)if(owners[index]==previous)owners[index]=replacement;
  }
@@ -262,7 +307,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
  }
  if(loops)for(const auto &pair:pairs){
   if(connected[pair.source][pair.target])continue;
-  if(connect(pair.source,pair.target)&&++loop_count>=(loops==2?int(exits.size()):1))break;
+  if(connect(pair.source,pair.target,true)&&++loop_count>=(loops==2?int(exits.size()):1))break;
  }
  const int desired_trails=trails*int(exits.size());
  int trail_count=0;
@@ -274,7 +319,7 @@ Dictionary plan_region_network(const World &world,const Array &districts,const A
    Vector3 finish=start+Vector3(std::cos(angle)*240,0,std::sin(angle)*240);
    if(finish.x<32||finish.x>1968||finish.z<32||finish.z>1968)continue;
    finish.y=world.height(finish.x,finish.z,false);++attempts;
-   Dictionary route=plan_regional_route(world,start,finish,reservations);
+   Dictionary route=route_with_workspace(world,start,finish,reservations,distributed_region(world.generator_id)?&workspace:nullptr);
    if(!bool(route.get("ok",false))||!compatible(route["points"]))continue;
    append(route,source,-1,true);++trail_count;break;
   }

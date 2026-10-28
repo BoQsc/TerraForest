@@ -171,10 +171,12 @@ func _apply_components(state: Dictionary) -> void:
 		if value is RefCounted and value.has_method("serialize_snapshot"):
 			selected[key]=value.serialize_snapshot()
 		if not selected[key] is PackedByteArray:
+			print("ADDON_CAPTURE_REJECTED section=",key," reason=invalid_payload_type")
 			_component_capture_valid=false
 			return
 	for key: String in selected:
 		if snapshot_validators.has(key) and not snapshot_validators[key].validate_snapshot(selected[key]):
+			print("ADDON_CAPTURE_REJECTED section=",key," bytes=",selected[key].size()," reason=validation_failed")
 			_component_capture_valid = false
 			return
 	for key: String in selected:
@@ -738,15 +740,15 @@ func _prepare_component_restores()->Dictionary:
 
 func _initialize_generated_components() -> bool:
 	components = {}
-	if world_generator in [4,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23] and snapshot_validators.has("volumetric_water"):
+	if world_generator in [4,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,27] and snapshot_validators.has("volumetric_water"):
 		var fitted:Dictionary=preload("res://addons/volumetric_terrain/generated_lakes.gd").describe(native,world_generator)
 		if not fitted.get("ok",false):write_allowed=false;return false
 		var records:Array=fitted.records
-		if world_generator in [19,21,23]:print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
+		if world_generator in [19,21,23,25,27]:print("GENERATED_LAKE_ADMISSION accepted=",records.size()," rejected=",fitted.rejected," samples=",fitted.height_samples)
 		# New worlds start from definitions, which the regional validator accepts.
 		# Encoding an empty regional snapshot here would mark unfilled lakes cached.
 		var catalog: RefCounted=ClassDB.instantiate("NativeLakeCatalog")
-		var encoded: PackedByteArray=catalog.encode(records,5)
+		var encoded: PackedByteArray=catalog.encode(records)
 		if encoded.is_empty() or not snapshot_validators["volumetric_water"].validate_snapshot(encoded):
 			write_allowed=false
 			return false

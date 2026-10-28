@@ -15,8 +15,8 @@ The footer stays available while settings scroll on smaller displays.
 | Control | Actual generation effect |
 | --- | --- |
 | Vegetation biome | Woodland, woodland/meadow mosaic, or open grassland with groves; coherent native tree-admission fields, not a cosmetic map recolor |
-| Ocean coastline | Existing coastal/inland generator profiles; no alteration to existing saves |
-| Build-friendly terrain | Existing accepted profiles 20/21, with original profiles 17/19 available by opting out |
+| Ocean coastline | Distributed inland/coastal generator profiles; no alteration to existing saves |
+| Build-friendly terrain | Distributed build-friendly profiles 24/25; natural profiles 26/27 when disabled |
 | Settlements | One, two or three communities |
 | Settlement scale | One, two or three independently terrain-fitted districts per community; three is experimental |
 | Regional roads | Direct connections, one alternate route, or an interconnected network with up to one extra link per district |
@@ -34,11 +34,65 @@ trail per district. These controls apply only to newly generated worlds.
 The 2026-10-28 UI groups settings under World, Landscape and Settlements, with
 five starting recipes and Custom mode. Presets set the actual underlying controls;
 they do not change the name/seed or independent mineral/grid-fit preferences.
-The regional-belt preset selects inland grassland, three centers, three districts
-each, interconnected roads and up to two offroads per district. Its seed-1703
-preview has 104 buildings, 5.14 km of regional roads and 3.99 km of trails (13
-accepted trails, nine alternate links). This is a connected experimental region,
-not an approved dense city or new urban building catalogue.
+The regional-belt preset selects coastal grassland, three centers, three districts
+each, interconnected roads and up to two offroads per district. Its distributed
+seed-1703 plan has 104 buildings, 4.30 km of regional links and 5.36 km of trails,
+with inhabited districts in all four quadrants. Unsafe optional loops are rejected
+and the preview reports the reduced network; no required district is dropped.
+This is an experimental connected region, not an approved dense city or new urban
+building catalogue. The earlier inland, west-biased preview is retained as history
+in the issue tracker, not presented as the current result.
+
+## Distribution and generation cost — 2026-10-28
+
+Previous generation used four lake anchors and clustered town hints. New immutable
+terrain IDs 24–27 scatter up to twelve irregular basins over twelve bounded search
+tiles, avoiding mine/cave and site reservations. Seeds 0, 42 and 1703 each have
+twelve lakes across all four quadrants in every new profile. Distributed bowls use
+five-metre maximum depths instead of retaining the old nine-metre small-basin
+recipe twelve times; this leaves capacity for player water edits under the existing
+finite-volume budgets. An 8×8 bitmask index
+keeps ordinary terrain queries from checking every lake. Old terrain IDs and saved
+worlds retain their original field, lake locations and edits; this is not migration.
+
+Primary communities use northern/southern/opposite-side search regions. Expanded
+multi-town recipes require eastern districts instead of repeatedly accepting all
+sites on the western side. Native surveys still enforce 2 m fill / 3 m cut, occupied
+envelopes, lake/mine reservations and connected entrances. No building geometry or
+trusted destructible plate design changes. The maximum inland seed-1703 recipe
+cannot currently fit its required eastern district under these standards; it fails
+explicitly rather than silently clustering, shrinking the recipe or raising budgets.
+The largest preset uses the validated coastal alternative; custom inland remains
+available. Broader seed qualification remains open.
+
+Native routing reuses one bounded regional A* graph per network request, uses exact
+segment/rectangle reservation tests, and avoids duplicate generated segments.
+Optional links must add meaningful route length rather than retrace an existing
+road. Connected grade fitting can reduce optional loop density after bounded
+reroutes; it never waives mandatory connectivity or crossing/earthwork limits.
+
+Native map queries skip proven-empty vertical space using terrain heights and
+authored-page/block bounds, retaining density checks for edited roofs and caves.
+Visibility batches accept 256 candidates but still allow only sixteen expensive
+queries per native call. Generation may pipeline up to four map patches through
+the existing bounded worker admission; gameplay retains one in flight. These are
+algorithm/batching changes, not new per-frame GPU work or relaxed map accuracy.
+
+Water loading reserves the exact validated triangle count per contact cell rather
+than geometrically growing every vector. Storage capture excludes regenerable
+unmodified ocean cells, while preserving inland water and all edited ocean records,
+including empty overrides. Live amounts, contact geometry and rendering are not
+changed by capture. The 128 MiB frozen-state and 64 MiB snapshot limits remain;
+larger lake counts are not permission for unbounded storage or allocation.
+
+Final package checks retain exact map pixels/visibility in nine baseline cases;
+their aggregate visibility work measures 201.188 → 8.451 ms and patch work
+267.229 → 5.543 ms. These isolated CPU timings are not total loading or gameplay
+speedups. The full new 104-building creation/photo/map/play/save/reload flow passes
+42 assertions; creation takes 96.19 s on the current machine. Three twelve-lake
+fixtures use 89.7–90.2 MB resident water storage and 48.4–48.9 MB snapshots.
+Installed-pack hashes, captures, exact tests and unclosed limits are recorded in
+the [world-generator issue](../issues/world-generator/README.md).
 
 The biome control changes woodland coverage, not climate, terrain materials or
 asset families. It does not claim desert, tundra, tropical vegetation, weather or
@@ -103,7 +157,7 @@ applies the currently selected creation controls. Publication validates the exac
 requested recipe as well as terrain/building storage. Presentation JSON is only
 informational; it is not the source of the live biome setting.
 
-Custom placement plans use `recipe_20_<sha256>.bin`. Keys include seed, terrain
+Custom placement plans use `recipe_21_<sha256>.bin`. Keys include seed, terrain
 profile, canonical binary options, recipe version, and terrain/structures native
 binary fingerprints. The checksummed payload contains plain Godot binary values;
 object deserialization is disabled and prefab Resources are rebuilt from recipes.

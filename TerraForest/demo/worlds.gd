@@ -366,7 +366,8 @@ func poll_preview()->void:
 		if result.has("options"):
 			preview_status.text="%d settlements / %d districts · %d trails · %d alternate routes.\n"%[result.options.settlements,result.options.settlements*result.options.districts,network.get("trail_count",0),network.get("loop_count",0)]+("Placement plan cached for generation." if result.get("plan_reusable",false) else "Deterministic plan ready; disk cache unavailable.")
 			if result.options.network>0 and network.get("loop_count",0)==0:preview_status.text+=" No additional inter-district route fits this plan."
-			if network.get("trail_count",0)<network.get("requested_trails",0):preview_status.text+=" Some trail candidates could not fit the terrain."
+			elif network.get("optional_loops_reduced",false):preview_status.text+=" Optional loops reduced by terrain limits."
+			if network.get("trail_count",0)<network.get("requested_trails",0):preview_status.text+=" Some trails could not fit."
 	else:preview_status.text="Terrain preview · north is up · 2 km × 2 km"
 func _exit_tree()->void:
 	if preview_worker!=null:preview_worker.wait_to_finish();preview_worker=null

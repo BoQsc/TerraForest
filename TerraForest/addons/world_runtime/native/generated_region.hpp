@@ -48,7 +48,7 @@ class NativeGeneratedRegion : public godot::RefCounted {
   if(in.is_empty()){result["ok"]=true;result["present"]=false;result["places"]=places;result["roads"]=roads;return result;}
   if(in.size()<24||in.size()>512*1024||in.decode_u32(0)!=0x31524754||in.decode_u32(4)!=1)return result;
   uint32_t seed=in.decode_u32(8),generator=in.decode_u32(12),np=in.decode_u32(16),nr=in.decode_u32(20);
-  if(seed>2147483647u||(generator<17||generator>23)||np>256||nr>8192)return result;
+  if(seed>2147483647u||(generator<17||generator>27)||np>256||nr>8192)return result;
   int at=24;std::set<uint32_t> ids;
   for(uint32_t i=0;i<np;i++){
    if(at+24>in.size())return result;
@@ -81,7 +81,7 @@ protected:
 public:
  bool set_plan(int64_t seed,int generator,const godot::Array &places,const godot::Array &roads){
   using namespace godot;
-  if(seed<0||seed>2147483647||(generator<17||generator>23)||places.size()>256||roads.size()>8192)return false;
+  if(seed<0||seed>2147483647||(generator<17||generator>27)||places.size()>256||roads.size()>8192)return false;
   PackedByteArray out;word(out,0x31524754);word(out,1);word(out,seed);word(out,generator);word(out,places.size());word(out,roads.size());
   for(int i=0;i<places.size();i++){
    if(places[i].get_type()!=Variant::DICTIONARY)return false;

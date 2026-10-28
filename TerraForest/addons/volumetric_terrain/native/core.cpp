@@ -264,7 +264,9 @@ float World::inland_height(float x,float z,bool developed)const{
    h=h*(1-inlet)+coastal*inlet;
   }
   if(developed&&generator_id>=REGIONAL_WORLD_GENERATOR_ID&&generator_id<UNGRADED_REGION_GENERATOR_ID)h=regional_height(x,z,h);
-  for(int i=0;i<basin_count;i++){
+  u32 candidates=distributed_region(generator_id)?basin_cells[int(clampf(x/250.f,0,7))+8*int(clampf(z/250.f,0,7))]:((1u<<basin_count)-1);
+  while(candidates){
+   int i=__builtin_ctz(candidates);candidates&=candidates-1;
    const auto &b=basins[i];float dx=x-b.x,dz=z-b.z,d2=dx*dx+dz*dz;
    if(generator_id>=NATURAL_REGION_GENERATOR_ID){
     // Keep the whole irregular shore inside the existing catalog bounds.
@@ -283,7 +285,8 @@ float World::inland_height(float x,float z,bool developed)const{
    }
    if(d2>=1600.f)continue;
    // Closed rim at radius 24; outer annulus blends back into the landscape.
-   if(d2<=576.f)return b.level-9.f+12.f*d2/576.f;
+   float depth=distributed_region(generator_id)?5.f:9.f;
+   if(d2<=576.f)return b.level-depth+(depth+3.f)*d2/576.f;
    float t=smooth((__builtin_sqrtf(d2)-24.f)/16.f);
    return (b.level+3.f)*(1.f-t)+h*t;
   }
@@ -316,8 +319,46 @@ float World::base(V3 p,float h)const{
  d=mx(d,1.f-p.y);d=mx(d,p.y-255.f);d=mx(d,-p.x);d=mx(d,p.x-WORLD);d=mx(d,-p.z);d=mx(d,p.z-WORLD);
  return clampf(d,-SDF_BAND,SDF_BAND);
 }
+void World::scatter_lakes(){
+ for(int tile=0;tile<12;tile++){
+  float best_cost=1e20f;V3 best{};
+  for(int attempt=0;attempt<48;attempt++){
+   u32 key=hash32(u32(seed)^0x81a73b25u^u32(tile*991+attempt*7919));
+   V3 candidate{340.f+float(tile%4)*440.f+float(int(key%161)-80),0,380.f+float(tile/4)*600.f+float(int((key>>12)%161)-80)};
+   if(candidate.x<320||candidate.z<320||candidate.x>1680||candidate.z>1680)continue;
+   bool clear=true;
+   for(int site=0;site<site_count;site++){
+    float dx=candidate.x-sites[site].position.x,dz=candidate.z-sites[site].position.z;
+    float radius=sites[site].radius+96.f;
+    if(dx*dx+dz*dz<radius*radius)clear=false;
+   }
+   for(int lake=0;lake<basin_count;lake++){
+    float dx=candidate.x-basins[lake].x,dz=candidate.z-basins[lake].z,radius=lake==0?160.f:104.f;
+    if(dx*dx+dz*dz<radius*radius)clear=false;
+   }
+   for(int cave=0;cave<caves.n;cave++){
+    const auto &part=caves[cave];float margin=part.r+48.f;
+    if(candidate.x>mn(part.a.x,part.b.x)-margin&&candidate.x<mx(part.a.x,part.b.x)+margin&&candidate.z>mn(part.a.z,part.b.z)-margin&&candidate.z<mx(part.a.z,part.b.z)+margin)clear=false;
+   }
+   if(!clear)continue;
+   float low=256,high=0;
+   for(int across=-1;across<=1;across++)for(int along=-1;along<=1;along++){
+    float sample=height(candidate.x+across*32.f,candidate.z+along*32.f);low=mn(low,sample);high=mx(high,sample);
+   }
+   float cost=high-low+mx(high-75.f,0.f)*.2f;
+   if(cost<best_cost){best_cost=cost;best=candidate;}
+  }
+  if(best_cost<1e20f){float level=height(best.x,best.z)-3.f;basins[basin_count++]={best.x,best.z,level};}
+ }
+ for(int lake=0;lake<basin_count;lake++){
+  float radius=lake==0?96.f:40.f;
+  int left=int(clampf((basins[lake].x-radius)/250.f,0,7)),right=int(clampf((basins[lake].x+radius)/250.f,0,7));
+  int top=int(clampf((basins[lake].z-radius)/250.f,0,7)),bottom=int(clampf((basins[lake].z+radius)/250.f,0,7));
+  for(int row=top;row<=bottom;row++)for(int column=left;column<=right;column++)basin_cells[column+8*row]|=u16(1u<<lake);
+ }
+}
 void World::init(int p_seed,u32 generator){
- seed=p_seed;generator_id=surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
+ seed=p_seed;generator_id=surrounding_coast(generator)||generator==BUILDABLE_REGION_GENERATOR_ID||distributed_region(generator)?UNGRADED_REGION_GENERATOR_ID:generator;basin_count=0;site_count=0;regional_roads=false;revision=edits=0;changed_samples=0;block_columns.resize(4096);
  edit_columns=(u32*)tr_alloc(NP*NP*sizeof(u32));if(edit_columns)zero_bytes(edit_columns,NP*NP*sizeof(u32));else tr_oom=true;
  if(generator_id==MATERIAL_FIELD_GENERATOR_ID)return;
  if(generator_id>=REGIONAL_WORLD_GENERATOR_ID){
@@ -354,12 +395,12 @@ void World::init(int p_seed,u32 generator){
  }
  if(generator_id==4||generator_id==WALKABLE_CAVE_GENERATOR_ID||generator_id>=REGIONAL_WORLD_GENERATOR_ID){
   // Separate seed domains and quadrant placement keep basins away from caves.
-  for(u32 i=0;i<4;i++){
+  for(u32 i=0;i<(distributed_region(generator)?0u:4u);i++){
    u32 h=hash32(u32(seed)^0x7a91c3b5u^(i*0x9e3779b9u));
    float x=180.f+float(i&1)*1000.f+float(h&63),z=180.f+float(i>>1)*1000.f+float((h>>8)&63);
    basins[i]={x,z,height(x,z)-3.f};
   }
-  basin_count=4;
+  basin_count=distributed_region(generator)?0:4;
  }
  if(generator_id>=POI_UNDERGROUND_GENERATOR_ID){
   // One mine belongs to east regional site 2. No ambient cave networks.
@@ -382,6 +423,7 @@ void World::init(int p_seed,u32 generator){
   V3 workings=hall+V3{-45.f,0,20.f},secret=hall+V3{0,0,-40.f};
   caves.push({end,workings+V3{0,5,0},6.f,5.f});caves.push({workings,workings,12.f,0.f});
   caves.push({end,secret+V3{0,5,0},6.f,5.f});caves.push({secret,secret,10.f,0.f});
+  if(distributed_region(generator))scatter_lakes();
   if(buildable_ground(generator))prepare_buildable_ground(surrounding_coast(generator));
   generator_id=generator;return;
  }

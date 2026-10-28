@@ -1,7 +1,9 @@
 {
   "date": "2026-10-28",
-  "build": "post-8a20ba11 generator rewrite, custom plan 20; source UI test 20261028T093027047714Z_generator_ui",
+  "build": "Distributed follow-up after 331226e7, custom plan 21; installed package 20261028T111244_distributed_pack. Earlier source plan-20 images retained separately.",
   "images": [
+    {"file":"distributed-regional-belt.png","source":"reports/pack_distributed/world_creation_city.png","sha256":"d7639bbae7e0dca72960ac9728bd3445fb2d321e7d8667805ab20aa8a6300c4e","pack_sha256":"9413c5e6bd942b24e8bb7dc02ece301a97520a3f6b220c5642f5d96abac95c0e","seed":1703,"generator":25,"districts":9,"resolution":"1920x1080","status":"inspected packaged UI; twelve lakes and four-quadrant districts; world quality not player-approved"},
+    {"file":"distributed-landscape-720.png","source":"reports/pack_distributed/world_creation_grid_1280x720.png","sha256":"a83d3b1dc0a625129ed818a97259697f81d82787ecc572f8f0d67df448ce6943","pack_sha256":"9413c5e6bd942b24e8bb7dc02ece301a97520a3f6b220c5642f5d96abac95c0e","seed":1703,"generator":25,"districts":4,"resolution":"1280x720","status":"inspected packaged small-window layout and custom map"},
     {"file":"regional-belt.png","source":"reports/world_creation_city.png","sha256":"3628c3e07462b96c720ce38c53f9e60898f7ebe6c7c9d99ec4b6c119a83609c3","seed":1703,"generator":22,"districts":9,"resolution":"1920x1080","status":"inspected UI; not player-approved world quality"},
     {"file":"settlements.png","source":"reports/world_creation_settlements.png","sha256":"8b29c6b09ee2c6f24c2a9046af2f5d117510ae93daa37e7199b0723adeeddc05","seed":1703,"generator":23,"districts":4,"resolution":"1920x1080","status":"inspected UI; custom settings differ from regional belt"},
     {"file":"landscape-720.png","source":"reports/world_creation_grid_1280x720.png","sha256":"13fe0bdfda9d505d1a29c4b2d0e5749a7f288b28b52cc9ff4e222be8ef2ee9cd","seed":1703,"generator":23,"districts":4,"resolution":"1280x720","status":"inspected small-window layout with settings scrolled"}
