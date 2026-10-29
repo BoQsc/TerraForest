@@ -97,6 +97,7 @@ func set_interaction_target(point: Vector3) -> void:
 	interaction_target_until_us=now+250000 if point.is_finite() else 0
 	if changed: schedule_timer=0.0
 var visible_cut: Array[Vector3i] = []
+var _cut_dirty := true
 var active_leaves: Dictionary = {}
 var roots: Array[Vector3i] = []
 var staging: Array[Dictionary] = []
@@ -288,7 +289,7 @@ func _process(delta: float) -> void:
 		_update_cut(planned_coverage)
 		_record_stage("LOD coverage",float(Time.get_ticks_usec()-cut_begin)/1000.0)
 		var evict_begin: int = Time.get_ticks_usec()
-		_evict()
+		_evict(_planned_eviction)
 		_record_stage("LOD eviction",float(Time.get_ticks_usec()-evict_begin)/1000.0)
 		last_schedule_ms = float(Time.get_ticks_usec() - schedule_begin) / 1000.0
 		_record_stage("LOD schedule/cut/evict", last_schedule_ms)
@@ -869,6 +870,7 @@ func _install(key: Vector3i, entry: Dictionary) -> void:
 		cache_bytes -= int(old["bytes"])
 		_destroy_entry(old)
 	tiles[key] = entry
+	_cut_dirty = _cut_dirty or visible_cut.has(key)
 	cache_bytes += int(entry["bytes"])
 	_set_active(entry, visible_cut.has(key))
 	if activation_keys.has(key): schedule_timer=0.0
@@ -1015,12 +1017,15 @@ func _schedule_urgent_collision() -> void:
 	_update_cut(_planned_coverage)
 
 var _planned_coverage:Dictionary={}
+var _planned_eviction:Dictionary={}
 func _plan_requests() -> Array[Vector3i]:
 	_planned_coverage={}
+	_planned_eviction={}
 	var target:Vector3=interaction_target if Time.get_ticks_usec()<interaction_target_until_us else Vector3.INF
 	var velocity:=travel_velocity
 	if navigation_interest.is_empty() and (target.is_finite() or not velocity.is_finite() or velocity.length_squared()<=0.01):velocity=Vector3.ZERO
-	var plan:Dictionary=planner.requests_navigation(focus,require_collision,velocity,target,navigation_interest,tiles,split_state,visible_cut,true)
+	var over_budget:=tiles.size()>cache_entry_limit or cache_bytes>cache_byte_limit
+	var plan:Dictionary=planner.requests_navigation(focus,require_collision,velocity,target,navigation_interest,tiles,split_state,visible_cut,true,over_budget)
 	if not plan.ok:
 		_fail("Native terrain scheduling rejected invalid state")
 		return []
@@ -1028,6 +1033,7 @@ func _plan_requests() -> Array[Vector3i]:
 	activation_keys = plan.activation_keys
 	split_state = plan.split_state
 	_planned_coverage=plan.coverage
+	_planned_eviction=plan.get("eviction",{})
 	return plan.requests
 
 var navigation_interest:=PackedVector3Array()
@@ -1142,6 +1148,8 @@ func _update_cut(covered:Dictionary={}) -> void:
 	var next: Array[Vector3i] = covered["keys"]
 	root_coverage = covered.root_coverage
 	covered_roots = covered.covered_roots
+	if not _cut_dirty and next == visible_cut:
+		return
 	for key: Vector3i in covered.hidden:
 		if tiles.has(key):
 			_set_active(tiles[key], false)
@@ -1156,11 +1164,12 @@ func _update_cut(covered:Dictionary={}) -> void:
 				for x in range(key.x / FINE_SIZE, (key.x + key.z) / FINE_SIZE):
 					active_leaves[Vector2i(x, z)] = true
 	visible_cut = next
+	_cut_dirty = false
 
-func _evict() -> void:
+func _evict(eviction:Dictionary={}) -> void:
 	if tiles.size() <= cache_entry_limit and cache_bytes <= cache_byte_limit:
 		return
-	var eviction: Dictionary = planner.eviction_candidates(tiles,visible_cut,requested_keys)
+	if eviction.is_empty():eviction=planner.eviction_candidates(tiles,visible_cut,requested_keys)
 	if not eviction.ok:
 		_fail("Native terrain eviction rejected invalid state")
 		return
@@ -1505,6 +1514,7 @@ func reload_world(reset: bool = false) -> void:
 	in_flight.clear()
 	stamps.clear()
 	visible_cut.clear()
+	_cut_dirty = true
 	active_leaves.clear()
 	cache_bytes = 0
 	_record_stage("reload records",(Time.get_ticks_usec()-teardown_begin)/1000.0)

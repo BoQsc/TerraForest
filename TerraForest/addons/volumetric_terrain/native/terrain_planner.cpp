@@ -162,7 +162,7 @@ void prioritize_coverage(Vector3 focus,bool collision,const State &state,const D
 }
 void NativeTerrainPlanner::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_target","point","normal","origin","empty"),&NativeTerrainPlanner::placement_target);
-    ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut","include_coverage"),&NativeTerrainPlanner::requests_navigation,DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("requests_navigation","focus","require_collision","velocity","target","points","tiles","split_state","visible_cut","include_coverage","include_eviction"),&NativeTerrainPlanner::requests_navigation,DEFVAL(false),DEFVAL(false));
     ClassDB::bind_method(D_METHOD("requests_travel","focus","require_collision","velocity","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests_travel);
     ClassDB::bind_method(D_METHOD("collision_region_ready","bounds","active_leaves"),&NativeTerrainPlanner::collision_region_ready);
     ClassDB::bind_method(D_METHOD("requests","focus","require_collision","tiles","split_state","visible_cut"),&NativeTerrainPlanner::requests);
@@ -197,7 +197,8 @@ bool NativeTerrainPlanner::collision_region_ready(AABB bounds,const Dictionary &
     return true;
 }
 static Dictionary coverage_from_state(State &state,const Array &visible,bool available);
-static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target,const std::vector<Vector3> *travel=nullptr,bool include_coverage=false) {
+static Dictionary eviction_from_state(const State &state,const Dictionary &tiles,const Dictionary &requested,int protected_flag);
+static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible,const Vector3 *target,const std::vector<Vector3> *travel=nullptr,bool include_coverage=false,bool include_eviction=false) {
     State state;if(!focus.is_finite()||(target&&!target->is_finite())||!state.load(tiles,previous,visible))return failure();
     Dictionary split=previous.duplicate(),wanted;
     std::vector<Request> pending;pending.reserve(512);
@@ -216,18 +217,19 @@ static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &t
     }
     Dictionary result;result["ok"]=true;result["requests"]=keys;result["requested_keys"]=wanted;result["split_state"]=split;result["activation_keys"]=activation;
     if(include_coverage)result["coverage"]=coverage_from_state(state,visible,true);
+    if(include_eviction)result["eviction"]=eviction_from_state(state,tiles,wanted,include_coverage?CHOSEN:VISIBLE);
     return result;
 }
 Dictionary NativeTerrainPlanner::requests(Vector3 focus,bool collision,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     return plan_requests(focus,collision,tiles,previous,visible,nullptr);
 }
-Dictionary NativeTerrainPlanner::requests_navigation(Vector3 focus,bool collision,Vector3 velocity,Vector3 target,const PackedVector3Array &points,const Dictionary &tiles,const Dictionary &previous,const Array &visible,bool include_coverage)const{
+Dictionary NativeTerrainPlanner::requests_navigation(Vector3 focus,bool collision,Vector3 velocity,Vector3 target,const PackedVector3Array &points,const Dictionary &tiles,const Dictionary &previous,const Array &visible,bool include_coverage,bool include_eviction)const{
     if(points.size()>8||!velocity.is_finite())return failure();
     std::vector<Vector3> samples;
     velocity.y=0;const double speed=velocity.length(),length=std::min(speed*2,128.0);
     if(length>0){const int count=int(std::ceil(length/32));for(int i=1;i<=count;++i)samples.push_back(focus+velocity/real_t(speed)*real_t(length*i/count));}
     for(int i=0;i<points.size();++i){if(!points[i].is_finite()||points[i].distance_to(focus)>128)return failure();samples.push_back(points[i]);}
-    return plan_requests(focus,collision,tiles,previous,visible,target.is_finite()?&target:nullptr,&samples,include_coverage);
+    return plan_requests(focus,collision,tiles,previous,visible,target.is_finite()?&target:nullptr,&samples,include_coverage,include_eviction);
 }
 Dictionary NativeTerrainPlanner::requests_travel(Vector3 focus,bool collision,Vector3 velocity,const Dictionary &tiles,const Dictionary &previous,const Array &visible) const {
     if(!velocity.is_finite())return failure();
@@ -273,12 +275,11 @@ Dictionary NativeTerrainPlanner::coverage(const Dictionary &tiles,const Dictiona
 Dictionary NativeTerrainPlanner::coverage_available(const Dictionary &tiles,const Dictionary &split,const Array &visible) const {
     return plan_coverage(tiles,split,visible,true);
 }
-Dictionary NativeTerrainPlanner::eviction_candidates(const Dictionary &tiles,const Array &visible,const Dictionary &requested) const {
-    State state;if(!state.load(tiles,requested,visible))return failure();
+static Dictionary eviction_from_state(const State &state,const Dictionary &tiles,const Dictionary &requested,int protected_flag) {
     struct Victim {int64_t used;Vector3i key;};std::vector<Victim> victims;
     for(int i=0;i<tiles.size();i++) {
         Vector3i key=state.tile_keys[i];auto flag=state.flags[index_for(key)];
-        if(key.z==256||(flag&VISIBLE)||requested.has(key))continue;
+        if(key.z==256||(flag&protected_flag)||requested.has(key))continue;
         Dictionary tile=tiles[key];Variant used=tile.get("used",0);
         if(used.get_type()!=Variant::INT)return failure();
         victims.push_back({int64_t(used),key});
@@ -286,5 +287,9 @@ Dictionary NativeTerrainPlanner::eviction_candidates(const Dictionary &tiles,con
     std::stable_sort(victims.begin(),victims.end(),[](const Victim &a,const Victim &b){return a.used<b.used;});
     TypedArray<Vector3i> keys;keys.resize(victims.size());for(size_t i=0;i<victims.size();i++)keys[i]=victims[i].key;
     Dictionary result;result["ok"]=true;result["keys"]=keys;return result;
+}
+Dictionary NativeTerrainPlanner::eviction_candidates(const Dictionary &tiles,const Array &visible,const Dictionary &requested) const {
+    State state;if(!state.load(tiles,requested,visible))return failure();
+    return eviction_from_state(state,tiles,requested,VISIBLE);
 }
 }

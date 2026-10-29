@@ -310,6 +310,12 @@ Resident shape limits range from the asset's part count to 16,384; per-tick shap
 
 Queries use authored records, not resident physics. Disabling or evicting collision preserves exclusion. Group bounds are updated during authoring and rebuilt after restore. Reconfigure the asset after changing mesh bounds in place. `exclusion_changed` signals proxy/asset reconfiguration and collection transform changes; ordinary placement changes retain their `changed` signal. These are scene-thread APIs.
 
+Unavailable model regions reuse the maintained bounds tree already used by
+collision readiness. Each candidate short-circuits at its first overlapping
+nonempty region; distant regions are pruned without a full metadata scan.
+Queries remain conservative until exact records are restored. Separate candidate
+queries avoid turning a widely scattered batch into one world-spanning traversal.
+
 `NativeStructureQueries.overlap_mask(blocks, models, transforms, prototype_bounds)` combines one NativeBlockWorld and up to 256 NativeStaticBatch collections in C++, rejecting invalid collections or failed component queries. `structures_world.gd` exposes this through its own `overlap_mask` and combined `changed` signal. Assign that adapter to the optional ecosystem coordinator to exclude both blocks and models. Reconciliation uses the existing one-owner-per-frame queue, so trees may briefly intersect new objects before it drains. See [model exclusion validation](../../docs/MODEL_EXCLUSION_VALIDATION.md).
 
 ## Saves and present scope

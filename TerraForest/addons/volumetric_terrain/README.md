@@ -23,6 +23,12 @@ func _process(_delta):
 
 `NativeTerrainPlanner` performs bounded request traversal, hysteresis, priority sorting, coverage fallback and eviction candidate ordering in C++. Runtime GDScript keeps queue submission and scene publication. The facade reports separate `LOD requests`, `LOD coverage` and `LOD eviction` stages as well as the total. See [planner validation and limits](../../docs/TERRAIN_PLANNER_VALIDATION.md).
 
+Scheduling reuses one validated native state for coverage and, only when over
+the cache budget, eviction ordering. The eviction set protects the newly selected
+cut, not just the previous frame's cut. An unchanged cut reuses its published
+collision-column membership and triangle total; visible mesh replacement and
+reload invalidate that reuse. No cross-frame geometry or readiness query is cached.
+
 `sculpt_sphere(center, radius, add = false, material_id = 1) -> bool` submits a sphere edit. `set_block(cell, material_id) -> bool` writes/removes an exact cube. Both return false if not ready, busy, malformed or admission fails. Radius is 0.5–64 m. Material values are 0–3; block material 0 removes. Existing `edit(...)` supports bounded ordered groups of up to four native brush packets, with validation before mutation. Failed native multi-command groups are not rollback-atomic; saving is disabled on that failure path.
 
 Player mining uses command 2 with `CONTACT_MINING_SHAPE` (3), the visible contact

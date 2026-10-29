@@ -1,5 +1,10 @@
 extends SceneTree
 const Reference = preload("res://tests/reference_terrain_planner.gd")
+class CutStream extends "res://addons/volumetric_terrain/terrain_stream.gd":
+	var activation_calls := 0
+	func _set_active(entry:Dictionary,active:bool,_inherited_visibility:bool=false)->void:
+		activation_calls += 1
+		entry.active = active
 var checks := 0
 var failures := 0
 var planner: RefCounted
@@ -53,6 +58,12 @@ func equivalent(reference: RefCounted, label: String) -> void:
 		var coverage:Dictionary=combined.coverage
 		combined.erase("coverage")
 		check(combined==separate and coverage==planner.coverage_available(before_tiles,separate.split_state,before_visible),label+" fused planner preserves exact requests and coverage mode %d"%mode)
+		var maintenance:Dictionary=planner.requests_navigation(reference.focus,reference.require_collision,velocity,target,interest,before_tiles,before_split,before_visible,true,true)
+		var eviction:Dictionary=maintenance.eviction
+		maintenance.erase("eviction")
+		check(maintenance.coverage==coverage and eviction==planner.eviction_candidates(before_tiles,coverage["keys"],maintenance.requested_keys),label+" fused eviction uses the newly selected coverage mode %d"%mode)
+		var original_cut:Dictionary=planner.requests_navigation(reference.focus,reference.require_collision,velocity,target,interest,before_tiles,before_split,before_visible,false,true)
+		check(original_cut.eviction==planner.eviction_candidates(before_tiles,before_visible,original_cut.requested_keys) and not original_cut.has("coverage"),label+" eviction without coverage protects the original visible cut mode %d"%mode)
 	var victims: Dictionary = planner.eviction_candidates(reference.tiles,reference.visible_cut,planned.requested_keys)
 	var expected_victims := {}
 	for key: Vector3i in reference.tiles:
@@ -86,6 +97,7 @@ func run() -> void:
 	check_travel_activation()
 	check_available()
 	check_invalid()
+	check_cut_reuse()
 	benchmark()
 	finish()
 
@@ -204,11 +216,38 @@ func check_invalid() -> void:
 	check(not planner.coverage({}, {Vector3i(0,0,32):1},[]).ok,"malformed hysteresis flag rejected")
 	check(not planner.coverage({}, {},[Vector3.ZERO]).ok,"malformed visible key rejected")
 	check(not planner.eviction_candidates({Vector3i(0,0,16):{"dirty":false,"used":"bad"}},[],{}).ok,"malformed eviction timestamp rejected")
+	var malformed:Dictionary=planner.requests_navigation(Vector3(960,64,960),true,Vector3.ZERO,Vector3.INF,PackedVector3Array(),{Vector3i(0,0,16):{"dirty":true,"used":"bad"}}, {},[],true,true)
+	check(malformed.ok and not malformed.eviction.ok,"fused maintenance preserves invalid eviction metadata failure")
 	var tile := Vector3i(0,0,16)
 	check(planner.eviction_candidates({tile:{"dirty":false,"used":0}},[],{tile:false})["keys"].is_empty(),"requested-key membership protects eviction independently of stored boolean value")
 	var excess: Array = []
 	excess.resize(21825)
 	check(not planner.coverage({}, {},excess).ok,"oversized planner input rejected before traversal")
+
+func check_cut_reuse() -> void:
+	var stream:=CutStream.new()
+	stream.planner=planner
+	var key:=Vector3i(960,1312,16)
+	stream.tiles[key]={"dirty":false,"active":false,"triangles":0,"bytes":0,"body":null}
+	var covered:Dictionary=planner.coverage_available(stream.tiles,{},[])
+	stream._update_cut(covered)
+	check(stream.activation_calls==1 and stream.active_leaves.has(Vector2i(60,82)),"first cut builds fine empty collision readiness")
+	var leaves:Dictionary=stream.active_leaves.duplicate()
+	for repeat in 100:stream._update_cut(covered)
+	check(stream.activation_calls==1 and stream.active_leaves==leaves,"unchanged coverage does not revisit scene entries or rebuild collision columns")
+	var node:=Node3D.new()
+	stream._install(key,{"dirty":false,"active":false,"triangles":12,"bytes":0,"body":null,"node":node})
+	var before:=stream.activation_calls
+	stream._update_cut(covered)
+	check(stream.activation_calls==before+1 and stream.total_triangles==12 and stream.active_leaves.is_empty(),"same-key mesh replacement invalidates cached triangles and collision readiness")
+	stream.tiles[key].triangles=0
+	stream._cut_dirty=true
+	stream._update_cut(covered)
+	check(stream.active_leaves==leaves,"new empty publication restores fine collision readiness")
+	stream.tiles.clear()
+	stream._update_cut(planner.coverage_available({}, {},[key]))
+	check(stream.visible_cut.is_empty() and stream.active_leaves.is_empty() and stream.total_triangles==0,"coverage removal clears the previous cut")
+	node.free();stream.free()
 
 func benchmark() -> void:
 	var reference := Reference.new()
@@ -220,6 +259,8 @@ func benchmark() -> void:
 	var native_times: Array[float] = []
 	var combined_times: Array[float] = []
 	var legacy_times: Array[float] = []
+	var maintenance_separate: Array[float] = []
+	var maintenance_fused: Array[float] = []
 	for i in range(80):
 		var begin := Time.get_ticks_usec()
 		reference.requests()
@@ -232,11 +273,20 @@ func benchmark() -> void:
 		begin=Time.get_ticks_usec()
 		planner.requests_navigation(reference.focus,true,Vector3.ZERO,Vector3.INF,PackedVector3Array(),reference.tiles,reference.split_state,reference.visible_cut,true)
 		combined_times.append(float(Time.get_ticks_usec()-begin)/1000.0)
+		begin=Time.get_ticks_usec()
+		var separate:Dictionary=planner.requests_navigation(reference.focus,true,Vector3.ZERO,Vector3.INF,PackedVector3Array(),reference.tiles,reference.split_state,reference.visible_cut,true)
+		planner.eviction_candidates(reference.tiles,separate.coverage["keys"],separate.requested_keys)
+		maintenance_separate.append(float(Time.get_ticks_usec()-begin)/1000.0)
+		begin=Time.get_ticks_usec()
+		planner.requests_navigation(reference.focus,true,Vector3.ZERO,Vector3.INF,PackedVector3Array(),reference.tiles,reference.split_state,reference.visible_cut,true,true)
+		maintenance_fused.append(float(Time.get_ticks_usec()-begin)/1000.0)
 	native_times.sort()
 	combined_times.sort()
 	legacy_times.sort()
 	metrics={"scope":"80 samples; separate and fused native request + available-coverage CPU calls; legacy strict coverage for reference only. Excludes scene publication, backend locks and rendering.","tiles":reference.tiles.size(),"native_median_ms":native_times[40],"native_p95_ms":native_times[76],"legacy_median_ms":legacy_times[40],"legacy_p95_ms":legacy_times[76]}
 	metrics["combined_median_ms"]=combined_times[40];metrics["combined_p95_ms"]=combined_times[76]
+	maintenance_separate.sort();maintenance_fused.sort()
+	metrics["maintenance_separate_median_ms"]=maintenance_separate[40];metrics["maintenance_fused_median_ms"]=maintenance_fused[40]
 	print("PLANNER_TIMING ",JSON.stringify(metrics))
 
 func finish() -> void:

@@ -59,6 +59,14 @@ func mutation_check(batch: Node3D,archive: RefCounted,asset: String,checkpoint: 
     scheduler.stop();scheduler.poll(64);scheduler.unregister_collection(asset)
     check(valid and batch.capture_snapshot()==snapshot,"shuffled admissions remove stale bounds and preserve discovery of remaining regions and exact final data")
     source.free()
+
+func transformed_exclusion(batch:Node3D,focus:Vector3)->void:
+    var frame:=Transform3D(Basis(Vector3.UP,PI*.5).scaled(Vector3(2,1.5,.75)),Vector3(-300,12,40))
+    batch.transform=frame
+    var samples:Array[Transform3D]=[frame*Transform3D(Basis.IDENTITY,focus),frame*Transform3D(Basis.IDENTITY,Vector3.ONE*1000000)]
+    check(batch.overlap_mask(samples,AABB(Vector3.ONE*-.25,Vector3.ONE*.5))==PackedByteArray([1,0]),"indexed exclusion respects collection rotation, translation and scale")
+    batch.transform=Transform3D.IDENTITY
+
 func run() -> void:
     for argument in OS.get_cmdline_user_args():
         if argument.begins_with("--profile-dir="):output=argument.trim_prefix("--profile-dir=")
@@ -108,6 +116,15 @@ func run() -> void:
             readiness_exact=batches[0].is_collision_region_ready(AABB(Vector3(1000000,1000000,1000000),Vector3.ONE)) and readiness_exact
         var collision_usec:=Time.get_ticks_usec()-collision_begin
         check(readiness_exact,"indexed collision readiness preserves unavailable and empty regions")
+        var query_bounds:=AABB(Vector3.ONE*-.25,Vector3.ONE*.5)
+        var samples:Array[Transform3D]=[Transform3D(Basis.IDENTITY,focus),Transform3D(Basis.IDENTITY,Vector3.ONE*1000000)]
+        var exclusion_expected:=PackedByteArray([1,0])
+        var exclusion_begin:=Time.get_ticks_usec()
+        var exclusion_exact:=true
+        for query in 1024:exclusion_exact=batches[0].overlap_mask(samples,query_bounds)==exclusion_expected and exclusion_exact
+        var exclusion_usec:=Time.get_ticks_usec()-exclusion_begin
+        check(exclusion_exact,"indexed vegetation exclusion preserves unavailable bounds, including extended meshes")
+        transformed_exclusion(batches[0],focus)
         var begin:=Time.get_ticks_usec()
         while calls<4096:
             var state: Dictionary=scheduler.select_focus(focus,4,64,64,250)
@@ -117,6 +134,7 @@ func run() -> void:
         var elapsed:=Time.get_ticks_usec()-begin
         results.append({"regions_per_asset":count,"assets":asset_count,"axis":axis,"offset":offset,"extended_visual_small_proxy":extended,"calls_to_first_request":calls,"visits":visits,"peak_selection_usec":peak_usec,"wall_usec":elapsed,"queued":queued,"first_request_gate_calls":4})
         results[-1]["collision_queries"]=2048;results[-1]["collision_query_usec"]=collision_usec
+        results[-1]["exclusion_batches"]=1024;results[-1]["exclusion_query_usec"]=exclusion_usec
         check(queued and calls<=4,"near destination discovered within four selection calls: %d regions, %d assets (actual %d)"%[count,asset_count,calls])
         scheduler.set_epoch(1);scheduler.poll(64)
         scheduler.select_focus(Vector3(1000000,1000000,1000000),4,64,64,250)

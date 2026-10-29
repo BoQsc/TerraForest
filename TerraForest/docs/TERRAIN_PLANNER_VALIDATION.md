@@ -39,6 +39,25 @@ thread. Other threads must not mutate shared Dictionary/Array inputs concurrentl
 
 ## Differential and CPU evidence
 
+### Maintenance reuse — 2026-10-29
+
+`requests_navigation(..., include_coverage=false, include_eviction=false)` retains
+its standalone defaults. The optional eviction result reuses the same validated
+tile flags and protects the returned coverage when requested, otherwise the input
+visible cut. The facade requests it only while over its existing cache budget.
+LRU ties, roots, requested-key membership and invalid-timestamp failures remain
+unchanged. `LOD requests` now includes this fused computation; compare the total
+`LOD schedule/cut/evict`, not the eviction stage alone, against older profiles.
+
+An unchanged selected cut skips scene-entry visits and collision-column rebuilds.
+Replacing a visible tile invalidates the reuse even if its key is unchanged;
+changed keys and reload still rebuild. Root-coverage reporting is always updated.
+This is publication bookkeeping reuse, not cached terrain collision queries.
+Differential/random-state, invalid-data and same-key publication tests are in
+`tests/terrain_planner.gd`; actual collider seams remain covered by
+`tests/terrain_stream_coverage.gd`. Current scoped CPU/pack evidence and remaining
+qualification are tracked in [runtime performance](../issues/runtime-performance/README.md).
+
 Debug and isolated release runs pass 129 checks. The tests compare the retained
 legacy algorithm with native requests, priorities, hysteresis, complete ordered
 cuts, hidden membership and eviction candidates through 36 seeded travel

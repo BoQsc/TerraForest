@@ -1,0 +1,1089 @@
+{
+  "date": "2026-10-29",
+  "baseline": "304206cc",
+  "status": "Scoped native CPU reductions verified and installed; not universal FPS/stutter resolution",
+  "before": {
+    "manifest": "reports/runtime_performance/20261029T051209118931Z_efficiency_before/run.json",
+    "frames": "reports/runtime_performance/20261029T051209118931Z_efficiency_before/frames.json",
+    "pack_sha256": "d1deee88ce06914dee5d433e66bc897fcb8992b57225afd0c43f49879b3c68a3",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "135c28c61b778afabb7b9075fcebb86901bfe7c191a4de6d9268fb3cf8672894",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d4ad783202d6fe34ea9208bcd332a2d805559c018e2ef6303111677348bffdc6",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "05dd9e21b8747803f6d213bfbda768aebfae24428ea959bc73343c0b7c667940",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "9cea3565d4d52420b1dd5f33d7f11dfbbfe1bf44cf19787fcbda411235dff978",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "8ad52e55cadbec5b311c95c3bb22ff6c5b913e5160800ac415317d0fa951bb8f",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a149fb672449b5ded74847ef02425e5b96ab765ff4b621e6016061f9048fcb6d"
+    },
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 161140,
+      "exit_code": 0,
+      "resources": {
+        "samples": 185,
+        "gpu_samples": 185,
+        "peak_private_commit_bytes": 4156645376,
+        "peak_working_set_bytes": 1920892928,
+        "peak_dedicated_gpu_bytes": 1767804928,
+        "checks": {
+          "ram": {
+            "bytes": 4156645376,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1767804928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 113.1588868999388,
+      "passed": true,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_e83c59bbfe574849b365da08e4ca7541",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    },
+    "travelled": 248.269714690745,
+    "save_unchanged": true,
+    "mouse_untouched": true,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "summary": {
+      "idle": {
+        "frame_ms": {
+          "samples": 480,
+          "mean": 16.642058333333335,
+          "p95": 19.324,
+          "maximum": 24.349
+        },
+        "process_ms": {
+          "samples": 480,
+          "mean": 2.1791625,
+          "p95": 4.171,
+          "maximum": 6.528
+        },
+        "gpu_ms": {
+          "samples": 480,
+          "mean": 6.381254169344902,
+          "p95": 6.69500017166138,
+          "maximum": 7.10300016403198
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 68,
+            "mean": 0.5473382352941176,
+            "p95": 0.818,
+            "maximum": 0.85
+          },
+          "LOD eviction": {
+            "samples": 68,
+            "mean": 0.2785294117647059,
+            "p95": 0.662,
+            "maximum": 0.935
+          },
+          "LOD requests": {
+            "samples": 68,
+            "mean": 0.8799264705882353,
+            "p95": 1.257,
+            "maximum": 1.363
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 68,
+            "mean": 1.7156617647058825,
+            "p95": 2.265,
+            "maximum": 2.793
+          },
+          "receive surface_batch": {
+            "samples": 56,
+            "mean": 0.8803214285714286,
+            "p95": 1.666,
+            "maximum": 1.939
+          },
+          "zombie update": {
+            "samples": 479,
+            "mean": 0.4599874739039666,
+            "p95": 0.597,
+            "maximum": 1.282
+          }
+        }
+      },
+      "walking": {
+        "frame_ms": {
+          "samples": 2700,
+          "mean": 16.66975,
+          "p95": 20.035,
+          "maximum": 30.574
+        },
+        "process_ms": {
+          "samples": 2700,
+          "mean": 2.381727777777778,
+          "p95": 4.512,
+          "maximum": 9.858
+        },
+        "gpu_ms": {
+          "samples": 2700,
+          "mean": 5.667431477617335,
+          "p95": 7.00299978256226,
+          "maximum": 8.59200000762939
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 386,
+            "mean": 0.6535103626943005,
+            "p95": 0.966,
+            "maximum": 1.344
+          },
+          "LOD eviction": {
+            "samples": 386,
+            "mean": 0.369580310880829,
+            "p95": 0.59,
+            "maximum": 1.133
+          },
+          "LOD requests": {
+            "samples": 386,
+            "mean": 0.8894067357512953,
+            "p95": 1.184,
+            "maximum": 1.728
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 386,
+            "mean": 1.9227538860103626,
+            "p95": 2.698,
+            "maximum": 3.766
+          },
+          "receive surface_batch": {
+            "samples": 328,
+            "mean": 0.768890243902439,
+            "p95": 1.517,
+            "maximum": 2.849
+          },
+          "zombie update": {
+            "samples": 2700,
+            "mean": 0.7268692592592593,
+            "p95": 1.25,
+            "maximum": 11.24
+          }
+        }
+      },
+      "recovery": {
+        "frame_ms": {
+          "samples": 481,
+          "mean": 16.666422037422038,
+          "p95": 22.18,
+          "maximum": 29.222
+        },
+        "process_ms": {
+          "samples": 481,
+          "mean": 2.672471933471934,
+          "p95": 4.651,
+          "maximum": 12.595
+        },
+        "gpu_ms": {
+          "samples": 481,
+          "mean": 6.044424123426981,
+          "p95": 6.47700023651123,
+          "maximum": 6.81500005722046
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 69,
+            "mean": 0.6265507246376811,
+            "p95": 0.757,
+            "maximum": 1.058
+          },
+          "LOD eviction": {
+            "samples": 69,
+            "mean": 0.3580144927536232,
+            "p95": 0.53,
+            "maximum": 0.751
+          },
+          "LOD requests": {
+            "samples": 69,
+            "mean": 0.8324782608695652,
+            "p95": 0.957,
+            "maximum": 1.294
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 69,
+            "mean": 1.825246376811594,
+            "p95": 2.059,
+            "maximum": 2.909
+          },
+          "receive surface_batch": {
+            "samples": 313,
+            "mean": 0.9087124600638978,
+            "p95": 1.807,
+            "maximum": 2.383
+          },
+          "zombie update": {
+            "samples": 481,
+            "mean": 1.1054968814968815,
+            "p95": 1.226,
+            "maximum": 1.665
+          }
+        }
+      }
+    }
+  },
+  "after": {
+    "manifest": "reports/runtime_performance/20261029T052508001760Z_efficiency_after_pack/run.json",
+    "frames": "reports/runtime_performance/20261029T052508001760Z_efficiency_after_pack/frames.json",
+    "pack_sha256": "f972b0c933d5a619652c896711a6dc34413ba9c2bd5452e52703b9d18050be2c",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "35a414459015214e6067748b50fecdfbc5579255beda5f3100a4d077da641657",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "39ef4de685cf84193b6c3504408531602e0f2cda8a8ade626f61299a1dac271b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "8ad52e55cadbec5b311c95c3bb22ff6c5b913e5160800ac415317d0fa951bb8f",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a149fb672449b5ded74847ef02425e5b96ab765ff4b621e6016061f9048fcb6d"
+    },
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 271536,
+      "exit_code": 0,
+      "resources": {
+        "samples": 182,
+        "gpu_samples": 182,
+        "peak_private_commit_bytes": 4171563008,
+        "peak_working_set_bytes": 2335768576,
+        "peak_dedicated_gpu_bytes": 1767804928,
+        "checks": {
+          "ram": {
+            "bytes": 4171563008,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1767804928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 111.01940740004648,
+      "passed": true,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_b0ab64be197342e18b69f54854fc75e8",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    },
+    "travelled": 248.26961170882,
+    "save_unchanged": true,
+    "mouse_untouched": true,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "summary": {
+      "idle": {
+        "frame_ms": {
+          "samples": 480,
+          "mean": 16.64016875,
+          "p95": 18.785,
+          "maximum": 26.206
+        },
+        "process_ms": {
+          "samples": 480,
+          "mean": 1.9693291666666668,
+          "p95": 4.036,
+          "maximum": 6.957
+        },
+        "gpu_ms": {
+          "samples": 480,
+          "mean": 6.332043748100599,
+          "p95": 6.625,
+          "maximum": 7.14499998092651
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 68,
+            "mean": 0.10010294117647059,
+            "p95": 0.585,
+            "maximum": 0.771
+          },
+          "LOD eviction": {
+            "samples": 68,
+            "mean": 0.036823529411764706,
+            "p95": 0.147,
+            "maximum": 0.313
+          },
+          "LOD requests": {
+            "samples": 68,
+            "mean": 0.8670588235294118,
+            "p95": 1.078,
+            "maximum": 1.247
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 68,
+            "mean": 1.0106323529411765,
+            "p95": 1.663,
+            "maximum": 1.777
+          },
+          "receive surface_batch": {
+            "samples": 41,
+            "mean": 0.8815365853658537,
+            "p95": 1.801,
+            "maximum": 2.073
+          },
+          "zombie update": {
+            "samples": 479,
+            "mean": 0.44940501043841335,
+            "p95": 0.56,
+            "maximum": 1.245
+          }
+        }
+      },
+      "walking": {
+        "frame_ms": {
+          "samples": 2701,
+          "mean": 16.668072935949645,
+          "p95": 20.168,
+          "maximum": 31.176
+        },
+        "process_ms": {
+          "samples": 2701,
+          "mean": 2.285401703072936,
+          "p95": 4.394,
+          "maximum": 8.225
+        },
+        "gpu_ms": {
+          "samples": 2701,
+          "mean": 5.698411334668738,
+          "p95": 6.89300012588501,
+          "maximum": 8.39599990844727
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 386,
+            "mean": 0.22676683937823833,
+            "p95": 0.883,
+            "maximum": 1.259
+          },
+          "LOD eviction": {
+            "samples": 386,
+            "mean": 0.01028756476683938,
+            "p95": 0.003,
+            "maximum": 0.564
+          },
+          "LOD requests": {
+            "samples": 386,
+            "mean": 0.903660621761658,
+            "p95": 1.17,
+            "maximum": 1.601
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 386,
+            "mean": 1.1487435233160623,
+            "p95": 1.902,
+            "maximum": 2.55
+          },
+          "receive surface_batch": {
+            "samples": 363,
+            "mean": 0.8116391184573003,
+            "p95": 1.656,
+            "maximum": 2.388
+          },
+          "zombie update": {
+            "samples": 2701,
+            "mean": 0.6044731580895965,
+            "p95": 1.224,
+            "maximum": 9.89
+          }
+        }
+      },
+      "recovery": {
+        "frame_ms": {
+          "samples": 481,
+          "mean": 16.656110187110187,
+          "p95": 21.683,
+          "maximum": 24.493
+        },
+        "process_ms": {
+          "samples": 481,
+          "mean": 2.3634656964656964,
+          "p95": 4.477,
+          "maximum": 6.612
+        },
+        "gpu_ms": {
+          "samples": 481,
+          "mean": 5.994850311358604,
+          "p95": 6.34100008010864,
+          "maximum": 6.75699996948242
+        },
+        "stages_ms": {
+          "LOD coverage": {
+            "samples": 69,
+            "mean": 0.020579710144927536,
+            "p95": 0.014,
+            "maximum": 0.852
+          },
+          "LOD eviction": {
+            "samples": 69,
+            "mean": 0.002101449275362319,
+            "p95": 0.003,
+            "maximum": 0.003
+          },
+          "LOD requests": {
+            "samples": 69,
+            "mean": 0.8969710144927536,
+            "p95": 1.027,
+            "maximum": 1.16
+          },
+          "LOD schedule/cut/evict": {
+            "samples": 69,
+            "mean": 0.9269710144927537,
+            "p95": 1.102,
+            "maximum": 1.843
+          },
+          "receive surface_batch": {
+            "samples": 284,
+            "mean": 0.926056338028169,
+            "p95": 1.8,
+            "maximum": 2.357
+          },
+          "zombie update": {
+            "samples": 481,
+            "mean": 0.3925488565488566,
+            "p95": 0.477,
+            "maximum": 1.162
+          }
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "test": "res://tests/terrain_planner.gd",
+      "manifest": "reports/checks/20261029T052620682471Z/run.json",
+      "checks": 634,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/model_focus_discovery.gd",
+      "manifest": "reports/checks/20261029T052125899266Z/run.json",
+      "checks": 74,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/static_placements.gd",
+      "manifest": "reports/checks/20261029T052202742719Z/run.json",
+      "checks": 235,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/static_model_regions.gd",
+      "manifest": "reports/checks/20261029T052243723775Z/run.json",
+      "checks": 58,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/model_region_metadata.gd",
+      "manifest": "reports/checks/20261029T052246404975Z/run.json",
+      "checks": 32,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/ground_cover_stream.gd",
+      "manifest": "reports/checks/20261029T052249749474Z/run.json",
+      "checks": 158,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/vegetation_terrain_support.gd",
+      "manifest": "reports/checks/20261029T052251537577Z/run.json",
+      "checks": 19,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/terrain_edit_recovery.gd",
+      "manifest": "reports/checks/20261029T052252509067Z/run.json",
+      "checks": 18,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/terrain_stream_coverage.gd",
+      "manifest": "reports/checks/20261029T052253965773Z/run.json",
+      "checks": 14,
+      "passed": true,
+      "diagnostics": []
+    },
+    {
+      "test": "res://tests/terrain_contact_mining.gd",
+      "manifest": "reports/checks/20261029T052255787195Z/run.json",
+      "checks": 137,
+      "passed": true,
+      "diagnostics": []
+    }
+  ],
+  "assertions": 1379,
+  "python_tests": {
+    "check_launcher": 6,
+    "resource_limits": 9,
+    "logs": [
+      "reports/efficiency_pass/launcher_tests.log",
+      "reports/efficiency_pass/resource_tests.log"
+    ]
+  },
+  "planner": {
+    "checks": 634,
+    "failures": 0,
+    "timing": {
+      "combined_median_ms": 0.229,
+      "combined_p95_ms": 0.469,
+      "legacy_median_ms": 2.916,
+      "legacy_p95_ms": 5.138,
+      "maintenance_fused_median_ms": 0.222,
+      "maintenance_separate_median_ms": 0.324,
+      "native_median_ms": 0.359,
+      "native_p95_ms": 0.662,
+      "scope": "80 samples; separate and fused native request + available-coverage CPU calls; legacy strict coverage for reference only. Excludes scene publication, backend locks and rendering.",
+      "tiles": 197
+    }
+  },
+  "exclusion_before": {
+    "cases": [
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 564,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 807,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 18,
+        "queued": true,
+        "regions_per_asset": 64,
+        "visits": 64,
+        "wall_usec": 53
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 660,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 21017,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 16,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 41
+      },
+      {
+        "assets": 32,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 623,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 19895,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 44,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 74
+      },
+      {
+        "assets": 1,
+        "axis": 1,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 663,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 22695,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -2048,
+        "peak_selection_usec": 22,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 55
+      },
+      {
+        "assets": 1,
+        "axis": 2,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 1270,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 31417,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -2048,
+        "peak_selection_usec": 24,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 61
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 1105,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 26982,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 28672,
+        "peak_selection_usec": 22,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 52
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 513,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 54961,
+        "extended_visual_small_proxy": true,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 34,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 64
+      },
+      {
+        "assets": 32,
+        "axis": 3,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 660,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 19547,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -8,
+        "peak_selection_usec": 33,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 56
+      }
+    ],
+    "checks": 66,
+    "failures": 0,
+    "scope": "Synthetic validated metadata selection only, no disk packets or scheduler ticks. Calls are not elapsed game frames; no actual arrival/FPS claim."
+  },
+  "exclusion_after": {
+    "cases": [
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 627,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 799,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 21,
+        "queued": true,
+        "regions_per_asset": 64,
+        "visits": 64,
+        "wall_usec": 56
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 666,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 875,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 11,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 28
+      },
+      {
+        "assets": 32,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 686,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 867,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 25,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 42
+      },
+      {
+        "assets": 1,
+        "axis": 1,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 850,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 901,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -2048,
+        "peak_selection_usec": 16,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 35
+      },
+      {
+        "assets": 1,
+        "axis": 2,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 906,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 891,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -2048,
+        "peak_selection_usec": 16,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 38
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 979,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 1365,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": 28672,
+        "peak_selection_usec": 16,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 41
+      },
+      {
+        "assets": 1,
+        "axis": 0,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 527,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 718,
+        "extended_visual_small_proxy": true,
+        "first_request_gate_calls": 4,
+        "offset": 0,
+        "peak_selection_usec": 27,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 47
+      },
+      {
+        "assets": 32,
+        "axis": 3,
+        "calls_to_first_request": 1,
+        "collision_queries": 2048,
+        "collision_query_usec": 707,
+        "exclusion_batches": 1024,
+        "exclusion_query_usec": 1495,
+        "extended_visual_small_proxy": false,
+        "first_request_gate_calls": 4,
+        "offset": -8,
+        "peak_selection_usec": 56,
+        "queued": true,
+        "regions_per_asset": 4096,
+        "visits": 64,
+        "wall_usec": 98
+      }
+    ],
+    "checks": 74,
+    "failures": 0,
+    "scope": "Synthetic validated metadata selection only, no disk packets or scheduler ticks. Calls are not elapsed game frames; no actual arrival/FPS claim."
+  },
+  "native_builds": {
+    "volumetric_terrain_build_template_debug.json": {
+      "target": "template_debug",
+      "compiled_extension_sources": [
+        "core.cpp",
+        "road_burial_trial.cpp",
+        "road_grid_trial.cpp",
+        "road_network_fit.cpp",
+        "road_normalization.cpp",
+        "road_profile.cpp",
+        "terrain_binding.cpp",
+        "terrain_collision.cpp",
+        "terrain_mount.cpp",
+        "terrain_planner.cpp",
+        "terrain_region_store.cpp",
+        "world_generation.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 19.834102599998005,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll",
+      "sha256": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "volumetric_terrain"
+    },
+    "volumetric_terrain_build_template_release.json": {
+      "target": "template_release",
+      "compiled_extension_sources": [
+        "core.cpp",
+        "road_burial_trial.cpp",
+        "road_grid_trial.cpp",
+        "road_network_fit.cpp",
+        "road_normalization.cpp",
+        "road_profile.cpp",
+        "terrain_binding.cpp",
+        "terrain_collision.cpp",
+        "terrain_mount.cpp",
+        "terrain_planner.cpp",
+        "terrain_region_store.cpp",
+        "world_generation.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 7.3654842000687495,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll",
+      "sha256": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "volumetric_terrain"
+    },
+    "structures_build_template_debug.json": {
+      "target": "template_debug",
+      "compiled_extension_sources": [
+        "static_exclusion.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 9.338183899992146,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll",
+      "sha256": "35a414459015214e6067748b50fecdfbc5579255beda5f3100a4d077da641657",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "structures"
+    },
+    "structures_build_template_release.json": {
+      "target": "template_release",
+      "compiled_extension_sources": [
+        "static_exclusion.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 2.2255866000195965,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\structures\\bin\\structures.windows.template_release.x86_64.dll",
+      "sha256": "39ef4de685cf84193b6c3504408531602e0f2cda8a8ade626f61299a1dac271b",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "structures"
+    }
+  },
+  "source_sha256": {
+    "addons/structures/native/static_exclusion.cpp": "8282277934453e6275b0db562c3ae8dcbd0dea2cea5cfcd15aff8158a344a56a",
+    "addons/volumetric_terrain/terrain_stream.gd": "e50d86f488ac0ab33a84f44e8d644ef12fc461d35ad3cae8e6b1901635b39efe",
+    "addons/volumetric_terrain/native/terrain_planner.cpp": "7bc557a6f11ae16a0c5542ba5f9b5bc97ad553ae30cbf15c633745d721fc924a",
+    "addons/volumetric_terrain/native/terrain_planner.hpp": "2634b8fb959d1a791e346a5f2e5c288bda4b7199ffedd913daecf24fa23a9fcb",
+    "tests/terrain_planner.gd": "90af46cfe4a44ae4be52daca9083043e4216c5564bfdbe45960fe7288539e614",
+    "tests/model_focus_discovery.gd": "b80a4e7b14079f52d319c97295c6012cf2015bef1ddde45a4997309be0a326ea"
+  },
+  "storage_gate": {
+    "distributable": {
+      "bytes": 422688503,
+      "status": "within_budget"
+    },
+    "free_bytes": 55782088704,
+    "minimum_free_bytes": 10737418240,
+    "registered_failed_cache_bytes": 436071272,
+    "failed_cache_budget_bytes": 1073741824,
+    "runtime": "Not measured by this static check",
+    "scope": "Installed game content, not source/history. Saved worlds and development evidence are excluded from automatic quotas.",
+    "passed": true
+  },
+  "export_log": "reports/efficiency_pass/export.log",
+  "retained_intermediates": [
+    {
+      "path": "reports/efficiency_pass/exclusion_after/model_focus_discovery.json",
+      "status": "Rejected combined batch bounds traversal: correct results, slower for wide scattered queries; replaced by per-candidate short-circuiting traversal"
+    },
+    {
+      "path": "reports/checks/20261029T052046995203Z/run.json",
+      "status": "Failed invalid-metadata fixture: selected visible tile is correctly eviction-protected; corrected to dirty hidden tile"
+    },
+    {
+      "path": "reports/checks/20261029T052216890277Z/run.json",
+      "status": "58 assertions passed, runner failed because requested completion string incorrectly included _RESULT"
+    },
+    {
+      "path": "reports/runtime_performance/20261029T051819796441Z_efficiency_after_source/run.json",
+      "status": "Intermediate source smoke, not final artifact"
+    }
+  ],
+  "limitations": [
+    "Same seed-1703 disposable generated save, 1080p/60 FPS cap, RTX 4050 Laptop; AI not deterministic and OS scheduling not lockstep.",
+    "Walking frame p95 20.035 -> 20.168 ms: no demonstrated whole-frame improvement; no GPU/visual quality reduction was attempted.",
+    "4 GiB physical GPU compatibility, maximum-city/mining/endurance peaks, generation/loading wall time and cold fast travel remain unqualified by this pass.",
+    "Metadata benchmark is synthetic with no disk streaming/rendering; local tree pruning is data-dependent, not a universal logarithmic bound.",
+    "Historical unexplained 199 ms stall and finer zombie-stage attribution remain open."
+  ]
+}

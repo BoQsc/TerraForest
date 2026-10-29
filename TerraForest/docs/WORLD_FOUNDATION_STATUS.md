@@ -49,6 +49,21 @@ assertions; unchanged packaging declarations are not qualified by this work.
 Return when shipping those standalone bundles; require a complete dependency
 manifest rather than treating the game PCK gate as addon-bundle validation.
 
+## Runtime maintenance follow-up — 2026-10-29
+
+Installed: fuse native terrain eviction with the validated planning state; reuse
+unchanged cut publication bookkeeping; index unavailable-model vegetation exclusion
+through the existing bounds tree. No generation, visual, collision or save rules
+relaxed. Same 248 m packaged walk lowers terrain scheduling 1.923→1.149 ms/update;
+synthetic 4,096-region exclusion 21.017→0.875 ms for 1,024 two-candidate batches.
+1,379 assertions, 15 Python checks, pack smoke and process-resource gates pass.
+Walking p95 remains effectively unchanged (20.035→20.168 ms), so this is not
+universal stutter resolution. [Evidence and comparisons](../issues/runtime-performance/README.md#maintenance-pass--2026-10-29).
+Remaining: finer zombie/publication attribution, historical unexplained stall,
+maximum-city/cold-arrival, loading/generation and endurance/weak-hardware tests.
+Return with matched traces in those workloads; subsystem reductions alone cannot
+close these wider requirements. Prior rejected/failed intermediate checks remain.
+
 ## Runtime efficiency pass — 2026-10-28
 
 Native fused terrain planning, indexed unloaded-model collision readiness and

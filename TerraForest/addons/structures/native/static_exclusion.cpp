@@ -23,8 +23,13 @@ PackedByteArray NativeStaticBatch::overlap_mask(const TypedArray<Transform3D> &t
     if(queries.empty()||source_mesh.is_null())return result;
     // Unknown placement details must not make vegetation regrow through models.
     // Retain conservative group bounds until exact records return.
-    for(const auto &entry:unloaded_regions)if(entry.second.count&&entry.second.bounds.intersects(combined))
-        for(size_t i=0;i<queries.size();i++)if(entry.second.bounds.intersects(queries[i]))result.set(i,1);
+    const auto overlaps_unloaded=[&](const auto &self,const ModelBoundsIndex::Node *node,const AABB &query)->bool {
+        if(!node||!node->bounds.intersects(query))return false;
+        return (node->box.intersects(query)&&unloaded_regions.at(node->key).count)||
+            self(self,node->left.get(),query)||self(self,node->right.get(),query);
+    };
+    for(size_t index=0;index<queries.size();++index)
+        if(overlaps_unloaded(overlaps_unloaded,unloaded_bounds.root(),queries[index]))result.set(index,1);
     const AABB fallback=proxy_parts.empty()?source_mesh->get_aabb():AABB();
     // Test group bounds once per batch before traversing nearby authored records.
     // This index is independent of physics residency and retains compound gaps.

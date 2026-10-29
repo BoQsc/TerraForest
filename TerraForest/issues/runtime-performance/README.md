@@ -1,7 +1,7 @@
 # Runtime performance
 
 - Status: Improved-partial; installed and packaged walking verified.
-- Updated: 2026-10-28. Baseline: `5bfe87f4`.
+- Updated: 2026-10-29. Initial baseline: `5bfe87f4`; maintenance baseline: `304206cc`.
 - User review: Not reviewed. No visual quality reduction intended.
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
@@ -11,6 +11,39 @@ pass. World data/history/evidence remain intact. [Resource evidence](resource-bu
 The user raised the provisional terrain-cache quota to 3 GiB on 2026-10-28;
 historical receipts are unchanged. Other resource thresholds stay the same.
 RAM thresholds remain provisional and physical 4 GiB hardware remains unqualified.
+
+## Maintenance pass — 2026-10-29
+
+- Native terrain planning reuses validated state for over-budget eviction, protecting
+  the newly selected coverage. Unchanged cuts no longer rebuild collision columns
+  or revisit scene entries; visible mesh replacements and reload invalidate reuse.
+- Vegetation exclusion reuses the existing unavailable-model bounds tree, with
+  per-candidate pruning and first-overlap exit. No extra spatial index or background
+  scan. Existing conservative bounds, authoring, streaming and save rules remain.
+- Same disposable seed-1703 save and 248 m route, 1080p/60 cap, RTX 4050 Laptop:
+  mean terrain schedule/cut/evict **1.923 → 1.149 ms/update** (40% less CPU);
+  idle **1.716 → 1.011 ms**. These are subsystem costs, not frame times.
+- Synthetic 4,096-region exclusion: 1,024 two-candidate batches **21.017 → 0.875 ms**;
+  signed axes, sparse coordinates, extended meshes and transforms pass too. This
+  is in-memory query cost, not disk streaming or whole-city performance.
+- **1,379 assertions + 15 Python checks pass**, plus packaged walking, native-hash
+  smoke and resource gates. Source snapshot hashes stay unchanged, zero mouse
+  captures. Both native configurations rebuilt; installed content 422.7 MB,
+  observed pack peaks 3.89 GiB private RAM / 1.65 GiB dedicated GPU.
+
+Walking frame p95 **20.035 → 20.168 ms**: no demonstrated whole-frame improvement.
+The GPU, visual settings, density and distances are unchanged. Remaining costs
+include surface-result publication and zombie updates; the historical unexplained
+199 ms stall is not claimed fixed. Maximum-city, cold-arrival, loading/generation,
+mining endurance and weaker-hardware qualification remain open. Resume with matched
+frame traces and finer stage attribution, not reduced visuals or loosened budgets.
+[Exact measurements, hashes, tests and rejected trials](maintenance-evidence.json).
+
+![Before maintenance optimization](images/maintenance-before.png)
+Baseline `304206cc`, road arrival: 2,963 trees / 376 owners.
+
+![Installed maintenance optimization](images/maintenance-after.png)
+Same route and counts; inspected for regressions, not user-approved or pixel-identical.
 
 ## Changes
 

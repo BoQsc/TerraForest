@@ -10,5 +10,17 @@
     "sha256": "b80b681b2c0773cf0d8f25fd1a75fecbe3af68994fb010174a31801ccdf30ab8",
     "revision": "5bfe87f4 plus runtime efficiency changes; exact native hashes in source run.json",
     "status": "Engineering comparison, not user visual approval"
+  },
+  "maintenance-before.png": {
+    "source": "reports/runtime_performance/20261029T051209118931Z_efficiency_before/arrival.png",
+    "sha256": "6cf9193d24b845c8bf877ae87a6fbca7f2830bad115aa1f8445ce73ef496ce82",
+    "revision": "304206cc",
+    "status": "Same 248 m route, 2963 trees / 376 owners; small camera/wind differences, engineering inspection only, not user approval"
+  },
+  "maintenance-after.png": {
+    "source": "reports/runtime_performance/20261029T052508001760Z_efficiency_after_pack/arrival.png",
+    "sha256": "fe0f36f77570095aa6135b49828914d6ce0c50b9577ee2e6881ec5766d286e58",
+    "revision": "304206cc plus this maintenance pass; exact build hashes in maintenance-evidence.json",
+    "status": "Same 248 m route, 2963 trees / 376 owners; small camera/wind differences, engineering inspection only, not user approval"
   }
 }
