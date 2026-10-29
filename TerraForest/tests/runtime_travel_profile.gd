@@ -20,9 +20,11 @@ var slot:=""
 var save_hash:=""
 var route:=PackedVector3Array()
 var route_index:=1
+var route_steps:=128
 var travelled:=0.0
 var previous_position:=Vector3.ZERO
 var expected_cache:=""
+var profile_notes:="Held W through real walking/physics with deterministic road-following turns, test-only movement admission without mouse capture. Not a mining or endurance benchmark."
 func _initialize()->void:
  ProjectSettings.set_setting("terraforest/offscreen_session",true)
  run.call_deferred()
@@ -89,7 +91,7 @@ func run()->void:
   requested_origin=road.a+heading*5+Vector3.UP*.1
   route.append(requested_origin);route.append(road.b)
   var used:={roads.find(road):true}
-  for step in 128:
+  for step in route_steps:
    var best:=-1;var destination:=Vector3.ZERO;var alignment:=-2.0
    for index in roads.size():
     if used.has(index):continue
@@ -111,6 +113,7 @@ func run()->void:
  game.session_menu.set_open(false);game._clear_motion();game.fly=false;game.player.rotation.y=atan2(-heading.x,-heading.z);game.camera.rotation.x=0
  if not await until(func():return game.ecosystem._requests.is_empty() and game.ecosystem.resident.size()==game.ecosystem._wanted.size(),60):push_error("Profile forest did not settle");await finish(false);return
  await sample("settling",2)
+ if not is_instance_valid(game):return
  origin=game.player.position;viewport=root.get_viewport_rid();RenderingServer.viewport_set_measure_render_time(viewport,true)
  game.vegetation.renderer.profiling_enabled=true
  game.zombies.profiling_enabled=true
@@ -126,7 +129,7 @@ func run()->void:
  var unchanged:=slot.is_empty() or save_hash==FileAccess.get_sha256("user://worlds/"+slot+".trw")
  var mouse_untouched:bool=preload("res://addons/world_runtime/mouse_ownership.gd").captures==0 and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE
  var cache_isolated:bool=expected_cache.is_empty() or game.terrain.backend.cache_path==expected_cache
- FileAccess.open(output.path_join("frames.json"),FileAccess.WRITE).store_string(JSON.stringify({"frames":rows,"initializations":initializations,"distance":moved,"travelled":travelled,"route":route,"adapter":RenderingServer.get_video_adapter_name(),"viewport":root.size,"slot":slot,"save_unchanged":unchanged,"mouse_untouched":mouse_untouched,"notes":"1080p capped at 60, nonactivating offscreen; wall intervals include waits, GPU timers may lag; nested stages must not be summed. Held W through real walking/physics with deterministic road-following turns, test-only movement admission without mouse capture. Not a mining or endurance benchmark."}))
+ FileAccess.open(output.path_join("frames.json"),FileAccess.WRITE).store_string(JSON.stringify({"frames":rows,"initializations":initializations,"distance":moved,"travelled":travelled,"route":route,"adapter":RenderingServer.get_video_adapter_name(),"viewport":root.size,"slot":slot,"save_unchanged":unchanged,"mouse_untouched":mouse_untouched,"notes":"1080p capped at 60, nonactivating offscreen; wall intervals include waits, GPU timers may lag; nested stages must not be summed. "+profile_notes}))
  print("TRAVEL_PROFILE distance=",moved," frames=",rows.size())
  print("PROFILE_CACHE actual=",game.terrain.backend.cache_path," isolated=",cache_isolated)
  await finish(travelled>80 and rows.size()>600 and unchanged and mouse_untouched and cache_isolated)

@@ -969,6 +969,37 @@ func _execute_density_batch(job: Dictionary) -> void:
 			values.clear();break
 	_push({"kind":"density_batch","token":job.token,"epoch":job.epoch,"revision":job.revision,"status":status,"values":values,"worker_us":Time.get_ticks_usec()-started})
 
+func _execute_surface_batch(job:Dictionary)->void:
+	var points:PackedVector3Array=job.points
+	var normals:=PackedVector3Array();normals.resize(points.size())
+	var packet:PackedByteArray=Codec.command(17,[points.size()])
+	packet.append_array(points.to_byte_array())
+	var reply:PackedByteArray=_call(packet)
+	if Codec.reply_ok(reply) and reply.size()==16+points.size()*24 and reply.decode_u32(12)==points.size():
+		var count:int=points.size()
+		points=Codec._packed_channel(reply,16,count,12,TYPE_PACKED_VECTOR3_ARRAY)
+		normals=Codec._packed_channel(reply,16+count*12,count,12,TYPE_PACKED_VECTOR3_ARRAY)
+	else:
+		points=PackedVector3Array();normals=PackedVector3Array()
+	_push({"kind":"surface_batch","points":points,"normals":normals,"token":job.token,"epoch":job.epoch,"revision":job.revision})
+
+func _service_surface_batches(soft_budget_us:int=1500)->void:
+	var began:=Time.get_ticks_usec()
+	for attempt in 4:
+		var selected:Dictionary={}
+		mutex.lock()
+		if not stopping:
+			for index in jobs.size():
+				var candidate:Dictionary=jobs[index]
+				var kind:String=candidate.get("kind","")
+				if kind=="surface_batch":
+					selected=candidate;jobs.remove_at(index);break
+				if kind not in ["mesh","relight","height"] or candidate.get("interaction_mesh",false):break
+		mutex.unlock()
+		if selected.is_empty():return
+		_execute_surface_batch(selected)
+		if Time.get_ticks_usec()-began>=soft_budget_us:return
+
 func _service_density_query() -> void:
 	# Worker-only cooperative read point. Keep the current mesh's completed
 	# regions; never cancel/restart its work merely to answer a target query.
@@ -1039,6 +1070,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 				if not foreground:
 					_service_density_query()
 					_service_interaction_mesh()
+					_service_surface_batches()
 					_service_lake_slice()
 				if _call(Codec.command(13)).decode_u32(12)!=expected_build_epoch: return {"cancelled":true}
 				if dependency.is_empty() and disk_cache.enabled:
@@ -1279,6 +1311,7 @@ func _run() -> void:
 		# job. The selector cannot cross an already queued mutation or save.
 		_service_density_query()
 		_service_interaction_mesh()
+		_service_surface_batches()
 		# Whole-column meshing also admits one bounded water slice here.
 		# Selection preserves mutation/save barriers; region builds retain
 		# their finer cooperative points inside _build_regions.
@@ -1515,21 +1548,7 @@ func _run() -> void:
 			surveyed.merge({"kind":"survey_patch","rect":rect,"token":job.token,"epoch":job.epoch})
 			_push(surveyed)
 		elif kind == "surface_batch":
-			var points: PackedVector3Array = job["points"]
-			var normals := PackedVector3Array()
-			normals.resize(points.size())
-			var packet: PackedByteArray = Codec.command(17, [points.size()])
-			packet.append_array(points.to_byte_array())
-			var reply: PackedByteArray = _call(packet)
-			if Codec.reply_ok(reply) and reply.size() == 16 + points.size() * 24 and reply.decode_u32(12) == points.size():
-				var count: int = points.size()
-				points = Codec._packed_channel(reply, 16, count, 12, TYPE_PACKED_VECTOR3_ARRAY)
-				normals = Codec._packed_channel(reply, 16 + count * 12, count, 12, TYPE_PACKED_VECTOR3_ARRAY)
-			else:
-				# Failed sampling must not publish a valid-looking empty forest.
-				points = PackedVector3Array()
-				normals = PackedVector3Array()
-			_push({"kind": "surface_batch", "points": points, "normals": normals, "token": job["token"], "epoch": job["epoch"], "revision": job["revision"]})
+			_execute_surface_batch(job)
 		elif kind in ["density_ray","placement_target"]:
 			_execute_density_query(job)
 		elif kind == "height":

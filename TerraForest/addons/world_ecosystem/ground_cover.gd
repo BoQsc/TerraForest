@@ -3,6 +3,7 @@ extends Node3D
 signal obstacles_changed(bounds:AABB)
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
+const SURFACE_JOBS:=8
 var road_regions:RefCounted
 var terrain: Node3D
 var camera: Camera3D
@@ -217,20 +218,19 @@ func _measured_step(_delta:float)->void:
 			if not _wanted.has(key):
 				_retiring[key]=true
 	_advance_retirement()
-	if terrain.pending_edit or _requests.size()>=1: return
+	if terrain.pending_edit or _requests.size()>=SURFACE_JOBS: return
 	if not _support_job.is_empty():
 		if not _support_job.waiting:
 			_support_job.waiting=terrain.request_interpolated_density_batch(_support_job.points,_support_job.token)
 		return
 	if not _scatter_job.is_empty() and (not _wanted.has(_scatter_job.key) or _scatter_job.layers!=_layers(_scatter_job.key) or _scatter_job.revision!=terrain.published_revision or _scatter_job.exclusion!=_exclusion_revision):_scatter_job.clear()
+	if not _requests.is_empty() and _scatter_job.is_empty():return
 	if _dirty.is_empty() and _scatter_job.is_empty() and _retiring.is_empty() and resident.size()==_wanted.size():return
 	for key in _wanted:
 		if not _scatter_job.is_empty() and _scatter_job.key!=key:continue
-		if (resident.has(key) and not _dirty.has(key)) or _pending.has(key): continue
+		if (resident.has(key) and not _dirty.has(key)) or (_pending.has(key) and _scatter_job.is_empty()): continue
 		if _scatter_job.is_empty():_scatter_job={"key":key,"layer":0,"next_layer":0,"layers":_layers(key),"revision":terrain.published_revision,"exclusion":_exclusion_revision,"packed":[],"shelter":shelter_source.call(key) if shelter_source.is_valid() else PackedVector3Array()}
-		# Four existing 64-point jobs per wave; admission may accept fewer.
-		# Keep one owner in flight and preserve terrain's foreground priority.
-		for slot in 4:
+		for slot in range(SURFACE_JOBS-_requests.size()):
 			if _scatter_job.next_layer>=_scatter_job.layers:break
 			var data: Dictionary=native.candidates(key,seed,_scatter_job.next_layer,_scatter_job.shelter,true)
 			var token:=Tokens.allocate()

@@ -1593,19 +1593,33 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
    points[i]=r.vec();V3 p=points[i];
    if(!r.good||!(p.x>=2&&p.x<1998&&p.z>=2&&p.z<1998&&ab(p.y)<=10000)){out.p[8]=1;return;}
   }
+  struct SurfaceSample{int cell_x,cell_y,cell_z;float value;u8 material,flags;};
+  SurfaceSample samples[256]{};
+  auto lattice_sample=[&](int cell_x,int cell_y,int cell_z,u8*material,bool original){
+   u32 slot=hash32(u32(cell_x)*73856093u^u32(cell_y)*83492791u^u32(cell_z)*19349663u^u32(original))&255u;
+   auto&cached=samples[slot];
+   u8 flags=u8(1|(material?2:0)|(original?4:0));
+   if((cached.flags&flags)==flags&&(cached.flags&4)==(flags&4)&&cached.cell_x==cell_x&&cached.cell_y==cell_y&&cached.cell_z==cell_z){
+    if(material)*material=cached.material;
+    return cached.value;
+   }
+   float value;u8 surface_material=0;
+   if(original){
+    V3 corner={float(cell_x),float(cell_y),float(cell_z)};
+    float height=w.height(corner.x,corner.z);value=w.base(corner,height);
+    if(material)surface_material=w.base_material(corner,height);
+   }else value=w.sample(cell_x,cell_y,cell_z,material?&surface_material:nullptr);
+   cached={cell_x,cell_y,cell_z,float(quant(value))/SDF_SCALE,surface_material,flags};
+   if(material)*material=surface_material;
+   return cached.value;
+  };
   auto density=[&](V3 p,bool *paved=nullptr,bool original=false){
    int x=fl(p.x),y=fl(p.y),z=fl(p.z);float dx=p.x-x,dy=p.y-y,dz=p.z-z,value=0;
    for(int k=0;k<8;k++){
     float weight=(k&1?dx:1-dx)*(k&2?dy:1-dy)*(k&4?dz:1-dz);
     if(weight<=0)continue;
-    u8 material=0;float sample;
-    if(original){
-     V3 corner={float(x+(k&1)),float(y+((k>>1)&1)),float(z+((k>>2)&1))};
-     float height=w.height(corner.x,corner.z);sample=w.base(corner,height);
-     if(paved)material=w.base_material(corner,height);
-    }else sample=w.sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr);
-    // Match meshing quantization even before a neighboring edit allocates a page.
-    sample=float(quant(sample))/SDF_SCALE;
+    u8 material=0;
+    float sample=lattice_sample(x+(k&1),y+((k>>1)&1),z+((k>>2)&1),paved?&material:nullptr,original);
     value+=sample*weight;
     if(paved&&sample<0&&material==4)*paved=true;
    }

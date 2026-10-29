@@ -1,0 +1,593 @@
+{
+  "date": "2026-10-29",
+  "status": "Improved-partial; not seamless driving acceptance",
+  "scope": "Controlled road-camera sweeps, not vehicle dynamics. Full production terrain/vegetation. Disk owner counts include empty/off-screen owners. Initial baseline uses pre-change DLL hashes despite an unbuilt source draft.",
+  "profiles": [
+    {
+      "report": "reports/runtime_performance/20261029T091522039578Z_sweep160_before/run.json",
+      "passed": true,
+      "speed_kph": 160.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 772,
+        "mean": 17.079306994818655,
+        "p95": 30.141,
+        "maximum": 58.899
+      },
+      "gpu": {
+        "samples": 772,
+        "mean": 5.661058289399419,
+        "p95": 8.60599994659424,
+        "maximum": 10.2480001449585
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 9.921875,
+          "maximum": 18
+        },
+        "ground_missing_visible": {
+          "mean": 36.890625,
+          "maximum": 57
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3790065664,
+      "dedicated_gpu_bytes": 1472806912,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": null
+    },
+    {
+      "report": "reports/runtime_performance/20261029T091947018151Z_sweep160_cache_rolling/run.json",
+      "passed": true,
+      "speed_kph": 160.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 757,
+        "mean": 17.422299867899603,
+        "p95": 29.279,
+        "maximum": 238.295
+      },
+      "gpu": {
+        "samples": 757,
+        "mean": 5.440256272155984,
+        "p95": 7.97200012207031,
+        "maximum": 9.89200019836426
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 9.603174603174603,
+          "maximum": 17
+        },
+        "ground_missing_visible": {
+          "mean": 36.76190476190476,
+          "maximum": 55
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3807506432,
+      "dedicated_gpu_bytes": 1481654272,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": null
+    },
+    {
+      "report": "reports/runtime_performance/20261029T092246961476Z_sweep160_eight/run.json",
+      "passed": true,
+      "speed_kph": 160.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 775,
+        "mean": 17.030003870967743,
+        "p95": 28.819,
+        "maximum": 49.072
+      },
+      "gpu": {
+        "samples": 775,
+        "mean": 5.585116132305514,
+        "p95": 7.85500001907349,
+        "maximum": 9.57400035858154
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 6.65625,
+          "maximum": 14
+        },
+        "ground_missing_visible": {
+          "mean": 32.453125,
+          "maximum": 47
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3799183360,
+      "dedicated_gpu_bytes": 1472806912,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": null
+    },
+    {
+      "report": "reports/runtime_performance/20261029T092843700369Z_sweep160_cooperative/run.json",
+      "passed": true,
+      "speed_kph": 160.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 791,
+        "mean": 16.700716814159293,
+        "p95": 23.727,
+        "maximum": 39.697
+      },
+      "gpu": {
+        "samples": 791,
+        "mean": 6.101687737270794,
+        "p95": 8.13300037384033,
+        "maximum": 10.1750001907349
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 4.461538461538462,
+          "maximum": 11
+        },
+        "ground_missing_visible": {
+          "mean": 28.076923076923077,
+          "maximum": 43
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3559714816,
+      "dedicated_gpu_bytes": 1481650176,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": null
+    },
+    {
+      "report": "reports/runtime_performance/20261029T093811677295Z_sweep160_pack/run.json",
+      "passed": true,
+      "speed_kph": 160.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 782,
+        "mean": 16.87218158567775,
+        "p95": 26.472,
+        "maximum": 47.466
+      },
+      "gpu": {
+        "samples": 782,
+        "mean": 6.022488490090041,
+        "p95": 8.28800010681152,
+        "maximum": 10.7519998550415
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 4.3076923076923075,
+          "maximum": 12
+        },
+        "ground_missing_visible": {
+          "mean": 28.953846153846154,
+          "maximum": 42
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3543474176,
+      "dedicated_gpu_bytes": 1481650176,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": "dece9b4521532b2b1c6c206176acdb8d3602d6d6affa20b541ab39616ba39302"
+    },
+    {
+      "report": "reports/runtime_performance/20261029T093930532537Z_sweep100_pack/run.json",
+      "passed": true,
+      "speed_kph": 100.0,
+      "path_metres": 585.583028793335,
+      "frame": {
+        "samples": 1265,
+        "mean": 16.685332806324112,
+        "p95": 21.54,
+        "maximum": 33.647
+      },
+      "gpu": {
+        "samples": 1265,
+        "mean": 6.517381027658938,
+        "p95": 8.4040002822876,
+        "maximum": 9.22799968719482
+      },
+      "missing_owners": {
+        "ground_missing_near": {
+          "mean": 1.7523809523809524,
+          "maximum": 8
+        },
+        "ground_missing_visible": {
+          "mean": 21.428571428571427,
+          "maximum": 34
+        },
+        "forest_missing_visible": {
+          "mean": 0.0,
+          "maximum": 0
+        }
+      },
+      "private_ram_bytes": 3586887680,
+      "dedicated_gpu_bytes": 1472802816,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": "dece9b4521532b2b1c6c206176acdb8d3602d6d6affa20b541ab39616ba39302"
+    }
+  ],
+  "sampling": {
+    "checks": 610,
+    "failures": 0,
+    "reference": "reports/surface_sampling_cache/before_valid/result.json",
+    "result": "reports/surface_sampling_cache/after/result.json",
+    "reference_sha256": "0a48a56c37ba063d02b2c53e6c794517b3a6a81c9784b8d338684b7a217a928f",
+    "before_us_per_batch": 727.392578125,
+    "after_us_per_batch": 292.621875
+  },
+  "checks": [
+    {
+      "report": "reports/checks/20261029T091916340335Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 1.972712600021623,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 86605824
+      }
+    },
+    {
+      "report": "reports/checks/20261029T092244344643Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 1.569719500024803,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 130928640
+      }
+    },
+    {
+      "report": "reports/checks/20261029T091921933659Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.5704610000830144,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 78692352
+      }
+    },
+    {
+      "report": "reports/checks/20261029T091923414577Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.5642385999672115,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 35627008
+      }
+    },
+    {
+      "report": "reports/checks/20261029T092841748346Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.691439300077036,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 84897792
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093215886897Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.4439730999292806,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 81330176
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093217006197Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.41824319993611425,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 39092224
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093218128579Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.424457999994047,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 27938816
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093219466544Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 1.914598700008355,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 132259840
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093330646230Z/run.json",
+      "test": null,
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "elapsed_seconds": 0.9712515999563038,
+        "diagnostics": [],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 160542720
+      }
+    },
+    {
+      "report": "reports/checks/20261029T093354454107Z/run.json",
+      "test": null,
+      "result": {
+        "passed": false,
+        "exit_code": 1,
+        "elapsed_seconds": 34.617851600050926,
+        "diagnostics": [
+          "FAIL maximum populated vegetation publication stays below 16 ms on this machine"
+        ],
+        "required_text_found": true,
+        "peak_private_commit_bytes": 1349767168
+      }
+    }
+  ],
+  "large_edit": {
+    "checks": 72,
+    "failures": 1,
+    "samples": [
+      {
+        "label": "terrain tool 0",
+        "instances": 137,
+        "support_publish_ms": 2.631,
+        "support_worker_ms": 0.634
+      },
+      {
+        "label": "terrain tool 1",
+        "instances": 150,
+        "support_publish_ms": 0.203,
+        "support_worker_ms": 0.41
+      },
+      {
+        "label": "terrain tool 2",
+        "instances": 130,
+        "support_publish_ms": 0.773,
+        "support_worker_ms": 0.283
+      },
+      {
+        "label": "terrain tool 3",
+        "instances": 137,
+        "support_publish_ms": 0.369,
+        "support_worker_ms": 1.074
+      },
+      {
+        "label": "terrain tool 4",
+        "instances": 24,
+        "support_publish_ms": 0.283,
+        "support_worker_ms": 0.778
+      },
+      {
+        "label": "terrain tool 5",
+        "instances": 137,
+        "support_publish_ms": 0.368,
+        "support_worker_ms": 0.327
+      },
+      {
+        "label": "authored plant mining",
+        "instances": 168,
+        "support_publish_ms": 0.346,
+        "support_worker_ms": 0.645
+      },
+      {
+        "label": "tree root mining",
+        "instances": 159,
+        "support_publish_ms": 4.566,
+        "support_worker_ms": 0.496
+      },
+      {
+        "label": "elevated trunk deposit",
+        "instances": 122,
+        "support_publish_ms": 0.24,
+        "support_worker_ms": 0.247
+      },
+      {
+        "label": "large excavation",
+        "instances": 1119,
+        "support_publish_ms": 3.971,
+        "support_worker_ms": 2.955
+      },
+      {
+        "label": "fully populated maximum excavation",
+        "instances": 18532,
+        "support_publish_ms": 26.475,
+        "support_worker_ms": 58.146
+      }
+    ]
+  },
+  "static_budget": {
+    "distributable": {
+      "bytes": 422699463,
+      "status": "within_budget"
+    },
+    "free_bytes": 50943610880,
+    "minimum_free_bytes": 10737418240,
+    "registered_failed_cache_bytes": 1073716156,
+    "failed_cache_budget_bytes": 1073741824,
+    "runtime": "Not measured by this static check",
+    "scope": "Installed game content, not source/history. Saved worlds and development evidence are excluded from automatic quotas.",
+    "passed": true
+  },
+  "rejected_or_incomplete_trials": [
+    {
+      "report": "reports/runtime_performance/20261029T085239484918Z_driving_before/run.json",
+      "reason": "Test vehicle entry failed; no driving measurement."
+    },
+    {
+      "report": "reports/runtime_performance/20261029T085631053872Z_driving_baseline/run.json",
+      "reason": "Mouse-capture-dependent entry rejected nonactivating test; no driving measurement."
+    },
+    {
+      "report": "reports/runtime_performance/20261029T090002723327Z_driving_baseline_ready/run.json",
+      "reason": "Physical car max 88.3 km/h, low average speed and left road; generic travel gate is not fast-driving acceptance."
+    },
+    {
+      "report": "reports/runtime_performance/20261029T091005243561Z_driving_analog_before/run.json",
+      "reason": "Automated steering left road and stalled; not valid high-speed qualification. Removed from retained driver."
+    },
+    {
+      "report": "reports/checks/20261029T090349975167Z/run.json",
+      "reason": "Test brush used invalid material 4; corrected to material 3 plus separate asphalt stamp."
+    },
+    {
+      "report": "reports/checks/20261029T091001796311Z/run.json",
+      "reason": "Test asphalt stamp too close to world edge; moved road witness inside valid stamp bounds."
+    },
+    {
+      "report": "reports/checks/20261029T093221985602Z/run.json",
+      "reason": "Test invoked without required --ground-cover."
+    },
+    {
+      "report": "reports/runtime_performance/20261029T093724505540Z_sweep160_installed/run.json",
+      "reason": "Packaged driver referenced tests excluded from game PCK; wrapper now copies only the needed test base."
+    },
+    {
+      "report": "reports/runtime_performance/20261029T093729502837Z_sweep100_installed/run.json",
+      "reason": "Same excluded-test-base harness error."
+    }
+  ]
+}

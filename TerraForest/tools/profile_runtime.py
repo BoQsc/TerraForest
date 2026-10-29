@@ -1,4 +1,4 @@
-"""Capture comparable offscreen walking profiles without modifying saved worlds."""
+"""Capture offscreen walking or controlled speed-sweep profiles without modifying saves."""
 import argparse
 import datetime
 import hashlib
@@ -36,6 +36,8 @@ def main():
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--label", default="profile")
     parser.add_argument("--require-resource-budget", action="store_true")
+    parser.add_argument("--speed-sweep", "--driving", dest="driving", action="store_true", help="Controlled road-camera speed sweep, not a vehicle handling qualification")
+    parser.add_argument("--speed-kph", type=float, default=100)
     args = parser.parse_args()
     if not args.label.isidentifier():
         parser.error("Label must be an identifier")
@@ -43,12 +45,15 @@ def main():
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder = ROOT / "reports/runtime_performance" / (stamp + "_" + args.label)
     folder.mkdir(parents=True)
-    source = ROOT / "tests/runtime_travel_profile.gd"
-    command, cache = command_for(config.godot, "runtime_travel_profile", folder,
-                                 ["--profile-slot=" + args.slot, "--profile-dir=" + folder.as_posix()])
+    test = "vegetation_driving_profile" if args.driving else "runtime_travel_profile"
+    source = ROOT / "tests" / (test + ".gd")
+    extra = ["--profile-slot=" + args.slot, "--profile-dir=" + folder.as_posix()]
+    if args.driving:
+        extra.append("--drive-kph=" + str(args.speed_kph))
+    command, cache = command_for(config.godot, test, folder, extra)
     command.remove("--fullscreen")
     command[1:1] = ["--windowed", "--position", "-2400,-1600"]
-    record = dict(command=command, cache=cache, source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+    record = dict(command=command, cache=cache, mode="controlled_speed_sweep" if args.driving else "walking", source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                   native_sha256={str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                                  for path in (ROOT / "addons").glob("*/bin/*.dll")}, **revision_metadata())
     if args.pack:
@@ -56,7 +61,13 @@ def main():
         command[1:1] = ["--main-pack", str(ROOT / "dist/TerraForest.pck")]
         command[command.index("--path") + 1] = str(ROOT / "dist")
         driver = folder / "profile.gd"
-        driver.write_bytes(source.read_bytes())
+        driver_text = source.read_text(encoding="utf-8")
+        if args.driving:
+            base = folder / "runtime_travel_profile.gd"
+            base.write_bytes((ROOT / "tests/runtime_travel_profile.gd").read_bytes())
+            record["base_source_sha256"] = hashlib.sha256(base.read_bytes()).hexdigest()
+            driver_text = driver_text.replace("res://tests/runtime_travel_profile.gd", base.as_posix())
+        driver.write_text(driver_text, encoding="utf-8")
         command[command.index("--script") + 1] = str(driver)
         record["pack_sha256"] = hashlib.sha256((ROOT / "dist/TerraForest.pck").read_bytes()).hexdigest()
     manifest = folder / "run.json"

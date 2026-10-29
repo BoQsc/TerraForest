@@ -13,7 +13,7 @@ class Terrain extends Node3D:
 	var density_requests: Array=[]
 	var published_revision:=0
 	var requests: Array=[]
-	var admission_limit:=4
+	var admission_limit:=8
 	var reverse_replies:=false
 	func register_edit_support(_capture:Callable,_apply:Callable)->bool:return true
 	func request_surface_batch(points: PackedVector3Array,token: int) -> bool:
@@ -56,7 +56,7 @@ func run() -> void:
 	var owner_count:int=cover.native.wanted_view(camera.position,Vector3.FORWARD,75,16.0/9.0,true).cells.size()
 	for i in range(owner_count):
 		cover._process(0.0)
-		check(terrain.requests.size()==4,"four bounded support jobs %d"%i)
+		check(terrain.requests.size()==8,"eight bounded support jobs %d"%i)
 		terrain.reply();finish_support(cover,terrain)
 	print("STREAM_COUNTS expected=",owner_count," resident=",cover.resident.size()," wanted=",cover._wanted.size()," fov=",camera.fov)
 	check(cover.resident.size()==owner_count and cover.rejected_batches==0,"all prefetched owners publish without rejection")
@@ -91,12 +91,12 @@ func run() -> void:
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	check(not cover._dirty.has(key) and cover.batches[0].get_ids().has(authored_id),"fresh support retry preserves authored identity")
 	camera.position=Vector3(1600,3,1600);cover._process(0.0)
-	check(cover._retiring.size()>0 and terrain.requests.size()==4,"teleport queues bounded old-owner retirement and four destination jobs")
+	check(cover._retiring.size()>0 and terrain.requests.size()==8,"teleport queues bounded old-owner retirement and eight destination jobs")
 	for frame in owner_count:cover._advance_retirement()
 	check(cover.resident.is_empty() and cover._retiring.is_empty(),"bounded retirement drains all departed owners")
 	check(not cover.picker.pick(Vector3(970,20.1,970),Vector3(970,21,970)).hit,"unloaded owner leaves no stale interaction proxy")
 	camera.position=Vector3(960,3,960);cover._process(0.0)
-	check(terrain.requests.size()==4,"teleport preserves the four-job bound")
+	check(terrain.requests.size()==8,"teleport preserves the eight-job bound")
 	terrain.reply();finish_support(cover,terrain)
 	check(cover.resident.is_empty(),"obsolete destination reply does not publish")
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
@@ -147,12 +147,27 @@ func run() -> void:
 	cover.reset();camera.position=Vector3(960,3,960)
 	cover._process(0.0);terrain.reply();finish_support(cover,terrain)
 	var reference:Array=cover.resident[Vector2i(30,30)].duplicate(true)
+	cover.reset();cover._process(0.0)
+	terrain.reply_one();cover._process(0.0)
+	check(terrain.requests.size()==8 and cover._scatter_job.next_layer==9 and cover.resident.is_empty(),"one completed layer refills the bounded queue without partial publication")
+	terrain.reverse_replies=true
+	for step in 8:
+		terrain.reply_one();cover._process(0.0)
+		check(terrain.requests.size()<=8 and cover.resident.is_empty(),"rolling support keeps one atomic owner and eight-job bound %d"%step)
+	terrain.reply();finish_support(cover,terrain)
+	check(cover.resident.get(Vector2i(30,30),[])==reference,"interleaved rolling replies preserve every ordered record")
+	cover.reset();cover._process(0.0);terrain.reply_one();cover._process(0.0)
+	cover._exclusion_changed(AABB())
+	terrain.reply_one();cover._process(0.0)
+	check(terrain.requests.size()==7 and cover._scatter_job.is_empty(),"invalidated rolling owner drains old requests before retry")
+	terrain.reply();cover._process(0.0);terrain.reply();finish_support(cover,terrain)
+	check(cover.resident.get(Vector2i(30,30),[])==reference,"rolling invalidation retries with identical records")
 	cover.reset();terrain.admission_limit=2;terrain.reverse_replies=true
 	cover._process(0.0)
 	check(terrain.requests.size()==2,"partial admission accepts only two jobs without advancing rejected layers")
 	terrain.reply();finish_support(cover,terrain)
 	check(cover.resident.get(Vector2i(30,30),[])==reference,"partial admission and reversed replies reproduce identical ordered records")
-	cover.reset();terrain.admission_limit=4
+	cover.reset();terrain.admission_limit=8
 	cover._process(0.0)
 	var bad:Dictionary=terrain.requests.pop_front()
 	terrain.surface_batch_ready.emit(bad.token,PackedVector3Array(),PackedVector3Array(),terrain.epoch,terrain.published_revision)

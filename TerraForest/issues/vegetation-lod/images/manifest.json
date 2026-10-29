@@ -13,5 +13,17 @@
     "file": "world_travel.png",
     "source": "reports/vegetation_lod_world/travel.png",
     "sha256": "7b1b151659c652e7d7318a84b139bad7807d172d4344d34e8ef6c760a625dfcf"
+  },
+  {
+    "file": "driving-four-job.png",
+    "source": "reports/runtime_performance/20261029T091947018151Z_sweep160_cache_rolling/moving-end.png",
+    "sha256": "9fdce922bba3113b930488a1477fbefccd53549172c8fc5f7c01ce27f2dc7e09",
+    "scope": "160 km/h controlled sweep endpoint, before recovery; images inspected, not user-approved"
+  },
+  {
+    "file": "driving-bounded-worker.png",
+    "source": "reports/runtime_performance/20261029T093811677295Z_sweep160_pack/moving-end.png",
+    "sha256": "b3d401144ae433cbfe34622f970e8c81dab5812c914a37ed43820c9c28c7f0d8",
+    "scope": "160 km/h controlled sweep endpoint, before recovery; images inspected, not user-approved"
   }
 ]

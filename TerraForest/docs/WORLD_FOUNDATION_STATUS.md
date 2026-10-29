@@ -126,9 +126,22 @@ Distant fern/bush/twig meshes use 41–61% fewer triangles; near geometry, densi
 harvest/persistence and grass remain unchanged. Scoped geometry, renderer and
 actual-world travel checks pass. Installed with the city integration; exported
 native hashes match source. [Evidence](../issues/vegetation-lod/README.md).
-Remaining: player review, weak-hardware/endurance and teleport publication checks.
-Moving-world p95 is 20.90 ms; this is not a universal smooth-60-FPS claim.
-Return on visible transitions or measured spikes, comparing the same camera/FOV.
+2026-10-29 driving follow-up installed: request-local native root cache, rolling
+eight-job ground-cover admission and bounded cooperative worker sampling. No
+density/mesh/visibility/identity reduction. 610 byte-parity assertions and 170
+coordinator checks pass. At 160 km/h on a 585.6 m controlled camera route, frame
+p95 30.14→23.73 ms (26.47 ms installed repeat); mean missing ground owners within
+64 m 9.92→4.46 (4.31 installed). Forest coverage kept up. This is not physical-car
+qualification or a seamless result. [Evidence and alternatives](../issues/vegetation-lod/README.md#driving-speed-streaming--2026-10-29).
+Installed 100 km/h sweep: frame p95 21.54 ms, mean/max missing near owners 1.75/8;
+no matched baseline at this speed. Both pack resource/save/mouse gates pass.
+Remaining: sustained real-car/camera-turn/cold-cache/endurance and weaker-hardware
+coverage; native versioned owner baking/streaming is the next candidate, not yet
+implemented, and must share the 3 GiB cache quota. Require same-density visual,
+save/edit correctness and frame/resource evidence before replacing any renderer.
+The integrated edit suite passes 71/72: maximum-volume vegetation publication
+26.475 ms exceeds 16 ms. Keep this budget failure open; compare the same prior-build
+fixture to establish attribution before a separate large-edit fix. No relaxed gate.
 
 ## City architecture proposals — 2026-10-28
 
