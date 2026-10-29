@@ -24,5 +24,31 @@
     ],
     "offscreen": true,
     "cursor_captures": 0
+  },
+  "usage-cached-top.png": {
+    "source": "reports/usage_cached_verified/usage-top.png",
+    "sha256": "c1f1104531d04173cbd0834f31bf20ac382ee9e346a0bb234f82fa30bf2ee8b9",
+    "baseline": "fd9c98d6 plus cached summaries and targeted metadata discovery",
+    "pack_sha256": "d1deee88ce06914dee5d433e66bc897fcb8992b57225afd0c43f49879b3c68a3",
+    "status": "Installed-pack scoped verification; values explicitly cached; not FPS or cold-storage qualification",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "cursor_captures": 0,
+    "synthetic_cache_fixture": false
+  },
+  "usage-cached-policies.png": {
+    "source": "reports/usage_cached_verified/usage-storage-policies.png",
+    "sha256": "34546de9f3d42b724823dfe3b1a47d5e4384b3aee89259716dfe53c3151ab74c",
+    "baseline": "fd9c98d6 plus cached summaries and targeted metadata discovery",
+    "pack_sha256": "d1deee88ce06914dee5d433e66bc897fcb8992b57225afd0c43f49879b3c68a3",
+    "status": "Installed-pack scoped verification; values explicitly cached; not FPS or cold-storage qualification",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "cursor_captures": 0,
+    "synthetic_cache_fixture": false
   }
 }

@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Resource usage visibility](resource-usage/README.md) | Implemented / scan cost unresolved | ESC Usage and provisional 3 GiB cache quota; audit measures a 67 s directory scan and initial 65 ms delay; settled counters are cheaper; manual/cached audit recommendation not implemented |
+| [Resource usage visibility](resource-usage/README.md) | Cached readings restored / bounded refresh | Size readings retained; opening uses saved/export/active-cache accounting, targeted native refresh has an 8 s budget; cold incomplete results stay explicit; initial counter cost remains reviewable |
 | [Runtime performance](runtime-performance/README.md) | Improved-partial / installed | Less redundant streaming work; 4 GiB GPU / 5 GB content gates; 53.3 GiB cache recovery; 100 GB free-space goal, frame spikes and endurance remain open |
 | [Varied lakes and bridges](lakes-and-bridges/README.md) | Installed / scoped checks | Larger curved and two-lobed lakes; destructible timber crossings; actual-world player/NPC traversal and packaged reopen pass; user visual review remains |
 | [Extended vegetation LOD](vegetation-lod/README.md) | Installed / scoped checks | 576 m forest with native circular preload; cheaper distant fern/bush/twig meshes; near detail unchanged; long travel and player review remain |

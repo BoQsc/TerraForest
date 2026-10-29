@@ -3,6 +3,8 @@
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <atomic>
+#include <array>
+#include <chrono>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -23,9 +25,13 @@ class NativeResourceUsage : public godot::RefCounted {
     std::mutex mutex_;
     std::thread worker_;
     std::atomic<bool> running_{false},stop_{false};
+    std::atomic<bool> timed_out_{false};
+    std::chrono::steady_clock::time_point started_{},deadline_{};
+    std::atomic<int64_t> elapsed_ms_{0};
+    std::array<std::atomic<int64_t>,8> visited_{};
     void *pdh_=nullptr,*query_=nullptr,*counter_=nullptr;
     int64_t gpu_peak_=-1;
-    void scan_directory(const std::wstring &path,int depth,Area &area,size_t index);
+    void scan_directory(const std::wstring &path,int depth,Area &area,size_t index,bool report=true);
     void publish(const Area &area,size_t index);
     void initialize_gpu();
 protected:
@@ -33,7 +39,7 @@ protected:
 public:
     ~NativeResourceUsage();
     godot::Dictionary sample(const godot::String &volume_path);
-    bool start_scan(const godot::Array &locations);
+    bool start_scan(const godot::Array &locations,int64_t budget_ms=8000);
     void cancel_scan();
     godot::Dictionary scan_status();
 };

@@ -7,6 +7,7 @@ import subprocess
 import sys
 import configparser
 import json
+import time
 from resource_limits import distribution_size, evaluate, load_budgets, require_free_space
 
 root=Path(__file__).resolve().parents[1]
@@ -102,4 +103,9 @@ if staging!=root/'dist':
     pending.replace(installed_pack)
 else:
     pack.replace(installed_pack)
+usage_metadata = dict(schema=1, bytes=distribution_size(root/'dist'), pack_bytes=installed_pack.stat().st_size,
+                      measured_at=time.time())
+usage_pending = root/'dist/usage_content.pending.json'
+usage_pending.write_text(json.dumps(usage_metadata), encoding='utf-8')
+usage_pending.replace(root/'dist/usage_content.json')
 print(f'PASS exported pack starts with {len(libraries)} external native libraries; keep dist/addons beside the PCK')

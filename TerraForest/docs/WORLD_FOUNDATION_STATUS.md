@@ -4,18 +4,22 @@ This file retains the wider backlog; the tracker initially covers three cases.
 ## Resource budgets and retained caches — 2026-10-28
 
 ESC → Usage now exposes the same resource limits, live native process RAM/GPU
-and free storage, read-only asynchronous folder totals and system-file-manager
-buttons. Sampling/scanning stop when leaving the page. No cleanup controls or
+and free storage, saved folder totals and system-file-manager buttons. Opening
+reads a small saved summary, not a directory walk. Export accounting provides
+content size; the existing terrain-worker counters provide active-cache size.
+Per-folder metadata refresh remains available with an eight-second work budget;
+only complete results replace cached totals. Sampling/discovery stop on leaving.
+No cleanup controls or
 new gameplay monitoring loop. [UI verification and screenshots](../issues/resource-usage/README.md).
 User review of the page remains pending; this visibility feature does not close
 the storage-recovery or hardware-qualification work below.
 
-Usage cost audit: automatic folder enumeration remains expensive (about 67 s,
-650,965 entries in the isolated test; cache roots dominate). Settled-page counters
-are much cheaper, but first activation has a measured 65 ms delay. No runtime
-behavior changed in this read-only investigation. [Scoped costs and recommended
-follow-up](../issues/resource-usage/README.md#remaining--resume-here); require a
-matched in-game comparison before claiming those costs are resolved.
+The 67-second automatic full audit is replaced by cached readings and explicit,
+targeted discovery; scan-removal commit `fe80b322` was reverted by `fd9c98d6`.
+Cold untracked trees can still exceed the budget and remain marked incomplete;
+this is not a claim that arbitrary recursive totals are instantaneous. The
+first-counter initialization and net in-game memory costs remain separate work.
+[Evidence and remaining scope](../issues/resource-usage/README.md#remaining--resume-here).
 
 User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
 warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record

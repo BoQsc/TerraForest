@@ -16,7 +16,7 @@ static String narrow(const std::string &value){return String::utf8(value.c_str()
 static bool protected_folder(const std::wstring &name){return !_wcsicmp(name.c_str(),L"worlds")||!_wcsicmp(name.c_str(),L"logs")||!_wcsicmp(name.c_str(),L"generation_reports")||!_wcsicmp(name.c_str(),L"screenshots");}
 void NativeResourceUsage::_bind_methods(){
     ClassDB::bind_method(D_METHOD("sample","volume_path"),&NativeResourceUsage::sample);
-    ClassDB::bind_method(D_METHOD("start_scan","locations"),&NativeResourceUsage::start_scan);
+    ClassDB::bind_method(D_METHOD("start_scan","locations","budget_ms"),&NativeResourceUsage::start_scan,DEFVAL(8000));
     ClassDB::bind_method(D_METHOD("cancel_scan"),&NativeResourceUsage::cancel_scan);
     ClassDB::bind_method(D_METHOD("scan_status"),&NativeResourceUsage::scan_status);
 }
@@ -56,15 +56,19 @@ Dictionary NativeResourceUsage::sample(const String &volume_path){
     return out;
 }
 void NativeResourceUsage::publish(const Area &area,size_t index){std::lock_guard<std::mutex> lock(mutex_);areas_[index]=area;}
-void NativeResourceUsage::scan_directory(const std::wstring &path,int depth,Area &area,size_t index){
+void NativeResourceUsage::scan_directory(const std::wstring &path,int depth,Area &area,size_t index,bool report){
     if(stop_||area.limited)return;
+    if(std::chrono::steady_clock::now()>=deadline_){timed_out_=true;area.limited=true;return;}
     if(depth>64||area.entries>=2000000){area.limited=true;return;}
     WIN32_FIND_DATAW data{};
+    std::vector<std::wstring> children;
     HANDLE search=FindFirstFileExW((path+L"\\*").c_str(),FindExInfoBasic,&data,FindExSearchNameMatch,nullptr,FIND_FIRST_EX_LARGE_FETCH);
     if(search==INVALID_HANDLE_VALUE){if(GetLastError()!=ERROR_FILE_NOT_FOUND)++area.errors;return;}
     do {
         std::wstring name=data.cFileName;if(name==L"."||name==L"..")continue;
-        if(stop_||area.entries>=2000000){area.limited=area.entries>=2000000;break;}
+        if(stop_)break;
+        if(std::chrono::steady_clock::now()>=deadline_){timed_out_=true;area.limited=true;break;}
+        if(visited_[index].fetch_add(1)>=2000000){area.limited=true;break;}
         ++area.entries;
         if(data.dwFileAttributes&FILE_ATTRIBUTE_REPARSE_POINT){++area.links;continue;}
         if(data.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY){
@@ -74,20 +78,39 @@ void NativeResourceUsage::scan_directory(const std::wstring &path,int depth,Area
                 DWORD marker=GetFileAttributesW((path+L"\\"+name+L"\\.terraforest-derived.lock").c_str());
                 if(marker==INVALID_FILE_ATTRIBUTES||(marker&(FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_REPARSE_POINT)))continue;
             }
-            scan_directory(path+L"\\"+name,depth+1,area,index);
+            if(depth==0)children.push_back(path+L"\\"+name);
+            else scan_directory(path+L"\\"+name,depth+1,area,index,report);
         }else{
             bool include=true;
             if(area.mode==1&&depth==0){auto extension=name.find_last_of(L'.');auto suffix=extension==std::wstring::npos?L"":name.substr(extension);include=!_wcsicmp(name.c_str(),area.pack_file.c_str())||!_wcsicmp(suffix.c_str(),L".exe")||!_wcsicmp(suffix.c_str(),L".dll");}
             if(area.mode==2)include=depth>0&&name.size()>4&&!_wcsicmp(name.c_str()+name.size()-4,L".trc");
             if(include){area.bytes+=(uint64_t(data.nFileSizeHigh)<<32)|data.nFileSizeLow;++area.files;}
         }
-        if(area.entries%256==0)publish(area,index);
+        if(report&&area.entries%256==0)publish(area,index);
     }while(FindNextFileW(search,&data));
     DWORD error=GetLastError();if(!stop_&&!area.limited&&error!=ERROR_NO_MORE_FILES)++area.errors;
     FindClose(search);
+    if(depth!=0||children.empty()||area.limited||stop_)return;
+    publish(area,index);
+    std::atomic<size_t> next{0};std::mutex merge_mutex;std::vector<std::thread> workers;
+    const auto count=std::min<size_t>(children.size(),std::min<size_t>(4,std::max<size_t>(1,std::thread::hardware_concurrency()/2)));
+    for(size_t worker=0;worker<count;++worker)workers.emplace_back([&](){
+        SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
+        while(!stop_&&!timed_out_&&visited_[index]<2000000){
+            size_t child=next.fetch_add(1);if(child>=children.size())break;
+            Area local;local.mode=area.mode;local.pack_file=area.pack_file;
+            scan_directory(children[child],1,local,index,false);
+            std::lock_guard<std::mutex> lock(merge_mutex);
+            area.bytes+=local.bytes;area.files+=local.files;area.entries+=local.entries;
+            area.links+=local.links;area.errors+=local.errors;area.limited=area.limited||local.limited;
+            publish(area,index);
+        }
+    });
+    for(auto &worker:workers)worker.join();
+    if(next.load()<children.size())area.limited=true;
 }
-bool NativeResourceUsage::start_scan(const Array &locations){
-    if(running_||locations.is_empty()||locations.size()>8)return false;
+bool NativeResourceUsage::start_scan(const Array &locations,int64_t budget_ms){
+    if(running_||locations.is_empty()||locations.size()>8||budget_ms<1||budget_ms>8000)return false;
     std::vector<Area> next;
     for(int index=0;index<locations.size();++index){
         if(locations[index].get_type()!=Variant::DICTIONARY)return false;
@@ -99,10 +122,11 @@ bool NativeResourceUsage::start_scan(const Array &locations){
     }
     if(worker_.joinable())worker_.join();
     {std::lock_guard<std::mutex> lock(mutex_);areas_=std::move(next);}
-    stop_=false;running_=true;
+    for(auto &visited:visited_)visited=0;
+    stop_=false;timed_out_=false;elapsed_ms_=0;started_=std::chrono::steady_clock::now();deadline_=started_+std::chrono::milliseconds(budget_ms);running_=true;
     worker_=std::thread([this](){
         SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
-        for(size_t index=0;index<areas_.size()&&!stop_;++index){
+        for(size_t index=0;index<areas_.size()&&!stop_&&!timed_out_;++index){
             Area area;{std::lock_guard<std::mutex> lock(mutex_);area=areas_[index];}
             area.started=true;
             DWORD attributes=GetFileAttributesW(area.path.c_str());
@@ -110,7 +134,7 @@ bool NativeResourceUsage::start_scan(const Array &locations){
             if(area.available)scan_directory(area.path,0,area,index);
             area.complete=!stop_&&!area.limited&&area.errors==0;publish(area,index);
         }
-        running_=false;
+        elapsed_ms_=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-started_).count();running_=false;
     });
     return true;
 }
@@ -118,7 +142,7 @@ void NativeResourceUsage::cancel_scan(){if(running_)stop_=true;}
 Dictionary NativeResourceUsage::scan_status(){
     Dictionary out;Array rows;
     {std::lock_guard<std::mutex> lock(mutex_);for(const auto &area:areas_){Dictionary row;row["id"]=narrow(area.id);row["bytes"]=area.bytes;row["files"]=area.files;row["entries"]=area.entries;row["links"]=area.links;row["errors"]=area.errors;row["started"]=area.started;row["available"]=area.available;row["complete"]=area.complete;row["limited"]=area.limited;rows.append(row);}}
-    out["running"]=bool(running_);out["cancelled"]=bool(stop_);out["areas"]=rows;return out;
+    out["running"]=bool(running_);out["cancelled"]=bool(stop_);out["timed_out"]=bool(timed_out_);out["elapsed_ms"]=running_?int64_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-started_).count()):elapsed_ms_.load();out["areas"]=rows;return out;
 }
 NativeResourceUsage::~NativeResourceUsage(){
     stop_=true;if(worker_.joinable())worker_.join();

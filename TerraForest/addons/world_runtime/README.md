@@ -6,14 +6,21 @@ Copy this addon directory, including `bin` and `world_runtime.gdextension`, into
 
 `NativeResourceUsage` supports the optional ESC Usage page. `sample(volume_path)`
 reads Windows process-private/resident memory, process GPU allocations when
-available and volume free space. `start_scan(locations)` accepts up to eight
+available and volume free space. `start_scan(locations, budget_ms=8000)` accepts up to eight
 absolute local folders with `id`, `path`, optional `mode` (all files / installed
 content / declared terrain caches) and optional primary `pack_file`. A single
-lower-priority worker publishes `scan_status()` counts, completion, skipped links
-and errors. Each area is bounded to 2,000,000 entries and 64 directory levels;
+lower-priority coordinator uses at most four child workers, bounded by CPU count,
+and publishes `scan_status()` counts, completion, skipped links and errors. Each
+area is bounded to 2,000,000 entries and 64 directory levels. Work budgets are
+1–8,000 ms; `timed_out`, `elapsed_ms` and incomplete areas are explicit. OS calls
+are cooperatively bounded, not forcibly interrupted mid-system-call;
 `cancel_scan()` requests cancellation without waiting on the UI thread. It never
 writes, deletes or follows reparse points. Missing telemetry is absent, not zero.
 The shared policy is `resource_budgets.json`; tools and the exported UI use it.
+Usage opens from `user://usage_sizes_v1.json`; it does not start discovery merely
+to display the page. `dist/usage_content.json` is published with a successful pack
+export. Active terrain usage reads existing `derived_metrics` accounting; it
+does not start another terrain census. Manual refresh can target one location.
 
 ```gdscript
 # Support/API calls only; every entity update is implemented in C++.

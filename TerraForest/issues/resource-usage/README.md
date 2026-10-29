@@ -9,7 +9,37 @@
   Nine resource-policy unit tests and the focused installed-pack policy/Usage-label
   check pass; logs: `reports/cache_policy_3gib/{unit,export,packed}.log`.
 
-## Changes and verification
+## Cached readings and targeted discovery
+
+Removal commit `fe80b322` was reverted in `fd9c98d6`, as requested. The size
+display remains: opening reads a small persisted summary without walking folders.
+Export supplies current pack/runtime size, and active terrain size comes from
+existing worker accounting, not a second scan. Other readings are explicitly
+cached snapshots; their measurement timestamps are available on hover. Known
+previous measurements were migrated as historical data, never relabelled live.
+
+Per-folder ↻ refresh avoids unrelated trees. Full refresh is still available,
+but both use an eight-second cooperative discovery budget and at most four
+native child workers. Only fully measured areas update saved totals; partial,
+unavailable and timed-out results stay explicit. Completed/cancelled jobs stop
+progress polling. There are no deletion controls.
+
+Installed verification passes 71 assertions and nine resource-policy tests.
+Activation takes 51 ms, a targeted content refresh 17 ms; a separate read-only
+query completes all 12,210,780,578 saved-world bytes in 1.68 s. These are local,
+repeated observations, not cold-device/FPS guarantees. All 14 native hashes match
+and cursor captures remain zero. [Exact receipts and limitations](cached-discovery-evidence.json).
+
+![Cached Usage readings](images/usage-cached-top.png)
+Current installed-pack seed-1703 temporary world, 1920×1080: preserved real
+measurements labelled cached, live counters, existing active-cache accounting,
+and per-folder refresh. No synthetic size fixture was used for these images.
+
+![Cached storage policy and locations](images/usage-cached-policies.png)
+Same run, lower page; 3 GiB quota and folder-opening buttons retained.
+Measurement timestamps/source are on each value's tooltip.
+
+## Original implementation and verification
 
 - ESC → Usage displays process-private RAM, resident RAM, process GPU allocation
   when available, free disk space and the shared runtime/tool limits. RAM limits
@@ -31,7 +61,7 @@
   compiler/fixture-import errors are summarized in the receipt. New evidence
   folders carry `.gdignore`.
 
-## Images
+## Original images
 
 ![Usage counters and folders](images/usage-top.png)
 1920×1080 installed-pack temporary world, seed 1703, Usage top. Native counters
@@ -44,7 +74,7 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
 
 ## Remaining / resume here
 
-- Cost audit: the automatic full scan is expensive; [measurements](cost-audit.json).
+- Historical cost audit before cached discovery: [measurements](cost-audit.json).
   An isolated rendered-page test visits 650,965 entries in about 67 s, with about
   60.5 s in cache roots. All 2,048 sampled geometry-leaf directories across eight
   roots were empty; this is a capped sample, not a census. Earlier file-only cache
@@ -55,11 +85,17 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
   after completion. First activation costs 64.8 ms. The isolated first-use rise
   is about 111 MiB private / 32 MiB dedicated GPU, including fonts, renderer and
   counter initialization; these are not measured incremental full-game figures.
-- Recommended next scope, not implemented: explicit/manual full audits with
-  retained snapshots and no completed-scan polling. Separately investigate the
-  initial counter hitch and safe empty-directory maintenance if requested. Require
-  matched game-page CPU/I/O/memory and open/close responsiveness before claiming
-  in-game performance improvement. No runtime changes were requested in this audit.
+- Saved totals, targeted requests and completed-job polling suppression are now
+  implemented. First-counter initialization and net in-game memory still need
+  matched-world profiling. OS calls can exceed the cooperative deadline on a
+  stalled device. Empty-directory maintenance remains separate and unrequested.
+- Unknown or externally changed trees still require an explicit reconciliation;
+  folder metadata is not a recursive byte total. A large cold census may not
+  finish in eight seconds; its old cached value is retained with an incomplete
+  marker, not presented as newly verified. A complete writer-maintained ledger
+  for every legacy cache/external directory is not implemented. Return if fully
+  fresh global totals without reconciliation are required; require cross-process
+  write/delete, overflow, external-change and recovery evidence before claiming it.
 - User review: ESC → Usage, scroll down, and try the folder buttons in normal play.
 - Folder totals are snapshots of a changing filesystem, logical bytes rather than
   allocated disk space; linked targets are not included. Large cold directories
@@ -70,7 +106,10 @@ offline maintenance policy, not a live allocator cap. [Provenance](images/manife
 
 ## Reproduce
 
+- Export first so `dist/usage_content.json` and native libraries match the build.
 - `python tools/run_godot_check.py resource_usage --headless --timeout 180 --require "RESOURCE_USAGE PASS"`
+- If no saved-size cache exists, the test uses a labelled synthetic world-size
+  fixture for persistence assertions; it never treats that value as a real total.
 - Rendered checks use the same driver offscreen with a nonactivating window;
   source and installed pack commands and exact hashes are retained in receipts.
 - [Native implementation](../../addons/world_runtime/native/resource_usage.cpp),

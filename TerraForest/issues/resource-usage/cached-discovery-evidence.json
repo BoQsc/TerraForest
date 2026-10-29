@@ -1,0 +1,270 @@
+{
+  "baseline": "fd9c98d6",
+  "reverted_removal_commit": "fe80b322",
+  "revert_commit": "fd9c98d6",
+  "scope": "Restore readings, reuse saved/export/active-cache accounting, and bound explicitly requested metadata discovery. Not a universal fresh-total or FPS guarantee.",
+  "checks": {
+    "checks": 71,
+    "cursor_captures": 0,
+    "failures": 0,
+    "native_timings": {
+      "initial_sample_us": 90407,
+      "repeat_sample_us": [
+        229,
+        115,
+        59,
+        50,
+        45,
+        42,
+        43,
+        41,
+        43,
+        45
+      ],
+      "scan_dispatch_us": 2335,
+      "targeted_refresh_us": 16798,
+      "ui_open_us": 51480
+    },
+    "paths": {
+      "active_cache": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/resource_usage_6dd825cbdb64428f85718bfeeef7baf4",
+      "build": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/.build",
+      "cache": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest",
+      "content": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/dist",
+      "data": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest",
+      "history": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/.git",
+      "imports": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/.godot/imported",
+      "logs": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/logs",
+      "reports": "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports",
+      "worlds": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/worlds"
+    },
+    "storage_snapshot": {
+      "areas": [
+        {
+          "available": true,
+          "bytes": 422686791,
+          "complete": true,
+          "entries": 33,
+          "errors": 0,
+          "files": 16,
+          "id": "content",
+          "limited": false,
+          "links": 0,
+          "started": true
+        }
+      ],
+      "cancelled": false,
+      "elapsed_ms": 3,
+      "running": false,
+      "timed_out": false
+    },
+    "synthetic_cache_fixture": false
+  },
+  "installed_run": {
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--windowed",
+      "--position",
+      "-2400,-1600",
+      "--main-pack",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+      "--log-file",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\usage_cached_verified\\engine.log",
+      "--resolution",
+      "1920x1080",
+      "--max-fps",
+      "60",
+      "--script",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\usage_cached_verified\\driver.gd",
+      "--",
+      "--temporary",
+      "--world-slot=check_6dd825cbdb64428f85718bfeeef7baf4",
+      "--derived-cache=user://resource_usage_6dd825cbdb64428f85718bfeeef7baf4",
+      "--usage-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/usage_cached_verified"
+    ],
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "135c28c61b778afabb7b9075fcebb86901bfe7c191a4de6d9268fb3cf8672894",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "d4ad783202d6fe34ea9208bcd332a2d805559c018e2ef6303111677348bffdc6",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "05dd9e21b8747803f6d213bfbda768aebfae24428ea959bc73343c0b7c667940",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "9cea3565d4d52420b1dd5f33d7f11dfbbfe1bf44cf19787fcbda411235dff978",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "8ad52e55cadbec5b311c95c3bb22ff6c5b913e5160800ac415317d0fa951bb8f",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a149fb672449b5ded74847ef02425e5b96ab765ff4b621e6016061f9048fcb6d"
+    },
+    "pack_sha256": "d1deee88ce06914dee5d433e66bc897fcb8992b57225afd0c43f49879b3c68a3",
+    "driver_sha256": "0d375a27acd6098f03be4028ca0e5ecb57a0c96b28b92a22e07f113404109989",
+    "result": {
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 582220,
+      "exit_code": 0,
+      "resources": {
+        "samples": 69,
+        "gpu_samples": 68,
+        "peak_private_commit_bytes": 2630094848,
+        "peak_working_set_bytes": 955928576,
+        "peak_dedicated_gpu_bytes": 1219526656,
+        "checks": {
+          "ram": {
+            "bytes": 2630094848,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1219526656,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 42.26158520008903,
+      "passed": true,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\resource_usage_6dd825cbdb64428f85718bfeeef7baf4",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    }
+  },
+  "world_folder_metadata_query": {
+    "areas": [
+      {
+        "available": true,
+        "bytes": 12210780578,
+        "complete": true,
+        "entries": 119928,
+        "errors": 0,
+        "files": 105730,
+        "id": "worlds",
+        "limited": false,
+        "links": 0,
+        "started": true
+      }
+    ],
+    "cancelled": false,
+    "elapsed_ms": 1673,
+    "running": false,
+    "timed_out": false,
+    "wall_ms": 1682
+  },
+  "world_folder_raw_log": "reports/usage_cached/world_metadata_parallel.log",
+  "previous_serial_budget_attempt": "reports/usage_cached/world_metadata.json: incomplete at 8009 ms; preserved, not counted as a successful fresh total",
+  "cache_seed": {
+    "source": "reports/usage_cost/ui.json",
+    "meaning": "Earlier verified full measurements migrated to user://usage_sizes_v1.json with original timestamps and explicit cached/source labels; not recalculated or claimed current"
+  },
+  "native_builds": {
+    "template_debug": {
+      "target": "template_debug",
+      "compiled_extension_sources": [
+        "resource_usage.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 5.720083300024271,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll",
+      "sha256": "8ad52e55cadbec5b311c95c3bb22ff6c5b913e5160800ac415317d0fa951bb8f",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "world_runtime"
+    },
+    "template_release": {
+      "target": "template_release",
+      "compiled_extension_sources": [
+        "resource_usage.cpp"
+      ],
+      "godot_cpp_sources_compiled": 0,
+      "linked": true,
+      "seconds": 3.078146400046535,
+      "output": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll",
+      "sha256": "a149fb672449b5ded74847ef02425e5b96ab765ff4b621e6016061f9048fcb6d",
+      "sdk": {
+        "api_version": "4.7",
+        "godot_cpp_sha": "d7b6162249ed52796a8301d216c24ee71d68c2bf",
+        "variant": "windows-x86_64-zig",
+        "compiler": "zig-0.16.0",
+        "platform": "windows",
+        "arch": "x86_64",
+        "targets": [
+          "template_debug",
+          "template_release"
+        ],
+        "precision": "single",
+        "created_unix": 1786965830
+      },
+      "addon": "world_runtime"
+    }
+  },
+  "unit_checks": {
+    "resource_policy_tests": 9,
+    "log": "reports/usage_cached_units_verified.log"
+  },
+  "export_log": "reports/usage_cached_export_installed.log",
+  "metadata_sources": {
+    "content": "dist/usage_content.json produced during successful export; one pack-length metadata validation",
+    "active_cache": "terrain_stream.derived_metrics from existing derived_cache.counters() write/delete accounting",
+    "other_folders": "user://usage_sizes_v1.json, validated path/mode/schema; timestamped snapshots, never automatic recounts"
+  },
+  "remaining": [
+    "First-counter initialization/net incremental in-game memory are not optimized by this change",
+    "Large previously untracked or externally changed trees can exceed eight seconds and stay incomplete; old complete totals are preserved",
+    "Budget is cooperative at OS-call boundaries, not forced cancellation of a hung device",
+    "A full writer-maintained global ledger covering all legacy/external folders is not implemented",
+    "Timings are scoped local repeated observations, not cold-device or multi-hour qualification"
+  ],
+  "raw_reports": [
+    "reports/usage_cached_verified/run.json",
+    "reports/usage_cached_verified/result.json",
+    "reports/usage_cached_verified/console.log"
+  ]
+}

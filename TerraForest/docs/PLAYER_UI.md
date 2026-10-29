@@ -15,11 +15,17 @@ terrain caches and, in a development checkout, reports/build/import/history data
 **Open folder**, **Open game data** and **Open active cache** use the system file
 manager. They do not delete or create directories.
 
-The first visit starts a read-only, lower-priority native folder scan. Results
-are snapshots; **Refresh folder sizes** updates them. Leaving Usage cancels
-scanning and stops live sampling. Cache sizes are estimates within declared cache
-roots, not proof that files are safe to delete. Links are skipped; inaccessible
-or bounded scans retain explicit partial/unavailable states.
+Opening Usage reads saved, timestamped folder totals, not a fresh directory walk.
+Game-content size comes from export metadata; active-cache size uses the terrain
+worker's existing write/delete accounting. Cached totals are marked **cached**;
+hover for the measurement date. Unknown folders remain explicitly unmeasured.
+
+Use **↻** beside one folder for a targeted metadata refresh, or the toolbar for
+all folders. Discovery has an eight-second work budget and bounded native CPU
+workers; partial results never replace a complete cached total. Large unknown
+trees may remain incomplete rather than pretending to be fully measured.
+Completed totals persist across restarts. Polling stops when a refresh finishes;
+leaving Usage cancels discovery and stops live sampling. No cleanup runs here.
 
 In **development mode**, open the world map with **M**, hold **Ctrl**, and
 **left-click** a point to teleport there. The map closes and the normal destination
