@@ -34,6 +34,8 @@ var residents: Array = []
 var _corpse_age: Dictionary = {}
 var _capsule: CapsuleShape3D
 var geometry_template:RefCounted
+var profiling_enabled:=false
+var update_phase_us:Dictionary={}
 
 func prepare(owner_game: Node, persistence: RefCounted) -> bool:
 	population = preload("res://addons/characters/runtime/zombie_population.gd").new()
@@ -67,6 +69,8 @@ func clear() -> void:
 	if population != null:population.reset_stream()
 
 func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) -> void:
+	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
+	if profiling_enabled:update_phase_us.clear()
 	if is_instance_valid(corpse_host):corpse_host.update(delta,focus,available)
 	if not enabled or not is_instance_valid(target):
 		if not residents.is_empty():
@@ -97,12 +101,17 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		zombie.set_behavior(available and ready and pursue)
 		if not ready and not zombie.alive:
 			_retire(index)
+	if profiling_enabled:update_phase_us["residency"]=Time.get_ticks_usec()-measured_begin
 	_update_navigation(delta,available and pursue)
+	if profiling_enabled:measured_begin=Time.get_ticks_usec()
 	if navigation_interest.is_valid() and (population == null or not population.busy()):navigation_interest.call(navigator.interest_points() if available and pursue else PackedVector3Array())
 	_update_spacing()
+	if profiling_enabled:update_phase_us["interest_spacing"]=Time.get_ticks_usec()-measured_begin
 	if not available or not pursue:
 		return
+	if profiling_enabled:measured_begin=Time.get_ticks_usec()
 	if population != null and population_enabled:population.advance(focus, false)
+	if profiling_enabled:update_phase_us["population"]=Time.get_ticks_usec()-measured_begin
 
 func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	if navigator!=null:navigator.invalidate(bounds)
@@ -114,6 +123,7 @@ func invalidate_navigation(bounds: AABB=AABB()) -> void:
 	_obstacle_clock.clear()
 
 func _update_navigation(delta: float, available: bool) -> void:
+	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	navigator.set_water_depth(water_depth)
 	var noise_speed:=0.0
 	if _last_player_position.is_finite() and delta>0:
@@ -145,7 +155,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 						seen=readiness.is_valid() and bool(readiness.call(sight_bounds)) and get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye,player_eye,7,excluded)).is_empty()
 					awareness.observe(id,target.global_position,seen)
 					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>7.0 else 7.0)
-			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.status(id).get("state","idle"))
+			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.state(id))
 			if intent.is_empty():continue
 			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
 				_roam_revision[id]=intent.revision
@@ -175,7 +185,13 @@ func _update_navigation(delta: float, available: bool) -> void:
 		var distance:Vector3=(zombie.target.global_position if combat_target else goal)-zombie.global_position;distance.y=0
 		var needs_route:bool=active and intent.moving and zombie._active_action.is_empty() and zombie._hit_timer<=0 and (distance.length()>(1.0 if combat_target else 0.6) or (combat_target and not zombie.navigation_attack_clear))
 		navigator.set_agent(id,zombie.global_position,goal,1 if zombie._crawling else 0,needs_route)
+	if profiling_enabled:
+		update_phase_us["intent"]=Time.get_ticks_usec()-measured_begin
+		measured_begin=Time.get_ticks_usec()
 	navigation_status=navigator.advance(delta,readiness,Callable())
+	if profiling_enabled:
+		update_phase_us["planning"]=Time.get_ticks_usec()-measured_begin
+		measured_begin=Time.get_ticks_usec()
 	navigation_status["perception_probes"]=2-sight_budget
 	navigation_status["perception_probe_limit"]=2
 	for zombie in residents:
@@ -187,6 +203,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 			var offset:Vector3=zombie.target.global_position-zombie.global_position;offset.y=0
 			if zombie.navigation_attack_clear and offset.length()<=1.0:
 				zombie.navigation_target=zombie.target.global_position
+	if profiling_enabled:update_phase_us["steering"]=Time.get_ticks_usec()-measured_begin
 
 func _update_spacing() -> void:
 	# At most six actors: 30 ordered neighbour checks, with no world scan.

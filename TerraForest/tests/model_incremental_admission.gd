@@ -40,6 +40,8 @@ func drain(batch: Node3D,records: int=256) -> Dictionary:
 		if not state.active:break
 		var start:=Time.get_ticks_usec();state=batch.advance_region_admission(records,65536,500);elapsed.append(Time.get_ticks_usec()-start)
 		bounded=bounded and state.step_records<=records and state.step_hash_bytes<=65536
+		var spatial:Dictionary=batch.region_stats()
+		bounded=bounded and spatial.collision_bounds_nodes==spatial.resident_regions and spatial.collision_bounds_height<=24
 	check(not state.active and bounded,"admission or rollback terminates within record and hash-byte budgets")
 	if not elapsed.is_empty():timings.append({"steps":elapsed.size(),"max_step_us":elapsed.max(),"result":state.result,"times_us":elapsed})
 	return state

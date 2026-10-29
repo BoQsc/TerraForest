@@ -87,3 +87,10 @@ Automatic ladder/jump links and tight crawler passages need separate capability
 and interaction checks. Door removal still needs fresh-process compound persistence.
 These cases do not qualify the whole2km world, large populations, sustained frame
 time, historical district/cave art or arbitrary third-party buildings.
+
+2026-10-29 regression check: the current `regional_navigation` synthetic tower
+fails its upper-floor and separate-storey assertions on both baseline `87afcdfe`
+and the readiness-index update. The historical journeys above are not current
+qualification of this fixture. Return to its present tower geometry/support and
+route trace; require the full fixture and actual street-to-floor journey to pass.
+[Comparison receipts](../issues/runtime-performance/README.md).

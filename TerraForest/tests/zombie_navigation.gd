@@ -12,6 +12,7 @@ var wet_band:=false
 var peak_work:=0
 var trace:Array=[]
 var camera:Camera3D
+var state_matches:=true
 func check(ok:bool,label:String)->void:
 	checks+=1
 	if not ok:failures+=1
@@ -24,6 +25,9 @@ func _initialize()->void:run.call_deferred()
 func tick_manager()->void:
 	if not active:return
 	encounters.update(1.0/Engine.physics_ticks_per_second,player.global_position,true)
+	for zombie in encounters.residents:
+		var identity:int=zombie.get_instance_id()
+		state_matches=state_matches and encounters.navigator.state(identity)==encounters.navigator.status(identity).state
 	peak_work=maxi(peak_work,int(encounters.navigation_status.get("route_work",0)))
 func ticks(count:int)->void:
 	for tick in count:await physics_frame
@@ -119,6 +123,7 @@ func run()->void:
 		await physics_frame
 		if target.damage_received>0:break
 	check(zombie.position.y>.9 and target.damage_received>0,"shared walking route and native motor climb four stairs to attack")
+	check(state_matches,"lightweight route state matches diagnostics through pursuit, obstruction, unavailable coverage and stairs")
 	if DisplayServer.get_name()!="headless":
 		camera.position=Vector3(7,5,13);camera.look_at(Vector3(0,0.8,8));await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png("res://reports/zombie_navigation/stairs.png")
 	var report:=FileAccess.open("res://reports/zombie_navigation/result.json",FileAccess.WRITE);report.store_string(JSON.stringify({"checks":checks,"failures":failures,"peak_route_work":peak_work,"wall_trace":trace,"water_trace":water_trace,"water_crossed":crossed_water,"final":zombie.get_behavior_snapshot(),"route":encounters.navigator.status(zombie.get_instance_id())},"  "));report.close()

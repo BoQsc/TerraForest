@@ -135,7 +135,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             }
             unloaded_regions.emplace(key,std::move(missing));
             unloaded_bounds.insert(key,unloaded_regions.at(key).bounds);
-            collision_bounds.erase(key);render_bounds.erase(key);
+            collision_bounds.erase(key);collision_index.erase(key);render_bounds.erase(key);
             job.phase=RegionAdmission::RETIRE_RECORDS;collision_dirty=true;render_dirty=true;
             // Publish availability before cleanup. Observers/save caches see the
             // whole unavailable disk region, never a prefix of surviving records.
@@ -148,6 +148,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             if(job.count) {
                 groups.emplace(key,std::move(job.ids));render_ids.emplace(key,std::move(job.ordered));
                 collision_bounds.emplace(key,job.collision);render_bounds.emplace(key,job.visual);
+                collision_index.insert(key,job.collision);
             }
             unloaded_regions.erase(key);unloaded_bounds.erase(key);collision_dirty=true;render_dirty=true;
             admission.reset();admission_result="complete";

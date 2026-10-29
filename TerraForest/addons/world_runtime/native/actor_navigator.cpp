@@ -21,6 +21,7 @@ void NativeActorNavigator::_bind_methods(){
     ClassDB::bind_method(D_METHOD("steering_target","id"),&NativeActorNavigator::steering_target);
     ClassDB::bind_method(D_METHOD("guard_motion","id","direction","travel"),&NativeActorNavigator::guard_motion);
     ClassDB::bind_method(D_METHOD("status","id"),&NativeActorNavigator::status);
+    ClassDB::bind_method(D_METHOD("state","id"),&NativeActorNavigator::state);
     ClassDB::bind_method(D_METHOD("interest_points"),&NativeActorNavigator::interest_points);
     ClassDB::bind_method(D_METHOD("route_points","id"),&NativeActorNavigator::route_points);
 }
@@ -141,6 +142,12 @@ bool NativeActorNavigator::guard_motion(int64_t id,const Vector3 &direction,doub
     Vector3 to=agent->position+heading.normalized()*real_t(std::max(.02,travel));
     const bool allowed=agent->route.permits_motion(get_world_3d()->get_direct_space_state(),agent->position,to,readiness_,admission_,agent->motion_ray,agent->motion_shape);
     agent->motion_rejection=agent->route.edge_failure();return allowed;
+}
+String NativeActorNavigator::state(int64_t id){
+    auto *agent=find(id);if(!agent)return "sleeping";
+    if(!agent->active)return "idle";
+    static const char *names[]={"idle","planning","following","arrived","blocked","unavailable","search_limit"};
+    return names[agent->regional?agent->journey.state:agent->route.state];
 }
 Dictionary NativeActorNavigator::status(int64_t id){
     auto *agent=find(id);Dictionary out;if(!agent){out["state"]="sleeping";return out;}

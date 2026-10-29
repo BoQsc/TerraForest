@@ -120,6 +120,7 @@ class NativeStaticBatch : public Node3D {
     std::map<int64_t,ProxyBody> collision_bodies;
     std::map<RID,int64_t> body_ids;
     std::map<BlockKey,AABB> collision_bounds;
+    ModelBoundsIndex collision_index;
     std::vector<int64_t> collision_pending;
     AABB proxy_box;
     std::vector<AABB> proxy_parts;
@@ -154,6 +155,7 @@ class NativeStaticBatch : public Node3D {
         decltype(render_ids) old_render;
         decltype(render_bounds) old_bounds;
         decltype(collision_bounds) old_collision_bounds;
+        ModelBoundsIndex old_collision_index;
         uint64_t units=0,render_bytes=0,stride_bytes=48;
     };
     std::unique_ptr<CollectionRetirement> collection_retirement;

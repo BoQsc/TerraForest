@@ -1,7 +1,7 @@
 # Runtime performance
 
 - Status: Improved-partial; installed and packaged walking verified.
-- Updated: 2026-10-29. Initial baseline: `5bfe87f4`; maintenance baseline: `304206cc`.
+- Updated: 2026-10-29. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
 - User review: Not reviewed. No visual quality reduction intended.
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
@@ -11,6 +11,63 @@ pass. World data/history/evidence remain intact. [Resource evidence](resource-bu
 The user raised the provisional terrain-cache quota to 3 GiB on 2026-10-28;
 historical receipts are unchanged. Other resource thresholds stay the same.
 RAM thresholds remain provisional and physical 4 GiB hardware remains unqualified.
+
+## Collision readiness and actor state — 2026-10-29
+
+- Loaded-model collision queries now prune a native bounds tree instead of
+  scanning every loaded region. Exact compound/body checks stay unchanged;
+  edits, admission, retirement, proxy changes and reload update the index.
+  At the 4,096-group cap, node payload is 352 KiB per collection, plus allocator
+  overhead. Incremental retirement also drains the old index incrementally.
+- Zombie awareness reads native `state(id)` instead of building full route
+  diagnostics every tick. Full diagnostics remain available; optional phase
+  profiling is off during ordinary play. No AI, rendering or save rules changed.
+- 2,048 readiness queries / 4,096 loaded regions: **37.564 → 1.179 ms**.
+  Signed 3D groups **40.520 → 1.363 ms**; extended proxies **34.657 → 0.609 ms**.
+  These are synthetic query batches, not whole-frame or city timings.
+- 10,000 same-route state reads: full diagnostics **56.675 ms**, lightweight
+  state **3.074 ms**; local/regional state equality checked through mutations.
+
+Same disposable seed-1703 road, 248 m walking, 1080p/60 cap, RTX 4050 Laptop.
+Baseline is source `87afcdfe` with profiling only; both final runs use the same
+installed pack. AI/planning work is not lockstep; retain both repetitions:
+
+| Mean CPU work per update | Before | Installed | Repeat |
+| --- | ---: | ---: | ---: |
+| Zombie residency/readiness | 0.2120 ms | 0.1146 ms | 0.1228 ms |
+| Zombie perception/intent | 0.1477 ms | 0.1062 ms | 0.1138 ms |
+| Zombie route planning | 0.1852 ms | 0.5043 ms | 0.3202 ms |
+| Whole zombie update | 0.6328 ms | 0.8161 ms | 0.6511 ms |
+| Whole-frame p95 | 19.940 ms | 20.089 ms | 21.085 ms |
+
+Readiness and state-reading work improve, but **no total zombie-update or frame
+speedup is demonstrated**: the final runs perform more route-planning work.
+No density/distance/quality reductions. Both pack runs preserve the save hash,
+capture no mouse and pass resource gates; peaks up to 3.88 GiB private RAM /
+1.65 GiB dedicated GPU. Installed content 422.7 MB; both native builds rebuilt.
+
+- **721 assertions across 11 runs pass**, plus export/native-hash smoke and
+  both packaged walking checks. Includes 100,000-instance admission, edits,
+  compound collision, retirement, reload, ground cover and zombie behavior.
+- Existing regional-navigation tower/storey fixture fails the same two checks
+  on old `87afcdfe` and current code. Not fixed or hidden: inspect its geometry,
+  support and route trace, then require full fixture and real floor-to-floor travel.
+- One admission run exceeded its timing gate (6.114 / 18.949 ms); the unchanged
+  retry passed at 0.489 ms maximum. Cause remains unestablished; both retained.
+- Rejected additional exclusion rewrites: one regressed a dense group from
+  20.163 to 208.893 ms; batching still regressed small cases. Original exclusion
+  code retained. Intermediate profiles are not final performance evidence.
+
+[Measurements, hashes, tests and retained failures](readiness-evidence.json).
+Dense per-object collision checks, publication, planning variability and earlier
+endurance/cold-arrival/hardware/stall requirements remain open.
+
+![Before loaded-readiness optimization](images/readiness-before.png)
+Baseline `87afcdfe`, seed 1703: 2,963 trees / 376 owners.
+
+![Installed loaded-readiness optimization](images/readiness-after.png)
+Same road route and counts; camera/wind differ slightly. Engineering inspection,
+not user visual approval. Saves and generated content are unchanged.
 
 ## Maintenance pass — 2026-10-29
 
@@ -126,7 +183,8 @@ uses read-only loading, records hashes/timings, and removes only its own passed
 temporary derived cache. Use a populated generated test fixture with asphalt roads.
 
 Multi-hour walking/mining/driving, maximum cities, cold fast-travel and lower-end
-hardware remain unqualified. Return with repeated frame traces and finer zombie
-update timing to attribute the isolated stall; do not treat an absent recurrence
+hardware remain unqualified. Zombie phase timing is now available; return with
+repeated frame traces and publication/planning attribution for the isolated stall;
+do not treat an absent recurrence
 as a fix. Loading/generation wall-time and GPU-bound rendering need separate
 matched benchmarks before further changes. Preserve the same visual settings.

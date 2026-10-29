@@ -22,5 +22,17 @@
     "sha256": "fe0f36f77570095aa6135b49828914d6ce0c50b9577ee2e6881ec5766d286e58",
     "revision": "304206cc plus this maintenance pass; exact build hashes in maintenance-evidence.json",
     "status": "Same 248 m route, 2963 trees / 376 owners; small camera/wind differences, engineering inspection only, not user approval"
+  },
+  "readiness-before.png": {
+    "source": "reports/runtime_performance/20261029T053945365155Z_second_pass_before/arrival.png",
+    "sha256": "a9f818d684b4508210866e3867a3d6187db24c4cc50a6695a711ddbdfa387b92",
+    "revision": "87afcdfe",
+    "status": "Seed 1703, same 248 m road route, 2963 trees / 376 owners; camera/wind differ slightly. Inspected engineering evidence, not user approval."
+  },
+  "readiness-after.png": {
+    "source": "reports/runtime_performance/20261029T060346200040Z_second_pass_final/arrival.png",
+    "sha256": "b0b5b498a0c2129365f2491f2138813b52c4750acc62271bf70c679e32f08d71",
+    "revision": "87afcdfe plus readiness pass; exact hashes in readiness-evidence.json",
+    "status": "Seed 1703, same 248 m road route, 2963 trees / 376 owners; camera/wind differ slightly. Inspected engineering evidence, not user approval."
   }
 }

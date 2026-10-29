@@ -49,6 +49,28 @@ assertions; unchanged packaging declarations are not qualified by this work.
 Return when shipping those standalone bundles; require a complete dependency
 manifest rather than treating the game PCK gate as addon-bundle validation.
 
+## Loaded collision / actor-state efficiency — 2026-10-29
+
+Installed: native loaded-region bounds index with exact collision/body checks and
+mutation/retirement/reload updates; lightweight actor state access avoids full
+diagnostics in zombie awareness. No generation, visuals, AI or save rules changed.
+4,096 loaded regions / 2,048 readiness queries: 37.564→1.179 ms. Same 248 m road
+profile: residency 0.2120→0.1146/0.1228 ms, intent 0.1477→0.1062/0.1138 ms in two
+installed repetitions. More route-planning work means whole zombie CPU does not
+improve; frame p95 19.940→20.089/21.085 ms. No universal stutter/FPS claim.
+721 assertions, two pack walks and resource gates pass. 422.7 MB content; observed
+peaks up to 3.88 GiB private RAM / 1.65 GiB GPU. Saves unchanged, no mouse capture.
+[Exact evidence, images and rejected trials](../issues/runtime-performance/README.md#collision-readiness-and-actor-state--2026-10-29).
+
+Remaining: existing regional tower/storey tests fail twice on both old baseline
+and current code; return to geometry/support and require the full fixture plus
+actual floor-to-floor travel. An admission timing outlier is retained (unchanged
+retry passes), not explained. Optional zombie phase attribution is now available;
+publication/planning variability, dense narrowphase, historical stall, large/cold
+worlds, loading/generation, endurance and weaker hardware still need matched traces.
+Rejected exclusion experiments were removed, not shipped. Do not close these
+limits from isolated CPU savings or an absent stall recurrence.
+
 ## Runtime maintenance follow-up — 2026-10-29
 
 Installed: fuse native terrain eviction with the validated planning state; reuse
@@ -59,7 +81,7 @@ synthetic 4,096-region exclusion 21.017→0.875 ms for 1,024 two-candidate batch
 1,379 assertions, 15 Python checks, pack smoke and process-resource gates pass.
 Walking p95 remains effectively unchanged (20.035→20.168 ms), so this is not
 universal stutter resolution. [Evidence and comparisons](../issues/runtime-performance/README.md#maintenance-pass--2026-10-29).
-Remaining: finer zombie/publication attribution, historical unexplained stall,
+Remaining: publication/planning attribution (zombie phases now available above), historical unexplained stall,
 maximum-city/cold-arrival, loading/generation and endurance/weak-hardware tests.
 Return with matched traces in those workloads; subsystem reductions alone cannot
 close these wider requirements. Prior rejected/failed intermediate checks remain.
@@ -76,7 +98,7 @@ Scoped regressions and installed-pack 248 m walking pass, with unchanged save
 hash and zero cursor captures. Pack repetition p95 21.85 ms, maximum 43.64 ms.
 Multi-hour play, large
 cities, cold arrivals, loading/generation and weak-GPU performance remain open.
-Return with repeated comparable profiles, finer zombie-stage timing and unchanged
+Return with repeated comparable profiles, recorded zombie phases and unchanged
 visual settings; lower per-subsystem CPU cost is not universal stutter resolution.
 
 ## Varied lakes and generated bridges — 2026-10-28

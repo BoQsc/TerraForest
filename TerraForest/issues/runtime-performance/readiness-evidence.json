@@ -1,0 +1,1159 @@
+{
+  "date": "2026-10-29",
+  "baseline": "87afcdfe",
+  "scope": "Loaded-model collision broadphase and lightweight actor state access; not overall FPS or all-world stutter resolution.",
+  "comparison": "Same disposable seed-1703 road route, 1080p/60 cap; baseline source and installed pack. AI/population and route planning are not lockstep. Preserve both final repetitions; no aggregate zombie speedup claim.",
+  "profiles": {
+    "before": {
+      "manifest": "reports/runtime_performance/20261029T053945365155Z_second_pass_before/run.json",
+      "manifest_sha256": "9e33be2d76b53245271e1a29747403ba78a32aeaf3b3e5404ccc6810a2bcf910",
+      "frames": "reports/runtime_performance/20261029T053945365155Z_second_pass_before/frames.json",
+      "frames_sha256": "46b16ef33e646cb883efd4c79fcc2cd3102b7576dc0d904e5bf9ee82a0a121d2",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "35a414459015214e6067748b50fecdfbc5579255beda5f3100a4d077da641657",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "39ef4de685cf84193b6c3504408531602e0f2cda8a8ade626f61299a1dac271b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "8ad52e55cadbec5b311c95c3bb22ff6c5b913e5160800ac415317d0fa951bb8f",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a149fb672449b5ded74847ef02425e5b96ab765ff4b621e6016061f9048fcb6d"
+      },
+      "pack_sha256": null,
+      "source_sha256": "07d47e41afcc198a83eb7a1c3aa0c5d6bce684e3a39cd561e05fa7e04df9a617",
+      "passed": true,
+      "resources": {
+        "samples": 191,
+        "gpu_samples": 191,
+        "peak_private_commit_bytes": 4177170432,
+        "peak_working_set_bytes": 1819201536,
+        "peak_dedicated_gpu_bytes": 1767804928,
+        "checks": {
+          "ram": {
+            "bytes": 4177170432,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1767804928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_ae3bed2640f04f93812139fa91ed87bf",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      },
+      "summary": {
+        "idle": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.642216666666666,
+            "p95": 19.194,
+            "maximum": 24.444
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 2.0427791666666666,
+            "p95": 4.003,
+            "maximum": 6.025
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 6.344874996940295,
+            "p95": 6.65199995040894,
+            "maximum": 7.21999979019165
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 57,
+              "mean": 0.8698771929824561,
+              "p95": 1.652,
+              "maximum": 1.872
+            },
+            "zombie intent": {
+              "samples": 479,
+              "mean": 0.14873903966597077,
+              "p95": 0.198,
+              "maximum": 0.914
+            },
+            "zombie interest_spacing": {
+              "samples": 479,
+              "mean": 0.026643006263048018,
+              "p95": 0.037,
+              "maximum": 0.112
+            },
+            "zombie planning": {
+              "samples": 479,
+              "mean": 0.019494780793319413,
+              "p95": 0.019,
+              "maximum": 0.79
+            },
+            "zombie population": {
+              "samples": 479,
+              "mean": 0.0075574112734864305,
+              "p95": 0.009,
+              "maximum": 0.112
+            },
+            "zombie residency": {
+              "samples": 479,
+              "mean": 0.2207599164926931,
+              "p95": 0.252,
+              "maximum": 0.826
+            },
+            "zombie steering": {
+              "samples": 479,
+              "mean": 0.004503131524008351,
+              "p95": 0.006,
+              "maximum": 0.033
+            },
+            "zombie update": {
+              "samples": 479,
+              "mean": 0.45062630480167015,
+              "p95": 0.579,
+              "maximum": 1.979
+            }
+          },
+          "mean_route_work": 0.15416666666666667
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 2699,
+            "mean": 16.676999629492403,
+            "p95": 19.94,
+            "maximum": 38.479
+          },
+          "process_ms": {
+            "samples": 2699,
+            "mean": 2.3131107817710266,
+            "p95": 4.512,
+            "maximum": 10.789
+          },
+          "gpu_ms": {
+            "samples": 2699,
+            "mean": 5.70895035190024,
+            "p95": 7.08699989318848,
+            "maximum": 8.2819995880127
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 332,
+              "mean": 0.7720993975903614,
+              "p95": 1.498,
+              "maximum": 2.412
+            },
+            "zombie intent": {
+              "samples": 2699,
+              "mean": 0.14769877732493517,
+              "p95": 0.217,
+              "maximum": 3.821
+            },
+            "zombie interest_spacing": {
+              "samples": 2699,
+              "mean": 0.02399592441645054,
+              "p95": 0.039,
+              "maximum": 0.135
+            },
+            "zombie planning": {
+              "samples": 2699,
+              "mean": 0.1852019266394961,
+              "p95": 0.79,
+              "maximum": 0.943
+            },
+            "zombie population": {
+              "samples": 2699,
+              "mean": 0.036022600963319745,
+              "p95": 0.01,
+              "maximum": 6.742
+            },
+            "zombie residency": {
+              "samples": 2699,
+              "mean": 0.21204260837347166,
+              "p95": 0.271,
+              "maximum": 0.67
+            },
+            "zombie steering": {
+              "samples": 2699,
+              "mean": 0.0049425713227121155,
+              "p95": 0.008,
+              "maximum": 0.08
+            },
+            "zombie update": {
+              "samples": 2699,
+              "mean": 0.6327954798073361,
+              "p95": 1.224,
+              "maximum": 7.833
+            }
+          },
+          "mean_route_work": 4.895516858095591
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.668056133056133,
+            "p95": 21.721,
+            "maximum": 33.006
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.557114345114345,
+            "p95": 4.863,
+            "maximum": 18.571
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 5.994295206486312,
+            "p95": 6.44600009918213,
+            "maximum": 6.90199995040894
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 302,
+              "mean": 0.8929139072847683,
+              "p95": 1.762,
+              "maximum": 2.445
+            },
+            "zombie intent": {
+              "samples": 481,
+              "mean": 0.1437214137214137,
+              "p95": 0.182,
+              "maximum": 0.318
+            },
+            "zombie interest_spacing": {
+              "samples": 481,
+              "mean": 0.0267027027027027,
+              "p95": 0.036,
+              "maximum": 0.078
+            },
+            "zombie planning": {
+              "samples": 481,
+              "mean": 0.14076299376299378,
+              "p95": 0.781,
+              "maximum": 0.818
+            },
+            "zombie population": {
+              "samples": 481,
+              "mean": 0.006952182952182952,
+              "p95": 0.008,
+              "maximum": 0.012
+            },
+            "zombie residency": {
+              "samples": 481,
+              "mean": 0.199991683991684,
+              "p95": 0.24,
+              "maximum": 0.385
+            },
+            "zombie steering": {
+              "samples": 481,
+              "mean": 0.004434511434511434,
+              "p95": 0.006,
+              "maximum": 0.017
+            },
+            "zombie update": {
+              "samples": 481,
+              "mean": 0.5438711018711018,
+              "p95": 1.173,
+              "maximum": 1.561
+            }
+          },
+          "mean_route_work": 3.9854469854469854
+        }
+      },
+      "slot": "recipe_generated_4644d8cfc8f97e43",
+      "travelled": 248.178260542452,
+      "distance": 209.270492553711,
+      "viewport": "(1920, 1080)",
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "save_unchanged": true,
+      "mouse_untouched": true
+    },
+    "installed": {
+      "manifest": "reports/runtime_performance/20261029T060346200040Z_second_pass_final/run.json",
+      "manifest_sha256": "240db155c440ea044fb6dd9b4b9dbcb01039a5afe8f0e1e83ebf47b1ef9932d3",
+      "frames": "reports/runtime_performance/20261029T060346200040Z_second_pass_final/frames.json",
+      "frames_sha256": "55fa7f2e2fe1de49f1bb01ce0b75db39782fc254b296a9e91a6e5c7fdea5889e",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": "8a9eca1ead3e1c6fdf080e4aeb05ba3ea1dea01970b8e23e164f8ce0985c5a5a",
+      "source_sha256": "07d47e41afcc198a83eb7a1c3aa0c5d6bce684e3a39cd561e05fa7e04df9a617",
+      "passed": true,
+      "resources": {
+        "samples": 181,
+        "gpu_samples": 181,
+        "peak_private_commit_bytes": 4169248768,
+        "peak_working_set_bytes": 2229235712,
+        "peak_dedicated_gpu_bytes": 1767804928,
+        "checks": {
+          "ram": {
+            "bytes": 4169248768,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1767804928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_93ef3978ed64406fa55fd14cd6f6e3ac",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      },
+      "summary": {
+        "idle": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.642110416666664,
+            "p95": 19.584,
+            "maximum": 25.995
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 2.1225125,
+            "p95": 4.142,
+            "maximum": 7.009
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 6.587668755650521,
+            "p95": 7.16599988937378,
+            "maximum": 8.21599960327148
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 62,
+              "mean": 0.9266935483870967,
+              "p95": 1.804,
+              "maximum": 2.73
+            },
+            "zombie intent": {
+              "samples": 479,
+              "mean": 0.0978643006263048,
+              "p95": 0.126,
+              "maximum": 0.186
+            },
+            "zombie interest_spacing": {
+              "samples": 479,
+              "mean": 0.026400835073068896,
+              "p95": 0.035,
+              "maximum": 0.11
+            },
+            "zombie planning": {
+              "samples": 479,
+              "mean": 0.028446764091858038,
+              "p95": 0.022,
+              "maximum": 0.808
+            },
+            "zombie population": {
+              "samples": 479,
+              "mean": 0.007292275574112735,
+              "p95": 0.009,
+              "maximum": 0.016
+            },
+            "zombie residency": {
+              "samples": 479,
+              "mean": 0.11171816283924843,
+              "p95": 0.139,
+              "maximum": 0.228
+            },
+            "zombie steering": {
+              "samples": 479,
+              "mean": 0.005110647181628392,
+              "p95": 0.007,
+              "maximum": 0.025
+            },
+            "zombie update": {
+              "samples": 479,
+              "mean": 0.2994864300626305,
+              "p95": 0.371,
+              "maximum": 1.067
+            }
+          },
+          "mean_route_work": 0.35833333333333334
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 2699,
+            "mean": 16.679044090403853,
+            "p95": 20.089,
+            "maximum": 40.844
+          },
+          "process_ms": {
+            "samples": 2699,
+            "mean": 2.3644546128195625,
+            "p95": 4.611,
+            "maximum": 9.751
+          },
+          "gpu_ms": {
+            "samples": 2699,
+            "mean": 5.753020005828586,
+            "p95": 7.30900001525879,
+            "maximum": 8.91600036621094
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 295,
+              "mean": 0.8207152542372881,
+              "p95": 1.664,
+              "maximum": 3.387
+            },
+            "zombie intent": {
+              "samples": 2699,
+              "mean": 0.10616561689514635,
+              "p95": 0.159,
+              "maximum": 0.709
+            },
+            "zombie interest_spacing": {
+              "samples": 2699,
+              "mean": 0.025725824379399777,
+              "p95": 0.041,
+              "maximum": 0.115
+            },
+            "zombie planning": {
+              "samples": 2699,
+              "mean": 0.5043349388662468,
+              "p95": 0.802,
+              "maximum": 1.012
+            },
+            "zombie population": {
+              "samples": 2699,
+              "mean": 0.03358577250833642,
+              "p95": 0.011,
+              "maximum": 6.487
+            },
+            "zombie residency": {
+              "samples": 2699,
+              "mean": 0.11455502037791776,
+              "p95": 0.158,
+              "maximum": 0.33
+            },
+            "zombie steering": {
+              "samples": 2699,
+              "mean": 0.007012226750648389,
+              "p95": 0.013,
+              "maximum": 0.15
+            },
+            "zombie update": {
+              "samples": 2699,
+              "mean": 0.8161285661356057,
+              "p95": 1.18,
+              "maximum": 7.891
+            }
+          },
+          "mean_route_work": 13.673212300852168
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.66880665280665,
+            "p95": 21.345,
+            "maximum": 23.566
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.5366299376299373,
+            "p95": 4.642,
+            "maximum": 7.974
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 5.862261953571978,
+            "p95": 6.46099996566772,
+            "maximum": 6.76599979400635
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 301,
+              "mean": 0.8802425249169434,
+              "p95": 1.731,
+              "maximum": 2.22
+            },
+            "zombie intent": {
+              "samples": 481,
+              "mean": 0.0961018711018711,
+              "p95": 0.121,
+              "maximum": 0.214
+            },
+            "zombie interest_spacing": {
+              "samples": 481,
+              "mean": 0.027744282744282745,
+              "p95": 0.037,
+              "maximum": 0.117
+            },
+            "zombie planning": {
+              "samples": 481,
+              "mean": 0.7790748440748441,
+              "p95": 0.796,
+              "maximum": 0.829
+            },
+            "zombie population": {
+              "samples": 481,
+              "mean": 0.007151767151767152,
+              "p95": 0.008,
+              "maximum": 0.013
+            },
+            "zombie residency": {
+              "samples": 481,
+              "mean": 0.1088066528066528,
+              "p95": 0.122,
+              "maximum": 0.193
+            },
+            "zombie steering": {
+              "samples": 481,
+              "mean": 0.005883575883575884,
+              "p95": 0.007,
+              "maximum": 0.018
+            },
+            "zombie update": {
+              "samples": 481,
+              "mean": 1.0468503118503119,
+              "p95": 1.095,
+              "maximum": 1.318
+            }
+          },
+          "mean_route_work": 24.53014553014553
+        }
+      },
+      "slot": "recipe_generated_4644d8cfc8f97e43",
+      "travelled": 248.269699200988,
+      "distance": 209.346282958984,
+      "viewport": "(1920, 1080)",
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "save_unchanged": true,
+      "mouse_untouched": true
+    },
+    "installed_repeat": {
+      "manifest": "reports/runtime_performance/20261029T060835694659Z_second_pass_repeat/run.json",
+      "manifest_sha256": "043ecf6e70c2de612db390dc5e722257accc275410c0bed0f36f4fb3fd7223b7",
+      "frames": "reports/runtime_performance/20261029T060835694659Z_second_pass_repeat/frames.json",
+      "frames_sha256": "681a5ca9588b4ae8969a1c010d5373654e12af78e0e1a1da3a2f577208da085c",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "73dede14e93946a719e9204cb2e2b2e744765a33737b02da3925297231a05afd",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "b4fcd7f302c698f3aacd800cfa7704ba061e16fe153c8836191f698f19766f09",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1f1668617a84c4dd4ec3116c0f1e3e5d52caeb663f805069465e96dac0230b9c",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "8edebe239bac88694c8c8b23fd363f5b71065dcf1f0198bac8f0845888b79f31",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "pack_sha256": "8a9eca1ead3e1c6fdf080e4aeb05ba3ea1dea01970b8e23e164f8ce0985c5a5a",
+      "source_sha256": "07d47e41afcc198a83eb7a1c3aa0c5d6bce684e3a39cd561e05fa7e04df9a617",
+      "passed": true,
+      "resources": {
+        "samples": 186,
+        "gpu_samples": 185,
+        "peak_private_commit_bytes": 3860013056,
+        "peak_working_set_bytes": 2138378240,
+        "peak_dedicated_gpu_bytes": 1490518016,
+        "checks": {
+          "ram": {
+            "bytes": 3860013056,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1490518016,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\runtime_travel_profile_b9edb19e5f9e4536a2562341bc5a39f6",
+        "retained_bytes": 0,
+        "failed_cache_bytes": 436071272,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      },
+      "summary": {
+        "idle": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.640975,
+            "p95": 20.588,
+            "maximum": 28.972
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 2.2247583333333334,
+            "p95": 4.178,
+            "maximum": 8.91
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 6.688604167103767,
+            "p95": 7.50799989700317,
+            "maximum": 8.0600004196167
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 52,
+              "mean": 1.000173076923077,
+              "p95": 1.982,
+              "maximum": 3.341
+            },
+            "zombie intent": {
+              "samples": 479,
+              "mean": 0.1118517745302714,
+              "p95": 0.177,
+              "maximum": 0.377
+            },
+            "zombie interest_spacing": {
+              "samples": 479,
+              "mean": 0.02810438413361169,
+              "p95": 0.047,
+              "maximum": 0.179
+            },
+            "zombie planning": {
+              "samples": 479,
+              "mean": 0.09902505219206681,
+              "p95": 0.794,
+              "maximum": 0.884
+            },
+            "zombie population": {
+              "samples": 479,
+              "mean": 0.008323590814196242,
+              "p95": 0.011,
+              "maximum": 0.196
+            },
+            "zombie residency": {
+              "samples": 479,
+              "mean": 0.12334864300626305,
+              "p95": 0.175,
+              "maximum": 0.371
+            },
+            "zombie steering": {
+              "samples": 479,
+              "mean": 0.00631732776617954,
+              "p95": 0.013,
+              "maximum": 0.025
+            },
+            "zombie update": {
+              "samples": 479,
+              "mean": 0.4017724425887265,
+              "p95": 1.1,
+              "maximum": 1.533
+            }
+          },
+          "mean_route_work": 1.8125
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 2696,
+            "mean": 16.693035979228487,
+            "p95": 21.085,
+            "maximum": 37.657
+          },
+          "process_ms": {
+            "samples": 2696,
+            "mean": 2.4970645400593474,
+            "p95": 4.865,
+            "maximum": 13.236
+          },
+          "gpu_ms": {
+            "samples": 2696,
+            "mean": 5.750349776946472,
+            "p95": 7.60099983215332,
+            "maximum": 9.21399974822998
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 273,
+              "mean": 0.8562600732600733,
+              "p95": 1.621,
+              "maximum": 2.817
+            },
+            "zombie intent": {
+              "samples": 2696,
+              "mean": 0.11375074183976262,
+              "p95": 0.193,
+              "maximum": 1.168
+            },
+            "zombie interest_spacing": {
+              "samples": 2696,
+              "mean": 0.02739243323442136,
+              "p95": 0.051,
+              "maximum": 0.219
+            },
+            "zombie planning": {
+              "samples": 2696,
+              "mean": 0.32022440652818995,
+              "p95": 0.803,
+              "maximum": 0.962
+            },
+            "zombie population": {
+              "samples": 2696,
+              "mean": 0.032437314540059346,
+              "p95": 0.012,
+              "maximum": 9.255
+            },
+            "zombie residency": {
+              "samples": 2696,
+              "mean": 0.12283271513353115,
+              "p95": 0.182,
+              "maximum": 0.532
+            },
+            "zombie steering": {
+              "samples": 2696,
+              "mean": 0.0069959198813056385,
+              "p95": 0.015,
+              "maximum": 0.142
+            },
+            "zombie update": {
+              "samples": 2696,
+              "mean": 0.6510853115727003,
+              "p95": 1.181,
+              "maximum": 9.496
+            }
+          },
+          "mean_route_work": 8.102744807121661
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.67051875,
+            "p95": 19.603,
+            "maximum": 43.569
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 2.01189375,
+            "p95": 4.167,
+            "maximum": 7.723
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 5.5960916638374325,
+            "p95": 6.09600019454956,
+            "maximum": 6.32600021362305
+          },
+          "stages_ms": {
+            "receive surface_batch": {
+              "samples": 28,
+              "mean": 0.9384285714285714,
+              "p95": 1.779,
+              "maximum": 2.718
+            },
+            "zombie intent": {
+              "samples": 480,
+              "mean": 0.10476041666666666,
+              "p95": 0.154,
+              "maximum": 0.255
+            },
+            "zombie interest_spacing": {
+              "samples": 480,
+              "mean": 0.028660416666666667,
+              "p95": 0.051,
+              "maximum": 0.125
+            },
+            "zombie planning": {
+              "samples": 480,
+              "mean": 0.2716895833333333,
+              "p95": 0.796,
+              "maximum": 0.852
+            },
+            "zombie population": {
+              "samples": 480,
+              "mean": 0.07249791666666666,
+              "p95": 0.011,
+              "maximum": 26.213
+            },
+            "zombie residency": {
+              "samples": 480,
+              "mean": 0.11905416666666667,
+              "p95": 0.162,
+              "maximum": 0.346
+            },
+            "zombie steering": {
+              "samples": 480,
+              "mean": 0.005970833333333333,
+              "p95": 0.01,
+              "maximum": 0.018
+            },
+            "zombie update": {
+              "samples": 480,
+              "mean": 0.6271833333333333,
+              "p95": 1.123,
+              "maximum": 26.456
+            }
+          },
+          "mean_route_work": 7.127083333333333
+        }
+      },
+      "slot": "recipe_generated_4644d8cfc8f97e43",
+      "travelled": 248.177985981107,
+      "distance": 209.270401000977,
+      "viewport": "(1920, 1080)",
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "save_unchanged": true,
+      "mouse_untouched": true
+    }
+  },
+  "tests": [
+    {
+      "name": "static_spatial_queries",
+      "receipt": "reports/checks/20261029T055949243231Z/run.json",
+      "receipt_sha256": "1121a288912694a88fb9e8920ca184b35c47b9e07efffa827b34389f1aa7fe1c",
+      "checks": 58,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "static_placements",
+      "receipt": "reports/checks/20261029T055950665211Z/run.json",
+      "receipt_sha256": "9508745f8f0287233fbd9f1ca6613a7d1c7149e24c57bd2333aa7b3106770869",
+      "checks": 235,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "static_model_regions",
+      "receipt": "reports/checks/20261029T060004814845Z/run.json",
+      "receipt_sha256": "d17e21af42244c9a6659975f5e14bca631c39ed39159773d09f955b2e7e80457",
+      "checks": 58,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "static_batch_clear",
+      "receipt": "reports/checks/20261029T060007365326Z/run.json",
+      "receipt_sha256": "d6d3759fe85c0e97efd2d0bdd6604c022e83f40bb725c52006469e5db632a9a3",
+      "checks": 8,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "model_focus_discovery",
+      "receipt": "reports/checks/20261029T060008088777Z/run.json",
+      "receipt_sha256": "c2b6183fafdbff0e091e1ecba560aab8ad67df35e969bda0dcaf751b6fa9220f",
+      "checks": 74,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "model_admission_history",
+      "receipt": "reports/checks/20261029T060010080660Z/run.json",
+      "receipt_sha256": "bf631540616ac52d4980817681b451e1fc117a4bf8bfd9c71383b986cac0b459",
+      "checks": 31,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "model_focus_paging",
+      "receipt": "reports/checks/20261029T060010986597Z/run.json",
+      "receipt_sha256": "a2024a0738f96098df65656d746bfe5f0c7376c4c692ff66cbe44b6e69871f96",
+      "checks": 24,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "ground_cover_stream",
+      "receipt": "reports/checks/20261029T060012765178Z/run.json",
+      "receipt_sha256": "b87e4ffbd1884200f42ff70d8b0629114e6de60b54fe4714fc7f65cf57829c56",
+      "checks": 158,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "zombie_navigation",
+      "receipt": "reports/checks/20261029T060014402204Z/run.json",
+      "receipt_sha256": "96eb6a8e9f463d28f7f30f47c490df627c91c3e33f0c5779b686f72d5ab96d73",
+      "checks": 15,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "zombie_behavior",
+      "receipt": "reports/checks/20261029T060054115750Z/run.json",
+      "receipt_sha256": "04979c5492a100090a0285ee7a18a66efbf9e9a68a375228c3ee660f6f87f7b1",
+      "checks": 18,
+      "failures": 0,
+      "passed": true
+    },
+    {
+      "name": "model_incremental_admission",
+      "receipt": "reports/checks/20261029T055505044573Z/run.json",
+      "receipt_sha256": "47cfb7611756c2292da6f88dfae98478f2d45ef6678aa56d27270a59287c2f16",
+      "checks": 42,
+      "failures": 0,
+      "passed": true
+    }
+  ],
+  "passing_assertions": 721,
+  "readiness_before": {
+    "cases": [
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 2620,
+        "layout": 0,
+        "readiness_queries": 2048,
+        "readiness_us": 838,
+        "regions": 64
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 94486,
+        "layout": 0,
+        "readiness_queries": 2048,
+        "readiness_us": 37564,
+        "regions": 4096
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 158814,
+        "layout": 1,
+        "readiness_queries": 2048,
+        "readiness_us": 40520,
+        "regions": 4096
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 96454,
+        "layout": 2,
+        "readiness_queries": 2048,
+        "readiness_us": 34657,
+        "regions": 4096
+      }
+    ],
+    "checks": 42,
+    "failures": 0
+  },
+  "readiness_after": {
+    "cases": [
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 2732,
+        "index_node_bytes": 5632,
+        "layout": 0,
+        "readiness_queries": 2048,
+        "readiness_us": 653,
+        "regions": 64
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 91674,
+        "index_node_bytes": 360448,
+        "layout": 0,
+        "readiness_queries": 2048,
+        "readiness_us": 1179,
+        "regions": 4096
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 100704,
+        "index_node_bytes": 360448,
+        "layout": 1,
+        "readiness_queries": 2048,
+        "readiness_us": 1363,
+        "regions": 4096
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 95685,
+        "index_node_bytes": 360448,
+        "layout": 2,
+        "readiness_queries": 2048,
+        "readiness_us": 609,
+        "regions": 4096
+      },
+      {
+        "candidates_per_batch": 65,
+        "exclusion_batches": 128,
+        "exclusion_us": 20524,
+        "index_node_bytes": 88,
+        "layout": 3,
+        "readiness_queries": 2048,
+        "readiness_us": 23725,
+        "regions": 1000
+      }
+    ],
+    "checks": 58,
+    "failures": 0
+  },
+  "state_read_microbenchmark": {
+    "full_status_us": 56675,
+    "queries": 10000,
+    "state_only_us": 3074
+  },
+  "static_resource_gate": {
+    "distributable": {
+      "bytes": 422698359,
+      "status": "within_budget"
+    },
+    "free_bytes": 55668314112,
+    "minimum_free_bytes": 10737418240,
+    "registered_failed_cache_bytes": 436071272,
+    "failed_cache_budget_bytes": 1073741824,
+    "runtime": "Not measured by this static check",
+    "scope": "Installed game content, not source/history. Saved worlds and development evidence are excluded from automatic quotas.",
+    "passed": true
+  },
+  "distribution": {
+    "bytes": 422698359,
+    "budget": {
+      "bytes": 422698359,
+      "status": "within_budget"
+    }
+  },
+  "preserved_failures": [
+    {
+      "path": "reports/static_spatial_queries/navigation_baseline/run.json",
+      "detail": "Original regional_navigation test on old 87afcdfe pack: 14 checks, same 2 tower/storey failures."
+    },
+    {
+      "path": "reports/checks/20261029T055506912231Z/run.json",
+      "detail": "Current regional_navigation: 18 checks, 2 tower/storey failures. Lightweight/full state parity passes. Not a passing suite."
+    },
+    {
+      "path": "reports/checks/20261029T055233325388Z/admission-details.json",
+      "detail": "Admission timing gate failed with 6.114/18.949 ms outliers; 42 correctness checks passed. Unchanged retry max 0.489 ms. Cause not established."
+    },
+    {
+      "path": "reports/checks/20261029T054429673100Z/run.json",
+      "detail": "New fixture errors: invalid oversized proxy and collision-enabled transient-clear setup; corrected test configuration."
+    }
+  ],
+  "rejected_trials": [
+    {
+      "path": "reports/static_spatial_queries/indexed",
+      "detail": "Candidate/group list exclusion: giant-proxy regression and candidate-times-group scratch growth."
+    },
+    {
+      "path": "reports/static_spatial_queries/dense_candidate",
+      "detail": "Per-candidate exclusion: 208.893 ms vs baseline 20.163 ms for dense 1000-instance group."
+    },
+    {
+      "path": "reports/static_spatial_queries/dense_batched",
+      "detail": "Recursive batch exclusion: dense 23.302 ms, small cases also regress; original exclusion code retained."
+    },
+    {
+      "path": "reports/runtime_performance/20261029T054946068194Z_second_pass_after_source",
+      "detail": "Intermediate walking profile includes rejected exclusion trial; not final installed evidence."
+    }
+  ],
+  "remaining": [
+    "Dense per-object collision narrowphase",
+    "Surface-result publication and actor planning variability",
+    "Existing tower-navigation failures",
+    "Admission timing outlier and historical unexplained stall",
+    "Maximum-city, cold-arrival, loading/generation, mining endurance and physical 4 GiB GPU qualification"
+  ]
+}

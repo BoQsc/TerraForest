@@ -306,6 +306,15 @@ Resident shape limits range from the asset's part count to 16,384; per-tick shap
 
 ### Model exclusion queries
 
+Loaded-region collision readiness uses a maintained native bounds tree rather
+than scanning every resident group. The tree updates with authoring, proxy
+configuration, region publication and snapshot restore; queries still test the
+actual compound parts and live proxy bodies. No cross-frame readiness cache.
+`region_stats()` reports `collision_bounds_nodes`, `collision_bounds_height` and
+`collision_bounds_node_bytes` (node payload only, excluding allocator overhead).
+The existing 4,096-group cap bounds this extra index; incremental collection
+retirement drains it alongside the old group bounds. Exclusion batching is unchanged.
+
 `NativeStaticBatch.overlap_mask(transforms, prototype_bounds)` returns one byte per candidate (1 overlaps, 0 clear). Transforms are world-space, bounds are prototype-local, and input is limited to 65,536 finite nonsingular transforms with positive finite bounds. Invalid input returns an empty array. The query converts candidates into collection coordinates, filters maintained 32 m group bounds, then tests transformed AABBs of configured proxy parts. Without configured parts it uses mesh bounds. Compound openings remain available, but rotated/sheared AABBs can conservatively exclude more than the exact surface.
 
 Queries use authored records, not resident physics. Disabling or evicting collision preserves exclusion. Group bounds are updated during authoring and rebuilt after restore. Reconfigure the asset after changing mesh bounds in place. `exclusion_changed` signals proxy/asset reconfiguration and collection transform changes; ordinary placement changes retain their `changed` signal. These are scene-thread APIs.

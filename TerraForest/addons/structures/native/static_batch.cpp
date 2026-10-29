@@ -283,6 +283,7 @@ bool NativeStaticBatch::begin_transient_clear() {
     retired->old_placements.swap(placements);retired->old_groups.swap(groups);retired->old_batches.swap(batches);
     retired->old_slots.swap(slots);retired->old_birth.swap(appearance_birth);retired->old_resident.swap(resident_ids);
     retired->old_render.swap(render_ids);retired->old_bounds.swap(render_bounds);retired->old_collision_bounds.swap(collision_bounds);
+    std::swap(retired->old_collision_index,collision_index);
     for(auto &entry:retired->old_batches)entry.second->set_visible(false);
     render_pending.clear();render_bytes=0;render_candidates=0;render_blocked=0;render_dirty=true;collision_dirty=true;
     collection_retirement=std::move(retired);publish_change();return true;
@@ -304,7 +305,8 @@ Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_
         else if(!r.old_groups.empty()) {
             auto it=r.old_groups.begin();if(it->second.empty())r.old_groups.erase(it);else it->second.erase(it->second.begin());
         }
-        else if(erase_one(r.old_slots)||erase_one(r.old_birth)||erase_one(r.old_resident)||erase_one(r.old_render)||erase_one(r.old_bounds)||erase_one(r.old_collision_bounds)){}
+        else if(erase_one(r.old_slots)||erase_one(r.old_birth)||erase_one(r.old_resident)||erase_one(r.old_render)||erase_one(r.old_bounds)){}
+        else if(!r.old_collision_bounds.empty()) {r.old_collision_index.erase(r.old_collision_bounds.begin()->first);erase_one(r.old_collision_bounds);}
         else {collection_retirement.reset();break;}
         --r.units;++processed;
         if(!r.units)collection_retirement.reset();
@@ -327,7 +329,7 @@ bool NativeStaticBatch::clear_instances() {
     batches.clear();render_bytes=0;render_candidates=0;render_blocked=0;
     clear_proxies();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
     resident_ids.clear();render_ids.clear();render_bounds.clear();render_pending.clear();
-    collision_bounds.clear();collision_dirty=true;render_dirty=true;
+    collision_bounds.clear();collision_index.clear();collision_dirty=true;render_dirty=true;
     publish_change();return true;
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
@@ -396,7 +398,7 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
         staged[i+1]=p;staged_groups[k].insert(i+1);
     }
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);for(auto &e:staged_groups)touched.insert(e.first);
-    clear_proxies();collision_bounds.clear();collision_dirty=true;
+    clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     rebuild(touched);publish_change();return true;
@@ -446,7 +448,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
     unloaded_regions.clear();unloaded_bounds.clear();unloaded_ids.clear();
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
-    clear_proxies();collision_bounds.clear();collision_dirty=true;
+    clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
     survey_saved_identity="snapshot-v1|"+bytes.slice(bytes.size()-32).hex_encode();
     rebuild(touched);publish_change(true);return true;

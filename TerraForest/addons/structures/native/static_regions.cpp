@@ -70,7 +70,7 @@ bool NativeStaticBatch::prepare_metadata(const PackedByteArray &bytes,std::map<B
 void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids,const String &identity) {
     // All validation and prototype bounds are prepared before scene publication.
     std::set<BlockKey> touched;for(const auto &entry:groups)touched.insert(entry.first);
-    clear_proxies();collision_bounds.clear();collision_dirty=true;
+    clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements.clear();groups.clear();slots.clear();
     unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
     unloaded_bounds.clear();for(const auto &entry:unloaded_regions)unloaded_bounds.insert(entry.first,entry.second.bounds);
@@ -174,6 +174,8 @@ Dictionary NativeStaticBatch::region_stats() const {
     out["reserved_id_payload_bytes"]=int64_t((unloaded_ids.size()+hidden_record_count())*sizeof(int64_t));
     out["unloaded_digest_bytes"]=int64_t(unloaded_regions.size()*32);
     out["unloaded_bounds_nodes"]=int64_t(unloaded_bounds.size());out["unloaded_bounds_height"]=unloaded_bounds.height();
+    out["collision_bounds_nodes"]=int64_t(collision_index.size());out["collision_bounds_height"]=collision_index.height();
+    out["collision_bounds_node_bytes"]=int64_t(collision_index.size()*sizeof(ModelBoundsIndex::Node));
     return out;
 }
 Dictionary NativeStaticBatch::capture_storage_state() const {

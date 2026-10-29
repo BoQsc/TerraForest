@@ -23,7 +23,7 @@ void NativeStaticBatch::remove_render_members(const std::set<BlockKey> &keys) {
             uint64_t count=std::min(uint64_t(old.size()),render_page_size(page->first));
             if(count!=old.size()||!std::equal(old.begin(),old.end(),ordered.begin()+uint64_t(page->first.second)*render_page_capacity()))changed.push_back(page->first);
         }
-        if(group==groups.end()){render_bounds.erase(key);collision_bounds.erase(key);}
+        if(group==groups.end()){render_bounds.erase(key);collision_bounds.erase(key);collision_index.erase(key);}
     }
     for(auto page:changed) {
         if(!render_page_size(page))release_batch(page,true,true);

@@ -43,6 +43,7 @@ public:
     godot::Vector3 steering_target(int64_t id);
     bool guard_motion(int64_t id,const godot::Vector3 &direction,double travel);
     godot::Dictionary status(int64_t id);
+    godot::String state(int64_t id);
     godot::PackedVector3Array interest_points()const;
     godot::PackedVector3Array route_points(int64_t id);
 };

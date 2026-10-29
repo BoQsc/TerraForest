@@ -36,6 +36,7 @@ func begin_process()->void:process_started=Time.get_ticks_usec();game.app_focuse
 func begin_draw()->void:draw_started=Time.get_ticks_usec()
 func frame()->void:
  var now:=Time.get_ticks_usec()
+ for label in game.zombies.update_phase_us:stages["zombie "+label]=game.zombies.update_phase_us[label]/1000.0
  if phase=="walking":travelled+=game.player.position.distance_to(previous_position)
  previous_position=game.player.position
  for zombie:Node3D in game.zombies.residents:
@@ -112,6 +113,7 @@ func run()->void:
  await sample("settling",2)
  origin=game.player.position;viewport=root.get_viewport_rid();RenderingServer.viewport_set_measure_render_time(viewport,true)
  game.vegetation.renderer.profiling_enabled=true
+ game.zombies.profiling_enabled=true
  game.terrain.stage_measured.connect(stage);process_frame.connect(begin_process);RenderingServer.frame_pre_draw.connect(begin_draw);RenderingServer.frame_post_draw.connect(frame)
  previous=Time.get_ticks_usec();process_started=previous;draw_started=previous;previous_position=game.player.position
  await sample("idle",8)

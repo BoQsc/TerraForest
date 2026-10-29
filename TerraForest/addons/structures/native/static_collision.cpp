@@ -22,9 +22,8 @@ bool NativeStaticBatch::is_collision_region_ready(const AABB &world_bounds) cons
     };
     if(overlaps(overlaps,unloaded_bounds.root()))return false;
     // Bounds include full transformed proxy extents, even beyond origin groups.
-    for(const auto &group:collision_bounds) {
-        if(!group.second.intersects(local))continue;
-        for(auto id:groups.at(group.first)) {
+    return !collision_index.any_intersection(local,[&](BlockKey key) {
+        for(auto id:groups.at(key)) {
             auto placement=placement_transform(placements.at(id));
             if(!placement.xform(proxy_box).intersects(local))continue;
             bool overlap=false;
@@ -33,10 +32,10 @@ bool NativeStaticBatch::is_collision_region_ready(const AABB &world_bounds) cons
             }
             if(!overlap)continue;
             if(!is_inside_tree()||proxy_radius<=0||current!=collision_transform||
-               !collision_bodies.count(id))return false;
+               !collision_bodies.count(id))return true;
         }
-    }
-    return true;
+        return false;
+    });
 }
 Transform3D NativeStaticBatch::placement_transform(const Placement &p) {
     return Transform3D(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));
@@ -82,7 +81,7 @@ bool NativeStaticBatch::configure_compound_collision(const TypedArray<AABB> &box
         combined=i?combined.merge(box):box;parts.push_back(box);
     }
     // Proxy geometry is application-owned asset metadata, not untrusted save data.
-    clear_proxies();collision_bounds.clear();proxy_box=combined;proxy_parts=std::move(parts);proxy_radius=radius;
+    clear_proxies();collision_bounds.clear();collision_index.clear();proxy_box=combined;proxy_parts=std::move(parts);proxy_radius=radius;
     proxy_shape_limit=int(shape_limit);proxy_shapes_per_tick=int(shapes_per_tick);
     proxy_limit=int(instance_limit);proxy_build_limit=int(builds_per_tick);collision_dirty=true;
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
@@ -109,7 +108,7 @@ void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys)
     for(auto key:keys) {
         auto group=groups.find(key);collision_bounds.erase(key);
         render_bounds.erase(key);
-        if(group==groups.end()) {render_ids.erase(key);continue;}
+        if(group==groups.end()) {collision_index.erase(key);render_ids.erase(key);continue;}
         if(!render_ids.count(key))render_ids[key].assign(group->second.begin(),group->second.end());
         bool first=true;AABB box,render_box;
         for(auto id:group->second) {
@@ -119,6 +118,7 @@ void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys)
             box=first?next:box.merge(next);first=false;
         }
         collision_bounds.emplace(key,box);
+        collision_index.insert(key,box);
         render_bounds.emplace(key,render_box);
     }
     if(!keys.empty()) {collision_dirty=true;render_dirty=true;}

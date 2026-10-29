@@ -20,6 +20,12 @@ private:
     std::unique_ptr<Node> root_;
     size_t size_=0;
     uint64_t revision_=0;
+    template<class Predicate>
+    static bool any_intersection(const Node *node,const AABB &bounds,const Predicate &predicate) {
+        if(!node||!node->bounds.intersects(bounds))return false;
+        return (node->box.intersects(bounds)&&predicate(node->key))||
+            any_intersection(node->left.get(),bounds,predicate)||any_intersection(node->right.get(),bounds,predicate);
+    }
     static int height(const std::unique_ptr<Node> &n){return n?n->height:0;}
     static void update(Node &n) {
         n.height=1+std::max(height(n.left),height(n.right));n.bounds=n.box;
@@ -80,6 +86,8 @@ public:
     void erase(BlockKey key) {const auto value=code(key);if(find(value)){root_=remove(std::move(root_),value);--size_;++revision_;}}
     void clear(){root_.reset();size_=0;++revision_;}
     const Node *root() const{return root_.get();}
+    template<class Predicate>
+    bool any_intersection(const AABB &bounds,const Predicate &predicate) const {return any_intersection(root_.get(),bounds,predicate);}
     size_t size() const{return size_;}
     int height() const{return height(root_);}
     uint64_t revision() const{return revision_;}

@@ -270,7 +270,10 @@ Persistence registration supports `register_components(Array[Dictionary])` for s
 second collision body or owning an entity store. Configure a bounded capacity,
 submit feet-origin `set_agent(id, feet, goal, profile, active)` records, then call
 `advance(delta, readiness, admission)` once per physics tick and consume
-`steering_target(id)`. `status(id)` exposes the ordinary route failures and work
+`steering_target(id)`. `state(id)` returns only the same state string, without
+constructing a diagnostics dictionary or traversing regional path tiles. The
+zombie perception loop uses this lightweight accessor. `status(id)` remains the
+full diagnostics API and exposes the ordinary route failures and work
 limits. `guard_motion` validates the actual post-steering direction with the same
 support/sweep/admission checks. Remove records on retirement; `clear` discards all
 transient routes. Call `set_exclusions` when the specific recipient RID changes,
