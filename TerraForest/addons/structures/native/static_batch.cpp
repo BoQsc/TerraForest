@@ -422,7 +422,7 @@ PackedByteArray NativeStaticBatch::encode_placements(const String &id,const std:
     for(auto &e:values) {write(uint64_t(e.first),8);for(float v:e.second){uint32_t bits;std::memcpy(&bits,&v,4);write(bits,4);}}
     result.resize(data.size());std::memcpy(result.ptrw(),data.data(),data.size());result.append_array(checksum(result));return result;
 }
-bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out) {
+bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out,std::vector<ModelPlacementRecord> *compact) {
     if(bytes.size()<49||bytes.size()>5600176||std::memcmp(bytes.ptr(),"TFSI\1\0\0\0",8))return false;
     auto payload=bytes.slice(0,bytes.size()-32);if(checksum(payload)!=bytes.slice(bytes.size()-32))return false;
     const uint8_t *data=payload.ptr();size_t p=8;
@@ -431,6 +431,7 @@ bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::ma
     if(!length||length>128||count>100000||uint64_t(payload.size())!=16+uint64_t(length)+uint64_t(count)*56)return false;
     for(uint32_t i=0;i<length;i++)if(data[p+i]<33||data[p+i]>126)return false;
     asset=String::utf8(reinterpret_cast<const char*>(data+p),length);p+=length;
+    if(compact)compact->reserve(count);
     std::set<BlockKey> keys;int64_t previous=0;
     for(uint32_t i=0;i<count;i++) {
         uint64_t raw=read(8);if(raw>uint64_t(INT64_MAX)||int64_t(raw)<=previous)return false;previous=int64_t(raw);
@@ -438,6 +439,7 @@ bool NativeStaticBatch::parse(const PackedByteArray &bytes,String &asset,std::ma
         if(!valid_transform(t.data()))return false;
         keys.insert(group_for(t));if(keys.size()>4096)return false;
         if(out)out->emplace(previous,t);
+        if(compact)compact->push_back({previous,t});
     }
     return true;
 }

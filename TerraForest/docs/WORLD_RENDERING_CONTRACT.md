@@ -98,7 +98,18 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    transition solution (including edited caves), not a heightmap covering edits.
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
 3. **Medium props/vehicles.** Furniture/other props still have local representation
-   limits. Parked vehicles now retain world-wide render ownership; debug/release
+   limits. The native read-only model-render page primitive is now implemented:
+   exact checkpoint reads decode compact ordered transforms on the shared archive
+   worker; the main thread can publish at most 1,024 instances per page using the
+   original mesh, materials and imported LODs. No far canonical/physics hydration.
+   Synthetic debug/release checks cover 100,000 records, affine transforms,
+   historical versions, cancellation and destruction. This is not yet connected
+   to main-world prop rendering. Next integrate one visual ownership policy,
+   global memory/upload budgets, authored-change invalidation, collection resets
+   and a real coverage play gate; then prove save/reload, dense-world cost and
+   uninterrupted travel/zoom. Do not substitute successful primitive tests for
+   those missing integrations. Details: issue `model-render-pages-verification.json`.
+   Parked vehicles now retain world-wide render ownership; debug/release
    native pressure and installed four-Ranger loading/handoff checks pass. The
    65,536-record test uses one box, not 65,536 full cars. Ranger's far prototype
    is now consolidated from 32 parts to one; a same-process actual-car A/B retains

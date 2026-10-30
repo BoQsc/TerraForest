@@ -9,6 +9,7 @@
 
 namespace terraforest {
 class ExclusionPageData;
+class ModelRenderPageData;
 // An optional native adapter around NativeWorldArchive. One save-worker owner.
 // Its sibling .regions directory is exclusively managed by this adapter.
 class NativeRegionWorldArchive : public RefCounted {
@@ -34,6 +35,7 @@ class NativeRegionWorldArchive : public RefCounted {
         String asset;
         bool metadata=false,strict_checkpoint=false,survey=false; AABB survey_bounds;
         bool exclusion=false;TypedArray<AABB> exclusion_parts;
+        bool model_render=false;
         Vector3i region;
         PackedByteArray expected,checkpoint;
     };
@@ -52,7 +54,8 @@ class NativeRegionWorldArchive : public RefCounted {
     std::deque<Dictionary> model_read_completed_;
     std::deque<Dictionary> survey_read_completed_;
     std::map<int64_t,std::shared_ptr<ExclusionPageData>> exclusion_completed_;
-    Dictionary take_survey_read_locked(int64_t ticket,std::shared_ptr<ExclusionPageData> *page);
+    std::map<int64_t,std::shared_ptr<ModelRenderPageData>> model_render_completed_;
+    Dictionary take_survey_read_locked(int64_t ticket,std::shared_ptr<ExclusionPageData> *page,std::shared_ptr<ModelRenderPageData> *render=nullptr);
     int64_t read_active_survey_ticket_=0;
     int64_t read_active_model_ticket_=0;
     bool read_discard_active_=false;
@@ -62,7 +65,7 @@ class NativeRegionWorldArchive : public RefCounted {
     int64_t read_cancelled_before_start_=0;
     int64_t read_accepted_=0,read_finished_=0,read_rejected_=0,read_starts_=0;
     void run_region_reads(Ref<NativeBlockRegionStore> store);
-    int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata=false,bool strict_checkpoint=false,bool survey=false,const AABB &bounds=AABB(),bool exclusion=false,const TypedArray<AABB> &parts=TypedArray<AABB>());
+    int64_t request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata=false,bool strict_checkpoint=false,bool survey=false,const AABB &bounds=AABB(),bool exclusion=false,const TypedArray<AABB> &parts=TypedArray<AABB>(),bool model_render=false);
     Array poll_reads(int max_results,bool models);
     bool reference_in_file(const String &path,std::set<String> &keep,std::map<String,std::set<String>> &model_keep) const;
     bool retire_unreferenced();
@@ -98,6 +101,9 @@ public:
     int64_t request_survey_region_read(Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
     int64_t request_model_survey_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,const AABB &bounds);
     Dictionary take_survey_region_read(int64_t ticket);
+    int64_t request_model_render_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch);
+    Dictionary take_model_render_read(int64_t ticket,std::shared_ptr<ModelRenderPageData> &page);
+    Dictionary take_model_render_region_read(int64_t ticket);
     Dictionary take_exclusion_read(int64_t ticket,std::shared_ptr<ExclusionPageData> &page);
     int64_t request_exclusion_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,const TypedArray<AABB> &parts);
     bool discard_survey_region_read(int64_t ticket);
