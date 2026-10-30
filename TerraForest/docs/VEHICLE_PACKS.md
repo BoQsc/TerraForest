@@ -130,3 +130,7 @@ world's production loading gate. Component binary injection is not compound-disk
 save qualification or physical driving endurance. Both run against the installed
 pack with `python tools/check_runtime_views.py <test> --pack`.
 [Evidence and open costs](../issues/world-overview/vehicle-verification.json).
+`vehicle_horizon_cost --pack` through the same runner records actual Ranger
+1,024-car close views and 4,096-car world-wide views, draw calls and CPU/GPU/frame
+timings. It is an isolated profiling baseline; functional PASS is not performance
+acceptance or mixed-world driving qualification.

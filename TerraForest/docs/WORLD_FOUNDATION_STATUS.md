@@ -102,6 +102,11 @@ pressure fixture uses one box: it does not qualify a dense real-car GPU workload
 Ranger's 32-part cost, near-handoff bursts, shadow continuity and actual driving
 endurance remain open; return with full-car pressure and continuous zoom/driving
 evidence. [Vehicle receipt](../issues/world-overview/vehicle-verification.json).
+Isolated real-car cost is now measured through 4,096 Rangers: 2,048 draw calls and
+GPU/render-CPU p95 4.96/3.48 ms in overview. A 76.60 ms close-view frame remains
+unexplained. All 32 parts share one material; exact per-material consolidation
+is the next candidate, followed by populated-world comparisons. This baseline
+has no terrain, driving or cast shadows and does not close performance acceptance.
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.

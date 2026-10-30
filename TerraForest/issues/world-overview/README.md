@@ -307,6 +307,15 @@ consolidation, bounded near-handoff latency, continuous zoom/driving and shadow
 transitions remain open. Return with full-prototype pressure and continuous visual
 evidence. Missing packs keep canonical records but cannot render substitute cars.
 
+Follow-up isolated actual-car baseline: 64 / 1,024 / 4,096 Rangers retain their
+32-part meshes and imported LODs. At 4,096 cars the renderer issues 2,048 visible
+draw calls; overview GPU/render-CPU p95 is 4.96 / 3.48 ms. All 32 parts share one
+material, making exact per-material consolidation the next candidate. The close
+1,024-car phase includes a 76.60 ms frame of unestablished cause; functional PASS
+does **not** mean performance accepted. No terrain, driving or cast shadows in
+this baseline. Raw samples and inspected images remain in
+`reports/runtime_views/20261030T124816059552Z`; receipt records all phases.
+
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical

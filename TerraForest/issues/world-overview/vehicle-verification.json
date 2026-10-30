@@ -65,6 +65,34 @@
     "dedicated_gpu_peak_bytes": 1472802816,
     "scope": "Two world instances; component restoration, not disk compound-save. Frozen test poses use terrain samples plus 0.85 m; wheel contact is not qualified. Distant manual camera retains normal fog, not production overview visual approval. Sampled peaks on current hardware, not 4 GiB hardware qualification."
   },
+  "actual_car_cost_baseline": {
+    "revision": "3155c844",
+    "run": "reports/runtime_views/20261030T124816059552Z/run.json",
+    "result": "reports/runtime_views/20261030T124816059552Z/result.json",
+    "earlier_overview_only_run": "reports/runtime_views/20261030T124555695891Z/run.json",
+    "test_sha256": "999c0805fcceabdbd9e239d764b818586d0450df034b32abe243d9f92fb18793",
+    "functional_checks_passed": true,
+    "performance_acceptance": false,
+    "parts": 32,
+    "surfaces": 32,
+    "materials": 1,
+    "source_triangles": 29794,
+    "imported_lod_entries": 120,
+    "phases": [
+      {"label": "empty", "draw_calls": 0, "gpu_p95_ms": 1.261, "render_cpu_p95_ms": 0.139, "frame_p95_ms": 17.143, "frame_max_ms": 19.601},
+      {"label": "dense64", "draw_calls": 32, "gpu_p95_ms": 4.186, "render_cpu_p95_ms": 0.227, "frame_p95_ms": 16.932, "frame_max_ms": 17.373},
+      {"label": "dense1024", "draw_calls": 256, "gpu_p95_ms": 4.153, "render_cpu_p95_ms": 0.500, "frame_p95_ms": 16.959, "frame_max_ms": 17.226},
+      {"label": "dense1024_close", "draw_calls": 256, "gpu_p95_ms": 5.712, "render_cpu_p95_ms": 0.437, "frame_p95_ms": 17.173, "frame_max_ms": 76.601},
+      {"label": "world4096", "draw_calls": 2048, "gpu_p95_ms": 4.959, "render_cpu_p95_ms": 3.477, "frame_p95_ms": 17.991, "frame_max_ms": 19.607},
+      {"label": "world4096_close", "draw_calls": 2048, "gpu_p95_ms": 5.138, "render_cpu_p95_ms": 2.479, "frame_p95_ms": 17.325, "frame_max_ms": 17.841}
+    ],
+    "world4096_instance_capacity_bytes": 12582912,
+    "private_commit_peak_bytes": 1134817280,
+    "dedicated_gpu_peak_bytes": 395771904,
+    "scope": "Isolated real-Ranger rendering, 1080p/60 cap, no terrain/shadow casting/driving. Six fixed-camera phases, 60 warmup and 120 measured frames each; images inspected. Functional success is not frame-time acceptance. A 76.601 ms close-view frame remains unexplained; no attribution to focus, driver or native code without evidence. Raw primitive counters are engine-dependent, not submitted instance triangle totals.",
+    "next": "Evaluate exact per-material prototype consolidation: 32 mesh parts share one material. Retain transforms, vertex attributes and imported LOD behavior; compare identical scenes, then populated-world handoff and driving/zoom. No geometry consolidation implemented by this test commit.",
+    "uid_import": "reports/vehicle_horizon_cost_import.log; Godot generated the sidecar. Existing nested ZombieLab project and three duplicate paving-test UIDs in retained rejected-ramp evidence produced warnings; not changed here."
+  },
   "regressions": {
     "vehicle_modules": "reports/checks/20261030T123131720053Z/run.json",
     "vehicle_fleet": "reports/checks/20261030T123232259472Z/run.json",
@@ -107,7 +135,7 @@
     }
   ],
   "remaining": [
-    "Dense real-car GPU/draw-call and frame-time pressure: one-box 65536 capacity is not that evidence.",
+    "Actual-car isolated pressure measured through 4096 cars; populated mixed-world, 65536-car and 4 GiB hardware qualification remain open. A 76.601 ms frame is retained, not a perfect-frame-delivery claim.",
     "Evaluate per-material prototype consolidation while preserving exact geometry/materials/imported LODs; no automatic arbitrary-pack LOD baking yet.",
     "Near handoff upload bursts, maximum-fleet restore/teardown and long mutation endurance.",
     "Continuous physical driving, zoom and shadow transitions; far shadows are intentionally off, user visual acceptance pending.",

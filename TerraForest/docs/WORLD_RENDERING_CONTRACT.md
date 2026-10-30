@@ -100,6 +100,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    and shadow/geometry transition continuity require qualification. Return with
    full-prototype pressure, continuous drive/zoom evidence and sampled budgets
    before claiming cheap seamless fleets. No automatic custom-pack LOD baker.
+   Isolated actual-car baseline now covers 64/1,024/4,096 Rangers: the 4,096-car
+   overview costs 2,048 draw calls, GPU/render-CPU p95 4.96/3.48 ms; a close
+   1,024-car frame reaches 76.60 ms. Not populated-world performance acceptance.
+   All 32 parts share one material; evaluate exact per-material consolidation
+   next, preserving attributes/LODs and comparing the retained baseline.
    Add the remaining exact lightweight prop tiers before advertising all
    medium/large objects at arbitrary distance. Boulders no longer
    share local grass ownership. The earlier 100 km/h sweep reported up to eight near
