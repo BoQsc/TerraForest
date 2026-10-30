@@ -1,4 +1,5 @@
 {
+  "horizon_manifest": "horizon-manifest.json",
   "source_run": "reports/checks/20261028T135000186386Z_minerals_pack/building_lod_visual/run.json",
   "base_revision": "6cad0491722e55557be63ef980602520209aac8a",
   "pack_sha256": "0aba7d1a8f9964dddde103d9e23a6680150993b9a3590b2eb28453ea342c5e9b",

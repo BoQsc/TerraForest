@@ -1,4 +1,5 @@
 #include "block_world.hpp"
+#include "block_horizon.hpp"
 #include "block_shapes.hpp"
 #include "modular_mesher.hpp"
 #include <godot_cpp/core/class_db.hpp>
@@ -76,6 +77,8 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_geometry_lod_enabled","enabled"),&NativeBlockWorld::set_geometry_lod_enabled);
     ClassDB::bind_method(D_METHOD("is_geometry_lod_enabled"),&NativeBlockWorld::is_geometry_lod_enabled);
     ClassDB::bind_method(D_METHOD("geometry_lod_stats"),&NativeBlockWorld::geometry_lod_stats);
+    ClassDB::bind_method(D_METHOD("set_distant_rendering_enabled","enabled"),&NativeBlockWorld::set_distant_rendering_enabled);
+    ClassDB::bind_method(D_METHOD("distant_rendering_stats"),&NativeBlockWorld::distant_rendering_stats);
     ClassDB::bind_method(D_METHOD("configure_mesh_uploads","chunk_limit","byte_limit","time_limit_us"),&NativeBlockWorld::configure_mesh_uploads);
     ClassDB::bind_method(D_METHOD("set_collision_radius","radius"),&NativeBlockWorld::set_collision_radius);
     ClassDB::bind_method(D_METHOD("is_idle"),&NativeBlockWorld::is_idle);
@@ -90,7 +93,8 @@ void NativeBlockWorld::_bind_methods() {
 uint16_t NativeBlockWorld::cell(int x,int y,int z) const {
     auto it=chunks.find(key_for(x,y,z)); return it==chunks.end()?0:it->second.cells[index(x,y,z)];
 }
-void NativeBlockWorld::invalidate(BlockKey key) {
+void NativeBlockWorld::invalidate(BlockKey key,bool authored) {
+    if(horizon&&authored)horizon->invalidate(key);
     residency_dirty=true;settled.erase(key);budget_blocked.erase(key);erase_cached(key);
     bool active=worker_active&&!(key<worker_key)&&!(worker_key<key);
     if(!chunks.count(key)&&!visuals.count(key)&&!active) {
@@ -418,6 +422,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     auto *instance=memnew(MeshInstance3D);instance->set_mesh(mesh);instance->set_position(Vector3(b.key.x*16,b.key.y*16,b.key.z*16));add_child(instance);
     instance->set_lod_bias(geometry_lod?4.f:1e8f);
     visuals[b.key]={instance,nullptr,int(b.indices.size()/3),payload,b.lattice_width,vertices,indices};mesh_bytes+=payload;
+    if(horizon)horizon->near_changed(b.key);
     auto &visual=visuals[b.key];visual.lod_levels=int(b.lods.size());visual.lod_min_triangles=visual.triangles;
     for(const auto &lod:b.lods){visual.lod_index_bytes+=lod.indices.size()*sizeof(int32_t);visual.lod_min_triangles=int(lod.indices.size()/3);}
     collision_work_pending=true;
@@ -429,6 +434,7 @@ void NativeBlockWorld::set_collision_radius(double radius) {
     collision_radius=radius;collisions=radius>0;
 }
 void NativeBlockWorld::_process(double) {
+    if(horizon)horizon->step();
     refresh_residency();
     const auto begin=std::chrono::steady_clock::now();
     auto elapsed=[&](){return std::chrono::duration<double,std::micro>(std::chrono::steady_clock::now()-begin).count();};

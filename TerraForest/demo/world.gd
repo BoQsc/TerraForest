@@ -227,6 +227,7 @@ func _ready() -> void:
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
+	structures.blocks.set_distant_rendering_enabled(true)
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
 	door_models.configure_compound_collision(doorway.get_meta("collision_boxes"),64,512,8,1536,24)
 	terrain.nearby_first = true
@@ -1680,6 +1681,13 @@ func _additional_loading_ready() -> bool:
 		loading_work_text="Waiting for building / tree collision within 2 m of the player · "+loading_work_text
 		return false
 	# Match the nearby model acceptance radius; distant world continues streaming.
+	var distant: Dictionary = structures.blocks.distant_rendering_stats()
+	if not distant.ready:
+		loading_stage_percent=80;loading_stage_text="Preparing distant buildings"
+		loading_work_text="Building regions %d/%d · %d distant meshes · %.1f MiB / %.0f MiB" % [distant.ready_regions,distant.regions,distant.mesh_chunks,distant.mesh_bytes/1048576.0,distant.byte_limit/1048576.0]
+		if distant.failed_reads > 0 or distant.budget_rejections > 0:
+			terrain.latest_error="Distant building preparation failed: %d archive reads, %d memory-budget rejections" % [distant.failed_reads,distant.budget_rejections]
+		return false
 	var visual_bounds:=AABB(player.global_position-Vector3(128,128,128),Vector3(256,256,256))
 	if not structures.is_model_render_region_ready(visual_bounds):
 		loading_stage_percent=82;loading_stage_text="Loading nearby buildings and objects"

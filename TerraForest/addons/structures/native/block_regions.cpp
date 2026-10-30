@@ -81,10 +81,10 @@ void NativeBlockWorld::replace_region_chunks(BlockKey region,std::map<BlockKey,B
     }
     for(auto &entry:restored) {affected.insert(entry.first);chunks.emplace(entry.first,std::move(entry.second));}
     for(auto k:affected) {
-        invalidate(k);
-        invalidate({k.x-1,k.y,k.z});invalidate({k.x+1,k.y,k.z});
-        invalidate({k.x,k.y-1,k.z});invalidate({k.x,k.y+1,k.z});
-        invalidate({k.x,k.y,k.z-1});invalidate({k.x,k.y,k.z+1});
+        invalidate(k,!storage_only);
+        invalidate({k.x-1,k.y,k.z},!storage_only);invalidate({k.x+1,k.y,k.z},!storage_only);
+        invalidate({k.x,k.y-1,k.z},!storage_only);invalidate({k.x,k.y+1,k.z},!storage_only);
+        invalidate({k.x,k.y,k.z-1},!storage_only);invalidate({k.x,k.y,k.z+1},!storage_only);
     }
     if(reset_history)clear_history();set_process(true);
 }

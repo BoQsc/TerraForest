@@ -27,6 +27,7 @@ bool NativeBlockPager::configure(NativeBlockWorld *blocks,const Ref<NativeRegion
     owns_read_service_=!bool(archive->region_read_stats()["running"]);
     if(owns_read_service_&&!archive->start_region_reads(REQUESTS,int64_t(REQUESTS)*(2*1024*1024+96)))return false;
     world_id_=blocks->get_instance_id();archive_=archive;load_radius_=load;unload_radius_=unload;chunk_limit_=limit;
+    blocks->set_distant_archive(archive,{});
     const int reach=int(std::ceil(load/64))+1;
     for(int x=-reach;x<=reach;++x)for(int y=-reach;y<=reach;++y)for(int z=-reach;z<=reach;++z)offsets_.push_back({x,y,z});
     std::sort(offsets_.begin(),offsets_.end(),[](BlockKey a,BlockKey b){int da=a.x*a.x+a.y*a.y+a.z*a.z,db=b.x*b.x+b.y*b.y+b.z*b.z;return da==db?a<b:da<db;});
@@ -96,6 +97,7 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
         index_revision_=index["revision"];committed_keys_=index["keys"];committed_digests_=index["checksums"];checkpoint_=index["checkpoint"];
         indexed_=true;admitted_versions_.clear();blocked_.clear();retry_after_.clear();
     }
+    blocks->set_distant_archive(archive_,checkpoint_);
     Array results=archive_->poll_region_reads(1);
     for(int i=0;i<results.size();++i) {
         Dictionary result=results[i];const int64_t ticket=result["ticket"];
@@ -140,6 +142,7 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
     last_ms_=(Time::get_singleton()->get_ticks_usec()-begin)/1000.0;max_ms_=std::max(max_ms_,last_ms_);return true;
 }
 void NativeBlockPager::stop() {
+    if(auto *blocks=world())blocks->set_distant_archive({},{});
     if(archive_.is_valid()){if(owns_read_service_){archive_->join_region_reads();archive_->poll_region_reads(64);}archive_.unref();}
     owns_read_service_=false;
     world_id_=ObjectID();pending_.clear();pending_keys_.clear();offsets_.clear();initialized_=false;

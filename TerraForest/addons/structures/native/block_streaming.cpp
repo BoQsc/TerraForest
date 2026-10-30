@@ -1,4 +1,5 @@
 #include "block_world.hpp"
+#include "block_horizon.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -36,10 +37,12 @@ bool NativeBlockWorld::configure_streaming(bool enabled,double radius,int64_t ch
 }
 void NativeBlockWorld::release_visual(BlockKey key) {
     auto it=visuals.find(key);if(it==visuals.end())return;
+    if(horizon)horizon->retain(key,it->second);
     collision_work_pending=true;
     mesh_bytes-=it->second.payload_bytes;
     retire_collision(it->second);
     memdelete(it->second.mesh);visuals.erase(it);
+    if(horizon)horizon->near_changed(key);
 }
 void NativeBlockWorld::erase_cached(BlockKey key) {
     auto it=bake_cache.find(key);if(it==bake_cache.end())return;

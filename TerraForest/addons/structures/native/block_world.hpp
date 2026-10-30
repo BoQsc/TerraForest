@@ -20,6 +20,8 @@
 
 namespace terraforest {
 using namespace godot;
+class BlockHorizon;
+class NativeRegionWorldArchive;
 struct BlockKey {
     int x=0,y=0,z=0;
     bool operator<(const BlockKey &b) const { return std::tie(x,y,z)<std::tie(b.x,b.y,b.z); }
@@ -60,6 +62,9 @@ class NativeBlockWorld : public Node3D {
     friend class NativePrefabPlacement;
     friend class NativeStructuresSnapshot;
     friend class NativeBlockPager;
+    friend class BlockHorizon;
+    BlockHorizon *horizon=nullptr;
+    void set_distant_archive(const Ref<NativeRegionWorldArchive> &archive,const PackedByteArray &checkpoint);
     uint64_t storage_epoch=0,history_revision=0,mutation_revision=0,content_revision=0;
     String survey_saved_identity;
     bool region_has_history(BlockKey region) const;
@@ -151,7 +156,7 @@ class NativeBlockWorld : public Node3D {
     uint16_t cell(int x,int y,int z) const;
     bool occupied(const AABB &bounds) const;
     bool prefab_records(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,bool replace,PackedInt32Array *out) const;
-    void invalidate(BlockKey key);
+    void invalidate(BlockKey key,bool authored=true);
     void launch(bool allow_cached_upload=true,uint64_t cached_byte_allowance=UINT64_MAX,bool allow_oversize=true);
     bool publish(BlockBake &&bake);
     bool update_collisions();
@@ -215,6 +220,8 @@ public:
     void set_geometry_lod_enabled(bool enabled);
     bool is_geometry_lod_enabled() const { return geometry_lod; }
     Dictionary geometry_lod_stats() const;
+    void set_distant_rendering_enabled(bool enabled);
+    Dictionary distant_rendering_stats() const;
     bool configure_mesh_uploads(int chunk_limit,int64_t byte_limit,int64_t time_limit_us);
     void set_collision_radius(double radius);
     bool is_idle() const { return !residency_dirty&&dirty.empty()&&!worker_active; }

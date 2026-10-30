@@ -1,0 +1,253 @@
+{
+  "date": "2026-10-30",
+  "status": "Installed; scoped engineering checks, user visual approval pending",
+  "source_runs": [
+    "reports/building_horizon_checks/20261030T060043359827Z/run.json",
+    "reports/building_horizon_checks/20261030T060049901080Z/run.json"
+  ],
+  "pack_sha256": "85ae4bf9b7f9f6ad2e84314c57c00920fa49545fb5993d5f549864ad2d1746c6",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "12a05a1f0b9574275530145843538c8bd8fec26b50e359197c601852dc6282bd",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "90883192cb82960151e00179d2fbf3c52e37e34667344a5e97f2d7b0662b7c6a",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "3e3ebc06d19d082a4cb3a12794b62df9d5f4c2e4002b69e51aa8a6dfcf90a625",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "5d3f678ba20ec912a850616f520086d97623fba2bd57c222e67d8b54eb6a5d31",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "f77d28e90f7b376bcfb5d1f43dffb1ac50a8d98232fca9f037b116cc4523e468",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "5c3e61b932819447798b5afef36950a32412b43fded0b799785aaac97d0d1c6d",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+  },
+  "images": {
+    "horizon-3000m.png": "d0c011908783598a70e677453b6ae3757185dac7e8854ada39194f24c76a391f",
+    "horizon-world-after.png": "f4d4fcfe833623177478ab956c7a58461e47af2f92b4ecbbd46b38846e17d315",
+    "horizon-world-before.png": "c41cfc9918f935990955589cd4ff7b7e831df428f5a5c86b7da7eefc3b398612",
+    "horizon-450m.png": "e0c5a27ed5a4dcbb9172b2cf5fb222ac6e892586a7ef892ede32ef3e2a208262"
+  },
+  "fixture": {
+    "checks": 32,
+    "failures": 0,
+    "rows": [
+      {
+        "horizon": {
+          "budget_rejections": 0,
+          "byte_limit": 134217728,
+          "enabled": true,
+          "failed_reads": 0,
+          "mesh_bytes": 928356,
+          "mesh_chunks": 20,
+          "published_chunks": 20,
+          "read_pending": false,
+          "ready": true,
+          "ready_regions": 16,
+          "regions": 16,
+          "stale_results": 0,
+          "triangles": 12851,
+          "upload_max_ms": 0.5004,
+          "visible_chunks": 16,
+          "worker_active": false
+        },
+        "near": {
+          "bake_jobs": 4,
+          "budget_blocked_chunks": 0,
+          "cache_byte_limit": 4194304,
+          "cache_capacity_bytes": 344840,
+          "cache_evictions": 0,
+          "cache_hits": 0,
+          "cached_chunks": 4,
+          "chunk_limit": 16,
+          "deferred_chunks": 16,
+          "enabled": true,
+          "mesh_byte_limit": 4194304,
+          "mesh_evictions": 0,
+          "mesh_payload_bytes": 250980,
+          "radius": 64,
+          "residency_checks": 1,
+          "residency_pending": false,
+          "settled_chunks": 4,
+          "upload_byte_limit": 524288,
+          "upload_chunk_limit": 8,
+          "upload_high_bytes": 79968,
+          "upload_high_chunks": 1,
+          "upload_last_bytes": 0,
+          "upload_last_chunks": 0,
+          "upload_last_us": 0.5,
+          "upload_max_us": 355.4,
+          "upload_oversize_ticks": 0,
+          "upload_time_limit_us": 1500,
+          "wanted_chunks": 4
+        },
+        "stage": "resident"
+      },
+      {
+        "horizon": {
+          "budget_rejections": 0,
+          "byte_limit": 134217728,
+          "enabled": true,
+          "failed_reads": 0,
+          "mesh_bytes": 968292,
+          "mesh_chunks": 20,
+          "published_chunks": 42,
+          "read_pending": false,
+          "ready": true,
+          "ready_regions": 16,
+          "regions": 16,
+          "stale_results": 0,
+          "triangles": 13593,
+          "upload_max_ms": 0.5004,
+          "visible_chunks": 20,
+          "worker_active": false
+        },
+        "paging": {
+          "active": true,
+          "admitted": 0,
+          "blocked_candidates": 0,
+          "budget_deferred": 0,
+          "chunk_limit": 64,
+          "epoch": 1,
+          "evicted": 0,
+          "failed_reads": 0,
+          "last_ms": 0.004,
+          "max_ms": 0.009,
+          "operation_high": 0,
+          "operation_last": 0,
+          "pending": 0,
+          "requested": 0,
+          "scan_high": 128,
+          "scan_last": 128,
+          "stale_results": 0
+        },
+        "stage": "archive_only"
+      }
+    ]
+  },
+  "world": {
+    "camera": "(1364.0, 128.0, 1924.0)",
+    "camera_far": 3300,
+    "checks": 9,
+    "draw_primitives": [
+      2525527,
+      2540381
+    ],
+    "failures": 0,
+    "horizon": {
+      "budget_rejections": 0,
+      "byte_limit": 134217728,
+      "enabled": true,
+      "failed_reads": 0,
+      "mesh_bytes": 2890128,
+      "mesh_chunks": 151,
+      "published_chunks": 151,
+      "read_pending": false,
+      "ready": true,
+      "ready_regions": 19,
+      "regions": 19,
+      "stale_results": 0,
+      "triangles": 36814,
+      "upload_max_ms": 0.4106,
+      "visible_chunks": 151,
+      "worker_active": false
+    },
+    "loading_ms": 16967,
+    "near": {
+      "bake_jobs": 0,
+      "budget_blocked_chunks": 0,
+      "cache_byte_limit": 33554432,
+      "cache_capacity_bytes": 0,
+      "cache_evictions": 0,
+      "cache_hits": 0,
+      "cached_chunks": 0,
+      "chunk_limit": 256,
+      "deferred_chunks": 0,
+      "enabled": true,
+      "mesh_byte_limit": 67108864,
+      "mesh_evictions": 0,
+      "mesh_payload_bytes": 0,
+      "radius": 384,
+      "residency_checks": 5,
+      "residency_pending": false,
+      "settled_chunks": 0,
+      "upload_byte_limit": 524288,
+      "upload_chunk_limit": 8,
+      "upload_high_bytes": 0,
+      "upload_high_chunks": 0,
+      "upload_last_bytes": 0,
+      "upload_last_chunks": 0,
+      "upload_last_us": 0.5,
+      "upload_max_us": 2.5,
+      "upload_oversize_ticks": 0,
+      "upload_time_limit_us": 1500,
+      "wanted_chunks": 0
+    },
+    "region": {
+      "max_unloaded_regions": 65536,
+      "region_edge_cells": 64,
+      "resident_chunks": 0,
+      "unloaded_digest_bytes": 608,
+      "unloaded_regions": 19,
+      "whole_snapshot_available": false
+    },
+    "samples": [
+      {
+        "enabled": false,
+        "frame_max_ms": 24.105,
+        "frame_p95_ms": 18.644,
+        "gpu_p95_ms": 6.02899980545044
+      },
+      {
+        "enabled": true,
+        "frame_max_ms": 21.743,
+        "frame_p95_ms": 19.279,
+        "gpu_p95_ms": 6.32800006866455
+      }
+    ],
+    "slot": "recipe_generated_4644d8cfc8f97e43",
+    "target": "(864.0, 8.0, 1824.0)"
+  },
+  "resources": {
+    "samples": 71,
+    "gpu_samples": 71,
+    "peak_private_commit_bytes": 3414429696,
+    "peak_working_set_bytes": 1875746816,
+    "peak_dedicated_gpu_bytes": 1490522112,
+    "checks": {
+      "ram": {
+        "bytes": 3414429696,
+        "status": "within_budget"
+      },
+      "vram": {
+        "bytes": 1490522112,
+        "status": "within_budget"
+      },
+      "redistributable": {
+        "bytes": null,
+        "status": "unavailable"
+      }
+    },
+    "limits": {
+      "schema": 1,
+      "vram_warning_bytes": 3758096384,
+      "vram_limit_bytes": 4294967296,
+      "ram_warning_bytes": 4294967296,
+      "ram_limit_bytes": 6442450944,
+      "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+      "redistributable_warning_bytes": 4000000000,
+      "redistributable_limit_bytes": 5000000000,
+      "derived_cache_total_bytes": 3221225472,
+      "failed_test_cache_bytes": 1073741824,
+      "saved_world_warning_bytes": 10737418240,
+      "minimum_free_bytes": 10737418240,
+      "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+    },
+    "errors": [],
+    "exceeded": false,
+    "telemetry_complete": true,
+    "within_sampled_limits": true,
+    "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+  },
+  "scope": "Same-camera layer-hidden baseline, not a historical binary comparison. 12-degree fixture inspection and ordinary 75-degree populated world; stationary samples are not fast-driving endurance or lower-end GPU qualification. Saves unchanged; nonactivating offscreen window, no mouse capture."
+}

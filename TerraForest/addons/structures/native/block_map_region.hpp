@@ -29,6 +29,7 @@ inline Dictionary block_map_columns(const std::map<BlockKey,BlockChunk>&chunks,B
 // the region into gameplay, construct meshes or allocate physics objects.
 class NativeBlockMapRegion : public RefCounted {
  GDCLASS(NativeBlockMapRegion,RefCounted)
+ friend class BlockHorizon;
  std::map<BlockKey,BlockChunk> chunks;BlockKey region;bool valid=false;
 protected:
  static void _bind_methods(){

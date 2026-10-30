@@ -215,17 +215,27 @@ occupancy after visual review; require edited/cut-tree comparisons and
 bounded worker/upload costs. Building geometry LOD is now implemented separately;
 see [its evidence and remaining qualification](../issues/building-lod/README.md).
 
-## Building geometry LOD — 2026-10-28
+## Building geometry LOD — 2026-10-30
 
 Native cached, error-controlled LOD is default-on with an ESC Graphics switch.
 Approved houses and authoritative cells/collision are unchanged. Renderer selection
 adds no per-frame GDScript work. The 24-house fixture tests actual draw counts,
 180-frame approaches, matched screenshots, edits, cache reuse and all 18 shapes.
-This replaces the previously unimplemented LOD entry, not the streaming system.
+This replaces the previously unimplemented geometry LOD entry.
 
-Remaining: player visual approval, full populated-world/weak-hardware endurance,
-and distant streaming-boundary transitions. Chunk residency still uses its existing
-range/budgets; geometry LOD does not claim to remove visibility at that boundary.
+2026-10-30: a separate default-on native horizon now retains compact actual block
+meshes outside near-render/cell-paging range, including never-visited saved regions.
+No distant physics or authoritative cell residency is added. Near/far publication,
+edit/undo, reload/teardown and a read-only populated world are checked. Loading
+waits for complete horizon coverage and shows region/mesh counters; camera clipping
+covers the finite world rather than temporarily cutting buildings at 320 m.
+The 19-region fixture uses 2.76 MiB of a 128 MiB derived mesh-payload ceiling.
+Archive/budget failures are explicit; this is not unlimited content capacity.
+See [building LOD evidence and images](../issues/building-lod/README.md#world-wide-distant-buildings--2026-10-30).
+
+Remaining: player visual approval, denser custom-world/weak-hardware endurance,
+and broad fast-travel transition acceptance. Near residency keeps existing budgets;
+the new distant layer removes the former visibility cutoff for building blocks.
 Over-dense chunks retain full detail rather than incur unbounded simplification.
 Return on a visible transition or measured geometry bottleneck; require same-camera
 comparisons, unchanged collision/edits and frame/GPU timings before expanding LOD.

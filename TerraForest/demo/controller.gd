@@ -816,7 +816,7 @@ func _process(delta: float) -> void:
 	_update_loading()
 	terrain._record_stage("controller loading",(Time.get_ticks_usec()-loading_begin)/1000.0)
 	if terrain.nearby_first:
-		camera.far = 3300.0 if terrain.root_coverage == terrain.roots.size() else 320.0
+		camera.far = maxf(3300.0, camera.global_position.distance_to(Vector3(1024, 128, 1024)) + 1600.0)
 	_consume_stroke()
 	# Engine delta is a simulation time step, NOT a wall-clock latency measurement.
 	var now: int = Time.get_ticks_usec()
