@@ -17,6 +17,7 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("grant_items","items","expected_revision"),&NativePlayerInventory::grant_items);
     ClassDB::bind_method(D_METHOD("can_receive","items","expected_revision"),&NativePlayerInventory::can_receive);
     ClassDB::bind_method(D_METHOD("exchange_items","costs","outputs","expected_revision"),&NativePlayerInventory::exchange_items);
+    ClassDB::bind_method(D_METHOD("exchange_with","peer","costs","outputs","expected_revision","expected_peer_revision"),&NativePlayerInventory::exchange_with);
     ClassDB::bind_method(D_METHOD("consume","slot","count","expected_revision"),&NativePlayerInventory::consume);
     ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
     ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
@@ -107,6 +108,27 @@ Dictionary NativePlayerInventory::exchange_items(const PackedInt64Array &costs,c
         slots=original;revision=original_revision;granted["revision"]=revision;return granted;
     }
     revision=original_revision+1;return result(true,"");
+}
+Dictionary NativePlayerInventory::exchange_with(const Ref<NativePlayerInventory> &peer,const PackedInt64Array &costs,const PackedInt64Array &outputs,int64_t expected,int64_t expected_peer) {
+    if(peer.is_null()||peer.ptr()==this)return result(false,"invalid_peer");
+    if(expected!=revision||expected_peer!=peer->revision)return result(false,"stale_revision");
+    if(costs.is_empty()||outputs.is_empty()||costs.size()>64||outputs.size()>64||costs.size()%2||outputs.size()%2)return result(false,"invalid_exchange");
+    // Commodity exchange only. Never discard wear or water metadata to sell an
+    // equipment item. Both inventories commit together, without callbacks.
+    for(const auto *items:{&costs,&outputs})for(int64_t i=0;i+1<items->size();i+=2) {
+        int64_t item=(*items)[i];
+        if(max_durability(item)||peer->max_durability(item)||water_container(item))return result(false,"non_commodity");
+    }
+    const auto original=slots,other=peer->slots;
+    const int64_t own_revision=revision,other_revision=peer->revision;
+    Dictionary first=exchange_items(costs,outputs,expected);
+    if(!bool(first["ok"]))return first;
+    Dictionary second=peer->exchange_items(outputs,costs,expected_peer);
+    if(!bool(second["ok"])) {
+        slots=original;peer->slots=other;revision=own_revision;peer->revision=other_revision;
+        auto rejected=result(false,"peer_rejected");rejected["peer_reason"]=second["reason"];return rejected;
+    }
+    auto accepted=result(true,"");accepted["peer_revision"]=peer->revision;return accepted;
 }
 Dictionary NativePlayerInventory::apply_costs(const PackedInt64Array &costs,int64_t expected,bool commit) {
     if(expected!=revision)return result(false,"stale_revision");
