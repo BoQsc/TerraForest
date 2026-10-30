@@ -67,10 +67,25 @@ overview cameras instead of imposing a 3,500 m cutoff. This is scoped evidence,
 not a universal load-time or seamless-rendering guarantee.
 Final adaptive-range pack repeats the checks: 31.68 / 15.88 s cold/warm, forest
 update p95 0.284 ms and whole-frame p95 18.26 ms during the controlled road sweep.
-Next dependency: unloaded building/model exclusion bounds remain conservative,
-so exact far tree membership around construction still needs read-only query pages
-and stream-in/out parity tests. Medium props, boulders and parked vehicles still
-lack the required complete far representation. See the linked issue receipts.
+Far construction exclusions now use compact native read-only pages from the archive
+worker, rather than excluding whole unloaded regions. The 32 MiB / 256-page cache
+allows two requests; gameplay records and collision are not hydrated. Debug/release
+parity and 100,000-instance / 270-owner pressure checks pass. The installed populated
+world retains 8,742 exact tree identities across real block admission/retirement and
+cold/warm reload; its 63 occupancy pages consume 321,964 accounted bytes. Final
+installed cold/warm pairs are 29.92 / 16.27 s and 29.74 / 16.54 s, not universal
+speedup claims.
+Missing-source and budget states are explicit and retain prior vegetation.
+Teardown counters traced an intermittent retained page to the worker handoff;
+owned native payloads replace Godot objects carried in cross-thread Variants.
+Both installed pairs release all pages without ObjectDB warnings; 58 native checks
+per debug/release configuration include 24 cancellation/consumption cycles. Mixed
+streaming endurance remains open. Medium props, boulders and parked vehicles lack the
+required complete far representation. See the linked issue receipts.
+The final 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
+but local ground-cover residency still lags by up to eight near / 33 visible
+owners. Decouple medium-object visibility from that local owner lifecycle next;
+do not treat the forest pass as seamless grass/boulder qualification.
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.

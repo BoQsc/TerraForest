@@ -200,6 +200,9 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
 // Query cost is bounded by resident chunks even for enormous caller bounds.
 bool NativeBlockWorld::occupied(const AABB &bounds) const {
     if(unavailable_region(bounds))return true;
+    return occupied_local(bounds);
+}
+bool NativeBlockWorld::occupied_local(const AABB &bounds) const {
     Vector3 lo=bounds.position, hi=bounds.get_end();
     for(int axis=0;axis<3;axis++) {
         if(hi[axis]<=-LIMIT || lo[axis]>=LIMIT+1) return false;
@@ -229,6 +232,9 @@ bool NativeBlockWorld::occupied(const AABB &bounds) const {
     return false;
 }
 PackedByteArray NativeBlockWorld::overlap_mask(const TypedArray<Transform3D> &transforms,const AABB &bounds) const {
+    return overlap_mask_impl(transforms,bounds,true);
+}
+PackedByteArray NativeBlockWorld::overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const {
     PackedByteArray result;
     if(transforms.size()>65536||!bounds.position.is_finite()||!bounds.size.is_finite()||
        bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return result;
@@ -240,7 +246,7 @@ PackedByteArray NativeBlockWorld::overlap_mask(const TypedArray<Transform3D> &tr
         Transform3D t=transforms[i];if(!t.is_finite()||std::abs(t.basis.determinant())<1e-12)return PackedByteArray();
         AABB box=(inverse*t).xform(bounds);
         if(!box.position.is_finite()||!box.get_end().is_finite())return PackedByteArray();
-        result.set(i,occupied(box)?1:0);
+        result.set(i,(include_unloaded?occupied(box):occupied_local(box))?1:0);
     }
     return result;
 }

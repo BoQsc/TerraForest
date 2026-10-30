@@ -9,6 +9,15 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "exclusions_after_1800.png",
+      "sha256": "9b95a076e447966db13ce905f3745191359ee2a597747dd809d525b2314f751d",
+      "source": "reports/runtime_views/20261030T094736701081Z/forest_0.png",
+      "run": "reports/runtime_views/20261030T094736701081Z/run.json",
+      "pack_sha256": "6a8e22eb75f8dbb52989b1a0fa3d792eabeae7824570d753f22ea488dc892624",
+      "distance_m": 1800,
+      "review": "Inspected installed overview with 8742 trees and exact archived construction exclusions. Coverage is present; coarse trees, terrain transition quality and generation layout remain unapproved. Not a per-pixel continuity proof."
+    },
+    {
       "file": "forest_after_768.png",
       "sha256": "3155113f0ba407dad58467acdf42556c03cc5bd9542e4e3b65e0769b6e06a301",
       "source": "reports/runtime_views/20261030T085129983450Z/overview_768.png",

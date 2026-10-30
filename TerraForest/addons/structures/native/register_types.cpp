@@ -6,6 +6,7 @@
 #include "hinged_doors.hpp"
 #include "structures_snapshot.hpp"
 #include "structure_queries.hpp"
+#include "exclusion_page.hpp"
 #include "static_history.hpp"
 #include "block_region_store.hpp"
 #include "model_region_store.hpp"
@@ -27,6 +28,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeHingedDoors);
         GDREGISTER_CLASS(terraforest::NativeStructuresSnapshot);
         GDREGISTER_CLASS(terraforest::NativeStructureQueries);
+        GDREGISTER_CLASS(terraforest::NativeExclusionPage);
         GDREGISTER_CLASS(terraforest::NativeStaticHistory);
         GDREGISTER_CLASS(terraforest::NativeBlockRegionStore);
         GDREGISTER_CLASS(terraforest::NativeModelRegionStore);

@@ -2,6 +2,7 @@
 #include "region_world_archive.hpp"
 #include "block_map_region.hpp"
 #include "model_map_region.hpp"
+#include "exclusion_page.hpp"
 #include <algorithm>
 #include <limits>
 
@@ -56,7 +57,15 @@ int64_t NativeRegionWorldArchive::request_model_checkpoint_region_read(const Str
 int64_t NativeRegionWorldArchive::request_model_metadata(const String &asset,const PackedByteArray &checkpoint,int64_t epoch) {
     return request_read(asset,Vector3i(),PackedByteArray(),checkpoint,epoch,true);
 }
-int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata,bool strict_checkpoint,bool survey,const AABB &bounds) {
+int64_t NativeRegionWorldArchive::request_exclusion_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,const TypedArray<AABB> &parts) {
+    if(parts.size()>32||asset.is_empty()!=parts.is_empty())return 0;
+    for(int index=0;index<parts.size();++index) {
+        AABB part=parts[index];
+        if(!part.position.is_finite()||!part.get_end().is_finite()||part.size.x<0||part.size.y<0||part.size.z<0)return 0;
+    }
+    return request_read(asset,region,expected,checkpoint,epoch,false,checkpoint.size()==32,true,AABB(),true,parts);
+}
+int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i region,const PackedByteArray &expected,const PackedByteArray &checkpoint,int64_t epoch,bool metadata,bool strict_checkpoint,bool survey,const AABB &bounds,bool exclusion,const TypedArray<AABB> &parts) {
     std::lock_guard<std::mutex> lock(read_mutex_);
     if(checkpoint.size()==32&&checkpoint_sweep_active_) {++read_rejected_;++read_checkpoint_busy_rejections_;return 0;}
     const bool model=!asset.is_empty();
@@ -70,6 +79,7 @@ int64_t NativeRegionWorldArchive::request_read(const String &asset,Vector3i regi
     }
     RegionRead request;request.ticket=read_next_ticket_++;request.epoch=epoch;request.asset=asset;request.metadata=metadata;request.strict_checkpoint=strict_checkpoint;request.survey=survey;request.survey_bounds=bounds;
     request.region=region;request.expected=expected;request.checkpoint=checkpoint;
+    request.exclusion=exclusion;request.exclusion_parts=parts.duplicate();
     const int64_t ticket=request.ticket;
     if(checkpoint.size()==32)++read_checkpoint_refs_[{asset,checkpoint.hex_encode()}];
     read_pending_.push_back(std::move(request));++read_outstanding_;++read_accepted_;
@@ -91,6 +101,7 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
         // Store locking serializes exact-version reads with catalog mutation and
         // garbage collection. Do not hold the queue mutex across any disk work.
         Dictionary result;
+        std::shared_ptr<ExclusionPageData> exclusion_page;
         if(request.asset.is_empty())result=request.strict_checkpoint?store->read_checkpoint_region(request.checkpoint,request.region):store->read_storage_region(request.region,request.expected,request.checkpoint);
         else {
             // Lazy opening happens only on this worker, never under read_mutex_.
@@ -104,7 +115,11 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
         }
         if(request.survey&&bool(result.get("ok",false))) {
             bool valid=false;
-            if(request.asset.is_empty()) {
+            if(request.exclusion) {
+                exclusion_page=std::make_shared<ExclusionPageData>();
+                valid=exclusion_page->load_packet(result["bytes"],request.expected,request.asset,request.region,request.exclusion_parts);
+                if(!valid)exclusion_page.reset();
+            } else if(request.asset.is_empty()) {
                 Ref<NativeBlockMapRegion> decoded;decoded.instantiate();
                 valid=decoded->load_packet(result["bytes"],request.expected);if(valid)result["survey"]=decoded;
             } else {
@@ -128,7 +143,10 @@ void NativeRegionWorldArchive::run_region_reads(Ref<NativeBlockRegionStore> stor
                 PackedByteArray pin=result["checkpoint"];
                 if(pin.size()==32)release_checkpoint_ref_locked({request.asset,pin.hex_encode()});
                 --read_outstanding_;read_reserved_-=request.asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;
-            } else (request.survey?survey_read_completed_:(request.asset.is_empty()?read_completed_:model_read_completed_)).push_back(std::move(result));
+            } else {
+                if(exclusion_page)exclusion_completed_.emplace(request.ticket,std::move(exclusion_page));
+                (request.survey?survey_read_completed_:(request.asset.is_empty()?read_completed_:model_read_completed_)).push_back(std::move(result));
+            }
             ++read_finished_;read_active_=false;read_active_model_ticket_=0;read_active_survey_ticket_=0;read_discard_active_=false;
         }
     }
@@ -257,10 +275,22 @@ Dictionary NativeRegionWorldArchive::region_read_stats() const {
 namespace terraforest {
 Dictionary NativeRegionWorldArchive::take_survey_region_read(int64_t ticket) {
  std::lock_guard<std::mutex> lock(read_mutex_);
+ return take_survey_read_locked(ticket,nullptr);
+}
+Dictionary NativeRegionWorldArchive::take_exclusion_read(int64_t ticket,std::shared_ptr<ExclusionPageData> &page) {
+ std::lock_guard<std::mutex> lock(read_mutex_);
+ return take_survey_read_locked(ticket,&page);
+}
+Dictionary NativeRegionWorldArchive::take_survey_read_locked(int64_t ticket,std::shared_ptr<ExclusionPageData> *page) {
  for(auto it=survey_read_completed_.begin();it!=survey_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket){
   Dictionary result=*it;PackedByteArray pin=result["checkpoint"];
   String asset=result.get("asset",String());
   if(pin.size()==32)release_checkpoint_ref_locked({asset,pin.hex_encode()});
+  auto native=exclusion_completed_.find(ticket);
+  if(native!=exclusion_completed_.end()) {
+   if(page)*page=std::move(native->second);
+   exclusion_completed_.erase(native);
+  }
   survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;return result;
  }return {};
 }
@@ -273,7 +303,7 @@ bool NativeRegionWorldArchive::discard_survey_region_read(int64_t ticket) {
  }
  for(auto it=survey_read_completed_.begin();it!=survey_read_completed_.end();++it)if(int64_t((*it)["ticket"])==ticket){
   PackedByteArray pin=(*it)["checkpoint"];String asset=(*it).get("asset",String());if(pin.size()==32)release_checkpoint_ref_locked({asset,pin.hex_encode()});
-  survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;return true;
+  exclusion_completed_.erase(ticket);survey_read_completed_.erase(it);--read_outstanding_;read_reserved_-=asset.is_empty()?READ_BYTES:MODEL_READ_BYTES;return true;
  }
  if(read_active_survey_ticket_==ticket){read_discard_active_=true;return true;}return false;
 }

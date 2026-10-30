@@ -46,6 +46,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   frame. Harvest and per-root edit exclusions remain authoritative.
 - Prior native building horizon (`083917a7`) supplies real, compacted, destructible
   block geometry across the saved world without loading its far editable regions.
+- Forest exclusion now uses native read-only archived occupancy, not whole unloaded
+  building regions. Worker-decoded column masks and compound-model BVHs share the
+  existing bounded archive reader; a 32 MiB / 256-page LRU admits at most two reads.
+  Missing pages retain the previous accepted forest; no far physics or editable
+  record hydration. Direct construction checks remain fail-closed.
 - Explicit trusted module registry and independent vehicle adapters, typed binary
   fleet state and per-kind parked rendering: [vehicle API](VEHICLE_PACKS.md).
 - Generation verification uses the native occupied-region index rather than
@@ -54,16 +59,21 @@ Status: **partial implementation; the requested whole-project overhaul is open**
 
 ## Open milestones / return criteria
 
-1. **Exact far exclusions and medium objects.** World-wide deterministic tree
-   owners, binary surface caching, harvest/mine invalidation and bounded local
-   collision are implemented. Read-only populated cold/warm, never-visited, zoom,
-   harvesting, excavation, reconstruction and 100 km/h controlled camera-sweep
-   checks pass. Unloaded building regions and model groups still supply conservative
-   exclusion bounds, rather than exact far solids; near/far membership can therefore
-   differ around buildings. Replace those bounds with bounded read-only exact query
-   pages; require exact tree identity parity across building/model stream-in/out,
-   construction, water changes and save/reload. Do not call that remaining behavior
-   seamless. Boulders and medium props still need independent far representations.
+1. **Forest continuity and medium objects.** Exact read-only far exclusion pages
+   replace the unloaded-region shortcut. Native debug/release fixtures cover
+   same-region openings, negative boundaries, transforms, incremental admission,
+   edits, cancellation and pressure (100,000 model instances / 270 sparse owners).
+   The populated installed world retains all 8,742 tree identities through actual
+   block-region admission/retirement, reload, harvesting and excavation. This is
+   parity with resident occupied cells/proxy AABBs, not exact mesh intersections.
+   Dense mixed model-streaming/water-change endurance, visual transitions and
+   arbitrary oversized query batches remain unqualified. Repeated teardown exposed
+   a retained exclusion payload in the worker-to-query handoff. That path now uses
+   owned native data instead of a Godot object inside a cross-thread Variant.
+   Twenty-four cancellation/consumption cycles per native configuration and two
+   consecutive installed cold/warm runs release all pages without ObjectDB warnings;
+   this does not qualify arbitrary mixed-world lifetime endurance.
+   Boulders and medium props still need independent far representations.
 2. **Seamless terrain/mesh transitions.** The large grey patches were mostly
    absent geometry, not simply bad transition surfaces: only 37/64 roots existed
    after 30 seconds in the previous fixture. Whole-world readiness and cheaper
@@ -74,7 +84,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
 3. **Medium props/vehicles.** Furniture, parked vehicles and boulders still have
    local representation limits. Add exact lightweight render-only tiers before
-   advertising all medium/large objects at arbitrary distance. Measure dense worlds.
+   advertising all medium/large objects at arbitrary distance. Boulders still share
+   local ground-cover ownership; the latest 100 km/h sweep reports up to eight near
+   and 33 visible ground owners missing while forest ownership stays complete.
+   Decouple medium-object visibility without expanding full grass/physics globally.
+   Measure dense worlds and require continuous driving/zoom/edit/reload evidence.
 4. **General module host.** Only vehicle providers are integrated. Generator,
    biome, terrain, vegetation and other service providers, dependency negotiation,
    migrations and native-pack deployment are not implemented. Reuse host ownership

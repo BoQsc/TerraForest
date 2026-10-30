@@ -1673,6 +1673,7 @@ func _additional_loading_diagnostics() -> Dictionary:
 		"zombies":zombies.population.status() if zombies.population!=null else {},
 		"trees":vegetation.statistics(),
 		"forest_coverage":ecosystem.coverage_status(),
+		"structure_exclusions":structures.exclusion_stats(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
 		"structures":{"asset_collections":structures._models.size(),"paging_failures":structures._model_paging_failures,"last_failure":structures._model_paging_last_failure,"paging":model_paging.last_state if model_paging!=null else {"active":false}}
@@ -1684,6 +1685,8 @@ func _additional_loading_ready() -> bool:
 	if not forest.ready:
 		loading_stage_percent=78;loading_stage_text="Preparing world forests"
 		loading_work_text="Tree owners %d / %d · %d surface pages pending · %d exclusions pending · %d retries"%[forest.owners,forest.total,forest.pending,forest.reconcile,forest.rejected]
+		var exclusions:Dictionary=structures.exclusion_stats()
+		loading_work_text+=" · Building occupancy: %s, %d reads pending, %d pages"%[exclusions.state,exclusions.pending,exclusions.pages]
 		return false
 	# Terrain readiness alone does not cover asynchronously admitted model proxies.
 	# Keep a small departure margin available before restoring player input.

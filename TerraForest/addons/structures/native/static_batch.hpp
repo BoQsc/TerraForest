@@ -23,6 +23,8 @@ class NativeStaticBatch : public Node3D {
     friend class NativeModelMapRegion;
     friend class NativePrefabPlacement;
     friend class NativeStructureQueries;
+    friend class ExclusionPageData;
+    PackedByteArray overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const;
     friend class NativeModelTransferScheduler;
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
     uint64_t paging_owner=0;

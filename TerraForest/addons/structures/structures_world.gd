@@ -17,6 +17,7 @@ var _cached_storage := PackedByteArray()
 var _storage_checkpoint := PackedByteArray()
 var _model_checkpoints: Dictionary = {}
 var _pager: RefCounted
+var _exclusion_archive: RefCounted
 var _model_scheduler: RefCounted
 var _model_paging_archive: RefCounted
 var _model_paging_draining := false
@@ -120,6 +121,7 @@ func enable_region_paging(archive: RefCounted, load_radius: float = 384, unload_
 	if not pager.configure(blocks,archive,load_radius,unload_radius,chunk_limit):
 		return false
 	_pager = pager
+	_exclusion_archive = archive
 	return true
 
 func step_region_paging(world_focus: Vector3) -> bool:
@@ -138,6 +140,10 @@ func region_paging_stats() -> Dictionary:
 	return _pager.stats() if _pager != null else {"active":false}
 
 func stop_region_paging() -> void:
+	if _queries != null:
+		_queries.clear_exclusion_cache()
+		_queries.configure_archive(null,PackedByteArray())
+	_exclusion_archive = null
 	if _pager != null:
 		_pager.stop()
 		_pager = null
@@ -164,7 +170,11 @@ func _exclusion_changed() -> void:
 func overlap_mask(transforms: Array[Transform3D], bounds: AABB) -> PackedByteArray:
 	if not prepare():
 		return PackedByteArray()
+	_queries.configure_archive(_exclusion_archive,_storage_checkpoint)
 	return _queries.overlap_mask(blocks,_model_list,transforms,bounds)
+
+func exclusion_stats() -> Dictionary:
+	return _queries.exclusion_stats() if _queries != null else {"state":"unavailable","pending":0,"pages":0,"bytes":0}
 
 func prepare() -> bool:
 	if blocks != null:

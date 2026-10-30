@@ -327,6 +327,38 @@ queries avoid turning a widely scattered batch into one world-spanning traversal
 
 `NativeStructureQueries.overlap_mask(blocks, models, transforms, prototype_bounds)` combines one NativeBlockWorld and up to 256 NativeStaticBatch collections in C++, rejecting invalid collections or failed component queries. `structures_world.gd` exposes this through its own `overlap_mask` and combined `changed` signal. Assign that adapter to the optional ecosystem coordinator to exclude both blocks and models. Reconciliation uses the existing one-owner-per-frame queue, so trees may briefly intersect new objects before it drains. See [model exclusion validation](../../docs/MODEL_EXCLUSION_VALIDATION.md).
 
+The combined facade now queries **exact archived occupancy**, independently of
+gameplay residency. Configure its block archive/checkpoint with `configure_archive`;
+model sources use the collection's retained paging checkpoint. The existing archive
+worker verifies and compacts region packets: 16-bit occupied columns for blocks,
+and an instance BVH with the same compound proxy parts for models. No distant
+physics bodies, meshes or editable records are admitted by this query.
+Worker completions transfer immutable native page data through an owned C++
+payload, not a Godot object embedded in a cross-thread Variant. Consumption and
+cancellation release that payload with its ticket. `exclusion_stats().live_pages`
+counts all live native page payloads for teardown checks; it is not this cache's
+resident-page count. `NativeExclusionPage` remains a script decoder wrapper.
+
+`overlap_mask` returns an empty array while required pages are pending or unavailable;
+consult `exclusion_stats().state` (`ready`, `pending`, `unavailable`, `budget`,
+`invalid`). Keep the previous accepted vegetation until a complete mask arrives.
+The ecosystem retries cached samples without repeating surface work. Direct
+`NativeBlockWorld` and `NativeStaticBatch` placement checks deliberately retain
+their conservative unavailable-region behavior; this does not authorize editing
+unloaded construction.
+
+The shared native LRU has 256 pages, a 32 MiB payload/entry/in-flight reservation
+ceiling and at most two queued reads. Models reserve 12 MiB per decoded page;
+blocks reserve 36 KiB. Archive packet reservations, bounded decoder scratch,
+allocator overhead and scene query arrays are separate costs. Keys include owner,
+archive and content digest; changed proxy definitions invalidate the entry.
+Same-content streaming does not invalidate occupancy. `clear_exclusion_cache`
+cancels only this consumer's tickets. Large batches whose simultaneously needed
+pages exceed the cache can report `budget`; split such tooling queries into small
+spatial batches. The production forest uses at most 36 candidates per owner.
+This is not a triangle-exact collision test: blocks reserve occupied cells and
+models retain the existing conservative transformed proxy-AABB semantics.
+
 ## Saves and present scope
 
 ### Reusable block prefabs

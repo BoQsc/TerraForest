@@ -27,6 +27,8 @@ func settled()->bool:
 func close_world()->void:
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();game=null
 	await process_frame;await process_frame
+	var diagnostics:RefCounted=ClassDB.instantiate("NativeStructureQueries")
+	check(diagnostics.exclusion_stats().live_pages==0,"world teardown releases all native exclusion pages")
 func run()->void:
 	for argument:String in OS.get_cmdline_user_args():
 		if argument.begins_with("--view-output="):output=argument.trim_prefix("--view-output=")
@@ -55,9 +57,29 @@ func run()->void:
 		root.get_texture().get_image().save_png(output.path_join("forest_%d.png"%pass_index))
 		check(initial==identities(),"overview does not change canonical forest membership")
 		check(game.vegetation.trunk_collision.collision_stats().resident_bodies<=256,"global forest retains 256 maximum local trunk bodies")
-		loads.append({"pass":pass_index,"load_ms":load_ms,"trees":initial.size(),"coverage":game.ecosystem.coverage_status(),"trunks":game.vegetation.trunk_collision.collision_stats(),"forest":game.vegetation.statistics(),"cache":game.terrain.derived_metrics})
+		loads.append({"pass":pass_index,"load_ms":load_ms,"trees":initial.size(),"coverage":game.ecosystem.coverage_status(),"trunks":game.vegetation.trunk_collision.collision_stats(),"forest":game.vegetation.statistics(),"cache":game.terrain.derived_metrics,"exclusions":game.structures.exclusion_stats()})
 		if pass_index==0:
 			game.player_view.set_overview(false)
+			var origin:Vector3=game.player.position
+			var residency_samples:=[]
+			var storage:Dictionary=game.structures.blocks.capture_storage_state()
+			var keys:PackedInt32Array=storage.unavailable_keys
+			check(keys.size()>=3,"populated fixture has actual unloaded block regions")
+			var destination:=origin
+			if keys.size()>=3:destination=Vector3(keys[0]*64+32,keys[1]*64+32,keys[2]*64+32)
+			var admitted_before:int=game.structures.region_paging_stats().admitted
+			var evicted_before:int=game.structures.region_paging_stats().evicted
+			for point:Vector3 in [destination,destination+Vector3(1200,0,1200),origin]:
+				game.player.position=point
+				var stable_membership:=true
+				for frame in 360:
+					game.app_focused=true
+					await process_frame
+					if frame%15==0:stable_membership=identities()==initial and stable_membership
+				check(await until(settled,45) and stable_membership and identities()==initial,"physical stream-in/out retains every exact forest identity")
+				residency_samples.append({"position":point,"blocks":game.structures.region_paging_stats(),"models":game.structures._model_scheduler.stats(),"exclusions":game.structures.exclusion_stats()})
+			check(game.structures.region_paging_stats().admitted>admitted_before and game.structures.region_paging_stats().evicted>evicted_before,"test actually admits and retires authored building regions")
+			loads[-1]["residency_samples"]=residency_samples
 			var identity:=0;var closest:=INF
 			for candidate:int in initial:
 				var distance:float=initial[candidate].origin.distance_squared_to(game.player.position)

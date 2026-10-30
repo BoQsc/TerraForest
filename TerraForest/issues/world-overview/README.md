@@ -184,10 +184,64 @@ Native/worker fixtures include `reports/checks/20261030T083930261877Z` (all owne
 `20261030T084909987619Z` (mesh-cache regression). Installed evidence follows in
 `forest-verification.json`. Engineering verification is not user visual approval.
 
+## Exact far construction exclusions — 2026-10-30
+
+- Whole unloaded 64 m building regions and aggregate model-group bounds previously
+  suppressed valid tree candidates between actual solids. Near/far residency could
+  therefore change forest membership without a construction edit.
+- Native worker-built occupied-column pages and compound-proxy BVHs now preserve
+  the same exclusion result as resident records. Cache keys bind owner, archive,
+  exact content digest and proxy definition. No far gameplay bodies or hydration.
+- Global cache: 32 MiB including entry/page reservations, 256 pages, two reads.
+  Packet/decoder scratch and allocator overhead remain separate bounded costs.
+  Pending pages keep the previous forest; retries reuse its sampled terrain poses.
+- Debug and release: 44 parity/lifecycle checks plus 14 pressure checks pass.
+  Pressure includes 100,000 instances in one region (9,204,264 accounted bytes),
+  270 sparse regions through a 256-page LRU, eviction/reload and zero live pages
+  after teardown. All-block-shape cell occupancy and conservative proxy AABBs
+  remain the resident standard, not triangle-exact exclusion geometry.
+- Installed populated world: 8,742 stable accepted trees versus 8,620 before this
+  change. All 1,024 owners exist before play. Actual block admission/retirement,
+  harvest, excavation, owner reconstruction and exact warm reload pass. Source
+  archive bytes remain unchanged. Sixty-three occupancy pages cost 321,964 bytes;
+  final cold/warm pairs are 29.92 / 16.27 s and 29.74 / 16.54 s. Root edits take
+  39.40 / 38.76 ms, support capture 0.133 / 0.128 ms in those two runs.
+- Isolated installed 100 km/h road-camera sweep: 585.58 m, zero missing forest
+  owners or surface requests; forest update p95/max 0.260 / 0.675 ms, whole-frame
+  p95/max 17.68 / 23.08 ms. Local ground-cover residency still lags by up to eight
+  near / 33 visible owners; that remains open. These counts are not pixel-gap
+  measurements, nor is this physical-vehicle or pixel-continuity proof.
+- Retained failures: the new fixture first used a nonexistent admission field,
+  then an out-of-range advancement time budget; bounded corrected fixtures pass.
+  The archive regression was initially invoked with a nonexistent completion marker;
+  its corrected run passes. The first world travel sample visited empty terrain:
+  it is **not** streaming evidence. The final test selects an actual unavailable
+  region and asserts that both admission and retirement counters increase.
+- Early world runs emitted one/two unnamed ObjectDB leak warnings. The harness
+  missed the singular wording; it now rejects both, with six launcher tests passing.
+  Page counters then caught a retained exclusion payload during teardown. Production
+  completions now transfer owned C++ data rather than a Godot object in a Variant.
+  The precise engine-internal refcount cause is not established. Native checks cover
+  24 pending/completed/consumed cancellation cycles per configuration. A source run
+  and two consecutive installed cold/warm pairs release all pages and pass strict
+  ObjectDB diagnostics. Broader mixed-world lifetime endurance remains open.
+
+Evidence and build identities: `exclusion-verification.json`. The installed world
+final repeated fixtures are `reports/runtime_views/20261030T102255872240Z` and
+`20261030T102429817507Z`. User visual acceptance,
+dense mixed-model paging, water-edit endurance and seamless frame delivery remain open.
+
+![Installed overview after exact exclusion pages](images/exclusions_after_1800.png)
+Earlier candidate of the same read-only seed-1703 fixture at 1800 m, 8,742 trees.
+Final installed view also inspected in `20261030T102255872240Z/forest_0.png`:
+coverage remains present; coarse tree shapes, terrain transitions and the rejected
+northern layout remain visible. This view alone cannot prove near-building parity;
+the native and actual-region residency assertions provide that scoped evidence.
+
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical
-exact far exclusion/medium-object pages, seam-safe volumetric transitions, remote
+medium-object pages, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
 prop/vehicle tiers, general service providers, full generation/loading profiling
 and physical 4 GiB hardware/endurance. Custom vehicles currently use the small-car
 envelope; pack inventory registration and native dependency installation are open.

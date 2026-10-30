@@ -1,6 +1,7 @@
 #include "structure_queries.hpp"
 #include "block_world.hpp"
 #include "static_batch.hpp"
+#include "region_world_archive.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <cmath>
 namespace terraforest {
@@ -9,6 +10,9 @@ void NativeStructureQueries::_bind_methods() {
     ClassDB::bind_method(D_METHOD("capture_models","blocks","models","origin","size"),&NativeStructureQueries::capture_models);
     ClassDB::bind_method(D_METHOD("is_collision_region_ready","blocks","models","world_bounds"),&NativeStructureQueries::is_collision_region_ready);
     ClassDB::bind_method(D_METHOD("overlap_mask","blocks","models","transforms","prototype_bounds"),&NativeStructureQueries::overlap_mask);
+    ClassDB::bind_method(D_METHOD("configure_archive","archive","checkpoint"),&NativeStructureQueries::configure_archive);
+    ClassDB::bind_method(D_METHOD("clear_exclusion_cache"),&NativeStructureQueries::clear_exclusion_cache);
+    ClassDB::bind_method(D_METHOD("exclusion_stats"),&NativeStructureQueries::exclusion_stats);
 }
 Dictionary NativeStructureQueries::capture_models(NativeBlockWorld *blocks,const Array &models,Vector3i origin,Vector3i size) const {
     Dictionary result;result["ok"]=false;result["reason"]="Invalid capture region or model collection";
@@ -52,22 +56,5 @@ bool NativeStructureQueries::is_collision_region_ready(NativeBlockWorld *blocks,
         if(!model||!model->is_collision_region_ready(bounds))return false;
     }
     return true;
-}
-PackedByteArray NativeStructureQueries::overlap_mask(NativeBlockWorld *blocks,const Array &models,const TypedArray<Transform3D> &transforms,const AABB &bounds) const {
-    if(!blocks||models.size()>256)return {};
-    std::vector<NativeStaticBatch*> collections;
-    for(int i=0;i<models.size();i++) {
-        Variant value=models[i];if(value.get_type()!=Variant::OBJECT)return {};
-        Object *object=value;auto *model=Object::cast_to<NativeStaticBatch>(object);
-        if(!model)return {};collections.push_back(model);
-    }
-    PackedByteArray result=blocks->overlap_mask(transforms,bounds);
-    if(result.size()!=transforms.size())return {};
-    for(auto *model:collections) {
-        PackedByteArray mask=model->overlap_mask(transforms,bounds);
-        if(mask.size()!=result.size())return {};
-        for(int64_t i=0;i<result.size();i++)result.set(i,result[i]|mask[i]);
-    }
-    return result;
 }
 }

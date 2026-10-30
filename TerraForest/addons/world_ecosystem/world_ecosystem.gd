@@ -163,7 +163,7 @@ func _step(_delta: float) -> void:
 		return
 	var admitted:=0
 	for key in _wanted:
-		if (resident.has(key) and not _resample.has(key)) or _pending_cells.has(key):
+		if (resident.has(key) and not _resample.has(key)) or _pending_cells.has(key) or (_reconcile.has(key) and not _resample.has(key)):
 			continue
 		if not world_coverage and not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
 			continue
@@ -270,7 +270,8 @@ func _publish_samples(key: Vector2i) -> void:
 	if structures != null and not transforms.is_empty():
 		mask = structures.overlap_mask(transforms, vegetation.placement_bounds())
 		if mask.size() != transforms.size():
-			rejected_batches += 1
+			if not structures.has_method("exclusion_stats") or structures.exclusion_stats().state != "pending":
+				rejected_batches += 1
 			_reconcile[key] = true
 			return
 	var ids := PackedInt64Array()

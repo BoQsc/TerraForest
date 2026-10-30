@@ -71,6 +71,10 @@ class NativeBlockWorld : public Node3D {
     bool restore_region_impl(const PackedByteArray &bytes,const PackedByteArray &expected,bool preserve_history);
     friend class NativeBlockRegionStore;
     friend class NativeBlockMapRegion;
+    friend class ExclusionPageData;
+    friend class NativeStructureQueries;
+    bool occupied_local(const AABB &bounds) const;
+    PackedByteArray overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const;
     std::map<BlockKey,BlockChunk> chunks;
     // Only checksums remain after an explicit authored-region transfer.
     std::map<BlockKey,PackedByteArray> unloaded_regions;

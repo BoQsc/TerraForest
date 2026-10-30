@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("test", choices=["world_overview", "forest_horizon_world", "overview_terrain_coverage", "loading_progress_ui", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
     parser.add_argument("--pack", action="store_true")
+    parser.add_argument("--verbose", action="store_true", help="Retain engine lifetime diagnostics")
     args = parser.parse_args()
     if args.pack and args.test == "loading_progress_ui":
         parser.error("Loading UI fixture writes source-only evidence; use its source check")
@@ -25,6 +26,8 @@ def main():
     if args.test == "vegetation_driving_profile":
         command += ["--profile-dir=" + folder.as_posix(), "--profile-slot=recipe_generated_4644d8cfc8f97e43"]
     command.remove("--fullscreen")
+    if args.verbose:
+        command.insert(1, "--verbose")
     command[1:1] = ["--windowed", "--position", "-2400,-1600"]
     source = ROOT / "tests" / (args.test + ".gd")
     record = dict(command=command, cache=cache, source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(), **revision_metadata())

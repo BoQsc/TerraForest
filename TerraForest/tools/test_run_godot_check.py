@@ -62,6 +62,7 @@ class CheckLauncherTests(unittest.TestCase):
 
     def test_old_and_counted_object_leak_warnings_fail(self):
         for warning in ["WARNING: ObjectDB instances leaked at exit",
+                        "WARNING: 1 ObjectDB instance was leaked at exit",
                         "WARNING: 3 ObjectDB instances were leaked at exit"]:
             with self.subTest(warning=warning):
                 result = self.run_process("print('DONE');print(" + repr(warning) + ")")

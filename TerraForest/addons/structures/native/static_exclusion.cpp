@@ -3,6 +3,9 @@
 
 namespace terraforest {
 PackedByteArray NativeStaticBatch::overlap_mask(const TypedArray<Transform3D> &transforms,const AABB &bounds) const {
+    return overlap_mask_impl(transforms,bounds,true);
+}
+PackedByteArray NativeStaticBatch::overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const {
     PackedByteArray result;
     if(transforms.size()>65536||!bounds.position.is_finite()||!bounds.size.is_finite()||
        bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return result;
@@ -28,7 +31,7 @@ PackedByteArray NativeStaticBatch::overlap_mask(const TypedArray<Transform3D> &t
         return (node->box.intersects(query)&&unloaded_regions.at(node->key).count)||
             self(self,node->left.get(),query)||self(self,node->right.get(),query);
     };
-    for(size_t index=0;index<queries.size();++index)
+    if(include_unloaded)for(size_t index=0;index<queries.size();++index)
         if(overlaps_unloaded(overlaps_unloaded,unloaded_bounds.root(),queries[index]))result.set(index,1);
     const AABB fallback=proxy_parts.empty()?source_mesh->get_aabb():AABB();
     // Test group bounds once per batch before traversing nearby authored records.
