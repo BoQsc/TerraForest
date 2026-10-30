@@ -10,10 +10,13 @@ using namespace godot;
 namespace terraforest {
 void NativeVehicleFleet::_bind_methods(){
     ADD_SIGNAL(MethodInfo("obstacles_changed",PropertyInfo(Variant::AABB,"bounds")));
+    ADD_SIGNAL(MethodInfo("presentation_changed",PropertyInfo(Variant::INT,"identity")));
+    ADD_SIGNAL(MethodInfo("presentation_reset"));
     ClassDB::bind_method(D_METHOD("spawn","pose"),&NativeVehicleFleet::spawn);
     ClassDB::bind_method(D_METHOD("spawn_module","pose","kind","state"),&NativeVehicleFleet::spawn_module,DEFVAL(PackedByteArray()));
     ClassDB::bind_method(D_METHOD("set_module_state","identity","state"),&NativeVehicleFleet::set_module_state);
     ClassDB::bind_method(D_METHOD("read_records","after","limit"),&NativeVehicleFleet::read_records);
+    ClassDB::bind_method(D_METHOD("first_of_kind","kind"),&NativeVehicleFleet::first_of_kind);
     ClassDB::bind_method(D_METHOD("remove","identity"),&NativeVehicleFleet::remove);
     ClassDB::bind_method(D_METHOD("set_pose","identity","pose"),&NativeVehicleFleet::set_pose);
     ClassDB::bind_method(D_METHOD("get_record","identity"),&NativeVehicleFleet::get_record);
@@ -32,9 +35,9 @@ int64_t NativeVehicleFleet::spawn(const Transform3D &pose){
 }
 int64_t NativeVehicleFleet::spawn_module(const Transform3D &pose,const String &kind,const PackedByteArray &state){
     if(!NativeVehicleStorage::valid_kind(kind)||state.size()>4096||records_.size()>=65536||next_==INT64_MAX||!NativeVehicleStorage::valid_pose(pose)||state_bytes_+state.size()+(records_.size()+1)*96>32*1024*1024)return 0;
-    const int64_t identity=next_++;records_.emplace(identity,pose);cells_[cell(pose.origin)].insert(identity);
+    const int64_t identity=next_++;records_.emplace(identity,pose);cells_[cell(pose.origin)].insert(identity);kinds_[kind].insert(identity);
     if(kind!=NativeVehicleStorage::default_kind()||!state.is_empty())modules_[identity]={kind,state};
-    state_bytes_+=state.size();++revision_;emit_signal("obstacles_changed",obstacle_bounds(pose));return identity;
+    state_bytes_+=state.size();++revision_;emit_signal("obstacles_changed",obstacle_bounds(pose));emit_signal("presentation_changed",identity);return identity;
 }
 bool NativeVehicleFleet::set_module_state(int64_t identity,const PackedByteArray &state){
     if(!records_.count(identity)||state.size()>4096)return false;
@@ -52,14 +55,15 @@ Dictionary NativeVehicleFleet::read_records(int64_t after,int limit) const {
     for(;iterator!=records_.end()&&rows.size()<limit;++iterator){cursor=iterator->first;rows.push_back(get_record(cursor));}
     result["ok"]=true;result["records"]=rows;result["cursor"]=cursor;result["complete"]=iterator==records_.end();result["revision"]=int64_t(revision_);return result;
 }
-bool NativeVehicleFleet::remove(int64_t id){auto it=records_.find(id);if(it==records_.end())return false;const AABB bounds=obstacle_bounds(it->second);remove_cell(id,it->second.origin);records_.erase(it);auto module=modules_.find(id);if(module!=modules_.end()){state_bytes_-=module->second.second.size();modules_.erase(module);}++revision_;emit_signal("obstacles_changed",bounds);return true;}
+int64_t NativeVehicleFleet::first_of_kind(const String &kind) const {auto found=kinds_.find(kind);return found==kinds_.end()||found->second.empty()?0:*found->second.begin();}
+bool NativeVehicleFleet::remove(int64_t id){auto it=records_.find(id);if(it==records_.end())return false;const AABB bounds=obstacle_bounds(it->second);remove_cell(id,it->second.origin);records_.erase(it);auto module=modules_.find(id);String kind=module==modules_.end()?NativeVehicleStorage::default_kind():module->second.first;kinds_[kind].erase(id);if(kinds_[kind].empty())kinds_.erase(kind);if(module!=modules_.end()){state_bytes_-=module->second.second.size();modules_.erase(module);}++revision_;emit_signal("obstacles_changed",bounds);emit_signal("presentation_changed",id);return true;}
 bool NativeVehicleFleet::set_pose(int64_t id,const Transform3D &pose){
     auto it=records_.find(id);if(it==records_.end())return false;
     if(!NativeVehicleStorage::valid_pose(pose))return false;
     if(it->second==pose)return true;
     const AABB bounds=obstacle_bounds(it->second).merge(obstacle_bounds(pose));
     if(cell(it->second.origin)!=cell(pose.origin)){remove_cell(id,it->second.origin);cells_[cell(pose.origin)].insert(id);}
-    it->second=pose;++revision_;emit_signal("obstacles_changed",bounds);return true;
+    it->second=pose;++revision_;emit_signal("obstacles_changed",bounds);emit_signal("presentation_changed",id);return true;
 }
 Dictionary NativeVehicleFleet::get_record(int64_t id) const {Dictionary out;auto it=records_.find(id);out["present"]=it!=records_.end();if(it!=records_.end()){out["identity"]=id;out["pose"]=it->second;auto module=modules_.find(id);out["kind"]=module==modules_.end()?NativeVehicleStorage::default_kind():module->second.first;out["state"]=module==modules_.end()?PackedByteArray():module->second.second;}return out;}
 Dictionary NativeVehicleFleet::statistics() const {Dictionary out;out["records"]=int64_t(records_.size());out["cells"]=int64_t(cells_.size());out["next_identity"]=next_;out["revision"]=int64_t(revision_);return out;}
@@ -99,6 +103,7 @@ bool NativeVehicleFleet::restore_storage_snapshot(const PackedByteArray &data){
     Array rows=decoded["records"];for(int i=0;i<rows.size();++i){Dictionary row=rows[i];int64_t id=row["identity"];Transform3D pose=row["pose"];records.emplace(id,pose);cells[cell(pose.origin)].insert(id);String kind=row.get("kind",NativeVehicleStorage::default_kind());PackedByteArray state=row.get("state",PackedByteArray());if(kind!=NativeVehicleStorage::default_kind()||!state.is_empty())modules[id]={kind,state};}
     int64_t state_bytes=0;for(const auto &module:modules)state_bytes+=module.second.second.size();
     if(state_bytes+records.size()*96>32*1024*1024)return false;
-    records_.swap(records);cells_.swap(cells);modules_.swap(modules);state_bytes_=state_bytes;next_=decoded["next_identity"];++revision_;emit_signal("obstacles_changed",AABB());return true;
+    std::map<String,std::set<int64_t>> kinds;for(const auto &entry:records){auto module=modules.find(entry.first);kinds[module==modules.end()?NativeVehicleStorage::default_kind():module->second.first].insert(entry.first);}
+    records_.swap(records);cells_.swap(cells);modules_.swap(modules);kinds_.swap(kinds);state_bytes_=state_bytes;next_=decoded["next_identity"];++revision_;emit_signal("obstacles_changed",AABB());emit_signal("presentation_reset");return true;
 }
 }

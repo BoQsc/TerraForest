@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [FPS / world overview](world-overview/README.md) | Partial / opt-in camera | Whole-world terrain/forest/boulder coverage and archived construction exclusions; other props, transitions, endurance and broader modules remain open |
+| [FPS / world overview](world-overview/README.md) | Partial / opt-in camera | Whole-world terrain/forest/boulder/parked-vehicle coverage and archived construction exclusions; other props, transitions, dense-fleet costs, endurance and broader modules remain open |
 | [Resource usage visibility](resource-usage/README.md) | Cached readings restored / bounded refresh | Size readings retained; opening uses saved/export/active-cache accounting, targeted native refresh has an 8 s budget; cold incomplete results stay explicit; initial counter cost remains reviewable |
 | [Runtime performance](runtime-performance/README.md) | Improved-partial / installed | Loaded collision index and cheap native actor state reduce readiness/intent CPU; 721 assertions and two pack walks pass; no whole-frame gain established; tower-route failures, spikes/endurance and 100 GB goal remain open |
 | [Varied lakes and bridges](lakes-and-bridges/README.md) | Installed / scoped checks | Larger curved and two-lobed lakes; destructible timber crossings; actual-world player/NPC traversal and packaged reopen pass; user visual review remains |

@@ -15,6 +15,19 @@ void NativeParkedVehicleRenderer::_bind_methods(){
  ClassDB::bind_method(D_METHOD("configure_collision","shape","local"),&NativeParkedVehicleRenderer::configure_collision);
  ClassDB::bind_method(D_METHOD("configure","fleet","parts","capacity","kind"),&NativeParkedVehicleRenderer::configure,DEFVAL(NativeVehicleStorage::default_kind()));
  ClassDB::bind_method(D_METHOD("refresh","center","radius","excluded","budget"),&NativeParkedVehicleRenderer::refresh);
+ ClassDB::bind_method(D_METHOD("enable_horizon","parts"),&NativeParkedVehicleRenderer::enable_horizon);
+ ClassDB::bind_method(D_METHOD("horizon_statistics"),&NativeParkedVehicleRenderer::horizon_statistics);
+}
+bool NativeParkedVehicleRenderer::enable_horizon(const Array &parts){
+ if(fleet_.is_null()||horizon_)return false;
+ auto *view=memnew(NativeVehicleHorizon);
+ if(!view->configure(fleet_,parts,kind_)){memdelete(view);return false;}
+ horizon_=view;add_child(view);return true;
+}
+Dictionary NativeParkedVehicleRenderer::horizon_statistics() const {return horizon_?horizon_->statistics():Dictionary();}
+void NativeParkedVehicleRenderer::sync_horizon(const PackedInt64Array &excluded){
+ if(!horizon_)return;
+ PackedInt64Array hidden=excluded;hidden.append_array(visible_ids_);horizon_->set_excluded(hidden);
 }
 NativeParkedVehicleRenderer::~NativeParkedVehicleRenderer(){auto *server=PhysicsServer3D::get_singleton();if(server)for(auto body:bodies_)server->free_rid(body);}
 void NativeParkedVehicleRenderer::_notification(int what){if(what==NOTIFICATION_EXIT_TREE){hide_all();auto *server=PhysicsServer3D::get_singleton();if(server)for(auto body:bodies_)server->body_set_space(body,RID());}}
@@ -53,12 +66,12 @@ Dictionary NativeParkedVehicleRenderer::refresh(const Vector3 &center,double rad
  for(auto &part:parts_){
   auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));
   if(!node||node->get_multimesh()!=part.mesh||part.mesh->get_instance_count()!=capacity_||part.mesh->get_transform_format()!=MultiMesh::TRANSFORM_3D||part.mesh->is_using_colors()||part.mesh->is_using_custom_data()){
-   hide_all();result["reason"]="renderer_resource_modified";return result;
+   hide_all();sync_horizon(excluded);result["reason"]="renderer_resource_modified";return result;
   }
  }
  if(excluded.size()>256){hide_all();return result;}
  result=fleet_->query_near_kind(center,radius,capacity_,budget,kind_);result["rendered"]=0;result["upload_bytes"]=int64_t(0);
- if(!bool(result["ok"])||!bool(result["complete"])){hide_all();return result;}
+ if(!bool(result["ok"])||!bool(result["complete"])){hide_all();sync_horizon(excluded);return result;}
  std::set<int64_t> skip;for(int i=0;i<excluded.size();++i)skip.insert(excluded[i]);
  PackedInt64Array ids=result["ids"],visible;std::vector<Transform3D> poses;
  for(int i=0;i<ids.size();++i){if(skip.count(ids[i]))continue;Dictionary record=fleet_->get_record(ids[i]);if(!bool(record["present"])){hide_all();result["ok"]=false;return result;}poses.push_back(record["pose"]);visible.push_back(ids[i]);}
@@ -84,6 +97,6 @@ Dictionary NativeParkedVehicleRenderer::refresh(const Vector3 &center,double rad
    body_enabled_[i]=enabled;
   }
  }
- visible_ids_=visible;result["ids"]=visible;result["rendered"]=int64_t(poses.size());result["upload_bytes"]=uploaded;return result;
+ visible_ids_=visible;sync_horizon(excluded);result["ids"]=visible;result["rendered"]=int64_t(poses.size());result["upload_bytes"]=uploaded;return result;
 }
 }

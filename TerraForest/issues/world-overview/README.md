@@ -274,15 +274,44 @@ and dedicated-GPU sampled peaks are 3.62 / 1.47 GB on an RTX 4050 Laptop GPU.
 Grass still lags by up to ten near / 34 visible owners; no grass-continuity claim.
 
 Continuous pixel-level transition quality, dense edited worlds and actual driven
-vehicle endurance remain unqualified. Other medium props/vehicles, grass coverage
+vehicle endurance remain unqualified. Other medium props, grass coverage
 and the broader overhaul remain open. Existing terrain seams and coarse forest
 appearance are not fixed by this boulder change. User visual approval is pending.
+
+## Whole-world parked vehicles — 2026-10-30
+
+Known vehicle providers now retain exact render-only instances outside the old
+128 m parked range, with native 256 m cells / 128-instance pages. Shared imported
+meshes/materials/LODs are reused; no replacement boxes, full remote physics or
+per-frame fleet scan. Near/body ownership changes publish complementary views in
+the same frame. Initial saved coverage gates play, including never-near vehicles.
+
+See `vehicle-verification.json` for debug/release, installed and regression runs.
+Twenty-three native checks include 65,536 records with a **one-box prototype**;
+this is not full-car GPU pressure. The installed populated fixture uses four
+actual Rangers, checks exact imported LOD retention, component restoration and
+the production loading gate in a second world. No source-save writes.
+
+![World-owned parked vehicles](images/vehicles_far_owned.png)
+Installed exact Ranger geometry rendered by the far owner, camera close for
+inspection while physical focus is elsewhere. Test poses are frozen above sampled
+terrain; wheel contact/placement is not qualified. Fourth car is partly behind HUD.
+
+![Near-owned comparison](images/vehicles_near_owned.png)
+Same camera after near promotion: exact geometry retained without duplicate far
+instances. Near shadows appear; far shadows are intentionally off. That difference
+is not a seamless-shadow claim. Images inspected, not user-approved.
+
+Ranger still has 32 parts. Dense actual-car GPU/draw cost, per-material prototype
+consolidation, bounded near-handoff latency, continuous zoom/driving and shadow
+transitions remain open. Return with full-prototype pressure and continuous visual
+evidence. Missing packs keep canonical records but cannot render substitute cars.
 
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical
 medium-object pages, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
-prop/vehicle tiers, general service providers, full generation/loading profiling
+prop tiers and dense-vehicle/transition qualification, general service providers, full generation/loading profiling
 and physical 4 GiB hardware/endurance. Custom vehicles currently use the small-car
 envelope; pack inventory registration and native dependency installation are open.
 The high view deliberately exposes current gaps instead of claiming they are fixed.

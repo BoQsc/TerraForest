@@ -8,7 +8,9 @@ namespace terraforest {
 // Scene-thread mutable ownership. Only validate_snapshot is worker-safe.
 class NativeVehicleFleet : public godot::RefCounted {
     GDCLASS(NativeVehicleFleet,godot::RefCounted)
+    friend class NativeVehicleHorizon;
     std::map<int64_t,godot::Transform3D> records_;
+    std::map<godot::String,std::set<int64_t>> kinds_;
     std::map<int64_t,std::pair<godot::String,godot::PackedByteArray>> modules_;
     uint64_t revision_=0;
     int64_t state_bytes_=0;
@@ -22,6 +24,7 @@ public:
     int64_t spawn_module(const godot::Transform3D &pose,const godot::String &kind,const godot::PackedByteArray &state);
     bool set_module_state(int64_t id,const godot::PackedByteArray &state);
     godot::Dictionary read_records(int64_t after,int limit) const;
+    int64_t first_of_kind(const godot::String &kind) const;
     bool remove(int64_t id);
     bool set_pose(int64_t id,const godot::Transform3D &pose);
     godot::Dictionary get_record(int64_t id) const;

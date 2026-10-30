@@ -9,6 +9,28 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "vehicles_far_owned.png",
+      "sha256": "0e02c9de96d579766fbd4acbd3b89053cfabee5da05b0ca1b87d397a58e32608",
+      "source": "reports/runtime_views/20261030T123654045560Z/far_owned_near_view.png",
+      "run": "reports/runtime_views/20261030T123654045560Z/run.json",
+      "pack_sha256": "04e87c28b2772c4ba851538cf238e200b3cea5bb59867e8ffa3f5d62a388fbb1",
+      "view": "Manual camera near four Rangers; physical focus remote; world-owned render-only pages",
+      "fixture_policy": "Read-only populated fixture; in-memory fleet only",
+      "provenance": "Engine screenshot of existing project world and bundled Ranger assets; no imported art or relicensing of depicted assets",
+      "review": "Exact meshes inspected, fourth car partly hidden by HUD; no far cast shadows. Frozen terrain-sampled test poses are elevated, not wheel-contact evidence or user approval."
+    },
+    {
+      "file": "vehicles_near_owned.png",
+      "sha256": "069b40e56ee631074411dccd62bc543153ab751c160f7c8628f3913150580c76",
+      "source": "reports/runtime_views/20261030T123654045560Z/near_owned.png",
+      "run": "reports/runtime_views/20261030T123654045560Z/run.json",
+      "pack_sha256": "04e87c28b2772c4ba851538cf238e200b3cea5bb59867e8ffa3f5d62a388fbb1",
+      "view": "Same camera after near parked-batch promotion; far duplicate ownership removed",
+      "fixture_policy": "Read-only populated fixture; in-memory fleet only",
+      "provenance": "Engine screenshot of existing project world and bundled Ranger assets; no imported art or relicensing of depicted assets",
+      "review": "Geometry matches far view; near cast shadows appear. Not a seamless-shadow, contact, driving or user-approval claim."
+    },
+    {
       "file": "boulders_far.png",
       "sha256": "527a97d12d0759f2beee15732264c6deaba03efb49a6838c0e0cda952c037494",
       "source": "reports/runtime_views/20261030T113447885116Z/far.png",

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "fleet.hpp"
+#include "vehicle_horizon.hpp"
 #include <godot_cpp/classes/multi_mesh_instance3d.hpp>
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <godot_cpp/variant/packed_int64_array.hpp>
@@ -20,7 +21,9 @@ class NativeParkedVehicleRenderer : public godot::Node3D {
  std::vector<godot::Transform3D> body_poses_;
  std::vector<bool> body_enabled_;
  godot::PackedInt64Array visible_ids_;
+ NativeVehicleHorizon *horizon_=nullptr;
  void hide_all();
+ void sync_horizon(const godot::PackedInt64Array &excluded);
 protected: static void _bind_methods();
  void _notification(int what);
 public:
@@ -28,6 +31,8 @@ public:
  int64_t identity_for_body(godot::RID body) const;
  bool configure_collision(const godot::Ref<godot::Shape3D> &shape,const godot::Transform3D &local);
  bool configure(const godot::Ref<NativeVehicleFleet> &fleet,const godot::Array &parts,int capacity,const godot::String &kind);
+ bool enable_horizon(const godot::Array &parts);
+ godot::Dictionary horizon_statistics() const;
  godot::Dictionary refresh(const godot::Vector3 &center,double radius,const godot::PackedInt64Array &excluded,int budget);
 };
 }

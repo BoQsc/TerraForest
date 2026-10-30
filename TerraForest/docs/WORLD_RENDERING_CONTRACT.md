@@ -58,6 +58,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   record hydration. Direct construction checks remain fail-closed.
 - Explicit trusted module registry and independent vehicle adapters, typed binary
   fleet state and per-kind parked rendering: [vehicle API](VEHICLE_PACKS.md).
+- Native parked-vehicle horizon retains all known fleet records in 256 m cells,
+  with 128-instance pages and existing imported geometry LODs. Changed identities
+  drive bounded uploads; near/body handoff publishes complementary ownership in
+  the same frame. Physics remains local, far shadows are disabled. Known saved
+  prototypes/coverage are part of the play gate, including never-near vehicles.
 - Generation verification uses the native occupied-region index rather than
   serializing the full resident world plus scanning 4,096 possible regions.
   Existing digests remain identical for the previous generated-world domain.
@@ -87,9 +92,16 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    qualification. Requires a compatible volumetric
    transition solution (including edited caves), not a heightmap covering edits.
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
-3. **Medium props/vehicles.** Furniture and parked vehicles still have
-   local representation limits. Add exact lightweight render-only tiers before
-   advertising all medium/large objects at arbitrary distance. Boulders no longer
+3. **Medium props/vehicles.** Furniture/other props still have local representation
+   limits. Parked vehicles now retain world-wide render ownership; debug/release
+   native pressure and installed four-Ranger loading/handoff checks pass. The
+   65,536-record test uses one box, not 65,536 full cars. Ranger still has 32 parts;
+   dense actual-car GPU/draw costs, per-material consolidation, near handoff bursts
+   and shadow/geometry transition continuity require qualification. Return with
+   full-prototype pressure, continuous drive/zoom evidence and sampled budgets
+   before claiming cheap seamless fleets. No automatic custom-pack LOD baker.
+   Add the remaining exact lightweight prop tiers before advertising all
+   medium/large objects at arbitrary distance. Boulders no longer
    share local grass ownership. The earlier 100 km/h sweep reported up to eight near
    and 33 visible ground owners missing; grass continuity remains unresolved.
    Extend independent medium-object visibility without expanding full grass/physics globally.
@@ -109,6 +121,7 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    establish perfect frame times, universal LOD continuity or visual acceptance.
 
 The overview camera is intentionally opt-in until these gaps are addressed; natural
-forest and boulder coverage are enabled by default. Continue with medium-object
+forest, boulder and known parked-vehicle coverage are enabled in ordinary world
+launches. Continue with medium-object
 coverage and transition qualification; do not close
 this contract because the current engineering tests pass.

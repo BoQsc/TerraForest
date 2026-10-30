@@ -77,8 +77,25 @@ pack's physics. Independent systems need their own travel and exit qualification
 
 Four live physics bodies total; pooling is type-specific. Nearby parked batches
 are per provider, limited to 64 instances and 64 mesh parts per provider, within
-128 m. This is **not** a long-distance vehicle LOD system. Oversized/animated
-parked prototypes require a subsequent API extension, not silent simplification.
+128 m. The native render-only horizon now retains the other records throughout
+the world, without a vehicle-distance cutoff. It uses 256 m spatial cells and
+128-instance pages, sharing the provider's exact meshes/materials and their
+existing imported LODs. Far pages have no collision or shadow casting. Near/body
+handoffs exclude duplicates in the same frame; canonical state is unchanged.
+Ordinary world launch enables fleet mode; known saved providers must finish
+prototype preparation and initial render publication before play is allowed.
+
+Native initial admission defaults to 128 records and three page uploads per
+frame; live cross-cell changes publish source/donor/destination pages together.
+Idle frames do not scan the fleet or upload unchanged transforms. Prototype
+preparation uses a per-kind identity index, not a distance query. This removes
+the old visual retirement, not the local physics limits. Camera clipping,
+frustum culling, occlusion and atmosphere still apply.
+
+There is no automatic cheap-LOD baker for arbitrary packs. Supply imported mesh
+LODs; oversized/animated parked prototypes require a subsequent API extension,
+not silent simplification. Ranger retains 32 mesh parts; dense real-car GPU cost,
+near-handoff upload spikes and shadow-transition quality remain unqualified.
 Custom vehicles currently spawn through Dev Spawner and persist in-world; their
 inventory items/recipes/icons are not registered. Pickup refuses to convert a
 custom vehicle into a Ranger item.
@@ -104,3 +121,12 @@ enablement and host-resource replacement protection.
 behavior. `check_runtime_views.py world_overview --pack` also checks installed
 Dev Spawner creation. These are engineering fixtures, not qualification of
 arbitrary third-party vehicle physics or native ABI compatibility.
+
+`vehicle_horizon`: rendered native ownership/buffer checks, bounded publication,
+mutation/restore/teardown and 65,536-record pressure using **one box prototype**.
+`vehicle_horizon_world`: four actual Rangers in the populated read-only fixture,
+never-near preparation, near/far handoff, imported LOD retention and a second
+world's production loading gate. Component binary injection is not compound-disk
+save qualification or physical driving endurance. Both run against the installed
+pack with `python tools/check_runtime_views.py <test> --pack`.
+[Evidence and open costs](../issues/world-overview/vehicle-verification.json).

@@ -80,8 +80,8 @@ Teardown counters traced an intermittent retained page to the worker handoff;
 owned native payloads replace Godot objects carried in cross-thread Variants.
 Both installed pairs release all pages without ObjectDB warnings; 58 native checks
 per debug/release configuration include 24 cancellation/consumption cycles. Mixed
-streaming endurance remains open. Other medium props and parked vehicles still lack
-the required complete far representation. See the linked issue receipts.
+streaming endurance remains open. Other medium props still lack the required
+complete far representation. See the linked issue receipts.
 The preceding 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
 but local ground-cover residency still lags by up to eight near / 33 visible
 owners. Natural boulders now use independent whole-world ownership and native
@@ -93,6 +93,15 @@ cold/warm loading is 31.48 / 17.12 s; the new road-camera sweep retains every
 boulder but still has ten near / 34 visible grass owners missing. Whole-frame
 p95/max is 21.98 / 37.27 ms, not a frame-time improvement or seamless grass claim.
 General medium-object qualification remains open.
+Parked vehicles now retain native world-wide render pages independently of local
+physics. Exact provider meshes and imported LODs are shared, with no 128 m visual
+retirement. Known saved providers/coverage gate play; changed-ID updates and
+same-frame near/far ownership preserve canonical fleet bytes. Debug/release native
+checks and installed four-Ranger loading/handoff checks pass. The 65,536-record
+pressure fixture uses one box: it does not qualify a dense real-car GPU workload.
+Ranger's 32-part cost, near-handoff bursts, shadow continuity and actual driving
+endurance remain open; return with full-car pressure and continuous zoom/driving
+evidence. [Vehicle receipt](../issues/world-overview/vehicle-verification.json).
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.

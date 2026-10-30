@@ -68,16 +68,18 @@ func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
 	var chassis: CollisionShape3D=owner.adapter(body).collision(body)
 	var kind: String=owner.kind_of(body)
-	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
+	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform) or not view.enable_horizon(parts):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
 	parked_views[kind]=view
 	if kind==owner.Packs.DEFAULT:parked_view=view
 func prepare_from_saved(world: Node) -> bool:
-	var nearby: Dictionary=owner.fleet.query_near(world.terrain.focus,128,256,4096)
-	if not nearby.ok or not nearby.complete:return false
-	for id: int in nearby.ids:
+	for kind:String in owner.packs.vehicles:
+		var id:int=owner.fleet.first_of_kind(kind)
+		if id==0:continue
 		var record: Dictionary=owner.fleet.get_record(id)
 		if not owner.packs.vehicles.has(record.kind) or parked_views.has(record.kind):continue
-		if not owner.scene_ready(record.kind):continue
+		if not owner.scene_ready(record.kind):
+			if owner.packs.unavailable(record.kind):parked_status={"ok":false,"reason":"provider_unavailable","kind":record.kind}
+			return false
 		for template: RigidBody3D in bodies:
 			if owner.kind_of(template)!=record.kind:continue
 			var was_visible:=template.visible
@@ -92,6 +94,15 @@ func prepare_from_saved(world: Node) -> bool:
 		owner.car=previous;owner.car_identity=previous_id
 		return false # Prototype batches are built on a subsequent activation tick.
 	return true
+func coverage_status()->Dictionary:
+	var state:Dictionary={"ready":true,"rendered":0,"pages":0,"pending_changes":0,"pending_pages":0,"instance_capacity_bytes":0}
+	for kind:String in owner.packs.vehicles:
+		if owner.fleet.first_of_kind(kind)!=0 and not parked_views.has(kind):state.ready=false
+	for view:Node3D in parked_views.values():
+		var result:Dictionary=view.horizon_statistics()
+		state.ready=state.ready and result.get("ready",false)
+		for field:String in ["rendered","pages","pending_changes","pending_pages","instance_capacity_bytes"]:state[field]+=result.get(field,0)
+	return state
 func refresh_parked(world: Node) -> void:
 	var rendered:=0;var uploaded:=0;var identities:=PackedInt64Array();var okay:=true
 	for view: Node3D in parked_views.values():

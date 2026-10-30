@@ -15,7 +15,7 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("test", choices=["world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
+    parser.add_argument("test", choices=["world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_horizon", "vehicle_horizon_world", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="Retain engine lifetime diagnostics")
     parser.add_argument("--persistence", action="store_true", help="Boulder check only: save/reopen a unique owned fixture clone")
@@ -70,7 +70,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = {"world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
+        marker = {"world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_horizon": "VEHICLE_HORIZON checks=", "vehicle_horizon_world": "VEHICLE_HORIZON_WORLD failures=0", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
         record["result"] = execute(command, folder, 240, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original

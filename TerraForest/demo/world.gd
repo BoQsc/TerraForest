@@ -1679,6 +1679,7 @@ func _additional_loading_diagnostics() -> Dictionary:
 		"trees":vegetation.statistics(),
 		"forest_coverage":ecosystem.coverage_status(),
 		"boulder_coverage":ground_cover.boulders.coverage_status() if ground_enabled and ground_cover.boulders!=null else {},
+		"vehicle_coverage":world_vehicle.activation.coverage_status() if world_vehicle.fleet_enabled else {},
 		"structure_exclusions":structures.exclusion_stats(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
@@ -1733,6 +1734,15 @@ func _additional_loading_ready() -> bool:
 		loading_stage_percent=94;loading_stage_text="Loading world inhabitants"
 		loading_work_text="Zombies: %d active / %d limit · %d / %d nearby positions checked · terrain sampling %s" % [population_state.active,zombies.LIMIT,population_state.examined,population_state.candidates,"pending" if population_state.sample_pending else "ready"]
 		return false
+	if world_vehicle.fleet_enabled:
+		var prototypes_ready:bool=world_vehicle.activation.prepare_from_saved(self)
+		var vehicles:Dictionary=world_vehicle.activation.coverage_status()
+		if not prototypes_ready or not vehicles.ready:
+			loading_stage_percent=95;loading_stage_text="Preparing world vehicles"
+			loading_work_text="Distant vehicles %d · %d render pages · %d changes / %d uploads pending"%[vehicles.rendered,vehicles.pages,vehicles.pending_changes,vehicles.pending_pages]
+			var failure:String=world_vehicle.activation.parked_status.get("reason","")
+			if failure in ["prototype_configuration","provider_unavailable"]:terrain.latest_error="Vehicle presentation preparation failed: "+failure
+			return false
 	if not temporary_world and not lakes.offline_preparation and not world_map.prepare_for_play():
 		loading_stage_percent=96;loading_stage_text="Preparing world map"
 		loading_work_text=world_map.updates.description()

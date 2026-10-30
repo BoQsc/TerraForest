@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "fdb173d25c58b3e47ca3b028fb24ab95621289c0",
+  "scope": "World-owned parked vehicle presentation, exact imported mesh/LOD reuse, bounded native publication and production loading gate. Not the full overhaul, dense real-car GPU qualification or seamless shadow transitions.",
+  "implementation": "Original 0BSD native code/tests using existing project meshes, materials and dependencies. No new external dependency, proxy asset or compute shader. Native changed-ID bookkeeping and engine GPU instancing/imported mesh LODs.",
+  "pack_sha256": "04e87c28b2772c4ba851538cf238e200b3cea5bb59867e8ffa3f5d62a388fbb1",
+  "pack_bytes": 394478424,
+  "vehicle_debug_sha256": "2e6c81ecdfc17501ffbcaed19625c3433f0a1e85ac1c08b23a2b2a950b349609",
+  "vehicle_release_sha256": "c52c9308406a892e483dc4cebcf451d9b366ef9724ca517630bbe1fad1b9ae21",
+  "fixture": {
+    "slot": "recipe_generated_4644d8cfc8f97e43",
+    "seed": 1703,
+    "generator": 29,
+    "sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+    "source_unchanged": true,
+    "policy": "Read-only source, four in-memory Rangers; component binary injected into second world's production loading gate. No new clone or disk compound-save test. Offscreen/nonactivating; no OS mouse capture."
+  },
+  "bounds": {
+    "fleet_records": 65536,
+    "providers": 8,
+    "prototype_parts_per_kind": 64,
+    "ranger_parts": 32,
+    "cell_width_m": 256,
+    "page_instances": 128,
+    "default_records_per_frame": 128,
+    "maximum_records_per_frame": 512,
+    "default_page_uploads_per_frame": 3,
+    "maximum_page_uploads_per_frame": 8,
+    "active_bodies": 4,
+    "near_parked_per_kind": 64,
+    "near_parked_radius_m": 128,
+    "far_collision": false,
+    "far_cast_shadows": false,
+    "scope": "No object-distance retirement. Frustum/occlusion/clipping/fog still apply. Synchronous near/full-body exclusion handoffs are separately bounded by identity capacity, not the background three-page limit; dense handoff latency remains unqualified."
+  },
+  "native_checks": {
+    "checks_each": 23,
+    "debug": "reports/runtime_views/20261030T122545918787Z/run.json",
+    "debug_maximum_step_us": 1359,
+    "release": "reports/vehicle_horizon_release.json",
+    "release_maximum_step_us": 1138,
+    "installed": "reports/runtime_views/20261030T123651176898Z/run.json",
+    "installed_maximum_step_us": 2152,
+    "capacity_records": 65536,
+    "capacity_pages": 530,
+    "capacity_instance_bytes": 3256320,
+    "scope": "One box prototype. Exact transforms/materials, idle no-scan/no-upload, state-only changes, exclusion atomicity, cross-cell transactions, packed removal, module separation, restore and observer teardown. GPU buffer validation uses rendered Vulkan; not full-car draw/GPU endurance."
+  },
+  "installed_world": {
+    "run": "reports/runtime_views/20261030T123654045560Z/run.json",
+    "result": "reports/runtime_views/20261030T123654045560Z/result.json",
+    "passed": true,
+    "elapsed_seconds": 53.7387696,
+    "vehicles": 4,
+    "far_pages": 1,
+    "far_instance_capacity_bytes": 196608,
+    "active_bodies_during_far_test": 0,
+    "same_camera_near_far_mesh_parity_inspected": true,
+    "actual_imported_geometry_lods_retained": true,
+    "loading_gate_withheld_until_restored_coverage": true,
+    "canonical_bytes_unchanged_by_rendering": true,
+    "remote_despawn": true,
+    "private_commit_peak_bytes": 3390578688,
+    "dedicated_gpu_peak_bytes": 1472802816,
+    "scope": "Two world instances; component restoration, not disk compound-save. Frozen test poses use terrain samples plus 0.85 m; wheel contact is not qualified. Distant manual camera retains normal fog, not production overview visual approval. Sampled peaks on current hardware, not 4 GiB hardware qualification."
+  },
+  "regressions": {
+    "vehicle_modules": "reports/checks/20261030T123131720053Z/run.json",
+    "vehicle_fleet": "reports/checks/20261030T123232259472Z/run.json",
+    "vehicle_fleet_storage": "reports/checks/20261030T123233059768Z/run.json",
+    "vehicle_parked_renderer": "reports/runtime_views/20261030T123234031258Z/run.json",
+    "external_module_pck": "reports/runtime_views/20261030T123238655117Z/run.json",
+    "forest_installed": "reports/runtime_views/20261030T123749356623Z/run.json",
+    "forest_result": "reports/runtime_views/20261030T123749356623Z/result.json",
+    "forest_trees": 8742,
+    "forest_cold_ms": 30992.351,
+    "forest_warm_ms": 16920.082,
+    "forest_exact_residency_harvest_excavation_reload": true,
+    "forest_private_commit_peak_bytes": 3427717120,
+    "forest_dedicated_gpu_peak_bytes": 1474899968,
+    "forest_live_exclusion_pages_after_teardown": 0,
+    "launcher_unit_tests": "python tools/test_run_godot_check.py: 6 passed",
+    "python_compile": "tools/check_runtime_views.py and tools/test_native_release.py pass py_compile",
+    "export": "Offline notice freshness and installed pack smoke check pass with 14 external native libraries"
+  },
+  "retained_failures": [
+    {
+      "run": "reports/checks/20261030T120548367468Z/run.json",
+      "reason": "Headless GPU-buffer transform assertion is not a valid rendered-buffer test; rendered debug/release checks pass."
+    },
+    {
+      "run": "reports/runtime_views/20261030T121830475562Z/run.json",
+      "reason": "First fixture indexed empty legacy prepared_streets and timed out. Corrected to actual generated regional road records."
+    },
+    {
+      "run": "reports/runtime_views/20261030T122214141035Z/run.json",
+      "reason": "Functional pass, rejected visual fixture: interpolation of road endpoint heights buried cars. Final fixture samples actual native terrain heights; not a placement-policy change."
+    },
+    {
+      "run": "reports/runtime_views/20261030T122353465227Z/run.json",
+      "reason": "Pressure test incorrectly expected 512 pages; a 30 m lattice has uneven population across 256 m cells. Exact per-cell expected capacity is 530. Corrected assertion, not native behavior."
+    },
+    {
+      "runs": ["reports/checks/20261030T123129848355Z/run.json", "reports/checks/20261030T123130711450Z/run.json"],
+      "reason": "All assertions passed but launcher required nonexistent terminal markers. Reran with actual success markers; corrected runs listed above."
+    }
+  ],
+  "remaining": [
+    "Dense real-car GPU/draw-call and frame-time pressure: one-box 65536 capacity is not that evidence.",
+    "Evaluate per-material prototype consolidation while preserving exact geometry/materials/imported LODs; no automatic arbitrary-pack LOD baking yet.",
+    "Near handoff upload bursts, maximum-fleet restore/teardown and long mutation endurance.",
+    "Continuous physical driving, zoom and shadow transitions; far shadows are intentionally off, user visual acceptance pending.",
+    "Other medium props, grass continuity, volumetric terrain transitions, general module providers and generation/loading architecture remain in WORLD_RENDERING_CONTRACT.md."
+  ]
+}

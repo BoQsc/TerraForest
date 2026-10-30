@@ -4,6 +4,14 @@ Current module host/API: [vehicle packs](../../docs/VEHICLE_PACKS.md).
 That contract supersedes the early single-car/fleet-limit notes below. The built-in
 Ranger retains its native driving policy; independent pack controllers use adapters.
 
+Current far presentation: `NativeVehicleHorizon` maintains cell-paged, render-only
+instances for the whole fleet using each provider's exact imported meshes/LODs.
+No 128 m visual retirement; collision and four-body activation remain local.
+Native changed-ID publication avoids idle full-fleet scans. The production loading
+gate waits for known saved prototypes and initial coverage. This supersedes the
+older local-only presentation notes below; dense real-car GPU cost, cheaper
+prototype consolidation and continuous transition quality remain open.
+
 0BSD port of the user's Vehicle Driving Test policy. NativeDrivingPolicy owns
 steering command smoothing, speed-dependent authority and cap recovery, and
 longitudinal acceleration/braking including the turn-grip budget. One policy

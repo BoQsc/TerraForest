@@ -7,6 +7,7 @@
 #include "storage.hpp"
 #include "fleet.hpp"
 #include "parked_renderer.hpp"
+#include "vehicle_horizon.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -20,6 +21,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeVehicleStorage);
         GDREGISTER_CLASS(terraforest::NativeVehicleFleet);
         GDREGISTER_CLASS(terraforest::NativeParkedVehicleRenderer);
+        GDREGISTER_CLASS(terraforest::NativeVehicleHorizon);
     }
 }
 static void terminate(ModuleInitializationLevel) {}
