@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "status": "Partial engineering milestone; overall request open; no user visual approval",
+  "base_revision": "083917a7d153455faa5c9a24a01d48ff931452cb",
+  "installed_pack_sha256": "5e11f763072ed30b7df2d1fac039f109b04b4a460895c884d1cd1f9d4a7e6528",
+  "export": {"passed": true, "log": "reports/export.log", "smoke": "reports/pack_smoke.log", "external_libraries": 14, "distribution_bytes": 422808515},
+  "installed_checks": [
+    {"test": "world_overview", "passed": true, "run": "reports/runtime_views/20261030T072103356539Z/run.json", "private_commit_peak_bytes": 3398590464, "dedicated_gpu_peak_bytes": 1490522112, "complete_sampled_telemetry": true},
+    {"test": "vehicle_module_pack", "passed": true, "run": "reports/runtime_views/20261030T071914802288Z/run.json", "private_commit_peak_bytes": 723550208, "dedicated_gpu_peak_bytes": 171700224, "complete_sampled_telemetry": true},
+    {"test": "vehicle_parked_renderer", "passed": true, "run": "reports/runtime_views/20261030T071327904420Z/run.json", "scope": "Same native binaries before final manifest type validation; no renderer changes since this run", "private_commit_peak_bytes": 740134912, "dedicated_gpu_peak_bytes": 171700224, "complete_sampled_telemetry": true}
+  ],
+  "headless_checks": [
+    {"test": "vehicle_modules", "passed": true, "run": "reports/checks/20261030T071735879065Z/run.json", "pass_assertions": 31},
+    {"test": "world_vehicle", "passed": true, "run": "reports/checks/20261030T070533724906Z/run.json", "pass_assertions": 25},
+    {"test": "terrain_view_planner", "passed": true, "run": "reports/checks/20261030T070537951196Z/run.json", "pass_assertions": 10},
+    {"test": "terrain_planner", "passed": true, "run": "reports/checks/20261030T063513602422Z/run.json", "pass_assertions": 634},
+    {"test": "generation_block_signature", "passed": true, "run": "reports/checks/20261030T070538663789Z/run.json", "pass_assertions": 7},
+    {"test": "developer_vehicle_spawn", "passed": true, "run": "reports/checks/20261030T064757832658Z/run.json", "pass_assertions": 7},
+    {"test": "vehicle_exit_facing", "passed": true, "run": "reports/checks/20261030T065256799147Z/run.json", "pass_assertions": 65},
+    {"test": "vehicle_motion", "passed": true, "run": "reports/checks/20261030T065302547576Z/run.json", "samples": 240, "maximum_component_comparison_error": 0},
+    {"test": "vehicle_scene_loading", "passed": true, "run": "reports/checks/20261030T065035727287Z/run.json"},
+    {"test": "vehicle_fleet_storage", "passed": true, "run": "reports/checks/20261030T063517055466Z/run.json", "pass_assertions": 18},
+    {"test": "vehicle_fleet", "passed": true, "run": "reports/checks/20261030T062445745575Z/run.json", "pass_assertions": 19}
+  ],
+  "microbenchmarks": {
+    "planner": {"mean_ms": [0.11381, 0.1351, 0.12215], "order": ["disabled", "remote", "high"], "requested_keys": [264, 296, 264]},
+    "generation_signature": {"reference_ms": 22.058, "indexed_ms": 0.326, "reference_region_captures": 4096, "indexed_region_captures": 32, "scope": "Sparse 32-region fixture; not total generation time"}
+  },
+  "scope": "1920x1080 capped at 60 FPS, one populated disposable world, four zoom positions. Process counters sampled every 0.5 s, not whole-device VRAM. Not 4 GiB hardware qualification, frame-time perfection, complete LOD coverage, continuous-transition validation, or universal module compatibility.",
+  "save_policy": "No player saves changed; populated fixture SHA256 before/after matches images/manifest.json; owned successful temporary caches removed by runner",
+  "failed_attempts_preserved": [
+    {"run": "reports/checks/20261030T062446450382Z", "reason": "GPU mesh readback attempted with headless renderer; corrected rendered test passes"},
+    {"run": "reports/checks/20261030T062502577889Z", "reason": "Old fixture spawned outside the existing native world bounds; fixture moved within bounds without relaxing production admission"},
+    {"run": "reports/checks/20261030T064508402282Z", "reason": "Dev-spawner invocation omitted required fleet/gameplay flags; corrected invocation passes"},
+    {"run": "reports/checks/20261030T065034786228Z", "reason": "Wrong completion marker used for motion parity; correct MOTION_PARITY marker passes"},
+    {"run": "reports/runtime_views/20261030T070840889844Z", "reason": "Functional assertions passed but insufficient GPU telemetry; added bounded three-second sampling window without weakening gate"},
+    {"run": "reports/runtime_views/20261030T070842965479Z", "reason": "Installed renderer test tried writing read-only res://reports; now uses explicit writable runner evidence destination"}
+  ],
+  "remaining": "See docs/WORLD_RENDERING_CONTRACT.md and this folder README; far tree/medium-object pages, flat grey terrain and transition defects, far props/vehicles, general service providers, full generation/loading profiling, endurance and hardware qualification remain open."
+}

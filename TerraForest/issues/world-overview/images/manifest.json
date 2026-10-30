@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "captured": "2026-10-30",
+  "base_revision": "083917a7d153455faa5c9a24a01d48ff931452cb",
+  "implementation": "Uncommitted milestone source and native hashes recorded in each run manifest; committed with this folder",
+  "fixture": "user://worlds/recipe_generated_4644d8cfc8f97e43.trw",
+  "fixture_sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+  "fixture_policy": "Read-only disposable populated world; test verifies unchanged archive bytes",
+  "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
+  "images": [
+    {
+      "file": "overview_32.png",
+      "sha256": "7189ce5c4dc73a083aefda0fc45dc8859e18e56c39d9a5b568d809df2fa577a2",
+      "source": "reports/runtime_views/20261030T072103356539Z/overview_32.png",
+      "run": "reports/runtime_views/20261030T072103356539Z/run.json",
+      "pack_sha256": "5e11f763072ed30b7df2d1fac039f109b04b4a460895c884d1cd1f9d4a7e6528",
+      "distance_m": 32,
+      "review": "Engineering image inspected; not user-approved"
+    },
+    {
+      "file": "rejected_fog_768.png",
+      "sha256": "ee2f6c57bb7fd23827ac0e5c0493d559a0c8fb814a0fed02efdcadcf86b48aa4",
+      "source": "reports/runtime_views/20261030T063802496788Z/overview_768.png",
+      "run": "reports/runtime_views/20261030T063802496788Z/run.json",
+      "build": "Source trial before camera-specific fog reduction",
+      "distance_m": 768,
+      "review": "Rejected fog washout; retained comparison"
+    },
+    {
+      "file": "overview_768.png",
+      "sha256": "cc585f97a6678fa06cb3b991a9107c3b126b29f8131df33ead7b365476062fbb",
+      "source": "reports/runtime_views/20261030T072103356539Z/overview_768.png",
+      "run": "reports/runtime_views/20261030T072103356539Z/run.json",
+      "pack_sha256": "5e11f763072ed30b7df2d1fac039f109b04b4a460895c884d1cd1f9d4a7e6528",
+      "distance_m": 768,
+      "review": "Colors improved, but visible terrain boundaries, flat patches and incomplete forests remain unacceptable for final quality"
+    },
+    {
+      "file": "overview_1800.png",
+      "sha256": "63efe85105376eccca40a6cd846f10b8134be710576f91f08bd8d9315ac3524c",
+      "source": "reports/runtime_views/20261030T072103356539Z/overview_1800.png",
+      "run": "reports/runtime_views/20261030T072103356539Z/run.json",
+      "pack_sha256": "5e11f763072ed30b7df2d1fac039f109b04b4a460895c884d1cd1f9d4a7e6528",
+      "distance_m": 1800,
+      "review": "Partial preview only; large flat areas and hard terrain boundaries require further diagnosis and correction"
+    }
+  ]
+}

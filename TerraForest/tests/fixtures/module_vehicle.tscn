@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="BoxShape3D" id="Shape"]
+size = Vector3(1.2, 0.6, 2)
+
+[sub_resource type="BoxMesh" id="Mesh"]
+size = Vector3(1.2, 0.6, 2)
+
+[node name="IndependentVehicle" type="RigidBody3D"]
+freeze = true
+
+[node name="ChassisCollision" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh")

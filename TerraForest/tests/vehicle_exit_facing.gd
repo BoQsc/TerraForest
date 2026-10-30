@@ -44,7 +44,7 @@ func run()->void:
 		session.car.freeze=true;session.car.set_physics_process(false)
 		session.car.rotation=angles*PI/180
 		await physics_frame;await physics_frame
-		for tick in 120:session._camera_follow.update(session.car,world.camera,1.0/60)
+		for tick in 120:session.adapter(session.car).camera_update(session.car,world.camera,1.0/60)
 		var old_camera:Transform3D=world.camera.transform;var old_player:Transform3D=world.player.transform;var old_yaw:float=world.yaw
 		session.interaction_available=func():return false
 		check(session.exit_vehicle(world)=="Vehicle interaction unavailable" and world.camera.transform==old_camera and world.player.transform==old_player and world.yaw==old_yaw,"denied exit preserves facing")

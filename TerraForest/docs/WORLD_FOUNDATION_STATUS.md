@@ -1,6 +1,22 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## FPS / overview and modular runtime — 2026-10-30
+
+The whole-project rendering/modding/generation request is **not complete**.
+Implemented first foundation: independent native render-view planning, optional
+smooth overview camera, player-local tree collision/ownership, trusted vehicle
+packs with independent controllers and typed binary saves, and occupied-region
+generation verification. No generated content or player saves replaced.
+[Architecture, missing milestones and closure evidence](WORLD_RENDERING_CONTRACT.md).
+[Vehicle API and current envelope limits](VEHICLE_PACKS.md).
+[Actual-world images, measured costs and known gaps](../issues/world-overview/README.md).
+Next dependency: exact far tree/medium-object instance pages with edit/harvest
+invalidation; current resident trees are not whole-world forests. Terrain transition
+seams, general generator/module providers, arbitrary vehicle envelopes and full
+generation/loading traces remain open. Return on those implementations and require
+continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.
+
 ## Resource budgets and retained caches — 2026-10-28
 
 ESC → Usage now exposes the same resource limits, live native process RAM/GPU

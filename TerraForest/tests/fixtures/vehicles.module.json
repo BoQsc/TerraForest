@@ -1,0 +1,8 @@
+{
+  "api": 1,
+  "id": "test.independent",
+  "providers": [
+    {"capability": "vehicle", "id": "test.cart.v1", "name": "Independent cart", "scene": "res://tests/fixtures/module_vehicle.tscn", "adapter": "res://tests/fixtures/module_vehicle.gd"},
+    {"capability": "vehicle", "id": "test.cart.v2", "name": "Shared resource variant", "scene": "res://tests/fixtures/module_vehicle.tscn", "adapter": "res://tests/fixtures/module_vehicle.gd"}
+  ]
+}

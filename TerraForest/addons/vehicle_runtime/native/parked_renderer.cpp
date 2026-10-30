@@ -13,7 +13,7 @@ int64_t NativeParkedVehicleRenderer::identity_for_body(RID body) const {for(size
 void NativeParkedVehicleRenderer::_bind_methods(){
  ClassDB::bind_method(D_METHOD("identity_for_body","body"),&NativeParkedVehicleRenderer::identity_for_body);
  ClassDB::bind_method(D_METHOD("configure_collision","shape","local"),&NativeParkedVehicleRenderer::configure_collision);
- ClassDB::bind_method(D_METHOD("configure","fleet","parts","capacity"),&NativeParkedVehicleRenderer::configure);
+ ClassDB::bind_method(D_METHOD("configure","fleet","parts","capacity","kind"),&NativeParkedVehicleRenderer::configure,DEFVAL(NativeVehicleStorage::default_kind()));
  ClassDB::bind_method(D_METHOD("refresh","center","radius","excluded","budget"),&NativeParkedVehicleRenderer::refresh);
 }
 NativeParkedVehicleRenderer::~NativeParkedVehicleRenderer(){auto *server=PhysicsServer3D::get_singleton();if(server)for(auto body:bodies_)server->free_rid(body);}
@@ -28,8 +28,8 @@ void NativeParkedVehicleRenderer::hide_all(){
  visible_ids_.clear();
  auto *server=PhysicsServer3D::get_singleton();if(server)for(size_t i=0;i<bodies_.size();++i){server->body_set_collision_layer(bodies_[i],0);body_enabled_[i]=false;}
 for(auto &part:parts_){part.mesh->set_visible_instance_count(0);auto *node=Object::cast_to<MultiMeshInstance3D>(ObjectDB::get_instance(part.node));if(node)node->hide();}}
-bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet,const Array &parts,int capacity){
- if(capacity_||fleet.is_null()||capacity<1||capacity>256||parts.is_empty()||parts.size()>64)return false;
+bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet,const Array &parts,int capacity,const String &kind){
+ if(!NativeVehicleStorage::valid_kind(kind)||capacity_||fleet.is_null()||capacity<1||capacity>256||parts.is_empty()||parts.size()>64)return false;
  for(int i=0;i<parts.size();++i){
   if(parts[i].get_type()!=Variant::DICTIONARY)return false;
   Dictionary row=parts[i];Variant mesh=row.get("mesh",Variant()),local=row.get("transform",Variant()),material=row.get("material",Variant());
@@ -38,7 +38,7 @@ bool NativeParkedVehicleRenderer::configure(const Ref<NativeVehicleFleet> &fleet
   Transform3D transform=local;if(!transform.is_finite()||std::abs(transform.basis.determinant())<0.000001)return false;
   if(material.get_type()!=Variant::NIL){if(material.get_type()!=Variant::OBJECT)return false;Object *value=material;if(value&&!Object::cast_to<Material>(value))return false;}
  }
- fleet_=fleet;capacity_=capacity;
+ fleet_=fleet;capacity_=capacity;kind_=kind;
  for(int i=0;i<parts.size();++i){
   Dictionary row=parts[i];Part part;part.local=row["transform"];part.mesh.instantiate();part.mesh->set_transform_format(MultiMesh::TRANSFORM_3D);
   part.mesh->set_mesh(row["mesh"]);part.mesh->set_instance_count(capacity);part.mesh->set_visible_instance_count(0);
@@ -57,7 +57,7 @@ Dictionary NativeParkedVehicleRenderer::refresh(const Vector3 &center,double rad
   }
  }
  if(excluded.size()>256){hide_all();return result;}
- result=fleet_->query_near(center,radius,capacity_,budget);result["rendered"]=0;result["upload_bytes"]=int64_t(0);
+ result=fleet_->query_near_kind(center,radius,capacity_,budget,kind_);result["rendered"]=0;result["upload_bytes"]=int64_t(0);
  if(!bool(result["ok"])||!bool(result["complete"])){hide_all();return result;}
  std::set<int64_t> skip;for(int i=0;i<excluded.size();++i)skip.insert(excluded[i]);
  PackedInt64Array ids=result["ids"],visible;std::vector<Transform3D> poses;

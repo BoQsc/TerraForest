@@ -1018,6 +1018,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
+	if player_view.overview:
+		pointer.hide();terrain.set_brush_active(false);return
 	if not session_menu.developer:
 		if input_vector!=Vector3.ZERO:terrain.note_interaction()
 		pointer.hide();terrain.set_brush_active(false)
@@ -1547,7 +1549,7 @@ func _process(delta: float) -> void:
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
 		if world_vehicle.driving:
-			activity="Waiting for terrain/building collision…" if world_vehicle.car.streaming.waiting else "Driving · %.0f km/h · E exit" % world_vehicle.car.speed_kph
+			activity=world_vehicle.adapter(world_vehicle.car).status_text(world_vehicle.car)
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 		if actors.pool!=null and actor_authoring.selected_identity!=0:
 			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
@@ -1609,7 +1611,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	return removed
 
 func _model_edit_available(allow_pending:bool=false) -> bool:
-	return vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
+	return not player_view.overview and vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
 
 func _interact_on_foot()->void:
 	if not _model_edit_available() or session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:return
@@ -1621,7 +1623,7 @@ func _interact_on_foot()->void:
 	_show_lake_notice(collected.reason)
 
 func _vehicle_interaction_available() -> bool:
-	return not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
+	return not (player_view.overview and player_view.active) and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
 func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}

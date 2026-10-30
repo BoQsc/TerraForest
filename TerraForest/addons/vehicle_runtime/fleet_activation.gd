@@ -8,75 +8,97 @@ var bodies: Array[RigidBody3D]=[]
 var timer:=0.0
 var status: Dictionary={}
 var parked_view: Node3D
+var parked_views: Dictionary = {}
 var parked_status: Dictionary={}
 func _init(session: Node) -> void:owner=session
 func sync_records() -> bool:
 	for id: int in residents:
 		var body: RigidBody3D=residents[id]
-		if not is_instance_valid(body) or not owner.fleet.set_pose(id,body.global_transform):return false
+		if not is_instance_valid(body) or not owner.sync_body(id,body):return false
 	return true
 func retire(id: int) -> void:
 	var body: RigidBody3D=residents[id]
-	body.set_controls_enabled(false);body.freeze=true;body.set_physics_process(false)
+	owner.adapter(body).controls(body,false);body.freeze=true;body.set_physics_process(false)
 	body.collision_layer=0;body.collision_mask=0;body.hide();residents.erase(id)
 	if owner.car==body:owner.car=null;owner.car_identity=0
 func reset() -> void:
-	if is_instance_valid(parked_view):parked_view.refresh(Vector3(NAN,0,0),0,PackedInt64Array(),1)
+	for view: Node3D in parked_views.values(): view.refresh(Vector3(NAN,0,0),0,PackedInt64Array(),1)
 	for id: int in residents.keys():retire(id)
 	timer=0
 func admit(world: Node,id: int,requested:bool=false) -> bool:
 	if residents.has(id):return true
 	var record: Dictionary=owner.fleet.get_record(id)
-	if not record.present:return false
+	if not record.present or not owner.packs.vehicles.has(record.kind):return false
 	var pose: Transform3D=record.pose
 	if not requested and not owner.ready_bounds(world,AABB(pose.origin-Vector3(3.25,1,3.25),Vector3(6.5,3,6.5))):return false
 	var body: RigidBody3D
 	for candidate in bodies:
-		if not residents.values().has(candidate):body=candidate;break
+		if not residents.values().has(candidate) and owner.kind_of(candidate)==record.kind:body=candidate;break
 	if body==null:
-		if bodies.size()>=CAPACITY or not owner.scene_ready():return false
+		if not owner.scene_ready(record.kind) or not reserve_body_slot():return false
 		var previous: RigidBody3D=owner.car;var previous_id: int=owner.car_identity
 		owner.car_identity=id
-		var installed: bool=owner._install_vehicle(world,pose)
+		var installed: bool=owner._install_vehicle(world,pose,record.kind,record.state)
 		body=owner.car if installed else null
 		owner.car=previous;owner.car_identity=previous_id
 		if body==null:return false
 		bodies.append(body)
-	else:body.restore_parked(pose)
+	else:
+		if not owner.adapter(body).restore_state(body,record.state):return false
+		owner.adapter(body).restore_parked(body,pose)
 	body.collision_layer=4;body.collision_mask=15
-	for wheel in body.wheel_rays:
-		wheel.collision_mask=7;wheel.add_exception(body)
 	body.show();residents[id]=body
-	if parked_view==null:prepare_parked_view(world,body)
+	if not parked_views.has(record.kind):prepare_parked_view(world,body)
 	return true
+func reserve_body_slot() -> bool:
+	if bodies.size()<CAPACITY:return true
+	for body: RigidBody3D in bodies:
+		if not residents.values().has(body):
+			bodies.erase(body);body.free();return true
+	return false
+func parked_identity(collider: Object, rid: RID) -> int:
+	for view: Node3D in parked_views.values():
+		if collider==view:return view.identity_for_body(rid)
+	return 0
 func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var parts: Array=[]
 	var inverse: Transform3D=body.global_transform.affine_inverse()
 	for node: MeshInstance3D in body.find_children("*","MeshInstance3D",true,false):
 		if node.mesh!=null and node.is_visible_in_tree():parts.append({"mesh":node.mesh,"transform":inverse*node.global_transform,"material":node.material_override})
 	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
-	var chassis: CollisionShape3D=body.get_node("ChassisCollision")
-	if not view.configure(owner.fleet,parts,64) or not view.configure_collision(chassis.shape,chassis.transform):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
-	parked_view=view
+	var chassis: CollisionShape3D=owner.adapter(body).collision(body)
+	var kind: String=owner.kind_of(body)
+	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
+	parked_views[kind]=view
+	if kind==owner.Packs.DEFAULT:parked_view=view
 func prepare_from_saved(world: Node) -> bool:
-	if parked_view!=null:return true
-	if not owner.scene_ready():return false
-	if bodies.is_empty():
-		var nearby: Dictionary=owner.fleet.query_near(world.terrain.focus,128,1,4096)
-		if not nearby.ok or not nearby.complete or nearby.ids.is_empty():return false
-		var id: int=nearby.ids[0]
+	var nearby: Dictionary=owner.fleet.query_near(world.terrain.focus,128,256,4096)
+	if not nearby.ok or not nearby.complete:return false
+	for id: int in nearby.ids:
+		var record: Dictionary=owner.fleet.get_record(id)
+		if not owner.packs.vehicles.has(record.kind) or parked_views.has(record.kind):continue
+		if not owner.scene_ready(record.kind):continue
+		for template: RigidBody3D in bodies:
+			if owner.kind_of(template)!=record.kind:continue
+			var was_visible:=template.visible
+			template.show();prepare_parked_view(world,template);template.visible=was_visible
+			return parked_views.has(record.kind)
+		if not reserve_body_slot():return true
 		var previous: RigidBody3D=owner.car;var previous_id: int=owner.car_identity
 		owner.car_identity=id
-		if owner._install_vehicle(world,owner.fleet.get_record(id).pose):
+		if owner._install_vehicle(world,record.pose,record.kind,record.state):
 			var template: RigidBody3D=owner.car
 			template.collision_layer=0;template.collision_mask=0;template.hide();bodies.append(template)
 		owner.car=previous;owner.car_identity=previous_id
 		return false # Prototype batches are built on a subsequent activation tick.
-	var template: RigidBody3D=bodies[0]
-	template.show();prepare_parked_view(world,template);template.hide()
-	return parked_view!=null
+	return true
 func refresh_parked(world: Node) -> void:
-	if parked_view!=null:parked_status=parked_view.refresh(world.terrain.focus,128,PackedInt64Array(residents.keys()),4096)
+	var rendered:=0;var uploaded:=0;var identities:=PackedInt64Array();var okay:=true
+	for view: Node3D in parked_views.values():
+		var result: Dictionary=view.refresh(world.terrain.focus,128,PackedInt64Array(residents.keys()),4096)
+		okay=okay and result.ok;rendered+=result.rendered;uploaded+=result.upload_bytes
+		identities.append_array(result.get("ids",PackedInt64Array()))
+	parked_status={"ok":okay,"rendered":rendered,"upload_bytes":uploaded,"ids":identities}
 func place(world: Node,pose: Transform3D) -> String:
 	if residents.size()>=CAPACITY:return "Nearby vehicle capacity reached; move farther before placing another."
 	var nearby: Dictionary=owner.fleet.query_near(pose.origin,7,256,4096)
@@ -89,7 +111,7 @@ func place(world: Node,pose: Transform3D) -> String:
 	if not admit(world,id):owner.fleet.remove(id);return "Vehicle activation unavailable."
 	owner.last_spawn_identity=id
 	return "Vehicle placed · E nearby to enter · F5 saves world"
-func place_requested(world:Node,pose:Transform3D)->String:
+func place_requested(world:Node,pose:Transform3D,kind: String= "terraforest.ranger.v1")->String:
 	if residents.size()>=CAPACITY:
 		var retired:=0;var farthest:=-1.0
 		for id:int in residents:
@@ -97,15 +119,15 @@ func place_requested(world:Node,pose:Transform3D)->String:
 			var distance:float=residents[id].global_position.distance_squared_to(world.player.global_position)
 			if distance>farthest:retired=id;farthest=distance
 		if retired>0:
-			owner.fleet.set_pose(retired,residents[retired].global_transform)
+			if not owner.sync_body(retired,residents[retired]):return "Vehicle state could not be saved"
 			owner.coasting.erase(retired);retire(retired)
-	var id:int=owner.fleet.spawn(pose)
+	var id:int=owner.fleet.spawn_module(pose,kind)
 	if id==0:return "Vehicle storage could not create the vehicle"
 	if not admit(world,id,true):owner.fleet.remove(id);return "Vehicle model could not be created"
 	owner.last_spawn_identity=id;refresh_parked(world)
 	return "Vehicle spawned nearby"
 func select_for_entry(point: Vector3,expected:int=0) -> void:
-	if parked_view==null:
+	if parked_views.is_empty():
 		owner.car=null;owner.car_identity=0;timer=0;return
 	var query: Dictionary=owner.fleet.query_near(point,3.5,1,4096)
 	if expected>0:
@@ -144,9 +166,12 @@ func update(world: Node,delta: float) -> void:
 	timer=0.2
 	if not sync_records():status={"ok":false,"reason":"invalid_live_pose"};return
 	if not prepare_from_saved(world):return
-	status=owner.fleet.query_near(world.terrain.focus,64,CAPACITY,4096)
+	status=owner.fleet.query_near(world.terrain.focus,64,256,4096)
 	if not status.ok or not status.complete:return
-	var wanted: PackedInt64Array=status.ids
+	var wanted:=PackedInt64Array()
+	for identity: int in status.ids:
+		if owner.packs.vehicles.has(owner.fleet.get_record(identity).kind):wanted.append(identity)
+		if wanted.size()>=CAPACITY:break
 	var pinned:Array=owner.coasting.keys()
 	if owner.driving:pinned.append(owner.car_identity)
 	for id:int in pinned:

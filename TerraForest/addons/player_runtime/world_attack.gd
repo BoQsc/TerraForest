@@ -63,7 +63,8 @@ func target() -> Dictionary:
 	if vehicles.fleet_enabled and collider!=null:
 		for id: int in vehicles.activation.residents:
 			if vehicles.activation.residents[id]==collider:vehicle_id=id
-		if collider==vehicles.activation.parked_view and collider.has_method("identity_for_body"):vehicle_id=collider.identity_for_body(hit.rid)
+		var parked_id:int=vehicles.activation.parked_identity(collider,hit.rid)
+		if parked_id>0:vehicle_id=parked_id
 	if vehicle_id>0:return surface_target({"kind":"vehicle","key":"vehicle:%d"%vehicle_id,"id":vehicle_id,"health":Durability.WORLD.vehicle,"material":"other","name":"Vehicle"},hit)
 	if collider==null or (collider is CollisionObject3D and game.terrain.is_ancestor_of(collider) and collider.collision_layer&1):
 		var cell:=Vector3i((hit.position-hit.normal*0.05).floor())
@@ -203,11 +204,5 @@ func destroy(t: Dictionary) -> bool:
 			return game._remove_actor(t.id)
 		"vehicle":
 			var vehicles=game.world_vehicle
-			if not vehicles.fleet.remove(t.id):return false
-			if vehicles.fleet_enabled:
-				if vehicles.activation.residents.has(t.id):vehicles.activation.retire(t.id)
-				vehicles.activation.refresh_parked(game)
-			elif vehicles.car_identity==t.id:
-				vehicles.car.queue_free();vehicles.car=null;vehicles.car_identity=0
-			return true
+			return vehicles.remove_vehicle(t.id)
 	return false

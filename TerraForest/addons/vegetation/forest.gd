@@ -56,6 +56,12 @@ var stats: Dictionary={"trees":0,"selection_jobs":0,"tested_rows":0,"uploaded_by
 
 func setup(shared: Array[ArrayMesh],draw_range: float)->void:
 	meshes=shared;far_distance=draw_range
+func set_draw_distance(distance:float)->void:
+	if not is_finite(distance) or distance<=0 or distance==far_distance:return
+	far_distance=distance
+	for cell:Dictionary in cells.values():
+		for node:MultiMeshInstance3D in cell.nodes:
+			if node!=null:node.visibility_range_end=far_distance+node.multimesh.custom_aabb.size.length()
 
 func _key(pos: Vector3)->Vector2i:
 	return Vector2i(floori(pos.x/CELL),floori(pos.z/CELL))

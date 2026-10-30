@@ -8,6 +8,12 @@ const Assets = preload("res://addons/vegetation/assets.gd")
 # trees when a single brick is placed underneath their overhanging branches.
 const TRUNK_BOUNDS := AABB(Vector3(-0.35, 0, -0.35), Vector3(0.7, 8, 0.7))
 @export var camera: Camera3D
+var collision_camera: Camera3D
+var visual_distance_override:=0.0
+func set_visual_distance(distance:float)->void:
+	visual_distance_override=distance
+	if not ready_to_render:return
+	renderer.set_draw_distance(distance if distance>0 else draw_distance)
 @export_range(64.0, 2200.0, 16.0) var draw_distance: float = 576.0
 @export_range(0.0, 256.0, 8.0) var shadow_distance: float = 128.0
 @export_range(0.0, 2.0, 0.05) var wind_strength: float = 0.3
@@ -49,7 +55,7 @@ func initialize() -> Error:
 	if not assets.build():
 		initialization_failed.emit("Vegetation geometry or view data could not be loaded")
 		return ERR_FILE_CORRUPT
-	renderer.setup(assets.meshes, draw_distance)
+	renderer.setup(assets.meshes, visual_distance_override if visual_distance_override>0 else draw_distance)
 	if not ClassDB.class_exists("NativeTreeFall"):GDExtensionManager.load_extension("res://addons/vegetation_runtime/vegetation_runtime.gdextension")
 	falling_trees=ClassDB.instantiate("NativeTreeFall");add_child(falling_trees)
 	if not falling_trees.configure(assets.meshes[0]):return ERR_CANT_CREATE
@@ -149,11 +155,11 @@ func _measured_step(delta:float)->void:
 		return
 	_clock += delta
 	if falling_trees!=null:falling_trees.advance(delta,_clock)
-	if trunk_collision!=null: trunk_collision.set_collision_focus(camera.global_position)
+	if trunk_collision!=null: trunk_collision.set_collision_focus(collision_camera.global_position if is_instance_valid(collision_camera) else camera.global_position)
 	var height: float = camera.get_viewport().get_visible_rect().size.y
 	var projection: float = height / (2.0 * tan(deg_to_rad(camera.fov) * 0.5))
 	renderer.tick(camera.global_position, projection, _clock)
-	assets.uniforms(camera.global_position, sun_direction, _clock, wind_strength, draw_distance, wind_strength > 0.0)
+	assets.uniforms(camera.global_position, sun_direction, _clock, wind_strength, renderer.far_distance, wind_strength > 0.0)
 
 func _exit_tree() -> void:
 	set_process(false)

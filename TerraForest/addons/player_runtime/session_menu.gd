@@ -24,6 +24,7 @@ var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
 var third_person_toggle:CheckButton
+var overview_toggle:CheckButton
 var first_person_toggle:CheckButton
 var first_person_shadows_toggle:CheckButton
 var fullscreen_toggle:CheckButton
@@ -97,6 +98,9 @@ func _ready() -> void:
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)
+	overview_toggle=CheckButton.new();overview_toggle.text="World overview camera (preview)"
+	overview_toggle.tooltip_text="Mouse orbits; wheel zooms from 3.4 to 1800 metres. WASD still moves your character. Terrain and distant buildings remain real geometry; full-world vegetation is not yet implemented. Turn off to return to your normal camera."
+	overview_toggle.toggled.connect(game.player_view.set_overview);player.add_child(overview_toggle)
 	first_person_toggle=CheckButton.new();first_person_toggle.text="First-person clipping protection"
 	first_person_toggle.tooltip_text="Protect first-person hands, held items and effects from world clipping while keeping normal lighting and shadows. Does not change reach or allow hits through walls."
 	first_person_toggle.toggled.connect(game.first_person_view.set_enabled);player.add_child(first_person_toggle)
@@ -344,6 +348,7 @@ func _input(event: InputEvent) -> void:
 
 	if leaving_world:
 		get_viewport().set_input_as_handled();return
+	if game.player_view.consume(event):get_viewport().set_input_as_handled();return
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 		if not visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 			var slot: int=game.player_hud.developer_slot if developer else game.player_hud.active_slot

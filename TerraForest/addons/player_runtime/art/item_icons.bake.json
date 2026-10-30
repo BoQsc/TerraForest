@@ -64,8 +64,8 @@
     "vehicle": {
       "engine": "4.7.2-stable (steam)",
       "files": {
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "d6479d2a000657a5b5fd6a516220efc67a34ff3183eae8c93c622b27fcaf3934",
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "c133f46b04d9cdefdbbf447323f1e65d4c7371e62530ed51276658bf2c931943",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "48c19ddcb2d7b8689866b84f4dfd416b61c675cc1b22ad0fd49f8fa966cff6e1",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "2da3a859b536f4b0d7f6baed4e0b7ccdcf49112aca55b0a4776d6eff3f717085",
         "res://addons/vehicle_runtime/vehicle_runtime.gdextension": "3158221f48bf06a5b784d5646deae71ce52d0e82dced2a0be0cfdb095f5a4100",
         "res://addons/vehicle_runtime/vehicle_streaming.gd": "7bc2c8b88b6ade1ef8e1bf08d4cd4b18e6743047d7e57171e61b9231b2b1943b",
         "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",

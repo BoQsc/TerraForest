@@ -52,18 +52,16 @@ func snapshot_signature(game:Node)->Dictionary:
  return result
 func block_signature(game:Node)->Dictionary:
  var result:Dictionary={}
- var state:Dictionary=game.structures.blocks.capture_storage_state()
- var keys:PackedInt32Array=state.unavailable_keys
- var checksums:PackedByteArray=state.unavailable_checksums
+ var blocks:Node3D=game.structures.blocks
+ var index:Dictionary=blocks.survey_index()
+ var keys:PackedInt32Array=index.keys
+ var checksums:PackedByteArray=index.checksums
  for i in keys.size()/3:
-  result["%d,%d,%d" % [keys[i*3],keys[i*3+1],keys[i*3+2]]]=checksums.slice(i*32,(i+1)*32).hex_encode()
- for x in 32:
-  for y in 4:
-   for z in 32:
-    var key:="%d,%d,%d" % [x,y,z]
-    if result.has(key):continue
-    var packet:PackedByteArray=game.structures.blocks.capture_region(Vector3i(x,y,z))
-    if packet.size()>=100 and packet.decode_u32(32)>0:result[key]=packet.slice(packet.size()-32).hex_encode()
+  var region:=Vector3i(keys[i*3],keys[i*3+1],keys[i*3+2])
+  var key:="%d,%d,%d" % [region.x,region.y,region.z]
+  if not blocks.is_region_loaded(region):result[key]=checksums.slice(i*32,(i+1)*32).hex_encode();continue
+  var packet:PackedByteArray=blocks.capture_region(region)
+  if packet.size()>=100 and packet.decode_u32(32)>0:result[key]=packet.slice(packet.size()-32).hex_encode()
  return result
 const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")

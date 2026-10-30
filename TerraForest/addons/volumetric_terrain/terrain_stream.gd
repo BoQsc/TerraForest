@@ -1018,6 +1018,8 @@ func _schedule_urgent_collision() -> void:
 
 var _planned_coverage:Dictionary={}
 var _planned_eviction:Dictionary={}
+var render_view := Vector3.INF
+var render_projection_scale := 1.0
 func _plan_requests() -> Array[Vector3i]:
 	_planned_coverage={}
 	_planned_eviction={}
@@ -1025,7 +1027,7 @@ func _plan_requests() -> Array[Vector3i]:
 	var velocity:=travel_velocity
 	if navigation_interest.is_empty() and (target.is_finite() or not velocity.is_finite() or velocity.length_squared()<=0.01):velocity=Vector3.ZERO
 	var over_budget:=tiles.size()>cache_entry_limit or cache_bytes>cache_byte_limit
-	var plan:Dictionary=planner.requests_navigation(focus,require_collision,velocity,target,navigation_interest,tiles,split_state,visible_cut,true,over_budget)
+	var plan:Dictionary=planner.requests_navigation(focus,require_collision,velocity,target,navigation_interest,tiles,split_state,visible_cut,true,over_budget,render_view,render_projection_scale)
 	if not plan.ok:
 		_fail("Native terrain scheduling rejected invalid state")
 		return []

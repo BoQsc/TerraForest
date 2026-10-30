@@ -1,0 +1,13 @@
+{
+  "api": 1,
+  "id": "terraforest.vehicles",
+  "providers": [
+    {
+      "capability": "vehicle",
+      "id": "terraforest.ranger.v1",
+      "name": "Ranger",
+      "scene": "res://vehicle_demo/scenes/car.tscn",
+      "adapter": "res://addons/vehicle_runtime/ranger_adapter.gd"
+    }
+  ]
+}

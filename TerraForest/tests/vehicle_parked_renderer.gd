@@ -42,6 +42,13 @@ func run() -> void:
 	await physics_frame;await physics_frame
 	check(renderer.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(),"invalid representation disables stale collision")
 	renderer.free()
-	DirAccess.make_dir_recursive_absolute("res://reports")
-	var file:=FileAccess.open("res://reports/vehicle_parked_renderer.json",FileAccess.WRITE);file.store_string(JSON.stringify({"failures":failures}));file.close()
+	var output:="res://reports"
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--view-output="):output=argument.trim_prefix("--view-output=")
+	DirAccess.make_dir_recursive_absolute(output)
+	var file:=FileAccess.open(output.path_join("vehicle_parked_renderer.json"),FileAccess.WRITE)
+	check(file!=null,"report destination is writable")
+	if file!=null:file.store_string(JSON.stringify({"failures":failures}));file.close()
+	await create_timer(3.0).timeout
+	print("VEHICLE_PARKED_RENDERER failures=",failures)
 	quit(1 if failures else 0)

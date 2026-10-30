@@ -1,5 +1,9 @@
 # Native vehicle runtime
 
+Current module host/API: [vehicle packs](../../docs/VEHICLE_PACKS.md).
+That contract supersedes the early single-car/fleet-limit notes below. The built-in
+Ranger retains its native driving policy; independent pack controllers use adapters.
+
 0BSD port of the user's Vehicle Driving Test policy. NativeDrivingPolicy owns
 steering command smoothing, speed-dependent authority and cap recovery, and
 longitudinal acceleration/braking including the turn-grip budget. One policy

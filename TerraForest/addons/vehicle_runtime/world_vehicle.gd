@@ -8,7 +8,6 @@ var _camera_local: Transform3D
 var _player_layer:=0
 var _player_mask:=0
 var _physics_ticks:=60
-var _camera_follow: RefCounted
 var storage: RefCounted
 var fleet: RefCounted
 var car_identity:=0
@@ -16,6 +15,9 @@ var activation: RefCounted
 var fleet_enabled:=false
 var _world: Node
 const VEHICLE_SCENE_PATH: String="res://vehicle_demo/scenes/car.tscn"
+const Packs = preload("res://addons/vehicle_runtime/vehicle_packs.gd")
+var packs = Packs.new()
+var _packs_ready := false
 var _vehicle_scene: PackedScene
 var _scene_requested:=false
 var profile_install:=false
@@ -32,21 +34,29 @@ func _ready() -> void:
 	set_physics_process(false)
 func can_interact() -> bool:
 	return not interaction_available.is_valid() or interaction_available.call()
-func request_scene() -> void:
-	if _vehicle_scene!=null or _scene_requested: return
-	_scene_requested=ResourceLoader.load_threaded_request(VEHICLE_SCENE_PATH,"PackedScene")==OK
-func scene_ready() -> bool:
-	if _vehicle_scene!=null: return true
-	if not _scene_requested: return false
-	if ResourceLoader.load_threaded_get_status(VEHICLE_SCENE_PATH)!=ResourceLoader.THREAD_LOAD_LOADED: return false
-	_take_requested_scene()
-	return _vehicle_scene!=null
+func request_scene(kind: String = Packs.DEFAULT) -> void:
+	if not _packs_ready: _packs_ready = packs.prepare()
+	if not _packs_ready: return
+	var accepted: bool = packs.request(kind)
+	if kind == Packs.DEFAULT: _scene_requested = accepted and _vehicle_scene == null
+func scene_ready(kind: String = Packs.DEFAULT) -> bool:
+	if not _packs_ready: return false
+	if not packs.ready(kind): return false
+	if kind == Packs.DEFAULT:
+		_vehicle_scene = packs.take(kind); _scene_requested = false
+	return true
 func _take_requested_scene() -> void:
-	if not _scene_requested: return
-	_vehicle_scene=ResourceLoader.load_threaded_get(VEHICLE_SCENE_PATH) as PackedScene
-	_scene_requested=false
+	if _scene_requested:
+		_vehicle_scene = packs.take(Packs.DEFAULT); _scene_requested = false
+func adapter(body: RigidBody3D) -> RefCounted:
+	return body.get_meta("vehicle_adapter")
+func kind_of(body: RigidBody3D) -> String:
+	return body.get_meta("vehicle_kind", Packs.DEFAULT)
+func sync_body(identity: int, body: RigidBody3D) -> bool:
+	return fleet.set_pose(identity, body.global_transform) and fleet.set_module_state(identity, adapter(body).capture_state(body))
 func prepare(world: Node,persistence: RefCounted) -> bool:
 	request_scene()
+	if not _packs_ready:return false
 	GDExtensionManager.load_extension("res://addons/vehicle_runtime/vehicle_runtime.gdextension")
 	storage=ClassDB.instantiate("NativeVehicleStorage");_world=world
 	fleet=ClassDB.instantiate("NativeVehicleFleet")
@@ -57,8 +67,8 @@ func capture_snapshot() -> PackedByteArray:
 	if fleet_enabled:
 		if not activation.sync_records():return PackedByteArray([0])
 	elif is_instance_valid(car):
-		if car_identity==0:car_identity=fleet.spawn(car.global_transform)
-		if car_identity==0 or not fleet.set_pose(car_identity,car.global_transform):return PackedByteArray([0])
+		if car_identity==0:car_identity=fleet.spawn_module(car.global_transform,kind_of(car))
+		if car_identity==0 or not sync_body(car_identity,car):return PackedByteArray([0])
 	var info: Dictionary=fleet.statistics()
 	if info.records==0 and info.next_identity==1:return PackedByteArray()
 	return fleet.capture_storage_snapshot()
@@ -79,34 +89,41 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 	var present: bool=not decoded.records.is_empty()
 	car_identity=decoded.records[0].identity if present else 0
 	if present and is_instance_valid(car):
-		car.restore_parked(decoded.records[0].pose)
-		return true
+		var record: Dictionary = fleet.get_record(car_identity)
+		if kind_of(car)==record.kind and adapter(car).restore_state(car,record.state):
+			adapter(car).restore_parked(car,record.pose);return true
 	if is_instance_valid(car):car.free()
 	car=null
-	if present:return _install_vehicle(_world,decoded.records[0].pose)
+	if present:
+		var record: Dictionary = fleet.get_record(car_identity)
+		if not packs.vehicles.has(record.kind): return true
+		return _install_vehicle(_world,record.pose,record.kind,record.state)
 	return true
-func _install_vehicle(world: Node,pose: Transform3D) -> bool:
+func _install_vehicle(world: Node,pose: Transform3D,kind: String = Packs.DEFAULT,state: PackedByteArray = PackedByteArray()) -> bool:
 	# Snapshot restoration is synchronous by contract; placement checks readiness
 	# first. Restore may wait for the in-flight request during world loading.
-	if _vehicle_scene==null:
-		if _scene_requested: _take_requested_scene()
-		else: _vehicle_scene=load(VEHICLE_SCENE_PATH) as PackedScene
-	if _vehicle_scene==null: return false
+	request_scene(kind)
+	var scene: PackedScene = packs.take(kind)
+	if scene == null: return false
+	if kind == Packs.DEFAULT: _vehicle_scene=scene;_scene_requested=false
 	var begin:=Time.get_ticks_usec() if profile_install else 0
-	car=_vehicle_scene.instantiate()
-	car.profile_setup=profile_install
+	var instance: Node = scene.instantiate()
+	var driver: RefCounted = packs.adapter(kind)
+	if driver == null or not driver.accepts(instance): instance.free(); return false
+	var body: RigidBody3D = instance
+	if "profile_setup" in body: body.profile_setup=profile_install
 	var allocated:=Time.get_ticks_usec() if profile_install else 0
-	car.transform=pose;car.collision_layer=4;car.collision_mask=15
-	world.add_child(car)
+	body.transform=pose;body.collision_layer=4;body.collision_mask=15
+	body.set_meta("vehicle_kind",kind);body.set_meta("vehicle_adapter",driver)
+	world.add_child(body)
 	var attached:=Time.get_ticks_usec() if profile_install else 0
-	for wheel in car.wheel_rays: wheel.collision_mask=3
-	car.set_controls_enabled(false);car.freeze=true;car.set_physics_process(false)
-	if car_identity==0:car_identity=fleet.spawn(pose)
-	car.bind_streamed_world(world.terrain,world.structures)
-	if "vegetation" in world: car.streaming.bind_vegetation(world.vegetation)
-	if _camera_follow==null:_camera_follow=ClassDB.instantiate("NativeVehicleCamera")
+	if not driver.install(body,world) or not driver.restore_state(body,state): body.free(); return false
+	driver.controls(body,false);driver.restore_parked(body,pose)
+	if car_identity==0:car_identity=fleet.spawn_module(pose,kind,state)
+	if car_identity==0: body.free(); return false
+	car=body
 	if profile_install:
-		install_timings={"instantiate_us":allocated-begin,"attach_ready_us":attached-allocated,"bind_us":Time.get_ticks_usec()-attached,"setup":car.setup_timings}
+		install_timings={"instantiate_us":allocated-begin,"attach_ready_us":attached-allocated,"bind_us":Time.get_ticks_usec()-attached,"setup":car.setup_timings if "setup_timings" in car else {}}
 	return true
 func ready_bounds(world: Node,bounds: AABB) -> bool:
 	return world.terrain.is_collision_region_ready(bounds) and world.structures.is_collision_region_ready(bounds) and (not "vegetation" in world or world.vegetation.is_collision_region_ready(bounds))
@@ -115,21 +132,23 @@ func overlaps_edit(world_bounds: AABB) -> bool:
 	if not is_instance_valid(car): return false
 	# Reuse the native orientation-independent chassis/suspension envelope.
 	# This includes the support immediately beneath the parked vehicle.
-	var bounds: AABB=car.driving_policy.travel_bounds(car.global_position,Vector3.ZERO,1.0/120.0)
+	var bounds: AABB=adapter(car).bounds(car)
 	return not bounds.position.is_finite() or bounds.intersects(world_bounds)
-func spawn_requested(world:Node)->String:
+func spawn_requested(world:Node,kind: String = Packs.DEFAULT)->String:
 	# Explicit Developer-menu request. This is not paid item placement and must
 	# not depend on aim, gameplay/development mode, focus or collision publication.
 	last_spawn_identity=0
-	if not scene_ready():return "Vehicle model could not be loaded"
+	request_scene(kind)
+	if not scene_ready(kind):return "Vehicle model is loading or its pack is unavailable"
 	var pose:Transform3D=preload("res://addons/vehicle_runtime/vehicle_placement.gd").requested_pose(world)
 	if fleet_enabled:
-		var message:String=activation.place_requested(world,pose)
+		var message:String=activation.place_requested(world,pose,kind)
 		if last_spawn_identity==0:return message
 	else:
 		if is_instance_valid(car):
-			if not driving:coasting.erase(car_identity);car.restore_parked(pose);fleet.set_pose(car_identity,pose)
-		elif not _install_vehicle(world,pose):return "Vehicle model could not be loaded"
+			if kind_of(car)!=kind:return "Enable the vehicle fleet to spawn a different pack"
+			if not driving:coasting.erase(car_identity);adapter(car).restore_parked(car,pose);fleet.set_pose(car_identity,pose)
+		elif not _install_vehicle(world,pose,kind):return "Vehicle model could not be loaded"
 		last_spawn_identity=car_identity
 	world.terrain.changed_since_save=true
 	return "Vehicle spawned nearby · E nearby to enter · F5 saves world"
@@ -187,7 +206,7 @@ func reachable(world:Node,id:int)->bool:
 	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,at,7,exclusions)
 	var hit:Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
 	if hit.is_empty():return true
-	return fleet_enabled and hit.collider==activation.parked_view and activation.parked_view.identity_for_body(hit.rid)==id
+	return fleet_enabled and activation.parked_identity(hit.collider,hit.rid)==id
 func remove_vehicle(id:int)->bool:
 	if not fleet.remove(id):return false
 	coasting.erase(id)
@@ -199,6 +218,7 @@ func remove_vehicle(id:int)->bool:
 	return true
 func pickup(world:Node,id:int)->String:
 	if driving or not can_interact() or not reachable(world,id):return "Vehicle is no longer reachable"
+	if fleet.get_record(id).kind != Packs.DEFAULT: return "This vehicle pack has no inventory item; it remains saved in the world"
 	var body:RigidBody3D=activation.residents.get(id) if fleet_enabled else car
 	if is_instance_valid(body) and body.linear_velocity.length()>.5:return "Wait for the vehicle to stop before picking it up"
 	var inventory:RefCounted=world.player_hud.inventory
@@ -220,12 +240,12 @@ func enter(world: Node,expected:int=0) -> bool:
 	var ray:=PhysicsRayQueryParameters3D.create(world.player.global_position+Vector3.UP,car.position,7,[world.player.get_rid(),car.get_rid()])
 	if not world.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(): return false
 	_camera_local=world.camera.transform
-	_physics_ticks=Engine.physics_ticks_per_second;Engine.physics_ticks_per_second=120
+	_physics_ticks=Engine.physics_ticks_per_second;Engine.physics_ticks_per_second=clampi(adapter(car).physics_rate(),60,120)
 	_player_layer=world.player.collision_layer;_player_mask=world.player.collision_mask
 	world.player.collision_layer=0;world.player.collision_mask=0
 	world.player.velocity=Vector3.ZERO
 	coasting.erase(car_identity);_coast_quiet.erase(car_identity)
-	car.freeze=false;car.set_controls_enabled(true);car.set_physics_process(true)
+	car.freeze=false;adapter(car).controls(car,true);car.set_physics_process(true)
 	driving=true
 	return true
 func safe_exit_position(world: Node) -> Vector3:
@@ -251,7 +271,7 @@ func exit_vehicle(world: Node) -> String:
 	# CharacterBody relocation is a kinematic target, consumed by the next
 	# physics step. Do not let the still-seated proxy hit the chassis en route.
 	_guard_exit_contact(world.player)
-	car.set_controls_enabled(false);coasting[car_identity]=car;_coast_quiet[car_identity]=0.0
+	adapter(car).controls(car,false);coasting[car_identity]=car;_coast_quiet[car_identity]=0.0
 	set_physics_process(true)
 	world.player.position=feet;world.player.velocity=car.linear_velocity
 	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
@@ -293,7 +313,7 @@ func _physics_process(delta:float) -> void:
 		var body:RigidBody3D=coasting[id]
 		if not is_instance_valid(body):coasting.erase(id);_coast_quiet.erase(id);continue
 		# A readiness hold or a skipped suspension pass cannot count as resting.
-		var quiet:bool=not body.freeze and body.contact_physics_frame==frame and body.loaded_wheels>=2 and body._has_drive_support() and body.linear_velocity.length()<.15 and body.angular_velocity.length()<.1
+		var quiet:bool=adapter(body).can_park(body,frame)
 		_coast_quiet[id]=float(_coast_quiet.get(id,0.0))+delta if quiet else 0.0
 		if _coast_quiet[id]>=PARK_QUIET_SECONDS:
 			body.freeze=true;body.set_physics_process(false);coasting.erase(id);_coast_quiet.erase(id)
@@ -302,6 +322,7 @@ func _exit_tree() -> void:
 	# Every accepted threaded request needs a matching get, even if the player
 	# never places a vehicle. On early exit this can wait for the pending load.
 	_take_requested_scene()
+	packs.finish()
 	_clear_exit_contacts()
 	if driving: Engine.physics_ticks_per_second=_physics_ticks
 func update(world: Node,delta: float) -> void:
@@ -314,5 +335,6 @@ func update(world: Node,delta: float) -> void:
 	if not driving or not is_instance_valid(car): return
 	world.player.position=car.position # Existing vegetation/building focus follows the occupant.
 	world.player.velocity=Vector3.ZERO
-	car.set_controls_enabled(can_interact() and world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
-	_camera_follow.update(car,world.camera,delta)
+	adapter(car).update_focus(car,world)
+	adapter(car).controls(car,can_interact() and world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
+	adapter(car).camera_update(car,world.camera,delta)

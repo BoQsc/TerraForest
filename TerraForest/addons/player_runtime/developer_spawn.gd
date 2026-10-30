@@ -7,11 +7,20 @@ var entries:Dictionary={}
 var last_spawn:CharacterBody3D
 var vehicle_button:Button
 var vehicle_busy:=false
+var vehicle_kind: OptionButton
 func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	game=host;menu=session
 	menu.label(parent,"Dev Spawner").add_theme_font_size_override("font_size",24)
 	menu.label(parent,"Spawn living entities and drivable vehicles nearby. Spawns are real world residents and are saved normally. Carried vehicle items, tools and materials remain in Dev Bag.")
 	entries["zombie"]=menu.button(parent,"Spawn zombie nearby",spawn_zombie)
+	vehicle_kind=OptionButton.new();parent.add_child(vehicle_kind)
+	for kind: String in game.world_vehicle.packs.vehicles:
+		vehicle_kind.add_item(game.world_vehicle.packs.vehicles[kind].name)
+		vehicle_kind.set_item_metadata(vehicle_kind.item_count-1,kind)
+		if kind==game.world_vehicle.Packs.DEFAULT:vehicle_kind.select(vehicle_kind.item_count-1)
+	vehicle_kind.visible=vehicle_kind.item_count>1
+	for problem:String in game.world_vehicle.packs.errors:menu.label(parent,problem)
+	for problem:Dictionary in game.world_vehicle.packs.registry.diagnostics:menu.label(parent,str(problem.path)+": "+str(problem.reason))
 	vehicle_button=menu.button(parent,"Spawn drivable vehicle nearby",spawn_vehicle);entries["vehicle"]=vehicle_button
 	vehicle_button.tooltip_text="Spawn one live vehicle immediately. No aiming required."
 	menu.label(parent,"Zombies use normal awareness, combat, anatomy and corpse storage. Spawning enables their simulation for this session. The existing six-active-zombie budget still applies; no inhabitants are silently removed to make room.")
@@ -21,14 +30,15 @@ func refresh()->void:
 func spawn_vehicle()->void:
 	if vehicle_busy or game.loading_active or game.shutdown_requested:return
 	vehicle_busy=true;vehicle_button.disabled=true;menu.set_open(false)
-	game.world_vehicle.request_scene()
-	if not game.world_vehicle.scene_ready():game._show_lake_notice("Loading vehicle model…")
-	while is_instance_valid(game) and not game.shutdown_requested and not game.world_vehicle.scene_ready():
-		if not game.world_vehicle._scene_requested or ResourceLoader.load_threaded_get_status(game.world_vehicle.VEHICLE_SCENE_PATH)==ResourceLoader.THREAD_LOAD_FAILED:
+	var kind: String=vehicle_kind.get_item_metadata(vehicle_kind.selected) if vehicle_kind.selected>=0 else game.world_vehicle.Packs.DEFAULT
+	game.world_vehicle.request_scene(kind)
+	if not game.world_vehicle.scene_ready(kind):game._show_lake_notice("Loading vehicle model…")
+	while is_instance_valid(game) and not game.shutdown_requested and not game.world_vehicle.scene_ready(kind):
+		if game.world_vehicle.packs.unavailable(kind):
 			vehicle_busy=false;vehicle_button.disabled=false;menu.show_page("Dev Spawner");menu.message.text="Vehicle model could not be loaded.";return
 		await game.get_tree().process_frame
 	if not is_instance_valid(game) or game.shutdown_requested:return
-	var message:String=game.world_vehicle.spawn_requested(game)
+	var message:String=game.world_vehicle.spawn_requested(game,kind)
 	vehicle_busy=false;vehicle_button.disabled=false
 	if game.world_vehicle.last_spawn_identity==0:menu.show_page("Dev Spawner");menu.message.text=message
 	game._show_lake_notice(message)

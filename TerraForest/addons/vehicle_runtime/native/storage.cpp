@@ -24,6 +24,11 @@ bool NativeVehicleStorage::validate_snapshot(const PackedByteArray &data) const 
 bool NativeVehicleStorage::valid_pose(const Transform3D &pose) {
     return pose.is_finite() && pose.origin.x>=2 && pose.origin.x<=1998 && pose.origin.z>=2 && pose.origin.z<=1998 && pose.origin.y>=0 && pose.origin.y<=600 && std::abs(pose.basis.determinant()-1)<=.00001 && pose.basis.is_equal_approx(pose.basis.orthonormalized());
 }
+bool NativeVehicleStorage::valid_kind(const String &kind) {
+    if(kind.is_empty()||kind.length()>96)return false;
+    for(int64_t index=0;index<kind.length();++index){char32_t value=kind[index];if(!((value>='a'&&value<='z')||(value>='0'&&value<='9')||value=='.'||value=='_'||value=='-'))return false;}
+    return true;
+}
 PackedByteArray NativeVehicleStorage::encode(Transform3D pose) const {
     if(!valid_pose(pose))return {};
     Quaternion q=pose.basis.get_rotation_quaternion().normalized();
@@ -44,13 +49,15 @@ Dictionary NativeVehicleStorage::decode(const PackedByteArray &data) const {
 // and silently discarding all but one record. Validation is worker-safe.
 bool NativeVehicleStorage::validate_fleet_snapshot(const PackedByteArray &data) const {
     if(data.is_empty() || (data.size()==72 && data.decode_u32(4)==1))return validate_snapshot(data);
-    if(data.size()<24 || data.decode_u32(0)!=0x31564654 || data.decode_u32(4)!=2 || data.decode_u32(12)!=0)return false;
+    if(data.size()<24 || data.size()>64*1024*1024 || data.decode_u32(0)!=0x31564654 || (data.decode_u32(4)!=2&&data.decode_u32(4)!=3) || data.decode_u32(12)!=0)return false;
+    const bool typed=data.decode_u32(4)==3;
     const uint32_t count=data.decode_u32(8);
     const uint64_t next=data.decode_u64(16);
-    if(count>65536 || data.size()!=24+int64_t(count)*64 || !next || next>INT64_MAX)return false;
+    if(count>65536 || (!typed&&data.size()!=24+int64_t(count)*64) || !next || next>INT64_MAX)return false;
     uint64_t previous=0;
+    int64_t at=24,metadata_bytes=0;
     for(uint32_t i=0;i<count;++i){
-        const int64_t at=24+int64_t(i)*64;
+        if(at+64>data.size())return false;
         const uint64_t id=data.decode_u64(at);
         if(id<=previous || id>=next)return false;
         previous=id;
@@ -59,14 +66,34 @@ bool NativeVehicleStorage::validate_fleet_snapshot(const PackedByteArray &data) 
         if(x<2||x>1998||z<2||z>1998||y<0||y>600)return false;
         double norm=0;for(int j=0;j<4;++j){double q=data.decode_double(at+32+j*8);norm+=q*q;}
         if(std::abs(norm-1)>=.00001)return false;
+        at+=64;
+        if(typed){
+            if(at+4>data.size())return false;
+            const uint16_t length=data.decode_u16(at),state_length=data.decode_u16(at+2);at+=4;
+            if(length<1||length>96||state_length>4096||at+length+state_length>data.size())return false;
+            for(int index=0;index<length;++index)if(data[at+index]>127||data[at+index]==0)return false;
+            if(!valid_kind(String::utf8(reinterpret_cast<const char *>(data.ptr()+at),length)))return false;
+            metadata_bytes+=96+state_length;if(metadata_bytes>32*1024*1024)return false;
+            at+=length+state_length;
+        }
     }
-    return true;
+    return at==data.size();
 }
 PackedByteArray NativeVehicleStorage::encode_fleet(const Array &records,int64_t next_identity) const {
     if(records.size()>65536 || next_identity<1)return {};
-    PackedByteArray data;data.resize(24+records.size()*64);data.fill(0);
-    data.encode_u32(0,0x31564654);data.encode_u32(4,2);data.encode_u32(8,records.size());data.encode_u64(16,next_identity);
+    bool typed=false;int64_t extra=0,state_budget=records.size()*96;
+    for(int64_t index=0;index<records.size();++index){
+        if(records[index].get_type()!=Variant::DICTIONARY)return {};
+        Dictionary row=records[index];Variant kind=row.get("kind",default_kind()),state=row.get("state",PackedByteArray());
+        if(kind.get_type()!=Variant::STRING||state.get_type()!=Variant::PACKED_BYTE_ARRAY)return {};
+        String name=kind;PackedByteArray bytes=state;if(!valid_kind(name)||bytes.size()>4096)return {};
+        state_budget+=bytes.size();if(state_budget>32*1024*1024)return {};
+        typed=typed||name!=default_kind()||!bytes.is_empty();extra+=name.length()+bytes.size();if(extra>32*1024*1024)return {};
+    }
+    PackedByteArray data;data.resize(24+records.size()*64+(typed?extra+records.size()*4:0));data.fill(0);
+    data.encode_u32(0,0x31564654);data.encode_u32(4,typed?3:2);data.encode_u32(8,records.size());data.encode_u64(16,next_identity);
     int64_t previous=0;
+    int64_t at=24;
     for(int64_t i=0;i<records.size();++i){
         if(records[i].get_type()!=Variant::DICTIONARY)return {};
         Dictionary row=records[i];Variant id=row.get("identity",Variant()),pose=row.get("pose",Variant());
@@ -74,9 +101,16 @@ PackedByteArray NativeVehicleStorage::encode_fleet(const Array &records,int64_t 
         const int64_t identity=id;
         if(identity<=previous || identity>=next_identity)return {};
         const auto encoded=encode(pose);if(encoded.is_empty())return {};
-        const int64_t at=24+i*64;data.encode_u64(at,identity);
+        data.encode_u64(at,identity);
         for(int j=0;j<7;++j)data.encode_double(at+8+j*8,encoded.decode_double(16+j*8));
         previous=identity;
+        at+=64;
+        if(typed){
+            String kind=row.get("kind",default_kind());PackedByteArray state=row.get("state",PackedByteArray());auto name=kind.ascii();
+            data.encode_u16(at,name.length());data.encode_u16(at+2,state.size());at+=4;
+            for(int index=0;index<name.length();++index)data.set(at++,name[index]);
+            for(int64_t index=0;index<state.size();++index)data.set(at++,state[index]);
+        }
     }
     return data;
 }
@@ -88,11 +122,13 @@ Dictionary NativeVehicleStorage::decode_fleet(const PackedByteArray &data) const
         Dictionary row;row["identity"]=int64_t(1);row["pose"]=decode(data)["pose"];rows.push_back(row);next=2;
     } else if(!data.is_empty()){
         next=data.decode_u64(16);
+        int64_t at=24;
         for(uint32_t i=0;i<data.decode_u32(8);++i){
-            const int64_t at=24+int64_t(i)*64;
             Vector3 p(data.decode_double(at+8),data.decode_double(at+16),data.decode_double(at+24));
             Quaternion q(data.decode_double(at+32),data.decode_double(at+40),data.decode_double(at+48),data.decode_double(at+56));
-            Dictionary row;row["identity"]=int64_t(data.decode_u64(at));row["pose"]=Transform3D(Basis(q.normalized()),p);rows.push_back(row);
+            Dictionary row;row["identity"]=int64_t(data.decode_u64(at));row["pose"]=Transform3D(Basis(q.normalized()),p);at+=64;
+            if(data.decode_u32(4)==3){const int length=data.decode_u16(at),state_length=data.decode_u16(at+2);at+=4;row["kind"]=String::utf8(reinterpret_cast<const char *>(data.ptr()+at),length);at+=length;row["state"]=data.slice(at,at+state_length);at+=state_length;}
+            rows.push_back(row);
         }
     }
     result["records"]=rows;result["next_identity"]=next;return result;
