@@ -1,9 +1,10 @@
 # Trader house and civic buildings
 
-- Status: Integrated opt-in review world; scoped engineering checks passed.
+- Status: All five R1 designs approved; integrated opt-in world and scoped checks passed.
 - Updated: 2026-10-30. Branch `codex/trader-civic-buildings`.
-- User review: Pending for Trader T1 R1, Town Hall T1 R1, Church C1 R1,
-  School S2 R1 and Warehouse W1 R1. None is a normal generation default.
+- User review: Approved 2026-10-30: Trader T1 R1, Town Hall T1 R1, Church C1 R1,
+  School S2 R1 and Warehouse W1 R1, plus the expansion direction. Current runtime
+  remains opt-in; the finished expansion requires its own real-world review.
 - Scope: One player-based trader with full commodity buying/selling, four large
   civic buildings with 81–99 m² partial basements, and shared terrain contact enforcement.
 
@@ -15,7 +16,8 @@
 
 All current views: `CivicReview_1703_8ae64a06`, seed 1703, civic plan 29,
 Godot 4.7.2 Forward+, 1920×1080. Captured after native publication and fresh-process
-restore. Images were inspected by Codex; overall design approval remains yours.
+restore. Images were inspected by Codex; the user approved all five R1 designs
+on 2026-10-30. Historical capture statuses remain preserved in the manifest.
 [Hashes, source runs and earlier images](images/manifest.json).
 
 ![Trader house in its surveyed lot](images/world_trader_t1_street.png)
@@ -155,12 +157,15 @@ Authoring now restores the full shared wall and its intended doorway.
 
 ## Review and future work
 
-The implementation and both requested expansion/display assessments are complete
-for review. Approve or revise each named R1 building before default adoption.
+The user approved the implementation, all five exact R1 designs and the expansion
+direction on 2026-10-30. No renewed approval is needed for those exact designs.
 The [shape and texture proposal](../../docs/BUILDING_EXPANSION_REVIEW.md) recommends
 shallow roofs/joints, cornices, searchable baked previews, and a four-slot material
-study before a versioned eight-appearance system. It is a proposed next pack,
-not an implemented set of new shape IDs or textures.
+study before a versioned eight-appearance system. The pack remains to be
+implemented. Its next review must demonstrate justified gains in actual populated
+worlds, with matching before/after views, gameplay and measured costs; the
+[acceptance requirements](../../docs/BUILDING_EXPANSION_REVIEW.md#required-real-world-review)
+are mandatory before final expansion approval.
 
 Prices and stock balance remain reviewable. The current trader intentionally sells
 eight commodities; equipment durability, quests and automatic restocking are not

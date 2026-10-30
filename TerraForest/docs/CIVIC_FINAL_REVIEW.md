@@ -1,11 +1,21 @@
 # Trader, civic buildings and terrain standards — final review
 
-2026-10-30 · branch `codex/trader-civic-buildings` · code `79d38271` · **Ready for your design review**.
+2026-10-30 · branch `codex/trader-civic-buildings` · code `79d38271` · **Approved by the user, 2026-10-30**.
 The trader and five-building review world are implemented. The recurring
 terrain/block contact defect has a shared correction and mandatory generation /
 export checks. The requested shape, display and general-texture assessments are
 complete as a decision-ready proposal. New shape/texture packs are not implied
 by completing that assessment.
+
+## Approval recorded — 2026-10-30
+
+The user approved all five exact R1 designs, the submitted trader/contact work
+and the proposed expansion direction: “I approve all.” The expansion itself
+requires a later review and approval demonstrating justified improvements in
+real-world situations. The mandatory evidence is recorded in
+[the expansion acceptance requirements](BUILDING_EXPANSION_REVIEW.md#required-real-world-review).
+The existing performance findings remain facts; approval does not change their
+measurements. This records design acceptance without altering saved worlds.
 
 ## The review world
 
@@ -14,7 +24,7 @@ addressable/destructible native cells with working attached doors, furniture and
 storage. Three connected streets fit separate surveyed grades; the forest remains
 between lots. Each large building has a medium partial basement.
 
-| Exact candidate | Cells / attached objects | Features | Basement |
+| Approved design | Cells / attached objects | Features | Basement |
 | --- | ---: | --- | ---: |
 | Trader T1 R1 | 1,019 / 21 | Covered entrance, public sales room, counter, stockroom, one idle current-player-based NPC | None requested |
 | Town Hall T1 R1 | 3,028 / 59 | Portico, public hall, upper council room, stairs and storage | 99 m² |
@@ -101,7 +111,7 @@ material bits cannot store eight choices safely. Keep original assets CC0, code
 0BSD, shared arrays/batches and exact saved identities. Update existing buildings
 through individually approved A/B revisions, with no automatic repainting.
 
-## Open it and approve
+## Open the approved review world
 
 From this worktree's TerraForest directory:
 
@@ -114,12 +124,12 @@ near the trader opens trade; Escape closes it. `--create` generates another uniq
 review world if needed. The package is `dist/TerraForest.pck`, with `dist/addons`
 kept beside it. No normal-generation default has been changed to these candidates.
 
-Please give a decision for each **Trader T1 R1, Town Hall T1 R1, Church C1 R1,
-School S2 R1 and Warehouse W1 R1**: approve the exact design, or name changes.
-Separately, approve or revise the proposed first shape/display/texture pack.
-This is the final review you requested; `WORLD_BUILDING_STANDARD.md` also requires
-exact per-building approval before default adoption. Approval of one design is
-not approval of the others or of all-world performance.
+**Approved:** Trader T1 R1, Town Hall T1 R1, Church C1 R1, School S2 R1 and
+Warehouse W1 R1, plus the expansion direction. Do not ask for these same design
+approvals again. Default integration can use these exact revisions; changed
+buildings and the finished expansion still need their own evidence and approval.
+The current package remains the reviewed opt-in build; approval recording does
+not itself change generator defaults or merge concurrent implementation work.
 
 ## Coordination and provenance
 

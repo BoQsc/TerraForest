@@ -257,5 +257,10 @@
       "world": "See docs/evidence/civic_buildings/world/before_apron_slot.json",
       "renderer": "Godot 4.7.2 Forward+ 1920x1080"
     }
-  ]
+  ],
+  "user_review": {
+    "date": "2026-10-30",
+    "decision": "All five final R1 designs approved; expansion direction approved subject to finished-pack real-world evidence and approval",
+    "scope": "Current integrated R1 designs, not rejected historical iterations; per-image status describes capture-time state"
+  }
 }

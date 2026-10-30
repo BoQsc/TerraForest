@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Trader and civic buildings](civic-buildings/README.md) | Integrated review world / scoped checks pass | Full buying/selling, five buildings, basement/player/NPC/vehicle routes and fresh restore verified; exact R1 designs await approval; broader frame pacing remains open |
+| [Trader and civic buildings](civic-buildings/README.md) | Five R1 designs approved / scoped checks pass | Approved 2026-10-30; full trade, basement/player/NPC/vehicle routes and fresh restore verified; expansion direction approved, finished pack must demonstrate real-world gains before approval; broader frame pacing remains open |
 | [Terrain crossing building blocks](terrain-building-contact/README.md) | Shared correction / enforced checks | Native shape-derived clearance, common datums and phase ordering, real footprint and exposed-surface publication gates; 30 debug/release + 64 catalog checks; human review and further recurrence coverage remain |
 | [FPS / world overview](world-overview/README.md) | Partial / opt-in camera | Whole-world terrain/forest/boulder/parked-vehicle coverage, archived exclusions and compact car LODs; native prop render pages tested but not world-integrated; transitions, costs, endurance and broader modules remain open |
 | [Resource usage visibility](resource-usage/README.md) | Cached readings restored / bounded refresh | Size readings retained; opening uses saved/export/active-cache accounting, targeted native refresh has an 8 s budget; cold incomplete results stay explicit; initial counter cost remains reviewable |

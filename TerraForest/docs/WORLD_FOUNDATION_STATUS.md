@@ -9,8 +9,10 @@ warehouse. Finite-stock buying/selling and compound persistence are implemented;
 the four large buildings have 81–99 m² basements. Final complete-world traversal
 and trade pass 73 checks; fresh-process exact inventory restore and actual basement
 descent pass 18 checks each. Ground/overview/basement/trader images were inspected.
-The five exact designs remain review candidates pending the user's approval;
-existing houses and saves are preserved.
+The user approved all five exact R1 designs and the submitted trader/contact
+work on 2026-10-30. Existing houses and saves are preserved. Approval recording
+does not change the current opt-in generation path; integration may use these
+exact designs without asking for the same approval again.
 
 The user's recurring terrain/block report is handled at the shared layer by the
 mandatory [contact contract](TERRAIN_BUILDING_CONTRACT.md) and
@@ -26,7 +28,12 @@ route-length deadline now passes with unchanged arrival/collision/work limits.
 The whole-game export and packed civic/door checks pass. Package dependency
 metadata now includes actual host dependencies; 13 package/runner tests pass.
 The [shape/display/texture assessment](BUILDING_EXPANSION_REVIEW.md) is complete
-as a proposal; the future pack and existing-house revisions await their decisions.
+and its direction was approved on 2026-10-30. The finished expansion and changed
+existing-house revisions still require review/approval, demonstrating justified
+improvements in real-world situations. The [mandatory comparison requirements](BUILDING_EXPANSION_REVIEW.md#required-real-world-review)
+cover populated A/B views, gameplay, terrain/save behavior and measured costs.
+Implementation and that evidence remain future work; return when the pack or a
+revised building is ready, and preserve the approved R1 comparison baseline.
 
 World quality and performance are not universally accepted. In the populated
 1080p check, merchant incremental mean is 0.058 ms; broader capped moving-camera

@@ -1,8 +1,9 @@
 # Building shapes, display and materials review — 2026-10-30
 
-This is a proposal grounded in the current native implementation and the new
-[civic review set](../reviews/civic_buildings/README.md). It does not approve a
-house replacement, change saves, or promise an unmeasured performance result.
+The user approved this expansion direction on 2026-10-30, together with the five
+exact civic R1 designs. The finished expansion requires its own review and
+approval, supported by justified improvements in real-world situations. This
+direction does not automatically approve changed house revisions or save migration.
 
 ## What the new buildings expose
 
@@ -101,16 +102,50 @@ outside timed samples. Revert or gate an option if its cost is unjustified.
 Create A/B revisions for each existing house. Exact house/revision approval is
 required by `WORLD_BUILDING_STANDARD.md` before changing its generation default.
 Keep saved cells intact; no automatic repainting, shape-ID reuse or save migration.
-The new civic candidates have now been placed on surveyed lots in an opt-in complete
-world, with excavation before publication, native traversal and saved-world checks.
-Their individual visual decisions remain in the final approval packet; enabling
-them in the normal generator is a separate promotion of those exact revisions.
+All five civic R1 designs were explicitly approved on 2026-10-30 following their
+complete-world review. Their exact geometry is the approved comparison baseline.
+Normal-generator integration is a separate implementation step; do not request
+the same design approval again. Expansion changes to those designs are new revisions.
 
 
-## Decision-ready implementation order
+## Required real-world review
 
-The assessment is complete. The expansion below is a proposed next implementation,
-not a claim that new shape IDs or an eight-material renderer already exist.
+User condition, 2026-10-30: the expansion must show justified improvements in
+real-world situations when it is ready for review and approval. Apply these
+requirements to the finished expansion; a component showroom alone is insufficient.
+
+1. State the existing problem and the expected player-visible benefit for every
+   addition. Demonstrate shallow-roof proportions and junctions on the school,
+   facade/cornice and material readability on the town hall/church, and roof or
+   material identity on the warehouse. Include an existing house/POI revision
+   when proposing updates to that family. A larger catalog is not itself a benefit.
+2. Capture before/after versions in the same populated, playable generated world,
+   with matching seed, lot, camera, lighting, weather, resolution and quality.
+   Preserve the approved R1 baseline and identify every tested revision/hash.
+   Show player-height arrival, interiors, roof underside/joins, overview and
+   near/far travel. Label unavoidable differences; do not hide terrain or foliage
+   defects by changing the comparison view.
+3. Exercise normal construction selection, rotation and placement for the display
+   changes, and actual movement through doors, stairs and basement routes.
+   Verify terrain contact, locally removed/damaged assemblies, save/reopen and
+   LOD transitions. Better appearance must preserve usable, destructible geometry.
+4. Measure matching populated routes and interactions: frame p95/worst, CPU/GPU
+   cost where available, memory, geometry/draw calls and publication/loading cost.
+   Keep screenshot readback outside timing. Use a stable merged build baseline;
+   unrelated concurrent changes or workloads must not be attributed to the pack.
+   Report regressions and uncertainty and explain why any added cost is justified.
+   Keep the current full-world frame-pacing gap visible; do not lower quality to
+   manufacture a passing comparison.
+5. Present a concise benefit/cost/remaining-defect decision for each addition.
+   Revise, remove or keep optional anything whose practical gain is unsupported.
+   Submit the finished pack and exact affected building revisions for explicit
+   user approval before adopting those changes as defaults. Approval of this
+   direction is already recorded and must not be requested again.
+
+## Approved implementation direction
+
+The assessment and direction are approved. New shape IDs, textures and the
+versioned material renderer still need implementation and the review above.
 
 | Review decision | Concrete first deliverable | Cost/control | Exit evidence |
 | --- | --- | --- | --- |

@@ -2,7 +2,8 @@
 
 - Status: Shared correction and enforcement implemented; scoped native checks pass.
 - Updated: 2026-10-30. Core commit `86fd2511`; final integration and footprint guard `79d38271`.
-- User review: Pending. This is not universal terrain or world-quality acceptance.
+- User review: Submitted correction approved on 2026-10-30. Finite verification
+  and the documented broader performance/coverage limits remain unchanged.
 - Symptom: Soil appears through building floors, narrow stairs or loading aprons
   even though the old foundation/support checks passed.
 

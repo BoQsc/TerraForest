@@ -65,5 +65,21 @@
     "license": "CC0-1.0",
     "source": "Original repository-native vector drawing; no external reference or imported artwork",
     "sha256": "e2fe6a096bf23fb3c2ec0a2934f212f0a14fe09b1a49a178c99e90fb1c644b77"
+  },
+  "approval": {
+    "date": "2026-10-30",
+    "source": "User approval in trader/civic work chat: I approve all.",
+    "designs": [
+      "Trader T1 R1",
+      "Town Hall T1 R1",
+      "Church C1 R1",
+      "School S2 R1",
+      "Warehouse W1 R1"
+    ],
+    "baseline_code": "79d38271",
+    "review_packet_commit": "5a58aff5",
+    "asset_hash_scope": "asset_sha256 and world_integration.files in this record",
+    "expansion_direction": "approved",
+    "finished_expansion": "Requires justified real-world improvements, review and explicit approval; see docs/BUILDING_EXPANSION_REVIEW.md"
   }
 }

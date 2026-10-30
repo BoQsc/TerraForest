@@ -124,6 +124,17 @@ cells and attached objects; a uniform origin shift for foundation planning is no
 a redesign. This does not authorize replacing existing houses or altering saves.
 Basement and slab excavation belongs in the native generation-time master plan.
 
+Subsequent explicit approval, 2026-10-30: Trader T1 R1, Town Hall T1 R1, Church C1
+R1, School S2 R1 and Warehouse W1 R1 are accepted as exact additional designs,
+along with the submitted trader and shared terrain-contact work. Preserve their
+reviewed cells, attached objects and approved asset hashes. The shape/display/
+texture expansion direction is approved, but its finished implementation must
+show justified improvements in actual populated-world situations and return for
+review and approval. Enforce the [real-world expansion evidence requirements](BUILDING_EXPANSION_REVIEW.md#required-real-world-review):
+matching before/after scenes and routes, functional/terrain/save checks, measured
+costs and an explicit benefit for each addition. Isolated shape fixtures alone
+cannot satisfy that approval. Existing measured performance gaps remain open.
+
 Each location needs a purpose, readable arrival, recognizable landmarks and useful
 interiors. Adjacent repeated modules must vary meaningfully in massing, height,
 roofline, frontage or use; tint changes alone do not establish variety. Repetition

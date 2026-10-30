@@ -68,4 +68,7 @@ source. [Export log](export.log), [size record](distribution_budget.json).
   not independent addon-runtime or all-platform qualification.
 
 [Inspected images and provenance](../../../../issues/civic-buildings/images/manifest.json)
-remain original captures. Human design approval is still pending.
+remain original captures. The user approved all five exact R1 designs and the
+submitted work on 2026-10-30. The future expansion direction is approved; its
+finished implementation must demonstrate justified real-world gains for a
+separate review and approval. Historical logs/capture statuses are unchanged.

@@ -45,7 +45,9 @@ Opening restores them; a corrupt archive disables saving to preserve the file.
 Without this flag, the review is temporary. Existing gameplay saves are untouched.
 The reusable merchant adapter is also registered with compound-world persistence.
 The opt-in `--civic-review` production generator now places all five buildings
-and activates one trader. Normal generation defaults still await design approval.
+and activates one trader. All five exact R1 designs received user approval on
+2026-10-30. Current runtime remains opt-in; future integration may use the approved
+revisions without asking for the same design approval again.
 
 ## Provenance and limits
 
@@ -55,7 +57,7 @@ parts and furniture rather than importing external assets. The exact retained
 player model and existing animations/materials keep their existing notices and
 the open GAP-002 provenance qualification. No asset is relicensed by this review.
 
-These are **review candidates**, not accepted world locations. Existing approved
+These five exact R1 designs are **user-approved as of 2026-10-30**. Existing approved
 houses, production recipes and saved buildings remain unchanged. See the
 [visual issue and evidence](../../issues/civic-buildings/README.md) and
 [shape/material expansion assessment](../../docs/BUILDING_EXPANSION_REVIEW.md).
