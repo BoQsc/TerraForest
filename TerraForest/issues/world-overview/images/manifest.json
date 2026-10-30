@@ -9,6 +9,15 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "static_props_distant_close.png",
+      "sha256": "ab6026365874eebdd4a3a7f9b9b1af361d2ac75d53785406cc79e47a4403e80e",
+      "source": "reports/runtime_views/20261030T154431245208Z/distant_prop_close.png",
+      "run": "reports/runtime_views/20261030T154431245208Z/run.json",
+      "pack_sha256": "60fad6a8ca426fb9ec3646c6ff214d66736d30f257cd236ff8c5412219310331",
+      "settings": "1920x1080, offscreen/noncapturing, camera close to table at (1011,60,270); physical player remains 997 m away. Overrides the older overview-orbit settings above.",
+      "review": "Inspected engineering evidence: original table/chair meshes remain visible beyond local canonical residency. Not a new building-design or universal transition approval."
+    },
+    {
       "file": "vehicles_compact_far_owned.png",
       "sha256": "6306f3d2b1b51c467b3ad2e363ccf30d8c0f6ea1300958240548aa4e4d53ca27",
       "source": "reports/runtime_views/20261030T134005428488Z/far_owned_near_view.png",

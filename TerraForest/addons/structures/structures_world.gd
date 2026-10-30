@@ -2,6 +2,7 @@ extends Node3D
 signal changed
 signal vegetation_changed(bounds: AABB)
 var _block_change_bounds:=AABB()
+var _block_content_revision:=0
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
@@ -25,6 +26,33 @@ var _model_paging_draining := false
 var _model_paging_assets: Array[String] = []
 var _model_paging_failures := 0
 var _model_paging_last_failure: Dictionary = {}
+var _model_horizon: Node
+
+func enable_model_horizon(archive: RefCounted) -> bool:
+	if _model_horizon != null:return true
+	if not seal() or archive == null or not archive.region_read_stats().running:return false
+	var checkpoints:Dictionary={}
+	for id:String in _models:
+		var checkpoint:PackedByteArray=_model_checkpoints.get(id,PackedByteArray())
+		if checkpoint.is_empty():checkpoint=archive.published_model_index(id).get("checkpoint",PackedByteArray())
+		checkpoints[id]=checkpoint
+	var horizon:Node=ClassDB.instantiate("NativeModelHorizon")
+	if not horizon.configure(archive,_model_list,checkpoints):
+		horizon.free()
+		return false
+	_model_horizon=horizon
+	horizon.name="WorldModelHorizon"
+	add_child(horizon)
+	return true
+
+func stop_model_horizon() -> void:
+	if _model_horizon != null:
+		_model_horizon.clear()
+		_model_horizon.free()
+		_model_horizon=null
+
+func model_horizon_stats() -> Dictionary:
+	return _model_horizon.statistics() if _model_horizon != null else {"active":false,"ready":false,"error":"","records":0,"rendered":0,"pages":0,"pending_regions":0,"pending_uploads":0,"charged_bytes":0,"byte_limit":128*1024*1024}
 
 func enable_model_paging(archive: RefCounted, history: RefCounted) -> bool:
 	if _model_scheduler != null:
@@ -150,21 +178,29 @@ func stop_region_paging() -> void:
 		_pager = null
 
 func _exit_tree() -> void:
+	stop_model_horizon()
 	stop_region_paging()
 	# Exceptional teardown only. Normal save/reload callers drain in frame slices.
 	_model_scheduler = null
 
 func _mark_dirty() -> void:
-	_dirty = true
-	_cached_storage = PackedByteArray()
+	_snapshot_changed()
 	var bounds:=_block_change_bounds;_block_change_bounds=AABB()
+	var revision:int=blocks.survey_content_revision_id()
+	if revision==_block_content_revision:return
+	_block_content_revision=revision
 	vegetation_changed.emit(bounds)
 	changed.emit()
 
 func _block_cells_changed(bounds: AABB) -> void:
 	_block_change_bounds=blocks.global_transform*bounds
 
+func _snapshot_changed() -> void:
+	_dirty = true
+	_cached_storage = PackedByteArray()
+
 func _exclusion_changed() -> void:
+	_snapshot_changed()
 	vegetation_changed.emit(AABB())
 	changed.emit()
 
@@ -214,7 +250,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	_model_list.append(collection)
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)
-	collection.changed.connect(_mark_dirty)
+	collection.changed.connect(_snapshot_changed)
 	collection.exclusion_changed.connect(_exclusion_changed)
 	return collection
 
@@ -222,6 +258,7 @@ func model(asset_id: String) -> Node3D:
 	return _models.get(asset_id)
 
 func is_model_render_region_ready(bounds: AABB) -> bool:
+	if _model_horizon != null:return _model_horizon.statistics().ready
 	for collection in _model_list:
 		if not collection.is_render_region_ready(bounds):return false
 	return true

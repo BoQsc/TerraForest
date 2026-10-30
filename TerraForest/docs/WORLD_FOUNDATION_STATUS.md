@@ -49,9 +49,19 @@ its unfinished changes remain separate. No default promotion or push occurred.
 
 Integration snapshot: later concurrent commits `13788225` (retained model visuals)
 and `cce00e89` (residency notifications) landed after this review baseline. They
-are preserved in the original checkout and are not included in this package or
-its timing results. Their eventual merge requires matching binary/package and
-world checks; do not transfer either branch by copying over files.
+are now merged for the expansion baseline. Both native targets were rebuilt;
+model horizon and residency notification checks pass. Earlier civic timing and
+package evidence predates this merge; expansion requires fresh matched evidence.
+Uncommitted vegetation work in the other checkout remains separate.
+## Vegetation invalidation during travel — 2026-10-30
+
+Unchanged block/model paging no longer invalidates every nearby vegetation owner
+or marks the world edited. Real changes, undo/redo, full restore and staged prefabs
+retain content notifications. Near-camera missing owners fell from mean 3.65/max
+11 to zero in the 160 km/h source and installed controlled sweeps; outer coverage
+and frame pacing remain incomplete. See [evidence and remaining work](../issues/vegetation-lod/README.md#residency-notifications--2026-10-30).
+Continue with bounded owner delivery/publication and physical-car/zoom/edit/endurance
+comparisons; do not claim universal seamlessness or a whole-frame speedup.
 
 ## Readable door content and GLB replacements — 2026-10-30
 
@@ -150,13 +160,18 @@ Teardown counters traced an intermittent retained page to the worker handoff;
 owned native payloads replace Godot objects carried in cross-thread Variants.
 Both installed pairs release all pages without ObjectDB warnings; 58 native checks
 per debug/release configuration include 24 cancellation/consumption cycles. Mixed
-streaming endurance remains open. Other medium props still lack the required
-complete far representation. A native read-only model-render page primitive now
-decodes exact archived transforms without loading editable models or physics;
-bounded GPU pages share the original mesh/material/LOD resource. It is not yet
-connected to the main-world prop renderer. Return next to globally budgeted visual
-ownership, edit/reset invalidation and loading coverage, then require real-world
-travel/zoom/reload and pressure evidence. See the linked issue receipts and contract.
+streaming endurance remains open. Registered static models now use a native
+whole-world visual owner in ordinary paged worlds. Exact archived transforms and
+shared source meshes remain visible independently of nearby gameplay/physics.
+Bounded publication, authoring/undo/door/prefab updates, reset invalidation and
+loading coverage are integrated. Debug/release checks cover 100,000 props;
+normal worker save/reload/reset tests and a fresh-scene edited pose pass.
+The populated fixture retains all 660 model identities, including a table 997 m
+away, through canonical admission without a duplicate renderer or GPU rebuild.
+See `issues/world-overview/model-horizon-verification.json` for scoped results,
+retained failed runs and installed-build identity. Dense real meshes, continuous
+travel/zoom, shadow transitions, other medium vegetation and mixed-edit endurance
+remain unqualified; return with those recordings and measured budgets.
 The preceding 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
 but local ground-cover residency still lags by up to eight near / 33 visible
 owners. Natural boulders now use independent whole-world ownership and native

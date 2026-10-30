@@ -135,6 +135,7 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
     render_bytes+=count*render_stride_bytes();render_uploaded_bytes+=count*render_stride_bytes();++uploads;
 }
 bool NativeStaticBatch::configure_render_streaming(bool enabled,double radius,int64_t batch_limit,int64_t byte_limit,int64_t uploads_per_tick,int64_t bytes_per_tick) {
+    if(world_render_owner)return false;
     if(admission||collection_retirement)return false;
     if(!std::isfinite(radius)||radius<0||radius>16384||batch_limit<1||batch_limit>4096||
        byte_limit<render_stride_bytes()||byte_limit>8000000||uploads_per_tick<1||uploads_per_tick>64||
@@ -213,7 +214,7 @@ void NativeStaticBatch::_process(double) {
     render_cleanup_us=Time::get_singleton()->get_ticks_usec()-started;
     render_process_us=render_cleanup_us;
     if(collection_retirement)return; // Retired GPU pages count against the collection budget.
-    if(collision_only)return;
+    if(collision_only||world_render_owner)return;
     if(!render_streaming||!is_inside_tree())return;
     const uint64_t selection_started=Time::get_singleton()->get_ticks_usec();
     if(render_dirty)select_render_batches();

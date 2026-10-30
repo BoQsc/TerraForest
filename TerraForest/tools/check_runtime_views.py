@@ -15,20 +15,21 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("test", choices=["model_render_pages", "world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_horizon", "vehicle_horizon_world", "vehicle_horizon_cost", "vehicle_prototype", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
+    parser.add_argument("test", choices=["door_mod_world", "model_horizon", "model_horizon_world", "model_render_pages", "world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_horizon", "vehicle_horizon_world", "vehicle_horizon_cost", "vehicle_prototype", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="Retain engine lifetime diagnostics")
     parser.add_argument("--persistence", action="store_true", help="Boulder check only: save/reopen a unique owned fixture clone")
     args = parser.parse_args()
     if args.persistence and args.test != "boulder_horizon_world":
         parser.error("--persistence requires boulder_horizon_world")
-    if args.pack and args.test == "loading_progress_ui":
-        parser.error("Loading UI fixture writes source-only evidence; use its source check")
+    if args.pack and args.test in ("loading_progress_ui", "door_mod_world"):
+        parser.error("This fixture uses source-only evidence/dependencies; use its source check")
     config, _ = parse_args([])
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder = ROOT / "reports/runtime_views" / stamp
     folder.mkdir(parents=True)
     command, cache = command_for(config.godot, args.test, folder, ["--view-output=" + folder.as_posix(), "--module-fixtures=" + (ROOT / "tests/fixtures").as_posix()])
+    if args.test == "door_mod_world":command.append("--noncapturing-door-check")
     if args.test == "vegetation_driving_profile":
         command += ["--profile-dir=" + folder.as_posix(), "--profile-slot=recipe_generated_4644d8cfc8f97e43"]
     if args.test == "boulder_fracture_cache":
@@ -70,7 +71,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = {"model_render_pages": "MODEL_RENDER_PAGES checks=", "world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_horizon": "VEHICLE_HORIZON checks=", "vehicle_horizon_world": "VEHICLE_HORIZON_WORLD failures=0", "vehicle_horizon_cost": "VEHICLE_HORIZON_COST failures=0", "vehicle_prototype": "VEHICLE_PROTOTYPE checks=", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
+        marker = {"door_mod_world": "DOOR_MOD_WORLD failures=0", "model_horizon": "MODEL_HORIZON checks=", "model_horizon_world": "MODEL_HORIZON_WORLD failures=0", "model_render_pages": "MODEL_RENDER_PAGES checks=", "world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_horizon": "VEHICLE_HORIZON checks=", "vehicle_horizon_world": "VEHICLE_HORIZON_WORLD failures=0", "vehicle_horizon_cost": "VEHICLE_HORIZON_COST failures=0", "vehicle_prototype": "VEHICLE_PROTOTYPE checks=", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
         record["result"] = execute(command, folder, 240, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original

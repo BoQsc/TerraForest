@@ -24,7 +24,7 @@ class NativeStaticHistory : public RefCounted {
     bool registered(NativeStaticBatch *collection) const;
     void clear_records();
     void remember(const Edit &edit);
-    void publish(NativeStaticBatch *collection);
+    void publish(NativeStaticBatch *collection,bool notify_exclusion=true);
     bool replay(bool backwards,const AABB &protection);
     bool region_referenced(uint64_t collection,BlockKey region) const;
     int64_t begin_owned_transfer(NativeStaticBatch *collection,const PackedByteArray &packet,bool retiring);

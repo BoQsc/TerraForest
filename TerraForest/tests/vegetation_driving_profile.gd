@@ -66,6 +66,8 @@ func frame()->void:
 	if not rows.is_empty():rows[-1]["boulder_us"]=game.ground_cover.boulders.last_process_us
 	if rows.size()%12==0:
 		var cover=game.ground_cover
+		rows[-1]["ground_exclusion_revision"]=cover._exclusion_revision
+		rows[-1]["ground_dirty_owners"]=cover._dirty.size()
 		var boulder:Dictionary=cover.boulders.coverage_status()
 		if boulder_identities()!=boulder_baseline or boulder.render.roots!=boulder_baseline.size():push_error("Boulder coverage lost during travel")
 		rows[-1]["boulders"]=boulder

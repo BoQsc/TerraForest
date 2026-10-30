@@ -22,6 +22,7 @@ bool NativeStaticBatch::begin_region_transfer(const PackedByteArray &bytes,bool 
     if(!valid_model_region(key)||length<1||length>128||count>100000||
        16+length+count*56!=uint64_t(bytes.size()-88))return false;
     if(retiring) {
+        if(world_render_owner&&(!world_render_seeded.count(key)||!world_render_changes.empty()))return false;
         auto group=groups.find(key);
         if(missing!=unloaded_regions.end()||count!=(group==groups.end()?0:group->second.size())||
            groups.size()+unloaded_regions.size()+(group==groups.end()?1:0)>4096)return false;
@@ -139,7 +140,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             job.phase=RegionAdmission::RETIRE_RECORDS;collision_dirty=true;render_dirty=true;
             // Publish availability before cleanup. Observers/save caches see the
             // whole unavailable disk region, never a prefix of surviving records.
-            publish_change(true);break;
+            publish_change(true,false);break;
         }
         if(!job.retiring&&job.ids.size()==job.count) {
             // All indexes were prepared a record at a time. Publication moves
@@ -154,7 +155,7 @@ Dictionary NativeStaticBatch::advance_region_admission_impl(int64_t max_records,
             admission.reset();admission_result="complete";
             // Synchronous observers cannot start another admission inside this
             // publication. As with raw restore_region, this is a history barrier.
-            publish_change(true);break;
+            publish_change(true,false);break;
         }
         if(admission_step_records>=uint64_t(max_records))break;
         const uint8_t *data=job.packet.ptr()+job.offset;

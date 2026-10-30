@@ -1,5 +1,17 @@
 [
   {
+    "file": "residency-before.png",
+    "source": "reports/runtime_performance/20261030T155350959207Z_ground_ownership_baseline/moving-end.png",
+    "sha256": "e7f281d9bd4d56709697dab0767c5361c04d3a79d7fdf3d6a99686ec0a721686",
+    "scope": "Unedited 1080p endpoint before recovery, 160 km/h controlled camera sweep, baseline 13788225; inspected, not user-approved"
+  },
+  {
+    "file": "residency-after.png",
+    "source": "reports/runtime_performance/20261030T163021634730Z_residency_final_pack/moving-end.png",
+    "sha256": "48e86484905b37a53a4ef7871421144d5d269e836f67295fed889a391985c6c0",
+    "scope": "Unedited 1080p matching endpoint before recovery, final installed build; wind/time differ; not a continuous-motion or user-approval claim"
+  },
+  {
     "file": "forest_448.png",
     "source": "reports/vegetation_lod_visual/forest_448.png",
     "sha256": "ef98dd3f70740d0016cdb0e2b21aaca47ade44c96a90402415c58374ecd744e8"

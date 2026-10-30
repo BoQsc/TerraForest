@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "173986575af0e67cef5df531a84b895c9a85c52e",
+  "scope": "Native whole-world static-model visual ownership in ordinary paged worlds. Scoped coverage/mutation/persistence verification, not universal seamless LOD, new proxy art, or whole-project completion.",
+  "implementation": "Original native code using existing registered static-model meshes/materials/imported LODs and the existing checked archive worker. No save schema, generator, canonical-world or new worker changes.",
+  "pack_sha256": "60fad6a8ca426fb9ec3646c6ff214d66736d30f257cd236ff8c5412219310331",
+  "pack_bytes": 400405936,
+  "distribution_bytes": 429832167,
+  "native_sha256": {
+    "debug": "49f735004ac09696685c77723409adfe7b95469a26c01e3a62439c1cb1cee442",
+    "release": "9b1663352018b63848dfb00b952dc78373ee4de9b84a4d7836debe9b8c88d702"
+  },
+  "contract": {
+    "collections": 256,
+    "page_capacity": 256,
+    "page_limit": 16384,
+    "seed_job_limit": 65536,
+    "default_record_work": 1024,
+    "default_uploads": 2,
+    "default_cooperative_usec": 1500,
+    "default_planning_bytes": 134217728,
+    "retained_archive_slots": 2,
+    "maximum_archive_slot_bytes": 5600328,
+    "render_distance_cutoff": false,
+    "collision": "Existing local canonical collision only; distant visual reads do not hydrate editable models.",
+    "mutation": "Authored upsert/removal/history/native prefab hooks, reset epochs and bootstrap overrides. Canonical admission/retirement preserves visual ownership.",
+    "pressure": "Explicit not-ready state; bounded authored-change retries allow removals to recover capacity. Failed reset seeds cannot report the new epoch ready.",
+    "limits": "Planning charge is not total allocator/mesh/driver memory. Collection reset/destruction are not fully sliced. No new mesh LODs are fabricated; existing source resources remain authoritative."
+  },
+  "pressure": {
+    "instances": 100000,
+    "pages": 391,
+    "gpu_transform_bytes": 4800000,
+    "planning_bytes": 63201424,
+    "prototype": "Shared BoxMesh, not 100000 complex authored props."
+  },
+  "checks": {
+    "source": {
+      "path": "reports/runtime_views/20261030T154349773773Z",
+      "checks": 57,
+      "failures": 0
+    },
+    "release": {
+      "path": "reports/model_horizon_release.json",
+      "checks": 57,
+      "failures": 0
+    },
+    "installed": {
+      "path": "reports/runtime_views/20261030T154427530746Z",
+      "checks": 57,
+      "failures": 0,
+      "peak_private_commit_bytes": 801423360,
+      "peak_dedicated_gpu_bytes": 171700224,
+      "within_sampled_limits": true
+    },
+    "lifecycle": {
+      "path": "reports/checks/20261030T154848130435Z",
+      "checks": 27,
+      "failures": 0,
+      "scope": "Real terrain worker manual save, autosave, rejected capture, reload, shutdown/fresh scene, reset. Includes full visual counts and persisted edited pose."
+    },
+    "installed_world": {
+      "path": "reports/runtime_views/20261030T154431245208Z",
+      "failures": 0,
+      "load_seconds": 25.77093,
+      "records": 660,
+      "pages": 203,
+      "collections": 15,
+      "archive_reads": 197,
+      "gpu_transform_bytes": 31680,
+      "planning_bytes": 11954320,
+      "selected_asset": "furniture/table/v1",
+      "selected_identity": 1,
+      "selected_position": [
+        1011,
+        60,
+        270
+      ],
+      "physical_player_distance_m": 997.496154785156,
+      "canonical_admission_uploaded_bytes": 0,
+      "authored_change_and_restore_uploaded_bytes": 192,
+      "peak_private_commit_bytes": 3322503168,
+      "peak_dedicated_gpu_bytes": 1490522112,
+      "within_sampled_limits": true,
+      "scope": "Complete registered-prop IDs, actual GPU pose, distant close camera, real canonical admission, authored update/restore; no physical-driving or continuous-zoom qualification."
+    },
+    "prior_installed_world": {
+      "path": "reports/runtime_views/20261030T154003603516Z",
+      "load_seconds": 32.107502,
+      "failures": 0,
+      "scope": "Before final failed-seed epoch guard; timing variation is not a claimed loading speedup."
+    },
+    "vehicle_regression": {
+      "path": "reports/runtime_views/20261030T154047337917Z",
+      "failures": 0,
+      "scope": "Prior combined DLL before final failed-seed epoch guard; populated four-Ranger ownership and second-world play gate."
+    },
+    "forest_regression": {
+      "path": "reports/runtime_views/20261030T154710030359Z",
+      "failures": 0,
+      "owners": 1024,
+      "trees": 8742,
+      "scope": "Final installed cold/warm world retains every tree identity through real block admission/retirement, harvest, excavation and rebuild; teardown releases exclusion pages and source save is unchanged. Loading controller logs include a 134 ms hitch; this is not a whole-loading frame-time pass."
+    },
+    "doors": {
+      "source_path": "reports/checks/20261030T152941533309Z",
+      "installed_path": "reports/door_content_pack/20261030T154425719774Z",
+      "checks": 58,
+      "failures": 0,
+      "component_world_path": "reports/runtime_views/20261030T153636274949Z",
+      "scope": "Temporary-world placement, description, native interaction and salvage run offscreen without mouse capture. Does not replace the door chat's separate isolated physical E/HUD evidence; headless pack check has no VRAM sample."
+    },
+    "regressions": {
+      "static_placements": "reports/checks/20261030T153101547769Z",
+      "static_model_regions": "reports/checks/20261030T153116126254Z",
+      "model_region_metadata": "reports/checks/20261030T153120025149Z",
+      "model_incremental_retirement": "reports/checks/20261030T153127245765Z",
+      "model_admission_history": "reports/checks/20261030T153130017185Z",
+      "prefab_transaction": "reports/checks/20261030T153131117541Z",
+      "model_visual_readiness": "reports/checks/20261030T153133181258Z",
+      "model_render_pages": "reports/checks/20261030T153134865094Z",
+      "model_incremental_admission": "reports/checks/20261030T153705546056Z"
+    }
+  },
+  "retained_failures": [
+    {
+      "path": "reports/checks/20261030T152749171098Z",
+      "cause": "New fixture put an attachment outside its prefab envelope and attempted atomic deletion of an already-removed identity. Corrected fixture; production validation was not weakened."
+    },
+    {
+      "path": "reports/checks/20261030T153037985396Z",
+      "cause": "New play gate incorrectly required an absent model horizon in a nonpaged temporary scene. Gate now applies only when the paging coordinator exists; normal saved worlds still require coverage."
+    },
+    {
+      "path": "reports/checks/20261030T153124908504Z",
+      "cause": "42 admission correctness checks passed, but concurrent-world-run step timing exceeded the existing 2 ms ceiling (2.322/3.637 ms). Sequential repeat retains the same threshold and peaks at 0.679 ms. Not universal thermal/frame-time qualification."
+    },
+    {
+      "scope": "Shared build initially encountered a DLL lock while the authorized door chat tested the same checkout. Builds were separated; door source commit 17398657 was integrated before combined rebuild/export."
+    }
+  ],
+  "fixture": {
+    "path": "user://worlds/recipe_generated_4644d8cfc8f97e43.trw",
+    "seed": 1703,
+    "generator": 29,
+    "sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+    "policy": "Read-only populated fixture; final SHA verified unchanged. Lifecycle fixtures are separate owned saves."
+  },
+  "measurement": "Windows per-process private-commit/dedicated-GPU counters sampled at 0.5 s on RTX4050 laptop; not instantaneous peaks, whole-device use or physical 4 GiB compatibility.",
+  "remaining": [
+    "Dense real-prototype mixed-world GPU/CPU cost and total memory",
+    "Continuous physical driving/zoom and shadow/geometry transition review",
+    "Fully bounded collection-wide reset/destruction and long mixed-edit endurance",
+    "Other medium vegetation, remaining grass-driving gaps",
+    "Wider terrain seams, service modules and generation/loading pipeline milestones in WORLD_RENDERING_CONTRACT.md"
+  ]
+}

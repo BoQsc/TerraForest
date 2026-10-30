@@ -68,12 +68,14 @@ void NativeStaticHistory::remember(const Edit &edit) {
     undo_edits.push_back(edit);
     while(undo_edits.size()>size_t(step_limit)||undo_edits.size()*sizeof(Edit)>byte_limit)undo_edits.pop_front();
 }
-void NativeStaticHistory::publish(NativeStaticBatch *collection) {
+void NativeStaticHistory::publish(NativeStaticBatch *collection,bool notify_exclusion) {
     // Update cursor/revision before notifying observers. Reject reentrant history
     // commands until callbacks finish; external batch mutations form a barrier.
-    revisions[collection->get_instance_id()]=collection->edit_revision;
+    const auto identity=collection->get_instance_id();
+    revisions[identity]=collection->edit_revision;
     collection->defer_change_signal=false;
     collection->emit_signal("changed");
+    if(notify_exclusion)if(auto *live=ObjectDB::get_instance(identity))live->emit_signal("exclusion_changed");
     busy=false;
     synchronize(); // A callback may mutate or destroy any registered collection.
 }
@@ -156,7 +158,7 @@ Dictionary NativeStaticHistory::advance_owned_transfer(NativeStaticBatch *collec
     const uint64_t revision=collection->edit_revision;
     Dictionary result=collection->advance_region_admission_impl(records,bytes,usec);
     result["accepted"]=true;
-    if(collection->edit_revision!=revision)publish(collection);
+    if(collection->edit_revision!=revision)publish(collection,false);
     else {collection->defer_change_signal=false;busy=false;}
     return result;
 }
@@ -190,6 +192,6 @@ bool NativeStaticHistory::transfer_region(NativeStaticBatch *collection,const Pa
     if(!ok){collection->defer_change_signal=false;busy=false;return false;}
     // This is a residency transition, not an authored edit. Keep both journal
     // stacks and publish the revision through the same reentrancy-safe path.
-    publish(collection);return true;
+    publish(collection,false);return true;
 }
 }

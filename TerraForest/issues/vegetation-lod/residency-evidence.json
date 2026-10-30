@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-30",
+  "status": "Improved-partial, installed; outer ground-cover continuity and frame pacing unresolved",
+  "baseline_revision": "13788225e814fc3aa439ed7dfc35b7dd1603c842",
+  "scope": "585.6 m controlled road-camera sweep at 160 km/h, seed 1703, RTX 4050 Laptop, 1920x1080, 60 fps cap. Not physical vehicle handling or continuous visual acceptance. Owner counts include empty/off-screen cells. No density, visibility range, material, generation or save-format change.",
+  "cause": "Unchanged model and block residency transitions propagated world-edit/vegetation invalidation. Existing snapshot and collection notifications are retained, but authored changes are distinguished. Native staged prefab publication now also advances the block content revision.",
+  "final_build": {
+    "pack_sha256": "1f507c2e25c546fa36e469228f067a27cc7f45b53ff89d68044544d0dd4a7ebe",
+    "pack_bytes": 400406080,
+    "structures_debug_sha256": "e636a4b1391115c6e3b94963d43f29bde2ca76ec2c48ecaa27e58080fbd3dd6b",
+    "structures_release_sha256": "af30b3552562558461107219c57772a10aabfa1b0d4edf244a7288ba819537ce",
+    "source_dist_native_hashes_equal": 14,
+    "export_log": "reports/residency_notifications_export.log"
+  },
+  "profiles": [
+    {"report": "reports/runtime_performance/20261030T155350959207Z_ground_ownership_baseline/run.json", "scope": "Installed baseline", "frame_p95_ms": 22.655, "missing_near_mean": 3.6515151515, "missing_near_max": 11, "missing_visible_mean": 27.0909090909, "missing_visible_max": 40},
+    {"report": "reports/runtime_performance/20261030T161050632332Z_residency_notifications_source/run.json", "scope": "Intermediate model-only notification fix", "frame_p95_ms": 23.1, "missing_near_mean": 0.6212121212, "missing_near_max": 8, "missing_visible_mean": 12.6212121212, "missing_visible_max": 32, "exclusion_revisions": [18, 214, 410, 602]},
+    {"report": "reports/runtime_performance/20261030T161726279445Z_block_model_residency_source/run.json", "scope": "Source block/model fix, before staged-prefab counter follow-up", "frame_p95_ms": 27.323, "missing_near_mean": 0, "missing_near_max": 0, "missing_visible_mean": 0.1692307692, "missing_visible_max": 3, "exclusion_revisions": [18]},
+    {"report": "reports/runtime_performance/20261030T162051740994Z_residency_notifications_pack/run.json", "scope": "First installed block/model fix, before staged-prefab counter follow-up", "frame_p95_ms": 27.52, "missing_near_mean": 0, "missing_near_max": 0, "missing_visible_mean": 0.6307692308, "missing_visible_max": 4, "exclusion_revisions": [18]},
+    {"report": "reports/runtime_performance/20261030T163021634730Z_residency_final_pack/run.json", "scope": "Final installed build, matched pack hash", "frame_p95_ms": 30.061, "frame_max_ms": 41.132, "gpu_p95_ms": 8.0500001907, "missing_near_mean": 0, "missing_near_max": 0, "missing_visible_mean": 2.265625, "missing_visible_max": 8, "exclusion_revisions": [18], "peak_private_bytes": 3660873728, "peak_dedicated_gpu_bytes": 1511849984, "resource_gates_passed": true}
+  ],
+  "profile_invariants": {"forest_visible_owner_misses": 0, "source_save_unchanged": true, "source_save_sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9", "mouse_untouched": true, "boulder_identity_checks_passed": true},
+  "verification": [
+    {"report": "reports/checks/20261030T162645438875Z", "test": "model_residency_notifications", "checks": 38, "passed": true, "scope": "Final native/scene code: raw/incremental/history residency, cache invalidation, authoring, replay, snapshot restore, block-only staged prefab and reentrancy"},
+    {"report": "reports/checks/20261030T162646494458Z", "test": "model_world_bootstrap", "checks": 44, "passed": true},
+    {"report": "reports/checks/20261030T162649698406Z", "test": "prefab_staged", "checks": 25, "passed": true},
+    {"report": "reports/checks/20261030T162652355687Z", "test": "model_paging_lifecycle", "checks": 28, "passed": true, "scope": "Real worker save/autosave/reload/shutdown; background retirement does not mark saved state dirty"},
+    {"report": "reports/prefab_staged_release.json", "test": "prefab_staged release", "checks": 25, "passed": true},
+    {"report": "reports/checks/20261030T160935789093Z", "test": "static_placements", "checks": 235, "passed": true, "scope": "Model signal changes; before final prefab/bootstrap-only follow-up"},
+    {"report": "reports/static_placements_release.json", "test": "static_placements release", "checks": 235, "passed": true, "scope": "Repeated on final release DLL"},
+    {"report": "reports/checks/20261030T160950202772Z", "test": "model_admission_history", "passed": true},
+    {"report": "reports/checks/20261030T160950929153Z", "test": "model_incremental_retirement", "passed": true},
+    {"report": "reports/checks/20261030T160956445341Z", "test": "ground_cover_stream", "passed": true},
+    {"report": "reports/checks/20261030T161906392903Z", "test": "structure_exclusion_paging", "passed": true},
+    {"report": "reports/checks/20261030T161908117572Z", "test": "structure_exclusion_pressure", "passed": true},
+    {"report": "reports/runtime_views/20261030T162218233318Z", "test": "model_horizon pack", "passed": true, "scope": "Before final prefab counter/bootstrap notification follow-up"},
+    {"report": "reports/runtime_views/20261030T162223633020Z", "test": "forest_horizon_world pack", "passed": true, "scope": "Before final prefab counter/bootstrap notification follow-up; cold/warm, harvesting, excavation and save preservation; concurrent civic test began during late verification, not a performance comparison"},
+    {"report": "reports/runtime_views/20261030T163145912144Z", "test": "model_horizon_world final pack", "passed": true, "scope": "Populated world retained props, canonical paging, edits, unchanged original save and zero mouse capture"},
+    {"report": "reports/door_content_pack/20261030T163231801829Z", "test": "door content final pack", "checks": 58, "passed": true}
+  ],
+  "retained_failures": [
+    {"report": "reports/checks/20261030T160031167264Z", "reason": "Six intended baseline failures: unchanged model residency invalidates cover and marks world edited"},
+    {"report": "reports/checks/20261030T160819065359Z", "reason": "Invalid test fixture attempted to free a signal-emitting locked Godot object; replaced with valid other-object callback and reentrancy checks"},
+    {"report": "reports/checks/20261030T161502259022Z", "reason": "Block restore test omitted required expected-current packet; fixture corrected"},
+    {"report": "reports/checks/20261030T161641152574Z", "reason": "Block undo fixture had no history budget; fixture corrected"},
+    {"report": "reports/checks/20261030T162430256645Z", "reason": "Two genuine regression failures: staged block-only prefab did not advance native content revision; fixed and all 38 checks repeated"},
+    {"report": "reports/residency_prefab_release_missing_dependencies.log", "reason": "Isolated release harness omitted building_lod.gd and fullscreen_policy.gd dependencies and timed out; fixture closure repaired, release repeated successfully"}
+  ],
+  "visuals": "images/residency-before.png and images/residency-after.png; hashes and original captures in images/manifest.json. Inspected endpoint only, not user visual approval.",
+  "remaining": "No whole-frame speedup: p95 worsened versus the incomplete-cover baseline. Bound grass owner delivery/publication, compare sustained physical cars, sharp turns, zoom, edits, weak hardware and endurance; outer owner misses and prior maximum-edit publication budget remain open. No pre-baked owner system implemented.",
+  "provenance": "Original project code/test changes under 0BSD. Screenshots are unedited local game captures; existing asset provenance and exceptions remain unchanged. No third-party dependency or asset added. User saves untouched."
+}
