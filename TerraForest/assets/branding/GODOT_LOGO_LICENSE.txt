@@ -1,0 +1,11 @@
+Godot Engine Logo
+Copyright (c) 2017 Andrea Calabró
+
+This work is licensed under the Creative Commons Attribution 4.0 International
+license (CC BY 4.0 International): https://creativecommons.org/licenses/by/4.0/
+
+Source artwork: https://github.com/godotengine/godot/blob/master/main/splash.png
+
+TerraForest modification: the original splash artwork is centered, unscaled, on
+a transparent 1920 x 1080 canvas with the footer "Public Domain • CC0 • 0BSD".
+The footer describes project content; it does not change the Godot logo license.

@@ -71,7 +71,8 @@ for descriptor in (root/'addons').rglob('*.gdextension'):
             destination.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(source,destination)
             libraries.add(str(library))
-notices=[Path('addons/structures/MESHOPTIMIZER_LICENSE.txt')]
+notices=[Path('addons/structures/MESHOPTIMIZER_LICENSE.txt'),
+         Path('assets/branding/GODOT_LOGO_LICENSE.txt')]
 for notice in notices:
     destination=staging/notice
     destination.parent.mkdir(parents=True,exist_ok=True)
@@ -97,7 +98,9 @@ if staging!=root/'dist':
         destination.parent.mkdir(parents=True,exist_ok=True)
         shutil.copy2(staging/library,destination)
     for notice in notices:
-        shutil.copy2(staging/notice,root/'dist'/notice)
+        destination=root/'dist'/notice
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(staging/notice,destination)
     pending=root/'dist/TerraForest.pending.pck'
     shutil.copy2(pack,pending)
     pending.replace(installed_pack)

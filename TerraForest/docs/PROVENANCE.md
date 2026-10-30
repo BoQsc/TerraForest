@@ -12,3 +12,9 @@ Terrain native binaries and their base meshes are retained as a matching set. Na
 The existing meshing and vegetation render algorithms were preserved while public APIs, lifecycle handling, world integration, streaming admission, resource paths, export loading and the demo were changed. This is not a claim that all underlying algorithms were newly authored.
 
 Both code distributions provide 0BSD licenses. Spruce provenance and its stated CC0 terms are retained in `addons/vegetation/ASSET_LICENSE.md`. Terrain texture notices are retained under `addons/volumetric_terrain/terrain_textures`. Review those notices when publishing assets separately. No Godot executable, export template, compiler, system library or Python package is redistributed.
+
+The boot splash retains Godot's default artwork and adds the project footer
+"Public Domain • CC0 • 0BSD". The Godot logo remains copyright 2017 Andrea
+Calabró under CC BY 4.0; attribution and modification details are retained in
+`assets/branding/GODOT_LOGO_LICENSE.txt`. The original artwork and reproducible
+Windows PNG builder are retained alongside the configured splash asset.
