@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "example.doors",
+  "objects": [
+    {
+      "schema": 1,
+      "id": "example/doors/narrow_right/v1",
+      "name": "Narrow right-hinged door",
+      "visual": { "source": "builtin:wooden_door", "scale": [0.8, 1, 1] },
+      "collision": { "position": [0, 0, -0.07], "size": [0.8, 2.2, 0.14] },
+      "behavior": {
+        "type": "hinged_door",
+        "pivot": [0.8, 0, 0],
+        "opening_degrees": -90,
+        "zombie_breakable": false
+      },
+      "recipe": { "wood": 5 },
+      "salvage": { "wood": 2 },
+      "durability": { "health": 75, "material": "wood" }
+    }
+  ],
+  "replacements": []
+}

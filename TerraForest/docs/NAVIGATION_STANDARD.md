@@ -122,7 +122,11 @@ spawn/refill loop is permitted. Dormant residents do not simulate navigation.
 Settlement actors and zombies share geometry, not permissions. A closed door is
 an obstruction until an authorized interaction changes it. The user's zombie
 policy is **attack breakable doors when blocked**; zombies do not open doors.
-The current breakable whitelist is the existing wooden-door asset.
+The built-in breakable whitelist remains the existing wooden-door asset. Door
+content packs must explicitly set `behavior.zombie_breakable`; the same bounded
+door targeting/damage path then uses that definition's collision and health.
+The shipped second-door example sets this permission false. Merely importing a
+GLB or registering a model grants no attack or opening permission.
 
 An interaction has an identified model placement, a valid approach, an action and
 a result. Attack windup and contact timing remain authored. At the contact marker,

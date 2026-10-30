@@ -133,7 +133,8 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    and 33 visible ground owners missing; grass continuity remains unresolved.
    Extend independent medium-object visibility without expanding full grass/physics globally.
    Measure dense worlds and require continuous driving/zoom/edit/reload evidence.
-4. **General module host.** Only vehicle providers are integrated. Generator,
+4. **General module host.** Vehicle providers and a narrow data-only
+   [door-content contract](DOOR_CONTENT.md) are integrated. Generator,
    biome, terrain, vegetation and other service providers, dependency negotiation,
    migrations and native-pack deployment are not implemented. Reuse host ownership
    and version/cache identities when adding them; no arbitrary automatic code scan.

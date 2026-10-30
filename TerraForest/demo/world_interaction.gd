@@ -11,8 +11,8 @@ func hit(game: Node) -> Dictionary:
 func describe(game: Node, target: Dictionary) -> String:
 	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
 	if game.storage.aimed_id(target)>0:return "E · Open wooden chest"
-	var door_id: int=game.doors.aimed_id(target)
-	if door_id>0:return "E · Close wooden door" if game.doors.state.is_open(door_id) else "E · Open wooden door"
+	var door_hint: String=game.doors.describe(target)
+	if not door_hint.is_empty():return door_hint
 	var loose:=loose_target(game,target)
 	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
 	if loose.get("kind")=="ground":

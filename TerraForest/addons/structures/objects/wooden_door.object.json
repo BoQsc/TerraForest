@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "id": "architecture/wooden_door/v1",
+  "name": "Wooden door",
+  "visual": { "source": "builtin:wooden_door" },
+  "collision": { "position": [0, 0, -0.07], "size": [1, 2.2, 0.14] },
+  "behavior": {
+    "type": "hinged_door",
+    "pivot": [0, 0, 0],
+    "opening_degrees": 90,
+    "zombie_breakable": true
+  },
+  "recipe": { "wood": 6 },
+  "salvage": { "wood": 3 },
+  "durability": { "health": 90, "material": "wood" }
+}

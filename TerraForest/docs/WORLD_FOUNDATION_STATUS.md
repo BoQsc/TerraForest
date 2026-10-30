@@ -1,6 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Readable door content and GLB replacements — 2026-10-30
+
+The original door now has a JSON definition; an opt-in data-only pack adds a
+second right-hinged door using the existing simple mesh. External packs can
+replace visuals with self-contained GLBs without gameplay code or editor import.
+Native placement, collision, hinge state and storage remain authoritative.
+The original ID/save section/v1 hinge bytes are preserved; missing door mods
+refuse loading and disable writes instead of discarding saved objects.
+See the [authoring contract](DOOR_CONTENT.md) and
+[scoped tests, failures and limits](evidence/door_content/README.md).
+
+Replacement artwork is deliberately pending the user's GLBs. On receipt, check
+provenance under CONTRIBUTING, dimensions/pivot/materials, in-world appearance
+and source/pack startup cost before claiming visual or performance acceptance.
+No new replacement artwork, general object scripting, hot reload or automatic
+save migration is included. The native 10,000-placement check proves absence of
+per-placement nodes; it is not a dense-world frame-time qualification.
+
 ## Public-domain-first policy and initial inventory — 2026-10-30
 
 Repository/project agent instructions and contribution guidance now set 0BSD for

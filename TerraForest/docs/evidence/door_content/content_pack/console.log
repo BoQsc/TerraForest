@@ -1,0 +1,61 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS read object pack definitions
+PASS register both door types as native shared models
+PASS independent native door states register with compound persistence
+PASS same numeric placement identity admitted in architecture/wooden_door/v1
+PASS open architecture/wooden_door/v1
+PASS same numeric placement identity admitted in example/doors/narrow_right/v1
+PASS open example/doors/narrow_right/v1
+PASS same placement IDs do not alias hinge state
+PASS right hinge rotates around authored pivot
+PASS original hinge packet stays byte-layout compatible
+PASS read object pack definitions
+PASS register both door types as native shared models
+PASS independent native door states register with compound persistence
+PASS fresh model collections restore both stable identities
+PASS fresh hinge restore: door_hinges
+PASS fresh hinge restore: door_bb6ea9fe9274b43a7db29627e3f0d4ff92fa2870
+PASS fresh restored door closes to exact original pose: architecture/wooden_door/v1
+PASS fresh restored door closes to exact original pose: example/doors/narrow_right/v1
+PASS one type closing leaves other type unchanged
+PASS different behavior contract configures
+PASS incompatible saved hinge geometry rejects instead of reinterpreting open pose
+PASS missing mod rejects model save without mutating existing world
+PASS actual pre-change native saves restore with the extra mod installed
+PASS legacy hinge bytes roundtrip unchanged
+PASS actual legacy opened door closes to its original pose
+PASS older world with no second door loads after enabling mod
+PASS new type defaults empty in older world
+PASS legacy empty hinge default accepted
+PASS construction and salvage consume the readable definition
+PASS damage profile consumes the same definition
+PASS empty salvage uses ordinary removal instead of an empty inventory grant
+PASS new doors do not grant implicit zombie permissions
+PASS encode simple GLB test fixture
+PASS visual-only GLB replacement admitted
+PASS loose GLB imports without editor or resource pack: 
+PASS nested GLB transforms and parts consolidate correctly
+PASS embedded GLB texture and material survive consolidation
+PASS repeated visual request reuses one mesh
+PASS replacement preserves collision and behavior contract
+PASS read object pack definitions
+PASS register both door types as native shared models
+PASS independent native door states register with compound persistence
+PASS GLB visual swap restores prior model and hinge saves
+PASS replaced open legacy door closes exactly
+PASS reject invalid visual source: ../outside.glb
+PASS reject invalid visual source: C:/outside.glb
+PASS reject invalid visual source: https://example.com/a.glb
+PASS reject invalid visual source: bad.tres
+PASS visual replacement cannot change gameplay collision
+PASS conflicting replacements reject explicitly
+PASS invalid behavior rejected before registration
+PASS independent native swing fixture
+PASS configurable large opening angle
+PASS intermediate swing occupancy blocks a 150-degree turn transactionally
+PASS 100 arbitrary-angle cycles close without accumulated drift
+PASS native profile cannot change after configuration
+PASS 10000 door placements use native collection storage
+PASS no scene node or script per placed door
+DOOR_CONTENT checks=58 failures=0

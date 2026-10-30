@@ -42,6 +42,7 @@ var destination_guide=preload("res://addons/player_runtime/destination_guide.gd"
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
+var object_mod_config := "user://mods/enabled.cfg"
 var world_interaction=preload("res://demo/world_interaction.gd").new()
 var terrain_placement=preload("res://addons/player_runtime/terrain_placement.gd").new()
 var terrain_placement_preview=preload("res://addons/player_runtime/terrain_placement_preview.gd").new()
@@ -164,8 +165,8 @@ func _ready() -> void:
 	structures_ready = structures_ready and not chest.is_empty()
 	var window: Dictionary=preload("res://addons/structures/window_catalog.gd").register(structures)
 	structures_ready = structures_ready and not window.is_empty()
-	var door: Dictionary=preload("res://addons/structures/door_catalog.gd").register(structures)
-	structures_ready = structures_ready and not door.is_empty() and doors.prepare(self)
+	var door_entries: Array[Dictionary]=preload("res://addons/structures/door_catalog.gd").register_all(structures,object_mod_config)
+	structures_ready = structures_ready and not door_entries.is_empty() and doors.prepare(self)
 	var guardrail: Dictionary=preload("res://addons/structures/guardrail_catalog.gd").register(structures)
 	structures_ready = structures_ready and not guardrail.is_empty()
 	var fence: Dictionary=preload("res://addons/structures/fence_catalog.gd").register(structures)
@@ -268,7 +269,7 @@ func _ready() -> void:
 	object_entries.append(ladder)
 	object_entries.append(chest)
 	object_entries.append(window)
-	object_entries.append(door)
+	object_entries.append_array(door_entries)
 	object_entries.append(guardrail)
 	object_entries.append(fence)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks,structures._models.values())
@@ -1371,7 +1372,7 @@ func _begin_frontage_placement(asset: Resource,target: Vector3i,from_dialog: boo
 
 func _begin_direct_prefab(asset: Resource,target: Vector3i) -> void:
 	if not _foundation_placement.is_empty():_show_lake_notice("Wait for the current placement");return
-	if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,asset,target,structure_rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()]):
+	if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,asset,target,structure_rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(structures.object_definitions),[model_tool.protection()]):
 		_foundation_placement={"asset":asset,"target":target,"rotation":structure_rotation,"index":structure_prefab_index,"preparing":true,"require_support":false,"terrain_epoch":terrain.epoch,"terrain_revision":terrain.density_revision}
 		_show_lake_notice("Preparing furnished building...")
 	else:_show_lake_notice(construction_inventory.reason)
@@ -1415,7 +1416,7 @@ func _advance_frontage_placement() -> void:
 	if world_vehicle.overlaps_edit(request.asset.placement_bounds(request.target,request.rotation)):
 		_placement_notice(request,"Move the vehicle clear before placing frontage");return
 	if not request.asset.get_model_attachments().is_empty():
-		if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()]):
+		if construction_inventory.begin_prefab(structures.blocks,player_hud.inventory,request.asset,request.target,request.rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(structures.object_definitions),[model_tool.protection()]):
 			request.preparing=true;request.terrain_epoch=terrain.epoch;request.terrain_revision=terrain.density_revision
 			_foundation_placement=request;_show_lake_notice("Preparing furnished buildings...")
 		else:_placement_notice(request,construction_inventory.reason)
@@ -1441,39 +1442,46 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 			offset=routed.normalized()*maxf(1.5,routed.length())
 	var ray:=PhysicsRayQueryParameters3D.create(start,start+offset.limit_length(12.0),7,[player.get_rid()])
 	var hit:=get_world_3d().direct_space_state.intersect_ray(ray)
-	if hit.is_empty() or hit.get("collider")!=doors.collection:return null
-	var identity:int=doors.collection.placement_for_body(hit.rid)
-	if identity<=0 or doors.state.is_open(identity) or doors.collection.is_removal_protected(identity):return null
+	var target:Dictionary=doors.aimed(hit)
+	if target.is_empty():return null
+	var entry:Dictionary=target.type
+	if not entry.definition.behavior.zombie_breakable:return null
+	var batch:Node3D=entry.collection
+	var hinges:RefCounted=entry.state
+	var identity:int=target.identity
+	if hinges.is_open(identity) or batch.is_removal_protected(identity):return null
 	var normal:Vector3=hit.normal;normal.y=0
 	if normal.length_squared()<0.5:return null
 	var obstacle=preload("res://addons/characters/runtime/obstacle_target.gd").new()
-	obstacle.surface=doors.collection;obstacle.body_rid=hit.rid;obstacle.identity=identity
-	var transform:PackedFloat32Array=doors.collection.get_instance(identity)
+	obstacle.surface=batch;obstacle.body_rid=hit.rid;obstacle.identity=identity
+	var transform:PackedFloat32Array=batch.get_instance(identity)
 	if transform.size()!=12:obstacle.free();return null
-	var base:Vector3=doors.collection.to_global(Vector3(transform[3],transform[7],transform[11]))
+	var base:Vector3=batch.to_global(Vector3(transform[3],transform[7],transform[11]))
 	var leaf_pose:=Transform3D(Basis(Vector3(transform[0],transform[4],transform[8]),Vector3(transform[1],transform[5],transform[9]),Vector3(transform[2],transform[6],transform[10])),Vector3(transform[3],transform[7],transform[11]))
-	obstacle.shape_pose=doors.collection.global_transform*leaf_pose*Transform3D(Basis.IDENTITY,Vector3(.5,1.1,0))
+	var bounds:AABB=entry.definition.bounds
+	obstacle.shape_pose=batch.global_transform*leaf_pose*Transform3D(Basis.IDENTITY,bounds.get_center())
+	obstacle.half_extents=bounds.size*.5
 	# Aim at the leaf centre, not an arbitrary ray hit near its jamb. The full
 	# standing envelope must fit the doorway, and entrance steps define support.
 	var centre:Vector3=obstacle.shape_pose.origin;centre.y=base.y
 	normal=obstacle.shape_pose.basis.z.normalized()
 	if (zombie.global_position-centre).dot(normal)<0:normal=-normal
-	obstacle.contact_point=centre+Vector3.UP*1.1+normal*.07
+	obstacle.contact_point=obstacle.shape_pose.origin+normal*bounds.size.z*.5*obstacle.shape_pose.basis.z.length()
 	obstacle.approach_point=centre+normal*.55
 	var support_ray:=PhysicsRayQueryParameters3D.create(obstacle.approach_point+Vector3.UP*.6,obstacle.approach_point-Vector3.UP*.8,7,[player.get_rid(),hit.rid])
 	var support:Dictionary=get_world_3d().direct_space_state.intersect_ray(support_ray)
 	if support.is_empty() or support.normal.y<.7072:obstacle.free();return null
 	obstacle.approach_point.y=support.position.y+.04
 	zombies.add_child(obstacle);obstacle.global_position=centre
-	obstacle.validity=func():return _model_edit_available() and doors.collection.placement_for_body(obstacle.body_rid)==identity and doors.collection.get_instance(identity)==transform and not doors.state.is_open(identity) and not doors.collection.is_removal_protected(identity)
+	obstacle.validity=func():return _model_edit_available() and batch.placement_for_body(obstacle.body_rid)==identity and batch.get_instance(identity)==transform and not hinges.is_open(identity) and not batch.is_removal_protected(identity)
 	obstacle.damage_callback=func(damage:float):
-		var key:String="model:%s:%d"%[preload("res://addons/structures/door_catalog.gd").KEY,identity]
-		var result:Dictionary=world_attack.durability.hit(key,world_attack.Durability.model_profile(preload("res://addons/structures/door_catalog.gd").KEY).health,maxi(1,int(roundf(damage))))
+		var key:String="model:%s:%d"%[entry.id,identity]
+		var result:Dictionary=world_attack.durability.hit(key,int(entry.definition.durability.health),maxi(1,int(roundf(damage))))
 		if not result.ok:return
 		terrain.changed_since_save=true
-		if result.destroyed and doors.collection.remove_instances(PackedInt64Array([identity])):
-			doors.state.forget(identity);world_attack.durability.forget(key)
-			_show_lake_notice("Zombie broke a wooden door")
+		if result.destroyed and batch.remove_instances(PackedInt64Array([identity])):
+			hinges.forget(identity);world_attack.durability.forget(key)
+			_show_lake_notice("Zombie broke a " + entry.definition.name.to_lower())
 	return obstacle
 
 func _physics_process(delta: float) -> void:
@@ -1607,15 +1615,15 @@ func _place_inventory_model(history: RefCounted, collection: Node3D, transforms:
 func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: int) -> bool:
 	if not _model_edit_available():
 		model_tool.placement_failure="World interaction unavailable";return false
-	var recipes: Dictionary=preload("res://addons/structures/construction_catalog.gd").salvage_recipes()
+	var recipes: Dictionary=preload("res://addons/structures/construction_catalog.gd").salvage_recipes(structures.object_definitions)
 	recipes.merge(preload("res://addons/world_runtime/material_deposits.gd").salvage_recipes())
 	for key: String in recipes:
 		if structures.model(key)==collection:
 			var removed: bool=construction_inventory.salvage_model(history,collection,player_hud.inventory,identity,recipes[key])
-			if removed and collection==doors.collection:doors.state.forget(identity)
+			if removed:doors.forget(collection,identity)
 			model_tool.placement_failure=construction_inventory.reason;player_hud.refresh();return removed
 	var removed: bool=history.erase(collection,identity)
-	if removed and collection==doors.collection:doors.state.forget(identity)
+	if removed:doors.forget(collection,identity)
 	model_tool.placement_failure="Object removed; no salvage recipe" if removed else "Object removal rejected"
 	return removed
 
@@ -1661,7 +1669,7 @@ func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	player_hud.refresh()
 
 func _place_combined_prefab(asset: Resource,target: Vector3i,rotation: int) -> bool:
-	return construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(),[model_tool.protection()])
+	return construction_inventory.place_prefab(structures.blocks,player_hud.inventory,asset,target,rotation,structures.model_collections(),preload("res://addons/structures/construction_catalog.gd").recipes(structures.object_definitions),[model_tool.protection()])
 
 func _prefab_placement_text(asset: Resource) -> String:
 	var attached: bool=not construction_inventory.prefab_transaction.model_counts(asset).is_empty()

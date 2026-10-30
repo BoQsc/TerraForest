@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent host loads enabled definitions
+PASS structure models register with real compound world persistence
+PASS door components attach before persistent terrain startup
+PASS isolated persistent world starts
+PASS missing door mod blocks real world startup
+PASS missing model disables world writes
+[TerrainRewrite] ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained
+PASS failed load and shutdown preserve exact original save file
+DOOR_CONTENT_STORAGE phase=missing failures=0

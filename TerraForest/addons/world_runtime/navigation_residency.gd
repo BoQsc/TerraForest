@@ -11,12 +11,7 @@ func update(points:PackedVector3Array)->void:
 	var now:=Time.get_ticks_msec()
 	if now<next_refresh and not points.is_empty():return
 	next_refresh=now+250
-	var doors:Array[RID]=[]
-	for identity:int in game.doors.collection.collision_identities():
-		if doors.size()>=64:break
-		if game.doors.state.is_open(identity) or game.doors.collection.is_removal_protected(identity):continue
-		var rid:RID=game.doors.collection.collision_body_for(identity)
-		if rid.is_valid():doors.append(rid)
+	var doors:Array[RID]=game.doors.breakable_bodies(64)
 	if doors!=last_doors:
 		last_doors=doors;game.zombies.navigator.set_interactions(doors)
 	var admitted:=PackedVector3Array()

@@ -18,7 +18,6 @@ const MODELS={
 	"furniture/chair/v1":{"name":"Wooden chair","health":90,"material":"wood"},
 	"furniture/shelf/v1":{"name":"Wooden shelf","health":90,"material":"wood"},
 	"storage/wooden_chest/v1":{"name":"Wooden chest","health":90,"material":"wood"},
-	"architecture/wooden_door/v1":{"name":"Wooden door","health":90,"material":"wood"},
 	"architecture/wooden_window/v1":{"name":"Wooden window","health":90,"material":"wood"},
 	"architecture/wooden_ladder/v1":{"name":"Wooden ladder","health":90,"material":"wood"},
 	"architecture/wooden_fence/v1":{"name":"Wooden fence","health":90,"material":"wood"},
@@ -30,7 +29,13 @@ const MODELS={
 	"architecture/concrete_paving/v1":{"name":"Concrete paving","health":90,"material":"other"}
 }
 
-static func model_profile(asset:String)->Dictionary:
+static func model_profile(asset:String,objects:Dictionary={})->Dictionary:
+	if asset==preload("res://addons/structures/door_catalog.gd").KEY and not objects.has(asset):
+		var definition:Dictionary=preload("res://addons/structures/door_catalog.gd").builtin_definition()
+		return {"name":definition.name,"health":definition.durability.health,"material":definition.durability.material}
+	if objects.has(asset):
+		var definition:Dictionary=objects[asset]
+		return {"name":definition.name,"health":definition.durability.health,"material":definition.durability.material}
 	if MODELS.has(asset):return MODELS[asset]
 	# Preserve the existing policy for modded model keys.
 	return {"name":"Object","health":WORLD.model,"material":"wood" if "wood" in asset or "furniture" in asset or "storage" in asset else "other"}
