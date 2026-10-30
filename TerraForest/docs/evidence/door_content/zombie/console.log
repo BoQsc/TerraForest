@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 192.37 ms at 29548
+[terrain-hitch] base controller 194.35 ms at 29550
+[terrain-hitch] controller process 196.43 ms at 29552
+[terrain-hitch] world process 198.38 ms at 29554
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 84.46 ms at 30365
+[terrain-hitch] base controller 86.3 ms at 30366
+[terrain-hitch] controller process 89.32 ms at 30369
+[terrain-hitch] world process 92.32 ms at 30372
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS actual host world becomes ready
+PASS real breakable wooden door inserted into host model collection
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS zombie admits in loaded test entrance
+PASS blocked-door perception selects explicit breakable interaction target
+PASS authored attack contacts debit existing world durability
+PASS repeated validated attacks destroy actual wooden door
+PASS zombie cannot walk through the intact door
+PASS door collision refresh holds rather than deleting attacking zombie
+PASS door removal invalidates route and zombie reaches player
+PASS NPC destruction grants no player salvage and consumes no tool wear
+PASS door destruction leaves no orphan hinge state
+PASS door damage/removal marks compound world dirty
+PASS model snapshot round trip preserves destroyed door
+PASS existing world component captures NPC structural damage
+[TerrainRewrite] Temporary test world: save skipped
+ZOMBIE_DOOR_INTERACTION checks=14 failures=0

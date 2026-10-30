@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Preload file "res://addons/presentation/fullscreen_policy.gd" does not exist.
+   at: GDScript::reload (res://addons/structures/building_lod.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/presentation/fullscreen_policy.gd" does not exist.
+   at: GDScript::reload (res://addons/structures/building_lod.gd:13)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/structures/structures_world.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://tests/door_content.gd:0)
+ERROR: Failed to load script "res://tests/door_content.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+PASS read object pack definitions
+SCRIPT ERROR: Invalid call. Nonexistent function 'apply' in base 'GDScript'.
+   at: prepare (res://addons/structures/structures_world.gd:187)
+   GDScript backtrace (most recent call first):
+       [0] prepare (res://addons/structures/structures_world.gd:187)
+       [1] register_model (res://addons/structures/structures_world.gd:205)
+       [2] register_all (res://addons/structures/object_catalog.gd:60)
+       [3] host (res://tests/door_content.gd:37)
+       [4] run (res://tests/door_content.gd:65)
+FAIL register both door types as native shared models
+FAIL independent native door states register with compound persistence
+SCRIPT ERROR: Invalid access to property or key 'architecture/wooden_door/v1' on a base object of type 'Dictionary'.
+   at: run (res://tests/door_content.gd:67)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/door_content.gd:67)

@@ -629,6 +629,14 @@ plan and hidden outside construction or after the plan is invalidated.
 
 ### Standalone bundle verification
 
+Door definitions, opt-in object packs and loose GLB visual replacements are
+documented in [Door content](../../docs/DOOR_CONTENT.md). The original door keeps
+its stable identity and legacy hinge packet. Additional types reuse native model
+batches and one native hinge store per type; no per-placement scripts are added.
+`NativeHingedDoors.configure(bounds, pivot, opening_degrees)` sets a type's local
+box, Y-axis hinge and signed opening angle once, before state is restored.
+The bundled second-door example reuses the existing simple mesh.
+
 Build the dependency bundle with `python tools/package.py --addon structures`.
 Verify it in a fresh temporary Godot project with
 `python tools/verify_addon_bundle.py --addon structures --godot <engine.exe> --exercise-structures`.

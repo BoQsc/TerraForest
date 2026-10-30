@@ -52,7 +52,7 @@ func target() -> Dictionary:
 		var collection=game.structures._models[asset]
 		if collider==collection:
 			var id: int=collection.placement_for_body(hit.rid)
-			var profile:Dictionary=Durability.model_profile(asset)
+			var profile:Dictionary=Durability.model_profile(asset,game.structures.object_definitions)
 			if id>0:return surface_target({"kind":"model","key":"model:%s:%d"%[asset,id],"id":id,"collection":collection,"asset":asset,"health":profile.health,"material":profile.material,"impact_material":profile.get("impact_material",""),"name":profile.name},hit)
 	if collider!=null and game.actors.pool!=null and collider.get_parent()==game.actors.pool:
 		var handle: int=collider.entity_handle(game.actors.store)

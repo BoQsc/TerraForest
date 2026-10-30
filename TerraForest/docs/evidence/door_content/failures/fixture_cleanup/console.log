@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent host loads enabled definitions
+PASS structure models register with real compound world persistence
+PASS door components attach before persistent terrain startup
+PASS isolated persistent world starts
+PASS persistent world restore finishes
+PASS fresh process restores exact saved model bytes
+PASS fresh process restores opened state for architecture/wooden_door/v1
+PASS reopened door closes to its original transform: architecture/wooden_door/v1
+PASS fresh process restores opened state for example/doors/narrow_right/v1
+PASS reopened door closes to its original transform: example/doors/narrow_right/v1
+FAIL reopened compound world saves both closed doors
+[TerrainRewrite] ERROR: terrain checkpoint save failed; previous canonical snapshot retained
+FAIL persistent shutdown completes
+DOOR_CONTENT_STORAGE phase=reopen failures=2

@@ -7,6 +7,7 @@ var identity := 0
 var contact_point := Vector3.ZERO
 var approach_point := Vector3.ZERO
 var shape_pose := Transform3D.IDENTITY
+var half_extents := Vector3(0.5,1.1,0.07)
 var damage_callback: Callable
 var validity: Callable
 
@@ -20,7 +21,7 @@ func get_zombie_attack_radius() -> float:
 	return 0.12
 
 func get_zombie_attack_contact_shapes(_action: String) -> Array:
-	return [{"type":"box","transform":shape_pose,"half_extents":Vector3(0.5,1.1,0.07)}]
+	return [{"type":"box","transform":shape_pose,"half_extents":half_extents}]
 
 func accepts_zombie_attack_surface(hit: Dictionary) -> bool:
 	return available() and hit.get("collider")==surface and hit.get("rid")==body_rid

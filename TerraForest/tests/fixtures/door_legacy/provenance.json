@@ -1,0 +1,11 @@
+{
+  "source_revision": "19fef843",
+  "native_sha256": "a5113d5ef4f1c50ca065a9249b3bb3be00badf2154b6cbf751ec92c018c99963",
+  "origin": "Generated from the pre-door-content native library using capture.gd; no user save data.",
+  "license": "CC0-1.0",
+  "creator": "TerraForest with OpenAI Codex assistance",
+  "files": {
+    "structures.bin": "48248d81a7a56a3b39081d714dfc0e30c64d16e5f2ba9478caec1e670b81aa8f",
+    "hinges.bin": "9da1298672ea65b4e2ca7b3c0745995aa3ae4b2ab2e3ac0ed5761feed6a82319"
+  }
+}

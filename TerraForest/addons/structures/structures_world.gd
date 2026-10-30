@@ -5,6 +5,7 @@ var _block_change_bounds:=AABB()
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
+var object_definitions: Dictionary = {}
 var _model_list: Array = []
 var _empty_models: Dictionary = {}
 var _empty_blocks := PackedByteArray()
