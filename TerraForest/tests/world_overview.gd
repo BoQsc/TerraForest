@@ -28,6 +28,7 @@ func run()->void:
 		game.app_focused=true;await process_frame
 	check(not game.loading_active and game.terrain.latest_error.is_empty(),"populated read-only world loads with exact building horizon")
 	check(game.terrain.root_coverage==64,"all actual terrain roots are ready before play")
+	check(game.ecosystem.coverage_status().ready and game.ecosystem.resident.size()==1024,"all world forest owners published before play")
 	if failures:await finish({});return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true
 	var view=game.player_view
@@ -50,6 +51,8 @@ func run()->void:
 		for frame in 120:
 			game.app_focused=true;await RenderingServer.frame_post_draw
 		check(game.terrain.root_coverage==64,"zoom preserves complete volumetric terrain coverage "+str(distance))
+		check(game.vegetation.renderer.roots.size()==before_trees and game.ecosystem.coverage_status().ready,"zoom retains every accepted tree identity")
+		check(game.vegetation.trunk_collision.collision_stats().resident_bodies<=256,"zoom does not expand trunk body budget")
 		check(absf(view.zoom_distance-distance)<1.0,"smooth zoom reaches requested distance "+str(distance))
 		check(game.player.global_transform.is_equal_approx(body_pose) and game.camera.transform.is_equal_approx(eye_pose),"overview preserves physical body and first-person aim")
 		check(game.terrain.focus==collision_focus and game.terrain.render_view.is_finite(),"separate render focus leaves physical focus unchanged")
@@ -65,6 +68,15 @@ func run()->void:
 		root.get_texture().get_image().save_png(output.path_join("overview_%d.png"%int(distance)))
 	check(game.structures.blocks.capture_storage_state()==near_state,"zoom alone does not hydrate remote editable building regions")
 	check(game.structures.blocks.distant_rendering_stats().ready,"world-wide building representation remains ready at maximum zoom")
+	view.set_process(false)
+	var saved_view:Transform3D=view.third_camera.global_transform
+	for eye:Vector3 in [Vector3(-1800,1200,-1800),Vector3(3800,1200,3800),Vector3(-3300,1200,5300)]:
+		view.third_camera.global_position=eye;game.vegetation._measured_step(0)
+		var covered:=true
+		for corner in 8:
+			covered=covered and eye.distance_to(game.vegetation.coverage_bounds.get_endpoint(corner))+32<game.vegetation.renderer.far_distance*.93
+		check(covered,"world-edge view keeps distant trees before the shader fade band "+str(eye))
+	view.third_camera.global_transform=saved_view;view.set_process(true)
 	view.set_overview(false)
 	for frame in 20:await RenderingServer.frame_post_draw
 	check(game.camera.current and not view.active and game.terrain.render_view==Vector3.INF,"leaving overview restores first-person and normal planning")

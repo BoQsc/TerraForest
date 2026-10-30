@@ -150,6 +150,13 @@ func request_surface_batch(points: PackedVector3Array, token: int) -> bool:
 			return false
 	return backend.submit({"kind": "surface_batch", "points": points.duplicate(), "token": token, "epoch": epoch, "revision": published_revision})
 
+func request_surface_page(points:PackedVector3Array,owner:Vector2i,token:int)->bool:
+	if not world_ready or pending_edit or foreground_brush or stopping or points.is_empty() or points.size()>64 or backend.queued()>8:return false
+	if owner.x<0 or owner.y<0 or owner.x>=32 or owner.y>=32:return false
+	for point:Vector3 in points:
+		if not point.is_finite() or floori(point.x/64.0)!=owner.x or floori(point.z/64.0)!=owner.y:return false
+	return backend.submit({"kind":"surface_batch","points":points.duplicate(),"cache_owner":owner,"token":token,"epoch":epoch,"revision":published_revision})
+
 func _receive(result: Dictionary) -> void:
 	if result.get("kind","") in ["survey_patch","survey_identity","survey_water_visibility"]:
 		survey_patch_ready.emit(result)

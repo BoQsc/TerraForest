@@ -57,7 +57,7 @@ func run() -> void:
 	sample(ecosystem,9,3)
 	check(not ecosystem._resample.has(Vector2i.ZERO) and is_equal_approx(vegetation.renderer.roots[1].t.origin.y,3),"post-edit retry publishes updated support")
 	var camera:=Camera3D.new();root.add_child(camera);ecosystem.camera=camera
-	ecosystem.density=0;ecosystem._last_cell=Vector2i.ZERO;ecosystem._scan_timer=1
+	ecosystem.density=0;ecosystem.max_resident_cells=1
 	ecosystem._resample[Vector2i.ZERO]=true;ecosystem._step(0)
 	check(vegetation.renderer.roots.is_empty() and vegetation.trunk_collision.get_ids().is_empty(),"zero-candidate resample retires existing renderer and trunk records")
 	check(ecosystem._samples[Vector2i.ZERO].ids.is_empty() and not ecosystem._resample.has(Vector2i.ZERO),"empty owner replaces stale sample cache and completes resampling")

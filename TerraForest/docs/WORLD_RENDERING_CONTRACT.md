@@ -33,9 +33,17 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   exponential wheel zoom, 3.4–1800 m; movement still controls the real player.
   No remote editing. Camera-specific atmosphere avoids distant fog washout without
   changing the normal environment. Existing third-person view remains available.
-- Loaded trees use their existing native pixel-based LODs from the overview camera;
-  trunk collision and procedural ownership stay near the player. This does not
-  generate never-visited forests or extend every medium object's representation.
+- Natural tree ownership now covers all 1,024 world owners before play. Stable
+  identities use the existing native pixel LOD selection and 12-triangle far tier,
+  with at least 3,500 m visual range; the host's coverage bounds extend it in 512 m
+  bands when an edge/outside-world view needs more, before the shader fade band.
+  Trunk bodies remain bounded to 256 within 96 m of the
+  physical player. Movement no longer evicts or resamples accepted forest owners.
+- Native surface pages use the existing checked, quota-controlled binary cache.
+  Keys include exact candidate coordinates and local terrain dependencies; unrelated
+  edits reuse them, local edits invalidate them, active input bypasses optional disk
+  work. At most two surface requests are in flight and eight owners admitted per
+  frame. Harvest and per-root edit exclusions remain authoritative.
 - Prior native building horizon (`083917a7`) supplies real, compacted, destructible
   block geometry across the saved world without loading its far editable regions.
 - Explicit trusted module registry and independent vehicle adapters, typed binary
@@ -46,10 +54,16 @@ Status: **partial implementation; the requested whole-project overhaul is open**
 
 ## Open milestones / return criteria
 
-1. **World-wide trees and medium objects.** Canonical deterministic far-instance
-   pages, exact road/lot/water/harvest exclusions and edit invalidation are missing.
-   Build this before claiming strategy-scale forest coverage. Require cold/warm,
-   never-visited, fast driving, harvest/mine/place, save/reload and budget evidence.
+1. **Exact far exclusions and medium objects.** World-wide deterministic tree
+   owners, binary surface caching, harvest/mine invalidation and bounded local
+   collision are implemented. Read-only populated cold/warm, never-visited, zoom,
+   harvesting, excavation, reconstruction and 100 km/h controlled camera-sweep
+   checks pass. Unloaded building regions and model groups still supply conservative
+   exclusion bounds, rather than exact far solids; near/far membership can therefore
+   differ around buildings. Replace those bounds with bounded read-only exact query
+   pages; require exact tree identity parity across building/model stream-in/out,
+   construction, water changes and save/reload. Do not call that remaining behavior
+   seamless. Boulders and medium props still need independent far representations.
 2. **Seamless terrain/mesh transitions.** The large grey patches were mostly
    absent geometry, not simply bad transition surfaces: only 37/64 roots existed
    after 30 seconds in the previous fixture. Whole-world readiness and cheaper
@@ -75,5 +89,6 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    vehicle movement envelopes remain open. Microbenchmarks and one fixture cannot
    establish perfect frame times, universal LOD continuity or visual acceptance.
 
-The preview is intentionally opt-in until these gaps are addressed. Continue at
-milestone 1; do not close this contract because the current engineering tests pass.
+The overview camera is intentionally opt-in until these gaps are addressed; natural
+forest coverage itself is enabled by default. Continue at milestone 1; do not close
+this contract because the current engineering tests pass.

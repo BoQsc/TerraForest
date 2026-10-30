@@ -12,6 +12,7 @@ var road_regions:RefCounted
 @export var structures: Node3D
 @export var water: Node3D
 @export var seed: int = 1703
+@export var world_coverage: bool = false
 @export_range(64.0, 768.0, 64.0) var stream_radius: float = 640.0
 @export_range(9, 625, 1) var max_resident_cells: int = 441
 @export_range(0.0, 1.0, 0.05) var density: float = 0.82
@@ -36,6 +37,9 @@ var harvest_state: RefCounted
 var _harvesting:=false
 var _native_scatter: RefCounted
 var _terrain_support:RefCounted
+
+func coverage_status()->Dictionary:
+	return {"enabled":world_coverage,"ready":not world_coverage or (_wanted.size()==1024 and resident.size()==1024 and _reconcile.is_empty() and _resample.is_empty() and _pending_cells.is_empty()),"owners":resident.size(),"total":1024 if world_coverage else _wanted.size(),"pending":_pending_cells.size(),"reconcile":_reconcile.size(),"resample":_resample.size(),"rejected":rejected_batches}
 
 func harvest_root(id: int, inventory: RefCounted,fall_direction:Vector3=Vector3.FORWARD) -> Dictionary:
 	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
@@ -148,7 +152,7 @@ func _step(_delta: float) -> void:
 		if _samples.has(key) and _wanted.has(key):
 			_publish_samples(key)
 	var cell: Vector2i = _cell(camera.global_position)
-	if cell != _last_cell or stream_radius != _last_radius or max_resident_cells != _last_limit:
+	if (cell != _last_cell and (not world_coverage or resident.size()<1024)) or _wanted.is_empty() or stream_radius != _last_radius or max_resident_cells != _last_limit:
 		_last_cell = cell
 		_last_radius = stream_radius
 		_last_limit = max_resident_cells
@@ -157,26 +161,30 @@ func _step(_delta: float) -> void:
 		return
 	if resident.size() == _wanted.size() and _resample.is_empty():
 		return
-	# One small batch submitted per frame. Queue admission is owned by TerrainWorld.
+	var admitted:=0
 	for key in _wanted:
 		if (resident.has(key) and not _resample.has(key)) or _pending_cells.has(key):
 			continue
-		if not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
+		if not world_coverage and not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
 			continue
 		var candidates: Dictionary = _candidates(key)
 		if candidates["points"].is_empty():
 			var empty_transforms: Array[Transform3D]=[]
 			_replace_samples(key,PackedInt64Array(),empty_transforms)
-			break # Empty owners consume the same per-frame generation budget.
+			admitted+=1
+			if not world_coverage or admitted>=8:break
+			continue
 		_token = SurfaceTokens.allocate()
-		if terrain.request_surface_batch(candidates["points"], _token):
+		var submitted:bool=terrain.request_surface_page(candidates["points"],key,_token) if world_coverage else terrain.request_surface_batch(candidates["points"],_token)
+		if submitted:
 			candidates["key"] = key
 			_requests[_token] = candidates
 			_pending_cells[key] = _token
-		break
+			admitted+=1
+		if not submitted or not world_coverage or admitted>=8 or _requests.size()>=2:break
 
 func _refresh(center: Vector2i) -> void:
-	var candidates: Array[Vector2i] = _scatter().wanted_cells(center, stream_radius, max_resident_cells, true)
+	var candidates: Array[Vector2i] = _scatter().world_cells(center) if world_coverage else _scatter().wanted_cells(center, stream_radius, max_resident_cells, true)
 	_wanted.clear()
 	for key in candidates:
 		_wanted[key] = true
@@ -319,13 +327,22 @@ func _region_changed(bounds: AABB, _revision: int) -> void:
 
 func _capture_terrain_support(bounds:AABB)->Array:
 	var snapshots:Array=[]
-	for key:Vector2i in _samples:
-		if not AABB(Vector3(key.x*CELL_SIZE,0,key.y*CELL_SIZE),Vector3(CELL_SIZE,256,CELL_SIZE)).grow(1).intersects(bounds):continue
+	for key:Vector2i in _sample_keys(bounds.grow(1)):
 		var sample:Dictionary=_samples[key]
 		var snapshot:Dictionary=_terrain_support.tree_probes(sample.active,sample.active_transforms,bounds)
 		if snapshot.get("ids",PackedInt64Array()).is_empty():continue
 		snapshot["key"]=key;snapshots.append(snapshot)
 	return snapshots
+
+func _sample_keys(bounds:AABB)->Array[Vector2i]:
+	var keys:Array[Vector2i]=[]
+	if not bounds.position.is_finite() or not bounds.end.is_finite():return keys
+	var first:=_cell(bounds.position);var last:=_cell(bounds.end)
+	for row in range(maxi(0,first.y),mini(31,last.y)+1):
+		for column in range(maxi(0,first.x),mini(31,last.x)+1):
+			var key:=Vector2i(column,row)
+			if _samples.has(key):keys.append(key)
+	return keys
 
 func _apply_terrain_support(snapshot:Dictionary,result:Dictionary)->bool:
 	var verdict:Dictionary=result.verdict if result.has("verdict") else _terrain_support.lost_roots(snapshot,result.before,result.after)

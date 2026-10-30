@@ -102,7 +102,7 @@ func inspect_access(game:Node,lot:Dictionary)->void:
 	intervals.sort();gpu.sort()
 	var lod:Dictionary=game.structures.blocks.geometry_lod_stats()
 	metrics.append({"id":identity,"fps_cap":Engine.max_fps,"frame_p95_ms":intervals[171],"frame_max_ms":intervals[-1],"gpu_p95_ms":gpu[171],"structure_stats":game.structures.blocks.stats(),"geometry_lods":lod,"vegetation_owners":game.ecosystem.resident.size()})
-	check(lod.chunks_with_lods>0 and game.ecosystem.resident.size()<=441,identity+" uses bounded forest coverage and native cached geometry LOD")
+	check(lod.chunks_with_lods>0 and game.ecosystem.coverage_status().ready and game.ecosystem.resident.size()==1024 and game.vegetation.trunk_collision.collision_stats().resident_bodies<=256,identity+" uses complete forest coverage, bounded local physics and native cached geometry LOD")
 	game.camera.transform=camera_pose;game.camera.cull_mask=camera_mask;game.set_physics_process(true)
 
 func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,finish:Vector3,label:String,npc:bool,max_ticks:int=1500)->void:

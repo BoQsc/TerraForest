@@ -25,6 +25,8 @@ func summarize(values:Array)->Dictionary:
 
 func run()->void:
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	for argument:String in OS.get_cmdline_user_args():
+		if argument.begins_with("--view-output="):output=argument.trim_prefix("--view-output=")
 	DirAccess.make_dir_recursive_absolute(output)
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60
 	root.add_child(game)
@@ -43,7 +45,7 @@ func run()->void:
 			render_cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(viewport))
 			forest_cpu.append(game.vegetation.last_process_us/1000.0);scatter_cpu.append(game.ecosystem.last_process_us/1000.0)
 		phases.append({"mode":mode,"frame_ms":summarize(frames),"gpu_ms":summarize(gpu),"render_cpu_ms":summarize(render_cpu),"forest_cpu_ms":summarize(forest_cpu),"scatter_cpu_ms":summarize(scatter_cpu),"owners":game.ecosystem.resident.size(),"roots":game.vegetation.renderer.roots.size()})
-		check(game.ecosystem.resident.size()<=441 and game.ecosystem._requests.size()<=2 and game.vegetation.renderer.roots.size()<=16384,"bounded streaming during "+mode)
+		check(game.ecosystem.resident.size()==1024 and game.ecosystem._requests.size()<=2 and game.vegetation.renderer.roots.size()<=36864 and game.vegetation.trunk_collision.collision_stats().resident_bodies<=256,"whole-world forest with bounded native physics during "+mode)
 		root.get_texture().get_image().save_png(output.path_join(mode+".png"))
 	check(await wait_for(settled,90),"travel catches up without lost owners")
 	check(game.ecosystem.rejected_batches==0 and game.terrain.latest_error.is_empty(),"no rejected forest publication or terrain errors")

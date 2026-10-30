@@ -206,6 +206,12 @@ func _reject(key: Vector3i, bytes: int, content: String = "") -> PackedByteArray
 	return PackedByteArray()
 
 func load_packet(key: Vector3i, content: String = "") -> PackedByteArray:
+	return _load_record(key,content,false)
+
+func load_surface(key:Vector3i,content:String)->PackedByteArray:
+	return _load_record(key,content,true)
+
+func _load_record(key:Vector3i,content:String,surface:bool)->PackedByteArray:
 	if not enabled or _name(key,content).is_empty():
 		return PackedByteArray()
 	# Only positive directory entries are retained. Unbounded edit history must
@@ -226,8 +232,10 @@ func load_packet(key: Vector3i, content: String = "") -> PackedByteArray:
 	f.close()
 	if header.size() != 40 or header.decode_u32(0) != MAGIC or header.decode_u32(4) != data.size() or digest(data) != header.slice(8, 40):
 		return _reject(key, length, content)
-	if data.size() < 36 or data.decode_u32(0) != Codec.MESH_MAGIC or data.decode_u32(4) != 5 or Vector3i(data.decode_u32(8), data.decode_u32(12), data.decode_u32(16)) != key:
-		return _reject(key, length, content)
+	if surface:
+		if not Codec.reply_ok(data) or data.decode_u32(4)!=17 or data.decode_u32(12)<1 or data.decode_u32(12)>64 or data.size()!=16+data.decode_u32(12)*24:return _reject(key,length,content)
+	else:
+		if data.size() < 36 or data.decode_u32(0) != Codec.MESH_MAGIC or data.decode_u32(4) != 5 or Vector3i(data.decode_u32(8), data.decode_u32(12), data.decode_u32(16)) != key:return _reject(key,length,content)
 	hits += 1
 	if _lease_owned:_cache_owner.touch(ProjectSettings.globalize_path(_name(key, content)))
 	return data

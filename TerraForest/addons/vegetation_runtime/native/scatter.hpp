@@ -34,10 +34,25 @@ protected:
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeVegetationScatter::restore_storage_snapshot);
 
         ClassDB::bind_method(D_METHOD("wanted_cells","center","radius_world","limit","circular"),&NativeVegetationScatter::wanted_cells,DEFVAL(false));
+        ClassDB::bind_method(D_METHOD("world_cells","center"),&NativeVegetationScatter::world_cells);
         ClassDB::bind_method(D_METHOD("candidates","cell","seed","density","natural_region","biome_profile"),&NativeVegetationScatter::candidates,DEFVAL(false),DEFVAL(0));
         ClassDB::bind_method(D_METHOD("place_surface","ids","points","normals","rotations","scales","min_up"),&NativeVegetationScatter::place_surface);
     }
 public:
+    TypedArray<Vector2i> world_cells(Vector2i center) const {
+        const int center_x=std::clamp(center.x,0,31),center_z=std::clamp(center.y,0,31);
+        std::vector<Vector2i> cells;
+        cells.reserve(1024);
+        for(int row=0;row<32;++row)for(int column=0;column<32;++column)cells.emplace_back(column,row);
+        std::sort(cells.begin(),cells.end(),[&](const Vector2i &first,const Vector2i &second){
+            const int first_distance=(first.x-center_x)*(first.x-center_x)+(first.y-center_z)*(first.y-center_z);
+            const int second_distance=(second.x-center_x)*(second.x-center_x)+(second.y-center_z)*(second.y-center_z);
+            return first_distance!=second_distance?first_distance<second_distance:first.y*32+first.x<second.y*32+second.x;
+        });
+        TypedArray<Vector2i> result;
+        for(const auto &cell:cells)result.append(cell);
+        return result;
+    }
     bool configure_groves(const PackedVector3Array &regions){
         if(regions.size()>32)return false;
         std::vector<Vector3> staged;

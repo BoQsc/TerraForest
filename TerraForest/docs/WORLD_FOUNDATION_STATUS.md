@@ -35,7 +35,7 @@ does not change generation behavior to satisfy old expectations.
 
 The whole-project rendering/modding/generation request is **not complete**.
 Implemented first foundation: independent native render-view planning, optional
-smooth overview camera, player-local tree collision/ownership, trusted vehicle
+smooth overview camera, player-local tree collision, trusted vehicle
 packs with independent controllers and typed binary saves, and occupied-region
 generation verification. No generated content or player saves replaced.
 [Architecture, missing milestones and closure evidence](WORLD_RENDERING_CONTRACT.md).
@@ -51,8 +51,26 @@ and eight coarse public-edit-to-draw samples at 75.2–93.1 ms. Installed verifi
 also passes: 28.22 s load, 185.80 MiB, 74.9–86.3 ms edits; 28 native/worker fixtures
 and 7,251 release-DLL volume commands pass. No save/generator change.
 This fixes the demonstrated missing-coverage path, not universal seamless LOD.
-Next dependency remains exact far tree/medium-object instance pages with
-edit/harvest invalidation; current resident trees are not whole-world forests.
+Natural forests now cover all 1,024 world owners before play (8,620 accepted trees
+in the populated fixture, versus 4,646 previously local trees). Existing native
+LOD selection/12-triangle far tier and 256-body local collision remain; accepted
+owners survive travel. Checked binary surface pages reuse the existing cache quota
+and local terrain dependency keys. Source cold/warm loading is 31.31 / 16.09 s;
+one root excavation publishes in 38.99 ms with 0.135 ms support capture. The cold
+case does more work than the earlier 28.22 s local-forest case; this is not a claim
+of faster cold loading. A controlled 100 km/h, 585.58 m road-camera sweep has zero
+missing forest owners/requests, forest update p95 0.285 ms; whole-frame p95 remains
+22.81 ms. Physical driving and visual continuity are not thereby qualified.
+Installed follow-up: 28.60 / 15.96 s cold/warm; 100 km/h sweep frame p95 17.46 ms,
+forest p95 0.259 ms. Range extends from actual world bounds for edge/outside-world
+overview cameras instead of imposing a 3,500 m cutoff. This is scoped evidence,
+not a universal load-time or seamless-rendering guarantee.
+Final adaptive-range pack repeats the checks: 31.68 / 15.88 s cold/warm, forest
+update p95 0.284 ms and whole-frame p95 18.26 ms during the controlled road sweep.
+Next dependency: unloaded building/model exclusion bounds remain conservative,
+so exact far tree membership around construction still needs read-only query pages
+and stream-in/out parity tests. Medium props, boulders and parked vehicles still
+lack the required complete far representation. See the linked issue receipts.
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.

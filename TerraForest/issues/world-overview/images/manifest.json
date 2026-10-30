@@ -9,6 +9,24 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "forest_after_768.png",
+      "sha256": "3155113f0ba407dad58467acdf42556c03cc5bd9542e4e3b65e0769b6e06a301",
+      "source": "reports/runtime_views/20261030T085129983450Z/overview_768.png",
+      "run": "reports/runtime_views/20261030T085129983450Z/run.json",
+      "pack_sha256": "14f298f8fe02939cb313fcc8cda5d0ec6b510746ffc94f12ff0368d60969572a",
+      "distance_m": 768,
+      "review": "Inspected installed forest coverage: 1024 owners, 8620 exact accepted trees. Far building exclusions and visual transitions remain unqualified; not user approval."
+    },
+    {
+      "file": "forest_after_1800.png",
+      "sha256": "cde5885e78c853bc811ec5c47ea8d5d9f628c14b99d1c0d1daf65c370ee208b9",
+      "source": "reports/runtime_views/20261030T085129983450Z/overview_1800.png",
+      "run": "reports/runtime_views/20261030T085129983450Z/run.json",
+      "pack_sha256": "14f298f8fe02939cb313fcc8cda5d0ec6b510746ffc94f12ff0368d60969572a",
+      "distance_m": 1800,
+      "review": "Inspected maximum overview retains forests across the world; terrain/road presentation and rejected northern district are not redesigned or approved."
+    },
+    {
       "file": "coverage_before_768.png",
       "sha256": "1a1a04381149321c591f60489bfa61d073e737b3a65093639054f741f46760c1",
       "source": "reports/runtime_views/20261030T073743154080Z/normal.png",

@@ -9,12 +9,13 @@ const Assets = preload("res://addons/vegetation/assets.gd")
 const TRUNK_BOUNDS := AABB(Vector3(-0.35, 0, -0.35), Vector3(0.7, 8, 0.7))
 @export var camera: Camera3D
 var collision_camera: Camera3D
+var coverage_bounds:=AABB()
 var visual_distance_override:=0.0
 func set_visual_distance(distance:float)->void:
 	visual_distance_override=distance
 	if not ready_to_render:return
 	renderer.set_draw_distance(distance if distance>0 else draw_distance)
-@export_range(64.0, 2200.0, 16.0) var draw_distance: float = 576.0
+@export_range(64.0, 6000.0, 16.0) var draw_distance: float = 576.0
 @export_range(0.0, 256.0, 8.0) var shadow_distance: float = 128.0
 @export_range(0.0, 2.0, 0.05) var wind_strength: float = 0.3
 @export var sun_direction := Vector3(-0.35, 0.75, 0.55).normalized()
@@ -153,6 +154,10 @@ func _process(delta: float) -> void:
 func _measured_step(delta:float)->void:
 	if not ready_to_render or not is_instance_valid(camera):
 		return
+	if coverage_bounds.size!=Vector3.ZERO:
+		var base_range:float=visual_distance_override if visual_distance_override>0 else draw_distance
+		var required_range:float=(camera.global_position.distance_to(coverage_bounds.get_center())+coverage_bounds.size.length()*.5+32.0)/.93
+		renderer.set_draw_distance(base_range if required_range<=base_range else ceilf(required_range/512.0)*512.0)
 	_clock += delta
 	if falling_trees!=null:falling_trees.advance(delta,_clock)
 	if trunk_collision!=null: trunk_collision.set_collision_focus(collision_camera.global_position if is_instance_valid(collision_camera) else camera.global_position)

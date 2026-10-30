@@ -118,10 +118,76 @@ edited beyond the world boundary. Two invalid headless loading-UI attempts waite
 for a render signal; the corrected nonactivating rendered run passes. One planner
 invocation used the wrong completion marker; its actual assertions passed.
 
+## World-wide forest follow-up — 2026-10-30
+
+![World-wide forest at 768 m](images/forest_after_768.png)
+Installed build, same fixture and camera as `coverage_after_768.png`: distant
+forests now exist outside the player's local circle. Inspected, not user-approved.
+
+![World-wide forest at 1800 m](images/forest_after_1800.png)
+Maximum overview retains the actual natural trees; no change to land or buildings.
+
+- All 1,024 deterministic natural owners are now prepared before play, not only
+  the 405 around the player. The same candidates, supported transforms and stable
+  IDs feed the existing native selection/flush and 12-triangle distant tree tier.
+  No alternative forest density or generator/save migration.
+- Minimum visual range is 3,500 m, extended in 512 m bands from the host-provided
+  coverage bounds when an edge/outside-world view needs more. Camera motion within
+  a band does not rewrite node culling ranges. Full render ownership does not create distant physics:
+  native trunk bodies retain the 96 m / 256-body cap. The populated fixture uses
+  8,620 accepted trees; the flat all-owner identity oracle contains 13,574.
+- Surface samples have checked binary cache records in the existing cache owner
+  and quota. Dependency identity includes local density/blocks plus candidate
+  coordinates; local edits invalidate, distant edits reuse, active input skips
+  optional cache work. Epoch/revision checks still gate publication.
+- Two in-flight surface jobs; at most eight admitted owners per frame. Near
+  owners are prepared first. Whole-world acceptance is explicit in loading details.
+  Small terrain edits query intersected owner coordinates, not all world roots.
+- Source cold/warm read-only reload: 31.31 / 16.09 s; every accepted transform is
+  identical. This is more cold work than the prior 28.22 s local-forest fixture,
+  not a cold-loading speedup. Harvesting, excavation, binary exclusion roundtrip
+  and complete page reconstruction preserve destroyed identities. One root edit
+  completes in 38.99 ms; support capture is 0.135 ms.
+- Source 100 km/h controlled road-camera sweep covers 585.58 m: zero missing
+  forest owners and zero surface requests. Forest-update p95/max: 0.285 / 0.787 ms;
+  whole-frame p95/max: 22.81 / 31.72 ms; GPU p95: 8.21 ms. Not physical driving,
+  input latency or a pixel-seam qualification. No cursor capture or save writes.
+- Exact far exclusions remain open: native unloaded building regions and model
+  groups currently reject their conservative bounds. Trees may change membership
+  near these groups when exact solids stream in. This pass does not claim that
+  behavior is seamless or replace it with a second approximate forest.
+- Initial installed checks pass: 28.60 / 15.96 s cold/warm loading; 47.49 ms root edit,
+  0.133 ms support capture. The installed 100 km/h sweep has zero missing forest
+  owners/requests, forest p95/max 0.259 / 0.892 ms, whole-frame p95/max 17.46 / 32.05
+  ms. Sampled peak private RAM 3.36 GiB; dedicated GPU allocations 1.37 GiB. These
+  are one-machine scoped observations, not guaranteed budgets on 4 GiB hardware.
+- Final adaptive-range build repeats these checks and three outside-world camera
+  positions: 31.68 / 15.88 s cold/warm, 52.84 ms root edit; 100 km/h forest p95
+  0.284 ms, whole-frame p95/max 18.26 / 31.86 ms. Zero missing forest owners or
+  surface requests. The older-generator stationary/travel check also passes.
+- Earlier retained failures: new cache test initially had a GDScript inference
+  error (fixed); the removal-continuity test was incorrectly invoked headless and
+  timed out waiting for drawing (the nonactivating rendered check passes).
+  The resampling fixture used obsolete `_scan_timer`; it now uses the actual owner
+  limit to select its single test owner, without changing the tested semantics.
+- The first installed driving test could not resolve its excluded test superclass;
+  the runner now stages that helper beside the external driver and records its
+  hash. The corrected installed run passes. City/old-world fixtures now assert
+  complete forest ownership plus local physics, rather than the obsolete 441-owner
+  limit; the whole city qualification is not rerun or claimed by this change.
+
+Source receipts: `reports/runtime_views/20261030T084527427729Z` (cold/warm,
+harvest and excavation), `20261030T084718627066Z` (100 km/h sweep),
+`20261030T083522120366Z` (zoom), `20261030T084716020690Z` (removal continuity).
+Native/worker fixtures include `reports/checks/20261030T083930261877Z` (all owners),
+`20261030T084028802850Z` (surface cache), `20261030T084904926148Z` (resampling),
+`20261030T084909987619Z` (mesh-cache regression). Installed evidence follows in
+`forest-verification.json`. Engineering verification is not user visual approval.
+
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical
-world-wide tree/medium-object pages, seam-safe volumetric transitions, remote
+exact far exclusion/medium-object pages, seam-safe volumetric transitions, remote
 prop/vehicle tiers, general service providers, full generation/loading profiling
 and physical 4 GiB hardware/endurance. Custom vehicles currently use the small-car
 envelope; pack inventory registration and native dependency installation are open.

@@ -974,8 +974,18 @@ func _execute_surface_batch(job:Dictionary)->void:
 	var normals:=PackedVector3Array();normals.resize(points.size())
 	var packet:PackedByteArray=Codec.command(17,[points.size()])
 	packet.append_array(points.to_byte_array())
-	var reply:PackedByteArray=_call(packet)
+	var content:=""
+	var cache_key:=Vector3i.ZERO
+	if job.has("cache_owner") and disk_cache.enabled and not _input_active():
+		var owner:Vector2i=job.cache_owner
+		cache_key=Vector3i(owner.x*64,owner.y*64,64)
+		var dependency:String=str(native.geometry_cache_key(cache_key.x,cache_key.y,64,1).get("key",""))
+		if not dependency.is_empty():content=("surface-page-v1|"+dependency+"|"+DiskCache.digest(packet).hex_encode()).sha256_text()
+	var reply:PackedByteArray=disk_cache.load_surface(cache_key,content) if not content.is_empty() else PackedByteArray()
+	var cached:=not reply.is_empty()
+	if not cached:reply=_call(packet)
 	if Codec.reply_ok(reply) and reply.size()==16+points.size()*24 and reply.decode_u32(12)==points.size():
+		if not cached and not content.is_empty():disk_cache.store_packet(cache_key,reply,content)
 		var count:int=points.size()
 		points=Codec._packed_channel(reply,16,count,12,TYPE_PACKED_VECTOR3_ARRAY)
 		normals=Codec._packed_channel(reply,16+count*12,count,12,TYPE_PACKED_VECTOR3_ARRAY)
