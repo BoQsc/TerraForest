@@ -109,7 +109,9 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 	var inset:float=contract.soil_inset
 	var target:=Vector3i(origin.x,grade-surface_offset,origin.z)
 	var bounds: AABB=asset.placement_bounds(target,rotation)
-	if bounds.position.y!=grade-surface_offset:
+	# An attachment envelope can reach Y=0 while every actual block floats.
+	# Ground support must come from the native cell footprint itself.
+	if bounds.position.y!=grade-surface_offset or asset.foundation_samples(Vector3i.ZERO,0,0).is_empty():
 		return {"ok":false,"reason":"Foundation layout must have its base at local Y=0"}
 	if bounds.size.x<=0 or bounds.size.z<=0 or grade<12 or grade>238:
 		return {"ok":false,"reason":"Foundation outside grading limits"}

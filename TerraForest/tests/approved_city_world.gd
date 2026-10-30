@@ -112,7 +112,12 @@ func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,fi
 	if npc:
 		nav=ClassDB.instantiate("NativeActorNavigator");game.add_child(nav);nav.configure(1);nav.set_exclusions([body.get_rid(),game.player.get_rid()])
 	var peak_work:=0
-	for tick in max_ticks:
+	var trace:Array=[]
+	var tick:=0
+	var budget:=max_ticks
+	var route_budget_set:=false
+	while tick<budget:
+		tick+=1
 		await physics_frame
 		var delta:=1.0/Engine.physics_ticks_per_second
 		var target:=finish
@@ -121,6 +126,15 @@ func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,fi
 			var state:Dictionary=nav.advance(delta,func(area:AABB):return game.world_vehicle.ready_bounds(game,area),Callable())
 			peak_work=maxi(peak_work,state.route_work)
 			target=nav.steering_target(1)
+			if not route_budget_set and nav.state(1)=="following":
+				var points:PackedVector3Array=nav.route_points(1)
+				var distance:=0.0
+				for index in range(1,points.size()):distance+=points[index].distance_to(points[index-1])
+				# One fixed budget for the published route at the actual 1.6 m/s
+				# walking speed. Replanning cannot extend it indefinitely.
+				budget=mini(6000,maxi(budget,tick+ceili(distance/1.6/delta)+300))
+				route_budget_set=true
+				print("CITY_NPC_BUDGET ",label," length_m=",distance," ticks=",budget)
 		var offset:=target-body.position;offset.y=0
 		var direction:=offset.normalized() if target.is_finite() else Vector3.ZERO
 		var speed:=minf(1.6,offset.length()/delta) if npc else 0.0
@@ -128,11 +142,20 @@ func walk_route(game:Node,body:CharacterBody3D,motor:RefCounted,start:Vector3,fi
 		body.velocity=motor.walking_velocity(direction,body.velocity,delta,false,body.is_on_floor(),false)
 		if npc:body.velocity.x=direction.x*speed;body.velocity.z=direction.z*speed
 		motor.move_grounded(body,delta)
+		if npc and "--route-diagnostics" in OS.get_cmdline_user_args():
+			var contacts:Array=[]
+			for index in body.get_slide_collision_count():
+				var contact:=body.get_slide_collision(index)
+				contacts.append({"point":contact.get_position(),"normal":contact.get_normal(),"collider":str(contact.get_collider())})
+			trace.append({"tick":tick,"position":body.position,"target":target,"velocity":body.velocity,"contacts":contacts})
+			if trace.size()>40:trace.pop_front()
 		if Vector2(body.position.x-finish.x,body.position.z-finish.z).length()<.17:break
 	var reached:=Vector2(body.position.x-finish.x,body.position.z-finish.z).length()<.2 and absf(body.position.y-finish.y)<.2
 	check(reached and peak_work<=48,("native NPC " if npc else "player ")+label+" street/interior route end="+str(body.position))
 	if npc:
-		if not reached:print("CITY_NPC_STATUS ",nav.status(1))
+		if not reached:
+			print("CITY_NPC_STATUS ",nav.status(1))
+			if not trace.is_empty():print("CITY_NPC_TRACE ",JSON.stringify(trace));print("CITY_NPC_PATH ",nav.route_points(1))
 		nav.free()
 
 func drive_bay(game:Node,driveway:Dictionary,label:String)->void:

@@ -27,4 +27,4 @@ func _initialize() -> void:
 	check(Codec.reply_ok(restored.execute(packet)) and sample(restored,Vector3(416,179,400))==after and sample(restored,Vector3(416,179,408)).decode_u32(12)==3,"foundation and street survive terrain snapshot")
 	var terrain=load("res://addons/volumetric_terrain/terrain_world.gd").new()
 	check(terrain.has_method("construct_graded_bed") and not terrain.construct_graded_bed(a,b,12,4,12,0),"public grading API rejects invalid material before worker submission")
-	terrain.free();quit(0 if failures==0 else 1)
+	terrain.free();print("TERRAIN_GRADED_BED failures=",failures);quit(0 if failures==0 else 1)

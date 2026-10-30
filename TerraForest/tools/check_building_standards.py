@@ -49,6 +49,7 @@ def main():
         extensions.append("res://addons/" + addon + "/" + descriptor)
     for name in (
         "addons/structures/foundation_check.gd", "addons/structures/terrain_contact.gd",
+        "addons/structures/site_plan.gd",
         "addons/volumetric_terrain/mesh_codec.gd", "addons/volumetric_terrain/surface_tokens.gd",
         "addons/world_runtime/generation_earthworks.gd", "tests/terrain_block_contract.gd",
     ):

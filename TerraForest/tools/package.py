@@ -11,15 +11,20 @@ EXCLUDED = {'.godot', '.build', '.git', 'dist', 'reports', '__pycache__'}
 # They do not claim that a scene adapter works without a host-world contract.
 DEPENDENCIES = {
     'player_runtime': ['volumetric_water', 'characters'], 'characters': ['world_runtime'], 'presentation': [],
-    'world_runtime': ['player_runtime', 'volumetric_water'],
+    # The world adapters reference these host services directly. A dependency
+    # bundle must carry them, even though it is not a standalone scene API.
+    'world_runtime': ['player_runtime', 'volumetric_water', 'structures',
+                      'vehicle_runtime', 'world_ecosystem', 'presentation', 'impact_effects'],
     'vegetation_runtime': [], 'volumetric_water': [],
     'volumetric_terrain': ['world_runtime', 'volumetric_water'],
     'structures': ['volumetric_terrain', 'player_runtime'],
     'vegetation': ['vegetation_runtime'],
     'world_ecosystem': ['vegetation', 'volumetric_terrain', 'vegetation_runtime'],
-    'vehicle_runtime': [],
+    'vehicle_runtime': ['world_runtime'],
+    'impact_effects': ['world_ecosystem'],
 }
 ASSETS = {'characters': ['addons/characters/README.md', 'addons/characters/LICENSE.txt'],
+          'world_runtime': ['demo', 'assets', 'mods'],
           'vehicle_runtime': ['vehicle_demo'],
           'player_runtime': ['addons/structures/textures/terraforest',
                              'addons/world_ecosystem/woodland.gdshader']}

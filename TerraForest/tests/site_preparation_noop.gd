@@ -29,4 +29,4 @@ func run() -> void:
 		runner.tick(terrain,guard);await process_frame
 	check(runner.status=="complete" and runner.completed==2 and terrain.density_revision==revision+1,"entire already prepared site completes without changing terrain")
 	print("FINAL_OUTCOME ",terrain.last_edit_outcome)
-	terrain.shutdown();terrain.free();quit(1 if failures else 0)
+	terrain.shutdown();terrain.free();print("SITE_PREPARATION_NOOP failures=",failures);quit(1 if failures else 0)

@@ -9,7 +9,7 @@ func _initialize()->void:
 		if not ok:failures+=1
 		print("PASS " if ok else "FAIL ","packaged candidate ",Civic.IDS[index])
 	var hud:=preload("res://addons/player_runtime/player_hud.gd").new()
-	var supported:bool=hud.prepare() and hud.inventory.has_item(601) and preload("res://addons/player_runtime/item_icons.gd").texture(601)!=null
+	var supported:bool=hud.prepare() and hud.inventory.grant(601,1,hud.inventory.snapshot().revision).ok and preload("res://addons/player_runtime/item_icons.gd").texture(601)!=null
 	if not supported:failures+=1
 	print("PASS " if supported else "FAIL ","packaged currency catalog and coin icon")
 	hud.free()

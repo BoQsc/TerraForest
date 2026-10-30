@@ -4,6 +4,7 @@ const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Check=preload("res://addons/structures/foundation_check.gd")
 const Contact=preload("res://addons/structures/terrain_contact.gd")
 const Works=preload("res://addons/world_runtime/generation_earthworks.gd")
+const Plan=preload("res://addons/structures/site_plan.gd")
 var checks:=0
 var failures:=0
 
@@ -42,6 +43,9 @@ func run()->void:
 	check(not Contact.describe(invalid).ok,"contradictory surface/sample metadata is rejected")
 	invalid=asset.duplicate();invalid.set_meta("site_surface_inset",0.0)
 	check(not Contact.describe(invalid).ok,"individual recipes cannot disable the required reveal")
+	var floating:Resource=ClassDB.instantiate("NativeBlockPrefab")
+	floating.configure(PackedInt32Array([0,3,0,1]));floating.configure_attachment_envelope(AABB(Vector3.ZERO,Vector3(1,5,1)))
+	check(not Plan.foundation(floating,Vector3i(900,0,900),0,48).ok,"attachment envelope cannot stand in for an actual grounded block footprint")
 	check(asset.clearance_sample_count()==0 and asset.terrain_surface_sample_count(1)==9,"single-cell apron omitted by old room scan has nine surface probes")
 	var original:PackedVector3Array=asset.terrain_surface_samples(Vector3i.ZERO,0,0,512,1)
 	for rotation in 4:

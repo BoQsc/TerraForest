@@ -36,4 +36,4 @@ func _initialize() -> void:
 	asset.configure(PackedInt32Array([0,0,0,1,4095,0,4095,1]))
 	var oversized: Dictionary=Plan.foundation(asset,Vector3i(900,0,900),0,48)
 	check(not oversized.ok and "256" in oversized.reason,"oversized plan rejects before allocating segments")
-	quit(1 if failures else 0)
+	print("SETTLEMENT_SITE_PLAN failures=",failures);quit(1 if failures else 0)

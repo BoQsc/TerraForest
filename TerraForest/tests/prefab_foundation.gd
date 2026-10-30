@@ -21,7 +21,8 @@ func _initialize() -> void:
 	var probes: PackedVector3Array=asset.foundation_samples(Vector3i.ZERO,0,0)
 	var outside_street:=true
 	for p in probes: outside_street=outside_street and absf(p.z)>4.0 and p.y==-0.25
-	check(probes.size()==396 and outside_street,"frontage retains 396 actual foundation columns without street probes")
+	# The approved stair correction adds six support columns to each cottage.
+	check(probes.size()==420 and outside_street,"frontage retains 420 actual foundation and approach columns without street probes")
 	GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
 	var core=ClassDB.instantiate("TerrainCore")
 	core.execute(Codec.command(6,[1703,2]))
@@ -34,7 +35,7 @@ func _initialize() -> void:
 	core.execute(Codec.brush(hole,hole,2,0,false,1))
 	check(unsupported(core,placed_probes)>0,"local excavation exposes unsupported foundation probes")
 	check(asset.configure(PackedInt32Array()) and asset.foundation_samples(Vector3i.ZERO,0,0).is_empty(),"empty reconfiguration clears cached footprint")
-	quit(1 if failed else 0)
+	print("PREFAB_FOUNDATION failures=",1 if failed else 0);quit(1 if failed else 0)
 func unsupported(core: RefCounted,probes: PackedVector3Array) -> int:
 	var count:=0
 	for p in probes:
