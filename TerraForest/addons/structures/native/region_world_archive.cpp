@@ -33,6 +33,8 @@ void NativeRegionWorldArchive::_bind_methods() {
     ClassDB::bind_method(D_METHOD("request_model_survey_read","asset","region","expected","checkpoint","epoch","bounds"),&NativeRegionWorldArchive::request_model_survey_read);
     ClassDB::bind_method(D_METHOD("request_survey_region_read","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_survey_region_read);
     ClassDB::bind_method(D_METHOD("take_survey_region_read","ticket"),&NativeRegionWorldArchive::take_survey_region_read);
+    ClassDB::bind_method(D_METHOD("request_model_render_read","asset","region","expected","checkpoint","epoch"),&NativeRegionWorldArchive::request_model_render_read);
+    ClassDB::bind_method(D_METHOD("take_model_render_region_read","ticket"),&NativeRegionWorldArchive::take_model_render_region_read);
     ClassDB::bind_method(D_METHOD("discard_survey_region_read","ticket"),&NativeRegionWorldArchive::discard_survey_region_read);
     ClassDB::bind_method(D_METHOD("discard_model_region_read","ticket"),&NativeRegionWorldArchive::discard_model_region_read);
     ClassDB::bind_method(D_METHOD("poll_model_region_reads","max_results"),&NativeRegionWorldArchive::poll_model_region_reads,DEFVAL(4));

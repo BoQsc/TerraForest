@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "a45e8588eb0a53af8bc45472802ac2ba0807e9dc",
+  "scope": "Native immutable model render-page primitive and checked archive-worker delivery. Not connected to the production medium-prop renderer; no new distant-prop coverage or gameplay speedup claimed.",
+  "implementation": "Original 0BSD code using existing godot-cpp/engine dependencies. Reuses canonical TFMR/TFSI validation; compact vector output avoids per-record ordered-map allocation. No new worker, save schema, generated content or proxy artwork.",
+  "pack_sha256": "22254b5e91d557dbcfab3780326273b9b7bfe575b66e3aaaa71f8a382d93558d",
+  "pack_bytes": 400387736,
+  "distribution_bytes": 429693135,
+  "native_sha256": {
+    "debug": "a5113d5ef4f1c50ca065a9249b3bb3be00badf2154b6cbf751ec92c018c99963",
+    "release": "2aa77ec2d832088352bc963a6be98fee922a63921215b7080abd217a7b75d227"
+  },
+  "contract": {
+    "maximum_records_per_region": 100000,
+    "record_bytes": 56,
+    "dense_payload_bytes": 5600040,
+    "maximum_instances_per_gpu_upload": 1024,
+    "maximum_transform_bytes_per_gpu_upload": 49152,
+    "pressure_pages": 98,
+    "archive_request_reservation": 5600328,
+    "source_mesh": "Exact shared mesh/material/imported LOD resource, not reconstructed or simplified.",
+    "frame": "Transforms local to 32 m origin; caller places node at reported origin under canonical collection transform.",
+    "retention": "Archive request reservation includes queued native result. Consumed payload/GPU resources belong to caller and require a separate global residency budget.",
+    "excluded_accounting": "Encoded packets, parser/hash scratch, engine objects, shared mesh and GPU allocations are not included in payload_bytes."
+  },
+  "checks": {
+    "source": {
+      "path": "reports/runtime_views/20261030T142906562098Z",
+      "checks": 50,
+      "failures": 0,
+      "dense_decode_usec": 55731,
+      "worker_dense_decode_usec": 56895
+    },
+    "release": {
+      "path": "reports/model_render_pages_release.json",
+      "checks": 50,
+      "failures": 0,
+      "dense_decode_usec": 40713,
+      "worker_dense_decode_usec": 65319
+    },
+    "installed": {
+      "path": "reports/runtime_views/20261030T143334141310Z",
+      "checks": 50,
+      "failures": 0,
+      "dense_decode_usec": 41898,
+      "worker_dense_decode_usec": 40108,
+      "elapsed_seconds": 3.7160726000001887,
+      "passed": true,
+      "peak_private_commit_bytes": 856436736,
+      "peak_dedicated_gpu_bytes": 171700224,
+      "within_sampled_limits": true
+    },
+    "cases": [
+      "Exact asset, owner, inner/outer hashes, nonsingular finite basis and sorted sparse identities",
+      "Negative origins, mirrored/sheared/scaled transforms and actual GPU transform readback",
+      "Source mesh identity and transformed culling bounds; bounded and partial final pages",
+      "Historical checkpoint survives concurrent newer publication; wrong versions expose no data",
+      "One shared bounded archive queue; ticket isolation; no gameplay/collision hydration",
+      "24 cancellation/consumption cycles; consumed and unread destruction release native payloads",
+      "100000-instance native payload and 98 bounded publication pages"
+    ],
+    "release_regressions": {
+      "region_archive_reads": {
+        "checks": 81,
+        "failures": 0,
+        "path": "reports/region_archive_reads_release.json"
+      },
+      "structure_exclusion_paging": {
+        "checks": 44,
+        "failures": 0,
+        "path": "reports/structure_exclusion_paging_release.json"
+      }
+    },
+    "installed_world": {
+      "path": "reports/runtime_views/20261030T143339323636Z",
+      "failures": 0,
+      "elapsed_seconds": 56.766142799999216,
+      "passed": true,
+      "peak_private_commit_bytes": 3264417792,
+      "peak_dedicated_gpu_bytes": 1490255872,
+      "within_sampled_limits": true,
+      "scope": "Existing four-Ranger populated-world coverage, complementary near/far ownership, canonical byte parity and production play gate smoke. Not new medium-prop integration or universal visual acceptance.",
+      "inspected_image": "reports/runtime_views/20261030T143339323636Z/far_owned_distant_view.png",
+      "image_review": "Inspected; existing distant haze/coarse terrain remain. No new prop presentation to approve."
+    },
+    "source_regressions": [
+      {
+        "test": "static_placements",
+        "checks": 235,
+        "path": "reports/checks/20261030T143801375589Z",
+        "passed": true
+      },
+      {
+        "test": "static_model_regions",
+        "checks": 58,
+        "path": "reports/checks/20261030T143817432905Z",
+        "passed": true
+      },
+      {
+        "test": "model_region_metadata",
+        "checks": 32,
+        "path": "reports/checks/20261030T143820607704Z",
+        "passed": true
+      },
+      {
+        "test": "region_archive_reads",
+        "checks": 81,
+        "path": "reports/checks/20261030T142656726982Z",
+        "passed": true
+      },
+      {
+        "test": "region_checkpoint_retention",
+        "path": "reports/checks/20261030T142700570245Z",
+        "passed": true
+      },
+      {
+        "test": "structure_exclusion_paging",
+        "checks": 44,
+        "path": "reports/checks/20261030T142705137817Z",
+        "passed": true
+      },
+      {
+        "test": "structure_exclusion_pressure",
+        "path": "reports/checks/20261030T142706744672Z",
+        "passed": true
+      },
+      {
+        "test": "model_incremental_admission",
+        "checks": 42,
+        "path": "reports/checks/20261030T142716149988Z",
+        "passed": true
+      },
+      {
+        "test": "model_incremental_retirement",
+        "checks": 56,
+        "path": "reports/checks/20261030T142717895608Z",
+        "passed": true
+      },
+      {
+        "test": "prefab_model_attachments",
+        "checks": 27,
+        "path": "reports/checks/20261030T142720353473Z",
+        "passed": true
+      }
+    ],
+    "tooling": {
+      "python_runner_tests": 6,
+      "python_compile": true,
+      "diff_whitespace": true,
+      "credit_notices": 10
+    }
+  },
+  "source_world": {
+    "slot": "recipe_generated_4644d8cfc8f97e43",
+    "sha256_before_and_after": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+    "unchanged": true
+  },
+  "retained_experiments": [
+    {
+      "path": "reports/checks/20261030T141901386974Z",
+      "description": "Earlier direct decode used an ordered map before packing; 100000-record decode 63882 us. Final timings vary; not a controlled universal speedup comparison."
+    },
+    {
+      "path": "reports/checks/20261030T142523720210Z",
+      "description": "All archive assertions passed but runner used nonexistent REGION_ARCHIVE_READS completion marker. Corrected-marker rerun passed at reports/checks/20261030T142656726982Z; no production workaround."
+    }
+  ],
+  "export": "14-library pack startup passes. Retained rejected_ramp snapshot causes existing duplicate-UID warnings; no new export error. Only related shape-icon DLL fingerprint refreshed; pre-existing item-icon receipt changes left unstaged.",
+  "remaining": [
+    "Main-world globally budgeted medium-object visual ownership and coverage gate",
+    "Authored edit/removal, collection reset and archive epoch invalidation",
+    "Seamless near/far handoff without duplicates or missing unchanged props",
+    "Real-world prop travel/zoom/edit/save/reload and dense memory/frame evidence",
+    "Other open WORLD_RENDERING_CONTRACT milestones; no full-overhaul completion claim"
+  ]
+}

@@ -81,7 +81,12 @@ owned native payloads replace Godot objects carried in cross-thread Variants.
 Both installed pairs release all pages without ObjectDB warnings; 58 native checks
 per debug/release configuration include 24 cancellation/consumption cycles. Mixed
 streaming endurance remains open. Other medium props still lack the required
-complete far representation. See the linked issue receipts.
+complete far representation. A native read-only model-render page primitive now
+decodes exact archived transforms without loading editable models or physics;
+bounded GPU pages share the original mesh/material/LOD resource. It is not yet
+connected to the main-world prop renderer. Return next to globally budgeted visual
+ownership, edit/reset invalidation and loading coverage, then require real-world
+travel/zoom/reload and pressure evidence. See the linked issue receipts and contract.
 The preceding 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
 but local ground-cover residency still lags by up to eight near / 33 visible
 owners. Natural boulders now use independent whole-world ownership and native

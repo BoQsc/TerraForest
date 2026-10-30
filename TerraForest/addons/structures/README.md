@@ -671,3 +671,31 @@ The main-world construction palette includes **Timber footbridge - 12 m span**. 
 ### Prefab attachment bounds
 
 For attachments extending beyond block geometry, call `configure_attachment_envelope(AABB)` on `NativeBlockPrefab`. Its serialized `attachment_envelope` merges with block bounds for placement, protection, site grading and composition. Use an empty AABB to retain block-only bounds. Bounds must be finite, positive in all dimensions and inside local coordinates -4095 through 4096. Attached model proxies must still fit within the combined envelope and pass existing overlap checks. Changing the envelope invalidates staged placement. This is a conservative author-specified extent, not automatic model-bound inference or structural support. Expanded bounds can enlarge site grading; foundation probes remain tied to blocks. See [verification and limits](../../docs/evidence/prefab_envelope/README.md).
+
+### Read-only model render pages
+
+`NativeRegionWorldArchive.request_model_render_read(asset, region, checksum, checkpoint, epoch)`
+uses the existing bounded read worker. A registered asset and exact 32-byte checkpoint
+are required; wrong or missing versions fail rather than substitute current content.
+`take_model_render_region_read(ticket)` returns the original epoch and a
+`NativeModelRenderPage` under `render_page`. The wrapper is created on the consuming
+thread; the worker owns plain native records, not a Godot object. Cancel through
+`discard_survey_region_read(ticket)`. Other survey/gameplay consumers cannot take
+this completion. No canonical records, collision bodies or save data are modified.
+
+An immutable page contains at most 100,000 records in one 32 m origin region.
+`page(first, limit=1024)` exposes ordered IDs, row-major local transforms, the
+collection-local `origin`, next cursor and completion flag. On the scene thread,
+`create_multimesh(mesh, first, limit=1024)` uploads one bounded page using the exact
+shared mesh/material/imported LOD resource and calculated transformed culling bounds.
+Place its instance at `origin` beneath the source collection's transform. Empty,
+invalid or oversized ranges return no mesh. Do not replace the source mesh with
+its bounding box. `stats()` accounts native records, not mesh or engine allocations.
+
+This is a tested renderer building block, **not yet the main-world prop horizon**.
+The host must still implement globally bounded residency/publication, authoritative
+edit invalidation, complementary near/far ownership and loading readiness. Archive
+reservations cover queued results only; consuming a page transfers that memory
+responsibility to the host. Native consumers can take the shared immutable payload
+directly, without per-instance GDScript. See `tests/model_render_pages.gd` and the
+[open rendering contract](../../docs/WORLD_RENDERING_CONTRACT.md).

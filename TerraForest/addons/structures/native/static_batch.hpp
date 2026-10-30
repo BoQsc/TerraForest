@@ -18,12 +18,14 @@ using namespace godot;
 // One shared model per collection. Native spatial partitioning makes culling
 // local; authoring does not create a node for every fence, rung, or prop.
 struct ModelCheckpointLease;
+struct ModelPlacementRecord {int64_t id;std::array<float,12> transform;};
 class NativeStaticBatch : public Node3D {
     GDCLASS(NativeStaticBatch,Node3D)
     friend class NativeModelMapRegion;
     friend class NativePrefabPlacement;
     friend class NativeStructureQueries;
     friend class ExclusionPageData;
+    friend class ModelRenderPageData;
     PackedByteArray overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const;
     friend class NativeModelTransferScheduler;
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;
@@ -44,7 +46,7 @@ class NativeStaticBatch : public Node3D {
     ModelBoundsIndex unloaded_bounds;
     std::set<int64_t> unloaded_ids;
     static PackedByteArray encode_placements(const String &asset,const std::map<int64_t,Placement> &values);
-    static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values);
+    static bool parse_region(const PackedByteArray &bytes,String &asset,BlockKey &region,std::map<int64_t,Placement> &values,std::vector<ModelPlacementRecord> *compact=nullptr);
     static bool valid_model_region(BlockKey key);
     bool prepare_metadata(const PackedByteArray &bytes,std::map<BlockKey,UnloadedRegion> &staged,std::set<int64_t> &ids) const;
     void install_metadata(std::map<BlockKey,UnloadedRegion> &&staged,std::set<int64_t> &&ids,const String &identity=String());
@@ -144,7 +146,7 @@ class NativeStaticBatch : public Node3D {
     static bool valid_transform(const float *t);
     static BlockKey group_for(const Placement &p);
     static bool valid_asset(const String &id);
-    static bool parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out);
+    static bool parse(const PackedByteArray &bytes,String &asset,std::map<int64_t,Placement> *out,std::vector<ModelPlacementRecord> *compact=nullptr);
     void rebuild(const std::set<BlockKey> &keys,bool continuous=false);
     void remove_render_members(const std::set<BlockKey> &keys);
     struct CollectionRetirement {

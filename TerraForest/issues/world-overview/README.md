@@ -357,10 +357,25 @@ one-part admission pass; the source world hash is unchanged. Synthetic release
 checks pass, as do installed prototype, cost, world, external-pack, ownership and
 near-renderer checks. Images inspected; user visual acceptance remains pending.
 
+## Read-only model render page foundation
+
+- Native exact-checkpoint reads use the existing archive worker, not distant
+  gameplay/physics activation or a new worker per model type.
+- Immutable packed records retain canonical IDs and affine transforms. Bounded
+  GPU pages reuse the exact source mesh/material/LOD resource; no proxy artwork.
+- One 100,000-instance payload uses 5,600,040 accounted native bytes. This excludes
+  encoded/parser scratch, shared meshes, engine allocations and caller GPU pages.
+- Corruption, wrong versions, sparse IDs, negative origins, mirrored/sheared
+  transforms, GPU readback, pressure and cancellation/lifetime are covered by
+  `tests/model_render_pages.gd`. Evidence: `model-render-pages-verification.json`.
+- **Not yet connected to main-world prop rendering.** No new visual acceptance
+  claim or gameplay performance gain. Next: globally bounded ownership, edits,
+  resets, near/far continuity and actual-world coverage/load gates.
+
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical
-medium-object pages, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
+medium-object renderer integration, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
 prop tiers and dense-vehicle/transition qualification, general service providers, full generation/loading profiling
 and physical 4 GiB hardware/endurance. Custom vehicles currently use the small-car
 envelope; pack inventory registration and native dependency installation are open.

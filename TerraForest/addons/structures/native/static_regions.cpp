@@ -97,14 +97,18 @@ PackedByteArray NativeStaticBatch::capture_region(Vector3i position) const {
     out.encode_u32(20,payload.size());out.append_array(payload);
     out.append_array(region_digest(out));return out;
 }
-bool NativeStaticBatch::parse_region(const PackedByteArray &bytes,String &asset,BlockKey &key,std::map<int64_t,Placement> &values) {
+bool NativeStaticBatch::parse_region(const PackedByteArray &bytes,String &asset,BlockKey &key,std::map<int64_t,Placement> &values,std::vector<ModelPlacementRecord> *compact) {
     if(bytes.size()<105||bytes.size()>5600232||std::memcmp(bytes.ptr(),"TFMR\1\0\0\0",8))return false;
     if(bytes.decode_u32(20)!=uint64_t(bytes.size()-56))return false;
     if(region_digest(bytes.slice(0,bytes.size()-32))!=bytes.slice(bytes.size()-32))return false;
     key={int(bytes.decode_s32(8)),int(bytes.decode_s32(12)),int(bytes.decode_s32(16))};
-    if(!valid_model_region(key)||!parse(bytes.slice(24,bytes.size()-32),asset,&values))return false;
+    if(!valid_model_region(key)||!parse(bytes.slice(24,bytes.size()-32),asset,compact?nullptr:&values,compact))return false;
     for(const auto &entry:values) {
         auto actual=group_for(entry.second);
+        if(actual<key||key<actual)return false;
+    }
+    if(compact)for(const auto &entry:*compact) {
+        auto actual=group_for(entry.transform);
         if(actual<key||key<actual)return false;
     }
     return true;
