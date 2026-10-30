@@ -71,6 +71,7 @@ func run()->void:
 	game.terrain.focus=Vector3(1900,80,1900)
 	check(await until(func():return activation.prepare_from_saved(game) and activation.coverage_status().ready),"never-near vehicle kind prepares across the full saved world")
 	check(activation.coverage_status().rendered==4 and activation.residents.is_empty(),"all distant cars draw without activating driving bodies")
+	check(activation.parked_view.horizon_statistics().parts==1,"production distant Ranger uses the verified offline consolidated prototype")
 	var meshes:=0;var lods:=0
 	for body:RigidBody3D in activation.bodies:
 		for node:MeshInstance3D in body.find_children("*","MeshInstance3D",true,false):

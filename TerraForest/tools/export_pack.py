@@ -25,6 +25,8 @@ direct=engine.parent/'godot.windows.opt.tools.64.exe'
 if direct.exists():engine=direct
 if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/bake_first_person_meshes.gd']):
     sys.exit(1)
+if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/bake_vehicle_prototype.gd']):
+    sys.exit(1)
 if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res://tools/ensure_item_icons.gd']):
     sys.exit(1)
 (root/'dist').mkdir(exist_ok=True)

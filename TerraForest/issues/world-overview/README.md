@@ -302,10 +302,11 @@ Same camera after near promotion: exact geometry retained without duplicate far
 instances. Near shadows appear; far shadows are intentionally off. That difference
 is not a seamless-shadow claim. Images inspected, not user-approved.
 
-Ranger still has 32 parts. Dense actual-car GPU/draw cost, per-material prototype
-consolidation, bounded near-handoff latency, continuous zoom/driving and shadow
-transitions remain open. Return with full-prototype pressure and continuous visual
-evidence. Missing packs keep canonical records but cannot render substitute cars.
+At this milestone Ranger retained 32 parts; the following consolidation milestone
+addresses far draw/transform cost. Bounded near-handoff latency, continuous
+zoom/driving and shadow transitions remain open. Return with populated-world
+pressure and continuous visual evidence. Missing packs keep canonical records
+but cannot render substitute cars.
 
 Follow-up isolated actual-car baseline: 64 / 1,024 / 4,096 Rangers retain their
 32-part meshes and imported LODs. At 4,096 cars the renderer issues 2,048 visible
@@ -315,6 +316,46 @@ material, making exact per-material consolidation the next candidate. The close
 does **not** mean performance accepted. No terrain, driving or cast shadows in
 this baseline. Raw samples and inspected images remain in
 `reports/runtime_views/20261030T124816059552Z`; receipt records all phases.
+
+## Offline vehicle consolidation — 2026-10-30
+
+The built-in Ranger now uses one far part instead of 32, while nearby/physical
+meshes remain unchanged. Native offline baking preserves base geometry,
+normals/tangents, UVs/colors, material and all 99 distinct imported LOD thresholds.
+Export fingerprints refresh the compressed binary when sources change. Runtime
+hash-checks it once and falls back to original parts if stale or unavailable;
+there is no gameplay mesh rebake. Other vehicle packs can opt into the same
+adapter hook, keeping their original geometry by default.
+
+Installed same-process A/B at 4,096 actual Rangers: draw calls **2,048 → 64**,
+transform capacity **12 → 0.375 MiB**, overview render-CPU p95 **2.59 → 0.22 ms**.
+GPU median is 5.68 → 5.56 ms, not a meaningful universal GPU speedup claim.
+GPU tails vary: the compact 64-car phase reaches 7.70 ms p95 versus 4.48 ms for
+the original. The shared bake adds a 5.91 MB file and fixed mesh memory; transform
+savings are not total-memory savings. No terrain, cast shadows or driving in
+this pressure fixture. Mixed-world GPU/frame delivery remains unqualified.
+
+The initial consolidation regressed GPU cost by double-applying source-part
+scale to imported LOD thresholds. It was rejected, corrected to the MultiMesh
+parent-scale policy and covered by a regression check. Rendered mesh readback
+also cost tens of milliseconds, so production baking moved entirely offline.
+Packaged validation caught Godot's rewritten import metadata; raw source/import
+hashes are now checked before export, with output-binary integrity always checked
+in-game. Failures and intermediate comparisons remain in
+`vehicle-consolidation-verification.json`, alongside final source/release/pack runs.
+
+![One-part distant prototype in the actual world](images/vehicles_compact_far_owned.png)
+Final installed read-only seed-1703 fixture, same elevated frozen test poses as
+the earlier comparison. One far mesh group; original silhouette/material retained.
+No far cast shadows. The fourth car is partly hidden behind the HUD.
+
+![Unchanged nearby representation](images/vehicles_compact_near_owned.png)
+Same camera after near promotion to the original 32 parts. Existing near shadows
+appear; no claim of seamless shadow transition or wheel-contact qualification.
+The production play gate, canonical component bytes, remote removal and actual
+one-part admission pass; the source world hash is unchanged. Synthetic release
+checks pass, as do installed prototype, cost, world, external-pack, ownership and
+near-renderer checks. Images inspected; user visual acceptance remains pending.
 
 ## Remaining / resume here
 

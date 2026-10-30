@@ -154,10 +154,10 @@
       "category": "legacy_asset_terms",
       "status": "retained_legacy_grant",
       "declared_terms": "0BSD",
-      "scope": ["vehicle_demo/assets/Vehicle.glb", "vehicle_demo/LICENSE.txt"],
+      "scope": ["vehicle_demo/assets/Vehicle.glb", "vehicle_demo/assets/Vehicle.parked.res", "vehicle_demo/assets/Vehicle.parked.bake.json", "vehicle_demo/LICENSE.txt"],
       "origin": "User-supplied and authored Godot_Vehicle_Driving_Test_FRESH_HEADLESS_REIMPORT_FIXED.zip, declared 0BSD on 2026-10-03; archive hash is in PROVENANCE.md.",
       "evidence": ["vehicle_demo/PROVENANCE.md", "vehicle_demo/LICENSE.txt"],
-      "distribution_boundary": "Vehicle demo source and model used by the integrated vehicle. Separate native bindings retain their own notice.",
+      "distribution_boundary": "Vehicle demo source and model used by the integrated vehicle, including its offline consolidated parked-mesh derivative and provenance receipt under the same 0BSD grant. Separate native bindings retain their own notice.",
       "reason_retained": "Existing author-provided 0BSD asset grant remains in force; associated original code conforms to the new code default.",
       "next_step": "Keep 0BSD. Request any additional asset-only CC0 dedication separately and record its precise scope.",
       "closure_evidence": ["Explicit author-supported CC0 dedication for the model or documented retention of 0BSD", "Unchanged separate binding/dependency attribution"]

@@ -1,0 +1,26 @@
+{
+  "bake": {
+    "bake_us": 13297,
+    "baked_lods": 99,
+    "ok": true,
+    "payload_bytes": 17166352,
+    "read_us": 2950,
+    "source_lods": 120,
+    "source_parts": 32,
+    "upload_us": 3409
+  },
+  "engine": "4.7.2-stable (steam)",
+  "output_sha256": "4c25c9ca8e83a5734b81b469cc0a8d3584318f6f26d95c36507da9ab3602ca53",
+  "provenance": "Derived by original native consolidation from the supplied Vehicle.glb and existing runtime transforms/materials; retains vehicle_demo/LICENSE.txt (0BSD). No new art or external dependency.",
+  "schema": 1,
+  "sources": {
+    "res://addons/vehicle_runtime/native/vehicle_prototype.cpp": "dd4d245dc44a584872d2e113e09a7b202e10e9a3787088317e7992133bad0486",
+    "res://addons/vehicle_runtime/native/vehicle_prototype.hpp": "1e8cb2c50a7135b9aae1f71608ce1d2d165695742733c8ec8cafaa23fb6ad013",
+    "res://tools/bake_vehicle_prototype.gd": "fa87a6722c4b273ac10d1c5d8dc269d96e3f7f95d1071e5547c7131cbab60213",
+    "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",
+    "res://vehicle_demo/assets/Vehicle.glb.import": "72b2c3ee9405b9d902f506c4e4b60f2d178b242adda35413f6ee7c4957b61111",
+    "res://vehicle_demo/scenes/car.tscn": "597766cbfe0141c3118f8762027839cdd47cbd2026ed87e93c6ae3980d8ac31a",
+    "res://vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
+    "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
+  }
+}

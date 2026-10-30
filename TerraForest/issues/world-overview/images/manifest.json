@@ -9,6 +9,28 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "vehicles_compact_far_owned.png",
+      "sha256": "6306f3d2b1b51c467b3ad2e363ccf30d8c0f6ea1300958240548aa4e4d53ca27",
+      "source": "reports/runtime_views/20261030T134005428488Z/far_owned_near_view.png",
+      "run": "reports/runtime_views/20261030T134005428488Z/run.json",
+      "pack_sha256": "90bc06cb597681d3ddf5246467f392757efe58778e439afe66dc1524042ba8ba",
+      "view": "Same populated fixture; four Rangers rendered by one-part offline far prototype, physical focus remote",
+      "fixture_policy": "Read-only world; frozen terrain-sampled in-memory vehicles, not wheel-contact qualification",
+      "provenance": "Unmodified engine screenshot of existing project and supplied 0BSD Ranger; no new art or relicensing of depicted assets",
+      "review": "Inspected geometry/material retention. Far shadows off as before; fourth car partly behind HUD. Not user approval or seamless shadow acceptance."
+    },
+    {
+      "file": "vehicles_compact_near_owned.png",
+      "sha256": "de2f5f32389c0c4cd08aa4147821ae3e8f94f0bbf222e3d3daa14498fbadc00a",
+      "source": "reports/runtime_views/20261030T134005428488Z/near_owned.png",
+      "run": "reports/runtime_views/20261030T134005428488Z/run.json",
+      "pack_sha256": "90bc06cb597681d3ddf5246467f392757efe58778e439afe66dc1524042ba8ba",
+      "view": "Same camera after near promotion to unchanged 32-part mesh; far owner complementary",
+      "fixture_policy": "Read-only world; in-memory fleet only",
+      "provenance": "Unmodified engine screenshot of existing project and supplied 0BSD Ranger; no new art or relicensing of depicted assets",
+      "review": "Inspected matching appearance with existing near shadows restored. Not wheel-contact, physical driving, continuous-transition or user approval."
+    },
+    {
       "file": "vehicles_far_owned.png",
       "sha256": "0e02c9de96d579766fbd4acbd3b89053cfabee5da05b0ca1b87d397a58e32608",
       "source": "reports/runtime_views/20261030T123654045560Z/far_owned_near_view.png",

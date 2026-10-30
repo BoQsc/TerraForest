@@ -75,6 +75,8 @@ func run() -> void:
 	var body: RigidBody3D=session.activation.residents.get(custom)
 	if body != null:
 		check(session.adapter(body).charge==77 and session.activation.parked_views.has("test.cart.v1"), "adapter restores opaque state and creates its own prototype")
+		var original_parts:Array=[{"mesh":BoxMesh.new(),"transform":Transform3D.IDENTITY}]
+		check(session.adapter(body).parked_render_parts(body,original_parts)==original_parts,"independent provider keeps its original far parts by default")
 		world.player.position=body.position+Vector3.RIGHT*2.8
 		check(session.enter(world,custom) and session.adapter(body).enabled and Engine.physics_ticks_per_second==60, "custom controller receives entry without Ranger physics policy")
 		session.adapter(body).camera_update(body,world.camera,0.016)

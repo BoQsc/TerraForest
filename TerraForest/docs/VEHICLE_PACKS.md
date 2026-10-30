@@ -62,6 +62,7 @@ One controller integrates that body; do not create a second movement authority.
 | `restore_parked(body, pose)` | Reset transient motion, disable processing and freeze the pooled body. |
 | `can_park(body, physics_frame)` | Confirm actual rest; readiness holds must not count as support. |
 | `bounds(body)` / `collision(body)` | Supply the supported bounds and one parked chassis proxy. |
+| `parked_render_parts(body, original)` | Optional static far prototype. Default returns original parts unchanged; Ranger loads a verified offline bake. Near geometry and collision are unaffected. |
 | `camera_update(body, camera, delta)` | Own the occupied camera without creating another game window. |
 | `physics_rate()` | 60–120 Hz; the host restores the previous rate on exit. |
 | `capture_state(body)` / `restore_state(body, bytes)` | Version the pack's opaque binary state; reset on empty defaults. |
@@ -92,13 +93,47 @@ preparation uses a per-kind identity index, not a distance query. This removes
 the old visual retirement, not the local physics limits. Camera clipping,
 frustum culling, occlusion and atmosphere still apply.
 
-There is no automatic cheap-LOD baker for arbitrary packs. Supply imported mesh
-LODs; oversized/animated parked prototypes require a subsequent API extension,
-not silent simplification. Ranger retains 32 mesh parts; dense real-car GPU cost,
-near-handoff upload spikes and shadow-transition quality remain unqualified.
+There is no automatic cheap-LOD generator for arbitrary packs. Supply imported
+mesh LODs; oversized/animated parked prototypes require a subsequent API extension,
+not silent simplification. Ranger retains 32 near/body parts but uses one offline
+consolidated part at distance. Continuous near-handoff upload spikes, shadow
+transitions and physical driving endurance remain unqualified.
 Custom vehicles currently spawn through Dev Spawner and persist in-world; their
 inventory items/recipes/icons are not registered. Pickup refuses to convert a
 custom vehicle into a Ranger item.
+
+## Offline parked prototypes
+
+`NativeVehiclePrototype.bake(parts)` is an authoring API, **not a gameplay call**.
+It groups compatible materials/attributes, transforms positions/normals/tangents
+and combines source indices. It does not invent a proxy shape or simplify new
+geometry. All imported error thresholds are retained; MultiMesh parent-instance
+LOD scale is preserved rather than double-applying each row's scale. Aggregated
+bounds can still change distant LOD selection relative to separate source parts.
+
+Admission: 2–64 ArrayMesh parts, 64 surfaces, 131,072 vertices and 786,432 base
+indices total; 65,535 vertices and 32 input LODs per source surface; 128 merged
+LOD thresholds per group. Input and output payload estimates each have a 32 MiB
+ceiling. Only indexed triangles, positive conformal transforms and ordinary
+opaque StandardMaterial3D/null materials qualify. Custom shaders, transparency,
+triplanar/object-dependent effects, skinning, blendshapes and unsupported channels
+reject explicitly. Callers must retain their original representation on rejection.
+Godot mesh readback can stall rendered execution; the built-in pipeline bakes
+headlessly before export and stores a compressed binary resource instead.
+
+`tools/bake_vehicle_prototype.gd` fingerprints the Ranger GLB/import settings,
+runtime scene/scripts and baker sources. Export refreshes stale output; `--check-only`
+verifies freshness without modifying it. Runtime validates the output hash and
+available source hashes once, loading the binary or falling back to original parts.
+Unavailable remapped source files in exported packs are checked at export time,
+not reconstructed at runtime. Godot also rewrites `.import` metadata during export;
+its source hash is checked only while the corresponding raw asset is present.
+The derived binary itself is always hash-checked. Missing/stale data never triggers a live rebake.
+Restart after asset/pack changes. Third-party adapters may opt into this same
+authoring API or supply their own valid static parts; their default remains unchanged.
+
+The Ranger derivative retains its supplied model's 0BSD terms. Its receipt records
+all source hashes and the exact engine version; see `vehicle_demo/PROVENANCE.md`.
 
 ## Save compatibility
 
@@ -134,3 +169,10 @@ pack with `python tools/check_runtime_views.py <test> --pack`.
 1,024-car close views and 4,096-car world-wide views, draw calls and CPU/GPU/frame
 timings. It is an isolated profiling baseline; functional PASS is not performance
 acceptance or mixed-world driving qualification.
+
+`vehicle_prototype --pack` verifies native geometry/attribute and imported-LOD
+assembly, bounded rejection, current/stale receipts and source-versus-consolidated
+rendered images. The populated-world test also asserts the production Ranger far
+owner actually uses the one-part bake rather than silently falling back.
+The cost fixture compares original and consolidated prototypes in the same process;
+[consolidation evidence and retained failures](../issues/world-overview/vehicle-consolidation-verification.json).

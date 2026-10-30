@@ -1,0 +1,739 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "e525da665d4bef80c6f5089fef31a8a0846b935d",
+  "scope": "Offline native consolidation of static opaque parked vehicle parts, automatic export freshness, runtime original-part fallback and optional provider hook. Not the full rendering/modding overhaul or universal seamless driving qualification.",
+  "implementation": "Original 0BSD code; derived Ranger asset retains supplied-model 0BSD. Existing godot-cpp dependency retained; no new dependency, proxy art, simplifier or compute shader.",
+  "pack_sha256": "90bc06cb597681d3ddf5246467f392757efe58778e439afe66dc1524042ba8ba",
+  "pack_bytes": 400387736,
+  "distribution": {
+    "bytes": 429634255,
+    "budget": {
+      "bytes": 429634255,
+      "status": "within_budget"
+    }
+  },
+  "native_sha256": {
+    "vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+    "vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e"
+  },
+  "artifact": {
+    "path": "vehicle_demo/assets/Vehicle.parked.res",
+    "receipt": "vehicle_demo/assets/Vehicle.parked.bake.json",
+    "sha256": "4c25c9ca8e83a5734b81b469cc0a8d3584318f6f26d95c36507da9ab3602ca53",
+    "bytes": 5905432,
+    "bake": {
+      "bake_us": 13297,
+      "baked_lods": 99,
+      "ok": true,
+      "payload_bytes": 17166352,
+      "read_us": 2950,
+      "source_lods": 120,
+      "source_parts": 32,
+      "upload_us": 3409
+    },
+    "engine": "4.7.2-stable (steam)",
+    "near_parts": 32,
+    "far_parts": 1,
+    "source_triangles": 29794,
+    "source_lod_entries": 120,
+    "distinct_merged_thresholds": 99,
+    "scope": "17,166,352-byte conservative bake payload estimate is not measured GPU memory. Compressed resource is shared once, not per instance. Baking runs before export, not during play."
+  },
+  "bounds": {
+    "parts": 64,
+    "surfaces": 64,
+    "total_vertices": 131072,
+    "total_base_indices": 786432,
+    "vertices_per_source_surface": 65535,
+    "input_lods_per_surface": 32,
+    "merged_lods_per_group": 128,
+    "input_payload_limit_bytes": 33554432,
+    "output_payload_limit_bytes": 33554432
+  },
+  "fixture": {
+    "slot": "recipe_generated_4644d8cfc8f97e43",
+    "sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+    "unchanged": true,
+    "policy": "Read-only populated world, four in-memory frozen Rangers. Component snapshot restored into second world's loading gate; not compound disk save or driven wheel-contact evidence. Offscreen/nonactivating, no OS mouse capture."
+  },
+  "checks": {
+    "source_prototype": "reports/runtime_views/20261030T135038038598Z/run.json",
+    "source_checks": 20,
+    "release_prototype": "reports/vehicle_prototype_release.json",
+    "release_checks": 14,
+    "source_module": "reports/checks/20261030T133313600184Z/run.json",
+    "source_world": "reports/runtime_views/20261030T133314438519Z/run.json",
+    "installed_prototype": "reports/runtime_views/20261030T135043352739Z/run.json",
+    "installed_prototype_checks": 20,
+    "installed_cost": "reports/runtime_views/20261030T133921014033Z/run.json",
+    "installed_world": "reports/runtime_views/20261030T134005428488Z/run.json",
+    "installed_module_pack": "reports/runtime_views/20261030T134103571904Z/run.json",
+    "installed_native_horizon": "reports/runtime_views/20261030T134108764421Z/run.json",
+    "installed_near_renderer": "reports/runtime_views/20261030T134111244740Z/run.json",
+    "export": "reports/export.log",
+    "smoke": "reports/pack_smoke.log",
+    "launcher_unit_tests": 6,
+    "python_compile": true,
+    "credits_freshness": true,
+    "bake_check_only_current": true,
+    "source_and_installed_passed": true,
+    "export_warnings": "Existing duplicate UID warnings from retained reports/rejected_ramp_20261025/snapshot; not introduced or resolved by this change. No export errors.",
+    "scope": "Geometry/normal/tangent/UV/color/index parity, LOD assembly and 128-threshold bound, unsupported-input rejection, stale/malformed receipt checks, cached production binary image comparison, exact production one-part admission, unchanged near/body meshes and canonical bytes, remote despawn, readiness gate, independent external provider and native ownership regressions. Release fixture is synthetic; installed actual-car tests use the debug DLL."
+  },
+  "visual": {
+    "installed_result": "reports/runtime_views/20261030T135043352739Z/result.json",
+    "pixels": 2073600,
+    "full_detail_changed_pixels_over_3": 22,
+    "full_detail_mean_channel_error": 0.000189846965020576,
+    "distance_40_changed_pixels_over_3": 10,
+    "distance_180_changed_pixels_over_3": 0,
+    "review": "Inspected source close A/B, installed dense close A/B and populated-world near/far/distant images. Silhouette/materials retained; far shadows remain off, near shadows appear. Distant multi-part/combined AABBs can choose slightly different imported LODs; no universal pixel-parity or user-approval claim."
+  },
+  "costs": {
+    "hardware": "RTX 4050 Laptop GPU; Godot 4.7.2 steam ed1daf0bf, Forward+, 1920x1080, 60 FPS cap",
+    "warmup_frames_per_phase": 60,
+    "measured_frames_per_phase": 120,
+    "order": "Original six phases, then consolidated six phases in the same process",
+    "samples": [
+      {
+        "label": "original_empty",
+        "count": 0,
+        "summary": {
+          "draw_calls": {
+            "max": 0,
+            "median": 0,
+            "p95": 0
+          },
+          "frame_ms": {
+            "max": 19.387,
+            "median": 16.658,
+            "p95": 17.607
+          },
+          "gpu_ms": {
+            "max": 1.88999998569489,
+            "median": 0.542999982833862,
+            "p95": 1.71700000762939
+          },
+          "primitives_raw": {
+            "max": 0,
+            "median": 0,
+            "p95": 0
+          },
+          "render_cpu_ms": {
+            "max": 0.196999996900558,
+            "median": 0.101000003516674,
+            "p95": 0.14300000667572
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 0,
+          "last_records": 0,
+          "last_uploads": 0,
+          "last_us": 1,
+          "pages": 0,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 0,
+          "rendered": 0,
+          "upload_bytes": 0,
+          "uploads": 0
+        },
+        "max_admission_ms": 0.001
+      },
+      {
+        "label": "original_dense64",
+        "count": 64,
+        "summary": {
+          "draw_calls": {
+            "max": 32,
+            "median": 32,
+            "p95": 32
+          },
+          "frame_ms": {
+            "max": 18.573,
+            "median": 16.656,
+            "p95": 16.973
+          },
+          "gpu_ms": {
+            "max": 6.375,
+            "median": 3.35700011253357,
+            "p95": 4.48199987411499
+          },
+          "primitives_raw": {
+            "max": 7274,
+            "median": 7274,
+            "p95": 7274
+          },
+          "render_cpu_ms": {
+            "max": 0.310000002384186,
+            "median": 0.148000001907349,
+            "p95": 0.212999999523163
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 196608,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 602,
+          "pages": 1,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 64,
+          "rendered": 64,
+          "upload_bytes": 196608,
+          "uploads": 1
+        },
+        "max_admission_ms": 0.602
+      },
+      {
+        "label": "original_dense1024",
+        "count": 1024,
+        "summary": {
+          "draw_calls": {
+            "max": 256,
+            "median": 256,
+            "p95": 256
+          },
+          "frame_ms": {
+            "max": 17.601,
+            "median": 16.652,
+            "p95": 17.044
+          },
+          "gpu_ms": {
+            "max": 7.45900011062622,
+            "median": 3.59899997711182,
+            "p95": 5.7979998588562
+          },
+          "primitives_raw": {
+            "max": 14768,
+            "median": 14768,
+            "p95": 14768
+          },
+          "render_cpu_ms": {
+            "max": 0.679000020027161,
+            "median": 0.314000010490417,
+            "p95": 0.503000020980835
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 1572864,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 397,
+          "pages": 8,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 1024,
+          "rendered": 1024,
+          "upload_bytes": 3342336,
+          "uploads": 17
+        },
+        "max_admission_ms": 0.992
+      },
+      {
+        "label": "original_dense1024_close",
+        "count": 1024,
+        "summary": {
+          "draw_calls": {
+            "max": 256,
+            "median": 256,
+            "p95": 256
+          },
+          "frame_ms": {
+            "max": 17.154,
+            "median": 16.658,
+            "p95": 16.899
+          },
+          "gpu_ms": {
+            "max": 7.3289999961853,
+            "median": 6.02799987792969,
+            "p95": 6.79400014877319
+          },
+          "primitives_raw": {
+            "max": 66768,
+            "median": 66768,
+            "p95": 66768
+          },
+          "render_cpu_ms": {
+            "max": 0.535000026226044,
+            "median": 0.307000011205673,
+            "p95": 0.363999992609024
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 1572864,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 269,
+          "pages": 8,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 1024,
+          "rendered": 1024,
+          "upload_bytes": 6488064,
+          "uploads": 33
+        },
+        "max_admission_ms": 0.795
+      },
+      {
+        "label": "original_world4096",
+        "count": 4096,
+        "summary": {
+          "draw_calls": {
+            "max": 2048,
+            "median": 2048,
+            "p95": 2048
+          },
+          "frame_ms": {
+            "max": 18.834,
+            "median": 16.666,
+            "p95": 17.382
+          },
+          "gpu_ms": {
+            "max": 7.04300022125244,
+            "median": 5.67700004577637,
+            "p95": 6.26700019836426
+          },
+          "primitives_raw": {
+            "max": 104576,
+            "median": 104576,
+            "p95": 104576
+          },
+          "render_cpu_ms": {
+            "max": 3.67199993133545,
+            "median": 2.08999991416931,
+            "p95": 2.58500003814697
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 12582912,
+          "last_records": 0,
+          "last_uploads": 1,
+          "last_us": 566,
+          "pages": 64,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 4096,
+          "rendered": 4096,
+          "upload_bytes": 45613056,
+          "uploads": 232
+        },
+        "max_admission_ms": 1.918
+      },
+      {
+        "label": "original_world4096_close",
+        "count": 4096,
+        "summary": {
+          "draw_calls": {
+            "max": 2048,
+            "median": 2048,
+            "p95": 2048
+          },
+          "frame_ms": {
+            "max": 18.378,
+            "median": 16.677,
+            "p95": 17.694
+          },
+          "gpu_ms": {
+            "max": 7.53900003433228,
+            "median": 6.1399998664856,
+            "p95": 6.90700006484985
+          },
+          "primitives_raw": {
+            "max": 131608,
+            "median": 131608,
+            "p95": 131608
+          },
+          "render_cpu_ms": {
+            "max": 3.17000007629395,
+            "median": 2.04099988937378,
+            "p95": 2.59299993515015
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 12582912,
+          "last_records": 0,
+          "last_uploads": 1,
+          "last_us": 624,
+          "pages": 64,
+          "parts": 32,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 4096,
+          "rendered": 4096,
+          "upload_bytes": 84738048,
+          "uploads": 431
+        },
+        "max_admission_ms": 2.096
+      },
+      {
+        "label": "compact_empty",
+        "count": 0,
+        "summary": {
+          "draw_calls": {
+            "max": 0,
+            "median": 0,
+            "p95": 0
+          },
+          "frame_ms": {
+            "max": 17.176,
+            "median": 16.654,
+            "p95": 16.875
+          },
+          "gpu_ms": {
+            "max": 3.42600011825562,
+            "median": 0.671000003814697,
+            "p95": 1.49500000476837
+          },
+          "primitives_raw": {
+            "max": 0,
+            "median": 0,
+            "p95": 0
+          },
+          "render_cpu_ms": {
+            "max": 0.149000003933907,
+            "median": 0.0979999974370003,
+            "p95": 0.140000000596046
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 0,
+          "last_records": 0,
+          "last_uploads": 0,
+          "last_us": 1,
+          "pages": 0,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 0,
+          "rendered": 0,
+          "upload_bytes": 0,
+          "uploads": 0
+        },
+        "max_admission_ms": 0.001
+      },
+      {
+        "label": "compact_dense64",
+        "count": 64,
+        "summary": {
+          "draw_calls": {
+            "max": 1,
+            "median": 1,
+            "p95": 1
+          },
+          "frame_ms": {
+            "max": 17.645,
+            "median": 16.659,
+            "p95": 16.936
+          },
+          "gpu_ms": {
+            "max": 11.664999961853,
+            "median": 2.91599988937378,
+            "p95": 7.70300006866455
+          },
+          "primitives_raw": {
+            "max": 7466,
+            "median": 7466,
+            "p95": 7466
+          },
+          "render_cpu_ms": {
+            "max": 0.303999990224838,
+            "median": 0.109999999403954,
+            "p95": 0.153999999165535
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 6144,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 88,
+          "pages": 1,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 64,
+          "rendered": 64,
+          "upload_bytes": 6144,
+          "uploads": 1
+        },
+        "max_admission_ms": 0.088
+      },
+      {
+        "label": "compact_dense1024",
+        "count": 1024,
+        "summary": {
+          "draw_calls": {
+            "max": 8,
+            "median": 8,
+            "p95": 8
+          },
+          "frame_ms": {
+            "max": 17.322,
+            "median": 16.685,
+            "p95": 17.054
+          },
+          "gpu_ms": {
+            "max": 6.98400020599365,
+            "median": 3.78999996185303,
+            "p95": 6.51200008392334
+          },
+          "primitives_raw": {
+            "max": 14768,
+            "median": 14768,
+            "p95": 14768
+          },
+          "render_cpu_ms": {
+            "max": 0.254999995231628,
+            "median": 0.128999993205071,
+            "p95": 0.203999996185303
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 49152,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 44,
+          "pages": 8,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 1024,
+          "rendered": 1024,
+          "upload_bytes": 104448,
+          "uploads": 17
+        },
+        "max_admission_ms": 0.195
+      },
+      {
+        "label": "compact_dense1024_close",
+        "count": 1024,
+        "summary": {
+          "draw_calls": {
+            "max": 8,
+            "median": 8,
+            "p95": 8
+          },
+          "frame_ms": {
+            "max": 17.273,
+            "median": 16.665,
+            "p95": 16.894
+          },
+          "gpu_ms": {
+            "max": 7.00600004196167,
+            "median": 6.13199996948242,
+            "p95": 6.55999994277954
+          },
+          "primitives_raw": {
+            "max": 68516,
+            "median": 68516,
+            "p95": 68516
+          },
+          "render_cpu_ms": {
+            "max": 0.256000012159348,
+            "median": 0.123000003397465,
+            "p95": 0.177000001072884
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 49152,
+          "last_records": 128,
+          "last_uploads": 1,
+          "last_us": 46,
+          "pages": 8,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 1024,
+          "rendered": 1024,
+          "upload_bytes": 202752,
+          "uploads": 33
+        },
+        "max_admission_ms": 0.123
+      },
+      {
+        "label": "compact_world4096",
+        "count": 4096,
+        "summary": {
+          "draw_calls": {
+            "max": 64,
+            "median": 64,
+            "p95": 64
+          },
+          "frame_ms": {
+            "max": 17.368,
+            "median": 16.655,
+            "p95": 16.971
+          },
+          "gpu_ms": {
+            "max": 6.91900014877319,
+            "median": 5.56300020217896,
+            "p95": 6.58400011062622
+          },
+          "primitives_raw": {
+            "max": 104576,
+            "median": 104576,
+            "p95": 104576
+          },
+          "render_cpu_ms": {
+            "max": 0.228000000119209,
+            "median": 0.160999998450279,
+            "p95": 0.217999994754791
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 393216,
+          "last_records": 0,
+          "last_uploads": 1,
+          "last_us": 85,
+          "pages": 64,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 4096,
+          "rendered": 4096,
+          "upload_bytes": 1425408,
+          "uploads": 232
+        },
+        "max_admission_ms": 0.225
+      },
+      {
+        "label": "compact_world4096_close",
+        "count": 4096,
+        "summary": {
+          "draw_calls": {
+            "max": 64,
+            "median": 64,
+            "p95": 64
+          },
+          "frame_ms": {
+            "max": 17.076,
+            "median": 16.654,
+            "p95": 16.878
+          },
+          "gpu_ms": {
+            "max": 7.40799999237061,
+            "median": 6.13800001144409,
+            "p95": 6.88299989700317
+          },
+          "primitives_raw": {
+            "max": 132968,
+            "median": 132968,
+            "p95": 132968
+          },
+          "render_cpu_ms": {
+            "max": 0.421000003814697,
+            "median": 0.180000007152557,
+            "p95": 0.291000008583069
+          }
+        },
+        "native": {
+          "instance_capacity_bytes": 393216,
+          "last_records": 0,
+          "last_uploads": 1,
+          "last_us": 90,
+          "pages": 64,
+          "parts": 1,
+          "pending_changes": 0,
+          "pending_pages": 0,
+          "ready": true,
+          "records": 4096,
+          "rendered": 4096,
+          "upload_bytes": 2648064,
+          "uploads": 431
+        },
+        "max_admission_ms": 0.266
+      }
+    ],
+    "resources": {
+      "world": {
+        "private_commit_peak_bytes": 3390074880,
+        "dedicated_gpu_peak_bytes": 1456099328,
+        "within_sampled_limits": true,
+        "elapsed_seconds": 56.60892410000088
+      },
+      "cost": {
+        "private_commit_peak_bytes": 1145913344,
+        "dedicated_gpu_peak_bytes": 395771904,
+        "within_sampled_limits": true,
+        "elapsed_seconds": 43.72953099998995
+      }
+    },
+    "interpretation": "4096-car draw calls 2048 -> 64; transform capacity 12582912 -> 393216 bytes; overview render CPU p95 about 2.59 -> 0.22 ms. GPU medians broadly similar, not a demonstrated universal GPU speedup: compact dense64 p95 7.70 ms vs 4.48 original; compact dense1024 p95 6.51 vs 5.80. Aggregate AABB selection raises raw primitives modestly in close phases. Keep GPU/whole-frame variability open; no mixed-world or 4 GiB hardware qualification.",
+    "scope": "Isolated real-car rendering without terrain, shadows, physical driving. Samples include cap/scheduling; raw primitive counters are engine-dependent per-page geometry, not submitted per-instance totals. Dedicated GPU telemetry is sampled process allocation, not full device occupancy."
+  },
+  "retained_failures_and_trials": [
+    {
+      "runs": [
+        "20261030T130148135747Z",
+        "20261030T130411112845Z"
+      ],
+      "status": "Failed synthetic normal assertion",
+      "finding": "Engine normal/tangent encode-decode error about 0.000033; replaced overly strict equality with explicit 0.0001 direction tolerance, retaining exact positions, UV/color/index assertions."
+    },
+    {
+      "runs": [
+        "20261030T130706594113Z"
+      ],
+      "status": "Functional pass only",
+      "finding": "First rendered bake took about 41 ms, mostly mesh readback. Rejected as gameplay work; switched production to headless offline binary baking."
+    },
+    {
+      "runs": [
+        "20261030T131156106412Z",
+        "20261030T131512024395Z",
+        "20261030T131741560640Z",
+        "20261030T131746679936Z"
+      ],
+      "status": "Rejected GPU-regressing candidates despite functional passes",
+      "finding": "Imported LOD errors were multiplied by source-part 4.5x scale, double-applying scale relative to MultiMesh parent-instance selection; dense close GPU median about 5.32 -> 8.55 ms in same-process trial. Removed that scale, added synthetic policy test."
+    },
+    {
+      "runs": [
+        "20261030T132216539349Z",
+        "20261030T132221853114Z",
+        "20261030T132339901279Z"
+      ],
+      "status": "Intermediate 19-threshold candidate",
+      "finding": "Scale corrected, then all 99 distinct imported thresholds retained instead of delaying small contributor reductions. Fixed artifact/payload size increases are recorded."
+    },
+    {
+      "runs": [
+        "20261030T133032866370Z",
+        "20261030T133037974562Z"
+      ],
+      "status": "Final 99-threshold native source A/B",
+      "finding": "Source geometry and cost checks pass; GPU timing is variable, CPU/draw savings reproducible. Later installed checks qualify package/fallback integration."
+    },
+    {
+      "runs": [
+        "20261030T133608125499Z",
+        "20261030T133758567004Z"
+      ],
+      "status": "Failed installed receipt check",
+      "finding": "Godot rewrites .import metadata and removes raw GLB/source files in exported packs. Output mesh hash matched. Runtime now verifies source .import hashes only when raw asset exists; export always verifies all source inputs, runtime always verifies binary output hash."
+    }
+  ],
+  "remaining": [
+    "Continuous camera/vehicle handoff and shadow transitions, dense mixed-world costs, first-spawn load latency and long-session physical driving; return with integrated traces/recordings.",
+    "Independent pack state-dependent/damaged/animated parked visuals and arbitrary vehicle envelopes; current bake accepts static ordinary opaque geometry only.",
+    "General medium prop horizon, grass continuity, volumetric transitions, general service providers and whole creation/loading architecture remain in WORLD_RENDERING_CONTRACT.md.",
+    "High-refresh/4K and actual 4 GiB hardware qualification, user visual acceptance; current microbenchmarks and sampled allocation are not closure."
+  ]
+}

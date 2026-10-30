@@ -99,13 +99,21 @@ retirement. Known saved providers/coverage gate play; changed-ID updates and
 same-frame near/far ownership preserve canonical fleet bytes. Debug/release native
 checks and installed four-Ranger loading/handoff checks pass. The 65,536-record
 pressure fixture uses one box: it does not qualify a dense real-car GPU workload.
-Ranger's 32-part cost, near-handoff bursts, shadow continuity and actual driving
-endurance remain open; return with full-car pressure and continuous zoom/driving
+Ranger's near-handoff bursts, shadow continuity and actual driving
+endurance remain open; return with populated-world pressure and continuous zoom/driving
 evidence. [Vehicle receipt](../issues/world-overview/vehicle-verification.json).
 Isolated real-car cost is now measured through 4,096 Rangers: 2,048 draw calls and
 GPU/render-CPU p95 4.96/3.48 ms in overview. A 76.60 ms close-view frame remains
-unexplained. All 32 parts share one material; exact per-material consolidation
-is the next candidate, followed by populated-world comparisons. This baseline
+unexplained. All 32 parts share one material; offline native consolidation now
+reduces the far prototype to one part without changing near/body meshes. A
+same-process 4,096-car A/B reduces draw calls 2,048 → 64 and transform capacity
+12 → 0.375 MiB. The compressed derived mesh adds a fixed 5.91 MB file and shared
+mesh memory; these are not total-memory reduction claims. Export fingerprints
+refresh it automatically, with original-part fallback on stale/missing receipts
+and no runtime rebake. The initial LOD-scale GPU regression was rejected; the
+corrected version retains all distinct imported thresholds. See
+[comparisons, measured costs and limitations](../issues/world-overview/vehicle-consolidation-verification.json).
+The baseline
 has no terrain, driving or cast shadows and does not close performance acceptance.
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require

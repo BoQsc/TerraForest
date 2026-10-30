@@ -27,6 +27,9 @@ func bounds(body: RigidBody3D) -> AABB:
 func collision(body: RigidBody3D) -> CollisionShape3D:
 	return body.get_node_or_null("ChassisCollision") as CollisionShape3D
 
+func parked_render_parts(_body: RigidBody3D, original: Array) -> Array:
+	return original
+
 func camera_update(_body: RigidBody3D, _camera: Camera3D, _delta: float) -> void:
 	pass
 

@@ -63,6 +63,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   drive bounded uploads; near/body handoff publishes complementary ownership in
   the same frame. Physics remains local, far shadows are disabled. Known saved
   prototypes/coverage are part of the play gate, including never-near vehicles.
+- Ranger's far prototype now consolidates its 32 source parts into one opaque
+  material group offline. Exact base attributes/topology and all distinct imported
+  LOD thresholds are retained in a checked binary resource, refreshed before
+  export. Near/physics meshes remain unchanged. The optional adapter hook keeps
+  original parts for other providers; no gameplay GPU readback/rebake is added.
 - Generation verification uses the native occupied-region index rather than
   serializing the full resident world plus scanning 4,096 possible regions.
   Existing digests remain identical for the previous generated-world domain.
@@ -95,16 +100,22 @@ Status: **partial implementation; the requested whole-project overhaul is open**
 3. **Medium props/vehicles.** Furniture/other props still have local representation
    limits. Parked vehicles now retain world-wide render ownership; debug/release
    native pressure and installed four-Ranger loading/handoff checks pass. The
-   65,536-record test uses one box, not 65,536 full cars. Ranger still has 32 parts;
-   dense actual-car GPU/draw costs, per-material consolidation, near handoff bursts
-   and shadow/geometry transition continuity require qualification. Return with
+   65,536-record test uses one box, not 65,536 full cars. Ranger's far prototype
+   is now consolidated from 32 parts to one; a same-process actual-car A/B retains
+   4,096 instances with 64 rather than 2,048 draw calls, and 0.375 rather than
+   12 MiB transform capacity. This is not total GPU memory: the shared derived
+   mesh adds its own fixed cost. Near handoff bursts, mixed-world GPU cost and
+   shadow/geometry transition continuity still require qualification. Return with
    full-prototype pressure, continuous drive/zoom evidence and sampled budgets
    before claiming cheap seamless fleets. No automatic custom-pack LOD baker.
    Isolated actual-car baseline now covers 64/1,024/4,096 Rangers: the 4,096-car
    overview costs 2,048 draw calls, GPU/render-CPU p95 4.96/3.48 ms; a close
    1,024-car frame reaches 76.60 ms. Not populated-world performance acceptance.
-   All 32 parts share one material; evaluate exact per-material consolidation
-   next, preserving attributes/LODs and comparing the retained baseline.
+   The first consolidation candidate regressed GPU work by double-applying local
+   scale to LOD thresholds; it was rejected. The corrected baker keeps the
+   MultiMesh parent-scale policy and all distinct imported thresholds. Evidence,
+   rejected runs and final packaged comparisons are retained in the issue's
+   `vehicle-consolidation-verification.json`; no universal GPU speedup claim.
    Add the remaining exact lightweight prop tiers before advertising all
    medium/large objects at arbitrary distance. Boulders no longer
    share local grass ownership. The earlier 100 km/h sweep reported up to eight near

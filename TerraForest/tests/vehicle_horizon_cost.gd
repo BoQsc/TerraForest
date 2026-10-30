@@ -71,18 +71,24 @@ func run()->void:
 			mesh_surfaces+=1;source_triangles+=node.mesh.surface_get_array_index_len(surface)/3
 			lod_levels+=RenderingServer.mesh_get_surface(node.mesh.get_rid(),surface).get("lods",[]).size()
 	check(parts.size()==32 and lod_levels>0,"actual 32-part Ranger prototype retains imported LODs")
+	var original_parts:=parts
+	parts=preload("res://addons/vehicle_runtime/ranger_adapter.gd").new().parked_render_parts(body,parts)
+	check(parts.size()==1,"production adapter supplies current pre-baked compact prototype")
 	body.free()
-	fleet=ClassDB.instantiate("NativeVehicleFleet");view=ClassDB.instantiate("NativeVehicleHorizon");root.add_child(view)
-	check(view.configure(fleet,parts,"terraforest.ranger.v1"),"actual vehicle render horizon configures")
+	fleet=ClassDB.instantiate("NativeVehicleFleet")
 	RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(),true)
-	await measure("empty",0,false,Vector3(0,20,35))
-	await measure("dense64",64,false,Vector3(0,35,65))
-	await measure("dense1024",1024,false,Vector3(0,180,300))
-	await measure("dense1024_close",1024,false,Vector3(-93,3,-101))
-	await measure("world4096",4096,true,Vector3(0,1800,1600))
-	await measure("world4096_close",4096,true,Vector3(-945,3,-953))
+	for prototype:Dictionary in [{"label":"original_","parts":original_parts},{"label":"compact_","parts":parts}]:
+		view=ClassDB.instantiate("NativeVehicleHorizon");root.add_child(view)
+		check(view.configure(fleet,prototype.parts,"terraforest.ranger.v1"),"actual vehicle render horizon configures")
+		await measure(prototype.label+"empty",0,false,Vector3(0,20,35))
+		await measure(prototype.label+"dense64",64,false,Vector3(0,35,65))
+		await measure(prototype.label+"dense1024",1024,false,Vector3(0,180,300))
+		await measure(prototype.label+"dense1024_close",1024,false,Vector3(-93,3,-101))
+		await measure(prototype.label+"world4096",4096,true,Vector3(0,1800,1600))
+		await measure(prototype.label+"world4096_close",4096,true,Vector3(-945,3,-953))
+		view.free();await process_frame
 	check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED,"offscreen measurement never captures the OS mouse")
-	var report:Dictionary={"failures":failures,"prototype":{"parts":parts.size(),"materials":material_ids.size(),"surfaces":mesh_surfaces,"source_triangles":source_triangles,"imported_lod_levels":lod_levels},"samples":samples,"scope":"Isolated actual-Ranger GPU/render-cost baseline; no terrain, world physics, driving, shadow casting or visual acceptance. Functional assertions gate this check, not arbitrary performance thresholds. Frame samples include the 60 FPS cap; raw primitive counters are engine-dependent, not submitted per-instance triangle totals."}
+	var report:Dictionary={"failures":failures,"prototype":{"parts":parts.size(),"source_parts":original_parts.size(),"materials":material_ids.size(),"surfaces":mesh_surfaces,"source_triangles":source_triangles,"imported_lod_levels":lod_levels},"samples":samples,"scope":"Isolated actual-Ranger GPU/render-cost baseline; no terrain, world physics, driving, shadow casting or visual acceptance. Functional assertions gate this check, not arbitrary performance thresholds. Frame samples include the 60 FPS cap; raw primitive counters are engine-dependent, not submitted per-instance triangle totals."}
 	FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(report,"  "))
-	view.free();camera.free();sun.free();environment.free();await process_frame
+	camera.free();sun.free();environment.free();await process_frame
 	print("VEHICLE_HORIZON_COST failures=",failures);quit(1 if failures else 0)

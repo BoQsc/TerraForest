@@ -28,7 +28,7 @@ generator field and an asset's file hash are not license grants.
 | GAP-002 | Inherited character base and derivatives | CC0 stated for original/derivative work; inherited-source scope retained | Verify the original asset chain rather than treating the derivative notice as universal proof. |
 | GAP-003 | Optional AK-47 comparison asset | No explicit grant found in retained asset/viewer readmes | Not loaded by the main-world integration, but retained in source; obtain rights evidence before expanding use. |
 | LEG-001 | Original woodland sample assets | Existing 0BSD declaration | Keep 0BSD; any additional CC0 dedication requires the relevant rights and an explicit scoped declaration. |
-| LEG-002 | Supplied vehicle model | Existing 0BSD author declaration | Keep its current grant; code already follows the code default. |
+| LEG-002 | Supplied vehicle model and offline parked-mesh derivative | Existing 0BSD author declaration | Keep its current grant; derived-model receipt/provenance identify source hashes; code follows the code default. |
 | LEG-003 | Original Zombie Lab source code | Existing CC0 dedication | Preserve CC0 source and file-specific notices; no blanket rewrite to the new code default. |
 | GAP-004 | Optional image-generated grass detail textures | Prompt/tool provenance retained; CC0 scope not established separately | Review output/reference rights and declaration scope before claiming CC0 coverage. |
 | INF-001 | Build/authoring tools and linked runtimes | External software plus unreviewed output/runtime coverage | Audit actual shipped artifacts and their notices; toolchain pins alone do not certify output licensing. |

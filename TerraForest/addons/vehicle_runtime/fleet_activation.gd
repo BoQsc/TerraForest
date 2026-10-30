@@ -68,7 +68,8 @@ func prepare_parked_view(world: Node,body: RigidBody3D) -> void:
 	var view: Node3D=ClassDB.instantiate("NativeParkedVehicleRenderer");world.add_child(view)
 	var chassis: CollisionShape3D=owner.adapter(body).collision(body)
 	var kind: String=owner.kind_of(body)
-	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform) or not view.enable_horizon(parts):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
+	var distant_parts:Array=owner.adapter(body).parked_render_parts(body,parts)
+	if chassis==null or not view.configure(owner.fleet,parts,64,kind) or not view.configure_collision(chassis.shape,body.global_transform.affine_inverse()*chassis.global_transform) or not view.enable_horizon(distant_parts):parked_status={"ok":false,"reason":"prototype_configuration","parts":parts.size()};view.free();return
 	parked_views[kind]=view
 	if kind==owner.Packs.DEFAULT:parked_view=view
 func prepare_from_saved(world: Node) -> bool:

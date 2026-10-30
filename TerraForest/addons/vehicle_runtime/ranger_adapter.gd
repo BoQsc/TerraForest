@@ -1,6 +1,10 @@
 extends "res://addons/vehicle_runtime/vehicle_adapter.gd"
 
 var follow: RefCounted
+const ParkedPrototype=preload("res://addons/vehicle_runtime/parked_prototype_cache.gd")
+
+func parked_render_parts(_body: RigidBody3D, original: Array) -> Array:
+	return ParkedPrototype.parts(original)
 
 func accepts(body: Node) -> bool:
 	return super.accepts(body) and body.has_method("bind_streamed_world") and body.has_method("set_controls_enabled")
