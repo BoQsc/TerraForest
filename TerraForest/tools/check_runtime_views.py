@@ -12,9 +12,11 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("test", choices=["world_overview", "vehicle_parked_renderer", "vehicle_module_pack"])
+    parser.add_argument("test", choices=["world_overview", "overview_terrain_coverage", "loading_progress_ui", "vehicle_parked_renderer", "vehicle_module_pack"])
     parser.add_argument("--pack", action="store_true")
     args = parser.parse_args()
+    if args.pack and args.test == "loading_progress_ui":
+        parser.error("Loading UI fixture writes source-only evidence; use its source check")
     config, _ = parse_args([])
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder = ROOT / "reports/runtime_views" / stamp
@@ -43,7 +45,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = {"world_overview": "WORLD_OVERVIEW", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER"}[args.test]
+        marker = {"world_overview": "WORLD_OVERVIEW", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER"}[args.test]
         record["result"] = execute(command, folder, 240, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original

@@ -95,6 +95,7 @@ func run() -> void:
 	check_boundaries()
 	check_targeted()
 	check_travel_activation()
+	check_root_priority()
 	check_available()
 	check_invalid()
 	check_cut_reuse()
@@ -312,3 +313,21 @@ func check_travel_activation() -> void:
 	var detail:=Vector3i(432,528,16)
 	check(planned.requests.has(bridge) and planned.requests.has(detail) and planned.requests.find(bridge)<planned.requests.find(detail),"ahead activation bridge precedes unrelated hidden fine detail")
 	check(not planner.requests_travel(focus,true,Vector3(NAN,0,0),{}, {},[]).ok,"nonfinite travel rejected")
+
+func check_root_priority()->void:
+	var focus:=Vector3(960,110,1310)
+	var initial:Dictionary=planner.requests(focus,true,{}, {},[])
+	var tiles:Dictionary={}
+	for key:Vector3i in initial.requested_keys:
+		if key.z<=32:tiles[key]={"dirty":false}
+	var planned:Dictionary=planner.requests(focus,true,tiles,initial.split_state,[])
+	var optional_seen:=false
+	var roots_first:=true
+	var roots:=0
+	for key:Vector3i in planned.requests:
+		if planned.activation_keys.has(key):continue
+		if key.z==256:
+			roots+=1;roots_first=roots_first and not optional_seen
+		else:optional_seen=true
+	check(roots==64 and roots_first,"missing whole-world coverage precedes optional refinement after physical activation")
+	check(planned.requests[0]==initial.requests[0] or planned.activation_keys.has(planned.requests[0]),"near collision activation remains ahead of distant roots")

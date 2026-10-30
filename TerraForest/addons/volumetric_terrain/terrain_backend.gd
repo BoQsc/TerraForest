@@ -1051,9 +1051,12 @@ func _service_interaction_mesh() -> void:
 		if diagnostic_enabled: diagnostic_active=prior_diagnostic
 		mutex.unlock()
 
+func _owner_size(key:Vector3i,columns:bool)->int:
+	return mini(64 if columns else 32,key.z)
+
 func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, foreground: bool=false, columns: bool=false) -> Dictionary:
 	var begin:=Time.get_ticks_usec()
-	var size:=mini(32,key.z)
+	var size:=_owner_size(key,columns)
 	var step:=maxi(1,key.z/32)
 	var height:=256 if columns else 32
 	var parts: Array[Dictionary]=[]
@@ -1077,7 +1080,7 @@ func _build_regions(key: Vector3i, expected_build_epoch: int, selected: Array, f
 					var mark:=Time.get_ticks_usec()
 					dependency=str(native.geometry_cache_key(x,z,size,step).get("key",""))
 					stages.key_us+=Time.get_ticks_usec()-mark
-				var representation: String="owned-column-v1" if columns else "owned-region-v1"
+				var representation: String="owned-column-v2" if columns else "owned-region-v1"
 				var content: String=("%s:%s:%d" % [representation,dependency,bottom]).sha256_text() if not dependency.is_empty() else ""
 				var owner:=Vector3i(x,z,size)
 				var packet:=PackedByteArray()
@@ -1450,8 +1453,8 @@ func _run() -> void:
 					# allocated, only the actual field/normal support can change.
 					if (region_terrain or local_terrain) and not selected.is_empty() and before_stats.decode_u32(20)==after_stats.decode_u32(20):
 						var key: Vector3i=item.key
-						var owner_size:=mini(32,key.z)
 						var owner_height:=256 if local_terrain and not region_terrain and key.z>32 else 32
+						var owner_size:=_owner_size(key,owner_height==256)
 						var local: Array=[]
 						var bounds:=AABB(job.geometry_lo,job.geometry_hi-job.geometry_lo)
 						for id: int in selected:

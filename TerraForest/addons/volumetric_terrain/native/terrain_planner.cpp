@@ -210,6 +210,12 @@ static Dictionary plan_requests(Vector3 focus,bool collision,const Dictionary &t
     // hidden fine meshes, with current-position activation always first.
     if(travel)for(size_t i=0;i<travel->size();++i)
         prioritize_coverage((*travel)[i],collision,state,wanted,pending,2000.0+100.0*i);
+    std::vector<Vector3i> covered;
+    for(auto &request:pending)if(request.key.z==256) {
+        covered.clear();
+        if(!cover(request.key,state,covered))
+            request.priority=std::min(request.priority,-2000+distance(request.key,focus,collision)*0.1);
+    }
     std::stable_sort(pending.begin(),pending.end(),[](const Request &a,const Request &b){return a.priority<b.priority;});
     TypedArray<Vector3i> keys;keys.resize(pending.size());Dictionary activation;
     for(size_t i=0;i<pending.size();i++) {

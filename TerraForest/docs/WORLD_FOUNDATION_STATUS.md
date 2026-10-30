@@ -11,9 +11,19 @@ generation verification. No generated content or player saves replaced.
 [Architecture, missing milestones and closure evidence](WORLD_RENDERING_CONTRACT.md).
 [Vehicle API and current envelope limits](VEHICLE_PACKS.md).
 [Actual-world images, measured costs and known gaps](../issues/world-overview/README.md).
-Next dependency: exact far tree/medium-object instance pages with edit/harvest
-invalidation; current resident trees are not whole-world forests. Terrain transition
-seams, general generator/module providers, arbitrary vehicle envelopes and full
+Overview diagnosis found genuinely missing terrain: 37/64 roots after 30 seconds
+of gameplay, despite all 64 being requested. Coarse columns now omit internal
+ownership boundaries that do not exist, use 64 m owners, and retain exact outer
+joins/edited caves. Missing base coverage precedes optional detail after collision
+activation; play requires all actual roots. Source fixture reaches complete
+coverage at play (27.49 s fresh-derived-cache load), with 185.84 MiB terrain payload
+and eight coarse public-edit-to-draw samples at 75.2–93.1 ms. Installed verification
+also passes: 28.22 s load, 185.80 MiB, 74.9–86.3 ms edits; 28 native/worker fixtures
+and 7,251 release-DLL volume commands pass. No save/generator change.
+This fixes the demonstrated missing-coverage path, not universal seamless LOD.
+Next dependency remains exact far tree/medium-object instance pages with
+edit/harvest invalidation; current resident trees are not whole-world forests.
+Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.
 

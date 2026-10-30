@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "540c6d49c1df1d4c24389893ef0f2d1bb94c2be2",
+  "scope": "Complete actual terrain coverage, bounded coarse owners and edit publication in one disposable populated world. Not complete forest streaming, seamless LOD, physical held-input, endurance or 4 GiB hardware qualification.",
+  "pack_sha256": "66f6262ed92c5a15064c1a10bee977ddf2f00da195c73e2becfea52481fd7c2c",
+  "debug_dll_sha256": "f861147200aba58c98a753b0f22a51eb8229ed304988b97106ae687be6c07066",
+  "release_dll_sha256": "1a2453c4ae4fdbf9ce9083c55f968ef2cbe7021ac0337eb24ec49866f7019d8d",
+  "fixture_archive_sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+  "baseline": {
+    "run": "reports/runtime_views/20261030T073743154080Z/run.json",
+    "results": "reports/runtime_views/20261030T073743154080Z/result.json",
+    "frames_after_play": 1800,
+    "actual_root_coverage": 37,
+    "required_roots": 64,
+    "at_frame_1680_cache_bytes": 237174288,
+    "cost_run": "reports/checks/20261030T074506259498Z/run.json",
+    "roots": [
+      {"origin": [1024,1280], "bytes": 3978472, "triangles": 91644, "native_ms": 177.954},
+      {"origin": [0,0], "bytes": 4326016, "triangles": 101398, "native_ms": 151.885},
+      {"origin": [512,512], "bytes": 4206656, "triangles": 97210, "native_ms": 212.812}
+    ]
+  },
+  "current": {
+    "source_run": "reports/runtime_views/20261030T080651384797Z/run.json",
+    "pack_run": "reports/runtime_views/20261030T081318342928Z/run.json",
+    "pack_results": "reports/runtime_views/20261030T081318342928Z/result.json",
+    "pack_zoom": "reports/runtime_views/20261030T081423236644Z/run.json",
+    "actual_roots_at_play": 64,
+    "pack_fresh_derived_cache_loading_ms": 28215.004,
+    "pack_cache_bytes": 194825176,
+    "cache_limit_bytes": 201326592,
+    "pack_stationary_frame_p95_ms": 18.039,
+    "pack_stationary_frame_max_ms": 41.572,
+    "pack_public_edit_to_draw_ms": [86.28,75.00,76.17,75.78,75.26,74.93,74.92,75.57],
+    "pack_peak_private_bytes": 3439390720,
+    "pack_peak_gpu_bytes": 1490522112,
+    "distribution_bytes": 422851211,
+    "cost_run": "reports/checks/20261030T074854002158Z/run.json",
+    "roots": [
+      {"origin": [1024,1280], "bytes": 1205488, "triangles": 26284, "native_ms": 165.792},
+      {"origin": [0,0], "bytes": 1889408, "triangles": 43914, "native_ms": 150.303},
+      {"origin": [512,512], "bytes": 1450016, "triangles": 32302, "native_ms": 178.095}
+    ]
+  },
+  "checks": {
+    "native_worker_suite": "reports/terrain_editing/20261030T080951Z/suite.json",
+    "fixtures_passed": 28,
+    "release_volumes": "reports/terrain_edit_release/20261030T080946806390Z/run.json",
+    "release_commands": 7251,
+    "rendered_loading_ui": "reports/runtime_views/20261030T080431140170Z/run.json",
+    "saved_archive_unchanged": true,
+    "mouse_never_captured": true
+  },
+  "initial_failures": [
+    {"run": "reports/checks/20261030T074930172208Z", "cause": "Narrow edit selection still decoded owners as 32 m; shared sizing now matches native builds"},
+    {"run": "reports/checks/20261030T074933185985Z", "cause": "Wrong runner completion marker; assertions passed"},
+    {"run": "reports/checks/20261030T075416123387Z", "cause": "New edge tests included perpendicular boundary fragments and one edit outside the world; corrected and augmented with complete mixed-corner edge parity"},
+    {"run": "reports/checks/20261030T075649425723Z", "cause": "Retained diagnostic of perpendicular edge mismatch"},
+    {"run": "reports/checks/20261030T075438383701Z", "cause": "Headless UI fixture waited for frame_post_draw; timed out"},
+    {"run": "reports/checks/20261030T075928673083Z", "cause": "Repeated invalid headless invocation stopped by owned PID; rendered run replaces it"}
+  ]
+}

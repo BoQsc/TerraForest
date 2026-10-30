@@ -126,7 +126,7 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	if not world.tiles.has(key): return
 	var before: Dictionary=world.tiles[key]
 	var columns:bool=world.backend.local_terrain and not world.backend.region_terrain
-	var owner_count:=64 if columns else 512
+	var owner_count:=16 if columns else 512
 	check(before.bricks.size()==owner_count,"256m container has %d bounded owners"%owner_count)
 	var empty_without_render_instance:=0
 	var empty_valid:=true
@@ -181,7 +181,7 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 		if child.node.get_instance_id()==ids[id]: retained+=1
 		else: replaced+=1
 		var bounds: AABB=child.region_bounds
-		var fresh_packet: PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var fresh_packet: PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),int(bounds.size.x),8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
 		var fresh: Dictionary=Codec.decode_mesh(fresh_packet)
 		if fresh.has("error"): exact=false;continue
 		for channel: int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
@@ -205,7 +205,7 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 		var child: Dictionary=current.bricks[id]
 		if child.node.get_instance_id()!=ids[id]: local_replaced+=1
 		var bounds: AABB=child.region_bounds
-		var fresh_packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var fresh_packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),int(bounds.size.x),8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
 		var fresh: Dictionary=Codec.decode_mesh(fresh_packet)
 		if fresh.has("error"): exact=false;continue
 		for channel: int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:
@@ -232,7 +232,7 @@ func verify_coarse_locality(rows: Array[Dictionary]) -> void:
 	epoch_reply=world.backend.native.execute(Codec.command(13))
 	for child:Dictionary in current.bricks.values():
 		var bounds:AABB=child.region_bounds
-		var packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),32,8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
+		var packet:PackedByteArray=world.backend.native.build_owned_column(int(bounds.position.x),int(bounds.position.z),int(bounds.size.x),8,epoch_reply.decode_u32(12)) if columns else world.backend.native.build_owned_region(int(bounds.position.x),int(bounds.position.z),32,8,int(bounds.position.y),int(bounds.end.y),epoch_reply.decode_u32(12))
 		var fresh:Dictionary=Codec.decode_mesh(packet)
 		if fresh.has("error"):exact=false;continue
 		for channel:int in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_COLOR,Mesh.ARRAY_TEX_UV2,Mesh.ARRAY_INDEX]:

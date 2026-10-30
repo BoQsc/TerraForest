@@ -1076,7 +1076,7 @@ static bool build_owned_surface(const World&w,int ox,int oz,int size,int step,in
  if(cancelled(w,epoch)||!extract_vertices(w,ox,oz,size,m,epoch,y_begin,y_end,w.owned_heights.p)){m.release();return false;}
  connect_patch(w,ox,oz,size,m,y_begin,y_end);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[0]=float(now-mark);mark=now;}
- simplify(w,m,ox,oz,size,step,epoch,true);
+ simplify(w,m,ox,oz,size,step,epoch,!column);
  if(w.profile_mesh){double now=mesh_clock_ms();w.mesh_stage_ms[1]=float(now-mark);mark=now;}
  if(cancelled(w,epoch)||tr_oom){m.release();return false;}
  add_blocks(w,ox,oz,size,m,y_begin,y_end);

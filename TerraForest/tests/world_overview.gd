@@ -27,6 +27,7 @@ func run()->void:
 	while game.loading_active and Time.get_ticks_msec()<deadline and game.terrain.latest_error.is_empty():
 		game.app_focused=true;await process_frame
 	check(not game.loading_active and game.terrain.latest_error.is_empty(),"populated read-only world loads with exact building horizon")
+	check(game.terrain.root_coverage==64,"all actual terrain roots are ready before play")
 	if failures:await finish({});return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true
 	var view=game.player_view
@@ -48,6 +49,7 @@ func run()->void:
 		view.overview_distance=distance
 		for frame in 120:
 			game.app_focused=true;await RenderingServer.frame_post_draw
+		check(game.terrain.root_coverage==64,"zoom preserves complete volumetric terrain coverage "+str(distance))
 		check(absf(view.zoom_distance-distance)<1.0,"smooth zoom reaches requested distance "+str(distance))
 		check(game.player.global_transform.is_equal_approx(body_pose) and game.camera.transform.is_equal_approx(eye_pose),"overview preserves physical body and first-person aim")
 		check(game.terrain.focus==collision_focus and game.terrain.render_view.is_finite(),"separate render focus leaves physical focus unchanged")

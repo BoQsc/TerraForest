@@ -5,7 +5,9 @@ var failures:=0
 func check(ok:bool,message:String)->void:
  if not ok:failures+=1;push_error(message)
 func screen_shade()->Color:return Color(0.01,0.02,0.03,0.5)
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+ ProjectSettings.set_setting("terraforest/offscreen_session",true)
+ run.call_deferred()
 func run()->void:
  var screen=preload("res://addons/world_runtime/generation_screen.gd").new();root.add_child(screen)
  screen.panel.set_compact_width(true,false)

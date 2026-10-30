@@ -24,6 +24,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
 - Native terrain planner accepts an independent render position/projection scale;
   existing physical/travel/interaction requests and activation priority remain.
   All 64 root regions stay requested, and incomplete refinements retain old cuts.
+- Actual coverage is now a play gate: all 64 roots must have published geometry.
+  Missing coverage takes precedence over optional refinement after local physical
+  activation. Coarse 64 m owners drop only nonexistent internal slab boundaries;
+  exact outer seams, excavations and fine collision remain protected. Derived
+  cache version changes without migrating canonical world data. See issue evidence.
 - ESC → Player → optional World overview preview: collision-swept orbit camera,
   exponential wheel zoom, 3.4–1800 m; movement still controls the real player.
   No remote editing. Camera-specific atmosphere avoids distant fog washout without
@@ -45,10 +50,12 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    pages, exact road/lot/water/harvest exclusions and edit invalidation are missing.
    Build this before claiming strategy-scale forest coverage. Require cold/warm,
    never-visited, fast driving, harvest/mine/place, save/reload and budget evidence.
-2. **Seamless terrain/mesh transitions.** Current coarse terrain and residency
-   boundaries remain visible from overview, including large flat grey patches in
-   the populated fixture. Diagnose actual geometry/material coverage independently
-   of the planner's root-count assertions. Requires a compatible volumetric
+2. **Seamless terrain/mesh transitions.** The large grey patches were mostly
+   absent geometry, not simply bad transition surfaces: only 37/64 roots existed
+   after 30 seconds in the previous fixture. Whole-world readiness and cheaper
+   coarse owners address that demonstrated failure. Continuous transition quality,
+   dense edited-world budgets and physical held-input/endurance still require
+   qualification. Requires a compatible volumetric
    transition solution (including edited caves), not a heightmap covering edits.
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
 3. **Medium props/vehicles.** Furniture, parked vehicles and boulders still have

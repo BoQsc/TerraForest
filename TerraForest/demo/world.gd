@@ -230,7 +230,7 @@ func _ready() -> void:
 	structures.blocks.set_distant_rendering_enabled(true)
 	structures.model("architecture/metal_beam/v1").configure_collision(beam.get_aabb(),64,512,8)
 	door_models.configure_compound_collision(doorway.get_meta("collision_boxes"),64,512,8,1536,24)
-	terrain.nearby_first = true
+	terrain.nearby_first = false
 	pending_spawn = _initial_generation_spawn
 	terrain.focus = pending_spawn
 	super._ready()

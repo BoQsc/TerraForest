@@ -181,18 +181,20 @@ lookup/hash/visibility costs require further budgeting in the replacement path.
 
 ### Production coarse-terrain locality
 
-The default renderer uses native 32 m-wide, full-height Surface Nets columns
-inside coarse tiles (64/128/256 m). A 256 m tile has 64 logical columns, not
-512 vertical slabs. Ordinary 16/32 m fine meshes are unchanged. This reuses the
-owned extraction and shared-boundary pins below without enabling the experimental
-regional renderer globally. `--whole-patch-terrain` retains the previous coarse
+The default renderer uses native 64 m-wide, full-height Surface Nets columns
+inside coarse tiles (64/128/256 m). A 256 m tile has 16 logical columns, not
+512 vertical slabs. Ordinary 16/32 m fine meshes are unchanged. Columns retain
+their exact outer boundaries and protected excavation/cave vertices, but do not
+pin nonexistent internal 16 m / vertical slab boundaries. The experimental
+regional renderer still retains its own slab boundaries. `--whole-patch-terrain` retains the previous coarse
 path for regression comparison; `--region-terrain` still explicitly selects the
 experimental all-LOD slab path.
 
 Edits rebuild intersecting columns and atomically transfer unaffected mesh and
 collision children. The 17 m coarse dependency halo protects simplifier changes
 when an authored page first appears; existing-page edits narrow that selection to
-field/normal support. A distinct `owned-column-v1` content key prevents reuse of
+field/normal support. Build and edit-selection paths share the owner-size rule.
+A distinct `owned-column-v2` content key prevents reuse of the former 32 m,
 whole-patch or slab packets. Authoritative density, generation, save encoding and
 fine collision behavior do not change. Worker reconstruction stays native;
 GDScript schedules and publishes bounded packets, not per-voxel work.
@@ -210,6 +212,15 @@ atomic collision and distant coarsening. `held_mining_coarse` additionally requi
 an already-visible 256 m parent before travel and verifies that real held input
 edits it before refinement. This is separate from the initially absent-root case.
 Qualification and remaining limits: `evidence/terrain_editing/README.md`.
+
+The 2026-10-30 overview follow-up prioritizes absent whole-world coverage after
+physical activation, before optional refinements. Gameplay loading now requires
+all 64 actual root regions, not only nearby roots or requested keys. It does not
+require far collision or a fully refined world. Explicit `--nearby-first` remains
+a diagnostic override. Current coverage/mesh-cost and bounded coarse-edit evidence:
+`../issues/world-overview/README.md`. Historical 32 m held-input timings above are
+not qualification of this larger owner size; renewed physical-input/endurance
+qualification remains open.
 
 ### Experimental Surface Nets slabs — integrated, not qualified
 

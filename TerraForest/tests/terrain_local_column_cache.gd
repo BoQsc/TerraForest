@@ -27,11 +27,11 @@ func run()->void:
 			world.stamps[key]=stamp
 			check(world.backend.submit({"kind":"mesh","key":key,"epoch":world.epoch,"stamp":stamp,"base":false}),"cached coarse build admitted")
 			check(await pump_until(func():return world.tiles.has(key) and world.tiles[key].stamp==stamp),"cached coarse build published")
-			check(world.tiles[key].bricks.size()==64,"cache retains all column identities including empty owners")
+			check(world.tiles[key].bricks.size()==16,"cache retains all 64m column identities including empty owners")
 			var digest:String=content(world.tiles[key])
 			if expected.is_empty():expected=digest
 			check(digest==expected,"cached geometry matches cold native construction after worker restart")
-			if session>0 or pass_index>0:check(world.backend.disk_cache.hits-hits==64,"all unchanged columns load from the content-addressed cache")
+			if session>0 or pass_index>0:check(world.backend.disk_cache.hits-hits==16,"all unchanged columns load from the content-addressed cache")
 			results.append({"session":session,"pass":pass_index,"hits":world.backend.disk_cache.hits-hits,"writes":world.backend.disk_cache.writes,"bytes":world.cache_bytes,"digest":digest})
 		world.shutdown();world.free();await process_frame
 	var folder:=ProjectSettings.globalize_path("res://reports")

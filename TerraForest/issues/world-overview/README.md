@@ -18,7 +18,7 @@ Source/build/run hashes are in `images/manifest.json` and linked run manifests.
 Initial 768 m source trial: existing distance fog washes out the overview. Rejected
 presentation, retained for comparison; tests passing did not make this acceptable.
 
-![Current overview](images/overview_768.png)
+![Previous overview](images/overview_768.png)
 Same 768 m view with camera-local fog scaling. Colors improve; coarse terrain,
 large flat patches and incomplete forest coverage remain visible. **Not seamless/approved.**
 
@@ -60,6 +60,63 @@ and `20261030T064221141424Z` (camera-local atmosphere); installed overview
 `reports/checks/20261030T070537951196Z`; signature
 `reports/checks/20261030T070538663789Z`. Installed validation is recorded in
 `verification.json`; use those exact run manifests for process RAM/GPU observations.
+
+## Missing terrain coverage follow-up — 2026-10-30
+
+The flat grey regions were absent meshes, not simply LOD seams or bad terrain
+materials. Native field samples contained hills there. All 64 roots were requested,
+but only 37 were actually published after 1,800 gameplay frames. The worker was
+running, not deadlocked: distance-first refinement and expensive, over-constrained
+coarse columns delayed the far surface. Fog was not changed in this correction.
+
+![Previous build: actual missing terrain after thirty seconds](images/coverage_before_768.png)
+Previous installed geometry, same read-only fixture, 768 m camera, 37/64 roots.
+
+![Installed correction: complete terrain coverage](images/coverage_after_768.png)
+Installed correction, same fixture/camera: 64/64 actual terrain regions at play,
+retained throughout refinement. Photographs precede the test-only excavations.
+
+![Installed whole-world view](images/coverage_after_1800.png)
+1,800 m view. No heightmap substitute; existing roads, coast and mountains remain.
+Local-only forests and the previously rejected northern district remain unfinished.
+This is **not user approval or a claim of seamless transitions**.
+
+- Coarse native owners grow from 32 to 64 m; a root contains 16 instead of 64.
+  Simplification pins actual outer borders, edited support and cave vertices, not
+  nonexistent internal 16 m / vertical slab boundaries. Fine collision is unchanged.
+- Shared owner sizing also governs narrow edit invalidation. One corner edit
+  replaces four owners, retains twelve; an empty selection reconstructs nothing.
+  Cache identity is `owned-column-v2`; old packets and canonical saves are not reused
+  under the wrong representation. No generator/profile/save migration.
+- Missing roots precede optional refinement after physical activation. The default
+  play gate requires complete actual terrain coverage, not merely requested keys.
+  Existing loading counters now report that whole-world gate without new UI.
+- Three real saved-field roots: packed coarse mesh bytes decrease 56–70%, triangles
+  57–71%. Native construction itself improves little (151–213 → 150–178 ms/root
+  in single samples); these are representation/transfer savings, not a 70% FPS gain.
+- Packaged fresh-derived-cache fixture: all roots ready at play in 28.22 s;
+  resident terrain payload 185.80 MiB against the existing 192 MiB budget. Previously
+  it still had only 37 roots after loading plus another thirty seconds. The new gate
+  does wait for remaining base coverage; further loading-pipeline optimization remains.
+- 32/256/768/1,800 m zoom checks pass with full coverage. Stationary overview frame
+  p95 17.73–18.85 ms; source/pack fixed-view maxima 29.68/41.57 ms. Not perfect pacing.
+  Packaged process peaks up to 3.21 GiB private RAM / 1.39 GiB GPU; distribution 422.9 MB.
+- Eight rendered coarse public-edit-to-draw samples: 74.9–86.3 ms packaged,
+  75.2–93.1 ms source, all below the unchanged 150 ms gate. This uses public edit
+  transactions, not physical held-button timing or an endurance run. Larger owners
+  trade more work per affected owner for substantially smaller distant representation.
+- 28 native/worker regression fixtures pass; independent release-DLL volume check
+  passes 7,251 commands. Tests cover actual mixed-LOD corner edges, cave joins,
+  preserved save bytes, cold/warm/restarted caches, narrow refill and empty halos.
+  Rendered loading UI, installed coverage/edit test and installed zoom/vehicle test pass.
+
+[Run receipts and measured costs](coverage-verification.json). Earlier failures are
+retained: initial narrow invalidation still used 32 m and was corrected; new seam
+tests initially counted perpendicular corner edges as shared joins (now separate
+interior-join, full-owner boundary and four-owner crack checks); an edge fixture
+edited beyond the world boundary. Two invalid headless loading-UI attempts waited
+for a render signal; the corrected nonactivating rendered run passes. One planner
+invocation used the wrong completion marker; its actual assertions passed.
 
 ## Remaining / resume here
 

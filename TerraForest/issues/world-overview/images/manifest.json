@@ -9,6 +9,32 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "coverage_before_768.png",
+      "sha256": "1a1a04381149321c591f60489bfa61d073e737b3a65093639054f741f46760c1",
+      "source": "reports/runtime_views/20261030T073743154080Z/normal.png",
+      "run": "reports/runtime_views/20261030T073743154080Z/run.json",
+      "distance_m": 768,
+      "review": "Previous installed terrain after 1800 frames: only 37/64 actual root regions published; no fog/material workaround"
+    },
+    {
+      "file": "coverage_after_768.png",
+      "sha256": "fe3017959523048933e00791f5ad2fe981213b27db0b27e73f46fe0206bc2a83",
+      "source": "reports/runtime_views/20261030T081318342928Z/normal.png",
+      "run": "reports/runtime_views/20261030T081318342928Z/run.json",
+      "pack_sha256": "66f6262ed92c5a15064c1a10bee977ddf2f00da195c73e2becfea52481fd7c2c",
+      "distance_m": 768,
+      "review": "All 64 terrain roots ready before play and retained during refinement; inspected engineering image, not user-approved"
+    },
+    {
+      "file": "coverage_after_1800.png",
+      "sha256": "7c8cb1478e7783d2fdb33ad7c68a80c8fbbcdba6a461e6fcbcf00fcfdbd0fd25",
+      "source": "reports/runtime_views/20261030T081423236644Z/overview_1800.png",
+      "run": "reports/runtime_views/20261030T081423236644Z/run.json",
+      "pack_sha256": "66f6262ed92c5a15064c1a10bee977ddf2f00da195c73e2becfea52481fd7c2c",
+      "distance_m": 1800,
+      "review": "Entire terrain surface rendered; forest ownership remains local and generation layout is unchanged, not approved as seamless"
+    },
+    {
       "file": "overview_32.png",
       "sha256": "7189ce5c4dc73a083aefda0fc45dc8859e18e56c39d9a5b568d809df2fa577a2",
       "source": "reports/runtime_views/20261030T072103356539Z/overview_32.png",
