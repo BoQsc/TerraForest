@@ -1,0 +1,23 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "metrics": [
+    {
+      "frames": 600,
+      "gpu_p95_ms": 8.2180004119873,
+      "mean_ms": 7.98286499999999,
+      "p95_ms": 8.806,
+      "state": "merchant_off",
+      "worst_ms": 9.874
+    },
+    {
+      "frames": 600,
+      "gpu_p95_ms": 8.10499954223633,
+      "mean_ms": 8.04120166666666,
+      "p95_ms": 8.754,
+      "state": "merchant_on",
+      "worst_ms": 11.86
+    }
+  ],
+  "resolution": "(1920, 1080)",
+  "scope": "Same populated view, unchanged quality, 600 samples per state in ABBA order; uncapped to separate render cost from cap waiting. Screenshots outside samples. No endurance or hardware-wide guarantee."
+}

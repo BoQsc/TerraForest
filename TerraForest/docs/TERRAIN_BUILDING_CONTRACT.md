@@ -81,5 +81,6 @@ arbitrary slope. They close the former missing gate; rendered and traversal
 evidence is still required. Do not turn a numerical pass into universal world
 quality approval, or introduce a ban on intentional player floating builds.
 
-Implementation is undergoing the catalog and complete-world checks. Record the
-final disposition and exact runs in the civic issue before marking it verified.
+Scoped source/release, catalog and complete-world checks now pass. See the
+[final review](CIVIC_FINAL_REVIEW.md) and [retained failures and passing runs](evidence/terrain_building_contract/README.md).
+Human design approval and broader world-quality/performance acceptance remain separate.

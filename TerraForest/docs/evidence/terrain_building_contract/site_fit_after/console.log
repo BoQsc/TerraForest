@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS complete terrain-fitting district / seed 0
+PASS full footprint plus one-metre apron obeys cut/fill budgets, not only sparse supports
+PASS complete five-metre garage access obeys the same terrain budgets
+PASS each lot has bounded rectangular preparation instead of rounded strip ends
+PASS complete terrain-fitting district / seed 42
+PASS full footprint plus one-metre apron obeys cut/fill budgets, not only sparse supports
+PASS complete five-metre garage access obeys the same terrain budgets
+PASS each lot has bounded rectangular preparation instead of rounded strip ends
+PASS complete terrain-fitting district / seed 1703
+PASS full footprint plus one-metre apron obeys cut/fill budgets, not only sparse supports
+PASS complete five-metre garage access obeys the same terrain budgets
+PASS each lot has bounded rectangular preparation instead of rounded strip ends
+PASS complete terrain-fitting district / seed 9999
+PASS full footprint plus one-metre apron obeys cut/fill budgets, not only sparse supports
+PASS complete five-metre garage access obeys the same terrain budgets
+PASS each lot has bounded rectangular preparation instead of rounded strip ends
+PASS native rectangular bed is accepted through the ordinary edit transaction
+PASS rectangular bed keeps its corners at grade instead of capsule-shaped scoops
+PASS unknown foundation profile cannot mutate terrain
+SITE_FIT_STANDARDS checks=19 failures=0

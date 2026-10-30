@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS existing isolated review slot is identified
+PASS fresh process restores complete review world
+PASS exact civic plan reconstructed
+PASS bounded civic roof and approach tree clearance
+PASS trader_t1 landscape resident before final photographs
+PASS town_hall_t1 landscape resident before final photographs
+PASS town_hall_t1 descends stairs and settles on basement floor (986.5, 38.00092, 570.4812)
+PASS town_hall_t1 basement floor supports actual capsule
+PASS church_c1 landscape resident before final photographs
+PASS church_c1 descends stairs and settles on basement floor (937.5, 37.00061, 634.4517)
+PASS church_c1 basement floor supports actual capsule
+PASS school_s2 landscape resident before final photographs
+PASS school_s2 descends stairs and settles on basement floor (978.5, 38.00127, 639.4636)
+PASS school_s2 basement floor supports actual capsule
+PASS warehouse_w1 landscape resident before final photographs
+PASS warehouse_w1 descends stairs and settles on basement floor (916.5, 36.00058, 700.4515)
+PASS warehouse_w1 basement floor supports actual capsule
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS durable review-world save succeeds
+CIVIC_WORLD checks=18 failures=0 slot=CivicReview_1703_8ae64a06

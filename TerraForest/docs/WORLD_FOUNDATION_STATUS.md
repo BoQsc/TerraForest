@@ -3,39 +3,48 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Trader house, civic buildings and terrain contact — 2026-10-30
 
-The opt-in R1 world integrates a trader house with one current-player-based NPC,
-town hall, church, school and warehouse. The large buildings have 81–99 m²
-partial basements. Eight commodities support finite-stock buying/selling,
-native atomic inventory transfers and compound-world persistence. Production
-world generation, saved native construction and populated routes are under final
-verification. See [the review issue](../issues/civic-buildings/README.md).
+[Final review and decisions](CIVIC_FINAL_REVIEW.md). The opt-in R1 complete world
+integrates one player-based commodity trader, town hall, church, school and
+warehouse. Finite-stock buying/selling and compound persistence are implemented;
+the four large buildings have 81–99 m² basements. Final complete-world traversal
+and trade pass 73 checks; fresh-process exact inventory restore and actual basement
+descent pass 18 checks each. Ground/overview/basement/trader images were inspected.
+The five exact designs remain review candidates pending the user's approval;
+existing houses and saves are preserved.
 
-The user's follow-up requires recurring terrain/block defects to be fixed at the
-shared layer. [The terrain/building contract](TERRAIN_BUILDING_CONTRACT.md) now
-owns datums, approach ends, shape-derived subtraction and publication checks.
-Native catalog checks cover 46 buildings and six sidewalk sets across civic,
-approved city and neighborhood recipes on seeds 1703 and 42 (64 checks passed).
-The export pipeline runs source and isolated release contract checks and the
-catalog checks. Older rejected soil-offset experiments and failed captures remain
-evidence; they are not accepted revisions.
+The user's recurring terrain/block report is handled at the shared layer by the
+mandatory [contact contract](TERRAIN_BUILDING_CONTRACT.md) and
+[stable issue](../issues/terrain-building-contact/README.md). Native shape-derived
+subtraction and prepublication surface scans complement support/room-air checks;
+a real grounded block footprint is required even with an attachment envelope.
+Export enforces 30 debug + 30 release contract checks and 64 catalog checks
+covering 46 buildings and six sidewalk sets on two seeds. Failed experiments
+remain in the evidence. The apparent NPC oscillation was a too-short fixed test
+deadline: its trace showed steady movement along a 49.4 m native route. A bounded
+route-length deadline now passes with unchanged arrival/collision/work limits.
 
-Closure still requires final complete-world traversal, fresh-process trade restore,
-inspected ground/basement images and matching package evidence after this shared
-correction. The five R1 building designs remain opt-in candidates pending explicit
-visual approval. Existing houses and saves are preserved. The
-[shape, rendering/display and general-texture assessment](BUILDING_EXPANSION_REVIEW.md)
-is complete as a proposal; it does not claim an implemented expansion pack.
+The whole-game export and packed civic/door checks pass. Package dependency
+metadata now includes actual host dependencies; 13 package/runner tests pass.
+The [shape/display/texture assessment](BUILDING_EXPANSION_REVIEW.md) is complete
+as a proposal; the future pack and existing-house revisions await their decisions.
 
-Current integrated results: generation/publication and player/vehicle routes pass;
-one additional native-NPC town-hall approach oscillates before its destination.
-Retain `20261030T160425308386Z` and `20261030T161316783210Z`; diagnose the shared
-door/navigation interaction and require a fresh route check before closing that
-extra coverage. This is not represented as a passing NPC route.
+World quality and performance are not universally accepted. In the populated
+1080p check, merchant incremental mean is 0.058 ms; broader capped moving-camera
+p95 is 21.744–24.262 ms, above a 16.67 ms frame envelope. Keep general frame pacing,
+road shoulders, landscape composition and material presentation visible in the
+[review issue](../issues/civic-buildings/README.md). Return on user design feedback,
+a contact recurrence, or completion of the other chat's performance work; require
+matching-world visual/traversal evidence and timing before broader acceptance.
 
-Work remains isolated on `codex/trader-civic-buildings`. Completed prop-render work
-from `19fef843` is merged. The other chat continues work in the original checkout;
-its uncommitted changes are not part of this branch. Record any later completed
-merge and its verification in the review packet before promotion.
+Work is isolated on `codex/trader-civic-buildings`; completed prop work `19fef843`
+and doors `17398657` are merged. The other chat continues in the original checkout;
+its unfinished changes remain separate. No default promotion or push occurred.
+
+Integration snapshot: later concurrent commits `13788225` (retained model visuals)
+and `cce00e89` (residency notifications) landed after this review baseline. They
+are preserved in the original checkout and are not included in this package or
+its timing results. Their eventual merge requires matching binary/package and
+world checks; do not transfer either branch by copying over files.
 
 ## Readable door content and GLB replacements — 2026-10-30
 

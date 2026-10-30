@@ -1,12 +1,79 @@
 # Trader house and civic buildings
 
-- Status: Implemented review candidates / world integration pending.
-- Updated: 2026-10-30. Branch: `codex/trader-civic-buildings`.
-- User review: Not yet reviewed; none of these R1 designs is a generation default.
-- Scope: One functioning commodity trader in a house, plus four large buildings
-  with medium partial basements. This is an isolated playable architecture review.
+- Status: Integrated opt-in review world; scoped engineering checks passed.
+- Updated: 2026-10-30. Branch `codex/trader-civic-buildings`.
+- User review: Pending for Trader T1 R1, Town Hall T1 R1, Church C1 R1,
+  School S2 R1 and Warehouse W1 R1. None is a normal generation default.
+- Scope: One player-based trader with full commodity buying/selling, four large
+  civic buildings with 81–99 m² partial basements, and shared terrain contact enforcement.
 
-## Current images
+[Final review, decisions and launch command](../../docs/CIVIC_FINAL_REVIEW.md).
+[Complete-world engineering evidence](../../docs/evidence/civic_buildings/world/README.md).
+[Recurring terrain/block correction](../terrain-building-contact/README.md).
+
+## Complete-world views
+
+All current views: `CivicReview_1703_8ae64a06`, seed 1703, civic plan 29,
+Godot 4.7.2 Forward+, 1920×1080. Captured after native publication and fresh-process
+restore. Images were inspected by Codex; overall design approval remains yours.
+[Hashes, source runs and earlier images](images/manifest.json).
+
+![Trader house in its surveyed lot](images/world_trader_t1_street.png)
+Trader T1: covered arrival, public room, counter and stockroom. The connected
+approach was walked in both directions. Broad landscape and texture refinement
+remain distinct from the verified contact correction.
+
+![Trading inside the actual world](images/world_trader_world_trade.png)
+The normal E interaction opens quantity-based buying/selling. Stock and both purses
+are finite. This capture follows test transactions in the disposable review save.
+
+![Player-based trader](images/world_trader_world_counter.png)
+One idle Human R11 trader. The visible pickaxe belongs to the player camera;
+the trader has no equipped tool. Existing character provenance remains unchanged.
+
+![Town hall](images/world_town_hall_t1_street.png)
+Town Hall T1: portico, two floors and 99 m² basement; street-to-interior player and
+native-NPC routes pass. The concrete appearance is an explicit texture-study target.
+
+![Church](images/world_church_c1_street.png)
+Church C1: tower, supported cross, nave and side vestry; 99 m² basement. The
+original disconnected cross and overwritten shared wall remain below as rejected history.
+
+![School](images/world_school_s2_street_final.png)
+School S2: two-storey classroom block, library wing and 81 m² basement. This closer
+street camera avoids a foreground tree that obscured the earlier traversal capture.
+No tree was hidden for the photograph.
+
+![Warehouse](images/world_warehouse_w1_street.png)
+Warehouse W1: three thin-roof bays, two working vehicle entrances and 99 m² basement.
+The exposed concrete apron no longer contains the earlier soil patch. Each driveway
+was tested with the real vehicle.
+
+![Surveyed civic streets](images/world_school_s2_overview_final.png)
+Overview retains separate lot grades and forest between buildings. This remains a
+review layout: irregular road shoulders, repetitive concrete/timber appearances
+and full-world frame pacing are not presented as finished world-quality acceptance.
+
+![Actual basement](images/world_town_hall_t1_basement_final.png)
+Town-hall basement after continuous stair descent: retained block floor, walls,
+ceiling, staircase and storage. No cutaway or hidden upper floor in this view.
+[Church](images/world_church_c1_basement_final.png),
+[school](images/world_school_s2_basement_final.png) and
+[warehouse](images/world_warehouse_w1_basement_final.png) basement captures use the
+same room-facing camera; all four actual capsules reach supported lower floors.
+
+## Earlier rejected preparation
+
+![Earlier trader preparation](images/preparation_before_trader_t1_street.png)
+Earlier preparation trial, preserved as historical evidence; a different review
+save/view from the final capture. Roof/arrival tree clearance was incomplete.
+
+![Earlier warehouse apron](images/preparation_before_warehouse_w1_street_final.png)
+Earlier warehouse preparation with terrain crossing the apron. The fix now lives
+in shared native contact/earthworks and publication validation, not a private
+warehouse offset. See the linked terrain issue for rejected experiments.
+
+## Earlier isolated design review
 
 All images below are Godot 4.7.2, Forward+, 1920×1080, on the same isolated review
 ground with no terrain seed. They are proposals, not an accepted populated world.
@@ -45,7 +112,7 @@ Reversible cutaway shows the main corridor, classrooms, library and stair zone.
 ![Warehouse](images/warehouse_w1_0.png)
 Warehouse: three thin-roof bays, two five-metre loading openings and 99 m² stores.
 
-## Changes and verification
+## Isolated design verification
 
 New building arrangements/metadata are original CC0-1.0 assets with reproducible
 [authoring and provenance](../../reviews/civic_buildings/provenance.json). New
@@ -85,41 +152,23 @@ cross uses connected oriented native panels and a grid-owned support block.
 Rejected initial proposal: the annex roof overwrote the shared nave wall.
 Authoring now restores the full shared wall and its intended doorway.
 
-## Remaining / resume here
 
-1. Obtain each building's visual decision before adopting it as a default.
-   Review the massing, furniture, roof junctions and palette at player scale.
-   The narrow material palette remains visible; see the
-   [shape/material expansion review](../../docs/BUILDING_EXPANSION_REVIEW.md).
-2. After approved revisions, integrate exact prefab cells into surveyed lots,
-   master-plan basement excavation, roads and landscape. Verify actual-world
-   arrivals, basement access, persistence and local removal. No existing save
-   should be rebuilt or repainted automatically.
-3. Register currency before the first player inventory grant and register the
-   merchant native snapshot in the compound world save. Connect the one authored
-   trader identity/anchor to bounded activation and live world reach/readiness.
-   The present trader is stationary in the review, not a roaming world resident.
-4. Measure a populated 1080p route: p95/worst frame, CPU/GPU costs, memory and
-   streaming/near-far behavior. No no-regression claim is made from these checks.
-5. Extend trade to equipment only with wear/fill-preserving transfers and a
-   declared valuation policy. Quests, replenishment and multiplayer are not part
-   of the current commodity transaction contract.
+## Review and future work
 
-These pending requirements are also linked from `WORLD_FOUNDATION_STATUS.md`.
-The production world is deliberately not promoted from these isolated results.
+The implementation and both requested expansion/display assessments are complete
+for review. Approve or revise each named R1 building before default adoption.
+The [shape and texture proposal](../../docs/BUILDING_EXPANSION_REVIEW.md) recommends
+shallow roofs/joints, cornices, searchable baked previews, and a four-slot material
+study before a versioned eight-appearance system. It is a proposed next pack,
+not an implemented set of new shape IDs or textures.
 
-## Reproduce
+Prices and stock balance remain reviewable. The current trader intentionally sells
+eight commodities; equipment durability, quests and automatic restocking are not
+part of this commodity catalog. Existing saves and approved buildings are intact.
+General frame pacing remains open in the [runtime issue](../runtime-performance/README.md).
 
-From TerraForest in the attached worktree:
-
-```text
-python tools/review_modular_buildings.py --civic --persistent-review
-python tools/run_godot_check.py civic_buildings --headless --timeout 300 --require CIVIC_BUILDINGS
-python tools/run_godot_check.py trader_interaction --require TRADER_INTERACTION
-python tools/check_trader_release.py
-```
-
-The persistent review uses its own `civic_trader_review_v1.tfworld`, never a
-gameplay slot. F5 saves coins and stock together; no automatic restocking.
-All temporary test outputs stay under `reports/`; original failed evidence is
-retained separately above. Existing approved buildings and user saves are intact.
+From TerraForest: `python tools/review_civic_world.py` opens the exact review world.
+Use `--create` only for another uniquely named review save. Press M for the named
+building markers; E near the trader opens trade, Escape closes it. The earlier
+isolated viewer remains available with `python tools/review_modular_buildings.py
+--civic --persistent-review`; it is historical asset evidence, not the integrated world.

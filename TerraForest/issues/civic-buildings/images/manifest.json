@@ -96,6 +96,166 @@
       "status": "rejected: annex roof overwrote shared wall",
       "renderer": "Godot 4.7.2 Forward+ 1920x1080",
       "world": "isolated native prefab review"
+    },
+    {
+      "file": "world_trader_t1_street.png",
+      "sha256": "c2e467ed80d598d3e9d8b6d4ee625dbeb5972c8c520a44a3fc71b272e3e5d069",
+      "source": "TerraForest/reports/civic_world/trader_t1_street.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T162350299218Z"
+    },
+    {
+      "file": "world_town_hall_t1_street.png",
+      "sha256": "86e4ca555c521d3437c0801fc44887d73a745fa22e0d11b712da1c0cfb9c4b10",
+      "source": "TerraForest/reports/civic_world/town_hall_t1_street.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T162350299218Z"
+    },
+    {
+      "file": "world_church_c1_street.png",
+      "sha256": "d7d5e5c3b77da24091923ac8c866249e1285291cb08de1432d08f745a2fc81af",
+      "source": "TerraForest/reports/civic_world/church_c1_street.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T162350299218Z"
+    },
+    {
+      "file": "world_school_s2_street_final.png",
+      "sha256": "f03c6ad3399c9a02c5c173ce52e8eb0f71747d129af5adb13250ab36fb98dd82",
+      "source": "TerraForest/reports/civic_world/school_s2_street_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_warehouse_w1_street.png",
+      "sha256": "d9574068016659a21736fba9d85e6ca3fb30e96530519cce3cad0c168be290ad",
+      "source": "TerraForest/reports/civic_world/warehouse_w1_street.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T162350299218Z"
+    },
+    {
+      "file": "world_trader_world_trade.png",
+      "sha256": "c1f37b54f1291a3416f64262023c51022d914623c6702543f40df667940d4915",
+      "source": "TerraForest/reports/civic_world/trader_world_trade.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T162350299218Z"
+    },
+    {
+      "file": "world_trader_world_counter.png",
+      "sha256": "20281be49cb16fa7ffea26d6d90a8c05ad8e650dc4c63a521368ccf478a20ba0",
+      "source": "TerraForest/reports/civic_world/trader_world_counter.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163005342535Z"
+    },
+    {
+      "file": "world_trader_t1_overview_final.png",
+      "sha256": "08f8cbccc98297bff2e2ddae4d0284fa3e6242e58889c1e615ec95f3eaf2df80",
+      "source": "TerraForest/reports/civic_world/trader_t1_overview_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_town_hall_t1_overview_final.png",
+      "sha256": "d6c0935f8ceb57348ce439161518373f36cac61f4679f72a2896e373911c68e3",
+      "source": "TerraForest/reports/civic_world/town_hall_t1_overview_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_church_c1_overview_final.png",
+      "sha256": "19752be8b70ea5ef5068629bedf08f3f15914cf4612659f0da7da5ea972cad74",
+      "source": "TerraForest/reports/civic_world/church_c1_overview_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_school_s2_overview_final.png",
+      "sha256": "b2334692da19ad7cd17729b21a0e8c44e47404ecd07aa298fec651e26c75bb4a",
+      "source": "TerraForest/reports/civic_world/school_s2_overview_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_warehouse_w1_overview_final.png",
+      "sha256": "4f28532378cb2fc68801feb8c05a0f83c3f808480e4ddc2d1d377e68d514f823",
+      "source": "TerraForest/reports/civic_world/warehouse_w1_overview_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_town_hall_t1_basement_final.png",
+      "sha256": "80825289f7ada997d9a88b94503c282bc087fb21053b890ba581ad1ae8363e4c",
+      "source": "TerraForest/reports/civic_world/town_hall_t1_basement_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_church_c1_basement_final.png",
+      "sha256": "a9a21ca9974eadd79fd3cf1c33700f615de1695c5d7e5dcd7ebc09a642f94f20",
+      "source": "TerraForest/reports/civic_world/church_c1_basement_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_school_s2_basement_final.png",
+      "sha256": "472a81d2bfd9af7d520069003e9feec0b87a5daa69c4a857464d138461cfb6f5",
+      "source": "TerraForest/reports/civic_world/school_s2_basement_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "world_warehouse_w1_basement_final.png",
+      "sha256": "08731a733c67b892ec5ee7e3390e88eacf2653719a4e1f605217f3e5afabf565",
+      "source": "TerraForest/reports/civic_world/warehouse_w1_basement_final.png",
+      "status": "Inspected scoped engineering view; R1 design and site quality require user review",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080, RTX 4050 Laptop GPU",
+      "world": "CivicReview_1703_8ae64a06; seed 1703; civic plan v29",
+      "run": "20261030T163115760132Z"
+    },
+    {
+      "file": "preparation_before_trader_t1_street.png",
+      "sha256": "bfd80d87c80c7d44ebaab37ffb6f9cbc51e22335f2feecf7624cb2c6c4417d40",
+      "source": "Earlier civic preparation capture, retained before shared contact correction",
+      "status": "Historical rejected preparation; not a matching-view final comparison",
+      "world": "See docs/evidence/civic_buildings/world/before_apron_slot.json",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080"
+    },
+    {
+      "file": "preparation_before_warehouse_w1_street_final.png",
+      "sha256": "38bfa881734f9c5f190fc6186fd941514da1d7155f2567944715fd88688289cb",
+      "source": "Earlier civic preparation capture, retained before shared contact correction",
+      "status": "Historical rejected preparation; not a matching-view final comparison",
+      "world": "See docs/evidence/civic_buildings/world/before_apron_slot.json",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080"
     }
   ]
 }

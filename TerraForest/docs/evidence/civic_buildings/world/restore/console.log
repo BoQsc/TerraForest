@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS existing isolated review slot is identified
+PASS fresh process restores complete review world
+PASS exact civic plan reconstructed
+PASS trader_t1 collision residency
+PASS trader_t1 every saved block matches reviewed geometry
+PASS exactly one resident trader activates with ready collision
+PASS actual player walks continuously from street toward shop counter (944.4999, 40.004, 597.5859)
+PASS actual player walks continuously from street toward shop counter (944.5, 40.004, 587.0433)
+PASS normal world picker and interaction hint identify merchant
+PASS normal trader interaction owns inventory focus
+PASS trade pauses player inventory and movement controls
+PASS fresh process restores exact post-trade player inventory
+PASS fresh process restores finite merchant goods and purse without refill
+PASS closing returns normal gameplay controls
+PASS stockroom wall blocks buying and selling inside reach radius
+PASS distant merchant visual and body retire
+PASS return activates one merchant without refilling inventory
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS durable review-world save succeeds
+CIVIC_WORLD checks=18 failures=0 slot=CivicReview_1703_8ae64a06

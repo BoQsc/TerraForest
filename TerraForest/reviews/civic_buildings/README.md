@@ -1,7 +1,10 @@
 # Trader and civic buildings — R1 review
 
 Five new native block prefabs, with one trader using the retained current Human
-R11 player model. Launch from TerraForest:
+R11 player model. The integrated review world and final decisions are in
+[the final review](../../docs/CIVIC_FINAL_REVIEW.md). Launch that world from TerraForest
+with `python tools/review_civic_world.py`. The original isolated design viewer
+remains available for cutaways and individual part inspection:
 
 ```text
 python tools/review_modular_buildings.py --civic --persistent-review
@@ -40,8 +43,9 @@ Stock is never refreshed by closing the panel or switching buildings.
 trade publishes both native inventories in one checksummed, leased, atomic archive.
 Opening restores them; a corrupt archive disables saving to preserve the file.
 Without this flag, the review is temporary. Existing gameplay saves are untouched.
-The reusable merchant adapter provides a production persistence registration hook;
-the main world does not yet place this review house or spawn its trader.
+The reusable merchant adapter is also registered with compound-world persistence.
+The opt-in `--civic-review` production generator now places all five buildings
+and activates one trader. Normal generation defaults still await design approval.
 
 ## Provenance and limits
 
@@ -55,6 +59,7 @@ These are **review candidates**, not accepted world locations. Existing approved
 houses, production recipes and saved buildings remain unchanged. See the
 [visual issue and evidence](../../issues/civic-buildings/README.md) and
 [shape/material expansion assessment](../../docs/BUILDING_EXPANSION_REVIEW.md).
-World placement, terrain fitting, merchant activation/persistence in a generated
-location and populated-world performance follow design approval. This review
-does not claim an accepted generated world or an equipment/quest economy.
+World placement, terrain fitting, activation/persistence and populated-world
+checks are complete in the opt-in review save. See the final packet for exact
+evidence and remaining frame-pacing/site-quality limits. This does not claim
+universal world quality, steady 60 FPS or an equipment/quest economy.
