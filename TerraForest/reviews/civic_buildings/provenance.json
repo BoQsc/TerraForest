@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "creator": "TerraForest contributors, authored with OpenAI Codex at the user's request",
+  "request": "Trader area with one NPC based on the current player; large town hall, church, school and warehouse with medium basements; full buying/selling support and a building-shape/material review.",
+  "original_assets": {
+    "paths": [
+      "baked/trader_t1.tres",
+      "baked/town_hall_t1.tres",
+      "baked/church_c1.tres",
+      "baked/school_s2.tres",
+      "baked/warehouse_w1.tres"
+    ],
+    "license": "CC0-1.0",
+    "dedication": "To the extent copyright or related rights exist in these newly authored arrangements and metadata, the contributors dedicate them under CC0-1.0 pursuant to the repository contribution policy. Existing referenced components retain their own terms.",
+    "source": "recipes.gd; deterministic offline authoring using existing repository primitives; no external reference images or copied building designs",
+    "rebuild": "python tools/run_godot_check.py civic_buildings --headless --require CIVIC_BUILDINGS -- --bake-civic --pictures-only"
+  },
+  "code": {
+    "paths": [
+      "recipes.gd",
+      "viewer.gd"
+    ],
+    "license": "0BSD"
+  },
+  "retained_references": [
+    {
+      "path": "../../reviews/city_buildings/recipes.gd",
+      "use": "Existing builder methods referenced by preload, without copying or relicensing"
+    },
+    {
+      "path": "../../addons/structures/prefabs/",
+      "use": "Existing furniture, storage, door and window resources referenced by stable keys; existing terms retained"
+    },
+    {
+      "path": "../../addons/characters/runtime/human_view.gd",
+      "use": "Current retained full player model and animation used for one stationary trader; no new copy or derivative asset; existing character-runtime scope and GAP-002 remain"
+    },
+    {
+      "path": "../../addons/structures/textures/",
+      "use": "Existing four-material renderer and selected texture set; provenance qualifications retained"
+    }
+  ],
+  "asset_sha256": {
+    "church_c1.tres": "225aa621c157f0d657d419aa667cd160efc6c128f94e044c9163408889b7428d",
+    "school_s2.tres": "c14d615f50c879d6e6bb2b12b0585d3ce9ba2f1f10acba37d5a42f451cbb93bc",
+    "town_hall_t1.tres": "0838dac703b4ddbbf6aa9da7f19b0a977b721efdd853b66f1a5691654238b89c",
+    "trader_t1.tres": "7cf7830d84bca3bd1864413988d66fd8fdc8ce0784df79b0f6631b254f76c24c",
+    "warehouse_w1.tres": "a3215a407d7f6b29493650c99cf063fd2312bc374c08636312d46d4fd3d564c8"
+  }
+}

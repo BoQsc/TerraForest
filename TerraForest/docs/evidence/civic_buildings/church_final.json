@@ -1,0 +1,13 @@
+{
+  "buildings": [
+    {
+      "attachments": 20,
+      "cells": 3011,
+      "id": "church_c1",
+      "snapshot_bytes": 14173
+    }
+  ],
+  "checks": 20,
+  "failures": 0,
+  "scope": "native prefab publication, local traversal, save/reload and review images; not generated-world acceptance"
+}

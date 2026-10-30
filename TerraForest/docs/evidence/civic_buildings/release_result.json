@@ -1,0 +1,17 @@
+[
+  {
+    "test": "trader_inventory",
+    "passed": true,
+    "exit_code": 0
+  },
+  {
+    "test": "trader_inventory_restore",
+    "passed": true,
+    "exit_code": 0
+  },
+  {
+    "test": "player_inventory",
+    "passed": true,
+    "exit_code": 0
+  }
+]

@@ -9,8 +9,10 @@ func start() -> void:
 	var shop_roof: bool="--shop-roof" in OS.get_cmdline_user_args()
 	var large_house: bool="--large-house" in OS.get_cmdline_user_args()
 	var city: bool="--city" in OS.get_cmdline_user_args()
+	var civic: bool="--civic" in OS.get_cmdline_user_args()
 	var viewer: Node3D
-	if city:viewer=load("res://reviews/city_buildings/viewer.gd").new()
+	if civic:viewer=load("res://reviews/civic_buildings/viewer.gd").new()
+	elif city:viewer=load("res://reviews/city_buildings/viewer.gd").new()
 	elif large_house:viewer=load("res://reviews/modular_buildings/large_house_viewer.gd").new()
 	elif shop_roof:viewer=load("res://reviews/modular_buildings/shop_roof_viewer.gd").new()
 	elif roof:viewer=load("res://reviews/modular_buildings/roof_viewer.gd").new()
@@ -21,7 +23,8 @@ func start() -> void:
 		push_error("Building review could not place its native prefabs: "+str(viewer.placement_results))
 		quit(1)
 	else:
-		if city:print("CITY_BUILDING_REVIEW_READY proposals=6 approval=pending originals=unchanged")
+		if civic:print("CIVIC_BUILDING_REVIEW_READY proposals=5 traders=1 approval=pending")
+		elif city:print("CITY_BUILDING_REVIEW_READY proposals=6 approval=pending originals=unchanged")
 		elif large_house:print("LARGE_HOUSE_REVIEW_READY candidate=C1 approval=approved_addition")
 		elif shop_roof:print("MODULAR_SHOP_ROOF_REVIEW_READY original=B0 candidate=B2 approval=approved_default")
 		elif roof:print("MODULAR_ROOF_REVIEW_READY original=A0 candidate=A2 approval=approved_default")

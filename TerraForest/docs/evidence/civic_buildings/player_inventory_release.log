@@ -1,0 +1,35 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS catalog registers bounded stack limits
+PASS duplicate catalog definitions rejected
+PASS grant spans stacks atomically
+PASS deterministic stacking
+PASS catalog freezes after inventory mutation
+PASS stale command cannot duplicate items
+PASS oversized grant is rejected without partial write
+PASS partial transfer splits a stack
+PASS split conserves counts
+PASS full destination rejects without losing items
+PASS different item admitted
+PASS whole different stacks swap
+PASS swap preserves both items
+PASS invalid late snapshot slot cannot partially restore
+PASS float counts rejected
+PASS consume exact stack
+PASS empty slot canonicalized
+PASS valid snapshot restores catalog-checked contents
+PASS returned snapshot cannot mutate native state
+PASS invalid slot bounds rejected
+PASS bounded native save format validates
+PASS binary load restores after mutation
+PASS binary roundtrip preserves all slots
+PASS corrupt field rejected atomically at byte 0
+PASS corrupt field rejected atomically at byte 4
+PASS corrupt field rejected atomically at byte 8
+PASS corrupt field rejected atomically at byte 12
+PASS corrupt field rejected atomically at byte 256
+PASS corrupt field rejected atomically at byte 260
+PASS truncated load rejected
+PASS trailing bytes rejected
+PASS disk roundtrip preserves loadout
+PLAYER_INVENTORY {"checks":32,"failures":0}

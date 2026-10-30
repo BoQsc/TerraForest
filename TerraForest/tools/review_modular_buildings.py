@@ -16,6 +16,8 @@ def main():
     mode.add_argument('--shop-roof', action='store_true', help='Compare historical B0 with the approved B2 thin gable roof')
     mode.add_argument('--large-house', action='store_true', help='Inspect the approved additional C1 two-storey house')
     mode.add_argument('--city', action='store_true', help='Inspect six unapproved city building proposals')
+    mode.add_argument('--civic', action='store_true', help='Inspect the trader, town hall, church, school and warehouse proposals')
+    parser.add_argument('--persistent-review', action='store_true', help='Save the civic review inventory in its own separate slot')
     parser.add_argument('--dry-run', action='store_true')
     options = parser.parse_args()
     config, _ = parse_args(['--godot', options.godot] if options.godot else [])
@@ -29,6 +31,8 @@ def main():
                *(['--shop-roof'] if options.shop_roof else []),
                *(['--large-house'] if options.large_house else []),
                *(['--city'] if options.city else []),
+               *(['--civic'] if options.civic else []),
+               *(['--persistent-review'] if options.persistent_review else []),
                *(['--guided-tour'] if options.comparison and not options.no_tour else [])]
     details = dict(command=command, temporary=True, label='Building review / Shop B approved addition', utc=stamp,
                    notes='Isolated architecture review, not a gameplay world. A0/B0 are unchanged originals; B1 is approved as an addition. Rejected A1 appears only in the archived comparison. No player saves are read or written.')
@@ -44,6 +48,9 @@ def main():
     if options.city:
         details.update(label='City architecture / six proposals pending approval',
                        notes='Warehouse, police, medical centre, research centre, factory and apartments. Review-only native block assets; no generation changes and no player saves read or written.')
+    if options.civic:
+        details.update(label='Trader and civic buildings / R1 review',
+                       notes='Five native prefabs, four partial basements and one trader using the current player model. Buy/sell uses a separate review inventory; --persistent-review saves only that isolated session. No gameplay saves read or rewritten.')
     if options.dry_run:
         print(json.dumps(details, indent=2))
         return 0

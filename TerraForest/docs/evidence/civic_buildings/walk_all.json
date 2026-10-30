@@ -1,0 +1,37 @@
+{
+  "buildings": [
+    {
+      "attachments": 21,
+      "cells": 1019,
+      "id": "trader_t1",
+      "snapshot_bytes": 5633
+    },
+    {
+      "attachments": 59,
+      "cells": 3028,
+      "id": "town_hall_t1",
+      "snapshot_bytes": 10797
+    },
+    {
+      "attachments": 20,
+      "cells": 3011,
+      "id": "church_c1",
+      "snapshot_bytes": 14173
+    },
+    {
+      "attachments": 67,
+      "cells": 2615,
+      "id": "school_s2",
+      "snapshot_bytes": 10609
+    },
+    {
+      "attachments": 39,
+      "cells": 3505,
+      "id": "warehouse_w1",
+      "snapshot_bytes": 16177
+    }
+  ],
+  "checks": 125,
+  "failures": 0,
+  "scope": "native prefab publication, local traversal, save/reload and review images; not generated-world acceptance"
+}

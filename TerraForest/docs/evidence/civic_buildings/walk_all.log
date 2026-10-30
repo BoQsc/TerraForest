@@ -1,0 +1,128 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS bake trader_t1
+PASS bake town_hall_t1
+PASS bake church_c1
+PASS bake school_s2
+PASS bake warehouse_w1
+PASS native combined publication trader_t1
+PASS baked recipe identity trader_t1
+PASS review metadata trader_t1
+PASS combined saved block/model restoration trader_t1
+PASS local block removal trader_t1
+PASS cutaway restores exact content trader_t1
+PASS working door trader_t1/1
+PASS working door trader_t1/2
+PASS walk trader_t1 arrival end=(6.5, 1.004, 12.10833)
+PASS walk trader_t1 reverse arrival end=(6.5, 1.004, 20.89167)
+PASS walk trader_t1 door (6.5, 1.0, 16.5) end=(6.5, 1.004, 17.50834)
+PASS walk trader_t1 reverse door (6.5, 1.0, 16.5) end=(6.5, 1.004, 15.49166)
+PASS walk trader_t1 door (9.5, 1.0, 6.5) end=(9.5, 1.004, 7.508334)
+PASS walk trader_t1 reverse door (9.5, 1.0, 6.5) end=(9.5, 1.004, 5.491666)
+PASS native combined publication town_hall_t1
+PASS baked recipe identity town_hall_t1
+PASS review metadata town_hall_t1
+PASS combined saved block/model restoration town_hall_t1
+PASS local block removal town_hall_t1
+PASS cutaway restores exact content town_hall_t1
+PASS medium partial basement town_hall_t1
+PASS basement has supported floor town_hall_t1
+PASS working door town_hall_t1/1
+PASS working door town_hall_t1/2
+PASS working door town_hall_t1/3
+PASS working door town_hall_t1/4
+PASS working door town_hall_t1/5
+PASS working door town_hall_t1/6
+PASS walk town_hall_t1 stairs end=(3.5, 5.004, 8.674998)
+PASS walk town_hall_t1 reverse stairs end=(3.5, 1.000953, 3.545911)
+PASS walk town_hall_t1 landing end=(5.524317, 5.004001, 3.491207)
+PASS walk town_hall_t1 reverse landing end=(5.5237, 5.004001, 8.760058)
+PASS walk town_hall_t1 arrival end=(11.41188, 1.004, 14.03916)
+PASS walk town_hall_t1 reverse arrival end=(11.416, 1.004003, 25.95323)
+PASS walk town_hall_t1 stairs end=(3.5, 1.004, 8.674998)
+PASS walk town_hall_t1 reverse stairs end=(3.5, -2.999663, 3.501029)
+PASS walk town_hall_t1 landing end=(5.524318, 1.004, 3.491206)
+PASS walk town_hall_t1 reverse landing end=(5.523771, 1.004369, 8.760077)
+PASS walk town_hall_t1 door (12.0, 1.0, 12.5) end=(12.0, 1.004001, 13.50832)
+PASS walk town_hall_t1 reverse door (12.0, 1.0, 12.5) end=(12.0, 1.004002, 11.49168)
+PASS walk town_hall_t1 door (12.0, 5.0, 12.5) end=(12.0, 5.004002, 13.50832)
+PASS walk town_hall_t1 reverse door (12.0, 5.0, 12.5) end=(12.0, 5.004002, 11.49168)
+PASS walk town_hall_t1 door (12.0, 1.0, 20.5) end=(12.0, 1.004003, 21.50834)
+PASS walk town_hall_t1 reverse door (12.0, 1.0, 20.5) end=(12.0, 1.004003, 19.49166)
+PASS native combined publication church_c1
+PASS baked recipe identity church_c1
+PASS review metadata church_c1
+PASS combined saved block/model restoration church_c1
+PASS local block removal church_c1
+PASS cutaway restores exact content church_c1
+PASS medium partial basement church_c1
+PASS basement has supported floor church_c1
+PASS working door church_c1/1
+PASS working door church_c1/2
+PASS walk church_c1 arrival end=(6.5, 1.004, 15.07488)
+PASS walk church_c1 reverse arrival end=(6.5, 1.004, 38.92512)
+PASS walk church_c1 stairs end=(3.5, 1.004, 8.674998)
+PASS walk church_c1 reverse stairs end=(3.5, -2.998964, 3.546015)
+PASS walk church_c1 landing end=(5.524318, 1.004, 3.491206)
+PASS walk church_c1 reverse landing end=(5.523767, 1.004, 8.76009)
+PASS walk church_c1 door (12.5, 1.0, 9.5) end=(13.50832, 1.004, 9.5)
+PASS walk church_c1 reverse door (12.5, 1.0, 9.5) end=(11.49168, 1.004, 9.5)
+PASS walk church_c1 door (6.5, 1.0, 34.5) end=(6.5, 1.004, 35.50835)
+PASS walk church_c1 reverse door (6.5, 1.0, 34.5) end=(6.5, 1.004, 33.49165)
+PASS native combined publication school_s2
+PASS baked recipe identity school_s2
+PASS review metadata school_s2
+PASS combined saved block/model restoration school_s2
+PASS local block removal school_s2
+PASS cutaway restores exact content school_s2
+PASS medium partial basement school_s2
+PASS basement has supported floor school_s2
+PASS working door school_s2/1
+PASS working door school_s2/2
+PASS working door school_s2/3
+PASS working door school_s2/4
+PASS working door school_s2/5
+PASS working door school_s2/6
+PASS walk school_s2 stairs end=(3.5, 5.004001, 7.675002)
+PASS walk school_s2 reverse stairs end=(3.5, 1.000947, 2.545907)
+PASS walk school_s2 landing end=(5.524319, 5.004001, 2.491202)
+PASS walk school_s2 reverse landing end=(5.523767, 5.004001, 7.760094)
+PASS walk school_s2 arrival end=(15.5, 1.004, 10.12502)
+PASS walk school_s2 reverse arrival end=(15.5, 1.004, 16.87498)
+PASS walk school_s2 stairs end=(3.5, 1.004, 7.675002)
+PASS walk school_s2 reverse stairs end=(3.5, -2.999646, 2.50105)
+PASS walk school_s2 landing end=(5.524319, 1.004, 2.491202)
+PASS walk school_s2 reverse landing end=(5.523767, 1.004, 7.760094)
+PASS walk school_s2 door (14.5, 1.0, 8.5) end=(14.58396, 1.004, 9.506494)
+PASS walk school_s2 reverse door (14.5, 1.0, 8.5) end=(14.58122, 1.000069, 7.455271)
+PASS walk school_s2 door (24.5, 1.0, 8.5) end=(24.58396, 1.004, 9.506494)
+PASS walk school_s2 reverse door (24.5, 1.0, 8.5) end=(24.58122, 1.000069, 7.455271)
+PASS walk school_s2 door (14.5, 5.0, 8.5) end=(14.58396, 5.004001, 9.506494)
+PASS walk school_s2 reverse door (14.5, 5.0, 8.5) end=(14.58122, 5.00007, 7.455271)
+PASS walk school_s2 door (24.5, 5.0, 8.5) end=(24.58396, 5.004003, 9.506494)
+PASS walk school_s2 reverse door (24.5, 5.0, 8.5) end=(24.58122, 5.000073, 7.455271)
+PASS walk school_s2 door (16.0, 1.0, 12.5) end=(16.0, 1.004, 13.50832)
+PASS walk school_s2 reverse door (16.0, 1.0, 12.5) end=(16.0, 1.004, 11.49168)
+PASS native combined publication warehouse_w1
+PASS baked recipe identity warehouse_w1
+PASS review metadata warehouse_w1
+PASS combined saved block/model restoration warehouse_w1
+PASS local block removal warehouse_w1
+PASS cutaway restores exact content warehouse_w1
+PASS medium partial basement warehouse_w1
+PASS basement has supported floor warehouse_w1
+PASS working door warehouse_w1/1
+PASS working door warehouse_w1/2
+PASS walk warehouse_w1 loading bay end=(13.5, 1.004, 25.10829)
+PASS walk warehouse_w1 reverse loading bay end=(13.5, 1.004, 33.89172)
+PASS walk warehouse_w1 loading bay end=(22.5, 1.004, 25.10828)
+PASS walk warehouse_w1 reverse loading bay end=(22.5, 1.004, 33.89172)
+PASS walk warehouse_w1 stairs end=(3.5, 1.004, 8.674998)
+PASS walk warehouse_w1 reverse stairs end=(3.5, -2.998964, 3.546015)
+PASS walk warehouse_w1 landing end=(5.524318, 1.004, 3.491206)
+PASS walk warehouse_w1 reverse landing end=(5.523749, 1.004, 8.760084)
+PASS walk warehouse_w1 door (20.5, 1.0, 9.5) end=(20.5, 1.004, 10.50832)
+PASS walk warehouse_w1 reverse door (20.5, 1.0, 9.5) end=(20.5, 1.004001, 8.491677)
+PASS walk warehouse_w1 door (5.5, 1.0, 28.5) end=(5.5, 1.004, 29.50834)
+PASS walk warehouse_w1 reverse door (5.5, 1.0, 28.5) end=(5.5, 1.004, 27.49166)
+CIVIC_BUILDINGS checks=125 failures=0

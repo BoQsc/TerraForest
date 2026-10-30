@@ -1,6 +1,31 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Trader house and civic buildings — 2026-10-30
+
+The isolated R1 review now contains a trader house with one current-player-based
+NPC, a town hall, church, school and warehouse. The four large buildings have
+81–99 m² partial basements and native stair access. Eight commodities can be bought
+and sold with finite stock/coins, native two-inventory atomic exchange, range and
+occlusion checks, and separate review-session compound persistence. Debug/release
+inventory checks and actual counter interaction pass; complete prefab traversal
+and fresh-process restore pass. See [images, evidence and outstanding requirements](../issues/civic-buildings/README.md).
+
+This is **not complete production-world integration**. Each R1 design needs visual
+review before promotion under WORLD_BUILDING_STANDARD. After accepted revisions,
+resume surveyed lots, native generation-time excavation, bounded single-trader
+activation and main-world inventory/persistence wiring, then actual-world routes,
+reload and populated 1080p performance. Closure requires that integrated evidence;
+isolated review results do not qualify terrain fit or player experience globally.
+Equipment/quest economics is outside the commodity transaction contract.
+The [shape, display and general-texture expansion assessment](BUILDING_EXPANSION_REVIEW.md)
+records the recommended next families and the four-material encoding constraint;
+it does not claim an implemented expansion pack or approved house replacements.
+
+Work is isolated on `codex/trader-civic-buildings`, based on `a45e8588`, while the
+other active chat changes distant prop rendering in the original checkout.
+Reconcile that branch before integration; no original-checkout edits were included.
+
 ## Public-domain-first policy and initial inventory — 2026-10-30
 
 Repository/project agent instructions and contribution guidance now set 0BSD for

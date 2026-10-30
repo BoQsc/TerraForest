@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-30",
+  "images": [
+    {
+      "file": "trader_t1_0.png",
+      "sha256": "b850fcdc84eafffbb15cbed5f07945e72276ba16cce94756902b0ab74884aec2",
+      "source": "TerraForest\\reports\\civic_images_final\\trader_t1_0.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "trader_t1_3.png",
+      "sha256": "f480050d0bbd27c490f22e211aac86eb54c504a9bcdbb08a787aa2700f6025b2",
+      "source": "TerraForest\\reports\\civic_images_final\\trader_t1_3.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "town_hall_t1_0.png",
+      "sha256": "150b2ea9d07834a0f90a9adb271b0703a3be06656ecbe5fe29541e030f99f268",
+      "source": "TerraForest\\reports\\civic_images_final\\town_hall_t1_0.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "town_hall_t1_4.png",
+      "sha256": "cdc4f621fec9b6dea7959215bc0324371347536391bb04c6ad3c930be1d59c94",
+      "source": "TerraForest\\reports\\civic_images_final\\town_hall_t1_4.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "church_c1_0.png",
+      "sha256": "ea425a3c874f66adf4e27a7cc8ff8bf9837ea4b84d1ad321b04ab89eb5b43f5a",
+      "source": "TerraForest\\reports\\civic_images_final\\church_c1_0.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "church_c1_3.png",
+      "sha256": "906f9e526e5197c16a31f9852d122b9dd8be04b4fb4bd2514a6899f46c151edd",
+      "source": "TerraForest\\reports\\civic_images_final\\church_c1_3.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "school_s2_0.png",
+      "sha256": "35a1623f46f4869d67101489ac91997bda09f69adec019b04bf9a58a37da4cf8",
+      "source": "TerraForest\\reports\\civic_images_final\\school_s2_0.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "school_s2_2.png",
+      "sha256": "eaf1fcd2f27a987c5859a07878685371c5ebf6d035b8fba0801b384bff35126e",
+      "source": "TerraForest\\reports\\civic_images_final\\school_s2_2.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "warehouse_w1_0.png",
+      "sha256": "2bd94ffe51d4b18ea79810ea776df68ee1c4a22ae146de30ffc73f367f2e8702",
+      "source": "TerraForest\\reports\\civic_images_final\\warehouse_w1_0.png",
+      "status": "R1 proposal, inspected representative view; human approval pending",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review, no terrain seed"
+    },
+    {
+      "file": "trade.png",
+      "sha256": "c0c0e0f08479758c7c0958983dd7922aebbcc1c34bf0928cdb64b0724331ef45",
+      "source": "TerraForest\\reports\\trader_interaction\\trade.png",
+      "status": "UI buy/sell checks passed",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review"
+    },
+    {
+      "file": "church_initial_exterior.png",
+      "sha256": "ba4d96b964d33e40905d6a0bb7d3cca1d0374315897a0d1818648b0b08c7ce23",
+      "source": "TerraForest\\reports\\civic_buildings\\church_c1_0.png",
+      "status": "rejected: cross support and geometry",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review"
+    },
+    {
+      "file": "church_initial_inside.png",
+      "sha256": "3c564e7aa2033a62e20b210f831318deb36108b035257ec7b64eddbe7dd1c575",
+      "source": "TerraForest\\reports\\civic_buildings\\church_c1_3.png",
+      "status": "rejected: annex roof overwrote shared wall",
+      "renderer": "Godot 4.7.2 Forward+ 1920x1080",
+      "world": "isolated native prefab review"
+    }
+  ]
+}

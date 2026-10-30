@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS buy transfers goods and coins exactly once
+PASS sell transfers owned goods at bid price
+PASS invalid/stale/unaffordable trade leaves both inventories untouched [102, 1, true, -1, 3]
+PASS invalid/stale/unaffordable trade leaves both inventories untouched [104, 999, true, 3, 3]
+PASS invalid/stale/unaffordable trade leaves both inventories untouched [201, 999, false, 3, 3]
+PASS invalid/stale/unaffordable trade leaves both inventories untouched [9999, 1, true, 3, 3]
+PASS invalid/stale/unaffordable trade leaves both inventories untouched [101, -1, true, 3, 3]
+PASS out-of-stock rollback preserves bytes and both revisions
+PASS full player inventory cannot lose payment
+PASS merchant cannot buy without coins
+PASS self exchange rejected
+PASS exchange work bounded to 32 item/count pairs
+PASS equipment with wear is not flattened into commodities
+PASS test save lease
+PASS native compound save publication
+PASS fresh inventories restore exact player wallet and finite stock
+TRADER_INVENTORY checks=16 failures=0
