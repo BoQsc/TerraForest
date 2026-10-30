@@ -141,6 +141,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    medium/large objects at arbitrary distance. Boulders no longer
    share local grass ownership. The earlier 100 km/h sweep reported up to eight near
    and 33 visible ground owners missing; grass continuity remains unresolved.
+   The 2026-10-30 follow-up removes false whole-cover invalidation from unchanged
+   block/model paging. A matched 160 km/h sweep now has zero missing near owners,
+   but outer owners still arrive late and frame p95 is above 16.67 ms. This fixes
+   an ownership error, not complete delivery/transition performance; see the
+   vegetation issue's residency comparison and retained regressions.
    Extend independent medium-object visibility without expanding full grass/physics globally.
    Measure dense worlds and require continuous driving/zoom/edit/reload evidence.
 4. **General module host.** Vehicle providers and a narrow data-only

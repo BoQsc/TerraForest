@@ -18,6 +18,14 @@ advances transfers. It uses the existing editor history and player focus.
 
 ## Lifecycle contract
 
+- Residency notifications (2026-10-30): a collection's `changed` signal still
+  invalidates cached snapshots and notifies history observers. Unchanged model
+  admission/retirement no longer emits `exclusion_changed`; actual edits, history
+  replay, full replacement and prefab publication do. The scene adapter uses the
+  existing native block content revision to make the same distinction for blocks.
+  Streaming must not request autosave or regenerate vegetation as if it were an
+  edit. `model_residency_notifications.gd` covers both paths, including block-only
+  prefabs; `model_paging_lifecycle.gd` checks the real worker's save-dirty flag.
 - Manual save requests remain queued while transfers cancel/drain across frames.
   Autosave uses the same gate. Capture and worker submission happen after draining.
 - The backend reports save completion with a structured success flag. Successful

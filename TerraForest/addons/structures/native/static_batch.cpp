@@ -77,10 +77,14 @@ bool NativeStaticBatch::valid_transform(const float *t) {
     double determinant=t[0]*(double(t[5])*t[10]-double(t[6])*t[9])-t[1]*(double(t[4])*t[10]-double(t[6])*t[8])+t[2]*(double(t[4])*t[9]-double(t[5])*t[8]);
     return std::abs(determinant)>=1e-9;
 }
-void NativeStaticBatch::publish_change(bool storage_only) {
+void NativeStaticBatch::publish_change(bool storage_only,bool notify_exclusion) {
     if(!storage_only)survey_saved_identity=String();
     ++edit_revision;
-    if(!defer_change_signal)emit_signal("changed");
+    if(!defer_change_signal) {
+        const auto identity=get_instance_id();
+        emit_signal("changed");
+        if(notify_exclusion)if(auto *live=ObjectDB::get_instance(identity))live->emit_signal("exclusion_changed");
+    }
 }
 bool NativeStaticBatch::placement_clear(const PackedFloat32Array &transform,const AABB &protection) const {
     if(source_mesh.is_null()||transform.size()!=12||!valid_transform(transform.ptr())||!protection.position.is_finite()||!protection.size.is_finite()||

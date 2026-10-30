@@ -1,6 +1,16 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Vegetation invalidation during travel — 2026-10-30
+
+Unchanged block/model paging no longer invalidates every nearby vegetation owner
+or marks the world edited. Real changes, undo/redo, full restore and staged prefabs
+retain content notifications. Near-camera missing owners fell from mean 3.65/max
+11 to zero in the 160 km/h source and installed controlled sweeps; outer coverage
+and frame pacing remain incomplete. See [evidence and remaining work](../issues/vegetation-lod/README.md#residency-notifications--2026-10-30).
+Continue with bounded owner delivery/publication and physical-car/zoom/edit/endurance
+comparisons; do not claim universal seamlessness or a whole-frame speedup.
+
 ## Readable door content and GLB replacements — 2026-10-30
 
 The original door now has a JSON definition; an opt-in data-only pack adds a

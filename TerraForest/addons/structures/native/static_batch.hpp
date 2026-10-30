@@ -124,7 +124,7 @@ class NativeStaticBatch : public Node3D {
     uint64_t edit_revision=0;
     String survey_saved_identity;
     bool defer_change_signal=false;
-    void publish_change(bool storage_only=false);
+    void publish_change(bool storage_only=false,bool notify_exclusion=true);
     bool placement_clear(const PackedFloat32Array &transform,const AABB &protection) const;
     struct ProxyBody { RID body; std::vector<RID> shapes; };
     std::map<int64_t,ProxyBody> collision_bodies;

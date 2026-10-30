@@ -2,6 +2,7 @@ extends Node3D
 signal changed
 signal vegetation_changed(bounds: AABB)
 var _block_change_bounds:=AABB()
+var _block_content_revision:=0
 ## Scene/persistence integration only. Storage, validation and rendering are native.
 var blocks: Node3D
 var _models: Dictionary = {}
@@ -183,16 +184,23 @@ func _exit_tree() -> void:
 	_model_scheduler = null
 
 func _mark_dirty() -> void:
-	_dirty = true
-	_cached_storage = PackedByteArray()
+	_snapshot_changed()
 	var bounds:=_block_change_bounds;_block_change_bounds=AABB()
+	var revision:int=blocks.survey_content_revision_id()
+	if revision==_block_content_revision:return
+	_block_content_revision=revision
 	vegetation_changed.emit(bounds)
 	changed.emit()
 
 func _block_cells_changed(bounds: AABB) -> void:
 	_block_change_bounds=blocks.global_transform*bounds
 
+func _snapshot_changed() -> void:
+	_dirty = true
+	_cached_storage = PackedByteArray()
+
 func _exclusion_changed() -> void:
+	_snapshot_changed()
 	vegetation_changed.emit(AABB())
 	changed.emit()
 
@@ -242,7 +250,7 @@ func register_model(asset_id: String, mesh: Mesh) -> Node3D:
 	_model_list.append(collection)
 	_empty_models[asset_id] = collection.capture_snapshot()
 	add_child(collection)
-	collection.changed.connect(_mark_dirty)
+	collection.changed.connect(_snapshot_changed)
 	collection.exclusion_changed.connect(_exclusion_changed)
 	return collection
 

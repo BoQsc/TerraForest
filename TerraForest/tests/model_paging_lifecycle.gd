@@ -54,6 +54,7 @@ func run() -> void:
     check(await until(func():return coordinator.successful_saves==1 and coordinator.operation==""),"normal manual save publishes and automatically resumes paging")
     check(await until(func():return not structures.model(assets[0]).is_region_loaded(Vector3i(44,2,4)) and not structures.model(assets[1]).is_region_loaded(Vector3i(44,2,4))),"coordinator retires far saved models without test-driven transfer calls")
     check(await until(func():return structures.model_horizon_stats().ready) and structures.model_horizon_stats().rendered==1024,"canonical retirement retains all model visuals")
+    check(not terrain.changed_since_save,"unchanged background retirement does not request another save")
     check(terrain.backend.snapshot_codec.region_read_stats().worker_starts==1 and terrain.backend.snapshot_codec.region_read_stats().request_limit==16,"block and model paging share one coordinator-owned archive service")
     focus=Vector3(1409,65,129)
     check(await until(func():return coordinator.last_state.get("jobs",0)>0),"travel creates pending model work")

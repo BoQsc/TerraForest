@@ -64,7 +64,10 @@ bool NativeStructuresSnapshot::restore_bootstrap(const PackedByteArray &bytes,Na
     for(auto &stage:prepared)stage.batch->set_block_signals(stage.blocked);
     // Publication observers may destroy nodes; resolve weak identities afresh.
     if(auto *world=ObjectDB::get_instance(block_id))world->emit_signal("changed");
-    for(auto &stage:prepared)if(auto *batch=ObjectDB::get_instance(stage.object_id))batch->emit_signal("changed");
+    for(auto &stage:prepared) {
+        if(auto *batch=ObjectDB::get_instance(stage.object_id))batch->emit_signal("changed");
+        if(auto *batch=ObjectDB::get_instance(stage.object_id))batch->emit_signal("exclusion_changed");
+    }
     restore_busy=false;return true;
 }
 }

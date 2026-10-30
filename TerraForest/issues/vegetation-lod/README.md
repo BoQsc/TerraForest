@@ -1,7 +1,7 @@
 # Extended vegetation LOD
 
 - Status: Improved-partial / installed; driving-speed continuity and player review remain open.
-- Updated: 2026-10-29. Original LOD implementation `e2d0e548`; driving follow-up below.
+- Updated: 2026-10-30. Original LOD implementation `e2d0e548`; driving follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
@@ -132,3 +132,47 @@ visual acceptance. Wind/time and streamed off-screen counts differ. Provenance i
 Reproduce the controlled sweep:
 `python tools/profile_runtime.py --slot recipe_generated_4644d8cfc8f97e43 --speed-sweep --speed-kph 160 --pack --label driving_repeat --require-resource-budget`.
 Historical `--driving` is an alias for this controlled workload, not autonomous driving.
+
+## Residency notifications — 2026-10-30
+
+- Root cause: unchanged model and block admission/retirement emitted the same
+  world-edit notifications as authoring. That dirtied every wanted ground-cover
+  owner, discarded in-flight scatter work and incorrectly requested another save.
+- Native model content notifications now distinguish residency. Blocks reuse their
+  existing native content revision. Snapshot-cache invalidation and collection
+  observers remain intact; actual edits, undo/redo, full restore and prefabs still
+  invalidate vegetation. No new worker, cache, density reduction or range change.
+- Validation also caught a missing content-revision increment in staged block-only
+  prefabs; fixed before final qualification rather than suppressing that edit.
+- Same seed 1703, 585.6 m/160 km/h controlled camera sweep, RTX 4050 Laptop,
+  1080p/60 cap. Counts are disk owners, including empty/off-screen owners, not
+  visible pixels. They do not qualify physical driving or arbitrary travel.
+
+| Build | Missing near owners mean / max | Missing visible-radius owners mean / max | Frame p95 |
+| --- | --- | --- | --- |
+| Installed baseline `13788225` | 3.65 / 11 | 27.09 / 40 | 22.66 ms |
+| Model notification fix only | 0.62 / 8 | 12.62 / 32 | 23.10 ms |
+| Block + model fix, source | 0 / 0 | 0.17 / 3 | 27.32 ms |
+| Block + model fix, first pack | 0 / 0 | 0.63 / 4 | 27.52 ms |
+| Final pack, prefab revision regression fixed | 0 / 0 | 2.27 / 8 | 30.06 ms |
+
+The source/first-pack runs recorded no cover exclusion-revision change or dirty
+owner during the measured route. Forest-visible owner misses stayed zero.
+The final repeat retains zero near misses and a constant exclusion revision;
+outer coverage and timings vary, so the earlier best sample is not universal.
+**This is a continuity improvement, not a frame-time improvement.** More cover
+actually becomes ready; frame pacing is worse in these samples and remains open.
+Do not hide this by lowering vegetation density. Return to bounded owner delivery
+and render publication, then require matched repeated physical-car, sharp-turn,
+zoom, edit/reload and weak-hardware/endurance evidence. Pre-baked owner records
+remain only a candidate, not an implemented replacement.
+
+Detailed reports, build identities, failed fixtures and final installed checks:
+[residency evidence](residency-evidence.json). Earlier evidence is preserved.
+
+![Prior paging notifications at the route endpoint](images/residency-before.png)
+![Final installed build at the same endpoint](images/residency-after.png)
+Unedited 1080p captures immediately after travel, before recovery. The far roadside
+has more ready ground cover; near plants/buildings retain their appearance.
+These inspected endpoints do not show every transient hole or qualify seamless
+motion. Wind/time differ; provenance is in `images/manifest.json`. User review pending.

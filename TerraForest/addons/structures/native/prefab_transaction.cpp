@@ -218,7 +218,7 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
         if(existing!=blocks->chunks.end()){existing->second=std::move(it->second);it=p.chunks.erase(it);}
         else {auto next=it++;blocks->chunks.insert(p.chunks.extract(next));}
     }
-    ++blocks->mutation_revision;blocks->survey_saved_identity=String();
+    ++blocks->mutation_revision;++blocks->content_revision;blocks->survey_saved_identity=String();
     for(auto key:p.invalidations)blocks->invalidate(key);
     blocks->clear_history();blocks->set_process(true);
     const auto blocks_committed=Time::get_singleton()->get_ticks_usec();
@@ -238,7 +238,10 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     for(auto &entry:p.staged)if(auto *batch=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(entry.second.id)))batch->rebuild(entry.second.touched);
     if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("cells_changed",p.changed_bounds);
     if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("changed");
-    for(const auto &entry:p.staged)if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("changed");
+    for(const auto &entry:p.staged) {
+        if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("changed");
+        if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("exclusion_changed");
+    }
     busy=false;
     Dictionary result;result["ok"]=true;result["status"]="committed";result["models"]=int64_t(p.model_at);result["block_probes"]=p.probes;result["model_comparisons"]=p.comparisons;
     Dictionary timing;timing["block_validation_us"]=p.block_us;timing["model_validation_us"]=p.model_us;timing["block_commit_us"]=blocks_committed-started;timing["model_commit_us"]=models_committed-blocks_committed;timing["publication_us"]=Time::get_singleton()->get_ticks_usec()-models_committed;result["timing"]=timing;return result;

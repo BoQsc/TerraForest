@@ -126,8 +126,11 @@ with tempfile.TemporaryDirectory(prefix='release_smoke_',dir=build) as temporary
         for name in ['mesh_codec.gd','collision_reuse.gd']:
             shutil.copy2(source/name,addon/name)
     if test in ('prefab_transaction','prefab_staged'):
-        for name in ['structures_world.gd','material_startup.gd','furniture_catalog.gd']:
+        for name in ['structures_world.gd','material_startup.gd','furniture_catalog.gd','building_lod.gd']:
             shutil.copy2(source/name,addon/name)
+        presentation=project/'addons/presentation'
+        presentation.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(ROOT/'addons/presentation/fullscreen_policy.gd',presentation/'fullscreen_policy.gd')
         destination=project/'addons/player_runtime'
         shutil.copytree(ROOT/'addons/player_runtime',destination)
         descriptor=destination/'player_runtime.gdextension'
