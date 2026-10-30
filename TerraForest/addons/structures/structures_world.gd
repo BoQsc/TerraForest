@@ -25,6 +25,33 @@ var _model_paging_draining := false
 var _model_paging_assets: Array[String] = []
 var _model_paging_failures := 0
 var _model_paging_last_failure: Dictionary = {}
+var _model_horizon: Node
+
+func enable_model_horizon(archive: RefCounted) -> bool:
+	if _model_horizon != null:return true
+	if not seal() or archive == null or not archive.region_read_stats().running:return false
+	var checkpoints:Dictionary={}
+	for id:String in _models:
+		var checkpoint:PackedByteArray=_model_checkpoints.get(id,PackedByteArray())
+		if checkpoint.is_empty():checkpoint=archive.published_model_index(id).get("checkpoint",PackedByteArray())
+		checkpoints[id]=checkpoint
+	var horizon:Node=ClassDB.instantiate("NativeModelHorizon")
+	if not horizon.configure(archive,_model_list,checkpoints):
+		horizon.free()
+		return false
+	_model_horizon=horizon
+	horizon.name="WorldModelHorizon"
+	add_child(horizon)
+	return true
+
+func stop_model_horizon() -> void:
+	if _model_horizon != null:
+		_model_horizon.clear()
+		_model_horizon.free()
+		_model_horizon=null
+
+func model_horizon_stats() -> Dictionary:
+	return _model_horizon.statistics() if _model_horizon != null else {"active":false,"ready":false,"error":"","records":0,"rendered":0,"pages":0,"pending_regions":0,"pending_uploads":0,"charged_bytes":0,"byte_limit":128*1024*1024}
 
 func enable_model_paging(archive: RefCounted, history: RefCounted) -> bool:
 	if _model_scheduler != null:
@@ -150,6 +177,7 @@ func stop_region_paging() -> void:
 		_pager = null
 
 func _exit_tree() -> void:
+	stop_model_horizon()
 	stop_region_paging()
 	# Exceptional teardown only. Normal save/reload callers drain in frame slices.
 	_model_scheduler = null
@@ -222,6 +250,7 @@ func model(asset_id: String) -> Node3D:
 	return _models.get(asset_id)
 
 func is_model_render_region_ready(bounds: AABB) -> bool:
+	if _model_horizon != null:return _model_horizon.statistics().ready
 	for collection in _model_list:
 		if not collection.is_render_region_ready(bounds):return false
 	return true

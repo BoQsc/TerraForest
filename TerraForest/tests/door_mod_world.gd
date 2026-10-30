@@ -2,6 +2,26 @@
 extends "res://tests/combined_resource_route.gd"
 const SECOND := "example/doors/narrow_right/v1"
 var directory := "user://mods/door_world_%d" % OS.get_process_id()
+var noncapturing := false
+
+func _initialize() -> void:
+	noncapturing = "--noncapturing-door-check" in OS.get_cmdline_user_args()
+	if noncapturing: ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	super._initialize()
+
+func aim(feet: Vector3, point: Vector3) -> void:
+	if not noncapturing: super.aim(feet,point);return
+	game.player.position=feet;game.camera.position=Vector3(0,1.62,0);game.camera.look_at(point)
+	game.app_focused=true;game.fly=false;game.needs_floor_spawn=false
+
+func use() -> void:
+	if noncapturing: game.doors.try_interact()
+	else: super.use()
+
+func prompt() -> String:
+	if not noncapturing:return game.player_hud.interaction_hint.text
+	var start:Vector3=game.camera.global_position
+	return game.doors.describe(game.structures.blocks.raycast_scene(start,start-game.camera.global_basis.z*3,7,[game.player.get_rid()],true))
 
 func run() -> void:
 	DirAccess.make_dir_recursive_absolute(directory)
@@ -38,19 +58,19 @@ func run() -> void:
 	batch.set_collision_focus(origin)
 	aim(origin+Vector3(.4,0,2),origin+Vector3(.4,1,0))
 	for frame in 15: await physics_frame;await process_frame
-	check(game.player_hud.interaction_hint.text == "E · Open narrow right-hinged door","HUD discovers mod name and door capability")
+	check(prompt() == "E · Open narrow right-hinged door","aimed door description discovers mod name and capability")
 	var damage_target: Dictionary = game.world_attack.target()
 	check(damage_target.get("asset") == SECOND and damage_target.get("health") == 75,"actual attack targeting uses mod durability")
 	use()
-	check(entry.state.is_open(identity) and game.terrain.changed_since_save,"normal E input opens mod door and marks world dirty")
+	check(entry.state.is_open(identity) and game.terrain.changed_since_save,"door interaction opens mod door and marks world dirty")
 	var sections: Dictionary = game.persistence._capture().sections
 	var section := "door_"+SECOND.sha256_text().left(40)
 	check(sections.has(section) and entry.state.validate_snapshot(sections[section]),"actual compound capture includes independent mod hinges")
 	aim(origin+Vector3(2,0,-.4),origin+Vector3(.8,1,-.4))
 	for frame in 15: await physics_frame;await process_frame
-	check(game.player_hud.interaction_hint.text == "E · Close narrow right-hinged door","HUD tracks right-hinged mod state")
+	check(prompt() == "E · Close narrow right-hinged door","aimed door description tracks right-hinged mod state")
 	use()
-	check(not entry.state.is_open(identity) and batch.get_instance(identity) == game.model_tool.records(pose,batch),"normal E input closes mod door without pose drift")
+	check(not entry.state.is_open(identity) and batch.get_instance(identity) == game.model_tool.records(pose,batch),"door interaction closes mod door without pose drift")
 	check(not game.doors.breakable_bodies().has(batch.collision_body_for(identity)),"mod's explicit zombie restriction reaches navigation")
 	if DisplayServer.get_name() != "headless":
 		var original: Node3D = game.doors.collection
@@ -69,6 +89,7 @@ func run() -> void:
 	await finish_mod()
 
 func finish_mod() -> void:
+	if noncapturing:check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED,"noncapturing component check leaves OS pointer uncaptured; physical E/HUD path is separate")
 	game.shutdown_requested = true
 	check(await game.terrain.shutdown_after_edits(),"temporary world shutdown completes")
 	game.free()

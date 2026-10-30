@@ -26,6 +26,12 @@ class NativeStaticBatch : public Node3D {
     friend class NativeStructureQueries;
     friend class ExclusionPageData;
     friend class ModelRenderPageData;
+    friend class NativeModelHorizon;
+    uint64_t world_render_owner=0,world_render_epoch=1;
+    std::set<int64_t> world_render_changes;
+    std::set<BlockKey> world_render_seeded;
+    void reset_world_render(){if(world_render_owner){++world_render_epoch;world_render_changes.clear();world_render_seeded.clear();}}
+    void change_world_render(int64_t id){if(world_render_owner){if(world_render_changes.size()>=200000)reset_world_render();world_render_changes.insert(id);}}
     PackedByteArray overlap_mask_impl(const TypedArray<Transform3D> &transforms,const AABB &bounds,bool include_unloaded) const;
     friend class NativeModelTransferScheduler;
     std::shared_ptr<ModelCheckpointLease> paging_checkpoint;

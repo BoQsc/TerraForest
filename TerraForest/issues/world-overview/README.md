@@ -368,14 +368,41 @@ near-renderer checks. Images inspected; user visual acceptance remains pending.
 - Corruption, wrong versions, sparse IDs, negative origins, mirrored/sheared
   transforms, GPU readback, pressure and cancellation/lifetime are covered by
   `tests/model_render_pages.gd`. Evidence: `model-render-pages-verification.json`.
-- **Not yet connected to main-world prop rendering.** No new visual acceptance
-  claim or gameplay performance gain. Next: globally bounded ownership, edits,
-  resets, near/far continuity and actual-world coverage/load gates.
+- The primitive's original verification is retained. Main-world integration now
+  follows below; those original primitive tests alone did not establish coverage.
+
+## Persistent static-model coverage
+
+- One native renderer now retains registered static-model visuals across the saved
+  world; nearby canonical records and physics can retire independently. Existing
+  source meshes/materials/imported LODs remain unchanged. No distant cutoff.
+- Default publication: 1,024 records/two uploads per tick, 256-instance pages,
+  cooperative 1.5 ms target, two archived payload slots, 128 MiB planning budget.
+  Explicit pressure can recover after removals; it does not silently report ready.
+- Debug/release pressure represents 100,000 props in 391 pages with 4.8 MB of GPU
+  transforms. Removal/undo, moved IDs, native prefab insertion, door rotation,
+  archive-read/edit races, cancellation and source destruction are checked.
+- Normal worker save/reload/reset and fresh-scene edited-pose tests pass. The
+  populated world represents all 660 registered props in 203 pages, including a
+  table 997 m from the physical player. Canonical admission keeps the same GPU
+  page without an upload; original save bytes remain unchanged.
+- **Scoped engineering verification, not universal seamless-rendering approval.**
+  Full-prototype dense cost, continuous driving/zoom, shadow changes, fully sliced
+  resets and long mixed-world endurance remain open. Unauthored LODs are not invented.
+  Counters exclude shared meshes/engine allocations; sampled process budgets are
+  recorded separately. See `model-horizon-verification.json` for build and evidence.
+
+![Original props retained while the physical player is distant](images/static_props_distant_close.png)
+
+Seed 1703, table `(1011,60,270)`: the camera is nearby, but the physical player is
+997 m away and furniture canonical records are unloaded. The retained source
+meshes remain visible; actual GPU transforms are checked. Installed-build image
+inspected, not user-approved artwork or evidence of seamless continuous zoom.
 
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical
-medium-object renderer integration, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
+medium-object cost/transition qualification, mixed streaming/lifetime endurance, seam-safe volumetric transitions, remote
 prop tiers and dense-vehicle/transition qualification, general service providers, full generation/loading profiling
 and physical 4 GiB hardware/endurance. Custom vehicles currently use the small-car
 envelope; pack inventory registration and native dependency installation are open.

@@ -77,3 +77,23 @@ and a 2×2 embedded texture, then removed; no replacement GLB is shipped.
 
 Other platforms, arbitrary GLB extensions, new artwork, general scripted objects,
 hot reload and automatic save migrations are outside this verification.
+
+## Combined model-renderer build — 2026-10-30
+
+- Source door contract: `17398657`. Combined debug/release DLL identities and
+  final pack: `issues/world-overview/model-horizon-verification.json`.
+- Debug content: `reports/checks/20261030T152941533309Z`, 58 checks pass.
+- Installed content: `reports/door_content_pack/20261030T153957575244Z`, 58 checks
+  pass, including loose textured GLB and matching native-library hashes.
+  Final failed-seed epoch guard rebuild repeats that pass at
+  `reports/door_content_pack/20261030T154425719774Z`.
+- Temporary-world component check: `reports/runtime_views/20261030T153636274949Z`
+  passes through actual placement, aiming, interaction, salvage and shutdown.
+  Run `python tools/check_runtime_views.py door_mod_world` for this noncapturing
+  variant. It calls the interaction/description components without claiming to
+  exercise OS E input or displayed HUD; the earlier isolated input evidence is separate.
+- Retained integration failure: `reports/checks/20261030T153037985396Z`. The new
+  model visual gate incorrectly waited in nonpaged temporary worlds, which do not
+  create that owner. The gate now applies only where the model coordinator exists;
+  ordinary paged worlds still require complete representation. No door restriction
+  or test timeout was relaxed to obtain the corrected pass.

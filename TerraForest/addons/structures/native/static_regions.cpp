@@ -74,7 +74,7 @@ void NativeStaticBatch::install_metadata(std::map<BlockKey,UnloadedRegion> &&sta
     placements.clear();groups.clear();slots.clear();
     unloaded_regions=std::move(staged);unloaded_ids=std::move(ids);
     unloaded_bounds.clear();for(const auto &entry:unloaded_regions)unloaded_bounds.insert(entry.first,entry.second.bounds);
-    survey_saved_identity=identity;rebuild(touched);publish_change(true);
+    survey_saved_identity=identity;rebuild(touched);reset_world_render();publish_change(true);
 }
 bool NativeStaticBatch::valid_model_region(BlockKey key) {
     for(int axis:{key.x,key.y,key.z})if(axis<-32768||axis>=32768)return false;
@@ -126,6 +126,7 @@ bool NativeStaticBatch::unload_region_impl(const PackedByteArray &expected) {
     BlockKey key;String asset;std::map<int64_t,Placement> values;
     if(!parse_region(expected,asset,key,values)||asset!=asset_id||unloaded_regions.count(key)||
        groups.size()+unloaded_regions.size()+(groups.count(key)?0:1)>4096)return false;
+    if(world_render_owner&&(!world_render_seeded.count(key)||!world_render_changes.empty()))return false;
     // parse_region already validated the canonical packet, both digests, IDs
     // and transforms. Compare the exact live records without allocating and
     // hashing another region packet. Float equality would miss signed-zero

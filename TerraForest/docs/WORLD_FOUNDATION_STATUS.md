@@ -98,13 +98,18 @@ Teardown counters traced an intermittent retained page to the worker handoff;
 owned native payloads replace Godot objects carried in cross-thread Variants.
 Both installed pairs release all pages without ObjectDB warnings; 58 native checks
 per debug/release configuration include 24 cancellation/consumption cycles. Mixed
-streaming endurance remains open. Other medium props still lack the required
-complete far representation. A native read-only model-render page primitive now
-decodes exact archived transforms without loading editable models or physics;
-bounded GPU pages share the original mesh/material/LOD resource. It is not yet
-connected to the main-world prop renderer. Return next to globally budgeted visual
-ownership, edit/reset invalidation and loading coverage, then require real-world
-travel/zoom/reload and pressure evidence. See the linked issue receipts and contract.
+streaming endurance remains open. Registered static models now use a native
+whole-world visual owner in ordinary paged worlds. Exact archived transforms and
+shared source meshes remain visible independently of nearby gameplay/physics.
+Bounded publication, authoring/undo/door/prefab updates, reset invalidation and
+loading coverage are integrated. Debug/release checks cover 100,000 props;
+normal worker save/reload/reset tests and a fresh-scene edited pose pass.
+The populated fixture retains all 660 model identities, including a table 997 m
+away, through canonical admission without a duplicate renderer or GPU rebuild.
+See `issues/world-overview/model-horizon-verification.json` for scoped results,
+retained failed runs and installed-build identity. Dense real meshes, continuous
+travel/zoom, shadow transitions, other medium vegetation and mixed-edit endurance
+remain unqualified; return with those recordings and measured budgets.
 The preceding 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
 but local ground-cover residency still lags by up to eight near / 33 visible
 owners. Natural boulders now use independent whole-world ownership and native

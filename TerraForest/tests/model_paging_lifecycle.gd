@@ -53,6 +53,7 @@ func run() -> void:
     terrain.save_world()
     check(await until(func():return coordinator.successful_saves==1 and coordinator.operation==""),"normal manual save publishes and automatically resumes paging")
     check(await until(func():return not structures.model(assets[0]).is_region_loaded(Vector3i(44,2,4)) and not structures.model(assets[1]).is_region_loaded(Vector3i(44,2,4))),"coordinator retires far saved models without test-driven transfer calls")
+    check(await until(func():return structures.model_horizon_stats().ready) and structures.model_horizon_stats().rendered==1024,"canonical retirement retains all model visuals")
     check(terrain.backend.snapshot_codec.region_read_stats().worker_starts==1 and terrain.backend.snapshot_codec.region_read_stats().request_limit==16,"block and model paging share one coordinator-owned archive service")
     focus=Vector3(1409,65,129)
     check(await until(func():return coordinator.last_state.get("jobs",0)>0),"travel creates pending model work")
@@ -79,16 +80,19 @@ func run() -> void:
     terrain.reload_world()
     check(terrain._reload_requested and terrain.epoch==old_epoch,"reload queues behind in-flight save without replacing live collections")
     check(await until(func():return terrain.epoch>old_epoch and near_ready()),"normal reload detaches, restores and automatically reattaches model paging")
+    check(await until(func():return structures.model_horizon_stats().ready) and structures.model_horizon_stats().rendered==1024,"normal reload reconstructs complete persistent visuals")
     check(structures.model(assets[0]).capture_region(Vector3i(4,2,4)).size()>0 and history.update(structures.model(assets[0]),1,pose(133),AABB()),"reloaded world accepts another edit for shutdown persistence")
     check(await terrain.shutdown_after_edits(),"normal asynchronous shutdown drains paging and saves the last edit")
     dispose()
     check(setup() and await until(near_ready),"fresh process-equivalent world instance loads shutdown save")
     # Compare a concrete placement through the public transform accessor.
     check(structures.model(assets[0]).get_instance(1)==pose(133),"shutdown edit survives fresh archive and scene reconstruction")
+    check(await until(func():return structures.model_horizon_stats().ready) and structures._model_horizon.visual_record(structures.model(assets[0]),1).transform.origin.is_equal_approx(Vector3(133,65,129)),"fresh scene renders the exact edited pose from the shutdown save")
     old_epoch=terrain.epoch
     terrain.reload_world(true)
     check(await until(func():return terrain.epoch>old_epoch and terrain.world_ready and coordinator.operation=="" and structures._model_scheduler!=null),"normal reset restores and reattaches paging")
     check(structures.model(assets[0]).get_instance(1).is_empty() and structures.model(assets[1]).get_instance(1).is_empty(),"reset removes prior model placements")
+    check(await until(func():return structures.model_horizon_stats().ready) and structures.model_horizon_stats().rendered==0,"reset clears stale global model pages")
     check(await terrain.shutdown_after_edits(),"reopened world shuts down cleanly")
     dispose();finish()
 func finish() -> void:

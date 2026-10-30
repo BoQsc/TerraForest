@@ -700,10 +700,38 @@ Place its instance at `origin` beneath the source collection's transform. Empty,
 invalid or oversized ranges return no mesh. Do not replace the source mesh with
 its bounding box. `stats()` accounts native records, not mesh or engine allocations.
 
-This is a tested renderer building block, **not yet the main-world prop horizon**.
-The host must still implement globally bounded residency/publication, authoritative
-edit invalidation, complementary near/far ownership and loading readiness. Archive
-reservations cover queued results only; consuming a page transfers that memory
-responsibility to the host. Native consumers can take the shared immutable payload
-directly, without per-instance GDScript. See `tests/model_render_pages.gd` and the
-[open rendering contract](../../docs/WORLD_RENDERING_CONTRACT.md).
+Archive reservations cover queued results only; consuming a page transfers memory
+responsibility to the host. Native consumers take the shared immutable payload
+directly, without per-instance GDScript. See `tests/model_render_pages.gd`.
+
+### Persistent world model visuals
+
+`NativeModelHorizon.configure(archive, collections, checkpoints, byte_limit)` claims
+one visual owner for up to 256 registered static collections. Original meshes,
+materials and imported LODs are shared, not rebaked. Canonical 32 m region ownership
+and physics remain unchanged. Each visual page holds at most 256 transforms; there
+is no distance eviction or near/far duplicate. Doors and moved props retain page
+identity, with refreshed bounds. Shadows keep the collection's local shadow range
+(384 m fallback), not whole-world shadow casting.
+
+`advance(max_records=1024, max_uploads=2, max_usec=1500)` performs native publication;
+time is cooperative, not a hard frame guarantee. At most two archived payload/read
+slots remain owned. `statistics()` exposes actual representation, pending work,
+errors, upload bytes and the default 128 MiB conservative planning charge. That
+charge excludes shared meshes, engine allocations and actual driver memory.
+Budget failure never reports ready; subsequent removals can recover capacity.
+`represented_ids(collection)` and `visual_record(collection,id)` are diagnostics,
+not production per-instance GDScript iteration APIs.
+
+Authoring/removal/history/native prefab commits invalidate identities; storage
+admission/retirement does not. Pending bootstrap reads cannot overwrite later edits.
+Retirement waits until a region's transforms are retained. Normal save leaves the
+visual owner alive; reload/reset/shutdown clear it before replacing checkpoint
+metadata. Callers replacing metadata directly must likewise clear/reconfigure the
+owner with the new checkpoint. Nonpaged temporary scenes retain local rendering.
+Collection-wide reset and destruction are not fully time-sliced. Meshes without
+authored LODs remain full geometry; arbitrary dense content is not yet qualified.
+
+`tests/model_horizon.gd`, `tests/model_paging_lifecycle.gd` and
+`tests/model_horizon_world.gd` cover native pressure, persistence and a populated
+world. [Unfinished rendering requirements](../../docs/WORLD_RENDERING_CONTRACT.md).

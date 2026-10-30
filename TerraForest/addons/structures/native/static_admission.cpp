@@ -22,6 +22,7 @@ bool NativeStaticBatch::begin_region_transfer(const PackedByteArray &bytes,bool 
     if(!valid_model_region(key)||length<1||length>128||count>100000||
        16+length+count*56!=uint64_t(bytes.size()-88))return false;
     if(retiring) {
+        if(world_render_owner&&(!world_render_seeded.count(key)||!world_render_changes.empty()))return false;
         auto group=groups.find(key);
         if(missing!=unloaded_regions.end()||count!=(group==groups.end()?0:group->second.size())||
            groups.size()+unloaded_regions.size()+(group==groups.end()?1:0)>4096)return false;

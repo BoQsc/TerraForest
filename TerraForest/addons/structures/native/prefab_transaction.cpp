@@ -224,7 +224,7 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     const auto blocks_committed=Time::get_singleton()->get_ticks_usec();
     for(auto &entry:p.staged) {
         auto &s=entry.second;auto *batch=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(s.id));
-        for(const auto &v:s.values)batch->groups[NativeStaticBatch::group_for(v.second)].insert(v.first);
+        for(const auto &v:s.values){batch->groups[NativeStaticBatch::group_for(v.second)].insert(v.first);batch->change_world_render(v.first);}
         batch->placements.merge(s.values);++batch->edit_revision;batch->survey_saved_identity=String();
     }
     const auto models_committed=Time::get_singleton()->get_ticks_usec();

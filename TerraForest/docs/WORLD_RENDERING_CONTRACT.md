@@ -68,6 +68,12 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   LOD thresholds are retained in a checked binary resource, refreshed before
   export. Near/physics meshes remain unchanged. The optional adapter hook keeps
   original parts for other providers; no gameplay GPU readback/rebake is added.
+- Saved-world static models now have one native persistent visual owner, independent
+  of nearby editable records and physics. Exact archived transforms feed 256-instance
+  pages sharing original mesh/material/imported LODs, with no distance eviction.
+  Native authoring, doors, prefab attachments, undo and reset update that owner.
+  The paged-world play gate requires all registered model visuals; nonpaged temporary
+  scenes retain their existing local renderer and readiness checks.
 - Generation verification uses the native occupied-region index rather than
   serializing the full resident world plus scanning 4,096 possible regions.
   Existing digests remain identical for the previous generated-world domain.
@@ -88,7 +94,8 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    Twenty-four cancellation/consumption cycles per native configuration and two
    consecutive installed cold/warm runs release all pages without ObjectDB warnings;
    this does not qualify arbitrary mixed-world lifetime endurance.
-   Boulders now have independent far representations; other medium props remain.
+   Boulders and registered static props now have independent far representations;
+   other medium vegetation and mixed streaming qualification remain.
 2. **Seamless terrain/mesh transitions.** The large grey patches were mostly
    absent geometry, not simply bad transition surfaces: only 37/64 roots existed
    after 30 seconds in the previous fixture. Whole-world readiness and cheaper
@@ -97,18 +104,21 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    qualification. Requires a compatible volumetric
    transition solution (including edited caves), not a heightmap covering edits.
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
-3. **Medium props/vehicles.** Furniture/other props still have local representation
-   limits. The native read-only model-render page primitive is now implemented:
-   exact checkpoint reads decode compact ordered transforms on the shared archive
-   worker; the main thread can publish at most 1,024 instances per page using the
-   original mesh, materials and imported LODs. No far canonical/physics hydration.
-   Synthetic debug/release checks cover 100,000 records, affine transforms,
-   historical versions, cancellation and destruction. This is not yet connected
-   to main-world prop rendering. Next integrate one visual ownership policy,
-   global memory/upload budgets, authored-change invalidation, collection resets
-   and a real coverage play gate; then prove save/reload, dense-world cost and
-   uninterrupted travel/zoom. Do not substitute successful primitive tests for
-   those missing integrations. Details: issue `model-render-pages-verification.json`.
+3. **Medium props/vehicles.** The archived model primitive is now connected to the
+   main saved-world renderer. One native owner replaces the duplicate near/far
+   handoff: canonical admission/retirement does not republish unchanged visuals.
+   Default work is 1,024 records/two uploads per tick, with a cooperative 1.5 ms
+   target, two retained archive payload slots and a 128 MiB planning budget.
+   Budget pressure is explicit and removals can recover it. The charge is not a
+   total engine/mesh/GPU allocator cap. Resets and destruction are not fully sliced.
+   Native debug/release pressure covers 100,000 records in 391 pages, 4.8 MB of GPU
+   transforms; normal worker lifecycle checks cover save/reload/reset and a fresh
+   scene. The populated fixture represents all 660 props in 203 pages, including
+   a table 997 m from the physical player, without far gameplay hydration.
+   Original meshes without imported LODs remain unsimplified. Dense real-prototype
+   cost, continuous physical travel/zoom, shadow transitions and long mixed-edit
+   lifetime still require qualification. See `model-horizon-verification.json`;
+   prior primitive checks remain in `model-render-pages-verification.json`.
    Parked vehicles now retain world-wide render ownership; debug/release
    native pressure and installed four-Ranger loading/handoff checks pass. The
    65,536-record test uses one box, not 65,536 full cars. Ranger's far prototype
@@ -127,7 +137,7 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    MultiMesh parent-scale policy and all distinct imported thresholds. Evidence,
    rejected runs and final packaged comparisons are retained in the issue's
    `vehicle-consolidation-verification.json`; no universal GPU speedup claim.
-   Add the remaining exact lightweight prop tiers before advertising all
+   Qualify remaining exact lightweight prop tiers before advertising all
    medium/large objects at arbitrary distance. Boulders no longer
    share local grass ownership. The earlier 100 km/h sweep reported up to eight near
    and 33 visible ground owners missing; grass continuity remains unresolved.
@@ -149,7 +159,7 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    establish perfect frame times, universal LOD continuity or visual acceptance.
 
 The overview camera is intentionally opt-in until these gaps are addressed; natural
-forest, boulder and known parked-vehicle coverage are enabled in ordinary world
-launches. Continue with medium-object
+forest, boulder, registered static-prop and known parked-vehicle coverage are enabled
+in ordinary paged world launches. Continue with medium-object
 coverage and transition qualification; do not close
 this contract because the current engineering tests pass.

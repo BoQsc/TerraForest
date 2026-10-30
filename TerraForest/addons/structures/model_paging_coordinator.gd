@@ -35,7 +35,9 @@ func ready_for(kind: String) -> bool:
 		if waiting_save:return false
 	if not structures.drain_model_paging():return false
 	if kind in ["reload","reset","shutdown"]:
-		return structures.finish_model_paging()
+		if not structures.finish_model_paging():return false
+		structures.stop_model_horizon()
+		return true
 	return true
 
 func _save_submitted() -> void:
@@ -61,6 +63,9 @@ func _measured_step(_delta:float)->void:
 	var archive: RefCounted=terrain.backend.snapshot_codec
 	if terrain.world_ready and not terrain.closing and operation=="" and structures._model_scheduler==null:
 		if not archive.region_read_stats().running and not archive.start_region_reads(16,64*1024*1024):return
+		if not structures.enable_model_horizon(archive):
+			terrain.latest_error="Could not initialize whole-world object visuals"
+			return
 		if not structures.enable_region_paging(archive):return
 		if not structures.enable_model_paging(archive,history):return
 	if structures._model_scheduler!=null:

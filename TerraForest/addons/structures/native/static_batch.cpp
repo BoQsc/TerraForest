@@ -127,12 +127,13 @@ bool NativeStaticBatch::configure_asset(const String &id,const Ref<Mesh> &mesh) 
     std::set<BlockKey> keys;for(auto &e:groups)keys.insert(e.first);refresh_collision_bounds(keys);
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     // Invalidate journals before either notification can call back into editing.
-    if(changed){++edit_revision;survey_saved_identity=String();}
+    if(changed){++edit_revision;survey_saved_identity=String();reset_world_render();}
     emit_signal("exclusion_changed");
     if(changed&&!defer_change_signal)emit_signal("changed");return true;
 }
 bool NativeStaticBatch::lock_asset_identity() {if(!valid_asset(asset_id)||source_mesh.is_null())return false;asset_locked=true;return true;}
 bool NativeStaticBatch::configure_collision_only(){
+    if(world_render_owner)return false;
     if(!placements.empty()||!unloaded_regions.empty()||!batches.empty())return false;
     collision_only=true;set_process(false);return true;
 }
@@ -193,7 +194,7 @@ void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys,bool continuous) 
     refresh_collision_bounds(keys);
     // Release all old memberships before assigning slots in their new groups.
     for(auto k:keys)release_group(k);
-    if(collision_only)return;
+    if(collision_only||world_render_owner)return;
     if(render_streaming) {if(!keys.empty())render_dirty=true;return;}
     for(auto k:keys)if(groups.count(k))upload_batch({k,0});
 }
@@ -239,7 +240,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     std::set<BlockKey> locally_changed;for(auto &e:local_updates)if(!touched.count(e.first))locally_changed.insert(e.first);
     refresh_collision_bounds(locally_changed);
     for(auto &e:local_updates)if(!touched.count(e.first)||(render_streaming&&appearance_fade)) {
-        if(collision_only)continue;
+        if(collision_only||world_render_owner)continue;
         if(render_streaming) {
             // Same-group transforms preserve compact membership. Rebuild only
             // their draw pages; untouched pages retain both nodes and buffers.
@@ -264,7 +265,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
             multi->set_instance_transform(slots.at(id),Transform3D(basis,Vector3(p[3]-e.first.x*32,p[7]-e.first.y*32,p[11]-e.first.z*32)));instance_updates++;
         }
     }
-    if(!touched.empty()||!local_updates.empty())publish_change();return true;
+    if(!touched.empty()||!local_updates.empty()){for(const auto &entry:staged)change_world_render(entry.first);publish_change();}return true;
 }
 bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
     if(admission||id<=0)return false;
@@ -273,6 +274,7 @@ bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
     removal_protected.insert(id);return true;
 }
 bool NativeStaticBatch::begin_transient_clear() {
+    if(world_render_owner)return false;
     if(collection_retirement||admission||paging_checkpoint||!unloaded_regions.empty()||!removal_protected.empty()||
        !render_streaming||!proxy_parts.empty()||!collision_bodies.empty())return false;
     if(placements.empty())return true;
@@ -330,7 +332,7 @@ bool NativeStaticBatch::clear_instances() {
     clear_proxies();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
     resident_ids.clear();render_ids.clear();render_bounds.clear();render_pending.clear();
     collision_bounds.clear();collision_index.clear();collision_dirty=true;render_dirty=true;
-    publish_change();return true;
+    reset_world_render();publish_change();return true;
 }
 bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     auto began=Time::get_singleton()->get_ticks_usec();
@@ -369,7 +371,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         auto &members=groups.at(key);members.erase(id);if(members.empty())groups.erase(key);
         refresh_collision_bounds({key});
         for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
-        publish_change();return true;
+        change_world_render(id);publish_change();return true;
     }
     for(const auto &entry:removed_counts) {
         auto group=groups.find(entry.first);
@@ -385,7 +387,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
     if(render_streaming&&appearance_fade&&!collision_only)remove_render_members(touched);
     else rebuild(touched,true);
     removal_render_us+=Time::get_singleton()->get_ticks_usec()-erased;
-    if(!touched.empty())publish_change();return true;
+    if(!touched.empty()){for(auto identity:unique)change_world_render(identity);publish_change();}return true;
 }
 bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32Array &transforms) {
     if(admission||!unloaded_regions.empty()||!removal_protected.empty())return false;
@@ -401,7 +403,7 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
     clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
-    rebuild(touched);publish_change();return true;
+    rebuild(touched);reset_world_render();publish_change();return true;
 }
 PackedFloat32Array NativeStaticBatch::get_instance(int64_t id) const {
     PackedFloat32Array result;auto it=placements.find(id);if(it==placements.end()||unloaded_regions.count(group_for(it->second)))return result;
@@ -453,7 +455,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
     survey_saved_identity="snapshot-v1|"+bytes.slice(bytes.size()-32).hex_encode();
-    rebuild(touched);publish_change(true);return true;
+    rebuild(touched);reset_world_render();publish_change(true);return true;
 }
 Dictionary NativeStaticBatch::stats() const {
     // Retirement is excluded from live placements but remains explicitly accounted.

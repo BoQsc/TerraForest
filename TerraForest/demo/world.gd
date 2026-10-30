@@ -1724,6 +1724,12 @@ func _additional_loading_ready() -> bool:
 		if distant.failed_reads > 0 or distant.budget_rejections > 0:
 			terrain.latest_error="Distant building preparation failed: %d archive reads, %d memory-budget rejections" % [distant.failed_reads,distant.budget_rejections]
 		return false
+	var prop_horizon:Dictionary=structures.model_horizon_stats()
+	if model_paging!=null and not prop_horizon.ready:
+		loading_stage_percent=82;loading_stage_text="Preparing world-wide object visuals"
+		loading_work_text="Objects %d/%d · %d mesh pages · %d regions / %d uploads pending · %.1f MiB / %.0f MiB"%[prop_horizon.rendered,prop_horizon.records,prop_horizon.pages,prop_horizon.pending_regions,prop_horizon.pending_uploads,prop_horizon.charged_bytes/1048576.0,prop_horizon.byte_limit/1048576.0]
+		if not prop_horizon.error.is_empty():terrain.latest_error=prop_horizon.error
+		return false
 	var visual_bounds:=AABB(player.global_position-Vector3(128,128,128),Vector3(256,256,256))
 	if not structures.is_model_render_region_ready(visual_bounds):
 		loading_stage_percent=82;loading_stage_text="Loading nearby buildings and objects"
