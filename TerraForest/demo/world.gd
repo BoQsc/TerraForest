@@ -39,6 +39,7 @@ var world_map=preload("res://addons/world_runtime/world_map.gd").new()
 var map_markers=preload("res://addons/player_runtime/map_markers.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
+var trader=preload("res://addons/player_runtime/trader_world.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
@@ -212,6 +213,7 @@ func _ready() -> void:
 		return
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
+		["trader",func():return trader.prepare(self,persistence)],
 		["corpse storage",func():return corpse_loot.prepare(self,persistence)],
 		["zombie population",func():return zombies.prepare(self,persistence)],
 		["structure catalog",func():return structures_ready],
@@ -240,6 +242,7 @@ func _ready() -> void:
 	tool_view.human.body=player
 	player.add_child(zombie_target)
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
+	add_child(trader)
 	add_child(zombies)
 	zombies.corpse_host=corpse_loot
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
@@ -636,7 +639,7 @@ func create_lake(point: Vector3) -> int:
 
 func _setup_scene() -> void:
 	super._setup_scene()
-	player.collision_mask |= 6
+	player.collision_mask |= 14
 	player.position = Vector3(800, 100, 1310)
 	for child in get_children():
 		if child is WorldEnvironment:

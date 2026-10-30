@@ -47,5 +47,23 @@
     "town_hall_t1.tres": "0838dac703b4ddbbf6aa9da7f19b0a977b721efdd853b66f1a5691654238b89c",
     "trader_t1.tres": "7cf7830d84bca3bd1864413988d66fd8fdc8ce0784df79b0f6631b254f76c24c",
     "warehouse_w1.tres": "a3215a407d7f6b29493650c99cf063fd2312bc374c08636312d46d4fd3d564c8"
+  },
+  "world_integration": {
+    "license": "CC0-1.0",
+    "source": "../../tools/bake_civic_review.gd",
+    "changes": "Uniform +4 m translation of basement buildings; generation-only entrance, clearance and site metadata. Exact original cells and attachment geometry retained. Candidate resources stay review_only.",
+    "files": {
+      "addons/structures/prefabs/civic_review_church_c1.tres": "838c9a1213a39eec45bdf67e5e5803731f416f381b8e9f468b6a2e0c2920c912",
+      "addons/structures/prefabs/civic_review_school_s2.tres": "7c2228265175ac1bd1d27512b4bd6ea7238e6b28d416a7586219e192985b95c9",
+      "addons/structures/prefabs/civic_review_town_hall_t1.tres": "58406cd327098b2e94ad0da59a188afe9ce2621b7edcea4003f9bf1bf047ba69",
+      "addons/structures/prefabs/civic_review_trader_t1.tres": "4305d14473cb123c87c9573db2ab0ac07ae6ee2f7ea9b88de22262487c69b06a",
+      "addons/structures/prefabs/civic_review_warehouse_w1.tres": "01cfb3fc4b6d180d9fac04db2e1f01a92f18baa61c4e8e32be987814ad263eb5"
+    }
+  },
+  "coin_icon": {
+    "path": "../../addons/player_runtime/art/coins.svg",
+    "license": "CC0-1.0",
+    "source": "Original repository-native vector drawing; no external reference or imported artwork",
+    "sha256": "e2fe6a096bf23fb3c2ec0a2934f212f0a14fe09b1a49a178c99e90fb1c644b77"
   }
 }

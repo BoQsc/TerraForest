@@ -55,8 +55,8 @@
         "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
-        "res://project.godot": "0c30e42f9facc33934f982cdf84835fd364607b04bc05b6ff41a9904f8c7ece0",
+        "res://addons/player_runtime/item_icons.gd": "1d2fe0bf0904837569a14258bcb406bac625009427bef259a3b0aaa2265d6ff2",
+        "res://project.godot": "3a77bad9ac81588ccaf1042327807ddb70f585c445e443ed9b426f986096b6e8",
         "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
         "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }
@@ -64,8 +64,8 @@
     "vehicle": {
       "engine": "4.7.2-stable (steam)",
       "files": {
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "48c19ddcb2d7b8689866b84f4dfd416b61c675cc1b22ad0fd49f8fa966cff6e1",
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "2da3a859b536f4b0d7f6baed4e0b7ccdcf49112aca55b0a4776d6eff3f717085",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
         "res://addons/vehicle_runtime/vehicle_runtime.gdextension": "3158221f48bf06a5b784d5646deae71ce52d0e82dced2a0be0cfdb095f5a4100",
         "res://addons/vehicle_runtime/vehicle_streaming.gd": "7bc2c8b88b6ade1ef8e1bf08d4cd4b18e6743047d7e57171e61b9231b2b1943b",
         "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",
@@ -81,8 +81,8 @@
         "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "1d0e5cdffc644e3c0012dffdff2b2d9aca5acd167cff4a01d2b49b8c268bf56d",
-        "res://project.godot": "0c30e42f9facc33934f982cdf84835fd364607b04bc05b6ff41a9904f8c7ece0",
+        "res://addons/player_runtime/item_icons.gd": "1d2fe0bf0904837569a14258bcb406bac625009427bef259a3b0aaa2265d6ff2",
+        "res://project.godot": "3a77bad9ac81588ccaf1042327807ddb70f585c445e443ed9b426f986096b6e8",
         "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
         "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
       }

@@ -2,7 +2,7 @@
 extends RefCounted
 # Shared preview/bake orchestration. All field, road and lot searches are native.
 # Derived plans contain plain values; prefab Resources are reconstructed from recipes.
-const VERSION:=12
+const VERSION:=13
 const CACHE_BYTES:=64*1024*1024
 const CACHE_ENTRIES:=32
 const LIMIT:=8*1024*1024
@@ -55,9 +55,10 @@ static func trim_cache(folder:String,keep:String)->void:
   if count<=CACHE_ENTRIES and total<=CACHE_BYTES:break
   if entry.path==keep:continue
   if DirAccess.remove_absolute(entry.path)==OK:count-=1;total-=entry.size
-static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans",options:Dictionary={},progress:RefCounted=null)->Dictionary:
+static func build(seed_value:int,generator:int,with_market:bool=true,with_connection:bool=true,folder:String="user://generation_plans",options:Dictionary={},progress:RefCounted=null,civic_review:bool=false)->Dictionary:
+ if civic_review and options.is_empty():options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
  if not options.is_empty():
-  var result:=preload("res://addons/world_runtime/custom_world_plan.gd").build(seed_value,generator,options,folder,0,progress)
+  var result:=preload("res://addons/world_runtime/custom_world_plan.gd").build(seed_value,generator,options,folder,0,progress,civic_review)
   if result.get("cache_persisted",false):trim_cache(folder,str(result.get("cache_path","")))
   result.erase("cache_path")
   return result
@@ -135,7 +136,7 @@ static func water_preview(core,generator:int)->PackedByteArray:
   if not visibility.get("ok",false) or visibility.visible.is_empty() or not raster.accept_prefix(offset,visibility.visible):return PackedByteArray()
   offset+=visibility.visible.size()
  return raster.pixels(Color(54/255.0,117/255.0,140/255.0))
-static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation",options:Dictionary={},progress:RefCounted=null)->Dictionary:
+static func preview(seed_value:int,generator:int,integrated:bool=true,with_market:bool=true,with_connection:bool=true,preview_folder:String="user://cartography/generation",options:Dictionary={},progress:RefCounted=null,civic_review:bool=false)->Dictionary:
  if progress!=null:progress.record("Surveying terrain heights and coastlines",0,0,"Native 256 × 256 overview / binary terrain cache")
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain

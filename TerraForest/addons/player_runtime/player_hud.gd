@@ -20,7 +20,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210,212]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102,212]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs","Woody bush"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -110,7 +110,7 @@ func prepare() -> bool:
 		inventory.register_item(id,1)
 		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
 	for id: int in MATERIALS: inventory.register_item(id,999)
-	for id: int in RESOURCES: inventory.register_item(id,1 if id>=301 else 999)
+	for id: int in RESOURCES: inventory.register_item(id,1000000 if id==601 else (1 if id>=301 else 999))
 	inventory.register_durable(501,preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle)
 	equipment=ClassDB.instantiate("NativeContainerStore")
 	if not equipment.configure(inventory,1):return false

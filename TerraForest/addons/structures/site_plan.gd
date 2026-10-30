@@ -3,12 +3,13 @@ extends RefCounted
 # Infrequent authoring geometry only. Terrain evaluation and edits stay native.
 # The complete plan must pass protection checks before any segment is applied.
 const MAX_SEGMENTS:=256
+const Contact=preload("res://addons/structures/terrain_contact.gd")
 static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -> Dictionary:
 	var plan:=foundation(asset,origin,rotation,grade)
 	if not plan.ok: return plan
 	var profiles:Array=[]
 	if asset.get_meta("cellar_clearance",false):
-		profiles.append({"sections":asset.get_meta("cellar_sections",[Vector2(-2,-3),Vector2(0,-3),Vector2(2,-3)]),"end":asset.get_meta("cellar_end",3.0),"height":asset.get_meta("cellar_height",5.0),"floor":asset.get_meta("cellar_floor",1.0),"width":1.5})
+		profiles.append({"sections":asset.get_meta("cellar_sections",[Vector2(-2,-3),Vector2(0,-3),Vector2(2,-3)]),"end":asset.get_meta("cellar_end",3.0),"height":asset.get_meta("cellar_height",5.0),"floor":asset.get_meta("cellar_floor",1.0-Contact.SURFACE_REVEAL),"width":1.5})
 	var extra_profiles:Variant=asset.get_meta("floor_profiles",[])
 	if not extra_profiles is Array:return {"ok":false,"reason":"Invalid underground floor profiles"}
 	profiles.append_array(extra_profiles)
@@ -33,9 +34,13 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 			var region:=AABB(a.min(b)-Vector3(width,1,width),a.max(b)-a.min(b)+Vector3(width*2,clearance+1,width*2))
 			if region.position.x<5 or region.position.z<5 or region.end.x>1995 or region.end.z>1995 or plan.segments.size()>=MAX_SEGMENTS:
 				return {"ok":false,"reason":"Cellar excavation outside site limits"}
-			plan.segments.append({"start":a,"finish":b,"half_width":width,"depth":1.0,"clearance":clearance,"shoulder":0.0,"material":1,"bounds":region})
+			plan.segments.append({"start":a,"finish":b,"half_width":width,"depth":1.0,"clearance":clearance,"shoulder":0.0,"material":1,"bounds":region,"phase":"excavation"})
 			plan.bounds=plan.bounds.merge(region)
 	plan["foundation_segments"]=plan.segments.size();plan["paving_segments"]=0
+	var contact:Dictionary=asset.terrain_surface_clearance(plan.target,rotation,int(asset.get_meta("site_sample_band",0)))
+	if not contact.ok:return contact
+	plan["surface_clearance"]=contact.segments
+	for segment:Dictionary in contact.segments:plan.bounds=plan.bounds.merge(segment.bounds)
 	if not asset.has_meta("frontage_version"): return plan
 	var street: Variant=asset.get_meta("street_width",null)
 	var version: Variant=asset.get_meta("frontage_version")
@@ -98,9 +103,10 @@ static func prepare(asset: Resource,origin: Vector3i,rotation: int,grade: int) -
 static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int,max_strip_width:float=24.0) -> Dictionary:
 	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3 or not is_finite(max_strip_width) or max_strip_width<1.0 or max_strip_width>24.0:
 		return {"ok":false,"reason":"Invalid building layout"}
-	var surface_offset:int=asset.get_meta("site_surface_offset",0)
-	if surface_offset not in [0,1,5] or (surface_offset==5 and not asset.get_meta("cellar_clearance",false)):
-		return {"ok":false,"reason":"Invalid underground foundation metadata"}
+	var contract:=Contact.describe(asset)
+	if not contract.ok:return contract
+	var surface_offset:int=contract.surface_offset
+	var inset:float=contract.soil_inset
 	var target:=Vector3i(origin.x,grade-surface_offset,origin.z)
 	var bounds: AABB=asset.placement_bounds(target,rotation)
 	if bounds.position.y!=grade-surface_offset:
@@ -121,7 +127,7 @@ static func foundation(asset: Resource,origin: Vector3i,rotation: int,grade: int
 	var protection:=AABB()
 	for row in rows:
 		for column in columns:
-			var a:=Vector3(bounds.position.x,grade-.125 if surface_offset==1 else grade,bounds.position.z)
+			var a:=Vector3(bounds.position.x,grade-inset,bounds.position.z)
 			var b:=a
 			var start: float=length*column/columns
 			var finish: float=maxf(start+1.0,length*(column+1)/columns)

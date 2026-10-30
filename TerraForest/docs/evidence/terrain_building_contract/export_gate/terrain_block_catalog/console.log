@@ -1,0 +1,67 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS catalog fits full ground and approach budgets / civic seed 1703
+PASS complete final earthworks bake / civic
+PASS civic / Trader house support, interior, exposed surfaces: supported
+PASS civic / Town hall support, interior, exposed surfaces: supported
+PASS civic / Church support, interior, exposed surfaces: supported
+PASS civic / School support, interior, exposed surfaces: supported
+PASS civic / Warehouse support, interior, exposed surfaces: supported
+PASS civic / all sidewalk plate surfaces: supported
+PASS catalog fits full ground and approach budgets / city seed 1703
+PASS complete final earthworks bake / city
+PASS city / Storage warehouse support, interior, exposed surfaces: supported
+PASS city / Factory support, interior, exposed surfaces: supported
+PASS city / Pharmaceutical research support, interior, exposed surfaces: supported
+PASS city / Police station support, interior, exposed surfaces: supported
+PASS city / Medical centre support, interior, exposed surfaces: supported
+PASS city / Apartments support, interior, exposed surfaces: supported
+PASS city / all sidewalk plate surfaces: supported
+PASS catalog fits full ground and approach budgets / neighborhood seed 1703
+PASS complete final earthworks bake / neighborhood
+PASS neighborhood / Northern lot 1 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 2 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 3 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 4 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 5 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 6 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 7 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 8 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 9 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 10 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 11 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 12 support, interior, exposed surfaces: supported
+PASS neighborhood / all sidewalk plate surfaces: supported
+PASS catalog fits full ground and approach budgets / civic seed 42
+PASS complete final earthworks bake / civic
+PASS civic / Trader house support, interior, exposed surfaces: supported
+PASS civic / Town hall support, interior, exposed surfaces: supported
+PASS civic / Church support, interior, exposed surfaces: supported
+PASS civic / School support, interior, exposed surfaces: supported
+PASS civic / Warehouse support, interior, exposed surfaces: supported
+PASS civic / all sidewalk plate surfaces: supported
+PASS catalog fits full ground and approach budgets / city seed 42
+PASS complete final earthworks bake / city
+PASS city / Storage warehouse support, interior, exposed surfaces: supported
+PASS city / Factory support, interior, exposed surfaces: supported
+PASS city / Pharmaceutical research support, interior, exposed surfaces: supported
+PASS city / Police station support, interior, exposed surfaces: supported
+PASS city / Medical centre support, interior, exposed surfaces: supported
+PASS city / Apartments support, interior, exposed surfaces: supported
+PASS city / all sidewalk plate surfaces: supported
+PASS catalog fits full ground and approach budgets / neighborhood seed 42
+PASS complete final earthworks bake / neighborhood
+PASS neighborhood / Northern lot 1 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 2 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 3 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 4 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 5 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 6 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 7 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 8 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 9 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 10 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 11 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 12 support, interior, exposed surfaces: supported
+PASS neighborhood / all sidewalk plate surfaces: supported
+TERRAIN_BLOCK_CATALOG checks=64 failures=0

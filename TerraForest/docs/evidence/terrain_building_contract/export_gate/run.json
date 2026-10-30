@@ -1,0 +1,297 @@
+{
+  "revision": "81e1f8f4d7e8431e83a20f84b942c548acfb1c20",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/player_runtime/item_icons.gd",
+    " M TerraForest/addons/player_runtime/player_hud.gd",
+    " M TerraForest/addons/player_runtime/trader_panel.gd",
+    " M TerraForest/addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+    " M TerraForest/addons/structures/bin/structures.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/structures/foundation_check.gd",
+    " M TerraForest/addons/structures/native/block_prefab.cpp",
+    " M TerraForest/addons/structures/native/block_prefab.hpp",
+    " M TerraForest/addons/structures/site_plan.gd",
+    " M TerraForest/addons/structures/site_preparation.gd",
+    " M TerraForest/addons/structures/terrain_lot_planner.gd",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll",
+    " M TerraForest/addons/volumetric_terrain/native/core.cpp",
+    " M TerraForest/addons/volumetric_terrain/terrain_world.gd",
+    " M TerraForest/addons/world_runtime/custom_world_plan.gd",
+    " M TerraForest/addons/world_runtime/generate_world_task.gd",
+    " M TerraForest/addons/world_runtime/generation_coordinator.gd",
+    " M TerraForest/addons/world_runtime/generation_earthworks.gd",
+    " M TerraForest/addons/world_runtime/world_generation_plan.gd",
+    " M TerraForest/demo/world.gd",
+    " M TerraForest/demo/world_interaction.gd",
+    " M TerraForest/docs/BUILDING_EXPANSION_REVIEW.md",
+    " M TerraForest/docs/WORLD_BUILDING_STANDARD.md",
+    " M TerraForest/docs/WORLD_FOUNDATION_STATUS.md",
+    " M TerraForest/reviews/civic_buildings/provenance.json",
+    " M TerraForest/tests/site_fit_standards.gd",
+    " M TerraForest/tools/export_pack.py",
+    "?? TerraForest/addons/player_runtime/art/coins.svg",
+    "?? TerraForest/addons/player_runtime/art/coins.svg.import",
+    "?? TerraForest/addons/player_runtime/trader_world.gd",
+    "?? TerraForest/addons/player_runtime/trader_world.gd.uid",
+    "?? TerraForest/addons/structures/civic_catalog.gd",
+    "?? TerraForest/addons/structures/civic_catalog.gd.uid",
+    "?? TerraForest/addons/structures/native/prefab_terrain_surfaces.cpp",
+    "?? TerraForest/addons/structures/prefabs/civic_review_church_c1.tres",
+    "?? TerraForest/addons/structures/prefabs/civic_review_school_s2.tres",
+    "?? TerraForest/addons/structures/prefabs/civic_review_town_hall_t1.tres",
+    "?? TerraForest/addons/structures/prefabs/civic_review_trader_t1.tres",
+    "?? TerraForest/addons/structures/prefabs/civic_review_warehouse_w1.tres",
+    "?? TerraForest/addons/structures/terrain_contact.gd",
+    "?? TerraForest/docs/TERRAIN_BUILDING_CONTRACT.md",
+    "?? TerraForest/docs/evidence/civic_buildings/world/",
+    "?? TerraForest/issues/civic-buildings/images/preparation_before_trader_t1_street.png",
+    "?? TerraForest/issues/civic-buildings/images/preparation_before_warehouse_w1_street_final.png",
+    "?? TerraForest/tests/civic_generation.gd",
+    "?? TerraForest/tests/civic_generation.gd.uid",
+    "?? TerraForest/tests/civic_pack.gd",
+    "?? TerraForest/tests/civic_pack.gd.uid",
+    "?? TerraForest/tests/civic_performance.gd",
+    "?? TerraForest/tests/civic_performance.gd.uid",
+    "?? TerraForest/tests/civic_world.gd",
+    "?? TerraForest/tests/civic_world.gd.uid",
+    "?? TerraForest/tests/terrain_block_catalog.gd",
+    "?? TerraForest/tests/terrain_block_contract.gd",
+    "?? TerraForest/tools/bake_civic_review.gd",
+    "?? TerraForest/tools/bake_civic_review.gd.uid",
+    "?? TerraForest/tools/check_building_standards.py",
+    "?? TerraForest/tools/review_civic_world.py"
+  ],
+  "git_metadata_available": true,
+  "passed": true,
+  "results": [
+    {
+      "test": "terrain_block_contract",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\building_standards\\20261030T160932370854Z\\terrain_block_contract\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_block_contract.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_8e90bdfb8ff74923a1eaccc37bf1d185",
+        "--derived-cache=user://terrain_block_contract_8e90bdfb8ff74923a1eaccc37bf1d185"
+      ],
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 11312,
+      "exit_code": 0,
+      "resources": {
+        "samples": 1,
+        "gpu_samples": 0,
+        "peak_private_commit_bytes": 31653888,
+        "peak_working_set_bytes": 69206016,
+        "peak_dedicated_gpu_bytes": null,
+        "checks": {
+          "ram": {
+            "bytes": 31653888,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": null,
+            "status": "unavailable"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": false,
+        "within_sampled_limits": false,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.36475930000597145,
+      "passed": true,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": null,
+        "retained_bytes": 0,
+        "failed_cache_bytes": 0,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    },
+    {
+      "test": "terrain_block_catalog",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\building_standards\\20261030T160932370854Z\\terrain_block_catalog\\engine.log",
+        "--headless",
+        "--max-fps",
+        "60",
+        "--script",
+        "res://tests/terrain_block_catalog.gd",
+        "--",
+        "--temporary",
+        "--world-slot=check_0705f3ecd53940da8747f11130fbbc7f",
+        "--derived-cache=user://terrain_block_catalog_0705f3ecd53940da8747f11130fbbc7f"
+      ],
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 12688,
+      "exit_code": 0,
+      "resources": {
+        "samples": 14,
+        "gpu_samples": 0,
+        "peak_private_commit_bytes": 101720064,
+        "peak_working_set_bytes": 118837248,
+        "peak_dedicated_gpu_bytes": null,
+        "checks": {
+          "ram": {
+            "bytes": 101720064,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": null,
+            "status": "unavailable"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": false,
+        "within_sampled_limits": false,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 8.21276689998922,
+      "passed": true,
+      "cache_retention": {
+        "managed": true,
+        "removed_owned_cache": null,
+        "retained_bytes": 0,
+        "failed_cache_bytes": 0,
+        "failed_cache_budget_bytes": 1073741824,
+        "evicted_derived_bytes": 0,
+        "over_budget": false,
+        "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+      }
+    },
+    {
+      "test": "terrain_block_contract_release",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--headless",
+        "--path",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\.build\\building_contract_release_20261030T160932370854Z",
+        "--log-file",
+        "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\building_standards\\20261030T160932370854Z\\release\\engine.log",
+        "--script",
+        "res://tests/terrain_block_contract.gd"
+      ],
+      "native_sha256": {
+        "structures.windows.template_release.x86_64.dll": "efc6196b69871f78162511ed2959c4d53a0f3a381a4a060057794b28a9f1a6af",
+        "terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb"
+      },
+      "timed_out": false,
+      "launch_error": null,
+      "cancelled": false,
+      "pid": 13852,
+      "exit_code": 0,
+      "resources": {
+        "samples": 1,
+        "gpu_samples": 0,
+        "peak_private_commit_bytes": 3874816,
+        "peak_working_set_bytes": 46161920,
+        "peak_dedicated_gpu_bytes": null,
+        "checks": {
+          "ram": {
+            "bytes": 3874816,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": null,
+            "status": "unavailable"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": false,
+        "within_sampled_limits": false,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "diagnostics": [],
+      "required_text_found": true,
+      "elapsed_seconds": 0.6168886999948882,
+      "passed": true,
+      "cache_retention": {
+        "managed": false
+      }
+    }
+  ]
+}

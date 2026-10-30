@@ -251,7 +251,9 @@ func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0,
 			if not is_finite(shoulder) or shoulder<0 or shoulder>16: return false
 			if not is_finite(clearance) or clearance<0 or clearance>16 or maxf(a.y,b.y)+clearance>250: return false
 			var distance:=Vector2(b.x-a.x,b.z-a.z).length()
-			if packet.size()==52 and (packet.decode_u32(48)!=1 or absf(a.y-b.y)>.001):return false
+			if packet.size()==52:
+				var profile:int=packet.decode_u32(48)
+				if profile<1 or profile>7 or ((profile&1)!=0 and absf(a.y-b.y)>.001) or ((profile&4)!=0 and clearance<=0):return false
 			if not a.is_finite() or not b.is_finite() or not is_finite(width) or not is_finite(depth) or width<0.5 or width>16 or depth<1 or depth>8 or distance<1 or distance>128 or absf(b.y-a.y)>distance*0.25: return false
 			for point: Vector3 in [a,b]:
 				if point.x<width+shoulder+5 or point.x>1995-width-shoulder or point.z<width+shoulder+5 or point.z>1995-width-shoulder or point.y<depth+4 or point.y>250: return false

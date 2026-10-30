@@ -1,5 +1,6 @@
 extends RefCounted
-const VERSION:=24
+const VERSION:=29
+const Civic=preload("res://addons/structures/civic_catalog.gd")
 const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
@@ -19,15 +20,15 @@ static func read_plan(path:String,key:String)->Dictionary:
  if not value is Dictionary or value.get("recipe_key")!=key or value.get("recipe_version")!=VERSION or not value.get("ok",false):return {}
  if not value.get("sites") is Array or value.sites.is_empty() or value.sites.size()>9:return {}
  for site:Dictionary in value.sites:
-  if site.recipe_kind not in ["market","neighborhood","city"]:return {}
-  var source:Array=City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true))
+  if site.recipe_kind not in ["market","neighborhood","city","civic"]:return {}
+  var source:Array=Civic.recipe(site.center) if site.recipe_kind=="civic" else City.recipe(site.center) if site.recipe_kind=="city" else (Market.recipe(site.center) if site.recipe_kind=="market" else Lots.recipe(site.center,true))
   if site.lots.size()!=source.size():return {}
   for index in site.lots.size():site.lots[index].asset=source[(index+int(site.get("variant",0)))%source.size()].asset
  value.plan=value.sites[0];value.market=value.sites[1] if value.options.settlements>1 else {}
  value["plan_digest"]=checksum.hex_encode();value["cache_hit"]=true
  value["mineral_plan_ms"]=0.0
  return value
-static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null)->Dictionary:
+static func build(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int=0,progress:RefCounted=null,civic_review:bool=false)->Dictionary:
  var started:=Time.get_ticks_usec()
  var encoded:=Recipe.encode(options)
  if encoded.is_empty() or seed_value<0 or seed_value>2147483647 or generator not in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]:return {"ok":false,"reason":"Unsupported world recipe"}
@@ -36,6 +37,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var suffix:="template_release" if core.build_variant()=="template_release" else "template_debug"
  var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
+ key+="|civic-r1" if civic_review else "|standard"
+ if civic_review:
+  for id:String in Civic.IDS:key+="|"+FileAccess.get_sha256("res://addons/structures/prefabs/civic_review_"+id+".tres")
  var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
  var cached:=read_plan(path,key)
  if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;return cached
@@ -52,11 +56,11 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if distributed or town==2:hint+=[Vector3.ZERO,Vector3(shift,0,0),Vector3(-shift,0,0),Vector3(0,0,-shift)][layout_variant]
   var search_area:=Rect2()
   if distributed and town==2:search_area=Rect2(Vector2(120 if hints[town]==1 else 1450,600),Vector2(430,800))
-  var site:Dictionary=Market.locate(core,hint,occupied[0]) if town==1 else Planner.locate(core,hint,occupied,search_area)
+  var site:Dictionary=Planner.locate(core,hint,occupied,search_area,Civic.recipe,Civic.streets,Vector2(180,224)) if town==0 and civic_review else (Market.locate(core,hint,occupied[0]) if town==1 else Planner.locate(core,hint,occupied,search_area))
   if not site.get("ok",false):
    site["reason"]="Settlement %d: %s"%[town+1,site.get("reason","Site fitting failed")]
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress) if distributed or town==2 else site
-  site["recipe_kind"]="market" if town==1 else "neighborhood";site["town"]=town;site["district"]=0
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review) if distributed or town==2 else site
+  site["recipe_kind"]="civic" if town==0 and civic_review else ("market" if town==1 else "neighborhood");site["town"]=town;site["district"]=0
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
   occupied.append(earthworks.bounds);sites.append(site)
@@ -88,7 +92,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if not site.get("ok",false):
    site["reason"]="Settlement %d district %d: %s"%[town+1,district+1,site.get("reason","Site fitting failed")]
    site["hint"]=hint;site["search_area"]=search_area
-   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress)
+   return retry(seed_value,generator,options,folder,layout_variant,started,site,progress,civic_review)
   site["recipe_kind"]="city" if district==1 else "neighborhood";site["town"]=town;site["district"]=district
   var earthworks:=Planner.earthworks(site)
   if not earthworks.get("ok",false):return earthworks
@@ -117,7 +121,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   exits.append(points);streets.append_array(site.roads)
  if progress!=null:progress.record("Connecting %d districts and planning offroads"%sites.size(),0,0,"Native A* / shared crossing grades / up to %d wilderness trails"%[options.trails*sites.size()])
  var network:Dictionary=core.plan_region_network(exits,reserved,options.network,options.trails,seed_value,streets)
- if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress)
+ if not network.get("ok",false):return retry(seed_value,generator,options,folder,layout_variant,started,network,progress,civic_review)
  var normalization:Dictionary={"enabled":false}
  if int(options.get("road_grid",0))>0:
   if progress!=null:progress.record("Planning build-friendly road grades",0,0,("Native footprint rules" if int(options.road_grid)==3 else "Native connected grades" if int(options.road_grid)==2 else "Native road normalization")+" / protected entrances / full-width cut and fill survey")
@@ -129,7 +133,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    if normalization.get("ok",false):break
    if not connected:return normalization
    if not normalization.has("reroute_position") or attempt%3==2:
-    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress)
+    if network_mode==0:return retry(seed_value,generator,options,folder,layout_variant,started,normalization,progress,civic_review)
     network_mode-=1;exclusions=reserved.duplicate()
     if progress!=null:progress.record("Rejecting optional road loops that exceed terrain limits",options.network-network_mode,options.network,"All districts still required / no relaxation of earthworks or crossing rules")
    else:
@@ -193,10 +197,10 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  result["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0
  result["cache_path"]=path
  return result
-static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted)->Dictionary:
+static func retry(seed_value:int,generator:int,options:Dictionary,folder:String,layout_variant:int,started:int,failure:Dictionary,progress:RefCounted,civic_review:bool=false)->Dictionary:
  var elapsed:float=(Time.get_ticks_usec()-started)/1000.0
  if layout_variant>=3:failure["worker_ms"]=elapsed;return failure
- var result:=build(seed_value,generator,options,folder,layout_variant+1,progress)
+ var result:=build(seed_value,generator,options,folder,layout_variant+1,progress,civic_review)
  result["worker_ms"]=float(result.get("worker_ms",0))+elapsed
  return result
 static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Rect2,district:int)->Dictionary:
@@ -208,6 +212,7 @@ static func navigation_metadata(sites:Array,network:Dictionary)->Dictionary:
   var site:Dictionary=sites[index]
   var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"Settlement %d / District %d"%[site.town+1,site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
   metadata.places.append_array(district.places);metadata.roads.append_array(district.roads)
+  if site.recipe_kind=="civic":metadata.places.append_array(Civic.metadata(site))
  if network.has("grid_navigation"):metadata.roads.append_array(network.grid_navigation)
  else:
   for link:Dictionary in network.links:

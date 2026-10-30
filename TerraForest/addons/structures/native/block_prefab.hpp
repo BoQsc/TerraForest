@@ -21,6 +21,11 @@ class NativeBlockPrefab : public Resource {
     std::vector<PrefabCell> foundation_columns;
     struct ClearanceColumn { int x,z,low,high; int64_t end; };
     std::vector<ClearanceColumn> clearance_columns;
+    mutable std::vector<Vector3> terrain_surface_probes;
+    mutable uint64_t terrain_surface_revision=uint64_t(-1);
+    mutable int terrain_surface_band=-1;
+    mutable bool terrain_surface_overflow=false;
+    void cache_terrain_surfaces(int surface_band) const;
     AABB bounds, attachment_envelope;
     uint64_t definition_revision=0;
     Array model_attachments;
@@ -50,5 +55,8 @@ public:
     PackedVector3Array foundation_samples(Vector3i origin,int quarter_turns,int max_base_y) const;
     int64_t clearance_sample_count() const { return clearance_columns.empty()?0:clearance_columns.back().end; }
     PackedVector3Array clearance_samples(Vector3i origin,int quarter_turns,int64_t offset,int limit,int surface_band=0) const;
+    int64_t terrain_surface_sample_count(int surface_band=0) const;
+    PackedVector3Array terrain_surface_samples(Vector3i origin,int quarter_turns,int64_t offset,int limit,int surface_band=0) const;
+    Dictionary terrain_surface_clearance(Vector3i origin,int quarter_turns,int surface_band=0) const;
 };
 }

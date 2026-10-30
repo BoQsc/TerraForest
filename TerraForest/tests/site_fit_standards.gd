@@ -58,6 +58,6 @@ func _initialize()->void:
 		var reply:PackedByteArray=core.execute(query)
 		corners=corners and Codec.reply_ok(reply) and reply.decode_float(20)<0 and reply.decode_float(24)>0
 	check(corners,"rectangular bed keeps its corners at grade instead of capsule-shaped scoops")
-	var before:PackedByteArray=core.execute(Codec.command(4));packet.encode_u32(48,2)
+	var before:PackedByteArray=core.execute(Codec.command(4));packet.encode_u32(48,8)
 	check(not Codec.reply_ok(core.execute(packet)) and before==core.execute(Codec.command(4)),"unknown foundation profile cannot mutate terrain")
 	print("SITE_FIT_STANDARDS checks=",checks," failures=",failures);quit(1 if failures else 0)

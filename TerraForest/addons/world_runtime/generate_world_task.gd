@@ -81,6 +81,7 @@ func run()->void:
  var recipe:=preload("res://addons/world_runtime/world_recipe.gd").from_arguments(PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())))
  if not recipe.ok:print("INVALID_WORLD_RECIPE");quit(1);return
  world_options=recipe.options
+ if "--civic-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and world_options.is_empty():world_options=preload("res://addons/world_runtime/world_recipe.gd").DEFAULTS.duplicate()
  var native_lakes:=not qualification and generator in [17,19,20,21,22,23,24,25,26,27,28,29,30,31]
  DirAccess.make_dir_recursive_absolute(output_dir)
  if not qualification:
@@ -94,7 +95,7 @@ func run()->void:
  planning_worker=Thread.new()
  var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var plan_progress:=preload("res://addons/world_runtime/world_plan_progress.gd").new()
- var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress)
+ var build:=preload("res://addons/world_runtime/world_generation_plan.gd").build.bind(seed_value,generator,"--central-market" in arguments,"--regional-connection" in arguments,"user://generation_plans",world_options,plan_progress,"--civic-review" in arguments)
  if planning_worker.start(build)!=OK:planning_worker=null;print("WORLD_PLAN_WORKER_FAILED");quit(1);return
  var planning_frames:=0
  var observed:Dictionary={}
@@ -106,6 +107,9 @@ func run()->void:
  if not prepared.get("ok",false):print("WORLD_PLAN_FAILED ",prepared);quit(1);return
  var plan:Dictionary=prepared.plan
  var works:Dictionary=prepared.works
+ var ordered_works:=preload("res://addons/world_runtime/generation_earthworks.gd").ordered_segments(works.segments)
+ if ordered_works.size()!=works.segments.size():print("INVALID_EARTHWORKS_PHASES");quit(1);return
+ works.segments=ordered_works
  var market:Dictionary=prepared.market
  var connection:Dictionary=prepared.connection
  var sites:Array=prepared.get("sites",[plan,market])
@@ -270,7 +274,11 @@ func run()->void:
   var plates=ClassDB.instantiate("NativeBlockPrefab")
   for offset in range(0,records.size(),4096):
    if cancelled():game.free();quit(2);return
-   if not plates.configure(records.slice(offset,mini(offset+4096,records.size()))) or not game.structures.blocks.place_prefab(plates,Vector3i.ZERO,0,false):print("PAVING_FAILED");quit(1);return
+   if not plates.configure(records.slice(offset,mini(offset+4096,records.size()))) or not game.foundation_check.begin_surfaces_only(game.terrain,plates,Vector3i.ZERO,0):print("PAVING_SURFACE_INVALID");quit(1);return
+   while game.foundation_check.status=="checking" and not cancelled():
+    game.foundation_check.tick(game.terrain);await process_frame
+   if game.foundation_check.status!="supported":print("PAVING_SURFACE_REJECTED ",game.foundation_check.status);quit(1);return
+   if not game.structures.blocks.place_prefab(plates,Vector3i.ZERO,0,false):print("PAVING_FAILED");quit(1);return
    completed_plates+=mini(4096,records.size()-offset)/4
    progress("Baking destructible sidewalk plates",completed_plates,total_plates)
    await process_frame
@@ -298,6 +306,8 @@ func run()->void:
  if int(world_options.get("material_veins",0))==1:
   progress("Placing mineral-bearing stones and map markers",0,prepared.get("material_deposits",[]).size())
   if not game.material_deposits.publish(seed_value,generator,prepared.get("material_deposits",[]),game.structures):print("MATERIAL_DEPOSITS_FAILED");quit(1);return
+ for site:Dictionary in sites:
+  if site.get("recipe_kind","")=="civic" and not preload("res://addons/structures/civic_catalog.gd").prepare_landscape(game,site):print("CIVIC_LANDSCAPE_FAILED");game.free();quit(1);return
  game.ecosystem._structures_changed()
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true
@@ -316,7 +326,7 @@ func run()->void:
  else:
   progress("Capturing world photographs")
   var center:Vector3=plan.center
-  center.y=plan.lots[5].origin.y
+  center.y=plan.lots[mini(5,plan.lots.size()-1)].origin.y
   game.teleport(center+Vector3(70,0,70))
   if not await ready_world(game):quit(1);return
   game.set_physics_process(false);game._clear_motion()

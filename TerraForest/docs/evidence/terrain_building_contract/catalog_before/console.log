@@ -1,0 +1,67 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS catalog fits full ground and approach budgets / civic seed 1703
+PASS complete final earthworks bake / civic
+PASS civic / Trader house support, interior, exposed surfaces: supported
+PASS civic / Town hall support, interior, exposed surfaces: supported
+PASS civic / Church support, interior, exposed surfaces: supported
+PASS civic / School support, interior, exposed surfaces: supported
+FAIL civic / Warehouse support, interior, exposed surfaces: Terrain intersects exposed block surface at (908.999, 38.98, 755.999)
+FAIL civic / all sidewalk plate surfaces: Terrain intersects exposed block surface at (873.999, 38.98, 754.001)
+PASS catalog fits full ground and approach budgets / city seed 1703
+PASS complete final earthworks bake / city
+PASS city / Storage warehouse support, interior, exposed surfaces: supported
+PASS city / Factory support, interior, exposed surfaces: supported
+PASS city / Pharmaceutical research support, interior, exposed surfaces: supported
+PASS city / Police station support, interior, exposed surfaces: supported
+PASS city / Medical centre support, interior, exposed surfaces: supported
+PASS city / Apartments support, interior, exposed surfaces: supported
+FAIL city / all sidewalk plate surfaces: Terrain intersects exposed block surface at (873.999, 38.98, 754.001)
+PASS catalog fits full ground and approach budgets / neighborhood seed 1703
+PASS complete final earthworks bake / neighborhood
+PASS neighborhood / Northern lot 1 support, interior, exposed surfaces: supported
+FAIL neighborhood / Northern lot 2 support, interior, exposed surfaces: Terrain intersects exposed block surface at (1043.001, 57.23, 283.999)
+PASS neighborhood / Northern lot 3 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 4 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 5 support, interior, exposed surfaces: supported
+FAIL neighborhood / Northern lot 6 support, interior, exposed surfaces: Terrain intersects exposed block surface at (1037.001, 59.23, 335.875)
+PASS neighborhood / Northern lot 7 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 8 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 9 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 10 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 11 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 12 support, interior, exposed surfaces: supported
+FAIL neighborhood / all sidewalk plate surfaces: Terrain intersects exposed block surface at (967.999, 58.98, 329.001)
+PASS catalog fits full ground and approach budgets / civic seed 42
+PASS complete final earthworks bake / civic
+PASS civic / Trader house support, interior, exposed surfaces: supported
+PASS civic / Town hall support, interior, exposed surfaces: supported
+PASS civic / Church support, interior, exposed surfaces: supported
+PASS civic / School support, interior, exposed surfaces: supported
+PASS civic / Warehouse support, interior, exposed surfaces: supported
+FAIL civic / all sidewalk plate surfaces: Terrain intersects exposed block surface at (1078.999, 43.98, 115.001)
+PASS catalog fits full ground and approach budgets / city seed 42
+PASS complete final earthworks bake / city
+PASS city / Storage warehouse support, interior, exposed surfaces: supported
+PASS city / Factory support, interior, exposed surfaces: supported
+PASS city / Pharmaceutical research support, interior, exposed surfaces: supported
+PASS city / Police station support, interior, exposed surfaces: supported
+PASS city / Medical centre support, interior, exposed surfaces: supported
+PASS city / Apartments support, interior, exposed surfaces: supported
+FAIL city / all sidewalk plate surfaces: Terrain intersects exposed block surface at (1078.999, 43.98, 115.001)
+PASS catalog fits full ground and approach budgets / neighborhood seed 42
+PASS complete final earthworks bake / neighborhood
+PASS neighborhood / Northern lot 1 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 2 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 3 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 4 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 5 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 6 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 7 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 8 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 9 support, interior, exposed surfaces: supported
+FAIL neighborhood / Northern lot 10 support, interior, exposed surfaces: Terrain intersects exposed block surface at (1116.001, 45.23, 195.875)
+PASS neighborhood / Northern lot 11 support, interior, exposed surfaces: supported
+PASS neighborhood / Northern lot 12 support, interior, exposed surfaces: supported
+FAIL neighborhood / all sidewalk plate surfaces: Terrain intersects exposed block surface at (1052.999, 43.98, 111.001)
+TERRAIN_BLOCK_CATALOG checks=64 failures=10

@@ -34,6 +34,9 @@ void NativeBlockPrefab::_bind_methods() {
     ClassDB::bind_method(D_METHOD("foundation_samples","origin","quarter_turns","max_base_y"),&NativeBlockPrefab::foundation_samples);
     ClassDB::bind_method(D_METHOD("clearance_sample_count"),&NativeBlockPrefab::clearance_sample_count);
     ClassDB::bind_method(D_METHOD("clearance_samples","origin","quarter_turns","offset","limit","surface_band"),&NativeBlockPrefab::clearance_samples,DEFVAL(0));
+    ClassDB::bind_method(D_METHOD("terrain_surface_sample_count","surface_band"),&NativeBlockPrefab::terrain_surface_sample_count,DEFVAL(0));
+    ClassDB::bind_method(D_METHOD("terrain_surface_samples","origin","quarter_turns","offset","limit","surface_band"),&NativeBlockPrefab::terrain_surface_samples,DEFVAL(0));
+    ClassDB::bind_method(D_METHOD("terrain_surface_clearance","origin","quarter_turns","surface_band"),&NativeBlockPrefab::terrain_surface_clearance,DEFVAL(0));
     ClassDB::bind_method(D_METHOD("configure_model_attachments","attachments"),&NativeBlockPrefab::configure_model_attachments);
     ClassDB::bind_method(D_METHOD("set_model_attachments","attachments"),&NativeBlockPrefab::set_model_attachments);
     ClassDB::bind_method(D_METHOD("get_model_attachments"),&NativeBlockPrefab::get_model_attachments);

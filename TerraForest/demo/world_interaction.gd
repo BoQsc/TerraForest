@@ -7,8 +7,9 @@ func available(game: Node) -> bool:
 	return game._model_edit_available() and not game.fly and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED and not game.session_menu.visible_ui()
 func hit(game: Node) -> Dictionary:
 	var origin: Vector3=game.camera.global_position
-	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,7,[game.player.get_rid()],true)
+	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,15,[game.player.get_rid()],true)
 func describe(game: Node, target: Dictionary) -> String:
+	if game.trader.aimed(target):return "E · Trade supplies"
 	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
 	if game.storage.aimed_id(target)>0:return "E · Open wooden chest"
 	var door_id: int=game.doors.aimed_id(target)
@@ -52,7 +53,7 @@ func interact(game: Node) -> bool:
 	if not available(game):return false
 	# Re-pick at the input event: the presentation cache is never authoritative.
 	var target:=hit(game)
-	var handled: bool=game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.doors.try_interact(target)
+	var handled: bool=game.trader.try_open(target) or game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.doors.try_interact(target)
 	var loose: Dictionary={} if handled else loose_target(game,target)
 	if not handled and loose.get("kind")=="pickup":
 		var result: Dictionary=game.pickups.collect_aimed(game.camera.global_position,pickup_end(game,target),game.player_hud.inventory,game._pickup_reachable)

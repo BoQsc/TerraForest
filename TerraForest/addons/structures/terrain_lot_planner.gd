@@ -6,6 +6,7 @@ extends RefCounted
 const Codec=preload("res://addons/volumetric_terrain/mesh_codec.gd")
 const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
+const Contact=preload("res://addons/structures/terrain_contact.gd")
 
 static func streets(core,center:Vector3,source:Array=[])->Dictionary:
  var roads:Array=Lots.street_segments(center) if source.is_empty() else source
@@ -35,6 +36,8 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
  for index in source.size():
   var lot:Dictionary=source[index].duplicate()
   lot.asset=source[(index+variant)%source.size()].asset
+  var contract:=Contact.describe(lot.asset)
+  if not contract.ok:return {"ok":false,"reason":contract.reason,"lots":[],"rejected":[lot.label]}
   lot.bounds=lot.asset.placement_bounds(lot.origin,lot.rotation)
   lot.samples=lot.asset.foundation_samples(lot.origin,lot.rotation,int(lot.asset.get_meta("site_sample_band",0)))
   lot.surface_offset=int(lot.asset.get_meta("site_surface_offset",0))
@@ -53,8 +56,40 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
    lot.access_points.append(access)
   descriptors.append(lot)
  var result:Dictionary=core.plan_lots(center,descriptors,roads,recipe.is_empty())
- for lot:Dictionary in result.get("lots",[]):lot.quality=Quality.site(lot.survey,lot.label)
+ for lot:Dictionary in result.get("lots",[]):
+  var earthwork_survey:Dictionary=lot.survey.duplicate()
+  earthwork_survey.grade-=Contact.inset(lot.asset)
+  lot.quality=Quality.site(earthwork_survey,lot.label)
+  if lot.quality.status!="pass":
+   result.ok=false;result.rejected.append({"label":lot.label,"reason":"Inset foundation exceeds terrain budget"})
+  lot["access_quality"]=_access_quality(core,lot) if not roads.is_empty() else {"status":"unreviewed","reason":"No road network supplied"}
+  if not roads.is_empty() and lot.access_quality.status!="pass":
+   result.ok=false;result.rejected.append({"label":lot.label,"reason":"Prepared approach exceeds terrain budget"})
  return result
+
+static func _access_quality(core,lot:Dictionary)->Dictionary:
+ var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
+ if lot.asset.has_meta("garage_entrance"):
+  var start:Vector3=lot.asset.get_meta("garage_entrance")
+  for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
+  paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
+ var probes:=PackedVector3Array()
+ for path:Dictionary in paths:
+  var start:Vector3=path.start-Vector3.UP*Contact.inset(lot.asset)
+  var finish:Vector3=path.finish
+  var horizontal:=Vector2(finish.x-start.x,finish.z-start.z)
+  var steps:=ceili(horizontal.length()*2)
+  if steps<1 or steps>128:return {"status":"rejected","reason":"Invalid access span"}
+  var across:=Vector3(-horizontal.y,0,horizontal.x).normalized()
+  if absf(finish.y-start.y)>horizontal.length()*.25:return {"status":"rejected","reason":"Approach exceeds 25% grade"}
+  for index in range(steps+1):
+   for side in [-1.0,0.0,1.0]:probes.append(start.lerp(finish,float(index)/steps)+across*float(path.half_width)*side)
+ var raw:=heights(core,probes)
+ if raw.size()!=probes.size():return {"status":"rejected","reason":"Incomplete approach survey"}
+ var fill:=0.0;var cut:=0.0
+ for i in raw.size():
+  fill=maxf(fill,probes[i].y-raw[i]);cut=maxf(cut,raw[i]-probes[i].y)
+ return {"status":"pass" if fill<=Quality.MAX_FILL and cut<=Quality.MAX_CUT else "rejected","max_fill":fill,"max_cut":cut,"samples":raw.size()}
 
 # Planning reservations come from the same native world instance being surveyed.
 # They are exclusions, never public map markers or evidence of baked construction.
@@ -158,15 +193,16 @@ static func earthworks(plan:Dictionary)->Dictionary:
    bed["rectangular"]=true
    segments.append(bed)
  for lot:Dictionary in plan.lots:
-  var path:Dictionary=lot.entrance.segment
-  segments.append(Lots._segment(path.start,path.finish,path.half_width,3,4,1,1))
+  var path:Dictionary=lot.entrance.segment.duplicate()
+  path.start.y-=Contact.inset(lot.asset)
+  segments.append(_approach(path.start,path.finish,path.half_width,1))
   for driveway:Dictionary in lot.get("vehicle_paths",[]):
-   segments.append(Lots._segment(driveway.start,driveway.finish,driveway.half_width,3,4,1,4))
+   segments.append(_approach(driveway.start-Vector3.UP*Contact.inset(lot.asset),driveway.finish,driveway.half_width,4))
   if lot.asset.has_meta("garage_entrance"):
    var start:Vector3=lot.asset.get_meta("garage_entrance")
    for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
    start+=Vector3(lot.origin)
-   segments.append(Lots._segment(start,path.finish,2.5,3,4,1,4))
+   segments.append(_approach(start-Vector3.UP*Contact.inset(lot.asset),path.finish,2.5,4))
  for road:Dictionary in plan.roads:
   segments.append(road_support(road))
  for road:Dictionary in plan.roads:
@@ -197,6 +233,22 @@ static func earthworks(plan:Dictionary)->Dictionary:
   var complete:Dictionary=site.prepare(lot.asset,lot.origin,lot.rotation,int(lot.survey.grade))
   if not foundation.ok or not complete.ok:return {"ok":false,"reason":"Cellar preparation failed"}
   segments.append_array(complete.segments.slice(foundation.segments.size()))
+ # Authoritative block shapes compile their own final soil exclusion volumes.
+ # These native cuts run after every bed, road and cellar edit, before placement.
+ for lot:Dictionary in plan.lots:
+  var contact:Dictionary=lot.asset.terrain_surface_clearance(lot.origin,lot.rotation,int(lot.asset.get_meta("site_sample_band",0)))
+  if not contact.ok:return contact
+  segments.append_array(contact.segments)
+ var paving_asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
+ if not paving_asset.configure(pavement.records):return {"ok":false,"reason":"Invalid paving geometry"}
+ var paving_contact:Dictionary=paving_asset.terrain_surface_clearance(Vector3i.ZERO,0,4095)
+ if not paving_contact.ok:return paving_contact
+ segments.append_array(paving_contact.segments)
  for segment:Dictionary in segments:
   bounds=segment.bounds if first else bounds.merge(segment.bounds);first=false
  return {"ok":true,"segments":segments,"bounds":bounds}
+
+static func _approach(start:Vector3,finish:Vector3,width:float,material:int)->Dictionary:
+ var bed:=Lots._segment(start,finish,width,3,4,1,material)
+ bed["level_caps"]=true
+ return bed

@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS fresh isolated civic review generation request
+MARKET_PLAN_TIMINGS candidates=65 attempts=20 survey_ms=25.453 recipe_ms=166.401 fitting_ms=275.518
+MARKET_PLAN_TIMINGS candidates=52 attempts=23 survey_ms=18.241 recipe_ms=204.811 fitting_ms=339.266
+WORLD_PLAN digest=b02ad4c0545f81ca34654a0bc6d0ebd8d4069a3c38879d9038f4e0e8c5642c74 cache_hit=false ms=3440.052 planning_frames=213
+OFFLINE_EARTHWORKS {"admission_retries":0,"capture_sample_bytes_high":3637248,"checkpoints":38,"completed":2313,"ok":true,"resident_high":1046,"resident_limit":16384,"revision":2198,"storage":{"region_reads":195,"reused_files":0,"reused_regions":2420,"workers":1,"written_bytes":10238710,"written_files":75},"worker_ms":3579.5856}
+GENERATED_LAKE_ADMISSION accepted=12 rejected=[] samples=0
+OFFLINE_GENERATED_LAKES {"lakes":12,"milliseconds":2880.336,"ok":true,"patches":2455,"peak_native_state_bytes":79271816,"regions":2455,"slices":2455,"snapshot_bytes":42690700,"status":2,"steps":2503,"water_ml":27351242997}
+PREPARED_CARTOGRAPHY {"cache_hit":true,"cache_persisted":true,"native_ms":0.0,"ok":true,"reopen_verified":true,"worker_ms":1.376}
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+WORLD_GENERATED failures=0 buildings=13 edits=2313
+GENERATION_JOB state=ready reason=
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+[terrain-hitch] controller loading 144.12 ms at 74883
+[terrain-hitch] base controller 145.1 ms at 74884
+[terrain-hitch] controller process 145.89 ms at 74885
+[terrain-hitch] world process 146.73 ms at 74886
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+Zombie ready: 14 parts, 14 hit regions, 15 physical bones.
+PASS complete production generation and native publication
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS durable review-world save succeeds
+CIVIC_WORLD checks=3 failures=0 slot=CivicReview_1703_8ae64a06

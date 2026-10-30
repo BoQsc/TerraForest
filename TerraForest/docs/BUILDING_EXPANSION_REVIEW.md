@@ -34,8 +34,9 @@ not just whether every individual shape is valid.
 - `block_lod.cpp` and `block_horizon.cpp` already preserve material/UV data in
   their derived representations. Every new part needs the same near/far identity,
   culling, picking, collision, damage, preview and save behavior.
-- Another active chat is modifying distant prop coverage. Rebase and inspect that
-  work before changing structures rendering. These civic assets do not alter it.
+- Completed distant-prop work from `19fef843` is merged into this isolated branch.
+  Further work continues in the original checkout. The shape-pack proposal does
+  not change those render paths.
 
 ## First expansion pack: architectural joints
 
@@ -100,7 +101,39 @@ outside timed samples. Revert or gate an option if its cost is unjustified.
 Create A/B revisions for each existing house. Exact house/revision approval is
 required by `WORLD_BUILDING_STANDARD.md` before changing its generation default.
 Keep saved cells intact; no automatic repainting, shape-ID reuse or save migration.
-The new civic proposals also need individual visual decisions before production
-generation. The partial basements then need surveyed lots and excavation in the
-native master plan before blocks are published, followed by actual-world routes,
-reload and populated performance evidence.
+The new civic candidates have now been placed on surveyed lots in an opt-in complete
+world, with excavation before publication, native traversal and saved-world checks.
+Their individual visual decisions remain in the final approval packet; enabling
+them in the normal generator is a separate promotion of those exact revisions.
+
+
+## Decision-ready implementation order
+
+The assessment is complete. The expansion below is a proposed next implementation,
+not a claim that new shape IDs or an eight-material renderer already exist.
+
+| Review decision | Concrete first deliverable | Cost/control | Exit evidence |
+| --- | --- | --- | --- |
+| Shape pack A | A 4×4-cell shallow-roof joint fixture: low/high slope phases, ridge, eave and valley; a four-cell cornice corner | Reserve IDs only after fixture geometry is settled; native mesh/convex and lattice caches; shared material | All 24 orientations, underside, joined UVs, one-cell damage/removal, floor-to-eave capsule clearance, near/far sweep and save restore |
+| Construction display | Searchable family tabs and baked orientation/assembly thumbnails in the existing palette | Event-driven filtering; no preview viewport per tile; retain numeric/native identities | Keyboard/mouse placement, rotate/tilt shortcuts and old prefab selection behave identically |
+| Texture study A | Four-slot **review-only** comparison: warm brick, pale plaster, timber, dark slate on the same hall and school | Begin at 512 px; compare 1024 only at player distance; same lighting and camera; no automatic world repaint | Side-by-side wall, roof, grazing light, repeat seams, mip transitions and GPU memory/frame results |
+| Material system B | Versioned per-cell appearance identity with eight authored appearances and legacy four-material decoding | Preserve structural/crafting material separately from appearance; atomic snapshot validation; fail closed on unsupported versions | Old saves byte-stable, new saves roundtrip, counts/crafting/salvage correct, bounded batches and shared arrays |
+| Existing buildings | One named A/B revision per approved house, then the civic set | New prefabs only until that exact revision is approved; no global texture substitution | Per-building approval plus all applicable roof, passage, support and damaged-assembly views |
+
+Recommended order is the fixture and display work, then the four-slot texture
+comparison, followed by the material format and individually reviewed building
+updates. A shallow roof improves the school wing's proportions; plaster and stone
+separate civic walls from warehouse walls. The warehouse benefits from a metal or
+slate appearance without needing another structural shape.
+
+Do not enable parallax/displacement, per-cell lights or transparent trim layers as
+part of this pack. Their runtime and visual costs are not needed to solve the
+observed joins and repeated surfaces. Normal/roughness arrays are an optional
+measured follow-up to the albedo study, with a lower-cost quality setting retaining
+the exact same collision and silhouette.
+
+For budgeting only: eight uncompressed RGBA8 1024² layers with a full mip chain
+are about 42.7 MiB per array (10.7 MiB at 512²). A second normal array doubles that;
+an R8 roughness array adds about 10.7 MiB at 1024². Actual resident format,
+compression, uploads and memory must come from the renderer on supported hardware;
+these arithmetic estimates are not a measured allocation or performance promise.

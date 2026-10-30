@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+MARKET_PLAN_TIMINGS candidates=65 attempts=20 survey_ms=18.232 recipe_ms=134.729 fitting_ms=232.263
+MARKET_PLAN_TIMINGS candidates=52 attempts=23 survey_ms=15.773 recipe_ms=146.894 fitting_ms=262.747
+CITY_PLAN seed=1703 result=ok ms=2901.672 details=(965.0, 57.0, 678.0)
+PASS all five roles fit native lots / seed 1703
+PASS generation-time grading succeeds with no runtime fixup
+CIVIC_SITE Trader house origin=(938, 39, 576) bounds=[P: (938.0, 39.0, 575.0), S: (13.0, 12.0, 23.0)] pedestrian={ "start": (944.5, 40.0, 597.5), "finish": (944.5, 41.0, 614.0), "half_width": 0.75, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (943.75, 38.95454, 596.75), S: (1.5, 6.090912, 18.0)] } vehicles=[]
+PASS Trader house full envelope respects 2m fill / 3m cut and level entrance
+PASS Trader house every foundation column supported
+PASS Trader house interior envelope clear after all road and foundation edits
+PASS Trader house shared native surface gate: floors, aprons, basement slabs and steps
+PASS Trader house doorway is not filled by terrain
+CIVIC_SITE Town hall origin=(983, 37, 567) bounds=[P: (983.0, 37.0, 566.0), S: (25.0, 19.0, 28.0)] pedestrian={ "start": (994.5, 42.0, 593.5), "finish": (994.5, 40.22193, 614.0), "half_width": 0.75, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (993.75, 39.15688, 592.75), S: (1.5, 6.908173, 22.0)] } vehicles=[]
+PASS Town hall full envelope respects 2m fill / 3m cut and level entrance
+PASS Town hall every foundation column supported
+PASS Town hall interior envelope clear after all road and foundation edits
+PASS Town hall shared native surface gate: floors, aprons, basement slabs and steps
+PASS Town hall doorway is not filled by terrain
+CIVIC_SITE Church origin=(934, 36, 631) bounds=[P: (933.0, 36.0, 630.0), S: (22.0, 24.0, 41.0)] pedestrian={ "start": (940.5, 41.0, 670.5), "finish": (940.5, 40.97911, 678.0), "half_width": 0.75, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (939.75, 39.97703, 669.75), S: (1.5, 5.025063, 9.0)] } vehicles=[]
+PASS Church full envelope respects 2m fill / 3m cut and level entrance
+PASS Church every foundation column supported
+PASS Church interior envelope clear after all road and foundation edits
+PASS Church shared native surface gate: floors, aprons, basement slabs and steps
+PASS Church doorway is not filled by terrain
+CIVIC_SITE School origin=(975, 37, 637) bounds=[P: (975.0, 37.0, 637.0), S: (29.0, 15.0, 26.0)] pedestrian={ "start": (990.5, 42.0, 654.5), "finish": (990.5, 42.99982, 678.0), "half_width": 0.75, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (989.75, 40.96809, 653.75), S: (1.5, 6.063637, 25.0)] } vehicles=[]
+PASS School full envelope respects 2m fill / 3m cut and level entrance
+PASS School every foundation column supported
+PASS School interior envelope clear after all road and foundation edits
+PASS School shared native surface gate: floors, aprons, basement slabs and steps
+PASS School doorway is not filled by terrain
+CIVIC_SITE Warehouse origin=(913, 35, 697) bounds=[P: (913.0, 35.0, 696.0), S: (27.0, 16.0, 36.0)] pedestrian={ "start": (926.5, 40.0, 731.5), "finish": (926.5, 40.0, 742.0), "half_width": 0.75, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (925.75, 39.0, 730.75), S: (1.5, 5.0, 12.0)] } vehicles=[{ "start": (926.5, 40.0, 731.0), "finish": (926.5, 40.0, 742.0), "half_width": 2.5, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (924.0, 39.0, 728.5), S: (5.0, 5.0, 16.0)] }, { "start": (935.5, 40.0, 731.0), "finish": (935.5, 39.22193, 742.0), "half_width": 2.5, "depth": 1.0, "clearance": 4.0, "shoulder": 0.0, "material": 1, "bounds": [P: (933.0, 38.0451, 728.5), S: (5.0, 6.131737, 16.0)] }]
+PASS Warehouse full envelope respects 2m fill / 3m cut and level entrance
+PASS Warehouse every foundation column supported
+PASS Warehouse interior envelope clear after all road and foundation edits
+PASS Warehouse shared native surface gate: floors, aprons, basement slabs and steps
+PASS Warehouse doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Warehouse
+PASS independent straight five-metre vehicle access / Warehouse
+PASS two warehouse bays receive separate native access routes
+CIVIC_GENERATION checks=30 failures=0

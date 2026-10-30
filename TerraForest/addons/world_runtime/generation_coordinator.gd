@@ -27,6 +27,7 @@ var metadata:Dictionary={}
 var progress_detail:Dictionary={}
 var next_progress_poll:=0
 var review_generation:=false # Developer qualification only; never the player path.
+var civic_review:=false
 var capture_generation_ui:=false
 func _begin()->void:_initialize() # Pre-cancelled requests still publish terminal status.
 func _initialize()->void:
@@ -37,6 +38,7 @@ func _initialize()->void:
   if arg=="--recover-publication":recovery_mode=true
   if arg=="--review-generation":review_generation=true
   if arg=="--capture-generation-ui":capture_generation_ui=true
+  if arg=="--civic-review":civic_review=true
   if arg.begins_with("--destination="):destination=arg.trim_prefix("--destination=")
   if arg.begins_with("--seed="):seed_value=int(arg.trim_prefix("--seed="))
   if arg.begins_with("--settlement-layout="):settlement_layout=arg.trim_prefix("--settlement-layout=")
@@ -91,6 +93,7 @@ func start_stage(state:String)->void:
  if state=="verifying":args.append_array(PackedStringArray(["--reopen-checkpoint","--gameplay-construction","--snapshot-readonly"]))
  args.append("--loading-started-ms="+str(loading_started_ms))
  if capture_generation_ui:args.append("--capture-generation-ui")
+ if civic_review:args.append("--civic-review")
  if not cancel_path.is_empty():args.append("--cancel-file="+cancel_path)
  if external_stages:
   child=OS.create_process(OS.get_executable_path(),args,false)

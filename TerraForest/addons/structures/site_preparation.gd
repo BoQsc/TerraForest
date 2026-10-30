@@ -12,10 +12,13 @@ var status:="idle"
 var reason:=""
 func begin(value: Dictionary,terrain: Node,guard: Callable) -> bool:
 	reason="Preparation unavailable; wait for terrain or survey again"
-	if status=="running" or not value.get("ok",false) or value.get("segments",[]).is_empty() or value.segments.size()>256 or terrain.pending_edit or not terrain.world_ready: return false
+	if status=="running" or not value.get("ok",false) or value.get("segments",[]).is_empty() or value.segments.size()+value.get("surface_clearance",[]).size()>256 or terrain.pending_edit or not terrain.world_ready: return false
+	var ordered:=preload("res://addons/world_runtime/generation_earthworks.gd").ordered_segments(value.segments+value.get("surface_clearance",[]))
+	if ordered.is_empty():reason="Invalid preparation phase";return false
 	var error: String=guard.call(value.bounds)
 	if not error.is_empty(): reason=error;return false
 	plan=value.duplicate(true);epoch=terrain.epoch;revision=terrain.density_revision
+	plan.segments=ordered
 	completed=0;waiting=false;stop_requested=false;reason="";status="running"
 	return true
 func cancel() -> void:
@@ -49,7 +52,7 @@ func tick(terrain: Node,guard: Callable) -> void:
 	var segment: Dictionary=plan.segments[completed]
 	if segment.has("coefficients"):
 		waiting=terrain.construct_curved_road_bed(segment.start,segment.finish,segment.coefficients,segment.curve_index,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
-	elif segment.get("rectangular",false):
+	elif segment.get("rectangular",false) or segment.get("level_caps",false):
 		var packets:Array=preload("res://addons/world_runtime/generation_earthworks.gd").packets([segment])
 		waiting=not packets.is_empty() and terrain.edit(packets[0],segment.bounds.position,segment.bounds.end)
 	else:

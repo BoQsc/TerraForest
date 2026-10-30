@@ -19,6 +19,11 @@ Do not promote a draft as the finished foundation or silently relax a failed rul
 
 ## Terrain fit comes before construction
 
+The shared [terrain/building contact contract](TERRAIN_BUILDING_CONTRACT.md) is
+mandatory for generated and authored sites. Its production publication checks
+cover exposed floors and paving as well as support and room air. A private
+prefab offset or a test-only probe set must not substitute for that contract.
+
 Natural terrain/grid alignment follows [PLACEMENT_STANDARD.md](PLACEMENT_STANDARD.md).
 Its experimental generation profiles reduce gaps without changing the block grid
 or forbidding intentional player floating builds. The site-quality rules below

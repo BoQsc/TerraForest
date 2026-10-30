@@ -1,0 +1,104 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS existing isolated review slot is identified
+PASS fresh process restores complete review world
+MARKET_PLAN_TIMINGS candidates=65 attempts=20 survey_ms=18.402 recipe_ms=175.442 fitting_ms=305.788
+MARKET_PLAN_TIMINGS candidates=52 attempts=23 survey_ms=22.473 recipe_ms=265.963 fitting_ms=437.58
+PASS exact civic plan reconstructed
+PASS trader_t1 collision residency
+PASS trader_t1 every saved block matches reviewed geometry
+PASS town_hall_t1 collision residency
+PASS town_hall_t1 every saved block matches reviewed geometry
+PASS church_c1 collision residency
+PASS church_c1 every saved block matches reviewed geometry
+PASS school_s2 collision residency
+PASS school_s2 every saved block matches reviewed geometry
+PASS warehouse_w1 collision residency
+PASS warehouse_w1 every saved block matches reviewed geometry
+PASS trader_t1 terrain, blocks, models and vegetation collision ready
+PASS trader_t1 door opens
+PASS trader_t1 door opens
+CITY_ACCESS trader_t1 start=(944.5, 41.04, 614.0) finish=(944.5, 40.04, 595.3)
+PASS player trader_t1 street/interior route end=(944.5, 40.00039, 595.4438)
+PASS player trader_t1 return street/interior route end=(944.5, 41.0008, 613.9134)
+PASS native NPC trader_t1 street/interior route end=(944.5, 40.00335, 595.4589)
+PASS player trader_t1 arrival street/interior route end=(944.5, 40.00018, 588.1075)
+PASS trader_t1 uses complete forest coverage, bounded local physics and native cached geometry LOD
+PASS town_hall_t1 terrain, blocks, models and vegetation collision ready
+PASS town_hall_t1 door opens
+PASS town_hall_t1 door opens
+PASS town_hall_t1 door opens
+PASS town_hall_t1 door opens
+PASS town_hall_t1 door opens
+PASS town_hall_t1 door opens
+CITY_ACCESS town_hall_t1 start=(994.5, 40.26193, 614.0) finish=(994.5, 42.04, 591.3)
+PASS player town_hall_t1 street/interior route end=(994.4999, 42.0009, 591.4481)
+PASS player town_hall_t1 return street/interior route end=(994.5, 40.2256, 613.9006)
+FAIL native NPC town_hall_t1 street/interior route end=(994.8068, 42.00366, 591.3414)
+CITY_NPC_STATUS { "state": "following", "nodes": 316, "expansions": 122, "node_limit": 16384, "radius_m": 96.0, "waypoints": 34, "waypoint_index": 32, "stuck_seconds": 0.01666666666667, "replans": 0, "graph_nodes": 315, "graph_node_limit": 32768, "graph_cache_hits": 0, "graph_revision": 1, "complete_path": true, "lowest_surface": 40.1784671020508, "highest_surface": 42.000004119873, "waypoint_target": (994.5132, 42.93, 591.3018), "regions": 6, "portals": 7, "planner": "regional", "conditional_door_count": 0, "motion_rejection": "none", "minimum_floor_normal_y": 0.7072, "profile": 0, "local_horizon": false, "goal": (994.5, 42.04, 591.3) }
+PASS player town_hall_t1 stairs street/interior route end=(986.5, 46.00175, 575.6755)
+PASS player town_hall_t1 landing street/interior route end=(988.5457, 46.00349, 570.583)
+PASS player town_hall_t1 arrival street/interior route end=(994.4937, 42.00359, 581.1346)
+PASS player town_hall_t1 stairs street/interior route end=(986.5, 42.00175, 575.6755)
+PASS player town_hall_t1 landing street/interior route end=(988.5457, 42.00349, 570.583)
+PASS town_hall_t1 uses complete forest coverage, bounded local physics and native cached geometry LOD
+PASS church_c1 terrain, blocks, models and vegetation collision ready
+PASS church_c1 door opens
+PASS church_c1 door opens
+CITY_ACCESS church_c1 start=(940.5, 41.01912, 678.0) finish=(940.5, 41.04, 668.3)
+PASS player church_c1 street/interior route end=(940.5001, 41.00107, 668.4584)
+PASS player church_c1 return street/interior route end=(940.5001, 40.97381, 677.8314)
+PASS native NPC church_c1 street/interior route end=(940.5001, 41.00319, 668.4473)
+PASS player church_c1 arrival street/interior route end=(940.5, 41.00018, 646.1645)
+PASS player church_c1 stairs street/interior route end=(937.5, 41.00175, 639.6755)
+PASS player church_c1 landing street/interior route end=(939.5457, 41.00349, 634.583)
+PASS church_c1 uses complete forest coverage, bounded local physics and native cached geometry LOD
+PASS school_s2 terrain, blocks, models and vegetation collision ready
+PASS school_s2 door opens
+PASS school_s2 door opens
+PASS school_s2 door opens
+PASS school_s2 door opens
+PASS school_s2 door opens
+PASS school_s2 door opens
+CITY_ACCESS school_s2 start=(990.5, 43.03982, 678.0) finish=(990.5, 42.04, 652.3)
+PASS player school_s2 street/interior route end=(990.5, 42.00316, 652.39)
+PASS player school_s2 return street/interior route end=(990.5, 42.99966, 677.8726)
+PASS native NPC school_s2 street/interior route end=(990.4733, 42.00354, 652.4442)
+PASS player school_s2 stairs street/interior route end=(978.5, 46.00175, 644.6755)
+PASS player school_s2 landing street/interior route end=(980.5457, 46.00349, 639.583)
+PASS player school_s2 arrival street/interior route end=(990.5, 42.00018, 647.1245)
+PASS player school_s2 stairs street/interior route end=(978.5, 42.00175, 644.6755)
+PASS player school_s2 landing street/interior route end=(980.5457, 42.00349, 639.583)
+PASS school_s2 uses complete forest coverage, bounded local physics and native cached geometry LOD
+PASS warehouse_w1 terrain, blocks, models and vegetation collision ready
+PASS warehouse_w1 door opens
+PASS warehouse_w1 door opens
+CITY_ACCESS warehouse_w1 start=(926.5, 40.04, 742.0) finish=(926.5, 40.04, 729.3)
+PASS player warehouse_w1 street/interior route end=(926.5, 40.00039, 729.434)
+PASS player warehouse_w1 return street/interior route end=(926.5, 39.99937, 741.8575)
+PASS native NPC warehouse_w1 street/interior route end=(926.5, 40.00326, 729.4486)
+PASS player warehouse_w1 loading bay street/interior route end=(926.5, 40.00018, 722.1075)
+PASS player warehouse_w1 loading bay street/interior route end=(935.5, 40.00018, 722.1075)
+PASS player warehouse_w1 stairs street/interior route end=(916.5, 40.00175, 705.6755)
+PASS player warehouse_w1 landing street/interior route end=(918.5457, 40.00349, 700.583)
+PASS native vehicle warehouse_w1 bay x=926.5 end=(926.5101, 40.62156, 728.5957) holds=0
+PASS native vehicle warehouse_w1 bay x=935.5 end=(935.4197, 40.60828, 728.5648) holds=0
+PASS warehouse_w1 uses complete forest coverage, bounded local physics and native cached geometry LOD
+PASS exactly one resident trader activates with ready collision
+PASS actual player walks continuously from street toward shop counter (944.4999, 40.004, 597.5859)
+PASS actual player walks continuously from street toward shop counter (944.5, 40.004, 587.0433)
+PASS normal world picker and interaction hint identify merchant
+PASS normal trader interaction owns inventory focus
+PASS trade pauses player inventory and movement controls
+PASS review fixture supplies gathered twigs for zero-coin start
+PASS sell resources creates spendable coins through native two-party exchange
+PASS normal buy UI transfers goods and exact price
+PASS trade marks compound world save dirty
+PASS closing returns normal gameplay controls
+PASS stockroom wall blocks buying and selling inside reach radius
+PASS distant merchant visual and body retire
+PASS return activates one merchant without refilling inventory
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS durable review-world save succeeds
+CIVIC_WORLD checks=91 failures=1 slot=CivicReview_1703_8ae64a06

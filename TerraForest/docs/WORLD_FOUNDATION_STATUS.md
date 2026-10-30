@@ -1,30 +1,41 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
-## Trader house and civic buildings — 2026-10-30
+## Trader house, civic buildings and terrain contact — 2026-10-30
 
-The isolated R1 review now contains a trader house with one current-player-based
-NPC, a town hall, church, school and warehouse. The four large buildings have
-81–99 m² partial basements and native stair access. Eight commodities can be bought
-and sold with finite stock/coins, native two-inventory atomic exchange, range and
-occlusion checks, and separate review-session compound persistence. Debug/release
-inventory checks and actual counter interaction pass; complete prefab traversal
-and fresh-process restore pass. See [images, evidence and outstanding requirements](../issues/civic-buildings/README.md).
+The opt-in R1 world integrates a trader house with one current-player-based NPC,
+town hall, church, school and warehouse. The large buildings have 81–99 m²
+partial basements. Eight commodities support finite-stock buying/selling,
+native atomic inventory transfers and compound-world persistence. Production
+world generation, saved native construction and populated routes are under final
+verification. See [the review issue](../issues/civic-buildings/README.md).
 
-This is **not complete production-world integration**. Each R1 design needs visual
-review before promotion under WORLD_BUILDING_STANDARD. After accepted revisions,
-resume surveyed lots, native generation-time excavation, bounded single-trader
-activation and main-world inventory/persistence wiring, then actual-world routes,
-reload and populated 1080p performance. Closure requires that integrated evidence;
-isolated review results do not qualify terrain fit or player experience globally.
-Equipment/quest economics is outside the commodity transaction contract.
-The [shape, display and general-texture expansion assessment](BUILDING_EXPANSION_REVIEW.md)
-records the recommended next families and the four-material encoding constraint;
-it does not claim an implemented expansion pack or approved house replacements.
+The user's follow-up requires recurring terrain/block defects to be fixed at the
+shared layer. [The terrain/building contract](TERRAIN_BUILDING_CONTRACT.md) now
+owns datums, approach ends, shape-derived subtraction and publication checks.
+Native catalog checks cover 46 buildings and six sidewalk sets across civic,
+approved city and neighborhood recipes on seeds 1703 and 42 (64 checks passed).
+The export pipeline runs source and isolated release contract checks and the
+catalog checks. Older rejected soil-offset experiments and failed captures remain
+evidence; they are not accepted revisions.
 
-Work is isolated on `codex/trader-civic-buildings`, based on `a45e8588`, while the
-other active chat changes distant prop rendering in the original checkout.
-Reconcile that branch before integration; no original-checkout edits were included.
+Closure still requires final complete-world traversal, fresh-process trade restore,
+inspected ground/basement images and matching package evidence after this shared
+correction. The five R1 building designs remain opt-in candidates pending explicit
+visual approval. Existing houses and saves are preserved. The
+[shape, rendering/display and general-texture assessment](BUILDING_EXPANSION_REVIEW.md)
+is complete as a proposal; it does not claim an implemented expansion pack.
+
+Current integrated results: generation/publication and player/vehicle routes pass;
+one additional native-NPC town-hall approach oscillates before its destination.
+Retain `20261030T160425308386Z` and `20261030T161316783210Z`; diagnose the shared
+door/navigation interaction and require a fresh route check before closing that
+extra coverage. This is not represented as a passing NPC route.
+
+Work remains isolated on `codex/trader-civic-buildings`. Completed prop-render work
+from `19fef843` is merged. The other chat continues work in the original checkout;
+its uncommitted changes are not part of this branch. Record any later completed
+merge and its verification in the review packet before promotion.
 
 ## Public-domain-first policy and initial inventory — 2026-10-30
 

@@ -65,7 +65,7 @@ func refresh() -> void:
 		rows.add_item("%-12s   Buy %d / Sell %d     Stock %d     Yours %d" % [offer[0], offer[1], offer[2], Trade.count(trader.stock, id), Trade.count(inventory, id)])
 		rows.set_item_metadata(rows.item_count - 1, id)
 	rows.select(selected[0] if not selected.is_empty() else 0)
-	notice.text = "Choose an item and quantity. Buying and selling complete together."
+	notice.text = "Choose an item and quantity, then Buy or Sell."
 
 func exchange(buying: bool) -> void:
 	if not opened: return

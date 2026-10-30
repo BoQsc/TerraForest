@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS one explicit soil datum for every at-grade building
+PASS contradictory surface/sample metadata is rejected
+PASS individual recipes cannot disable the required reveal
+PASS single-cell apron omitted by old room scan has nine surface probes
+PASS surface samples follow exact native cell transform / turn 0
+PASS surface samples follow exact native cell transform / turn 1
+PASS surface samples follow exact native cell transform / turn 2
+PASS surface samples follow exact native cell transform / turn 3
+PASS all 18 shapes and all native mount orientations supply bounded surface probes
+PASS buried wall joins are excluded; exposed top remains checked
+PASS invalid placement/band cannot produce accepted probes
+PASS shape edits invalidate cached probes and preserve actual half-slab height
+PASS real native terrain admits a bounded foundation check
+PASS coplanar soil rejects / separated soil accepts: Terrain intersects exposed block surface at (500.001, 47.98, 500.001)
+PASS real native terrain admits a bounded foundation check
+PASS coplanar soil rejects / separated soil accepts: supported
+PASS final excavation follows paving even when input/material order differs
+PASS unknown earthworks phase fails closed
+PASS actual stair geometry compiles a bounded floor-clearance mask
+PASS subtractive mask applies before publication
+PASS narrow masks preserve vertical clearance at lattice corners and every stair tread
+PASS surface clearance never refills an existing void below the floor
+PASS unknown native profile rejects without changing saved terrain
+PASS native sloped bed accepted / end profile 0
+PASS approach caps stay level behind threshold; legacy road grade extension remains explicit
+PASS edited approach persists in the existing terrain format
+PASS native sloped bed accepted / end profile 2
+PASS approach caps stay level behind threshold; legacy road grade extension remains explicit
+PASS edited approach persists in the existing terrain format
+TERRAIN_BLOCK_CONTRACT checks=29 failures=0

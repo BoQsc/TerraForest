@@ -1,0 +1,99 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS approved production identity storage_s1
+PASS exact approved geometry and models storage_s1
+PASS approved production identity police_p1
+PASS exact approved geometry and models police_p1
+PASS approved production identity medical_h1
+PASS exact approved geometry and models medical_h1
+PASS approved production identity research_r1
+PASS exact approved geometry and models research_r1
+PASS approved production identity factory_f1
+PASS exact approved geometry and models factory_f1
+PASS approved production identity apartments_a3
+PASS exact approved geometry and models apartments_a3
+CITY_PLAN seed=1703 result=ok ms=188.089 details=(941.0, 57.0, 702.0)
+PASS all six roles fit native lots / seed 1703
+PASS generation-time grading succeeds with no runtime fixup
+PASS Storage warehouse full envelope respects 2m fill / 3m cut and level entrance
+PASS Storage warehouse every foundation column supported
+PASS Storage warehouse interior envelope clear after all road and foundation edits
+PASS Storage warehouse doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Storage warehouse
+PASS independent straight five-metre vehicle access / Storage warehouse
+PASS Factory full envelope respects 2m fill / 3m cut and level entrance
+PASS Factory every foundation column supported
+PASS Factory interior envelope clear after all road and foundation edits
+PASS Factory doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Factory
+PASS independent straight five-metre vehicle access / Factory
+PASS independent straight five-metre vehicle access / Factory
+PASS Pharmaceutical research full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (917.5, 41.75, 684.5) value=0.02117919921875 solid=true
+DENSITY_MISMATCH (922.5, 41.75, 684.5) value=0.0 solid=true
+FAIL Pharmaceutical research every foundation column supported
+PASS Pharmaceutical research interior envelope clear after all road and foundation edits
+PASS Pharmaceutical research doorway is not filled by terrain
+PASS Police station full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (967.5, 40.75, 685.5) value=0.0 solid=true
+DENSITY_MISMATCH (972.5, 40.75, 685.5) value=0.0 solid=true
+FAIL Police station every foundation column supported
+PASS Police station interior envelope clear after all road and foundation edits
+PASS Police station doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Police station
+PASS Medical centre full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (905.5, 39.75, 756.5) value=0.01318359375 solid=true
+DENSITY_MISMATCH (913.5, 39.75, 756.5) value=0.0 solid=true
+FAIL Medical centre every foundation column supported
+PASS Medical centre interior envelope clear after all road and foundation edits
+PASS Medical centre doorway is not filled by terrain
+PASS Apartments full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (981.5, 40.75, 743.5) value=0.01788330078125 solid=true
+DENSITY_MISMATCH (983.5, 40.75, 743.5) value=0.01788330078125 solid=true
+FAIL Apartments every foundation column supported
+PASS Apartments interior envelope clear after all road and foundation edits
+PASS Apartments doorway is not filled by terrain
+PASS six loading/garage bays receive separate native access routes
+CITY_PLAN seed=42 result=ok ms=374.218 details=(1146.0, 68.0, 174.0)
+PASS all six roles fit native lots / seed 42
+PASS generation-time grading succeeds with no runtime fixup
+PASS Storage warehouse full envelope respects 2m fill / 3m cut and level entrance
+PASS Storage warehouse every foundation column supported
+PASS Storage warehouse interior envelope clear after all road and foundation edits
+PASS Storage warehouse doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Storage warehouse
+PASS independent straight five-metre vehicle access / Storage warehouse
+PASS Factory full envelope respects 2m fill / 3m cut and level entrance
+PASS Factory every foundation column supported
+PASS Factory interior envelope clear after all road and foundation edits
+PASS Factory doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Factory
+PASS independent straight five-metre vehicle access / Factory
+PASS independent straight five-metre vehicle access / Factory
+PASS Pharmaceutical research full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (1113.5, 43.75, 159.5) value=0.0123291015625 solid=true
+DENSITY_MISMATCH (1118.5, 43.75, 159.5) value=0.0 solid=true
+FAIL Pharmaceutical research every foundation column supported
+PASS Pharmaceutical research interior envelope clear after all road and foundation edits
+PASS Pharmaceutical research doorway is not filled by terrain
+PASS Police station full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (1172.5, 43.75, 148.5) value=0.0 solid=true
+DENSITY_MISMATCH (1177.5, 43.75, 148.5) value=0.0 solid=true
+FAIL Police station every foundation column supported
+PASS Police station interior envelope clear after all road and foundation edits
+PASS Police station doorway is not filled by terrain
+PASS independent straight five-metre vehicle access / Police station
+PASS Medical centre full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (1110.5, 45.75, 225.5) value=0.0 solid=true
+DENSITY_MISMATCH (1118.5, 45.75, 225.5) value=0.0 solid=true
+FAIL Medical centre every foundation column supported
+PASS Medical centre interior envelope clear after all road and foundation edits
+PASS Medical centre doorway is not filled by terrain
+PASS Apartments full envelope respects 2m fill / 3m cut and level entrance
+DENSITY_MISMATCH (1177.5, 48.75, 221.5) value=0.01910400390625 solid=true
+DENSITY_MISMATCH (1179.5, 48.75, 221.5) value=0.01910400390625 solid=true
+FAIL Apartments every foundation column supported
+PASS Apartments interior envelope clear after all road and foundation edits
+PASS Apartments doorway is not filled by terrain
+PASS six loading/garage bays receive separate native access routes
+APPROVED_CITY_GENERATION checks=78 failures=8

@@ -74,7 +74,7 @@ func inspect_access(game:Node,lot:Dictionary)->void:
 	var shape:=CollisionShape3D.new();shape.shape=capsule;shape.position.y=.9;body.add_child(shape);game.add_child(body)
 	var motor:RefCounted=ClassDB.instantiate("NativePlayerMovement")
 	var start:Vector3=lot.entrance.segment.finish+Vector3.UP*.04
-	var finish:Vector3=point(lot,lot.asset.get_meta("site_entrance"))+Vector3(0,.04,-2.2)
+	var finish:Vector3=point(lot,lot.asset.get_meta("site_access_goal")) if lot.asset.has_meta("site_access_goal") else point(lot,lot.asset.get_meta("site_entrance"))+Vector3(0,.04,-2.2)
 	print("CITY_ACCESS ",identity," start=",start," finish=",finish)
 	await walk_route(game,body,motor,start,finish,identity,false)
 	await walk_route(game,body,motor,finish,start,identity+" return",false)

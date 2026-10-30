@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS specific approved revision loads as an addition
+PASS all reviewed cells and attached objects preserved under one vertical translation
+PASS editing one prefab cannot change future houses
+PASS one C1 joins the neighborhood alongside the existing archetypes
+PASS legacy ungraded neighborhood recipe is unchanged
+PASS basement and garage soil meet slab undersides under quarter-turn 0
+PASS basement and garage soil meet slab undersides under quarter-turn 1
+PASS basement and garage soil meet slab undersides under quarter-turn 2
+PASS basement and garage soil meet slab undersides under quarter-turn 3
+PASS existing small cellar excavation stays unchanged
+PASS malformed excavation metadata fails before edits
+PASS malformed floor profile is rejected without a script error
+PASS native terrain-fitting neighborhood plan / seed 1703
+PASS C1 fitted at surveyed surface with basement below grade
+PASS complete master plan includes house, driveway and underground clearance
+PASS native generation-time bake includes all edits / seed 1703
+PASS all 351 sampled cellar interior points are excavated before construction
+PASS soil stays below exposed basement and garage slab tops instead of z-fighting
+PASS every basement floor column has solid terrain support
+PASS production foundation validator sees clear rooms, garage and roof envelope
+PASS generated terrain archive restores without a new save format
+PASS derived-plan cache reattaches current approved archetypes
+C1_GENERATION seed=1703 origin=(1052, 52, 423) rotation=0 edits=174 bake_ms=112.2611
+PASS native site structures prepare
+PASS native compound publication / Northern lot 1
+PASS native compound publication / Northern lot 2
+PASS native compound publication / Northern lot 3
+PASS native compound publication / Northern lot 4
+PASS native compound publication / Northern lot 5
+PASS native compound publication / Northern lot 6
+PASS native compound publication / Northern lot 7
+PASS native compound publication / Northern lot 8
+PASS native compound publication / Northern lot 9
+PASS native compound publication / Northern lot 10
+PASS native compound publication / Northern lot 11
+PASS native compound publication / Northern lot 12
+PASS destructible street paving publishes beside fitted houses
+FAIL actual terrain + blocks traversal / route 0 end (1052.499, 56.44191, 431.4062)
+PASS actual terrain + blocks traversal / route 1 end (1054.5, 53.15638, 417.9551)
+PASS actual terrain + blocks traversal / route 2 end (1054.5, 57.00401, 423.6672)
+PASS actual terrain + blocks traversal / route 3 end (1054.5, 61.00401, 423.6672)
+PASS actual terrain + blocks traversal / route 4 end (1054.5, 57.10519, 417.9037)
+PASS actual terrain + blocks traversal / route 5 end (1052.5, 61.12901, 432.1169)
+PASS actual terrain + blocks traversal / route 6 end (1061.409, 57.004, 426.5)
+PASS native terrain-fitting neighborhood plan / seed 42
+PASS C1 fitted at surveyed surface with basement below grade
+PASS complete master plan includes house, driveway and underground clearance
+PASS native generation-time bake includes all edits / seed 42
+PASS all 351 sampled cellar interior points are excavated before construction
+PASS soil stays below exposed basement and garage slab tops instead of z-fighting
+PASS every basement floor column has solid terrain support
+PASS production foundation validator sees clear rooms, garage and roof envelope
+PASS generated terrain archive restores without a new save format
+PASS derived-plan cache reattaches current approved archetypes
+C1_GENERATION seed=42 origin=(1185, 42, 615) rotation=0 edits=186 bake_ms=186.7133
+MARKET_PLAN_TIMINGS candidates=24 attempts=5 survey_ms=13.872 recipe_ms=49.792 fitting_ms=73.766
+PASS complete default two-settlement world plan includes the additional house
+PASS default binary plan cache reopens with the current C1 definition
+PASS default generation contains one C1 without replacing approved shop designs
+APPROVED_LARGE_HOUSE checks=56 failures=1
