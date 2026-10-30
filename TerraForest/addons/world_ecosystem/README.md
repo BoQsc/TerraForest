@@ -1,5 +1,31 @@
 # World Ecosystem addon
 
+## Whole-world natural objects
+
+The production host enables `world_coverage` for trees and `world_boulders` for
+ground cover. The legacy local modes described below remain available to standalone
+consumers. Natural boulders now have independent sparse ownership across all 1,024
+world cells; retiring nearby grass cannot retire them. Their original IDs, poses,
+mining rewards, damage stages and binary removal state are retained.
+
+`NativeBoulderFracture.configure_horizon(low_mesh)` adds four cached distant damage
+meshes to the four detailed meshes, with 4,096 roots maximum. Native view selection
+and complementary GPU dithering blend tiers over normalized distances 72–104 m.
+`advance_view(eye, projection_scale)` accounts for perspective FOV and resolution;
+the far tier has no object-distance cutoff or shadow pass. Frustum/terrain occlusion
+and atmosphere still apply. Physics stays within 96 m of the player, capped at 256
+bodies. `boulder_camera` follows the active view, separately from grass/physics focus.
+
+The host optionally wires `additional_surface_candidates(owner)` and
+`additional_surface_ready(request, points, normals, epoch, revision)` on the forest
+coordinator. A companion returns a dictionary containing `points`; the opaque
+dictionary returns with its corresponding result slice. Combined pages stay within
+64 probes and two requests, including empty forest cells. Boulder-only resets use
+bounded independent requests after shared forest sampling completes. Existing cache
+keys include the exact combined packet and local terrain dependencies.
+
+[Qualification and remaining work](../../issues/world-overview/README.md).
+
 Optional integration between `TerrainWorld`, `VegetationWorld`, and a perspective `Camera3D`. Assign all three before adding the coordinator to the tree. Initialize terrain and vegetation first. The demo shows this wiring in `demo/world.gd`.
 
 The coordinator maintains 64 m placement cells, with a deterministic jittered 6Ã—6 candidate grid per cell. IDs depend on cell and grid position, and random variation depends on seed, so request/visit order cannot alter placement. A grassy-biome mask, slope filter and native density support reject unsuitable positions.

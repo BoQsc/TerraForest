@@ -50,6 +50,7 @@ func _bind_view(view:Camera3D)->void:
 	game.vegetation.collision_camera=game.camera
 	game.ecosystem.camera=game.camera if overview else view
 	game.ground_cover.camera=game.camera if overview else view
+	game.ground_cover.boulder_camera=view
 	game.vegetation.set_visual_distance(3500.0 if overview and view==third_camera else 0.0)
 	var canopy:Node=game.get_node_or_null("CanopyShadows")
 	if canopy!=null:canopy.camera=view

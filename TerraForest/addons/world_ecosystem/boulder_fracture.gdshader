@@ -6,7 +6,10 @@ uniform vec3 cover_eye=vec3(0.0);
 uniform float cover_clock=0.0;
 uniform float distance_fade_start=100.0;
 uniform float distance_fade_end=124.0;
+uniform int horizon_tier=-1;
+uniform float horizon_projection=1.0;
 varying float coverage;
+varying float detail_blend;
 varying float tint;
 varying float variation;
 varying vec3 rock_position;
@@ -61,11 +64,16 @@ void vertex(){
     // fracture thresholds. Later hits preserve the already settled chunk pose.
     VERTEX.xz+=impact*0.0035*sin(age*43.0)*exp(-15.0*age);
     float distance_weight=1.0-smoothstep(distance_fade_start,distance_fade_end,distance(MODEL_MATRIX[3].xz,cover_eye.xz));
+    float instance_scale=max(max(length(MODEL_MATRIX[0].xyz),length(MODEL_MATRIX[1].xyz)),length(MODEL_MATRIX[2].xyz))/12.0;
+    detail_blend=smoothstep(72.0,104.0,distance(MODEL_MATRIX[3].xyz,cover_eye)/max(0.001,instance_scale*horizon_projection));
+    if(horizon_tier>=0)distance_weight=1.0;
     coverage=distance_weight*(stage>2.5?1.0-smoothstep(1.8,2.6,age):1.0);
     tint=stage>0.5?COLOR.r:1.0;
 }
 void fragment(){
     float threshold=fract(52.9829189*fract(dot(floor(FRAGCOORD.xy),vec2(0.06711056,0.00583715))));
+    if(horizon_tier==0&&threshold<detail_blend)discard;
+    if(horizon_tier==1&&threshold>=detail_blend)discard;
     if(coverage<=threshold)discard;
     // One local-space projection on each axis keeps freshly cut faces and
     // rounded surfaces at the same scale without stretched pole/cap UVs.

@@ -6,6 +6,14 @@ var path_distance:=0.0
 var path_total:=0.0
 var path_lengths:=PackedFloat32Array()
 var road_finished:=false
+var boulder_baseline:Dictionary={}
+
+func boulder_identities()->Dictionary:
+	var result:Dictionary={}
+	for key:Vector2i in game.ground_cover.boulders.resident:
+		var row:Dictionary=game.ground_cover.boulders.resident[key][0]
+		for index in row.ids.size():result[row.ids[index]]=row.transforms.slice(index*12,(index+1)*12)
+	return result
 
 func _initialize()->void:
 	walking_seconds=35.0;route_steps=512
@@ -19,6 +27,7 @@ func move(_pressed:bool)->void:
 
 func sample(label:String,seconds:float)->void:
 	if label=="settling":
+		boulder_baseline=boulder_identities()
 		game.fly=true;game.player.velocity=Vector3.ZERO
 		route.remove_at(0)
 		path_lengths.append(0)
@@ -54,8 +63,12 @@ func missing_owners(wanted:Dictionary,resident:Dictionary,cell_size:float,radius
 
 func frame()->void:
 	super.frame()
+	if not rows.is_empty():rows[-1]["boulder_us"]=game.ground_cover.boulders.last_process_us
 	if rows.size()%12==0:
 		var cover=game.ground_cover
+		var boulder:Dictionary=cover.boulders.coverage_status()
+		if boulder_identities()!=boulder_baseline or boulder.render.roots!=boulder_baseline.size():push_error("Boulder coverage lost during travel")
+		rows[-1]["boulders"]=boulder
 		coverage.append({"frame":rows.size(),"phase":phase,"ground_wanted":cover._wanted.size(),"ground_resident":cover.resident.size(),"ground_missing_near":missing_owners(cover._wanted,cover.resident,32,64),"ground_missing_visible":missing_owners(cover._wanted,cover.resident,32,cover._view_range),"ground_requests":cover._requests.size(),"ground_job_layer":cover._scatter_job.get("layer",-1),"forest_missing_visible":missing_owners(game.ecosystem._wanted,game.ecosystem.resident,64,576),"forest_requests":game.ecosystem._requests.size()})
 
 func finish(success:bool)->void:

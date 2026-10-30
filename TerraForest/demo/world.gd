@@ -375,9 +375,14 @@ func _ready() -> void:
 	add_child(ecosystem)
 	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
 	ground_cover.seed_source=func():return terrain.backend.world_seed
+	ground_cover.world_boulders=true;ground_cover.collision_focus=player
 	ground_cover.rock_damage=world_attack.durability
 	ground_cover.shelter_source=ecosystem.ground_shelter
 	add_child(ground_cover);ground_cover.set_process(ground_enabled)
+	if ground_enabled and ecosystem.world_coverage:
+		ecosystem.additional_surface_candidates=ground_cover.boulders.candidates_for_page
+		ecosystem.additional_surface_ready=ground_cover.boulders.accept_surface_page
+		ground_cover.boulders.shared_surface_ready=func()->bool:return ecosystem.coverage_status().ready
 	add_child(ground_preview)
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
@@ -1673,6 +1678,7 @@ func _additional_loading_diagnostics() -> Dictionary:
 		"zombies":zombies.population.status() if zombies.population!=null else {},
 		"trees":vegetation.statistics(),
 		"forest_coverage":ecosystem.coverage_status(),
+		"boulder_coverage":ground_cover.boulders.coverage_status() if ground_enabled and ground_cover.boulders!=null else {},
 		"structure_exclusions":structures.exclusion_stats(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
@@ -1681,6 +1687,12 @@ func _additional_loading_diagnostics() -> Dictionary:
 
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
+	if ground_enabled and ground_cover.boulders!=null:
+		var boulders:Dictionary=ground_cover.boulders.coverage_status()
+		if not boulders.ready:
+			loading_stage_percent=77;loading_stage_text="Preparing world boulders"
+			loading_work_text="Boulder owners %d / %d · %d surface pages pending · %d exclusion retries · %d roots"%[boulders.owners,boulders.total,boulders.pending,boulders.reconcile,boulders.render.roots]
+			return false
 	var forest:Dictionary=ecosystem.coverage_status()
 	if not forest.ready:
 		loading_stage_percent=78;loading_stage_text="Preparing world forests"

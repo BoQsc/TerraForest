@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_revision": "94a55b69aaa8d7d2a5a2a3ef99755a62d0d1a5f5",
+  "scope": "World-owned natural boulders, native detailed/distant fracture tiers, shared surface requests, active-camera selection and local interaction. Not universal seamless rendering or the full overhaul.",
+  "implementation": "Original 0BSD code and tests using existing project geometry, materials and native dependencies. No imported implementation or new external dependency. CPU native tier selection and GPU shader blending/animation; no new compute shader.",
+  "pack_sha256": "b5d29c1ca1a1515ceb7ac3259ccc93d4fbed11b077c742c9955bbc0a4c39a5d3",
+  "vegetation_debug_sha256": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+  "vegetation_release_sha256": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+  "fixture": {
+    "slot": "recipe_generated_4644d8cfc8f97e43",
+    "seed": 1703,
+    "generator": 29,
+    "sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+    "source_unchanged": true,
+    "persistence_policy": "Writable compound-save checks use unique owned clones; forest and driving checks use the original read-only fixture. No player save was overwritten."
+  },
+  "budgets": {
+    "world_owners": 1024,
+    "roots_capacity": 4096,
+    "draw_groups": 8,
+    "picker_owner_limit": 3969,
+    "local_collision_bodies": 256,
+    "local_collision_radius_m": 96,
+    "fallback_surface_jobs": 2,
+    "surface_probes_per_page_maximum": 64,
+    "owner_admissions_per_tick": 8,
+    "owner_reconciliations_per_tick": 2,
+    "seed_1703_candidates": 1097,
+    "seed_1703_maximum_candidates_per_owner": 6,
+    "whole_mesh_triangles_near": 720,
+    "whole_mesh_triangles_far": 96,
+    "scope": "Far geometry has no object-distance retirement; frustum, terrain occlusion, camera clipping and fog still apply. Physics remains player-local."
+  },
+  "native_checks": {
+    "checks_per_debug_and_release_configuration": 1156,
+    "horizon_checks": 23,
+    "scatter_checks": 1084,
+    "state_checks": 27,
+    "picker_checks": 22,
+    "debug": [
+      "reports/checks/20261030T111524816664Z/run.json",
+      "reports/checks/20261030T111528571648Z/run.json",
+      "reports/checks/20261030T111530464193Z/run.json",
+      "reports/checks/20261030T111531200167Z/run.json"
+    ],
+    "release": [
+      "reports/boulder_horizon_native_release.json",
+      "reports/ground_scatter_release.json",
+      "reports/ground_cover_state_release.json",
+      "reports/ground_cover_picker_release.json"
+    ],
+    "scope": "Legacy candidate/pose parity, 2048-root pressure beyond the old 512 cap, 100000-m far membership, projection overlap, damage/expiry in both tiers, invalid-publication atomicity, reset and sparse picking."
+  },
+  "regressions": {
+    "forest_companion_delivery": "reports/checks/20261030T111532180477Z/run.json",
+    "seed_and_stale_completion": "reports/checks/20261030T113017738137Z/run.json",
+    "seed_and_stale_checks": 4,
+    "rendered_legacy_fractures": "reports/runtime_views/20261030T110559608786Z/run.json",
+    "launcher_unit_tests": "python tools/test_run_godot_check.py: 6 passed"
+  },
+  "installed_boulder_lifecycle": {
+    "run": "reports/runtime_views/20261030T113447885116Z/run.json",
+    "result": "reports/runtime_views/20261030T113447885116Z/result.json",
+    "passed": true,
+    "roots": 368,
+    "clone_cold_load_ms": 37530.666,
+    "elapsed_seconds": 105.7128,
+    "overview_height_m": 1800,
+    "actual_overview_all_far_none_near": true,
+    "identities_and_poses_survive_three_teleports": true,
+    "pending_surface_work_blocks_mining_through_rock": true,
+    "contact_targeting_and_progressive_rewards": true,
+    "partial_damage_and_inventory_compound_reopen": true,
+    "excavation_and_owner_reconstruction": true,
+    "private_commit_peak_bytes": 3574169600,
+    "dedicated_gpu_peak_bytes": 1478696960,
+    "scope": "Production contact calls, binary roundtrip and compound save/new world instance. Not attack-input animation, cross-process reopen or user visual acceptance. Clone loading is not directly comparable with read-only forest timings."
+  },
+  "installed_forest_regression": {
+    "run": "reports/runtime_views/20261030T113853577491Z/run.json",
+    "result": "reports/runtime_views/20261030T113853577491Z/result.json",
+    "passed": true,
+    "trees": 8742,
+    "cold_ms": 31484.988,
+    "warm_ms": 17115.365,
+    "exact_ids_and_poses_across_actual_block_residency": true,
+    "harvest_excavation_reset": true,
+    "live_exclusion_pages_after_each_world_teardown": 0,
+    "private_commit_peak_bytes": 3443568640,
+    "dedicated_gpu_peak_bytes": 1474899968,
+    "scope": "Shared requests avoid duplicate forest/boulder sampling. This is not a loading speedup over the older local-only boulder baseline."
+  },
+  "installed_road_camera_sweep": {
+    "run": "reports/runtime_views/20261030T113635895941Z/run.json",
+    "result": "reports/runtime_views/20261030T113635895941Z/driving.json",
+    "passed": true,
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "resolution": "1920x1080",
+    "fps_cap": 60,
+    "cruise_kph": 100,
+    "path_distance_m": 585.583,
+    "moving_frames": 1266,
+    "exact_boulder_ids_and_poses_retained": 368,
+    "missing_forest_owners": 0,
+    "ground_missing_near_maximum": 10,
+    "ground_missing_visible_maximum": 34,
+    "frame_p95_ms": 21.978,
+    "frame_max_ms": 37.268,
+    "gpu_p95_ms": 7.950,
+    "gpu_max_ms": 9.308,
+    "forest_coordinator_p95_us": 206,
+    "forest_coordinator_max_us": 310,
+    "local_cover_including_fractures_p95_us": 628,
+    "local_cover_including_fractures_max_us": 1396,
+    "boulder_coordinator_p95_us": 151,
+    "boulder_coordinator_max_us": 329,
+    "unchanged_mask_reuses_in_moving_samples": 2402,
+    "private_commit_peak_bytes": 3623661568,
+    "dedicated_gpu_peak_bytes": 1472802816,
+    "preceding_uncached_run": "reports/runtime_views/20261030T112836106318Z/run.json",
+    "preceding_uncached_boulder_p95_us": 768,
+    "scope": "Controlled road-camera sweep, not physical vehicle endurance. Scoped boulder coordinator improvement, not whole-frame improvement. Grass owner-residency deficits are not measured pixel gaps. Process-specific resource counters are sampled, not allocator caps or physical 4-GiB hardware qualification."
+  },
+  "retained_failures_and_limits": [
+    "reports/checks/20261030T104917229986Z: rendered fracture fixture mistakenly invoked headless; frame-post-draw wait timed out. Rendered regression passes.",
+    "reports/checks/20261030T105226939705Z: expiry fixture SceneTree timer included preceding long frame; replaced with actual elapsed ticks matching the native clock. Subsequent debug/release checks pass.",
+    "reports/runtime_views/20261030T112105341136Z: overstrict coverage.ready assertion failed during queued exclusion reconciliation while all 368 roots remained rendered. Regression now checks actual identities, poses and render count.",
+    "Earlier high-view fixture moved the first-person camera instead of using production overview. It could not detect the wrong boulder camera binding. Binding and fixture are corrected; final evidence uses the actual overview camera.",
+    "Initial duplicate surface requests increased cold loading; final implementation shares bounded forest requests with independent fallback only for missed/resampled pages.",
+    "Export retains pre-existing nested ZombieLab and old rejected-ramp snapshot UID warnings; final startup and installed tests pass without runtime diagnostics."
+  ],
+  "temporary_world_cleanup": {
+    "status": "blocked_by_execution_policy",
+    "removed": false,
+    "root": "%APPDATA%/Godot/app_userdata/TerraForest/worlds",
+    "owned_slots_left_intact": [
+      "boulder_check_ea8b72a24bef44079c9fa38c79cca67c",
+      "boulder_check_a0897394eaba4e808e7d854f734dcc21",
+      "boulder_check_4353cce0d7af49619cce813f4a3c02d4",
+      "boulder_check_ed8180c49953491382163c90379802c1"
+    ],
+    "scope": "Deletion command was rejected before execution; no bypass attempted. Existing runner already removed its successful derived caches. Worlds and failed-test evidence are not disposable caches."
+  },
+  "remaining": [
+    "Continuous pixel-level LOD transition review and user visual acceptance.",
+    "Other medium props, mineral marker rocks, furniture and parked-vehicle far tiers.",
+    "Local grass delivery lag and whole-frame jitter.",
+    "Dense edited-world and physical vehicle endurance, cross-process gameplay coverage and actual 4-GiB hardware.",
+    "Volumetric transition quality, general module host and full generation/loading pipeline work remain open in WORLD_RENDERING_CONTRACT.md."
+  ]
+}

@@ -238,6 +238,46 @@ coverage remains present; coarse tree shapes, terrain transitions and the reject
 northern layout remain visible. This view alone cannot prove near-building parity;
 the native and actual-region residency assertions provide that scoped evidence.
 
+## Whole-world boulders — 2026-10-30
+
+Natural boulders now retain independent world ownership, rather than disappearing
+when local grass retires. Native cached detailed/distant fracture meshes use the
+same canonical mining/removal identity and GPU transition; distant geometry has
+no per-object distance cutoff. Physics remains player-local. Support requests
+share the forest's bounded binary surface pages; no grass density was reduced.
+
+See `boulder-verification.json` for exact runs/builds, retained failures and costs.
+The installed populated fixture keeps 368 boulders through travel and zoom;
+production targeting, per-hit/final rewards, excavation and compound save/reopen
+are checked. The camera-binding check uses the real overview camera, not a moved
+first-person camera. Nearby mining can resolve its bounded exclusion work without
+waiting behind distant queued owners; genuine pending surface work still blocks.
+
+![Distant boulders retained](images/boulders_far.png)
+Installed seed-1703 clone, 150 m up / 300 m back from the selected boulder.
+Default first-person atmosphere retained; other vegetation/terrain limits remain.
+
+![Mining damage retained after reload](images/boulders_quarters.png)
+Same clone after checkpoint restoration and six production pickaxe contact
+operations; settled stage-two fragments. This is not an attack-input animation test.
+
+![Actual overview camera](images/boulders_overview.png)
+Production 1800 m overview: all 368 accepted boulders use their distant tier while
+collision stays near the player. Images inspected; user visual acceptance pending.
+
+The final 100 km/h road-camera sweep retains every exact boulder identity/pose:
+585.58 m, 1,266 moving frames, boulder coordinator p95/max 0.151 / 0.329 ms.
+Unchanged exclusion masks reuse accepted rows (2,402 reuses in the moving sample),
+down from 0.768 ms p95 in the preceding uncached run. Whole-frame p95/max remains
+21.98 / 37.27 ms; this is not a perfect-frame-delivery claim. Process private-commit
+and dedicated-GPU sampled peaks are 3.62 / 1.47 GB on an RTX 4050 Laptop GPU.
+Grass still lags by up to ten near / 34 visible owners; no grass-continuity claim.
+
+Continuous pixel-level transition quality, dense edited worlds and actual driven
+vehicle endurance remain unqualified. Other medium props/vehicles, grass coverage
+and the broader overhaul remain open. Existing terrain seams and coarse forest
+appearance are not fixed by this boulder change. User visual approval is pending.
+
 ## Remaining / resume here
 
 [Open architecture milestones](../../docs/WORLD_RENDERING_CONTRACT.md): canonical

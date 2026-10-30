@@ -9,6 +9,36 @@
   "settings": "1920x1080, 60 FPS cap, offscreen/nonactivating, seed 1703, overview orbit pitch -0.85 radians; no mouse capture",
   "images": [
     {
+      "file": "boulders_far.png",
+      "sha256": "527a97d12d0759f2beee15732264c6deaba03efb49a6838c0e0cda952c037494",
+      "source": "reports/runtime_views/20261030T113447885116Z/far.png",
+      "run": "reports/runtime_views/20261030T113447885116Z/run.json",
+      "pack_sha256": "b5d29c1ca1a1515ceb7ac3259ccc93d4fbed11b077c742c9955bbc0a4c39a5d3",
+      "view": "First-person camera moved 150 m up / 300 m back from selected boulder; default atmosphere retained",
+      "fixture_policy": "Unique owned clone of the populated fixture, source bytes unchanged",
+      "review": "Inspected: distant boulders remain present. Not a pixel-continuity or terrain-fit approval."
+    },
+    {
+      "file": "boulders_quarters.png",
+      "sha256": "54dc22a97330f635d7c52a126389b617b26d956996c3014228c5063bc327f494",
+      "source": "reports/runtime_views/20261030T113447885116Z/quarters.png",
+      "run": "reports/runtime_views/20261030T113447885116Z/run.json",
+      "pack_sha256": "b5d29c1ca1a1515ceb7ac3259ccc93d4fbed11b077c742c9955bbc0a4c39a5d3",
+      "view": "After restored checkpoint and six pickaxe contact operations; settled stage-two geometry",
+      "fixture_policy": "Unique owned clone; no player-save writes",
+      "review": "Inspected: fracture and texture retained. Camera does not expose every piece; native tests validate separate capped pieces."
+    },
+    {
+      "file": "boulders_overview.png",
+      "sha256": "c6794594484ae617dd470b68149ac3c4dbd8ff479aaa4d22c2fc77f23c32b5b0",
+      "source": "reports/runtime_views/20261030T113447885116Z/overview.png",
+      "run": "reports/runtime_views/20261030T113447885116Z/run.json",
+      "pack_sha256": "b5d29c1ca1a1515ceb7ac3259ccc93d4fbed11b077c742c9955bbc0a4c39a5d3",
+      "view": "Actual production overview camera at 1800 m; player physics remains local",
+      "fixture_policy": "Unique owned clone; no player-save writes",
+      "review": "Far-tier ownership asserted for all 368 boulders. Coarse trees, terrain joins and settlement quality remain unapproved."
+    },
+    {
       "file": "exclusions_after_1800.png",
       "sha256": "9b95a076e447966db13ce905f3745191359ee2a597747dd809d525b2314f751d",
       "source": "reports/runtime_views/20261030T094736701081Z/forest_0.png",

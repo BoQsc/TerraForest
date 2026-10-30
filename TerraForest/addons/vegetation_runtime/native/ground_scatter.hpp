@@ -13,8 +13,43 @@ protected:
         ClassDB::bind_method(D_METHOD("place","ids","points","normals"),&NativeGroundCover::place);
         ClassDB::bind_method(D_METHOD("pack","ids","transforms","excluded","shelter"),&NativeGroundCover::pack,DEFVAL(PackedVector3Array()));
         ClassDB::bind_method(D_METHOD("boulder_rows","row","large"),&NativeGroundCover::boulder_rows,DEFVAL(true));
+        ClassDB::bind_method(D_METHOD("boulder_candidates","owner","seed"),&NativeGroundCover::boulder_candidates);
+        ClassDB::bind_method(D_METHOD("pack_boulders","ids","transforms","excluded","shelters"),&NativeGroundCover::pack_boulders);
     }
 public:
+    Dictionary boulder_candidates(Vector2i owner,int64_t seed) const {
+        PackedInt64Array ids;PackedVector3Array points;
+        if(owner.x>=0&&owner.y>=0&&owner.x<32&&owner.y<32) {
+            for(int row=0;row<2;++row)for(int column=0;column<2;++column) {
+                Dictionary source=candidates(owner*2+Vector2i(column,row),seed);
+                PackedInt64Array source_ids=source["ids"];PackedVector3Array source_points=source["points"];
+                for(int index=0;index<source_ids.size();++index) {
+                    const auto identity=source_ids[index];
+                    if(hash(uint32_t(identity))%10||hash(uint32_t(identity)^0xb017de5u)%24)continue;
+                    ids.append(identity);points.append(source_points[index]);
+                }
+            }
+        }
+        Dictionary result;result["ids"]=ids;result["points"]=points;return result;
+    }
+    Dictionary pack_boulders(const PackedInt64Array &ids,const TypedArray<Transform3D> &transforms,const PackedByteArray &excluded,const Array &shelters) const {
+        if(ids.size()>64||ids.size()!=transforms.size()||ids.size()!=excluded.size()||shelters.size()!=4)return {};
+        for(int index=0;index<4;++index)if(shelters[index].get_type()!=Variant::PACKED_VECTOR3_ARRAY||PackedVector3Array(shelters[index]).size()>144)return {};
+        PackedInt64Array selected,owner_ids[4];PackedFloat32Array values,owner_values[4];std::unordered_set<int64_t> seen;
+        for(int index=0;index<ids.size();++index) {
+            if(ids[index]<1||ids[index]>63*63*64||!seen.insert(ids[index]).second)return {};
+            const int cell=int((ids[index]-1)/64),owner=(cell%63)%2+2*((cell/63)%2);
+            PackedInt64Array single;single.append(ids[index]);TypedArray<Transform3D> pose;pose.append(transforms[index]);
+            PackedByteArray mask;mask.append(excluded[index]);
+            Array packed=pack(single,pose,mask,shelters[owner]);
+            if(packed.size()!=9)return {};
+            Dictionary row=boulder_rows(packed[0]);
+            selected.append_array(row["ids"]);values.append_array(row["transforms"]);
+            owner_ids[owner].append_array(row["ids"]);owner_values[owner].append_array(row["transforms"]);
+        }
+        Array owners;for(int index=0;index<4;++index){Dictionary row;row["ids"]=owner_ids[index];row["transforms"]=owner_values[index];owners.append(row);}
+        Dictionary result;result["ids"]=selected;result["transforms"]=values;result["owners"]=owners;return result;
+    }
     TypedArray<Vector2i> wanted(Vector2i center) const {
         TypedArray<Vector2i> out;
         if(center.x<-4||center.y<-4||center.x>66||center.y>66)return out;

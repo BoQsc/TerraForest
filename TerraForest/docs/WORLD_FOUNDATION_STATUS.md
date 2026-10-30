@@ -80,12 +80,19 @@ Teardown counters traced an intermittent retained page to the worker handoff;
 owned native payloads replace Godot objects carried in cross-thread Variants.
 Both installed pairs release all pages without ObjectDB warnings; 58 native checks
 per debug/release configuration include 24 cancellation/consumption cycles. Mixed
-streaming endurance remains open. Medium props, boulders and parked vehicles lack the
-required complete far representation. See the linked issue receipts.
-The final 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
+streaming endurance remains open. Other medium props and parked vehicles still lack
+the required complete far representation. See the linked issue receipts.
+The preceding 100 km/h sweep keeps forest coverage complete (0.260 ms update p95),
 but local ground-cover residency still lags by up to eight near / 33 visible
-owners. Decouple medium-object visibility from that local owner lifecycle next;
-do not treat the forest pass as seamless grass/boulder qualification.
+owners. Natural boulders now use independent whole-world ownership and native
+near/far fracture meshes, without globally activating grass or collision. Shared
+forest/boulder support requests avoid duplicated owner dispatch. Harvesting,
+excavation and compound checkpoint restoration retain their existing identities.
+The boulder issue receipt records installed tests and limitations: final forest
+cold/warm loading is 31.48 / 17.12 s; the new road-camera sweep retains every
+boulder but still has ten near / 34 visible grass owners missing. Whole-frame
+p95/max is 21.98 / 37.27 ms, not a frame-time improvement or seamless grass claim.
+General medium-object qualification remains open.
 Terrain transition quality, general generator/module providers, arbitrary vehicle envelopes and full
 generation/loading traces remain open. Return on those implementations and require
 continuous zoom/driving/edit/reload evidence within budgets, not only fixture passes.

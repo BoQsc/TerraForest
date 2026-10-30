@@ -21,10 +21,14 @@ func collection_probe(from: Vector3,to: Vector3,shared_hit: Variant=null,species
 	var obstruction: Dictionary=scene_ray.call(from,to) if shared_hit==null else shared_hit
 	var end: Vector3=obstruction.position if not obstruction.is_empty() and from.distance_squared_to(obstruction.position)<from.distance_squared_to(to) else to
 	var hit: Dictionary=cover.picker.pick_filtered(from,end,species_mask)
+	var owner:Node=cover
+	if cover.boulders!=null:
+		var boulder:Dictionary=cover.boulders.picker.pick_filtered(from,end,species_mask)
+		if boulder.hit and (not hit.hit or boulder.fraction<hit.fraction):hit=boulder;owner=cover.boulders
 	if not hit.hit: return {"ok":false,"reason":"No reachable ground cover"}
 	var key: Vector2i=hit.cell
-	if cover._dirty.has(key) or cover._pending.has(key) or not cover.resident.has(key): return {"ok":false,"reason":"Ground cover updating"}
-	return {"ok":true,"hit":hit}
+	if not owner.owner_available(key): return {"ok":false,"reason":"Ground cover updating","blocked":true}
+	return {"ok":true,"hit":hit,"owner":owner}
 
 func pickup_probe(from:Vector3,to:Vector3,shared_hit:Variant=null)->Dictionary:
 	return collection_probe(from,to,shared_hit,Catalog.PICKUP_SPECIES_MASK)
@@ -33,11 +37,12 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 	var candidate:=pickup_probe(from,to,shared_hit) if gameplay and attack_target==0 else collection_probe(from,to,shared_hit)
 	if not candidate.ok:return candidate
 	var hit: Dictionary=candidate.hit
+	var owner:Node=candidate.owner
 	if attack_target!=0 and hit.id!=attack_target:return {"ok":false,"reason":"Target changed"}
 	if gameplay and Catalog.HARVEST_ONLY[hit.species] and attack_target!=hit.id:return {"ok":false,"reason":"Strike vegetation to harvest it"}
 	if gameplay and hit.get("large",false) and attack_target!=hit.id:return {"ok":false,"reason":"Mine the boulder with a pickaxe"}
 	var key: Vector2i=hit.cell
-	var previous: Array=cover.resident[key]
+	var previous: Array=owner.resident[key]
 	var next: Array=previous.duplicate(true)
 	var row: Dictionary=next[hit.species]
 	var index: int=row.ids.find(hit.id)
@@ -51,22 +56,22 @@ func collect(from: Vector3,to: Vector3,inventory: RefCounted,gameplay: bool,shar
 		var grant: Dictionary=inventory.grant_items(PackedInt64Array([Catalog.REWARDS[hit.species],LARGE_REWARD if hit.get("large",false) else 1]),before.revision)
 		if not grant.ok: busy=false;return {"ok":false,"reason":"Make room in inventory"}
 		revision=grant.revision
-	var applied: bool=cover.picker.replace_cell(key,next)
-	if applied and not hit.get("large",false):applied=cover.batches[hit.species].remove_instances(PackedInt64Array([hit.id]))
-	if applied and hit.get("large",false):applied=cover.rock_collision.remove_instances(PackedInt64Array([hit.id]))
+	var applied: bool=owner.picker.replace_cell(key,next)
+	if applied and not hit.get("large",false):applied=owner.batches[hit.species].remove_instances(PackedInt64Array([hit.id]))
+	if applied and hit.get("large",false):applied=owner.rock_collision.remove_instances(PackedInt64Array([hit.id]))
 	if applied:
-		applied=cover.removed.mark(hit.id) if hit.id<4294967296 else cover.removed.erase(hit.id)
+		applied=owner.removed.mark(hit.id) if hit.id<4294967296 else owner.removed.erase(hit.id)
 	if not applied:
-		cover.picker.replace_cell(key,previous)
-		cover.restore_render_row(previous[hit.species],hit.species)
+		owner.picker.replace_cell(key,previous)
+		owner.restore_render_row(previous[hit.species],hit.species)
 		if hit.get("large",false):
-			var large:Dictionary=cover.native.boulder_rows(previous[0]);cover.rock_collision.upsert_instances(large.ids,large.transforms)
+			var large:Dictionary=owner.native.boulder_rows(previous[0]);owner.rock_collision.upsert_instances(large.ids,large.transforms)
 		if revision>=0 and not inventory.restore(before,revision).ok: push_error("Ground-cover inventory rollback failed")
 		busy=false;return {"ok":false,"reason":"Ground cover changed; try again"}
-	cover.resident[key]=next
+	owner.resident[key]=next
 	if hit.get("large",false):
-		if gameplay:cover.fractures.finish(hit.id)
-		else:cover.fractures.remove_rows(PackedInt64Array([hit.id]))
+		if gameplay:owner.fractures.finish(hit.id)
+		else:owner.fractures.remove_rows(PackedInt64Array([hit.id]))
 	changed.emit();busy=false
 	return {"ok":true,"reason":"Collected ground cover" if gameplay else "Ground cover removed","id":hit.id}
 

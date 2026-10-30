@@ -32,10 +32,11 @@ func target() -> Dictionary:
 	if not zombie_hit.is_empty() and (hit.is_empty() or same_zombie or start.distance_squared_to(zombie_hit.position)<=start.distance_squared_to(hit.position)+0.001):
 		return zombie_hit
 	if game.ground_enabled and game.ground_interaction.available():
-		var cover: Dictionary=game.ground_cover.picker.pick(start,hit.position if not hit.is_empty() else end)
-		if cover.get("hit",false):
-			if game.ground_cover._dirty.has(cover.cell) or game.ground_cover._pending.has(cover.cell):return {}
-			return surface_target({"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"species":cover.species,"large":cover.get("large",false),"health":240 if cover.get("large",false) else Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":"Stone boulder" if cover.get("large",false) else game.player_hud.GroundCatalog.NAMES[cover.species],"end":end},cover)
+		var candidate:Dictionary=game.ground_interaction.collection_probe(start,end,hit)
+		if candidate.get("blocked",false):return {}
+		if candidate.ok:
+			var cover:Dictionary=candidate.hit
+			return surface_target({"kind":"cover","key":"cover:%d"%cover.id,"id":cover.id,"cell":cover.cell,"cover_owner":candidate.owner,"species":cover.species,"large":cover.get("large",false),"health":240 if cover.get("large",false) else Durability.COVER_MAXIMUM[cover.species],"material":"stone" if cover.species==0 else "wood","name":"Stone boulder" if cover.get("large",false) else game.player_hud.GroundCatalog.NAMES[cover.species],"end":end},cover)
 	if hit.is_empty():
 		if game.terrain.backend.region_terrain:hit=game._terrain_pick(start,end)
 		if hit.is_empty():return {}
@@ -153,8 +154,9 @@ func apply_target(t: Dictionary) -> bool:
 	if t.kind=="actor" and (t.handle==0 or game.actors.store.resolve_identity(t.id)!=t.handle):return false
 	if t.kind=="tree" and (not game.vegetation.renderer.roots.has(t.id) or game.ecosystem.harvest_state.contains(t.id)):return false
 	if t.kind=="cover":
-		if game.ground_cover._dirty.has(t.cell) or game.ground_cover._pending.has(t.cell) or not game.ground_cover.resident.has(t.cell):return false
-		var rows:Array=game.ground_cover.resident[t.cell]
+		var owner:Node=t.get("cover_owner",game.ground_cover)
+		if not is_instance_valid(owner) or not owner.owner_available(t.cell):return false
+		var rows:Array=owner.resident[t.cell]
 		if t.species<0 or t.species>=rows.size() or not rows[t.species].ids.has(t.id):return false
 	if t.kind=="model" and Durability.RESOURCE_MODELS.has(t.get("asset","")) and t.collection.get_instance(t.id).is_empty():return false
 	if t.kind=="model" and t.collection.is_removal_protected(t.id):

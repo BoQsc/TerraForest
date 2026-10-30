@@ -221,20 +221,20 @@ func grass_horizon() -> void:
 		var base:Vector3=direction*0.035
 		tri(base-side*0.09,base+side*0.09,base+direction*0.22+Vector3.UP*0.36,Color("64773f"),Vector2.ZERO,Vector2.RIGHT,Vector2(0.5,1))
 
-static func build(species: int,with_lod: bool=true,extended_lod: bool=true) -> ArrayMesh:
+static func build(species: int,with_lod: bool=true,extended_lod: bool=true,low_only:bool=false) -> ArrayMesh:
 	if species<0 or species>8:return null
 	var asset=load("res://addons/world_ecosystem/woodland_mesh.gd").new()
 	var method: String=["stone_mesh","fern","grass","white_flower","gold_flower","violet_flower","bush","twigs","woody_bush"][species]
-	asset.call(method,false)
+	asset.call(method,low_only)
 	var full_count: int=asset.vertices.size();var indices:=PackedInt32Array()
 	for i in full_count:indices.append(i)
 	var lods: Dictionary={}
-	if with_lod:
+	if with_lod and not low_only:
 		asset.call(method,true)
 		var distant:=PackedInt32Array()
 		for i in range(full_count,asset.vertices.size()):distant.append(i)
 		lods[[0.03,0.025,0.02,0.02,0.02,0.02,0.025,0.02,0.025][species]]=distant
-	if with_lod and species==2:
+	if with_lod and not low_only and species==2:
 		var far_start:int=asset.vertices.size()
 		asset.grass_far()
 		var far_indices:=PackedInt32Array()
@@ -245,7 +245,7 @@ static func build(species: int,with_lod: bool=true,extended_lod: bool=true) -> A
 		var horizon_indices:=PackedInt32Array()
 		for i in range(horizon_start,asset.vertices.size()):horizon_indices.append(i)
 		lods[0.2]=horizon_indices
-	if with_lod and extended_lod and species in [1,6,7,8]:
+	if with_lod and not low_only and extended_lod and species in [1,6,7,8]:
 		var far_start:int=asset.vertices.size()
 		asset.call(method,true,true)
 		var far_indices:=PackedInt32Array()

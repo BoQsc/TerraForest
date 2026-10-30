@@ -8,9 +8,11 @@ class NativeGroundCoverPicker : public RefCounted {
     GDCLASS(NativeGroundCoverPicker,RefCounted)
     struct Item {int64_t id;int species;Transform3D inverse;bool large;};
     std::map<int,std::vector<Item>> cells;
+    int owner_limit=121;
     static bool valid_cell(Vector2i key){return key.x>=0&&key.y>=0&&key.x<63&&key.y<63;}
 protected:
     static void _bind_methods(){
+        ClassDB::bind_method(D_METHOD("configure_owner_limit","limit"),&NativeGroundCoverPicker::configure_owner_limit);
         ClassDB::bind_method(D_METHOD("replace_cell","cell","species"),&NativeGroundCoverPicker::replace_cell);
         ClassDB::bind_method(D_METHOD("remove_cell","cell"),&NativeGroundCoverPicker::remove_cell);
         ClassDB::bind_method(D_METHOD("remove_roots","cell","ids"),&NativeGroundCoverPicker::remove_roots);
@@ -18,6 +20,7 @@ protected:
         ClassDB::bind_method(D_METHOD("pick_filtered","from","to","species_mask"),&NativeGroundCoverPicker::pick_filtered);
     }
 public:
+    bool configure_owner_limit(int limit){if(!cells.empty()||limit<1||limit>3969)return false;owner_limit=limit;return true;}
     bool remove_roots(Vector2i key,const PackedInt64Array &ids){
         if(!valid_cell(key)||ids.size()>1280)return false;
         if(ids.is_empty())return true;
@@ -29,7 +32,7 @@ public:
     bool replace_cell(Vector2i key,const Array &species){
         if(!valid_cell(key)||species.size()!=9)return false;
         int owner=key.y*63+key.x;
-        if(!cells.count(owner)&&cells.size()>=121)return false;
+        if(!cells.count(owner)&&cells.size()>=size_t(owner_limit))return false;
         std::vector<Item> staged;std::unordered_set<int64_t> seen;
         for(int s=0;s<9;++s){
             if(species[s].get_type()!=Variant::DICTIONARY)return false;

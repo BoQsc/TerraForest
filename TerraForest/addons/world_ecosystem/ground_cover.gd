@@ -23,6 +23,10 @@ var preview_meshes:Array[Mesh]=[]
 var rock_collision:Node3D
 var fractures:Node3D
 var rock_damage:RefCounted
+var world_boulders:=false
+var boulders:Node
+var collision_focus:Node3D
+var boulder_camera:Camera3D
 var resident: Dictionary={}
 var _wanted: Dictionary={}
 var _requests: Dictionary={}
@@ -79,11 +83,16 @@ func _ready() -> void:
 		batches.append(batch)
 	fractures=ClassDB.instantiate("NativeBoulderFracture");add_child(fractures)
 	var stone_material:ShaderMaterial=preload("res://addons/world_ecosystem/boulder_material.tres").duplicate()
-	if not fractures.configure(stone_geometry,stone_material,rock_damage):
+	var fracture_geometry:Mesh=preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0,false) if world_boulders else stone_geometry
+	if not fractures.configure(fracture_geometry,stone_material,rock_damage):
 		push_error("Boulder fragment cache initialization failed");set_process(false);return
+	if world_boulders and not fractures.configure_horizon(preload("res://addons/world_ecosystem/woodland_mesh.gd").build(0,false,false,true)):
+		push_error("Boulder horizon initialization failed");set_process(false);return
 	rock_collision=ClassDB.instantiate("NativeStaticBatch");add_child(rock_collision)
 	if not rock_collision.configure_asset("vegetation/boulder_proxy/v1",BoxMesh.new()) or not rock_collision.configure_collision_only() or not rock_collision.configure_collision(AABB(Vector3(-0.26,-0.12,-0.2),Vector3(0.52,0.26,0.4)),96,256,16):
 		push_error("Boulder collision initialization failed");set_process(false);return
+	if world_boulders:
+		boulders=preload("res://addons/world_ecosystem/boulder_horizon.gd").new();boulders.cover=self;add_child(boulders)
 	if not set_grass_texture(true):push_warning("Grass detail unavailable; using untextured material")
 	terrain.surface_batch_ready.connect(_surface_ready)
 	terrain.density_batch_ready.connect(_density_ready)
@@ -113,6 +122,7 @@ func set_grass_texture(enabled: bool) -> bool:
 
 func _begin_reset()->void:
 	if _reset_active:return
+	if boulders!=null:boulders.reset()
 	if rock_collision!=null:rock_collision.clear_instances()
 	if fractures!=null:fractures.clear()
 	_reset_active=true;_reset_batch=0;_reset_keys=resident.keys()
@@ -177,6 +187,9 @@ func restore_render_row(row:Dictionary,species:int)->bool:
 func damage_boulder(id:int,hit_from:=Vector3.ZERO)->void:
 	if fractures!=null:fractures.sync_damage(id,hit_from)
 
+func owner_available(key:Vector2i)->bool:
+	return resident.has(key) and not _dirty.has(key) and not _pending.has(key)
+
 var last_process_us:int=0
 func _process(_delta: float) -> void:
 	var measured_begin:=Time.get_ticks_usec()
@@ -193,8 +206,12 @@ func _measured_step(_delta:float)->void:
 		material.set_shader_parameter("cover_eye",camera.global_position)
 		material.set_shader_parameter("cover_clock",Time.get_ticks_msec()/1000.0)
 	for batch in batches: batch.set_render_focus(camera.global_position)
-	if rock_collision!=null:rock_collision.set_collision_focus(camera.global_position)
-	if fractures!=null:fractures.advance(camera.global_position)
+	if rock_collision!=null:rock_collision.set_collision_focus(collision_focus.global_position if collision_focus!=null else camera.global_position)
+	if fractures!=null:
+		if world_boulders:
+			var view:Camera3D=boulder_camera if boulder_camera!=null else camera
+			fractures.advance_view(view.global_position,clampf(tan(deg_to_rad(75)*0.5)/tan(deg_to_rad(view.fov)*0.5)*view.get_viewport().get_visible_rect().size.y/1080.0,0.1,32.0))
+		else:fractures.advance(camera.global_position)
 	var center:=Vector2i(floori(camera.global_position.x/32.0),floori(camera.global_position.z/32.0))
 	var forward:Vector3=-camera.global_basis.z
 	var zoomed:bool=camera.fov<71.0
@@ -263,6 +280,7 @@ func _surface_ready(token: int,points: PackedVector3Array,normals: PackedVector3
 		if road_regions!=null and road_mask[i]:mask[i]=1
 	var packed: Array=native.pack(placed.ids,placed.transforms,mask,_scatter_job.shelter)
 	if packed.size()!=Catalog.COUNT: rejected_batches+=1;_scatter_job.clear();return
+	if boulders!=null:packed[0]=native.boulder_rows(packed[0],false)
 	# Replies may arrive in any order; concatenate by original layer for stable IDs.
 	if _scatter_job.packed.is_empty():_scatter_job.packed.resize(_scatter_job.layers)
 	_scatter_job.packed[request.layer]=packed

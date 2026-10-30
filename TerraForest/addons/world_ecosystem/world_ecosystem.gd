@@ -37,6 +37,8 @@ var harvest_state: RefCounted
 var _harvesting:=false
 var _native_scatter: RefCounted
 var _terrain_support:RefCounted
+var additional_surface_candidates:Callable
+var additional_surface_ready:Callable
 
 func coverage_status()->Dictionary:
 	return {"enabled":world_coverage,"ready":not world_coverage or (_wanted.size()==1024 and resident.size()==1024 and _reconcile.is_empty() and _resample.is_empty() and _pending_cells.is_empty()),"owners":resident.size(),"total":1024 if world_coverage else _wanted.size(),"pending":_pending_cells.size(),"reconcile":_reconcile.size(),"resample":_resample.size(),"rejected":rejected_batches}
@@ -168,14 +170,20 @@ func _step(_delta: float) -> void:
 		if not world_coverage and not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
 			continue
 		var candidates: Dictionary = _candidates(key)
-		if candidates["points"].is_empty():
+		var companion:Dictionary=additional_surface_candidates.call(key) if world_coverage and additional_surface_candidates.is_valid() else {}
+		var points:PackedVector3Array=candidates.points.duplicate()
+		if not companion.is_empty() and points.size()+companion.points.size()<=64:
+			candidates.companion=companion
+			points.append_array(companion.points)
+		if points.is_empty():
 			var empty_transforms: Array[Transform3D]=[]
 			_replace_samples(key,PackedInt64Array(),empty_transforms)
+			if candidates.has("companion") and additional_surface_ready.is_valid():additional_surface_ready.call(companion,PackedVector3Array(),PackedVector3Array(),terrain.epoch,terrain.published_revision)
 			admitted+=1
 			if not world_coverage or admitted>=8:break
 			continue
 		_token = SurfaceTokens.allocate()
-		var submitted:bool=terrain.request_surface_page(candidates["points"],key,_token) if world_coverage else terrain.request_surface_batch(candidates["points"],_token)
+		var submitted:bool=terrain.request_surface_page(points,key,_token) if world_coverage else terrain.request_surface_batch(points,_token)
 		if submitted:
 			candidates["key"] = key
 			_requests[_token] = candidates
@@ -225,6 +233,10 @@ func _surface_ready(token: int, points: PackedVector3Array, normals: PackedVecto
 	if not _wanted.has(key) or epoch_id != terrain.epoch or revision != terrain.published_revision or terrain.pending_edit:
 		stale_results += 1
 		return
+	if request.has("companion"):
+		var count:int=request.points.size()
+		if additional_surface_ready.is_valid():additional_surface_ready.call(request.companion,points.slice(count),normals.slice(count),epoch_id,revision)
+		points=points.slice(0,count);normals=normals.slice(0,count)
 	var placed: Dictionary=_scatter().place_surface(request["ids"],points,normals,request["rotations"],request["scales"],cos(deg_to_rad(max_slope_degrees)))
 	if not placed.ok:
 		rejected_batches += 1

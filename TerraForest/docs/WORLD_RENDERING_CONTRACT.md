@@ -46,6 +46,11 @@ Status: **partial implementation; the requested whole-project overhaul is open**
   frame. Harvest and per-root edit exclusions remain authoritative.
 - Prior native building horizon (`083917a7`) supplies real, compacted, destructible
   block geometry across the saved world without loading its far editable regions.
+- Natural boulders now have independent whole-world ownership, native near/far
+  fracture tiers and complementary shader blending. The active render camera is
+  separate from player-local collision and grass focus. Existing harvesting,
+  support removal, damage and save identities remain shared. Forest and boulder
+  support probes share bounded cached requests instead of duplicating dispatch.
 - Forest exclusion now uses native read-only archived occupancy, not whole unloaded
   building regions. Worker-decoded column masks and compound-model BVHs share the
   existing bounded archive reader; a 32 MiB / 256-page LRU admits at most two reads.
@@ -73,7 +78,7 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    Twenty-four cancellation/consumption cycles per native configuration and two
    consecutive installed cold/warm runs release all pages without ObjectDB warnings;
    this does not qualify arbitrary mixed-world lifetime endurance.
-   Boulders and medium props still need independent far representations.
+   Boulders now have independent far representations; other medium props remain.
 2. **Seamless terrain/mesh transitions.** The large grey patches were mostly
    absent geometry, not simply bad transition surfaces: only 37/64 roots existed
    after 30 seconds in the previous fixture. Whole-world readiness and cheaper
@@ -82,12 +87,12 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    qualification. Requires a compatible volumetric
    transition solution (including edited caves), not a heightmap covering edits.
    Require continuous zoom/orbit recordings, seam/error checks, and user review.
-3. **Medium props/vehicles.** Furniture, parked vehicles and boulders still have
+3. **Medium props/vehicles.** Furniture and parked vehicles still have
    local representation limits. Add exact lightweight render-only tiers before
-   advertising all medium/large objects at arbitrary distance. Boulders still share
-   local ground-cover ownership; the latest 100 km/h sweep reports up to eight near
-   and 33 visible ground owners missing while forest ownership stays complete.
-   Decouple medium-object visibility without expanding full grass/physics globally.
+   advertising all medium/large objects at arbitrary distance. Boulders no longer
+   share local grass ownership. The earlier 100 km/h sweep reported up to eight near
+   and 33 visible ground owners missing; grass continuity remains unresolved.
+   Extend independent medium-object visibility without expanding full grass/physics globally.
    Measure dense worlds and require continuous driving/zoom/edit/reload evidence.
 4. **General module host.** Only vehicle providers are integrated. Generator,
    biome, terrain, vegetation and other service providers, dependency negotiation,
@@ -104,5 +109,6 @@ Status: **partial implementation; the requested whole-project overhaul is open**
    establish perfect frame times, universal LOD continuity or visual acceptance.
 
 The overview camera is intentionally opt-in until these gaps are addressed; natural
-forest coverage itself is enabled by default. Continue at milestone 1; do not close
+forest and boulder coverage are enabled by default. Continue with medium-object
+coverage and transition qualification; do not close
 this contract because the current engineering tests pass.

@@ -76,6 +76,21 @@ func run()->void:
 	check(before==forest.chunks and ecosystem._resample.has(owner),"stale epoch keeps previous far representation and retries")
 	ecosystem.reset()
 	check(forest.chunks.is_empty() and ecosystem.resident.is_empty() and not ecosystem.coverage_status().ready,"reload clears derived forest ownership")
+	terrain.pending.clear();ecosystem.density=0
+	var companions:Dictionary={}
+	ecosystem.additional_surface_candidates=func(key:Vector2i)->Dictionary:return {"key":key,"points":PackedVector3Array([Vector3(key.x*64+3,0,key.y*64+3)])}
+	ecosystem.additional_surface_ready=func(request:Dictionary,points:PackedVector3Array,normals:PackedVector3Array,epoch:int,revision:int)->void:
+		companions[request.key]=points.size()==1 and normals.size()==1 and points[0].y==10 and epoch==1 and revision==1
+	frames=0
+	while not ecosystem.coverage_status().ready and frames<1500:
+		ecosystem._step(0)
+		for token:int in terrain.pending:
+			var points:PackedVector3Array=terrain.pending[token].points.duplicate()
+			var normals:=PackedVector3Array();normals.resize(points.size());normals.fill(Vector3.UP)
+			for index in points.size():points[index].y=10
+			ecosystem._surface_ready(token,points,normals,1,1)
+		terrain.pending.clear();frames+=1
+	check(ecosystem.coverage_status().ready and companions.size()==1024 and not companions.values().has(false),"companion surfaces publish for every owner even without trees")
 	ecosystem.free();terrain.free();forest.free();camera.free()
 	print("FOREST_WORLD_COVERAGE failures=",failures," owners=1024 trees=",identities," frames=",frames)
 	quit(1 if failures else 0)
