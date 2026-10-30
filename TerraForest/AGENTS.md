@@ -1,5 +1,39 @@
 # World-building work
 
+## Public-domain-first policy
+
+Public-domain-first is a core project goal. Use **0BSD for new original code**
+(including scripts, shaders, native code, tests and tools) and **CC0-1.0 for new
+original assets** (including models, textures, audio, fonts, animations and
+non-code authoring data). Follow [contribution and intake rules](CONTRIBUTING.md).
+The policy covers human and AI-assisted work, copied snippets, vendored code,
+embedded resources and material linked into distributed binaries.
+
+Preserve inherited licenses and notices. Existing CC0 code and 0BSD assets retain
+their terms; new defaults do not authorize rewriting their license declarations.
+Keep copyright-bearing upstream portions identifiable when modifying them.
+
+Before importing material, record its source/author, version or hash, exact terms,
+affected paths and whether it is copied, linked, bundled or only used externally.
+Prefer original work and verified default-compatible inputs. Missing license text,
+"free", public availability or AI generation alone is not evidence of permission.
+Do not copy an implementation and relabel it as original 0BSD/CC0 work.
+
+Use [the license inventory](docs/LICENSE_INVENTORY.md) and
+[`license_inventory.json`](license_inventory.json) for existing non-default terms
+and provenance gaps. Listed existing use may continue within its recorded scope.
+New or widened exceptions require a recorded proposal and an explicit maintainer
+decision before admission; inventorying a proposal does not approve it. Routine
+maintenance of listed use does not require renewed permission, but upgrades must
+be checked for changed terms or new content.
+
+Update provenance, inventory and applicable distribution notices together when
+their scope changes. If a retained notice used by the credits viewer changes,
+rebuild `assets/credits/notices.json` with `tools/build_credit_notices.py` and run
+its `--check` mode. Do not claim a wholly 0BSD/CC0 distribution while exceptions,
+unresolved provenance or binary-runtime coverage remain. Inventorying an exception
+does not authorize dependency replacement; follow the current task's scope.
+
 ## Commit preference
 
 User direction, 2026-10-25: commit completed, verified work by default rather

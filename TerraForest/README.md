@@ -1,6 +1,10 @@
 # TerraForest
 
-An open-source world-building project for Godot. The project code is available
+An open-source world-building project for Godot, with a **public-domain-first**
+goal: 0BSD code and CC0 assets. See the [contribution policy](CONTRIBUTING.md)
+and [existing exceptions and provenance gaps](docs/LICENSE_INVENTORY.md). The
+policy preserves existing grants and does not claim the current distribution
+is entirely 0BSD/CC0. The project code is available
 under [0BSD](LICENSE.txt), allowing use, modification and redistribution,
 including commercially. Source and build tools are included in the project
 download and [repository](https://github.com/BoQsc/TerraForest).

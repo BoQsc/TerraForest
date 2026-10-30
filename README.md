@@ -39,6 +39,11 @@ The project folder contains the addons, demo, native source, tools and validatio
 
 ## License
 
+TerraForest is a **public-domain-first project**, working toward 0BSD code and
+CC0 assets. See the [contribution policy](CONTRIBUTING.md) and
+[existing exceptions and unresolved provenance](TerraForest/docs/LICENSE_INVENTORY.md).
+Existing grants remain in force; the current distribution is not entirely 0BSD/CC0.
+
 TerraForest's project code uses [Zero-Clause BSD](LICENSE.txt): you can use,
 copy, modify and distribute it, including commercially, under the included terms.
 Get the source from [the project repository](https://github.com/BoQsc/TerraForest)

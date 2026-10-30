@@ -1,5 +1,10 @@
 # Provenance
 
+The [public-domain-first contribution policy](../CONTRIBUTING.md) sets
+prospective 0BSD code and CC0 asset defaults. The
+[license inventory](LICENSE_INVENTORY.md) records retained exceptions, legacy
+grants and unresolved evidence; it does not replace the canonical notices below.
+
 Inputs:
 
 - `C:\Users\Windows10_new\Downloads\TerrainRewrite_v0.4.4\TerrainRewrite` — code identifies itself as 0.4.6-r4 despite the enclosing download name.

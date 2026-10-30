@@ -1,6 +1,20 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Public-domain-first policy and initial inventory — 2026-10-30
+
+Repository/project agent instructions and contribution guidance now set 0BSD for
+new original code and CC0 for new original assets, with provenance and explicit
+admission review for new exceptions. Existing grants and dependencies remain.
+[Inventory, evidence, unresolved scope and closure criteria](LICENSE_INVENTORY.md).
+
+A wholly 0BSD/CC0 project distribution remains a long-term goal. Dependency
+replacement is explicitly outside this task. Original-rights evidence for the
+listed gaps, complete source/asset notice mapping, binary linkage/runtime and
+notice verification, and automated admission checks remain open. Revisit on new
+rights evidence, upgrades, scope expansions or an explicit migration/enforcement
+task; require the inventory's closure evidence before marking a record resolved.
+
 ## Startup identity and credits — 2026-10-30
 
 The boot PNG retains the original Godot artwork and now reads **TerraForest •
