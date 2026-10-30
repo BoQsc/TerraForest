@@ -17,6 +17,8 @@ p.add_argument('--staging-directory',type=Path)
 args=p.parse_args()
 if not args.godot:
     p.error('Specify --godot PATH')
+if subprocess.call([sys.executable,str(root/'tools/build_credit_notices.py'),'--check']):
+    sys.exit(1)
 require_free_space(root, load_budgets()['redistributable_limit_bytes'])
 engine=Path(args.godot)
 direct=engine.parent/'godot.windows.opt.tools.64.exe'

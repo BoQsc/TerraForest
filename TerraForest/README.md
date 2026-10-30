@@ -1,5 +1,16 @@
 # TerraForest
 
+An open-source world-building project for Godot. The project code is available
+under [0BSD](LICENSE.txt), allowing use, modification and redistribution,
+including commercially. Source and build tools are included in the project
+download and [repository](https://github.com/BoQsc/TerraForest).
+
+Open **Credits & licenses** from the world browser for offline project, asset
+and dependency notices. CC0/public-domain dedications apply to the assets whose
+own notices say so. Other assets and dependencies retain their separate terms;
+inherited terrain textures keep their original provenance without a new license
+grant. See [provenance](docs/PROVENANCE.md).
+
 See the [delivery plan and coverage register](docs/PROJECT_PLAN.md) for current milestones, original-scope gaps and explicit return points for deferred work. Historical validation documents describe their recorded builds, not completion of the whole project.
 
 See the [visual issue tracker](issues/README.md) for solved and partly solved

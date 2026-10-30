@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "notices": [
+    {
+      "id": "project",
+      "title": "TerraForest project code",
+      "license": "0BSD",
+      "source": "LICENSE.txt",
+      "summary": "Use, copy, modify and distribute the project code, including commercially, under Zero-Clause BSD. Separately identified components retain their own terms.",
+      "text": "Zero-Clause BSD\n\nPermission to use, copy, modify, and/or distribute this software for any purpose\nwith or without fee is hereby granted.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH\nREGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY\nAND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,\nINDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM\nLOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR\nOTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR\nPERFORMANCE OF THIS SOFTWARE.\n\nThird-party assets retain their own terms. See the notices in each addon."
+    },
+    {
+      "id": "spruce",
+      "title": "Spruce tree assets",
+      "license": "CC0 1.0",
+      "source": "addons/vegetation/ASSET_LICENSE.md",
+      "summary": "The supplied spruce model, extracted images and derived bakes retain the source's stated CC0 dedication.",
+      "text": "# Provided asset provenance\n\nThe source supplied in this conversation was Spruce.Tree.v6(1).glb.\nSHA-256: 5c7cc423531752b5ef5459b3bb572133318064a986d4d259aa4b44c77490ee85\nIts embedded metadata declares: \"CC0 1.0 Universal dedication; see LICENSE.txt\".\nThe generator is \"Spruce v6 / open branchlet cutouts / CC0\".\n\nThe packed original geometry, six extracted PNGs, new native view bakes and fitted\noutlines are derived from that supplied source and retain those stated CC0 terms.\nThe distribution does not include a Godot executable, software Vulkan driver,\npresentation bridge, font file, or third-party Python/C++ package."
+    },
+    {
+      "id": "characters",
+      "title": "Character assets",
+      "license": "CC0 1.0 / inherited provenance",
+      "source": "addons/characters/LICENSE.txt",
+      "summary": "Original character work is dedicated under CC0. The retained notice explains the inherited character source and the scope of that dedication.",
+      "text": "BG5 Zombie Lab — CC0 1.0 Universal\n\nSPDX-License-Identifier: CC0-1.0\n\nTo the extent possible under law, the contributors dedicate the newly authored\nproject code, test scene, zombie animation trajectories, material modifications,\nmesh partitioning and cut-cap geometry in this delivery to the public domain\nunder the CC0 1.0 Universal Public Domain Dedication.\n\nYou may copy, modify, distribute and use this original content, including for\ncommercial purposes, without asking permission. Attribution is appreciated\nbut is not required. The content is provided without warranty to the extent\npermitted by law.\n\nFull CC0 1.0 legal text:\nhttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\nINHERITED CHARACTER PROVENANCE\n\nThe character is based on assets/Human.realistic.glb in the user-supplied\nFirstPersonLab.r3(1).zip. That source identifies its content as CC0-1.0 and\nstates that its base geometry and textures retain the provenance of the\noriginal user-supplied asset. This derivative retains that provenance; this\ndedication grants only rights held by the contributors to this delivery.\n\nSource GLB SHA-256:\n667f7746d21cd19db6b2c796a2e9b741269312265cbdf7f14a8e3c799f7914e2\n\nNo external models, texture packs, animation packs, motion capture, add-ons or\nthird-party Python libraries were added. Blender's bundled APIs, Godot's built-in\nfeatures and Python's standard library were used for authoring and validation.\n\nGodot and Blender are separate software products. Their licenses continue to\napply to those applications; neither application is distributed in this archive."
+    },
+    {
+      "id": "woodland",
+      "title": "Original woodland sample",
+      "license": "0BSD",
+      "source": "LICENSE.txt",
+      "summary": "Original woodland stones, plants, grass and procedural textures are identified as 0BSD in the woodland sample's authoring notes.",
+      "text": "Zero-Clause BSD\n\nPermission to use, copy, modify, and/or distribute this software for any purpose\nwith or without fee is hereby granted.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH\nREGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY\nAND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,\nINDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM\nLOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR\nOTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR\nPERFORMANCE OF THIS SOFTWARE.\n\nThird-party assets retain their own terms. See the notices in each addon."
+    },
+    {
+      "id": "vehicle",
+      "title": "Vehicle model and demo",
+      "license": "0BSD",
+      "source": "vehicle_demo/LICENSE.txt",
+      "summary": "The supplied vehicle model and demo code were declared the author's own 0BSD work. Native bindings retain their separate MIT notice.",
+      "text": "Zero-Clause BSD\n\nPermission to use, copy, modify, and/or distribute this software for any purpose\nwith or without fee is hereby granted.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH\nREGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY\nAND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,\nINDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM\nLOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR\nOTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR\nPERFORMANCE OF THIS SOFTWARE.\n\nThird-party assets retain their own terms. See the notices in each addon."
+    },
+    {
+      "id": "terrain_textures",
+      "title": "Inherited terrain textures",
+      "license": "Retained source provenance",
+      "source": "addons/volumetric_terrain/terrain_textures/THIRD_PARTY_TEXTURES.md",
+      "summary": "These inherited textures retain their source terms. The supplied note does not establish a new 0BSD or CC0 grant; consult the original asset metadata before reusing them separately.",
+      "text": "# Texture provenance note\n\nThe four image files in this folder were reused from the user's existing terrain-texture assets available in this workspace:\n\n- `grass_albedo.png`\n- `gravel_albedo.png`\n- `sand_albedo.jpg`\n- `snow_albedo.png`\n\nNo new third-party source or license assertion is made by RayCell Terrain v0.1.7. Keep the original source/license metadata that belongs to the user's asset set when these textures are moved into another project."
+    },
+    {
+      "id": "godot_logo",
+      "title": "Godot logo and boot artwork",
+      "license": "CC BY 4.0",
+      "source": "assets/branding/GODOT_LOGO_LICENSE.txt",
+      "summary": "Godot logo by Andrea Calabró. The original artwork is centered at native size; TerraForest adds its own footer. Attribution and the license link follow.",
+      "text": "Godot Engine Logo\nCopyright (c) 2017 Andrea Calabró\n\nThis work is licensed under the Creative Commons Attribution 4.0 International\nlicense (CC BY 4.0 International): https://creativecommons.org/licenses/by/4.0/\n\nSource artwork: https://github.com/godotengine/godot/blob/master/main/splash.png\n\nTerraForest modification: the original splash artwork is centered, unscaled, on\na transparent 1920 x 1080 canvas with the footer \"TerraForest • Open source\".\nThe footer identifies the project; it does not change the Godot logo license."
+    },
+    {
+      "id": "godot_cpp",
+      "title": "godot-cpp native bindings",
+      "license": "MIT",
+      "source": "addons/world_runtime/GODOT_CPP_LICENSE.md",
+      "summary": "The Godot C++ bindings used by the native addons retain this MIT notice.",
+      "text": "# MIT License\n\nCopyright (c) 2017-present Godot Engine contributors.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+    },
+    {
+      "id": "godot_abi",
+      "title": "Godot GDExtension interface",
+      "license": "MIT",
+      "source": "addons/volumetric_terrain/native/GODOT_INTERFACE_LICENSE.txt",
+      "summary": "The Godot GDExtension C ABI declarations retain the engine contributors' MIT notice.",
+      "text": "Godot Engine GDExtension C ABI declarations\nCopyright (c) 2014-present Godot Engine contributors.\nCopyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
+    },
+    {
+      "id": "meshoptimizer",
+      "title": "meshoptimizer",
+      "license": "MIT",
+      "source": "addons/structures/MESHOPTIMIZER_LICENSE.txt",
+      "summary": "Mesh optimization by Arseny Kapoulkine. The structures addon retains the following MIT notice.",
+      "text": "MIT License\n\nCopyright (c) 2016-2025 Arseny Kapoulkine\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE."
+    }
+  ]
+}

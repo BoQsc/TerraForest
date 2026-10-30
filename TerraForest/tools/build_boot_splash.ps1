@@ -21,7 +21,7 @@ try {
     $format.Alignment = [System.Drawing.StringAlignment]::Center
     $format.LineAlignment = [System.Drawing.StringAlignment]::Center
     $separator = [char]0x2022
-    $footer = "Public Domain $separator CC0 $separator 0BSD"
+    $footer = "TerraForest $separator Open source"
     $bounds = [System.Drawing.RectangleF]::new(0, 999, 1920, 38)
     $graphics.DrawString($footer, $font, $brush, $bounds, $format)
     $graphics.Dispose()

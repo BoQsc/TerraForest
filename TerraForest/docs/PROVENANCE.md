@@ -14,7 +14,13 @@ The existing meshing and vegetation render algorithms were preserved while publi
 Both code distributions provide 0BSD licenses. Spruce provenance and its stated CC0 terms are retained in `addons/vegetation/ASSET_LICENSE.md`. Terrain texture notices are retained under `addons/volumetric_terrain/terrain_textures`. Review those notices when publishing assets separately. No Godot executable, export template, compiler, system library or Python package is redistributed.
 
 The boot splash retains Godot's default artwork and adds the project footer
-"Public Domain • CC0 • 0BSD". The Godot logo remains copyright 2017 Andrea
+"TerraForest • Open source". The Godot logo remains copyright 2017 Andrea
 Calabró under CC BY 4.0; attribution and modification details are retained in
 `assets/branding/GODOT_LOGO_LICENSE.txt`. The original artwork and reproducible
 Windows PNG builder are retained alongside the configured splash asset.
+
+The world browser's **Credits & licenses** screen presents retained project and
+asset notices from `assets/credits/notices.json`, generated from the canonical
+files by `tools/build_credit_notices.py`. Godot's own license, component credits
+and license texts come from the running engine. Inherited terrain textures retain
+their existing provenance note; this screen makes no new license grant for them.

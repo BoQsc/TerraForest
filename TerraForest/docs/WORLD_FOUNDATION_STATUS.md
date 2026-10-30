@@ -1,6 +1,22 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Startup identity and credits — 2026-10-30
+
+The boot PNG retains the original Godot artwork and now reads **TerraForest •
+Open source**. The browser adds a project subtitle and **Credits & licenses**,
+with searchable offline project/asset notices, live Godot notices and a source
+link. Scoped UI checks pass at 1080p and 720p, including Back/Escape focus return;
+an isolated PCK check passes without loose source files. See
+[implementation, retained evidence and verification limits](../assets/credits/README.md).
+Human review of the new presentation is still pending.
+
+The broader world-browser regression remains failing on outdated generator
+identities and widget ancestry, reproduced against the unchanged browser. It is
+not reported as a credits pass. Synchronize that test with the current launch
+contract and hierarchy, then require `WORLD_BROWSER failures=0`; credits work
+does not change generation behavior to satisfy old expectations.
+
 ## FPS / overview and modular runtime — 2026-10-30
 
 The whole-project rendering/modding/generation request is **not complete**.

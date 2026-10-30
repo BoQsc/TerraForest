@@ -2,6 +2,7 @@
 extends Control
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Launch=preload("res://demo/world_launch.gd")
+const CreditsDialog=preload("res://demo/credits_dialog.gd")
 var worlds: ItemList
 var name_field: LineEdit
 var seed_field: SpinBox
@@ -63,6 +64,8 @@ var cancel_pending:=false
 var quit_pending:=false
 var cancel_button:Button
 var generation_screen:CanvasLayer
+var credits_button:Button
+var credits_dialog:CreditsDialog
 func heading(parent: Node,text: String,size: int=24) -> Label:
 	var label:=Label.new();label.text=text;label.add_theme_font_size_override("font_size",size);parent.add_child(label);return label
 func button(parent: Node,text: String,action: Callable) -> Button:
@@ -79,9 +82,12 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_fit_browser.bind(margin));_fit_browser(margin)
 	var panel:=VBoxContainer.new();panel.add_theme_constant_override("separation",14);margin.add_child(panel)
 	var branding:=HBoxContainer.new();panel.add_child(branding)
-	var title:=heading(branding,"TERRAFOREST",32);title.add_theme_color_override("font_color",Color("91d5b4"));title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	var identity:=VBoxContainer.new();identity.size_flags_horizontal=Control.SIZE_EXPAND_FILL;identity.add_theme_constant_override("separation",2);branding.add_child(identity)
+	var title:=heading(identity,"TERRAFOREST",32);title.add_theme_color_override("font_color",Color("91d5b4"))
+	var tagline:=heading(identity,"An open-source world-building project",15);tagline.add_theme_color_override("font_color",Color("9bafad"))
 	heading(branding,"WORLDS / YOUR NEXT CHAPTER",16)
-	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;panel.add_child(columns)
+	var workspace:=ScrollContainer.new();workspace.size_flags_vertical=Control.SIZE_EXPAND_FILL;workspace.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;panel.add_child(workspace)
+	var columns:=TabContainer.new();columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.size_flags_horizontal=Control.SIZE_EXPAND_FILL;workspace.add_child(columns)
 	world_tabs=columns
 	columns.tab_changed.connect(func(index:int):
 		if index==1 and preview_view!=null and preview_view.texture==null:preview_due_ms=Time.get_ticks_msec()+PREVIEW_DELAY_MS)
@@ -109,9 +115,16 @@ func _ready() -> void:
 	gameplay=CheckBox.new();gameplay.text="Gameplay material costs (uncheck for free editor)";gameplay.button_pressed=true;panel.add_child(gameplay)
 	var bottom:=HBoxContainer.new();bottom.alignment=BoxContainer.ALIGNMENT_END;panel.add_child(bottom)
 	notice=heading(bottom,"",16);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	credits_button=button(bottom,"Credits & licenses",show_credits)
 	button(bottom,"Quit",request_quit)
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
+func show_credits()->void:
+	if credits_dialog==null:
+		credits_dialog=CreditsDialog.new();credits_dialog.theme=theme;add_child(credits_dialog)
+		credits_dialog.confirmed.connect(func():credits_button.grab_focus.call_deferred())
+		credits_dialog.canceled.connect(func():credits_button.grab_focus.call_deferred())
+	credits_dialog.open()
 func _fit_browser(panel:Control)->void:
 	var available:=get_viewport_rect().size
 	var factor:=clampf(minf(available.y/900.0,available.x/1280.0),0.5,1.0)

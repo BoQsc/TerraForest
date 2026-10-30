@@ -39,4 +39,16 @@ The project folder contains the addons, demo, native source, tools and validatio
 
 ## License
 
-Project code uses [Zero-Clause BSD](LICENSE.txt). Third-party assets and dependencies retain their own licenses; see the notices included with each addon.
+TerraForest's project code uses [Zero-Clause BSD](LICENSE.txt): you can use,
+copy, modify and distribute it, including commercially, under the included terms.
+Get the source from [the project repository](https://github.com/BoQsc/TerraForest)
+or the source download, which includes the addons, native source and build tools.
+
+Assets and dependencies retain their individual terms. The supplied spruce and
+character assets carry their own CC0 notices; original woodland samples and the
+supplied vehicle have 0BSD notices. Inherited terrain textures retain their source
+provenance, which does not establish a new 0BSD or CC0 grant. Godot, godot-cpp,
+meshoptimizer and the Godot logo have separate notices.
+
+Open **Credits & licenses** in the world browser to read the retained notices
+offline. See [provenance](TerraForest/docs/PROVENANCE.md) for the original inputs.
