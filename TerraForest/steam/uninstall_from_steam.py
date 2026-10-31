@@ -146,12 +146,22 @@ def main():
     print(f'file     : {shortcut}')
     print(f'exe      : {exe}')
     print(f'entries  : {", ".join(names)}')
+    # The desktop links go as soon as the entry is out of shortcuts.vdf, before the
+    # long wait for Steam to boot again, so nothing stale is left while it restarts.
+    cleaned = {'desktop': False}
+
+    def clean_desktop():
+        if args.desktop and not cleaned['desktop']:
+            cleaned['desktop'] = True
+            desktop_tool().remove_shortcuts(args.desktop_folder, args.dry_run)
+
     code = tool.remove_all(shortcut, names, exe, args.dry_run,
-                           not args.no_restart, args.force)
+                           not args.no_restart, args.force, after_write=clean_desktop)
     if code == 0 and args.artwork:
         code = remove_artwork(shortcut, names, exe, args.dry_run, tool)
-    if code == 0 and args.desktop:
-        code = desktop_tool().remove_shortcuts(args.desktop_folder, args.dry_run)
+    if code == 0:
+        # Dry runs and "nothing to remove" never reach the write, so clean here too.
+        clean_desktop()
     return code
 
 

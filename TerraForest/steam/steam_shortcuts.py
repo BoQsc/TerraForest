@@ -462,7 +462,8 @@ def write_bytes(path, payload):
     raise SystemExit(f'{path}: could not write: {error}')
 
 
-def commit(shortcut, original, candidate, label, restart, force, progress=None):
+def commit(shortcut, original, candidate, label, restart, force, progress=None,
+           after_write=None):
     """Stop Steam if needed, replace the file, verify, and restart Steam."""
     steam = shortcut.parents[3]
     running = steam_running()
@@ -493,6 +494,10 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None):
     print(f'backup   : {backup}')
     print(label)
     bar.tick(1.0, 'file written')
+    # The entry is gone from the file at this point, so anything else that depends
+    # on it (desktop links) can be cleaned before the long wait for Steam to boot.
+    if after_write is not None:
+        after_write()
 
     status = 0
     if not running:
@@ -642,7 +647,7 @@ def remove(shortcut, name, exe, dry_run, restart=True, force=False):
                   f'removed  : entry {", ".join(victim)}; {len(remaining)} left', restart, force)
 
 
-def remove_all(shortcut, names, exe, dry_run, restart=True, force=False):
+def remove_all(shortcut, names, exe, dry_run, restart=True, force=False, after_write=None):
     """Remove several named entries in one pass, so Steam is restarted once."""
     data, root, entries = load(shortcut)
     victims = {}
@@ -668,7 +673,7 @@ def remove_all(shortcut, names, exe, dry_run, restart=True, force=False):
         return 0
     return commit(shortcut, data, candidate,
                   f'removed  : {len(victims)} entry(ies); {len(remaining)} left',
-                  restart, force)
+                  restart, force, after_write=after_write)
 
 
 def main():
