@@ -104,7 +104,13 @@ def register(dry_run, name, restart, force, steam, account):
             raise SystemExit(f'no shortcuts.vdf for account {account}')
     else:
         shortcut = steam_tool.accounts(root)[0]
-    return steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force)
+    return steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
+                          launch_options(dry_run))
+
+
+def launch_options(_dry_run=False):
+    """The editor binary needs --path, or Steam opens the project manager instead."""
+    return f'--path "{ROOT}"'
 
 
 def main():

@@ -222,7 +222,7 @@ def serialize_shortcuts(root_name, entries):
     return bytes(out)
 
 
-def shortcut_fields(name, exe):
+def shortcut_fields(name, exe, launch_options=''):
     return {
         # The documented entry format carries its own app id; Steam rewrote a
         # file whose entries lack it, dropping them, so it is always written.
@@ -232,7 +232,7 @@ def shortcut_fields(name, exe):
         'StartDir': f'"{exe.parent}"',
         'icon': '',
         'ShortcutPath': '',
-        'LaunchOptions': '',
+        'LaunchOptions': launch_options,
         'IsHidden': 0,
         'AllowDesktopConfig': 1,
         'AllowOverlay': 1,
@@ -342,15 +342,48 @@ def commit(shortcut, original, candidate, label, restart, force):
     return status
 
 
-def add(shortcut, name, exe, dry_run, restart=True, force=False):
+def set_launch_options(shortcut, name, exe, launch_options, dry_run=False, restart=True,
+                       force=False):
+    """Rewrite one existing entry's LaunchOptions, keeping everything else as is."""
+    data, root, entries = load(shortcut)
+    found = find_entry(entries, name, exe)
+    if not found:
+        print(f'no "{name}" shortcut in {shortcut}; nothing to update')
+        return 0
+    index = next(iter(found))
+    current = entries[index].get('LaunchOptions', '')
+    if current == launch_options:
+        print(f'"{name}" already launches with {launch_options!r}; nothing to do')
+        return 0
+    updated = dict(entries)
+    updated[index] = dict(entries[index], LaunchOptions=launch_options)
+    candidate = serialize_shortcuts(root, updated)
+    check_root, check_entries = parse_shortcuts(candidate)
+    if check_root != root or len(check_entries) != len(entries) or \
+       check_entries[index].get('LaunchOptions') != launch_options:
+        raise SystemExit('refusing to write: the candidate file failed its own round-trip check')
+    print(f'options  : "{name}" {current!r} -> {launch_options!r}')
+    if dry_run:
+        print('dry run  : nothing written, Steam untouched')
+        return 0
+    return commit(shortcut, data, candidate,
+                  f'updated  : entry {index} launch options', restart, force)
+
+
+def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=''):
     data, root, entries = load(shortcut)
     duplicate = find_entry(entries, name, exe)
     if duplicate:
+        index = next(iter(duplicate))
+        current = duplicate[index].get('LaunchOptions', '')
+        if launch_options and current != launch_options:
+            return set_launch_options(shortcut, name, exe, launch_options, dry_run,
+                                      restart, force)
         print(f'"{name}" is already a shortcut in {shortcut} (index '
-              f'{", ".join(duplicate)}); nothing to do')
+              f'{index}); nothing to do')
         return 0
     index = max((int(k) for k in entries), default=-1) + 1
-    fields = shortcut_fields(name, exe)
+    fields = shortcut_fields(name, exe, launch_options)
     if not data.endswith(KV_END):
         raise SystemExit(f'{shortcut}: does not end with the dictionary terminator')
     body = bytearray()
@@ -397,6 +430,8 @@ def main():
     parser.add_argument('--account', help='Steam account id under userdata')
     parser.add_argument('--list', action='store_true', help='list current shortcuts')
     parser.add_argument('--remove', action='store_true', help='remove the shortcut')
+    parser.add_argument('--launch-options', default='',
+                        help='arguments Steam passes on top of Exe (e.g. --path "<project>")')
     parser.add_argument('--dry-run', action='store_true', help='report without touching Steam')
     parser.add_argument('--no-restart', action='store_true',
                         help='stop Steam for the write but leave it stopped afterwards')
@@ -420,7 +455,9 @@ def main():
         for index, fields in sorted(entries.items(), key=lambda item: int(item[0])):
             appid = fields.get('appid')
             tag = f'[{appid & 0xFFFFFFFF}]' if isinstance(appid, int) else '[no appid]'
-            print(f'  {index}: {fields.get("AppName")}  {fields.get("Exe")}  {tag}')
+            options = fields.get('LaunchOptions') or ''
+            print(f'  {index}: {fields.get("AppName")}  {fields.get("Exe")}  {tag}'
+                  + (f'  opts={options}' if options else '  opts=<none>'))
         return 0
 
     exe = args.exe or next((p for p in CANDIDATE_EXES if p.exists()), None)
@@ -430,7 +467,7 @@ def main():
     restart, force = not args.no_restart, args.force
     if args.remove:
         return remove(shortcut, args.name, exe, args.dry_run, restart, force)
-    return add(shortcut, args.name, exe, args.dry_run, restart, force)
+    return add(shortcut, args.name, exe, args.dry_run, restart, force, args.launch_options)
 
 
 if __name__ == '__main__':

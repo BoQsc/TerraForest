@@ -6,6 +6,14 @@ Both shortcuts start the play build the same way the game starts itself
 `res://demo/world.tscn -- --world-slot=<slot> --ground-cover --actors
 --vehicle-fleet --max-fps=60`.
 
+If the game is already registered in Steam (`add_steam_shortcut.py`), the plain
+shortcut launches it through Steam (`steam://rungameid/<id>`) so the overlay and
+playtime apply, and only falls back to running the executable directly when the
+Steam entry is missing. A world shortcut needs its slot as a launch argument, and
+a Steam entry carries fixed launch options, so it goes through Steam only when
+that entry already holds the same arguments; otherwise it stays native and says
+so. `--launch steam` or `--launch native` force either route.
+
 *TerraForest* opens the world list. *TerraForest Last World* opens the most
 recently saved world, picked from `user://worlds` (`%APPDATA%\\Godot\\
 app_userdata\\<project>\\worlds`, newest `.trw` by modification time). Re-running
@@ -15,11 +23,13 @@ gets updated after you play something else.
 Usage:
     python create_desktop_shortcuts.py               # create or update both
     python create_desktop_shortcuts.py --dry-run     # report only
+    python create_desktop_shortcuts.py --launch steam  # force the Steam route
     python create_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
 """
 from pathlib import Path
 import argparse
 import ctypes
+import importlib.util
 import os
 import sys
 import uuid
@@ -27,10 +37,11 @@ from ctypes import wintypes as w
 
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT
-MAIN_SHORTCUT = 'TerraForest.lnk'
-WORLD_SHORTCUT = 'TerraForest Last World.lnk'
 WORLD_SCENE = 'res://demo/world.tscn'
 WORLD_ARGS = ['--ground-cover', '--actors', '--vehicle-fleet', '--max-fps=60']
+RUNDLL = Path(os.environ.get('SystemRoot', r'C:\Windows'))/'System32'/'rundll32.exe'
+# Steam's "long" app id for a non-Steam shortcut: (shortcut app id << 32) | 0x02000000.
+SHORTCUT_APPID_FLAG = 0x02000000
 
 ole32 = ctypes.OleDLL('ole32')
 ole32.CoInitializeEx.argtypes = [ctypes.c_void_p, w.DWORD]
@@ -56,8 +67,28 @@ def project_name(project_file=PROJECT/'project.godot'):
     raise SystemExit(f'{project_file}: no config/name')
 
 
+def user_dir(project_file=PROJECT/'project.godot'):
+    """Godot's user:// folder: app_userdata/<name>, or a configured custom folder."""
+    settings = {}
+    for line in project_file.read_text('utf-8', 'replace').splitlines():
+        if line.startswith('application/config/'):
+            key, _, value = line.partition('=')
+            settings[key.strip()] = value.strip().strip('"')
+    appdata = Path(os.environ['APPDATA'])
+    custom = settings.get('application/config/custom_user_dir_name')
+    if custom and settings.get('application/config/use_custom_user_dir', '').lower() == 'true':
+        return appdata/custom
+    return appdata/'Godot'/'app_userdata'/project_name(project_file)
+
+
 def worlds_dir(project_file=PROJECT/'project.godot'):
-    return Path(os.environ['APPDATA'])/'Godot'/'app_userdata'/project_name(project_file)/'worlds'
+    return user_dir(project_file)/'worlds'
+
+
+def shortcut_names(project_file=PROJECT/'project.godot'):
+    """Both .lnk names, derived from the project name rather than fixed here."""
+    name = project_name(project_file)
+    return f'{name}.lnk', f'{name} Last World.lnk'
 
 
 def newest_world(directory):
@@ -167,13 +198,79 @@ def read_shortcut(link):
     return target, arguments.value
 
 
-def plan(folder, exe, slot):
-    """The two shortcuts this run will create or update."""
-    entries = [(folder/MAIN_SHORTCUT, launch_arguments(None),
-                f'Play TerraForest', 'TerraForest')]
+_STEAM = None
+
+
+def steam():
+    """The sibling tool that owns shortcuts.vdf, loaded once."""
+    global _STEAM
+    if _STEAM is None:
+        spec = importlib.util.spec_from_file_location('add_steam_shortcut',
+                                                      ROOT/'add_steam_shortcut.py')
+        if spec is None or spec.loader is None:
+            raise SystemExit(f'{ROOT}/add_steam_shortcut.py: cannot be imported')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _STEAM = module
+    return _STEAM
+
+
+def steam_entry(exe, name):
+    """(shortcuts file, fields) when Steam already has this game, else (None, None)."""
+    tool = steam()
+    for root in [p for p in tool.steam_roots() if (p/'userdata').is_dir()]:
+        for shortcut in tool.accounts(root):
+            try:
+                _, _, entries = tool.load(shortcut)
+            except (SystemExit, OSError):
+                continue
+            found = tool.find_entry(entries, name, exe)
+            if found:
+                index = next(iter(found))
+                return shortcut, found[index]
+    return None, None
+
+
+def long_app_id(appid):
+    """Steam's 64-bit "rungameid" form of a non-Steam shortcut id."""
+    return ((appid & 0xFFFFFFFF) << 32) | SHORTCUT_APPID_FLAG
+
+
+def steam_command(appid):
+    """Target and arguments that hand steam://rungameid/<id> to the client."""
+    return RUNDLL, ['url.dll,FileProtocolHandler', f'steam://rungameid/{long_app_id(appid)}']
+
+
+def plan(folder, slot, name=None, exe=None, entry=None, mode='auto'):
+    """Shortcuts to write: Steam when its entry launches what we ask, else native."""
+    name = name or project_name()
+    exe = exe or ROOT/f'{name}.exe'
+    appid = entry.get('appid') if entry else None
+    on_steam = isinstance(appid, int) and mode != 'native'
+    options = (entry or {}).get('LaunchOptions', '') or ''
+    plain = command_line(launch_arguments())
+    entries = []
+
+    if on_steam and (mode == 'steam' or options == plain):
+        target, arguments = steam_command(appid)
+        state = f'steam (appid {appid & 0xFFFFFFFF})'
+    else:
+        target, arguments, state = exe, launch_arguments(None), 'native'
+    entries.append({'link': folder/f'{name}.lnk', 'target': target,
+                    'arguments': arguments, 'description': f'Play {name}', 'mode': state})
+
     if slot:
-        entries.append((folder/WORLD_SHORTCUT, launch_arguments(slot),
-                        f'Continue {slot}', 'TerraForest Last World'))
+        world_arguments = launch_arguments(slot)
+        world_steam = on_steam and mode == 'steam' and \
+            options == command_line(world_arguments)
+        if world_steam:
+            target, arguments = steam_command(appid)
+            state = f'steam (appid {appid & 0xFFFFFFFF})'
+        else:
+            target, arguments, state = exe, world_arguments, 'native'
+        entries.append({'link': folder/f'{name} Last World.lnk', 'target': target,
+                        'arguments': arguments, 'description': f'Continue {slot}',
+                        'mode': state})
     return entries
 
 
@@ -181,10 +278,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--folder', type=Path, help='where to put the shortcuts (default: desktop)')
-    parser.add_argument('--exe', type=Path, default=ROOT/'TerraForest.exe',
+    parser.add_argument('--exe', type=Path, default=ROOT/f'{project_name()}.exe',
                         help='executable the shortcuts start')
     parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
     parser.add_argument('--slot', help='world slot for the last-world shortcut')
+    parser.add_argument('--launch', choices=('auto', 'steam', 'native'), default='auto',
+                        help='launch through Steam when it has the game (default: auto)')
     parser.add_argument('--dry-run', action='store_true', help='report without writing')
     args = parser.parse_args()
 
@@ -195,23 +294,42 @@ def main():
     if slot is None:
         print(f'warning  : no saved world in {args.worlds_dir or worlds_dir()}; '
               'only the plain shortcut is made')
+    name = project_name()
+    entry_file, fields = steam_entry(args.exe, name)
+    appid = (fields or {}).get('appid')
+    if fields is None:
+        print('steam    : not registered; shortcuts start the executable directly')
+    else:
+        options = fields.get('LaunchOptions') or '<none>'
+        number = appid & 0xFFFFFFFF if isinstance(appid, int) else '?'
+        print(f'steam    : {entry_file}  appid {number}  opts={options}')
     print(f'folder   : {folder}')
     print(f'exe      : {args.exe}')
     print(f'world    : {slot or "<none>"}')
 
     status = 0
-    for link, arguments, description, name in plan(folder, args.exe, slot):
-        existed = link.exists()
-        action = 'update' if existed else 'create'
+    for item in plan(folder, slot, name, args.exe, fields, args.launch):
+        link = item['link']
+        action = 'update' if link.exists() else 'create'
         if args.dry_run:
-            print(f'{action:8} : {link.name}\n           {arguments}')
+            print(f'{action:8} : {link.name} [{item["mode"]}]\n'
+                  f'           {item["target"]} {command_line(item["arguments"])}')
             continue
-        write_shortcut(link, args.exe, command_line(arguments), ROOT, description, args.exe)
+        write_shortcut(link, item['target'], command_line(item['arguments']), ROOT,
+                       item['description'], args.exe)
         target, stored = read_shortcut(link)
-        print(f'{action}d  : {link.name} -> {target}\n           {stored}')
-        if Path(target).resolve() != args.exe.resolve() or not stored:
+        print(f'{action}d  : {link.name} [{item["mode"]}] -> {target}\n           {stored}')
+        if Path(target).resolve() != item['target'].resolve() or not stored:
             print(f'warning  : {link.name} did not read back as expected', file=sys.stderr)
             status = 1
+    if fields is not None and args.launch != 'native':
+        expected = command_line(launch_arguments())
+        if (fields.get('LaunchOptions') or '') != expected:
+            print(f'note     : the Steam entry launches with '
+                  f'{fields.get("LaunchOptions") or "<no options>"!r}, so Steam cannot run '
+                  f'the game correctly. Give it this launch option (one argument):\n'
+                  f'           {expected}\n'
+                  f'           python add_steam_shortcut.py --launch-options <that value>')
     if args.dry_run:
         print('dry run  : nothing written')
     return status
