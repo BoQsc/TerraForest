@@ -14,11 +14,11 @@ edit the brand, not the PNGs.
 
 | Script | What it does |
 |---|---|
-| `install_to_steam.py` | copy the build, stamp the icon, register in Steam, then repair/recreate everything else: `--last-world` adds the second entry, `--artwork` installs the images, and the two desktop shortcuts are (re)created by default (`--no-desktop` skips them) |
-| `uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
-| `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
+| `steam/lib/install_to_steam.py` | copy the build, stamp the icon, register in Steam, then repair/recreate everything else: `--last-world` adds the second entry, `--artwork` installs the images, and the two desktop shortcuts are (re)created by default (`--no-desktop` skips them) |
+| `steam/lib/uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
+| `steam/add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
 
-All three are run from the project root, e.g. `python steam/install_to_steam.py --dry-run`.
+All three are run from the project root, e.g. `python steam/lib/install_to_steam.py --dry-run`.
 The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
 
 ### Layout
@@ -34,6 +34,8 @@ The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
 | `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
 | `steam/lib/steam_confirm.py` | the restart approval dialog (non-Steam shortcut, Steam restart) |
 | `steam/lib/steam_gui.py` | the windowed front end: approval and the same bar, no console |
+| `steam/lib/install_to_steam.py` | the install entry point (also behind `install_to_steam.pyw`) |
+| `steam/lib/uninstall_from_steam.py` | the uninstall entry point (also behind `uninstall_from_steam.pyw`) |
 
 ### Windowed launchers
 

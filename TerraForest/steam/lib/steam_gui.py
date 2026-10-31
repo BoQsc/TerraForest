@@ -207,8 +207,15 @@ class App:
 
 
 def load_tool(name):
-    """Import steam/<name>.py as a module, so its main() can be driven here."""
-    path = STEAM/f'{name}.py'
+    """Import the tool module, so its main() can be driven here.
+
+    Console scripts live in steam/lib/; anything left beside the launchers in steam/
+    is still found, so the lookup keeps working if a tool moves again.
+    """
+    path = next((folder/f'{name}.py' for folder in (STEAM/'lib', STEAM)
+                 if (folder/f'{name}.py').is_file()), None)
+    if path is None:
+        raise SystemExit(f'{name}.py: not found in steam/lib or steam')
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
         raise SystemExit(f'{path}: cannot be imported')
