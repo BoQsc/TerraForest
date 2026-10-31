@@ -10,9 +10,9 @@ name. No section entry, RVA, SizeOfImage or file length changes, and re-running
 the patch is idempotent.
 
 Usage:
-    python tools/app_icon/set_app_icon.py                  # patch the project executable
-    python tools/app_icon/set_app_icon.py --check          # verify without writing
-    python tools/app_icon/set_app_icon.py --exe dist/TerraForest.exe --icon other.ico
+    python steam/app_icon/set_app_icon.py                  # patch the project executable
+    python steam/app_icon/set_app_icon.py --check          # verify without writing
+    python steam/app_icon/set_app_icon.py --exe dist/TerraForest.exe --icon other.ico
 """
 from pathlib import Path
 import argparse

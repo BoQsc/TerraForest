@@ -17,10 +17,10 @@ world, chosen by the game itself (it orders saves by last played). Re-running th
 script rewrites both shortcuts in place.
 
 Usage:
-    python add_desktop_shortcuts.py               # create or update both
-    python add_desktop_shortcuts.py --dry-run     # report only
-    python add_desktop_shortcuts.py --launch steam  # force the Steam route
-    python add_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
+    python steam/add_desktop_shortcuts.py               # create or update both
+    python steam/add_desktop_shortcuts.py --dry-run     # report only
+    python steam/add_desktop_shortcuts.py --launch steam  # force the Steam route
+    python steam/add_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
 """
 from pathlib import Path
 import argparse
@@ -31,8 +31,8 @@ import sys
 import uuid
 from ctypes import wintypes as w
 
-ROOT = Path(__file__).resolve().parent
-PROJECT = ROOT
+# This file lives in steam/; the project it describes is one level up.
+PROJECT = Path(__file__).resolve().parent.parent
 WORLD_SCENE = 'res://demo/world.tscn'
 # The scene that reads --continue-last (the browser); it is also the main scene.
 BROWSER_SCENE = 'res://demo/worlds.tscn'
@@ -212,9 +212,9 @@ def steam():
     global _STEAM
     if _STEAM is None:
         spec = importlib.util.spec_from_file_location('steam_shortcuts',
-                                                      ROOT/'tools'/'steam_shortcuts.py')
+                                                      PROJECT/'tools'/'steam_shortcuts.py')
         if spec is None or spec.loader is None:
-            raise SystemExit(f'{ROOT}/tools/steam_shortcuts.py: cannot be imported')
+            raise SystemExit(f'{PROJECT}/tools/steam_shortcuts.py: cannot be imported')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         _STEAM = module
@@ -263,7 +263,7 @@ def plan(folder, slot=None, name=None, exe=None, plain_entry=None, world_entry=N
          mode='auto'):
     """Shortcuts to write: Steam when its entry launches what we ask, else native."""
     name = name or project_name()
-    exe = exe or ROOT/f'{name}.exe'
+    exe = exe or PROJECT/f'{name}.exe'
     entries = []
 
     plain = steam_route(plain_entry, command_line(launch_arguments()), mode)
@@ -293,7 +293,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--folder', type=Path, help='where to put the shortcuts (default: desktop)')
-    parser.add_argument('--exe', type=Path, default=ROOT/f'{project_name()}.exe',
+    parser.add_argument('--exe', type=Path, default=PROJECT/f'{project_name()}.exe',
                         help='executable the shortcuts start')
     parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
 
@@ -333,7 +333,7 @@ def main():
             print(f'{action:8} : {link.name} [{item["mode"]}]\n'
                   f'           {item["target"]} {command_line(item["arguments"])}')
             continue
-        write_shortcut(link, item['target'], command_line(item['arguments']), ROOT,
+        write_shortcut(link, item['target'], command_line(item['arguments']), PROJECT,
                        item['description'], args.exe)
         target, stored = read_shortcut(link)
         print(f'{action}d  : {link.name} [{item["mode"]}] -> {target}\n           {stored}')

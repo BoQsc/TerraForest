@@ -3,15 +3,15 @@
 
 1. copies the source Godot executable to `TerraForest.exe` (skipped when it is
    already there, unless `--force`),
-2. stamps the app icon into that copy's PE resources (`tools/app_icon`),
+2. stamps the app icon into that copy's PE resources (`steam/app_icon`),
 3. registers the copy as a Steam non-Steam shortcut (`tools/steam_shortcuts.py`),
    which stops Steam, writes `shortcuts.vdf` and starts Steam again.
 
 Usage:
-    python install_to_steam.py                # copy if needed, icon, add, restart
-    python install_to_steam.py --force        # re-copy the source first
-    python install_to_steam.py --dry-run      # report only, touch nothing
-    python install_to_steam.py --no-restart   # leave Steam stopped after the write
+    python steam/install_to_steam.py                # copy if needed, icon, add, restart
+    python steam/install_to_steam.py --force        # re-copy the source first
+    python steam/install_to_steam.py --dry-run      # report only, touch nothing
+    python steam/install_to_steam.py --no-restart   # leave Steam stopped after the write
 """
 from pathlib import Path
 import argparse
@@ -19,9 +19,10 @@ import importlib.util
 import shutil
 import sys
 
-ROOT = Path(__file__).resolve().parent
+# This file lives in steam/; the play build and tools/ are one level up.
+ROOT = Path(__file__).resolve().parent.parent
 TARGET = ROOT/'TerraForest.exe'
-ICON = ROOT/'tools'/'app_icon'/'terraforest.ico'
+ICON = ROOT/'steam'/'app_icon'/'terraforest.ico'
 GODOT_RELATIVE = Path('steamapps')/'common'/'Godot Engine'/'Godot Engine.exe'
 
 
@@ -35,7 +36,7 @@ def load(name, path):
     return module
 
 
-app_icon = load('set_app_icon', ROOT/'tools'/'app_icon'/'set_app_icon.py')
+app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
 steam_tool = load('steam_shortcuts', ROOT/'tools'/'steam_shortcuts.py')
 
 
@@ -76,7 +77,7 @@ def prepare(source, force, dry_run):
 def stamp(dry_run):
     """Apply the icon and verify the resources, reusing the app_icon tool."""
     if not ICON.is_file():
-        raise SystemExit(f'{ICON}: icon missing; run tools/app_icon/make_app_icon.py')
+        raise SystemExit(f'{ICON}: icon missing; run steam/app_icon/make_app_icon.py')
     if dry_run:
         problems, count, _ = app_icon.check(TARGET, ICON)
         state = 'already matches' if not problems else f'{len(problems)} problem(s)'

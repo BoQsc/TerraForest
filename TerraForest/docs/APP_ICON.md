@@ -7,7 +7,7 @@ be replaced in the built binary.
 
 ## Files
 
-Everything lives in `tools/app_icon/`:
+Everything lives in `steam/app_icon/`:
 
 | Path | Role |
 | --- | --- |
@@ -21,10 +21,10 @@ it into exports. `tools/` is outside the project's export filters.
 ## Use
 
 ```bat
-python tools/app_icon/make_app_icon.py --preview   :: rewrite the .ico (and a 256 px PNG)
-python tools/app_icon/set_app_icon.py              :: patch the project executable
-python tools/app_icon/set_app_icon.py --check      :: verify without writing
-python tools/app_icon/set_app_icon.py --exe dist\TerraForest.exe
+python steam/app_icon/make_app_icon.py --preview   :: rewrite the .ico (and a 256 px PNG)
+python steam/app_icon/set_app_icon.py              :: patch the project executable
+python steam/app_icon/set_app_icon.py --check      :: verify without writing
+python steam/app_icon/set_app_icon.py --exe dist\TerraForest.exe
 ```
 
 The icon defaults to the copy beside the script, and the executable defaults to
@@ -50,16 +50,16 @@ process its DPI awareness and comctl32 v6 visual styles, and drops
 ## Limits
 
 - A re-export writes a fresh template binary with Godot's icon again. Re-run
-  `tools/app_icon/set_app_icon.py --exe <export>` after exporting, or set the
+  `steam/app_icon/set_app_icon.py --exe <export>` after exporting, or set the
   preset's application icon once the project has an imported icon resource.
 - Explorer caches the icon per path. After a patch, an already-open window can
   keep drawing the old icon; renaming the file or refreshing the view shows the
-  new one. `python tools/app_icon/set_app_icon.py --check` is the honest test of
+  new one. `python steam/app_icon/set_app_icon.py --check` is the honest test of
   the binary itself.
 
 ## Licensing
 
 The tool code is 0BSD, like the rest of `tools/`. The icon is original CC0-1.0
-artwork drawn by `tools/app_icon/make_app_icon.py`; it contains no Godot logo,
+artwork drawn by `steam/app_icon/make_app_icon.py`; it contains no Godot logo,
 so it adds no attribution requirement beyond the project's existing inventory.
 Godot's own default icon, replaced here, is part of the exported engine binary.

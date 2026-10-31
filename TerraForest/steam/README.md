@@ -3,8 +3,20 @@
 Everything that decides how TerraForest appears in Steam lives here, so the choices are
 visible and reviewable before anything touches `shortcuts.vdf` or the Steam grid folder.
 
-Nothing in this folder is used by the installer yet — it is the source of truth to wire up
-next. Placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
+The three tools live here too, next to the resources they apply. `manifest.json` and
+`artwork/` are not read by the installer yet — they are the source of truth to wire up next.
+The placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
+
+## Tools
+
+| Script | What it does |
+|---|---|
+| `install_to_steam.py` | copy the build, stamp the icon, register in Steam (`--last-world` adds the second entry) |
+| `uninstall_from_steam.py` | remove both Steam entries in one pass, with backup and restart (`--list`, `--dry-run`, `--name`) |
+| `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
+
+All three are run from the project root, e.g. `python steam/install_to_steam.py --dry-run`.
+The shared `shortcuts.vdf` engine stays in `tools/steam_shortcuts.py`.
 
 ## Files
 

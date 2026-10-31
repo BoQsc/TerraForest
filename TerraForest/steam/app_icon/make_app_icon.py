@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: 0BSD
-"""Regenerate the TerraForest app icon (`tools/app_icon/terraforest.ico`).
+"""Regenerate the TerraForest app icon (`steam/app_icon/terraforest.ico`).
 
 The mark is original work: a conifer over terraced hills with a low sun, on a
 rounded tile so it reads on a dark taskbar and in Explorer's light view. It is
@@ -7,8 +7,8 @@ drawn at 1024 px and reduced, then saved with every size Explorer, the taskbar
 and alt-tab ask for.
 
 Usage:
-    python tools/app_icon/make_app_icon.py            # rewrite the tool's icon
-    python tools/app_icon/make_app_icon.py --out other.ico --preview
+    python steam/app_icon/make_app_icon.py            # rewrite the tool's icon
+    python steam/app_icon/make_app_icon.py --out other.ico --preview
 """
 from pathlib import Path
 import argparse

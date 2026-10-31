@@ -2,24 +2,26 @@
 """Remove the Steam shortcuts that install_to_steam.py put in the library.
 
 Uninstalling is its own entry point so nobody has to remember `--remove` on the
-add tool, and so the usual pair of entries (the plain launch and the "last world"
-launch) can be dropped together in one pass, with one Steam restart.
+shared engine (`tools/steam_shortcuts.py`), and so the usual pair of entries (the
+plain launch and the "last world" launch) can be dropped together in one pass,
+with one Steam restart.
 
 Both entries are removed by default. The executable is not touched, and neither
 are the desktop shortcuts (see add_desktop_shortcuts.py for those).
 
 Usage:
-    python uninstall_from_steam.py               # remove both entries
-    python uninstall_from_steam.py --dry-run     # report only
-    python uninstall_from_steam.py --list        # show what Steam has now
-    python uninstall_from_steam.py --name TerraForest
+    python steam/uninstall_from_steam.py               # remove both entries
+    python steam/uninstall_from_steam.py --dry-run     # report only
+    python steam/uninstall_from_steam.py --list        # show what Steam has now
+    python steam/uninstall_from_steam.py --name TerraForest
 """
 from pathlib import Path
 import argparse
 import importlib.util
 import sys
 
-ROOT = Path(__file__).resolve().parent
+# This file lives in steam/; tools/ and the play build are one level up.
+ROOT = Path(__file__).resolve().parent.parent
 MAIN_NAME = 'TerraForest'
 DEFAULT_NAMES = (MAIN_NAME, f'{MAIN_NAME} Last World')
 

@@ -4,7 +4,7 @@
   "exe": "TerraForest.exe",
   "launch_options": "--path \"<project>\"",
   "last_world_launch_options": "--path \"<project>\" res://demo/worlds.tscn -- --continue-last",
-  "icon": "tools/app_icon/terraforest.ico",
+  "icon": "steam/app_icon/terraforest.ico",
   "sortas": "TerraForest",
   "tags": ["World building", "Sandbox"],
   "overlay": true,
