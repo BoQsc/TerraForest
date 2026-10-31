@@ -1,0 +1,221 @@
+# SPDX-License-Identifier: 0BSD
+"""Put "TerraForest" and "TerraForest Last World" on the desktop, or refresh them.
+
+Both shortcuts start the play build the same way the game starts itself
+(`demo/world_launch.gd`): the executable plus `--path <project>`, and for a world
+`res://demo/world.tscn -- --world-slot=<slot> --ground-cover --actors
+--vehicle-fleet --max-fps=60`.
+
+*TerraForest* opens the world list. *TerraForest Last World* opens the most
+recently saved world, picked from `user://worlds` (`%APPDATA%\\Godot\\
+app_userdata\\<project>\\worlds`, newest `.trw` by modification time). Re-running
+the script rewrites both shortcuts in place, which is how the "last world" one
+gets updated after you play something else.
+
+Usage:
+    python create_desktop_shortcuts.py               # create or update both
+    python create_desktop_shortcuts.py --dry-run     # report only
+    python create_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
+"""
+from pathlib import Path
+import argparse
+import ctypes
+import os
+import sys
+import uuid
+from ctypes import wintypes as w
+
+ROOT = Path(__file__).resolve().parent
+PROJECT = ROOT
+MAIN_SHORTCUT = 'TerraForest.lnk'
+WORLD_SHORTCUT = 'TerraForest Last World.lnk'
+WORLD_SCENE = 'res://demo/world.tscn'
+WORLD_ARGS = ['--ground-cover', '--actors', '--vehicle-fleet', '--max-fps=60']
+
+ole32 = ctypes.OleDLL('ole32')
+ole32.CoInitializeEx.argtypes = [ctypes.c_void_p, w.DWORD]
+ole32.CoCreateInstance.argtypes = [ctypes.c_void_p, ctypes.c_void_p, w.DWORD,
+                                   ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p)]
+ole32.CoTaskMemFree.argtypes = [ctypes.c_void_p]
+shell32 = ctypes.WinDLL('shell32')
+shell32.SHGetKnownFolderPath.argtypes = [ctypes.c_void_p, w.DWORD, w.HANDLE,
+                                         ctypes.POINTER(ctypes.c_void_p)]
+shell32.SHGetKnownFolderPath.restype = ctypes.c_long
+CLSCTX_INPROC_SERVER = 1
+CLSID_SHELLLINK = '{00021401-0000-0000-C000-000000000046}'
+IID_ISHELLLINKW = '{000214F9-0000-0000-C000-000000000046}'
+IID_IPERSISTFILE = '{0000010B-0000-0000-C000-000000000046}'
+FOLDERID_DESKTOP = '{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}'
+
+
+def project_name(project_file=PROJECT/'project.godot'):
+    """config/name from project.godot, which is also the user:// folder name."""
+    for line in project_file.read_text('utf-8', 'replace').splitlines():
+        if line.startswith('config/name='):
+            return line.split('=', 1)[1].strip().strip('"')
+    raise SystemExit(f'{project_file}: no config/name')
+
+
+def worlds_dir(project_file=PROJECT/'project.godot'):
+    return Path(os.environ['APPDATA'])/'Godot'/'app_userdata'/project_name(project_file)/'worlds'
+
+
+def newest_world(directory):
+    """Newest saved world slot: the game orders by last_played, then by save time."""
+    if not directory.is_dir():
+        return None
+    worlds = sorted(directory.glob('*.trw'), key=lambda p: p.stat().st_mtime, reverse=True)
+    return worlds[0].stem if worlds else None
+
+
+def launch_arguments(slot=None):
+    """Engine and user arguments for the game's own launch line."""
+    base = ['--path', str(PROJECT)]
+    if slot is None:
+        return base
+    return base + ['--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
+                   WORLD_SCENE, '--', f'--world-slot={slot}'] + WORLD_ARGS
+
+
+def command_line(arguments):
+    """Windows command line for a .lnk: quote any argument containing a space."""
+    return ' '.join(f'"{argument}"' if ' ' in argument else argument
+                    for argument in arguments)
+
+
+def desktop_folder():
+    """The real desktop, honouring a redirected (OneDrive) profile."""
+    raw = ctypes.c_void_p()
+    guid = _guid(FOLDERID_DESKTOP)
+    if shell32.SHGetKnownFolderPath(ctypes.byref(guid), 0, None, ctypes.byref(raw)) == 0:
+        try:
+            return Path(ctypes.wstring_at(raw.value))
+        finally:
+            ole32.CoTaskMemFree(raw)
+    return Path(os.environ['USERPROFILE'])/'Desktop'
+
+
+class GUID(ctypes.Structure):
+    _fields_ = [('Data1', w.DWORD), ('Data2', w.WORD), ('Data3', w.WORD),
+                ('Data4', ctypes.c_ubyte * 8)]
+
+
+def _guid(text):
+    value = GUID()
+    ctypes.memmove(ctypes.byref(value), uuid.UUID(text).bytes_le, 16)
+    return value
+
+
+def _vtable_method(pointer, index, restype, *argtypes):
+    vtable = ctypes.cast(pointer, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
+    prototype = ctypes.WINFUNCTYPE(restype, ctypes.c_void_p, *argtypes)
+    return prototype(vtable[index])
+
+
+def _shell_link():
+    ole32.CoInitializeEx(None, 2)  # STA
+    pointer = ctypes.c_void_p()
+    clsid, iid = _guid(CLSID_SHELLLINK), _guid(IID_ISHELLLINKW)
+    result = ole32.CoCreateInstance(ctypes.byref(clsid), None, CLSCTX_INPROC_SERVER,
+                                    ctypes.byref(iid), ctypes.byref(pointer))
+    if result != 0 or not pointer:
+        raise SystemExit(f'CoCreateInstance(IShellLink) failed: 0x{result & 0xFFFFFFFF:08x}')
+    return pointer
+
+
+def write_shortcut(link, target, arguments, working_directory, description, icon):
+    """Create or overwrite one .lnk through IShellLink + IPersistFile."""
+    pointer = _shell_link()
+    for index, text in ((20, str(target)), (11, arguments), (9, str(working_directory)),
+                        (7, description)):
+        method = _vtable_method(pointer, index, ctypes.c_long, ctypes.c_wchar_p)
+        if method(pointer, text) != 0:
+            raise SystemExit(f'IShellLink call {index} failed for {link}')
+    icon_method = _vtable_method(pointer, 17, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)
+    icon_method(pointer, str(icon), 0)
+    show = _vtable_method(pointer, 15, ctypes.c_long, ctypes.c_int)
+    show(pointer, 1)  # SW_SHOWNORMAL
+
+    persist = ctypes.c_void_p()
+    query = _vtable_method(pointer, 0, ctypes.c_long, ctypes.c_void_p, ctypes.c_void_p)
+    iid = _guid(IID_IPERSISTFILE)
+    if query(pointer, ctypes.byref(iid), ctypes.byref(persist)) != 0 or not persist:
+        raise SystemExit(f'{link}: IPersistFile not available')
+    save = _vtable_method(persist, 6, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)
+    if save(persist, str(link), 1) != 0:
+        raise SystemExit(f'{link}: Save failed')
+
+
+def read_shortcut(link):
+    """(target, arguments) of an existing .lnk, for checking the result."""
+    pointer = _shell_link()
+    persist = ctypes.c_void_p()
+    query = _vtable_method(pointer, 0, ctypes.c_long, ctypes.c_void_p, ctypes.c_void_p)
+    iid = _guid(IID_IPERSISTFILE)
+    if query(pointer, ctypes.byref(iid), ctypes.byref(persist)) != 0 or not persist:
+        raise SystemExit(f'{link}: IPersistFile not available')
+    load = _vtable_method(persist, 5, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)
+    if load(persist, str(link), 0) != 0:
+        raise SystemExit(f'{link}: Load failed')
+    buffer = ctypes.create_unicode_buffer(1024)
+    _vtable_method(pointer, 3, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int,
+                   ctypes.c_void_p, w.DWORD)(pointer, buffer, 1024, None, 0)
+    target = buffer.value
+    arguments = ctypes.create_unicode_buffer(4096)
+    _vtable_method(pointer, 10, ctypes.c_long, ctypes.c_wchar_p, ctypes.c_int)(
+        pointer, arguments, 4096)
+    return target, arguments.value
+
+
+def plan(folder, exe, slot):
+    """The two shortcuts this run will create or update."""
+    entries = [(folder/MAIN_SHORTCUT, launch_arguments(None),
+                f'Play TerraForest', 'TerraForest')]
+    if slot:
+        entries.append((folder/WORLD_SHORTCUT, launch_arguments(slot),
+                        f'Continue {slot}', 'TerraForest Last World'))
+    return entries
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--folder', type=Path, help='where to put the shortcuts (default: desktop)')
+    parser.add_argument('--exe', type=Path, default=ROOT/'TerraForest.exe',
+                        help='executable the shortcuts start')
+    parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
+    parser.add_argument('--slot', help='world slot for the last-world shortcut')
+    parser.add_argument('--dry-run', action='store_true', help='report without writing')
+    args = parser.parse_args()
+
+    folder = args.folder or desktop_folder()
+    if not args.exe.is_file():
+        raise SystemExit(f'{args.exe}: missing; run install_to_steam.py first')
+    slot = args.slot or newest_world(args.worlds_dir or worlds_dir())
+    if slot is None:
+        print(f'warning  : no saved world in {args.worlds_dir or worlds_dir()}; '
+              'only the plain shortcut is made')
+    print(f'folder   : {folder}')
+    print(f'exe      : {args.exe}')
+    print(f'world    : {slot or "<none>"}')
+
+    status = 0
+    for link, arguments, description, name in plan(folder, args.exe, slot):
+        existed = link.exists()
+        action = 'update' if existed else 'create'
+        if args.dry_run:
+            print(f'{action:8} : {link.name}\n           {arguments}')
+            continue
+        write_shortcut(link, args.exe, command_line(arguments), ROOT, description, args.exe)
+        target, stored = read_shortcut(link)
+        print(f'{action}d  : {link.name} -> {target}\n           {stored}')
+        if Path(target).resolve() != args.exe.resolve() or not stored:
+            print(f'warning  : {link.name} did not read back as expected', file=sys.stderr)
+            status = 1
+    if args.dry_run:
+        print('dry run  : nothing written')
+    return status
+
+
+if __name__ == '__main__':
+    sys.exit(main())
