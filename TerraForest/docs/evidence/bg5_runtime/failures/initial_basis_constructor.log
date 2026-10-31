@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+
+SCRIPT ERROR: Parse Error: No constructor of "Basis" matches the signature "Basis(int, int, int, int, int, int, int, int, int)".
+   at: GDScript::reload (res://tools/bake_bg5_runtime.gd:92)
+ERROR: Failed to load script "res://tools/bake_bg5_runtime.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)

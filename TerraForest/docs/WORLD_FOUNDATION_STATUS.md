@@ -14,7 +14,7 @@ comparisons; do not claim universal seamlessness or a whole-frame speedup.
 ## Readable door content and GLB replacements — 2026-10-30
 
 The original door now has a JSON definition; an opt-in data-only pack adds a
-second right-hinged door using the existing simple mesh. External packs can
+second right-hinged door using the current built-in mesh. External packs can
 replace visuals with self-contained GLBs without gameplay code or editor import.
 Native placement, collision, hinge state and storage remain authoritative.
 The original ID/save section/v1 hinge bytes are preserved; missing door mods
@@ -22,12 +22,28 @@ refuse loading and disable writes instead of discarding saved objects.
 See the [authoring contract](DOOR_CONTENT.md) and
 [scoped tests, failures and limits](evidence/door_content/README.md).
 
-Replacement artwork is deliberately pending the user's GLBs. On receipt, check
-provenance under CONTRIBUTING, dimensions/pivot/materials, in-world appearance
-and source/pack startup cost before claiming visual or performance acceptance.
-No new replacement artwork, general object scripting, hot reload or automatic
-save migration is included. The native 10,000-placement check proves absence of
-per-placement nodes; it is not a dense-world frame-time qualification.
+The supplied BG5 door, chest, chair, table and bookshelf have now been admitted
+under the contributor's explicit CC0 confirmation. Editable masters are retained;
+offline runtime bakes preserve model IDs, canonical sizes and collision proxies.
+See [conversion contract and scoped evidence](BG5_RUNTIME_ASSETS.md).
+The door frame is prepared separately and is not automatically inserted into old
+worlds; automatic frame placement would require a separately designed native
+derived-visual contract, layout review and old-save/streaming/edit tests. Chest
+lid animation remains authoring-only until a bounded native interaction design
+is requested. No general object scripting, hot reload or automatic save migration
+is included. Human art acceptance and dense-world frame-time qualification with
+the new art remain open; revisit with the intended dense-world scene and require
+source/export frame-time, RAM/VRAM and visual evidence, not just node-count checks.
+
+The BG5 full-addon ZIP check also exposed an unresolved dependency-closure issue
+in the existing `tools/package.py`: unchanged scripts require omitted
+presentation, `demo/world_launch.gd`, ecosystem and vehicle files. See the
+[failed check](evidence/bg5_runtime/failures/standalone_bundle/load.log).
+The game export and portable GLBs pass; the current standalone structures ZIP
+is not qualified. This broader packaging repair is outside the supplied-model
+conversion. Before the next standalone addon release, update declared dependencies
+or decouple those host references, then require a fresh extracted import/load and
+structures interaction check with no main-project fallback.
 
 ## Public-domain-first policy and initial inventory — 2026-10-30
 

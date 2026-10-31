@@ -17,6 +17,8 @@ NOTICES = [
      "Original woodland stones, plants, grass and procedural textures are identified as 0BSD in the woodland sample's authoring notes."),
     ("vehicle", "Vehicle model and demo", "0BSD", "vehicle_demo/LICENSE.txt",
      "The supplied vehicle model and demo code were declared the author's own 0BSD work. Native bindings retain their separate MIT notice."),
+    ("bg5", "BG5 door and furniture assets", "CC0 1.0", "addons/structures/prefabs/BG5_LICENSE.md",
+     "User-supplied door, chest, chair, table and bookshelf masters and runtime derivatives, with explicit contributor CC0 authorization and retained source provenance."),
     ("terrain_textures", "Inherited terrain textures", "Retained source provenance", "addons/volumetric_terrain/terrain_textures/THIRD_PARTY_TEXTURES.md",
      "These inherited textures retain their source terms. The supplied note does not establish a new 0BSD or CC0 grant; consult the original asset metadata before reusing them separately."),
     ("godot_logo", "Godot logo and boot artwork", "CC BY 4.0", "assets/branding/GODOT_LOGO_LICENSE.txt",
@@ -46,7 +48,7 @@ def main():
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != content:
             parser.exit(1, "Credit notices are stale; run tools/build_credit_notices.py\n")
-        print("PASS: all 10 offline notices match their retained source files")
+        print(f"PASS: all {len(NOTICES)} offline notices match their retained source files")
     else:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_text(content, encoding="utf-8")

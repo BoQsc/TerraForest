@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "id": "bg5.door_visual",
+  "objects": [],
+  "replacements": [
+    {"id":"architecture/wooden_door/v1","visual":{"source":"door_leaf.glb"}}
+  ]
+}
