@@ -55,6 +55,25 @@ The first teardown-specific fixture attempted to reparent a live world and hit
 unrelated duplicate-disconnect errors; it was replaced by a fresh primary-world
 fixture. That rejected test record is retained too.
 
+## Earlier diagnostic findings
+
+The original handoff is retained in Git at `fd11ccf3`; this issue is now the
+canonical record. It reported the problem in `Copper_Creek` on Windows with
+Godot 4.7.2 Steam, Forward+ and borderless fullscreen. Keep these rejected
+approaches in mind if the bug returns:
+
+- Windows/Godot had already released capture before focus-out was delivered.
+  Reading `Input.mouse_mode` there lost the previous gameplay intent.
+- Pointer-inside-window checks reported an outside position immediately after
+  focus changes, even while the pointer was over the game, and blocked recapture.
+- A capture watchdog every 30 physics frames reclaimed the Esc menu cursor about
+  every half second. Ownership must be checked at the relevant transitions.
+- Foreground-window observations confirmed the game was activated after Alt+Tab;
+  capture intent and UI ownership, rather than forced activation, needed repair.
+
+The handoff's temporary diagnostic switches and working-tree reset advice are
+historical. Use the current reproduction commands below.
+
 ## Reproduce / remaining review
 
 ```powershell
