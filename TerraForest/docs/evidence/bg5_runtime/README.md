@@ -69,3 +69,24 @@ from the supplied CC0 assets with the repository's original diagnostic stage.
 Reproduction commands are in [BG5 runtime assets](../../BG5_RUNTIME_ASSETS.md).
 Logs from earlier unsuccessful checks remain visible; later passes do not erase
 their scope or imply user visual acceptance.
+
+## Shared-checkout integration
+
+The focused asset commit was integrated into the user's main checkout as
+`8677fe61`, after its existing icon/Steam-tool commits. All ten pre-existing
+modified/untracked files were verified byte-for-byte unchanged after export;
+the 14 native DLLs match the isolated validated checkout. The main checkout's
+unfinished vegetation configuration remains present and is outside this result.
+
+Its refreshed PCK passes [75 asset checks](shared_pack/console.log),
+[58 door/mod checks](shared_content/console.log) and the
+[rendered native preview](shared_preview/console.log). Respective manifests record
+the shared PCK hash and dirty-source state. The main PCK is 439,575,812 bytes;
+the slightly different isolated build above remains identified by its own hash.
+
+`dist/BG5-runtime.zip` in the main checkout contains the six self-contained GLBs,
+door replacement manifest, bake receipt, README, CC0 notice and provenance. Its
+17,616,891 bytes pass ZIP CRC and exact-entry comparisons; SHA-256:
+`816a8a9eb66bffc51315c5290f4fa6e44b9685ec6876ade7fa1d3c95496910bd`.
+This portable asset pack is separate from the broader standalone-addon archive
+whose dependency failure is recorded above.
