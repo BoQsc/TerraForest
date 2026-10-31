@@ -57,6 +57,10 @@ STEAM_START_TIMEOUT = 90
 # Polling granularity: Steam's own shutdown/boot dominates, so waiting in whole
 # seconds only added dead time at the end of each phase.
 POLL = 0.25
+# Measured: steam.exe appears almost at once, the first webhelper follows in ~0.1 s,
+# and the process set then settles for a couple of seconds. Waiting for that quiet
+# period is the closest thing to "Steam is ready" that Windows exposes.
+STEAM_SETTLE = 1.0
 # Launch Steam detached so our console closing cannot take the client with it.
 DETACHED_PROCESS = 0x00000008
 CREATE_NEW_PROCESS_GROUP = 0x00000200
@@ -133,13 +137,21 @@ def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
             return True
         if progress is not None:
             left = max(0.0, (deadline - time.time())/timeout)
-            progress.tick(1.0-left, f'{len(alive)} process(es) left: {", ".join(alive)}')
+            elapsed_fraction = 1.0-left
+            # Measured shutdown order: helpers go first, the client lingers ~0.3 s,
+            # then everything is gone.
+            if 'steamwebhelper.exe' not in alive:
+                progress.tick(max(0.5, elapsed_fraction), 'helpers closed, client exiting')
+            else:
+                progress.tick(min(0.5, elapsed_fraction),
+                              f'{len(alive)} process(es) left: {", ".join(alive)}')
         time.sleep(POLL)
     return False
 
 
-def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None):
-    """Start Steam again without waiting on it, then wait for the client process.
+def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
+                settle=STEAM_SETTLE):
+    """Start Steam again, then report the milestones measured in steam/traces.
 
     `steam.exe` becomes the client once it starts, so waiting for that process to
     exit - which `subprocess.run` does - blocks until Steam is closed again. That
@@ -161,14 +173,27 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None):
         print(f'warning  : could not launch Steam: {exc}', file=sys.stderr)
         return False
     deadline = time.time() + timeout
+    client_up = helpers_up = False
+    previous, stable_since = None, time.time()
     while time.time() < deadline:
-        if 'steam.exe' in steam_running():
+        alive = set(steam_running())
+        if 'steam.exe' in alive and not client_up:
+            client_up = True
             if progress is not None:
-                progress.tick(1.0, 'steam.exe is up')
+                progress.tick(0.2, 'client process up')
+        if 'steamwebhelper.exe' in alive and not helpers_up:
+            helpers_up = True
+            if progress is not None:
+                progress.tick(0.5, 'helpers up (library loading)')
+        if alive != previous:
+            previous, stable_since = alive, time.time()
+        elif client_up and time.time()-stable_since >= settle:
+            if progress is not None:
+                progress.tick(1.0, 'process set settled')
             return True
-        if progress is not None:
+        if progress is not None and not client_up:
             left = max(0.0, (deadline - time.time())/timeout)
-            progress.tick(1.0-left, 'waiting for steam.exe')
+            progress.tick(0.2*max(0.0, 1-left), 'waiting for steam.exe')
         time.sleep(POLL)
     return False
 

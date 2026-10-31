@@ -39,6 +39,25 @@ verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays sil
 output is piped, so scripts and tests keep their plain lines.
 Preview the stages without touching Steam: `python steam/steam_progress.py --demo`.
 
+### Measured phases
+
+`python steam/steam_trace.py --restart --json steam/traces/steam-boot.json` samples the
+process set every 100 ms across a real restart and records what actually happens. The
+last run (`steam/traces/steam-boot.json`):
+
+| Side | Observed sequence | Time |
+|---|---|---|
+| shutdown | helpers leave first | 1.32 s |
+| shutdown | `steam.exe` alone, exiting | 0.33 s |
+| shutdown | nothing left | 2.07 s |
+| boot | `steam.exe` alone | 0.11 s |
+| boot | `steam.exe` + `steamwebhelper.exe` | 2.08 s (settle window) |
+
+Totals on that run: stop 3.75 s, boot 2.21 s. The bar's stop stage therefore reports
+"helpers closed, client exiting" before the client goes, and the start stage reports
+"client process up" → "helpers up (library loading)" → "process set settled". Those
+labels are these measurements, not invented stages.
+
 ## Files
 
 | File | What it decides |
