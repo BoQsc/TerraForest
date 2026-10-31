@@ -235,7 +235,7 @@ def serialize_shortcuts(root_name, entries):
     return bytes(out)
 
 
-def shortcut_fields(name, exe, launch_options=''):
+def shortcut_fields(name, exe, launch_options='', icon='', tags=()):
     return {
         # The documented entry format carries its own app id; Steam rewrote a
         # file whose entries lack it, dropping them, so it is always written.
@@ -243,7 +243,7 @@ def shortcut_fields(name, exe, launch_options=''):
         'AppName': name,
         'Exe': f'"{exe}"',
         'StartDir': f'"{exe.parent}"',
-        'icon': '',
+        'icon': str(icon),
         'ShortcutPath': '',
         'LaunchOptions': launch_options,
         'IsHidden': 0,
@@ -256,7 +256,8 @@ def shortcut_fields(name, exe, launch_options=''):
         'LastPlayTime': 0,
         'FlatpakAppID': '',
         'sortas': '',
-        'tags': {},
+        # Steam reads this nested dictionary for collections/filters.
+        'tags': {str(tag): 1 for tag in tags},
     }
 
 
@@ -403,20 +404,41 @@ def set_launch_options(shortcut, name, exe, launch_options, dry_run=False, resta
                   f'updated  : entry {index} launch options', restart, force)
 
 
-def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=''):
+def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options='',
+        icon='', tags=()):
     data, root, entries = load(shortcut)
     duplicate = find_entry(entries, name, exe)
     if duplicate:
         index = next(iter(duplicate))
-        current = duplicate[index].get('LaunchOptions', '')
-        if launch_options and current != launch_options:
-            return set_launch_options(shortcut, name, exe, launch_options, dry_run,
-                                      restart, force)
-        print(f'"{name}" is already a shortcut in {shortcut} (index '
-              f'{index}); nothing to do')
-        return 0
+        fields = dict(duplicate[index])
+        wanted_tags = {str(tag): 1 for tag in tags}
+        changes = {}
+        if launch_options and fields.get('LaunchOptions', '') != launch_options:
+            changes['LaunchOptions'] = launch_options
+        if icon and str(icon) != fields.get('icon', ''):
+            changes['icon'] = str(icon)
+        if wanted_tags and fields.get('tags', {}) != wanted_tags:
+            changes['tags'] = wanted_tags
+        if not changes:
+            print(f'"{name}" is already a shortcut in {shortcut} (index '
+                  f'{index}); nothing to do')
+            return 0
+        fields.update(changes)
+        updated = dict(entries)
+        updated[index] = fields
+        candidate = serialize_shortcuts(root, updated)
+        check_root, check_entries = parse_shortcuts(candidate)
+        if check_root != root or len(check_entries) != len(entries) or \
+           any(check_entries[index].get(key) != value for key, value in changes.items()):
+            raise SystemExit('refusing to write: the candidate file failed its own round-trip check')
+        print(f'updated  : "{name}" {", ".join(sorted(changes))}')
+        if dry_run:
+            print('dry run  : nothing written, Steam untouched')
+            return 0
+        return commit(shortcut, data, candidate,
+                      f'updated  : entry {index} {", ".join(sorted(changes))}', restart, force)
     index = max((int(k) for k in entries), default=-1) + 1
-    fields = shortcut_fields(name, exe, launch_options)
+    fields = shortcut_fields(name, exe, launch_options, icon, tags)
     updated = dict(entries)
     updated[str(index)] = fields
     # Serialised from the parsed entries rather than spliced into the original

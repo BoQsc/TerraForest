@@ -26,6 +26,7 @@ TARGET = ROOT/'TerraForest.exe'
 ICON = ROOT/'steam'/'app_icon'/'terraforest.ico'
 MANIFEST = ROOT/'steam'/'manifest.json'
 ARTWORK = ROOT/'steam'/'artwork'
+BROWSER_SCENE = 'res://demo/worlds.tscn'
 GODOT_RELATIVE = Path('steamapps')/'common'/'Godot Engine'/'Godot Engine.exe'
 
 
@@ -100,12 +101,14 @@ def stamp(dry_run):
 def register(dry_run, name, restart, force, steam, account, last_world=False):
     """Add the shortcut through the Steam tool; it owns the restart and the backup."""
     shortcut = shortcut_file(steam, account)
+    tags = tuple(json.loads(MANIFEST.read_text('utf-8')).get('tags', ()))
+    icon = str(ICON)
     code = steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
-                          launch_options())
+                          launch_options(), icon, tags)
     if code == 0 and last_world:
         # A second entry, because one Steam entry cannot express two command lines.
         code = steam_tool.add(shortcut, f'{name} Last World', TARGET.resolve(), dry_run,
-                              restart, force, launch_options('--continue-last'))
+                              restart, force, launch_options('--continue-last'), icon, tags)
     return code
 
 
@@ -149,8 +152,14 @@ def install_artwork(shortcut, names, dry_run):
 
 
 def launch_options(suffix=''):
-    """The editor binary needs --path, or Steam opens the project manager instead."""
-    return f'--path "{ROOT}"' + (f' {suffix}' if suffix else '')
+    """The editor binary needs --path; a user flag must follow `--` to reach the game."""
+    line = f'--path "{ROOT}"'
+    if suffix:
+        # The browser scene resolves --continue-last. Before `--` the engine keeps the
+        # flag as an unknown engine argument, so the game never sees it and opens the
+        # world list - that was the "Last World" regression.
+        line += f' {BROWSER_SCENE} -- {suffix}'
+    return line
 
 
 def main():
