@@ -1,0 +1,27 @@
+{
+  "name": "TerraForest",
+  "last_world_name": "TerraForest Last World",
+  "exe": "TerraForest.exe",
+  "launch_options": "--path \"<project>\"",
+  "last_world_launch_options": "--path \"<project>\" res://demo/worlds.tscn -- --continue-last",
+  "icon": "tools/app_icon/terraforest.ico",
+  "sortas": "TerraForest",
+  "tags": ["World building", "Sandbox"],
+  "overlay": true,
+  "desktop_config": true,
+  "hidden": false,
+  "artwork": {
+    "portrait.png": "{appid}.png",
+    "wide.png": "{appid}p.png",
+    "hero.png": "{appid}_hero.png",
+    "logo.png": "{appid}_logo.png",
+    "icon.png": "{appid}_icon.png"
+  },
+  "artwork_sizes": {
+    "portrait.png": [600, 900],
+    "wide.png": [920, 430],
+    "hero.png": [1920, 620],
+    "logo.png": [1000, 300],
+    "icon.png": [256, 256]
+  }
+}
