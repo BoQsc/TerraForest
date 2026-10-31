@@ -42,6 +42,7 @@ def load(name, path):
 
 app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
 steam_tool = load('steam_shortcuts', ROOT/'steam'/'steam_shortcuts.py')
+log_tool = load('install_log', ROOT/'steam'/'install_log.py')
 
 
 def godot_sources():
@@ -151,6 +152,30 @@ def install_artwork(shortcut, names, dry_run):
     return 0
 
 
+def repair_missing(shortcut, names, dry_run):
+    """Steam can rewrite shortcuts.vdf and drop an entry; put it back and say so."""
+    _, _, entries = steam_tool.load(shortcut)
+    present = {(fields.get('AppName') or '').strip() for fields in entries.values()}
+    missing = [name for name in names if name not in present]
+    if not missing:
+        print(f'checked  : {", ".join(names)} present in shortcuts.vdf')
+        return 0
+    if dry_run:
+        print(f'repair   : would re-add {", ".join(missing)} (dry run)')
+        log_tool.warn(f'Steam dropped {", ".join(missing)} (dry run: not re-added)')
+        return 0
+    print(f'repair   : Steam dropped {", ".join(missing)}; re-adding')
+    log_tool.warn(f'Steam dropped {", ".join(missing)}; re-added')
+    tags = tuple(json.loads(MANIFEST.read_text('utf-8')).get('tags', ()))
+    for name in missing:
+        options = launch_options() if name == names[0] else launch_options('--continue-last')
+        code = steam_tool.add(shortcut, name, TARGET.resolve(), False, True, False,
+                              options, str(ICON), tags)
+        if code != 0:
+            return code
+    return 0
+
+
 def launch_options(suffix=''):
     """The editor binary needs --path; a user flag must follow `--` to reach the game."""
     line = f'--path "{ROOT}"'
@@ -179,9 +204,20 @@ def main():
     parser.add_argument('--account', help='Steam account id under userdata')
     parser.add_argument('--progress', choices=('auto', 'bar', 'plain', 'off'), default='auto',
                         help='restart display: auto (bar on a terminal), bar, plain, off')
+    parser.add_argument('--desktop', action=argparse.BooleanOptionalAction, default=True,
+                        help='also (re)create the desktop shortcuts (default: yes)')
+    parser.add_argument('--desktop-folder', type=Path,
+                        help='desktop folder to write into (default: the real desktop)')
+    parser.add_argument('--log', type=Path, help='run log file (default: steam/logs/install.log)')
+    parser.add_argument('--no-log', action='store_true', help='do not write the run log')
     args = parser.parse_args()
     steam_tool.PROGRESS_MODE = args.progress
+    with log_tool.run('install_to_steam', sys.argv[1:], args.log, enabled=not args.no_log):
+        return deploy(args)
 
+
+def deploy(args):
+    """The actual install, run inside the log context."""
     source = args.source or next(iter(godot_sources()), None)
     print(f'source   : {source or "<none found>"}')
     prepare(source, args.force, args.dry_run)
@@ -189,11 +225,17 @@ def main():
         raise SystemExit(f'{TARGET.name}: nothing to stamp; no source was copied')
     if not stamp(args.dry_run):
         raise SystemExit('icon stamping failed; the shortcut was not touched')
+    names = [args.name] + ([f'{args.name} Last World'] if args.last_world else [])
+    shortcut = shortcut_file(args.steam, args.account)
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
                     args.steam, args.account, args.last_world)
+    if code == 0:
+        code = repair_missing(shortcut, names, args.dry_run)
     if code == 0 and args.artwork:
-        names = [args.name] + ([f'{args.name} Last World'] if args.last_world else [])
-        code = install_artwork(shortcut_file(args.steam, args.account), names, args.dry_run)
+        code = install_artwork(shortcut, names, args.dry_run)
+    if code == 0 and args.desktop:
+        desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
+        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run)
     if code == 0:
         print('done     : TerraForest is prepared and registered')
     return code

@@ -42,6 +42,7 @@ TOOL_DIR = Path(__file__).resolve().parent
 if str(TOOL_DIR) not in sys.path:
     sys.path.insert(0, str(TOOL_DIR))
 import steam_progress  # noqa: E402
+import install_log  # noqa: E402
 
 # Lives in tools/; the play build is one level up next to project.godot.
 ROOT = Path(__file__).resolve().parent.parent
@@ -474,12 +475,14 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None,
             print(f'refusing : a Steam game session looks active ({", ".join(running)}); '
                   'stopping Steam would end it.\n'
                   '           Finish the game, or pass --force.', file=sys.stderr)
+            install_log.warn('refused: a game session was active')
             bar.abort('refused: a game session is active')
             return 2
         print(f'stopping : Steam ({", ".join(running)}) so it cannot overwrite the file')
         bar.stage('stop', f'closing {", ".join(running)}')
         if not stop_steam(steam, progress=bar):
             print('refusing : Steam did not exit in time; nothing written', file=sys.stderr)
+            install_log.warn('Steam did not exit in time; nothing written')
             bar.abort('failed: Steam did not exit')
             return 2
     else:
@@ -513,6 +516,7 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None,
             status = verify_after_restart(shortcut, bar)
         else:
             print('warning  : Steam did not start again; start it yourself', file=sys.stderr)
+            install_log.warn('Steam did not start again')
             bar.abort('warning: Steam did not start')
             status = 1
     else:
@@ -540,6 +544,7 @@ def verify_after_restart(shortcut, bar):
     if entries is None:
         print('warning  : could not re-read shortcuts.vdf yet; Steam may still be '
               'writing it', file=sys.stderr)
+        install_log.warn('could not re-read shortcuts.vdf after the restart')
         bar.tick(1.0, 'unreadable')
         return 1
     print(f'checked  : shortcuts.vdf still holds {len(entries)} entry(ies)')
@@ -655,6 +660,7 @@ def remove_all(shortcut, names, exe, dry_run, restart=True, force=False, after_w
         found = find_entry(entries, name, exe)
         if not found:
             print(f'missing  : no "{name}" entry in {shortcut}')
+            install_log.warn(f'entry "{name}" was missing when removing')
             continue
         victims.update(found)
     if not victims:

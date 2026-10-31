@@ -4,3 +4,4 @@ reports/
 dist/
 *.tmp.*
 __pycache__/
+steam/logs/

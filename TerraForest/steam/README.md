@@ -14,7 +14,7 @@ edit the brand, not the PNGs.
 
 | Script | What it does |
 |---|---|
-| `install_to_steam.py` | copy the build, stamp the icon, register in Steam (`--last-world` adds the second entry, `--artwork` installs the images) |
+| `install_to_steam.py` | copy the build, stamp the icon, register in Steam, then repair/recreate everything else: `--last-world` adds the second entry, `--artwork` installs the images, and the two desktop shortcuts are (re)created by default (`--no-desktop` skips them) |
 | `uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
 | `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
 
@@ -84,6 +84,24 @@ Steam lives in the tray) → held for 2 s of grace. A live run reports:
 ```
 
 If no window appears within 20 s the tool says so and continues rather than hanging.
+
+### Entries Steam drops
+
+Steam rewrites `shortcuts.vdf` on its own schedule and has been seen dropping the second
+entry ("… Last World") while keeping the first, which left a library with one shortcut
+after a while. Restart-loop measurement (three full shutdown/boot cycles with a freshly
+added entry) kept both entries every time, so the loss is not a plain restart: it has only
+been observed after an in-place update of an existing entry.
+
+Because the cause is Steam's own rewrite, install defends against it: after registering it
+re-reads the file and reports
+
+```
+checked  : TerraForest, TerraForest Last World present in shortcuts.vdf
+```
+
+or, when something is missing, re-adds it and says so
+(`repair   : Steam dropped …, re-adding`). A dry run reports `would re-add` instead.
 
 ## Files
 

@@ -59,6 +59,17 @@ def desktop_tool():
     return module
 
 
+def log_tool():
+    """Import install_log.py, which owns the run log."""
+    path = ROOT/'steam'/'install_log.py'
+    spec = importlib.util.spec_from_file_location('install_log', path)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f'{path}: cannot be imported')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def remove_artwork(shortcut, names, exe, dry_run, tool):
     """Delete the grid images install_to_steam.py copied, named by each entry's app id."""
     mapping = json.loads(MANIFEST.read_text('utf-8'))['artwork']
@@ -106,10 +117,19 @@ def main():
                         help='also delete the desktop shortcuts (default: yes; --no-desktop keeps them)')
     parser.add_argument('--desktop-folder', type=Path,
                         help='desktop folder to clean (default: the real desktop)')
+    parser.add_argument('--log', type=Path, help='run log file (default: steam/logs/install.log)')
+    parser.add_argument('--no-log', action='store_true', help='do not write the run log')
     args = parser.parse_args()
 
     tool = add_tool()
     tool.PROGRESS_MODE = args.progress
+    with log_tool().run('uninstall_from_steam', sys.argv[1:], args.log,
+                        enabled=not args.no_log):
+        return deploy(args, tool, parser)
+
+
+def deploy(args, tool, parser):
+    """The actual removal, run inside the log context."""
     steam = args.steam or next((p for p in tool.steam_roots() if (p/'userdata').is_dir()), None)
     if steam is None:
         parser.error('Steam install not found; pass --steam PATH')

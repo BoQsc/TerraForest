@@ -111,6 +111,28 @@ def remove_shortcuts(folder=None, dry_run=False):
     return 0
 
 
+def create_shortcuts(folder=None, dry_run=False, launch='auto', exe=None):
+    """Write both .lnk files with the same plan main() uses; for other tools to call."""
+    executable = exe or PROJECT/f'{project_name()}.exe'
+    if not executable.is_file():
+        raise SystemExit(f'{executable}: missing; run install_to_steam.py first')
+    target = folder or desktop_folder()
+    name = project_name()
+    plain_file, plain_fields = steam_entry(executable, name)
+    world_file, world_fields = steam_entry(executable, f'{name} Last World')
+    for item in plan(target, newest_world(worlds_dir()), name, executable,
+                     plain_fields, world_fields, launch):
+        link = item['link']
+        action = 'update' if link.exists() else 'create'
+        if dry_run:
+            print(f'{action:8} : {link.name} [{item["mode"]}] (dry run)')
+            continue
+        write_shortcut(link, item['target'], command_line(item['arguments']), PROJECT,
+                       item['description'], executable)
+        print(f'{action}d  : {link.name} [{item["mode"]}]')
+    return 0
+
+
 def newest_world(directory):
     """Newest saved world slot: the game orders by last_played, then by save time."""
     if not directory.is_dir():
