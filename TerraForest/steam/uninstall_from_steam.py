@@ -9,8 +9,12 @@ with one Steam restart.
 Both entries are removed by default. The executable is not touched, and neither
 are the desktop shortcuts (see add_desktop_shortcuts.py for those).
 
+`--artwork` also deletes the grid images install_to_steam.py copied, matching
+them by each entry's app id.
+
 Usage:
     python steam/uninstall_from_steam.py               # remove both entries
+    python steam/uninstall_from_steam.py --artwork     # and their grid images
     python steam/uninstall_from_steam.py --dry-run     # report only
     python steam/uninstall_from_steam.py --list        # show what Steam has now
     python steam/uninstall_from_steam.py --name TerraForest
@@ -18,10 +22,12 @@ Usage:
 from pathlib import Path
 import argparse
 import importlib.util
+import json
 import sys
 
 # This file lives in steam/; tools/ and the play build are one level up.
 ROOT = Path(__file__).resolve().parent.parent
+MANIFEST = ROOT/'steam'/'manifest.json'
 MAIN_NAME = 'TerraForest'
 DEFAULT_NAMES = (MAIN_NAME, f'{MAIN_NAME} Last World')
 
@@ -42,6 +48,29 @@ def target_names(requested=None):
     return tuple(requested) if requested else DEFAULT_NAMES
 
 
+def remove_artwork(shortcut, names, exe, dry_run, tool):
+    """Delete the grid images install_to_steam.py copied, named by each entry's app id."""
+    mapping = json.loads(MANIFEST.read_text('utf-8'))['artwork']
+    grid = shortcut.parent/'grid'
+    if not grid.is_dir():
+        print('artwork  : no grid folder; nothing to remove')
+        return 0
+    removed = 0
+    for name in names:
+        appid = tool.shortcut_appid(str(exe), name)
+        for pattern in mapping.values():
+            target = grid/pattern.replace('{appid}', str(appid))
+            if not target.is_file():
+                continue
+            print(f'artwork  : remove {target.name}')
+            if not dry_run:
+                target.unlink()
+            removed += 1
+    print(f'artwork  : {removed} file(s) {"would be removed" if dry_run else "removed"}'
+          f' from {grid}')
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -52,6 +81,8 @@ def main():
     parser.add_argument('--steam', type=Path, help='Steam install directory')
     parser.add_argument('--account', help='Steam account id under userdata')
     parser.add_argument('--list', action='store_true', help='list the entries and exit')
+    parser.add_argument('--artwork', action='store_true',
+                        help='also delete the grid images install_to_steam.py copied')
     parser.add_argument('--dry-run', action='store_true',
                         help='report without touching shortcuts.vdf or Steam')
     parser.add_argument('--no-restart', action='store_true',
@@ -77,10 +108,15 @@ def main():
     if args.list:
         _, _, entries = tool.load(shortcut)
         print(f'{shortcut}: {len(entries)} shortcut(s)')
+        grid = shortcut.parent/'grid'
+        mapping = json.loads(MANIFEST.read_text('utf-8'))['artwork']
         for index, fields in sorted(entries.items(), key=lambda item: int(item[0])):
             appid = fields.get('appid')
             tag = f'[{appid & 0xFFFFFFFF}]' if isinstance(appid, int) else '[no appid]'
-            print(f'  {index}: {fields.get("AppName")}  {fields.get("Exe")}  {tag}')
+            present = sum(1 for pattern in mapping.values()
+                          if (grid/pattern.replace('{appid}', str(appid & 0xFFFFFFFF))).is_file())
+            print(f'  {index}: {fields.get("AppName")}  {fields.get("Exe")}  {tag}'
+                  f'  artwork {present}/{len(mapping)}')
         return 0
 
     exe = args.exe or next((p for p in tool.CANDIDATE_EXES if p.exists()), None)
@@ -92,8 +128,11 @@ def main():
     print(f'file     : {shortcut}')
     print(f'exe      : {exe}')
     print(f'entries  : {", ".join(names)}')
-    return tool.remove_all(shortcut, names, exe, args.dry_run,
+    code = tool.remove_all(shortcut, names, exe, args.dry_run,
                            not args.no_restart, args.force)
+    if code == 0 and args.artwork:
+        code = remove_artwork(shortcut, names, exe, args.dry_run, tool)
+    return code
 
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@ Usage:
 from pathlib import Path
 import argparse
 import importlib.util
+import json
 import shutil
 import sys
 
@@ -23,6 +24,8 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 TARGET = ROOT/'TerraForest.exe'
 ICON = ROOT/'steam'/'app_icon'/'terraforest.ico'
+MANIFEST = ROOT/'steam'/'manifest.json'
+ARTWORK = ROOT/'steam'/'artwork'
 GODOT_RELATIVE = Path('steamapps')/'common'/'Godot Engine'/'Godot Engine.exe'
 
 
@@ -96,15 +99,7 @@ def stamp(dry_run):
 
 def register(dry_run, name, restart, force, steam, account, last_world=False):
     """Add the shortcut through the Steam tool; it owns the restart and the backup."""
-    root = steam or next((p for p in steam_tool.steam_roots() if (p/'userdata').is_dir()), None)
-    if root is None:
-        raise SystemExit('Steam install not found; pass --steam PATH')
-    if account:
-        shortcut = root/'userdata'/account/'config'/'shortcuts.vdf'
-        if not shortcut.is_file():
-            raise SystemExit(f'no shortcuts.vdf for account {account}')
-    else:
-        shortcut = steam_tool.accounts(root)[0]
+    shortcut = shortcut_file(steam, account)
     code = steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
                           launch_options())
     if code == 0 and last_world:
@@ -112,6 +107,45 @@ def register(dry_run, name, restart, force, steam, account, last_world=False):
         code = steam_tool.add(shortcut, f'{name} Last World', TARGET.resolve(), dry_run,
                               restart, force, launch_options('--continue-last'))
     return code
+
+
+def shortcut_file(steam, account):
+    """The shortcuts.vdf this install writes; resolved once for register and artwork."""
+    root = steam or next((p for p in steam_tool.steam_roots() if (p/'userdata').is_dir()), None)
+    if root is None:
+        raise SystemExit('Steam install not found; pass --steam PATH')
+    if account:
+        shortcut = root/'userdata'/account/'config'/'shortcuts.vdf'
+        if not shortcut.is_file():
+            raise SystemExit(f'no shortcuts.vdf for account {account}')
+        return shortcut
+    return steam_tool.accounts(root)[0]
+
+
+def install_artwork(shortcut, names, dry_run):
+    """Copy the brand artwork into Steam's grid folder, named by each entry's app id."""
+    manifest = json.loads(MANIFEST.read_text('utf-8'))
+    mapping = manifest['artwork']
+    grid = shortcut.parent/'grid'
+    executable = str(TARGET.resolve())
+    written = 0
+    for name in names:
+        appid = steam_tool.shortcut_appid(executable, name)
+        for role, pattern in mapping.items():
+            source = ARTWORK/role
+            if not source.is_file():
+                raise SystemExit(f'{source}: missing; run python steam/brand/make_brand_artwork.py')
+            target = grid/pattern.replace('{appid}', str(appid))
+            fresh = target.is_file() and target.read_bytes() == source.read_bytes()
+            print(f'artwork  : {role:14} -> {target.name} ({"up to date" if fresh else "copy"})')
+            if dry_run or fresh:
+                continue
+            grid.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(source.read_bytes())
+            written += 1
+    print(f'artwork  : {grid} (dry run, nothing written)' if dry_run
+          else f'artwork  : {written} file(s) written to {grid}')
+    return 0
 
 
 def launch_options(suffix=''):
@@ -130,6 +164,8 @@ def main():
     parser.add_argument('--no-restart', action='store_true', help='leave Steam stopped')
     parser.add_argument('--last-world', action='store_true',
                         help='also register the "Last World" entry (--continue-last)')
+    parser.add_argument('--artwork', action='store_true',
+                        help="copy steam/artwork into Steam's grid folder for each entry")
     parser.add_argument('--steam', type=Path, help='Steam install directory')
     parser.add_argument('--account', help='Steam account id under userdata')
     args = parser.parse_args()
@@ -143,6 +179,9 @@ def main():
         raise SystemExit('icon stamping failed; the shortcut was not touched')
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
                     args.steam, args.account, args.last_world)
+    if code == 0 and args.artwork:
+        names = [args.name] + ([f'{args.name} Last World'] if args.last_world else [])
+        code = install_artwork(shortcut_file(args.steam, args.account), names, args.dry_run)
     if code == 0:
         print('done     : TerraForest is prepared and registered')
     return code
