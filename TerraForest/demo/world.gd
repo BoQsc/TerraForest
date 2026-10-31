@@ -876,6 +876,23 @@ func _set_player_tool_mode(building: bool,objects: bool,terrain_tool: int) -> bo
 	_show_lake_notice(player_hud.CATALOG.get(player_hud.active_item,"Terrain editing"))
 	return true
 
+func _ui_owns_cursor() -> bool:
+	return session_menu.visible_ui() or player_hud.inventory_open or storage.opened or corpse_loot.ui.opened or vehicle_radial.opened or (session_menu.player_actions!=null and session_menu.player_actions.opened) or (session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access) or (session_menu.confirmation!=null and session_menu.confirmation.visible) or construction_palette.survey_dialog.visible or construction_palette.frontage_dialog.visible
+
+func _restore_gameplay_mouse(attempts:int=4) -> void:
+	# Event-driven: world ready or main-window focus returned. Windows can release
+	# capture before focus-out, so current mouse mode cannot represent play intent.
+	if not is_inside_tree() or get_viewport()!=get_tree().root or ProjectSettings.get_setting("terraforest/offscreen_session",false):return
+	if loading_active or shutdown_requested or session_menu.leaving_world:return
+	# Keep play intent through menus so closing one after Alt-Tab can capture.
+	mouse_capture_requested=true
+	if not app_focused or _ui_owns_cursor():return
+	if Mouse.set_mode(self,Input.MOUSE_MODE_CAPTURED) or attempts<=1:return
+	# Native focus can settle after its notification. A bounded, bound callback
+	# rechecks UI ownership and disconnects automatically if the world is freed.
+	var retry:=_restore_gameplay_mouse.bind(attempts-1)
+	if not get_tree().process_frame.is_connected(retry):get_tree().process_frame.connect(retry,CONNECT_ONE_SHOT)
+
 func _movement_input_available() -> bool:
 	if session_menu!=null and session_menu.pauses_world():return false
 	return super._movement_input_available() or (world_map!=null and world_map.opened) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
@@ -1678,7 +1695,9 @@ func _prefab_placement_text(asset: Resource) -> String:
 func _update_loading() -> void:
 	if not loading_active:return
 	super._update_loading()
-	if not loading_active:player_hud.equip_first_tool_if_unselected()
+	if not loading_active:
+		player_hud.equip_first_tool_if_unselected()
+		_restore_gameplay_mouse()
 
 func _additional_loading_diagnostics() -> Dictionary:
 	# Constant-sized summaries. Never copy instance buffers or scan the world.

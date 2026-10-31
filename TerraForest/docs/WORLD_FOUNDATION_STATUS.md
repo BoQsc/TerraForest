@@ -1,6 +1,22 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## No-click world entry and Alt+Tab return — 2026-10-31
+
+The user's current report supersedes October 28's click-to-play policy. That
+policy blocked both world-ready capture and the earlier Alt-tool focus recovery.
+The world now restores capture on readiness/focus return after checking actual UI
+ownership, with bounded native-focus retries and no periodic watchdog. Source
+checks pass: 36 focus/input assertions, 42 including real Windows Alt+Tab, 16
+hidden-world ownership/teardown assertions, and the Esc interface matrix. The
+rebuilt installed PCK also passes all 42 focus assertions and both OS round trips.
+Retries disconnect on scene disposal. Menus retain
+their cursor and background worlds make zero global mouse-mode changes.
+[Current evidence and prior rejected behavior](../issues/mouse-capture/README.md).
+Player review of the normal Last World/Steam route is still pending; close that
+review only after no-click load/Alt+Tab plus usable Esc-menu cursor are confirmed.
+Return on a regression or a new modal interface; preserve the event-driven policy.
+
 ## Vegetation invalidation during travel — 2026-10-30
 
 Unchanged block/model paging no longer invalidates every nearby vegetation owner
@@ -488,8 +504,8 @@ separate from the approved building design; see linked evidence and limitations.
 
 Completed and installed after the approved C1 integration, in four focused changes.
 These scoped engineering checks do not replace player visual/feel approval.
-- Mouse: click-to-play capture implemented; 13 headless checks pass. No automatic
-  loading/focus recapture. [Desktop review remains](../issues/mouse-capture/README.md).
+- Mouse: historical click-to-play policy; **superseded 2026-10-31** by the user's
+  no-click load/focus requirement. [Current verification](../issues/mouse-capture/README.md).
 - Ore: native generation now bakes continuous matching material below every marker;
   eight seed/profile cases and generated earthworks pass. Existing saves unchanged.
   [Verification and review limits](../issues/material-veins/README.md).

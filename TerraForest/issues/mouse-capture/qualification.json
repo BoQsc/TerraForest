@@ -1,0 +1,372 @@
+{
+  "date": "2026-10-31",
+  "status": "Fixed for reproduced source and installed-package cases; player review pending",
+  "provenance": "Local Godot 4.7.2 Windows test output. Original code/tests AI-assisted with Codex; no imported implementation or assets.",
+  "limits": "Temporary-world tests and actual Windows Alt-Tab; normal Steam overlay/Last World user route not personally reviewed.",
+  "runtime_and_test_sha256": {
+    "demo/controller.gd": "cbcb35ba369d5fe131dfee1c4115cbcbc3d7cc0f0b44ed51a93eb423bcae2e11",
+    "demo/world.gd": "cd651d2a01c85ce06e3050f31fb3d4bc4fd352360bdbbf0175dbdcbe584cdbd2",
+    "addons/player_runtime/developer_hud.gd": "4c82bed7337e0c72167fc05de809484e01135aca428985414f71dd6f26a7375a",
+    "tests/focus_return.gd": "068c3472fb9335b88fb347c0e9888cb9e1c94e24bc691b22350c070c6b04f40e",
+    "tests/loading_mouse_ownership.gd": "ab7c403c7f2e5bdaf3989f1d74f75f35fb986e0f18004254c08045fe5cfe6c1d",
+    "tools/check_focus_desktop.py": "06a2fbda27a9845ae3f187656b94c432d8c617670ce074c9f6bd57b58565408b"
+  },
+  "installed_pack_sha256": "75cf0c2eb28b8b63984c7fa0aaa9d02a3284073278c489829b8e464adb220157",
+  "runs": [
+    {
+      "label": "baseline",
+      "original_run": "20261031T112828545428Z",
+      "scope": "Before fix: 17 of 31 assertions failed",
+      "passed": false,
+      "pass_lines": 14,
+      "fail_lines": 17,
+      "diagnostics": [
+        "FAIL closing inventory returns to aiming",
+        "FAIL closing map returns to aiming",
+        "FAIL closing session returns to aiming",
+        "FAIL closing tool settings returns to aiming",
+        "FAIL focus return dismisses stale tool popup without an invisible input blocker",
+        "FAIL focus return recaptures after OS release without an Alt event or click",
+        "FAIL focus return resumes aiming without Escape, application first=false",
+        "FAIL focus return resumes aiming without Escape, application first=true",
+        "FAIL fresh movement input works immediately after focus return",
+        "FAIL mouse look works immediately after focus return",
+        "FAIL ordinary Alt release restores aiming",
+        "FAIL plain Tab still closes inventory",
+        "FAIL root-window focus completes deferred capture after a dialog",
+        "FAIL world readiness captures gameplay without a click"
+      ],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/baseline_console.log.gz",
+          "original_sha256": "921c5122589bd45c5eac5d8fcb6ed0e1b12d9369fec819cbda3f51649ece1ac7"
+        },
+        "engine.log": {
+          "path": "logs/baseline_engine.log.gz",
+          "original_sha256": "63397fe64eb9588bb7ef4b97508045b73b2ea5c8a4466e87f91064d2f15057fd"
+        },
+        "run.json": {
+          "path": "logs/baseline_run.json.gz",
+          "original_sha256": "e2f4b71946b3d1612f270fdb87be8c1cb3b0e85bb16e5c023a5b199f694f0ee7"
+        }
+      }
+    },
+    {
+      "label": "focus_source",
+      "original_run": "20261031T113032042039Z",
+      "scope": "36 source focus/loading assertions",
+      "passed": true,
+      "pass_lines": 36,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/focus_source_console.log.gz",
+          "original_sha256": "8c80c639e8f115213f8e02bea2334175bf0a5c7f13df2ccbae7129dbefdb37c6"
+        },
+        "engine.log": {
+          "path": "logs/focus_source_engine.log.gz",
+          "original_sha256": "ef97fc03b2df7c88a7ccc5dec9e7f44213f33ce4d12785ce79ea01d786087cee"
+        },
+        "run.json": {
+          "path": "logs/focus_source_run.json.gz",
+          "original_sha256": "e85f292257cd840b8d58cf0417b19dffd1de489887f2fd0823aa0c5e1410e2d9"
+        }
+      }
+    },
+    {
+      "label": "escape_source",
+      "original_run": "20261031T113154221532Z",
+      "scope": "Escape priority integration",
+      "passed": true,
+      "pass_lines": 100,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/escape_source_console.log.gz",
+          "original_sha256": "69ed5f4b9a25839a9dddb2823274d29262f0c0d3c33de38280e5d3455f1423da"
+        },
+        "engine.log": {
+          "path": "logs/escape_source_engine.log.gz",
+          "original_sha256": "f98cbc943d94d1a4ab5c1514323e6126d2a8ccbcf3f9087de871d69d74b047d2"
+        },
+        "run.json": {
+          "path": "logs/escape_source_run.json.gz",
+          "original_sha256": "72a654fb75546be6f0846fb4eedcb359d87ac19ccbc2b6d48bd6997951e9fe87"
+        }
+      }
+    },
+    {
+      "label": "desktop_source_initial",
+      "original_run": "20261031T113250821066Z_desktop_focus",
+      "scope": "Initial actual Windows task-switch check",
+      "passed": true,
+      "pass_lines": 42,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [
+        {
+          "menu": "false",
+          "before": [
+            1842522,
+            12724
+          ],
+          "away": [
+            10427500,
+            32056
+          ],
+          "returned": [
+            1842522,
+            12724
+          ],
+          "passed": true
+        },
+        {
+          "menu": "true",
+          "before": [
+            1842522,
+            12724
+          ],
+          "away": [
+            10427500,
+            32056
+          ],
+          "returned": [
+            1842522,
+            12724
+          ],
+          "passed": true
+        }
+      ],
+      "files": {
+        "console.log": {
+          "path": "logs/desktop_source_initial_console.log.gz",
+          "original_sha256": "7189f826c6273ac8dbebb6fa1bcb86beb70b2096c8a9054f11f3a88a82e00805"
+        },
+        "engine.log": {
+          "path": "logs/desktop_source_initial_engine.log.gz",
+          "original_sha256": "0895bb39ccd308f92e33d04f84e3582eec3afd341469a9d3290158221ec21d44"
+        },
+        "run.json": {
+          "path": "logs/desktop_source_initial_run.json.gz",
+          "original_sha256": "0b75467e8089b246d592cfb575af93967b5e2a317c3b83a54d0910d3aa2d8dd1"
+        }
+      }
+    },
+    {
+      "label": "desktop_pack_unfocused",
+      "original_run": "20261031T113535010883Z_desktop_focus",
+      "scope": "Failed prerequisite: no OS switches; also exposed stale awaited retry at teardown",
+      "passed": false,
+      "pass_lines": 20,
+      "fail_lines": 22,
+      "diagnostics": [
+        "ERROR: Resumed function '_restore_gameplay_mouse()' after await, but class instance is gone. At script: res://demo/world.gd:894",
+        "FAIL closing inventory returns to aiming",
+        "FAIL closing map returns to aiming",
+        "FAIL closing menu after deferred focus return resumes gameplay",
+        "FAIL closing session returns to aiming",
+        "FAIL closing tool settings returns to aiming",
+        "FAIL focus return dismisses stale tool popup without an invisible input blocker",
+        "FAIL focus return recaptures after OS release without an Alt event or click",
+        "FAIL focus return resumes aiming without Escape, application first=false",
+        "FAIL focus return resumes aiming without Escape, application first=true",
+        "FAIL fresh movement input works immediately after focus return",
+        "FAIL mouse look works immediately after focus return",
+        "FAIL ordinary Alt release restores aiming",
+        "FAIL plain Tab still closes inventory",
+        "FAIL real Alt-Tab restores correct cursor ownership without a click, menu=false",
+        "FAIL real Alt-Tab returns native game focus, menu=false",
+        "FAIL real Alt-Tab returns native game focus, menu=true",
+        "FAIL returning after background loading captures without a click",
+        "FAIL root-window focus completes deferred capture after a dialog",
+        "FAIL world readiness captures gameplay without a click"
+      ],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/desktop_pack_unfocused_console.log.gz",
+          "original_sha256": "c4b79a7464206c1d7ad743137f12aac7f2fa7166345c2c98e1fbfd237049686e"
+        },
+        "engine.log": {
+          "path": "logs/desktop_pack_unfocused_engine.log.gz",
+          "original_sha256": "2357af31258a472ceb9241b2e52442be345f4663909fa39783c5d6d731f6d9f8"
+        },
+        "run.json": {
+          "path": "logs/desktop_pack_unfocused_run.json.gz",
+          "original_sha256": "60811358692b9981f13115840353d9e7abdf21b3123d0c95bf77aa9716c6fd91"
+        }
+      }
+    },
+    {
+      "label": "desktop_source",
+      "original_run": "20261031T113739950288Z_desktop_focus",
+      "scope": "Final runtime: actual Windows task-switch check",
+      "passed": true,
+      "pass_lines": 42,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [
+        {
+          "menu": "false",
+          "before": [
+            9117454,
+            11364
+          ],
+          "away": [
+            198012,
+            21036
+          ],
+          "returned": [
+            9117454,
+            11364
+          ],
+          "passed": true
+        },
+        {
+          "menu": "true",
+          "before": [
+            9117454,
+            11364
+          ],
+          "away": [
+            198012,
+            21036
+          ],
+          "returned": [
+            9117454,
+            11364
+          ],
+          "passed": true
+        }
+      ],
+      "files": {
+        "console.log": {
+          "path": "logs/desktop_source_console.log.gz",
+          "original_sha256": "1853ed2d18ae0440ae9dafd7c3e978d2a0170496b8d59bd9cb479ac130019875"
+        },
+        "engine.log": {
+          "path": "logs/desktop_source_engine.log.gz",
+          "original_sha256": "0515de9d3ee52fd1607824b2e23277745e476ae372f823eadcba9553d99aa062"
+        },
+        "run.json": {
+          "path": "logs/desktop_source_run.json.gz",
+          "original_sha256": "c316b885fc8541b46098c33b978b1bd2a346448e82e1baea0d2df8dc18e0eb77"
+        }
+      }
+    },
+    {
+      "label": "teardown_fixture_reparent",
+      "original_run": "20261031T113942566768Z",
+      "scope": "Rejected fixture: reparenting a live world caused duplicate disconnect diagnostics",
+      "passed": false,
+      "pass_lines": 15,
+      "fail_lines": 0,
+      "diagnostics": [
+        "ERROR: Attempt to disconnect a nonexistent connection from '@Node3D@99:<Node3D#109169346104>'. Signal: 'region_changed', callable: 'Node(world_ecosystem.gd)::_region_changed'.",
+        "ERROR: Attempt to disconnect a nonexistent connection from '@Node3D@99:<Node3D#109169346104>'. Signal: 'reload_started', callable: 'Node(world_ecosystem.gd)::reset'.",
+        "ERROR: Attempt to disconnect a nonexistent connection from '@Node3D@99:<Node3D#109169346104>'. Signal: 'surface_batch_ready', callable: 'Node(world_ecosystem.gd)::_surface_ready'."
+      ],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/teardown_fixture_reparent_console.log.gz",
+          "original_sha256": "84bdf80795deff7388380b21718e20381fcc281811bab3f568046a994e023fe5"
+        },
+        "engine.log": {
+          "path": "logs/teardown_fixture_reparent_engine.log.gz",
+          "original_sha256": "70fc35bf70edda824d82277c96ac92ee3523d43d50e9316421c903116f26d4ff"
+        },
+        "run.json": {
+          "path": "logs/teardown_fixture_reparent_run.json.gz",
+          "original_sha256": "83c839ccd2ed71dcc10dabc4670a43fa3b39d568b642ceea0f3e6eaee59b8f2e"
+        }
+      }
+    },
+    {
+      "label": "desktop_pack",
+      "original_run": "20261031T113942573716Z_desktop_focus",
+      "scope": "Installed package: actual Windows task-switch check",
+      "passed": true,
+      "pass_lines": 42,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [
+        {
+          "menu": "false",
+          "before": [
+            3609808,
+            15104
+          ],
+          "away": [
+            198012,
+            21036
+          ],
+          "returned": [
+            3609808,
+            15104
+          ],
+          "passed": true
+        },
+        {
+          "menu": "true",
+          "before": [
+            3609808,
+            15104
+          ],
+          "away": [
+            198012,
+            21036
+          ],
+          "returned": [
+            3609808,
+            15104
+          ],
+          "passed": true
+        }
+      ],
+      "files": {
+        "console.log": {
+          "path": "logs/desktop_pack_console.log.gz",
+          "original_sha256": "7f8328e9ba47db6c6eeb783621b0cd3cedd4a3de807522d04e2e9b36e6fce0fc"
+        },
+        "engine.log": {
+          "path": "logs/desktop_pack_engine.log.gz",
+          "original_sha256": "72006c182c54d2ea2e28a8d63a156e7efaaacac71bf6bd7b4b91adecca07c3d3"
+        },
+        "run.json": {
+          "path": "logs/desktop_pack_run.json.gz",
+          "original_sha256": "1ed6c0c069884b80c15d5f63c0ce3e6ac025fb6879e1f8d483ba4a19310ca35b"
+        }
+      }
+    },
+    {
+      "label": "hidden_and_teardown",
+      "original_run": "20261031T114054496280Z",
+      "scope": "16 hidden-cursor and primary-world retry teardown assertions",
+      "passed": true,
+      "pass_lines": 16,
+      "fail_lines": 0,
+      "diagnostics": [],
+      "switches": [],
+      "files": {
+        "console.log": {
+          "path": "logs/hidden_and_teardown_console.log.gz",
+          "original_sha256": "f96074bceafffd5189eeb20bf67a5b7d0ffdf211f4648f11c9a45a2f6d80238b"
+        },
+        "engine.log": {
+          "path": "logs/hidden_and_teardown_engine.log.gz",
+          "original_sha256": "067e3d6caa00dc66564142314f6ea48198840493878bff2b994571c8599e4b4a"
+        },
+        "run.json": {
+          "path": "logs/hidden_and_teardown_run.json.gz",
+          "original_sha256": "1d2b68facf3404e0023c2e55353f6c2ff27eaf4efefce3e0309bc148a0f6ea4d"
+        }
+      }
+    }
+  ]
+}

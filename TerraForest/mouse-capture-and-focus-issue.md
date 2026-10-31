@@ -1,6 +1,16 @@
 # Issue: mouse capture / focus on entering a world and after Alt+Tab
 
-Status: **unfixed**. Written as a handoff so someone else can pick it up without repeating the dead ends.
+Status (2026-10-31): **fixed for reproduced source/package cases; final player review pending**.
+The current user report confirms Alt+Tab requires an extra click; loading was
+uncertain. Both paths were still click-only in the current source and are now
+covered by automatic, UI-aware capture. Source/package checks and actual
+Windows Alt+Tab round trips pass, including keeping the Esc menu cursor visible.
+See the [stable issue and current evidence](issues/mouse-capture/README.md).
+
+The handoff below is preserved as historical diagnosis. Its "not yet implemented"
+and working-tree statements describe the earlier state, not instructions to reset
+current files. The fix lives in `world.gd`, with a focus hook in `controller.gd`;
+it does not restore the abandoned controller watchdog.
 
 ## What the user reported (their words)
 

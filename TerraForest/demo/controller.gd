@@ -418,7 +418,7 @@ func _update_loading() -> void:
 	terrain.autosave_paused = false
 	travel_blocked_s = 0.0
 	_clear_motion()
-	_message("Click the world to play · nearby terrain is ready")
+	_message("Nearby terrain is ready")
 	if "--human-playtest" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
 		DisplayServer.window_set_title("TerraForest — Human checkpoint 2026-10-09" if "--playtest-checkpoint" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) else "TerraForest — Human playtest (%s)" % ["temporary world" if temporary_world else "saved world"])
 		print("HUMAN_PLAYTEST_READY ", JSON.stringify({"presentation":Presentation.measurement(get_window()),"vsync":DisplayServer.window_get_vsync_mode(),"fps_cap":Engine.max_fps,"temporary":temporary_world,"slot":terrain.save_slot,"save_path":ProjectSettings.globalize_path(terrain.backend.save_path),"snapshot_terrain":terrain.backend.snapshot_terrain,"regional_terrain":terrain.backend.region_terrain}))
@@ -517,6 +517,10 @@ func _edited(_latency: float) -> void:
 
 func _mouse_capture_allowed() -> bool:
 	return mouse_capture_requested and app_focused and not loading_active and not shutdown_requested
+
+func _restore_gameplay_mouse() -> void:
+	# The playable world decides whether a menu owns the cursor.
+	pass
 
 func _capture_mouse_click(event: InputEvent) -> bool:
 	if loading_active or shutdown_requested or not app_focused or Input.mouse_mode!=Input.MOUSE_MODE_VISIBLE:return false
@@ -889,6 +893,7 @@ func _notification(what: int) -> void:
 		Presentation.restore_vsync()
 		app_focused = true
 		_refresh_frame_cap.call_deferred()
+		_restore_gameplay_mouse.call_deferred()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and not shutdown_requested:
 		shutdown_requested = true
 		_close_journal()
