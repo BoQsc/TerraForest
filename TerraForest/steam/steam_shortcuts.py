@@ -18,11 +18,11 @@ this Windows client (it appears as `ExecuteSteamURL` in the log) but opens no
 dialog and writes no entry, so a Steam restart is unavoidable for a scripted add.
 
 Usage:
-    python tools/steam_shortcuts.py --dry-run      # show what would be added
-    python tools/steam_shortcuts.py                # add, restarting Steam around the write
-    python tools/steam_shortcuts.py --no-restart   # add, leave Steam stopped
-    python tools/steam_shortcuts.py --list         # show current entries
-    python tools/steam_shortcuts.py --remove       # drop the TerraForest entry
+    python steam/steam_shortcuts.py --dry-run      # show what would be added
+    python steam/steam_shortcuts.py                # add, restarting Steam around the write
+    python steam/steam_shortcuts.py --no-restart   # add, leave Steam stopped
+    python steam/steam_shortcuts.py --list         # show current entries
+    python steam/steam_shortcuts.py --remove       # drop the TerraForest entry
 """
 from pathlib import Path
 import argparse
@@ -36,6 +36,12 @@ import time
 import winreg
 import zlib
 from ctypes import wintypes as w
+
+# tools/ holds the progress display; keep the import working when loaded by path.
+TOOL_DIR = Path(__file__).resolve().parent
+if str(TOOL_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOL_DIR))
+import steam_progress  # noqa: E402
 
 # Lives in tools/; the play build is one level up next to project.godot.
 ROOT = Path(__file__).resolve().parent.parent
@@ -101,12 +107,14 @@ def steam_running():
     return sorted(set(hits))
 
 
-def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT):
+def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
     """Ask Steam to exit and wait until no Steam process is left."""
     executable = steam/'steam.exe'
     if not executable.is_file():
         raise SystemExit(f'{executable}: steam.exe not found')
     if 'steam.exe' not in steam_running():
+        if progress is not None:
+            progress.tick(1.0, 'Steam was already closed')
         return True  # already closed: nothing to wait for
     try:
         subprocess.run([str(executable), '-shutdown'], timeout=30,
@@ -118,13 +126,19 @@ def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT):
     while time.time() < deadline:
         # The client owns shortcuts.vdf; its helpers are torn down with it, and
         # waiting on them only added latency after the file was already safe.
-        if 'steam.exe' not in steam_running():
+        alive = steam_running()
+        if 'steam.exe' not in alive:
+            if progress is not None:
+                progress.tick(1.0, 'all Steam processes gone')
             return True
+        if progress is not None:
+            left = max(0.0, (deadline - time.time())/timeout)
+            progress.tick(1.0-left, f'{len(alive)} process(es) left: {", ".join(alive)}')
         time.sleep(POLL)
     return False
 
 
-def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT):
+def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None):
     """Start Steam again without waiting on it, then wait for the client process.
 
     `steam.exe` becomes the client once it starts, so waiting for that process to
@@ -132,6 +146,8 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT):
     was the hang; launch detached and poll instead.
     """
     if 'steam.exe' in steam_running():
+        if progress is not None:
+            progress.tick(1.0, 'Steam relaunched itself')
         return True  # Steam relaunched itself after the shutdown
     executable = steam/'steam.exe'
     if not executable.is_file():
@@ -147,7 +163,12 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT):
     deadline = time.time() + timeout
     while time.time() < deadline:
         if 'steam.exe' in steam_running():
+            if progress is not None:
+                progress.tick(1.0, 'steam.exe is up')
             return True
+        if progress is not None:
+            left = max(0.0, (deadline - time.time())/timeout)
+            progress.tick(1.0-left, 'waiting for steam.exe')
         time.sleep(POLL)
     return False
 
@@ -256,8 +277,9 @@ def shortcut_fields(name, exe, launch_options='', icon='', tags=()):
         'LastPlayTime': 0,
         'FlatpakAppID': '',
         'sortas': '',
-        # Steam reads this nested dictionary for collections/filters.
-        'tags': {str(tag): 1 for tag in tags},
+        # Steam stores tags as index -> name pairs: "tags" { "0" "World building" }.
+        # Writing {name: 1} instead made Steam collapse the whole set to {"0": "1"}.
+        'tags': {str(index): str(tag) for index, tag in enumerate(tags)},
     }
 
 
@@ -324,56 +346,84 @@ def write_bytes(path, payload):
     raise SystemExit(f'{path}: could not write: {error}')
 
 
-def commit(shortcut, original, candidate, label, restart, force):
+def commit(shortcut, original, candidate, label, restart, force, progress=None):
     """Stop Steam if needed, replace the file, verify, and restart Steam."""
     steam = shortcut.parents[3]
     running = steam_running()
+    bar = progress if progress is not None else steam_progress.Progress()
+    bar.stage('check', f'{len(running)} process(es): {", ".join(running) or "none"}')
     if running:
         if GAME_MARKER in running and not force:
             print(f'refusing : a Steam game session looks active ({", ".join(running)}); '
                   'stopping Steam would end it.\n'
                   '           Finish the game, or pass --force.', file=sys.stderr)
+            bar.abort('refused: a game session is active')
             return 2
         print(f'stopping : Steam ({", ".join(running)}) so it cannot overwrite the file')
-        if not stop_steam(steam):
+        bar.stage('stop', f'closing {", ".join(running)}')
+        if not stop_steam(steam, progress=bar):
             print('refusing : Steam did not exit in time; nothing written', file=sys.stderr)
+            bar.abort('failed: Steam did not exit')
             return 2
+    else:
+        bar.stage('stop', 'Steam was not running')
+        bar.tick(1.0)
 
     stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
     backup = shortcut.with_name(shortcut.name + f'.bak-{stamp}')
+    bar.stage('write')
     backup.write_bytes(original)
     write_bytes(shortcut, candidate)
     print(f'backup   : {backup}')
     print(label)
+    bar.tick(1.0, 'file written')
 
     status = 0
     if not running:
         # Nothing was stopped, so nothing needs starting: Steam reads this on its
         # next launch, and launching it unasked would be a surprise.
         print('note     : Steam was not running; it will read this at its next start')
+        bar.stage('start', 'not needed: Steam was closed')
+        bar.tick(1.0)
     elif restart:
-        if start_steam(steam):
+        bar.stage('start', 'waiting for steam.exe')
+        if start_steam(steam, progress=bar):
             print('started  : Steam')
-            # Re-read immediately: a fixed settle only delayed the answer when the
-            # file was already fine. Retry briefly only if Steam is mid-write.
-            entries = None
-            for _ in range(5):
-                try:
-                    _, entries = parse_shortcuts(shortcut.read_bytes())
-                    break
-                except (SystemExit, OSError):
-                    time.sleep(0.2)
-            if entries is None:
-                print('warning  : could not re-read shortcuts.vdf yet; Steam may still be '
-                      'writing it', file=sys.stderr)
-            else:
-                print(f'checked  : shortcuts.vdf still holds {len(entries)} entry(ies)')
+            status = verify_after_restart(shortcut, bar)
         else:
             print('warning  : Steam did not start again; start it yourself', file=sys.stderr)
+            bar.abort('warning: Steam did not start')
             status = 1
     else:
         print('stopped  : Steam left stopped (--no-restart); it reads this at its next start')
+        bar.stage('start', 'skipped: --no-restart')
+        bar.tick(1.0)
+    if status == 0:
+        bar.finish('done')
     return status
+
+
+def verify_after_restart(shortcut, bar):
+    """Re-read the file Steam just took over; its own rewrite is what could break it."""
+    bar.stage('verify', 're-reading shortcuts.vdf')
+    # Re-read immediately: a fixed settle only delayed the answer when the file was
+    # already fine. Retry briefly only if Steam is mid-write.
+    entries = None
+    for attempt in range(5):
+        try:
+            _, entries = parse_shortcuts(shortcut.read_bytes())
+            break
+        except (SystemExit, OSError):
+            bar.tick((attempt+1)/5, 'Steam is still writing the file')
+            time.sleep(0.2)
+    if entries is None:
+        print('warning  : could not re-read shortcuts.vdf yet; Steam may still be '
+              'writing it', file=sys.stderr)
+        bar.tick(1.0, 'unreadable')
+        return 1
+    print(f'checked  : shortcuts.vdf still holds {len(entries)} entry(ies)')
+    bar.tick(1.0, f'{len(entries)} entr(ies) intact')
+    return 0
 
 
 def set_launch_options(shortcut, name, exe, launch_options, dry_run=False, restart=True,
@@ -411,7 +461,7 @@ def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=
     if duplicate:
         index = next(iter(duplicate))
         fields = dict(duplicate[index])
-        wanted_tags = {str(tag): 1 for tag in tags}
+        wanted_tags = {str(index): str(tag) for index, tag in enumerate(tags)}
         changes = {}
         if launch_options and fields.get('LaunchOptions', '') != launch_options:
             changes['LaunchOptions'] = launch_options

@@ -7,7 +7,7 @@ world one `res://demo/worlds.tscn -- --continue-last`, which lets the game pick
 the world itself instead of naming a slot in the shortcut.
 
 If Steam already has an entry whose launch options match a shortcut's arguments
-(`tools/steam_shortcuts.py`), that shortcut launches through Steam
+(`steam/steam_shortcuts.py`), that shortcut launches through Steam
 (`steam://rungameid/<id>`) so the overlay and playtime apply, and only falls back
 to the executable when no entry carries that exact argument string. `--launch
 steam` or `--launch native` force either route.
@@ -212,9 +212,9 @@ def steam():
     global _STEAM
     if _STEAM is None:
         spec = importlib.util.spec_from_file_location('steam_shortcuts',
-                                                      PROJECT/'tools'/'steam_shortcuts.py')
+                                                      PROJECT/'steam'/'steam_shortcuts.py')
         if spec is None or spec.loader is None:
-            raise SystemExit(f'{PROJECT}/tools/steam_shortcuts.py: cannot be imported')
+            raise SystemExit(f'{PROJECT}/steam/steam_shortcuts.py: cannot be imported')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         _STEAM = module
@@ -350,7 +350,7 @@ def main():
                       f'{fields.get("LaunchOptions") or "<no options>"!r}, so Steam cannot '
                       f'run it correctly. Register it with this launch option:\n'
                       f'           {wanted}\n'
-                      f'           python tools/steam_shortcuts.py --name "{label}" '
+                      f'           python steam/steam_shortcuts.py --name "{label}" '
                       f'--launch-options <that value>')
     if args.dry_run:
         print('dry run  : nothing written')

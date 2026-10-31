@@ -2,7 +2,7 @@
 """Remove the Steam shortcuts that install_to_steam.py put in the library.
 
 Uninstalling is its own entry point so nobody has to remember `--remove` on the
-shared engine (`tools/steam_shortcuts.py`), and so the usual pair of entries (the
+shared engine (`steam/steam_shortcuts.py`), and so the usual pair of entries (the
 plain launch and the "last world" launch) can be dropped together in one pass,
 with one Steam restart.
 
@@ -33,8 +33,8 @@ DEFAULT_NAMES = (MAIN_NAME, f'{MAIN_NAME} Last World')
 
 
 def add_tool():
-    """Import tools/steam_shortcuts.py, which owns shortcuts.vdf and the restart."""
-    path = ROOT/'tools'/'steam_shortcuts.py'
+    """Import steam/steam_shortcuts.py, which owns shortcuts.vdf and the restart."""
+    path = ROOT/'steam'/'steam_shortcuts.py'
     spec = importlib.util.spec_from_file_location('add_steam_shortcut', path)
     if spec is None or spec.loader is None:
         raise SystemExit(f'{path}: cannot be imported')

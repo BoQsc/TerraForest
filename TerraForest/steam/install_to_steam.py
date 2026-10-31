@@ -4,7 +4,7 @@
 1. copies the source Godot executable to `TerraForest.exe` (skipped when it is
    already there, unless `--force`),
 2. stamps the app icon into that copy's PE resources (`steam/app_icon`),
-3. registers the copy as a Steam non-Steam shortcut (`tools/steam_shortcuts.py`),
+3. registers the copy as a Steam non-Steam shortcut (`steam/steam_shortcuts.py`),
    which stops Steam, writes `shortcuts.vdf` and starts Steam again.
 
 Usage:
@@ -41,7 +41,7 @@ def load(name, path):
 
 
 app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
-steam_tool = load('steam_shortcuts', ROOT/'tools'/'steam_shortcuts.py')
+steam_tool = load('steam_shortcuts', ROOT/'steam'/'steam_shortcuts.py')
 
 
 def godot_sources():

@@ -19,7 +19,25 @@ edit the brand, not the PNGs.
 | `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
 
 All three are run from the project root, e.g. `python steam/install_to_steam.py --dry-run`.
-The shared `shortcuts.vdf` engine stays in `tools/steam_shortcuts.py`.
+The shared `shortcuts.vdf` engine stays in `steam/steam_shortcuts.py`.
+
+## Progress during a Steam restart
+
+Writes need Steam stopped, so every add/update/remove stops it, writes, and starts it
+again. While that happens `steam/steam_progress.py` draws one updating line:
+
+```
+[#########---------------]  38%  Stopping Steam · 2 process(es) left: steam.exe, steamwebhelper.exe
+[############------------]  50%  Writing shortcuts.vdf · file written
+[#####################---]  90%  Starting Steam · waiting for steam.exe
+[########################] 100%  Verifying the file · 2 entr(ies) intact
+```
+
+The percentages come from the process list, not a timer: the stop stage polls how many
+Steam processes are still alive, the start stage polls for `steam.exe` to return, and the
+verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays silent when
+output is piped, so scripts and tests keep their plain lines.
+Preview the stages without touching Steam: `python steam/steam_progress.py --demo`.
 
 ## Files
 
@@ -40,7 +58,7 @@ The shared `shortcuts.vdf` engine stays in `tools/steam_shortcuts.py`.
 - **Artwork** → `<Steam>/userdata/<account>/config/grid/`, renamed by the entry's app id.
 
 `<appid>` is the id Steam computes for a non-Steam shortcut from its executable and name
-(`tools/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
+(`steam/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
 files here are named by role and renamed on install. On this machine the two entries are:
 
 | Entry | App id | Artwork names |
