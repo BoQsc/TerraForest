@@ -26,21 +26,32 @@ STAGES = (
 TITLES = {key: title for key, title, _ in STAGES}
 
 
+MODES = ('auto', 'bar', 'plain', 'off')
+
+
 class Progress:
-    """One updating line on a terminal; nothing at all when not on one."""
+    """One updating line on a terminal, plain lines on request, nothing when off."""
 
     WIDTH = 24
     MAX_LINE = 118
 
-    def __init__(self, stream=None, enabled=None):
+    def __init__(self, stream=None, enabled=None, mode='auto'):
         self.stream = stream if stream is not None else sys.stdout
+        if mode not in MODES:
+            raise SystemExit(f'{mode}: progress mode must be one of {", ".join(MODES)}')
+        self.mode = mode
+        on_terminal = bool(getattr(self.stream, 'isatty', lambda: False)())
+        if mode == 'auto':
+            mode = 'bar' if on_terminal else 'off'
+        self.mode = mode
         if enabled is None:
-            enabled = bool(getattr(self.stream, 'isatty', lambda: False)())
+            enabled = mode != 'off'
         self.enabled = enabled
         self.key = None
         self.fraction = 0.0
         self.note = ''
         self._last_percent = None
+        self._last_bucket = None
         self._drawn = False
 
     def stage(self, key, note=''):
@@ -95,6 +106,17 @@ class Progress:
         if not self.enabled:
             return
         percent = self.percent()
+        if self.mode == 'plain':
+            # Plain mode is for logs and piped output: one line per 10%, plus every
+            # stage change, so it never rewinds with a carriage return.
+            bucket = percent//10
+            if not force and percent != 100 and bucket == self._last_bucket:
+                return
+            self._last_bucket = bucket
+            self.stream.write(self.render() + '\n')
+            self.stream.flush()
+            self._drawn = True
+            return
         if not force and percent == self._last_percent:
             return
         self._last_percent = percent
@@ -103,11 +125,13 @@ class Progress:
         self._drawn = True
 
 
-def demo(seconds=0.9):
+def demo(seconds=0.9, mode='bar'):
     """Walk the stages with plausible notes, so the display can be judged off-line."""
-    # Forced on: the point of --demo is to show the frames even when piped.
-    progress = Progress(enabled=True)
-    print('progress : preview; a real run only animates on a terminal')
+    progress = Progress(mode=mode)
+    if not progress.enabled:
+        print('progress : off (pass --mode plain to print lines instead of frames)')
+        return 0
+    print(f'progress : preview ({progress.mode})')
     plan = (('check', '2 processes: steam.exe, steamwebhelper.exe'),
             ('stop', None), ('write', None), ('start', None),
             ('verify', '2 entries'))
@@ -121,4 +145,9 @@ def demo(seconds=0.9):
 
 
 if __name__ == '__main__':
-    sys.exit(demo() if '--demo' in sys.argv else print(__doc__.strip()) or 0)
+    if '--demo' in sys.argv:
+        requested = 'bar'
+        if '--mode' in sys.argv:
+            requested = sys.argv[sys.argv.index('--mode')+1]
+        sys.exit(demo(mode=requested))
+    print(__doc__.strip())

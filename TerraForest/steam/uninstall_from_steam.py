@@ -89,9 +89,12 @@ def main():
                         help='stop Steam for the write but leave it stopped')
     parser.add_argument('--force', action='store_true',
                         help='stop Steam even if a game session looks active')
+    parser.add_argument('--progress', choices=('auto', 'bar', 'plain', 'off'), default='auto',
+                        help='restart display: auto (bar on a terminal), bar, plain, off')
     args = parser.parse_args()
 
     tool = add_tool()
+    tool.PROGRESS_MODE = args.progress
     steam = args.steam or next((p for p in tool.steam_roots() if (p/'userdata').is_dir()), None)
     if steam is None:
         parser.error('Steam install not found; pass --steam PATH')

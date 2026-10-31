@@ -39,6 +39,13 @@ verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays sil
 output is piped, so scripts and tests keep their plain lines.
 Preview the stages without touching Steam: `python steam/steam_progress.py --demo`.
 
+Every tool takes `--progress auto|bar|plain|off`:
+
+- `auto` (default) — the animated single line on a terminal, silent when piped;
+- `bar` — force that animated line even when the output is captured;
+- `plain` — one line per 10%, so logs and captured output show the stages too;
+- `off` — no progress output at all.
+
 ### Measured phases
 
 `python steam/steam_trace.py --restart --json steam/traces/steam-boot.json` samples the
@@ -57,6 +64,26 @@ Totals on that run: stop 3.75 s, boot 2.21 s. The bar's stop stage therefore rep
 "helpers closed, client exiting" before the client goes, and the start stage reports
 "client process up" → "helpers up (library loading)" → "process set settled". Those
 labels are these measurements, not invented stages.
+
+### When the tool considers Steam "back"
+
+The client process is not the signal: measured here, `steam.exe` appears 0.02 s after
+launch and its helpers 0.26 s later, but Steam's main window - title `Steam`, class
+`SDL_app`, 1280x744, kept **hidden in the tray** - only exists after about 25 s. Waiting
+on the process alone is what made the tool exit before Steam (and its tray notification)
+was back.
+
+So the wait is: client process → helpers → main window exists (hidden counts, because
+Steam lives in the tray) → held for 2 s of grace. A live run reports:
+
+```
++ 0.02s  client process up
++ 0.28s  helpers up (library loading)
++24.85s  Steam UI ready (window 1280x744, in the tray)
++27.01s  Steam is up: window and tray are back
+```
+
+If no window appears within 20 s the tool says so and continues rather than hanging.
 
 ## Files
 

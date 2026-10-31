@@ -177,7 +177,10 @@ def main():
                         help="copy steam/artwork into Steam's grid folder for each entry")
     parser.add_argument('--steam', type=Path, help='Steam install directory')
     parser.add_argument('--account', help='Steam account id under userdata')
+    parser.add_argument('--progress', choices=('auto', 'bar', 'plain', 'off'), default='auto',
+                        help='restart display: auto (bar on a terminal), bar, plain, off')
     args = parser.parse_args()
+    steam_tool.PROGRESS_MODE = args.progress
 
     source = args.source or next(iter(godot_sources()), None)
     print(f'source   : {source or "<none found>"}')

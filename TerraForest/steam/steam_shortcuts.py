@@ -61,6 +61,13 @@ POLL = 0.25
 # and the process set then settles for a couple of seconds. Waiting for that quiet
 # period is the closest thing to "Steam is ready" that Windows exposes.
 STEAM_SETTLE = 1.0
+# The client process is not the UI: wait for a visible Steam window to come back,
+# and let it stand for a moment so the tray entry and its notification appear.
+STEAM_UI_TIMEOUT = 20
+STEAM_UI_GRACE = 2.0
+# How the restart is reported: auto (bar on a terminal), bar, plain (one line per
+# 10%, for logs) or off. The entry points set this from their --progress flag.
+PROGRESS_MODE = 'auto'
 # Launch Steam detached so our console closing cannot take the client with it.
 DETACHED_PROCESS = 0x00000008
 CREATE_NEW_PROCESS_GROUP = 0x00000200
@@ -83,12 +90,12 @@ def steam_roots():
     return found
 
 
-def steam_running():
-    """Watched Steam processes: the client, its helpers and the game overlay."""
+def steam_processes():
+    """{pid: name} for the watched Steam processes."""
     kernel = ctypes.WinDLL('kernel32')
     snapshot = kernel.CreateToolhelp32Snapshot(2, 0)  # TH32CS_SNAPPROCESS
     if snapshot in (0, -1):
-        return []
+        return {}
 
     class Entry(ctypes.Structure):
         _fields_ = [('dwSize', w.DWORD), ('cntUsage', w.DWORD), ('th32ProcessID', w.DWORD),
@@ -98,17 +105,92 @@ def steam_running():
                     ('szExeFile', ctypes.c_char * 260)]
 
     watched = {'steam.exe', 'steamwebhelper.exe', GAME_MARKER}
-    entry, hits = Entry(), []
+    entry, found = Entry(), {}
     entry.dwSize = ctypes.sizeof(Entry)
     kernel.Process32First(snapshot, ctypes.byref(entry))
     while True:
         name = entry.szExeFile.decode('mbcs', 'replace').lower()
         if name in watched:
-            hits.append(name)
+            found[entry.th32ProcessID] = name
         if not kernel.Process32Next(snapshot, ctypes.byref(entry)):
             break
     kernel.CloseHandle(snapshot)
-    return sorted(set(hits))
+    return found
+
+
+def steam_running():
+    """Watched Steam process names: the client, its helpers and the game overlay."""
+    return sorted(set(steam_processes().values()))
+
+
+def steam_windows():
+    """Top-level windows owned by a Steam process, hidden ones included.
+
+    Measured: Steam runs with its main window hidden in the tray (title "Steam",
+    class "SDL_app", 1280x744, IsWindowVisible false). Requiring it to be *visible*
+    meant the wait could never finish, which is why the tool used to hand back
+    before the tray entry and its notification were back. This reports the window's
+    existence, and marks which one is the main window.
+    """
+    pids = set(steam_processes())
+    if not pids:
+        return []
+    user32 = ctypes.WinDLL('user32')
+    user32.GetWindowTextW.argtypes = [w.HWND, w.LPWSTR, ctypes.c_int]
+    user32.GetClassNameW.argtypes = [w.HWND, w.LPWSTR, ctypes.c_int]
+    user32.GetWindowThreadProcessId.argtypes = [w.HWND, ctypes.POINTER(w.DWORD)]
+    user32.IsWindowVisible.argtypes = [w.HWND]
+    user32.GetWindowRect.argtypes = [w.HWND, ctypes.POINTER(w.RECT)]
+    found = []
+
+    def visit(hwnd, _):
+        pid = w.DWORD()
+        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if pid.value not in pids:
+            return True
+        title, klass = ctypes.create_unicode_buffer(256), ctypes.create_unicode_buffer(256)
+        user32.GetWindowTextW(hwnd, title, 256)
+        user32.GetClassNameW(hwnd, klass, 256)
+        box = w.RECT()
+        user32.GetWindowRect(hwnd, ctypes.byref(box))
+        size = (box.right-box.left, box.bottom-box.top)
+        if size[0] <= 0 or size[1] <= 0:
+            return True
+        found.append({'title': title.value, 'class': klass.value,
+                      'visible': bool(user32.IsWindowVisible(hwnd)),
+                      'size': size,
+                      'main': title.value == 'Steam' and klass.value == 'SDL_app'})
+        return True
+
+    user32.EnumWindows(ctypes.WINFUNCTYPE(w.BOOL, w.HWND, w.LPARAM)(visit), 0)
+    return found
+
+
+def wait_for_steam_ui(timeout=STEAM_UI_TIMEOUT, progress=None, grace=STEAM_UI_GRACE,
+                      windows=None):
+    """Wait until Steam shows a window and has kept it for `grace` seconds."""
+    lookup = windows or steam_windows
+    deadline = time.time() + timeout
+    ready_since = None
+    while time.time() < deadline:
+        live = lookup()
+        main = next((win for win in live if win.get('main')), None)
+        tray = next((win for win in live if win.get('class') == 'Chrome_StatusTrayWindow'), None)
+        if ready_since is None and (main or tray):
+            ready_since = time.time()
+            if progress is not None:
+                detail = (f"window {main['size'][0]}x{main['size'][1]}"
+                          + ('' if main['visible'] else ', in the tray'))
+                progress.tick(0.75, f'Steam UI ready ({detail})')
+        elif ready_since is not None and time.time()-ready_since >= grace:
+            if progress is not None:
+                progress.tick(1.0, 'Steam is up: window and tray are back')
+            return True
+        elif progress is not None and ready_since is None:
+            elapsed = 1 - max(0.0, (deadline-time.time())/timeout)
+            progress.tick(0.5 + 0.25*elapsed, 'waiting for the Steam window')
+        time.sleep(POLL)
+    return False
 
 
 def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
@@ -150,7 +232,7 @@ def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
 
 
 def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
-                settle=STEAM_SETTLE):
+                settle=STEAM_SETTLE, wait_ui=True):
     """Start Steam again, then report the milestones measured in steam/traces.
 
     `steam.exe` becomes the client once it starts, so waiting for that process to
@@ -188,8 +270,17 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
         if alive != previous:
             previous, stable_since = alive, time.time()
         elif client_up and time.time()-stable_since >= settle:
+            if not wait_ui:
+                if progress is not None:
+                    progress.tick(1.0, 'process set settled')
+                return True
+            # Do not hand control back while Steam is still starting: wait for its
+            # window, which is also when the tray icon and notification come back.
             if progress is not None:
-                progress.tick(1.0, 'process set settled')
+                progress.tick(0.6, 'waiting for the Steam window')
+            shown = wait_for_steam_ui(timeout=max(5.0, deadline-time.time()), progress=progress)
+            if not shown and progress is not None:
+                progress.tick(1.0, 'no window yet (Steam may be in the tray)')
             return True
         if progress is not None and not client_up:
             left = max(0.0, (deadline - time.time())/timeout)
@@ -375,7 +466,7 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None):
     """Stop Steam if needed, replace the file, verify, and restart Steam."""
     steam = shortcut.parents[3]
     running = steam_running()
-    bar = progress if progress is not None else steam_progress.Progress()
+    bar = progress if progress is not None else steam_progress.Progress(mode=PROGRESS_MODE)
     bar.stage('check', f'{len(running)} process(es): {", ".join(running) or "none"}')
     if running:
         if GAME_MARKER in running and not force:
@@ -596,7 +687,11 @@ def main():
                         help='stop Steam for the write but leave it stopped afterwards')
     parser.add_argument('--force', action='store_true',
                         help='stop Steam even if a game session looks active')
+    parser.add_argument('--progress', choices=steam_progress.MODES, default='auto',
+                        help='restart display: auto (bar on a terminal), bar, plain, off')
     args = parser.parse_args()
+    global PROGRESS_MODE
+    PROGRESS_MODE = args.progress
 
     steam = args.steam or next((p for p in steam_roots() if (p/'userdata').is_dir()), None)
     if steam is None:
