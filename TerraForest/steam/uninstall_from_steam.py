@@ -48,6 +48,17 @@ def target_names(requested=None):
     return tuple(requested) if requested else DEFAULT_NAMES
 
 
+def desktop_tool():
+    """Import add_desktop_shortcuts.py, which owns the .lnk files and their names."""
+    path = ROOT/'steam'/'add_desktop_shortcuts.py'
+    spec = importlib.util.spec_from_file_location('add_desktop_shortcuts', path)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f'{path}: cannot be imported')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def remove_artwork(shortcut, names, exe, dry_run, tool):
     """Delete the grid images install_to_steam.py copied, named by each entry's app id."""
     mapping = json.loads(MANIFEST.read_text('utf-8'))['artwork']
@@ -91,6 +102,10 @@ def main():
                         help='stop Steam even if a game session looks active')
     parser.add_argument('--progress', choices=('auto', 'bar', 'plain', 'off'), default='auto',
                         help='restart display: auto (bar on a terminal), bar, plain, off')
+    parser.add_argument('--desktop', action=argparse.BooleanOptionalAction, default=True,
+                        help='also delete the desktop shortcuts (default: yes; --no-desktop keeps them)')
+    parser.add_argument('--desktop-folder', type=Path,
+                        help='desktop folder to clean (default: the real desktop)')
     args = parser.parse_args()
 
     tool = add_tool()
@@ -135,6 +150,8 @@ def main():
                            not args.no_restart, args.force)
     if code == 0 and args.artwork:
         code = remove_artwork(shortcut, names, exe, args.dry_run, tool)
+    if code == 0 and args.desktop:
+        code = desktop_tool().remove_shortcuts(args.desktop_folder, args.dry_run)
     return code
 
 

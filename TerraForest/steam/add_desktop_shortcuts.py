@@ -89,6 +89,28 @@ def shortcut_names(project_file=PROJECT/'project.godot'):
     return f'{name}.lnk', f'{name} Last World.lnk'
 
 
+def remove_shortcuts(folder=None, dry_run=False):
+    """Delete the two desktop shortcuts this tool writes; anything else stays.
+
+    Named from shortcut_names(), so a renamed project cannot leave stale links
+    behind; a missing link is reported rather than treated as an error.
+    """
+    target = folder or desktop_folder()
+    removed = 0
+    for name in shortcut_names():
+        link = target/name
+        if not link.exists():
+            print(f'missing  : {link}')
+            continue
+        print(f'{"would remove" if dry_run else "removed":12} : {link}')
+        if not dry_run:
+            link.unlink()
+            removed += 1
+    tally = f'{removed} shortcut(s) removed' if not dry_run else 'nothing written'
+    print(f'desktop  : {tally} in {target}')
+    return 0
+
+
 def newest_world(directory):
     """Newest saved world slot: the game orders by last_played, then by save time."""
     if not directory.is_dir():

@@ -15,7 +15,7 @@ edit the brand, not the PNGs.
 | Script | What it does |
 |---|---|
 | `install_to_steam.py` | copy the build, stamp the icon, register in Steam (`--last-world` adds the second entry, `--artwork` installs the images) |
-| `uninstall_from_steam.py` | remove both Steam entries in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--artwork` deletes the grid images too) |
+| `uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
 | `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
 
 All three are run from the project root, e.g. `python steam/install_to_steam.py --dry-run`.
