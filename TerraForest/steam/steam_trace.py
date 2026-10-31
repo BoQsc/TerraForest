@@ -19,8 +19,9 @@ import sys
 import time
 
 TOOL = Path(__file__).resolve().parent
-if str(TOOL) not in sys.path:
-    sys.path.insert(0, str(TOOL))
+# The engine lives in steam/lib/; this tracer stays in steam/.
+if str(TOOL/'lib') not in sys.path:
+    sys.path.insert(0, str(TOOL/'lib'))
 import steam_shortcuts as steam  # noqa: E402
 
 SAMPLE = 0.1

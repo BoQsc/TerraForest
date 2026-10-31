@@ -19,12 +19,24 @@ edit the brand, not the PNGs.
 | `add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
 
 All three are run from the project root, e.g. `python steam/install_to_steam.py --dry-run`.
-The shared `shortcuts.vdf` engine stays in `steam/steam_shortcuts.py`.
+The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
+
+### Layout
+
+`steam/` holds the entry points and the data they use; the importable modules live in
+`steam/lib/`:
+
+| Path | Role |
+|---|---|
+| `steam/lib/steam_shortcuts.py` | reads/writes `shortcuts.vdf`, stops and starts Steam, waits for its window |
+| `steam/lib/steam_progress.py` | the restart bar: measured weights, drift, progress modes |
+| `steam/lib/install_log.py` | the run log in `steam/logs/`, which flags repairs and refusals as WARN |
+| `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
 
 ## Progress during a Steam restart
 
 Writes need Steam stopped, so every add/update/remove stops it, writes, and starts it
-again. While that happens `steam/steam_progress.py` draws one updating line:
+again. While that happens `steam/lib/steam_progress.py` draws one updating line:
 
 ```
 [#########---------------]  38%  Stopping Steam · 2 process(es) left: steam.exe, steamwebhelper.exe
@@ -37,7 +49,7 @@ The percentages come from the process list, not a timer: the stop stage polls ho
 Steam processes are still alive, the start stage polls for `steam.exe` to return, and the
 verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays silent when
 output is piped, so scripts and tests keep their plain lines.
-Preview the stages without touching Steam: `python steam/steam_progress.py --demo`.
+Preview the stages without touching Steam: `python steam/lib/steam_progress.py --demo`.
 
 Stage weights follow the measured durations (check 5%, stop 15%, write 5%, start 70%,
 verify 5%), because the wait for Steam's window is ~24 s of a ~29 s run. Inside the start
@@ -129,7 +141,7 @@ or, when something is missing, re-adds it and says so
 - **Artwork** → `<Steam>/userdata/<account>/config/grid/`, renamed by the entry's app id.
 
 `<appid>` is the id Steam computes for a non-Steam shortcut from its executable and name
-(`steam/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
+(`steam/lib/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
 files here are named by role and renamed on install. On this machine the two entries are:
 
 | Entry | App id | Artwork names |

@@ -41,8 +41,9 @@ def load(name, path):
 
 
 app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
-steam_tool = load('steam_shortcuts', ROOT/'steam'/'steam_shortcuts.py')
-log_tool = load('install_log', ROOT/'steam'/'install_log.py')
+# The importable modules live in steam/lib/; the entry points stay in steam/.
+steam_tool = load('steam_shortcuts', ROOT/'steam'/'lib'/'steam_shortcuts.py')
+log_tool = load('install_log', ROOT/'steam'/'lib'/'install_log.py')
 
 
 def godot_sources():

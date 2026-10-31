@@ -16,7 +16,8 @@ import datetime
 import sys
 import time
 
-LOG_DIR = Path(__file__).resolve().parent/'logs'
+# This module lives in steam/lib/; the logs sit beside it in steam/logs/.
+LOG_DIR = Path(__file__).resolve().parent.parent/'logs'
 DEFAULT_LOG = LOG_DIR/'install.log'
 HISTORY = LOG_DIR/'history.tsv'
 # Set by run(); the module level helpers below write through it.

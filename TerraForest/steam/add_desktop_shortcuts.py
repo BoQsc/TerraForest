@@ -252,13 +252,13 @@ _STEAM = None
 
 
 def steam():
-    """The tools/ module that owns shortcuts.vdf, loaded once."""
+    """The steam/lib module that owns shortcuts.vdf, loaded once."""
     global _STEAM
     if _STEAM is None:
         spec = importlib.util.spec_from_file_location('steam_shortcuts',
-                                                      PROJECT/'steam'/'steam_shortcuts.py')
+                                                      PROJECT/'steam'/'lib'/'steam_shortcuts.py')
         if spec is None or spec.loader is None:
-            raise SystemExit(f'{PROJECT}/steam/steam_shortcuts.py: cannot be imported')
+            raise SystemExit(f'{PROJECT}/steam/lib/steam_shortcuts.py: cannot be imported')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         _STEAM = module

@@ -34,7 +34,7 @@ DEFAULT_NAMES = (MAIN_NAME, f'{MAIN_NAME} Last World')
 
 def add_tool():
     """Import steam/steam_shortcuts.py, which owns shortcuts.vdf and the restart."""
-    path = ROOT/'steam'/'steam_shortcuts.py'
+    path = ROOT/'steam'/'lib'/'steam_shortcuts.py'
     spec = importlib.util.spec_from_file_location('add_steam_shortcut', path)
     if spec is None or spec.loader is None:
         raise SystemExit(f'{path}: cannot be imported')
@@ -61,7 +61,7 @@ def desktop_tool():
 
 def log_tool():
     """Import install_log.py, which owns the run log."""
-    path = ROOT/'steam'/'install_log.py'
+    path = ROOT/'steam'/'lib'/'install_log.py'
     spec = importlib.util.spec_from_file_location('install_log', path)
     if spec is None or spec.loader is None:
         raise SystemExit(f'{path}: cannot be imported')
