@@ -140,10 +140,12 @@ class App:
         self.run_tool()
 
     def run_tool(self):
-        steam_tool = getattr(self.module, 'steam_tool', None)
-        if steam_tool is not None:
-            steam_tool.PROGRESS_FACTORY = lambda: GuiProgress(self.queue.put)
-            steam_tool.CONFIRM = None  # approved by this window
+        engine = engine_of(self.module)
+        if engine is not None:
+            engine.PROGRESS_FACTORY = lambda: GuiProgress(self.queue.put)
+            engine.CONFIRM = None  # approved by this window
+        else:
+            self.queue.put(('error', 'no engine module: the bar will stay at 0%'))
         threading.Thread(target=self.work, daemon=True).start()
         self.root.after(50, self.pump)
 
@@ -213,6 +215,19 @@ def load_tool(name):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def engine_of(module):
+    """The engine instance the tool's own main() uses, or None.
+
+    install_to_steam exposes it as `steam_tool`; uninstall_from_steam exposes an
+    `add_tool()` that caches, so both paths configure the same object main() runs.
+    """
+    engine = getattr(module, 'steam_tool', None)
+    if engine is not None:
+        return engine
+    provider = getattr(module, 'add_tool', None)
+    return provider() if callable(provider) else None
 
 
 def launch(tool_name, argv=None):

@@ -29,17 +29,24 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT/'steam'/'manifest.json'
 MAIN_NAME = 'TerraForest'
+_TOOL = None
 DEFAULT_NAMES = (MAIN_NAME, f'{MAIN_NAME} Last World')
 
 
 def add_tool():
     """Import steam/steam_shortcuts.py, which owns shortcuts.vdf and the restart."""
+    # Cached: the windowed launcher configures this instance (progress bar, approval),
+    # so main() must get the same module object rather than a fresh copy.
+    global _TOOL
+    if _TOOL is not None:
+        return _TOOL
     path = ROOT/'steam'/'lib'/'steam_shortcuts.py'
     spec = importlib.util.spec_from_file_location('add_steam_shortcut', path)
     if spec is None or spec.loader is None:
         raise SystemExit(f'{path}: cannot be imported')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    _TOOL = module
     return module
 
 
