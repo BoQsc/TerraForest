@@ -67,6 +67,16 @@ def drift_fraction(elapsed, expected):
     return min(0.95, max(0.0, elapsed)/expected)
 
 
+def percent_at(key, fraction):
+    """Percent for a stage and fraction, shared by the console bar and the GUI."""
+    done = 0.0
+    for name, _, share in STAGES:
+        if name == key:
+            return int(round((done + share*max(0.0, min(1.0, fraction)))*100))
+        done += share
+    return int(round(done*100))
+
+
 class Progress:
     WIDTH = 24
     MAX_LINE = 118
@@ -132,12 +142,7 @@ class Progress:
 
     # -- arithmetic -----------------------------------------------------
     def percent_for(self, key, fraction):
-        done = 0.0
-        for name, _, share in STAGES:
-            if name == key:
-                return int(round((done + share*fraction)*100))
-            done += share
-        return int(round(done*100))
+        return percent_at(key, fraction)
 
     def percent(self):
         return self.percent_for(self.key, self.fraction)

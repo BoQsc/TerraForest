@@ -70,6 +70,17 @@ def log_tool():
     return module
 
 
+def confirm_tool():
+    """Import steam_confirm.py, which shows the restart approval dialog."""
+    path = ROOT/'steam'/'lib'/'steam_confirm.py'
+    spec = importlib.util.spec_from_file_location('steam_confirm', path)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f'{path}: cannot be imported')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def remove_artwork(shortcut, names, exe, dry_run, tool):
     """Delete the grid images install_to_steam.py copied, named by each entry's app id."""
     mapping = json.loads(MANIFEST.read_text('utf-8'))['artwork']
@@ -119,10 +130,21 @@ def main():
                         help='desktop folder to clean (default: the real desktop)')
     parser.add_argument('--log', type=Path, help='run log file (default: steam/logs/install.log)')
     parser.add_argument('--no-log', action='store_true', help='do not write the run log')
+    parser.add_argument('--confirm', action='store_true',
+                        help='always show the restart approval dialog')
+    parser.add_argument('--yes', '--no-confirm', dest='yes', action='store_true',
+                        help='never ask; assume the restart is approved')
+    parser.add_argument('--silent', action='store_true',
+                        help='unattended run: no dialog and no progress output (--yes --progress off)')
     args = parser.parse_args()
+    if args.silent:
+        args.yes, args.progress = True, 'off'
 
     tool = add_tool()
     tool.PROGRESS_MODE = args.progress
+    confirm = confirm_tool()
+    if confirm.should_confirm(args):
+        tool.CONFIRM = lambda detail: confirm.ask(detail)
     with log_tool().run('uninstall_from_steam', sys.argv[1:], args.log,
                         enabled=not args.no_log):
         return deploy(args, tool, parser)

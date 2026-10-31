@@ -32,6 +32,44 @@ The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
 | `steam/lib/steam_progress.py` | the restart bar: measured weights, drift, progress modes |
 | `steam/lib/install_log.py` | the run log in `steam/logs/`, which flags repairs and refusals as WARN |
 | `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
+| `steam/lib/steam_confirm.py` | the restart approval dialog (non-Steam shortcut, Steam restart) |
+| `steam/lib/steam_gui.py` | the windowed front end: approval and the same bar, no console |
+
+### Windowed launchers
+
+`install_to_steam.pyw` and `uninstall_from_steam.pyw` are the double-click entry points.
+`.pyw` runs under `pythonw`, so no command prompt appears; their output is appended to
+`steam/logs/gui.log` instead.
+
+One Tk window does both jobs: it explains the non-Steam shortcut and the Steam restart,
+then draws the same bar the console build draws - identical weights, the measured drift
+through the 24 s window wait, 99 before 100 - with the stage line and the live note under
+it. Cancel writes nothing; when the run ends the button becomes Close and the window
+reports `Finished.` or the exit code.
+
+Flags still work, e.g. `pythonw steam/install_to_steam.pyw --last-world --artwork`.
+Without a display the launcher falls back to the headless tool.
+
+### Restart approval
+
+Before Steam is stopped, a small Tk window asks once:
+
+- TerraForest is added as a **non-Steam game** shortcut (not a real Steam app);
+- Steam keeps those in `shortcuts.vdf` and only reads it while closed, so it has to be
+  closed and reopened now;
+- nothing else in the library changes, and Steam needs about 25 s to come back.
+
+`Restart Steam and continue` approves; `Cancel` (or Esc) aborts before anything is
+written: the run exits with code 3, writes no backup, and records
+`WARN cancelled: Steam restart not approved` in the log. The dialog appears only when
+someone can answer - an interactive console with Tk available. Piped runs skip it, and
+so do `--yes` / `--no-confirm`; `--confirm` forces it.
+
+Preview it without touching Steam: `python steam/lib/steam_confirm.py --demo`.
+
+Unattended runs stay silent: pipe the output (the dialog and the bar both switch
+themselves off), or ask explicitly with `--silent`, which is `--yes --progress off`.
+Steam itself is still launched with `-silent`, so it returns to the tray either way.
 
 ## Progress during a Steam restart
 

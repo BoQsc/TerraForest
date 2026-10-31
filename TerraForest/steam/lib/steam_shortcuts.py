@@ -70,6 +70,11 @@ STEAM_UI_GRACE = 2.0
 # How the restart is reported: auto (bar on a terminal), bar, plain (one line per
 # 10%, for logs) or off. The entry points set this from their --progress flag.
 PROGRESS_MODE = 'auto'
+# Set by the windowed launchers: builds the bar shown in the Tk window instead.
+PROGRESS_FACTORY = None
+# Optional approval callback, set by the entry points: called with a short description
+# before Steam is stopped, because that restart is the intrusive part.
+CONFIRM = None
 # Launch Steam detached so our console closing cannot take the client with it.
 DETACHED_PROCESS = 0x00000008
 CREATE_NEW_PROCESS_GROUP = 0x00000200
@@ -476,9 +481,21 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None,
     """Stop Steam if needed, replace the file, verify, and restart Steam."""
     steam = shortcut.parents[3]
     running = steam_running()
-    bar = progress if progress is not None else steam_progress.Progress(mode=PROGRESS_MODE)
+    if progress is not None:
+        bar = progress
+    elif PROGRESS_FACTORY is not None:
+        bar = PROGRESS_FACTORY()
+    else:
+        bar = steam_progress.Progress(mode=PROGRESS_MODE)
     bar.stage('check', f'{len(running)} process(es): {", ".join(running) or "none"}')
     if running:
+        if restart and CONFIRM is not None:
+            if not CONFIRM(f'This run will: {label.strip()}'):
+                print('cancelled : the Steam restart was not approved; nothing written',
+                      file=sys.stderr)
+                install_log.warn('cancelled: Steam restart not approved')
+                bar.abort('cancelled: restart not approved')
+                return 3
         if GAME_MARKER in running and not force:
             print(f'refusing : a Steam game session looks active ({", ".join(running)}); '
                   'stopping Steam would end it.\n'

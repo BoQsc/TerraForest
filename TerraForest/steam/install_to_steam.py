@@ -44,6 +44,7 @@ app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
 # The importable modules live in steam/lib/; the entry points stay in steam/.
 steam_tool = load('steam_shortcuts', ROOT/'steam'/'lib'/'steam_shortcuts.py')
 log_tool = load('install_log', ROOT/'steam'/'lib'/'install_log.py')
+confirm_tool = load('steam_confirm', ROOT/'steam'/'lib'/'steam_confirm.py')
 
 
 def godot_sources():
@@ -211,8 +212,18 @@ def main():
                         help='desktop folder to write into (default: the real desktop)')
     parser.add_argument('--log', type=Path, help='run log file (default: steam/logs/install.log)')
     parser.add_argument('--no-log', action='store_true', help='do not write the run log')
+    parser.add_argument('--confirm', action='store_true',
+                        help='always show the restart approval dialog')
+    parser.add_argument('--yes', '--no-confirm', dest='yes', action='store_true',
+                        help='never ask; assume the restart is approved')
+    parser.add_argument('--silent', action='store_true',
+                        help='unattended run: no dialog and no progress output (--yes --progress off)')
     args = parser.parse_args()
+    if args.silent:
+        args.yes, args.progress = True, 'off'
     steam_tool.PROGRESS_MODE = args.progress
+    if confirm_tool.should_confirm(args):
+        steam_tool.CONFIRM = lambda detail: confirm_tool.ask(detail)
     with log_tool.run('install_to_steam', sys.argv[1:], args.log, enabled=not args.no_log):
         return deploy(args)
 
