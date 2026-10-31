@@ -1,4 +1,5 @@
 {
+  "brand": "steam/brand/brand.json",
   "name": "TerraForest",
   "last_world_name": "TerraForest Last World",
   "exe": "TerraForest.exe",
@@ -6,7 +7,7 @@
   "last_world_launch_options": "--path \"<project>\" res://demo/worlds.tscn -- --continue-last",
   "icon": "steam/app_icon/terraforest.ico",
   "sortas": "TerraForest",
-  "tags": ["World building", "Sandbox"],
+  "tags": ["World building", "Sandbox", "Open source"],
   "overlay": true,
   "desktop_config": true,
   "hidden": false,

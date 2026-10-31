@@ -7,6 +7,9 @@ The three tools live here too, next to the resources they apply. `manifest.json`
 `artwork/` are not read by the installer yet — they are the source of truth to wire up next.
 The placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
 
+`artwork/` is generated from `brand/brand.json` (`python steam/brand/make_brand_artwork.py`);
+edit the brand, not the PNGs.
+
 ## Tools
 
 | Script | What it does |
