@@ -38,6 +38,8 @@ from ctypes import wintypes as w
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT
 WORLD_SCENE = 'res://demo/world.tscn'
+# The scene that reads --continue-last (the browser); it is also the main scene.
+BROWSER_SCENE = 'res://demo/worlds.tscn'
 WORLD_ARGS = ['--ground-cover', '--actors', '--vehicle-fleet', '--max-fps=60']
 RUNDLL = Path(os.environ.get('SystemRoot', r'C:\Windows'))/'System32'/'rundll32.exe'
 # Steam's "long" app id for a non-Steam shortcut: (shortcut app id << 32) | 0x02000000.
@@ -112,6 +114,14 @@ def command_line(arguments):
     """Windows command line for a .lnk: quote any argument containing a space."""
     return ' '.join(f'"{argument}"' if ' ' in argument else argument
                     for argument in arguments)
+
+
+def continue_arguments():
+    """Static "continue the newest world" command line; the game picks the slot."""
+    # The flag must follow the `--` separator: the game reads OS.get_cmdline_user_args(),
+    # and anything before `--` is an engine argument that never reaches the game.
+    # The browser scene is the one that resolves it (the world scene ignores it).
+    return launch_arguments() + [BROWSER_SCENE, '--', '--continue-last']
 
 
 def desktop_folder():
@@ -241,36 +251,45 @@ def steam_command(appid):
     return RUNDLL, ['url.dll,FileProtocolHandler', f'steam://rungameid/{long_app_id(appid)}']
 
 
-def plan(folder, slot, name=None, exe=None, entry=None, mode='auto'):
+def steam_route(entry, required, mode):
+    """The Steam command for an entry, or None when it cannot launch what we ask."""
+    if mode == 'native' or not entry:
+        return None
+    appid = entry.get('appid')
+    if not isinstance(appid, int):
+        return None
+    if mode == 'steam' or (entry.get('LaunchOptions') or '') == required:
+        return steam_command(appid)
+    return None
+
+
+def plan(folder, slot=None, name=None, exe=None, plain_entry=None, world_entry=None,
+         mode='auto'):
     """Shortcuts to write: Steam when its entry launches what we ask, else native."""
     name = name or project_name()
     exe = exe or ROOT/f'{name}.exe'
-    appid = entry.get('appid') if entry else None
-    on_steam = isinstance(appid, int) and mode != 'native'
-    options = (entry or {}).get('LaunchOptions', '') or ''
-    plain = command_line(launch_arguments())
     entries = []
 
-    if on_steam and (mode == 'steam' or options == plain):
-        target, arguments = steam_command(appid)
-        state = f'steam (appid {appid & 0xFFFFFFFF})'
+    plain = steam_route(plain_entry, command_line(launch_arguments()), mode)
+    if plain:
+        target, arguments = plain
+        state = f'steam (appid {plain_entry["appid"] & 0xFFFFFFFF})'
     else:
         target, arguments, state = exe, launch_arguments(None), 'native'
     entries.append({'link': folder/f'{name}.lnk', 'target': target,
                     'arguments': arguments, 'description': f'Play {name}', 'mode': state})
 
-    if slot:
-        world_arguments = launch_arguments(slot)
-        world_steam = on_steam and mode == 'steam' and \
-            options == command_line(world_arguments)
-        if world_steam:
-            target, arguments = steam_command(appid)
-            state = f'steam (appid {appid & 0xFFFFFFFF})'
-        else:
-            target, arguments, state = exe, world_arguments, 'native'
-        entries.append({'link': folder/f'{name} Last World.lnk', 'target': target,
-                        'arguments': arguments, 'description': f'Continue {slot}',
-                        'mode': state})
+    # The last-world shortcut carries no slot: --continue-last lets the game decide,
+    # which is what makes a fixed Steam command line able to express it.
+    world = steam_route(world_entry, command_line(continue_arguments()), mode)
+    if world:
+        target, arguments = world
+        state = f'steam (appid {world_entry["appid"] & 0xFFFFFFFF})'
+    else:
+        target, arguments, state = exe, continue_arguments(), 'native'
+    entries.append({'link': folder/f'{name} Last World.lnk', 'target': target,
+                    'arguments': arguments, 'description': f'Continue {name}',
+                    'mode': state})
     return entries
 
 
@@ -291,24 +310,27 @@ def main():
     if not args.exe.is_file():
         raise SystemExit(f'{args.exe}: missing; run install_to_steam.py first')
     slot = args.slot or newest_world(args.worlds_dir or worlds_dir())
-    if slot is None:
-        print(f'warning  : no saved world in {args.worlds_dir or worlds_dir()}; '
-              'only the plain shortcut is made')
     name = project_name()
-    entry_file, fields = steam_entry(args.exe, name)
-    appid = (fields or {}).get('appid')
-    if fields is None:
-        print('steam    : not registered; shortcuts start the executable directly')
-    else:
-        options = fields.get('LaunchOptions') or '<none>'
-        number = appid & 0xFFFFFFFF if isinstance(appid, int) else '?'
-        print(f'steam    : {entry_file}  appid {number}  opts={options}')
+    plain_file, plain_fields = steam_entry(args.exe, name)
+    world_file, world_fields = steam_entry(args.exe, f'{name} Last World')
+
+    def describe(label, entry_file, fields):
+        if fields is None:
+            print(f'{label:8} : not registered')
+            return
+        number = fields.get('appid')
+        number = number & 0xFFFFFFFF if isinstance(number, int) else '?'
+        print(f'{label:8} : {entry_file}  appid {number}  '
+              f'opts={fields.get("LaunchOptions") or "<none>"}')
+
+    describe('steam', plain_file, plain_fields)
+    describe('last', world_file, world_fields)
     print(f'folder   : {folder}')
     print(f'exe      : {args.exe}')
-    print(f'world    : {slot or "<none>"}')
+    print(f'world    : {slot or "<no saves yet>"} (resolved by the game at launch)')
 
     status = 0
-    for item in plan(folder, slot, name, args.exe, fields, args.launch):
+    for item in plan(folder, slot, name, args.exe, plain_fields, world_fields, args.launch):
         link = item['link']
         action = 'update' if link.exists() else 'create'
         if args.dry_run:
@@ -322,14 +344,18 @@ def main():
         if Path(target).resolve() != item['target'].resolve() or not stored:
             print(f'warning  : {link.name} did not read back as expected', file=sys.stderr)
             status = 1
-    if fields is not None and args.launch != 'native':
-        expected = command_line(launch_arguments())
-        if (fields.get('LaunchOptions') or '') != expected:
-            print(f'note     : the Steam entry launches with '
-                  f'{fields.get("LaunchOptions") or "<no options>"!r}, so Steam cannot run '
-                  f'the game correctly. Give it this launch option (one argument):\n'
-                  f'           {expected}\n'
-                  f'           python add_steam_shortcut.py --launch-options <that value>')
+
+    if args.launch != 'native':
+        for label, fields, wanted in (
+                (name, plain_fields, command_line(launch_arguments())),
+                (f'{name} Last World', world_fields, command_line(continue_arguments()))):
+            if fields is not None and (fields.get('LaunchOptions') or '') != wanted:
+                print(f'note     : the Steam entry "{label}" launches with '
+                      f'{fields.get("LaunchOptions") or "<no options>"!r}, so Steam cannot '
+                      f'run it correctly. Register it with this launch option:\n'
+                      f'           {wanted}\n'
+                      f'           python add_steam_shortcut.py --name "{label}" '
+                      f'--launch-options <that value>')
     if args.dry_run:
         print('dry run  : nothing written')
     return status

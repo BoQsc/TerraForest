@@ -38,6 +38,8 @@ ROOT = Path(__file__).resolve().parent
 CANDIDATE_EXES = (ROOT/'TerraForest.exe', ROOT/'Godot Engine TerraForest.exe',
                   ROOT/'dist/TerraForest.exe')
 DEFAULT_NAME = 'TerraForest'
+# One 0x08 closes a dictionary; the file's root end carries one extra 0x08 pad,
+# which is the shape Steam itself writes (verified against a Steam-saved file).
 KV_END = b'\x08\x08'
 GAME_MARKER = 'gameoverlayui.exe'
 STEAM_EXIT_TIMEOUT = 90
@@ -165,8 +167,12 @@ def accounts(steam):
 def read_dict(data, pos, target):
     """Read one binary KeyValues dictionary starting at pos."""
     while True:
-        if data[pos:pos+2] == KV_END:
-            return pos + 2
+        if pos >= len(data):
+            raise SystemExit('shortcuts.vdf is truncated (Steam may be writing it)')
+        if data[pos] == 0x08:
+            # End of this dictionary. Some writers emit one 0x08 per dictionary,
+            # ours emits two; accept one and let the caller absorb any padding.
+            return pos + 1
         kind = data[pos]
         pos += 1
         end = data.index(b'\x00', pos)
@@ -197,6 +203,8 @@ def parse_shortcuts(data):
     end = data.index(b'\x00', 1)
     root = {}
     pos = read_dict(data, end + 1, root)
+    while pos < len(data) and data[pos] == 0x08:
+        pos += 1
     if pos != len(data):
         raise SystemExit(f'{len(data) - pos} unexpected trailing bytes in shortcuts.vdf')
     return data[1:end].decode('utf-8'), root
@@ -213,12 +221,13 @@ def write_dict(out, fields):
             out += b'\x02' + key.encode('utf-8') + b'\x00' + struct.pack('<i', value)
         else:
             raise SystemExit(f'cannot encode {key}={value!r}')
-    out += KV_END
+    out += b'\x08'
 
 
 def serialize_shortcuts(root_name, entries):
     out = bytearray(b'\x00' + root_name.encode('utf-8') + b'\x00')
     write_dict(out, {str(index): fields for index, fields in sorted(entries.items())})
+    out += b'\x08'
     return bytes(out)
 
 
@@ -258,8 +267,17 @@ def signed32(value):
 
 
 def matches(fields, name, exe):
+    """One entry is identified by its executable plus its name.
+
+    Two shortcuts may point at the same executable (the plain launch and the
+    "continue last world" launch), so the name has to take part in the identity;
+    matching on the executable alone silently rewrote the other entry.
+    """
     stored = (fields.get('Exe') or '').strip('"').replace('/', '\\').lower()
-    return stored == str(exe).replace('/', '\\').lower() or fields.get('AppName') == name
+    if stored != str(exe).replace('/', '\\').lower():
+        return False
+    wanted = (name or '').strip().lower()
+    return not wanted or (fields.get('AppName') or '').strip().lower() == wanted
 
 
 def find_entry(entries, name, exe):
@@ -267,8 +285,19 @@ def find_entry(entries, name, exe):
 
 
 def load(path):
-    data = path.read_bytes()
-    root, entries = parse_shortcuts(data)
+    # Steam rewrites this file; a read that lands mid-write is truncated, so retry
+    # before reporting, and fail with a clear message rather than an index error.
+    error = None
+    for _ in range(10):
+        try:
+            data = path.read_bytes()
+            root, entries = parse_shortcuts(data)
+            break
+        except (SystemExit, IndexError, OSError) as exc:
+            error = exc
+            time.sleep(0.2)
+    else:
+        raise SystemExit(f'{path}: cannot be read right now ({error})')
     if serialize_shortcuts(root, entries) != data:
         print(f'warning: {path} does not round-trip byte for byte; '
               'only appending, never rewriting', file=sys.stderr)
@@ -384,15 +413,15 @@ def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=
         return 0
     index = max((int(k) for k in entries), default=-1) + 1
     fields = shortcut_fields(name, exe, launch_options)
-    if not data.endswith(KV_END):
-        raise SystemExit(f'{shortcut}: does not end with the dictionary terminator')
-    body = bytearray()
-    write_dict(body, fields)
-    candidate = data[:-len(KV_END)] + b'\x00' + str(index).encode() + b'\x00' + bytes(body) + KV_END
+    updated = dict(entries)
+    updated[str(index)] = fields
+    # Serialised from the parsed entries rather than spliced into the original
+    # bytes: Steam rewrites the file with its own terminator layout, and splicing
+    # into that produced trailing garbage.
+    candidate = serialize_shortcuts(root, updated)
     check_root, check_entries = parse_shortcuts(candidate)
     if check_root != root or len(check_entries) != len(entries) + 1 or \
-       not matches(check_entries[str(index)], name, exe) or \
-       not candidate.startswith(data[:-len(KV_END)]):
+       not matches(check_entries[str(index)], name, exe):
         raise SystemExit('refusing to write: the candidate file failed its own round-trip check')
     print(f'shortcut : "{name}" -> {exe}')
     print(f'file     : {shortcut} ({len(data)} -> {len(candidate)} bytes)')

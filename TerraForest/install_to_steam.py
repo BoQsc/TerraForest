@@ -93,7 +93,7 @@ def stamp(dry_run):
     return True
 
 
-def register(dry_run, name, restart, force, steam, account):
+def register(dry_run, name, restart, force, steam, account, last_world=False):
     """Add the shortcut through the Steam tool; it owns the restart and the backup."""
     root = steam or next((p for p in steam_tool.steam_roots() if (p/'userdata').is_dir()), None)
     if root is None:
@@ -104,13 +104,18 @@ def register(dry_run, name, restart, force, steam, account):
             raise SystemExit(f'no shortcuts.vdf for account {account}')
     else:
         shortcut = steam_tool.accounts(root)[0]
-    return steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
-                          launch_options(dry_run))
+    code = steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
+                          launch_options())
+    if code == 0 and last_world:
+        # A second entry, because one Steam entry cannot express two command lines.
+        code = steam_tool.add(shortcut, f'{name} Last World', TARGET.resolve(), dry_run,
+                              restart, force, launch_options('--continue-last'))
+    return code
 
 
-def launch_options(_dry_run=False):
+def launch_options(suffix=''):
     """The editor binary needs --path, or Steam opens the project manager instead."""
-    return f'--path "{ROOT}"'
+    return f'--path "{ROOT}"' + (f' {suffix}' if suffix else '')
 
 
 def main():
@@ -122,6 +127,8 @@ def main():
     parser.add_argument('--force', action='store_true', help='re-copy over TerraForest.exe')
     parser.add_argument('--dry-run', action='store_true', help='report without changing anything')
     parser.add_argument('--no-restart', action='store_true', help='leave Steam stopped')
+    parser.add_argument('--last-world', action='store_true',
+                        help='also register the "Last World" entry (--continue-last)')
     parser.add_argument('--steam', type=Path, help='Steam install directory')
     parser.add_argument('--account', help='Steam account id under userdata')
     args = parser.parse_args()
@@ -134,7 +141,7 @@ def main():
     if not stamp(args.dry_run):
         raise SystemExit('icon stamping failed; the shortcut was not touched')
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
-                    args.steam, args.account)
+                    args.steam, args.account, args.last_world)
     if code == 0:
         print('done     : TerraForest is prepared and registered')
     return code

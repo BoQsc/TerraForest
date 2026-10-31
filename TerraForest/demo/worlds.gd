@@ -119,6 +119,22 @@ func _ready() -> void:
 	button(bottom,"Quit",request_quit)
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
+	if "--continue-last" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):continue_last_world.call_deferred()
+func continue_last_world() -> void:
+	# A Steam entry carries one fixed command line, so "continue" is decided here
+	# instead of by an argument naming a slot: the list is already newest first.
+	var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+	if slots.is_empty():
+		notice.text="No saved world to continue."
+		if "--continue-report" in arguments:
+			print("continue-last: no saved world");get_tree().quit(1)
+		return
+	if worlds.item_count>0:worlds.select(0)
+	if "--continue-report" in arguments:
+		# Verification hook: says which world the flag resolves to, then exits.
+		print("continue-last: "+slots[0]);get_tree().quit(0)
+		return
+	launch_selected(false)
 func show_credits()->void:
 	if credits_dialog==null:
 		credits_dialog=CreditsDialog.new();credits_dialog.theme=theme;add_child(credits_dialog)
