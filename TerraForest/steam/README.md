@@ -39,6 +39,13 @@ verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays sil
 output is piped, so scripts and tests keep their plain lines.
 Preview the stages without touching Steam: `python steam/steam_progress.py --demo`.
 
+Stage weights follow the measured durations (check 5%, stop 15%, write 5%, start 70%,
+verify 5%), because the wait for Steam's window is ~24 s of a ~29 s run. Inside the start
+stage the window wait sweeps 20% → 90% linearly against that measured 24 s, so the bar
+keeps moving at the pace the wait actually takes; only the real window event completes
+it. The bar never goes backwards, big jumps are walked a few points at a time, and 99%
+is drawn before 100%.
+
 Every tool takes `--progress auto|bar|plain|off`:
 
 - `auto` (default) — the animated single line on a terminal, silent when piped;

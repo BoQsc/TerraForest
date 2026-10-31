@@ -172,6 +172,8 @@ def wait_for_steam_ui(timeout=STEAM_UI_TIMEOUT, progress=None, grace=STEAM_UI_GR
     """Wait until Steam shows a window and has kept it for `grace` seconds."""
     lookup = windows or steam_windows
     deadline = time.time() + timeout
+    started = time.time()
+    expected = getattr(progress, 'expected', {}).get('start', 25.0) if progress else 25.0
     ready_since = None
     while time.time() < deadline:
         live = lookup()
@@ -182,14 +184,20 @@ def wait_for_steam_ui(timeout=STEAM_UI_TIMEOUT, progress=None, grace=STEAM_UI_GR
             if progress is not None:
                 detail = (f"window {main['size'][0]}x{main['size'][1]}"
                           + ('' if main['visible'] else ', in the tray'))
-                progress.tick(0.75, f'Steam UI ready ({detail})')
+                progress.tick(0.90, f'Steam UI ready ({detail})')
         elif ready_since is not None and time.time()-ready_since >= grace:
             if progress is not None:
                 progress.tick(1.0, 'Steam is up: window and tray are back')
             return True
+        elif ready_since is not None and progress is not None:
+            # The window is back; hold at the measured pace while the tray settles.
+            progress.tick(0.90 + 0.08*steam_progress.drift_fraction(
+                time.time()-ready_since, grace), 'waiting for the tray to settle')
         elif progress is not None and ready_since is None:
-            elapsed = 1 - max(0.0, (deadline-time.time())/timeout)
-            progress.tick(0.5 + 0.25*elapsed, 'waiting for the Steam window')
+            # Measured: this is the long part (~24 s). It sweeps most of the start
+            # stage (0.20 -> 0.90), so the bar moves at the pace the wait takes.
+            progress.tick(0.20 + 0.70*steam_progress.drift_fraction(
+                time.time()-started, expected), 'waiting for the Steam window')
         time.sleep(POLL)
     return False
 
@@ -210,6 +218,7 @@ def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
     except subprocess.TimeoutExpired:
         pass  # the bootstrap may linger; the poll below is what decides
     deadline = time.time() + timeout
+    started = time.time()
     while time.time() < deadline:
         # The client owns shortcuts.vdf; its helpers are torn down with it, and
         # waiting on them only added latency after the file was already safe.
@@ -219,15 +228,13 @@ def stop_steam(steam, timeout=STEAM_EXIT_TIMEOUT, progress=None):
                 progress.tick(1.0, 'all Steam processes gone')
             return True
         if progress is not None:
-            left = max(0.0, (deadline - time.time())/timeout)
-            elapsed_fraction = 1.0-left
             # Measured shutdown order: helpers go first, the client lingers ~0.3 s,
-            # then everything is gone.
+            # then everything is gone. Drift at the measured pace, never frozen.
+            elapsed = time.time()-started
             if 'steamwebhelper.exe' not in alive:
-                progress.tick(max(0.5, elapsed_fraction), 'helpers closed, client exiting')
+                progress.drift(elapsed, 'helpers closed, client exiting')
             else:
-                progress.tick(min(0.5, elapsed_fraction),
-                              f'{len(alive)} process(es) left: {", ".join(alive)}')
+                progress.drift(elapsed, f'{len(alive)} process(es) left: {", ".join(alive)}')
         time.sleep(POLL)
     return False
 
@@ -263,11 +270,11 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
         if 'steam.exe' in alive and not client_up:
             client_up = True
             if progress is not None:
-                progress.tick(0.2, 'client process up')
+                progress.tick(0.10, 'client process up')
         if 'steamwebhelper.exe' in alive and not helpers_up:
             helpers_up = True
             if progress is not None:
-                progress.tick(0.5, 'helpers up (library loading)')
+                progress.tick(0.20, 'helpers up (library loading)')
         if alive != previous:
             previous, stable_since = alive, time.time()
         elif client_up and time.time()-stable_since >= settle:
@@ -278,7 +285,7 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
             # Do not hand control back while Steam is still starting: wait for its
             # window, which is also when the tray icon and notification come back.
             if progress is not None:
-                progress.tick(0.6, 'waiting for the Steam window')
+                progress.tick(0.20, 'waiting for the Steam window')
             shown = wait_for_steam_ui(timeout=max(5.0, deadline-time.time()), progress=progress)
             if not shown and progress is not None:
                 progress.tick(1.0, 'no window yet (Steam may be in the tray)')

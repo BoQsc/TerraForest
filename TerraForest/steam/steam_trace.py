@@ -110,9 +110,16 @@ def restart(trace_json=None):
     subprocess.Popen([str(executable), '-silent'], stdin=subprocess.DEVNULL,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True,
                      creationflags=steam.DETACHED_PROCESS | steam.CREATE_NEW_PROCESS_GROUP)
+    window_at = None
+    while time.time()-t1 < 90:
+        if any(win.get('main') for win in steam.steam_windows()):
+            window_at = round(time.time()-t1, 2)
+            break
+        time.sleep(0.1)
     boot = watch(60, label='boot')
     boot_seconds = round(time.time()-t1, 2)
-    print(f"started  : {describe(boot['events'][-1]['set'])} in {boot_seconds:.2f}s")
+    print(f"started  : {describe(boot['events'][-1]['set'])} in {boot_seconds:.2f}s, "
+          f"main window at {window_at}s")
 
     print('timeline :')
     for phase in phases(boot):
@@ -124,6 +131,7 @@ def restart(trace_json=None):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps({'stop_seconds': stop_seconds,
                                       'boot_seconds': boot_seconds,
+                                      'window_seconds': window_at,
                                       'shutdown': phases(down),
                                       'phases': phases(boot)}, indent=2), 'utf-8')
         print(f'written  : {trace_json}')
