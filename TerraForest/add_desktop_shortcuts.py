@@ -2,29 +2,25 @@
 """Put "TerraForest" and "TerraForest Last World" on the desktop, or refresh them.
 
 Both shortcuts start the play build the same way the game starts itself
-(`demo/world_launch.gd`): the executable plus `--path <project>`, and for a world
-`res://demo/world.tscn -- --world-slot=<slot> --ground-cover --actors
---vehicle-fleet --max-fps=60`.
+(`demo/world_launch.gd`): the executable plus `--path <project>`, and for the
+world one `res://demo/worlds.tscn -- --continue-last`, which lets the game pick
+the world itself instead of naming a slot in the shortcut.
 
-If the game is already registered in Steam (`add_steam_shortcut.py`), the plain
-shortcut launches it through Steam (`steam://rungameid/<id>`) so the overlay and
-playtime apply, and only falls back to running the executable directly when the
-Steam entry is missing. A world shortcut needs its slot as a launch argument, and
-a Steam entry carries fixed launch options, so it goes through Steam only when
-that entry already holds the same arguments; otherwise it stays native and says
-so. `--launch steam` or `--launch native` force either route.
+If Steam already has an entry whose launch options match a shortcut's arguments
+(`tools/steam_shortcuts.py`), that shortcut launches through Steam
+(`steam://rungameid/<id>`) so the overlay and playtime apply, and only falls back
+to the executable when no entry carries that exact argument string. `--launch
+steam` or `--launch native` force either route.
 
-*TerraForest* opens the world list. *TerraForest Last World* opens the most
-recently saved world, picked from `user://worlds` (`%APPDATA%\\Godot\\
-app_userdata\\<project>\\worlds`, newest `.trw` by modification time). Re-running
-the script rewrites both shortcuts in place, which is how the "last world" one
-gets updated after you play something else.
+*TerraForest* opens the world list. *TerraForest Last World* continues the newest
+world, chosen by the game itself (it orders saves by last played). Re-running the
+script rewrites both shortcuts in place.
 
 Usage:
-    python create_desktop_shortcuts.py               # create or update both
-    python create_desktop_shortcuts.py --dry-run     # report only
-    python create_desktop_shortcuts.py --launch steam  # force the Steam route
-    python create_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
+    python add_desktop_shortcuts.py               # create or update both
+    python add_desktop_shortcuts.py --dry-run     # report only
+    python add_desktop_shortcuts.py --launch steam  # force the Steam route
+    python add_desktop_shortcuts.py --folder DIR  # somewhere other than the desktop
 """
 from pathlib import Path
 import argparse
@@ -212,13 +208,13 @@ _STEAM = None
 
 
 def steam():
-    """The sibling tool that owns shortcuts.vdf, loaded once."""
+    """The tools/ module that owns shortcuts.vdf, loaded once."""
     global _STEAM
     if _STEAM is None:
-        spec = importlib.util.spec_from_file_location('add_steam_shortcut',
-                                                      ROOT/'add_steam_shortcut.py')
+        spec = importlib.util.spec_from_file_location('steam_shortcuts',
+                                                      ROOT/'tools'/'steam_shortcuts.py')
         if spec is None or spec.loader is None:
-            raise SystemExit(f'{ROOT}/add_steam_shortcut.py: cannot be imported')
+            raise SystemExit(f'{ROOT}/tools/steam_shortcuts.py: cannot be imported')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         _STEAM = module
@@ -300,7 +296,7 @@ def main():
     parser.add_argument('--exe', type=Path, default=ROOT/f'{project_name()}.exe',
                         help='executable the shortcuts start')
     parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
-    parser.add_argument('--slot', help='world slot for the last-world shortcut')
+
     parser.add_argument('--launch', choices=('auto', 'steam', 'native'), default='auto',
                         help='launch through Steam when it has the game (default: auto)')
     parser.add_argument('--dry-run', action='store_true', help='report without writing')
@@ -309,7 +305,7 @@ def main():
     folder = args.folder or desktop_folder()
     if not args.exe.is_file():
         raise SystemExit(f'{args.exe}: missing; run install_to_steam.py first')
-    slot = args.slot or newest_world(args.worlds_dir or worlds_dir())
+    slot = newest_world(args.worlds_dir or worlds_dir())
     name = project_name()
     plain_file, plain_fields = steam_entry(args.exe, name)
     world_file, world_fields = steam_entry(args.exe, f'{name} Last World')
@@ -354,7 +350,7 @@ def main():
                       f'{fields.get("LaunchOptions") or "<no options>"!r}, so Steam cannot '
                       f'run it correctly. Register it with this launch option:\n'
                       f'           {wanted}\n'
-                      f'           python add_steam_shortcut.py --name "{label}" '
+                      f'           python tools/steam_shortcuts.py --name "{label}" '
                       f'--launch-options <that value>')
     if args.dry_run:
         print('dry run  : nothing written')

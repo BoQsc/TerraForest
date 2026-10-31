@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 """Add, list or remove a Steam shortcut for the TerraForest play build.
 
+This is the shared engine behind `install_to_steam.py` and
+`uninstall_from_steam.py`; run it directly only for one-off inspection
+(`--list`) or surgery.
+
 Steam has no supported API for non-Steam games. The entries live in
 `<Steam>/userdata/<account>/config/shortcuts.vdf` as Valve's binary KeyValues,
 and Steam keeps them in memory and rewrites that file when it exits - so an edit
@@ -14,11 +18,11 @@ this Windows client (it appears as `ExecuteSteamURL` in the log) but opens no
 dialog and writes no entry, so a Steam restart is unavoidable for a scripted add.
 
 Usage:
-    python add_steam_shortcut.py --dry-run      # show what would be added
-    python add_steam_shortcut.py                # add, restarting Steam around the write
-    python add_steam_shortcut.py --no-restart   # add, leave Steam stopped
-    python add_steam_shortcut.py --list         # show current entries
-    python add_steam_shortcut.py --remove       # drop the TerraForest entry
+    python tools/steam_shortcuts.py --dry-run      # show what would be added
+    python tools/steam_shortcuts.py                # add, restarting Steam around the write
+    python tools/steam_shortcuts.py --no-restart   # add, leave Steam stopped
+    python tools/steam_shortcuts.py --list         # show current entries
+    python tools/steam_shortcuts.py --remove       # drop the TerraForest entry
 """
 from pathlib import Path
 import argparse
@@ -33,8 +37,8 @@ import winreg
 import zlib
 from ctypes import wintypes as w
 
-# Lives at the project root next to project.godot and the play build.
-ROOT = Path(__file__).resolve().parent
+# Lives in tools/; the play build is one level up next to project.godot.
+ROOT = Path(__file__).resolve().parent.parent
 CANDIDATE_EXES = (ROOT/'TerraForest.exe', ROOT/'Godot Engine TerraForest.exe',
                   ROOT/'dist/TerraForest.exe')
 DEFAULT_NAME = 'TerraForest'
@@ -448,6 +452,35 @@ def remove(shortcut, name, exe, dry_run, restart=True, force=False):
         return 0
     return commit(shortcut, data, candidate,
                   f'removed  : entry {", ".join(victim)}; {len(remaining)} left', restart, force)
+
+
+def remove_all(shortcut, names, exe, dry_run, restart=True, force=False):
+    """Remove several named entries in one pass, so Steam is restarted once."""
+    data, root, entries = load(shortcut)
+    victims = {}
+    for name in names:
+        found = find_entry(entries, name, exe)
+        if not found:
+            print(f'missing  : no "{name}" entry in {shortcut}')
+            continue
+        victims.update(found)
+    if not victims:
+        print(f'nothing  : no entry of {", ".join(names)} to remove')
+        return 0
+    labels = ', '.join(f'"{entries[index].get("AppName")}" (index {index})'
+                       for index in sorted(victims, key=int))
+    remaining = {index: fields for index, fields in entries.items() if index not in victims}
+    candidate = serialize_shortcuts(root, remaining)
+    check_root, check_entries = parse_shortcuts(candidate)
+    if check_root != root or len(check_entries) != len(entries) - len(victims):
+        raise SystemExit('refusing to write: the candidate file failed its own round-trip check')
+    print(f'removing : {labels} from {shortcut}')
+    if dry_run:
+        print('dry run  : nothing written, Steam untouched')
+        return 0
+    return commit(shortcut, data, candidate,
+                  f'removed  : {len(victims)} entry(ies); {len(remaining)} left',
+                  restart, force)
 
 
 def main():
