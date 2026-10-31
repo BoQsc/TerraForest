@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS persistent host loads enabled definitions
+PASS structure models register with real compound world persistence
+PASS door components attach before persistent terrain startup
+PASS isolated persistent world starts
+PASS persistent world restore finishes
+PASS place and open architecture/wooden_door/v1
+PASS place and open example/doors/narrow_right/v1
+PASS compound terrain and both opened doors publish to disk
+[TerrainRewrite] World saved and verified; terrain and addon state published together
+PASS persistent shutdown completes
+DOOR_CONTENT_STORAGE phase=create failures=0

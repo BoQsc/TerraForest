@@ -1,0 +1,19 @@
+{
+  "addon": "structures",
+  "archive_sha256": "a38c4fe7640a1834c354c95d9362e04dd002bc3ce9fe000dfd7ee4fa064f66b6",
+  "steps": [
+    {
+      "phase": "import",
+      "exit_code": 0,
+      "ok": true
+    },
+    {
+      "phase": "load",
+      "exit_code": 0,
+      "ok": false
+    }
+  ],
+  "import_frame_delay_ms": 0,
+  "resource_count": 244,
+  "ok": false
+}

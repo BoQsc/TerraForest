@@ -1,0 +1,130 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\.codex\\worktrees\\door-content\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\.codex\\worktrees\\door-content\\Godot Terrain\\TerraForest\\reports\\checks\\20261030T180010339494Z\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/door_component.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_d256c8d1e350437484e707235ae66c30",
+    "--derived-cache=user://door_component_d256c8d1e350437484e707235ae66c30"
+  ],
+  "cache": "user://door_component_d256c8d1e350437484e707235ae66c30",
+  "utc": "20261030T180010339494Z",
+  "timeout": 45.0,
+  "required_text": "failures=0",
+  "headless": true,
+  "persistent": false,
+  "scope": "Fresh derived-cache argument; test code must honor it. Not save isolation or a sandbox.",
+  "cache_retained": false,
+  "revision": "cce00e89316aa45a0044a3198319ab507dfb5f69",
+  "worktree_changes": [
+    " M TerraForest/addons/structures/object_mesh.gd",
+    " M TerraForest/addons/structures/prefabs/chair_model.tres",
+    " M TerraForest/addons/structures/prefabs/door_model.tres",
+    " M TerraForest/addons/structures/prefabs/shelf_model.tres",
+    " M TerraForest/addons/structures/prefabs/storage_chest_model.tres",
+    " M TerraForest/addons/structures/prefabs/table_model.tres",
+    " M TerraForest/assets/credits/notices.json",
+    " M TerraForest/export_presets.cfg",
+    " M TerraForest/tools/build_credit_notices.py",
+    " M TerraForest/tools/export_pack.py",
+    "?? TerraForest/addons/structures/prefabs/BG5_LICENSE.md",
+    "?? TerraForest/addons/structures/textures/bg5/",
+    "?? TerraForest/authoring/",
+    "?? TerraForest/mods/bg5_runtime/",
+    "?? TerraForest/tests/bg5_preview.gd",
+    "?? TerraForest/tests/bg5_runtime.gd",
+    "?? TerraForest/tools/bake_bg5_runtime.gd",
+    "?? TerraForest/tools/bake_bg5_runtime.gd.uid",
+    "?? TerraForest/tools/check_bg5_runtime.py",
+    "?? TerraForest/tools/prepare_bg5_runtime.py"
+  ],
+  "git_metadata_available": true,
+  "engine_sha256": "12310c74bdda7dcd43f28e971f33047dcecadd436b68169d61ce41009006df38",
+  "test_sha256": "1ee7cc7c95ec12b474c6c26aadc4c3865b91aee571e2050b27bfcbb13bdda3ec",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e636a4b1391115c6e3b94963d43f29bde2ca76ec2c48ecaa27e58080fbd3dd6b",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "af30b3552562558461107219c57772a10aabfa1b0d4edf244a7288ba819537ce",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1a2453c4ae4fdbf9ce9083c55f968ef2cbe7021ac0337eb24ec49866f7019d8d",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "f861147200aba58c98a753b0f22a51eb8229ed304988b97106ae687be6c07066",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+  },
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 19560,
+    "exit_code": 0,
+    "resources": {
+      "samples": 16,
+      "gpu_samples": 0,
+      "peak_private_commit_bytes": 550797312,
+      "peak_working_set_bytes": 566235136,
+      "peak_dedicated_gpu_bytes": null,
+      "checks": {
+        "ram": {
+          "bytes": 550797312,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": null,
+          "status": "unavailable"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "limits": {
+        "schema": 1,
+        "vram_warning_bytes": 3758096384,
+        "vram_limit_bytes": 4294967296,
+        "ram_warning_bytes": 4294967296,
+        "ram_limit_bytes": 6442450944,
+        "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+        "redistributable_warning_bytes": 4000000000,
+        "redistributable_limit_bytes": 5000000000,
+        "derived_cache_total_bytes": 3221225472,
+        "failed_test_cache_bytes": 1073741824,
+        "saved_world_warning_bytes": 10737418240,
+        "minimum_free_bytes": 10737418240,
+        "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+      },
+      "errors": [],
+      "exceeded": false,
+      "telemetry_complete": false,
+      "within_sampled_limits": false,
+      "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+    },
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 9.639428300011787,
+    "passed": true,
+    "cache_retention": {
+      "managed": true,
+      "removed_owned_cache": null,
+      "retained_bytes": 0,
+      "failed_cache_bytes": 97663220,
+      "failed_cache_budget_bytes": 1073741824,
+      "evicted_derived_bytes": 0,
+      "over_budget": false,
+      "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+    }
+  }
+}

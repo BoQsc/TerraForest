@@ -1,0 +1,122 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--windowed",
+    "--position",
+    "-2400,-1600",
+    "--path",
+    "C:\\Users\\windows10\\.codex\\worktrees\\door-content\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\.codex\\worktrees\\door-content\\Godot Terrain\\TerraForest\\reports\\runtime_views\\20261031T055138372764Z\\engine.log",
+    "--resolution",
+    "1920x1080",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/door_mod_world.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_cf64cfec00e3473d9817f0a5bd04df3e",
+    "--derived-cache=user://door_mod_world_cf64cfec00e3473d9817f0a5bd04df3e",
+    "--view-output=C:/Users/windows10/.codex/worktrees/door-content/Godot Terrain/TerraForest/reports/runtime_views/20261031T055138372764Z",
+    "--module-fixtures=C:/Users/windows10/.codex/worktrees/door-content/Godot Terrain/TerraForest/tests/fixtures",
+    "--noncapturing-door-check"
+  ],
+  "cache": "user://door_mod_world_cf64cfec00e3473d9817f0a5bd04df3e",
+  "source_sha256": "9981a1fb6c69f849b07b83dfcd7acaeca1996dc0fb8f2d9d6a2d5ad0f93bf0e6",
+  "revision": "cce00e89316aa45a0044a3198319ab507dfb5f69",
+  "worktree_changes": [
+    " M TerraForest/addons/player_runtime/art/item_icons.bake.json",
+    " M TerraForest/addons/structures/README.md",
+    " M TerraForest/addons/structures/object_mesh.gd",
+    " M TerraForest/addons/structures/objects/PROVENANCE.md",
+    " M TerraForest/addons/structures/prefabs/chair_model.tres",
+    " M TerraForest/addons/structures/prefabs/door_model.tres",
+    " M TerraForest/addons/structures/prefabs/shelf_model.tres",
+    " M TerraForest/addons/structures/prefabs/storage_chest_model.tres",
+    " M TerraForest/addons/structures/prefabs/table_model.tres",
+    " M TerraForest/assets/credits/notices.json",
+    " M TerraForest/docs/DOOR_CONTENT.md",
+    " M TerraForest/docs/WORLD_FOUNDATION_STATUS.md",
+    " M TerraForest/export_presets.cfg",
+    " M TerraForest/mods/example_doors/README.md",
+    " M TerraForest/tools/build_credit_notices.py",
+    " M TerraForest/tools/export_pack.py",
+    "?? TerraForest/addons/structures/prefabs/BG5_LICENSE.md",
+    "?? TerraForest/addons/structures/textures/bg5/",
+    "?? TerraForest/authoring/",
+    "?? TerraForest/docs/BG5_RUNTIME_ASSETS.md",
+    "?? TerraForest/mods/bg5_runtime/",
+    "?? TerraForest/tests/bg5_preview.gd",
+    "?? TerraForest/tests/bg5_preview.gd.uid",
+    "?? TerraForest/tests/bg5_runtime.gd",
+    "?? TerraForest/tests/bg5_runtime.gd.uid",
+    "?? TerraForest/tools/bake_bg5_runtime.gd",
+    "?? TerraForest/tools/bake_bg5_runtime.gd.uid",
+    "?? TerraForest/tools/check_bg5_runtime.py",
+    "?? TerraForest/tools/prepare_bg5_runtime.py"
+  ],
+  "git_metadata_available": true,
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 16964,
+    "exit_code": 0,
+    "resources": {
+      "samples": 50,
+      "gpu_samples": 50,
+      "peak_private_commit_bytes": 2686984192,
+      "peak_working_set_bytes": 1431015424,
+      "peak_dedicated_gpu_bytes": 1219526656,
+      "checks": {
+        "ram": {
+          "bytes": 2686984192,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1219526656,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "limits": {
+        "schema": 1,
+        "vram_warning_bytes": 3758096384,
+        "vram_limit_bytes": 4294967296,
+        "ram_warning_bytes": 4294967296,
+        "ram_limit_bytes": 6442450944,
+        "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+        "redistributable_warning_bytes": 4000000000,
+        "redistributable_limit_bytes": 5000000000,
+        "derived_cache_total_bytes": 3221225472,
+        "failed_test_cache_bytes": 1073741824,
+        "saved_world_warning_bytes": 10737418240,
+        "minimum_free_bytes": 10737418240,
+        "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+      },
+      "errors": [],
+      "exceeded": false,
+      "telemetry_complete": true,
+      "within_sampled_limits": true,
+      "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+    },
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 30.05477700001211,
+    "passed": true,
+    "cache_retention": {
+      "managed": true,
+      "removed_owned_cache": "C:\\Users\\windows10\\AppData\\Roaming\\Godot\\app_userdata\\TerraForest\\door_mod_world_cf64cfec00e3473d9817f0a5bd04df3e",
+      "retained_bytes": 0,
+      "failed_cache_bytes": 97663220,
+      "failed_cache_budget_bytes": 1073741824,
+      "evicted_derived_bytes": 0,
+      "over_budget": false,
+      "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+    }
+  }
+}

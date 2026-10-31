@@ -6,8 +6,8 @@ code. This is the first object capability, not a general scripted-object engine.
 
 Start with [the built-in definition](../addons/structures/objects/wooden_door.object.json)
 and [the example pack](../mods/example_doors/example.objects.json). The example
-reuses the existing simple mesh at 0.8 width, with a right hinge and a different
-recipe. No new replacement artwork is included.
+reuses the current built-in mesh at 0.8 width, with a right hinge and a different
+recipe. The built-in visual now uses the supplied [BG5 runtime art](BG5_RUNTIME_ASSETS.md).
 
 ## Enable the example
 
@@ -124,17 +124,22 @@ native swept-box extrema, including intermediate angles, at interaction time.
 
 Admission limits: 16 door types total, 16 manifests, 64 KiB per JSON manifest,
 16 MiB per GLB, 256 GLB nodes, 32,768 referenced vertices, eight source surfaces,
-four embedded images at up to 2048², and a visual bounds diagonal at most 32 m.
+eight embedded images at up to 2048², with an aggregate 16,777,216-pixel budget,
+and a visual bounds diagonal at most 32 m. This permits small PBR map sets while
+retaining the previous four-by-2048² aggregate ceiling.
 Collision sides are at most 8 m; origins/pivots are within 16 m. Visual scales
 must be positive. Apply mirrored transforms before GLB export. Skinning, morphs,
 animations and non-triangle geometry are rejected. These are admission limits,
 not a claim that every maximum-sized pack meets world performance targets.
 Texture decoding precedes the decoded-size check; this is not an asset sandbox.
 
-The shipped example has no new GLB. Tests create disposable box geometry only.
-User-supplied replacements still need licensing/provenance intake and visual
-alignment review. See [CONTRIBUTING](../CONTRIBUTING.md) and the original-data
-[provenance](../addons/structures/objects/PROVENANCE.md).
+The second-door example shares the current built-in visual. The separate
+`mods/bg5_runtime/door.objects.json` demonstrates the supplied runtime leaf as a
+loose GLB replacement. Tests also retain the disposable box importer fixture.
+Future supplied replacements still need provenance intake and alignment review.
+See [CONTRIBUTING](../CONTRIBUTING.md), the definition
+[provenance](../addons/structures/objects/PROVENANCE.md), and
+[BG5 provenance](../authoring/bg5/provenance.json).
 
 ## Verification
 

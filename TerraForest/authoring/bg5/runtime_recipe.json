@@ -1,0 +1,251 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "texture_long_edge": 1024,
+  "assets": [
+    {
+      "name": "door_leaf",
+      "source": "BG5.Door.Parts.glb",
+      "group": "DoorPivot",
+      "fit": "hinge",
+      "rotation_y": 180,
+      "mirror_repeat": true,
+      "target_position": [
+        0,
+        0,
+        -0.11
+      ],
+      "target_size": [
+        1,
+        2.2,
+        0.22
+      ],
+      "prefab": "door_model.tres"
+    },
+    {
+      "name": "door_frame",
+      "source": "BG5.Door.Parts.glb",
+      "group": "Frame",
+      "mirror_repeat": true,
+      "transform_from": "door_leaf"
+    },
+    {
+      "name": "chest",
+      "source": "Chest_Rebuilt.glb",
+      "fit": "bounds",
+      "rotation_y": 0,
+      "target_position": [
+        -0.6075,
+        0,
+        -0.39
+      ],
+      "target_size": [
+        1.215,
+        0.75,
+        0.8075
+      ],
+      "prefab": "storage_chest_model.tres"
+    },
+    {
+      "name": "chair",
+      "source": "WoodenChair_Retopo.glb",
+      "fit": "bounds",
+      "rotation_y": 180,
+      "target_position": [
+        -0.24,
+        0,
+        -0.24
+      ],
+      "target_size": [
+        0.48,
+        0.98,
+        0.48
+      ],
+      "prefab": "chair_model.tres",
+      "collision_boxes": [
+        [
+          -0.24,
+          0.42,
+          -0.24,
+          0.48,
+          0.08,
+          0.48
+        ],
+        [
+          -0.24,
+          0.5,
+          0.17,
+          0.48,
+          0.48,
+          0.07
+        ],
+        [
+          -0.22,
+          0.0,
+          -0.22,
+          0.08,
+          0.42,
+          0.08
+        ],
+        [
+          -0.22,
+          0.0,
+          0.14,
+          0.08,
+          0.42,
+          0.08
+        ],
+        [
+          0.14,
+          0.0,
+          -0.22,
+          0.08,
+          0.42,
+          0.08
+        ],
+        [
+          0.14,
+          0.0,
+          0.14,
+          0.08,
+          0.42,
+          0.08
+        ]
+      ]
+    },
+    {
+      "name": "table",
+      "source": "WoodenTable_Retopology.glb",
+      "fit": "bounds",
+      "rotation_y": 0,
+      "target_position": [
+        -0.8,
+        0,
+        -0.45
+      ],
+      "target_size": [
+        1.6,
+        0.8,
+        0.9
+      ],
+      "prefab": "table_model.tres",
+      "collision_boxes": [
+        [
+          -0.8,
+          0.68,
+          -0.45,
+          1.6,
+          0.12,
+          0.9
+        ],
+        [
+          -0.72,
+          0.0,
+          -0.37,
+          0.1,
+          0.68,
+          0.1
+        ],
+        [
+          -0.72,
+          0.0,
+          0.27,
+          0.1,
+          0.68,
+          0.1
+        ],
+        [
+          0.62,
+          0.0,
+          -0.37,
+          0.1,
+          0.68,
+          0.1
+        ],
+        [
+          0.62,
+          0.0,
+          0.27,
+          0.1,
+          0.68,
+          0.1
+        ]
+      ]
+    },
+    {
+      "name": "shelf",
+      "source": "Wooden_BookShelf_Retopo.glb",
+      "fit": "bounds",
+      "rotation_y": 180,
+      "target_position": [
+        -0.6,
+        0,
+        -0.2
+      ],
+      "target_size": [
+        1.2,
+        1.8,
+        0.4
+      ],
+      "prefab": "shelf_model.tres",
+      "collision_boxes": [
+        [
+          -0.6,
+          0.0,
+          -0.2,
+          0.08,
+          1.8,
+          0.4
+        ],
+        [
+          0.52,
+          0.0,
+          -0.2,
+          0.08,
+          1.8,
+          0.4
+        ],
+        [
+          -0.52,
+          0.0,
+          0.15,
+          1.04,
+          1.8,
+          0.05
+        ],
+        [
+          -0.52,
+          0.0,
+          -0.2,
+          1.04,
+          0.08,
+          0.4
+        ],
+        [
+          -0.52,
+          0.55,
+          -0.2,
+          1.04,
+          0.08,
+          0.4
+        ],
+        [
+          -0.52,
+          1.1,
+          -0.2,
+          1.04,
+          0.08,
+          0.4
+        ],
+        [
+          -0.52,
+          1.72,
+          -0.2,
+          1.04,
+          0.08,
+          0.4
+        ]
+      ]
+    }
+  ]
+}

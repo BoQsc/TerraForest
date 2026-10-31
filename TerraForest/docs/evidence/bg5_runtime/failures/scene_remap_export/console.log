@@ -1,0 +1,44 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS editable masters are excluded from game export
+FAIL portable chair passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/chair.glb
+FAIL portable chest passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/chest.glb
+FAIL portable door_frame passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/door_frame.glb
+FAIL portable door_leaf passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/door_leaf.glb
+FAIL portable shelf passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/shelf.glb
+FAIL portable table passes real loose-GLB admission: GLB missing or outside the 16 MiB file limit: res://mods/bg5_runtime/table.glb
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS scaled built-in mod door retains generated geometry LODs
+PASS replacement furniture registers original native compound collision
+PASS new default door uses original native collection identity
+PASS actual pre-content model packet restores with replacement art
+PASS actual pre-content open hinge packet restores
+PASS replaced old door closes to its exact historical transform
+PASS reopening preserves exact legacy hinge bytes
+PASS replacement creates no per-door scene children
+PASS chair keeps its canonical proxy count
+PASS table keeps its canonical proxy count
+PASS shelf keeps its canonical proxy count
+PASS 10000 supplied door leaves remain in native placement storage
+PASS supplied art adds no per-placement node or animation player
+PASS nine embedded images reject before decode
+BG5_RUNTIME_CHECK checks=41 failures=6

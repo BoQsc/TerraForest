@@ -1,0 +1,77 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS portable chair passes real loose-GLB admission: 
+PASS chair has consolidated material surfaces
+PASS chair built-in uses the same bounded shared mesh
+PASS chair GLB and native resource have matching bounds
+PASS chair retains offline geometry LODs
+PASS chair matches the previous mesh size and ground origin
+PASS chair uses mipmapped anisotropic filtering
+PASS chair uses mipmapped anisotropic filtering
+PASS portable chest passes real loose-GLB admission: 
+PASS chest has consolidated material surfaces
+PASS chest built-in uses the same bounded shared mesh
+PASS chest GLB and native resource have matching bounds
+PASS chest retains offline geometry LODs
+PASS chest matches the previous mesh size and ground origin
+PASS chest uses mipmapped anisotropic filtering
+PASS portable door_frame passes real loose-GLB admission: 
+PASS door_frame has consolidated material surfaces
+PASS portable door_leaf passes real loose-GLB admission: 
+PASS door_leaf has consolidated material surfaces
+PASS door_leaf built-in uses the same bounded shared mesh
+PASS door_leaf GLB and native resource have matching bounds
+PASS door_leaf retains offline geometry LODs
+PASS door_leaf uses mipmapped anisotropic filtering
+PASS door_leaf uses mipmapped anisotropic filtering
+PASS door_leaf uses mipmapped anisotropic filtering
+PASS portable shelf passes real loose-GLB admission: 
+PASS shelf has consolidated material surfaces
+PASS shelf built-in uses the same bounded shared mesh
+PASS shelf GLB and native resource have matching bounds
+PASS shelf retains offline geometry LODs
+PASS shelf matches the previous mesh size and ground origin
+PASS shelf uses mipmapped anisotropic filtering
+PASS portable table passes real loose-GLB admission: 
+PASS table has consolidated material surfaces
+PASS table built-in uses the same bounded shared mesh
+PASS table GLB and native resource have matching bounds
+PASS table retains offline geometry LODs
+PASS table matches the previous mesh size and ground origin
+PASS table uses mipmapped anisotropic filtering
+PASS table uses mipmapped anisotropic filtering
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS built-in VRAM-compressed mipmapped texture stays inside 1024px limit
+PASS scaled built-in mod door retains generated geometry LODs
+PASS replacement furniture registers original native compound collision
+PASS new default door uses original native collection identity
+PASS actual pre-content model packet restores with replacement art
+PASS actual pre-content open hinge packet restores
+PASS replaced old door closes to its exact historical transform
+PASS reopening preserves exact legacy hinge bytes
+PASS replacement creates no per-door scene children
+PASS chair keeps its canonical proxy count
+PASS table keeps its canonical proxy count
+PASS shelf keeps its canonical proxy count
+PASS 10000 supplied door leaves remain in native placement storage
+PASS supplied art adds no per-placement node or animation player
+PASS nine embedded images reject before decode
+BG5_RUNTIME_CHECK checks=74 failures=0

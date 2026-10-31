@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+BG5_RUNTIME door_leaf parts=44 surfaces=3 triangles=4048 lods=8
+BG5_RUNTIME door_frame parts=37 surfaces=3 triangles=3584 lods=8
+BG5_RUNTIME chest parts=45 surfaces=1 triangles=1084 lods=2
+BG5_RUNTIME chair parts=10 surfaces=2 triangles=1032 lods=4
+BG5_RUNTIME table parts=16 surfaces=2 triangles=1152 lods=5
+
+ERROR: Cannot save file 'res://addons/structures/prefabs/table_model.tres'.
+   at: save (scene/resources/resource_format_text.cpp:1768)
+   GDScript backtrace (most recent call first):
+       [0] bake (res://tools/bake_bg5_runtime.gd:157)
+       [1] run (res://tools/bake_bg5_runtime.gd:182)
+ERROR: BG5 bake: Could not save res://addons/structures/prefabs/table_model.tres
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] fail (res://tools/bake_bg5_runtime.gd:18)
+       [1] bake (res://tools/bake_bg5_runtime.gd:157)
+       [2] run (res://tools/bake_bg5_runtime.gd:182)
