@@ -21,6 +21,8 @@ const PLAYER_LAYER:=1<<19
 func _init()->void:set_process(false)
 func prepare(world:Node)->void:
 	game=world
+	game.player_hud.character_panel.equipment_presented.connect(game.tool_view.human.clothing.set_slots)
+	game.tool_view.human.clothing.set_slots(game.player_hud.equipment.snapshot(1).slots)
 	arm=SpringArm3D.new();arm.name="ThirdPersonBoom"
 	# Sweep from the eye to the shoulder view, rather than starting an offset
 	# sweep on the far side of a thin wall beside the player's shoulder.

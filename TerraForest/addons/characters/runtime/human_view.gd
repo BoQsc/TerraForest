@@ -47,6 +47,7 @@ var torch_effects:Node3D
 var bucket_water:MeshInstance3D
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
+var clothing=preload("res://addons/characters/wearables/clothing.gd").new()
 @export var diagonal_pickaxe := true
 @export_enum("fresh", "pullback", "diagonal") var pickaxe_swing := "fresh"
 
@@ -87,6 +88,7 @@ func _ready() -> void:
 	water_material.clearcoat_enabled=true;water_material.clearcoat=.85;water_material.clearcoat_roughness=.1
 	water_disk.material=water_material;bucket_water.mesh=water_disk;bucket_root.add_child(bucket_water)
 	_collect(model)
+	add_child(clothing);clothing.prepare(model);clothing.set_third_person(third_person)
 	animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 	animation_player.add_animation_library("placement", PLACEMENT)
 	animation_player.add_animation_library("unarmed", UNARMED)
@@ -168,6 +170,7 @@ func _sync_equipment() -> void:
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 	_sync_bucket_water()
+	clothing.set_third_person(third_person)
 	if torch_effects!=null:torch_effects.set_burning(current==6 and not placement_active)
 
 func _sync_bucket_water()->void:

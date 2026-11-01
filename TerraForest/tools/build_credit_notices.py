@@ -15,6 +15,8 @@ NOTICES = [
      "The supplied spruce model, extracted images and derived bakes retain the source's stated CC0 dedication."),
     ("characters", "Character assets", "CC0 1.0 / inherited provenance", "addons/characters/LICENSE.txt",
      "Original character work is dedicated under CC0. The retained notice explains the inherited character source and the scope of that dedication."),
+    ("woven_clothes", "Original woven woodland clothing", "CC0 1.0", "addons/characters/wearables/woven/ASSET_LICENSE.md",
+     "Three original parametric garments, weave materials and clothing icon/drop derivatives. Portable garment exports contain no inherited character body or rig."),
     ("woodland", "Original woodland sample", "0BSD", "LICENSE.txt",
      "Original woodland stones, plants, grass and procedural textures are identified as 0BSD in the woodland sample's authoring notes."),
     ("vehicle", "Vehicle model and demo", "0BSD", "vehicle_demo/LICENSE.txt",

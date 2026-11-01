@@ -1,7 +1,21 @@
 {
-  "atlas_sha256": "98b1662a8eead6e5b621d180395f4cb00b7c437c7cff0631b38894836f72d5e0",
+  "atlas_sha256": "505ec382fe19a5942216fa7a463c263c788f952263f1f99127cccab5e25fb811",
   "schema": 1,
   "sources": {
+    "clothing": {
+      "engine": "4.7.2-stable (steam)",
+      "files": {
+        "res://addons/characters/wearables/woven/301.res": "123a701078e5db1bb87cc6dbf62cd456bbeaa53f3352b5a9905412c5f1ffe6be",
+        "res://addons/characters/wearables/woven/302.res": "c3480cf771a54025f935ff4df648a593c9741b4245fc832af7312d04c4c4e5ea",
+        "res://addons/characters/wearables/woven/303.res": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22"
+      },
+      "recipe": {
+        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
+        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
+      }
+    },
     "consumables": {
       "engine": "4.7.2-stable (steam)",
       "files": {
@@ -15,8 +29,8 @@
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
-        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
+        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
+        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
       }
     },
     "tools": {
@@ -61,10 +75,14 @@
         "res://addons/characters/runtime/assets/Torch_Torch_8.png": "cf736832cfc5f6b1a0d4bdf83b7e3be9658789726fa126c278e4f59ee4710385",
         "res://addons/characters/runtime/assets/Torch_Torch_8.png.import": "5659d5b0a65bdac175deb5763dfde3a17b2d885bb5ac4f6364f517aae157e9f0",
         "res://addons/characters/runtime/hidden_surface.gdshader": "0c9a2deeaa1ee872d18bc78a086d74e1fe6cb511c6ad6e149aa3e4f57b4dc61a",
-        "res://addons/characters/runtime/human_view.gd": "61689d08e02a4a5e1236e4aecd237b8dd032ea4829678d57402c69911615b198",
+        "res://addons/characters/runtime/human_view.gd": "59add2e348429ece93870657c8de1216f80f2b18d0c8be6e566c1643814f102d",
         "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
         "res://addons/characters/runtime/torch_flame.gdshader": "fa3bb0bd7d95800568c281d0e211ca3adc5b89ea33f6ead0bc549da868600ea9",
         "res://addons/characters/runtime/torch_motes.gdshader": "9b3787987bfc55aea2cc183e05ab4efe749cfe364aa0c07e0c3d7a9bcfb58110",
+        "res://addons/characters/wearables/clothing.gd": "070e0cb7adb6e6d923034ca46a6501fabc1f2b111067906397a09dff2c4388f6",
+        "res://addons/characters/wearables/woven/301.res": "123a701078e5db1bb87cc6dbf62cd456bbeaa53f3352b5a9905412c5f1ffe6be",
+        "res://addons/characters/wearables/woven/302.res": "c3480cf771a54025f935ff4df648a593c9741b4245fc832af7312d04c4c4e5ea",
+        "res://addons/characters/wearables/woven/303.res": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22",
         "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
         "res://addons/volumetric_water/assets/Bucket.bail.res": "14d29c851b114b28e0f2bedc2d91563f6da2c54a75d0d6412b0b7e641ae93533",
         "res://addons/volumetric_water/assets/Bucket.held.res": "4ec59e95169282b775ee9c9ecc4e774ff3f2f312722f515b29a2cb47ba7aa4c4",
@@ -74,8 +92,8 @@
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
-        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
+        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
+        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
       }
     },
     "vehicle": {
@@ -100,8 +118,8 @@
       "recipe": {
         "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
-        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
+        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
+        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
       }
     }
   }

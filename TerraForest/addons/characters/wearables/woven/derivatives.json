@@ -1,0 +1,55 @@
+{
+  "source": "manifest.json",
+  "derivatives": [
+    {
+      "path": "addons/characters/wearables/woven/301__albedo.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/woven/301__albedo2.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/woven/302__albedo.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/woven/302__albedo2.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/woven/303__albedo.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/woven/303__albedo2.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/301.res",
+      "sha256": "c06812549ddeba773cf6320f2c091d2798c0d8be6fc44b81a26013b8b623c2f3",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/302.res",
+      "sha256": "b74918d134233f077e3adbb634e1f70f666d71bbf07a4850f54d9d4e5a2b9835",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/303.res",
+      "sha256": "b2b87ef8eafb3d1cc24eb4b5b88b3554a6ddcd6953507354aabbca1e3de4d864",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/item_icons.trtex",
+      "sha256": "505ec382fe19a5942216fa7a463c263c788f952263f1f99127cccab5e25fb811",
+      "scope": "clothing tiles 301,302,303 only; other tiles retain their own terms"
+    }
+  ]
+}

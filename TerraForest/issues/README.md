@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Visible woven clothing](woven-clothes/README.md) | Implemented / source and world checks | Three original CC0 garments, paid crafting, both views and fresh-process restore pass; inherited crouch clipping, user review and installed-package validation remain separate |
 | [Authored door Open/Close](door-animation/README.md) | Installed / scoped checks | Authored GLB handle/latch and leaf motion; normal E, streamed visual ownership and mid-swing save/reopen pass in source/release/PCK; actual main executable checked, visual review pending |
 | [Startup and browser latency](browser-responsiveness/README.md) | Improved-partial / installed, scoped checks | Background catalog/photo reads and bounded thumbnails; source first frame 1.75 → 1.24 s, filtering 45 → 2 ms with 299 saves; packaged browser/credits pass, export timing and player review pending |
 | [Gameplay expansion](gameplay-expansion/README.md) | In progress / navigation source verified | Survival installed; shared inventory tabs, on-demand portrait and real map pass source UI/world input checks; package navigation, quests, lookout route and remaining expansions stay open |

@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-01",
+  "scope": "Source working tree with concurrent inventory navigation; no installed-package claim",
+  "passed": [
+    {
+      "name": "source",
+      "checks": 49,
+      "report": "reports/woven_clothes/20261101T152602975528Z/source",
+      "log": "logs/source.log",
+      "sha256": "bcb58a8cefdefc2941e87e62a8e26b1a9a0adef1baf9b84716c8d9f0783849b3"
+    },
+    {
+      "name": "world_create",
+      "checks": 15,
+      "report": "reports/woven_clothes/20261101T152237348750Z/create",
+      "log": "logs/world_create.log",
+      "sha256": "982e93996e20eeace8a1e5467385b8ff37f39392d37fe4e8e83be9dbc674c527"
+    },
+    {
+      "name": "world_restore",
+      "checks": 8,
+      "report": "reports/woven_clothes/20261101T152237348750Z/restore",
+      "log": "logs/world_restore.log",
+      "sha256": "078f110dd16c060b6759253cf3ba0995af944d56ca514d9bc198240c12a62cc2"
+    },
+    {
+      "name": "navigation",
+      "checks": 24,
+      "report": "reports/inventory_navigation/20261101T151910116463Z",
+      "log": "logs/navigation.log",
+      "sha256": "dc3dd78db402f46080f8464128f28a2a32ab20de1738ffef1501f9b40a53c2d0"
+    }
+  ],
+  "retained_failed_reports": [
+    "reports/woven_clothes/20261101T151344822562Z",
+    "reports/woven_clothes/20261101T152126675381Z"
+  ],
+  "commands": [
+    "python tools/check_woven_clothes.py",
+    "python tools/check_woven_clothes.py --world",
+    "python tools/check_inventory_navigation.py",
+    "godot --headless --path . --script res://tools/ensure_item_icons.gd -- --check-only",
+    "python tools/build_credit_notices.py --check"
+  ]
+}

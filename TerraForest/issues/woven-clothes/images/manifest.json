@@ -1,0 +1,72 @@
+[
+  {
+    "file": "fit-idle.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-Idle.png",
+    "sha256": "330949ce6758ae6ba18ff5739c672b3e2d8c3a20584bd8939b8437c14e6ee10b",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "character-equipped.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/02-equipped.png",
+    "sha256": "674a0cff9bcef0147b016c6f95e0cf259b9dc6470abcd871945125188a25a510",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "world-restored.png",
+    "source": "reports/woven_clothes/20261101T152237348750Z/restore/world-third-person.png",
+    "sha256": "36a994153fe4462106f11a2b989f0cd833a97ebe1db267f92e4c6b7d22beddb0",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "base-crouch.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/baseline-crouch.png",
+    "sha256": "01e9201ad761520f6301e1b24529577d707edb42a2004201aea0b6a62f338a5d",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "woven-crouch.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-Player_Crouch.png",
+    "sha256": "ff71bdcdd02f5045d9c29fcbf4db2f0d668900997d7a1d28f4da26f2d95018b7",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "rejected-first-fit.png",
+    "source": "reports/woven_clothes/20261101T151416832503Z/fit-Idle.png",
+    "sha256": "a375fb622db450040fa6e49d368c616d0914c9689d5140f924211dabc9fa3ede",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Rejected initial fit"
+  },
+  {
+    "file": "fit-run.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-Run.png",
+    "sha256": "f8d0324bfc21898258f0e4ff886f7a1519e22a6188410075077d6c8771226f74",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "fit-pickaxe.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-FP_Pickaxe_Fresh_Swing.png",
+    "sha256": "c9ee220700fbd7d30dac1dcac44c2b804a20b70494926f77fe43c0a9bb5994a8",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "fit-walk.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-Walk.png",
+    "sha256": "609b5949e6f710c071494c85742b1903d1e0b7b0280d79c5c938d1b0a6990c94",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "fit-punch.png",
+    "source": "reports/woven_clothes/20261101T152602975528Z/source/fit-FP_Unarmed_Punch.png",
+    "sha256": "31af12766110f4f920957363c64959068bd943780746f9da14799cd4d4cbacf3",
+    "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
+    "review": "Assistant sampled visual review; user approval pending"
+  }
+]

@@ -1,6 +1,18 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Woven wearable clothing pack — 2026-11-01
+
+Three original CC0 garments now drive existing Head/Body/Feet equipment in both
+the cached portrait and animated player, with matching icons and ground models.
+Paid crafting, equip/remove, binary restore, FP/3P visibility and sampled animation
+fit pass source checks; normal generated-world save and fresh-process restoration
+also pass. Editable 0BSD generator and portable garment-only GLBs are retained.
+User visual approval and the next combined installed-package check remain
+unreviewed. Existing deep-crouch trouser clipping is reproduced in the base outfit;
+return on a body/trouser fitting task with matching before/after animation evidence.
+Exact evidence, rejected trials and remaining scope: [woven clothing tracker](../issues/woven-clothes/README.md).
+
 ## Inventory navigation and on-demand portrait — 2026-11-01
 
 Source UI and ordinary generated-world checks pass for Backpack/Character/Skills/

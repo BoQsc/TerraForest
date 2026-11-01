@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends VBoxContainer
+signal equipment_presented(slots:Array)
+var clothing:Node
 const TYPES={301:0,302:1,303:2}
 const NAMES=["Head","Body","Feet"]
 var hud: Node
@@ -14,16 +16,26 @@ func _ready() -> void:
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.side="equipment";button.slot=i;button.custom_minimum_size=Vector2(116,84)
 		row.add_child(button);buttons.append(button)
 	var help:=Label.new();help.text="Drag clothing into Head, Body or Feet.\nDrag it back to your backpack to remove.";help.add_theme_font_size_override("font_size",14);add_child(help)
+	visibility_changed.connect(func():_sync_clothing_portrait.call_deferred())
 	refresh()
 func set_active(value:bool)->void:
 	if portrait!=null:portrait.set_active(value)
 func refresh() -> void:
 	if buttons.is_empty():return
 	var state: Dictionary=hud.equipment.snapshot(1)
+	equipment_presented.emit(state.slots)
+	_sync_clothing_portrait()
 	for i in 3:
 		var item: int=state.slots[i].item
 		buttons[i].present(state.slots[i],hud.RESOURCES.get(item,"Empty"),NAMES[i])
 		buttons[i].set_appearance(item==0,item!=0,false)
+func _sync_clothing_portrait()->void:
+	# Optional so this presentation adapter also works with the slot-only panel.
+	var preview:Control=get("portrait")
+	if preview==null or preview.actor==null:return
+	if clothing==null:
+		clothing=preload("res://addons/characters/wearables/clothing.gd").new();preview.actor.add_child(clothing);clothing.prepare(preview.actor)
+	if clothing.set_slots(hud.equipment.snapshot(1).slots):preview.request_render()
 func drag_data(side: String,slot: int) -> Dictionary:
 	if side!="equipment" or slot<0 or slot>=NAMES.size() or not hud.inventory_open:return {}
 	var state: Dictionary=hud.equipment.snapshot(1)

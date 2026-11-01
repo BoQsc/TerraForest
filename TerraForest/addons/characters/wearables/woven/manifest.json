@@ -1,0 +1,46 @@
+{
+  "author": "TerraForest contributors with OpenAI Codex",
+  "authoring_tool": "4.7.2-stable (steam)",
+  "bones": [
+    "Hips",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "Neck",
+    "Head",
+    "LeftLeg",
+    "LeftFoot",
+    "RightLeg",
+    "RightFoot"
+  ],
+  "date": "2026-11-01",
+  "items": [
+    {
+      "id": 301,
+      "portable_sha256": "44287d5c6fa8da4829dd7f7247f45ef068f97c06a57662efa6c5239b72940726",
+      "resource": "res://addons/characters/wearables/woven/301.res",
+      "sha256": "123a701078e5db1bb87cc6dbf62cd456bbeaa53f3352b5a9905412c5f1ffe6be",
+      "triangles": 1236
+    },
+    {
+      "id": 302,
+      "portable_sha256": "b48775724e537606f478f672908108c7b92bad7d52b223a395df2309d021b1c2",
+      "resource": "res://addons/characters/wearables/woven/302.res",
+      "sha256": "c3480cf771a54025f935ff4df648a593c9741b4245fc832af7312d04c4c4e5ea",
+      "triangles": 4236
+    },
+    {
+      "id": 303,
+      "portable_sha256": "4bc8bb03889374912fb6954f9ad8c6b13cf6eeb780509c826afa5c228454eb79",
+      "resource": "res://addons/characters/wearables/woven/303.res",
+      "sha256": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22",
+      "triangles": 2368
+    }
+  ],
+  "license": "CC0-1.0",
+  "prompt": "Author/add a wearable 3D clothes items pack for the existing 3D character view",
+  "recipe": "tools/author_woven_clothes.gd",
+  "recipe_sha256": "8e427c67f08d99f0ee409e15a19d8916ef86dff93fd93dfb3ae1579c0581ef91",
+  "source": "Original mathematical garment patterns; no imported garment geometry or textures",
+  "version": 1
+}
