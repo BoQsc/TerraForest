@@ -32,12 +32,21 @@ func run()->void:
 		check(game.world_vehicle.passenger==null and not game.world_vehicle.driving and game.player.position.distance_to(player_origin)<.1,"return reload leaves the player on foot")
 		check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==int(expected.coins) and ride.state.refund==0,"refund stays exact after return reload")
 		await finish();return
-	if stage=="complete":
+	if stage in ["complete","paid-resume"]:
 		var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("expected.json")))
 		if not check(ride.state.paid and ride.identity()==int(expected.vehicle) and Trade.count(game.player_hud.inventory,Trade.CURRENCY)==int(expected.coins),"fresh process restores the paid journey, car identity and exact wallet"):await finish();return
 		if not check(await watch(func():return game.world_vehicle.passenger==ride,25),"saved passenger reboards the same moving service without another purchase"):await finish();return
 		check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==int(expected.coins),"automatic reboarding does not charge twice")
+		if stage=="paid-resume":
+			check(ride.state.phase==ride.OUTBOUND,"paid checkpoint resumes the outward trip")
+			check(await wait_for(func():return game._vehicle_ui_active and game.help.text.begins_with("Trader ride"),3),"restored passenger receives the ride controls")
+			check(is_instance_valid(ride.driver_view) and is_instance_valid(ride.passenger_view),"restored driver and passenger occupy the same car")
 		await seat_photograph(game,ride)
+		if stage=="paid-resume":
+			var origin:Vector3=ride.car.position
+			check(await watch(func():return ride.car.position.distance_to(origin)>20,30),"paid saved journey resumes real road travel")
+			check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==int(expected.coins),"resumed travel retains the exact paid wallet")
+			await finish();return
 		await complete_journey(game,ride,ride.state.outbound[-1],int(expected.coins),ride.identity(),ride.state.home)
 		return
 	if stage=="resume":
@@ -199,7 +208,7 @@ func walk_player_to_car(game:Node,ride:Node)->bool:
 func finish()->void:
 	if not frame_ms.is_empty():
 		frame_ms.sort()
-		FileAccess.open(folder.path_join("frames.json"),FileAccess.WRITE).store_string(JSON.stringify({"samples":frame_ms.size(),"p95_ms":frame_ms[mini(frame_ms.size()-1,int(frame_ms.size()*.95))],"worst_ms":frame_ms[-1],"fps_cap":Engine.max_fps,"measurement":"wall-clock process-frame intervals","scope":"Offscreen source run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking"},"  "))
+		FileAccess.open(folder.path_join("frames.json"),FileAccess.WRITE).store_string(JSON.stringify({"samples":frame_ms.size(),"p95_ms":frame_ms[mini(frame_ms.size()-1,int(frame_ms.size()*.95))],"worst_ms":frame_ms[-1],"fps_cap":Engine.max_fps,"measurement":"wall-clock process-frame intervals","scope":"Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking"},"  "))
 	check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED and preload("res://addons/world_runtime/mouse_ownership.gd").captures==0,"test never captures the user's pointer")
 	if game_ready():
 		current_scene.shutdown_requested=true;check(await current_scene.terrain.shutdown_after_edits(),"private copied world closes durably")
