@@ -59,13 +59,19 @@ func gain(item:int,count:int)->void:
 		for candidate:Dictionary in pool:
 			if not candidate.panel.visible:entry=candidate;break
 		if entry.is_empty():entry=active.pop_front()
-		entry.item=item;entry.count=0;entry.icon.texture=Icons.texture(item)
+		entry.item=item;entry.count=0;entry.icon.texture=Icons.texture(item) if item>0 else null
+		entry.icon.visible=item>0
 		entry.label.text="Gained "+str(names.get(item,"Item"))
 	else:active.erase(entry)
 	entry.count+=count;entry.amount.text="+%d"%entry.count
 	entry.expires_us=Time.get_ticks_usec()+DISPLAY_US;entry.panel.modulate.a=1
 	active.append(entry);move_child(entry.panel,get_child_count()-1);entry.panel.show()
 	show();set_process(true)
+func gain_experience(count:int,level:int)->void:
+	if allowed.is_valid() and not allowed.call():return
+	gain(-1,count)
+	for entry:Dictionary in active:
+		if entry.item==-1:entry.label.text="Experience · Level %d"%level;break
 func clear()->void:
 	for entry:Dictionary in pool:entry.panel.hide()
 	active.clear();hide();set_process(false)

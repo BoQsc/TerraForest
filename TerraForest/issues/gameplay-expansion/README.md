@@ -7,6 +7,59 @@
 
 ## Images
 
+### Player progression — source/package verified and installed
+
+![Installed package: earned level and Mining skill restored in the owned seed-1703 world](images/skills-restored.png)
+
+The image shows actual earned 253 XP and a spent Mining point after fresh-process
+reload, not a developer grant. Existing passive HUD overlaps the old side-tab
+area; the requested full navigation redesign remains open. Camera/viewpoint differs
+from the mining view, so this is UI/save evidence, not a terrain before/after.
+[Capture and package provenance](progression-evidence.json).
+
+Native XP, levels, points and Mining/Woodcraft/Melee ranks are connected to
+published mining, natural harvesting, living-zombie damage and paid crafting.
+Skills are accessible beside Crafting/Character; the full requested top navigation
+is not complete. The existing five-row resource feed aggregates XP without idle
+polling. Initial saved state is 48 bytes, bounded to 280 bytes for 32 skills.
+
+- Native debug/release: `reports/player_progression/20261101T135312891896Z` and
+  `20261101T135313495577Z`, 26 checks each: cap/thresholds, stale revision, malformed
+  atomic restore, overspending, skill bounds and adding skills to older saves.
+- Real HUD/native stores and crafting/mining/combat adapters:
+  `reports/checks/20261101T135049409040Z`, 19 assertions. Synthetic edit publication
+  and enemy health in this fixture are not actual world excavation/combat.
+- Ordinary generated-world source: `reports/player_progression/20261101T134707497088Z`,
+  50 earn/spend assertions and 8 fresh-process assertions. Native visible-ground
+  rays feed the real pickaxe contact adapter; actual generated trees are harvested
+  through their native-backed owner. No test XP grants; 253 cumulative XP earns
+  level 2 and a Mining rank. Exact XP/ranks, gathered items, crafting costs and tool
+  wear reload. Scripted target/position selection is not an input-animation or
+  walking qualification. Only the owned `Exploration_1703_8f8d4c8f` world changes.
+- Source sampled peaks: 3,708,997,632 bytes private commit and 1,490,513,920 bytes
+  dedicated GPU memory; short offscreen checks, not frame-pacing/endurance proof.
+- Legacy crafting/backpack tests pass (`reports/checks/20261101T134742845857Z`,
+  `20261101T134743835009Z`); debug/release container suites remain green at
+  `reports/container_locks/20261101T135050704956Z` and `20261101T135053334591Z`.
+- Installed matching PCK: `reports/player_progression/20261101T135527577997Z`,
+  8 fresh-process assertions for XP/ranks, inventory/wear, active damage modifier
+  and zero pointer capture. Native hash parity, building gates and pack startup
+  pass. Package size 447,314,276 bytes; distribution 477,164,955 bytes.
+  Packaged sampled private commit 3,666,939,904 bytes and GPU 1,490,513,920 bytes,
+  not a general frame-pacing or minimum-hardware claim.
+- Retained fixture failures: `reports/checks/20261101T133932362644Z` used a nonconstant
+  packed-array constant; `reports/player_progression/20261101T134315093670Z` wrongly
+  required GPU telemetry from a headless native check. Corrected test configuration,
+  not relaxed graphical memory limits. `20261101T134315647793Z` and
+  `20261101T134434970119Z` did not earn 250 XP from shallow soil cuts; the passing
+  continuation combines actual felling and mining without changing XP thresholds.
+  The first attempt verifies absent-component migration from the old fixture save.
+- Remaining: readable items/consumption, hunger/buffs, full
+  inventory navigation, populated ordinary combat and progression balance. Natural
+  resource/contact guards are not a complete anti-grinding system; terrain cycling
+  still trains by doing at the cost of tool durability. Existing route/performance
+  failures and every other full-contract row remain open.
+
 ### Container locks — source and package verified, 2026-11-01
 
 ![Actual generated house chest retains 150 of 180 lock durability after a hatchet hit](images/container-lock-damaged.png)

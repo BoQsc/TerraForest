@@ -53,10 +53,10 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Desert aloe, medium cacti and fewer trees | Pending original asset expansion, harvesting, biome distribution and near/far rendering |
 | Snow berries and snowy-tree expansion | Pending original assets, gathering and bounded LOD/residency |
 | Player buffs | Pending native effect identities, durations/stacking, UI and persistence |
-| Skills, XP and skill points | Pending native progression and transactions, save migration, rewards and actual gameplay hooks |
-| Learn by doing and crafting | Pending bounded event-driven awards with exploit/replay prevention |
+| Skills, XP and skill points | Installed: native bounded XP/levels/points, three functional harvesting/combat skills, Skills panel and compound-save migration; source earned-level/reload and matching package reload verified; wider balance and remaining navigation/content pending |
+| Learn by doing and crafting | Published mining, natural harvesting, actual zombie health loss and successful paid crafting award XP; duplicate/failed/dev actions excluded; source real-world mining/felling/reload checked; broader ordinary combat and anti-grind balance remain |
 | Books, letters and journals give mild learning | Pending items, left-click use, inventory double-click and USE context action with atomic consumption |
-| Accumulating right-side XP notification | Pending aggregation beside resource gains, not per-frame UI churn |
+| Accumulating right-side XP notification | Implemented in existing five-row event-driven resource feed, fixed control pool and no idle processing; gameplay adapter aggregation checked; broader player presentation review remains |
 | Hunger and food items | Pending time-scaled hunger, consumable food effects, inventory/use UI and persistence |
 | Inventory top tabs: backpack, character, skills, journal, map, quests | Pending shared navigation and ESC/input ownership; backpack never duplicates toolbelt |
 | Character 3D representation, equipment slots, bag on right | Pending cached/on-demand presentation, equip state and proper ordinary UI |
@@ -64,6 +64,39 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Streaming, CPU/GPU/RAM/VRAM/storage efficiency under new content | Pending doubled-content generation/loading and populated travel/interaction/endurance measurements; preserve 4 GiB VRAM target and existing budgets |
 
 ## Current work and next dependency
+
+### Native player progression
+
+`NativePlayerProgression` is part of the existing player runtime DLL, not another
+extension or per-frame service. It keeps XP, level-derived points and skill ranks;
+the initial three skills take 48 binary bytes (up to 32 skills take 280 bytes).
+Levels use `125 * (level - 1) * level` cumulative XP, capped at level 50. Each level
+grants one point; each of five ranks costs one point and adds 5% relevant damage,
+rounded to the nearest integer. Mining covers terrain/natural stone, Woodcraft
+covers natural trees/plants, and Melee affects living zombies. Balance is provisional.
+The existing recipe/harvest/encounter owners still decide whether an action occurs.
+
+Awards happen only after publication/accepted damage or successful paid crafting.
+Mining uses removed sample counts (maximum 20 XP per published edit); natural
+harvesting uses paid resources and a finishing bonus; combat uses actual lost
+overall health, capped per hit, plus a one-time finishing bonus. Inventory transfers,
+tool windup, refunds, no-ops, refused hits, rollback and dev-belt actions award none.
+Terrain place/mine cycling is still possible practice with material/tool costs;
+there is no claim of a general anti-grinding or authored-terrain-origin ledger.
+
+The compound-save component restores old worlds to zero XP only when absent.
+Native expected revisions prevent stale award/spend transactions; existing edit
+tickets/contact ownership prevent repeated events. Malformed bytes and unknown
+saved skill IDs fail without mutation; adding stable skill IDs retains old ranks
+and initializes the additions at zero. Removing skills or reducing rank limits
+requires an explicit migration. The compact bounded definitions live in
+`addons/player_runtime/progression_rules.gd`; they are not a complete mod loader.
+
+The current Skills side panel is reachable from inventory while preserving the
+separate 22-slot backpack/10-slot belt. It is not the requested complete top-tab
+navigation or 3D character screen. Readables, hunger/food, buffs, journal/quests
+and location-reset ownership remain the next dependencies in the full checklist.
+Source/package evidence and retained fixture failures are in the expansion tracker.
 
 Native encounter profiles and limb-loss recipes are the first implementation slice.
 Sleep/wake state does not imply sleepers are playable before pose, collision,

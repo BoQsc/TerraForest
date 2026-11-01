@@ -6,6 +6,7 @@
 #include "movement.hpp"
 #include "pose.hpp"
 #include "durability.hpp"
+#include "progression.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -18,6 +19,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativePlayerMovement);
         GDREGISTER_CLASS(terraforest::NativePlayerPose);
         GDREGISTER_CLASS(terraforest::NativeWorldDurability);
+        GDREGISTER_CLASS(terraforest::NativePlayerProgression);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

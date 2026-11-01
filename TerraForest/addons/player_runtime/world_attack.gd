@@ -12,6 +12,7 @@ signal impact_resolved(identity:int,accepted:bool)
 signal impact_preparing(from:Vector3,to:Vector3)
 signal contact_effect(target:Dictionary)
 const Durability=preload("res://addons/player_runtime/durability_catalog.gd")
+const Progression=preload("res://addons/player_runtime/progression_rules.gd")
 const TOOLS={0:{"stone":5,"wood":5,"other":5},1:{"stone":30,"wood":10,"other":15},2:{"stone":10,"wood":30,"other":15},3:{"stone":15,"wood":15,"other":20},4:{"stone":10,"wood":15,"other":15},5:{"stone":15,"wood":5,"other":10}}
 const ZOMBIE_IMPACTS={0:"unarmed",1:"melee",2:"cutting",3:"melee",4:"melee",5:"melee"}
 const BARE_HAND_REACH := 1.65
@@ -146,7 +147,10 @@ func apply_target(t: Dictionary) -> bool:
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
 	if t.kind=="zombie":
-		if not game.zombies.apply_hit(t,TOOLS[item]["other"],-game.camera.global_basis.z,ZOMBIE_IMPACTS[item]):return false
+		var health_before:float=maxf(0,t.zombie.health)
+		if not game.zombies.apply_hit(t,hud.skill_damage(Progression.MELEE,TOOLS[item]["other"]),-game.camera.global_basis.z,ZOMBIE_IMPACTS[item]):return false
+		var health_lost:float=health_before-maxf(0,t.zombie.health)
+		if health_lost>0:hud.award_experience(mini(15,int(ceil(health_lost)))+(25 if not t.zombie.alive else 0))
 		var part:String=t.get("part","torso")
 		hud.damage_feedback.show_zombie_hit(part.replace("_"," ").capitalize(),int(ceil(t.zombie.health)),int(t.zombie.PARTS.torso.health),float(t.zombie.limb_health.get(part,0.0)),float(t.zombie.PARTS[part].health),t.zombie.missing.get(part,false))
 		if item!=0:
@@ -169,6 +173,8 @@ func apply_target(t: Dictionary) -> bool:
 	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
 	if t.kind=="cover" and t.get("species",-1)==8:damage=1
 	var harvest:=harvest_profile(t);var before:Dictionary={};var result:Dictionary
+	if t.kind=="terrain" or not harvest.is_empty():
+		damage=hud.skill_damage(Progression.MINING if t.material=="stone" else Progression.WOODCRAFT,damage)
 	if locked:
 		if t.collection.get_instance(t.id).is_empty():return false
 		result=game.storage.store.damage_lock(t.id,damage,game.storage.store.lock_state(t.id).store_revision)
@@ -193,6 +199,8 @@ func apply_target(t: Dictionary) -> bool:
 			if result.applied>0:durability.repair(t.key,t.health,result.applied)
 			if result.reward_count>0 and not hud.inventory.restore(before,hud.inventory.snapshot().revision).ok:push_error("Harvest reward rollback failed")
 		game._show_lake_notice(rejection_reason if not rejection_reason.is_empty() else "Destruction blocked; make inventory room or wait for the world");return false
+	if not harvest.is_empty() and result.applied>0:
+		hud.award_experience(mini(12,int(result.reward_count)*2)+(8 if result.destroyed else 0))
 	if t.kind=="cover" and t.get("large",false) and not result.destroyed:game.ground_cover.damage_boulder(t.id,game.camera.global_position)
 	hud.show_target_damage(t.name,int(result.remaining),int(result.maximum))
 	t["destroyed"]=result.destroyed

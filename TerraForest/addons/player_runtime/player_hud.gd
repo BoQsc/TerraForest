@@ -10,6 +10,7 @@ var developer_slot:=8
 signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
+signal progression_changed
 signal drop_requested(slot: int, revision: int, count: int)
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
@@ -26,6 +27,8 @@ var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
 var inventory: RefCounted
 var reward_inbox: RefCounted
+var progression: RefCounted
+const Progression=preload("res://addons/player_runtime/progression_rules.gd")
 var inventory_open:=false
 var selected_slot: int=-1
 var previous_mouse: int=Input.MOUSE_MODE_CAPTURED
@@ -38,6 +41,7 @@ var crafting_panel: PanelContainer
 var crafting_message: Label
 var equipment: RefCounted
 var character_panel: Control
+var skills_panel: Control
 var crafting_content: Control
 var side_tabs: HBoxContainer
 var drop_layer: CanvasLayer
@@ -106,6 +110,8 @@ func prepare() -> bool:
 		push_error("Player inventory extension unavailable");enabled=false;return false
 	inventory=ClassDB.instantiate("NativePlayerInventory")
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
+	progression=Progression.create()
+	if progression==null:inventory=null;return false
 	for id: int in CATALOG:
 		inventory.register_item(id,1)
 		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
@@ -197,8 +203,8 @@ func _ready() -> void:
 	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
 	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
 	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,148);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
-	for tab in ["Crafting","Character"]:
-		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(205,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
+	for tab in ["Crafting","Character","Skills"]:
+		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(133,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
 	var craft_margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]:craft_margin.add_theme_constant_override("margin_"+side,20)
 	crafting_panel.add_child(craft_margin)
@@ -206,6 +212,7 @@ func _ready() -> void:
 	var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;side_host.add_child(scroll);crafting_content=scroll
 	var recipes:=VBoxContainer.new();recipes.size_flags_horizontal=Control.SIZE_EXPAND_FILL;recipes.add_theme_constant_override("separation",14);scroll.add_child(recipes)
 	character_panel=preload("res://addons/player_runtime/character_panel.gd").new();character_panel.hud=self;side_host.add_child(character_panel);character_panel.hide()
+	skills_panel=preload("res://addons/player_runtime/skills_panel.gd").new();skills_panel.hud=self;side_host.add_child(skills_panel);skills_panel.hide()
 	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
 	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
 	for i in Crafting.RECIPES.size():
@@ -265,10 +272,13 @@ func refresh() -> void:
 
 	_refresh_recipes()
 	character_panel.refresh()
+	if skills_panel.visible:skills_panel.refresh()
 	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Hold Alt: tool controls | Esc: session | ~ gameplay"
 
 func show_side(tab: String) -> void:
 	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
+	skills_panel.visible=tab=="Skills"
+	if skills_panel.visible:skills_panel.refresh()
 	for button in side_tabs.get_children():button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
 
 # Bounded event-driven delivery. The persisted inbox is an internal safety journal,
@@ -351,6 +361,7 @@ func craft_recipe(recipe: int) -> void:
 	if not enabled or not inventory_open: return
 	var result: Dictionary=Crafting.craft(inventory,recipe,1,state.revision)
 	if result.ok:
+		award_experience(Progression.crafting_xp(Crafting.RECIPES[recipe]))
 		message.text="Crafted supplies · "+("temporary world; not saved" if temporary_world else "F5 saves world")
 		inventory_changed.emit()
 	elif result.reason=="full": message.text="Not enough output space. Free a slot or craft fewer; inputs are retained."
@@ -358,6 +369,18 @@ func craft_recipe(recipe: int) -> void:
 	else: message.text="Craft rejected (%s). Inventory refreshed; try again."%result.reason
 	crafting_message.text=message.text
 	refresh()
+
+func award_experience(amount:int)->int:
+	if progression==null or developer_belt or amount<=0:return 0
+	var result:Dictionary=progression.award(amount,progression.snapshot().revision)
+	if not result.ok or result.gained==0:return 0
+	progression_changed.emit()
+	if resource_feed!=null:resource_feed.gain_experience(result.gained,result.level)
+	if skills_panel!=null and skills_panel.visible:skills_panel.refresh()
+	return result.gained
+
+func skill_damage(skill:int,base:int)->int:
+	return base if progression==null or developer_belt else progression.scale_action(skill,base)
 
 func select_slot(slot: int) -> void:
 	# Click selects; dragging moves. Selection must never relocate an item.

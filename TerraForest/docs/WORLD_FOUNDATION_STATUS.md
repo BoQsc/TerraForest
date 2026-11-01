@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Player experience and skills — 2026-11-01
+
+Native bounded XP/levels/points, three functional skill ranks, compact binary saves
+and an inventory Skills panel are implemented. Actual mining/felling and paid
+crafting earned a level and spent a point in the owned generated world; fresh
+process restoration preserves XP, ranks, materials and wear (50 + 8 checks).
+Debug/release native contracts and real HUD/adapters pass. The five-row resource
+feed aggregates XP without per-frame inventory scans. Matching package restoration
+passes another 8 checks and is installed; this is not the completed progression/content request.
+Return next to consumable readables, food/hunger/buffs, the full navigation and
+3D character screen, quest ownership/reset and ordinary combat/balance evidence.
+No player save is edited, no power/FPS setting changes, and no earlier terrain,
+lookout-route or frame-pacing failure is closed. Exact evidence and retained failed
+fixtures: [expansion tracker](../issues/gameplay-expansion/README.md).
+
 ## Authored door animation — 2026-11-01
 
 The supplied BG5 Open/Close clips now drive native leaf timing and a compact

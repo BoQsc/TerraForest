@@ -78,6 +78,9 @@ func published(_bounds: AABB,_revision: int) -> void:
 	if items.is_empty(): return
 	var accepted: Dictionary=hud.reward_inbox.accept(items,receipt)
 	if not accepted.ok: _fail("Excavation reward rejected: "+str(accepted.reason));return
+	var learned:=0
+	for index in range(1,items.size(),2):learned+=mini(items[index],20)
+	hud.award_experience(mini(learned,20))
 	terrain.changed_since_save=true
 	hud.deliver_mining_rewards()
 	if not hud.slots.is_empty(): hud.refresh()

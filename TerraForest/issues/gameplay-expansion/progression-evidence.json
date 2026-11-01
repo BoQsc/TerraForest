@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "world": "Exploration_1703_8f8d4c8f",
+  "seed": 1703,
+  "generation": "reports/exploration_world/20261101T130043255160Z",
+  "source_earn_and_reload": "reports/player_progression/20261101T134707497088Z",
+  "package_reload": "reports/player_progression/20261101T135527577997Z",
+  "native_debug": "reports/player_progression/20261101T135312891896Z",
+  "native_release": "reports/player_progression/20261101T135313495577Z",
+  "hud_adapters": "reports/checks/20261101T135049409040Z",
+  "building_gates": "reports/building_standards/20261101T135314547500Z",
+  "pack_sha256": "06b8524de1caedc05342dd5c5233e1da4f9ab1f06f160f5f9f0c0063f43cc8aa",
+  "native_sha256": {
+    "debug": "a3eac61dba9b46064ed144c16113b540b6edd41efd2ae35f8de6fd2993e00c51",
+    "release": "9f718e75c22f79bc00b4abe3a464b7cc7e598111c6e75c04a9273161be994b09"
+  },
+  "image": {
+    "path": "images/skills-restored.png",
+    "source": "reports/player_progression/20261101T135527577997Z/skills-restored.png",
+    "sha256": "80e2b4dcce57b842c06f5843f06fd77f36323f1ffa2d180780329bd1b772e2b6",
+    "caption": "Actual earned 253 XP, level 2 and Mining rank 1 after matching-package reload; separate backpack/toolbelt retained. Existing passive-HUD/side-tab overlap remains for full navigation redesign.",
+    "provenance": "Local automated game capture, not generated artwork; existing underlying asset licenses/authorship remain unchanged. Documentation-only image excluded from game imports/exports."
+  },
+  "scope": "Native progression contracts and actual generated-world mining/harvesting/crafting/save owners. Scripted targets and camera positioning, not mouse/animation input, route or endurance qualification. Combat adapter uses a synthetic enemy in the focused test; ordinary populated combat balance remains open.",
+  "performance": {
+    "state_bytes": 48,
+    "maximum_schema_bytes": 280,
+    "pack_bytes": 447314276,
+    "distribution_bytes": 477164955,
+    "package_peak_private_commit_bytes": 3666939904,
+    "package_peak_dedicated_gpu_bytes": 1490513920,
+    "native_10000_scale_calls_debug_us": 1370,
+    "native_10000_scale_calls_release_us": 1250,
+    "qualification": "Short scoped measurements only. Existing 60 FPS cap, VSync and Quiet Mode unchanged."
+  }
+}

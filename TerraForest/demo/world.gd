@@ -195,6 +195,9 @@ func _ready() -> void:
 		push_error("Pending reward persistence initialization failed")
 		_abort_startup(2)
 		return
+	if not persistence.register_component("player_progression",player_hud.progression.capture_storage_snapshot,player_hud.progression.restore_storage_snapshot,player_hud.progression,player_hud.progression.capture_storage_snapshot()):
+		push_error("Player progression persistence initialization failed");_abort_startup(2);return
+	player_hud.progression_changed.connect(func():terrain.changed_since_save=true)
 	mining_rewards.enabled=construction_inventory.gameplay
 	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")

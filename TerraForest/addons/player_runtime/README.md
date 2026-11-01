@@ -1,5 +1,16 @@
 # Player inventory and construction
 
+## Experience and skills
+
+Inventory → Skills exposes Mining, Woodcraft and Melee. Actual published mining,
+natural harvesting, living-zombie damage and successful paid crafting earn XP;
+levels grant points for native damage bonuses. The existing resource feed groups
+XP notifications. `NativePlayerProgression` owns bounded transactions and the
+binary `player_progression` compound-save component; old saves start at zero only
+when that section is absent. Stable new skill IDs can be added through
+`progression_rules.gd` without discarding saved ranks. Rules, limits, incomplete
+survival/navigation features and evidence: [expansion contract](../../docs/GAMEPLAY_EXPANSION.md).
+
 The [player UI guide](../../docs/PLAYER_UI.md) covers the Escape session menu, tool-owned Alt panels, development
 mode, gameplay tools, selectable empty belt slots and player/chest drag-and-drop
 controls. Existing IDs 1-4 now identify pickaxe, hatchet, building hammer and
