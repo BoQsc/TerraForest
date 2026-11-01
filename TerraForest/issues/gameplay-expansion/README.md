@@ -59,6 +59,11 @@
   another 33 per variant at `reports/terrain_field_patch_binding/20261101T173628376880Z`:
   deferred page reads, dirty versions, geometry keys, epoch rejection, durable
   checkpoint publication and fresh-owner restore preserve neighboring edits.
+- The final 35-check adapter run at
+  `reports/terrain_field_patch_binding/20261101T174526651866Z` also warms the native
+  mesh cache, restores the field, and verifies that the cached mesh matches fresh
+  meshing instead of retaining the pre-reset surface. This is geometry parity,
+  not rendered multi-owner quest-reset acceptance.
 - Retained failed fixtures: the first adapter attempt used brush material 7,
   which ordinary editing correctly rejects; it now uses supported material 2.
   The unnecessary isolated headless editor import also exited with 0xc0000005;

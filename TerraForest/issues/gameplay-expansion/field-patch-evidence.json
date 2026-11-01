@@ -11,8 +11,9 @@
     "maximum_serialized_bytes": 3145776
   },
   "binding": {
-    "report": "reports/terrain_field_patch_binding/20261101T173628376880Z/run.json",
-    "checks_per_variant": 33,
+    "report": "reports/terrain_field_patch_binding/20261101T174526651866Z/run.json",
+    "earlier_report": "reports/terrain_field_patch_binding/20261101T173628376880Z/run.json",
+    "checks_per_variant": 35,
     "debug_sha256": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
     "release_sha256": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
     "includes_concurrent_vehicle_planner_source": true

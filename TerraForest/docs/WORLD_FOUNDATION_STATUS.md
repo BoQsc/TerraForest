@@ -53,7 +53,7 @@ trader/marker interaction and live rewards. Exact scope and closure evidence:
 [expansion contract](GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state)
 and [retained test reports](../issues/gameplay-expansion/README.md).
 
-Bounded native terrain field patches now pass 33 standalone and 33 Godot
+Bounded native terrain field patches now pass 33 standalone and 35 Godot
 binding/archived-page checks in each rebuilt debug/release variant. They are not
 installed and no quest reset is enabled. This covers density/material samples,
 not the remaining cube/block/model/stock/resident/water/vegetation transaction,
