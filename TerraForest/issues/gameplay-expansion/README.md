@@ -5,6 +5,16 @@
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Combined package milestone — 2026-11-01
+
+The coordinated expansion package is exported and starts successfully, with all
+14 native libraries matching the verified source builds. It includes the coal
+mine, combat, trader travel, town signs and both reset primitives. This supersedes
+the older primitives' "not installed" notes below, not their limited scope:
+gameplay resets are still absent. Exact-executable feature journeys are being
+checked serially; no complete expansion or new visual approval is claimed.
+[Frozen package identity and pending gates](combined-package-evidence.json).
+
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
 
 - Native location identities and TFQ1 state are implemented; trader offers,

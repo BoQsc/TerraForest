@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-01",
+  "status": "Published; export gates and startup pass, exact-executable feature journeys pending",
+  "pack": {
+    "path": "dist/TerraForest.pck",
+    "sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+    "bytes": 448923068,
+    "distribution_bytes": 479418355,
+    "matching_native_libraries": 14,
+    "native_artifact_commit": "579a21c1",
+    "source_milestones": {
+      "coal_mine": "58282bdd",
+      "combat": "165a75b9",
+      "trader_travel": "2d276dd0",
+      "town_signs": "20cabe9b",
+      "terrain_field_patch": "0780ed88",
+      "building_cell_patch": "22f9f9a4"
+    }
+  },
+  "export_gates": {
+    "passed": true,
+    "log": "reports/expansion_combined_export.log",
+    "building_contracts": "reports/building_standards/20261101T183447979349Z/run.json",
+    "scope": "Required source/release building contracts, production catalog, retained notices, authored-door assets and headless packaged startup"
+  },
+  "pending_package_checks": [
+    "Exact installed executable world-entry fly-in and town-sign generation/reopen with final UV images",
+    "Uninterrupted coal-mine normal generation, complete journey and fresh-process reopen",
+    "Combat actual-fire chain blast and partially completed destruction save/reopen",
+    "Trader paid departure and short paid reopen on the same car without duplicate fare",
+    "Updated quest ownership normal generation/reopen with twenty residents and twelve chests"
+  ],
+  "scope_limits": [
+    "User worlds and user-owned root TerraForest.exe remain unchanged",
+    "60 FPS cap, VSync and Quiet Mode unchanged",
+    "Native reset primitives are included but no multi-owner gameplay reset or trader quest is enabled",
+    "Full expansion, visual acceptance and foreground performance remain incomplete"
+  ]
+}
