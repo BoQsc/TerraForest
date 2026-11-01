@@ -1,0 +1,60 @@
+{
+  "source_commit": "4eef399a",
+  "combined_commit": "2b89c4c9",
+  "container_commit": "40fc2d73",
+  "status": "Combined package verified; main install pending",
+  "runs": {
+    "source_world": {
+      "path": "reports/checks/20261101T131952201456Z/run.json",
+      "sha256": "68a44b06a3927686d661e1284f45614af5d8008cc8472618ca557ec62ed1ca56",
+      "passed": true
+    },
+    "source_motion": {
+      "path": "reports/checks/20261101T131239049174Z/run.json",
+      "sha256": "1596b259532958cb0f4a43815e25480a7c8bfcf9642e7cf67b88e5c152abaef5",
+      "passed": true
+    },
+    "source_horizon": {
+      "path": "reports/checks/20261101T132039266926Z/run.json",
+      "sha256": "62aaf246e523da102753275693fa7c03c823cc996612c901f06581b182210ce4",
+      "passed": true
+    },
+    "building_export_gate": {
+      "path": "reports/building_standards/20261101T132440724249Z/run.json",
+      "sha256": "357749592af92a4fc66d7e76db1747843eb6042822190c4c86146ac72a69241e",
+      "passed": true
+    },
+    "pack_doors": {
+      "path": "reports/door_animation_pack/20261101T132605685756Z/run.json",
+      "sha256": "c34d267b006863624d597c6c6e64044e6638547688b3560a58a6667c18178c55",
+      "passed": true
+    },
+    "pack_container_restore": {
+      "path": "reports/container_lock_world/20261101T132734256039Z/run.json",
+      "sha256": "d09f6e86fdb3093e0b89412366a14b401d42e55a3bf2ed6cb3d3be00a1134a46",
+      "passed": true
+    }
+  },
+  "native_sha256": {
+    "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "fa3170f3c481ab66589e1c6eac17aaddfc73a5cba2eeef60a2190f726852a2c2",
+    "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "bbb156253e3b2674bd143a32099184a6344a4b6697c93558428a4ee6835f7c39",
+    "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "3185541626b3c1e3a477acfae5353fd59576ec55e3a83b285d7b84834efbe06e",
+    "addons/structures/bin/structures.windows.template_release.x86_64.dll": "5c130eeecf0b629713222f0668173d72f881e1bec0eca4683ed82c6abe8536e2",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+    "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+    "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "56e61c3a9e4eadfd07fc3a0889828bfdb2279d55fab51592f7818d977c4a6678",
+    "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "3faf0eeab0b88c13cad688c5c7d49d167ef51f03aa6a9740d3dddc1181434391",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+    "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "922aba2f65cbc9a1adcda097fd2ae7ad51c4cdd882c4b2e8a3486fb05cb6e8e3",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "a5ab80fdfee980b6a93eeb529c9f743b0f73fd5d171fe92abcbd4d40ab919aa6"
+  },
+  "pack": {
+    "path": "dist/TerraForest.pck",
+    "sha256": "86e8f1f42eaab2a81b9db8e1b91d43d16c0000df97b1b191eeb9ddb10a1a7ab8",
+    "bytes": 447308308
+  },
+  "distribution_bytes": 477120587
+}

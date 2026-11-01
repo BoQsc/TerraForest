@@ -7,7 +7,7 @@
 
 ## Images
 
-### Container locks — source verified, 2026-11-01
+### Container locks — source and package verified, 2026-11-01
 
 ![Actual generated house chest retains 150 of 180 lock durability after a hatchet hit](images/container-lock-damaged.png)
 ![Generated chest opened with a crafted lockpick; supplies and reusable picks remain](images/container-lock-picked.png)
@@ -43,8 +43,10 @@ are native, bounded and binary; no idle polling or replacement model is added.
   safety reserve; `20261101T131255627535Z` assumed starter metal and omitted the
   existing offscreen scene-transition hook. Corrected fixture collects real loot
   and records zero pointer captures in both passing phases. No limit was disabled.
-- Remaining: matching combined export/package verification and direct player
-  animation-input playtest. The dedicated lock-world check reuses only that owned
+- Combined door/lock package restores the same owned world with 11 passing
+  assertions: `reports/container_lock_world/20261101T132734256039Z`. Exact remaining
+  lock damage, contents, picks and worn tool match; no desktop pointer capture.
+- Remaining: main installation and direct player animation-input playtest. The dedicated lock-world check reuses only that owned
   `Exploration_*` save; it does not replace the failed lookout route requirement. Locked doors,
   barricades and POI quest reset ownership remain separate unfinished work.
 

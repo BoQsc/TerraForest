@@ -1,7 +1,7 @@
 # Authored door opening and closing
 
-- Status: Fixed for reproduced case; source/release checked, package integration pending.
-- Updated: 2026-11-01. Fix/build: door animation source milestone on `codex/trader-civic-buildings`.
+- Status: Fixed for reproduced case; source/release/package verified; main installation pending.
+- Updated: 2026-11-01. Fix/build: `4eef399a`, combined with container locks in `2b89c4c9`.
 - User review: Not reviewed. User explicitly requested the existing GLB animation.
 - Symptom: E changed the native door placement immediately; the supplied GLB's
   Open/Close, handle and latch channels were discarded by the static art bake.
@@ -77,9 +77,14 @@ matched-view acceptance. Earlier PNG-per-frame captures remain in `open/` and
 
 ## Remaining / resume here
 
-Source interaction, region retirement and both direction captures pass. Run the
-PCK interaction and actual disk roundtrip, then coordinate the combined main
-installation. Keep package/install pending until that evidence exists. Player
+Source interaction, region retirement and both direction captures pass. The
+[combined PCK](../../reports/door_animation_pack/20261101T132605685756Z/run.json)
+passes all four phases: motion, ordinary E, actual mid-swing save and fresh reopen.
+The other chat's generated-container state also passes 11 packaged restore checks
+([report](../../reports/container_lock_world/20261101T132734256039Z/run.json)).
+All eight source/release building export gates pass.
+[Artifact hashes and run provenance](verification.json). Main installation and
+its usual executable verification remain pending. Player
 visual approval remains separate; dense concurrent-door frame pacing is unqualified.
 Loose replacement GLBs retain their own art and use the native hinge curve;
 arbitrary loose-GLB animation import is outside this change.
