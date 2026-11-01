@@ -38,33 +38,33 @@ and packaging await coordinated integration; no installed-build claim. Evidence:
 
 ## Town roadside signs — 2026-11-01
 
-One or two named static signs per new town pass 18 native checks plus ordinary
-source generation17, fresh-process restore18 and corrected-post restore18 checks.
-Seed1703 has Coldwater2/Dunvale2 signs with map-name parity, native collision and
-edited-ground post support. Initial front-post geometry was rejected and corrected;
-final timber/panel UVs and unobstructed photos await the next rendered pass. Main
-integration and installed creation/reopen remain open in the coordinated mine/vehicle
-queue. No performance acceptance under concurrent compilation.
+Installed one or two named signs per new town: 18 native checks, normal installed
+Generate & play 17 and fresh-process My worlds reopen 18 pass. Source and earlier
+rejected/partial image evidence remain retained. Seed 1703 has two Coldwater and
+two Dunvale signs with map-name parity, native collision and edited-ground support.
+Final rear posts, vertical timber grain, flat panels and unobstructed views were
+inspected. Main integration `20cabe9b`; owned review world `TownSigns_1703_18021c51`.
+Stationary 120-frame samples have p95 16.94–17.62 ms; restored Dunvale retains a
+67.10 ms worst frame. No signs-disabled baseline or broad travel/performance claim.
+User visual approval and broader seed/performance coverage remain separate.
 [Evidence and resume steps](../issues/town-road-signs/README.md).
 
 ## World entry fly-in — 2026-11-01
 
-Default-on entry passes 24 populated-world and 25 ordinary-browser source checks,
-plus 49 frozen-package checks. Buffered complete entry images were inspected.
-Package validation used the Steam engine; exact installed TerraForest.exe remains
-pending. The first misconfigured launch loaded mutable source; corrected exact-exe
-retry stopped before launch on changed source/dist native hashes. Vehicle now owns
-the shared build window. Preserve failed evidence and resume with the explicit
-package runner after the coordinator supplies a matching installed milestone.
+Default-on entry passes 49 source checks, 49 earlier frozen-package checks and now
+49 checks through the exact installed TerraForest.exe with explicit matching PCK
+and all 14 native libraries. Ordinary browser and read-only populated entry pass;
+the source fixture remains unchanged. Buffered complete 3.078-second installed
+motion is retained and relevant frames inspected. The prior failed launch/parity
+receipts remain visible; the exact-executable dependency is closed.
 [Scope, controls and remaining evidence](../issues/world-entry-fly-in/README.md).
 Clean no-capture source probe: 53.27 FPS during entry, 59.21 FPS settled first
-person, but a 143.33 ms first-frame handoff stall remains unqualified. This is not
-a locked-60-FPS or installed/focused-presentation acceptance; compare a no-entry
-baseline and profile the handoff on the coordinated build.
-User requested a later dedicated optimization pass (2026-11-01). Keep sustained
-rendering cost and the handoff hitch open; preserve quality and fixed power/frame
-settings, and require comparable before/after measurements. Installed feature
-validation remains separate from this deferred optimization work.
+person, but a 143.33 ms first-frame handoff stall remains unqualified. Installed
+capture includes GPU readback and does not establish performance or foreground
+presentation. User motion review and the requested later dedicated optimization
+pass remain open. Compare a matched installed no-entry baseline, attribute the
+handoff and sustained rendering cost, preserve quality/power/frame settings, and
+require measured improvement. Installed feature validation is complete separately.
 
 This file retains the wider backlog; the tracker initially covers three cases.
 

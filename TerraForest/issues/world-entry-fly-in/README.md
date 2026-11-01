@@ -1,6 +1,6 @@
 # World entry fly-in
 
-- Status: Main source and frozen-package checks pass; exact installed-executable check pending.
+- Status: Installed; exact executable passes 49 checks. User motion review and deferred performance work remain open.
 - Source: `d34557e0`; main integration: `4fbca4e9`.
 - Updated: 2026-11-01.
 - User review: Enabled-by-default preference approved; motion and images not reviewed.
@@ -47,7 +47,7 @@ camera rotation that lost the character; the revised shoulder approach retains i
 Initial capture PNG writes stalled the animation under test; the recording fixture
 now buffers screenshots for compression after the fly-in. These old capture timings
 are not clean runtime performance measurements. Final buffered package recording
-and installed verification remain required.
+and exact installed verification are now retained below.
 
 ![Actual populated world from above](images/aerial.png)
 
@@ -112,7 +112,7 @@ The user explicitly wants to return to the rendering cost and optimization
 opportunities. Keep this work open; the current FPS measurements and functional
 checks are not performance approval. Optimization is deferred for a dedicated
 profiling pass after the coordinated build is stable. This does not cancel the
-separately pending installed feature/browser/visual checks.
+separate installed feature/browser/visual checks, completed below.
 
 Resume from the existing raw timings and fixture, with no competing game renders:
 
@@ -156,16 +156,45 @@ PCK, dist directory, external driver and installed executable. Its attempted exa
 executable rerun stopped before starting Godot because source/dist native parity
 had changed during concurrent work. No player save or preference was changed.
 
+## Exact installed-executable qualification — 2026-11-01
+
+The actual user-owned `TerraForest.exe`, explicit installed PCK/dist and external
+check driver pass **25 ordinary-browser checks plus 24 populated-world checks**.
+The populated fixture `Exploration_1703_8f8d4c8f` remains byte-identical. All 14
+native libraries match the coordinated export. This closes the earlier engine and
+build-parity dependency; the prior failed and package-only receipts remain above.
+[Installed receipt](../../reports/entry_fly_in_pack/20261101T183739770167Z/run.json).
+
+- Engine SHA-256: `981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5`.
+- PCK SHA-256: `4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`.
+- Complete browser entry: 3.015 s; populated entry: 3.078 s.
+- Sampled process commit and dedicated VRAM stayed within project budgets.
+
+![Installed shoulder approach](images/installed-handoff.png)
+
+Installed populated world, current player visible before first-person handoff.
+Aerial, approach and first-person frames were inspected. The complete populated
+recording retains 65 buffered frames with original timestamps, encoded to 960×540
+at 30 FPS, followed by a 0.75-second first-person hold:
+[installed entry motion](images/installed-entry.mp4).
+
+The driver ran passive off-desktop 1080p windows with 60 FPS/VSync and unchanged
+Quiet Mode during a reserved serial test window. Captures include GPU readback;
+their frame timings are **not performance qualification**. Human motion approval
+and foreground presentation remain distinct. Encoding uses existing external
+FFmpeg 9.0.2; no runtime dependency or imported game asset was added.
+
 ## Remaining / resume here
 
-Run the exact installed-executable check after the coordinator supplies the next
-matching build and render window. Vehicle owns current native builds; do not
-replace its libraries or export an older source snapshot. The focused runner is:
+Scoped installed feature verification is complete. User motion/visual review and
+the explicitly deferred profiling/optimization pass remain open. Resume performance
+work from the clean source measurement and the four-step follow-up above: obtain a
+matched installed on/off baseline, attribute sustained rendering and the 143 ms
+handoff stall, preserve quality and fixed power/frame settings, and verify actual
+foreground presentation. Do not infer performance acceptance from captured motion.
+
+For a future coordinated package regression check:
 
 ```powershell
 python TerraForest/tools/check_entry_fly_in_pack.py --project "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest"
 ```
-
-Inspect retained buffered motion and record the actual engine/PCK/native hashes.
-The package-only result does not close exact-executable qualification. User motion
-approval and the deferred profiling/optimization pass remain separate.

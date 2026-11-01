@@ -1,7 +1,7 @@
 # Town names beside approach roads
 
-- Status: Ordinary source generation and fresh-process restore pass; final UV/photo and installed verification pending.
-- Updated: 2026-11-01. Main integration pending the coordinated vehicle build window.
+- Status: Installed; normal generation and fresh-process restore pass. Final images inspected; user visual review pending.
+- Updated: 2026-11-01. Source: `2c0de278`; main integration: `20cabe9b`.
 - User review: Requested one or two town/city name signs; appearance not reviewed.
 - Request: Identify towns from their roads without blocking driving or walking.
 
@@ -19,7 +19,7 @@ ends. The transformed board clears roads, shoulders, pedestrian space and buildi
 lots. Publication uses bounded native rays against the **edited** terrain at the
 board corners and both posts; no terrain grading is added for decoration. Generation
 requires at least one admitted sign per town and stops rather than publishing a
-known unsupported sign. Broader seed admission needs evidence before closure.
+known unsupported sign. Broader seed admission remains a separate coverage follow-up.
 
 The dark painted board, rough timber posts and physical cream lettering use
 original 0BSD procedural code plus the approved E2 weathered timber/patinated zinc
@@ -67,25 +67,69 @@ Corrected assembly: board in front of posts and feet grounded. Still an incomple
 review view because the held pickaxe covers part of the text. Exact screenshot
 sources, settings and hashes are retained in [manifest](images/manifest.json).
 
+## Installed verification and final images — 2026-11-01
+
+The coordinated combined build passes **17 normal Generate & play checks and 18
+fresh-process My worlds → Open checks** using the actual installed
+`TerraForest.exe`, explicit PCK and matching dist libraries. The integrated native
+sign check also passes 18 checks. No developer content flags are required.
+[Installed creation/reopen receipt](../../reports/town_signs_world/20261101T184013933118Z/run.json).
+
+The owned review world is **`TownSigns_1703_18021c51`**, normal **Connected
+countryside**, seed 1703. Coldwater and Dunvale each receive two signs. Names match
+the map; resident bodies/text, board collisions and both posts against edited
+terrain survive reopening. Existing player worlds were not regenerated.
+
+- PCK SHA-256: `4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`.
+- Installed engine SHA-256: `981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5`.
+- All 14 native libraries matched the coordinated package. The user-owned executable
+  was launched without replacement; no source or native build ran during this window.
+
+Final views use an ordinary empty belt slot. Timber grain runs vertically up the
+rear posts, sampling inside one plank; the flat painted board avoids the zinc
+texture's folded roof seams. The unobstructed close and road views were inspected.
+This completes the outstanding final UV/photo and installed integration checks.
+
+![Installed Coldwater sign](images/installed-coldwater-close.png)
+
+Final Coldwater board, physical lettering and rear timber posts.
+
+![Installed Dunvale sign](images/installed-dunvale-close.png)
+
+Final Dunvale assembly and town frontage after fresh-process restore.
+
+![Restored Coldwater road approach](images/installed-coldwater-road.png)
+
+The approach keeps the road, shoulder and walking space clear. These are unretouched
+runtime captures. HUD FPS may include earlier PNG compression and is not the clean
+frame sample. Source paths, hashes and settings are in the [manifest](images/manifest.json).
+
+### Scoped frame samples
+
+Each sample contains 120 stationary frames before screenshot readback, at 1080p,
+60 FPS cap/VSync and unchanged Quiet Mode, without competing game renders/builds.
+
+| Phase / town | p95 frame | Worst frame |
+| --- | ---: | ---: |
+| Create / Coldwater | 16.941 ms | 17.613 ms |
+| Create / Dunvale | 16.968 ms | 23.367 ms |
+| Restore / Coldwater | 17.623 ms | 18.426 ms |
+| Restore / Dunvale | 17.261 ms | **67.101 ms** |
+
+The restored Dunvale outlier remains unexplained. These short samples do not qualify
+travel, foreground presentation, broad world performance or a locked 60 FPS. There
+is no matched signs-disabled baseline, so they do not isolate sign overhead. Sampled
+process commit and dedicated VRAM stayed within project budgets.
+
 ## Remaining / resume here
 
-After the corrected-post run, source UVs were aligned so timber grain runs up the
-posts, sampling inside one plank, and the flat painted board avoids the zinc
-texture's folded roof seams. The driver now selects an ordinary empty belt slot
-for unobstructed photos. These final UV/photo changes need the next rendered pass;
-18 native checks remain passing. No new texture assets were generated or imported.
+Implementation and scoped installed checks are complete. User visual approval
+remains open. Broader seeds/recipes and travel/frame-cost coverage belong to the
+next world-generation/performance review; preserve the 67.101 ms outlier and compare
+matched scenes before attributing it. Do not regenerate played saves for testing.
 
-Next: reopen the owned fixture with the final driver, inspect corrected close and
-road views, integrate the focused source through the coordinator, export the combined
-build and run ordinary package creation/reopen. Mine/vehicle own the shared test
-queue after the source window was released. Keep the field/quest/vehicle changes
-and current plan fingerprints on merge. Main integration and installed verification
-are completion requirements; the source results do not imply they are done.
+To reproduce on a coordinated matching package and reserved runtime window:
 
 ```powershell
-python TerraForest/tools/check_town_signs_world.py --untimed --restore-report reports/town_signs_world/20261101T173151258077Z
-python TerraForest/tools/check_town_signs_world.py --pack --untimed
+python TerraForest/tools/check_town_signs_world.py --pack
 ```
-
-Broader seed/recipe coverage, uncontended frame-cost evidence and user visual
-approval remain distinct from the reproduced default-world functional checks.
