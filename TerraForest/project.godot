@@ -16,7 +16,6 @@ config/version="1.0.0-dev"
 run/main_scene="res://demo/worlds.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/image="res://assets/branding/boot_splash.png"
-boot_splash/stretch_mode=1
 
 [autoload]
 
@@ -46,9 +45,9 @@ import/blender/enabled=false
 [physics]
 
 3d/physics_engine="Jolt Physics"
-3d/default_gravity=20.0
 jolt_physics_3d/simulation/velocity_steps=16
 jolt_physics_3d/simulation/position_steps=8
+3d/default_gravity=20.0
 
 [rendering]
 
