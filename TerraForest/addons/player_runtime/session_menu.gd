@@ -23,6 +23,7 @@ var session_message:Label
 var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
+var entry_fly_in_toggle:CheckButton
 var third_person_toggle:CheckButton
 var overview_toggle:CheckButton
 var first_person_toggle:CheckButton
@@ -96,6 +97,9 @@ func _ready() -> void:
 	button(session,"Save world",save_world)
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
+	entry_fly_in_toggle=CheckButton.new();entry_fly_in_toggle.text="World entry fly-in (3 seconds)"
+	entry_fly_in_toggle.tooltip_text="Start above the world and descend into first person after loading. Space skips. Covered indoor spawns enter directly. Applies on the next world load."
+	entry_fly_in_toggle.toggled.connect(game.player_view.entry.set_enabled);player.add_child(entry_fly_in_toggle)
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)
 	overview_toggle=CheckButton.new();overview_toggle.text="World overview camera (preview)"
