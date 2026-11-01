@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: 0BSD
+extends SceneTree
+func _initialize()->void:
+	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	run.call_deferred()
+func run()->void:
+	var start:=Time.get_ticks_usec()
+	var scene=load("res://reports/non_gameplay_startup/worlds_before.tscn" if "--baseline" in OS.get_cmdline_user_args() else "res://demo/worlds.tscn")
+	var loaded:=Time.get_ticks_usec()
+	var browser=scene.instantiate();root.add_child(browser)
+	var ready:=Time.get_ticks_usec()
+	if DisplayServer.get_name()!="headless":await RenderingServer.frame_post_draw
+	else:await process_frame
+	var first_frame:=Time.get_ticks_usec()
+	var library=browser.get("library")
+	var deadline:=Time.get_ticks_msec()+10000
+	if library!=null:
+		while (library.loading or library.worker!=null) and Time.get_ticks_msec()<deadline:await process_frame
+	var populated:=Time.get_ticks_usec()
+	var timings:Array=[]
+	for i in 12:
+		var now:=Time.get_ticks_usec();browser.filter_list();timings.append((Time.get_ticks_usec()-now)/1000.0)
+	print("BROWSER_PROBE ",JSON.stringify({"scene_load_ms":(loaded-start)/1000.0,"ready_ms":(ready-loaded)/1000.0,"ticks_ready_ms":ready/1000.0,"first_frame_ms":first_frame/1000.0,"populated_ms":populated/1000.0,"slots":browser.slots.size(),"filter_ms":timings}))
+	if "--capture" in OS.get_cmdline_user_args():
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://reports/non_gameplay_startup/browser.png")
+	browser.free();quit()

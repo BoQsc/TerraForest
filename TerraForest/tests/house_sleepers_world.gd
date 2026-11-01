@@ -16,6 +16,7 @@ func run()->void:
 	admission="--admission-homes" in OS.get_cmdline_user_args()
 	restoration=cleared or admission or "--restore-homes" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
+	await wait_for(browser_catalog_ready)
 	var browser=current_scene
 	if restoration:
 		var receipt:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("homes.json")))

@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+BROWSER_PROBE {"filter_ms":[2.092,1.93,2.117,1.747,1.406,1.512,1.501,1.739,2.19,2.115,2.339,3.687],"first_frame_ms":1346.02,"populated_ms":1429.468,"ready_ms":31.032,"scene_load_ms":122.187,"slots":299,"ticks_ready_ms":1303.851}

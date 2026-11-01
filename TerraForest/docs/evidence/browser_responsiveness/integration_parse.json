@@ -1,0 +1,58 @@
+[
+  {
+    "test": "window_session_flow",
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--script",
+      "res://tests/window_session_flow.gd",
+      "--check-only"
+    ],
+    "passed": true,
+    "diagnostics": []
+  },
+  {
+    "test": "production_buildings",
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--script",
+      "res://tests/production_buildings.gd",
+      "--check-only"
+    ],
+    "passed": true,
+    "diagnostics": []
+  },
+  {
+    "test": "house_sleepers_world",
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--script",
+      "res://tests/house_sleepers_world.gd",
+      "--check-only"
+    ],
+    "passed": true,
+    "diagnostics": []
+  },
+  {
+    "test": "exploration_world",
+    "command": [
+      "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+      "--headless",
+      "--path",
+      "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+      "--script",
+      "res://tests/exploration_world.gd",
+      "--check-only"
+    ],
+    "passed": true,
+    "diagnostics": []
+  }
+]

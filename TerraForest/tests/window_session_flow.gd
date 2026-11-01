@@ -26,6 +26,7 @@ func wait_for(predicate:Callable,seconds:int=40)->bool:
 	while not predicate.call() and Time.get_ticks_msec()<deadline:await process_frame
 	return predicate.call()
 func browser_ready()->bool:return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/worlds.tscn"
+func browser_catalog_ready()->bool:return browser_ready() and not current_scene.library.loading
 func game_ready()->bool:return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" and not current_scene.loading_active
 func photograph(name:String)->void:
 	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join(name+".png"))
@@ -42,10 +43,11 @@ func open_world(slot:String,create:bool,generator:int,seed_value:int,gameplay:bo
 	return ready
 func leave()->bool:
 	current_scene.session_menu.leave_to_browser()
-	return await wait_for(browser_ready,40)
+	return await wait_for(browser_catalog_ready,40)
 func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder);original_window=root.get_window_id();original_handle=DisplayServer.window_get_native_handle(DisplayServer.WINDOW_HANDLE,original_window)
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
+	await wait_for(browser_catalog_ready)
 	check(browser_ready(),"world selector opens in original window")
 	var slot:="window_flow_"+Crypto.new().generate_random_bytes(8).hex_encode();slots.append(slot)
 	if not check(await open_world(slot,true,1,1703,true),"selector opens a new playable world in place"):await finish();return

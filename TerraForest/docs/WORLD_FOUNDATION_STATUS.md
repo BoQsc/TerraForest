@@ -1,6 +1,19 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Non-gameplay browser responsiveness — 2026-11-01
+
+Source browser now reads saved-world metadata/photos off the UI thread, caches
+eight thumbnails and loads generation code only when requested. Three alternating
+rendered comparisons with 299 saves: median first browser frame 1.75 → 1.24 s,
+filter update 45 → 2 ms. Focused concurrency/preview, presentation, credits,
+cancellation, progress and continue-last checks pass. Existing executable/PCK
+not rebuilt during concurrent native/content work. Source icon freshness
+preflight, full scene/native/GPU startup, other menus and exported timing remain
+unqualified. Return after the build stabilizes for export comparison and player
+review; do not infer general UI/performance completion. Evidence and exact remaining
+scope: [browser issue](../issues/browser-responsiveness/README.md).
+
 ## Full gameplay expansion — 2026-11-01
 
 Active implementation: native zombie temperaments, finite surface pursuit,

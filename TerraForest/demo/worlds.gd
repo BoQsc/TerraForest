@@ -3,6 +3,9 @@ extends Control
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Launch=preload("res://demo/world_launch.gd")
 const CreditsDialog=preload("res://demo/credits_dialog.gd")
+const WorldLibrary=preload("res://demo/world_library.gd")
+var library:WorldLibrary
+var continue_pending:=false
 var worlds: ItemList
 var name_field: LineEdit
 var seed_field: SpinBox
@@ -98,9 +101,9 @@ func _ready() -> void:
 	var filters:=HBoxContainer.new();saved.add_child(filters)
 	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Generation drafts (developer, read-only)";show_preparation.visible="--developer-worlds" in OS.get_cmdline_user_args();show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
-	var library:=HBoxContainer.new();library.add_theme_constant_override("separation",28);library.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library)
-	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(300,250);library.add_child(worlds)
-	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=380;detail_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;library.add_child(detail_column)
+	var library_row:=HBoxContainer.new();library_row.add_theme_constant_override("separation",28);library_row.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library_row)
+	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(300,250);library_row.add_child(worlds)
+	var detail_column:=VBoxContainer.new();detail_column.custom_minimum_size.x=380;detail_column.size_flags_horizontal=Control.SIZE_EXPAND_FILL;library_row.add_child(detail_column)
 	saved_title=heading(detail_column,"Select a world",24)
 	saved_picture=TextureRect.new();saved_picture.custom_minimum_size=Vector2(380,200);saved_picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;saved_picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_column.add_child(saved_picture)
 	saved_details=heading(detail_column,"",18);saved_details.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
@@ -117,18 +120,23 @@ func _ready() -> void:
 	notice=heading(bottom,"",16);notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;notice.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	credits_button=button(bottom,"Credits & licenses",show_credits)
 	button(bottom,"Quit",request_quit)
+	library=WorldLibrary.new();add_child(library)
+	library.catalog_ready.connect(_catalog_ready)
+	library.details_ready.connect(_saved_details_ready)
+	continue_pending="--continue-last" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	refresh()
 	if not session.last_error.is_empty():notice.text=session.last_error;session.last_error=""
-	if "--continue-last" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):continue_last_world.call_deferred()
 func continue_last_world() -> void:
 	# A Steam entry carries one fixed command line, so "continue" is decided here
 	# instead of by an argument naming a slot: the list is already newest first.
+	if library.loading:continue_pending=true;return
 	var arguments:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	if slots.is_empty():
 		notice.text="No saved world to continue."
 		if "--continue-report" in arguments:
 			print("continue-last: no saved world");get_tree().quit(1)
 		return
+	filter_field.clear();filter_list()
 	if worlds.item_count>0:worlds.select(0)
 	if "--continue-report" in arguments:
 		# Verification hook: says which world the flag resolves to, then exits.
@@ -147,8 +155,13 @@ func _fit_browser(panel:Control)->void:
 	panel.scale=Vector2.ONE*factor;panel.size=available/factor
 func refresh() -> void:
 	if preparation_pid>=0 or photograph_pid>=0:return
-	slots=Launch.saved_slots("user://worlds",show_preparation.button_pressed,["played","created","name"][sort_order.selected]);filter_list()
-	notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
+	notice.text="Finding saved worlds…"
+	library.refresh(show_preparation.button_pressed,["played","created","name"][sort_order.selected])
+func _catalog_ready(found:PackedStringArray)->void:
+	slots=found;filter_list()
+	if notice.text=="Finding saved worlds…":notice.text="%d saved worlds. Save from the Actions menu or with F5 while playing."%slots.size()
+	if continue_pending:
+		continue_pending=false;continue_last_world.call_deferred()
 func filter_list() -> void:
 	var selected:=""
 	if not worlds.get_selected_items().is_empty():selected=str(worlds.get_item_metadata(worlds.get_selected_items()[0]))
@@ -162,15 +175,20 @@ func filter_list() -> void:
 		for i in worlds.item_count:
 			if str(worlds.get_item_metadata(i))==selected:index=i;break
 		worlds.select(index);show_saved_details(index)
-	else:saved_title.text="No matching worlds";saved_picture.texture=null;saved_details.text=""
+	else:
+		library.select("")
+		saved_title.text="No matching worlds";saved_picture.texture=null;saved_details.text=""
 func show_saved_details(index:int)->void:
 	if index<0 or index>=worlds.item_count:return
 	var slot:=str(worlds.get_item_metadata(index))
-	var presentation=preload("res://addons/world_runtime/world_presentation.gd")
-	var data:Dictionary=presentation.details(slot)
+	if library.selected_slot!=slot or not library.cache.has(slot):
+		saved_picture.texture=null;saved_details.text="Loading world details…"
 	saved_title.text=slot
 	saved_title.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
-	saved_picture.texture=presentation.image_for(slot)
+	library.select(slot)
+func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
+	if slot!=library.selected_slot:return
+	saved_picture.texture=picture
 	var lines:=PackedStringArray()
 	for entry in [["created","Created"],["last_played","Last played"],["saved","Last saved"]]:
 		var value:int=int(data.get(entry[0],0))
@@ -227,7 +245,7 @@ func start_preparation(result:Dictionary,slot:String)->void:
 		if quit_pending:get_tree().quit()
 		return
 	preparation_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(preparation_job)
-	preparation_job.start(preload("res://addons/world_runtime/generation_coordinator.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
+	preparation_job.start(load("res://addons/world_runtime/generation_coordinator.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
 	Engine.max_fps=60
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
@@ -368,7 +386,8 @@ func start_preview()->void:
 	preview_started=Time.get_ticks_msec();preview_key=selected_preview_key();preview_status.text="Surveying terrain, fitting districts and connecting roads…";preview_button.disabled=true;preview_empty.hide()
 	preview_worker=Thread.new()
 	plan_progress=preload("res://addons/world_runtime/world_plan_progress.gd").new()
-	var job:Callable=preload("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
+	# Load native helper initializers on the owner thread, only when requested.
+	var job:Callable=load("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
 func poll_preview()->void:
 	if preview_worker==null:
@@ -412,7 +431,7 @@ func refresh_photographs()->void:
 	var cancel_path:=photograph_log+".cancel"
 	args.append("--cancel-file="+cancel_path)
 	photograph_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(photograph_job)
-	photograph_job.start(preload("res://addons/world_runtime/capture_world_previews_task.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(args))
+	photograph_job.start(load("res://addons/world_runtime/capture_world_previews_task.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(args))
 	photograph_pid=OS.get_process_id();photograph_cancelling=false
 	generation_screen=preload("res://addons/world_runtime/generation_screen.gd").new();generation_screen.cancel_path=cancel_path;add_child(generation_screen)
 	generation_screen.cancel_requested.connect(cancel_photographs)

@@ -7,7 +7,7 @@ static func metadata(slot:String,directory:String="user://worlds")->Dictionary:
  if not FileAccess.file_exists(path):return {}
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()>16384:return {}
- var result:Variant=JSON.parse_string(FileAccess.get_file_as_string(path))
+ var result:Variant=JSON.parse_string(file.get_as_text())
  return result if result is Dictionary else {}
 
 static func mark_played(slot:String,directory:String="user://worlds")->bool:

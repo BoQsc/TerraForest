@@ -6,6 +6,7 @@ func run()->void:
 	folder="res://reports/production_buildings";DirAccess.make_dir_recursive_absolute(folder)
 	restoration="--restore-production" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
+	await wait_for(browser_catalog_ready)
 	var browser=current_scene
 	if "--create-production" in OS.get_cmdline_user_args():
 		selected_slot="CivicTown_1703_"+Crypto.new().generate_random_bytes(4).hex_encode()

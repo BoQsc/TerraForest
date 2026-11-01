@@ -1,0 +1,80 @@
+{
+  "command": [
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+    "--path",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "--log-file",
+    "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\non_gameplay_startup\\world_presentation\\engine.log",
+    "--headless",
+    "--max-fps",
+    "60",
+    "--script",
+    "res://tests/world_presentation.gd",
+    "--",
+    "--temporary",
+    "--world-slot=check_b2eaa749c2da422e81460d879cdf4648",
+    "--derived-cache=user://world_presentation_b2eaa749c2da422e81460d879cdf4648"
+  ],
+  "result": {
+    "timed_out": false,
+    "launch_error": null,
+    "cancelled": false,
+    "pid": 38852,
+    "exit_code": 0,
+    "resources": {
+      "samples": 1,
+      "gpu_samples": 0,
+      "peak_private_commit_bytes": 34811904,
+      "peak_working_set_bytes": 99532800,
+      "peak_dedicated_gpu_bytes": null,
+      "checks": {
+        "ram": {
+          "bytes": 34811904,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": null,
+          "status": "unavailable"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      },
+      "limits": {
+        "schema": 1,
+        "vram_warning_bytes": 3758096384,
+        "vram_limit_bytes": 4294967296,
+        "ram_warning_bytes": 4294967296,
+        "ram_limit_bytes": 6442450944,
+        "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+        "redistributable_warning_bytes": 4000000000,
+        "redistributable_limit_bytes": 5000000000,
+        "derived_cache_total_bytes": 3221225472,
+        "failed_test_cache_bytes": 1073741824,
+        "saved_world_warning_bytes": 10737418240,
+        "minimum_free_bytes": 10737418240,
+        "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+      },
+      "errors": [],
+      "exceeded": false,
+      "telemetry_complete": false,
+      "within_sampled_limits": false,
+      "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+    },
+    "diagnostics": [],
+    "required_text_found": true,
+    "elapsed_seconds": 0.3962870999821462,
+    "passed": true,
+    "cache_retention": {
+      "managed": true,
+      "removed_owned_cache": null,
+      "retained_bytes": 0,
+      "failed_cache_bytes": 1073632096,
+      "failed_cache_budget_bytes": 1073741824,
+      "evicted_derived_bytes": 0,
+      "over_budget": false,
+      "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+    }
+  }
+}

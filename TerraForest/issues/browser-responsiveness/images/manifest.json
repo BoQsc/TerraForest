@@ -1,0 +1,10 @@
+[
+  {
+    "file": "browser.png",
+    "source": "reports/non_gameplay_startup/browser.png",
+    "sha256": "49fc08c7dfd4e6f8e7ff7cb8155ca0fd978e1ef923603aac55c5184e07f5b8d5",
+    "caption": "Source browser after async loading; 299 existing saved worlds, 1920x1080 Forward+. Selected Exploration_1703_596a160e photograph is a pre-existing world preview; no world opened or modified. Layout reviewed, timing comparison is in logs.",
+    "edited": false,
+    "provenance": "Godot viewport capture of existing project UI/assets. Existing component/asset terms remain; no new third-party material imported."
+  }
+]

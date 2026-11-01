@@ -28,6 +28,7 @@ func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	var restore:bool="--restore-exploration" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed
+	await wait_for(browser_catalog_ready)
 	var browser=current_scene
 	if restore:
 		expected=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()

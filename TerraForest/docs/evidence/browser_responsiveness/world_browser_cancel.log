@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+MARKET_PLAN_TIMINGS candidates=39 attempts=26 survey_ms=19.189 recipe_ms=303.531 fitting_ms=341.608
+WORLD_PLAN digest=e0a5445dff89408d1cdc8ee466f316ee808c72d7ab663107212ea8c4b6287f46 cache_hit=false ms=1674.323 planning_frames=103
+WRONG_WORLD
+[TerrainRewrite] ERROR: save blocked by world initialization or snapshot validation failure; previous canonical snapshot retained
+GENERATION_JOB state=cancelled reason=Unpublished staging retained for diagnosis
+WORLD_BROWSER_CANCEL failures=0

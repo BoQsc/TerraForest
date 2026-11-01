@@ -1,0 +1,165 @@
+{
+  "date": "2026-11-01",
+  "engine": "Godot 4.7.2 stable Steam",
+  "renderer": "Forward+ Vulkan, RTX 4050 Laptop GPU",
+  "resolution": "1920x1080",
+  "saved_worlds": 299,
+  "baseline_browser_sha256": "cdd6541d673301c99c5cee711b065d81710dc530d375f00c65051d4174cd41bf",
+  "scope": "Three alternating source runs per variant. Warm filesystem/driver caches; no cache purge, simultaneous project work. Engine tick timings include initialization, not PowerShell/icon preflight. Baseline browser loaded from a preserved pre-change copy, sharing current native libraries and other resources.",
+  "samples": {
+    "before": [
+      {
+        "filter_ms": [
+          43.379,
+          44.74,
+          41.582,
+          42.608,
+          49.022,
+          37.983,
+          39.728,
+          40.167,
+          51.619,
+          39.13,
+          40.416,
+          38.514
+        ],
+        "first_frame_ms": 2043.647,
+        "populated_ms": 2043.665,
+        "ready_ms": 130.408,
+        "scene_load_ms": 433.599,
+        "slots": 299,
+        "ticks_ready_ms": 1989.801
+      },
+      {
+        "filter_ms": [
+          45.292,
+          46.424,
+          44.746,
+          46.027,
+          47.703,
+          47.788,
+          39.8,
+          47.295,
+          48.066,
+          40.475,
+          40.781,
+          44.053
+        ],
+        "first_frame_ms": 1578.969,
+        "populated_ms": 1578.988,
+        "ready_ms": 111.688,
+        "scene_load_ms": 416.956,
+        "slots": 299,
+        "ticks_ready_ms": 1525.747
+      },
+      {
+        "filter_ms": [
+          48.536,
+          41.115,
+          46.459,
+          45.043,
+          42.089,
+          40.483,
+          42.628,
+          56.143,
+          50.857,
+          48.814,
+          46.679,
+          49.06
+        ],
+        "first_frame_ms": 1748.795,
+        "populated_ms": 1748.812,
+        "ready_ms": 137.009,
+        "scene_load_ms": 433.205,
+        "slots": 299,
+        "ticks_ready_ms": 1704.955
+      }
+    ],
+    "after": [
+      {
+        "filter_ms": [
+          3.906,
+          3.653,
+          2.582,
+          2.231,
+          2.93,
+          2.024,
+          1.892,
+          2.157,
+          2.201,
+          1.664,
+          1.621,
+          1.883
+        ],
+        "first_frame_ms": 1243.004,
+        "populated_ms": 1376.481,
+        "ready_ms": 34.887,
+        "scene_load_ms": 120.916,
+        "slots": 299,
+        "ticks_ready_ms": 1205.28
+      },
+      {
+        "filter_ms": [
+          2.363,
+          1.62,
+          1.507,
+          1.49,
+          1.639,
+          1.62,
+          1.579,
+          1.591,
+          1.584,
+          1.624,
+          1.801,
+          1.819
+        ],
+        "first_frame_ms": 1207.2,
+        "populated_ms": 1290.66,
+        "ready_ms": 40.292,
+        "scene_load_ms": 114.284,
+        "slots": 299,
+        "ticks_ready_ms": 1169.313
+      },
+      {
+        "filter_ms": [
+          2.092,
+          1.93,
+          2.117,
+          1.747,
+          1.406,
+          1.512,
+          1.501,
+          1.739,
+          2.19,
+          2.115,
+          2.339,
+          3.687
+        ],
+        "first_frame_ms": 1346.02,
+        "populated_ms": 1429.468,
+        "ready_ms": 31.032,
+        "scene_load_ms": 122.187,
+        "slots": 299,
+        "ticks_ready_ms": 1303.851
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "first_frame_ms": 1748.795,
+      "populated_ms": 1748.812,
+      "scene_load_ms": 433.205,
+      "ready_ms": 130.408,
+      "blocking_browser_ms": 564.007,
+      "filter_ms": 44.743
+    },
+    "after": {
+      "first_frame_ms": 1243.004,
+      "populated_ms": 1376.481,
+      "scene_load_ms": 120.916,
+      "ready_ms": 34.887,
+      "blocking_browser_ms": 154.57600000000002,
+      "filter_ms": 1.851
+    }
+  }
+}
