@@ -7,6 +7,7 @@ const Structures = preload("res://addons/structures/structures_world.gd")
 var persistence = Persistence.new()
 var generated_region=preload("res://addons/world_runtime/generated_region.gd").new()
 var world_recipe=preload("res://addons/world_runtime/world_recipe.gd").new()
+var town_signs=preload("res://addons/world_runtime/town_signs.gd").new()
 var material_deposits=preload("res://addons/world_runtime/material_deposits.gd").new()
 var actor_authoring=preload("res://addons/world_runtime/actor_authoring.gd").new()
 var zombies=preload("res://addons/characters/runtime/zombie_world.gd").new()
@@ -185,6 +186,9 @@ func _ready() -> void:
 		push_error("World recipe persistence initialization failed");_abort_startup(2);return
 	if not generated_region.prepare(persistence):
 		push_error("Generated region persistence initialization failed");_abort_startup(2);return
+	add_child(town_signs)
+	if not town_signs.prepare(persistence,structures):
+		push_error("Town sign initialization failed");_abort_startup(2);return
 	if not material_deposits.prepare(persistence,structures):
 		push_error("Material deposit initialization failed");_abort_startup(2);return
 	if not map_markers.prepare(persistence):
