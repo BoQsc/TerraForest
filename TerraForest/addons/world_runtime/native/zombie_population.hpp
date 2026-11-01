@@ -21,6 +21,7 @@ class NativeZombiePopulation : public godot::RefCounted {
     std::array<std::vector<int>,2500> cells_;
     int64_t seed_=-1,revision_=0;
     godot::Vector3 sanctuary_;
+    bool decode_resident_patch(const godot::PackedByteArray &,std::vector<std::pair<int,Resident>> &)const;
     static uint32_t mix(uint32_t value){value^=value>>16;value*=0x7feb352d;value^=value>>15;value*=0x846ca68b;return value^(value>>16);}
     static int cell(godot::Vector3 point){return std::clamp(int(std::floor(point.x/40)),0,49)+50*std::clamp(int(std::floor(point.z/40)),0,49);}
     static bool valid_position(godot::Vector3 point){return point.is_finite()&&point.x>=0&&point.x<=2000&&point.z>=0&&point.z<=2000&&point.y>=-256&&point.y<=512;}
@@ -53,8 +54,16 @@ protected:
         ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeZombiePopulation::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_snapshot","bytes"),&NativeZombiePopulation::restore_snapshot);
         ClassDB::bind_method(D_METHOD("statistics"),&NativeZombiePopulation::statistics);
+        ClassDB::bind_method(D_METHOD("resident_patch_state"),&NativeZombiePopulation::resident_patch_state);
+        ClassDB::bind_method(D_METHOD("capture_resident_patch","ids","revision","owner"),&NativeZombiePopulation::capture_resident_patch);
+        ClassDB::bind_method(D_METHOD("validate_resident_patch","bytes"),&NativeZombiePopulation::validate_resident_patch);
+        ClassDB::bind_method(D_METHOD("restore_resident_patch","bytes","revision","owner"),&NativeZombiePopulation::restore_resident_patch);
     }
 public:
+    godot::Dictionary resident_patch_state()const;
+    godot::PackedByteArray capture_resident_patch(const godot::PackedInt64Array &,int64_t,int64_t)const;
+    bool validate_resident_patch(const godot::PackedByteArray &)const;
+    godot::Dictionary restore_resident_patch(const godot::PackedByteArray &,int64_t,int64_t);
     bool initialize(int64_t seed,godot::Vector3 sanctuary){
         if(seed<0||seed>2147483647||!valid_position(sanctuary))return false;
         if(seed_>=0)return seed_==seed;
@@ -105,7 +114,7 @@ public:
     bool update_resident(int64_t identity,godot::Vector3 position,double yaw,const godot::PackedByteArray &vitals,const godot::PackedByteArray &sleep=godot::PackedByteArray()){
         if(identity<1||identity>int64_t(residents_.size())||!valid_position(position)||!std::isfinite(yaw)||std::abs(yaw)>10000||!valid_vitals(vitals)||!valid_sleep_state(sleep))return false;
         if(!sleep.is_empty()&&(vitals.is_empty()||vitals.decode_float(0)<=0))return false;
-        auto &record=residents_[identity-1];if(record.state>=2)return false;
+        auto &record=residents_[identity-1];if(record.state>=2||(record.anchor&&vitals.size()!=60))return false;
         int previous=cell(record.position);record.position=position;record.yaw=yaw;record.vitals=vitals;record.sleep=sleep;record.state=!vitals.is_empty()&&vitals.decode_float(0)==0?2:1;
         if(cell(position)!=previous||record.state==2){
             auto &bucket=cells_[previous];bucket.erase(std::remove(bucket.begin(),bucket.end(),int(identity-1)),bucket.end());

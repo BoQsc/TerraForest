@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-01",
+  "status": "Native source/debug/release and fresh-process tests verified; package pending; not gameplay quest reset",
+  "format": "TFRP1: seed/sanctuary profile, sorted resident IDs, exact authored anchor, position/yaw, living/dead state, vitals and sleeper phase, SHA-256",
+  "limits": {"selected_authored_residents": 256, "patch_bytes": 37952, "world_residents": 2756, "spatial_cells": 2500},
+  "verification": {
+    "report": "reports/resident_patch/20261101T203604331436Z/run.json",
+    "checks_per_variant": {"resident_patch": 64, "fresh_process_reopen": 4, "population_regression": 33},
+    "debug_sha256": "501f6708978eb84b26c00a3efb4f059e060381a5bff6e36dd5d5809fd6801f2e",
+    "release_sha256": "a714bf031ee00f3094ffb8c1628a6c0cd09aed44098a97f37d91e6dd6f8dfc31",
+    "encounter_regressions": ["reports/zombie_expansion/20261101T203649350791Z/run.json", "reports/zombie_expansion/20261101T203651645443Z/run.json"],
+    "encounter_checks_per_variant": {"expansion": 58, "awareness": 34, "population": 33, "anatomy": 52, "house_sleepers": 23, "fresh_population_reopen": 4},
+    "import_log": "reports/expansion_resident_import.log"
+  },
+  "verified": [
+    "Only explicit authored residents can be captured; ambient and developer-spawned residents reject",
+    "Stable anchors and IDs must still match; no new residents are appended",
+    "Dead or travelled residents return to the selected baseline, including exact injuries, missing limbs, sleep/wake phase and signed-zero yaw",
+    "Outside resident bytes and player exclusion remain unchanged; old spatial membership is removed and baseline membership appears once",
+    "Only affected spatial buckets are staged; restore publishes after all selected identities validate",
+    "Malformed, over-limit, missing, different-world and stale owner/revision inputs reject without mutation",
+    "No-op resets preserve the revision and do not rebuild buckets",
+    "Fresh processes restore exact expected population snapshots; legacy population versions remain compatible"
+  ],
+  "timing": {
+    "scope": "Headless cold full 256-resident patch, not live gameplay or frame pacing",
+    "bytes": 37952, "changed_residents": 256, "affected_buckets": 17,
+    "debug_capture_us": 664, "debug_restore_us": 300,
+    "release_capture_us": 344, "release_restore_us": 306
+  },
+  "retained_failed_fixtures": [
+    {"report": "reports/resident_patch/20261101T203437846533Z/run.json", "cause": "A changed 32-bit anchor remained structurally valid; runtime correctly rejected ownership mismatch. Fixture now separately tests out-of-range 64-bit anchor and valid mismatched owner."},
+    {"report": "reports/resident_patch/20261101T203539593672Z/run.json", "cause": "GDScript inferred an untyped native return. Explicit integer type fixes the fixture parse error."}
+  ],
+  "remaining": [
+    "Installed-package verification",
+    "Quiesce selected live actors and retire associated corpse/ragdoll instances before publication; preserve unselected actors",
+    "Persistent baseline retention, corpse ownership/contents, vegetation and editable-water reset",
+    "Coordinated rollback, player/vehicle exclusion and actual trader/marker/E/objective/reward gameplay",
+    "Allocator-failure rollback, visual acceptance and foreground performance are not qualified"
+  ]
+}

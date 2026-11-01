@@ -165,7 +165,16 @@ The installed package repeats these checks and the attack/door-component suites:
 Live rig quiescence and matching model/state pairing still belong to the upcoming
 transaction. [Owner-state evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
 
-These primitives are not a complete location reset: residents/corpses,
+Selected authored residents now also have a native TFRP1 patch: at most 256
+identities and 37,952 bytes. It preserves exact anchor, pose, anatomy and sleep
+phase, stages affected spatial buckets and requires current owner/revision plus
+matching world/anchor identities. Ambient and developer-spawned residents are
+not reset. Both builds pass 64 reset and four fresh-process assertions plus
+population/encounter regressions. Live controller quiescence and corpse cleanup
+are not part of this data primitive.
+[Resident evidence](../issues/gameplay-expansion/resident-patch-evidence.json).
+
+These primitives are not a complete location reset: live residents/corpses,
 vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered

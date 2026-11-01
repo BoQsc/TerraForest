@@ -146,6 +146,13 @@ blocked mid-swing restoration. All eight installed-PCK owner/regression suites p
 selection, resident/corpse/vegetation/water baselines, transactional safety and
 ordinary trader/marker/E playtests. [Owner evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
 
+Selected authored-resident patches now pass 64 reset, four fresh-process and 33
+population assertions in both builds, plus 204 encounter-regression assertions
+per build. They retain outside identities and update only affected spatial buckets.
+Next: installed-package checks, live actor/corpse cleanup, retained baselines and
+the remaining reset owners before real trader/E quest integration.
+[Resident evidence](../issues/gameplay-expansion/resident-patch-evidence.json).
+
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and
 twelve streamed stocked chests in 877 bytes. Three saves complete in 1.61–1.84 s;

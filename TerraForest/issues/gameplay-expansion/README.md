@@ -23,13 +23,18 @@ and 63 persistent-rendering assertions pass. Existing gameplay journeys are not
 claimed as rerun against that package. The latest package adds hinge/damage
 restoration and Ranger assets: eight installed headless suites pass 224 counted
 assertions plus the door-component check. The actual executable Ranger journey
-is pending; full location resets are not enabled.
+passes 51 gameplay and 12 fresh-reopen checks; full location resets are not enabled.
 Earlier exact-executable
 journeys retain their own package identity. No complete expansion, smooth-frame
 qualification or new visual approval is claimed.
 [Frozen package identity and pending gates](combined-package-evidence.json).
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
+
+- Selected authored-resident restoration passes both native variants: 64 reset,
+  four fresh-process and 33 population checks each, plus encounter regressions.
+  Live actor/corpse cleanup and coordinated resets remain unimplemented.
+  [Resident-state evidence](resident-patch-evidence.json).
 
 - Selected hinge/damage restoration passes both native variants, installed-PCK
   and fresh-process checks; real blocked-door restoration passes. Live rigs, remaining world owners

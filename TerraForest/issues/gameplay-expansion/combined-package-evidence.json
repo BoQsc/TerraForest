@@ -14,7 +14,8 @@
     "checks": {"owners": 58, "fresh_process_reopen": 6, "combat_native": 53, "harvest": 15, "containers": 42, "door_animation": 29, "attack_durability": 21},
     "door_component": "Passed; fixture has no assertion count",
     "root_user_executable_sha256_unchanged": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
-    "scope": "Eight headless installed-PCK suites. Actual executable Ranger journey pending. Earlier journeys and primitives retain their exact artifact identities below; no gameplay reset, visual or frame-pacing acceptance."
+    "ranger_actual_executable": {"passed": true, "checks": [51, 12], "report": "reports/combat_world/20261101T202958692951Z/run.json", "evidence": "issues/ranger-assault-rifle/verification.json"},
+    "scope": "Eight headless installed-PCK suites and actual-executable Ranger combat/save-reopen. Earlier journeys and primitives retain their exact artifact identities below; no gameplay reset or foreground frame-pacing acceptance."
   },
   "model_package": {
     "sha256": "008043cc4caa120d03b1fb2803242b7d44f1558782b589508b0b6f2877c45ac2",
