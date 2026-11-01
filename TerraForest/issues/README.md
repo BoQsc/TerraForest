@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Gameplay expansion](gameplay-expansion/README.md) | In progress / caves and mine | Persistent sleepers/supplies and portal thin-roof correction checked; richer location art, watchtower, quests, progression and expanded world content remain open |
+| [Gameplay expansion](gameplay-expansion/README.md) | In progress / watchtower review | Caves/mine with persistent sleepers/supplies installed; 385-cell lookout review traversable, not yet generated; richer art, quests, progression and expanded world content remain open |
 | [Building expansion materials and joints](building-expansion/README.md) | E2 approved / production integration installed | Eight individual imagegen materials alongside retained optional older sets, shape/palette improvements and nine matched revisions; source/release/PCK, save/reopen and traversal checks pass; known older NPC planning and frame-pacing limits retained |
 | [Trader and civic buildings](civic-buildings/README.md) | R1/E2 approved / production integration installed | Full trade, four basements, nine normal catalog choices and stock/inventory restore pass without review flags; source/PCK recipes and actual main executable checked; concurrent work preserved; broader frame pacing remains open |
 | [Terrain crossing building blocks](terrain-building-contact/README.md) | Shared correction / enforced checks | Native shape-derived clearance, common datums and phase ordering, real footprint and exposed-surface publication gates; 30 debug/release + 64 catalog checks; human review and further recurrence coverage remain |

@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "5bf1b73a",
+  "scope": "Isolated native watchtower authoring/review; not ordinary generation, loot, terrain fit, quest integration or final visual approval.",
+  "license": "CC0-1.0",
+  "source": "Original TerraForest contributor work, AI-assisted with OpenAI Codex. In-engine captures; no imported third-party images/models.",
+  "recipe": {"path":"addons/exploration/watchtower.gd","license":"0BSD","sha256":"02ffb69bee50d49112546ad114927b4a5175a96241df5c8d2fc29f7c016b7c49"},
+  "asset": {"path":"addons/exploration/watchtower_w1.tres","license":"CC0-1.0","sha256":"e65664c4f014a20a4b4674cb48e7ec3846e1073dbc69c02764d862afa2e4f534","grid_cells":385},
+  "source_render": "reports/watchtower/20261101T112343447658Z",
+  "source_exact_resource_check": "reports/watchtower/20261101T112757477833Z",
+  "release_native_render": "reports/watchtower/20261101T112536612254Z",
+  "release_scope": "External review driver/recipe against verified installed release-native pack and unchanged shared materials/models. Not a shipped watchtower catalog.",
+  "images": [
+    {"path":"images/watchtower-w1-front.png","source":"reports/watchtower/20261101T112536612254Z/watchtower_front.png","sha256":"14700e6b342348bc4d888bee191fd81bc86ab99a31e6ad9f73f3cf5622f34d62","status":"review"},
+    {"path":"images/watchtower-w1-deck.png","source":"reports/watchtower/20261101T112536612254Z/watchtower_deck.png","sha256":"6fb398d0476e4b722b42e9a09723e62d305355005ea3ebaf4c03b708070c3f9a","status":"review"},
+    {"path":"images/watchtower-rejected-support-gaps.png","source":"reports/watchtower/20261101T111552991620Z/watchtower_front.png","sha256":"9e8d9b915841712de85a0a7437e126cc8ab1121bea33bb852296430cd87cdc3a","status":"rejected: disconnected support joints"}
+  ],
+  "remaining": ["Shared native natural-site fitting", "Connected off-road approach", "Ordinary generation, streaming and map", "Stocked chest and stable sleeper", "Fresh-process world persistence", "Populated visual and performance qualification"]
+}

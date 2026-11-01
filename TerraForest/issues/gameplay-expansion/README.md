@@ -7,6 +7,45 @@
 
 ## Images
 
+### Watchtower W1 review — 2026-11-01
+
+![W1 lookout: separate grid pieces, two stair flights and sheltered deck](images/watchtower-w1-front.png)
+![W1 deck, stair opening and chest attachment](images/watchtower-w1-deck.png)
+
+Original `addons/exploration/watchtower.gd` authors the CC0 baked
+`watchtower_w1.tres`: 385 independent native cells, smooth shallow metal roof,
+weathered timber supports/guards, switchback stairs and one existing chest model.
+No houses were replaced. The chest is an attachment, **not yet stocked loot**.
+This isolated review does not qualify natural terrain fit or ordinary generation.
+
+Checks use actual `NativePlayerMovement` and native block/model collision: climb
+both flights, cross the deck and descend in all four grid rotations. They also
+check continuous support columns, exact baked-resource correspondence, independent
+roof-cell removal and binary restoration. No whole-tower runtime mesh/Node per
+piece, per-frame authoring or new native library is required.
+
+- Source render: `reports/watchtower/20261101T112343447658Z`, 35 checks, including
+  baking the corrected resource. Final exact-resource parity is checked separately.
+- Final source headless: `reports/watchtower/20261101T112757477833Z`, 35 checks,
+  including exact baked-resource parity. Godot import succeeds and generated both
+  new script UIDs: `reports/watchtower_import/20261101T112627831928Z`.
+- Release-native render: `reports/watchtower/20261101T112536612254Z`, 35 checks.
+  The external review recipe/driver uses installed pack materials, models and
+  release DLLs; this does **not** mean the watchtower is in the installed catalog.
+  Sampled private commit 1,342,844,928 bytes / dedicated GPU 662,040,576 bytes for
+  this isolated scene, not populated-world headroom evidence.
+- Initial failures retained: `20261101T111351568799Z` (low beam obstructed stairs),
+  `20261101T111449111215Z` (guard mounted across upper landing),
+  `20261101T112141544296Z` / `20261101T112305547662Z` (discontinuous support column).
+  Fixes change authored cells, not controller tolerances or grid rules.
+
+![Rejected early lookout with disconnected support joints](images/watchtower-rejected-support-gaps.png)
+
+Return next: shared native lot fitting and protection checks; real road/path-to-deck
+route; normal generation and native streaming; stock/persist chest and sleeper;
+fresh-process reload and populated visual/performance evidence. Existing world
+saves remain untouched. No final user visual approval is claimed.
+
 ### Portal correction — 2026-11-01
 
 ![Original cave location with the thin roof remnant removed](images/cave-portal-original-site-after.png)

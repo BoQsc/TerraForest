@@ -24,8 +24,12 @@ frame-pacing acceptance. Two authored underground locations now generate with
 native arched cuts, shared grounded-prop checks, five supply chests and five stable
 sleepers. Real entrance walks, chest UI/withdrawal, waking and fresh-load clearing
 pass. Recessed portals remove the reproduced thin-roof/rim patch without changing
-global lighting; sparse dressing, watchtower, town-to-POI/NPC routes and broader
-performance remain open; return before art acceptance. Shared
+global lighting. W1 watchtower is a 385-cell baked review asset; four-rotation
+native player stair traversal, local roof-cell removal and exact block snapshot
+restore pass. It is not generated: return next for shared natural-terrain fitting,
+connected approach, stocked chest/resident, ordinary-world reload and performance.
+Sparse underground dressing and town-to-POI/NPC routes also remain open; return
+before art acceptance. Shared
 location ownership/reset and locks are next dependencies, not completed by loot
 seeding. Arbitrary slopes and moving-obstacle review also remain open.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
