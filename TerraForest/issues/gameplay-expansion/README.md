@@ -46,7 +46,10 @@ are native, bounded and binary; no idle polling or replacement model is added.
 - Combined door/lock package restores the same owned world with 11 passing
   assertions: `reports/container_lock_world/20261101T132734256039Z`. Exact remaining
   lock damage, contents, picks and worn tool match; no desktop pointer capture.
-- Remaining: main installation and direct player animation-input playtest. The dedicated lock-world check reuses only that owned
+- The combined source and PCK/native libraries are installed in the main checkout
+  with matching hashes; door and lock integration evidence is linked from
+  [the door verification receipt](../door-animation/verification.json).
+- Remaining: direct player animation-input playtest. The dedicated lock-world check reuses only that owned
   `Exploration_*` save; it does not replace the failed lookout route requirement. Locked doors,
   barricades and POI quest reset ownership remain separate unfinished work.
 

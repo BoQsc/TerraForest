@@ -8,8 +8,9 @@ active-only handle/latch rig. Source/release motion contracts and real mid-swing
 save/reopen pass. Normal-world restored-door aiming, both rendered directions
 and 62 debug/release GPU ownership assertions also pass. Combined PCK motion,
 ordinary E, mid-swing save/reopen and the other chat's lock restoration pass.
-Main installation and its usual executable check remain in progress. Return before declaring activation complete; user visual approval is
-separate. Exact retained failures and remaining evidence:
+Main source and PCK/native libraries are installed with matching hashes; the usual
+`TerraForest.exe` passes normal E/restore/overlap/occlusion checks. No new world is
+needed. User visual approval and dense concurrent-door frame pacing remain separate. Exact retained failures and remaining evidence:
 [door animation tracker](../issues/door-animation/README.md).
 
 ## Non-gameplay browser responsiveness — 2026-11-01
@@ -69,8 +70,8 @@ source with 56 debug/release lock checks plus legacy suites and 24 HUD/attack
 adapter checks. Actual generated-chest picking, forced entry, loot→metal→pick
 crafting, E unlocking and compound-save/fresh-process restoration pass 30 + 11
 checks; partial lock damage and contents persist. The combined door/lock package
-passes another 11 fresh-process restore checks. Main installation and direct
-animation-input playtest remain pending. The broad
+passes another 11 fresh-process restore checks and is installed with matching
+native libraries. Direct animation-input playtest remains pending. The broad
 generation test reproduced the known second-lookout return-walk stall before
 reaching locked chests; the passing dedicated interaction test does not close
 that route failure. Arbitrary slopes and moving-obstacle review also remain open.

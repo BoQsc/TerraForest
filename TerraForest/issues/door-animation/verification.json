@@ -2,7 +2,7 @@
   "source_commit": "4eef399a",
   "combined_commit": "2b89c4c9",
   "container_commit": "40fc2d73",
-  "status": "Combined package verified; main install pending",
+  "status": "Installed in main checkout; source/release/PCK and actual main executable verified",
   "runs": {
     "source_world": {
       "path": "reports/checks/20261101T131952201456Z/run.json",
@@ -56,5 +56,17 @@
     "sha256": "86e8f1f42eaab2a81b9db8e1b91d43d16c0000df97b1b191eeb9ddb10a1a7ab8",
     "bytes": 447308308
   },
-  "distribution_bytes": 477120587
+  "distribution_bytes": 477120587,
+  "installation": {
+    "receipt": "reports/door_animation_install/20261101T133124Z/install.json",
+    "revision": "d154890e",
+    "main_root": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "actual_executable": {
+      "path": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+      "sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5"
+    },
+    "main_run": "reports/checks/20261101T133128974770Z/run.json",
+    "main_run_sha256": "0f68cef5c9a4be644d7f8bd570d107b97129ca6b52b5fda99268598626089600",
+    "passed": true
+  }
 }

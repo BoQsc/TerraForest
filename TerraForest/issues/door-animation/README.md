@@ -1,7 +1,7 @@
 # Authored door opening and closing
 
-- Status: Fixed for reproduced case; source/release/package verified; main installation pending.
-- Updated: 2026-11-01. Fix/build: `4eef399a`, combined with container locks in `2b89c4c9`.
+- Status: Fixed for reproduced case; installed; source/release/package and actual main executable verified.
+- Updated: 2026-11-01. Fix/build: `4eef399a`, combined with container locks in `2b89c4c9`; installed at `d154890e`.
 - User review: Not reviewed. User explicitly requested the existing GLB animation.
 - Symptom: E changed the native door placement immediately; the supplied GLB's
   Open/Close, handle and latch channels were discarded by the static art bake.
@@ -83,8 +83,10 @@ passes all four phases: motion, ordinary E, actual mid-swing save and fresh reop
 The other chat's generated-container state also passes 11 packaged restore checks
 ([report](../../reports/container_lock_world/20261101T132734256039Z/run.json)).
 All eight source/release building export gates pass.
-[Artifact hashes and run provenance](verification.json). Main installation and
-its usual executable verification remain pending. Player
+[Artifact hashes and run provenance](verification.json). Main source and PCK/native libraries were installed with hash parity and a prior
+package backup. The usual `TerraForest.exe` also passes the ordinary E/restore/
+overlap/occlusion check: [main check](../../reports/checks/20261101T133128974770Z/run.json).
+Both chats' work is preserved. No new world is needed for existing doors. Player
 visual approval remains separate; dense concurrent-door frame pacing is unqualified.
 Loose replacement GLBs retain their own art and use the native hinge curve;
 arbitrary loose-GLB animation import is outside this change.
