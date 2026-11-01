@@ -89,8 +89,8 @@ The expansion tracker retains the first failed save-return test and the separate
 reproduced cache-accounting priority fix.
 
 The next reset primitive, `TerrainCore.capture_field_patch` / `restore_field_patch`,
-passes rebuilt debug/release native and archived-storage checks; it is not installed
-or connected to gameplay. It captures a bounded integer
+passes rebuilt debug/release native and archived-storage checks and is included
+in the combined package; it is not connected to gameplay. It captures a bounded integer
 sample box as TFP1: 48 bytes of metadata/checksum plus three bytes per density/material
 sample, at most 1,048,576 samples and 128 samples per axis. Coordinates exclude the
 protected bottom and exterior. Capture is read-only; restore requires matching

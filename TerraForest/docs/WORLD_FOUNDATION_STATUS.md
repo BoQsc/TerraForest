@@ -94,8 +94,8 @@ trader/marker interaction and live rewards. Exact scope and closure evidence:
 and [retained test reports](../issues/gameplay-expansion/README.md).
 
 Bounded native terrain field patches now pass 33 standalone and 35 Godot
-binding/archived-page checks in each rebuilt debug/release variant. They are not
-installed and no quest reset is enabled. This covers density/material samples,
+binding/archived-page checks in each rebuilt debug/release variant. They are included
+in the combined package; no quest reset is enabled. This covers density/material samples,
 not the remaining cube/block/model/stock/resident/water/vegetation transaction,
 baseline retention, worker publication or player-edit safety. Continue these
 dependencies before trader offers and marker/E acceptance; retain the explicit
@@ -105,10 +105,19 @@ The separate bounded native building-cell reset is now source-verified: 28 check
 per debug/release variant, 73 region checks, 36 prefab transactions, 294 structure/
 history checks, worker stress and 31 model-admission checks pass. It preserves air,
 shape words and outside edits, rejects stale/unavailable/capacity-conflicting
-state, and rebuilds changed chunk halos. It is not installed or wired to quests.
+state, and rebuilds changed chunk halos. It is included in the package, not wired to quests.
 Continue exact terrain cubes and remaining model/stock/resident/vegetation/water
 owners, baseline retention, safety and coordinated rollback before enabling
 gameplay resets. [Evidence](../issues/gameplay-expansion/block-patch-evidence.json).
+
+The combined package `4295d8f9` additionally passes 27 normal-generation and ten
+fresh-process ownership checks: five locations, twenty sleeper identities and
+twelve streamed stocked chests in 877 bytes. Three saves complete in 1.61–1.84 s;
+quest capture takes 11 microseconds. This remains ownership-state verification,
+not playable contracts. The separate mine follow-up exposed a stale player-pose
+save while holding a torch and an unqualified physical survivor restore; those
+must be resolved before claiming full mine save/load acceptance.
+[Combined gates and retained limitations](../issues/gameplay-expansion/combined-package-evidence.json).
 
 ## Wearable clothing packs and trader outfit — 2026-11-01
 

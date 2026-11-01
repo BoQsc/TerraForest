@@ -1,5 +1,5 @@
 {
-  "status": "Source and rebuilt native primitive verified; not installed or wired to gameplay",
+  "status": "Source and rebuilt native primitive verified and included in combined-package-evidence.json; not wired to gameplay",
   "date": "2026-11-01",
   "scope": "Bounded density/material samples only; no complete quest reset or foreground performance claim",
   "native": {
@@ -35,7 +35,6 @@
     }
   ],
   "remaining": [
-    "Native artifact commit coordinated with vehicle planner source and next matching export",
     "Bounded exact voxel cube, structure/model/container/door, resident, vegetation and water baselines",
     "Persistent baseline retention and multi-owner reset rollback",
     "Terrain worker scheduling and rendered/collision publication",

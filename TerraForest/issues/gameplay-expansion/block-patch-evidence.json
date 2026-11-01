@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "status": "Source and rebuilt native primitive verified; not installed or connected to gameplay",
+  "status": "Source and rebuilt native primitive verified and included in combined-package-evidence.json; not connected to gameplay",
   "scope": "Building cells only; exact terrain cubes and other location owners remain separate",
   "binding": {
     "report": "reports/block_cell_patch/20261101T182251975419Z/run.json",
@@ -28,7 +28,6 @@
     {"report": "reports/block_cell_patch_syntax.log", "cause": "Compiler-only syntax mode returned FileNotFound; ordinary object compilation and both DLL builds succeeded"}
   ],
   "remaining": [
-    "Coordinated native artifact commit and matching package checks",
     "Exact terrain voxel cubes, model/door, contents, residents, vegetation and water reset ownership",
     "Persistent bounded baselines, admission safety and multi-owner rollback",
     "Ordinary trader offers, marker/E activation, live objective/reward delivery and save/reopen",

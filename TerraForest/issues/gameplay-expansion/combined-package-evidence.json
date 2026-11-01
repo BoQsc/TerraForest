@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "status": "Published; export gates and startup pass, exact-executable feature journeys pending",
+  "status": "Published milestone; scoped package gates pass, torch player-pose save and physical mine restoration follow-up remain open",
   "pack": {
     "path": "dist/TerraForest.pck",
     "sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
@@ -23,12 +23,22 @@
     "building_contracts": "reports/building_standards/20261101T183447979349Z/run.json",
     "scope": "Required source/release building contracts, production catalog, retained notices, authored-door assets and headless packaged startup"
   },
+  "verified_package_checks": [
+    {"name": "world_entry_fly_in", "passed": true, "checks": 49, "report": "reports/entry_fly_in_pack/20261101T183739770167Z/run.json", "scope": "Exact root executable; user-deferred optimization remains open"},
+    {"name": "town_signs", "passed": true, "checks": 35, "report": "reports/town_signs_world/20261101T184013933118Z/run.json", "scope": "Normal generation/reopen; final UV/road views inspected by owning chat; restored Dunvale 67.10 ms outlier retained"},
+    {"name": "coal_mine", "passed": true, "checks": 100, "report": "reports/coal_mine/20261101T184507896315Z/run.json", "scope": "Uninterrupted normal generation/full journey59 plus fresh-process data reopen41; no capture and resource gates pass. Restored station image rejected: fixture teleported to surface; physical re-entry follow-up pending"},
+    {"name": "combat", "passed": true, "checks": 44, "report": "reports/combat_world/20261101T185025193271Z/run.json", "scope": "Exact root executable: actual firearm/barrel chain, optional integrity, partial-blast save/reopen; resource gates and zero capture pass"},
+    {"name": "trader_departure", "passed": true, "checks": 24, "report": "reports/trader_ride_world/20261101T185229667074Z/run.json", "scope": "Exact root executable: quote, paid boarding and over thirty metres of physical travel; no full packaged round-trip claim"},
+    {"name": "trader_paid_reopen", "passed": true, "checks": 14, "report": "reports/trader_ride_world/20261101T185356591401Z/run.json", "scope": "Exact root executable: same car, exact wallet/no repeat fare, both views, over twenty metres resumed travel and durable close"},
+    {"name": "quest_ownership", "passed": true, "checks": 37, "report": "reports/quests_world/20261101T190152439787Z/run.json", "scope": "Normal generation and fresh reopen: five locations, twenty residents, twelve streamed stocked chests, 877-byte native component; not playable quests", "save_us": [1608369,1835843,1772543], "quest_capture_us": [11,11,11]}
+  ],
+  "retained_failed_followups": [
+    {"report": "reports/coal_mine/20261101T184507896315Z/resume_reentry_rejected.json", "scope": "Physical re-entry reaches station, but fewer than nine surviving station bodies are admitted; 48 checks, one failure"},
+    {"report": "reports/coal_mine/20261101T184507896315Z/inside_restore185833/console.log", "scope": "Genuine saved underground player pose differs on browser reopen; 11 checks, one failure. Torch id6 exceeds legacy pose codec0..4 and stale _saved_pose was reused"}
+  ],
   "pending_package_checks": [
-    "Exact installed executable world-entry fly-in and town-sign generation/reopen with final UV images",
-    "Uninterrupted coal-mine normal generation, complete journey and fresh-process reopen",
-    "Combat actual-fire chain blast and partially completed destruction save/reopen",
-    "Trader paid departure and short paid reopen on the same car without duplicate fare",
-    "Updated quest ownership normal generation/reopen with twenty residents and twelve chests"
+    "Corrected player-pose capture for all current catalog selections, fail-closed invalid active poses and matching package save/reopen",
+    "Coal mine physical survivor admission and genuine saved underground pose restoration without test teleport"
   ],
   "scope_limits": [
     "User worlds and user-owned root TerraForest.exe remain unchanged",
