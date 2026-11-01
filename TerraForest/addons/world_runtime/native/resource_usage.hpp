@@ -2,6 +2,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/packed_int64_array.hpp>
 #include <atomic>
 #include <array>
 #include <chrono>
@@ -39,6 +40,7 @@ protected:
 public:
     ~NativeResourceUsage();
     godot::Dictionary sample(const godot::String &volume_path);
+    godot::PackedInt64Array thread_work() const;
     bool start_scan(const godot::Array &locations,int64_t budget_ms=8000);
     void cancel_scan();
     godot::Dictionary scan_status();

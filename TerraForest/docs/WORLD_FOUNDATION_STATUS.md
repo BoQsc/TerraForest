@@ -3,6 +3,25 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Gameplay responsiveness verification — 2026-11-01
 
+Follow-up installed: routine zombie lifecycle/hitch logging is verbose-only;
+background surface callbacks use a 1 ms soft gameplay budget and admission
+backpressure, with mining/targeting replies delivered first. Controlled zombie
+logging costs up to 9.644 ms; installed admission peaks at 4.071 ms. Surface reply
+bursts fall from 5.950 to 2.870 ms; requested ground-cover residency recovers to
+100/100. A repeated 272.535 ms contact exposed optional cache writes during gameplay
+windup; attacks now reserve worker I/O without blocking vegetation streaming.
+Focused installed contacts are 22.671–29.497 ms. Incremental hidden terrain-root
+attachment reduces the sampled attachment peak from 4.520 to 1.535 ms while
+retaining atomic visibility/collision publication. Regression checks cover priority,
+hidden preparation, native counters, population and actual terrain/vegetation edits.
+Quiet Mode, visuals and production 60 FPS/VSync stay unchanged at the user's request.
+The fully focused uncapped comparison passes but is diagnostic only; the user did
+not visually review it and rejected extra GPU power. Strict 60 FPS frame-pacing
+gates still fail. Historical large stalls are not closed by non-recurrence.
+Return with presentation/CPU-wait attribution at 60 FPS and dense/cave/endurance
+workloads; retain the legacy input/partition fixture failures pending adaptation.
+[Follow-up evidence](../issues/runtime-performance/README.md#movement-stall-isolation--2026-11-01).
+
 First-hit effect resource construction blocked terrain publication. Selected
 resources now prepare during existing loading, with unchanged particles/contact
 timing; uncontended first contact-to-draw 88.438 ms versus 42.493 ms in the first

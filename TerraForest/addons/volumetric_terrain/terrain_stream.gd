@@ -19,6 +19,7 @@ var committed_measurements: Array[Dictionary] = []
 var published_revision: int = 0
 var derived_metrics: Dictionary = {}
 var foreground_brush: bool = false
+var foreground_attack: bool = false
 var diagnostics_pause_streaming: bool = false
 var latest_edit_descriptor: Dictionary = {}
 var latest_edit_members: Array[Dictionary] = []
@@ -51,7 +52,13 @@ func _capture_edit_support(bounds:AABB)->Array[PackedVector3Array]:
 
 func set_brush_active(active: bool) -> void:
 	foreground_brush = active
-	backend.set_input_active(active)
+	backend.set_input_active(active or foreground_attack)
+	if active:
+		note_interaction()
+
+func set_attack_active(active: bool) -> void:
+	foreground_attack = active
+	backend.set_input_active(active or foreground_brush)
 	if active:
 		note_interaction()
 signal reload_started
@@ -68,6 +75,8 @@ const FINE_SIZE: int = 16
 @export_range(64, 4096, 1) var cache_entry_limit: int = 512
 @export_range(100, 16000, 1) var main_build_budget_us: int = 2500
 const LIGHT_UPLOAD_BYTES: int = 256 * 1024
+const SURFACE_RECEIVE_BUDGET_US: int = 1000
+var _surface_replies: Array[Dictionary] = []
 var backend = Backend.new()
 var partition_request: Dictionary = {}
 var _partition_serial: int = 0
@@ -198,6 +207,7 @@ func start(terrain_material: Material, temporary_world: bool) -> Error:
 
 func shutdown_after_edits() -> bool:
 	closing=true
+	set_attack_active(false)
 	set_brush_active(false)
 	var deadline:=Time.get_ticks_msec()+30000
 	while pending_edit and latest_error.is_empty() and not stopping and Time.get_ticks_msec()<deadline:
@@ -252,6 +262,7 @@ func shutdown() -> void:
 	retired_nodes.clear()
 	retired_payloads.clear()
 	staging.clear()
+	_surface_replies.clear()
 
 func _exit_tree() -> void:
 	shutdown()
@@ -262,10 +273,7 @@ func _process(delta: float) -> void:
 	var receive_begin: int = Time.get_ticks_usec()
 	var ready_results: Array[Dictionary]=backend.poll()
 	_record_stage("receive poll",(Time.get_ticks_usec()-receive_begin)/1000.0)
-	for result: Dictionary in ready_results:
-		var result_begin:=Time.get_ticks_usec()
-		_receive(result)
-		_record_stage("receive "+str(result.get("kind","unknown")),(Time.get_ticks_usec()-result_begin)/1000.0)
+	_dispatch_results(ready_results)
 	last_receive_ms = float(Time.get_ticks_usec() - receive_begin) / 1000.0
 	_record_stage("receive", last_receive_ms)
 	_drain_staging()
@@ -307,6 +315,21 @@ func _process(delta: float) -> void:
 			changed_since_save = false
 		_record_stage("save capture",(Time.get_ticks_usec()-save_begin)/1000.0)
 
+func _receive_measured(result: Dictionary) -> void:
+	var began:=Time.get_ticks_usec()
+	_receive(result)
+	_record_stage("receive "+str(result.get("kind","unknown")),(Time.get_ticks_usec()-began)/1000.0)
+
+func _dispatch_results(ready: Array[Dictionary]) -> void:
+	for result: Dictionary in ready:
+		if result.get("kind","")=="surface_batch":_surface_replies.append(result)
+		else:_receive_measured(result)
+	var began:=Time.get_ticks_usec()
+	var budget_us:=maxi(main_build_budget_us,SURFACE_RECEIVE_BUDGET_US) if initial_loading else SURFACE_RECEIVE_BUDGET_US
+	while not _surface_replies.is_empty():
+		_receive_measured(_surface_replies.pop_front())
+		if Time.get_ticks_usec()-began>=budget_us:break
+
 func note_interaction() -> void:
 	last_interaction_us = Time.get_ticks_usec()
 
@@ -315,7 +338,7 @@ func _record_stage(label: String, ms: float) -> void:
 	if ms > slowest_stage_ms:
 		slowest_stage_ms = ms
 		slowest_stage = label
-	if ms > 50.0:
+	if ms > 50.0 and OS.is_stdout_verbose():
 		print("[terrain-hitch] ", label, " ", snappedf(ms, 0.01), " ms at ", Time.get_ticks_msec())
 
 func _retire_some() -> void:
@@ -624,7 +647,9 @@ func _prepare_piece() -> bool:
 			var part: Dictionary=parts[index]
 			part["stamp"]=parent.data.stamp
 			parent["brick_preparation"]={"data":part,"entry":_begin_entry(part),"piece_at":0}
+			var attach_begin:=Time.get_ticks_usec()
 			parent.entry.node.add_child(parent.brick_preparation.entry.node)
+			_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 			# The hidden parent gates the whole region. Keep child visibility local
 			# to the mesh so LOD switches need only one inherited visibility change.
 			parent.brick_preparation.entry.node.visible=true
@@ -736,6 +761,9 @@ func _drain_staging() -> void:
 				_apply_lighting_piece()
 				break
 			preparation = {"data": data, "entry": _begin_entry(data), "piece_at": 0}
+			var attach_begin:=Time.get_ticks_usec()
+			add_child(preparation.entry.node)
+			_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 		else:
 			var data: Dictionary = preparation["data"]
 			var key: Vector3i = data["key"]
@@ -746,9 +774,6 @@ func _drain_staging() -> void:
 				continue
 			if _prepare_piece():
 				var entry: Dictionary = preparation["entry"]
-				var attach_begin:=Time.get_ticks_usec()
-				add_child(entry["node"])
-				_record_stage("prepared subtree attach",(Time.get_ticks_usec()-attach_begin)/1000.0)
 				preparation.clear()
 				last_mesh_ms = float(data["worker_ms"])
 				worker_builds += 1

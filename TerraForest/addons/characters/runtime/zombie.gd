@@ -213,7 +213,7 @@ func configure(scene: PackedScene = null) -> void:
 	if animation_player != null:
 		animation_player.advance(0.0)
 	initialization_us["animation"]=Time.get_ticks_usec()-measured_begin
-	print("Zombie ready: ", part_meshes.size(), " parts, ", hit_areas.size(), " hit regions, ", physical_bones.size(), " physical bones.")
+	if OS.is_stdout_verbose():print("Zombie ready: ", part_meshes.size(), " parts, ", hit_areas.size(), " hit regions, ", physical_bones.size(), " physical bones.")
 
 
 func _find_type(node: Node, type_name: String) -> Node:
@@ -1580,7 +1580,7 @@ func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:
 	if caps.has(part) and caps[part].has("body"):
 		caps[part].body.show()
 	limb_severed.emit(part)
-	print("Zombie severed ", part, ": ", chain)
+	if OS.is_stdout_verbose():print("Zombie severed ", part, ": ", chain)
 	if alive:
 		if part == "head":
 			die(impulse * 0.5)
@@ -1631,7 +1631,7 @@ func die(impulse: Vector3 = Vector3.ZERO) -> void:
 	collision_mask = 0
 	call_deferred("_begin_ragdoll", impulse)
 	died.emit()
-	print("Zombie ragdoll started with ", physical_bones.size(), " physical bones.")
+	if OS.is_stdout_verbose():print("Zombie ragdoll started with ", physical_bones.size(), " physical bones.")
 
 
 func ragdoll(impulse: Vector3 = Vector3.ZERO) -> void:

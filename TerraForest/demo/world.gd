@@ -1066,6 +1066,7 @@ func _update_edit(delta: float) -> void:
 		pointer.hide();terrain.set_brush_active(false)
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):world_attack.attack()
 		elif equipped_tool==3 and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):world_attack.attack(true)
+		terrain.set_attack_active(tool_view.attack_identity!=0)
 		return
 	if not editor_tool_active:
 		pointer.hide();terrain.set_brush_active(false);return

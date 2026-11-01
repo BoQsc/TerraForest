@@ -16,9 +16,22 @@ static String narrow(const std::string &value){return String::utf8(value.c_str()
 static bool protected_folder(const std::wstring &name){return !_wcsicmp(name.c_str(),L"worlds")||!_wcsicmp(name.c_str(),L"logs")||!_wcsicmp(name.c_str(),L"generation_reports")||!_wcsicmp(name.c_str(),L"screenshots");}
 void NativeResourceUsage::_bind_methods(){
     ClassDB::bind_method(D_METHOD("sample","volume_path"),&NativeResourceUsage::sample);
+    ClassDB::bind_method(D_METHOD("thread_work"),&NativeResourceUsage::thread_work);
     ClassDB::bind_method(D_METHOD("start_scan","locations","budget_ms"),&NativeResourceUsage::start_scan,DEFVAL(8000));
     ClassDB::bind_method(D_METHOD("cancel_scan"),&NativeResourceUsage::cancel_scan);
     ClassDB::bind_method(D_METHOD("scan_status"),&NativeResourceUsage::scan_status);
+}
+PackedInt64Array NativeResourceUsage::thread_work() const {
+    PackedInt64Array result;result.resize(2);result.set(0,-1);result.set(1,-1);
+    const HANDLE current=GetCurrentThread();ULONG64 cycles=0;
+    if(QueryThreadCycleTime(current,&cycles))result.set(0,int64_t(cycles));
+    FILETIME created{},exited{},kernel{},user{};
+    if(GetThreadTimes(current,&created,&exited,&kernel,&user)){
+        const uint64_t kernel_ticks=(uint64_t(kernel.dwHighDateTime)<<32)|kernel.dwLowDateTime;
+        const uint64_t user_ticks=(uint64_t(user.dwHighDateTime)<<32)|user.dwLowDateTime;
+        result.set(1,int64_t((kernel_ticks+user_ticks)/10));
+    }
+    return result;
 }
 void NativeResourceUsage::initialize_gpu(){
     if(pdh_)return;

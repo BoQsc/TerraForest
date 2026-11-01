@@ -283,10 +283,13 @@ func supported_point(around: Vector3) -> Vector3:
 func spawn_at(point: Vector3) -> CharacterBody3D:
 	if not enabled or not point.is_finite() or residents.size() >= LIMIT or not is_instance_valid(target):
 		return null
+	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	var supported := supported_point(point)
+	if profiling_enabled:update_phase_us["admission support"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	if not supported.is_finite():
 		return null
 	var zombie := Zombie.new()
+	if profiling_enabled:update_phase_us["admission instance"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	zombie.geometry_template=geometry_template
 	zombie.position = to_local(supported)
 	zombie.target = target if force_pursuit else null
@@ -299,6 +302,7 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	if excluded!=_navigation_exclusions:
 		navigator.set_exclusions(excluded);_navigation_exclusions=excluded
 	add_child(zombie)
+	if profiling_enabled:update_phase_us["admission attach"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	if not zombie.initialized:
 		zombie.queue_free();return null
 	geometry_template=zombie.anatomy

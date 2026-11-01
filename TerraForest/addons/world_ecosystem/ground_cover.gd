@@ -39,6 +39,7 @@ var _view_fov:float=-1.0
 var _view_range:float=124.0
 var _last_cell:=Vector2i(-999,-999)
 var rejected_batches:=0
+var profiling_enabled:=false
 var _support_job: Dictionary={}
 var _exclusion_revision:=0
 var _scatter_job:Dictionary={}
@@ -315,6 +316,7 @@ func _density_ready(result: Dictionary) -> void:
 	_publish(job.key,job.packed,job.poses,unsupported)
 
 func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],unsupported: PackedByteArray) -> void:
+	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	# Existing low cover reserves only its centre. Large rocks must clear roads
 	# across their whole footprint, using the road query's bounded 4m margin.
 	if road_regions!=null:
@@ -361,8 +363,10 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 				packed[8].ids.remove_at(i)
 				packed[8].transforms=packed[8].transforms.slice(0,i*12)+packed[8].transforms.slice((i+1)*12)
 	if resident.get(key,[])==packed: _dirty.erase(key);return
+	if profiling_enabled:terrain._record_stage("cover prepare",(Time.get_ticks_usec()-measured_begin)/1000.0);measured_begin=Time.get_ticks_usec()
 	var previous: Array=resident.get(key,[])
 	if not picker.replace_cell(key,packed): rejected_batches+=1;return
+	if profiling_enabled:terrain._record_stage("cover picker",(Time.get_ticks_usec()-measured_begin)/1000.0);measured_begin=Time.get_ticks_usec()
 	var large:Dictionary=native.boulder_rows(packed[0])
 	if not rock_collision.upsert_instances(large.ids,large.transforms):
 		if previous.is_empty():picker.remove_cell(key)
@@ -383,6 +387,7 @@ func _publish(key: Vector2i,packed: Array,authored_poses: Array[Transform3D],uns
 			if not previous.is_empty():
 				var old_large:Dictionary=native.boulder_rows(previous[0]);rock_collision.upsert_instances(old_large.ids,old_large.transforms)
 			rejected_batches+=1;return
+	if profiling_enabled:terrain._record_stage("cover publish",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	if not previous.is_empty():
 		var old_large:Dictionary=native.boulder_rows(previous[0]);var removed_large:=PackedInt64Array()
 		for id:int in old_large.ids:

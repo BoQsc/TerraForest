@@ -17,6 +17,10 @@ are cooperatively bounded, not forcibly interrupted mid-system-call;
 `cancel_scan()` requests cancellation without waiting on the UI thread. It never
 writes, deletes or follows reparse points. Missing telemetry is absent, not zero.
 The shared policy is `resource_budgets.json`; tools and the exported UI use it.
+Opt-in profilers can call `thread_work()` for `[raw_thread_cycles, cpu_microseconds]`
+on the calling thread (`-1` when unavailable). Cycle counts are not elapsed time;
+Windows CPU time may be quantized. This does not sample GPU/disk counters, scan
+folders or add an ordinary gameplay polling loop.
 Usage opens from `user://usage_sizes_v1.json`; it does not start discovery merely
 to display the page. `dist/usage_content.json` is published with a successful pack
 export. Active terrain usage reads existing `derived_metrics` accounting; it

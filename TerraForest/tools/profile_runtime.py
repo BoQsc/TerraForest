@@ -53,6 +53,11 @@ def main():
     parser.add_argument("--slot", required=True)
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--gameplay", action="store_true", help="Measure pickaxe contact-to-draw, walking, sprinting and physical jumping")
+    parser.add_argument("--visible", action="store_true", help="User-attended gameplay test; waits for window focus and never captures the pointer")
+    parser.add_argument("--uncapped", action="store_true", help="Gameplay diagnostic without FPS limiter or VSync; does not change saved graphics settings")
+    parser.add_argument("--mailbox", action="store_true", help="Gameplay diagnostic using mailbox VSync with the normal FPS cap")
+    parser.add_argument("--vsync-only", action="store_true", help="Gameplay diagnostic with VSync and no software FPS limiter")
+    parser.add_argument("--no-vsync", action="store_true", help="Gameplay diagnostic with the normal FPS limiter and VSync disabled")
     parser.add_argument("--require-gameplay-performance", action="store_true", help="Fail the command if any gameplay timing gate fails")
     parser.add_argument("--label", default="profile")
     parser.add_argument("--require-resource-budget", action="store_true")
@@ -62,8 +67,13 @@ def main():
     args = parser.parse_args()
     if args.gameplay and args.driving:
         parser.error("Gameplay and speed-sweep workloads are separate")
+    if args.visible and not args.gameplay:
+        parser.error("Visible attended testing requires --gameplay")
     if args.require_gameplay_performance and not args.gameplay:
         parser.error("Gameplay performance gates require --gameplay")
+    presentation_modes = sum([args.uncapped, args.mailbox, args.vsync_only, args.no_vsync])
+    if presentation_modes and (not args.gameplay or presentation_modes > 1):
+        parser.error("Presentation diagnostics require --gameplay and exactly one mode")
     if not args.label.isidentifier():
         parser.error("Label must be an identifier")
     config, _ = parse_args([])
@@ -73,12 +83,17 @@ def main():
     test = "gameplay_performance" if args.gameplay else ("vegetation_driving_profile" if args.driving else "runtime_travel_profile")
     source = ROOT / "tests" / (test + ".gd")
     extra = ["--profile-slot=" + args.slot, "--profile-dir=" + folder.as_posix()]
+    if args.uncapped:extra.append("--profile-uncapped")
+    if args.mailbox:extra.append("--profile-mailbox")
+    if args.vsync_only:extra.append("--profile-vsync-only")
+    if args.no_vsync:extra.append("--profile-no-vsync")
+    if args.visible:extra.append("--profile-visible")
     if args.driving:
         extra.append("--drive-kph=" + str(args.speed_kph))
         extra.append("--ground-upload-kib=" + str(args.ground_upload_kib))
     command, cache = command_for(config.godot, test, folder, extra)
     command.remove("--fullscreen")
-    command[1:1] = ["--windowed", "--position", "-2400,-1600"]
+    command[1:1] = ["--windowed", "--position", "0,0" if args.visible else "-2400,-1600"]
     record = dict(command=command, cache=cache, mode="gameplay" if args.gameplay else ("controlled_speed_sweep" if args.driving else "walking"), source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                   native_sha256={str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                                  for path in (ROOT / "addons").glob("*/bin/*.dll")}, **revision_metadata())
@@ -109,7 +124,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        record["result"] = execute(command, folder, 240, "TRAVEL_PROFILE PASS", require_resource_budget=args.require_resource_budget)
+        record["result"] = execute(command, folder, 330 if args.visible else 240, "TRAVEL_PROFILE PASS", require_resource_budget=args.require_resource_budget)
     finally:
         subprocess.Popen = original
     samples = folder / "frames.json"

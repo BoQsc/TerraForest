@@ -90,7 +90,7 @@ func attack(repairing:bool=false) -> bool:
 	pending={"identity":sequence,"item":game.equipped_tool,"slot":game.player_hud.active_slot,"epoch":game.terrain.epoch,"contacted":false,"repairing":repairing}
 	if not game.tool_view.begin_attack(sequence):pending={};return false
 	# Recovery is owned by the actual animation; retain the minimum input debounce.
-	next_attack=now+250;game.terrain.note_interaction()
+	next_attack=now+250;game.terrain.set_attack_active(true)
 	impact_preparing.emit(game.camera.global_position,game.camera.global_position-game.camera.global_basis.z*reach())
 	return true
 func can_continue()->bool:
@@ -115,6 +115,7 @@ func cancel()->void:
 	if pending.is_empty():return
 	game.tool_view.cancel_attack()
 func finish_swing(identity:int,cancelled:bool)->void:
+	if game.tool_view.attack_identity==0:game.terrain.set_attack_active(false)
 	if pending.is_empty() or pending.identity!=identity:return
 	if cancelled and not pending.contacted:next_attack=0
 	pending={}

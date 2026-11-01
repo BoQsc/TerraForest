@@ -1,0 +1,1767 @@
+{
+  "schema": 1,
+  "updated": "2026-11-01",
+  "status": "improved-partial",
+  "parent_commit": "b33742b15614f079eaf06f7d8adb38d5b33106e3",
+  "hardware": "Intel i5-12450H, RTX 4050 Laptop GPU, 144.023 Hz display",
+  "power_mode": "Legion Quiet Mode, unchanged at user request",
+  "production_presentation": "60 FPS software cap and VSync retained; uncapped/mailbox/no-VSync runs are diagnostic only",
+  "user_review": "User did not watch the focused comparison and explicitly declined uncapped gameplay; no visual acceptance claimed",
+  "fixture": "recipe_generated_4644d8cfc8f97e43, seed 1703, generator 29, read-only",
+  "fixture_archive_sha256": "d0ecdd2444d972e10cf4b75d6ecd9d0df9d01c423a34fd736d6094597e1c49b9",
+  "scope": "Physical movement and 24 authored-animation contacts through production targeting, edits, collision and rewards; test-only initiation bypasses capture/debounce, not click-to-photon. 1920x1080 windowed rendering. No quality/density/physics changes.",
+  "fixes": [
+    "Routine zombie lifecycle and terrain-hitch stdout is verbose-only; errors and in-memory telemetry remain",
+    "Surface callbacks use a 1 ms soft budget, FIFO/revision validation and admission backpressure; critical replies overtake them",
+    "Gameplay windup/recovery suppresses optional worker cache writes without pausing vegetation streaming; cancellation releases priority",
+    "Hidden, collision-disabled terrain roots enter the scene before piece preparation, spreading subtree attachment while preserving atomic publication"
+  ],
+  "cache_write_recurrence": {
+    "run": "movement_final_pack_repeat",
+    "contact_ms": 272.535,
+    "worker_queue_ms": 243.289,
+    "overlapping_background_cache_write_ms": 163.668,
+    "explanation": "Gameplay previously cleared the worker input-priority flag; optional disk writes could run during windup. Already-started OS I/O is not preempted."
+  },
+  "reports": [
+    {
+      "label": "movement_cpu_uncapped",
+      "report": "reports/runtime_performance/20261101T044351405824Z_movement_cpu_uncapped",
+      "functional_pass": true,
+      "timing_pass": true,
+      "driver_sha256": "5350bd90a3a1410985027563222ee53f678591bb00ae30e154d60aaefa9ef413",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 12137,
+      "focus_frames": {
+        "True": 6905,
+        "False": 5232
+      },
+      "phases": {
+        "idle": {
+          "frames": 862,
+          "frame_p99_ms": 13.571,
+          "frame_max_ms": 28.367,
+          "process_p99_ms": 5.24,
+          "gpu_p95_ms": 9.10999965667725
+        },
+        "mining_idle": {
+          "frames": 2040,
+          "frame_p99_ms": 10.746,
+          "frame_max_ms": 15.158,
+          "process_p99_ms": 5.534,
+          "gpu_p95_ms": 6.79899978637695
+        },
+        "walking": {
+          "frames": 1628,
+          "frame_p99_ms": 16.614,
+          "frame_max_ms": 29.406,
+          "process_p99_ms": 6.09,
+          "gpu_p95_ms": 10.0229997634888
+        },
+        "sprinting": {
+          "frames": 1571,
+          "frame_p99_ms": 18.853,
+          "frame_max_ms": 22.37,
+          "process_p99_ms": 6.936,
+          "gpu_p95_ms": 10.1090002059937
+        },
+        "mining_after_run": {
+          "frames": 1982,
+          "frame_p99_ms": 11.631,
+          "frame_max_ms": 43.691,
+          "process_p99_ms": 5.919,
+          "gpu_p95_ms": 7.17899990081787
+        },
+        "jumping": {
+          "frames": 1560,
+          "frame_p99_ms": 19.221,
+          "frame_max_ms": 26.177,
+          "process_p99_ms": 7.856,
+          "gpu_p95_ms": 10.1549997329712
+        },
+        "mining_after_jump": {
+          "frames": 1779,
+          "frame_p99_ms": 13.535,
+          "frame_max_ms": 18.423,
+          "process_p99_ms": 6.122,
+          "gpu_p95_ms": 8.39000034332275
+        },
+        "recovery": {
+          "frames": 715,
+          "frame_p99_ms": 18.735,
+          "frame_max_ms": 26.768,
+          "process_p99_ms": 5.414,
+          "gpu_p95_ms": 9.0620002746582
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 18.681,
+      "contact_max_ms": 31.678,
+      "first_contact_ms": 29.928,
+      "worst_contact_worker_queue_ms": 0.085,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 10.394,
+        "zombie admission console": null,
+        "receive surface_batch": 4.531,
+        "prepared subtree attach": 3.879,
+        "staging frame": 4.951
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 4069507072,
+      "peak_dedicated_gpu_bytes": 1524580352,
+      "within_sampled_limits": true,
+      "presentation": null
+    },
+    {
+      "label": "movement_console_control",
+      "report": "reports/runtime_performance/20261101T045050243439Z_movement_console_control",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "5350bd90a3a1410985027563222ee53f678591bb00ae30e154d60aaefa9ef413",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6219,
+      "focus_frames": {
+        "True": 6219
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 22.139,
+          "frame_max_ms": 25.742,
+          "process_p99_ms": 5.521,
+          "gpu_p95_ms": 7.21400022506714
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 21.279,
+          "frame_max_ms": 24.848,
+          "process_p99_ms": 6.888,
+          "gpu_p95_ms": 6.50099992752075
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 23.947,
+          "frame_max_ms": 37.902,
+          "process_p99_ms": 6.566,
+          "gpu_p95_ms": 8.28400039672852
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 26.012,
+          "frame_max_ms": 30.498,
+          "process_p99_ms": 8.536,
+          "gpu_p95_ms": 8.31099987030029
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 20.939,
+          "frame_max_ms": 22.084,
+          "process_p99_ms": 7.2,
+          "gpu_p95_ms": 6.38600015640259
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 24.776,
+          "frame_max_ms": 31.307,
+          "process_p99_ms": 8.86,
+          "gpu_p95_ms": 8.65900039672852
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 20.499,
+          "frame_max_ms": 22.935,
+          "process_p99_ms": 7.115,
+          "gpu_p95_ms": 7.02500009536743
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 19.797,
+          "frame_max_ms": 22.88,
+          "process_p99_ms": 4.726,
+          "gpu_p95_ms": 7.82399988174438
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 21.387,
+      "contact_max_ms": 37.944,
+      "first_contact_ms": 25.881,
+      "worst_contact_worker_queue_ms": 0.152,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 13.475,
+        "zombie admission console": null,
+        "receive surface_batch": 4.685,
+        "prepared subtree attach": 5.459,
+        "staging frame": 6.807
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3875917824,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": null
+    },
+    {
+      "label": "movement_quiet_logging",
+      "report": "reports/runtime_performance/20261101T045417882405Z_movement_quiet_logging",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "c1d7679efcb8a0c3813b1fc53bf31e640cc81ba70250576091a7b48982c6dfcd",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6219,
+      "focus_frames": {
+        "True": 6219
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 22.963,
+          "frame_max_ms": 28.17,
+          "process_p99_ms": 6.307,
+          "gpu_p95_ms": 7.17999982833862
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 20.921,
+          "frame_max_ms": 24.309,
+          "process_p99_ms": 7.406,
+          "gpu_p95_ms": 6.43200016021729
+        },
+        "walking": {
+          "frames": 899,
+          "frame_p99_ms": 25.429,
+          "frame_max_ms": 34.67,
+          "process_p99_ms": 8.677,
+          "gpu_p95_ms": 8.79899978637695
+        },
+        "sprinting": {
+          "frames": 901,
+          "frame_p99_ms": 25.137,
+          "frame_max_ms": 28.888,
+          "process_p99_ms": 8.952,
+          "gpu_p95_ms": 8.38599967956543
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 22.263,
+          "frame_max_ms": 28.334,
+          "process_p99_ms": 7.335,
+          "gpu_p95_ms": 6.26000022888184
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 23.955,
+          "frame_max_ms": 31.586,
+          "process_p99_ms": 9.045,
+          "gpu_p95_ms": 8.62399959564209
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 21.447,
+          "frame_max_ms": 28.718,
+          "process_p99_ms": 7.194,
+          "gpu_p95_ms": 6.94899988174438
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 20.002,
+          "frame_max_ms": 25.351,
+          "process_p99_ms": 5.443,
+          "gpu_p95_ms": 7.97700023651123
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.559,
+      "contact_max_ms": 36.277,
+      "first_contact_ms": 36.277,
+      "worst_contact_worker_queue_ms": 2.993,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 6.831,
+        "zombie admission console": null,
+        "receive surface_batch": 6.581,
+        "prepared subtree attach": 5.96,
+        "staging frame": 6.863
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3879612416,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_surface_attribution_fixed",
+      "report": "reports/runtime_performance/20261101T045725212896Z_movement_surface_attribution_fixed",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "d739c2103d53fa9064582ad83e017617570ec33fedf8cd27c6f27b96c3ef02c6",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6215,
+      "focus_frames": {
+        "True": 6215
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 24.592,
+          "frame_max_ms": 27.655,
+          "process_p99_ms": 6.326,
+          "gpu_p95_ms": 7.65500020980835
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 22.201,
+          "frame_max_ms": 24.596,
+          "process_p99_ms": 7.209,
+          "gpu_p95_ms": 6.43800020217896
+        },
+        "walking": {
+          "frames": 898,
+          "frame_p99_ms": 24.433,
+          "frame_max_ms": 35.396,
+          "process_p99_ms": 8.358,
+          "gpu_p95_ms": 8.5930004119873
+        },
+        "sprinting": {
+          "frames": 898,
+          "frame_p99_ms": 25.929,
+          "frame_max_ms": 33.745,
+          "process_p99_ms": 9.433,
+          "gpu_p95_ms": 8.46399974822998
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.583,
+          "frame_max_ms": 23.471,
+          "process_p99_ms": 7.131,
+          "gpu_p95_ms": 6.18599987030029
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 23.416,
+          "frame_max_ms": 29.7,
+          "process_p99_ms": 8.913,
+          "gpu_p95_ms": 8.60099983215332
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 21.303,
+          "frame_max_ms": 29.425,
+          "process_p99_ms": 7.057,
+          "gpu_p95_ms": 6.78499984741211
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 19.958,
+          "frame_max_ms": 23.853,
+          "process_p99_ms": 5.418,
+          "gpu_p95_ms": 7.80999994277954
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 21.622,
+      "contact_max_ms": 41.811,
+      "first_contact_ms": 24.453,
+      "worst_contact_worker_queue_ms": 11.04,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 4.14,
+        "zombie admission console": null,
+        "receive surface_batch": 5.95,
+        "prepared subtree attach": 5.242,
+        "staging frame": 6.474
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3876040704,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_mailbox_diagnostic",
+      "report": "reports/runtime_performance/20261101T050035204987Z_movement_mailbox_diagnostic",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "2fc8a4c7401d30fe70b3cd1d14d1e649845b8d3f150f8c3db825f9c033fdf5d2",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6215,
+      "focus_frames": {
+        "True": 1298,
+        "False": 4917
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 23.627,
+          "frame_max_ms": 27.451,
+          "process_p99_ms": 5.849,
+          "gpu_p95_ms": 7.5310001373291
+        },
+        "mining_idle": {
+          "frames": 839,
+          "frame_p99_ms": 21.936,
+          "frame_max_ms": 26.183,
+          "process_p99_ms": 7.418,
+          "gpu_p95_ms": 6.30700016021729
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 23.885,
+          "frame_max_ms": 31.794,
+          "process_p99_ms": 7.404,
+          "gpu_p95_ms": 8.67000007629395
+        },
+        "sprinting": {
+          "frames": 898,
+          "frame_p99_ms": 25.736,
+          "frame_max_ms": 37.522,
+          "process_p99_ms": 9.417,
+          "gpu_p95_ms": 8.92899990081787
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 20.965,
+          "frame_max_ms": 24.421,
+          "process_p99_ms": 7.63,
+          "gpu_p95_ms": 6.28999996185303
+        },
+        "jumping": {
+          "frames": 899,
+          "frame_p99_ms": 25.815,
+          "frame_max_ms": 33.414,
+          "process_p99_ms": 10.029,
+          "gpu_p95_ms": 9.59899997711182
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 22.143,
+          "frame_max_ms": 30.832,
+          "process_p99_ms": 7.574,
+          "gpu_p95_ms": 6.97599983215332
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 21.07,
+          "frame_max_ms": 22.576,
+          "process_p99_ms": 5.323,
+          "gpu_p95_ms": 8.11600017547607
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 19.725,
+      "contact_max_ms": 42.137,
+      "first_contact_ms": 42.137,
+      "worst_contact_worker_queue_ms": 3.29,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 8.803,
+        "zombie admission console": null,
+        "receive surface_batch": 6.188,
+        "prepared subtree attach": 4.266,
+        "staging frame": 5.447
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3885535232,
+      "peak_dedicated_gpu_bytes": 1516126208,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 3
+      }
+    },
+    {
+      "label": "movement_cover_attribution",
+      "report": "reports/runtime_performance/20261101T050349928778Z_movement_cover_attribution",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "de85f5d22b7f23497e2c3c59f8f9288a44f9f881aea5b6659e5580ec5327d767",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6217,
+      "focus_frames": {
+        "True": 856,
+        "False": 5361
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 21.277,
+          "frame_max_ms": 21.843,
+          "process_p99_ms": 4.909,
+          "gpu_p95_ms": 7.5939998626709
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 21.718,
+          "frame_max_ms": 35.203,
+          "process_p99_ms": 7.816,
+          "gpu_p95_ms": 6.16400003433228
+        },
+        "walking": {
+          "frames": 899,
+          "frame_p99_ms": 22.699,
+          "frame_max_ms": 34.367,
+          "process_p99_ms": 7.517,
+          "gpu_p95_ms": 8.65100002288818
+        },
+        "sprinting": {
+          "frames": 901,
+          "frame_p99_ms": 25.506,
+          "frame_max_ms": 28.87,
+          "process_p99_ms": 8.976,
+          "gpu_p95_ms": 8.56400012969971
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.918,
+          "frame_max_ms": 27.491,
+          "process_p99_ms": 7.374,
+          "gpu_p95_ms": 6.23699998855591
+        },
+        "jumping": {
+          "frames": 899,
+          "frame_p99_ms": 27.109,
+          "frame_max_ms": 31.685,
+          "process_p99_ms": 10.562,
+          "gpu_p95_ms": 9.39599990844727
+        },
+        "mining_after_jump": {
+          "frames": 877,
+          "frame_p99_ms": 25.004,
+          "frame_max_ms": 32.426,
+          "process_p99_ms": 9.326,
+          "gpu_p95_ms": 7.23099994659424
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 24.162,
+          "frame_max_ms": 31.665,
+          "process_p99_ms": 6.231,
+          "gpu_p95_ms": 8.47399997711182
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 23.288,
+      "contact_max_ms": 48.826,
+      "first_contact_ms": 44.175,
+      "worst_contact_worker_queue_ms": 0.095,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 5.272,
+        "zombie admission console": null,
+        "receive surface_batch": 5.95,
+        "prepared subtree attach": 5.015,
+        "staging frame": 6.378
+      },
+      "surface_backlog_max": null,
+      "last_cover_cells": null,
+      "last_cover_wanted": null,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3884453888,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_budgeted_replies",
+      "report": "reports/runtime_performance/20261101T051054364049Z_movement_budgeted_replies",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "4caf180e1244e6992dcab574e65b75874ab92ccfc26e0159c1bcf32393757cd2",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6219,
+      "focus_frames": {
+        "True": 6219
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 24.725,
+          "frame_max_ms": 27.101,
+          "process_p99_ms": 6.526,
+          "gpu_p95_ms": 7.60300016403198
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 21.668,
+          "frame_max_ms": 35.159,
+          "process_p99_ms": 7.327,
+          "gpu_p95_ms": 6.35900020599365
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 23.189,
+          "frame_max_ms": 26.512,
+          "process_p99_ms": 5.999,
+          "gpu_p95_ms": 8.36900043487549
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 25.518,
+          "frame_max_ms": 35.363,
+          "process_p99_ms": 7.842,
+          "gpu_p95_ms": 8.73999977111816
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.721,
+          "frame_max_ms": 31.437,
+          "process_p99_ms": 7.159,
+          "gpu_p95_ms": 6.2960000038147
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 23.779,
+          "frame_max_ms": 28.225,
+          "process_p99_ms": 8.133,
+          "gpu_p95_ms": 9.0319995880127
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 22.387,
+          "frame_max_ms": 32.499,
+          "process_p99_ms": 7.543,
+          "gpu_p95_ms": 7.18400001525879
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 23.243,
+          "frame_max_ms": 28.57,
+          "process_p99_ms": 4.901,
+          "gpu_p95_ms": 8.24400043487549
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.338,
+      "contact_max_ms": 41.82,
+      "first_contact_ms": 41.82,
+      "worst_contact_worker_queue_ms": 9.354,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 4.085,
+        "zombie admission console": null,
+        "receive surface_batch": 3.321,
+        "prepared subtree attach": 5.34,
+        "staging frame": 6.709
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3884609536,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_final_pack",
+      "report": "reports/runtime_performance/20261101T052130272063Z_movement_final_pack",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "4caf180e1244e6992dcab574e65b75874ab92ccfc26e0159c1bcf32393757cd2",
+      "pack_sha256": "d1df739de443aa3b24b5524bbd6831630aecb06032f95f9c230702257a30a60e",
+      "visible_requested": false,
+      "frames": 6219,
+      "focus_frames": {
+        "False": 6164,
+        "True": 55
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 25.929,
+          "frame_max_ms": 29.234,
+          "process_p99_ms": 8.575,
+          "gpu_p95_ms": 7.61399984359741
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 22.439,
+          "frame_max_ms": 25.815,
+          "process_p99_ms": 7.496,
+          "gpu_p95_ms": 6.35699987411499
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 22.581,
+          "frame_max_ms": 29.802,
+          "process_p99_ms": 6.479,
+          "gpu_p95_ms": 8.51599979400635
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 25.302,
+          "frame_max_ms": 29.405,
+          "process_p99_ms": 8.697,
+          "gpu_p95_ms": 8.53699970245361
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.117,
+          "frame_max_ms": 23.514,
+          "process_p99_ms": 7.083,
+          "gpu_p95_ms": 6.26599979400635
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 25.14,
+          "frame_max_ms": 31.099,
+          "process_p99_ms": 9.099,
+          "gpu_p95_ms": 8.94999980926514
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 21.978,
+          "frame_max_ms": 25.827,
+          "process_p99_ms": 7.137,
+          "gpu_p95_ms": 7.05800008773804
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 21.695,
+          "frame_max_ms": 26.428,
+          "process_p99_ms": 5.626,
+          "gpu_p95_ms": 7.95699977874756
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.22,
+      "contact_max_ms": 39.669,
+      "first_contact_ms": 25.798,
+      "worst_contact_worker_queue_ms": 7.959,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 4.071,
+        "zombie admission console": null,
+        "receive surface_batch": 2.87,
+        "prepared subtree attach": 6.357,
+        "staging frame": 7.834
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3875430400,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_final_pack_repeat",
+      "report": "reports/runtime_performance/20261101T052528516320Z_movement_final_pack_repeat",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "4caf180e1244e6992dcab574e65b75874ab92ccfc26e0159c1bcf32393757cd2",
+      "pack_sha256": "d1df739de443aa3b24b5524bbd6831630aecb06032f95f9c230702257a30a60e",
+      "visible_requested": false,
+      "frames": 6220,
+      "focus_frames": {
+        "False": 6220
+      },
+      "phases": {
+        "idle": {
+          "frames": 482,
+          "frame_p99_ms": 24.391,
+          "frame_max_ms": 103.34,
+          "process_p99_ms": 6.907,
+          "gpu_p95_ms": 7.53000020980835
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 21.779,
+          "frame_max_ms": 26.328,
+          "process_p99_ms": 7.283,
+          "gpu_p95_ms": 6.41200017929077
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 21.475,
+          "frame_max_ms": 27.417,
+          "process_p99_ms": 6.159,
+          "gpu_p95_ms": 8.47200012207031
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 26.466,
+          "frame_max_ms": 38.032,
+          "process_p99_ms": 8.681,
+          "gpu_p95_ms": 8.68099975585938
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.021,
+          "frame_max_ms": 24.925,
+          "process_p99_ms": 7.448,
+          "gpu_p95_ms": 6.35400009155273
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 23.733,
+          "frame_max_ms": 31.418,
+          "process_p99_ms": 8.697,
+          "gpu_p95_ms": 8.75800037384033
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 22.454,
+          "frame_max_ms": 26.775,
+          "process_p99_ms": 7.052,
+          "gpu_p95_ms": 7.03200006484985
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 20.766,
+          "frame_max_ms": 31.106,
+          "process_p99_ms": 5.715,
+          "gpu_p95_ms": 8.07299995422363
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.15,
+      "contact_max_ms": 272.535,
+      "first_contact_ms": 272.535,
+      "worst_contact_worker_queue_ms": 243.289,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 6.323,
+        "zombie admission console": null,
+        "receive surface_batch": 2.854,
+        "prepared subtree attach": 5.281,
+        "staging frame": 6.585
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3890421760,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_final_pack_headroom",
+      "report": "reports/runtime_performance/20261101T052832458635Z_movement_final_pack_headroom",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "4caf180e1244e6992dcab574e65b75874ab92ccfc26e0159c1bcf32393757cd2",
+      "pack_sha256": "d1df739de443aa3b24b5524bbd6831630aecb06032f95f9c230702257a30a60e",
+      "visible_requested": false,
+      "frames": 11759,
+      "focus_frames": {
+        "True": 11759
+      },
+      "phases": {
+        "idle": {
+          "frames": 824,
+          "frame_p99_ms": 16.43,
+          "frame_max_ms": 31.874,
+          "process_p99_ms": 5.589,
+          "gpu_p95_ms": 9.19200038909912
+        },
+        "mining_idle": {
+          "frames": 1955,
+          "frame_p99_ms": 12.685,
+          "frame_max_ms": 23.832,
+          "process_p99_ms": 6.17,
+          "gpu_p95_ms": 6.87200021743774
+        },
+        "walking": {
+          "frames": 1584,
+          "frame_p99_ms": 17.233,
+          "frame_max_ms": 24.5,
+          "process_p99_ms": 6.247,
+          "gpu_p95_ms": 10.1389999389648
+        },
+        "sprinting": {
+          "frames": 1524,
+          "frame_p99_ms": 19.656,
+          "frame_max_ms": 34.585,
+          "process_p99_ms": 6.958,
+          "gpu_p95_ms": 10.2729997634888
+        },
+        "mining_after_run": {
+          "frames": 1932,
+          "frame_p99_ms": 12.27,
+          "frame_max_ms": 21.583,
+          "process_p99_ms": 6.025,
+          "gpu_p95_ms": 7.15999984741211
+        },
+        "jumping": {
+          "frames": 1526,
+          "frame_p99_ms": 22.592,
+          "frame_max_ms": 48.49,
+          "process_p99_ms": 8.42,
+          "gpu_p95_ms": 10.0579996109009
+        },
+        "mining_after_jump": {
+          "frames": 1746,
+          "frame_p99_ms": 19.374,
+          "frame_max_ms": 32.562,
+          "process_p99_ms": 6.795,
+          "gpu_p95_ms": 7.83300018310547
+        },
+        "recovery": {
+          "frames": 668,
+          "frame_p99_ms": 23.791,
+          "frame_max_ms": 31.701,
+          "process_p99_ms": 5.498,
+          "gpu_p95_ms": 9.51700019836426
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 17.566,
+      "contact_max_ms": 44.675,
+      "first_contact_ms": 30.394,
+      "worst_contact_worker_queue_ms": 0.11,
+      "priority_contacts": null,
+      "stage_max_ms": {
+        "zombie admission attach": 6.369,
+        "zombie admission console": null,
+        "receive surface_batch": 3.308,
+        "prepared subtree attach": 6.034,
+        "staging frame": 6.897
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 4083523584,
+      "peak_dedicated_gpu_bytes": 1524580352,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 0,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": true,
+        "vsync": 0
+      }
+    },
+    {
+      "label": "movement_attack_priority",
+      "report": "reports/runtime_performance/20261101T053246459361Z_movement_attack_priority",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "2014594f0b0e7981049e036a966ea40e6e1137099879e162b27f16c79a0d4b3f",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6216,
+      "focus_frames": {
+        "False": 5275,
+        "True": 941
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 23.882,
+          "frame_max_ms": 28.485,
+          "process_p99_ms": 6.492,
+          "gpu_p95_ms": 7.63700008392334
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 22.217,
+          "frame_max_ms": 25.52,
+          "process_p99_ms": 7.212,
+          "gpu_p95_ms": 6.38100004196167
+        },
+        "walking": {
+          "frames": 899,
+          "frame_p99_ms": 23.924,
+          "frame_max_ms": 58.932,
+          "process_p99_ms": 6.333,
+          "gpu_p95_ms": 8.46599960327148
+        },
+        "sprinting": {
+          "frames": 901,
+          "frame_p99_ms": 26.383,
+          "frame_max_ms": 29.188,
+          "process_p99_ms": 7.892,
+          "gpu_p95_ms": 8.77499961853027
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 22.259,
+          "frame_max_ms": 36.572,
+          "process_p99_ms": 7.272,
+          "gpu_p95_ms": 6.2810001373291
+        },
+        "jumping": {
+          "frames": 899,
+          "frame_p99_ms": 23.994,
+          "frame_max_ms": 35.329,
+          "process_p99_ms": 8.466,
+          "gpu_p95_ms": 8.93299961090088
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 22.356,
+          "frame_max_ms": 29.148,
+          "process_p99_ms": 7.233,
+          "gpu_p95_ms": 6.90999984741211
+        },
+        "recovery": {
+          "frames": 478,
+          "frame_p99_ms": 22.285,
+          "frame_max_ms": 27.28,
+          "process_p99_ms": 4.913,
+          "gpu_p95_ms": 8.23799991607666
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.405,
+      "contact_max_ms": 45.038,
+      "first_contact_ms": 26.888,
+      "worst_contact_worker_queue_ms": 0.118,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 5.753,
+        "zombie admission console": null,
+        "receive surface_batch": 3.225,
+        "prepared subtree attach": 5.103,
+        "staging frame": 6.054
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3885404160,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_vsync_only",
+      "report": "reports/runtime_performance/20261101T054321652922Z_movement_vsync_only",
+      "functional_pass": true,
+      "timing_pass": true,
+      "driver_sha256": "b921b7a3957e6a4829155325b6b85668c6c9ceed520ae3474b4859a7364aac84",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 11910,
+      "focus_frames": {
+        "False": 11910
+      },
+      "phases": {
+        "idle": {
+          "frames": 839,
+          "frame_p99_ms": 14.549,
+          "frame_max_ms": 15.419,
+          "process_p99_ms": 5.837,
+          "gpu_p95_ms": 9.24699974060059
+        },
+        "mining_idle": {
+          "frames": 1929,
+          "frame_p99_ms": 12.417,
+          "frame_max_ms": 15.68,
+          "process_p99_ms": 5.276,
+          "gpu_p95_ms": 6.81599998474121
+        },
+        "walking": {
+          "frames": 1637,
+          "frame_p99_ms": 15.338,
+          "frame_max_ms": 22.714,
+          "process_p99_ms": 5.757,
+          "gpu_p95_ms": 10.0819997787476
+        },
+        "sprinting": {
+          "frames": 1546,
+          "frame_p99_ms": 19.202,
+          "frame_max_ms": 23.856,
+          "process_p99_ms": 7.417,
+          "gpu_p95_ms": 10.0830001831055
+        },
+        "mining_after_run": {
+          "frames": 1866,
+          "frame_p99_ms": 13.782,
+          "frame_max_ms": 18.279,
+          "process_p99_ms": 6.276,
+          "gpu_p95_ms": 7.14900016784668
+        },
+        "jumping": {
+          "frames": 1600,
+          "frame_p99_ms": 19.173,
+          "frame_max_ms": 34.134,
+          "process_p99_ms": 7.836,
+          "gpu_p95_ms": 10.1770000457764
+        },
+        "mining_after_jump": {
+          "frames": 1787,
+          "frame_p99_ms": 14.273,
+          "frame_max_ms": 24.131,
+          "process_p99_ms": 5.672,
+          "gpu_p95_ms": 7.97300004959106
+        },
+        "recovery": {
+          "frames": 706,
+          "frame_p99_ms": 17.212,
+          "frame_max_ms": 22.429,
+          "process_p99_ms": 5.451,
+          "gpu_p95_ms": 9.28499984741211
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 17.352,
+      "contact_max_ms": 32.21,
+      "first_contact_ms": 32.21,
+      "worst_contact_worker_queue_ms": 0.059,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 4.712,
+        "zombie admission console": null,
+        "receive surface_batch": 2.644,
+        "prepared subtree attach": 4.795,
+        "staging frame": 5.963
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 99,
+      "last_cover_wanted": 99,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 4083752960,
+      "peak_dedicated_gpu_bytes": 1524568064,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 0,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_no_vsync",
+      "report": "reports/runtime_performance/20261101T054605835894Z_movement_no_vsync",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "b921b7a3957e6a4829155325b6b85668c6c9ceed520ae3474b4859a7364aac84",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6216,
+      "focus_frames": {
+        "False": 6216
+      },
+      "phases": {
+        "idle": {
+          "frames": 480,
+          "frame_p99_ms": 27.769,
+          "frame_max_ms": 35.661,
+          "process_p99_ms": 7.193,
+          "gpu_p95_ms": 7.60699987411499
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 22.461,
+          "frame_max_ms": 37.737,
+          "process_p99_ms": 7.974,
+          "gpu_p95_ms": 6.34800004959106
+        },
+        "walking": {
+          "frames": 899,
+          "frame_p99_ms": 23.738,
+          "frame_max_ms": 42.039,
+          "process_p99_ms": 6.982,
+          "gpu_p95_ms": 8.47599983215332
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 27.542,
+          "frame_max_ms": 35.357,
+          "process_p99_ms": 9.738,
+          "gpu_p95_ms": 8.5939998626709
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.469,
+          "frame_max_ms": 22.919,
+          "process_p99_ms": 7.249,
+          "gpu_p95_ms": 6.31799983978271
+        },
+        "jumping": {
+          "frames": 899,
+          "frame_p99_ms": 23.959,
+          "frame_max_ms": 36.395,
+          "process_p99_ms": 8.935,
+          "gpu_p95_ms": 9.00800037384033
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 23.322,
+          "frame_max_ms": 26.647,
+          "process_p99_ms": 7.467,
+          "gpu_p95_ms": 7.04699993133545
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 21.787,
+          "frame_max_ms": 24.808,
+          "process_p99_ms": 5.677,
+          "gpu_p95_ms": 8.26599979400635
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 18.987,
+      "contact_max_ms": 42.605,
+      "first_contact_ms": 32.788,
+      "worst_contact_worker_queue_ms": 0.401,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 4.366,
+        "zombie admission console": null,
+        "receive surface_batch": 3.574,
+        "prepared subtree attach": 5.212,
+        "staging frame": 7.496
+      },
+      "surface_backlog_max": 7,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3880259584,
+      "peak_dedicated_gpu_bytes": 1516126208,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 0
+      }
+    },
+    {
+      "label": "movement_focused_priority_pack",
+      "report": "reports/runtime_performance/20261101T055446108700Z_movement_focused_priority_pack",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "pack_sha256": "ebb7574f3f0d568619497934ab807a79c4ba76efabefc820e3eddaa3b9cf2eba",
+      "visible_requested": true,
+      "frames": 6218,
+      "focus_frames": {
+        "True": 6218
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 24.222,
+          "frame_max_ms": 33.081,
+          "process_p99_ms": 5.388,
+          "gpu_p95_ms": 7.42700004577637
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 21.556,
+          "frame_max_ms": 26.908,
+          "process_p99_ms": 7.348,
+          "gpu_p95_ms": 6.23099994659424
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 22.212,
+          "frame_max_ms": 26.39,
+          "process_p99_ms": 6.243,
+          "gpu_p95_ms": 8.39599990844727
+        },
+        "sprinting": {
+          "frames": 899,
+          "frame_p99_ms": 27.526,
+          "frame_max_ms": 34.253,
+          "process_p99_ms": 8.38,
+          "gpu_p95_ms": 8.57100009918213
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 21.606,
+          "frame_max_ms": 22.849,
+          "process_p99_ms": 7.136,
+          "gpu_p95_ms": 6.30399990081787
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 24.765,
+          "frame_max_ms": 28.135,
+          "process_p99_ms": 8.693,
+          "gpu_p95_ms": 8.90900039672852
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 21.201,
+          "frame_max_ms": 37.686,
+          "process_p99_ms": 7.186,
+          "gpu_p95_ms": 6.89499998092651
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 22.203,
+          "frame_max_ms": 28.153,
+          "process_p99_ms": 5.654,
+          "gpu_p95_ms": 8.26599979400635
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.671,
+      "contact_max_ms": 29.497,
+      "first_contact_ms": 25.443,
+      "worst_contact_worker_queue_ms": 0.084,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 7.974,
+        "zombie admission console": null,
+        "receive surface_batch": 2.935,
+        "prepared subtree attach": 4.52,
+        "staging frame": 6.298
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3873996800,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_focused_vsync_only_pack",
+      "report": "reports/runtime_performance/20261101T055833398484Z_movement_focused_vsync_only_pack",
+      "functional_pass": true,
+      "timing_pass": true,
+      "driver_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "pack_sha256": "ebb7574f3f0d568619497934ab807a79c4ba76efabefc820e3eddaa3b9cf2eba",
+      "visible_requested": true,
+      "frames": 11863,
+      "focus_frames": {
+        "True": 11863
+      },
+      "phases": {
+        "idle": {
+          "frames": 833,
+          "frame_p99_ms": 13.777,
+          "frame_max_ms": 14.851,
+          "process_p99_ms": 5.545,
+          "gpu_p95_ms": 9.4689998626709
+        },
+        "mining_idle": {
+          "frames": 1871,
+          "frame_p99_ms": 13.968,
+          "frame_max_ms": 15.564,
+          "process_p99_ms": 6.142,
+          "gpu_p95_ms": 6.87200021743774
+        },
+        "walking": {
+          "frames": 1644,
+          "frame_p99_ms": 14.942,
+          "frame_max_ms": 20.372,
+          "process_p99_ms": 5.639,
+          "gpu_p95_ms": 10.0710000991821
+        },
+        "sprinting": {
+          "frames": 1540,
+          "frame_p99_ms": 18.986,
+          "frame_max_ms": 24.288,
+          "process_p99_ms": 7.407,
+          "gpu_p95_ms": 10.2670001983643
+        },
+        "mining_after_run": {
+          "frames": 1849,
+          "frame_p99_ms": 14.027,
+          "frame_max_ms": 16.872,
+          "process_p99_ms": 6.229,
+          "gpu_p95_ms": 7.19999980926514
+        },
+        "jumping": {
+          "frames": 1603,
+          "frame_p99_ms": 17.974,
+          "frame_max_ms": 25.107,
+          "process_p99_ms": 7.243,
+          "gpu_p95_ms": 10.2779998779297
+        },
+        "mining_after_jump": {
+          "frames": 1787,
+          "frame_p99_ms": 14.048,
+          "frame_max_ms": 19.866,
+          "process_p99_ms": 5.825,
+          "gpu_p95_ms": 8.13099956512451
+        },
+        "recovery": {
+          "frames": 736,
+          "frame_p99_ms": 16.986,
+          "frame_max_ms": 21.748,
+          "process_p99_ms": 4.74,
+          "gpu_p95_ms": 9.69900035858154
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 17.179,
+      "contact_max_ms": 29.062,
+      "first_contact_ms": 29.062,
+      "worst_contact_worker_queue_ms": 0.097,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 4.008,
+        "zombie admission console": null,
+        "receive surface_batch": 2.979,
+        "prepared subtree attach": 4.426,
+        "staging frame": 5.509
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 4096659456,
+      "peak_dedicated_gpu_bytes": 1515720704,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 0,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_incremental_attach",
+      "report": "reports/runtime_performance/20261101T061356521269Z_movement_incremental_attach",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "pack_sha256": null,
+      "visible_requested": false,
+      "frames": 6219,
+      "focus_frames": {
+        "False": 6219
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 24.222,
+          "frame_max_ms": 28.896,
+          "process_p99_ms": 5.753,
+          "gpu_p95_ms": 7.50600004196167
+        },
+        "mining_idle": {
+          "frames": 840,
+          "frame_p99_ms": 22.053,
+          "frame_max_ms": 27.832,
+          "process_p99_ms": 7.342,
+          "gpu_p95_ms": 6.3730001449585
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 22.029,
+          "frame_max_ms": 27.358,
+          "process_p99_ms": 5.988,
+          "gpu_p95_ms": 8.35999965667725
+        },
+        "sprinting": {
+          "frames": 900,
+          "frame_p99_ms": 24.852,
+          "frame_max_ms": 32.038,
+          "process_p99_ms": 8.5,
+          "gpu_p95_ms": 8.59799957275391
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 22.331,
+          "frame_max_ms": 29.945,
+          "process_p99_ms": 7.504,
+          "gpu_p95_ms": 6.30000019073486
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 24.645,
+          "frame_max_ms": 27.654,
+          "process_p99_ms": 8.129,
+          "gpu_p95_ms": 8.91499996185303
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 21.974,
+          "frame_max_ms": 34.834,
+          "process_p99_ms": 7.219,
+          "gpu_p95_ms": 6.82999992370605
+        },
+        "recovery": {
+          "frames": 480,
+          "frame_p99_ms": 21.76,
+          "frame_max_ms": 31.385,
+          "process_p99_ms": 4.904,
+          "gpu_p95_ms": 7.99300003051758
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 23.016,
+      "contact_max_ms": 56.123,
+      "first_contact_ms": 37.793,
+      "worst_contact_worker_queue_ms": 0.231,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 5.361,
+        "zombie admission console": null,
+        "receive surface_batch": 2.883,
+        "prepared subtree attach": 1.535,
+        "staging frame": 3.868
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3882942464,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    },
+    {
+      "label": "movement_verified_pack",
+      "report": "reports/runtime_performance/20261101T062827483023Z_movement_verified_pack",
+      "functional_pass": true,
+      "timing_pass": false,
+      "driver_sha256": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+      "pack_sha256": "55c1b5131f3f828650ce6e683351ac3b980e5c441bde3adc367ac13252d43d5b",
+      "visible_requested": false,
+      "frames": 6217,
+      "focus_frames": {
+        "True": 6217
+      },
+      "phases": {
+        "idle": {
+          "frames": 481,
+          "frame_p99_ms": 23.795,
+          "frame_max_ms": 29.342,
+          "process_p99_ms": 5.547,
+          "gpu_p95_ms": 7.50699996948242
+        },
+        "mining_idle": {
+          "frames": 838,
+          "frame_p99_ms": 22.064,
+          "frame_max_ms": 27.838,
+          "process_p99_ms": 7.118,
+          "gpu_p95_ms": 6.4520001411438
+        },
+        "walking": {
+          "frames": 900,
+          "frame_p99_ms": 22.436,
+          "frame_max_ms": 30.117,
+          "process_p99_ms": 6.755,
+          "gpu_p95_ms": 8.51000022888184
+        },
+        "sprinting": {
+          "frames": 901,
+          "frame_p99_ms": 24.228,
+          "frame_max_ms": 27.304,
+          "process_p99_ms": 8.143,
+          "gpu_p95_ms": 8.47799968719482
+        },
+        "mining_after_run": {
+          "frames": 840,
+          "frame_p99_ms": 22.156,
+          "frame_max_ms": 37.724,
+          "process_p99_ms": 7.607,
+          "gpu_p95_ms": 6.37099981307983
+        },
+        "jumping": {
+          "frames": 900,
+          "frame_p99_ms": 25.193,
+          "frame_max_ms": 34.284,
+          "process_p99_ms": 9.386,
+          "gpu_p95_ms": 8.94900035858154
+        },
+        "mining_after_jump": {
+          "frames": 878,
+          "frame_p99_ms": 22.013,
+          "frame_max_ms": 29.271,
+          "process_p99_ms": 7.47,
+          "gpu_p95_ms": 6.85500001907349
+        },
+        "recovery": {
+          "frames": 479,
+          "frame_p99_ms": 22.876,
+          "frame_max_ms": 23.977,
+          "process_p99_ms": 5.237,
+          "gpu_p95_ms": 8.24300003051758
+        }
+      },
+      "contacts": 24,
+      "jumps": 22,
+      "contact_min_ms": 22.352,
+      "contact_max_ms": 34.203,
+      "first_contact_ms": 27.509,
+      "worst_contact_worker_queue_ms": 0.033,
+      "priority_contacts": 24,
+      "stage_max_ms": {
+        "zombie admission attach": 4.063,
+        "zombie admission console": null,
+        "receive surface_batch": 4.729,
+        "prepared subtree attach": 0.237,
+        "staging frame": 4.275
+      },
+      "surface_backlog_max": 6,
+      "last_cover_cells": 100,
+      "last_cover_wanted": 100,
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "peak_private_commit_bytes": 3886542848,
+      "peak_dedicated_gpu_bytes": 1507233792,
+      "within_sampled_limits": true,
+      "presentation": {
+        "fps_cap": 60,
+        "refresh_hz": 144.022994995117,
+        "uncapped_requested": false,
+        "vsync": 1
+      }
+    }
+  ],
+  "source_sha256": {
+    "addons/characters/runtime/zombie.gd": "1ad5a2eaea2e6bd289501e39b16c927e7092f09c54731ab1a8f085b439de503c",
+    "addons/characters/runtime/zombie_world.gd": "b4fc4ddee29c5d23cda8d147e6bb0533bbaf62a9e30dce0b0dafd0dbc327db43",
+    "addons/player_runtime/world_attack.gd": "e86ccfa3aa171b54824939a4017b26de88056dbac2f99ce4420c02f2f00b38de",
+    "addons/volumetric_terrain/terrain_stream.gd": "852ad88ca796126bbfea7ea7c2f171cc5f13b05b0487a8a32954f01d135ebc61",
+    "addons/volumetric_terrain/terrain_world.gd": "abf0130c28d80409686d0de7562cca8e265038d5095b4d8407b025c1658f901f",
+    "addons/world_ecosystem/ground_cover.gd": "cbc80e5e8c8bae7cd39ba57cb6d277a3a3038c32cfc59d62d690a6f392f841bb",
+    "addons/world_runtime/native/resource_usage.cpp": "8fdd9f0363692ddbc44b0bcd15844b6276c0fc0cd7c97187cdb5cc58a04153af",
+    "addons/world_runtime/native/resource_usage.hpp": "2ad05220eb39cda5c026c651ee7c7389e59258f84b845eef004afced7fb9efd9",
+    "demo/world.gd": "84158e9979145bfe175101ffa5218e20dbedfa78cb9fdd722d916d81081a463e",
+    "tests/terrain_result_delivery.gd": "187371f77cb2560a71ee8744befd29719a99c24274ff153ba54ac7e419eb73ac",
+    "tests/gameplay_performance.gd": "8c1b85cc08b11e8a4013ba40430f65a3f763ac5a9c97a1b01389aff4e996e43b",
+    "tests/resource_usage.gd": "4bca9618f1b43096a9437f188a6f9fd8d5ad2a723c5713d6ae6ec726756d6e34",
+    "tools/profile_runtime.py": "b3f9125c389f8b13fc4b2e563d3b1c9904e9a794421606bcc07435958fa1bc2d"
+  },
+  "native_sha256": {
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "d3f2b8797c2083be3da1e3f30ac8f77cca91d4e7b406e952ec0f91df1fd0a171",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "ad4c073d5b977dc4197bf6ca7be56ec98873a791f4b776f150047d5bf320cbc3"
+  },
+  "verification": {
+    "delivery_priority_preparation_24_checks": "reports/checks/20261101T061355476874Z",
+    "resource_usage_71_checks": "reports/checks/20261101T051527289330Z",
+    "zombie_population_33_checks": "reports/checks/20261101T051558616876Z",
+    "vegetation_edit_world_24_checks": "reports/runtime_views/20261101T062107712806Z",
+    "vegetation_terrain_edits_74_checks": "reports/runtime_views/20261101T062148076658Z",
+    "partition_rejection_source_probe": "reports/partition_admission_source",
+    "partition_rejection_prior_pack_probe": "reports/partition_admission_installed_pre_incremental_attach",
+    "python_gate_tests": "python -m unittest test_profile_runtime (tools directory), six pass",
+    "native_builds": [
+      "reports/stutter_native_debug.log",
+      "reports/stutter_native_release.log"
+    ],
+    "export": "reports/movement_verified_export.log",
+    "export_building_standards": "reports/building_standards/20261101T062725407578Z",
+    "unrelated_files_preserved": "reports/stutter_export_preserve/hashes.json, 33 SHA-256 matches"
+  },
+  "retained_failures": [
+    {
+      "report": "reports/runtime_performance/20261101T045703878203Z_movement_surface_attribution",
+      "reason": "Harness duplicate local name; corrected before attribution runs"
+    },
+    {
+      "report": "reports/checks/20261101T053915777024Z",
+      "reason": "Legacy mouse-capture-dependent attack suite was invalid headless: requested mode 2 reads back as 0. Its 18 failures are retained, not an input verification pass."
+    },
+    {
+      "report": "reports/checks/20261101T061316055366Z",
+      "reason": "New preparation fixture ran before SceneTree startup; moved to deferred run and reran successfully"
+    },
+    {
+      "report": "reports/checks/20261101T061753714908Z",
+      "reason": "Legacy partition probe expects admission for a brick container, now explicitly rejected; subsequent nil access and timeout retained, not a partition pass"
+    }
+  ],
+  "remaining": [
+    "60 FPS strict p99 timing gates still fail; uncapped diagnostic passes are not a shipped pacing fix",
+    "Rendering/presentation waits and intermittent CPU costs need further attribution; upstream timer code inspection is not installed-binary proof",
+    "Historical 80-370 ms stalls are not closed merely because recent runs did not repeat them",
+    "Dense settlements, caves, driving/endurance and subjective foreground motion remain broader qualification work",
+    "Legacy input/partition fixtures need current-contract adaptation before use as gates"
+  ]
+}

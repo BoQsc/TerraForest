@@ -12,9 +12,17 @@ var phase_distance:Dictionary={}
 var performance_origin:=Vector3.ZERO
 var first_physics_us:=0
 var physics_steps:=0
+var thread_probe:RefCounted
+var previous_work:=PackedInt64Array()
+var process_work:=PackedInt64Array()
+var first_physics_work:=PackedInt64Array()
+var profile_uncapped:=false
+var surface_callbacks:Array[Dictionary]=[]
 
 func _initialize()->void:
 	frame_limit=12000
+	profile_uncapped="--profile-uncapped" in OS.get_cmdline_user_args()
+	if profile_uncapped or "--profile-vsync-only" in OS.get_cmdline_user_args():frame_limit=30000
 	super._initialize()
 
 func key(code:Key,pressed:bool)->void:
@@ -23,8 +31,14 @@ func key(code:Key,pressed:bool)->void:
 	Input.parse_input_event(event);Input.flush_buffered_events()
 
 func physics_tick()->void:
-	if first_physics_us==0:first_physics_us=Time.get_ticks_usec()
+	if first_physics_us==0:
+		first_physics_us=Time.get_ticks_usec()
+		first_physics_work=thread_probe.thread_work()
 	physics_steps+=1
+
+func begin_process()->void:
+	super.begin_process()
+	if thread_probe!=null:process_work=thread_probe.thread_work()
 
 func measured_callback(callback:Callable,label:String)->Callable:
 	return func(value:Variant)->Variant:
@@ -33,8 +47,15 @@ func measured_callback(callback:Callable,label:String)->Callable:
 		stage("zombie callback "+label,(Time.get_ticks_usec()-began)/1000.0)
 		return result
 
+func measured_surface_callback(callback:Callable,label:String)->Callable:
+	return func(token:int,points:PackedVector3Array,normals:PackedVector3Array,epoch:int,revision:int)->void:
+		var began:=Time.get_ticks_usec()
+		callback.call(token,points,normals,epoch,revision)
+		stage("surface callback "+label,(Time.get_ticks_usec()-began)/1000.0)
+
 func frame()->void:
 	var previous_draw_us:=previous
+	var current_work:PackedInt64Array=thread_probe.thread_work()
 	phase_distance[phase]=float(phase_distance.get(phase,0.0))+game.player.position.distance_to(performance_origin)
 	performance_origin=game.player.position
 	super.frame()
@@ -42,10 +63,22 @@ func frame()->void:
 	rows.back()["physics_to_process_ms"]=(process_started-first_physics_us)/1000.0 if first_physics_us else -1.0
 	rows.back()["physics_steps"]=physics_steps
 	rows.back()["window_focused"]=DisplayServer.window_is_focused()
+	if previous_work.size()==2 and process_work.size()==2:
+		rows.back()["thread_cycles"]=current_work[0]-previous_work[0]
+		rows.back()["thread_cpu_ms"]=(current_work[1]-previous_work[1])/1000.0
+		rows.back()["before_process_cycles"]=process_work[0]-previous_work[0]
+		rows.back()["before_process_cpu_ms"]=(process_work[1]-previous_work[1])/1000.0
+	if first_physics_work.size()==2:
+		rows.back()["physics_to_process_cycles"]=process_work[0]-first_physics_work[0]
+		rows.back()["physics_to_process_cpu_ms"]=(process_work[1]-first_physics_work[1])/1000.0
+	previous_work=current_work;first_physics_work.clear()
 	first_physics_us=0;physics_steps=0
 	rows.back()["grounded"]=game.player.is_on_floor()
 	rows.back()["velocity"]=game.player.velocity
 	rows.back()["pending_edit"]=game.terrain.pending_edit
+	rows.back()["surface_backlog"]=game.terrain._surface_replies.size()
+	rows.back()["ground_cover_cells"]=game.ground_cover.resident.size()
+	rows.back()["ground_cover_wanted"]=game.ground_cover._wanted.size()
 	rows.back()["loading"]=game.loading_active
 	rows.back()["pipeline_draw"]=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW)
 	rows.back()["pipeline_specialization"]=Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION)
@@ -55,6 +88,9 @@ func frame()->void:
 func contact(identity:int)->void:
 	if active_contact.is_empty() or active_contact.identity!=identity:return
 	active_contact.contact_us=Time.get_ticks_usec()
+	active_contact.foreground_priority=game.terrain.foreground_attack and not game.terrain.foreground_brush and game.terrain.backend._input_active()
+	active_contact.worker_at_contact=game.terrain.backend.status()
+	if not active_contact.foreground_priority:gameplay_failures.append("gameplay attack lost terrain foreground priority")
 	active_contact.animation_seconds=game.tool_view.human.animation_player.current_animation_position
 	var selected:Dictionary=game.world_attack.target()
 	active_contact.kind=selected.get("kind","")
@@ -103,16 +139,39 @@ func mine(label:String,count:int)->void:
 
 func sample(label:String,seconds:float)->void:
 	print("GAMEPLAY_PHASE ",label)
+	if "--profile-visible" in OS.get_cmdline_user_args():
+		DisplayServer.window_set_title("TerraForest performance test — "+label+" — mouse stays free")
+		if label=="idle":
+			var focus_deadline:=Time.get_ticks_msec()+90000
+			while not root.has_focus() and Time.get_ticks_msec()<focus_deadline:await process_frame
+			if not root.has_focus():gameplay_failures.append("attended test did not receive window focus")
 	if label=="settling":
 		await super.sample(label,seconds)
 		return
 	if label=="idle":
+		thread_probe=ClassDB.instantiate("NativeResourceUsage")
+		previous_work=thread_probe.thread_work()
+		if profile_uncapped or "--profile-vsync-only" in OS.get_cmdline_user_args():
+			game.max_fps=0;game.background_fps=0;Engine.max_fps=0
+		if profile_uncapped or "--profile-no-vsync" in OS.get_cmdline_user_args():
+			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		elif "--profile-mailbox" in OS.get_cmdline_user_args():
+			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_MAILBOX)
 		physics_frame.connect(physics_tick)
+		game.ground_cover.profiling_enabled=true
+		for connection:Dictionary in game.terrain.surface_batch_ready.get_connections():
+			var callback:Callable=connection.callable
+			var script:Script=callback.get_object().get_script()
+			var receiver_label:String=script.resource_path.get_file() if script!=null else callback.get_object().get_class()
+			var wrapped:=measured_surface_callback(callback,receiver_label)
+			game.terrain.surface_batch_ready.disconnect(callback)
+			game.terrain.surface_batch_ready.connect(wrapped,connection.flags)
+			surface_callbacks.append({"original":callback,"wrapped":wrapped,"flags":connection.flags})
 		for property:String in ["readiness","navigation_interest","water_depth","spawn_visible"]:
 			var callback:Callable=game.zombies.get(property)
 			if callback.is_valid():game.zombies.set(property,measured_callback(callback,property))
 		performance_origin=game.player.position
-		profile_notes="Real standing/walking/sprinting/jumping physics, authored pickaxe contact, production target/durability/stroke/mesh/collision/rewards. Test-only animation initiation bypasses OS mouse capture and input debounce; no click-to-photon claim. Actors, vegetation and normal rendering stay enabled; read-only fixture."
+		profile_notes="Real standing/walking/sprinting/jumping physics, authored pickaxe contact, production target/durability/stroke/mesh/collision/rewards. Test-only animation initiation bypasses OS mouse capture and input debounce; no click-to-photon claim. Actors, vegetation and normal rendering stay enabled; read-only fixture. Uncapped diagnostic: %s. Native thread cycles are raw work counts, not time; CPU time can be coarsely quantized."%profile_uncapped
 		game.player_hud.equip_item(1)
 		game.tool_view.attack_allowed=func():return not game.loading_active and not game.shutdown_requested and not game.session_menu.visible_ui()
 		game.tool_view.attack_contact.connect(contact)
@@ -146,11 +205,17 @@ func travel(label:String,seconds:float)->void:
 
 func finish(success:bool)->void:
 	move(false);key(KEY_SHIFT,false);key(KEY_SPACE,false)
+	for binding:Dictionary in surface_callbacks:
+		if game.terrain.surface_batch_ready.is_connected(binding.wrapped):game.terrain.surface_batch_ready.disconnect(binding.wrapped)
+		if binding.original.is_valid() and not game.terrain.surface_batch_ready.is_connected(binding.original):game.terrain.surface_batch_ready.connect(binding.original,binding.flags)
+	surface_callbacks.clear()
 	if rows.size()>=frame_limit:gameplay_failures.append("frame trace reached its capture limit")
 	if contacts.size()<24:gameplay_failures.append("fewer than 24 measured pickaxe strikes")
 	if jumps<3:gameplay_failures.append("fewer than three physical jumps")
+	if game.terrain.foreground_attack or game.terrain.foreground_brush or game.terrain.backend._input_active():gameplay_failures.append("terrain priority was not released after attacks")
 	for label:String in ["walking","sprinting","jumping"]:
 		if float(phase_distance.get(label,0.0))<40:gameplay_failures.append(label+": physical route covered less than 40 metres")
 	FileAccess.open(output.path_join("gameplay.json"),FileAccess.WRITE).store_string(JSON.stringify({"contacts":contacts,"publications":publications,"patch_work":patch_work,"jumps":jumps,"distance_by_phase":phase_distance,"failures":gameplay_failures,"scope":profile_notes},"  "))
+	FileAccess.open(output.path_join("presentation.json"),FileAccess.WRITE).store_string(JSON.stringify({"fps_cap":Engine.max_fps,"vsync":DisplayServer.window_get_vsync_mode(),"refresh_hz":DisplayServer.screen_get_refresh_rate(),"uncapped_requested":profile_uncapped},"  "))
 	print("GAMEPLAY_PROFILE contacts=",contacts.size()," jumps=",jumps," failures=",gameplay_failures)
 	await super.finish(success and gameplay_failures.is_empty())

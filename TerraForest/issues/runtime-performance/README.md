@@ -12,6 +12,76 @@ The user raised the provisional terrain-cache quota to 3 GiB on 2026-10-28;
 historical receipts are unchanged. Other resource thresholds stay the same.
 RAM thresholds remain provisional and physical 4 GiB hardware remains unqualified.
 
+## Movement stall isolation — 2026-11-01
+
+- Kept the user's Legion Quiet Mode, graphics, vegetation density, physics solver
+  and production 60 FPS/VSync settings unchanged. The user explicitly declined
+  removing the FPS cap after the diagnostic comparison. Saves remain read-only.
+- Confirmed synchronous zombie-ready logging costs up to **9.644 ms** per call.
+  Lifecycle chatter and terrain-hitch console output now require `--verbose`;
+  errors, warnings, stage signals and optional interaction traces remain available.
+  Measured zombie admission falls from **13.475 ms** in that control to
+  **4.071 ms** in the first installed check.
+- Terrain delivery previously drained every completed vegetation callback in one
+  frame. Background surface replies now share a **1 ms soft gameplay budget**,
+  retain FIFO/revision identities, and count toward query admission backpressure.
+  Mining, targeting and other non-surface replies go first. Initial loading uses
+  the existing terrain-build budget. A single callback is not preemptible.
+- Surface-reply frame cost falls from **5.950 ms** in the instrumented control to
+  **2.870 ms** in the first installed check. Backlog peaks at six; recovery has
+  **100/100 requested cover cells**, with no density/range reduction.
+- A repeat caught a **272.535 ms** mining contact, including **243.289 ms** of
+  worker queueing behind a background mesh with a **163.668 ms cache write**.
+  Gameplay previously cleared the worker input-priority flag. Windup/recovery
+  now defers optional writes without pausing vegetation streaming; completion
+  and cancellation release priority. Already-started OS I/O is not preempted.
+- The focused installed check completes **24 contacts at 22.671–29.497 ms**, with
+  worker queueing at most **0.113 ms**, 22 physical jumps and **6,218/6,218 focused
+  frames**. It still fails the strict frame-pacing gates; this is not a universal
+  mining-latency guarantee.
+- Hidden, collision-disabled terrain roots now enter the scene before bounded
+  piece preparation, rather than attaching a populated subtree all at once.
+  Source comparison: attachment peak **4.520 → 1.535 ms**, staging-frame peak
+  **6.298 → 3.868 ms**. Publication remains atomic. That run has 24 successful
+  contacts at **23.016–56.123 ms**, so the slower contact is retained too.
+- Added opt-in native main-thread work counters and callback timings. Raw CPU
+  cycles are not elapsed time; Windows CPU-time readings are quantized. Uncapped,
+  mailbox, cap-only and VSync-only runs are diagnostics, not production settings.
+- Regression checks: 24 delivery/priority/hidden-preparation assertions, 71 resource
+  checks, 33 population checks, 24 actual mining/building vegetation checks,
+  74 terrain-tool checks, six Python timing-gate tests, native debug/release builds
+  and the export/building-standard checks pass.
+- Final updated pack: **6,217 frames, 24 changed contacts at 22.352–34.203 ms,
+  22 jumps, 100/100 requested cover cells**; attachment peak 0.237 ms, sampled
+  private RAM 3.62 GiB / dedicated GPU 1.40 GiB. This final check is off-screen,
+  not another user visual review, and still fails the strict timing gates.
+
+Still **not universally stutter-free**. At the retained 60 FPS cap, focused
+walking/sprinting/jumping p99 is **22.741 / 27.526 / 25.385 ms**. The longest focused
+interval is 37.686 ms, including 21.948 ms in the drawing interval; GPU time is
+6.27 ms with no pipeline-compilation count change. This is not enough to identify
+the driver/OS/engine wait. Process-start cadence is steadier than draw-end cadence;
+do not claim that the software limiter itself is proven faulty.
+
+Removing only the software cap passes every timing gate in a separate **11,863-frame,
+fully focused** installed diagnostic. The user did not watch the comparison and
+prefers 60 FPS to avoid extra GPU power, so **that mode is not shipped as a fix**.
+Mailbox and disabling VSync with the cap retained do not solve the gates either.
+Historical 80–370 ms stalls remain unexplained by mere non-recurrence. Dense
+settlements, caves, driving/endurance and subjective movement remain unqualified.
+
+Retained non-passes: an initial harness naming error; a preparation fixture invoked
+before SceneTree startup (corrected and rerun); the legacy input suite cannot
+capture a mouse in headless mode; the legacy partition probe assumes an admitted
+single-mesh partition, but current brick containers reject it. Paired source and
+pre-incremental-attachment pack probes confirm that rejection in both builds.
+These old fixtures need adaptation before use as regression gates, not assertions
+silently removed from passing tests.
+
+Return with 60 FPS presentation/CPU-wait attribution, repeated focused runs and
+dense/cave workloads. Preserve failures; do not substitute average FPS or an
+uncapped result. [Comparisons, exact builds and retained failures](movement-stutter-evidence.json).
+
 ## Mining contact and ordinary movement — 2026-11-01
 
 - Reproduced first-hit presentation blocking ready terrain publication. In the

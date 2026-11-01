@@ -33,6 +33,12 @@ func wait_scan(probe:RefCounted)->Dictionary:
 func native_checks()->void:
 	if not check(ClassDB.class_exists("NativeResourceUsage"),"native usage probe is registered"):return
 	var probe:RefCounted=ClassDB.instantiate("NativeResourceUsage")
+	var work_before:PackedInt64Array=probe.thread_work()
+	var checksum:=0
+	for value in 10000:checksum+=value
+	var work_after:PackedInt64Array=probe.thread_work()
+	check(work_before.size()==2 and work_before[0]>=0 and work_before[1]>=0,"native thread work counters are supported")
+	check(checksum==49995000 and work_after[0]>work_before[0] and work_after[1]>=work_before[1],"thread cycles increase during work and CPU time is monotonic")
 	var start:=Time.get_ticks_usec();var sample:Dictionary=probe.sample(OS.get_user_data_dir());timings.initial_sample_us=Time.get_ticks_usec()-start
 	check(sample.get("private_bytes",0)>0 and sample.get("working_bytes",0)>0,"native memory includes process-private and resident allocations")
 	check(sample.get("disk_free_bytes",0)>0 and sample.get("disk_total_bytes",0)>=sample.disk_free_bytes,"native free space is a real volume measurement")
