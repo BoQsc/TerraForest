@@ -126,7 +126,8 @@ rollback next; then verify ordinary trader/reset/reward play.
 Selected container supplies and locks now have a bounded native restoration
 primitive: 64 identities/34,872 bytes, no whole-store replacement. Both variants
 pass 42 assertions, the existing five inventory/lock suites and 53 quest-state
-assertions. Outside supplies/views and player inventory stay unchanged; tool wear,
+assertions. Package `32ded986` additionally passes nine headless suites using the
+installed DLLs. Outside supplies/views and player inventory stay unchanged; tool wear,
 water and lock random state survive. Physical models/removal protection and the
 multi-owner transaction remain unfinished. Return to those owners and persistent
 baselines before enabling actual quest reset.
@@ -138,7 +139,7 @@ twelve streamed stocked chests in 877 bytes. Three saves complete in 1.61–1.84
 quest capture takes 11 microseconds. This remains ownership-state verification,
 not playable contracts. The mine follow-up exposed stale player-pose capture with
 newer held items and an oversized restoration capsule. Both are corrected in
-`016e3ffb`; current package `2bf75c9e` passes 59 physical re-entry and 46 genuine
+`016e3ffb`; follow-up package `2bf75c9e` passes 59 physical re-entry and 46 genuine
 underground save/reopen checks, retaining the exact saved feet and all nine
 survivors. No position nudges remain. Another 85 installed-package headless checks
 cover field/cube restoration and actual zombie collision shape. Retained earlier

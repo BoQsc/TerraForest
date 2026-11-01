@@ -1,6 +1,8 @@
 {
   "date": "2026-11-01",
-  "status": "Source and native variants verified; scoped supplies/locks only, not gameplay location reset",
+  "status": "Source, native variants and installed package verified; scoped supplies/locks only, not gameplay location reset",
+  "package": {"sha256": "32ded98664686b7146fa9af481ca1bf06177a86a54373f085ea08468f404fc46", "checks": 42, "report": "reports/expansion_container_pack/20261101T194037173957Z/run.json", "required_export_gates": "reports/building_standards/20261101T193751920586Z/run.json"},
+  "retained_failed_fixture": {"report": "reports/expansion_container_pack/20261101T193951103964Z/run.json", "cause": "Three legacy tests wrote reports under read-only res://reports in the package. Their gameplay assertions passed but diagnostics correctly failed the run. Repeated with report output redirected to the external evidence folder; all assertions unchanged."},
   "format": "TFCP1: sorted selected IDs, container slot/pick schema, exact inventory and lock state, SHA-256",
   "limits": {"selected_containers": 64, "bytes": 34872},
   "verification": {
