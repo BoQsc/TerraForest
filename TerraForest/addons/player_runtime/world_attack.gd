@@ -68,7 +68,9 @@ func target() -> Dictionary:
 			if vehicles.activation.residents[id]==collider:vehicle_id=id
 		var parked_id:int=vehicles.activation.parked_identity(collider,hit.rid)
 		if parked_id>0:vehicle_id=parked_id
-	if vehicle_id>0:return surface_target({"kind":"vehicle","key":"vehicle:%d"%vehicle_id,"id":vehicle_id,"health":Durability.WORLD.vehicle,"material":"other","name":"Vehicle"},hit)
+	if vehicle_id>0:
+		if vehicles.is_service(vehicle_id):return {} # Reserved NPC service vehicle.
+		return surface_target({"kind":"vehicle","key":"vehicle:%d"%vehicle_id,"id":vehicle_id,"health":Durability.WORLD.vehicle,"material":"other","name":"Vehicle"},hit)
 	if collider==null or (collider is CollisionObject3D and game.terrain.is_ancestor_of(collider) and collider.collision_layer&1):
 		var cell:=Vector3i((hit.position-hit.normal*0.05).floor())
 		return {"kind":"terrain","key":"terrain:%d:%d:%d"%[cell.x,cell.y,cell.z],"health":Durability.WORLD.terrain,"material":"stone","name":"Terrain","position":hit.position,"normal":hit.normal}

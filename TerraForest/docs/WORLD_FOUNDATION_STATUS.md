@@ -19,16 +19,21 @@ return triggers and required closing evidence: [coal-mine tracker](../issues/coa
 ## Paid trader road travel — 2026-11-01
 
 Requested: select another town/city, pay coins, both board a car, trader drives
-there on roads, player exits, trader drives home. An inert native
-road-graph/fare/control foundation passes 27 debug + 27 release checks and nine
-physical car/input assertions. Existing steering/motion parity passes; initial
-corner and braking-fixture failures are retained. No playable paid ride yet.
-Boarding, passenger ownership, atomic payment,
-service persistence and independent distant return residency remain. Streaming
-and archived model paging currently follow one focus, which does not establish an
-unattended whole-world return. The next coordinated export is limited to the
-inactive foundation; resume integration after that shared export, coordinating
-trader UI with quest work. Missing work, prerequisites and evidence:
+there on roads, player exits, trader drives home. Service source now includes
+booking, passenger ownership, atomic fare/refund, saved identity, walking/door
+permissions and bounded remote residency. Native road contracts pass 30 per
+variant, service archives 35 and fare/refund 15; existing quests pass 53 per
+variant. Focused remote terrain/model/block checks pass. In the actual copied
+seed-1703 world, counter-to-car/player walks, atomic paid boarding, fresh-process
+paid reopen, 1.5 km outward driving, stopped exit, 1.69 km independent return and
+walk back to the counter all pass. Player position and streaming focus stay in
+the destination. Exact cancellation refund passes 27 integrated checks. The long
+run is retained as an overall failure only for its offscreen pointer assertion;
+the mouse guard was fixed and subsequent zero-capture runs pass. A later UI
+assertion sampled too early; final UI/cancellation checks pass 30/30 and fresh
+unoccupied return/refund reopen passes 11/11. Fitted seated views are inspected;
+inherited garment fitting and opaque car glass remain separate. Native artifacts
+and packaging await coordinated integration; no installed-build claim. Evidence:
 [travel contract](TRADER_TRAVEL.md) and [tracker](../issues/trader-travel/README.md).
 
 ## World entry fly-in — 2026-11-01

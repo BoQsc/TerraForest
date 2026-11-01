@@ -22,6 +22,7 @@ class NativeBlockPager : public RefCounted {
     bool indexed_=false,initialized_=false,grid_valid_=false;
     BlockKey grid_;
     size_t cursor_=0;
+    size_t interest_cursor_=0;
     uint64_t world_epoch_=0,ticks_=0;
     int64_t epoch_=0,index_revision_=0;
     double load_radius_=384,unload_radius_=512;

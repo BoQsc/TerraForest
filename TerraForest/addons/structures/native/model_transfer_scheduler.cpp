@@ -103,6 +103,9 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
        load_radius<0||unload_radius<=load_radius||unload_radius>32768||max_scans<1||max_scans>1024||max_usec<1||max_usec>2000)return stats();
     const auto begin=std::chrono::steady_clock::now(),deadline=begin+std::chrono::microseconds(max_usec);
     selection_scans=selection_requests=0;++selection_tick;
+    auto interest_distance=[](const AABB &bounds,const std::vector<Vector3> &points){
+        double distance=1e100;for(const auto &point:points)distance=std::min(distance,focus_distance(bounds,point));return distance;
+    };
     // The job set is already bounded by the shared scheduler capacity. Cancel
     // only obsolete work; ordinary sub-region camera motion does not reset I/O.
     for(auto &entry:jobs) {
@@ -118,7 +121,8 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         else {auto rendered=collection->render_bounds.find(key);if(rendered==collection->render_bounds.end())continue;bounds=rendered->second;
             auto collision=collection->collision_bounds.find(key);if(collision!=collection->collision_bounds.end())bounds=bounds.merge(collision->second);}
         const double distance=focus_distance(bounds,focus);
-        if((!job.retiring&&distance>unload_radius*unload_radius)||(job.retiring&&distance<=unload_radius*unload_radius))cancel_job(job);
+        const bool retained=distance<=unload_radius*unload_radius||interest_distance(bounds,collection->navigation_interest)<=96*96;
+        if((!job.retiring&&!retained)||(job.retiring&&retained))cancel_job(job);
     }
     while(!collections.empty()&&selection_scans<max_scans&&std::chrono::steady_clock::now()<deadline) {
         auto next=collections.upper_bound(selection_asset);if(next==collections.end())next=collections.begin();
@@ -130,25 +134,28 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         collection->set_render_focus(focus);collection->set_collision_focus(focus);
         BlockKey key;AABB bounds;PackedByteArray expected;
         auto &index=collection->unloaded_bounds;
-        if(!binding.query_valid||binding.bounds_revision!=index.revision()||binding.query_radius!=load_radius||binding.query_focus.distance_squared_to(focus)>16) {
+        if(!binding.query_valid||binding.bounds_revision!=index.revision()||binding.query_radius!=load_radius||binding.query_focus.distance_squared_to(focus)>16||binding.query_interest!=collection->navigation_interest) {
             binding.query_valid=true;binding.bounds_revision=index.revision();binding.query_radius=load_radius;binding.query_focus=focus;
+            binding.query_interest=collection->navigation_interest;
             binding.frontier.clear();if(index.root())binding.frontier.push_back(index.root()->code);
             binding.select_resident=false;
         }
         if(!binding.select_resident) {
             bool candidate=false;
             const double padded=(load_radius+4)*(load_radius+4);
+            auto near_query=[&](const AABB &box){return focus_distance(box,binding.query_focus)<=padded||interest_distance(box,binding.query_interest)<=68*68;};
+            auto order_distance=[&](const AABB &box){return std::min(focus_distance(box,binding.query_focus),interest_distance(box,binding.query_interest));};
             // A small per-asset quantum follows nearby branches promptly without
             // allowing one overlapping collection to monopolize the shared visit budget.
             for(int visited=0;visited<16&&!binding.frontier.empty()&&selection_scans<max_scans&&std::chrono::steady_clock::now()<deadline;++visited) {
                 const auto code=binding.frontier.back();binding.frontier.pop_back();++selection_scans;
-                const auto *node=index.find(code);if(!node||focus_distance(node->bounds,binding.query_focus)>padded)continue;
+                const auto *node=index.find(code);if(!node||!near_query(node->bounds))continue;
                 const auto *first=node->left.get(),*second=node->right.get();
-                if(first&&second&&focus_distance(first->bounds,binding.query_focus)>focus_distance(second->bounds,binding.query_focus))std::swap(first,second);
+                if(first&&second&&order_distance(first->bounds)>order_distance(second->bounds))std::swap(first,second);
                 // LIFO: visit the nearer child first, including true extended bounds.
-                if(second&&focus_distance(second->bounds,binding.query_focus)<=padded)binding.frontier.push_back(second->code);
-                if(first&&focus_distance(first->bounds,binding.query_focus)<=padded)binding.frontier.push_back(first->code);
-                if(focus_distance(node->box,focus)>load_radius*load_radius)continue;
+                if(second&&near_query(second->bounds))binding.frontier.push_back(second->code);
+                if(first&&near_query(first->bounds))binding.frontier.push_back(first->code);
+                if(focus_distance(node->box,focus)>load_radius*load_radius&&interest_distance(node->box,collection->navigation_interest)>64*64)continue;
                 auto item=collection->unloaded_regions.find(node->key);if(item==collection->unloaded_regions.end())continue;
                 key=item->first;bounds=item->second.bounds;expected=item->second.checksum;candidate=true;break;
             }
@@ -167,7 +174,8 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
         if(binding.select_resident){binding.cursor=key;binding.cursor_valid=true;}
         const double distance=focus_distance(bounds,focus);
         const bool retiring=binding.select_resident;
-        if(expected.is_empty()||(!retiring&&distance>load_radius*load_radius)||(retiring&&distance<=unload_radius*unload_radius))continue;
+        const double secondary=interest_distance(bounds,collection->navigation_interest);
+        if(expected.is_empty()||(!retiring&&distance>load_radius*load_radius&&secondary>64*64)||(retiring&&(distance<=unload_radius*unload_radius||secondary<=96*96)))continue;
         auto retry=binding.retry_after.find(key);if(retry!=binding.retry_after.end()&&retry->second>selection_tick)continue;
         if(retiring) {
             // Background eviction must not occupy every slot while destination
@@ -182,7 +190,7 @@ Dictionary NativeModelTransferScheduler::select_focus(Vector3 world_focus,double
             if(drawn!=collection->batches.end()&&!(key<drawn->first.first)&&!(drawn->first.first<key))continue;
             if(history->region_has_history(collection,Vector3i(key.x,key.y,key.z)))continue;
         }
-        const int priority=retiring?0:128+int(std::max(0.0,127.0-std::sqrt(distance)/32.0));
+        const int priority=retiring?0:128+int(std::max(0.0,127.0-std::sqrt(std::min(distance,secondary))/32.0));
         if(request(next->first,Vector3i(key.x,key.y,key.z),expected,retiring,priority,epoch)>0)++selection_requests;
     }
     selection_usec=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-begin).count();

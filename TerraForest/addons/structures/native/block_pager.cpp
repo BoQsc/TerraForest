@@ -59,6 +59,9 @@ bool NativeBlockPager::evict_one(NativeBlockWorld *blocks,Vector3 focus) {
     bool found=false;BlockKey selected;double farthest=threshold;
     const auto revision=std::make_pair(blocks->revision,blocks->history_revision);
     for(auto key:regions) {
+        bool protected_interest=false;
+        for(const auto &point:blocks->navigation_interest)if(distance_squared(key,point)<=96*96){protected_interest=true;break;}
+        if(protected_interest)continue;
         auto skipped=blocked_.find(key);if(skipped!=blocked_.end()&&skipped->second==revision)continue;
         const double distance=distance_squared(key,focus);
         if(distance>farthest){farthest=distance;selected=key;found=true;}
@@ -105,7 +108,9 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
         if(int64_t(result["epoch"])!=epoch_||request==pending_.end()){++stale_;continue;}
         const Pending captured=request->second;pending_keys_.erase(captured.key);pending_.erase(request);
         auto missing=blocks->unloaded_regions.find(captured.key);
-        if(missing==blocks->unloaded_regions.end()||missing->second!=captured.checksum||distance_squared(captured.key,focus)>load_radius_*load_radius_){++stale_;continue;}
+        bool needed=distance_squared(captured.key,focus)<=load_radius_*load_radius_;
+        for(const auto &point:blocks->navigation_interest)needed=needed||distance_squared(captured.key,point)<=64*64;
+        if(missing==blocks->unloaded_regions.end()||missing->second!=captured.checksum||!needed){++stale_;continue;}
         if(!bool(result["ok"])){++failed_;retry_after_[captured.key]=ticks_+RETRY_TICKS;continue;}
         PackedByteArray packet=result["bytes"];
         const int64_t chunks=packet.size()>=36?packet.decode_u32(32):65;
@@ -126,12 +131,22 @@ bool NativeBlockPager::step(Vector3 world_focus,const PackedByteArray &restore_c
     pressure_distance_=1e100;
     int submitted=0;
     while(scanned_<SCAN_BUDGET&&submitted<2&&pending_.size()<REQUESTS) {
-        const auto offset=offsets_[cursor_++];if(cursor_==offsets_.size())cursor_=0;++scanned_;
-        BlockKey key{grid.x+offset.x,grid.y+offset.y,grid.z+offset.z};
-        if(!NativeBlockWorld::valid_region(key)||distance_squared(key,focus)>load_radius_*load_radius_||pending_keys_.count(key))continue;
+        BlockKey key;Vector3 selecting_focus=focus;double radius=load_radius_;
+        if(!blocks->navigation_interest.empty()&&(scanned_%2)==0){
+            // Share the existing 128-scan/four-request budgets. A bounded 5^3
+            // neighborhood per interest can page a distant service vehicle.
+            size_t slot=interest_cursor_++%(blocks->navigation_interest.size()*125);
+            selecting_focus=blocks->navigation_interest[slot/125];slot%=125;radius=64;
+            key={int(std::floor(selecting_focus.x/64))+int(slot%5)-2,int(std::floor(selecting_focus.y/64))+int((slot/5)%5)-2,int(std::floor(selecting_focus.z/64))+int(slot/25)-2};
+        }else{
+            const auto offset=offsets_[cursor_++];if(cursor_==offsets_.size())cursor_=0;
+            key={grid.x+offset.x,grid.y+offset.y,grid.z+offset.z};
+        }
+        ++scanned_;
+        if(!NativeBlockWorld::valid_region(key)||distance_squared(key,selecting_focus)>radius*radius||pending_keys_.count(key))continue;
         auto missing=blocks->unloaded_regions.find(key);if(missing==blocks->unloaded_regions.end())continue;
         auto delayed=retry_after_.find(key);if(delayed!=retry_after_.end()&&delayed->second>ticks_)continue;
-        if(int64_t(blocks->chunks.size())+int64_t(pending_.size()+1)*64>chunk_limit_){pressure_distance_=std::min(pressure_distance_,distance_squared(key,focus));++budget_deferred_;continue;}
+        if(int64_t(blocks->chunks.size())+int64_t(pending_.size()+1)*64>chunk_limit_){pressure_distance_=std::min(pressure_distance_,distance_squared(key,selecting_focus));++budget_deferred_;continue;}
         const int64_t ticket=archive_->request_region_read(Vector3i(key.x,key.y,key.z),missing->second,checkpoint_,epoch_);
         if(!ticket)break;
         pending_.emplace(ticket,Pending{key,missing->second});pending_keys_.insert(key);++requested_;++submitted;

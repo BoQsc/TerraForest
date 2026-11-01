@@ -13,6 +13,10 @@ namespace terraforest {
 namespace {
 double cross(Vector3 a,Vector3 b){return double(a.x)*b.z-double(a.z)*b.x;}
 Vector3 flat(Vector3 p){p.y=0;return p;}
+// Generated approach roads can end at the half-cell frontage of a street.
+// Join only overlapping vehicle-width road surfaces at the same elevation;
+// live footprint/support guards still validate the driven connection.
+bool junction(Vector3 a,Vector3 b){return flat(a-b).length()<=.75&&std::abs(a.y-b.y)<=.15;}
 double parameter(Vector3 p,Vector3 a,Vector3 b){auto d=flat(b-a);return std::clamp(double(flat(p-a).dot(d))/std::max(double(d.length_squared()),1e-9),0.0,1.0);}
 Dictionary fail(const char *reason){Dictionary d;d["ok"]=false;d["reason"]=reason;return d;}
 }
@@ -20,6 +24,7 @@ void NativeRoadJourney::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","roads"),&NativeRoadJourney::configure);
     ClassDB::bind_method(D_METHOD("route","start","destination","maximum_snap","heading"),&NativeRoadJourney::route,DEFVAL(Vector3()));
     ClassDB::bind_method(D_METHOD("follow","points"),&NativeRoadJourney::follow);
+    ClassDB::bind_method(D_METHOD("resume","points","waypoint"),&NativeRoadJourney::resume);
     ClassDB::bind_method(D_METHOD("advance","pose","velocity","delta","ready","clear"),&NativeRoadJourney::advance);
     ClassDB::bind_method(D_METHOD("get_state"),&NativeRoadJourney::get_state);
     ClassDB::bind_method(D_METHOD("get_path"),&NativeRoadJourney::get_path);
@@ -37,10 +42,10 @@ Dictionary NativeRoadJourney::configure(const Array &source){
         if(!r.a.is_finite()||!r.b.is_finite()||std::max(r.a.abs().length(),r.b.abs().length())>8192||!std::isfinite(r.width)||r.width<1||r.width>64||r.a.distance_to(r.b)<.05||r.a.distance_to(r.b)>4096)return fail("invalid_road");
         // Footpaths/trails are not taxi roads. Reject grades beyond the service
         // profile even if their metadata connects to a street.
-        if(r.width<6||std::abs(r.a.y-r.b.y)>flat(r.b-r.a).length()*.25)continue;
+        if(r.width<5||std::abs(r.a.y-r.b.y)>flat(r.b-r.a).length()*.25)continue;
         int id=int(roads.size());roads.push_back(r);
-        for(int z=int(std::floor((std::min(r.a.z,r.b.z)-.1)/32));z<=int(std::floor((std::max(r.a.z,r.b.z)+.1)/32));z++)
-            for(int x=int(std::floor((std::min(r.a.x,r.b.x)-.1)/32));x<=int(std::floor((std::max(r.a.x,r.b.x)+.1)/32));x++){
+        for(int z=int(std::floor((std::min(r.a.z,r.b.z)-.75)/32));z<=int(std::floor((std::max(r.a.z,r.b.z)+.75)/32));z++)
+            for(int x=int(std::floor((std::min(r.a.x,r.b.x)-.75)/32));x<=int(std::floor((std::max(r.a.x,r.b.x)+.75)/32));x++){
                 if(++references>131072){roads.clear();return fail("search_limit");}bins[{x,z}].push_back(id);
             }
     }
@@ -59,15 +64,15 @@ Dictionary NativeRoadJourney::configure(const Array &source){
         }
         // Also connect collinear segments and T-junction endpoints. Different
         // storeys/overpasses must never acquire an edge merely by crossing XZ.
-        for(auto point:{r.a,r.b}){double t=parameter(point,s.a,s.b);if(point.distance_to(s.a.lerp(s.b,t))<=.08)s.cuts.push_back(t);}
-        for(auto point:{s.a,s.b}){double t=parameter(point,r.a,r.b);if(point.distance_to(r.a.lerp(r.b,t))<=.08)r.cuts.push_back(t);}
+        for(auto point:{r.a,r.b}){double t=parameter(point,s.a,s.b);if(junction(point,s.a.lerp(s.b,t)))s.cuts.push_back(t);}
+        for(auto point:{s.a,s.b}){double t=parameter(point,r.a,r.b);if(junction(point,r.a.lerp(r.b,t)))r.cuts.push_back(t);}
     }
     std::map<std::tuple<int,int,int>,std::vector<int>> buckets;
     auto node=[&](Vector3 p){
-        int x=int(std::floor(p.x/.1)),y=int(std::floor(p.y/.2)),z=int(std::floor(p.z/.1));
+        int x=int(std::floor(p.x)),y=int(std::floor(p.y/.2)),z=int(std::floor(p.z));
         for(int dz=-1;dz<=1;dz++)for(int dy=-1;dy<=1;dy++)for(int dx=-1;dx<=1;dx++){
             auto found=buckets.find({x+dx,y+dy,z+dz});if(found==buckets.end())continue;
-            for(int id:found->second)if(flat(nodes[id]-p).length()<=.08&&std::abs(nodes[id].y-p.y)<=.15)return id;
+            for(int id:found->second)if(junction(nodes[id],p))return id;
         }
         int id=int(nodes.size());nodes.push_back(p);edges.emplace_back();buckets[{x,y,z}].push_back(id);return id;
     };
@@ -107,6 +112,10 @@ bool NativeRoadJourney::follow(const PackedVector3Array &points){
     if(points.size()<2||points.size()>32768)return false;
     for(int i=0;i<points.size();i++)if(!points[i].is_finite()||(i&&points[i].distance_to(points[i-1])<.01))return false;
     path=points;cursor=0;stalled=0;observed=false;state="following";return true;
+}
+bool NativeRoadJourney::resume(const PackedVector3Array &points,int waypoint){
+    if(waypoint<0||waypoint>=points.size()-1||!follow(points))return false;
+    cursor=waypoint;return true;
 }
 Dictionary NativeRoadJourney::advance(Transform3D pose,Vector3 velocity,double delta,bool ready,bool clear){
     Dictionary out;out["steer"]=0.0;out["throttle"]=0.0;out["brake"]=1.0;out["hold"]=true;

@@ -1587,7 +1587,7 @@ func _process(delta: float) -> void:
 		if crosshair!=null: crosshair.visible=not _vehicle_ui_active
 		if _vehicle_ui_active:
 			_walking_help=help.text
-			help.text="W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
+			help.text="Trader ride · E to leave when stopped or request a stop\nEsc Pause · F5 Save ride" if world_vehicle.passenger!=null else "W / S  Accelerate / Brake or reverse    A / D  Steer    Space  Handbrake    Shift  Boost\nE  Exit when stopped    R  Reset vehicle    Esc  Release mouse\nF5 Save · reload on foot beside the parked vehicle. Cosmetic dents are not saved."
 		else: help.text=_walking_help
 	section_begin=Time.get_ticks_usec()
 	super._process(delta)
@@ -1634,7 +1634,7 @@ func _process(delta: float) -> void:
 		if Time.get_ticks_msec() < _lake_notice_until:
 			activity = _lake_notice
 		if world_vehicle.driving:
-			activity=world_vehicle.adapter(world_vehicle.car).status_text(world_vehicle.car)
+			activity="Passenger · E to leave or request a stop" if world_vehicle.passenger!=null else world_vehicle.adapter(world_vehicle.car).status_text(world_vehicle.car)
 		telemetry.text = "%d FPS  ·  %s trees  ·  %d cells\n%s" % [Engine.get_frames_per_second(), str(vegetation.renderer.roots.size()), ecosystem.resident.size(), activity]
 		if actors.pool!=null and actor_authoring.selected_identity!=0:
 			var actor_handle: int=actors.store.resolve_identity(actor_authoring.selected_identity)
@@ -1702,7 +1702,7 @@ func _interact_on_foot()->void:
 	if not _model_edit_available() or session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:return
 	if world_interaction.interact(self):return
 	if world_vehicle.enter(self):
-		_clear_motion();_show_lake_notice("Driving · E exit · Space brake");return
+		_clear_motion();_show_lake_notice("Trader ride · E asks to stop" if world_vehicle.passenger!=null else "Driving · E exit · Space brake");return
 	var collected:Dictionary=pickups.collect_near(player.global_position+Vector3(0,.5,0),player_hud.inventory,_pickup_reachable)
 	if collected.ok:player_hud.refresh()
 	_show_lake_notice(collected.reason)

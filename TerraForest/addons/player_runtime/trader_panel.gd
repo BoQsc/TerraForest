@@ -14,12 +14,17 @@ var notice: Label
 var player_revision := -1
 var stock_revision := -1
 var opened := false
+var ride: Node
+var towns: OptionButton
+var reserve: Button
+var cancel: Button
+var travel_info: Label
 
 func _ready() -> void:
 	layer = 30
 	panel = PanelContainer.new()
-	panel.position = Vector2(460, 190)
-	panel.custom_minimum_size = Vector2(1000, 650)
+	panel.position = Vector2(460, 145)
+	panel.custom_minimum_size = Vector2(1000, 730)
 	add_child(panel)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("17252b")
@@ -36,7 +41,7 @@ func _ready() -> void:
 	var welcome := Label.new()
 	welcome.text = "Welcome. I buy resources and sell building supplies, food and reading material.\nStock and coins are finite. Prices below are per item."
 	column.add_child(welcome)
-	rows = ItemList.new(); rows.custom_minimum_size = Vector2(940, 320)
+	rows = ItemList.new(); rows.custom_minimum_size = Vector2(940, 250)
 	rows.add_theme_font_size_override("font_size", 21)
 	column.add_child(rows)
 	var buttons := HBoxContainer.new(); column.add_child(buttons)
@@ -47,6 +52,12 @@ func _ready() -> void:
 		button.custom_minimum_size.x = 180; button.pressed.connect(exchange.bind(buying)); buttons.add_child(button)
 	var close_button := Button.new(); close_button.text = "Close / Esc"
 	close_button.pressed.connect(close); buttons.add_child(close_button)
+	var travel := HBoxContainer.new(); column.add_child(travel)
+	towns = OptionButton.new(); towns.custom_minimum_size.x = 500; travel.add_child(towns)
+	towns.item_selected.connect(func(_index: int): _travel_quote())
+	reserve = Button.new(); reserve.text = "Reserve ride"; reserve.pressed.connect(_reserve); travel.add_child(reserve)
+	cancel = Button.new(); cancel.text = "Cancel reservation"; cancel.pressed.connect(_cancel); travel.add_child(cancel)
+	travel_info = Label.new(); travel_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; column.add_child(travel_info)
 	notice = Label.new(); notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; column.add_child(notice)
 	panel.hide()
 
@@ -67,6 +78,36 @@ func refresh() -> void:
 	rows.select(selected[0] if not selected.is_empty() else 0)
 	rows.ensure_current_is_visible()
 	notice.text = "Choose an item and quantity, then Buy or Sell."
+	_refresh_travel()
+
+func _refresh_travel() -> void:
+	towns.clear()
+	if is_instance_valid(ride):
+		for offer: Dictionary in ride.destinations():
+			towns.add_item("%s · %d coins" % [offer.title, offer.fare])
+			towns.set_item_metadata(towns.item_count - 1, offer)
+	if towns.item_count > 0: towns.select(0)
+	reserve.disabled = towns.item_count == 0
+	cancel.visible = is_instance_valid(ride) and ride.state.phase == ride.BOARDING
+	_travel_quote()
+
+func _travel_quote() -> void:
+	if towns.item_count == 0:
+		travel_info.text = "The trader is already attending a ride." if is_instance_valid(ride) and ride.active() else "No connected town road and return route are available here."
+		return
+	var offer: Dictionary = towns.get_item_metadata(towns.selected)
+	travel_info.text = "Road ride: %.1f km · %d coins, charged when you board.\nFollow the trader to the car. At your destination, get out and the trader drives home." % [offer.distance_m / 1000.0, offer.fare]
+
+func _reserve() -> void:
+	if not opened or not is_instance_valid(ride) or towns.selected < 0: return
+	var offer: Dictionary = towns.get_item_metadata(towns.selected)
+	var result: Dictionary = ride.book(offer.id, offer.revision)
+	if not result.ok: _refresh_travel(); notice.text = result.reason
+
+func _cancel() -> void:
+	if not opened or not is_instance_valid(ride): return
+	var message: String = ride.cancel_reservation()
+	_refresh_travel(); notice.text = message
 
 func exchange(buying: bool) -> void:
 	if not opened: return

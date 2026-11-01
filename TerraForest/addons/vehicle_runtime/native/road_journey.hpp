@@ -29,6 +29,7 @@ public:
     godot::Dictionary configure(const godot::Array &published_roads);
     godot::Dictionary route(godot::Vector3 start,godot::Vector3 destination,double maximum_snap,godot::Vector3 heading=godot::Vector3()) const;
     bool follow(const godot::PackedVector3Array &points);
+    bool resume(const godot::PackedVector3Array &points,int waypoint);
     godot::Dictionary advance(godot::Transform3D pose,godot::Vector3 velocity,double delta,bool ready,bool clear);
     godot::String get_state()const{return state;}
     godot::PackedVector3Array get_path()const{return path;}

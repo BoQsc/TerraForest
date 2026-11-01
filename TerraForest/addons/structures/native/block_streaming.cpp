@@ -9,7 +9,10 @@ bool NativeBlockWorld::configure_mesh_uploads(int count,int64_t bytes,int64_t mi
     upload_chunk_limit=count;upload_byte_limit=uint64_t(bytes);upload_time_limit_us=uint64_t(micros);return true;
 }
 double NativeBlockWorld::distance_to_focus(BlockKey k) const {
-    return Vector3(k.x*16+8,k.y*16+8,k.z*16+8).distance_squared_to(focus);
+    const Vector3 center(k.x*16+8,k.y*16+8,k.z*16+8);
+    double distance=center.distance_squared_to(focus);
+    for(const auto &point:navigation_interest){double other=center.distance_squared_to(point);if(other<=38*38)distance=std::min(distance,other);}
+    return distance;
 }
 void NativeBlockWorld::set_focus(Vector3 p) {
     if(!p.is_finite())return;
@@ -24,7 +27,7 @@ bool NativeBlockWorld::set_navigation_interest(const PackedVector3Array &points)
     const Transform3D frame=is_inside_tree()?get_global_transform():get_transform();
     if(!frame.is_finite()||std::abs(frame.basis.determinant())<1e-9)return false;
     std::vector<Vector3> next;for(int i=0;i<points.size();++i){if(!points[i].is_finite())return false;next.push_back(frame.affine_inverse().xform(points[i]));}
-    if(next!=navigation_interest){navigation_interest=std::move(next);collision_work_pending=true;}
+    if(next!=navigation_interest){navigation_interest=std::move(next);collision_work_pending=true;residency_dirty=true;set_process(true);}
     return true;
 }
 bool NativeBlockWorld::configure_streaming(bool enabled,double radius,int64_t chunk_limit,int64_t mesh_byte_limit,int64_t cache_byte_limit) {
@@ -87,7 +90,11 @@ void NativeBlockWorld::refresh_residency() {
     for(const auto &entry:chunks) {
         double d=distance_to_focus(entry.first);
         if(!streaming)next.insert(entry.first);
-        else if(d<=(render_radius+14)*(render_radius+14))candidates.emplace_back(d,entry.first);
+        else {
+            bool remote=false;const Vector3 center(entry.first.x*16+8,entry.first.y*16+8,entry.first.z*16+8);
+            for(const auto &point:navigation_interest)if(center.distance_squared_to(point)<=38*38){remote=true;break;}
+            if(d<=(render_radius+14)*(render_radius+14)||remote)candidates.emplace_back(d,entry.first);
+        }
     }
     if(streaming) {
         std::sort(candidates.begin(),candidates.end(),[](const auto &a,const auto &b){return a.first==b.first?a.second<b.second:a.first<b.first;});

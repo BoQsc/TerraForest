@@ -10,6 +10,7 @@
 #include "vehicle_horizon.hpp"
 #include "vehicle_prototype.hpp"
 #include "road_journey.hpp"
+#include "trader_ride_state.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -26,6 +27,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeVehicleHorizon);
         GDREGISTER_CLASS(terraforest::NativeVehiclePrototype);
         GDREGISTER_CLASS(terraforest::NativeRoadJourney);
+        GDREGISTER_CLASS(terraforest::NativeTraderRideState);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

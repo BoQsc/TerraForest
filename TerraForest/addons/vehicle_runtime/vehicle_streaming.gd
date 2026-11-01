@@ -6,6 +6,9 @@ var structures: Node
 var structures_required:=false
 var vegetation: Node
 var vegetation_required:=false
+# Unoccupied service cars use the host's bounded secondary residency, never the
+# player's terrain focus. Ordinary player/coasting vehicles retain their policy.
+var owns_focus:=true
 func bind_vegetation(provider: Node) -> bool:
 	if waiting or not is_instance_valid(provider) or not provider.has_method("is_collision_region_ready"): return false
 	vegetation=provider;vegetation_required=true
@@ -28,9 +31,10 @@ func update(car: RigidBody3D,policy: RefCounted,delta: float) -> bool:
 		_hold(car)
 		return false
 	var velocity: Vector3=_linear if waiting else car.linear_velocity
-	terrain.focus=car.global_position
-	terrain.require_collision=true
-	terrain.travel_velocity=velocity
+	if owns_focus:
+		terrain.focus=car.global_position
+		terrain.require_collision=true
+		terrain.travel_velocity=velocity
 	var bounds: AABB=policy.travel_bounds(car.global_position,velocity,delta)
 	var ready: bool=terrain.is_collision_region_ready(bounds)
 	if structures_required:

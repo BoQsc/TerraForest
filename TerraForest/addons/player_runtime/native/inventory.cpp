@@ -18,6 +18,7 @@ void NativePlayerInventory::_bind_methods() {
     ClassDB::bind_method(D_METHOD("can_receive","items","expected_revision"),&NativePlayerInventory::can_receive);
     ClassDB::bind_method(D_METHOD("exchange_items","costs","outputs","expected_revision"),&NativePlayerInventory::exchange_items);
     ClassDB::bind_method(D_METHOD("exchange_with","peer","costs","outputs","expected_revision","expected_peer_revision"),&NativePlayerInventory::exchange_with);
+    ClassDB::bind_method(D_METHOD("transfer_items_to","peer","items","expected_revision","expected_peer_revision"),&NativePlayerInventory::transfer_items_to);
     ClassDB::bind_method(D_METHOD("consume","slot","count","expected_revision"),&NativePlayerInventory::consume);
     ClassDB::bind_method(D_METHOD("consume_items","costs","expected_revision"),&NativePlayerInventory::consume_items);
     ClassDB::bind_method(D_METHOD("can_afford","costs","expected_revision"),&NativePlayerInventory::can_afford);
@@ -127,6 +128,25 @@ Dictionary NativePlayerInventory::exchange_with(const Ref<NativePlayerInventory>
     if(!bool(second["ok"])) {
         slots=original;peer->slots=other;revision=own_revision;peer->revision=other_revision;
         auto rejected=result(false,"peer_rejected");rejected["peer_reason"]=second["reason"];return rejected;
+    }
+    auto accepted=result(true,"");accepted["peer_revision"]=peer->revision;return accepted;
+}
+Dictionary NativePlayerInventory::transfer_items_to(const Ref<NativePlayerInventory> &peer,const PackedInt64Array &items,int64_t expected,int64_t expected_peer) {
+    if(peer.is_null()||peer.ptr()==this)return result(false,"invalid_peer");
+    if(expected!=revision||expected_peer!=peer->revision)return result(false,"stale_revision");
+    if(items.is_empty()||items.size()>64||items.size()%2)return result(false,"invalid_items");
+    // Aggregate commodity payment/refund across split stacks. The existing
+    // slot transfer retains ownership of equipment and water metadata.
+    for(int64_t i=0;i<items.size();i+=2)
+        if(max_durability(items[i])||peer->max_durability(items[i])||water_container(items[i]))return result(false,"non_commodity");
+    const auto original=slots,other=peer->slots;
+    const int64_t own_revision=revision,other_revision=peer->revision;
+    Dictionary consumed=apply_costs(items,expected,true);
+    if(!bool(consumed["ok"]))return consumed;
+    Dictionary granted=peer->apply_grants(items,expected_peer,true);
+    if(!bool(granted["ok"])) {
+        slots=original;peer->slots=other;revision=own_revision;peer->revision=other_revision;
+        auto rejected=result(false,"peer_rejected");rejected["peer_reason"]=granted["reason"];return rejected;
     }
     auto accepted=result(true,"");accepted["peer_revision"]=peer->revision;return accepted;
 }

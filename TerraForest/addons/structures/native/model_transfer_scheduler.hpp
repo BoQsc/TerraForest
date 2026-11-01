@@ -22,6 +22,7 @@ class NativeModelTransferScheduler : public RefCounted {
         std::vector<uint64_t> frontier;
         uint64_t bounds_revision=0;
         Vector3 query_focus;double query_radius=-1;bool query_valid=false;
+        std::vector<Vector3> query_interest;
     };
     enum Stage {QUEUED,READING,READY,TRANSFERRING,DONE};
     struct Job {

@@ -54,7 +54,7 @@ func activate(selected:int)->void:
 	var id:=identity;cancel()
 	if selected<0 or not valid_context():return
 	if selected==0:
-		if game.world_vehicle.enter(game,id):game._clear_motion();game._show_lake_notice("Driving · E exit · Space brake")
+		if game.world_vehicle.enter(game,id):game._clear_motion();game._show_lake_notice("Passenger ride · E to ask the trader to stop" if game.world_vehicle.passenger!=null else "Driving · E exit · Space brake")
 		else:game._show_lake_notice("Vehicle entry unavailable; move closer to the same vehicle")
 	else:game._show_lake_notice(game.world_vehicle.pickup(game,id))
 func paint(canvas:Control)->void:
@@ -66,7 +66,8 @@ func paint(canvas:Control)->void:
 	for index in 2:
 		canvas.draw_arc(center,178,PI+index*PI,TAU+index*PI,48,Color("8ce2bb") if choice==index else Color("45665a"),8,true)
 	var font:Font=ThemeDB.fallback_font
-	for row:Array in [["1 · Enter vehicle",-88],["2 · Pick up vehicle",100],["Release E to choose",230],["Esc / right mouse: cancel",256]]:
+	var trader_car:bool=game.world_vehicle.is_service(identity)
+	for row:Array in [["1 · Board trader ride" if trader_car else "1 · Enter vehicle",-88],["2 · Cancel reservation" if trader_car else "2 · Pick up vehicle",100],["Release E to choose",230],["Esc / right mouse: cancel",256]]:
 		var size:=20 if abs(int(row[1]))<200 else 16
 		var text:String=row[0];var width:float=font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,size).x
 		canvas.draw_string(font,center+Vector2(-width*.5,row[1]),text,HORIZONTAL_ALIGNMENT_LEFT,-1,size,Color("daf4e7"))

@@ -127,7 +127,7 @@ func place_requested(world:Node,pose:Transform3D,kind: String= "terraforest.rang
 	if residents.size()>=CAPACITY:
 		var retired:=0;var farthest:=-1.0
 		for id:int in residents:
-			if owner.driving and id==owner.car_identity:continue
+			if (owner.driving and id==owner.car_identity) or id==owner.pinned_service():continue
 			var distance:float=residents[id].global_position.distance_squared_to(world.player.global_position)
 			if distance>farthest:retired=id;farthest=distance
 		if retired>0:
@@ -150,7 +150,7 @@ func select_for_entry(point: Vector3,expected:int=0) -> void:
 			if residents.size()>=CAPACITY:
 				var farthest:=0;var distance:=-1.0
 				for id: int in residents:
-					if owner.coasting.has(id):continue
+					if owner.coasting.has(id) or id==owner.pinned_service():continue
 					var candidate: float=residents[id].global_position.distance_squared_to(point)
 					if candidate>distance:distance=candidate;farthest=id
 				if farthest==0:return
@@ -186,6 +186,7 @@ func update(world: Node,delta: float) -> void:
 		if wanted.size()>=CAPACITY:break
 	var pinned:Array=owner.coasting.keys()
 	if owner.driving:pinned.append(owner.car_identity)
+	if owner.pinned_service()>0:pinned.append(owner.pinned_service())
 	for id:int in pinned:
 		if wanted.has(id):continue
 		if wanted.size()>=CAPACITY:

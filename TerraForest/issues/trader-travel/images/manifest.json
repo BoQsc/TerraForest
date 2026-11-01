@@ -1,0 +1,34 @@
+[
+  {
+    "image": "fitted-seats.png",
+    "source": "reports/trader_ride_world/20261101T182542058854Z/seated-interior.png",
+    "sha256": "9dba950e4e9583f2aa0c5d65b2c81918fb66496fa6b721210e6249ed3d540acf",
+    "caption": "Final fitted driver/passenger views in the actual source world. Heads and arms fit inside the cabin; simple seat/wheel fittings reuse the car frame. Prior blocked-boarding notice is still visible in this immediate diagnostic capture. Existing garment fitting is not universally resolved.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot source-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "destination-menu.png",
+    "source": "reports/trader_ride_world/20261101T175017950478Z/destination-menu.png",
+    "sha256": "a22bcb868eb3e70a2870de5c608e714849fd7f323aef7c5f3456cab9f9ecbf6e",
+    "caption": "Seed 1703, owned copy: Town 2, 1.5 km road distance, 42 coins; inspected source menu.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot source-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "destination-arrival.png",
+    "source": "reports/trader_ride_world/20261101T175223024902Z/destination-arrival.png",
+    "sha256": "a2c94bab70464a39df25616d44a7e34fd7c7927e5378f33f55759e9e535680c1",
+    "caption": "Seed 1703: actual stopped arrival at the quoted Town 2 road stop after paid fresh-process reopen. Top telemetry was subsequently relabelled Passenger.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot source-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "rejected-high-seat.png",
+    "source": "reports/trader_ride_world/20261101T180138538968Z/seated-interior.png",
+    "sha256": "88269e2b4f5da9183b8e774b907f54170fd6f9bc0fb9dae1037996bd7f9a0079",
+    "caption": "Rejected earlier pose: heads intersected roof. Later fitting lowered and scaled seat views; retained for comparison.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot source-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  }
+]

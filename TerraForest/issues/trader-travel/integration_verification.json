@@ -1,0 +1,1635 @@
+{
+  "date": "2026-11-01",
+  "scope": "Source generated-world paid ride, outward reload, safe exit, full remote return, cancellation/refund. Packaging and user approval separate.",
+  "road_metres": {
+    "outward": 1506.95073437691,
+    "return": 1690.58484250307
+  },
+  "retained_failures": [
+    "Full journey passes 16 functional/lifecycle assertions; overall report failed its final offscreen pointer assertion. Explicit offscreen capture denial added afterward; cancellation passes with zero captures.",
+    "Repeat booking passes all ride/refund/pointer assertions; UI assertion ran before host process publication. Harness now waits for publication.",
+    "Initial seat pose intersected roof; fitted pose and arm targets replace it. Existing garment/body fitting is not universally resolved."
+  ],
+  "reports": {
+    "final_ui_cancellation": {
+      "path": "reports/trader_ride_world/20261101T182542058854Z",
+      "log_sha256": "a717f4ad4b7fd2d3ee6e2f10cf18de4e59f178370a53a76c82816739eaf23e9b",
+      "passed_assertions": 30,
+      "failed_assertions": [],
+      "run_sha256": "a30e1ce168086099212f10c4973f105c1e8ec83f1aa102711a9a55a83b713138",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 19684,
+        "exit_code": 0,
+        "resources": {
+          "samples": 124,
+          "gpu_samples": 123,
+          "peak_private_commit_bytes": 3651436544,
+          "peak_working_set_bytes": 2260246528,
+          "peak_dedicated_gpu_bytes": 1481592832,
+          "checks": {
+            "ram": {
+              "bytes": 3651436544,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1481592832,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 75.85649500001455,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "source_sha256": {
+        "addons/characters/runtime/human_view.gd": "95ec752361cb6f9c8d3c7327021dea378bcdadd307f6cd877ccb39a14a500e4a",
+        "addons/player_runtime/trader_inventory.gd": "a10b1f5f6d5eefeae8cd8ea3b0fbf3f5ce3f63413df217e8e14ae89306527024",
+        "addons/player_runtime/trader_panel.gd": "31402806d06bd0aa772b55b7f89c5b994c4ed7c34744b104cdb26696247232c4",
+        "addons/player_runtime/trader_ride.gd": "b72606d82d43b9d88280fda0c73adea205138aa67a25ca40d2587f838e70e401",
+        "addons/player_runtime/trader_seat.gd": "9c01c6449eb56ea46f45a87b371b1ac6db16acafd430ed74fa40c4e6ec16e1ca",
+        "addons/player_runtime/trader_world.gd": "35c4abe6b412a6b88a8311f6bc67ac6fc511b2a2e9c7206604018f2da0970de7",
+        "addons/vehicle_runtime/fleet_activation.gd": "75076c8146c36f13a5b6115411dbfa0a703acc803fbb9855dd60681a49257492",
+        "addons/vehicle_runtime/parked_prototype_cache.gd": "de4989835fae8f8d76f73db02be2203b1cc5955897b9f30e031f49d936d63bf1",
+        "addons/vehicle_runtime/ranger_adapter.gd": "bcf2de5242ea4191c9f8c8a7fa49061c67473a633055eac3df3b1f193ffe1305",
+        "addons/vehicle_runtime/vehicle_adapter.gd": "f980470a79e278993c7f6f728763ff4406306dc00cecbdf405c2d65a5a2422b0",
+        "addons/vehicle_runtime/vehicle_item.gd": "0c02b1c8b119878c07912bc978f9a882d36c37a0b63832eebfa794b3a301ff8f",
+        "addons/vehicle_runtime/vehicle_packs.gd": "746277715d66678e9a441753befd5502960a45fb7088d9eeb2dfa01ac688072c",
+        "addons/vehicle_runtime/vehicle_placement.gd": "ec3f346840bd37db9863d32156a6568c42963e7afac0d960aee613ff35767cb2",
+        "addons/vehicle_runtime/vehicle_radial.gd": "5733c3eb5f225dc531dc995164fa4a1208c4dc5e8d1c0f590395c807bdd9d0b1",
+        "addons/vehicle_runtime/vehicle_streaming.gd": "42f0fcb68b45e6045019c3a9c6341fb4c37bde930ac348947d3c2d2305862731",
+        "addons/vehicle_runtime/world_vehicle.gd": "ee37c221743f824c220d0eaabbdca087ddbce31c7a1ed132c8998628b7d6fbfa",
+        "addons/volumetric_terrain/terrain_stream.gd": "c5d67545d7f73355f79b39277ca0baa8f901147f257c1671cb3f4b7a9e146218",
+        "addons/world_runtime/mouse_ownership.gd": "d6cb96e644fa234d8926af500a3afa063bcc8d0bcdb9ce44eb9c4180ef367169",
+        "addons/world_runtime/navigation_residency.gd": "2b2184abfe9205444c6ce9db18b858313771204ec94c6d571cbcd79833d05af7",
+        "demo/world.gd": "c4b0a18d6381abe92ead8339ceaabe283d554fc7d57b6b1b4e27c2cc6d6d9830",
+        "vehicle_demo/scripts/car.gd": "2526ca08418c42d1eaabd9faa40c9a61fc5900a3224a6a7f243cd7cdd8f72c63",
+        "vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55",
+        "tests/trader_clothes.gd": "531c6428447f81190521f2b319f12f1f333de5f6e7b9bfc0dd58316d5cd23abe",
+        "tests/trader_interaction.gd": "949ee6a59cfefb968e3633c09482ba8644a544d42c349173699247bb8d35b997",
+        "tests/trader_inventory.gd": "e4a56e1d1e1a26e88e5595646785005a72cdd1806b18a32f045865f12d8d7b37",
+        "tests/trader_ride_payment.gd": "7dade283ed03d91078374923f051e8b054fa4f602bcb6ac1f9d5a0a8ca71a89d",
+        "tests/trader_ride_physics.gd": "7ee424ab191aea9fb66d4e8c6d5adb9b2a16a4477a90a14c5cd5920b06348996",
+        "tests/trader_ride_state.gd": "5d5e8a62ef1cb18a823c960884672a6fea90d9ad1f5963a550f5e7d9ade550b3",
+        "tests/trader_ride_world.gd": "76071261171e37aeece2b35bca5a409ee0134d5f6116d72a24ed865f6a6aa490",
+        "tests/trader_road_journey.gd": "b9ab609dde654e107bc55c28524485ab5b2dc48a3d02908671a0be6bc108ed50",
+        "tests/trader_road_plan.gd": "3988f39297009cd0e0bb0320eedb4d6dfe3cce36c7b62132ba96ccff653ddd7e",
+        "tests/trader_seat_visual.gd": "a36b03d7e68de7965117660788cfe6ba9ff14a7af4c69aecdaad83928e2f6708"
+      },
+      "frames": {
+        "fps_cap": 60,
+        "measurement": "wall-clock process-frame intervals",
+        "p95_ms": 19.112,
+        "samples": 1599,
+        "scope": "Offscreen source run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 51.839
+      }
+    },
+    "final_unoccupied_return_reload": {
+      "path": "reports/trader_ride_world/20261101T182722483062Z",
+      "log_sha256": "b56235a979df8b6a51881d9def6fa615b4715bdd9fd50c866d9d74e0b7066581",
+      "passed_assertions": 11,
+      "failed_assertions": [],
+      "run_sha256": "fd3173412b11825e90ac9af9f10e69165709cba71d8bf863be0d00dcd8dde9dd",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 14416,
+        "exit_code": 0,
+        "resources": {
+          "samples": 51,
+          "gpu_samples": 50,
+          "peak_private_commit_bytes": 3594801152,
+          "peak_working_set_bytes": 2060840960,
+          "peak_dedicated_gpu_bytes": 1472745472,
+          "checks": {
+            "ram": {
+              "bytes": 3594801152,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1472745472,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 31.172498199972324,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "source_sha256": {
+        "addons/characters/runtime/human_view.gd": "95ec752361cb6f9c8d3c7327021dea378bcdadd307f6cd877ccb39a14a500e4a",
+        "addons/player_runtime/trader_inventory.gd": "a10b1f5f6d5eefeae8cd8ea3b0fbf3f5ce3f63413df217e8e14ae89306527024",
+        "addons/player_runtime/trader_panel.gd": "31402806d06bd0aa772b55b7f89c5b994c4ed7c34744b104cdb26696247232c4",
+        "addons/player_runtime/trader_ride.gd": "b72606d82d43b9d88280fda0c73adea205138aa67a25ca40d2587f838e70e401",
+        "addons/player_runtime/trader_seat.gd": "9c01c6449eb56ea46f45a87b371b1ac6db16acafd430ed74fa40c4e6ec16e1ca",
+        "addons/player_runtime/trader_world.gd": "35c4abe6b412a6b88a8311f6bc67ac6fc511b2a2e9c7206604018f2da0970de7",
+        "addons/vehicle_runtime/fleet_activation.gd": "75076c8146c36f13a5b6115411dbfa0a703acc803fbb9855dd60681a49257492",
+        "addons/vehicle_runtime/parked_prototype_cache.gd": "de4989835fae8f8d76f73db02be2203b1cc5955897b9f30e031f49d936d63bf1",
+        "addons/vehicle_runtime/ranger_adapter.gd": "bcf2de5242ea4191c9f8c8a7fa49061c67473a633055eac3df3b1f193ffe1305",
+        "addons/vehicle_runtime/vehicle_adapter.gd": "f980470a79e278993c7f6f728763ff4406306dc00cecbdf405c2d65a5a2422b0",
+        "addons/vehicle_runtime/vehicle_item.gd": "0c02b1c8b119878c07912bc978f9a882d36c37a0b63832eebfa794b3a301ff8f",
+        "addons/vehicle_runtime/vehicle_packs.gd": "746277715d66678e9a441753befd5502960a45fb7088d9eeb2dfa01ac688072c",
+        "addons/vehicle_runtime/vehicle_placement.gd": "ec3f346840bd37db9863d32156a6568c42963e7afac0d960aee613ff35767cb2",
+        "addons/vehicle_runtime/vehicle_radial.gd": "5733c3eb5f225dc531dc995164fa4a1208c4dc5e8d1c0f590395c807bdd9d0b1",
+        "addons/vehicle_runtime/vehicle_streaming.gd": "42f0fcb68b45e6045019c3a9c6341fb4c37bde930ac348947d3c2d2305862731",
+        "addons/vehicle_runtime/world_vehicle.gd": "ee37c221743f824c220d0eaabbdca087ddbce31c7a1ed132c8998628b7d6fbfa",
+        "addons/volumetric_terrain/terrain_stream.gd": "c5d67545d7f73355f79b39277ca0baa8f901147f257c1671cb3f4b7a9e146218",
+        "addons/world_runtime/mouse_ownership.gd": "d6cb96e644fa234d8926af500a3afa063bcc8d0bcdb9ce44eb9c4180ef367169",
+        "addons/world_runtime/navigation_residency.gd": "2b2184abfe9205444c6ce9db18b858313771204ec94c6d571cbcd79833d05af7",
+        "demo/world.gd": "c4b0a18d6381abe92ead8339ceaabe283d554fc7d57b6b1b4e27c2cc6d6d9830",
+        "vehicle_demo/scripts/car.gd": "2526ca08418c42d1eaabd9faa40c9a61fc5900a3224a6a7f243cd7cdd8f72c63",
+        "vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55",
+        "tests/trader_clothes.gd": "531c6428447f81190521f2b319f12f1f333de5f6e7b9bfc0dd58316d5cd23abe",
+        "tests/trader_interaction.gd": "949ee6a59cfefb968e3633c09482ba8644a544d42c349173699247bb8d35b997",
+        "tests/trader_inventory.gd": "e4a56e1d1e1a26e88e5595646785005a72cdd1806b18a32f045865f12d8d7b37",
+        "tests/trader_ride_payment.gd": "7dade283ed03d91078374923f051e8b054fa4f602bcb6ac1f9d5a0a8ca71a89d",
+        "tests/trader_ride_physics.gd": "7ee424ab191aea9fb66d4e8c6d5adb9b2a16a4477a90a14c5cd5920b06348996",
+        "tests/trader_ride_state.gd": "5d5e8a62ef1cb18a823c960884672a6fea90d9ad1f5963a550f5e7d9ade550b3",
+        "tests/trader_ride_world.gd": "76071261171e37aeece2b35bca5a409ee0134d5f6116d72a24ed865f6a6aa490",
+        "tests/trader_road_journey.gd": "b9ab609dde654e107bc55c28524485ab5b2dc48a3d02908671a0be6bc108ed50",
+        "tests/trader_road_plan.gd": "3988f39297009cd0e0bb0320eedb4d6dfe3cce36c7b62132ba96ccff653ddd7e",
+        "tests/trader_seat_visual.gd": "a36b03d7e68de7965117660788cfe6ba9ff14a7af4c69aecdaad83928e2f6708"
+      },
+      "frames": {
+        "fps_cap": 60,
+        "measurement": "wall-clock process-frame intervals",
+        "p95_ms": 16.972,
+        "samples": 278,
+        "scope": "Offscreen source run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 37.927
+      }
+    },
+    "paid_departure": {
+      "path": "reports/trader_ride_world/20261101T175017950478Z",
+      "log_sha256": "5a35beaf449ded1874e06c715e03626241f40b78dddeeab32f3bec7c77ddbe26",
+      "passed_assertions": 22,
+      "failed_assertions": [],
+      "run_sha256": "302526aad671b24e1042783a0bc49995ac1efcbebaa029b432b18ad65eeaf1f0",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 10388,
+        "exit_code": 0,
+        "resources": {
+          "samples": 156,
+          "gpu_samples": 155,
+          "peak_private_commit_bytes": 3749425152,
+          "peak_working_set_bytes": 2224586752,
+          "peak_dedicated_gpu_bytes": 1495425024,
+          "checks": {
+            "ram": {
+              "bytes": 3749425152,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1495425024,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 96.10555060004117,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "frames": {
+        "p95_ms": 19.734,
+        "samples": 1550,
+        "scope": "30fps-capped offscreen source run; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 144.06,
+        "measurement_note": "This historical run sampled Godot get_process_delta_time, not independent wall-clock intervals. Later runner records wall-clock intervals explicitly.",
+        "correction": "Launch requested 30 FPS, but world active policy was 60 FPS, confirmed by subsequent instrumented run. Original report retained."
+      }
+    },
+    "paid_reload_full_outward_return": {
+      "path": "reports/trader_ride_world/20261101T175223024902Z",
+      "log_sha256": "bdd3a5edab00deecb5f4fc5a5ca40097b014c35b71da7df7ad5ead395625a622",
+      "passed_assertions": 16,
+      "failed_assertions": [
+        "test never captures the user's pointer"
+      ],
+      "run_sha256": "3a422ca5bb11fcfe4b21d836501522d5cee83adb39185ffa2960192f21f15256",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 35340,
+        "exit_code": 1,
+        "resources": {
+          "samples": 801,
+          "gpu_samples": 801,
+          "peak_private_commit_bytes": 4123844608,
+          "peak_working_set_bytes": 2573819904,
+          "peak_dedicated_gpu_bytes": 1498374144,
+          "checks": {
+            "ram": {
+              "bytes": 4123844608,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1498374144,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [
+          "FAIL test never captures the user's pointer"
+        ],
+        "required_text_found": true,
+        "elapsed_seconds": 488.8719996000291,
+        "passed": false,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "frames": {
+        "p95_ms": 19.089,
+        "samples": 26375,
+        "scope": "30fps-capped offscreen source run; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 133.312666666667,
+        "measurement_note": "This historical run sampled Godot get_process_delta_time, not independent wall-clock intervals. Later runner records wall-clock intervals explicitly.",
+        "correction": "Launch requested 30 FPS, but world active policy was 60 FPS, confirmed by subsequent instrumented run. Original report retained."
+      }
+    },
+    "cancellation_refund": {
+      "path": "reports/trader_ride_world/20261101T180138538968Z",
+      "log_sha256": "b505e682745930ea5bd7204e2eba0a770c96e00f70dd72f8d7ab5664e2067a35",
+      "passed_assertions": 27,
+      "failed_assertions": [],
+      "run_sha256": "728a6fd41bd799ce0ffd7d75f83aed5ce9187c2c8a4174f61cd1d8d2af1fbe23",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 38476,
+        "exit_code": 0,
+        "resources": {
+          "samples": 122,
+          "gpu_samples": 121,
+          "peak_private_commit_bytes": 3749920768,
+          "peak_working_set_bytes": 2204266496,
+          "peak_dedicated_gpu_bytes": 1495425024,
+          "checks": {
+            "ram": {
+              "bytes": 3749920768,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1495425024,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 74.21908109996002,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "frames": {
+        "fps_cap": 60,
+        "p95_ms": 23.005,
+        "samples": 1617,
+        "scope": "Offscreen source run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 133.309333333333,
+        "measurement_note": "This historical run sampled Godot get_process_delta_time, not independent wall-clock intervals. Later runner records wall-clock intervals explicitly."
+      }
+    },
+    "repeat_booking_ui_timing_failure": {
+      "path": "reports/trader_ride_world/20261101T180310509234Z",
+      "log_sha256": "1a26ae07af5372b81ceafb064c0254d3d9aebc7ef21d33016c75394a874fae81",
+      "passed_assertions": 28,
+      "failed_assertions": [
+        "passenger help keeps the ordinary walking instructions for exit"
+      ],
+      "run_sha256": "cee8e00456cb697bc4f84e86215c756146a41c6f3333a869edbd6238c686e69e",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 37112,
+        "exit_code": 1,
+        "resources": {
+          "samples": 109,
+          "gpu_samples": 109,
+          "peak_private_commit_bytes": 3750772736,
+          "peak_working_set_bytes": 2216353792,
+          "peak_dedicated_gpu_bytes": 1489530880,
+          "checks": {
+            "ram": {
+              "bytes": 3750772736,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1489530880,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [
+          "FAIL passenger help keeps the ordinary walking instructions for exit"
+        ],
+        "required_text_found": true,
+        "elapsed_seconds": 66.62458120001247,
+        "passed": false,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      },
+      "frames": {
+        "fps_cap": 60,
+        "p95_ms": 22.227,
+        "samples": 1243,
+        "scope": "Offscreen source run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 131.979,
+        "measurement_note": "This historical run sampled Godot get_process_delta_time, not independent wall-clock intervals. Later runner records wall-clock intervals explicitly."
+      }
+    },
+    "payment_debug_combined": {
+      "path": "reports/trader_ride_payment/20261101T180606395678Z",
+      "log_sha256": "0dc4586eef09b3915c232327ec49ae7ec8a53fa2d4c8578bdb83ca8b137295d1",
+      "passed_assertions": 15,
+      "failed_assertions": [],
+      "run_sha256": "6b6a57621a58c69958b92934af96493cd2a1f37e5e008ec224f3a2e5a5c38db0",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 27804,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 34148352,
+          "peak_working_set_bytes": 70905856,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 34148352,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.2913012999924831,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+      "variant": "template_debug"
+    },
+    "payment_release_combined": {
+      "path": "reports/trader_ride_payment/20261101T180606395233Z",
+      "log_sha256": "0dc4586eef09b3915c232327ec49ae7ec8a53fa2d4c8578bdb83ca8b137295d1",
+      "passed_assertions": 15,
+      "failed_assertions": [],
+      "run_sha256": "b09cb274de031dc8d0cbd1e331146e45e217d0aaad3dbaafaf55b05229333597",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 17036,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 33923072,
+          "peak_working_set_bytes": 70623232,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 33923072,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.29278139997040853,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+      "variant": "template_release"
+    },
+    "road_debug": {
+      "path": "reports/trader_road_journey/20261101T173404109364Z",
+      "log_sha256": "4718d7b8c58f5aa0a737635da2b537c78393c1a90d73d508913f4be512ee45b6",
+      "passed_assertions": 0,
+      "failed_assertions": [],
+      "run_sha256": "d44271f1641f65e576c5d4d2a130364d2218dcb317a92c99206164033f97a0c4",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 34580,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 33951744,
+          "peak_working_set_bytes": 95272960,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 33951744,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.26797630003420636,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+      "variant": "template_debug"
+    },
+    "road_release": {
+      "path": "reports/trader_road_journey/20261101T173350660286Z",
+      "log_sha256": "4718d7b8c58f5aa0a737635da2b537c78393c1a90d73d508913f4be512ee45b6",
+      "passed_assertions": 0,
+      "failed_assertions": [],
+      "run_sha256": "90e57eb27b69e8ca65963be3ec96c654a94b8d3ef88a95458f2aa6b1a0f61dc1",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 17596,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 39784448,
+          "peak_working_set_bytes": 100769792,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 39784448,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.3041570999776013,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+      "variant": "template_release"
+    },
+    "service_debug": {
+      "path": "reports/trader_ride_state/20261101T171350571139Z",
+      "log_sha256": "f4efe79c5dbe70140afa1f8a17e324db045c1283e2914a257bb39b996a151d96",
+      "passed_assertions": 35,
+      "failed_assertions": [],
+      "run_sha256": "ef7c7f93908bf7b81b83b8a8ea65560c3149a82bc71f76448648c63a162fb2ab",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 11840,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 33873920,
+          "peak_working_set_bytes": 70909952,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 33873920,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5286553999758326,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "e51466e22e07aa391e03e4a8b9a170332e2b4e39c684abc58b356f7ad9358709",
+      "variant": "template_debug"
+    },
+    "service_release": {
+      "path": "reports/trader_ride_state/20261101T171350581764Z",
+      "log_sha256": "f4efe79c5dbe70140afa1f8a17e324db045c1283e2914a257bb39b996a151d96",
+      "passed_assertions": 35,
+      "failed_assertions": [],
+      "run_sha256": "e302f0e862e1e4f09edac82c06a418a73b10479e9f349b50037d376cda5256b4",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 33808,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 34041856,
+          "peak_working_set_bytes": 70774784,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 34041856,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.5218484000070021,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "3700991f7781df75f0a8ad79eeaf2e49f1a32ccba69ae69f3fce4981ca3c1633",
+      "variant": "template_release"
+    },
+    "production_road_debug": {
+      "path": "reports/trader_road_plan/20261101T173041370342Z",
+      "log_sha256": "a04261c18a7ddd680cb54261a45b7cfdf3f5ec31aa5388cc07a5703e034f2505",
+      "passed_assertions": 2,
+      "failed_assertions": [],
+      "run_sha256": "575eacba6ad0d85f7c84ec85e1b5e75a9252df4b7d6f19be5faba844b2ec1e01",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 10360,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 31834112,
+          "peak_working_set_bytes": 67465216,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 31834112,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.2808857999625616,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+      "variant": "template_debug"
+    },
+    "production_road_release": {
+      "path": "reports/trader_road_plan/20261101T173404729009Z",
+      "log_sha256": "a04261c18a7ddd680cb54261a45b7cfdf3f5ec31aa5388cc07a5703e034f2505",
+      "passed_assertions": 2,
+      "failed_assertions": [],
+      "run_sha256": "6d2e6c7b05723e5b4633f773ecc14560e785afc29816f24016bac81292725d7e",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 24564,
+        "exit_code": 0,
+        "resources": {
+          "samples": 1,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 33902592,
+          "peak_working_set_bytes": 95383552,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 33902592,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.3987656000535935,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "library_sha256": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+      "variant": "template_release"
+    },
+    "navigation_residency": {
+      "path": "reports/checks/20261101T171851674650Z",
+      "log_sha256": "624273158663e3a6d5de844f0f116e92c3925ca1ca0d3f3c8e0baffe15f9f340",
+      "passed_assertions": 14,
+      "failed_assertions": [],
+      "run_sha256": "93bfbdc503199baaafa78820d0692307447561273668afdd145bd16049f89316",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 31100,
+        "exit_code": 0,
+        "resources": {
+          "samples": 2,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 105824256,
+          "peak_working_set_bytes": 135405568,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 105824256,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 0.9217594999936409,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073632096,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "db2a6ccbf0ad85b0ab1edda2306ffa78a78947c847a83e95b1d2a9f66ee47452",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "22437922b37c8a328f496a27da2d4f6643557bd3d199a6a2965dc52354937cfb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e51466e22e07aa391e03e4a8b9a170332e2b4e39c684abc58b356f7ad9358709",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "3700991f7781df75f0a8ad79eeaf2e49f1a32ccba69ae69f3fce4981ca3c1633",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "8e7782fd2cd03a1a8a4e661b2d84ee04638d90c0e42d25d38490c08ebf82a835",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3dd931becc0bd444125b161650baf2056beac3a639b754cd8fc92c0f5def1a09",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    },
+    "block_pager": {
+      "path": "reports/checks/20261101T172018100308Z",
+      "log_sha256": "78be0c3da2afa92a2cb91547d96ad9fb7f5dd2b91222b50ace4643ceadeb4c24",
+      "passed_assertions": 31,
+      "failed_assertions": [],
+      "run_sha256": "d2222e5cea4a85cf26795314edd67488170776d0cd85d96e87187b0ad1effee3",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 25312,
+        "exit_code": 0,
+        "resources": {
+          "samples": 5,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 89079808,
+          "peak_working_set_bytes": 122363904,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 89079808,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 3.097509999992326,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073632096,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "db2a6ccbf0ad85b0ab1edda2306ffa78a78947c847a83e95b1d2a9f66ee47452",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "22437922b37c8a328f496a27da2d4f6643557bd3d199a6a2965dc52354937cfb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e51466e22e07aa391e03e4a8b9a170332e2b4e39c684abc58b356f7ad9358709",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "3700991f7781df75f0a8ad79eeaf2e49f1a32ccba69ae69f3fce4981ca3c1633",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "8e7782fd2cd03a1a8a4e661b2d84ee04638d90c0e42d25d38490c08ebf82a835",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3dd931becc0bd444125b161650baf2056beac3a639b754cd8fc92c0f5def1a09",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    },
+    "model_paging": {
+      "path": "reports/checks/20261101T171851674069Z",
+      "log_sha256": "08a10860bd0b67649eeda64afbe238b7b45ba4fec2e2ff8c911ec24b458bec00",
+      "passed_assertions": 26,
+      "failed_assertions": [],
+      "run_sha256": "6425978ed1b9ee5cbc87de6bbd49401156e19739a7a80e1ab47f3400599050ec",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 14884,
+        "exit_code": 0,
+        "resources": {
+          "samples": 3,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 106307584,
+          "peak_working_set_bytes": 172343296,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 106307584,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 1.577762899978552,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073632096,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "db2a6ccbf0ad85b0ab1edda2306ffa78a78947c847a83e95b1d2a9f66ee47452",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "22437922b37c8a328f496a27da2d4f6643557bd3d199a6a2965dc52354937cfb",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e51466e22e07aa391e03e4a8b9a170332e2b4e39c684abc58b356f7ad9358709",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "3700991f7781df75f0a8ad79eeaf2e49f1a32ccba69ae69f3fce4981ca3c1633",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "8e7782fd2cd03a1a8a4e661b2d84ee04638d90c0e42d25d38490c08ebf82a835",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3dd931becc0bd444125b161650baf2056beac3a639b754cd8fc92c0f5def1a09",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    },
+    "ordinary_vehicle": {
+      "path": "reports/checks/20261101T174801539860Z",
+      "log_sha256": "25548170bf57f72385aa3231a6f0dbf0972c6335734315d68072f4c6c44900de",
+      "passed_assertions": 25,
+      "failed_assertions": [],
+      "run_sha256": "837b7458666a3ec023a3464cc6aa8880167f667a7d4799c809e761a44f88359f",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 17848,
+        "exit_code": 0,
+        "resources": {
+          "samples": 16,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 540241920,
+          "peak_working_set_bytes": 569323520,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 540241920,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 10.589482999988832,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073546652,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3dcd983854825a86cac4b62ac1ed3b938078013f17b765029e02693dd2f99858",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "e1c961beb899dbfc3518bd9e37ceead812ccb555ae5cdf0357c371073e1fe3d8",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    },
+    "vehicle_streaming": {
+      "path": "reports/checks/20261101T174845952732Z",
+      "log_sha256": "e1e6d5827d649e009ba4926eca302f4f9981b2607592e6438378cbd13f7f8bca",
+      "passed_assertions": 21,
+      "failed_assertions": [],
+      "run_sha256": "99c84506d558902c6df20b9e45907ae78dd49ace137eb8802b196587d886ea4e",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 12624,
+        "exit_code": 0,
+        "resources": {
+          "samples": 3,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 140980224,
+          "peak_working_set_bytes": 157310976,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 140980224,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 2.1840723999775946,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073546652,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3dcd983854825a86cac4b62ac1ed3b938078013f17b765029e02693dd2f99858",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "e1c961beb899dbfc3518bd9e37ceead812ccb555ae5cdf0357c371073e1fe3d8",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    },
+    "trader_interaction": {
+      "path": "reports/checks/20261101T174845988439Z",
+      "log_sha256": "3d2149036276319440d073b1e7c314bae7ea469bc19708b8801919805c9ebdd0",
+      "passed_assertions": 10,
+      "failed_assertions": [],
+      "run_sha256": "26f2abc6b9348c5c0f0900d7b2cc2cdfaf6d320f6d9a5abff2f37c582b43736e",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 38100,
+        "exit_code": 0,
+        "resources": {
+          "samples": 12,
+          "gpu_samples": 0,
+          "peak_private_commit_bytes": 411230208,
+          "peak_working_set_bytes": 421371904,
+          "peak_dedicated_gpu_bytes": null,
+          "checks": {
+            "ram": {
+              "bytes": 411230208,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": null,
+              "status": "unavailable"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": false,
+          "within_sampled_limits": false,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 7.661620700033382,
+        "passed": true,
+        "cache_retention": {
+          "managed": true,
+          "removed_owned_cache": null,
+          "retained_bytes": 0,
+          "failed_cache_bytes": 1073546652,
+          "failed_cache_budget_bytes": 1073741824,
+          "evicted_derived_bytes": 0,
+          "over_budget": false,
+          "scope": "Successful unique temporary caches removed; oldest registered failed TRC packets trimmed; failed logs, images, unknown files and worlds retained"
+        }
+      },
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3dcd983854825a86cac4b62ac1ed3b938078013f17b765029e02693dd2f99858",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "e1c961beb899dbfc3518bd9e37ceead812ccb555ae5cdf0357c371073e1fe3d8",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "63cc730c41d665e3678d31fb137999eff0424daf490aa34b3a4a9726b875e14a",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "52b1ebe2398e74352d831837d01899124089d47293b8b73a5625f5b1af657f60",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+      }
+    }
+  },
+  "full_trip_samples": {
+    "count": 93,
+    "maximum_sampled_lane_error_m": 2.5728759765625,
+    "sampled_control_holds": 2,
+    "note": "Two sampled return holds report road footprint at the tight approach-road corner; both recovered under normal controls, with no pose correction. Five-second samples do not exclude shorter holds. Home walk initially waited for collision publication, then completed."
+  }
+}

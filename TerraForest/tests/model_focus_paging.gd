@@ -67,6 +67,17 @@ func run() -> void:
     live._model_scheduler.select_focus(Vector3.ZERO,160,64)
     check(live._model_scheduler.stats().jobs==before.jobs and live._model_paging_assets.size()==2,"invalid focus/radii enqueue no work and unsaved empty asset waits for first save")
     check(await drive(Vector3.ZERO,Vector3i.ZERO,Vector3i(64,0,0)),"near focus automatically admits both assets without explicit region requests")
+    for id in assets:live.model(id).set_navigation_interest(PackedVector3Array([Vector3(2048,1,1)]))
+    var remote_ready:=false
+    var remote_deadline:=Time.get_ticks_msec()+8000
+    while Time.get_ticks_msec()<remote_deadline and not remote_ready:
+        var remote_state:Dictionary=live.step_model_paging(Vector3.ZERO,64,160)
+        remote_ready=remote_state.jobs==0
+        for id in assets:remote_ready=remote_ready and live.model(id).is_region_loaded(Vector3i.ZERO) and live.model(id).is_region_loaded(Vector3i(64,0,0))
+        await process_frame
+    check(remote_ready,"remote service pages both saved model collections while retaining the player's regions")
+    for id in assets:live.model(id).set_navigation_interest(PackedVector3Array())
+    check(await drive(Vector3.ZERO,Vector3i.ZERO,Vector3i(64,0,0)),"releasing service interests permits distant models to retire")
     check(await drive(Vector3(2048,0,0),Vector3i(64,0,0),Vector3i.ZERO),"travel automatically admits destination and retires old regions in both assets")
     check(await drive(Vector3.ZERO,Vector3i.ZERO,Vector3i(64,0,0)),"return travel restores both original nearby regions")
     check(live.model(assets[0]).capture_region(Vector3i.ZERO)==source.model(assets[0]).capture_region(Vector3i.ZERO),"automatic travel preserves exact model transforms")

@@ -3,6 +3,10 @@
 extends Node
 var car: RigidBody3D
 var driving:=false
+var service:Node
+var passenger:Node
+func is_service(id:int)->bool:return service!=null and id>0 and service.identity()==id
+func pinned_service()->int:return service.identity() if service!=null and service.active() else 0
 var _obstacle_sync_time:=0.0
 var _camera_local: Transform3D
 var _player_layer:=0
@@ -82,6 +86,7 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 		_world.player.collision_layer=_player_layer;_world.player.collision_mask=_player_mask
 		_world.camera.transform=_camera_local;Engine.physics_ticks_per_second=_physics_ticks
 		driving=false
+	passenger=null
 	if fleet_enabled:
 		activation.reset();car=null;car_identity=0;return true
 	# Preserve every parked record while the scene still has one live slot.
@@ -208,6 +213,7 @@ func reachable(world:Node,id:int)->bool:
 	if hit.is_empty():return true
 	return fleet_enabled and activation.parked_identity(hit.collider,hit.rid)==id
 func remove_vehicle(id:int)->bool:
+	if is_service(id):return false
 	if not fleet.remove(id):return false
 	coasting.erase(id)
 	if fleet_enabled:
@@ -217,6 +223,7 @@ func remove_vehicle(id:int)->bool:
 		car.collision_layer=0;car.collision_mask=0;car.freeze=true;car.queue_free();car=null;car_identity=0
 	return true
 func pickup(world:Node,id:int)->String:
+	if is_service(id):return service.cancel_reservation() if reachable(world,id) else "The trader's car is out of reach."
 	if driving or not can_interact() or not reachable(world,id):return "Vehicle is no longer reachable"
 	if fleet.get_record(id).kind != Packs.DEFAULT: return "This vehicle pack has no inventory item; it remains saved in the world"
 	var body:RigidBody3D=activation.residents.get(id) if fleet_enabled else car
@@ -232,6 +239,13 @@ func pickup(world:Node,id:int)->String:
 	world.terrain.changed_since_save=true;world.player_hud.refresh()
 	return "Vehicle picked up · equip it and right mouse to place"
 func enter(world: Node,expected:int=0) -> bool:
+	if expected==0:expected=candidate(world)
+	if is_service(expected):return service.board()
+	return _enter(world,expected)
+func enter_passenger(world:Node,id:int,owner_service:Node)->bool:
+	if owner_service!=service or not is_service(id) or not _enter(world,id):return false
+	passenger=owner_service;adapter(car).controls(car,false);return true
+func _enter(world: Node,expected:int=0) -> bool:
 	if not can_interact(): return false
 	if expected>0 and not reachable(world,expected):return false
 	if fleet_enabled and not driving:activation.select_for_entry(world.player.global_position,expected)
@@ -245,25 +259,38 @@ func enter(world: Node,expected:int=0) -> bool:
 	world.player.collision_layer=0;world.player.collision_mask=0
 	world.player.velocity=Vector3.ZERO
 	coasting.erase(car_identity);_coast_quiet.erase(car_identity)
+	if "streaming" in car and car.streaming!=null:car.streaming.owns_focus=true
 	car.freeze=false;adapter(car).controls(car,true);car.set_physics_process(true)
 	driving=true
 	return true
 func safe_exit_position(world: Node) -> Vector3:
-	if not is_instance_valid(car): return Vector3.INF
+	return safe_exit_for(world,car,world.player.get_rid())
+func safe_exit_for(world:Node,body:RigidBody3D,occupant:RID)->Vector3:
+	if not is_instance_valid(body): return Vector3.INF
 	for offset:Vector3 in [Vector3(2.8,0,0),Vector3(-2.8,0,0),Vector3(0,0,-3.8),Vector3(3.8,0,0),Vector3(-3.8,0,0)]:
-		var desired: Vector3=car.position+car.global_basis*offset
-		var ray:=PhysicsRayQueryParameters3D.create(desired+Vector3.UP*2,desired-Vector3.UP*3,3,[car.get_rid()])
+		var desired: Vector3=body.position+body.global_basis*offset
+		var ray:=PhysicsRayQueryParameters3D.create(desired+Vector3.UP*2,desired-Vector3.UP*3,3,[body.get_rid(),occupant])
 		var hit: Dictionary=world.get_world_3d().direct_space_state.intersect_ray(ray)
 		if hit.is_empty() or hit.normal.dot(Vector3.UP)<0.7: continue
 		var feet: Vector3=hit.position+Vector3.UP*0.06
 		if not ready_bounds(world,AABB(feet-Vector3(.4,.1,.4),Vector3(.8,2,.8))): continue
 		var capsule:=CapsuleShape3D.new();capsule.height=1.8;capsule.radius=.34
 		var query:=PhysicsShapeQueryParameters3D.new();query.shape=capsule;query.transform=Transform3D(Basis.IDENTITY,feet+Vector3.UP*.9);query.collision_mask=15
-		query.exclude=[world.player.get_rid()]
+		query.exclude=[occupant]
 		if not world.get_world_3d().direct_space_state.intersect_shape(query,1).is_empty(): continue
 		return feet
 	return Vector3.INF
 func exit_vehicle(world: Node) -> String:
+	if passenger!=null:return passenger.request_exit()
+	return _exit_vehicle(world)
+func exit_passenger(world:Node,owner_service:Node)->String:
+	if passenger!=owner_service:return "No passenger ride is active."
+	passenger=null
+	var message:=_exit_vehicle(world)
+	if driving:passenger=owner_service
+	else:coasting.erase(car_identity);_coast_quiet.erase(car_identity)
+	return message
+func _exit_vehicle(world: Node) -> String:
 	if not can_interact(): return "Vehicle interaction unavailable"
 	if not driving: return ""
 	var feet:=safe_exit_position(world)
@@ -336,5 +363,5 @@ func update(world: Node,delta: float) -> void:
 	world.player.position=car.position # Existing vegetation/building focus follows the occupant.
 	world.player.velocity=Vector3.ZERO
 	adapter(car).update_focus(car,world)
-	adapter(car).controls(car,can_interact() and world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
+	adapter(car).controls(car,passenger==null and can_interact() and world.app_focused and not world.player_hud.inventory_open and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED)
 	adapter(car).camera_update(car,world.camera,delta)

@@ -18,8 +18,11 @@ func run()->void:
 	check(not route.route(Vector3(0,10,0),Vector3(250,10,100),20).ok,"distant place cannot snap across countryside")
 	check(route.configure([road(Vector3(0,10,0),Vector3(100,10,0)),road(Vector3(50,15,-50),Vector3(50,15,50))]).ok,"overpass data accepted")
 	check(route.route(Vector3(0,10,0),Vector3(50,15,50),1).reason=="disconnected","crossing at another elevation is not a road junction")
-	check(route.configure([road(Vector3(0,10,0),Vector3(100,10,0)),road(Vector3(100,10,0),Vector3(200,10,0),5)]).ok,"road graph excludes footpaths")
+	check(route.configure([road(Vector3(0,10,0),Vector3(100,10,0)),road(Vector3(100,10,0),Vector3(200,10,0),4)]).ok,"road graph excludes footpaths")
 	check(not route.route(Vector3(0,10,0),Vector3(200,10,0),1).ok,"footpath cannot carry a paid ride")
+	check(route.configure([road(Vector3(0,10,0),Vector3(100,10,0)),road(Vector3(99.5,10,0),Vector3(99.5,10,100),5)]).ok,"five-metre town approach is a vehicle road")
+	check(route.route(Vector3(0,10,0),Vector3(99.5,10,100),1).ok,"half-cell frontage joins overlapping street surfaces")
+	check(route.configure([road(Vector3(0,10,0),Vector3(100,10,0)),road(Vector3(99.5,11,0),Vector3(99.5,11,100),5)]).ok and not route.route(Vector3(0,10,0),Vector3(99.5,11,100),1).ok,"frontage tolerance never joins different levels")
 	check(not route.configure([road(Vector3(NAN,0,0),Vector3.ZERO)]).ok,"invalid coordinates refused")
 	check(not route.route(Vector3.ZERO,Vector3(100,0,0),1).ok,"failed configuration invalidates old graph")
 	var loop:Array=[road(Vector3.ZERO,Vector3(0,0,40)),road(Vector3(0,0,40),Vector3(40,0,40)),road(Vector3(40,0,40),Vector3(40,0,0)),road(Vector3(40,0,0),Vector3.ZERO)]
