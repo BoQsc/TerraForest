@@ -5,6 +5,21 @@ contact contract. It responds to the rejected E1 expansion: clean procedural
 patterns changed the established atmosphere, and generic UV projection turned
 roof courses sideways. A passing build did not establish suitable artwork.
 
+## Retain earlier materials alongside additions
+
+User direction, 2026-11-01: keep every earlier building texture as an available
+option, even when unused. New art adds choices; it must not overwrite or remove
+older textures. In particular, retain the existing brick and wood alternatives,
+as well as concrete and metal, in both `textures/original/` and
+`textures/terraforest/`, with their existing identities and provenance.
+
+The construction palette's `Original material` appearance uses the selected
+pre-expansion set; both sets remain supported by `--block-textures` and the native
+texture-set selector. E2 appearances coexist with these options. This retention
+instruction does not request applying older materials to any new or existing
+building, prefab or saved world. Keep their current material assignments.
+Rejected E1 trials remain in their existing authoring archive.
+
 ## Authoring and pattern rules
 
 - Match the existing grim, weathered TerraForest art direction: restrained earthy

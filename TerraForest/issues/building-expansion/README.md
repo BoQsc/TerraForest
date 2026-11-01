@@ -9,6 +9,17 @@
 
 Implementation commit: `1be69743a253545cbf83cfc6c02f4cad5bec500d` (native, assets, tools and regression coverage).
 
+## Older texture retention — 2026-11-01
+
+The user requires all older textures to remain available as optional alternatives,
+even when unused, and specifically values the earlier wood and brick in some uses.
+All eight PNGs across `textures/original/` and `textures/terraforest/` are
+byte-identical to pre-expansion baseline `63337456`. The palette's `Original
+material` appearance and existing set selector retain access alongside E2.
+No prefab, building or save was repainted for this request. The existing GPU
+texture/switching check passes in `reports/checks/20261101T023833189351Z`.
+This continuing requirement is recorded in the [material standard](../../docs/BUILDING_MATERIAL_STANDARD.md#retain-earlier-materials-alongside-additions).
+
 ## Changes and current evidence
 
 E2 uses eight individually generated imagegen materials, with retained masters,

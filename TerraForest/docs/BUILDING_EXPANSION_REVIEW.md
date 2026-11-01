@@ -47,6 +47,13 @@ inventory costs, damage or salvage. Approved R1 remains the comparison baseline.
 
 ## Material decision
 
+Retention direction, 2026-11-01: preserve all earlier textures as optional
+alternatives, including the older brick and wood materials, even if unused.
+Both pre-expansion sets (`original` and `terraforest`) remain intact and usable
+through `Original material`; E2 adds appearances alongside them. No building
+material assignment is changed by this instruction. See the
+[retention contract](BUILDING_MATERIAL_STANDARD.md#retain-earlier-materials-alongside-additions).
+
 All eight textures were individually authored with imagegen, with separate masters,
 exact prompts and generation/edit lineage. The first eight-board timber trial was
 rejected and retained; the selected edit uses four broader boards. Godot only

@@ -3,6 +3,12 @@ This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Building expansion E2 — 2026-11-01
 
+User retention direction: keep every older building texture available alongside
+E2, even if unused; do not reapply old materials to any building for this request.
+Both earlier four-material sets are byte-identical to baseline `63337456` and
+remain selectable. Existing GPU texture/switching checks pass in
+`reports/checks/20261101T023833189351Z`; the material standard records this policy.
+
 The [stable expansion issue](../issues/building-expansion/README.md) retains the
 rejected E1 materials/images and failed checks. The user rejected the bright,
 clean procedural direction and requested individual imagegen materials matching
