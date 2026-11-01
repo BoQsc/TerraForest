@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [World entry fly-in](world-entry-fly-in/README.md) | Main source integrated / installed check pending | Default-on three-second entry: 24 populated + 25 ordinary browser checks; clean source 53 FPS flight / 59 FPS settled, 143 ms handoff stall needs profiling; installed and motion review pending |
+| [World entry fly-in](world-entry-fly-in/README.md) | Main source integrated / installed check pending | Default-on three-second entry: 24 populated + 25 ordinary browser checks; clean source 53 FPS flight / 59 FPS settled, 143 ms handoff stall; user-requested optimization follow-up retained, installed and motion review pending |
 | [Wearable clothing and trader outfit](woven-clothes/README.md) | Woven R1 installed / trader + trail source verified | Trader role outfit survives respawn; second CC0 pack supports paid crafting, swaps and fresh-process restore; both shown outfits approved and required in next combined build; all six remain craftable |
 | [Authored door Open/Close](door-animation/README.md) | Installed / scoped checks | Authored GLB handle/latch and leaf motion; normal E, streamed visual ownership and mid-swing save/reopen pass in source/release/PCK; actual main executable checked, visual review pending |
 | [Startup and browser latency](browser-responsiveness/README.md) | Improved-partial / installed, scoped checks | Background catalog/photo reads and bounded thumbnails; source first frame 1.75 → 1.24 s, filtering 45 → 2 ms with 299 saves; packaged browser/credits pass, export timing and player review pending |
