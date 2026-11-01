@@ -137,7 +137,21 @@ pass 42 checks plus the five existing lock/inventory suites and 53 quest asserti
 Restoring 64 targets among 2,048 containers takes 0.48–0.61 ms headlessly, not a
 whole-reset or gameplay-frame guarantee. [Evidence](../issues/gameplay-expansion/container-patch-evidence.json).
 
-These primitives are not a complete location reset: models/door state,
+`NativeStaticBatch.capture_placement_patch` / `restore_placement_patch` adds
+bounded model restoration. TFMP1 stores exact IDs/transforms and asset/prototype
+identity within a local integer box, at most 128 m per axis, 4,096 models and
+229,652 bytes. It examines at most 4,096 group bounds and 16,384 candidate records;
+over-budget, straddling, unloaded, protected or externally moved identities reject.
+Selected replacements are staged together; outside models, live bodies and runtime
+protection survive. Changed collision/exclusion and persistent visual pages update
+through existing native owners. No whole-world copy or per-frame work is added.
+Both variants pass 50 checks plus three fresh-process reopen checks. Existing
+history, pages and horizon suites pass, including restoration without stale visual
+records. Maximum capture/restore measures 2.61–3.68 / 3.53–6.02 ms headlessly;
+renderer allocation failures and foreground frame pacing are not qualified.
+[Model reset evidence](../issues/gameplay-expansion/model-patch-evidence.json).
+
+These primitives are not a complete location reset: active door state,
 residents, vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered

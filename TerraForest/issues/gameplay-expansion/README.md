@@ -25,6 +25,11 @@ qualification or new visual approval is claimed.
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
 
+- Static-model restoration now passes both native variants and fresh-process
+  checks, including actual collision, outside edits, history barriers, full
+  capacity and persistent visual publication. No gameplay reset is enabled.
+  [Model evidence and remaining integration](model-patch-evidence.json).
+
 - Native location identities and TFQ1 state are implemented; trader offers,
   question-mark/E start and actual location reset are not yet wired to gameplay.
 - Debug/release initially pass 51 native assertions:

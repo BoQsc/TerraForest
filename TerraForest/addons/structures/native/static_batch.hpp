@@ -45,6 +45,9 @@ class NativeStaticBatch : public Node3D {
     friend class NativeStaticHistory;
     friend class NativeBlockRegionStore;
     using Placement = std::array<float,12>;
+    PackedByteArray placement_patch_prototype() const;
+    bool select_placement_patch(const AABB &,std::map<int64_t,Placement> &,String &) const;
+    bool decode_placement_patch(const PackedByteArray &,AABB &,std::map<int64_t,Placement> &) const;
     std::map<int64_t,Placement> placements;
     // Runtime ownership interlock (e.g. nonempty container contents). Rebuilt
     // by the owner on load; streaming retirement is not object destruction.
@@ -178,6 +181,10 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    Dictionary placement_patch_state() const;
+    PackedByteArray capture_placement_patch(Vector3i origin,Vector3i size,int64_t expected_revision,int64_t expected_owner) const;
+    bool validate_placement_patch(const PackedByteArray &bytes) const;
+    Dictionary restore_placement_patch(const PackedByteArray &bytes,int64_t expected_revision,int64_t expected_owner);
     bool set_instance_visual_hidden(int64_t id,bool hidden);
     bool is_instance_visual_hidden(int64_t id) const {return visual_hidden.count(id)!=0;}
     String survey_cache_identity() const{return survey_saved_identity;}

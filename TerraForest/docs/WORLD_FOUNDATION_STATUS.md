@@ -133,6 +133,14 @@ multi-owner transaction remain unfinished. Return to those owners and persistent
 baselines before enabling actual quest reset.
 [Container patch evidence](../issues/gameplay-expansion/container-patch-evidence.json).
 
+Static model patches now pass 50 native checks and three fresh-process restoration
+checks per variant, plus collision/history/render-page/horizon regressions. They
+preserve outside edits and reject unavailable, boundary-crossing or protected
+models; 4,096 selected records and 16,384 candidate records cap the work. This is
+not active door/corpse state or a coordinated gameplay reset. Next: those remaining
+owners, resident/vegetation/water baselines, transactional safety and ordinary
+trader/marker/E playtests. [Evidence](../issues/gameplay-expansion/model-patch-evidence.json).
+
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and
 twelve streamed stocked chests in 877 bytes. Three saves complete in 1.61–1.84 s;
