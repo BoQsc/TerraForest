@@ -10,6 +10,7 @@
 #include "survival.hpp"
 #include "trader_stock.hpp"
 #include "quests.hpp"
+#include "combat_state.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -26,6 +27,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativePlayerSurvival);
         GDREGISTER_CLASS(terraforest::NativeTraderStock);
         GDREGISTER_CLASS(terraforest::NativeQuestLog);
+        GDREGISTER_CLASS(terraforest::NativeCombatState);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

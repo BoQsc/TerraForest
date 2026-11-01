@@ -69,3 +69,5 @@ This initial index is not the entire backlog. Other work remains in
   approval. Preserve rejected trials and remaining limits instead of hiding them.
 
 `.gdignore` and export exclusions keep the archive outside game resources.
+
+- [First firearm and volumetric explosive destruction](explosive-combat/README.md) — Source implemented / scoped checks pass, 2026-11-01. Native/animation 66, native 46 per variant, rendered 31+11 save/reopen, melee 27/21 and quests 53 per variant pass; corrected HUD/reload/barrel/crater images reviewed. Coordinated native export, packaged verification and user visual review remain.

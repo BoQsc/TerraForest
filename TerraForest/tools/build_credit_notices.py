@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
+    ("combat", "Original combat effects and barrel", "0BSD code / CC0 1.0 assets", "addons/player_runtime/COMBAT_PROVENANCE.txt",
+     "Original procedural barrel, combat icons and synthesized sound are dedicated under CC0. Existing character and carbine assets retain their separate provenance."),
     ("project", "TerraForest project code", "0BSD", "LICENSE.txt",
      "Use, copy, modify and distribute the project code, including commercially, under Zero-Clause BSD. Separately identified components retain their own terms."),
     ("building_expansion", "Original building expansion materials E2", "CC0 1.0", "addons/structures/textures/expansion_v2/ASSET_LICENSE.md",

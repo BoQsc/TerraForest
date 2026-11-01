@@ -1,0 +1,58 @@
+[
+  {
+    "path": "rifle-initial.png",
+    "sha256": "248e0246ff8020792c62647067718f3874e6fa77b125c45d39814bc75676ac4a",
+    "source": "reports/combat_world/20261101T174717454784Z/rifle.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "initial; HUD overlap rejected"
+  },
+  {
+    "path": "blast-initial.png",
+    "sha256": "535c785f755107c4b88ea5803114530eee03bf4b110d384a01c4e73654d17c68",
+    "source": "reports/combat_world/20261101T174717454784Z/blast.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "initial; HUD overlap rejected"
+  },
+  {
+    "path": "rifle-verified.png",
+    "sha256": "c38cb05c2a2b3bedacb5f8d567d8ea8f1031a0ce66c61b0a547886f8765b092b",
+    "source": "reports/combat_world/20261101T181508831902Z/rifle.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; source verification; user review pending"
+  },
+  {
+    "path": "reload-verified.png",
+    "sha256": "b2d412d05be8a3a9a87fd3a9b1c8e61dcf92fe649b659102579bd243906d38bb",
+    "source": "reports/combat_world/20261101T181508831902Z/reload.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; source verification; user review pending"
+  },
+  {
+    "path": "barrel-verified.png",
+    "sha256": "52301e72ac272e4fca5d7d3825c8c94a014fed847c754bfd6874bca2f3b03dba",
+    "source": "reports/combat_world/20261101T181508831902Z/barrel.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; source verification; user review pending"
+  },
+  {
+    "path": "blast-verified.png",
+    "sha256": "13d793ee01957bdeeb11bb885f1b5746483f10c3fd44da108d9502c8c065cfae",
+    "source": "reports/combat_world/20261101T181508831902Z/blast.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; source verification; user review pending"
+  },
+  {
+    "path": "crater-verified.png",
+    "sha256": "7e5a52295b1cd29c5bc5d1b6e70837e72303c9a148bc8982d39139d442945dc8",
+    "source": "reports/combat_world/20261101T181508831902Z/crater.png",
+    "creator": "TerraForest Godot runtime screenshot",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; source verification; user review pending"
+  }
+]

@@ -8,6 +8,8 @@ var failed:=false
 var enabled:=true
 const TERRAIN_ITEMS={201:1,202:8,203:9,211:10}
 var payment:Dictionary={}
+var blast_packet:=PackedByteArray()
+var blast_tickets:Dictionary={}
 var last_reward_ticket:=-1
 var last_reward_epoch:=-1
 func attach(world: Node,player_hud: Node) -> bool:
@@ -41,11 +43,23 @@ func refund()->void:
 	hud.deliver_mining_rewards()
 	if not hud.slots.is_empty():hud.refresh()
 func resolved(outcome:Dictionary)->void:
+	if outcome.status in ["rejected","unchanged"]:blast_tickets.erase(Vector2i(outcome.epoch,outcome.ticket))
 	if payment.is_empty() or outcome.epoch!=payment.epoch or outcome.ticket!=payment.ticket:return
 	if outcome.status in ["rejected","unchanged"]:
 		refund();terrain.message_changed.emit("Terrain already filled or placement unavailable; material returned")
 	elif outcome.status=="building":payment={}
+func excavate_blast(center:Vector3,radius:float)->bool:
+	if terrain==null or failed or terrain.pending_edit or not terrain.world_ready or radius<.5 or radius>8:return false
+	blast_packet=terrain.Codec.brush(center,center,radius,0,false,0)
+	var ticket:int=terrain.edit_ticket+1
+	blast_tickets[Vector2i(terrain.epoch,ticket)]=true
+	var accepted:bool=terrain.edit(blast_packet,center-Vector3.ONE*(radius+5),center+Vector3.ONE*(radius+5))
+	blast_packet=PackedByteArray()
+	if not accepted:blast_tickets.erase(Vector2i(terrain.epoch,ticket))
+	return accepted
 func admit(commands: Array) -> bool:
+	if commands.size()==1 and not blast_packet.is_empty() and commands[0]==blast_packet:return not failed
+
 	if not enabled:return true
 	if failed: return false
 	hud.deliver_mining_rewards()
@@ -64,8 +78,10 @@ func admit(commands: Array) -> bool:
 		return false
 	return true
 func published(_bounds: AABB,_revision: int) -> void:
-	if not enabled:return
 	var outcome: Dictionary=terrain.last_edit_outcome
+	var key:=Vector2i(outcome.get("epoch",-1),outcome.get("ticket",-1))
+	if blast_tickets.has(key):blast_tickets.erase(key);return
+	if not enabled:return
 	if failed or outcome.get("status")!="published" or outcome.get("epoch")!=terrain.epoch: return
 	if last_reward_epoch==outcome.epoch and last_reward_ticket==outcome.ticket:return
 	last_reward_epoch=outcome.epoch;last_reward_ticket=outcome.ticket

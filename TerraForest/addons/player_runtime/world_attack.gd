@@ -146,6 +146,10 @@ func apply_target(t: Dictionary) -> bool:
 	var hud=game.player_hud
 	var item: int=game.equipped_tool
 	if not TOOLS.has(item) or (item!=0 and hud.active_slot<0):return false
+	if t.kind=="model" and t.get("asset","")==game.combat.Barrel.KEY:
+		if not game.combat.damage_barrel(t.id,TOOLS[item]["other"]):return false
+		if item!=0:hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision)
+		hud.refresh();return true
 	if t.kind=="zombie":
 		var health_before:float=maxf(0,t.zombie.health)
 		if not game.zombies.apply_hit(t,hud.skill_damage(Progression.MELEE,TOOLS[item]["other"]),-game.camera.global_basis.z,ZOMBIE_IMPACTS[item]):return false
@@ -212,7 +216,7 @@ func apply_target(t: Dictionary) -> bool:
 	return true
 func destroy(t: Dictionary) -> bool:
 	match t.kind:
-		"block":return game.construction_inventory.place_block(game.structures.blocks,game.player_hud.inventory,t.cell,0)
+		"block":return game.combat.demolish(t.cell,game.structures.blocks.get_cell(t.cell),game.camera.global_position,2.0)
 		"tree":return game.ecosystem.harvest_root(t.id,game.player_hud.inventory,-game.camera.global_basis.z).ok
 		"model":return game._remove_inventory_model(game.model_tool.history,t.collection,t.id)
 		"cover":

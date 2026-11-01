@@ -47,7 +47,7 @@ var spawner:RefCounted
 var dev_bag:RefCounted
 var dev_shapes:RefCounted
 var usage_panel:VBoxContainer
-const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift.",6:"Wooden torch: a burning survival light. Equip to carry it; switch slots to put it away. G drops it."}
+const DESCRIPTIONS={1:"Pickaxe: hold left mouse to attack or dig. Most effective on stone.",2:"Hatchet: hold left mouse to attack or dig. Most effective on wood.",3:"Repair hammer: left mouse attacks; right mouse repairs damaged blocks, objects and vehicles at swing contact.",4:"Assembly tool: left mouse attacks the aimed target; right mouse places the selected object.",5:"Shovel: hold left mouse to dig terrain or attack, with a two-handed thrust and lift.",6:"Wooden torch: a burning survival light. Equip to carry it; switch slots to put it away. G drops it.",7:"Carbine: left mouse fires, right mouse aims, R reloads. Uses carbine cartridges.",222:"Explosive barrel: right mouse places on nearby ground. Shoot it to detonate."}
 func button(parent: Node,text: String,action: Callable) -> Button:
 	var out:=Button.new();out.text=text;out.custom_minimum_size.y=40;out.pressed.connect(action);parent.add_child(out);return out
 func label(parent: Node,text: String) -> Label:
@@ -85,6 +85,7 @@ func _ready() -> void:
 	usage_panel=preload("res://addons/player_runtime/usage_panel.gd").new();page("Usage").add_child(usage_panel);usage_panel.build(game)
 	var player:=page("Player")
 	label(player,"Player").add_theme_font_size_override("font_size",22)
+	game.combat.add_controls(self,player)
 	var graphics:=page("Graphics")
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"

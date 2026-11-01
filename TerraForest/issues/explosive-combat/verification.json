@@ -1,0 +1,139 @@
+{
+  "date": "2026-11-01",
+  "scope": "Source runtime; coherent combined package pending",
+  "native_sha256": {
+    "player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+    "player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325"
+  },
+  "world_report": "reports/combat_world/20261101T181508831902Z",
+  "world_phases": [
+    {
+      "phase": "create",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 14644,
+        "exit_code": 0,
+        "resources": {
+          "samples": 68,
+          "gpu_samples": 67,
+          "peak_private_commit_bytes": 2833051648,
+          "peak_working_set_bytes": 1585692672,
+          "peak_dedicated_gpu_bytes": 1203838976,
+          "checks": {
+            "ram": {
+              "bytes": 2833051648,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1203838976,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 41.07407089998014,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    },
+    {
+      "phase": "restore",
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 31836,
+        "exit_code": 0,
+        "resources": {
+          "samples": 27,
+          "gpu_samples": 26,
+          "peak_private_commit_bytes": 2815135744,
+          "peak_working_set_bytes": 1563193344,
+          "peak_dedicated_gpu_bytes": 1203838976,
+          "checks": {
+            "ram": {
+              "bytes": 2815135744,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1203838976,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "minimum_free_bytes": 10737418240,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 16.22610510000959,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      }
+    }
+  ],
+  "checks": {
+    "native_and_animation": 66,
+    "native_debug": 46,
+    "native_release": 46,
+    "rendered_create": 31,
+    "rendered_restore": 11,
+    "melee_timing": 27,
+    "melee_durability": 21,
+    "quest_debug": 53,
+    "quest_release": 53,
+    "credit_notices": 15
+  }
+}

@@ -12,6 +12,7 @@ const HARVEST_DAMAGE_PER_ITEM=30
 const HARVEST_FINISHING_BONUS=1
 const RESOURCE_MODELS={"resources/coal_heap/v1":220,"resources/iron_outcrop/v1":202,"resources/copper_outcrop/v1":203}
 const MODELS={
+	"combat/explosive_barrel/v1":{"name":"Explosive barrel","health":50,"material":"other"},
 	"resources/coal_heap/v1":{"name":"Coal heap","health":180,"material":"stone"},
 	"resources/iron_outcrop/v1":{"name":"Iron-bearing stone","health":360,"material":"stone"},
 	"resources/copper_outcrop/v1":{"name":"Copper-bearing stone","health":360,"material":"stone"},

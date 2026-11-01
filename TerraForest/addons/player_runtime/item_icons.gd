@@ -6,6 +6,9 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
+	if str(key)=="7":return preload("res://addons/player_runtime/art/carbine.svg")
+	if str(key)=="221":return preload("res://addons/player_runtime/art/cartridge.svg")
+	if str(key)=="222":return preload("res://addons/player_runtime/art/explosive_barrel.svg")
 	if str(key)=="220":return preload("res://addons/player_runtime/art/coal.svg")
 	if str(key) in preload("res://addons/structures/mine_rail_catalog.gd").PARTS.values():return preload("res://addons/player_runtime/art/mine_rail.svg")
 	if str(key)=="213":return preload("res://addons/player_runtime/art/lockpick.svg")

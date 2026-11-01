@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: 0BSD
 extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
+signal rifle_reload_finished
+var rifle_aiming:=false
+var rifle_holster_item:=-1
+var rifle_holster_water:=-1
 signal swing_contact(identity:int)
 signal swing_finished(identity:int,cancelled:bool)
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
@@ -137,6 +141,10 @@ func set_third_person(value:bool)->void:
 	_sync_equipment()
 
 func equip(item: int, water_ml:int=-1) -> void:
+	if current==7 and item!=7 and model!=null and rifle_holster_item<0:
+		cancel_rifle_reload();rifle_holster_item=item;rifle_holster_water=water_ml
+		_play("FP_Rifle_Holster",true,0.04);return
+	rifle_holster_item=-1
 	cancel_swing()
 	var previous_bucket_fill:=bucket_fill
 	var previous_item:=current
@@ -150,7 +158,9 @@ func equip(item: int, water_ml:int=-1) -> void:
 	if model == null:
 		return
 	_sync_equipment()
-	if current==6 and previous_item!=6:
+	if current==7 and previous_item!=7:
+		_play("FP_Rifle_Equip",true,0.0);animation_player.advance(0)
+	elif current==6 and previous_item!=6:
 		# The torch has its own keyed raise. Blending another tool's hand and
 		# weapon transforms independently can fold the wrist during equip.
 		_play("FP_Torch_Equip",true,0.0)
@@ -166,7 +176,7 @@ func _sync_equipment() -> void:
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = not placement_active and ((current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==6 and label.contains("torch")) or (current==401 and label.contains("bucket")))
+			mesh.visible = not placement_active and ((current==7 and label.contains("carbine")) or (current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==6 and label.contains("torch")) or (current==401 and label.contains("bucket")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 	_sync_bucket_water()
@@ -187,7 +197,19 @@ func _sync_bucket_water()->void:
 	var radius:=lerpf(.108,.137,bucket_display_fill)/.135
 	bucket_water.scale=Vector3(radius,1,radius)
 
+func rifle_action(action:String)->bool:
+	if current!=7 or action_remaining>0 or rifle_holster_item>=0:return false
+	var clip:String=("Rifle_" if third_person else "FP_Rifle_")+action
+	if third_person and action=="HipFire":clip="Rifle_Fire"
+	if not clips.has(clip):return false
+	_play(clip,true,0.025);animation_player.advance(0);return true
+func cancel_rifle_reload()->void:
+	if current==7 and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:
+		action_remaining=0;_play(_motion_clip("Idle"),false,0.05)
 func _motion_clip(action: String) -> String:
+	if current==7:
+		var name:String=("Rifle_" if third_person else "FP_Rifle_")+("Aim" if rifle_aiming else action)
+		return name if clips.has(name) else ("Rifle_Idle" if third_person else "FP_Rifle_Idle")
 	if current==6:return "FP_Torch_"+action if clips.has("FP_Torch_"+action) else "FP_Torch_Idle"
 	if third_person and action=="Crouch":return "Player_Pickaxe_Crouch" if current==1 else "Player_Crouch"
 	if current==401:return "FP_Bucket_"+action if clips.has("FP_Bucket_"+action) else "FP_Bucket_Idle"
@@ -274,6 +296,10 @@ func _process(delta: float) -> void:
 		_sync_bucket_water()
 		if action_remaining > 0.0:
 			return
+		if rifle_holster_item>=0:
+			var next:=rifle_holster_item;var water:=rifle_holster_water
+			current=-1;rifle_holster_item=-1;equip(next,water);return
+		if current==7 and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:rifle_reload_finished.emit()
 		if not swing_clip.is_empty():
 			var identity:=swing_identity;swing_identity=0;swing_clip=""
 			swing_finished.emit(identity,false)
@@ -284,7 +310,7 @@ func _process(delta: float) -> void:
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
 	# Authored tools use their own locomotion presentation.
-	if (third_person or current in [1, 2, 3, 5, 6, 401]) and is_instance_valid(body):
+	if (third_person or current in [1, 2, 3, 5, 6, 7, 401]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"

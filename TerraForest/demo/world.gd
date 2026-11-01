@@ -51,6 +51,7 @@ var terrain_placement_preview=preload("res://addons/player_runtime/terrain_place
 var target_overlay=preload("res://addons/player_runtime/target_overlay.gd").new()
 var vehicle_radial=preload("res://addons/vehicle_runtime/vehicle_radial.gd").new()
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
+var combat=preload("res://addons/player_runtime/combat_world.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
 var impact_effects:Node3D
 var equipped_tool:=0
@@ -156,6 +157,8 @@ func _ready() -> void:
 	beam_material.albedo_color = Color("3b5359")
 	beam.material = beam_material
 	var structures_ready: bool = structures.prepare() and structures.register_model("architecture/metal_beam/v1",beam) != null
+	combat.barrels=preload("res://addons/player_runtime/combat_barrel.gd").register(structures)
+	structures_ready=structures_ready and combat.barrels!=null
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
 	var door_models: Node3D = structures.register_model("architecture/doorway/v1",doorway)
 	structures_ready = structures_ready and door_models != null
@@ -193,6 +196,9 @@ func _ready() -> void:
 		return
 	if not world_attack.prepare(self):
 		push_error("World durability initialization failed");_abort_startup(2);return
+	add_child(combat)
+	if not combat.prepare(self):
+		push_error("Combat initialization failed");_abort_startup(2);return
 	if not persistence.register_component("player_equipment",player_hud.equipment.capture_storage_snapshot,player_hud.equipment.restore_storage_snapshot,player_hud.equipment,player_hud.equipment.capture_storage_snapshot()):
 		push_error("Character equipment persistence initialization failed");_abort_startup(2);return
 	if not persistence.register_component("pending_rewards",player_hud.reward_inbox.capture_storage_snapshot,player_hud.reward_inbox.restore_storage_snapshot,player_hud.reward_inbox,player_hud.reward_inbox.capture_storage_snapshot()):
@@ -743,11 +749,13 @@ func _setup_hud() -> void:
 
 func _cancel_edit_input()->void:
 	world_attack.cancel()
+	combat.cancel_reload()
 	terrain_placement.cancel()
 	super._cancel_edit_input()
 
 func _equip_player_tool(item: int) -> void:
 	if world_vehicle.driving:return
+	combat.cancel_reload()
 	editor_tool_active=false;equipped_tool=item
 	_set_player_tool_mode(item==4 or item in player_hud.MATERIALS,item==4,3)
 	if item in player_hud.MATERIALS:
@@ -960,6 +968,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.physical_keycode==KEY_ESCAPE:
 				Mouse.set_mode(self,Input.MOUSE_MODE_VISIBLE if Input.mouse_mode==Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED)
 		return
+	if not session_menu.developer and combat.handle_input(event):return
 	if not session_menu.developer and equipped_tool>=401 and equipped_tool<=411 and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT,MOUSE_BUTTON_RIGHT] and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if event.pressed and _model_edit_available():
 			var start:Vector3=camera.global_position

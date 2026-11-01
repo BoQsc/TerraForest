@@ -6160,3 +6160,7 @@ pixel; all layout preview caches pass cold/warm parity. The full-volume preview
 candidate failed its15s gate and was removed. See WORLD_WORKFLOW_REDESIGN.md.
 POI planning/preview, broader admission and the other full rewrite requirements
 remain open. The surface preview does not alter static water gameplay.
+
+## Firearm and optional structural destruction — 2026-11-01
+
+Source adds the existing animated carbine, travelling projectiles, zombie firearm impacts, explosive barrels using the volumetric mining edit pipeline, individual simulated block debris and a saved optional integrity toggle (off by default). Native/animation checks pass 66; native storage/support passes 46 per variant; the rendered journey passes 31 creation and 11 fresh-process restore checks. Exact ammunition, partial barrel damage, craters, destroyed cells and interrupted blasts persist; completed blast cells are not damaged again. Melee timing/durability pass 27/21; quests pass 53 per variant. Corrected ammo HUD and blast label images are reviewed. The integration coordinator owns the combined native artifact commit/export after concurrent trader source is committed; packaged combat verification and user visual review remain. Resume that packaged journey on the coherent build and record hashes before claiming installed verification. Local support bounds and temporary debris limits remain explicit. See [COMBAT_DESTRUCTION.md](COMBAT_DESTRUCTION.md) and [the combat issue](../issues/explosive-combat/README.md).
