@@ -116,6 +116,22 @@ are now merged for the expansion baseline. Both native targets were rebuilt;
 model horizon and residency notification checks pass. Earlier civic timing and
 package evidence predates this merge; expansion requires fresh matched evidence.
 Uncommitted vegetation work in the other checkout remains separate.
+## No-click world entry and Alt+Tab return — 2026-10-31
+
+The user's current report supersedes October 28's click-to-play policy. That
+policy blocked both world-ready capture and the earlier Alt-tool focus recovery.
+The world now restores capture on readiness/focus return after checking actual UI
+ownership, with bounded native-focus retries and no periodic watchdog. Source
+checks pass: 36 focus/input assertions, 42 including real Windows Alt+Tab, 16
+hidden-world ownership/teardown assertions, and the Esc interface matrix. The
+rebuilt installed PCK also passes all 42 focus assertions and both OS round trips.
+Retries disconnect on scene disposal. Menus retain
+their cursor and background worlds make zero global mouse-mode changes.
+[Current evidence and prior rejected behavior](../issues/mouse-capture/README.md).
+Player review of the normal Last World/Steam route is still pending; close that
+review only after no-click load/Alt+Tab plus usable Esc-menu cursor are confirmed.
+Return on a regression or a new modal interface; preserve the event-driven policy.
+
 ## Vegetation invalidation during travel — 2026-10-30
 
 Unchanged block/model paging no longer invalidates every nearby vegetation owner
@@ -129,7 +145,7 @@ comparisons; do not claim universal seamlessness or a whole-frame speedup.
 ## Readable door content and GLB replacements — 2026-10-30
 
 The original door now has a JSON definition; an opt-in data-only pack adds a
-second right-hinged door using the existing simple mesh. External packs can
+second right-hinged door using the current built-in mesh. External packs can
 replace visuals with self-contained GLBs without gameplay code or editor import.
 Native placement, collision, hinge state and storage remain authoritative.
 The original ID/save section/v1 hinge bytes are preserved; missing door mods
@@ -137,12 +153,28 @@ refuse loading and disable writes instead of discarding saved objects.
 See the [authoring contract](DOOR_CONTENT.md) and
 [scoped tests, failures and limits](evidence/door_content/README.md).
 
-Replacement artwork is deliberately pending the user's GLBs. On receipt, check
-provenance under CONTRIBUTING, dimensions/pivot/materials, in-world appearance
-and source/pack startup cost before claiming visual or performance acceptance.
-No new replacement artwork, general object scripting, hot reload or automatic
-save migration is included. The native 10,000-placement check proves absence of
-per-placement nodes; it is not a dense-world frame-time qualification.
+The supplied BG5 door, chest, chair, table and bookshelf have now been admitted
+under the contributor's explicit CC0 confirmation. Editable masters are retained;
+offline runtime bakes preserve model IDs, canonical sizes and collision proxies.
+See [conversion contract and scoped evidence](BG5_RUNTIME_ASSETS.md).
+The door frame is prepared separately and is not automatically inserted into old
+worlds; automatic frame placement would require a separately designed native
+derived-visual contract, layout review and old-save/streaming/edit tests. Chest
+lid animation remains authoring-only until a bounded native interaction design
+is requested. No general object scripting, hot reload or automatic save migration
+is included. Human art acceptance and dense-world frame-time qualification with
+the new art remain open; revisit with the intended dense-world scene and require
+source/export frame-time, RAM/VRAM and visual evidence, not just node-count checks.
+
+The BG5 full-addon ZIP check also exposed an unresolved dependency-closure issue
+in the existing `tools/package.py`: unchanged scripts require omitted
+presentation, `demo/world_launch.gd`, ecosystem and vehicle files. See the
+[failed check](evidence/bg5_runtime/failures/standalone_bundle/load.log).
+The game export and portable GLBs pass; the current standalone structures ZIP
+is not qualified. This broader packaging repair is outside the supplied-model
+conversion. Before the next standalone addon release, update declared dependencies
+or decouple those host references, then require a fresh extracted import/load and
+structures interaction check with no main-project fallback.
 
 ## Public-domain-first policy and initial inventory — 2026-10-30
 
@@ -587,8 +619,8 @@ separate from the approved building design; see linked evidence and limitations.
 
 Completed and installed after the approved C1 integration, in four focused changes.
 These scoped engineering checks do not replace player visual/feel approval.
-- Mouse: click-to-play capture implemented; 13 headless checks pass. No automatic
-  loading/focus recapture. [Desktop review remains](../issues/mouse-capture/README.md).
+- Mouse: historical click-to-play policy; **superseded 2026-10-31** by the user's
+  no-click load/focus requirement. [Current verification](../issues/mouse-capture/README.md).
 - Ore: native generation now bakes continuous matching material below every marker;
   eight seed/profile cases and generated earthworks pass. Existing saves unchanged.
   [Verification and review limits](../issues/material-veins/README.md).

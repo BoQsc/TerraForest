@@ -1,0 +1,68 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+BUNDLE_RESOURCES 244 failures=0
+
+SCRIPT ERROR: Parse Error: Preload file "res://addons/presentation/fullscreen_policy.gd" does not exist.
+   at: GDScript::reload (res://addons/structures/building_lod.gd:5)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/presentation/fullscreen_policy.gd" does not exist.
+   at: GDScript::reload (res://addons/structures/building_lod.gd:13)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/player_runtime/session_menu.gd:0)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+ERROR: Failed to load script "res://addons/player_runtime/session_menu.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://demo/world_launch.gd" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/generation_coordinator.gd:5)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "args" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://addons/world_runtime/generation_coordinator.gd:85)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+ERROR: Failed to load script "res://addons/world_runtime/generation_coordinator.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/world_ecosystem/woodland_mesh.gd" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/material_deposits.gd:8)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/world_ecosystem/mineral_stone.gdshader" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/material_deposits.gd:11)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/world_ecosystem/art/boulder_granite_v1.png" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/material_deposits.gd:12)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+ERROR: Failed to load script "res://addons/world_runtime/material_deposits.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/vehicle_runtime/vehicle_item.gd" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/material_pickups.gd:72)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+ERROR: Failed to load script "res://addons/world_runtime/material_pickups.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Parse Error: Preload file "res://addons/world_ecosystem/woodland_authoring.gd" does not exist.
+   at: GDScript::reload (res://addons/world_runtime/prepare_combined_world_task.gd:257)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+   at: GDScript::reload (res://addons/world_runtime/prepare_combined_world.gd:0)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)
+ERROR: Failed to load script "res://addons/world_runtime/prepare_combined_world.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://bundle_check.gd:5)

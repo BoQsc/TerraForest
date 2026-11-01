@@ -629,13 +629,22 @@ plan and hidden outside construction or after the plan is invalidated.
 
 ### Standalone bundle verification
 
+The 2026-10-31 full-addon check currently fails because the package omits
+dependencies required by existing host/runtime scripts. The game PCK and BG5
+portable GLBs pass separately. See the [retained failure and repair scope](../../docs/evidence/bg5_runtime/README.md)
+before relying on the standalone ZIP; the older component evidence below is
+historical and does not override this failure.
+
 Door definitions, opt-in object packs and loose GLB visual replacements are
 documented in [Door content](../../docs/DOOR_CONTENT.md). The original door keeps
 its stable identity and legacy hinge packet. Additional types reuse native model
 batches and one native hinge store per type; no per-placement scripts are added.
 `NativeHingedDoors.configure(bounds, pivot, opening_degrees)` sets a type's local
 box, Y-axis hinge and signed opening angle once, before state is restored.
-The bundled second-door example reuses the existing simple mesh.
+The bundled second-door example reuses the current built-in mesh. The supplied
+BG5 art uses offline shared meshes with the original model identities and
+collision proxies; editable masters, conversion recipes and portable GLBs are
+documented in [BG5 runtime assets](../../docs/BG5_RUNTIME_ASSETS.md).
 
 Build the dependency bundle with `python tools/package.py --addon structures`.
 Verify it in a fresh temporary Godot project with

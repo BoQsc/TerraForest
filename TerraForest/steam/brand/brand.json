@@ -1,0 +1,35 @@
+{
+  "name": "TerraForest",
+  "tagline": "An open-source world-building project",
+  "description": "Generate a world, shape the land and build in it. TerraForest is an open-source sandbox with volumetric terrain, settlements, vehicles and first-person building.",
+  "studio": "TerraForest contributors",
+  "license": "0BSD",
+  "website": "",
+  "palette": {
+    "background": "#0b171d",
+    "panel": "#10201c",
+    "accent": "#91d5b4",
+    "accent_deep": "#2c5a4a",
+    "terraces": ["#0f271f", "#17382c", "#204a39"],
+    "foliage": ["#1d5142", "#2a6b56", "#3a8f74"],
+    "sun": "#e8b44a"
+  },
+  "steam": {
+    "genres": ["Simulation", "Sandbox"],
+    "tags": ["World building", "Sandbox", "Open source"],
+    "artwork_sizes": {
+      "portrait.png": [600, 900],
+      "wide.png": [920, 430],
+      "hero.png": [1920, 620],
+      "logo.png": [1000, 300],
+      "icon.png": [256, 256]
+    },
+    "artwork": {
+      "portrait.png": "{appid}.png",
+      "wide.png": "{appid}p.png",
+      "hero.png": "{appid}_hero.png",
+      "logo.png": "{appid}_logo.png",
+      "icon.png": "{appid}_icon.png"
+    }
+  }
+}

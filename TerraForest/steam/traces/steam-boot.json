@@ -1,0 +1,45 @@
+{
+  "stop_seconds": 3.53,
+  "boot_seconds": 26.24,
+  "window_seconds": 24.23,
+  "shutdown": [
+    {
+      "phase": "client up, 1 helper(s)",
+      "from": 0.01,
+      "to": 1.1,
+      "seconds": 1.09,
+      "processes": [
+        "steam.exe",
+        "steamwebhelper.exe"
+      ]
+    },
+    {
+      "phase": "client up, 0 helper(s)",
+      "from": 1.1,
+      "to": 1.43,
+      "seconds": 0.33,
+      "processes": [
+        "steam.exe"
+      ]
+    },
+    {
+      "phase": "no Steam processes",
+      "from": 1.43,
+      "to": 3.51,
+      "seconds": 2.08,
+      "processes": []
+    }
+  ],
+  "phases": [
+    {
+      "phase": "client up, 1 helper(s)",
+      "from": 0.01,
+      "to": 2.01,
+      "seconds": 2.0,
+      "processes": [
+        "steam.exe",
+        "steamwebhelper.exe"
+      ]
+    }
+  ]
+}

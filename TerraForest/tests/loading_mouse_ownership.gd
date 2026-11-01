@@ -28,6 +28,8 @@ func run()->void:
 	if game.loading_active:await finish();return
 	check(Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"hidden world finishing loading cannot capture the main cursor")
 	check(not game.mouse_capture_requested and not game._mouse_capture_allowed(),"world readiness does not grant mouse capture")
+	game._restore_gameplay_mouse();await process_frame
+	check(not game.mouse_capture_requested and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"hidden focus recovery cannot grant capture or affect the main cursor")
 	var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
 	check(not game._capture_mouse_click(click) and not game.mouse_capture_requested,"hidden worlds cannot claim gameplay input even from a click")
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
@@ -51,11 +53,29 @@ func run()->void:
 		for attempt in 5:Mouse.set_mode(owner,Input.MOUSE_MODE_CAPTURED)
 		check(Mouse.captures==0 and Mouse.mode_changes==changes,"unsupported capture does not count as a transition")
 	Mouse.set_mode(owner,Input.MOUSE_MODE_VISIBLE);owner.free()
+	if DisplayServer.get_name()=="headless":
+		# Use a fresh primary world: live world services do not support reparenting.
+		game.shutdown_requested=true;await game.terrain.shutdown_after_edits()
+		background.free();background=null;game=null;Options.reset()
+		game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;root.add_child(game)
+		deadline=Time.get_ticks_msec()+45000
+		while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
+		check(not game.loading_active,"primary world ready for pending-capture teardown")
+		if game.loading_active:await finish();return
+		game.shutdown_requested=true;await game.terrain.shutdown_after_edits()
+		# Headless capture refuses, leaving a retry pending. Dispose immediately.
+		game.shutdown_requested=false;game.app_focused=true
+		game._restore_gameplay_mouse();game.free();game=null
+		await process_frame;await process_frame
+		check(Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"disposing a world during capture retry leaves cursor unchanged without a stale callback")
 	await finish()
 
 func finish()->void:
-	game.shutdown_requested=true;await game.terrain.shutdown_after_edits()
-	background.free();Options.reset();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	if is_instance_valid(game):
+		game.shutdown_requested=true;await game.terrain.shutdown_after_edits()
+		game.free()
+	if is_instance_valid(background):background.free()
+	Options.reset();Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
 	await process_frame
 	print("LOADING_MOUSE_OWNERSHIP checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

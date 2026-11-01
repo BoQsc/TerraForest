@@ -5,6 +5,7 @@ const BUILTIN_DOOR := "res://addons/structures/prefabs/door_model.tres"
 const MAX_FILE_BYTES := 16 * 1024 * 1024
 const MAX_VERTICES := 32768
 const MAX_SURFACES := 8
+const MAX_IMAGE_PIXELS := 4 * 2048 * 2048
 var error := ""
 var cache: Dictionary = {}
 
@@ -19,9 +20,16 @@ func load_visual(visual: Dictionary, directory: String) -> Mesh:
 		if pose == Transform3D.IDENTITY:
 			result = original
 		else:
-			var sources: Array[ImporterMesh] = [ImporterMesh.from_mesh(original)]
+			# Merge discards incoming LODs. Feed base surfaces deliberately and
+			# regenerate once for the normalized visual, including scaled mod doors.
+			var base := ImporterMesh.new()
+			for surface in original.get_surface_count():
+				base.add_surface(Mesh.PRIMITIVE_TRIANGLES,original.surface_get_arrays(surface),[],{},original.surface_get_material(surface),original.surface_get_name(surface))
+			var sources: Array[ImporterMesh] = [base]
 			var transforms: Array[Transform3D] = [pose]
-			result = ImporterMesh.merge_importer_meshes(sources, transforms).get_mesh()
+			var merged := ImporterMesh.merge_importer_meshes(sources, transforms)
+			merged.generate_lods(60.0,60.0,[])
+			result = merged.get_mesh()
 	else:
 		result = _load_glb(directory.path_join(visual.source), pose)
 	if result != null: cache[key] = result
@@ -53,15 +61,18 @@ func _load_glb(path: String, visual_pose: Transform3D) -> Mesh:
 	if not json.get("nodes", []) is Array or json.get("nodes", []).size() > 256:
 		return _fail("GLB exceeds 256 nodes")
 	if not json.get("animations", []) is Array or not json.get("skins", []) is Array: return _fail("Invalid GLB animation/skin arrays")
-	if json.get("images", []).size() > 4 or not json.get("animations", []).is_empty() or not json.get("skins", []).is_empty():
-		return _fail("Doors accept rigid geometry and up to four embedded images; no skins or animations")
+	if json.get("images", []).size() > 8 or not json.get("animations", []).is_empty() or not json.get("skins", []).is_empty():
+		return _fail("Doors accept rigid geometry and up to eight embedded images; no skins or animations")
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
 	if document.append_from_buffer(bytes, path.get_base_dir(), state) != OK:
 		return _fail("Godot could not decode GLB: " + path)
+	var image_pixels := 0
 	for texture: Texture2D in state.get_images():
 		if texture != null and (texture.get_width() > 2048 or texture.get_height() > 2048):
 			return _fail("Door textures must be at most 2048 by 2048")
+		if texture != null: image_pixels += texture.get_width() * texture.get_height()
+	if image_pixels > MAX_IMAGE_PIXELS: return _fail("Door exceeds the aggregate 16-megapixel texture budget")
 	var nodes := state.get_nodes()
 	var meshes := state.get_meshes()
 	var sources: Array[ImporterMesh] = []

@@ -136,5 +136,4 @@ func _notification(what: int) -> void:
 func _restore_mouse_after_focus()->void:
 	if not resume_mouse_after_focus or not game.app_focused:return
 	resume_mouse_after_focus=false
-	if game.loading_active or game.shutdown_requested or game.session_menu.visible_ui() or game.player_hud.inventory_open or game.storage.opened:return
-	Mouse.set_mode(game,Input.MOUSE_MODE_CAPTURED)
+	game._restore_gameplay_mouse()

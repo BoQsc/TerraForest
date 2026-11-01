@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+BG5_RUNTIME door_leaf parts=44 surfaces=3 triangles=4048 lods=8
+BG5_RUNTIME door_frame parts=37 surfaces=3 triangles=3584 lods=8
+BG5_RUNTIME chest parts=45 surfaces=1 triangles=1084 lods=2
+BG5_RUNTIME chair parts=10 surfaces=2 triangles=1032 lods=4
+BG5_RUNTIME table parts=16 surfaces=2 triangles=1152 lods=5
+BG5_RUNTIME shelf parts=13 surfaces=1 triangles=812 lods=3
+

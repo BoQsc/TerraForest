@@ -1,0 +1,204 @@
+# Steam installation resources
+
+Everything that decides how TerraForest appears in Steam lives here, so the choices are
+visible and reviewable before anything touches `shortcuts.vdf` or the Steam grid folder.
+
+The three tools live here too, next to the resources they apply. `manifest.json` and
+`artwork/` are not read by the installer yet — they are the source of truth to wire up next.
+The placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
+
+`artwork/` is generated from `brand/brand.json` (`python steam/brand/make_brand_artwork.py`);
+edit the brand, not the PNGs.
+
+## Tools
+
+| Script | What it does |
+|---|---|
+| `steam/lib/install_to_steam.py` | copy the build, stamp the icon, register in Steam, then repair/recreate everything else: `--last-world` adds the second entry, `--artwork` installs the images, and the two desktop shortcuts are (re)created by default (`--no-desktop` skips them) |
+| `steam/lib/uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
+| `steam/add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
+
+All three are run from the project root, e.g. `python steam/lib/install_to_steam.py --dry-run`.
+The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
+
+### Layout
+
+`steam/` holds the entry points and the data they use; the importable modules live in
+`steam/lib/`:
+
+| Path | Role |
+|---|---|
+| `steam/lib/steam_shortcuts.py` | reads/writes `shortcuts.vdf`, stops and starts Steam, waits for its window |
+| `steam/lib/steam_progress.py` | the restart bar: measured weights, drift, progress modes |
+| `steam/lib/install_log.py` | the run log in `steam/logs/`, which flags repairs and refusals as WARN |
+| `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
+| `steam/lib/steam_confirm.py` | the restart approval dialog (non-Steam shortcut, Steam restart) |
+| `steam/lib/steam_gui.py` | the windowed front end: approval and the same bar, no console |
+| `steam/lib/install_to_steam.py` | the install entry point (also behind `install_to_steam.pyw`) |
+| `steam/lib/uninstall_from_steam.py` | the uninstall entry point (also behind `uninstall_from_steam.pyw`) |
+
+### Windowed launchers
+
+`install_to_steam.pyw` and `uninstall_from_steam.pyw` are the double-click entry points.
+`.pyw` runs under `pythonw`, so no command prompt appears; their output is appended to
+`steam/logs/gui.log` instead.
+
+One Tk window does both jobs: it explains the non-Steam shortcut and the Steam restart,
+then draws the same bar the console build draws - identical weights, the measured drift
+through the 24 s window wait, 99 before 100 - with the stage line and the live note under
+it. Cancel writes nothing; when the run ends the button becomes Close and the window
+reports `Finished.` or the exit code.
+
+Flags still work, e.g. `pythonw steam/install_to_steam.pyw --last-world --artwork`.
+Without a display the launcher falls back to the headless tool.
+
+### Restart approval
+
+Before Steam is stopped, a small Tk window asks once:
+
+- TerraForest is added as a **non-Steam game** shortcut (not a real Steam app);
+- Steam keeps those in `shortcuts.vdf` and only reads it while closed, so it has to be
+  closed and reopened now;
+- nothing else in the library changes, and Steam needs about 25 s to come back.
+
+`Restart Steam and continue` approves; `Cancel` (or Esc) aborts before anything is
+written: the run exits with code 3, writes no backup, and records
+`WARN cancelled: Steam restart not approved` in the log. The dialog appears only when
+someone can answer - an interactive console with Tk available. Piped runs skip it, and
+so do `--yes` / `--no-confirm`; `--confirm` forces it.
+
+Preview it without touching Steam: `python steam/lib/steam_confirm.py --demo`.
+
+Unattended runs stay silent: pipe the output (the dialog and the bar both switch
+themselves off), or ask explicitly with `--silent`, which is `--yes --progress off`.
+Steam itself is still launched with `-silent`, so it returns to the tray either way.
+
+## Progress during a Steam restart
+
+Writes need Steam stopped, so every add/update/remove stops it, writes, and starts it
+again. While that happens `steam/lib/steam_progress.py` draws one updating line:
+
+```
+[#########---------------]  38%  Stopping Steam · 2 process(es) left: steam.exe, steamwebhelper.exe
+[############------------]  50%  Writing shortcuts.vdf · file written
+[#####################---]  90%  Starting Steam · waiting for steam.exe
+[########################] 100%  Verifying the file · 2 entr(ies) intact
+```
+
+The percentages come from the process list, not a timer: the stop stage polls how many
+Steam processes are still alive, the start stage polls for `steam.exe` to return, and the
+verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays silent when
+output is piped, so scripts and tests keep their plain lines.
+Preview the stages without touching Steam: `python steam/lib/steam_progress.py --demo`.
+
+Stage weights follow the measured durations (check 5%, stop 15%, write 5%, start 70%,
+verify 5%), because the wait for Steam's window is ~24 s of a ~29 s run. Inside the start
+stage the window wait sweeps 20% → 90% linearly against that measured 24 s, so the bar
+keeps moving at the pace the wait actually takes; only the real window event completes
+it. The bar never goes backwards, big jumps are walked a few points at a time, and 99%
+is drawn before 100%.
+
+Every tool takes `--progress auto|bar|plain|off`:
+
+- `auto` (default) — the animated single line on a terminal, silent when piped;
+- `bar` — force that animated line even when the output is captured;
+- `plain` — one line per 10%, so logs and captured output show the stages too;
+- `off` — no progress output at all.
+
+### Measured phases
+
+`python steam/steam_trace.py --restart --json steam/traces/steam-boot.json` samples the
+process set every 100 ms across a real restart and records what actually happens. The
+last run (`steam/traces/steam-boot.json`):
+
+| Side | Observed sequence | Time |
+|---|---|---|
+| shutdown | helpers leave first | 1.32 s |
+| shutdown | `steam.exe` alone, exiting | 0.33 s |
+| shutdown | nothing left | 2.07 s |
+| boot | `steam.exe` alone | 0.11 s |
+| boot | `steam.exe` + `steamwebhelper.exe` | 2.08 s (settle window) |
+
+Totals on that run: stop 3.75 s, boot 2.21 s. The bar's stop stage therefore reports
+"helpers closed, client exiting" before the client goes, and the start stage reports
+"client process up" → "helpers up (library loading)" → "process set settled". Those
+labels are these measurements, not invented stages.
+
+### When the tool considers Steam "back"
+
+The client process is not the signal: measured here, `steam.exe` appears 0.02 s after
+launch and its helpers 0.26 s later, but Steam's main window - title `Steam`, class
+`SDL_app`, 1280x744, kept **hidden in the tray** - only exists after about 25 s. Waiting
+on the process alone is what made the tool exit before Steam (and its tray notification)
+was back.
+
+So the wait is: client process → helpers → main window exists (hidden counts, because
+Steam lives in the tray) → held for 2 s of grace. A live run reports:
+
+```
++ 0.02s  client process up
++ 0.28s  helpers up (library loading)
++24.85s  Steam UI ready (window 1280x744, in the tray)
++27.01s  Steam is up: window and tray are back
+```
+
+If no window appears within 20 s the tool says so and continues rather than hanging.
+
+### Entries Steam drops
+
+Steam rewrites `shortcuts.vdf` on its own schedule and has been seen dropping the second
+entry ("… Last World") while keeping the first, which left a library with one shortcut
+after a while. Restart-loop measurement (three full shutdown/boot cycles with a freshly
+added entry) kept both entries every time, so the loss is not a plain restart: it has only
+been observed after an in-place update of an existing entry.
+
+Because the cause is Steam's own rewrite, install defends against it: after registering it
+re-reads the file and reports
+
+```
+checked  : TerraForest, TerraForest Last World present in shortcuts.vdf
+```
+
+or, when something is missing, re-adds it and says so
+(`repair   : Steam dropped …, re-adding`). A dry run reports `would re-add` instead.
+
+## Files
+
+| File | What it decides |
+|---|---|
+| `manifest.json` | library name, launch options, icon, sort name, tags, overlay/desktop/hidden flags, artwork mapping |
+| `artwork/portrait.png` | library portrait capsule, 600×900 → `<appid>.png` |
+| `artwork/wide.png` | library wide capsule, 920×430 → `<appid>p.png` |
+| `artwork/hero.png` | library hero banner, 1920×620 → `<appid>_hero.png` |
+| `artwork/logo.png` | transparent logo, 1000×300 → `<appid>_logo.png` |
+| `artwork/icon.png` | shortcut icon, 256×256 → `<appid>_icon.png` |
+
+## Where each one goes
+
+- **Entry metadata** → `<Steam>/userdata/<account>/config/shortcuts.vdf`, one entry per
+  shortcut. Field mapping is in `manifest.json` (`name`, `launch_options`, `icon`,
+  `sortas`, `tags`, `overlay`, `desktop_config`, `hidden`).
+- **Artwork** → `<Steam>/userdata/<account>/config/grid/`, renamed by the entry's app id.
+
+`<appid>` is the id Steam computes for a non-Steam shortcut from its executable and name
+(`steam/lib/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
+files here are named by role and renamed on install. On this machine the two entries are:
+
+| Entry | App id | Artwork names |
+|---|---|---|
+| TerraForest | 3801998348 | `3801998348.png`, `3801998348p.png`, `3801998348_hero.png`, … |
+| TerraForest Last World | 3967375980 | `3967375980.png`, `3967375980p.png`, `3967375980_hero.png`, … |
+
+`config/grid/` does not exist until artwork is first set; Steam creates it on demand.
+
+## Replacing the placeholders
+
+Drop your own PNG in place, keeping the file name and the size in `artwork_sizes`. The
+portrait capsule is the one that dominates the library grid; the hero and logo are what the
+game page shows at the top.
+
+## Caveats
+
+- Artwork file names are a client convention, not a documented API.
+- Artwork appears after Steam refreshes the library (sometimes a restart is needed).
+- Metadata edits need the same stop-Steam → write → start cycle `commit()` already performs.

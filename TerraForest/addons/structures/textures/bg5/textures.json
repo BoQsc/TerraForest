@@ -1,0 +1,117 @@
+{
+  "assets": {},
+  "engine": "4.7.2-stable (steam)",
+  "license": "CC0-1.0",
+  "recipe_sha256": "7345d82829b38d37e0434f41ad34d59c1e1dfda85108119dd04980cafb6542e8",
+  "schema": 1,
+  "sources": {
+    "res://authoring/bg5/BG5.Door.Parts.glb": "6f7face8c29dbaeffc06ee218b5bc5996b08758ac61b1b38f8b52e1e91081a65",
+    "res://authoring/bg5/Chest_Rebuilt.glb": "8fbb477208d8fd11e593f1bdaa7e2fcde544b1eb0be513bc11a3329fa060db15",
+    "res://authoring/bg5/WoodenChair_Retopo.glb": "0a24355987ef0c47b9fc68a774fd092259ced2e2cc3881442e24ee21441b4ce7",
+    "res://authoring/bg5/WoodenTable_Retopology.glb": "ccbd56c1a9f5e9796669b3653652c4d9fd37b74a1ade0ec41c95190cc14ea2e0",
+    "res://authoring/bg5/Wooden_BookShelf_Retopo.glb": "23a3896a5c6eb3923dc1e5512b5f806b2ec52bd91f62c3c6848339f076200712"
+  },
+  "textures": {
+    "res://addons/structures/textures/bg5/01ea9e2e173e8bddfd9ec061.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/1d4c7f61a0612e93fcc043b3.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/2747a24b090093aa73a43c3f.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/3ea64aef4e025988c2d0c3f6.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/50fefba314ce1e048a67acd7_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/558d1de1d21fffce91aba70a.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/5b0538f721b3d37e7754f053_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/5ea29dd063fb512120087fe0.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/73c72e2ca1c1e491d16a30a5.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/818a5684eb56226bb3c6f003.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/8e4c311114979ea036a783be.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/935d9e4ca3f9f7be2a715a3e.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/9bf5497e0d2571969c03e885.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/a0081c478539155001a76288_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/d27cadf34cd2b4cabc863014_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/eb3ad9b88d72457539907d46.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/eb8806926b83d2cb83f0f3e5.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024
+    },
+    "res://addons/structures/textures/bg5/f8e9690df129be9ab91b2c8c.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/fc14d18fadaae02bbc99337e.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512
+    },
+    "res://addons/structures/textures/bg5/ff7e65f7def186974ca990ba.png": {
+      "height": 256,
+      "normal": false,
+      "width": 256
+    }
+  },
+  "tool_sha256": "5fab67448a3c26d34138be7d520de8b04af8e3bc0717e45412cf65586856b2dc"
+}

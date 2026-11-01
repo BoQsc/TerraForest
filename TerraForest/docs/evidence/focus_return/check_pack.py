@@ -32,7 +32,7 @@ details = dict(command=command, cache=cache, utc=stamp,
                native_sha256={str(p.relative_to(root / "dist")): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((root / "dist/addons").glob("*/bin/*.dll"))}, **revision_metadata())
 manifest = folder / "run.json"
 manifest.write_text(json.dumps(details, indent=2) + "\n", encoding="utf-8")
-details["result"] = execute(command, folder, 100, "FOCUS_RETURN checks=29 failures=0")
+details["result"] = execute(command, folder, 100, "FOCUS_RETURN checks=36 failures=0")
 manifest.write_text(json.dumps(details, indent=2) + "\n", encoding="utf-8")
 print(("PASS " if details["result"]["passed"] else "FAIL ") + str(folder), flush=True)
 raise SystemExit(0 if details["result"]["passed"] else 1)

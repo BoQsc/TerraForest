@@ -1,0 +1,426 @@
+{
+  "assets": {
+    "chair": {
+      "glb": "res://mods/bg5_runtime/chair.glb",
+      "glb_bytes": 4068311,
+      "glb_sha256": "b431790cec08cb7a1656c65749e8f9205102debef2377e4d25aed92b4538f25b",
+      "lod_levels": 4,
+      "position": [
+        -0.239999994635582,
+        0.0,
+        -0.240000009536743
+      ],
+      "prefab": "res://addons/structures/prefabs/chair_model.tres",
+      "prefab_sha256": "662e293e55a564358a834eb7d9c72482fde82b5cdb4f93034dc3be29b1b47b38",
+      "size": [
+        0.479999989271164,
+        0.980000138282776,
+        0.480000019073486
+      ],
+      "source": "res://authoring/bg5/WoodenChair_Retopo.glb",
+      "source_parts": 10,
+      "surfaces": 2,
+      "transform": {
+        "origin": [
+          2.66730785369873e-06,
+          0.0,
+          -2.66581773757935e-05
+        ],
+        "x": [
+          -0.860247611999512,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          0.977897942066193,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          -0.86028915643692
+        ]
+      },
+      "triangles": 1032,
+      "vertices": 856
+    },
+    "chest": {
+      "glb": "res://mods/bg5_runtime/chest.glb",
+      "glb_bytes": 2024646,
+      "glb_sha256": "3777fc0bb3e9c9e3a247c2befd4d61c03620cce1e5ac0e73c7dfdee19b497eba",
+      "lod_levels": 2,
+      "position": [
+        -0.607499957084656,
+        0.0,
+        -0.390000015497208
+      ],
+      "prefab": "res://addons/structures/prefabs/storage_chest_model.tres",
+      "prefab_sha256": "ffe08510f76d4cb040087d323f0c3afea1a866a6da8c9f92dc4e8e7464a3f804",
+      "size": [
+        1.2150000333786,
+        0.75,
+        0.807500004768372
+      ],
+      "source": "res://authoring/bg5/Chest_Rebuilt.glb",
+      "source_parts": 45,
+      "surfaces": 1,
+      "transform": {
+        "origin": [
+          -4.76837158203125e-06,
+          7.21661990610301e-07,
+          0.0160257518291473
+        ],
+        "x": [
+          1.21237397193909,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          1.79370057582855,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          1.56948482990265
+        ]
+      },
+      "triangles": 1084,
+      "vertices": 1422
+    },
+    "door_frame": {
+      "glb": "res://mods/bg5_runtime/door_frame.glb",
+      "glb_bytes": 1688641,
+      "glb_sha256": "3139bdeab9387efb178d7b402e7c5611ca9339ae87598d0647d2a50301c6efc6",
+      "lod_levels": 8,
+      "position": [
+        -0.104972377419472,
+        -0.0124351978302002,
+        -0.0361194014549255
+      ],
+      "size": [
+        1.21546959877014,
+        2.32124376296997,
+        0.222189053893089
+      ],
+      "source": "res://authoring/bg5/BG5.Door.Parts.glb",
+      "source_parts": 37,
+      "surfaces": 3,
+      "transform": {
+        "origin": [
+          0.50276243686676,
+          -0.0124352369457483,
+          0.0350248776376247
+        ],
+        "x": [
+          -1.10497236251831,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          1.03626954555511,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          -1.09452736377716
+        ]
+      },
+      "triangles": 3584,
+      "vertices": 3856
+    },
+    "door_leaf": {
+      "glb": "res://mods/bg5_runtime/door_leaf.glb",
+      "glb_bytes": 1727313,
+      "glb_sha256": "b1d15ea25504ce956a4952c93c697ffde19a317cd3a5dd404e6e1fb7be7c5a44",
+      "lod_levels": 8,
+      "position": [
+        -0.00718229589983821,
+        0.0,
+        -0.0399502441287041
+      ],
+      "prefab": "res://addons/structures/prefabs/door_model.tres",
+      "prefab_sha256": "3146d6c7fd259af0058ca684cf8d87424f8f45499c3db0682d94ce8e8dd07286",
+      "size": [
+        1.01712691783905,
+        2.20000028610229,
+        0.149950250983238
+      ],
+      "source": "res://authoring/bg5/BG5.Door.Parts.glb",
+      "source_parts": 44,
+      "surfaces": 3,
+      "transform": {
+        "origin": [
+          0.50276243686676,
+          -0.0124352369457483,
+          0.0350248776376247
+        ],
+        "x": [
+          -1.10497236251831,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          1.03626954555511,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          -1.09452736377716
+        ]
+      },
+      "triangles": 4048,
+      "vertices": 4606
+    },
+    "shelf": {
+      "glb": "res://mods/bg5_runtime/shelf.glb",
+      "glb_bytes": 2250487,
+      "glb_sha256": "4d35dc9892ca2c5c8950e28985e7ed9abbc2647ffe64281bf6ce0bfce3187dea",
+      "lod_levels": 3,
+      "position": [
+        -0.600000023841858,
+        0.0,
+        -0.200000002980232
+      ],
+      "prefab": "res://addons/structures/prefabs/shelf_model.tres",
+      "prefab_sha256": "20b15a10f9ec96ccac936f7468daf6b9f41af43e3e2ed4a7b7d098937941242a",
+      "size": [
+        1.20000004768372,
+        1.79999995231628,
+        0.400000035762787
+      ],
+      "source": "res://authoring/bg5/Wooden_BookShelf_Retopo.glb",
+      "source_parts": 13,
+      "surfaces": 1,
+      "transform": {
+        "origin": [
+          7.68899917602539e-06,
+          0.900014936923981,
+          0.000648513436317444
+        ],
+        "x": [
+          -1.93669867515564,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          1.79614496231079,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          -1.8829357624054
+        ]
+      },
+      "triangles": 812,
+      "vertices": 804
+    },
+    "table": {
+      "glb": "res://mods/bg5_runtime/table.glb",
+      "glb_bytes": 6371772,
+      "glb_sha256": "4e344ad48ec6e08cbd64ffc56a3f01f75354dd4a25db53168cbde8e1f1bdce5a",
+      "lod_levels": 5,
+      "position": [
+        -0.800000011920929,
+        0.0,
+        -0.450000017881393
+      ],
+      "prefab": "res://addons/structures/prefabs/table_model.tres",
+      "prefab_sha256": "14e0bb41700957cb10305d1698ef45911f4b390f5b31ca356b688043abd84088",
+      "size": [
+        1.60000002384186,
+        0.800000011920929,
+        0.899999976158142
+      ],
+      "source": "res://authoring/bg5/WoodenTable_Retopology.glb",
+      "source_parts": 16,
+      "surfaces": 2,
+      "transform": {
+        "origin": [
+          2.26497650146484e-06,
+          -0.000319239916279912,
+          3.92794609069824e-05
+        ],
+        "x": [
+          1.59660983085632,
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.0,
+          1.56538271903992,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0,
+          1.45044124126434
+        ]
+      },
+      "triangles": 1152,
+      "vertices": 960
+    }
+  },
+  "engine": "4.7.2-stable (steam)",
+  "license": "CC0-1.0",
+  "recipe_sha256": "7345d82829b38d37e0434f41ad34d59c1e1dfda85108119dd04980cafb6542e8",
+  "schema": 1,
+  "sources": {
+    "res://authoring/bg5/BG5.Door.Parts.glb": "6f7face8c29dbaeffc06ee218b5bc5996b08758ac61b1b38f8b52e1e91081a65",
+    "res://authoring/bg5/Chest_Rebuilt.glb": "8fbb477208d8fd11e593f1bdaa7e2fcde544b1eb0be513bc11a3329fa060db15",
+    "res://authoring/bg5/WoodenChair_Retopo.glb": "0a24355987ef0c47b9fc68a774fd092259ced2e2cc3881442e24ee21441b4ce7",
+    "res://authoring/bg5/WoodenTable_Retopology.glb": "ccbd56c1a9f5e9796669b3653652c4d9fd37b74a1ade0ec41c95190cc14ea2e0",
+    "res://authoring/bg5/Wooden_BookShelf_Retopo.glb": "23a3896a5c6eb3923dc1e5512b5f806b2ec52bd91f62c3c6848339f076200712"
+  },
+  "textures": {
+    "res://addons/structures/textures/bg5/01ea9e2e173e8bddfd9ec061.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512,
+      "sha256": "39b84d20981f1bb6f567db7e5eb0da5db23348e8334f237c7a56bdcadc81e329",
+      "import_sha256": "c801ef7b48fdbfb2913832a913df122bea0e91f750f8b2ae0811f2f65d0b3807"
+    },
+    "res://addons/structures/textures/bg5/1d4c7f61a0612e93fcc043b3.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "8f480ca54b7ff912dca723a48aca1b2f5ab7981d93b682d68b46776958e0da98",
+      "import_sha256": "b93fbc2d468cc01d45b4a93c02d0454c3628e3978a3a6f2a54ece8411471564a"
+    },
+    "res://addons/structures/textures/bg5/2747a24b090093aa73a43c3f.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "7f170ad98600664de0ee27616125d8e21fe8d96448ea03cd05d3f3f72f5a4380",
+      "import_sha256": "f44e0d9ab501cd0b2c7ccb5d29d1bb2734e2fe27b833ccaa5b4f8587310f8c09"
+    },
+    "res://addons/structures/textures/bg5/3ea64aef4e025988c2d0c3f6.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512,
+      "sha256": "f7444a0b61c0a6512b581948b2061823d256208adfe22ecfaea098f258bfff42",
+      "import_sha256": "3832a7b714001c187bc8d7aa14d72fe118edc79de8ce1e14f42f3eb6f6b0f979"
+    },
+    "res://addons/structures/textures/bg5/50fefba314ce1e048a67acd7_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 512,
+      "sha256": "96c2d94d260ce653571031d9ec44fd24d58d9f27fd29b010a80171be2fcd919b",
+      "import_sha256": "da258caff96334104a8da2a1eac8f538cfd571cfe4a3eb5fc3f8960f04802c76"
+    },
+    "res://addons/structures/textures/bg5/558d1de1d21fffce91aba70a.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512,
+      "sha256": "dbf0bd073da30498f6d5a702215549e0099ddaaf1f1028c79eb3156a818bc7a9",
+      "import_sha256": "0e76c2499f7b521c240b09ccbc9457b5d22e5315514957423ec95671a3e6aa8a"
+    },
+    "res://addons/structures/textures/bg5/5b0538f721b3d37e7754f053_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024,
+      "sha256": "8666375bd7fcca964273f32a981ace9910e820d7ac37217ee91d6272a36da0d0",
+      "import_sha256": "4dd4fbf17a0e8fb720e25aa6835fdfe5d52d95737e5b6dc836f2f6337ff16937"
+    },
+    "res://addons/structures/textures/bg5/5ea29dd063fb512120087fe0.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "8bd9d8be67b5448a2a2e8f87d9fb9e582837429d03c3edc3c3370e5e2b24e134",
+      "import_sha256": "b0b0e43e1bfc49e6f957168d23aa8f5a85fd269b8dcccb30a53d26df6a775318"
+    },
+    "res://addons/structures/textures/bg5/73c72e2ca1c1e491d16a30a5.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "68db3ade353c8fe9dea1a942be8dc30bc80fb2a0f8b5867ed6a907ec847f236a",
+      "import_sha256": "09a657573ccb2de17f5d584e970f36c8c07f4be8c59108bbacb9bbebf5dcbf55"
+    },
+    "res://addons/structures/textures/bg5/818a5684eb56226bb3c6f003.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "b21e46351f79029664d83b99100471682fa0de13feb079bde111b4abb7b77ddf",
+      "import_sha256": "598d94bd4f9a029cbabdc6413b51264fd2e4071332cb35bca1834ab3b9bc6386"
+    },
+    "res://addons/structures/textures/bg5/8e4c311114979ea036a783be.png": {
+      "height": 512,
+      "normal": false,
+      "width": 512,
+      "sha256": "45782aa4e47d827d8c34bc51d1b9c9f30efc45e185c301e7c0210a4e471732ef",
+      "import_sha256": "1149d00df787e49d52a34d71badfdeac43c37f6bb197ea8a91b4e5f8859dca51"
+    },
+    "res://addons/structures/textures/bg5/935d9e4ca3f9f7be2a715a3e.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "9638bcf19cafc485451cd56c22904a30af78e04b55dcf96a4c9b8a05212155b9",
+      "import_sha256": "1289f898f101a8f440063c255e0cd09abfaba6e1d8424cc3551c3055d17b1fd9"
+    },
+    "res://addons/structures/textures/bg5/9bf5497e0d2571969c03e885.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "3f32ac70bc3505deda6969f49ca7f8cda33556731882999bbcc18620d2d1f342",
+      "import_sha256": "4bb2ac10d28696b1108077f36a793df6e23d2621de619193ad22556d12289ab6"
+    },
+    "res://addons/structures/textures/bg5/a0081c478539155001a76288_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024,
+      "sha256": "19089195564fb8dbaffa115343a06db4593a7e7e278819e6c082b4a43dc5b3eb",
+      "import_sha256": "37356487f52946970bdba7a74d625b81357beb000b8a72a33bddc6cf6a6098e2"
+    },
+    "res://addons/structures/textures/bg5/d27cadf34cd2b4cabc863014_normal.png": {
+      "height": 1024,
+      "normal": true,
+      "width": 1024,
+      "sha256": "63d88b3aa0547f459367d9a172df5358fd33a7382044c4985db4f79bbbd54da6",
+      "import_sha256": "267dc974dcbb6477bad6abe5e5f029646a0531f148b3b532b6b6535c08d368f0"
+    },
+    "res://addons/structures/textures/bg5/eb3ad9b88d72457539907d46.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "685199661b98bb31245e959eedab539443db11f18397f2972415259272dff6c0",
+      "import_sha256": "1d2a9236ae4b7e54aacfa4291277a6ce0dd4486b49995d044d3e2e390d6b5c65"
+    },
+    "res://addons/structures/textures/bg5/eb8806926b83d2cb83f0f3e5.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 1024,
+      "sha256": "212bbb28d399fef5bb19f8cfa09726fe2cc0e607b3d273249192be3115b67fa0",
+      "import_sha256": "9f181464430c1d7709d1391d580120f16ede7368647e00ca84b132ce6e0ffff5"
+    },
+    "res://addons/structures/textures/bg5/f8e9690df129be9ab91b2c8c.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512,
+      "sha256": "a07bde1ae4273192303b220ce23af6455b302120769b04b226f0bc218d0fa0f8",
+      "import_sha256": "94b36bac763c525b71b0e93532afbc32c377d22ff5032da25c1b2269e49ee577"
+    },
+    "res://addons/structures/textures/bg5/fc14d18fadaae02bbc99337e.png": {
+      "height": 1024,
+      "normal": false,
+      "width": 512,
+      "sha256": "2c2967f73dea4682ecd65f8889a217502225639c501e069209082e79ea0df388",
+      "import_sha256": "08924c84610c66628e777346a0ebb5431d5ca3944deb2d6b89a918eaa6b3758d"
+    },
+    "res://addons/structures/textures/bg5/ff7e65f7def186974ca990ba.png": {
+      "height": 256,
+      "normal": false,
+      "width": 256,
+      "sha256": "7bb39941335d5571f90f4ad547d1a69003ca5a1e7c93b07819c05848bd783278",
+      "import_sha256": "2799a05aed0ed34e395f65b410a6767e947c11d99ba70ba90f6c0614b8d3d06a"
+    }
+  },
+  "tool_sha256": "5fab67448a3c26d34138be7d520de8b04af8e3bc0717e45412cf65586856b2dc"
+}

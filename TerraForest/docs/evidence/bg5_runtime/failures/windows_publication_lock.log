@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+BG5_RUNTIME door_leaf parts=44 surfaces=3 triangles=4048 lods=8
+BG5_RUNTIME door_frame parts=37 surfaces=3 triangles=3584 lods=8
+
+ERROR: BG5 bake: Could not publish res://addons/structures/prefabs/storage_chest_model.tres
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] fail (res://tools/bake_bg5_runtime.gd:18)
+       [1] bake (res://tools/bake_bg5_runtime.gd:159)
+       [2] run (res://tools/bake_bg5_runtime.gd:184)
