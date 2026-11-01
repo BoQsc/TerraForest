@@ -70,6 +70,42 @@ ordinary default preference/eligibility path has executed. It never changes real
 camera preferences. New implementation and check are original AI-assisted 0BSD;
 no imported art or code was added.
 
+## Clean source frame-time measurement — 2026-11-01
+
+The first no-capture measurement is **not a locked-60-FPS qualification**.
+RTX 4050 Laptop GPU, 1920×1080 Forward+, 60 FPS cap, VSync enabled, unchanged
+Legion Quiet Mode; existing Exploration / seed 1703 with 64 terrain roots and
+1,024 forest owners, normal actors and vehicle-fleet flags. No competing game
+render ran. No screenshots, readback, compression or disk writes occurred during
+sampling. The read-only saved world remained unchanged.
+
+| Phase | Average FPS | 95th percentile frame | Worst frame |
+| --- | ---: | ---: | ---: |
+| Full initial fly-in (3.004 s) | 53.27 | 27.12 ms | 31.07 ms |
+| First five seconds after entry | 53.72 | 22.26 ms | **143.33 ms** |
+| Next five seconds in first person | 59.21 | 18.41 ms | 33.44 ms |
+
+The flight had no frames above 33.34 ms. The 143.33 ms stall was the **first
+first-person frame**, with measured GPU 17.36 ms and render-thread CPU 2.46 ms;
+its cause is not established by those counters. Do not call the handoff smooth
+or attribute the stall solely to the camera without a baseline/profile. The warm
+attempt ended early (2.345 s sampled), so its 55.02 FPS average does not qualify a
+matched full three-second replay. Sampled peak process commit was 3.36 GiB and
+dedicated VRAM 1.39 GiB, within project limits.
+
+[Raw timings](../../reports/entry_fly_in/performance_clean/timing.json) ·
+[run receipt](../../reports/checks/20261101T164831640512Z/run.json).
+Harness: `tests/entry_fly_in_performance.gd` (original AI-assisted 0BSD). This run
+used the automation/offscreen ownership guard and did not establish actual OS
+foreground presentation. The harness now records foreground-frame counts and
+whether each attempt completed three seconds; that metadata enhancement awaits
+the next run. Engine validity is separate from performance acceptance.
+
+Remaining: repeat on the coordinated installed build, measure a no-entry baseline
+at the same spawn, and profile/correct any reproducible handoff stall. Retain
+60 FPS/VSync/Quiet Mode, scene quality and whole-world coverage. Broader gameplay
+performance remains in [runtime performance](../runtime-performance/README.md).
+
 ## Remaining / resume here
 
 Main source integration is complete (`4fbca4e9`). The installed executable still
