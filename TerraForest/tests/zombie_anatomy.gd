@@ -20,6 +20,8 @@ func _initialize()->void:
 	if not ClassDB.class_exists("NativeZombieAnatomy"):GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	var anatomy=ClassDB.instantiate("NativeZombieAnatomy")
 	check(not anatomy.configure({}) and anatomy.configure(DEFINITIONS) and not anatomy.configure(DEFINITIONS),"native anatomy validates and configures once")
+	check(anatomy.sample_bounds("head",Transform3D.IDENTITY)==AABB(),"skin bounds remain empty until render geometry is configured")
+	check(anatomy.sample_bounds("unknown",Transform3D.IDENTITY)==AABB(),"unknown anatomy regions have no skin bounds")
 	for part:String in DEFINITIONS:
 		var region:=fresh();var hit:Dictionary=region.hit(part,15)
 		check(hit.ok and hit.health==165 and hit.remaining==165 and hit.applied==15 and region.snapshot().limbs.torso==165 and not hit.sever,"every hit region spends the same shared health: "+part)

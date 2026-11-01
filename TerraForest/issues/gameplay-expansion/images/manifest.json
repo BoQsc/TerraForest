@@ -10,6 +10,60 @@
       "pack_sha256": "62f9267e618e10dd93c69d158a66db04e3d13f479ae698af49bf7ec1a1cc8299",
       "review": "Assistant inspected; persistent missing forearm/hand presentation, not animation or user visual approval",
       "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-01. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
+      "file": "rejected-sleeper-v1-floating.png",
+      "source": "reports/zombie_sleepers/20261101T071236678857Z/Zombie_Wake_Seated_side.png",
+      "sha256": "f0c4dfdb2250f64b5070d23c97056f3954d2f48c2b33d272536d66ceb89ec9ef",
+      "kind": "image",
+      "stage": "Flat animation review; no saved world",
+      "review": "Rejected draft; preserved for comparison",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+    },
+    {
+      "file": "rejected-seated-crawl-v2-floor.png",
+      "source": "reports/zombie_sleepers/20261101T071617600873Z/Zombie_Wake_Seated_Crawl_side.png",
+      "sha256": "3979c4416e27c428d40c1028491fc0d3c2a41d03e4a0fb9c1a86694d7847e81b",
+      "kind": "image",
+      "stage": "Flat animation review; no saved world",
+      "review": "Rejected draft; preserved for comparison",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+    },
+    {
+      "file": "sleeper-seated-wake.png",
+      "source": "reports/zombie_sleepers/20261101T073006040088Z/Zombie_Wake_Seated_side.png",
+      "sha256": "f38bb63b947b6efc14484bcbf6b0babb454ab23da9ed8506cd21f02b2dfeccb2",
+      "kind": "image",
+      "stage": "Flat animation review; no saved world",
+      "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+    },
+    {
+      "file": "sleeper-lying-wake.png",
+      "source": "reports/zombie_sleepers/20261101T073006040088Z/Zombie_Wake_Lying_side.png",
+      "sha256": "5f395fbbc5aeb5a050960caebcaed4ce5ece31b3b3af062751fffcfbad192f2b",
+      "kind": "image",
+      "stage": "Flat animation review; no saved world",
+      "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+    },
+    {
+      "file": "sleeper-crawl-missing-shin.png",
+      "source": "reports/zombie_sleepers/20261101T073009012664Z/Zombie_Wake_Seated_Crawl_front.png",
+      "sha256": "5220e8f82ab18a4b6591651d38d0c92ee0fd016e750cfbd4f7d5ef2b6d40b035",
+      "kind": "image",
+      "stage": "Flat animation review; no saved world",
+      "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+    },
+    {
+      "file": "sleeper-wake-normal-speed.mp4",
+      "source": "reports/zombie_sleepers/20261101T073143932264Z/Zombie.sleepers.mp4",
+      "sha256": "40eb194bca52d4de5718234005102e2c1054e7bdfebb1b011692bf8dfde47967",
+      "kind": "video",
+      "stage": "Flat animation review; no saved world",
+      "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
+      "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
     }
   ]
 }

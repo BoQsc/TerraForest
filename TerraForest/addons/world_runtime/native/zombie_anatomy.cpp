@@ -41,6 +41,7 @@ void NativeZombieAnatomy::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","definitions"),&NativeZombieAnatomy::configure);
     ClassDB::bind_method(D_METHOD("set_hit_meshes","skeleton","meshes","geometry"),&NativeZombieAnatomy::set_hit_meshes,DEFVAL(Ref<NativeZombieAnatomy>()));
     ClassDB::bind_method(D_METHOD("sample_vertices","part","to_local"),&NativeZombieAnatomy::sample_vertices);
+    ClassDB::bind_method(D_METHOD("sample_bounds","part","to_local"),&NativeZombieAnatomy::sample_bounds);
     ClassDB::bind_method(D_METHOD("hand_groups","part","to_local"),&NativeZombieAnatomy::hand_groups);
     ClassDB::bind_method(D_METHOD("closest_contact","part","target","use_point","shapes","mouth"),&NativeZombieAnatomy::closest_contact);
     ClassDB::bind_method(D_METHOD("fit_collision_shapes"),&NativeZombieAnatomy::fit_collision_shapes);
@@ -388,6 +389,13 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
             for(int index:island){for(uint64_t id:entries[index].group->bodies){auto *body=Object::cast_to<PhysicsBody3D>(ObjectDB::get_instance(id));if(body)server->body_set_state(body->get_rid(),PhysicsServer3D::BODY_STATE_SLEEPING,true);}entries[index].owner->settle_events_++;}
         }
     }
+}
+AABB NativeZombieAnatomy::sample_bounds(const String &part,const Transform3D &to_local) const {
+    const PackedVector3Array vertices=sample_vertices(part,to_local);
+    if(vertices.is_empty())return {};
+    AABB bounds(vertices[0],Vector3());
+    for(int vertex=1;vertex<vertices.size();++vertex)bounds.expand_to(vertices[vertex]);
+    return bounds;
 }
 void NativeZombieAnatomy::wake_ragdolls(const AABB &bounds){
     if(!bounds.position.is_finite()||!bounds.size.is_finite())return;

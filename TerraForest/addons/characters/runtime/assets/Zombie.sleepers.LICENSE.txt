@@ -1,0 +1,17 @@
+Zombie.sleepers.res: original TerraForest sleeper animation trajectories and
+derived clearance envelopes, authored with OpenAI Codex on 2026-11-01 at the
+maintainer's request. New original animation work is contributed under CC0-1.0.
+Dedication: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Editable counterparts: ../../authoring/Zombie.sleepers.blend,
+Zombie.sleepers.glb and Zombie.sleepers.json. Original authoring and conversion
+code is in tools/author_zombie_sleepers.py and tools/import_zombie_sleepers.gd
+under 0BSD. The JSON records the exact retained R4 source hash and tool version.
+
+The source rig, mesh, materials and existing idle poses are from the repository's
+ZombieLab/source/Zombie.r4.blend; their inherited provenance remains governed by
+../../LICENSE.txt and the character entry in license_inventory.json. This notice
+does not relicense inherited assets or resolve their recorded provenance gaps.
+The runtime library contains animation and envelope data, not replacement meshes.
+No third-party animation, motion capture, model or texture pack was imported.
+Blender and Godot are existing external development tools, not bundled here.

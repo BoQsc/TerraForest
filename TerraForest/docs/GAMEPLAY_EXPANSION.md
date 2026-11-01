@@ -27,8 +27,8 @@ compute shaders are used where measured workloads justify them, not as a label.
 | --- | --- |
 | Zombie variety, including already missing limbs | Native recipes installed; ordinary source/pack admission and anatomy reload checked; new visual character variety and balance still pending |
 | Less irritating surface zombies, more wandering, finite pursuit and a faster minority | Native timers and configurable temperaments installed/tested; natural player encounters, jogging clip and locomotion review pending |
-| Seated and lying sleepers, awakened by hearing or damage | Native sleeping/waking contract in progress; authored poses, rise animations, collision clearance and live integration still required |
-| Wake-animation frame-by-frame, multiple-perspective review | Pending real rendered clips, grounded contact and no instant attacks/pose snaps |
+| Seated and lying sleepers, awakened by hearing or damage | Six authored clips and native sleep/wake intent exist; physical clearance, live hearing/hit integration and persistence still required |
+| Wake-animation frame-by-frame, multiple-perspective review | 57 pose/bounds checks; original runtime skin reviewed front/side and with missing limbs; actual live transition, interruptions and slope/obstacle qualification pending |
 | Sleeper residents inside some houses and underground locations | Pending authored anchors, fair admission, persistent sleep/wake/death and player-safe placement |
 | Off-road watchtowers | Pending modular destructible design, access, terrain fit, loot and approval/review |
 | Small art-directed caves and mines | Pending differentiated entrances, rooms, side spaces and some built mine structures; no generic straight tunnels |
@@ -70,5 +70,12 @@ Sleep/wake state does not imply sleepers are playable before pose, collision,
 animation and persistence integration. The existing ragdoll and route owners remain
 authoritative; a sleeper is a living entity, not a corpse resurrected by a timer.
 Full body/limb health remains separate and linked. No player save is regenerated.
+
+The six-clip animation checkpoint now has editable sources, a 316,364-byte shared
+library and offline native-skin envelope baking. Rejected floating/ground-penetrating
+trials remain in the tracker. Next, connect the existing native wake handshake to
+these clips and one collision/body owner; qualify low ceilings, moving obstacles,
+hits, limb loss, death, suspension and fresh-process sleep persistence before
+admitting sleepers into ordinary houses/POIs. No live sleeper has been claimed yet.
 
 Evidence and retained failures: [expansion tracker](../issues/gameplay-expansion/README.md).

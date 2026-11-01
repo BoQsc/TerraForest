@@ -32,3 +32,15 @@ features and Python's standard library were used for authoring and validation.
 
 Godot and Blender are separate software products. Their licenses continue to
 apply to those applications; neither application is distributed in this archive.
+
+ADDITIONAL ORIGINAL SLEEPER ANIMATIONS — 2026-11-01
+
+runtime/assets/Zombie.sleepers.res and authoring/Zombie.sleepers.* add six
+original seated/lying sleep and wake trajectories, including crawling exits,
+authored with OpenAI Codex at the maintainer's request. This new animation and
+clearance-envelope data is contributed under CC0-1.0. The retained R4 rig, meshes,
+materials and endpoint idle poses keep the inherited provenance stated above;
+no third-party motion capture or animation pack was imported. Exact source hash,
+tool version and samples are in authoring/Zombie.sleepers.json. The new authoring,
+conversion and validation code is separately marked 0BSD, not relicensed by this
+asset dedication. See runtime/assets/Zombie.sleepers.LICENSE.txt for exact paths.

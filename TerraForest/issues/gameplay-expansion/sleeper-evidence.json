@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "0ddb6abc88a7ce59e7b029d147aef79c15a3043a",
+  "scope": "Original sleeper animation asset checkpoint; not playable sleepers or full expansion completion.",
+  "runtime_asset": {
+    "path": "addons/characters/runtime/assets/Zombie.sleepers.res",
+    "bytes": 316364,
+    "sha256": "6a3d944f5b60241486c3233e6f60e1eeffba144bff3c990548da5035f3b15591"
+  },
+  "bake": {
+    "clips": 6,
+    "bones": 59,
+    "tracks_per_clip": 184,
+    "sample_hz": 60,
+    "envelope_hz": 12,
+    "envelope_padding_m": 0.015,
+    "minimum_skin_y_m": -0.000510811805725098,
+    "maximum_single_frame_bone_step_m": 0.0343063808977604,
+    "scope": "Flat skinned poses, not physical clearance, slope contact or self-collision acceptance. No new per-frame skin sampling in normal gameplay."
+  },
+  "passed": [
+    {
+      "kind": "source poses",
+      "assertions": 57,
+      "report": "reports/zombie_sleepers/20261101T074038450183Z"
+    },
+    {
+      "kind": "packed poses",
+      "assertions": 57,
+      "report": "reports/zombie_sleepers/20261101T074039794266Z"
+    },
+    {
+      "kind": "packed front and side renders",
+      "report": "reports/zombie_sleepers/20261101T074041256409Z",
+      "peak_private_bytes": 1113489408,
+      "peak_dedicated_gpu_bytes": 411262976
+    },
+    {
+      "kind": "missing left shin front and side renders",
+      "report": "reports/zombie_sleepers/20261101T073009012664Z"
+    },
+    {
+      "kind": "missing left forearm front and side renders",
+      "report": "reports/zombie_sleepers/20261101T073011466860Z"
+    },
+    {
+      "kind": "normal speed motion capture",
+      "frames": 480,
+      "fps": 30,
+      "report": "reports/zombie_sleepers/20261101T073143932264Z",
+      "visual_review": "Sampled rendered frames inspected, not continuous playback inspection."
+    },
+    {
+      "kind": "release native regression",
+      "assertions": {
+        "expansion": 58,
+        "awareness": 31,
+        "population": 33,
+        "anatomy": 52,
+        "fresh_population": 4
+      },
+      "report": "reports/zombie_expansion/20261101T073404907698Z"
+    },
+    {
+      "kind": "packed ordinary resident world regression",
+      "assertions": 47,
+      "report": "reports/zombie_expansion/20261101T074044845176Z",
+      "seed": 1703,
+      "peak_private_bytes": 2741424128,
+      "peak_dedicated_gpu_bytes": 1221558272,
+      "scope": "Temporary world, six-body/two-sight-probe budgets, identity/anatomy/temperament restore and uncaptured pointer. Not live sleeper or frame-pacing qualification."
+    },
+    {
+      "kind": "mandatory export building gates",
+      "report": "reports/building_standards/20261101T073517692764Z"
+    }
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/zombie_sleepers/20261101T071541940828Z",
+      "cause": "Launcher incorrectly required GPU telemetry in headless mode; corrected."
+    },
+    {
+      "report": "reports/zombie_sleepers/20261101T071838486006Z",
+      "cause": "Importer accessed ready-dependent actor before deferred initialization; corrected."
+    },
+    {
+      "report": "reports/checks/20261101T072709807501Z",
+      "cause": "Guessed exact assertion count in launcher rejected otherwise passing checks; corrected."
+    },
+    {
+      "report": "reports/zombie_sleepers/20261101T073843991425Z",
+      "cause": "Packed report output used read-only res:// destination; now explicit writable report folder."
+    }
+  ],
+  "installation": {
+    "pack_sha256": "149c62c7ef5733f1d43b6f4328944b1da65a018ced52a1ea0c39c2771b925ac9",
+    "pack_bytes": 447049688,
+    "redistributable_bytes": 476617743,
+    "world_runtime_debug_sha256": "120ab9e9319aa35321458176dc97fb3ca1f58fc78098b8e5af8846d07f73e6c0",
+    "world_runtime_release_sha256": "641f28ec293e72079f083da5d6845835715ec6ec00a03b44b733ab2f16160e09",
+    "external_native_libraries": 14,
+    "export_log": "reports/sleeper_export.log",
+    "preserved_worktree_files_sha256_verified": 33
+  },
+  "remaining": [
+    "Physical sleep/wake collision owner and bounded clearance checks",
+    "Hits, missing limbs, death, pause and unload during wake-up",
+    "Persistent sleeper state and actual house/POI admission",
+    "Slopes, obstacles, tight interiors, self-contact and live player review",
+    "All other unfinished requirements in docs/GAMEPLAY_EXPANSION.md"
+  ],
+  "constraints": {
+    "fps": 60,
+    "power_scheme": "Legion Quiet Mode",
+    "user_saves": "Untouched",
+    "user_visual_approval": false
+  }
+}

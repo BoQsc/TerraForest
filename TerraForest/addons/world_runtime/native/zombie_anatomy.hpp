@@ -55,6 +55,7 @@ public:
     bool configure(const godot::Dictionary &definitions);
     bool set_hit_meshes(godot::Skeleton3D *skeleton,const godot::Dictionary &meshes,const godot::Ref<NativeZombieAnatomy> &geometry=godot::Ref<NativeZombieAnatomy>());
     godot::PackedVector3Array sample_vertices(const godot::String &part,const godot::Transform3D &to_local) const;
+    godot::AABB sample_bounds(const godot::String &part,const godot::Transform3D &to_local) const;
     godot::Dictionary hand_groups(const godot::String &part,const godot::Transform3D &to_local) const;
     godot::Dictionary closest_contact(const godot::String &part,godot::Vector3 target,bool use_point,const godot::Array &shapes,const godot::AABB &mouth) const;
     godot::Dictionary fit_collision_shapes();
