@@ -1,7 +1,9 @@
 # Building expansion E2 review — 2026-11-01
 
-Status: engineering verification complete for the proposed scope; ready for review.
-Exact E2 artwork and building revisions await user approval.
+Status: **Approved by the user, 2026-11-01**: “I approve the new changes.”
+Engineering verification and visual acceptance are complete for the reviewed E2 scope.
+The [approval record](../reviews/building_expansion/approval.json) binds that decision
+to the exact nine prefab revisions, eight 512-pixel materials and implementation.
 The direction and five civic R1 designs were already approved on 2026-10-30.
 This review concerns the changed buildings and expansion only. Existing approved
 resources and saves retain their original cells and appearance.
@@ -10,12 +12,12 @@ resources and saves retain their original cells and appearance.
 
 | Addition | Demonstrated use | Cost and decision |
 | --- | --- | --- |
-| 1:2 slopes, seam pieces and ridge (19–23), closed shallow gables (32–34) | School library roof falls from a 45-degree pitch to a 1:2 pitch; its crest is 2.25 m lower and joins the taller school wall | School has 24 fewer cells. Keep for review |
-| Shallow hip phases (24–25) | Town-hall entrance canopy has finished sloping corners | Individual native cells, shared material. Keep for review |
-| Crown/corner and coping/corner (28–31) | Town-hall frontage and parapets get a continuous profile | Hall adds 166 cells including canopy. Corners remain individually removable. Keep for review |
-| Closed pitched gables (35–36) | Roof finish continues across roof ends while exposed end faces remain timber | Same solid volume as their legacy slopes/ridges; all yaw orientations verified. Keep for review |
-| Eight grim appearances | Brick, weathered plaster, limestone, timber, slate, zinc, clay and aged trim distinguish building uses | Shared lazy 512-pixel array; separate from structural/crafting material. Keep for review |
-| Search, families, orientation and assembly previews | Players can find and orient 36 native shapes without a live render viewport for each button | Baked images; original numeric identities and prefab controls preserved. Keep for review |
+| 1:2 slopes, seam pieces and ridge (19–23), closed shallow gables (32–34) | School library roof falls from a 45-degree pitch to a 1:2 pitch; its crest is 2.25 m lower and joins the taller school wall | School has 24 fewer cells. Approved |
+| Shallow hip phases (24–25) | Town-hall entrance canopy has finished sloping corners | Individual native cells, shared material. Approved |
+| Crown/corner and coping/corner (28–31) | Town-hall frontage and parapets get a continuous profile | Hall adds 166 cells including canopy. Corners remain individually removable. Approved |
+| Closed pitched gables (35–36) | Roof finish continues across roof ends while exposed end faces remain timber | Same solid volume as their legacy slopes/ridges; all yaw orientations verified. Approved |
+| Eight grim appearances | Brick, weathered plaster, limestone, timber, slate, zinc, clay and aged trim distinguish building uses | Shared lazy 512-pixel array; separate from structural/crafting material. Approved |
+| Search, families, orientation and assembly previews | Players can find and orient 36 native shapes without a live render viewport for each button | Baked images; original numeric identities and prefab controls preserved. Approved |
 | Shallow valleys (26–27) | Assembly fixture only | Retain as optional prototypes; no default-building adoption proposed without a useful populated-world example |
 | Beams/braces, chamfers and heavier arches | No first-pack building requires them | Assessed follow-up, not additional catalog entries in this pack |
 | Normal/roughness arrays, parallax/displacement | No measured benefit established for this pack | Not enabled. Preserve current silhouette/collision and keep albedo cost bounded |
@@ -27,7 +29,7 @@ source and E2 hashes, the recipe and material manifest. None inherits an approva
 flag from its R1 source. E1's rejected procedural art, prefabs and provenance are
 archived under `reviews/building_expansion/rejected_e1/` and excluded from the game.
 
-| Candidate | Player-visible change | Cells R1 → E2 |
+| Approved revision | Player-visible change | Cells R1 → E2 |
 | --- | --- | ---: |
 | Trader T1 E2 | Aged brick, timber and clay roof; same counter and one resident merchant | 1019 → 1019 |
 | Town hall T1 E2 | Weathered civic finish, slate roof, shallow entrance hip, cornice and coping | 3028 → 3194 |
@@ -67,7 +69,7 @@ pitch ratio. Some repeated weathering remains visible on broad surfaces: materia
 variety does not remove grid repetition or solve the surrounding forest rendering.
 
 The 512/1024 study uses the same trader roof and hall wall at 2, 8 and 20 m.
-At two metres the extra detail is slight; 512 is the proposed runtime choice.
+At two metres the extra detail is slight; 512 is the approved runtime choice.
 The 20 m cameras are obscured by foliage and are not used to claim distant detail
 equivalence. The larger array is loaded only for the study and both arrays coexist during those
 captures. The report distinguishes actual additional allocation from logical RGB
@@ -129,9 +131,14 @@ test edits are discarded when closing. The runtime prefab list exposes
 candidates through `--building-expansion-review`; ordinary generation does not
 silently adopt changed resources. No automatic repainting of saved worlds is added.
 
-The implementation and art are review candidates. Approval should identify the
-pack and exact building revisions; adoption as generation defaults follows that
-decision. No renewed approval of the previously accepted R1 designs is needed.
+The user approved the reviewed E2 implementation, artwork and exact building
+revisions on 2026-11-01, including retention of all older textures as options.
+The original bake receipts and resources stay byte-identical; the separate
+hash-bound approval record supersedes their bake-time unreviewed status.
+The current branch retains opt-in runtime exposure; recording approval does not
+change generation defaults or repaint saved worlds. These exact revisions may be
+integrated without repeating their visual review. Valley pieces remain prototypes
+and the documented navigation, frame-pacing and terrain/foliage limits stay open.
 
 Contracts: [world/building standard](WORLD_BUILDING_STANDARD.md),
 [material standard](BUILDING_MATERIAL_STANDARD.md),

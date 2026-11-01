@@ -21,11 +21,13 @@ Implementation includes 18 new grid-owned shapes, independent per-cell appearanc
 with legacy words preserved, styled archive version 3, native crafting/salvage
 decoding, searchable palette families and baked orientation/assembly previews.
 Roof courses/drain direction are checked from actual published triangles through
-all supported mounts. E2 prefabs are separate unapproved candidates with inherited
-approval flags removed; no existing save or generation default is replaced.
+all supported mounts. E2 prefabs have separate identities and do not inherit R1
+approval flags; no existing save or generation default is replaced. Their later
+[hash-bound approval](../reviews/building_expansion/approval.json) records the user
+decision without modifying the reviewed resources.
 
-Engineering verification is complete for the proposed expansion scope; exact E2
-art/building approval remains pending. See the [final review](BUILDING_EXPANSION_REVIEW.md),
+Engineering verification and user visual approval are complete for the reviewed
+E2 scope. User approval, 2026-11-01: “I approve the new changes.” See the [final review](BUILDING_EXPANSION_REVIEW.md),
 [captioned before/after gallery](../issues/building-expansion/GALLERY.md) and
 [measured costs](../issues/building-expansion/PERFORMANCE.md). Mandatory source/release
 checks pass 30 contact and 490 expansion cases each, plus 80 catalog, eight material
@@ -45,7 +47,8 @@ claiming universal NPC access. This limitation is visible in the review, not cou
 as passed. Valley shapes still lack a justified actual-building application and
 remain prototype-only for promotion. Normal/roughness and beam/chamfer/arch additions
 are assessed follow-ups, outside this pack. Full-world frame-pacing and terrain/foliage
-quality remain open; user approval is the next step for the scoped E2 candidates.
+quality remain open. Exact E2 revisions are approved for subsequent integration;
+the current branch retains its opt-in exposure and all older texture options.
 
 Concurrency: work remains in `codex/trader-civic-buildings`. The other chat reports
 BG5 integrated and vegetation validation pending, with its overhaul paused; this

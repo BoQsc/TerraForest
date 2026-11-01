@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-01",
-  "scope": "E2 implementation verified; exact art/building acceptance pending",
+  "scope": "E2 implementation verified; exact reviewed art/buildings approved 2026-11-01",
   "artifacts": [
     {
       "path": "dist/TerraForest.pck",
@@ -88,5 +88,6 @@
     "Valley shapes 26/27 only have assembly-fixture evidence.",
     "20 m texture-resolution views are obscured by foliage."
   ],
-  "implementation_commit": "1be69743a253545cbf83cfc6c02f4cad5bec500d"
+  "implementation_commit": "1be69743a253545cbf83cfc6c02f4cad5bec500d",
+  "approval_record": "reviews/building_expansion/approval.json"
 }

@@ -1,6 +1,6 @@
 # Matched building images
 
-Captured in the populated seed-1703 worlds at 1920 × 1080, Godot 4.7.2 Forward+ on an RTX 4050 Laptop GPU. Each row uses matching cameras, lighting and original save. E2 is a candidate for approval. The images retain surrounding terrain and foliage defects. Neighbors change incrementally during the eight-lot pass; C1 uses the separate northern-district save. Full source paths, hashes, worlds and available camera coordinates are in [the manifest](images/manifest.json).
+Captured in the populated seed-1703 worlds at 1920 × 1080, Godot 4.7.2 Forward+ on an RTX 4050 Laptop GPU. Each row uses matching cameras, lighting and original save. The exact pictured E2 revisions were approved by the user on 2026-11-01. The images retain surrounding terrain and foliage defects. Neighbors change incrementally during the eight-lot pass; C1 uses the separate northern-district save. Full source paths, hashes, worlds and available camera coordinates are in [the manifest](images/manifest.json).
 
 | Building / purpose | Approved R1 baseline | Proposed E2 |
 | --- | --- | --- |

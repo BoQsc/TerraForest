@@ -1,9 +1,10 @@
 # Building expansion: materials, roof joints and construction display
 
-- Status: Improved-partial; E2 engineering verified and ready for visual approval.
+- Status: E2 reviewed scope approved; documented wider limitations remain open.
 - Updated: 2026-11-01. Implementation is in the isolated trader/civic worktree.
 - User review: Direction approved 2026-10-30. User rejected E1's clean, bright
-  procedural materials and questioned pattern correctness. E2 is not approved.
+  procedural materials and questioned pattern correctness. Exact E2 changes approved
+  2026-11-01: “I approve the new changes.” See the [approval record](../../reviews/building_expansion/approval.json).
 - Symptom: Expansion materials lost the existing grim, weathered appearance;
   generic dominant-axis UV projection could run roof courses down the slope.
 
@@ -43,7 +44,7 @@ Eight source-image identity/dimension checks passed in
 `reports/checks/20261031T061323630756Z`; all eight 3×3 repeats in
 `reports/building_expansion/materials_1793427204_061` were visually inspected.
 The completed populated-world comparisons are in the [gallery](GALLERY.md);
-user visual acceptance remains pending.
+user visual acceptance was recorded on 2026-11-01 for the exact reviewed E2 scope.
 
 ## Preserved rejected and failed evidence
 
@@ -124,9 +125,11 @@ All `paired_`, `persistent_` and `packed` references above are beneath
 
 ## Remaining / resume here
 
-The proposed scope is ready for user visual approval, including exact E2 buildings
-and the 512-pixel material choice. No changed building becomes a generation default
-until that decision. Three older market NPC route plans remain an existing open
+The reviewed scope is approved, including exact E2 buildings, the 512-pixel
+material choice and retention of all older texture alternatives. The separate
+approval record preserves the exact bake identities. Runtime exposure remains
+opt-in in this branch; generation defaults and saved worlds are unchanged.
+Three older market NPC route plans remain an existing open
 limitation; Shop B1 reproduces it on unchanged R1. Return to the native route planner
 with those retained fixtures before claiming universal NPC access. Full-world frame
 pacing and terrain/foliage quality remain separate project issues.

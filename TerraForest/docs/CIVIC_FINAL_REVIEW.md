@@ -14,6 +14,8 @@ and the proposed expansion direction: “I approve all.” The expansion itself
 requires a later review and approval demonstrating justified improvements in
 real-world situations. The mandatory evidence is recorded in
 [the expansion acceptance requirements](BUILDING_EXPANSION_REVIEW.md#verification-and-remaining-limitations).
+Follow-up: the exact E2 expansion revisions and older-texture retention were
+approved on 2026-11-01; see the [final expansion approval](BUILDING_EXPANSION_REVIEW.md).
 The existing performance findings remain facts; approval does not change their
 measurements. This records design acceptance without altering saved worlds.
 
