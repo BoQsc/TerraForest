@@ -114,6 +114,12 @@ func _refresh_ground_hint() -> void:
 	ground_hint.text=names[ground_species]+" · "+cost+"\n"+("E collect" if gameplay_construction else "LMB / E remove")+" · RMB place · Hold Alt: plant settings"
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
+static func stack_limit(item:int)->int:
+	if CATALOG.has(item):return 1
+	if MATERIALS.has(item):return 999
+	if RESOURCES.has(item):return 1000000 if item==601 else (1 if item>=301 else 999)
+	return 0
+
 func prepare() -> bool:
 	if inventory!=null: return true
 	if not ClassDB.class_exists("NativePlayerInventory"):
@@ -127,10 +133,10 @@ func prepare() -> bool:
 	survival=Consumables.create()
 	if survival==null:inventory=null;return false
 	for id: int in CATALOG:
-		inventory.register_item(id,1)
+		inventory.register_item(id,stack_limit(id))
 		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
-	for id: int in MATERIALS: inventory.register_item(id,999)
-	for id: int in RESOURCES: inventory.register_item(id,1000000 if id==601 else (1 if id>=301 else 999))
+	for id: int in MATERIALS: inventory.register_item(id,stack_limit(id))
+	for id: int in RESOURCES: inventory.register_item(id,stack_limit(id))
 	inventory.register_durable(501,preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle)
 	equipment=ClassDB.instantiate("NativeContainerStore")
 	if not equipment.configure(inventory,1):return false

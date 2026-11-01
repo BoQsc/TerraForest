@@ -12,7 +12,7 @@ var catalog:Dictionary={}
 func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	game=host;menu=session
 	menu.label(parent,"Dev Bag").add_theme_font_size_override("font_size",24)
-	menu.label(parent,"Click an item to add the chosen quantity to your inventory. These are free developer grants, even in gameplay mode. Carried vehicle items stay here; live vehicles and creatures belong in Dev Spawner.")
+	menu.label(parent,"Click an item to add the chosen quantity. Hold Shift while clicking for one full stack, including ammunition. These are free developer grants, even in gameplay mode. Carried vehicle items stay here; live vehicles and creatures belong in Dev Spawner.")
 	var row:=HBoxContainer.new();parent.add_child(row)
 	search=LineEdit.new();search.placeholder_text="Search items by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
 	category=OptionButton.new()
@@ -27,7 +27,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 		if item>=401 and item<=411:catalog[item]="Water bucket (empty)" if item==401 else "Water bucket (%d L)"%(item-401)
 		var entry:=Button.new();entry.custom_minimum_size=Vector2(0,94);entry.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 		entry.text="%s\n#%d"%[catalog[item],item];entry.icon=Icons.texture(item);entry.expand_icon=true;entry.add_theme_constant_override("icon_max_width",48)
-		entry.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;entry.tooltip_text="Add to inventory: "+catalog[item];entry.pressed.connect(give.bind(item));grid.add_child(entry);entries[item]=entry
+		entry.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;entry.tooltip_text="Click: chosen quantity · Shift-click: full stack (%d)"%game.player_hud.stack_limit(item);entry.pressed.connect(give.bind(item));grid.add_child(entry);entries[item]=entry
 	empty=menu.label(parent,"No matching items. Clear the search or choose another category.")
 	search.text_changed.connect(func(_value:String):filter_items());category.item_selected.connect(func(_index:int):filter_items());filter_items()
 func item_category(item:int)->int:
@@ -43,12 +43,12 @@ func filter_items()->void:
 		var found:bool=(category.selected==0 or category.selected==item_category(item)) and (query.is_empty() or query in str(catalog[item]).to_lower() or query in str(item))
 		entries[item].visible=found
 		if found:matches+=1
-	empty.visible=matches==0;summary.text="%d / %d items · Click to add · Full inventories are left unchanged"%[matches,catalog.size()]
+	empty.visible=matches==0;summary.text="%d / %d items · Shift-click: full stack · Full inventories are left unchanged"%[matches,catalog.size()]
 func give(item:int)->void:
 	if not catalog.has(item):menu.message.text="Unknown inventory item.";return
 	if game.loading_active or game.shutdown_requested:menu.message.text="Wait for the world to be ready.";return
 	var inventory:RefCounted=game.player_hud.inventory
-	var quantity:=int(count.value)
+	var quantity:int=game.player_hud.stack_limit(item) if Input.is_key_pressed(KEY_SHIFT) else int(count.value)
 	var result:Dictionary=inventory.grant(item,quantity,inventory.snapshot().revision)
 	if not result.ok:
 		menu.message.text="Not enough inventory space for %d × %s. Nothing was added."%[quantity,catalog[item]] if result.reason=="full" else "Could not add item: "+str(result.reason)
