@@ -4,6 +4,21 @@ const Layouts=preload("res://addons/exploration/cave_layouts.gd")
 var game:Node
 var expected:Dictionary={}
 var frames:Array[float]=[]
+var locks_opened:=0
+func open_supply()->bool:
+	var identity:int=game.storage.aimed_id()
+	if not check(identity>0,"actual supply chest is selected by live scene ray"):return false
+	if game.storage.store.is_locked(identity):
+		check(game.storage.store.lock_state(identity).maximum==180,"generated lock has twice the normal chest durability")
+		game.player_hud.equip_item(2)
+		for strike in ceili(float(game.storage.store.lock_state(identity).remaining)/30.):
+			var target:Dictionary=game.world_attack.target()
+			if not check(target.get("kind")=="model" and target.get("id")==identity and game.world_attack.apply_target(target),"live hatchet contact adapter damages generated chest lock"):return false
+			if strike==2:await photograph("generated_chest_partial_lock")
+		check(not game.storage.store.is_locked(identity) and game.storage.collection.is_removal_protected(identity),"hatchet hits open lock without losing chest or contents")
+		locks_opened+=1
+	if not game.storage.opened:game.storage.try_open()
+	return check(game.storage.opened,"actual supply storage opens and blocks player control")
 func _initialize()->void:
 	root.set_flag(Window.FLAG_NO_FOCUS,true);ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	node_added.connect(func(node:Node):
@@ -90,7 +105,7 @@ func run()->void:
 		game.zombies.update(0,game.player.global_position,false)
 		var crate_position:=Vector3(origin)+Layouts.turn(Layouts.point(layout.crates[0]),rotation)
 		game.camera.look_at(crate_position+Vector3.UP*.4)
-		check(game.storage.try_open(),"real scene picking opens authored supply chest")
+		if not await open_supply():await finish();return
 		if game.storage.opened:
 			var identity:int=game.storage.identity;expected.chests.append(identity)
 			check(game.storage.store.snapshot(identity).slots[0].count>=3,"underground chest contains generated supplies")
@@ -112,6 +127,7 @@ func run()->void:
 				game.zombies.population.sync(actor);check(store.resident(expected.killed).state==2,"underground death is persisted as cleared")
 		game.zombies.update(0,game.player.global_position,false)
 	expected.storage=game.storage.store.capture_storage_snapshot()
+	print("GENERATED_LOCKS_OPENED ",locks_opened)
 	FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE).store_var(expected)
 	frames.sort();FileAccess.open(folder.path_join("walk_timing.json"),FileAccess.WRITE).store_string(JSON.stringify({"samples":frames.size(),"p95_ms":frames[int(frames.size()*.95)] if not frames.is_empty() else 0,"worst_ms":frames.back() if not frames.is_empty() else 0,"scope":"Offscreen physical player entrance walks; no foreground frame-pacing qualification"}))
 	await finish()
@@ -151,7 +167,7 @@ func check_watchtowers(restore:bool)->bool:
 			if not check(await walk(Vector3(origin)+Layouts.turn(point,rotation)),"real player climbs lookout staircase and reaches supplies"):return false
 		var crate:=Vector3(origin)+Layouts.turn(Vector3(1.8,7,6.3),rotation)
 		game.camera.look_at(crate+Vector3.UP*.4)
-		check(game.storage.try_open(),"actual upper-deck chest opens through scene picking")
+		if not await open_supply():return false
 		if game.storage.opened:
 			check(game.storage.store.snapshot(game.storage.identity).slots[0].count>=3,"lookout chest contains generated supplies")
 			game.storage.storage_list.select(0);game.storage.quantity.get_line_edit().text="1"

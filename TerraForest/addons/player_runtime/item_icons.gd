@@ -6,6 +6,7 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
+	if str(key)=="213":return preload("res://addons/player_runtime/art/lockpick.svg")
 	if str(key)=="601":return preload("res://addons/player_runtime/art/coins.svg")
 	if str(key).is_valid_int() and int(key)>=401 and int(key)<=411:
 		if bucket_icon==null:

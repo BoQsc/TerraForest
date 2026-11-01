@@ -153,7 +153,7 @@ native prefab accounting and placement rollback, not rendering performance.
 
 ## Wooden chest storage
 
-`NativeContainerStore` supplies sparse 32-slot inventories keyed by placement ID
+`NativeContainerStore` supplies sparse inventories (up to 32 slots) keyed by placement ID
 within one asset collection. Configure once from a registered player inventory;
 nonempty entries share a private immutable item catalog. `snapshot(id)` returns a
 `store_revision`; deposit/withdraw require that token plus the player's revision.
@@ -163,9 +163,30 @@ before mutation. Mutations are main-thread only; configured validation is immuta
 
 `storage.gd` connects the native store to the wooden chest model, E interaction,
 reach/occlusion checks, inventory UI, native removal protection and compound saves.
-The world cap is 4,096 nonempty chests; serialized size is 16 + 272*N bytes. Cold
+The world uses 16 visible chest slots and a shared cap of 4,096 identities with
+contents or locks. Unlocked version-three storage is 16 + 528*N bytes. Version
+four adds an eight-byte lock count and 24 bytes per lock: stable ID, remaining /
+maximum health and persisted random state. Old v1-v3 snapshots still load. Cold
 contents remain resident. Accounting/encoding are native; UI is event-driven.
 See [usage, verification and limits](../../docs/evidence/chest_storage/README.md).
+
+Pass a registered `pick_item` as the optional fourth configure argument to enable
+locks; the default disables them, and corpse stores reject the capability.
+`seed_lock`, `lock_state`, `attempt_unlock` and `damage_lock` retain the same native
+revision/atomicity boundary as transfers. Locked transfers reject even without UI.
+`requires_protection` covers locked empty chests as well as nonempty inventories.
+Lock picking has a ten-percent break chance; success reuses the pick, failure
+consumes one and advances saved random state. Forced entry unlocks, never deletes
+contents. No idle lock processing, model replacement or per-frame inventory scan.
+
+`container_rules.gd` is the generation/balance boundary: one in five generated
+chests, 180 lock health (twice normal chest health), lockpick item 213. Native
+selection-independent storage validates all changes. This seeding runs only in
+new-world generation, never on restore or existing player-placed containers.
+Craft one metal into three picks or buy from a new world's trader. Existing
+trader stock is not refilled on load. Test native debug/release with
+`python tools/check_container_locks.py [--release]`; the separate
+`container_lock_gameplay` adapter test does not qualify actual world picking.
 
 ### Host-owned world browser
 

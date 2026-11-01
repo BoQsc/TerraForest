@@ -17,11 +17,13 @@ Source browser now reads saved-world metadata/photos off the UI thread, caches
 eight thumbnails and loads generation code only when requested. Three alternating
 rendered comparisons with 299 saves: median first browser frame 1.75 → 1.24 s,
 filter update 45 → 2 ms. Focused concurrency/preview, presentation, credits,
-cancellation, progress and continue-last checks pass. Existing executable/PCK
-not rebuilt during concurrent native/content work. Source icon freshness
-preflight, full scene/native/GPU startup, other menus and exported timing remain
-unqualified. Return after the build stabilizes for export comparison and player
-review; do not infer general UI/performance completion. Evidence and exact remaining
+cancellation, progress and continue-last checks pass. The coordinated export is
+now installed with native/content milestone cb0c9cc8; all 42 packaged browser
+checks and rendered credits pass, as do source/package exploration-world create
+and restore checks. Source icon freshness preflight, full scene/native/GPU startup,
+other menus and exported timing remain unqualified. Return when the shared test
+window is available for exported timing comparison and player review; do not infer
+general UI/performance completion. Evidence and exact remaining
 scope: [browser issue](../issues/browser-responsiveness/README.md).
 
 ## Full gameplay expansion — 2026-11-01
@@ -60,8 +62,16 @@ both reproduce identically in the previously installed pack, not a new regressio
 The required current source/release building-contract gate passes; retain both facts.
 Sparse underground dressing and town-to-POI/NPC routes also remain open; return
 before art acceptance. Shared
-location ownership/reset and locks are next dependencies, not completed by loot
-seeding. Arbitrary slopes and moving-obstacle review also remain open.
+location ownership/reset remains a next dependency, not completed by loot
+seeding. Native container locks, lockpicks and forced entry are implemented in
+source with 56 debug/release lock checks plus legacy suites and 24 HUD/attack
+adapter checks. Actual generated-chest picking, forced entry, loot→metal→pick
+crafting, E unlocking and compound-save/fresh-process restoration pass 30 + 11
+checks; partial lock damage and contents persist. Matching combined export/package
+verification and direct animation-input playtest remain pending. The broad
+generation test reproduced the known second-lookout return-walk stall before
+reaching locked chests; the passing dedicated interaction test does not close
+that route failure. Arbitrary slopes and moving-obstacle review also remain open.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Gameplay responsiveness verification — 2026-11-01

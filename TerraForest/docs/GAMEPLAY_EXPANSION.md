@@ -35,8 +35,8 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Pending stable location identities, quest objectives, rewards and trader UI |
 | Large question-mark start interaction near POI, E acceptance and location reset | Pending bounded reset transaction with explicit location ownership, player-edit safety and persisted quest state |
-| Locked wilderness/building containers | Pending rare deterministic locks, E lockpick consumption with small break chance, no minigame |
-| Locked-container forced entry | Pending doubled durability while locked, damage opens lock, preserves contents and persists |
+| Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
+| Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
 | Double the largest world-content recipe | Pending measured counts/capacity, distributed towns/cities/POIs and generation/loading limits |
 | Less chaotic main roads linking towns and cities | Pending corridor planning and actual connected on-foot/vehicle routes |

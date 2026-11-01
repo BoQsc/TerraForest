@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS opening saved worlds does not load generation code
+PASS browser controls exist while the catalog is still loading
+PASS catalog and selected photograph finish asynchronously
+PASS last played order selects the newest fixture
+PASS browser uploads a bounded thumbnail
+PASS source photograph stays full resolution
+CACHED_FILTER_20_MS 1.914
+PASS repeated filtering reuses the texture without more disk work
+PASS selection changes immediately and clears the previous photograph
+PASS latest selection resolves
+PASS superseded work never replaces the latest details
+PASS empty results clear selection and photo
+PASS refresh supersedes old catalog and photo work
+PASS refresh reads changed metadata and replaces the cached photo
+PASS refreshed photo contains the new pixels
+PASS browse world_00
+PASS browse world_01
+PASS browse world_02
+PASS browse world_03
+PASS browse world_04
+PASS browse world_05
+PASS browse world_06
+PASS browse world_07
+PASS browse world_08
+PASS browse world_09
+PASS thumbnail cache has a fixed memory bound
+PASS invalid selection completes safely
+PASS invalid slots cannot escape the save directory
+PASS name sort completes
+PASS sort order remains correct
+PASS save bytes preserved 0
+PASS save bytes preserved 1
+PASS save bytes preserved 2
+PASS save bytes preserved 3
+PASS save bytes preserved 4
+PASS save bytes preserved 5
+PASS save bytes preserved 6
+PASS save bytes preserved 7
+PASS save bytes preserved 8
+PASS save bytes preserved 9
+PASS preview code loads when explicitly requested
+PASS deferred preview still returns a native terrain image
+PASS browser teardown joins in-flight read work
+WORLD_BROWSER_RESPONSIVENESS failures=0

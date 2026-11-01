@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "source": "reports/container_lock_world/20261101T131517785107Z",
+  "generation_source": "reports/exploration_world/20261101T130043255160Z",
+  "world": "Exploration_1703_8f8d4c8f",
+  "seed": 1703,
+  "build": "Source project with updated native player_runtime debug DLL; package verification pending",
+  "scope": "Actual generated objects and native picking/contact adapter, ordinary storage/crafting UI and fresh-process compound-save restore. Camera moved within streamed interiors for inspection; no input-animation, route or frame-pacing qualification.",
+  "images": [
+    {
+      "path": "images/container-lock-damaged.png",
+      "original": "generated-lock-damaged-13.png",
+      "sha256": "31659c54a959fc8bfd0f8064eda0b39eb367415fbae28f3617e0edf11293c974",
+      "caption": "Generated chest 13 after one hatchet contact: 150/180 lock durability, retained after fresh-process reload."
+    },
+    {
+      "path": "images/container-lock-picked.png",
+      "original": "generated-lock-picked.png",
+      "sha256": "e9addc538d4792c22ed1814598b46eedcb764e8fab3a5839c07015fd332821a5",
+      "caption": "Generated chest 8 opened through E with a crafted pick. The preceding forced-entry notice is still visible; this screenshot alone does not prove the input sequence, which is recorded in the passing log."
+    }
+  ],
+  "provenance": "Unedited Godot framebuffer captures by the repository test. Underlying game assets retain their existing licenses and attribution; these captures do not relicense them."
+}

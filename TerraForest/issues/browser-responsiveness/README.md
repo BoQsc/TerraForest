@@ -1,7 +1,7 @@
 # Startup and saved-world browser latency
 
-- Status: Improved-partial / source checks pass.
-- Updated: 2026-11-01. Fix: focused browser responsiveness commit; no export install.
+- Status: Improved-partial / installed, source and package functional checks pass.
+- Updated: 2026-11-01. Fix: `83f09d30`; coordinated export with `cb0c9cc8`.
 - User review: Pending.
 - Symptom: Startup waits for save/photo work; filtering or changing worlds hitches.
 
@@ -25,14 +25,20 @@ Three alternating rendered source comparisons: median first browser frame
 1.75 → 1.24 s, filter update 45 → 2 ms. See [timings, commands, passing checks and
 limitations](../../docs/evidence/browser_responsiveness/README.md).
 
+The matching installed package passes all 42 browser assertions and the rendered
+credits check. Normal source/package exploration-world create and restore checks
+also pass. Exported startup timings have not been compared; the numbers above
+remain source-run observations.
+
 ## Remaining / resume here
 
 The source launcher's required icon freshness preflight remains (read-only check
 found stale icons while other content was being edited). Full native/GPU startup,
 game-scene loading, general pause/inventory responsiveness and exported build
-timing are separate work. Resume after concurrent changes stabilize: rebuild,
-measure startup and filter/continue behavior in the export, then obtain player
-review. Passing source checks is not export validation or user approval.
+timing are separate work. The coordinated export is installed and functionally
+checked. Resume with exported startup/filter/continue timing when the shared test
+window is available, then obtain player review. Functional passes do not establish
+exported performance or user approval.
 
 ## Reproduce / history
 
