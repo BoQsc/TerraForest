@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=37
+const VERSION:=38
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -224,7 +224,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if not minerals.get("ok",false):return {"ok":false,"reason":"Material deposit planning failed"}
   result["material_deposits"]=minerals.deposits
   result["mineral_plan_ms"]=minerals.worker_ms
- var navigation:=navigation_metadata(sites,network)
+ var navigation:=navigation_metadata(sites,network,seed_value)
  navigation.roads.append_array(bridge_navigation)
  for location:Dictionary in result.get("watchtowers",{}).get("sites",[]):
   navigation.places.append({"id":6000+navigation.places.size(),"title":location.title,"detail":"Destructible wilderness lookout with connected stairs, supplies and a sleeping inhabitant.","position":location.entrance.segment.start})
@@ -263,11 +263,11 @@ static func locate_expansion(core:RefCounted,hint:Vector3,occupied:Array,area:Re
  if civic:return Planner.locate(core,hint,occupied,area,Civic.recipe,Civic.streets,Vector2(180,224))
  if district==1:return Planner.locate(core,hint,occupied,area,City.recipe,City.streets,Vector2(180,224))
  return Planner.locate(core,hint,occupied,area)
-static func navigation_metadata(sites:Array,network:Dictionary)->Dictionary:
+static func navigation_metadata(sites:Array,network:Dictionary,seed_value:int=0)->Dictionary:
  var metadata:Dictionary={"places":[],"roads":[]}
  for index in sites.size():
   var site:Dictionary=sites[index]
-  var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"Settlement %d / District %d"%[site.town+1,site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
+  var district:=preload("res://addons/world_runtime/generated_region.gd").neighborhood_metadata(site,30+index,"%s / District %d"%[preload("res://addons/world_runtime/town_sign_plan.gd").town_name(seed_value,site.town),site.district+1],"Terrain-fitted buildings and individually destructible sidewalk plates.")
   metadata.places.append_array(district.places);metadata.roads.append_array(district.roads)
   if site.recipe_kind=="civic":metadata.places.append_array(Civic.metadata(site))
  if network.has("grid_navigation"):metadata.roads.append_array(network.grid_navigation)

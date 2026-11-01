@@ -1,5 +1,16 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Town roadside signs — 2026-11-01
+
+One or two named static signs per new town pass 18 native checks plus ordinary
+source generation17, fresh-process restore18 and corrected-post restore18 checks.
+Seed1703 has Coldwater2/Dunvale2 signs with map-name parity, native collision and
+edited-ground post support. Initial front-post geometry was rejected and corrected;
+final timber/panel UVs and unobstructed photos await the next rendered pass. Main
+integration and installed creation/reopen remain open in the coordinated mine/vehicle
+queue. No performance acceptance under concurrent compilation.
+[Evidence and resume steps](../issues/town-road-signs/README.md).
+
 ## World entry fly-in — 2026-11-01
 
 Default-on entry passes 24 populated-world and 25 ordinary-browser source checks,

@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Town roadside signs](town-road-signs/README.md) | Source generation/reopen pass / installed pending | Coldwater2 + Dunvale2; map names, native collision and grounded posts verified. Initial post overlap corrected; final UV/photo pass and coordinated main/package integration remain open |
 | [World entry fly-in](world-entry-fly-in/README.md) | Source + frozen PCK verified / exact executable pending | 49 source + 49 PCK checks; buffered approach inspected; corrected runner awaits matching native build. User motion review and deferred 53 FPS flight / 143 ms handoff optimization remain open |
 | [Wearable clothing and trader outfit](woven-clothes/README.md) | Woven R1 installed / trader + trail source verified | Trader role outfit survives respawn; second CC0 pack supports paid crafting, swaps and fresh-process restore; both shown outfits approved and required in next combined build; all six remain craftable |
 | [Authored door Open/Close](door-animation/README.md) | Installed / scoped checks | Authored GLB handle/latch and leaf motion; normal E, streamed visual ownership and mid-swing save/reopen pass in source/release/PCK; actual main executable checked, visual review pending |

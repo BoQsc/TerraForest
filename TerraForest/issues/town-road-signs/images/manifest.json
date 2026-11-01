@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-01",
+  "base_commit": "13145a68",
+  "images": [
+    {
+      "file": "rejected-front-posts.png",
+      "source": "reports/town_signs_world/20261101T173151258077Z/road_coldwater.png",
+      "sha256": "6a6d51554a3aaf1cfeeaa13dabf70ac23c107b69738fb9f9b504c3a412a0b832",
+      "caption": "Rejected first assembly: timber posts partly overlap the board face; tool also obscures the review view.",
+      "world": "TownSigns_1703_8a941a34",
+      "seed": 1703,
+      "recipe": "Connected countryside, unchanged normal UI defaults",
+      "capture": "Godot 4.7.2, Vulkan Forward+, 1920x1080, 60 FPS cap, VSync; concurrent native compilation, no performance claim",
+      "provenance": "Unretouched runtime screenshot; inherited content licenses retained; documentation evidence excluded from imports/game exports"
+    },
+    {
+      "file": "rear-posts-partial-review.png",
+      "source": "reports/town_signs_world/20261101T173519352892Z/close_coldwater.png",
+      "sha256": "8a81b36040cf2dba3f4ea664a22b44b50e53db57072eb29cd71918eeba376f8b",
+      "caption": "Corrected posts behind the board. Grounded roadside placement and name inspected; held tool still obscures the right side. Final UV alignment and unobstructed review remain pending.",
+      "world": "TownSigns_1703_8a941a34",
+      "seed": 1703,
+      "recipe": "Connected countryside, unchanged normal UI defaults",
+      "capture": "Godot 4.7.2, Vulkan Forward+, 1920x1080, 60 FPS cap, VSync; concurrent native compilation, no performance claim",
+      "provenance": "Unretouched runtime screenshot; inherited content licenses retained; documentation evidence excluded from imports/game exports"
+    }
+  ]
+}

@@ -323,6 +323,9 @@ func run()->void:
   if not game.material_deposits.publish(seed_value,generator,prepared.get("material_deposits",[]),game.structures):print("MATERIAL_DEPOSITS_FAILED");quit(1);return
  for site:Dictionary in sites:
   if site.get("recipe_kind","")=="civic" and not preload("res://addons/structures/civic_catalog.gd").prepare_landscape(game,site):print("CIVIC_LANDSCAPE_FAILED");game.free();quit(1);return
+ if not world_options.is_empty():
+  progress("Placing town entrance signs",0,world_options.settlements)
+  if not await game.town_signs.publish(game,seed_value,generator,sites,prepared.network):print("TOWN_SIGNS_FAILED");game.free();quit(1);return
  game.ecosystem._structures_changed()
  game.ground_cover._exclusion_changed(works.bounds)
  game.terrain.changed_since_save=true
