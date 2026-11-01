@@ -13,6 +13,12 @@ func move(store: RefCounted,player: RefCounted,id: int,count: int,deposit: bool=
 func _initialize() -> void:
 	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var player:=inventory();player.grant(201,100,0)
+	var seeded:RefCounted=ClassDB.instantiate("NativeContainerStore");seeded.configure(player,2,4)
+	check(not seeded.seed_contents(1,PackedInt64Array()) and not seeded.seed_contents(1,PackedInt64Array([999,1])),"generation seeding rejects empty and unknown supply lists")
+	check(seeded.seed_contents(1,PackedInt64Array([201,5])) and seeded.snapshot(1).slots[0].count==5,"generation supplies publish with one native grant")
+	var seeded_bytes:PackedByteArray=seeded.capture_storage_snapshot()
+	check(not seeded.seed_contents(1,PackedInt64Array([201,6])) and seeded.capture_storage_snapshot()==seeded_bytes,"seeding cannot replace existing contents")
+	check(not seeded.seed_contents(2,PackedInt64Array([201,3,999,1])) and seeded.capture_storage_snapshot()==seeded_bytes,"invalid mixed supply grant is atomic")
 	var store: RefCounted=ClassDB.instantiate("NativeContainerStore")
 	check(store.configure(player,2) and not store.configure(player,3),"capacity and catalog configure once")
 	var empty: PackedByteArray=store.capture_storage_snapshot()

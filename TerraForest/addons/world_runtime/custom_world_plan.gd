@@ -1,5 +1,6 @@
 extends RefCounted
-const VERSION:=32
+const VERSION:=33
+const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
 const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
@@ -57,6 +58,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
  key+="|civic-r1" if civic_review else "|approved-e2-civic"
+ key+="|"+FileAccess.get_sha256(Exploration.PATH)
  if not civic_review:
   for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
  if civic_review:
@@ -190,6 +192,19 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   result["bridges"]=bridge_plan.bridges;result["bridge_rejections"]=bridge_plan.rejected
   bridge_navigation=bridge_plan.navigation
   for path_segment:Dictionary in bridge_plan.segments:works.segments.append(path_segment);works.bounds=works.bounds.merge(path_segment.bounds)
+ if generator>=29:
+  if progress!=null:progress.record("Fitting small mines and caves",0,0,"Native bounded hillside search / authored rooms / roof cover and dry approaches")
+  var layouts:=Exploration.load_catalog()
+  if layouts.is_empty():return {"ok":false,"reason":"Invalid exploration layout catalog"}
+  var exploration:Dictionary=core.plan_exploration_sites(layouts,reserved,works.segments)
+  if not exploration.get("ok",false):return {"ok":false,"reason":"Exploration site survey failed"}
+  result["exploration"]=exploration
+  for location:Dictionary in exploration.sites:
+   var layout_entry:Dictionary=layouts.filter(func(value:Dictionary):return value.id==location.id)[0]
+   location["title"]=layout_entry.title
+   var segments:=Exploration.segments(layout_entry,location.origin,location.rotation)
+   segments.push_front(location.approach)
+   for segment:Dictionary in segments:works.segments.append(segment);works.bounds=works.bounds.merge(segment.bounds)
  if int(options.get("material_veins",0))==1:
   if progress!=null:progress.record("Locating material veins and surface stones",0,0,"Native geology / dry gentle ground / outside roads and construction")
   var minerals:Dictionary=core.plan_material_deposits(works.segments)
@@ -198,6 +213,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   result["mineral_plan_ms"]=minerals.worker_ms
  var navigation:=navigation_metadata(sites,network)
  navigation.roads.append_array(bridge_navigation)
+ for location:Dictionary in result.get("exploration",{}).get("sites",[]):
+  navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
  for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation

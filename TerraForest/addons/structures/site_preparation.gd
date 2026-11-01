@@ -52,7 +52,7 @@ func tick(terrain: Node,guard: Callable) -> void:
 	var segment: Dictionary=plan.segments[completed]
 	if segment.has("coefficients"):
 		waiting=terrain.construct_curved_road_bed(segment.start,segment.finish,segment.coefficients,segment.curve_index,segment.half_width,segment.depth,segment.clearance,segment.material,segment.shoulder)
-	elif segment.get("rectangular",false) or segment.get("level_caps",false):
+	elif segment.get("rectangular",false) or segment.get("level_caps",false) or segment.get("cut_only",false) or segment.get("arched",false):
 		var packets:Array=preload("res://addons/world_runtime/generation_earthworks.gd").packets([segment])
 		waiting=not packets.is_empty() and terrain.edit(packets[0],segment.bounds.position,segment.bounds.end)
 	else:

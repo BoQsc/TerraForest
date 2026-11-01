@@ -258,6 +258,12 @@ func run()->void:
  var sleepers:Dictionary=preload("res://addons/characters/runtime/house_sleepers.gd").populate(game,all_lots)
  if not sleepers.get("ok",false):print("HOUSE_SLEEPERS_FAILED ",sleepers);game.free();quit(1);return
  FileAccess.open(output_dir.path_join("house_sleepers.json"),FileAccess.WRITE).store_string(JSON.stringify(sleepers))
+ var exploration_sites:Array=prepared.get("exploration",{}).get("sites",[])
+ if not exploration_sites.is_empty():
+  progress("Placing mine and cave supplies and sleepers",0,exploration_sites.size())
+  var exploration:Dictionary=await preload("res://addons/exploration/generation.gd").publish(game,exploration_sites)
+  if not exploration.get("ok",false):print("EXPLORATION_PUBLICATION_FAILED ",exploration);game.free();quit(1);return
+  FileAccess.open(output_dir.path_join("exploration.json"),FileAccess.WRITE).store_string(JSON.stringify(exploration))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

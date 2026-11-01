@@ -339,7 +339,7 @@ PackedInt32Array NativeBlockPrefab::get_records() const {
     return out;
 }
 AABB NativeBlockPrefab::placement_bounds(Vector3i origin,int turns) const {
-    if(turns<0||turns>3||cells.empty())return AABB();
+    if(turns<0||turns>3||(cells.empty()&&model_attachments.is_empty()))return AABB();
     const AABB complete=get_bounds();
     Vector3 lo=complete.position,hi=complete.get_end();
     // Integer cell rotation about the centre of local cell (0,0,0).

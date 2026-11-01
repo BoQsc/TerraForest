@@ -5,6 +5,7 @@
 namespace terraforest {
 using namespace godot;
 void NativeContainerStore::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("seed_contents","id","items"),&NativeContainerStore::seed_contents);
     ClassDB::bind_method(D_METHOD("drag_slots","id","player","source_chest","target_chest","from","to","count","player_revision","store_revision"),&NativeContainerStore::drag_slots);
     ClassDB::bind_method(D_METHOD("configure","prototype","max_containers","slots"),&NativeContainerStore::configure,DEFVAL(32));
     ClassDB::bind_method(D_METHOD("snapshot","id"),&NativeContainerStore::snapshot);

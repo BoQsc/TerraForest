@@ -1,11 +1,76 @@
 # Gameplay expansion: encounters, exploration and progression
 
-- Status: In progress; native encounters and generated house sleepers, not a completed expansion.
+- Status: In progress; generated house/underground sleepers and supplies, not a completed expansion.
 - Updated: 2026-11-01.
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
 ## Images
+
+### Generated underground locations — 2026-11-01
+
+![Survey mine in an ordinary generated world](images/survey-mine-world-entrance.png)
+![Mine supply chest reached through actual player movement](images/survey-mine-world-chamber.png)
+![Cave entrance with unresolved faceted/dark rim patches](images/cave-world-entrance.png)
+![Cave supply chest](images/cave-world-chamber.png)
+
+Seed 1703, normal default browser recipe, source run
+`reports/exploration_world/20261101T102919511519Z`. Captures are unedited; existing
+materials/models retain their original provenance. Timbers are 33 destructible
+grid blocks, not one mine mesh. The mine branches and loops; the smaller cave has
+two connected chambers. Actual collision-driven approach/room walks, chest UI,
+withdrawal, hearing/wake and separate-process restoration pass. Teleporting to the
+approach does not qualify travel from town. Dark angular cave-rim patches and
+sparse dressing remain visible defects, **not final art approval**. The separate
+[unshaded diagnostic](images/cave-entrance-geometry.png) shows surface geometry at
+that patch; it does not establish the final lighting/material cause or fix.
+
+- Native debug/release: `reports/exploration_native/20261101T103315815064Z` and
+  `20261101T103318338898Z`; 25 arched-density, 66 layout/route/fitting and 23
+  model-only atomic-placement checks each. Includes flat-floor exact-cube safety,
+  five deterministic seeds, all rotations, reject/no-mutation and binary reload.
+- Standalone visual/collision: `reports/exploration_review/20261101T102303021939Z`,
+  26 checks, shared production support/clearance gate and native sleeper wake.
+- Ordinary world create/restore: `reports/exploration_world/20261101T102919511519Z`.
+  Two sites, five stocked chests, five keyed sleepers; actual looted contents and
+  killed resident survive a fresh process. Old saves are not repopulated.
+- Matching installed pack create/restore passes:
+  `reports/exploration_world/20261101T103815729207Z`, SHA-256
+  `852158e09857496452c1723074dbdab39166c1fc668c9c2a6eb0ced23db6b305`.
+  Pack size 447,074,612 bytes; source/package entrance images inspected. Its 466
+  offscreen walking frames have p95 22.018 ms and worst 78.687 ms: **remaining
+  performance work**, not a smooth-60 claim. Sampled peak private commit 3.566 GiB,
+  dedicated GPU 1.401 GiB. Controlled foreground comparison remains necessary.
+- Source walking window: 466 frames, p95 18.325 ms, worst 32.883 ms. These are
+  offscreen physical-controller walks, **not** foreground pacing or smooth-60
+  approval. Sampled peak private commit 3.442 GiB and dedicated GPU 1.387 GiB;
+  0.5-second process-specific counters do not capture every instantaneous peak.
+  FPS shown during screenshot readback is not a benchmark. 60 FPS/VSync and
+  Quiet Mode are unchanged.
+- Existing container, real-prefab, frontage and terrain contract tests pass;
+  required source/release building gate: `reports/building_standards/20261101T103446324792Z`.
+- First ordinary-world run `20261101T102618255608Z` is retained as **failed**:
+  the test's initial offscreen flag was reset during scene transition, permitting
+  mouse capture. The harness now sets it before the world enters the tree and
+  asserts zero captures both at readiness and exit. Passing rerun retains normal
+  collision but opens the movement gate without OS capture; it is not an input
+  or foreground-performance qualification.
+- Other retained rejects: `exploration_review/20261101T095955750134Z` (wrong
+  approach material/camera inside wall); `exploration_native/20261101T100715626549Z`
+  (stale release binary launched before build ended); `exploration_native/20261101T102238121129Z`
+  (test Variant-inference parse error). Earlier native/visual failures remain in
+  `reports`; no failed cache or review image is silently removed.
+
+Next: rim/art refinement, watchtower and external paths, then persistent location
+ownership/reset and locked access. Loot seeding is generation-only, not quest
+reset. Dense encounter balance, general NPC routes, broader seeds/recipes and
+foreground/doubled-content performance remain open.
+
+Implementation: `addons/exploration/`, native `exploration_sites.hpp`, native
+arched terrain profile, `NativePrefabPlacement.ground_model_samples`, the shared
+foundation state machine, exact committed-model IDs and native container grants.
+`custom_world_plan.gd`/`generate_world_task.gd` are the ordinary-generation hook;
+there is no load-time regeneration or new frame-loop excavation.
 
 ![Generated forearm-loss resident](images/seed1703-forearm-variant.png)
 

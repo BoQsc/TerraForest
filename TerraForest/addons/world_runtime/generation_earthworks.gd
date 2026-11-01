@@ -6,6 +6,7 @@ static func ordered_segments(segments:Array)->Array:
  var ordered:Array=[]
  for segment:Dictionary in segments:
   if segment.get("phase","") not in ["","excavation","surface_clearance"]:return []
+  if segment.get("arched",false) and (segment.get("phase","")!="excavation" or not segment.get("cut_only",false) or segment.get("rectangular",false) or segment.get("level_caps",false) or segment.get("shoulder",0)!=0 or segment.has("coefficients")):return []
   if segment.get("phase","")=="surface_clearance" and (not segment.get("cut_only",false) or not segment.get("rectangular",false)):return []
   if int(segment.material)!=4 and segment.get("phase","")=="":ordered.append(segment)
  for segment:Dictionary in segments:
@@ -32,7 +33,7 @@ static func packets(segments:Array,deposits:Array=[])->Array:
   else:
    packet=Codec.graded_bed(segment.start,segment.finish,segment.half_width,segment.depth,segment.clearance,segment.material)
    if segment.shoulder!=0.0:packet.resize(48);packet.encode_float(44,segment.shoulder)
-   var profile:int=(1 if segment.get("rectangular",false) else 0)|(2 if segment.get("level_caps",false) else 0)|(4 if segment.get("cut_only",false) else 0)
+   var profile:int=(1 if segment.get("rectangular",false) else 0)|(2 if segment.get("level_caps",false) else 0)|(4 if segment.get("cut_only",false) else 0)|(8 if segment.get("arched",false) else 0)
    if profile:packet.resize(52);packet.encode_u32(48,profile)
   result.append(packet)
  for deposit:Dictionary in deposits:

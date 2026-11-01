@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "seed": 1703,
+  "date": "2026-11-01",
+  "matching_pack_report": "reports/exploration_world/20261101T103815729207Z",
+  "pack_sha256": "852158e09857496452c1723074dbdab39166c1fc668c9c2a6eb0ced23db6b305",
+  "provenance": "Unedited local TerraForest captures by Codex. Existing assets retain their original terms/provenance; no third-party content relicensed. Excluded from game imports and export.",
+  "review": "Assistant inspected. Engineering milestone only; visible cave-rim/material defects and sparse dressing remain. No user art approval or foreground pacing qualification.",
+  "images": [
+    {
+      "file": "survey-mine-world-entrance.png",
+      "sha256": "f80e9ab1da672b237f15cca1fcd6bb2127c4d698cffa66279f3521c1b3da13a8",
+      "source": "reports/exploration_world/20261101T102919511519Z/survey_mine_world_entrance.png"
+    },
+    {
+      "file": "survey-mine-world-chamber.png",
+      "sha256": "0a0b8aba88959c7ba4b8e1b110f37f4ea5d70deeebada7df40a54fbf0716e826",
+      "source": "reports/exploration_world/20261101T102919511519Z/survey_mine_world_chamber.png"
+    },
+    {
+      "file": "cave-world-entrance.png",
+      "sha256": "2e868a1c53dd059a3d04bb908c67053cfca32a7f949bcf41a6acb0e5a7ac2a17",
+      "source": "reports/exploration_world/20261101T102919511519Z/split_rock_cave_world_entrance.png"
+    },
+    {
+      "file": "cave-world-chamber.png",
+      "sha256": "ca5597fdf7c828cfccce16f1e172d14280ef6601deb60aa13a8921ca697f1000",
+      "source": "reports/exploration_world/20261101T102919511519Z/split_rock_cave_world_chamber.png"
+    },
+    {
+      "file": "cave-entrance-geometry.png",
+      "sha256": "c32fec91fe8e6d0b4bed2da10a86c587f55604637888b423974c833dfa26779e",
+      "source": "reports/exploration_review/20261101T101424182838Z/split_rock_cave_entrance_geometry.png",
+      "scope": "Separate diagnostic unshaded normals on the actual generated mesh, not ordinary game lighting or a final material fix."
+    }
+  ]
+}

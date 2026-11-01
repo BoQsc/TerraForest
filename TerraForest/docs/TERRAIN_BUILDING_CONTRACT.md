@@ -27,8 +27,12 @@ These are independent causes; a different soil offset alone is insufficient.
 3. Building approaches use level capsule ends. Their slopes stop at the declared
    endpoints, preventing backward slope extension into floors. Existing road
    packets retain their original through-join behavior. New native profile bits
-   are explicit: 1 rectangular, 2 level ends, 4 subtractive clearance. Unknown
-   bits and invalid geometry fail before edits.
+   are explicit: 1 rectangular, 2 level ends, 4 subtractive clearance, 8 arched.
+   An arched cut is exactly profile 12 with no shoulder or curve coefficients;
+   its rounded roof is clipped at the authored floor, including exact voxel-cube
+   removal. Width is at least 1.5 m; clearance is between one and 1.75 widths.
+   Unknown bits and invalid geometry fail before edits. Arches are excavation,
+   never support/fill operations or a different floor-grid datum.
 4. Native block convex geometry supplies exposed surface probes, including
    half-slabs, plates, stairs and all supported shape mounts. Fully covered joins
    are excluded. Full flat cells receive nine corner/edge/centre probes; other
@@ -56,6 +60,14 @@ The surface cache is bounded at 1,048,576 points per prefab; native pages contai
 at most 512 points and asynchronous scans at most 4,096. Clearance authoring is
 bounded at 4,096 runs per asset and the existing 16,384 master-edit limit. This is
 offline/placement work, not a new frame-loop scan or terrain deformation system.
+
+Grounded standalone props use `NativePrefabPlacement.ground_model_samples` through
+`foundation_check.begin_ground_models`: real transformed visual/collision bounds,
+half-metre support and interior grids, the same deep-support/epoch/revision gate.
+The API bounds 64 attachments, 256 model collections and 4,096 probes; unsupported
+frames or oversized geometry reject. It is not a foundation rule for furniture
+attached to upper floors. Model-only prefabs are atomic native transactions;
+empty prefabs still reject. Existing overlap, envelope and admission rules apply.
 
 ## Verification and approval
 

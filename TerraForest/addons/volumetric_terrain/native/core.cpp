@@ -650,11 +650,14 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  List<EditSample> staged;List<u32> new_keys;Map planned;
  auto discard=[&](){staged.release();new_keys.release();planned.release();};
  int x0=fl(lo.x),x1=fl(hi.x),y0=fl(lo.y),y1=fl(hi.y),z0=fl(lo.z),z1=fl(hi.z);
+ V3 arch_axis={b.x-a.x,0,b.z-a.z};float arch_inverse=shape==8?1.f/mx(dot(arch_axis,arch_axis),1e-8f):0;
  for(int z=z0;z<=z1;z++)for(int x=x0;x<=x1;x++){
   float h=height(float(x),float(z));int lastpy=-1,idx=-1,reference=0;bool present=false;u32 key=0;
+  float arch_floor=shape==8?a.y+(b.y-a.y)*clampf(dot(V3{float(x)-a.x,0,float(z)-a.z},arch_axis)*arch_inverse,0,1)-depth:0;
   for(int y=y0;y<=y1;y++){
    bool graded=shape==2||(shape>=5&&shape<=7),rectangular=shape==5||shape==7,level_caps=shape==6||shape==7;
    V3 p={float(x),float(y),float(z)};float brush=graded?road_bed_field(p,a,b,radius,depth,shoulder,curve,curve_count,curve_index,0,false,rectangular,level_caps):(shape==1?box_distance(p,b,radius):capsule(p,a,b,radius));
+   if(shape==8)brush=mx(brush,arch_floor-p.y);
    float cut=graded&&clearance>0?road_bed_field(p,a+V3{0,clearance,0},b+V3{0,clearance,0},radius,clearance,shoulder,curve,curve_count,curve_index,clearance,true,rectangular,level_caps,rectangular&&!add):SDF_BAND+1;
    if(brush>SDF_BAND&&cut>SDF_BAND)continue;
    int py=y>>4;if(py!=lastpy){key=page_key(x>>4,py,z>>4);idx=pages_by_key.get(key);int virtual_page=idx<0?planned.get(key):-1;present=idx>=0||virtual_page>=0;reference=idx>=0?idx:-1-virtual_page;lastpy=py;}
@@ -715,7 +718,7 @@ bool World::edit(V3 a,V3 b,float radius,int shape,bool add,u8 material,V3&lo,V3&
  // Construction is a separate exact grid. Smooth excavation removes whole intersected cubes,
  // rather than silently rounding them into the smooth density lattice.
  if(!add)for(int cz=fl(lo.z)/32;cz<=fl(hi.z)/32;cz++)for(int cx=fl(lo.x)/32;cx<=fl(hi.x)/32;cx++){
-  auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(d<=0){blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
+  auto&column=block_columns[cx+64*cz];int j=0;while(j<column.n){u32 key=column[j];int x,y,z;decode_block(key,x,y,z);V3 p={x+.5f,y+.5f,z+.5f};float d=shape==1?box_distance(p,b,radius):capsule(p,a,b,radius);if(shape==8)d=mx(d,a.y+(b.y-a.y)*clampf(dot(p-a,arch_axis)*arch_inverse,0,1)-depth-p.y);if(d<=0){blocks.erase(key);column[j]=column[column.n-1];column.n--;changes++;}else j++;}
  }
  if(changes){invalidate_geometry_cache(*this,lo,hi);revision++;edits++;changed_samples+=changes;lighting_revision=-1;}return true;
 }
@@ -1510,7 +1513,8 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   V3 a=r.vec(),b=r.vec();float width=r.f(),depth=r.f(),clearance=n>=40?r.f():0;u32 material=n>=44?r.u():4;float shoulder=n>=48?r.f():0;V3 axis={b.x-a.x,0,b.z-a.z};float distance=length(axis);
   u32 profile=n==52?r.u():0;
   bool rectangular=(profile&1)!=0,level_caps=(profile&2)!=0;
-  if(n==52&&(profile==0||profile>7||((profile&4)&&clearance<=0))){out.p[8]=1;return;}
+  bool arched=(profile&8)!=0;
+  if(n==52&&(profile==0||profile>15||((profile&4)&&clearance<=0)||(arched&&(profile!=12||shoulder!=0||width<1.5f||clearance<width||clearance>width*1.75f)))){out.p[8]=1;return;}
   float coefficients[256];int curve_count=0,curve_index=0;
   if(n>=72){
    curve_count=int(r.u());curve_index=int(r.u());
@@ -1533,7 +1537,9 @@ void process_request(World&w,const u8*data,int n,Bytes&out){
   if(!r.good||(n!=36&&n!=40&&n!=44&&n!=48&&!profile&&!curve_count)||(rectangular&&ab(a.y-b.y)>.001f)||material<1||material>4||!(shoulder>=0&&shoulder<=16)||!(clearance>=0&&clearance<=16&&mx(a.y,b.y)+clearance<=250&&width>=.5f&&width<=16.f&&depth>=1.f&&depth<=8.f&&distance>=1.f&&distance<=128.f)||
      !(a.x>=width+5&&a.x<=WORLD-width-5&&b.x>=width+5&&b.x<=WORLD-width-5&&a.z>=width+5&&a.z<=WORLD-width-5&&b.z>=width+5&&b.z<=WORLD-width-5&&a.y>=depth+4&&a.y<=250&&b.y>=depth+4&&b.y<=250&&ab(b.y-a.y)<=distance*.25f)){out.p[8]=1;return;}
   if(!(a.x>=width+shoulder+5&&a.x<=WORLD-width-shoulder-5&&b.x>=width+shoulder+5&&b.x<=WORLD-width-shoulder-5&&a.z>=width+shoulder+5&&a.z<=WORLD-width-shoulder-5&&b.z>=width+shoulder+5&&b.z<=WORLD-width-shoulder-5)){out.p[8]=1;return;}
-  V3 lo,hi;int changes;bool ok=w.edit(a,b,width,level_caps?(rectangular?7:6):(rectangular?5:2),(profile&4)==0,u8(material),lo,hi,changes,depth,clearance,shoulder,nullptr,curve_count?coefficients:nullptr,curve_count,curve_index);
+  V3 lo,hi;int changes;bool ok;
+  if(arched){float lift=clearance-width;ok=w.edit(a+V3{0,lift,0},b+V3{0,lift,0},width,8,false,u8(material),lo,hi,changes,lift);}
+  else ok=w.edit(a,b,width,level_caps?(rectangular?7:6):(rectangular?5:2),(profile&4)==0,u8(material),lo,hi,changes,depth,clearance,shoulder,nullptr,curve_count?coefficients:nullptr,curve_count,curve_index);
   if(!ok)out.p[8]=2;out.u(w.revision);out.u(changes);out.u(w.pages.n);out.u(w.blocks.n);out.vec(lo);out.vec(hi);
  }
  else if(cmd==3){

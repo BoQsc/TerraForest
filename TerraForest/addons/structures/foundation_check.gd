@@ -21,6 +21,7 @@ var surfaces:=false
 var surface_total:=0
 var failure_point:=Vector3.INF
 var checked_band:=0
+var model_clearance:=PackedVector3Array()
 func begin(terrain: Node,asset: Resource,target: Vector3i,rotation: int) -> bool:
 	if status=="checking" or not terrain.world_ready or terrain.pending_edit: return false
 	var contract:=preload("res://addons/structures/terrain_contact.gd").describe(asset)
@@ -28,6 +29,7 @@ func begin(terrain: Node,asset: Resource,target: Vector3i,rotation: int) -> bool
 	points=asset.foundation_samples(target,rotation,int(asset.get_meta("site_sample_band",0)))
 	if points.is_empty(): status="No foundation probes";return false
 	checked_asset=asset;checked_target=target;checked_rotation=rotation
+	model_clearance=PackedVector3Array()
 	checked_band=int(contract.sample_band)
 	clearance=false;deep_support=false;clearance_total=asset.clearance_sample_count()
 	surfaces=false;failure_point=Vector3.INF
@@ -41,9 +43,21 @@ func begin_surfaces_only(terrain:Node,asset:Resource,target:Vector3i,rotation:in
 	if status=="checking" or not terrain.world_ready or terrain.pending_edit:return false
 	if asset==null or not asset.is_class("NativeBlockPrefab") or rotation<0 or rotation>3:return false
 	checked_asset=asset;checked_target=target;checked_rotation=rotation;checked_band=band
+	model_clearance=PackedVector3Array()
 	surface_total=asset.terrain_surface_sample_count(band)
 	if surface_total<=0:status="Missing or excessive terrain surface probes";return false
 	surfaces=true;clearance=false;deep_support=false;failure_point=Vector3.INF
+	epoch=terrain.epoch;revision=terrain.density_revision
+	offset=0;waiting=false;status="checking";deadline=Time.get_ticks_msec()+10000
+	return true
+func begin_ground_models(terrain:Node,asset:Resource,target:Vector3i,rotation:int,models:Dictionary)->bool:
+	if status=="checking" or not terrain.world_ready or terrain.pending_edit:return false
+	var sampler:RefCounted=ClassDB.instantiate("NativePrefabPlacement")
+	var probes:Dictionary=sampler.ground_model_samples(asset,target,rotation,models)
+	if not probes.get("ok",false):status=probes.get("reason","Invalid model probes");return false
+	points=probes.support;model_clearance=probes.clearance
+	checked_asset=null;checked_target=target;checked_rotation=rotation;checked_band=0
+	clearance=false;deep_support=false;surfaces=false;surface_total=0;clearance_total=model_clearance.size();failure_point=Vector3.INF
 	epoch=terrain.epoch;revision=terrain.density_revision
 	offset=0;waiting=false;status="checking";deadline=Time.get_ticks_msec()+10000
 	return true
@@ -59,8 +73,10 @@ func tick(terrain: Node) -> void:
 		for page_offset in range(offset,mini(offset+SCAN_LIMIT,surface_total),512):
 			batch.append_array(checked_asset.terrain_surface_samples(checked_target,checked_rotation,page_offset,512,checked_band))
 	elif clearance:
-		for page_offset in range(offset,mini(offset+SCAN_LIMIT,clearance_total),512):
-			batch.append_array(checked_asset.clearance_samples(checked_target,checked_rotation,page_offset,512,checked_band))
+		if not model_clearance.is_empty():batch=model_clearance.slice(offset,mini(offset+SCAN_LIMIT,clearance_total))
+		else:
+			for page_offset in range(offset,mini(offset+SCAN_LIMIT,clearance_total),512):
+				batch.append_array(checked_asset.clearance_samples(checked_target,checked_rotation,page_offset,512,checked_band))
 	else: batch=points.slice(offset,mini(offset+SCAN_LIMIT,points.size()))
 	# Native column maximum checks every layer through the bounded fill depth.
 	var support_depth: int=mini(8,maxi(0,checked_target.y-4)) if deep_support and not clearance else 0

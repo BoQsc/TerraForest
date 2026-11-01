@@ -1,0 +1,17 @@
+Small exploration locations, revision 1, 2026-11-01.
+Original TerraForest contributor work, AI-assisted with OpenAI Codex.
+No external models, diagrams, snippets or copied layouts were used.
+User request: compact branching caves and mines, structures, supply crates,
+seated/lying sleeper encounters, not a straight tunnel template.
+
+Original layout data: small_locations.poi.json, dedicated CC0-1.0 under the
+repository contribution policy. Layout coordinates, view anchors, timber frame
+locations and supply/encounter anchors are original authoring data.
+Code: cave_layouts.gd, generation.gd and associated native/test/authoring code
+are 0BSD. The catalog/native planning boundary is described in
+docs/GAMEPLAY_EXPANSION.md; layouts are not monolithic imported meshes.
+Existing TerraForest timber block materials and wooden chest models retain
+their existing provenance and terms; this set does not relicense them.
+
+Layout art and natural-site fit require review. Test success is not visual
+acceptance or approval of any existing building replacement.

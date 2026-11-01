@@ -19,6 +19,7 @@ protected:
 protected:
     static void _bind_methods();
 public:
+    bool seed_contents(int64_t id,const godot::PackedInt64Array &items){return !items.is_empty()&&items.size()<=64&&initialize_contents(id,items);}
     bool configure(const godot::Ref<NativePlayerInventory> &prototype,int64_t max_containers,int64_t slots=32);
     godot::Dictionary snapshot(int64_t id) const;
     godot::PackedInt64Array get_ids() const;

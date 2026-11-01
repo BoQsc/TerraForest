@@ -27,12 +27,12 @@ compute shaders are used where measured workloads justify them, not as a label.
 | --- | --- |
 | Zombie variety, including already missing limbs | Native recipes installed; ordinary source/pack admission and anatomy reload checked; new visual character variety and balance still pending |
 | Less irritating surface zombies, more wandering, finite pursuit and a faster minority | Native timers and configurable temperaments installed/tested; natural player encounters, jogging clip and locomotion review pending |
-| Seated and lying sleepers, awakened by hearing or damage | Live native-clearance lifecycle integrated; default generation now registers stable house residents; crafted underground POIs and natural encounter review remain |
+| Seated and lying sleepers, awakened by hearing or damage | Live native-clearance lifecycle integrated; default generation registers stable house and cave/mine residents; broader natural encounter review remains |
 | Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, live interruption checks, both poses through furnished A2/C1 collision at all rotations; arbitrary slopes, moving obstacles and player visual acceptance pending |
-| Sleeper residents inside some houses and underground locations | New-world A2/C1 anchors, bounded priority admission and persistent wake/death implemented; default generated cottage verified; populated C1 visit, crafted underground anchors and street-to-room player route evidence remain |
+| Sleeper residents inside some houses and underground locations | New-world A2/C1 and authored underground anchors persist; cottage and both underground locations checked; populated C1 visit, broader street-to-room routes and encounter balance remain |
 | Off-road watchtowers | Pending modular destructible design, access, terrain fit, loot and approval/review |
-| Small art-directed caves and mines | Pending differentiated entrances, rooms, side spaces and some built mine structures; no generic straight tunnels |
-| Cave/mine crates and supplies | Pending meaningful placements, reachability, loot and save/reopen |
+| Small art-directed caves and mines | Branching survey mine and bent two-chamber cave generate on fitted hillsides; native cuts, destructible mine timbers and entry walks checked; rim/material defects, set dressing and full art acceptance remain |
+| Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Pending stable location identities, quest objectives, rewards and trader UI |
 | Large question-mark start interaction near POI, E acceptance and location reset | Pending bounded reset transaction with explicit location ownership, player-edit safety and persisted quest state |
 | Locked wilderness/building containers | Pending rare deterministic locks, E lockpick consumption with small break chance, no minigame |
@@ -86,8 +86,34 @@ actual cottage wake, fresh-process damage/death and hidden nonloading admission
 are tested. Both poses clear both unchanged furnished resources in all four
 rotations. The C1 collision fixture is not a populated-world C1 visit; teleport
 arrival is not a street-to-room player traversal or frame-pacing qualification.
-Next: crafted watchtower/mine/cave layouts and ordinary route/terrain-fit review,
-then shared location ownership for quest reset, locks, supplies and persistence.
+Ordinary generator 29+ now plans two compact underground layouts before baking:
+a nine-segment looping survey mine and a five-segment bent cave. Native bounded
+fitting avoids buildings, earthworks and lake envelopes; approach cut/fill, floor
+support, roof cover and shared model-ground checks precede publication. Existing
+saves never receive retroactive excavation. Five chest supplies and five keyed
+sleepers use the existing binary model/container/population owners, not a parallel
+scene or per-frame script population. Entry walks, actual chest UI, waking and
+fresh-process clearing are tested. Exterior faceting/dark rim patches and sparse
+dressing are not final art; town-to-entrance paths and general NPC routes remain.
+Next: refine those visible defects, add the watchtower, then shared stable location
+ownership for quest reset and locks. Supply grants occur only during generation;
+loading a looted location never grants or resets its contents.
+
+### Exploration addon boundary
+
+`addons/exploration/small_locations.poi.json` is original CC0 authoring data.
+`cave_layouts.gd` validates a 64 KiB, 1–8-layout catalog, 2–16 flat arched segments
+per layout, finite bounded coordinates and at most 16 anchors in each group.
+Unsupported data fails rather than silently dropping pieces. Quarter-turn grid
+rotation is shared with the native prefab owner; timbers remain individual blocks.
+`TerrainCore.plan_exploration_sites` tests at most 4,096 candidates per layout and
+four rotations against bounded reservations. No eligible site means an explicit
+skip, not a destructive fallback or increased cut/fill allowance. The v33 plan key
+includes catalog contents and native identity. Ground probes and excavation run
+once during generation, not during frame updates or save loading. Native prefab
+transactions return exact new model IDs for container grants; model-only sites
+do not manufacture placeholder blocks, block revisions or undo entries. This is
+a validated content boundary, not yet the requested complete mod/plugin system.
 
 Sleeper integration uses `ZombieWorld.put_to_sleep(actor, 1)` for seated and `2`
 for lying, or `sleep_pose` in a validated encounter descriptor. The host owns the

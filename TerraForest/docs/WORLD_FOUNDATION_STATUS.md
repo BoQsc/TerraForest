@@ -20,8 +20,13 @@ Real cottage generation/wake and fresh-process injury/death checks pass; both po
 clear both furnished resources in every rotation. V4 keeps stable authored keys
 and tombstones; old saves are not retrofitted. Hidden nonloading admission is also
 checked, but this is not natural walking/entry, populated C1, dense encounter or
-frame-pacing acceptance. Crafted terrain-fitting POIs, quest ownership/reset and
-supplies/locks are next; arbitrary slopes and moving-obstacle review remain open.
+frame-pacing acceptance. Two authored underground locations now generate with
+native arched cuts, shared grounded-prop checks, five supply chests and five stable
+sleepers. Real entrance walks, chest UI/withdrawal, waking and fresh-load clearing
+pass. Cave rim/material artifacts, sparse dressing, watchtower, town-to-POI/NPC
+routes and broader performance remain open; return before art acceptance. Shared
+location ownership/reset and locks are next dependencies, not completed by loot
+seeding. Arbitrary slopes and moving-obstacle review also remain open.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Gameplay responsiveness verification — 2026-11-01

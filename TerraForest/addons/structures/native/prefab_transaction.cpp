@@ -45,6 +45,36 @@ void NativePrefabPlacement::_bind_methods() {
     ClassDB::bind_method(D_METHOD("commit","protected_boxes"),&NativePrefabPlacement::commit);
     ClassDB::bind_method(D_METHOD("cancel"),&NativePrefabPlacement::cancel);
     ClassDB::bind_method(D_METHOD("model_counts","prefab"),&NativePrefabPlacement::model_counts);
+    ClassDB::bind_method(D_METHOD("ground_model_samples","prefab","origin","quarter_turns","models"),&NativePrefabPlacement::ground_model_samples);
+}
+Dictionary NativePrefabPlacement::ground_model_samples(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models) const {
+    if(prefab.is_null()||turns<0||turns>3||models.size()>256||prefab->model_attachments.is_empty()||prefab->model_attachments.size()>64)return failure("Invalid ground-model survey");
+    for(int axis=0;axis<3;++axis)if(origin[axis]<-1044480||origin[axis]>1044480)return failure("Invalid ground-model origin");
+    Vector3 x_axis(1,0,0),z_axis(0,0,1);
+    for(int turn=0;turn<turns;++turn){x_axis=Vector3(-x_axis.z,0,x_axis.x);z_axis=Vector3(-z_axis.z,0,z_axis.x);}
+    Basis rotation(x_axis,Vector3(0,1,0),z_axis);Vector3 half(.5,0,.5);
+    Transform3D placement(rotation,Vector3(origin)+half-rotation.xform(half));
+    PackedVector3Array support,clearance;
+    for(int index=0;index<prefab->model_attachments.size();++index){
+        Dictionary item=prefab->model_attachments[index];String key=item["model"];
+        if(!models.has(key)||models[key].get_type()!=Variant::OBJECT)return failure("Missing ground-model collection");
+        auto *batch=Object::cast_to<NativeStaticBatch>(models[key]);
+        if(!batch||batch->asset_id!=key||batch->source_mesh.is_null()||(batch->is_inside_tree()?batch->get_global_transform():batch->get_transform())!=Transform3D())return failure("Invalid ground-model frame");
+        Transform3D pose=placement*Transform3D(item["transform"]);
+        AABB bounds=pose.xform(batch->source_mesh->get_aabb());
+        for(const auto &part:batch->proxy_parts)bounds=bounds.merge(pose.xform(part));
+        if(!bounds.position.is_finite()||!bounds.size.is_finite())return failure("Invalid ground-model geometry");
+        for(int axis=0;axis<3;++axis)if(bounds.size[axis]<.05||bounds.size[axis]>8)return failure("Ground-model dimensions exceed survey budget");
+        const Vector3 start=bounds.position+Vector3(.02,.02,.02),span=bounds.size-Vector3(.04,.04,.04);
+        const int columns=int(std::ceil(span.x/.5)),rows=int(std::ceil(span.z/.5)),layers=int(std::ceil(span.y/.5));
+        if(clearance.size()+(columns+1)*(rows+1)*(layers+1)>4096)return failure("Ground-model probe budget exceeded");
+        for(int row=0;row<=rows;++row)for(int column=0;column<=columns;++column){
+            Vector3 point=start+Vector3(span.x*column/columns,0,span.z*row/rows);
+            support.push_back(Vector3(point.x,bounds.position.y-.25,point.z));
+            for(int layer=0;layer<=layers;++layer)clearance.push_back(point+Vector3(0,span.y*layer/layers,0));
+        }
+    }
+    Dictionary result;result["ok"]=true;result["support"]=support;result["clearance"]=clearance;return result;
 }
 Dictionary NativePrefabPlacement::model_counts(const Ref<NativeBlockPrefab> &prefab) const {
     Dictionary counts;if(prefab.is_null())return counts;
@@ -77,12 +107,13 @@ Dictionary NativePrefabPlacement::state() const {
     return d;
 }
 Dictionary NativePrefabPlacement::begin(NativeBlockWorld *blocks,const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,const Array &protected_boxes) {
-    if(busy||pending||!blocks||prefab.is_null()||prefab->cells.empty()||turns<0||turns>3||models.size()>256)return failure("Invalid or busy placement");
+    if(busy||pending||!blocks||prefab.is_null()||(prefab->cells.empty()&&prefab->model_attachments.is_empty())||turns<0||turns>3||models.size()>256)return failure("Invalid or busy placement");
     for(int a=0;a<3;++a)if(origin[a]<-1048575||origin[a]>1048575)return failure("Invalid placement origin");
     if((blocks->is_inside_tree()?blocks->get_global_transform():blocks->get_transform())!=Transform3D())return failure("Unsupported block frame");
     auto next=std::make_unique<Pending>();auto &p=*next;
     p.prefab=prefab;p.source_revision=prefab->definition_revision;p.block_id=blocks->get_instance_id();p.block_revision=blocks->mutation_revision;p.origin=origin;p.turns=turns;
     p.envelope=prefab->placement_bounds(origin,turns);
+    if(prefab->cells.empty())p.changed_bounds=p.envelope;
     if(!protection_valid(protected_boxes,p.envelope))return failure("Invalid protection or protected actor overlaps building");
     Vector3 x_axis(1,0,0),z_axis(0,0,1);
     for(int r=0;r<turns;++r){x_axis=Vector3(-x_axis.z,0,x_axis.x);z_axis=Vector3(-z_axis.z,0,z_axis.x);}
@@ -210,6 +241,8 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     if(!admission_blocks->admits_edit(pending->changed_bounds)){pending.reset();return failure("Water data unavailable at building location");}
     if(!current()){pending.reset();return failure("World changed during edit admission");}
     auto work=std::move(pending);auto &p=*work;busy=true;
+    Dictionary identities;
+    for(const auto &entry:p.staged){PackedInt64Array ids;for(const auto &value:entry.second.values)ids.push_back(value.first);identities[entry.first]=ids;}
     auto *blocks=Object::cast_to<NativeBlockWorld>(ObjectDB::get_instance(p.block_id));
     // No validation, per-cell traversal or scripts in this publication section.
     // Transfer prepared nodes for new chunks; existing chunks receive one copy.
@@ -218,9 +251,11 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
         if(existing!=blocks->chunks.end()){existing->second=std::move(it->second);it=p.chunks.erase(it);}
         else {auto next=it++;blocks->chunks.insert(p.chunks.extract(next));}
     }
-    ++blocks->mutation_revision;++blocks->content_revision;blocks->survey_saved_identity=String();
-    for(auto key:p.invalidations)blocks->invalidate(key);
-    blocks->clear_history();blocks->set_process(true);
+    if(!p.prefab->cells.empty()){
+        ++blocks->mutation_revision;++blocks->content_revision;blocks->survey_saved_identity=String();
+        for(auto key:p.invalidations)blocks->invalidate(key);
+        blocks->clear_history();blocks->set_process(true);
+    }
     const auto blocks_committed=Time::get_singleton()->get_ticks_usec();
     for(auto &entry:p.staged) {
         auto &s=entry.second;auto *batch=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(s.id));
@@ -236,14 +271,14 @@ Dictionary NativePrefabPlacement::commit(const Array &protected_boxes) {
     // All authoring records and query bounds agree before renderer nodes or
     // public notifications can invoke scene callbacks.
     for(auto &entry:p.staged)if(auto *batch=Object::cast_to<NativeStaticBatch>(ObjectDB::get_instance(entry.second.id)))batch->rebuild(entry.second.touched);
-    if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("cells_changed",p.changed_bounds);
-    if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("changed");
+    if(!p.prefab->cells.empty())if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("cells_changed",p.changed_bounds);
+    if(!p.prefab->cells.empty())if(auto *live=ObjectDB::get_instance(p.block_id))live->emit_signal("changed");
     for(const auto &entry:p.staged) {
         if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("changed");
         if(auto *live=ObjectDB::get_instance(entry.second.id))live->emit_signal("exclusion_changed");
     }
     busy=false;
-    Dictionary result;result["ok"]=true;result["status"]="committed";result["models"]=int64_t(p.model_at);result["block_probes"]=p.probes;result["model_comparisons"]=p.comparisons;
+    Dictionary result;result["ok"]=true;result["status"]="committed";result["models"]=int64_t(p.model_at);result["placements"]=identities;result["block_probes"]=p.probes;result["model_comparisons"]=p.comparisons;
     Dictionary timing;timing["block_validation_us"]=p.block_us;timing["model_validation_us"]=p.model_us;timing["block_commit_us"]=blocks_committed-started;timing["model_commit_us"]=models_committed-blocks_committed;timing["publication_us"]=Time::get_singleton()->get_ticks_usec()-models_committed;result["timing"]=timing;return result;
 }
 Dictionary NativePrefabPlacement::place(NativeBlockWorld *blocks,const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,const Array &protected_boxes) {
