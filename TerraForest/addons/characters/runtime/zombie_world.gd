@@ -36,12 +36,17 @@ var _capsule: CapsuleShape3D
 var geometry_template:RefCounted
 var profiling_enabled:=false
 var update_phase_us:Dictionary={}
+@export_file("*.json") var encounter_profiles_path:="res://addons/characters/runtime/assets/zombie.encounters.json"
+var encounter_profiles:Dictionary={}
 
 func prepare(owner_game: Node, persistence: RefCounted) -> bool:
 	population = preload("res://addons/characters/runtime/zombie_population.gd").new()
 	return population.prepare(owner_game, self, persistence)
 
 func _ready() -> void:
+	var catalog:Variant=JSON.parse_string(FileAccess.get_file_as_string(encounter_profiles_path))
+	if catalog is Dictionary and catalog.get("version")==1 and catalog.get("profiles") is Dictionary:
+		encounter_profiles=catalog.profiles
 	_capsule = CapsuleShape3D.new()
 	_capsule.radius = 0.32
 	_capsule.height = 1.8
@@ -315,6 +320,19 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 		if is_instance_valid(navigator):navigator.remove_agent(id)
 		if is_instance_valid(awareness):awareness.remove_agent(id))
 	return zombie
+
+func configure_encounter(zombie:CharacterBody3D,descriptor:Dictionary)->bool:
+	if zombie not in residents or not zombie.alive:return false
+	var profile_id:String=descriptor.get("profile","")
+	var profile:Variant=encounter_profiles.get(profile_id)
+	if not profile is Dictionary or not awareness.set_profile(zombie.get_instance_id(),profile):return false
+	var vitals:PackedByteArray=descriptor.get("initial_vitals",PackedByteArray())
+	if not vitals.is_empty() and not zombie.restore_population_vitals(vitals):return false
+	var intent:Dictionary=awareness.status(zombie.get_instance_id())
+	zombie.walk_speed=float(intent.walk_speed)
+	zombie.chase_speed_multiplier=float(intent.chase_speed_multiplier)
+	zombie.set_meta("encounter_profile",profile_id)
+	return true
 
 func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
 	var bodies:Array=residents.duplicate()

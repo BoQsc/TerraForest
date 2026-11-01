@@ -113,6 +113,9 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	if zombie == null:return false
 	zombie.set_meta("world_zombie_id", record.id)
 	zombie.global_rotation.y = record.yaw
+	if not host.configure_encounter(zombie,store.encounter(record.id)):
+		failure = "Cannot configure zombie encounter %d" % record.id
+		return false
 	if not record.vitals.is_empty() and not zombie.restore_population_vitals(record.vitals):
 		failure = "Invalid saved zombie health for resident %d" % record.id
 		return false

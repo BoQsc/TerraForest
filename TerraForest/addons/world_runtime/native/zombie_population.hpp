@@ -41,6 +41,7 @@ protected:
         ClassDB::bind_method(D_METHOD("initialize","seed","sanctuary"),&NativeZombiePopulation::initialize);
         ClassDB::bind_method(D_METHOD("nearby","focus","radius"),&NativeZombiePopulation::nearby);
         ClassDB::bind_method(D_METHOD("resident","identity"),&NativeZombiePopulation::resident);
+        ClassDB::bind_method(D_METHOD("encounter","identity"),&NativeZombiePopulation::encounter);
         ClassDB::bind_method(D_METHOD("update_resident","identity","position","yaw","vitals"),&NativeZombiePopulation::update_resident);
         ClassDB::bind_method(D_METHOD("add_resident","position","yaw","vitals"),&NativeZombiePopulation::add_resident);
         ClassDB::bind_method(D_METHOD("exclude","identity"),&NativeZombiePopulation::exclude);
@@ -65,6 +66,24 @@ public:
     godot::Dictionary resident(int64_t identity)const{
         godot::Dictionary out;if(identity<1||identity>int64_t(residents_.size()))return out;
         const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;return out;
+    }
+    godot::Dictionary encounter(int64_t identity)const{
+        godot::Dictionary out;if(seed_<0||identity<1||identity>int64_t(residents_.size()))return out;
+        const auto &record=residents_[identity-1];
+        const uint32_t variety=mix(uint32_t(seed_)^mix(uint32_t(identity))^0x8f31ac47),temperament=variety%100;
+        out["profile"]=temperament<12?"restless":temperament<47?"roamer":"shambler";
+        godot::PackedByteArray vitals;
+        if(identity<=2500&&record.state==0){
+            const uint32_t injury=mix(variety^0x436fd2b1)%100;
+            int part=injury<12?3:injury<24?6:injury<27?9:injury<30?12:-1;
+            if(part>=0){
+                constexpr float maximum[]={180,50,50,38,24,50,38,24,65,52,32,65,52,32};
+                vitals.resize(60);vitals.fill(0);
+                for(int index=0;index<14;index++)vitals.encode_float(index*4,index==part||index==part+1?0:maximum[index]);
+                vitals.encode_u32(56,(1<<part)|(1<<(part+1)));
+            }
+        }
+        out["initial_vitals"]=vitals;return out;
     }
     godot::Array nearby(godot::Vector3 focus,double radius)const{
         godot::Array out;if(!valid_position(focus)||!std::isfinite(radius)||radius<=0||radius>96)return out;

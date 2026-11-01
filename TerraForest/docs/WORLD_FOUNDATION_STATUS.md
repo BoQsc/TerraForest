@@ -1,6 +1,20 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Full gameplay expansion — 2026-11-01
+
+Active implementation: native zombie temperaments, finite surface pursuit,
+stable limb-loss variants and sleeper lifecycle foundations. The complete request
+is preserved in [the expansion contract](GAMEPLAY_EXPANSION.md), including authored
+POIs/quests/locks, progression/food/UI, biomes/content/roads/lights and performance.
+The first encounter slice is installed: 58 native contracts plus legacy suites
+pass in debug/release; source/pack normal-world admission and reload each pass 47
+checks. Two generated amputees and all three temperaments are verified. Short
+intent work p95 is 159 microseconds, not full frame-pacing/headroom qualification.
+The overall checklist remains open. Sleeper poses/animation,
+scene physics and persistence are the next dependency before POI placement.
+Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
+
 ## Gameplay responsiveness verification — 2026-11-01
 
 Follow-up installed: routine zombie lifecycle/hitch logging is verbose-only;

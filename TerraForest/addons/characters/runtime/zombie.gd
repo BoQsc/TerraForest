@@ -1530,7 +1530,7 @@ func restore_population_vitals(bytes: PackedByteArray) -> bool:
 	if not validator.configure(PARTS) or not validator.restore_vitals(bytes) or not validator.snapshot().alive:return false
 	var saved: Dictionary = validator.snapshot()
 	for part: String in PARTS:
-		if saved.missing[part] and not missing.get(part, false):sever_limb(part)
+		if saved.missing[part] and not missing.get(part, false):sever_limb(part,Vector3.ZERO,false)
 	for detached in detached_parts:
 		if is_instance_valid(detached):detached.queue_free()
 	detached_parts.clear()
@@ -1543,7 +1543,7 @@ func restore_population_vitals(bytes: PackedByteArray) -> bool:
 		animation_player.advance(0.0)
 	return true
 
-func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:
+func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO, emit_debris: bool = true) -> void:
 	if not initialized or not PARTS.has(part) or missing.get(part, false):
 		return
 	if part == "torso":
@@ -1555,7 +1555,7 @@ func sever_limb(part: String, impulse: Vector3 = Vector3.ZERO) -> void:
 	_collect_chain(part, chain)
 	anatomy.detach(part);health=float(anatomy.snapshot().health)
 	skeleton.force_update_all_bone_transforms()
-	_spawn_detached(part, chain, impulse)
+	if emit_debris:_spawn_detached(part, chain, impulse)
 	for removed: String in chain:
 		missing[removed] = true
 		limb_health[removed] = 0.0

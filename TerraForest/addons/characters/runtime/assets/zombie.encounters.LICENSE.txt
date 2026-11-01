@@ -1,0 +1,6 @@
+zombie.encounters.json: original TerraForest encounter tuning data, authored
+with OpenAI Codex on 2026-11-01 for the maintainer's requested gameplay expansion.
+No third-party profile data, art or implementation was copied.
+Contributed under CC0-1.0 under TerraForest's contribution policy.
+Dedication: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Source: ../zombie_world.gd and the native NativeZombieAwareness profile contract.

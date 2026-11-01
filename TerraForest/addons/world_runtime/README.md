@@ -26,6 +26,24 @@ to display the page. `dist/usage_content.json` is published with a successful pa
 export. Active terrain usage reads existing `derived_metrics` accounting; it
 does not start another terrain census. Manual refresh can target one location.
 
+`NativeZombieAwareness.set_profile(id, values)` accepts an `id` string plus bounded
+numeric fields declared in `native/zombie_awareness.cpp`; unknown fields, inverted
+ranges, strings masquerading as numbers and nonfinite values reject atomically.
+Configure only idle/wandering agents. Observation uses sustained recognition,
+finite total pursuit and retry cooldown; confirmed hits bypass recognition and
+extend, but do not remove, the interest limit. Existing physics/route/contact
+owners remain unchanged. `set_sleeping(id, pose)` accepts seated (1) or lying (2);
+sleeping agents do not acquire sight or perform roaming. Audible noise or damage
+enters non-moving/non-combat `waking`. After the native timer is ready, the host
+must call `finish_waking(id)` only when its animation and physical clearance are
+complete. This API does not author animation, move bodies or persist sleep state.
+The six-agent capacity and host's two sight probes/tick remain unchanged.
+
+`NativeZombiePopulation.encounter(identity)` derives a stable temperament and
+optional initial 60-byte injury template without modifying the binary population.
+Templates apply only to pristine natural inhabitants; existing saved vitals always
+win. Scene adapters must persist those vitals on admission. Developer-added and
+already admitted residents never get a new initial injury on activation.
 ```gdscript
 # Support/API calls only; every entity update is implemented in C++.
 var store = ClassDB.instantiate("NativeEntityStore")

@@ -90,15 +90,33 @@ gameplay feature. Population tests cover native binary state and integrated worl
 loading/travel; this does not qualify whole-world navigation or population balance.
 
 `NativeZombieAwareness` owns bounded session intent and randomized roaming goals.
-Unaware zombies wander between short pauses. They notice an unobstructed player
-within a 120-degree forward cone and 24 metres; close awareness within 3.5 metres
-still requires clear sight. Engaged sight extends to 36 metres. Losing sight
-sends them to the last seen position, without tracking hidden player movement;
-arrival starts a six-second local search. Eighteen seconds without sight or a
-blocked pursuit ends interest and resumes roaming. Striking a zombie provokes
-investigation. Unreachable visible targets also receive a retry cooldown.
+Normal population admission reads the original tuning catalog
+`runtime/assets/zombie.encounters.json`, selected through the host's exported
+`encounter_profiles_path`. Mods can supply the same version-one profile contract;
+native validation rejects unknown keys, invalid ranges and nonfinite values.
+Shamblers, roamers and the faster restless minority have stable seed/identity-based
+profiles. Unaware sight is 18/22/24 metres in the existing 140-degree cone, with
+clear occlusion checks and 0.55–1.1 seconds of sustained recognition before combat.
+Ordinary pursuit expires after 22–30 seconds even if the player remains visible;
+cooldown prevents instant reacquisition. Damage provokes a longer finite response.
+Losing sight investigates the last known point without tracking a hidden player.
+More frequent wandering and reduced footstep attraction keep most surface residents
+less intrusive. Faster variants still use the existing gait: an authored jogging
+clip and subjective movement/balance review remain part of the expansion.
 
-Perception is staggered at four updates per second per resident, with at most two
+For previously unactivated natural residents, native recipes choose approximately
+24% missing forearm/hand chains and 6% missing shin/foot chains. Restored inhabitants
+retain their exact injuries, not a newly rolled template. Initial overall health
+stays 180; surviving limbs keep their separate health. The existing 60-byte vitals
+encoding persists the anatomy with no population schema migration. Missing limbs
+are hidden/disabled without creating throwaway detached rigid-body groups.
+
+Native sleeper states support seated/lying intent, sound/hit wake triggers and a
+completion handshake. This is not yet playable sleeper content: animation, safe
+body transitions, persistent sleep state and authored POI placement remain pending.
+See the [full expansion contract](../../docs/GAMEPLAY_EXPANSION.md).
+
+Perception is staggered at a 0.15-second interval per resident, with at most two
 sight eligibility probes per physics tick. Physics supplies actual occlusion and
 support; existing native navigation and guarded movement execute all destinations.
 Wander/search positions are not attack recipients. Combat still requires the

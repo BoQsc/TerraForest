@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "images": [
+    {
+      "file": "seed1703-forearm-variant.png",
+      "sha256": "61badee3308fd4340e6cf9c54732d35178a642c590cb2832e6db873d280370de",
+      "source": "reports/zombie_expansion/20261101T065543316413Z/resident_1622_1.png",
+      "seed": 1703,
+      "resident": 1622,
+      "pack_sha256": "62f9267e618e10dd93c69d158a66db04e3d13f479ae698af49bf7ec1a1cc8299",
+      "review": "Assistant inspected; persistent missing forearm/hand presentation, not animation or user visual approval",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-01. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    }
+  ]
+}

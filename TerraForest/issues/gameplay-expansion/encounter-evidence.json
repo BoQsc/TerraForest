@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "status": "First native encounter slice verified; full expansion incomplete",
+  "base_commit": "a69d21fb",
+  "pack_sha256": "62f9267e618e10dd93c69d158a66db04e3d13f479ae698af49bf7ec1a1cc8299",
+  "debug_dll_sha256": "baf6b7fcd5b8f2fe2922be80c66b5aea889c527c0ce7f74499c5ec92d92350f0",
+  "release_dll_sha256": "8d6d6c6cc8d0b19f8b1dc9c2675469222033711181f839f3d5ee890159f095d7",
+  "files": {
+    "addons/world_runtime/native/zombie_awareness.cpp": "41a507a945f3616761f73ed084a35e2cb758063a548faba75855c89f0618f910",
+    "addons/world_runtime/native/zombie_awareness.hpp": "3e1c459fb5f2c2fce10bd572fc4ebe20a6e76bec8088c52f2d57e068ec695e71",
+    "addons/world_runtime/native/zombie_population.hpp": "9830abff902126ff5b381662918c3d709d3cbf8a93dcaa49f025982bcaad0d20",
+    "addons/characters/runtime/zombie_world.gd": "41903f88e28152aa650acc74d424a0a584b366318a7abc2e7cd130a89d1bd249",
+    "addons/characters/runtime/zombie_population.gd": "36a6352d9f6b0c5b57368cb134caafdad7cc706548d3da05c0a662777d289570",
+    "addons/characters/runtime/zombie.gd": "4f32d7d0a0fa9c389f44e9203db70d1c11700a07b02606a3ff77581b2f30a2de",
+    "addons/characters/runtime/assets/zombie.encounters.json": "f6e297fb4cc70281c4b1e070c9f4035fa852a9ddc40c8aa56b53228bca89e334",
+    "tests/zombie_expansion.gd": "d5bbf781ed51a7a47db91c67abaed8cf24911a2ada90c2e39264e8a6f2b0aa22",
+    "tests/zombie_variety_world.gd": "e277d266b8c09bf5737172ccb9ea7e5911c3084a3dec8887a1bd1ffd5e7074a7",
+    "tools/check_zombie_expansion.py": "f92f79b6f2c502991ba0418aa09978646cd1ac8ea35cb7256bbf0e6d0aa35530"
+  },
+  "checks": [
+    {
+      "name": "new native encounter contracts",
+      "count": 58,
+      "report": "reports/checks/20261101T064751515950Z",
+      "passed": true
+    },
+    {
+      "name": "legacy awareness",
+      "count": 31,
+      "report": "reports/checks/20261101T064752674587Z",
+      "passed": true
+    },
+    {
+      "name": "population binary compatibility",
+      "count": 33,
+      "report": "reports/checks/20261101T064753620072Z",
+      "passed": true
+    },
+    {
+      "name": "crowd/contact/crawler",
+      "count": 17,
+      "report": "reports/checks/20261101T064919288268Z",
+      "passed": true
+    },
+    {
+      "name": "anatomy",
+      "count": 50,
+      "report": "reports/checks/20261101T064944425812Z",
+      "passed": true
+    },
+    {
+      "name": "navigation",
+      "count": 15,
+      "report": "reports/checks/20261101T064945365634Z",
+      "passed": true
+    },
+    {
+      "name": "release suites and fresh process",
+      "count": 176,
+      "report": "reports/zombie_expansion/20261101T065541491082Z",
+      "passed": true
+    },
+    {
+      "name": "source ordinary admission/scene restore",
+      "count": 47,
+      "report": "reports/zombie_variety_source",
+      "passed": true
+    },
+    {
+      "name": "packaged ordinary admission/scene restore",
+      "count": 47,
+      "report": "reports/zombie_expansion/20261101T065543316413Z",
+      "passed": true
+    }
+  ],
+  "export_report": "reports/expansion_encounters_export.log",
+  "building_gates": "reports/building_standards/20261101T065300186126Z",
+  "installed_sample": {
+    "seed": 1703,
+    "residents": 6,
+    "initial_amputees": 2,
+    "intent_ticks": 180,
+    "intent_p95_us": 159,
+    "private_commit_bytes": 2738499584,
+    "dedicated_gpu_bytes": 1221558272,
+    "installed_content_bytes": 476294851,
+    "scope": "Short offscreen initial resident workload, not frame-pacing, dense POI, vehicle or endurance qualification"
+  },
+  "unchanged": [
+    "60 FPS",
+    "VSync",
+    "Legion Quiet Mode",
+    "six scene residents",
+    "two sight probes per tick",
+    "player saves",
+    "33 unrelated local files"
+  ],
+  "open": [
+    "sleeper pose and wake animation",
+    "sleep/wake persistence and physical clearance",
+    "jogging clip and locomotion review",
+    "POI/house sleeper placement",
+    "all remaining full expansion checklist requirements"
+  ]
+}
