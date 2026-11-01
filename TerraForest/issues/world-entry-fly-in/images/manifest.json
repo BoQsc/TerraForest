@@ -32,6 +32,24 @@
       "seed": 1703,
       "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; native screenshot; no image generation or retouching",
       "provenance": "Project runtime render; existing asset licenses retained. Documentation evidence excluded from game export."
+    },
+    {
+      "file": "installed-handoff.png",
+      "sha256": "c208d60f112db62a5500fd43787017a34c542e53b8e3dee2bd7bc2fee93b5257",
+      "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\entry_fly_in_pack\\20261101T183739770167Z\\populated\\04_handoff.png",
+      "caption": "Installed package shoulder approach; current player body and world retained.",
+      "world": "Exploration_1703_8f8d4c8f",
+      "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+      "provenance": "Unretouched project runtime screenshot; existing asset licenses retained; documentation evidence excluded from imports/game exports."
+    },
+    {
+      "file": "installed-entry.mp4",
+      "sha256": "2d90df390fa367e493fc8db9ccc157f16eb3f7a24da230f6bef76be44be4baa9",
+      "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\entry_fly_in_pack\\20261101T183739770167Z\\populated",
+      "caption": "Complete 3.078-second buffered installed entry with 65 original sample timestamps, then 0.75-second first-person hold. 960x540 H264/30 FPS output; captures include GPU readback overhead, not a performance benchmark.",
+      "world": "Exploration_1703_8f8d4c8f",
+      "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+      "provenance": "Runtime evidence, inherited content licenses retained. Video encoded with external FFmpeg9.0.2 from original timestamped frames, no retouching."
     }
   ]
 }

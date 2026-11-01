@@ -23,6 +23,42 @@
       "recipe": "Connected countryside, unchanged normal UI defaults",
       "capture": "Godot 4.7.2, Vulkan Forward+, 1920x1080, 60 FPS cap, VSync; concurrent native compilation, no performance claim",
       "provenance": "Unretouched runtime screenshot; inherited content licenses retained; documentation evidence excluded from imports/game exports"
+    },
+    {
+      "file": "installed-coldwater-close.png",
+      "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\town_signs_world\\20261101T184013933118Z\\close_coldwater.png",
+      "sha256": "d592006378389955614af985c0e5db0297a297082369dee69e609c97ea4da639",
+      "caption": "Final installed Coldwater sign: readable physical lettering, rear posts and vertical timber grain.",
+      "world": "TownSigns_1703_18021c51",
+      "seed": 1703,
+      "recipe": "Connected countryside, normal defaults",
+      "capture": "Installed TerraForest.exe, Godot4.7.2 Vulkan Forward+, 1920x1080, 60FPS cap, VSync. PNG capture outside timing samples; HUD FPS may include prior image compression.",
+      "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+      "provenance": "Unretouched project runtime screenshot; existing asset licenses retained; documentation-only, excluded from game imports/exports"
+    },
+    {
+      "file": "installed-dunvale-close.png",
+      "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\town_signs_world\\20261101T184013933118Z\\close_dunvale.png",
+      "sha256": "c7f8a0f0a4453858ebd7f6d8dc7becea42a79f03f7ef9cf521a4ba9418196919",
+      "caption": "Final installed Dunvale sign: flat weathered panel, clear town frontage and grounded posts.",
+      "world": "TownSigns_1703_18021c51",
+      "seed": 1703,
+      "recipe": "Connected countryside, normal defaults",
+      "capture": "Installed TerraForest.exe, Godot4.7.2 Vulkan Forward+, 1920x1080, 60FPS cap, VSync. PNG capture outside timing samples; HUD FPS may include prior image compression.",
+      "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+      "provenance": "Unretouched project runtime screenshot; existing asset licenses retained; documentation-only, excluded from game imports/exports"
+    },
+    {
+      "file": "installed-coldwater-road.png",
+      "source": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\town_signs_world\\20261101T184013933118Z\\restore_coldwater.png",
+      "sha256": "f38a1333ba03e3221a2650ade2f477e87d5a388259972b143e1903f2862c1945",
+      "caption": "Fresh-process restored Coldwater approach: sign beside the shoulder with walking/road clearance.",
+      "world": "TownSigns_1703_18021c51",
+      "seed": 1703,
+      "recipe": "Connected countryside, normal defaults",
+      "capture": "Installed TerraForest.exe, Godot4.7.2 Vulkan Forward+, 1920x1080, 60FPS cap, VSync. PNG capture outside timing samples; HUD FPS may include prior image compression.",
+      "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+      "provenance": "Unretouched project runtime screenshot; existing asset licenses retained; documentation-only, excluded from game imports/exports"
     }
   ]
 }
