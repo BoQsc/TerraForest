@@ -9,7 +9,7 @@
 
 The coordinated expansion package is exported and starts successfully, with all
 14 native libraries matching the verified source builds. It includes the coal
-mine, combat, trader travel, town signs and five reset primitives. This supersedes
+mine, combat, trader travel, town signs and seven reset primitives. This supersedes
 the older primitives' "not installed" notes below, not their limited scope:
 gameplay resets are still absent. The updated package fixes stale player poses
 when saving with newer items and mismatched zombie restoration collision shapes.
@@ -18,9 +18,12 @@ package-native field/cube/capsule checks pass another 85. The next package adds
 selected container restoration and passes nine headless native suites. Three
 legacy report writers initially failed against the read-only PCK; the corrected
 external report paths pass with assertions unchanged and failed logs retained.
-The latest package adds static-model restoration: 52 model, three fresh-process
+The model package adds static-model restoration: 52 model, three fresh-process
 and 63 persistent-rendering assertions pass. Existing gameplay journeys are not
-claimed as rerun against this new package.
+claimed as rerun against that package. The latest package adds hinge/damage
+restoration and Ranger assets: eight installed headless suites pass 224 counted
+assertions plus the door-component check. The actual executable Ranger journey
+is pending; full location resets are not enabled.
 Earlier exact-executable
 journeys retain their own package identity. No complete expansion, smooth-frame
 qualification or new visual approval is claimed.
@@ -28,8 +31,8 @@ qualification or new visual approval is claimed.
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
 
-- Selected hinge/damage restoration passes both native variants and fresh-process
-  checks; real blocked-door restoration passes. Live rigs, remaining world owners
+- Selected hinge/damage restoration passes both native variants, installed-PCK
+  and fresh-process checks; real blocked-door restoration passes. Live rigs, remaining world owners
   and coordinated gameplay reset still require integration.
   [Owner-state evidence](owner-patch-evidence.json).
 

@@ -1,6 +1,16 @@
 {
   "date": "2026-11-01",
-  "status": "Source and final combined native variants verified; installed-package verification pending; not gameplay reset",
+  "status": "Source, final combined native variants and installed package verified; not gameplay reset",
+  "commits": {"source": "97e06218", "native_artifacts": "b4d1c063"},
+  "package": {
+    "sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
+    "bytes": 449319724, "distribution_bytes": 480138595, "matching_native_libraries": 14,
+    "report": "reports/location_owner_patches/20261101T202554846236Z/run.json",
+    "passed": true,
+    "checks": {"owners": 58, "fresh_process_reopen": 6, "combat_native": 53, "harvest": 15, "containers": 42, "door_animation": 29, "attack_durability": 21},
+    "door_component": "Passed; fixture reports failures but not assertion count",
+    "scope": "Eight headless installed-PCK suites, 224 counted assertions plus door_component. Real physics actor-blocking assertions, not foreground gameplay performance or coordinated location reset."
+  },
   "door_format": "TFDP1: sorted selected identities, exact closed/last poses, open/moving/blocked flags, elapsed clip time, geometry/animation profile and SHA-256",
   "damage_format": "TFWP1: sorted selected ASCII keys, maximum/applied damage or explicit absence, SHA-256; legacy world damage storage unchanged",
   "limits": {
@@ -41,7 +51,6 @@
     "release_damage_capture_us": 3031, "release_damage_restore_us": 3509
   },
   "remaining": [
-    "Installed-PCK verification coordinated with the Ranger combat owner",
     "Gameplay orchestration must quiesce active visual rigs and pair metadata with model restoration",
     "Generation-owned scoped ID/key selection and persistent baseline retention",
     "Resident/corpse, vegetation and editable-water ownership; coordinated rollback and player/vehicle exclusion",

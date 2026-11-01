@@ -141,7 +141,8 @@ models; 4,096 selected records and 16,384 candidate records cap the work. This i
 not a coordinated gameplay reset. [Model evidence](../issues/gameplay-expansion/model-patch-evidence.json).
 Selected hinge/damage state now passes 58 owner and six fresh-process checks per
 variant plus combat/harvest/container regressions; real authored-door checks cover
-blocked mid-swing restoration. Next: live rig quiescence, scoped identity/key
+blocked mid-swing restoration. All eight installed-PCK owner/regression suites pass
+(224 counted assertions plus door-component verification). Next: live rig quiescence, scoped identity/key
 selection, resident/corpse/vegetation/water baselines, transactional safety and
 ordinary trader/marker/E playtests. [Owner evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
 

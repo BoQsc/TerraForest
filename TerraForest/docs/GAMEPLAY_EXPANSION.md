@@ -160,6 +160,8 @@ use current owner/revision tokens and stage selected replacements before mutatio
 Door publication rejects reentrant changes and mixed model/hinge save capture.
 Both variants pass 58 owner checks, six fresh-process checks and existing combat,
 harvest and container suites; 29 real authored-door checks cover blocked restoration.
+The installed package repeats these checks and the attack/door-component suites:
+224 counted assertions pass across eight suites; no foreground performance claim.
 Live rig quiescence and matching model/state pairing still belong to the upcoming
 transaction. [Owner-state evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
 

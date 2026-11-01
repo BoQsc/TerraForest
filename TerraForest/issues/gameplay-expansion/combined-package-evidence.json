@@ -1,7 +1,22 @@
 {
   "date": "2026-11-01",
-  "status": "Published milestone with verified restoration fixes and five installed bounded reset primitives; full expansion remains incomplete",
+  "status": "Published milestone with verified restoration fixes and seven installed bounded reset primitives; full expansion remains incomplete",
   "current_package": {
+    "sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
+    "bytes": 449319724,
+    "distribution_bytes": 480138595,
+    "matching_native_libraries": 14,
+    "source_commits": {"hinge_damage": "97e06218", "ranger": "9b12130f", "native_artifacts": "b4d1c063"},
+    "export_log": "reports/expansion_owner_ranger_export.log",
+    "required_export_gates": "reports/building_standards/20261101T202423154849Z/run.json",
+    "verification": "reports/location_owner_patches/20261101T202554846236Z/run.json",
+    "passed": true,
+    "checks": {"owners": 58, "fresh_process_reopen": 6, "combat_native": 53, "harvest": 15, "containers": 42, "door_animation": 29, "attack_durability": 21},
+    "door_component": "Passed; fixture has no assertion count",
+    "root_user_executable_sha256_unchanged": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "scope": "Eight headless installed-PCK suites. Actual executable Ranger journey pending. Earlier journeys and primitives retain their exact artifact identities below; no gameplay reset, visual or frame-pacing acceptance."
+  },
+  "model_package": {
     "sha256": "008043cc4caa120d03b1fb2803242b7d44f1558782b589508b0b6f2877c45ac2",
     "bytes": 448922844,
     "distribution_bytes": 479674643,
