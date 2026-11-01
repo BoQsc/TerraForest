@@ -9,6 +9,7 @@
 #include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/packed_float64_array.hpp>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 #include <set>
@@ -485,7 +486,38 @@ Dictionary plan_street_network(const World &world,const Array &roads,const Packe
 }
 namespace terraforest {
 namespace {
-struct LotRoad {Vector3 start,finish;Vector2 a,axis;double denominator;};
+struct LotRoad {Vector3 start,finish;Vector2 a,axis;double denominator;double half_width=4;bool curved=false;std::array<double,4> coefficients{};};
+Dictionary regional_entrance_path(Survey &survey,Vector3 entrance,Vector3 outward,const std::vector<LotRoad> &roads){
+ struct Candidate {Vector3 finish,join;double distance,width;};
+ std::vector<Candidate> candidates;
+ for(const auto &road:roads){
+  const Vector2 offset(entrance.x-road.a.x,entrance.z-road.a.y);
+  const double fraction=std::clamp(double(offset.dot(road.axis))/road.denominator,0.,1.);
+  Vector3 join=road.start.lerp(road.finish,fraction);
+  if(road.curved){const auto &curve=road.coefficients;join.y=((curve[0]*fraction+curve[1])*fraction+curve[2])*fraction+curve[3];}
+  Vector3 away(entrance.x-join.x,0,entrance.z-join.z);
+  const double distance=away.length();
+  if(distance<road.half_width+3||distance>64||away.dot(outward)>=0)continue;
+  Vector3 finish=join+away/distance*(road.half_width+1.75);
+  const double length=horizontal(finish-entrance);
+  if(length<1||std::abs(finish.y-entrance.y)>length*.25)continue;
+  candidates.push_back({finish,join,length,road.half_width});
+ }
+ std::stable_sort(candidates.begin(),candidates.end(),[](const Candidate &first,const Candidate &second){return first.distance<second.distance;});
+ for(size_t index=0;index<std::min<size_t>(8,candidates.size());++index){
+  const auto &candidate=candidates[index];const Vector3 axis=candidate.finish-entrance;
+  const Vector3 across=Vector3(-axis.z,0,axis.x).normalized();const int count=int(std::ceil(candidate.distance*2));bool supported=true;
+  for(int step=0;step<=count&&supported;++step)for(double side:{-.75,0.,.75}){
+   const Vector3 point=entrance.lerp(candidate.finish,double(step)/count)+across*side;
+   if(!inside(point)){supported=false;break;}
+   const double fill=point.y-survey.height(point);
+   if(fill>2||fill< -3){supported=false;break;}
+  }
+  if(!supported)continue;
+  Dictionary result;result["ok"]=true;result["segment"]=segment(entrance,candidate.finish,.75,1,4,0,1);result["road_join"]=candidate.join;result["road_half_width"]=candidate.width;return result;
+ }
+ return failure("No terrain-fitting regional approach");
+}
 Dictionary entrance_path(Survey &survey,Vector3 a,double street_z,const std::vector<LotRoad> &roads,double width=.75,double target_x=NAN){
  Vector3 b(std::isfinite(target_x)?target_x:a.x,0,street_z);bool found=false;
  for(int i=0;i<roads.size();i++){
@@ -512,6 +544,18 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
   if(!r.has("start")||!r.has("finish")||!inside(r["start"])||!inside(r["finish"]))return failure("Invalid lot road endpoints");
   Vector3 a=r["start"],b=r["finish"];Vector2 first(a.x,a.z),axis(b.x-a.x,b.z-a.z);
   road_geometry.push_back({a,b,first,axis,std::max(.001,double(axis.length_squared()))});
+  if(r.has("half_width")&&r["half_width"].get_type()!=Variant::FLOAT&&r["half_width"].get_type()!=Variant::INT)return failure("Invalid lot road width type");
+  auto &parsed=road_geometry.back();parsed.half_width=double(r.get("half_width",4.));
+  if(!std::isfinite(parsed.half_width)||parsed.half_width<.25||parsed.half_width>32)return failure("Invalid lot road width");
+  if(r.has("coefficients")){
+   if(r["coefficients"].get_type()!=Variant::PACKED_FLOAT64_ARRAY&&r["coefficients"].get_type()!=Variant::PACKED_FLOAT32_ARRAY)return failure("Invalid lot road curve");
+   if(r.has("curve_index")&&r["curve_index"].get_type()!=Variant::INT)return failure("Invalid lot curve index type");
+   PackedFloat64Array coefficients=r["coefficients"];const int64_t section=int64_t(r.get("curve_index",0));
+   if(coefficients.size()<4||coefficients.size()>256||coefficients.size()%4||section<0||section>=coefficients.size()/4)return failure("Invalid lot road curve section");
+   for(int coefficient=0;coefficient<coefficients.size();++coefficient)if(!std::isfinite(coefficients[coefficient]))return failure("Nonfinite lot road curve");
+   for(int coefficient=0;coefficient<4;++coefficient)parsed.coefficients[coefficient]=coefficients[section*4+coefficient];
+   parsed.curved=true;
+  }
  }
  for(int i=0;i<lots.size();i++){
   if(lots[i].get_type()!=Variant::DICTIONARY)return failure("Invalid lot descriptor");Dictionary l=lots[i];
@@ -526,11 +570,13 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
    PackedVector3Array access=l["access_points"];if(access.size()>8)return failure("Too many access points");
    for(int point=0;point<access.size();point++)if(!access[point].is_finite())return failure("Invalid access point");
   }
+  if(l.has("general_access")&&l["general_access"].get_type()!=Variant::BOOL)return failure("Invalid lot access mode");
  }
  Survey survey{world};survey.cache=true;Array fitted,rejected;std::vector<AABB> reserved;
  const int offsets[]={0,-3,3,-6,6,-9,9};
  for(int index=0;index<lots.size();index++){
   Dictionary lot=lots[index],best;double best_cost=1e30;
+  const bool general_access=bool(lot.get("general_access",false));
   Vector3i base=lot["origin"];AABB original=lot["bounds"];PackedVector3Array points=lot["samples"];
   for(int dx:offsets)for(int dz:offsets){
    Vector3 shift(dx,0,dz);Vector3i origin=base+Vector3i(dx,0,dz);AABB bounds(original.position+shift,original.size);bool blocked=false;
@@ -552,7 +598,7 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
    double low=1e30,high=-1e30;
    for(int i=0;i<points.size();i++){
     Vector3 p=points[i]+shift;
-    if(!inside(p)||std::abs(p.x-center.x)<8){blocked=true;break;}
+    if(!inside(p)||(!general_access&&std::abs(p.x-center.x)<8)){blocked=true;break;}
     if(default_streets){
      for(int street:{-52,0,52})if(std::abs(p.z-center.z-street)<6.5){blocked=true;break;}
      if(std::abs(std::abs(p.x-center.x)-42)<6.5&&std::abs(p.z-center.z)<=57)blocked=true;
@@ -576,7 +622,8 @@ Dictionary plan_settlement_lots(const World &world,Vector3 center,const Array &l
     bool found=false;Vector3 local=lot["entrance_local"];
     for(int candidate=minimum;candidate<=maximum;candidate++){
      Vector3 a=local+Vector3(origin.x,candidate-surface_offset,origin.z);
-     Dictionary path=entrance_path(survey,a,double(lot["street_z"]),road_geometry);
+     Vector3 outward=local-(original.position+original.size*.5-Vector3(base));outward.y=0;
+     Dictionary path=general_access?regional_entrance_path(survey,a,outward,road_geometry):entrance_path(survey,a,double(lot["street_z"]),road_geometry);
      Array candidate_paths;
      if(bool(path["ok"])&&lot.has("access_points")){
       PackedVector3Array access=lot["access_points"];

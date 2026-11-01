@@ -2,6 +2,15 @@
 extends RefCounted
 const SCAN_LIMIT:=4096
 const SurfaceTokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
+static func block_model_support(blocks:Node,asset:Resource,target:Vector3i,rotation:int,models:Dictionary)->Dictionary:
+	var sampler:RefCounted=ClassDB.instantiate("NativePrefabPlacement")
+	var probes:Dictionary=sampler.ground_model_samples(asset,target,rotation,models,.02)
+	if not probes.get("ok",false):return probes
+	var support:PackedByteArray=blocks.sample_solid(probes.support)
+	var clearance:PackedByteArray=blocks.sample_solid(probes.clearance)
+	if support.is_empty() or support.size()!=probes.support.size() or support.count(1)!=support.size():return {"ok":false,"reason":"Model lacks continuous block support"}
+	if clearance.size()!=probes.clearance.size() or clearance.count(0)!=clearance.size():return {"ok":false,"reason":"Model bounds intersect building blocks"}
+	return {"ok":true,"support_samples":support.size(),"clearance_samples":clearance.size()}
 # Orchestration only: footprint generation and density sampling are native.
 var points:=PackedVector3Array()
 var offset:=0

@@ -23,6 +23,6 @@ public:
     bool cancel();
     Dictionary place(NativeBlockWorld *blocks,const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,const Array &protected_boxes);
     Dictionary model_counts(const Ref<NativeBlockPrefab> &prefab) const;
-    Dictionary ground_model_samples(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models) const;
+    Dictionary ground_model_samples(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,double support_depth=.25) const;
 };
 }

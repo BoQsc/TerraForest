@@ -56,9 +56,16 @@ func run()->void:
 		var placement=ClassDB.instantiate("NativePrefabPlacement")
 		var placed:Dictionary=placement.place(structures.blocks,asset,Vector3i.ZERO,rotation,structures.model_collections(),[])
 		check(placed.get("ok",false),"grid structure and supply chest place atomically at rotation "+str(rotation))
+		check(preload("res://addons/structures/foundation_check.gd").block_model_support(structures.blocks,asset,Vector3i.ZERO,rotation,structures.model_collections()).get("ok",false),"actual upper-floor chest bounds have continuous block support and clearance")
 		structures.blocks.set_focus(Vector3(0,4,0));structures.blocks.set_collision_radius(48);structures.blocks.flush_bakes();structures.set_model_focus(Vector3(0,4,0))
 		var saved:PackedByteArray=structures.blocks.capture_snapshot()
 		check(structures.blocks.restore_snapshot(saved) and structures.blocks.capture_snapshot()==saved,"independent blocks restore exact binary state")
+		var footing:=Vector3i(Turns.turn(Vector3(2.5,6.5,6.5),rotation).floor())
+		check(structures.blocks.set_cells(PackedInt32Array([footing.x,footing.y,footing.z,0])) and not preload("res://addons/structures/foundation_check.gd").block_model_support(structures.blocks,asset,Vector3i.ZERO,rotation,structures.model_collections()).get("ok",false),"missing upper-deck floor rejects supply publication")
+		check(structures.blocks.restore_snapshot(saved),"restore upper-deck support after rejection")
+		var obstruction:=Vector3i(Turns.turn(Vector3(1.5,7.5,6.5),rotation).floor())
+		check(structures.blocks.set_cells(PackedInt32Array([obstruction.x,obstruction.y,obstruction.z,1])) and not preload("res://addons/structures/foundation_check.gd").block_model_support(structures.blocks,asset,Vector3i.ZERO,rotation,structures.model_collections()).get("ok",false),"intersecting upper-deck solid rejects supply publication")
+		check(structures.blocks.restore_snapshot(saved),"restore clear supply bounds after rejection")
 		var probes:=PackedVector3Array()
 		for column in [0,6]:
 			for row in [0,4,8]:
@@ -74,7 +81,7 @@ func run()->void:
 		player=CharacterBody3D.new();player.collision_mask=7;player.collision_layer=8;player.floor_snap_length=.35;player.floor_max_angle=deg_to_rad(48.);player.floor_constant_speed=true;player.safe_margin=.004;player.max_slides=8;player.wall_min_slide_angle=0
 		var shape:=CapsuleShape3D.new();shape.radius=.34;shape.height=1.8
 		var collider:=CollisionShape3D.new();collider.shape=shape;collider.position.y=.9;player.add_child(collider);stage.add_child(player)
-		var route:PackedVector3Array=asset.get_meta("walk_route")
+		var route:PackedVector3Array=asset.get_meta("walk_route").duplicate()
 		player.position=Turns.turn(route[0],rotation)
 		for frame in 8:await physics_frame
 		var reached:=true

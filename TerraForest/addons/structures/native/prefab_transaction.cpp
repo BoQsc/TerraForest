@@ -45,9 +45,10 @@ void NativePrefabPlacement::_bind_methods() {
     ClassDB::bind_method(D_METHOD("commit","protected_boxes"),&NativePrefabPlacement::commit);
     ClassDB::bind_method(D_METHOD("cancel"),&NativePrefabPlacement::cancel);
     ClassDB::bind_method(D_METHOD("model_counts","prefab"),&NativePrefabPlacement::model_counts);
-    ClassDB::bind_method(D_METHOD("ground_model_samples","prefab","origin","quarter_turns","models"),&NativePrefabPlacement::ground_model_samples);
+    ClassDB::bind_method(D_METHOD("ground_model_samples","prefab","origin","quarter_turns","models","support_depth"),&NativePrefabPlacement::ground_model_samples,DEFVAL(.25));
 }
-Dictionary NativePrefabPlacement::ground_model_samples(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models) const {
+Dictionary NativePrefabPlacement::ground_model_samples(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int turns,const Dictionary &models,double support_depth) const {
+    if(!std::isfinite(support_depth)||support_depth<.005||support_depth>1)return failure("Invalid model support depth");
     if(prefab.is_null()||turns<0||turns>3||models.size()>256||prefab->model_attachments.is_empty()||prefab->model_attachments.size()>64)return failure("Invalid ground-model survey");
     for(int axis=0;axis<3;++axis)if(origin[axis]<-1044480||origin[axis]>1044480)return failure("Invalid ground-model origin");
     Vector3 x_axis(1,0,0),z_axis(0,0,1);
@@ -70,7 +71,7 @@ Dictionary NativePrefabPlacement::ground_model_samples(const Ref<NativeBlockPref
         if(clearance.size()+(columns+1)*(rows+1)*(layers+1)>4096)return failure("Ground-model probe budget exceeded");
         for(int row=0;row<=rows;++row)for(int column=0;column<=columns;++column){
             Vector3 point=start+Vector3(span.x*column/columns,0,span.z*row/rows);
-            support.push_back(Vector3(point.x,bounds.position.y-.25,point.z));
+            support.push_back(Vector3(point.x,bounds.position.y-support_depth,point.z));
             for(int layer=0;layer<=layers;++layer)clearance.push_back(point+Vector3(0,span.y*layer/layers,0));
         }
     }

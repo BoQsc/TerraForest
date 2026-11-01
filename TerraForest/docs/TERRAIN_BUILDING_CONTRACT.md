@@ -69,6 +69,12 @@ frames or oversized geometry reject. It is not a foundation rule for furniture
 attached to upper floors. Model-only prefabs are atomic native transactions;
 empty prefabs still reject. Existing overlap, envelope and admission rules apply.
 
+Upper-floor props can use `foundation_check.block_model_support`: the same native
+transformed-bound sampler at 0.02 m below the base, checked against actual native
+block solids plus clear interior samples. The default terrain-support depth stays
+0.25 m. Invalid depth, missing support or intersecting blocks reject publication;
+thin deck plates are not replaced with thicker floors to bypass this check.
+
 ## Verification and approval
 
 `tools/export_pack.py` requires `tools/check_building_standards.py` to pass.

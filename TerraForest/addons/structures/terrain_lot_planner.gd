@@ -220,7 +220,8 @@ static func earthworks(plan:Dictionary)->Dictionary:
    var low:Vector3=path.start.min(path.finish)
    var high:Vector3=path.start.max(path.finish)
    access.append(Rect2(Vector2(low.x,low.z),Vector2(high.x-low.x,high.z-low.z)).grow(float(path.half_width)))
- var pavement:Dictionary=ClassDB.instantiate("NativeBlockPrefab").plan_paving(plan.roads,access)
+ var pavement:Dictionary={"ok":true,"records":PackedInt32Array(),"beds":[]}
+ if not plan.roads.is_empty():pavement=ClassDB.instantiate("NativeBlockPrefab").plan_paving(plan.roads,access)
  if not pavement.get("ok",false):return pavement
  plan["block_paving"]=pavement
  segments.append_array(pavement.beds)

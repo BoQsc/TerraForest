@@ -21,6 +21,12 @@ func walk(target:Vector3)->bool:
 		game.controls.set_key(KEY_W,true,Time.get_ticks_usec())
 		await physics_frame;game.app_focused=true;game._physics_process(1./60.)
 		var now:=Time.get_ticks_usec();frames.append((now-previous)/1000.);previous=now
+	if not reached:
+		print("EXPLORATION_BLOCKED velocity=",game.player.velocity," floor=",game.player.is_on_floor()," normal=",game.player.get_floor_normal())
+		for index in game.player.get_slide_collision_count():
+			var hit:KinematicCollision3D=game.player.get_slide_collision(index)
+			print("EXPLORATION_COLLISION ",hit.get_collider()," at=",hit.get_position()," normal=",hit.get_normal())
+		await photograph("blocked_walk")
 	game.controls.clear(Time.get_ticks_usec());game._clear_motion();game.session_menu.developer_hud.mouse_access=false
 	print("EXPLORATION_WALK target=",target," actual=",game.player.position," reached=",reached)
 	return reached
@@ -60,6 +66,7 @@ func run()->void:
 	if not check(anchors.size()==5 and locations.size()==2,"ordinary generation saves two underground sites and five keyed sleepers"):await finish();return
 	var places:Array=game.generated_region.store.get_plan().places
 	check(places.filter(func(place:Dictionary):return place.title in ["Abandoned survey mine","Split-rock cave"]).size()==2,"both actual locations are published on the map")
+	if not await check_watchtowers(restore):await finish();return
 	if restore:
 		check(game.storage.store.capture_storage_snapshot()==expected.storage,"fresh process restores exact depleted supplies without refill")
 		check(store.resident(expected.killed).state==2,"cleared underground resident stays dead")
@@ -108,6 +115,70 @@ func run()->void:
 	FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE).store_var(expected)
 	frames.sort();FileAccess.open(folder.path_join("walk_timing.json"),FileAccess.WRITE).store_string(JSON.stringify({"samples":frames.size(),"p95_ms":frames[int(frames.size()*.95)] if not frames.is_empty() else 0,"worst_ms":frames.back() if not frames.is_empty() else 0,"scope":"Offscreen physical player entrance walks; no foreground frame-pacing qualification"}))
 	await finish()
+func check_watchtowers(restore:bool)->bool:
+	var store:RefCounted=game.zombies.population.store
+	var towers:Array=[]
+	for identity in range(2501,int(store.statistics().slots)+1):
+		var resident:Dictionary=store.resident(identity)
+		if (int(resident.anchor)&(1<<41))!=0:towers.append(resident)
+	if not check(towers.size()==2,"ordinary generation includes two persistent off-road lookout residents"):return false
+	var navigation:Dictionary=game.generated_region.store.get_plan()
+	var markers:Array=navigation.places.filter(func(place:Dictionary):return place.title=="Wilderness lookout")
+	check(markers.size()==2,"both lookouts publish their actual entrance on the world map")
+	var keys:Array=towers.map(func(resident:Dictionary):return resident.anchor)
+	if restore:
+		check(keys==expected.tower_keys,"fresh process restores stable lookout population identities")
+		check(store.resident(expected.tower_killed).state==2,"cleared lookout resident stays dead after reload")
+		return true
+	expected.tower_keys=keys;expected.tower_killed=0
+	var asset:Resource=preload("res://addons/exploration/watchtower_sites.gd").asset()
+	for resident:Dictionary in towers:
+		var key:int=resident.anchor
+		var origin:=Vector3i((key&2047)-1,(key>>29)&1023,((key>>11)&2047)-1);var rotation:int=(key>>22)&3
+		var entrance:=Vector3(origin)+Layouts.turn(asset.get_meta("site_entrance"),rotation)
+		var matching:Array=markers.filter(func(marker:Dictionary):return marker.position.distance_to(entrance)<1.)
+		if not check(matching.size()==1,"lookout marker is at its actual terrain-fitted entrance"):return false
+		var paths:Array=navigation.roads.filter(func(path:Dictionary):return path.a.is_equal_approx(matching[0].position))
+		if not check(paths.size()==1,"lookout has a connected approach from the regional road"):return false
+		game.teleport(paths[0].b+Vector3.UP*.05)
+		if not check(await wait_for(func():return not game.loading_active,90),"ordinary streaming admits the roadside lookout"):return false
+		game.set_physics_process(false);game.zombies.update(0,game.player.global_position,false)
+		game.camera.look_at(Vector3(origin)+Layouts.turn(Vector3(3.5,6.,4.5),rotation))
+		await photograph("watchtower_"+str(resident.id)+"_road")
+		if not check(await walk(paths[0].a),"real player walks from regional road to lookout entrance"):return false
+		var route:PackedVector3Array=asset.get_meta("walk_route").duplicate();route.resize(route.size()-1)
+		for point:Vector3 in route:
+			if not check(await walk(Vector3(origin)+Layouts.turn(point,rotation)),"real player climbs lookout staircase and reaches supplies"):return false
+		var crate:=Vector3(origin)+Layouts.turn(Vector3(1.8,7,6.3),rotation)
+		game.camera.look_at(crate+Vector3.UP*.4)
+		check(game.storage.try_open(),"actual upper-deck chest opens through scene picking")
+		if game.storage.opened:
+			check(game.storage.store.snapshot(game.storage.identity).slots[0].count>=3,"lookout chest contains generated supplies")
+			game.storage.storage_list.select(0);game.storage.quantity.get_line_edit().text="1"
+			check(game.storage.move_selected(false),"lookout supplies transfer through normal inventory UI")
+			game.storage.close()
+		game.camera.look_at(Vector3(origin)+Layouts.turn(Vector3(3.5,7.5,6.5),rotation))
+		await photograph("watchtower_"+str(resident.id)+"_deck")
+		var actors:Array=game.zombies.residents.filter(func(actor:Node):return actor.get_meta("world_zombie_id",0)==resident.id)
+		check(actors.size()==1,"authored lookout resident is physically streamed on the upper deck")
+		if actors.size()==1:
+			var actor:CharacterBody3D=actors[0]
+			game.zombies.update(0,game.player.global_position,true);game.zombies.hear_noise(actor.global_position,5.)
+			var deadline:=Time.get_ticks_msec()+8000
+			while actor.sleeper_active() and Time.get_ticks_msec()<deadline:
+				await physics_frame;game.zombies.update(1./60.,game.player.global_position,true)
+			check(not actor.sleeper_active() and absf(actor.global_position.y-(origin.y+7))<.4,"upper-deck resident completes waking without falling through the floor")
+			if expected.tower_killed==0:
+				expected.tower_killed=resident.id;actor.receive_hit("torso",1000.,actor.global_position+Vector3.UP,Vector3.ZERO)
+				game.zombies.population.sync(actor)
+		game.zombies.update(0,game.player.global_position,false)
+		route.reverse()
+		check(asset.get_meta("walk_route").size()==7 and asset.get_meta("walk_route")[0].is_equal_approx(Vector3(1.5,1.02,.5)),"walking test never mutates the shared authored route")
+		for point:Vector3 in route:
+			if not check(await walk(Vector3(origin)+Layouts.turn(point,rotation)),"real player descends lookout staircase"):return false
+		if not check(await walk(paths[0].b),"real player returns from lookout to regional road"):return false
+	return true
+
 func finish()->void:
 	check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED and preload("res://addons/world_runtime/mouse_ownership.gd").captures==0,"test never captures the desktop pointer")
 	if game_ready():

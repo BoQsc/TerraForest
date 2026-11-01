@@ -6,8 +6,8 @@ model_attachments = [{
 "model": "storage/wooden_chest/v1",
 "transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 7, 6.3)
 }]
-resource_name = "Wilderness lookout / W1 review"
-metadata/review_only = true
+resource_name = "Wilderness lookout / W1"
+metadata/content_id = "watchtower_w1"
 metadata/site_surface_offset = 1
 metadata/site_sample_band = 1
 metadata/site_entrance = Vector3(1.5, 1, -0.5)

@@ -37,10 +37,17 @@ frame-pacing acceptance. Two authored underground locations now generate with
 native arched cuts, shared grounded-prop checks, five supply chests and five stable
 sleepers. Real entrance walks, chest UI/withdrawal, waking and fresh-load clearing
 pass. Recessed portals remove the reproduced thin-roof/rim patch without changing
-global lighting. W1 watchtower is a 385-cell baked review asset; four-rotation
-native player stair traversal, local roof-cell removal and exact block snapshot
-restore pass. It is not generated: return next for shared natural-terrain fitting,
-connected approach, stocked chest/resident, ordinary-world reload and performance.
+global lighting. W1 watchtower now uses shared native regional-road fitting,
+thin-deck prop support and ordinary generation with stocked supplies and a keyed
+sleeper. Source/package walking to/from both towers, looting, waking and fresh-process
+restoration pass (76 + 15 each); four-rotation traversal, negative prop-support
+checks and local destruction pass 55 assertions each. Broader seed/art/NPC routes
+and foreground performance remain. Package offscreen travel p95 is 17.014 ms and
+worst 38.401 ms, not seamless-60-FPS acceptance. Private commit 3.60 GiB and GPU
+1.39 GiB remain within configured budgets; distribution is about 477 MB.
+The older raw lot-earthworks check still reports two tiny pavement-support failures;
+both reproduce identically in the previously installed pack, not a new regression.
+The required current source/release building-contract gate passes; retain both facts.
 Sparse underground dressing and town-to-POI/NPC routes also remain open; return
 before art acceptance. Shared
 location ownership/reset and locks are next dependencies, not completed by loot

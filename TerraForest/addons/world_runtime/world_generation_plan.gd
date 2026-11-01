@@ -144,7 +144,11 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  var plan:=build(seed_value,generator,with_market,with_connection,"user://generation_plans",options,progress,civic_review)
  if not plan.get("ok",false):return plan
  if progress!=null:progress.record("Compositing the actual regional plan",0,0,"Terrain grades, water surfaces, vegetation biome, roads and buildings")
- var sites:Array=plan.get("sites",[plan.plan,plan.market])
+ var sites:Array=plan.get("sites",[plan.plan,plan.market]).duplicate()
+ var tower_lots:Array=[]
+ for location:Dictionary in plan.get("watchtowers",{}).get("sites",[]):
+  var lot:Dictionary=location.duplicate();lot["asset"]=preload("res://addons/exploration/watchtower_sites.gd").asset();tower_lots.append(lot)
+ if not tower_lots.is_empty():sites.append({"lots":tower_lots})
  var bounds:Array=[]
  for site:Dictionary in sites:
   for lot:Dictionary in site.get("lots",[]):bounds.append(lot.bounds)

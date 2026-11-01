@@ -59,8 +59,8 @@ static func build(blocks:Node)->Resource:
 	var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
 	if not asset.configure(records):return null
 	if not asset.configure_model_attachments([{"model":"storage/wooden_chest/v1","transform":Transform3D(Basis.IDENTITY,Vector3(1.8,7,6.3))}]):return null
-	asset.resource_name="Wilderness lookout / W1 review"
-	asset.set_meta("review_only",true)
+	asset.resource_name="Wilderness lookout / W1"
+	asset.set_meta("content_id","watchtower_w1")
 	asset.set_meta("site_surface_offset",1)
 	asset.set_meta("site_sample_band",1)
 	asset.set_meta("site_entrance",Vector3(1.5,1,-.5))

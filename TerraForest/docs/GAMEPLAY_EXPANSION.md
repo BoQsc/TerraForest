@@ -30,7 +30,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Seated and lying sleepers, awakened by hearing or damage | Live native-clearance lifecycle integrated; default generation registers stable house and cave/mine residents; broader natural encounter review remains |
 | Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, live interruption checks, both poses through furnished A2/C1 collision at all rotations; arbitrary slopes, moving obstacles and player visual acceptance pending |
 | Sleeper residents inside some houses and underground locations | New-world A2/C1 and authored underground anchors persist; cottage and both underground locations checked; populated C1 visit, broader street-to-room routes and encounter balance remain |
-| Off-road watchtowers | W1 review resource: 385 individual native cells, switchback stairs, sheltered deck and chest attachment; four-rotation physical traversal/local removal checked; natural terrain fit, road/path connection, stocked loot, sleepers and generation still pending |
+| Off-road watchtowers | W1 installed in ordinary new worlds using shared native lot fitting, connected approaches, stocked upper-deck chest and persistent sleeper; source/package generation/travel/loot/wake/reload pass; broader seeds and visual/NPC/performance acceptance remain |
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Pending stable location identities, quest objectives, rewards and trader UI |
@@ -97,10 +97,16 @@ fresh-process clearing are tested. The reproduced isolated dark rim patch came
 with a thin rock layer; bounded authored entrance recesses now remove that layer
 instead of modifying global lighting. Faceting and sparse dressing are not final
 art; town-to-entrance paths and general NPC routes remain.
-W1 watchtower now has a baked review resource and four-rotation native-controller
-stair checks in source and the release-native pack harness. It is not generated
-yet: next fit it with the shared lot planner, connect a real off-road approach,
-stock the chest, register the sleeper and verify ordinary generation/reload.
+W1 watchtower uses the shared lot planner with an explicit regional-access mode:
+arbitrary road directions and their actual cubic height profile, unchanged 2 m
+fill/3 m cut limits, bounded candidate search and lake/building/cave exclusions.
+Normal preview includes the roof geometry; publication checks terrain contact and
+actual thin-deck prop support before stock and keyed sleepers are registered.
+Plan v34 fingerprints the baked resource. Existing worlds are never retrofitted.
+Source ordinary-generation tests now walk both approaches and staircases, withdraw
+supplies, wake residents and verify fresh-process stock/death persistence. Matching
+installed-package checks pass too. Broader seed/art/NPC traversal and foreground
+performance acceptance remain distinct.
 Refine location dressing, then add shared stable location
 ownership for quest reset and locks. Supply grants occur only during generation;
 loading a looted location never grants or resets its contents.

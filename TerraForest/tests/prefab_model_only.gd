@@ -32,6 +32,9 @@ func run()->void:
 	var probe_origin:=Vector3i(200,40,200)
 	var probes:Dictionary=place.ground_model_samples(asset,probe_origin,0,models)
 	check(probes.ok and probes.support.size()==12 and probes.clearance.size()==36,"native grounded-model probes derive from actual mesh bounds")
+	var shallow:Dictionary=place.ground_model_samples(asset,probe_origin,0,models,.02)
+	check(shallow.ok and shallow.clearance==probes.clearance and shallow.support[0].is_equal_approx(probes.support[0]+Vector3(0,.23,0)),"thin block-floor support depth changes only the support plane")
+	check(not place.ground_model_samples(asset,probe_origin,0,models,NAN).ok and not place.ground_model_samples(asset,probe_origin,0,models,0.).ok and not place.ground_model_samples(asset,probe_origin,0,models,2.).ok,"invalid support depth rejects before sampling")
 	check(not place.ground_model_samples(asset,probe_origin,0,{}).ok and not place.ground_model_samples(asset,probe_origin,4,models).ok,"ground survey rejects missing model and invalid rotation")
 	for turn in 4:
 		var origin:=Vector3i(200+turn*10,40,200)

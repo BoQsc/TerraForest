@@ -1,5 +1,6 @@
 extends RefCounted
-const VERSION:=33
+const VERSION:=34
+const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
 const LIMIT:=32*1024*1024
@@ -59,6 +60,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
  key+="|civic-r1" if civic_review else "|approved-e2-civic"
  key+="|"+FileAccess.get_sha256(Exploration.PATH)
+ key+="|"+prefab_fingerprint(Watchtowers.asset())
  if not civic_review:
   for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
  if civic_review:
@@ -205,6 +207,17 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
    var segments:=Exploration.segments(layout_entry,location.origin,location.rotation)
    segments.push_front(location.approach)
    for segment:Dictionary in segments:works.segments.append(segment);works.bounds=works.bounds.merge(segment.bounds)
+ if generator>=29:
+  if progress!=null:progress.record("Fitting wilderness lookouts",0,2,"Bounded native lot survey / existing roads / separate stair decks and supplies")
+  var tower_roads:Array=network.segments.duplicate();var tower_reserved:Array=reserved.duplicate()
+  for district:Dictionary in sites:tower_roads.append_array(district.roads)
+  for location:Dictionary in result.get("exploration",{}).get("sites",[]):
+   var protected_bounds:AABB=location.bounds.grow(12)
+   tower_reserved.append(Rect2(Vector2(protected_bounds.position.x,protected_bounds.position.z),Vector2(protected_bounds.size.x,protected_bounds.size.z)))
+  var towers:=Watchtowers.build(core,tower_roads,tower_reserved,seed_value)
+  if not towers.get("ok",false):return towers
+  result["watchtowers"]=towers;building_count+=towers.sites.size();result.building_count=building_count
+  for segment:Dictionary in towers.segments:works.segments.append(segment);works.bounds=works.bounds.merge(segment.bounds)
  if int(options.get("material_veins",0))==1:
   if progress!=null:progress.record("Locating material veins and surface stones",0,0,"Native geology / dry gentle ground / outside roads and construction")
   var minerals:Dictionary=core.plan_material_deposits(works.segments)
@@ -213,6 +226,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   result["mineral_plan_ms"]=minerals.worker_ms
  var navigation:=navigation_metadata(sites,network)
  navigation.roads.append_array(bridge_navigation)
+ for location:Dictionary in result.get("watchtowers",{}).get("sites",[]):
+  navigation.places.append({"id":6000+navigation.places.size(),"title":location.title,"detail":"Destructible wilderness lookout with connected stairs, supplies and a sleeping inhabitant.","position":location.entrance.segment.start})
+  navigation.roads.append({"a":location.entrance.segment.start,"b":location.entrance.road_join,"width":1.5})
  for location:Dictionary in result.get("exploration",{}).get("sites",[]):
   navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
  for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})

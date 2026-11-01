@@ -26,12 +26,10 @@ def main():
     if args.pack:
         record['native_sha256'] = verify_pack_native()
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
-        recipe = folder / 'watchtower.gd'
-        recipe.write_bytes((ROOT / 'addons/exploration/watchtower.gd').read_bytes())
         driver = folder / 'driver.gd'
-        driver.write_text((ROOT / 'tests/watchtower_review.gd').read_text().replace('res://addons/exploration/watchtower.gd', recipe.as_posix()), encoding='utf-8')
+        driver.write_bytes((ROOT / 'tests/watchtower_review.gd').read_bytes())
         script = str(driver)
-        record['driver_scope'] = 'External review script and recipe against installed release-native pack resources, not a shipped watchtower catalog.'
+        record['driver_scope'] = 'External assertion driver; recipe and exact baked W1 resource load from the installed pack.'
     command = [config.godot, '--path', str(ROOT / 'dist' if args.pack else ROOT), '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', script]
     if args.pack:
         command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
@@ -40,7 +38,6 @@ def main():
     else:
         command.append('--headless')
     command.append('--')
-    command.append('--watchtower-resource=' + (ROOT / 'addons/exploration/watchtower_w1.tres').as_posix())
     if args.render:
         command.append('--review-output=' + folder.as_posix())
     if args.bake:

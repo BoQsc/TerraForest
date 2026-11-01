@@ -16,13 +16,14 @@ docs/GAMEPLAY_EXPANSION.md; layouts are not monolithic imported meshes.
 Existing TerraForest timber block materials and wooden chest models retain
 their existing provenance and terms; this set does not relicense them.
 
-Watchtower W1 review: watchtower_w1.tres is original CC0-1.0 authoring data,
+Watchtower W1: watchtower_w1.tres is original CC0-1.0 authoring data,
 baked from the new 0BSD watchtower.gd recipe. Its footing, posts, stair flights,
 landings, guards, roof slopes and joints are individual native grid cells, not
 an imported or monolithic model. The storage attachment uses the unchanged
 existing wooden chest. Original authorship, AI assistance and contribution
-terms above apply; no new third-party assets were introduced. Watchtower W1
-is a review resource, not yet an ordinary world-generation default.
+terms above apply; no new third-party assets were introduced. The original
+0BSD watchtower_sites.gd uses the shared native lot planner for new-world sites;
+generation.gd publishes its native blocks, upper-floor supplies and sleeper.
 
 Layout art and natural-site fit require review. Test success is not visual
 acceptance or approval of any existing building replacement.

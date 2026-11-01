@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "83f09d30",
+  "scope": "Ordinary default Generate & play, real road-to-deck walking, stocked containers, waking, clearing and fresh-process restore; broader visual/NPC/performance acceptance remains open.",
+  "license": "CC0-1.0",
+  "source": "Original TerraForest contributor work, AI-assisted with OpenAI Codex. Unedited in-engine captures of existing assets under retained terms; no external images or models imported.",
+  "pack_sha256": "0c073b05501ae387f28d38e9cbf7b1c6cd781332283205a9d5838013eec8b889",
+  "pack_bytes": 447097272,
+  "distribution_budget_bytes": 476824047,
+  "recipe": {"path":"addons/exploration/watchtower.gd","license":"0BSD","sha256":"19f4331fb56f31216c1a36607796b5ddd18142c12f28f45e0b8b5a8d2a549d9e"},
+  "asset": {"path":"addons/exploration/watchtower_w1.tres","license":"CC0-1.0","sha256":"b4bd759828031b734c9b4080b04aec1979eaca4f6bf2f9d1a8a052e1fbe7d4dd","grid_cells":385},
+  "source_world": "reports/exploration_world/20261101T120954902588Z",
+  "package_world": "reports/exploration_world/20261101T122106715365Z",
+  "world_checks_per_build": {"create":76,"restore":15},
+  "source_geometry": "reports/watchtower/20261101T122522042640Z",
+  "package_geometry": "reports/watchtower/20261101T122557845008Z",
+  "geometry_checks_per_build": 55,
+  "browser_check": "reports/watchtower_package_checks/20261101T122451101872Z/world_browser_responsiveness",
+  "credits_check": "reports/watchtower_package_checks/20261101T122722947826Z",
+  "images": [
+    {"path":"images/watchtower-world-approach.png","source":"reports/exploration_world/20261101T122106715365Z/watchtower_2509_road.png","sha256":"103d1d388920dde6e6e8d87d37029f92741a59203a2c2e3ae19fdae217ce2b98","caption":"Real regional-road arrival; native foundation and independent tower blocks. HUD still shows recent collision preparation; traversal is verified separately.","status":"inspected, no final human visual approval"},
+    {"path":"images/watchtower-world-deck.png","source":"reports/exploration_world/20261101T122106715365Z/watchtower_2509_deck.png","sha256":"ba3b44e38196645a619f90f016c1f4c756c6819416eb49217349028a4a8d43c9","caption":"Upper-deck chest after normal withdrawal; resident encountered during waking, not proof of a fully sleeping pose.","status":"inspected, no final human visual approval"}
+  ],
+  "remaining": ["Broader seeds and visual acceptance", "Full NPC road/stair routes", "Foreground frame-pacing qualification", "Investigate retained headless startup crash and first travel timeout if reproduced", "Quest reset ownership and locks", "Remaining full gameplay expansion"]
+}

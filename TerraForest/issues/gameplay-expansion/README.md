@@ -1,11 +1,67 @@
 # Gameplay expansion: encounters, exploration and progression
 
-- Status: In progress; generated house/underground sleepers and supplies, not a completed expansion.
+- Status: In progress; generated house/underground/lookout sleepers and supplies, not a completed expansion.
 - Updated: 2026-11-01.
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
 ## Images
+
+### Generated W1 lookouts — 2026-11-01
+
+![Installed world: lookout on a fitted local foundation and connected footpath](images/watchtower-world-approach.png)
+![Installed world: upper-deck supplies and resident encountered during waking](images/watchtower-world-deck.png)
+
+The ordinary unchanged default Generate & play recipe now includes up to two
+separated lookouts. Shared native fitting handles diagonal/curved regional roads,
+retains the existing 2 m fill / 3 m cut limits and protects lakes, buildings and
+underground sites. At most 192 candidates are tested once during planning. Two
+sites fitted in 12.704 ms in the isolated seed-1703 planning measurement; this is
+not whole-world generation time. No existing save or approved house is replaced.
+
+Construction remains 385 individually destructible cells, batched by the existing
+native world. The deck chest has actual thin-floor support and clear-bound checks,
+stocked supplies and a stable sleeper; native binary storage preserves withdrawals
+and cleared residents. New roof geometry appears in generation preview, and actual
+entrances/approaches are in the native regional plan. There is no frame-loop survey.
+
+- Source ordinary world: `reports/exploration_world/20261101T120954902588Z`, 76
+  generation/travel/loot/wake assertions and fresh-process restoration. Both towers
+  are reached from their real roads, climbed, looted and descended; the cave/mine
+  interactions remain covered in the same populated world.
+- Fifteen siting/cache/malformed-road assertions:
+  `reports/checks/20261101T120953037834Z`. Seven-seed legacy lot planning passes at
+  `reports/checks/20261101T121405129828Z`. Required source/release building gates:
+  `reports/building_standards/20261101T121730382946Z`.
+- Source travel: 2,157 samples, p95 18.340 ms, worst 38.854 ms; peak private commit
+  3,802,275,840 bytes and dedicated GPU 1,490,579,456 bytes. Offscreen 1080p, capped
+  60 FPS/VSync, Quiet Mode unchanged. This does not qualify smooth foreground 60 FPS.
+- Retained failures: first road-return timeout (`20261101T120104107970Z`, not
+  reproduced in subsequent source traversal); a test-owned shared route was
+  reversed in-place (`20261101T120630769200Z`, fixed by duplicating before mutation).
+  A headless material-startup crash remains recorded in
+  `reports/watchtower/20261101T115429631373Z`; rendered review passes separately.
+- The legacy raw earthworks test reports two pavement-support failures, reproduced
+  identically in the old installed pack at
+  `reports/watchtower_baseline/20261101T121702667145Z`. Do not present that check as
+  green; the current production source/release contact gate passes.
+
+Installed-package generation and fresh restoration pass 76 + 15 assertions at
+`reports/exploration_world/20261101T122106715365Z`. Package travel p95 is 17.014 ms,
+worst 38.401 ms across 2,157 samples; peak private commit 3,862,499,328 bytes and
+dedicated GPU 1,490,579,456 bytes. These remain offscreen measurements, not a claim
+of seamless foreground frame pacing. Exact shipped W1 resource, four rotations,
+missing-deck/obstructed-prop rejection and local destruction pass 55 assertions in
+source (`reports/watchtower/20261101T122522042640Z`) and package
+(`reports/watchtower/20261101T122557845008Z`). Distribution budget: 476,824,047 bytes.
+
+The coordinated browser update is also included; packaged responsiveness and
+credits UI checks pass. A first credits harness incorrectly wrote into read-only
+`res://` and used headless screenshot capture; its failed evidence is retained,
+then the unchanged assertions pass with an external output directory and renderer.
+Exact package, resource and image provenance: [integration evidence](watchtower-world-evidence.json).
+Return for broader seeds, full NPC routes, final visual review and foreground
+performance. Quest/reset/lock ownership and the full expansion remain unfinished.
 
 ### Watchtower W1 review — 2026-11-01
 
@@ -15,8 +71,9 @@
 Original `addons/exploration/watchtower.gd` authors the CC0 baked
 `watchtower_w1.tres`: 385 independent native cells, smooth shallow metal roof,
 weathered timber supports/guards, switchback stairs and one existing chest model.
-No houses were replaced. The chest is an attachment, **not yet stocked loot**.
-This isolated review does not qualify natural terrain fit or ordinary generation.
+No houses were replaced. At this historical isolated-review checkpoint the chest
+was only an attachment; current generation/loot evidence is recorded above.
+This isolated review alone does not qualify natural terrain fit or generation.
 
 Checks use actual `NativePlayerMovement` and native block/model collision: climb
 both flights, cross the deck and descend in all four grid rotations. They also
@@ -41,10 +98,9 @@ piece, per-frame authoring or new native library is required.
 
 ![Rejected early lookout with disconnected support joints](images/watchtower-rejected-support-gaps.png)
 
-Return next: shared native lot fitting and protection checks; real road/path-to-deck
-route; normal generation and native streaming; stock/persist chest and sleeper;
-fresh-process reload and populated visual/performance evidence. Existing world
-saves remain untouched. No final user visual approval is claimed.
+The integration entry above supersedes this checkpoint's pending fitting,
+publication, supplies and persistence work. Existing saves remain untouched;
+broader quality/performance and final user visual approval are still not claimed.
 
 ### Portal correction — 2026-11-01
 
