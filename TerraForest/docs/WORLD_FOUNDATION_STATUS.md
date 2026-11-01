@@ -106,9 +106,18 @@ per debug/release variant, 73 region checks, 36 prefab transactions, 294 structu
 history checks, worker stress and 31 model-admission checks pass. It preserves air,
 shape words and outside edits, rejects stale/unavailable/capacity-conflicting
 state, and rebuilds changed chunk halos. It is included in the package, not wired to quests.
-Continue exact terrain cubes and remaining model/stock/resident/vegetation/water
+Continue remaining model/stock/resident/vegetation/water
 owners, baseline retention, safety and coordinated rollback before enabling
 gameplay resets. [Evidence](../issues/gameplay-expansion/block-patch-evidence.json).
+
+Exact terrain cubes now have a separate bounded native reset: 38 native and 35
+binding assertions per variant pass, including allocation failures, two-million
+world capacity, unchanged density/outside cubes, mesh invalidation, stale worker
+rejection and persistent checkpoint/reopen. Maximum dense restoration is
+7.23–8.06 ms in a standalone fixture, not gameplay performance. No quest reset is
+enabled. Complete remaining owners, durable baselines and coordinated safety/
+rollback next; then verify ordinary trader/reset/reward play.
+[Cube patch evidence](../issues/gameplay-expansion/cube-patch-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and

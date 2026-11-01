@@ -115,8 +115,19 @@ The maximum empty-baseline fixture restores two changed edge cells in 4.60–5.7
 this is not a dense restore or rendered gameplay timing guarantee.
 [Building-cell evidence](../issues/gameplay-expansion/block-patch-evidence.json).
 
-These primitives are not a complete location reset: exact terrain voxel cubes,
-models/door state, contents, residents, vegetation and any editable water require
+`TerrainCore.capture_cube_patch` / `restore_cube_patch` supplies the separate
+exact terrain-cube owner. TCP1 includes air and materials, capped at 262,144 cells
+and 262,192 bytes. Both variants pass 38 native and 35 binding checks: allocation
+failure, world capacity, stale revision/epoch, preserved neighboring edits, cached
+geometry, stale worker rejection and durable checkpoint/reopen. Dense maximum
+restoration takes 7.23–8.06 ms in the standalone fixture, not gameplay timing.
+Preflight reserves affected columns and hash capacity before mutation; deletion
+compacts each affected column once. Rare hash growth/tombstone cleanup visits the
+global cube map. Schedule on the existing worker, never the frame loop.
+[Cube reset evidence](../issues/gameplay-expansion/cube-patch-evidence.json).
+
+These primitives are not a complete location reset: models/door state, contents,
+residents, vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered
 publication, player/vehicle exclusion and rollback across owners remain prerequisites

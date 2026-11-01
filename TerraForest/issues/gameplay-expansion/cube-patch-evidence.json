@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-01",
+  "status": "Native primitive verified; not a playable multi-owner location reset",
+  "format": "TCP1: bounded integer cell box, seed/generator identity, one material byte per cell including air, checksum",
+  "limits": {"cells": 262144, "axis": 128, "bytes": 262192, "world_cubes": 2000000},
+  "native": {"report": "reports/terrain_cube_patch/20261101T191844230716Z/run.json", "checks_per_variant": 38},
+  "binding": {
+    "report": "reports/terrain_cube_patch_binding/20261101T192124145584Z/run.json",
+    "checks_per_variant": 35,
+    "debug_sha256": "f1d27d5f55344140407892e17faf21f8d0dd3371f313a4e638e9812fa381d0e5",
+    "release_sha256": "68b4e33395e5b4162c68b6496e9515968755e8fcdc264ad8f444339533fabe16"
+  },
+  "regressions": [
+    {"name": "field_patch_binding", "checks_per_variant": 35, "report": "reports/terrain_field_patch_binding/20261101T191858256720Z/run.json"},
+    {"name": "snapshot_bridge", "report": "reports/checks/20261101T192125232094Z/run.json"}
+  ],
+  "verified": [
+    "Cross-column material/air restoration and outside cube preservation",
+    "Density/material samples and page versions unchanged",
+    "Allocation preflight failure retains exact serialized state and index contents",
+    "Two-million-cube world rejects growth and admits capacity-neutral replacement",
+    "Invalid bytes, bounds, seed/generator, revision and owner epoch reject",
+    "Cached mesh matches fresh geometry; old asynchronous snapshot cannot publish",
+    "Mounted checkpoint restoration, fresh owner reopen and immutable old checkpoint"
+  ],
+  "work": "Patch cells plus existing entries in affected 32m columns; rare hash capacity/tombstone rebuild visits the global cube map. No repeated per-cube column removal or per-frame scan.",
+  "timing": {"scope": "Standalone cold dense 262144-cell restore, not rendered gameplay", "debug_capture_ms": 0.5595, "release_capture_ms": 0.5559, "debug_restore_ms": 7.2284, "release_restore_ms": 8.0609},
+  "remaining": [
+    "Bind terrain samples, exact cubes, building cells and all other owners into one safe rollback transaction",
+    "Persistent bounded baselines and worker/publication scheduling",
+    "Models/doors, containers, residents, vegetation and editable water ownership",
+    "Trader offers, marker/E start, live objectives/rewards and ordinary-world save/reopen"
+  ]
+}

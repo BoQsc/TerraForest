@@ -106,6 +106,17 @@ checked serially; no complete expansion or new visual approval is claimed.
   baseline retention, rollback and normal-world acceptance stay open.
 - [Exact reports and native identities](block-patch-evidence.json).
 
+## Exact terrain-cube reset — native verified, not gameplay
+
+- TCP1 captures air/materials separately from density and building blocks.
+- Both variants pass 38 native and 35 binding checks, including allocation failure,
+  two-million-world capacity, outside preservation, stale worker rejection,
+  geometry rebuild and fresh checkpoint reopening.
+- Maximum dense 262,144-cell restore: 7.23–8.06 ms standalone; not a frame-rate claim.
+- Per-column bulk removal avoids repeated scans; rare map rehash remains global.
+- Multi-owner safety, persistent baselines and playable quests remain unfinished.
+- [Reports, limits and binary hashes](cube-patch-evidence.json).
+
 ## Images
 
 ### Inventory navigation — source/package verified and installed
