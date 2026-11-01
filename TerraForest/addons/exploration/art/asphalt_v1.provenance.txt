@@ -1,0 +1,15 @@
+Main-road asphalt material candidate, 2026-11-01.
+Asset: asphalt_v1.png. Original TerraForest contributor work generated with
+OpenAI built-in image_gen, no external references. Dedicated CC0-1.0 under the
+repository contribution policy to the extent rights apply. AI generation alone
+does not establish uniqueness or rights in unrelated third-party material.
+Source output: exec-5aa0d5e2-1e41-450c-a352-2a81f047250a.png.
+SHA-256: a60ae218a51e1746a00b86db3d9cd19bbe2e843a51c5ad9d570f44acaf4c34a8.
+Actual output: RGB PNG, 1254 x 1254, 4487199 bytes (requested 1024 x 1024).
+User request: improved main-road texture, with separate destructible line pieces.
+Status: visually inspected source candidate only. Not imported or installed.
+Needs tiled/surface scale review, runtime bake and populated-world comparison.
+Road marking geometry and route/layout changes remain separate unfinished work.
+
+Exact built-in prompt:
+Use case: photorealistic-natural. Asset type: original tileable asphalt albedo material for main roads in a realistic survival game. Create a single square 1024x1024 texture swatch, not a scene or a road photograph. Orthographic straight-down view, filling the whole canvas edge to edge with understated worn mid-dark charcoal-grey asphalt, extremely fine embedded grey mineral aggregate, slight muted dusty weathering, subtle non-directional variation, consistent asphalt binder between tiny stones. Entire tile represents about two metres of paved road, aggregate remains small, not oversized cobblestones or coarse gravel. Serious realistic restrained material, readable road pavement rather than pure black. Neutral diffuse even lighting, no directional shadows, specular highlights, ambient occlusion, vignetting or baked relief. Seamless repetition across all edges, no obvious large recognizable marks. No road edges, grass, cracks, potholes, debris, tyre marks, lanes, white/yellow paint, symbols, text, frames, objects or split PBR panels. Pure base-colour only; line markings will be separate destructible game geometry. New original asset, no external reference images.

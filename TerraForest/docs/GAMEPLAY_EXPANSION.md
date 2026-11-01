@@ -46,7 +46,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Efficient house-light expansion: fireplace, torch and fixtures | Pending original models, bounded light residency, emissive/distant representation and indoor performance |
 | Slightly varied safe player starts | Pending second-floor house, roadside and path starts with collision/readiness and no hostile immediate spawn |
 | Paths with a new imagegen texture | Original imagegen source candidate and exact prompt/provenance retained in `addons/exploration/art/`; tiled/surface review, runtime bake, path planning and natural transitions remain pending |
-| Improved main-road texture | Pending separate imagegen material, correct physical scale and populated-world comparison |
+| Improved main-road texture | Original imagegen asphalt candidate and prompt/provenance retained in `addons/exploration/art/`; runtime bake, tiled/physical scale review and populated-world comparison remain pending |
 | Ultra-thin white median/road-strip building shapes | Pending individual destructible grid-owned pieces and suitable marking textures; no continuous roadside meshes |
 | Desert, lowland snow and rubble/ruins biomes | Pending generation and map integration, not snow restricted to mountaintops |
 | Different biome traders | Pending varied original presentation/catalogs and ordinary-world reachable trade |
