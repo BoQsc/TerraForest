@@ -88,6 +88,28 @@ fresh-process restore pass 25 + 10 checks. The 620-byte foundation is installed.
 The expansion tracker retains the first failed save-return test and the separately
 reproduced cache-accounting priority fix.
 
+The next reset primitive, `TerrainCore.capture_field_patch` / `restore_field_patch`,
+passes rebuilt debug/release native and archived-storage checks; it is not installed
+or connected to gameplay. It captures a bounded integer
+sample box as TFP1: 48 bytes of metadata/checksum plus three bytes per density/material
+sample, at most 1,048,576 samples and 128 samples per axis. Coordinates exclude the
+protected bottom and exterior. Capture is read-only; restore requires matching
+seed/generator, current revision and owner epoch. Allocation/admission completes
+before publication; failure retains authoritative samples. Existing samples outside
+the box stay unchanged, including samples sharing the same storage page. An absent
+page uses the normal terrain edit path's 1/1024 m density quantization when admitted.
+Changed page versions, geometry digests and lighting are invalidated together.
+Run this cold operation on the existing terrain worker, not a frame-loop scan.
+
+This primitive is not a complete location reset: exact voxel cubes, building cells,
+models/door state, contents, residents, vegetation and any editable water require
+their own bounded capture/restore and a coordinated transaction. Preserve their
+outside edits too. Persistent baseline retention, worker scheduling, rendered
+publication, player/vehicle exclusion and rollback across owners remain prerequisites
+before enabling the marker/E interaction or trader offers.
+Evidence, retained fixture failures and an unchanged older golden-data mismatch:
+[field patch checks](../issues/gameplay-expansion/field-patch-evidence.json).
+
 ### Shared inventory navigation and character view
 
 Six top tabs share one close button. Backpack retains crafting and the 22 bag

@@ -43,6 +43,33 @@
 - No new visual acceptance is claimed. Remaining/reset closure requirements:
   [expansion contract](../../docs/GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state).
 
+## Bounded terrain reset primitive — source verified, not gameplay
+
+- Native TFP1 density/material patches pass rebuilt debug/release checks; no
+  gameplay reset, new UI or existing-world modification is enabled. Distribution
+  remains unchanged; the shared native artifact commit awaits the vehicle source.
+- Standalone debug/release checks pass at
+  `reports/terrain_field_patch/20261101T171822674934Z/run.json`: 32 checks per
+  variant, including 96 allocation-fault attempts and 32 forced failures each.
+  Outside authored samples, stale revisions, malformed input and residency-failure
+  rollback are covered. A maximum patch is 3,145,776 bytes; these cold-kernel timings
+  are not frame-pacing evidence and ran during other coordinated build work.
+- Final standalone checks add capture-allocation failure, passing 33 per variant
+  at `reports/terrain_field_patch/20261101T173629541232Z`. Rebuilt bindings pass
+  another 33 per variant at `reports/terrain_field_patch_binding/20261101T173628376880Z`:
+  deferred page reads, dirty versions, geometry keys, epoch rejection, durable
+  checkpoint publication and fresh-owner restore preserve neighboring edits.
+- Retained failed fixtures: the first adapter attempt used brush material 7,
+  which ordinary editing correctly rejects; it now uses supported material 2.
+  The unnecessary isolated headless editor import also exited with 0xc0000005;
+  a previous-installed-DLL control reproduced the same exit. Direct headless
+  script checks pass without editor import. The older edit atomicity probe passes
+  its 704 allocation-fault attempts but fails its prechange golden-file hashes;
+  its core/probe inputs are unchanged by this patch. That mismatch is not waived
+  or reported as passed. [Exact reports and native identities](field-patch-evidence.json).
+- Complete multi-owner reset remains open in the
+  [expansion contract](../../docs/GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state).
+
 ## Images
 
 ### Inventory navigation — source/package verified and installed

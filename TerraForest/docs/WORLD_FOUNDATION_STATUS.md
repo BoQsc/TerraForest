@@ -53,6 +53,14 @@ trader/marker interaction and live rewards. Exact scope and closure evidence:
 [expansion contract](GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state)
 and [retained test reports](../issues/gameplay-expansion/README.md).
 
+Bounded native terrain field patches now pass 33 standalone and 33 Godot
+binding/archived-page checks in each rebuilt debug/release variant. They are not
+installed and no quest reset is enabled. This covers density/material samples,
+not the remaining cube/block/model/stock/resident/water/vegetation transaction,
+baseline retention, worker publication or player-edit safety. Continue these
+dependencies before trader offers and marker/E acceptance; retain the explicit
+normal-world reset/reward/reopen acceptance gates in the expansion contract.
+
 ## Wearable clothing packs and trader outfit — 2026-11-01
 
 The user-approved woven trader outfit and trail pack are installed with the

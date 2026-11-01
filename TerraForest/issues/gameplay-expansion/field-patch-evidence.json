@@ -1,0 +1,44 @@
+{
+  "status": "Source and rebuilt native primitive verified; not installed or wired to gameplay",
+  "date": "2026-11-01",
+  "scope": "Bounded density/material samples only; no complete quest reset or foreground performance claim",
+  "native": {
+    "report": "reports/terrain_field_patch/20261101T173629541232Z/run.json",
+    "checks_per_variant": 33,
+    "allocation_attempts_per_variant": 96,
+    "forced_failures_per_variant": 32,
+    "maximum_samples": 1048576,
+    "maximum_serialized_bytes": 3145776
+  },
+  "binding": {
+    "report": "reports/terrain_field_patch_binding/20261101T173628376880Z/run.json",
+    "checks_per_variant": 33,
+    "debug_sha256": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+    "release_sha256": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+    "includes_concurrent_vehicle_planner_source": true
+  },
+  "retained_failures": [
+    {
+      "report": "reports/terrain_field_patch_binding/20261101T173236565099Z/debug/console.log",
+      "cause": "Test-only brush material 7 is unsupported by ordinary terrain editing; changed fixture to supported material 2"
+    },
+    {
+      "report": "reports/terrain_field_patch_binding/20261101T173431621275Z/debug/import/result.json",
+      "control": "reports/terrain_field_patch_binding/20261101T173431621275Z/previous-installed-editor/result.json",
+      "cause": "Headless editor import exits 0xc0000005 with both previous installed and current DLL; direct native script tests require no editor import"
+    },
+    {
+      "report": "reports/terrain_field_patch/20261101T173629541232Z/existing_regression/run.json",
+      "cause": "Existing standalone edit atomicity probe passes allocation rollback but fails old golden field/receipt hashes; its core and probe inputs are unchanged by this field-patch addition",
+      "disposition": "Unresolved existing golden-data mismatch; no golden fixtures rewritten"
+    }
+  ],
+  "remaining": [
+    "Native artifact commit coordinated with vehicle planner source and next matching export",
+    "Bounded exact voxel cube, structure/model/container/door, resident, vegetation and water baselines",
+    "Persistent baseline retention and multi-owner reset rollback",
+    "Terrain worker scheduling and rendered/collision publication",
+    "Player/vehicle safety, outside-edit preservation and explicit reset interaction",
+    "Trader offers, question marker, live objectives, rewards and ordinary world save/reopen"
+  ]
+}

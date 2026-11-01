@@ -8,6 +8,7 @@
 #include "terrain_collision.hpp"
 #include "terrain_region_store.hpp"
 #include "terrain_capture.hpp"
+#include "terrain_field_patch.hpp"
 #include "terrain_residency.hpp"
 #include "generation_bake_progress.hpp"
 #include "geometry_content_key.hpp"
@@ -74,6 +75,10 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_exploration_sites","layouts","reservations","earthworks"), &TerrainCore::exploration_sites);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
+        godot::ClassDB::bind_method(godot::D_METHOD("field_patch_state"),&TerrainCore::field_patch_state);
+        godot::ClassDB::bind_method(godot::D_METHOD("capture_field_patch","origin","size","expected_revision","expected_epoch"),&TerrainCore::capture_field_patch);
+        godot::ClassDB::bind_method(godot::D_METHOD("restore_field_patch","patch","expected_revision","expected_epoch"),&TerrainCore::restore_field_patch);
+        godot::ClassDB::bind_method(godot::D_METHOD("validate_field_patch","patch"),&TerrainCore::validate_field_patch);
         godot::ClassDB::bind_method(godot::D_METHOD("commit_storage_snapshot","capture","checkpoint"),&TerrainCore::commit_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("configure_storage_checkpoint","checkpoint","checksum"),&TerrainCore::configure_storage_checkpoint);
         godot::ClassDB::bind_method(godot::D_METHOD("mount_storage_checkpoint","directory","checkpoint","resident_limit"),&TerrainCore::mount_storage_checkpoint,DEFVAL(MAX_PAGES));
@@ -116,6 +121,36 @@ protected:
         godot::ClassDB::bind_method(godot::D_METHOD("experimental_partition_mesh_budgeted","packet","workspace_bytes","output_bytes","expected_epoch"), &TerrainCore::experimental_partition_mesh_budgeted);
     }
 public:
+    godot::Dictionary field_patch_state(){
+        std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary result;
+        result["revision"]=world_.revision;result["epoch"]=int64_t(storage_epoch_);
+        result["seed"]=world_.seed;result["generator"]=world_.generator_id;return result;
+    }
+    bool validate_field_patch(const godot::PackedByteArray &patch) const {
+        if(patch.size()>FIELD_PATCH_LIMIT)return false;
+        FieldPatchBounds bounds;int seed=0;u32 generator=0;
+        return terraforest::validate_field_patch(patch.ptr(),int(patch.size()),bounds,seed,generator);
+    }
+    godot::PackedByteArray capture_field_patch(godot::Vector3i origin,godot::Vector3i size,int64_t revision,int64_t epoch){
+        std::lock_guard<std::mutex> lock(mutex_);
+        if(revision<0||revision!=world_.revision||epoch<=0||uint64_t(epoch)!=storage_epoch_)return {};
+        tr_oom=false;Bytes bytes;godot::PackedByteArray result;
+        const FieldPatchBounds bounds{origin.x,origin.y,origin.z,size.x,size.y,size.z};
+        if(terraforest::capture_field_patch(world_,bounds,bytes)&&result.resize(bytes.n)==godot::OK)copy_bytes(result.ptrw(),bytes.p,bytes.n);
+        bytes.release();return result;
+    }
+    godot::Dictionary restore_field_patch(const godot::PackedByteArray &patch,int64_t revision,int64_t epoch){
+        std::lock_guard<std::mutex> lock(mutex_);godot::Dictionary result;
+        result["ok"]=false;result["changes"]=0;result["revision"]=world_.revision;
+        result["epoch"]=int64_t(storage_epoch_);result["minimum"]=godot::Vector3();result["maximum"]=godot::Vector3();
+        if(patch.size()>FIELD_PATCH_LIMIT||revision<0||revision!=world_.revision||epoch<=0||uint64_t(epoch)!=storage_epoch_)return result;
+        tr_oom=false;FieldPatchResult receipt;
+        if(!terraforest::restore_field_patch(world_,patch.ptr(),int(patch.size()),int(revision),receipt))return result;
+        if(receipt.changes&&snapshot_worker_)snapshot_worker_->observe_density_edit(int(revision),world_.revision,receipt.minimum,receipt.maximum);
+        result["ok"]=true;result["changes"]=receipt.changes;result["revision"]=world_.revision;
+        result["minimum"]=godot::Vector3(receipt.minimum.x,receipt.minimum.y,receipt.minimum.z);
+        result["maximum"]=godot::Vector3(receipt.maximum.x,receipt.maximum.y,receipt.maximum.z);return result;
+    }
     godot::Dictionary material_deposits(const godot::Array &earthworks){
         std::lock_guard<std::mutex> lock(mutex_);return terraforest::plan_material_deposits(world_,earthworks);
     }
