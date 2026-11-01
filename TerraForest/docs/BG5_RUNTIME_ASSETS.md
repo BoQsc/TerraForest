@@ -2,8 +2,9 @@
 
 The user-supplied door, chest, chair, table and bookshelf replace the five
 built-in visual meshes at their existing resource paths. Model IDs, recipes,
-durability, hinge packets, placement transforms and native collision proxies
-are unchanged. No save migration or native DLL replacement is needed.
+durability and established open/closed placement transforms are retained.
+The original static art conversion needed no save migration. The subsequent
+authored door animation uses updated native libraries and supports mid-swing saves.
 
 ## Authoring and rights
 
@@ -77,9 +78,10 @@ This fixes the stretched edge sampling without a runtime custom shader.
 
 Textures are capped at a 1024-pixel long edge, share hashed resources, use
 mipmaps/aniso filtering and VRAM compression for built-in meshes. Portable GLBs
-embed their own textures for loose-pack use. No authoring animations, separate
-screw nodes, physics bodies or animation players are instantiated per placement.
-Native batches, native hinge changes and existing near/far rendering remain the
+embed their own textures for loose-pack use. Idle placements instantiate no
+animation rigs, separate screw nodes or extra physics bodies.
+Moving doors temporarily use a compact rig for the authored handles and latch,
+with native leaf motion/collision and existing near/far rendering remaining the
 runtime owners. Scaled built-in variants regenerate their LODs at catalog startup
 instead of losing them during the mesh transform.
 
@@ -93,13 +95,36 @@ After export, run `python tools/check_bg5_runtime.py --pack` and
 model collection and hinge with the stationary frame in a separate collection.
 Tests use fresh temporary worlds/fixtures and do not rewrite user saves.
 
+## Authored door Open/Close
+
+Normal E uses the preserved door master's Open/Close clips, including both
+handles and the latch. `tools/bake_door_animation.gd` produces a shared compact
+`addons/structures/door_animation/bg5_motion.scn`; it does not rebake or replace
+the master, static leaf, frame or textures. Native motion follows the original
+60 Hz leaf keys, retargeted from 105 degrees to each existing definition's hinge
+angle. The separate frame stays stationary. Only active swings instantiate the
+hardware rig; settled doors return to the native batch. See [door behavior and
+save compatibility](DOOR_CONTENT.md) and [the animation issue](../issues/door-animation/README.md).
+
+Rebuild after the ordinary BG5 bake:
+
+```text
+godot --headless --path . --script res://tools/bake_door_animation.gd
+python tools/check_door_animation_assets.py
+python tools/run_godot_check.py door_animation --headless --require "DOOR_ANIMATION checks=26 failures=0"
+```
+
+Export runs the asset integrity gate, including the unchanged master, conversion
+tools, base fit receipt and compact rig hashes. Any intentional source/timing
+change needs save-compatibility review before replacing the curve signature.
+
 ## Verification and limits
 
 [Evidence and inspected images](evidence/bg5_runtime/README.md) distinguish
 source checks, release checks, the packaged game and rejected intermediate bakes.
 Legacy door bytes, actual disk save/reopen, new mod doors and native collision
-are checked independently from image review. No native source or library is
-changed by this asset conversion.
+are checked independently from image review. The static art conversion did not
+change native source; the subsequent animation integration does.
 
 The art has more full-detail geometry than the earlier box meshes. Batching,
 LOD, texture and instance bounds are preserved; this is not a guarantee of

@@ -19,7 +19,10 @@ and reference metadata remain intact. The authoring tool is recorded separately;
 its use alone is not the basis for this grant.
 
 Derived scope: `door_model.tres`, `storage_chest_model.tres`, `chair_model.tres`,
-`table_model.tres`, `shelf_model.tres`, `../textures/bg5/`, and
+`table_model.tres`, `shelf_model.tres`, `../textures/bg5/`, `../door_animation/`, and
 `mods/bg5_runtime/`. The conversion recipe and output hashes are in
 `authoring/bg5/runtime_recipe.json` and `mods/bg5_runtime/bake.json`.
+The compact Open/Close rig retains the master's handle and latch channels;
+its source, conversion tool and output hashes are in
+`addons/structures/door_animation/provenance.json`.
 Existing project code, native libraries and unrelated assets retain their terms.

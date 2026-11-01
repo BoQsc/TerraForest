@@ -89,8 +89,20 @@ a unique stable ID such as `my_pack/doors/front/v1`. Its definition contains:
 | `recipe`, `salvage` | Integer quantities keyed by brick, wood, concrete or metal. Salvage cannot exceed construction inputs. |
 | `durability.health`, `durability.material` | Maximum health and damage class: wood, stone or other. |
 
-Opening is an immediate native transform update, matching existing doors; GLB
-animations are not played. Static nested mesh parts are consolidated at startup.
+Normal E interaction plays the supplied BG5 master's 1.15-second Open/Close
+timing. The built-in visual also plays its authored front handle, back handle
+and latch channels. The original 105-degree leaf timing is retargeted to each
+definition's configured angle (90 degrees for the existing wooden door), keeping
+the exact established open and closed placements. Idle doors remain batched;
+only moving built-in doors instantiate the compact hardware rig. Collision
+follows the moving leaf without rebuilding its body. Actors, vehicles and
+ragdolls entering the swing pause it; the operating player's overlap policy is
+unchanged. Repeated E during a clip does not restart it. Motion pauses with the
+world and is limited to 32 active doors per type.
+
+Loose GLB replacements keep their own consolidated visual and receive the same
+hinge timing; arbitrary animation tracks from loose packs are not imported.
+The native immediate `toggle` API remains for authoring and compatibility.
 New art does not automatically add interaction behavior: the definition does.
 
 ## Saves and compatibility
@@ -99,6 +111,10 @@ New art does not automatically add interaction behavior: the definition does.
   default pivot/dimensions, exact quarter turn and v1 hinge bytes are preserved.
 - Each additional type has its own native state and deterministic save-section
   key. Placement ID 7 in one type is independent of ID 7 in another.
+- Saves made during a swing use a TDR3 packet containing authored curve identity,
+  target, playback time, original closed pose and current leaf pose. Reopening
+  resumes the clip. Incompatible curves or malformed poses are rejected. Settled
+  doors still emit their existing TDR1/TDR2 bytes, and those older packets load.
 - Old saves without the new type restore it empty. Compatible visual replacement
   does not migrate or rewrite object identities or placement poses.
 - Non-default hinge packets include bounds, pivot and angle. Changing these
@@ -118,9 +134,10 @@ schema does not migrate historical health or construction economics.
 Definitions are read once before collections are sealed. Loose GLBs import once
 per unique visual in a catalog, using native Godot import/merge/LOD generation.
 There is no runtime import during walking or door interaction and no node/script
-per placed door. Existing native placement, streaming, collision, undo, durability
+per idle placed door. Existing native placement, streaming, collision, undo, durability
 and snapshot stores remain authoritative. Hinge occupancy checks use bounded
-native swept-box extrema, including intermediate angles, at interaction time.
+native swept-box extrema, including intermediate angles, at interaction time and
+each active motion tick. Unloaded motion pauses until its canonical region returns.
 
 Admission limits: 16 door types total, 16 manifests, 64 KiB per JSON manifest,
 16 MiB per GLB, 256 GLB nodes, 32,768 referenced vertices, eight source surfaces,

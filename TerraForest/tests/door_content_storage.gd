@@ -7,6 +7,7 @@ var failures := 0
 var slot := ""
 var reopening := false
 var missing := false
+var animated := false
 var messages: Array[String] = []
 var terrain: Node3D
 var host: Node3D
@@ -33,6 +34,7 @@ func save() -> bool:
 func run() -> void:
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--door-content-slot="): slot = argument.trim_prefix("--door-content-slot=")
+		animated = animated or argument == "--animate-doors"
 		reopening = reopening or argument == "--reopen-doors"
 		missing = missing or argument == "--missing-doors"
 	reopening = reopening or missing
@@ -80,12 +82,20 @@ func run() -> void:
 		check(host.structures.capture_snapshot()==expected.models,"fresh process restores exact saved model bytes")
 		for entry: Dictionary in host.doors.types.values():
 			check(entry.state.is_open(7) and entry.state.capture_storage_snapshot()==expected[entry.id],"fresh process restores opened state for "+entry.id)
-			check(entry.state.toggle(entry.collection,7,AABB()).ok and entry.collection.get_instance(7)==closed,"reopened door closes to its original transform: "+entry.id)
+			if animated:
+				check(entry.state.is_moving(7),"fresh process restores an in-flight authored clip")
+				for frame in 14:entry.state.advance(entry.collection,.1)
+				check(entry.state.animate_toggle(entry.collection,7,AABB()).ok,"restored door starts authored closing")
+				for frame in 14:entry.state.advance(entry.collection,.1)
+			check((not entry.state.is_open(7) if animated else entry.state.toggle(entry.collection,7,AABB()).ok) and entry.collection.get_instance(7)==closed,"reopened door closes to its original transform: "+entry.id)
 		check(await save(),"reopened compound world saves both closed doors")
 	else:
 		var expected := {}
 		for entry: Dictionary in host.doors.types.values():
-			check(entry.collection.upsert_instances(PackedInt64Array([7]),closed) and entry.state.toggle(entry.collection,7,AABB()).ok,"place and open "+entry.id)
+			check(entry.collection.upsert_instances(PackedInt64Array([7]),closed) and (entry.state.animate_toggle(entry.collection,7,AABB()).ok if animated else entry.state.toggle(entry.collection,7,AABB()).ok),"place and open "+entry.id)
+			if animated:
+				for frame in 5:entry.state.advance(entry.collection,.1)
+				check(entry.state.is_moving(7),"save captures partial authored opening")
 			expected[entry.id] = entry.state.capture_storage_snapshot()
 		expected.models = host.structures.capture_snapshot()
 		check(await save(),"compound terrain and both opened doors publish to disk")

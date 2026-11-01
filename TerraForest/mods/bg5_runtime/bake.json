@@ -286,140 +286,140 @@
       "normal": false,
       "width": 512,
       "sha256": "39b84d20981f1bb6f567db7e5eb0da5db23348e8334f237c7a56bdcadc81e329",
-      "import_sha256": "c801ef7b48fdbfb2913832a913df122bea0e91f750f8b2ae0811f2f65d0b3807"
+      "import_sha256": "6f7eff393bc8c5d6e065e4acae0b652e2aaba91a5dbf04eb311bf8358bca1fb7"
     },
     "res://addons/structures/textures/bg5/1d4c7f61a0612e93fcc043b3.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "8f480ca54b7ff912dca723a48aca1b2f5ab7981d93b682d68b46776958e0da98",
-      "import_sha256": "b93fbc2d468cc01d45b4a93c02d0454c3628e3978a3a6f2a54ece8411471564a"
+      "import_sha256": "1a81354b5a2d6d1e1f6074d8a7abf48ecd0e7328f9a65b3604728b68a290f5e6"
     },
     "res://addons/structures/textures/bg5/2747a24b090093aa73a43c3f.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "7f170ad98600664de0ee27616125d8e21fe8d96448ea03cd05d3f3f72f5a4380",
-      "import_sha256": "f44e0d9ab501cd0b2c7ccb5d29d1bb2734e2fe27b833ccaa5b4f8587310f8c09"
+      "import_sha256": "cf53259daf1b67aa6b69f28ff1c2c18f80847df38c8206cd99f6b41efafe100c"
     },
     "res://addons/structures/textures/bg5/3ea64aef4e025988c2d0c3f6.png": {
       "height": 512,
       "normal": false,
       "width": 512,
       "sha256": "f7444a0b61c0a6512b581948b2061823d256208adfe22ecfaea098f258bfff42",
-      "import_sha256": "3832a7b714001c187bc8d7aa14d72fe118edc79de8ce1e14f42f3eb6f6b0f979"
+      "import_sha256": "28be85c425a02a76bfd32c03cca740d3fc99220c93bdb5204cdbe08d4ea6e33a"
     },
     "res://addons/structures/textures/bg5/50fefba314ce1e048a67acd7_normal.png": {
       "height": 1024,
       "normal": true,
       "width": 512,
       "sha256": "96c2d94d260ce653571031d9ec44fd24d58d9f27fd29b010a80171be2fcd919b",
-      "import_sha256": "da258caff96334104a8da2a1eac8f538cfd571cfe4a3eb5fc3f8960f04802c76"
+      "import_sha256": "1284439ee3fbceb26884f6661a2ff4522f7ba98e191e64524fbf49e10a89162a"
     },
     "res://addons/structures/textures/bg5/558d1de1d21fffce91aba70a.png": {
       "height": 512,
       "normal": false,
       "width": 512,
       "sha256": "dbf0bd073da30498f6d5a702215549e0099ddaaf1f1028c79eb3156a818bc7a9",
-      "import_sha256": "0e76c2499f7b521c240b09ccbc9457b5d22e5315514957423ec95671a3e6aa8a"
+      "import_sha256": "63eccee76cea7c56d00dba3408e1b81e25f5f9fb1f3acc2376508a250df0076e"
     },
     "res://addons/structures/textures/bg5/5b0538f721b3d37e7754f053_normal.png": {
       "height": 1024,
       "normal": true,
       "width": 1024,
       "sha256": "8666375bd7fcca964273f32a981ace9910e820d7ac37217ee91d6272a36da0d0",
-      "import_sha256": "4dd4fbf17a0e8fb720e25aa6835fdfe5d52d95737e5b6dc836f2f6337ff16937"
+      "import_sha256": "48dc6b057d3ca0cceb1cc8509f119ae693627e3e08d6d49c2f93e250aeb3fefc"
     },
     "res://addons/structures/textures/bg5/5ea29dd063fb512120087fe0.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "8bd9d8be67b5448a2a2e8f87d9fb9e582837429d03c3edc3c3370e5e2b24e134",
-      "import_sha256": "b0b0e43e1bfc49e6f957168d23aa8f5a85fd269b8dcccb30a53d26df6a775318"
+      "import_sha256": "e8fb6515267552db408a9fae04426265e027791da3d43dcdc9a8b5670525f7b7"
     },
     "res://addons/structures/textures/bg5/73c72e2ca1c1e491d16a30a5.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "68db3ade353c8fe9dea1a942be8dc30bc80fb2a0f8b5867ed6a907ec847f236a",
-      "import_sha256": "09a657573ccb2de17f5d584e970f36c8c07f4be8c59108bbacb9bbebf5dcbf55"
+      "import_sha256": "d86ba680163fb917af905b59d0a0d75ecd5afaa49bb3b98cde27d38f80533a3e"
     },
     "res://addons/structures/textures/bg5/818a5684eb56226bb3c6f003.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "b21e46351f79029664d83b99100471682fa0de13feb079bde111b4abb7b77ddf",
-      "import_sha256": "598d94bd4f9a029cbabdc6413b51264fd2e4071332cb35bca1834ab3b9bc6386"
+      "import_sha256": "811e7318fb71566e3889ff6772090dc40fd4e9400c971ef24e147f25eaccd62e"
     },
     "res://addons/structures/textures/bg5/8e4c311114979ea036a783be.png": {
       "height": 512,
       "normal": false,
       "width": 512,
       "sha256": "45782aa4e47d827d8c34bc51d1b9c9f30efc45e185c301e7c0210a4e471732ef",
-      "import_sha256": "1149d00df787e49d52a34d71badfdeac43c37f6bb197ea8a91b4e5f8859dca51"
+      "import_sha256": "9d85c75ff8041eb30d9fee3160e88cd96e6c1763c71a934064773b3c38fb54ec"
     },
     "res://addons/structures/textures/bg5/935d9e4ca3f9f7be2a715a3e.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "9638bcf19cafc485451cd56c22904a30af78e04b55dcf96a4c9b8a05212155b9",
-      "import_sha256": "1289f898f101a8f440063c255e0cd09abfaba6e1d8424cc3551c3055d17b1fd9"
+      "import_sha256": "df1a61a4a34b1d9b482f76d61763af1a015eb6d9550225696706e250924dae66"
     },
     "res://addons/structures/textures/bg5/9bf5497e0d2571969c03e885.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "3f32ac70bc3505deda6969f49ca7f8cda33556731882999bbcc18620d2d1f342",
-      "import_sha256": "4bb2ac10d28696b1108077f36a793df6e23d2621de619193ad22556d12289ab6"
+      "import_sha256": "6d1226b99048be6b3c60082717929339ba216d02ccaa476068c530098fdce40e"
     },
     "res://addons/structures/textures/bg5/a0081c478539155001a76288_normal.png": {
       "height": 1024,
       "normal": true,
       "width": 1024,
       "sha256": "19089195564fb8dbaffa115343a06db4593a7e7e278819e6c082b4a43dc5b3eb",
-      "import_sha256": "37356487f52946970bdba7a74d625b81357beb000b8a72a33bddc6cf6a6098e2"
+      "import_sha256": "448361d2a6aed8e00496df709a21e82d9687f88d1d2f24df89a829098e194482"
     },
     "res://addons/structures/textures/bg5/d27cadf34cd2b4cabc863014_normal.png": {
       "height": 1024,
       "normal": true,
       "width": 1024,
       "sha256": "63d88b3aa0547f459367d9a172df5358fd33a7382044c4985db4f79bbbd54da6",
-      "import_sha256": "267dc974dcbb6477bad6abe5e5f029646a0531f148b3b532b6b6535c08d368f0"
+      "import_sha256": "6d9cc0577b6ade6fb0ed0a6741ec504428352dde81978d848327f7b9a87a660e"
     },
     "res://addons/structures/textures/bg5/eb3ad9b88d72457539907d46.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "685199661b98bb31245e959eedab539443db11f18397f2972415259272dff6c0",
-      "import_sha256": "1d2a9236ae4b7e54aacfa4291277a6ce0dd4486b49995d044d3e2e390d6b5c65"
+      "import_sha256": "9da6372a07704bfbb4c4425b1dfc8b84796bbc78fd518fc61ab5c0466dd805f5"
     },
     "res://addons/structures/textures/bg5/eb8806926b83d2cb83f0f3e5.png": {
       "height": 1024,
       "normal": false,
       "width": 1024,
       "sha256": "212bbb28d399fef5bb19f8cfa09726fe2cc0e607b3d273249192be3115b67fa0",
-      "import_sha256": "9f181464430c1d7709d1391d580120f16ede7368647e00ca84b132ce6e0ffff5"
+      "import_sha256": "322d95b61fcb887d2084b2354fb429be4b707490b8fcbb69c64b1814e32fe18d"
     },
     "res://addons/structures/textures/bg5/f8e9690df129be9ab91b2c8c.png": {
       "height": 1024,
       "normal": false,
       "width": 512,
       "sha256": "a07bde1ae4273192303b220ce23af6455b302120769b04b226f0bc218d0fa0f8",
-      "import_sha256": "94b36bac763c525b71b0e93532afbc32c377d22ff5032da25c1b2269e49ee577"
+      "import_sha256": "0398bca67fb18cc5f92b1ddf75477606ce5600fb8b6a6a66ade7ffdeecda21c8"
     },
     "res://addons/structures/textures/bg5/fc14d18fadaae02bbc99337e.png": {
       "height": 1024,
       "normal": false,
       "width": 512,
       "sha256": "2c2967f73dea4682ecd65f8889a217502225639c501e069209082e79ea0df388",
-      "import_sha256": "08924c84610c66628e777346a0ebb5431d5ca3944deb2d6b89a918eaa6b3758d"
+      "import_sha256": "f7829aaa4d60c917742e96a1cb1283307d3c15f0a4623967d22ab45cfac8c1d2"
     },
     "res://addons/structures/textures/bg5/ff7e65f7def186974ca990ba.png": {
       "height": 256,
       "normal": false,
       "width": 256,
       "sha256": "7bb39941335d5571f90f4ad547d1a69003ca5a1e7c93b07819c05848bd783278",
-      "import_sha256": "2799a05aed0ed34e395f65b410a6767e947c11d99ba70ba90f6c0614b8d3d06a"
+      "import_sha256": "5938c5103860bbab43176d5ccd371f24622be5fc61d188ec692429b4a2754379"
     }
   },
   "tool_sha256": "5fab67448a3c26d34138be7d520de8b04af8e3bc0717e45412cf65586856b2dc"

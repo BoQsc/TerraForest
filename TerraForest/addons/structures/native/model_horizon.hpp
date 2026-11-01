@@ -64,6 +64,7 @@ class NativeModelHorizon : public Node {
 protected:
     static void _bind_methods();
 public:
+    void refresh_instance_visual(NativeStaticBatch *,int64_t);
     ~NativeModelHorizon();
     bool configure(const Ref<NativeRegionWorldArchive> &archive,const Array &models,const Dictionary &checkpoints,int64_t bytes=128*1024*1024);
     void clear();

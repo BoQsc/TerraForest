@@ -1,6 +1,16 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Authored door animation — 2026-11-01
+
+The supplied BG5 Open/Close clips now drive native leaf timing and a compact
+active-only handle/latch rig. Source/release motion contracts and real mid-swing
+save/reopen pass. Normal-world restored-door aiming, both rendered directions
+and 62 debug/release GPU ownership assertions also pass. Combined package and
+main installation remain in progress. Return before declaring activation complete; user visual approval is
+separate. Exact retained failures and remaining evidence:
+[door animation tracker](../issues/door-animation/README.md).
+
 ## Non-gameplay browser responsiveness — 2026-11-01
 
 Source browser now reads saved-world metadata/photos off the UI thread, caches

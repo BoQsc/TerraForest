@@ -27,6 +27,11 @@ class NativeStaticBatch : public Node3D {
     friend class ExclusionPageData;
     friend class ModelRenderPageData;
     friend class NativeModelHorizon;
+    friend class NativeHingedDoors;
+    bool upsert_instances_impl(const PackedInt64Array &,const PackedFloat32Array &,bool motion);
+    void move_proxy(int64_t,const Transform3D &);
+    std::set<int64_t> visual_hidden;
+    void mask_visual(int64_t id,float *values) const {if(visual_hidden.count(id))for(int r=0;r<3;++r)for(int c=0;c<3;++c)values[r*4+c]=0;}
     uint64_t world_render_owner=0,world_render_epoch=1;
     std::set<int64_t> world_render_changes;
     std::set<BlockKey> world_render_seeded;
@@ -173,6 +178,8 @@ protected:
     static void _bind_methods();
     void _notification(int what);
 public:
+    bool set_instance_visual_hidden(int64_t id,bool hidden);
+    bool is_instance_visual_hidden(int64_t id) const {return visual_hidden.count(id)!=0;}
     String survey_cache_identity() const{return survey_saved_identity;}
     AABB survey_prototype_bounds() const{return source_mesh.is_valid()?source_mesh->get_aabb():AABB();}
     Dictionary survey_index() const;

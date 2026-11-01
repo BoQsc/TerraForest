@@ -1,4 +1,5 @@
 #include "static_batch.hpp"
+#include "model_horizon.hpp"
 #include "model_map_region.hpp"
 #include <godot_cpp/classes/multi_mesh.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
@@ -39,6 +40,8 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("configure_asset","asset_id","mesh"),&NativeStaticBatch::configure_asset);
     ClassDB::bind_method(D_METHOD("lock_asset_identity"),&NativeStaticBatch::lock_asset_identity);
     ClassDB::bind_method(D_METHOD("upsert_instances","ids","transforms"),&NativeStaticBatch::upsert_instances);
+    ClassDB::bind_method(D_METHOD("set_instance_visual_hidden","id","hidden"),&NativeStaticBatch::set_instance_visual_hidden);
+    ClassDB::bind_method(D_METHOD("is_instance_visual_hidden","id"),&NativeStaticBatch::is_instance_visual_hidden);
     ClassDB::bind_method(D_METHOD("remove_instances","ids"),&NativeStaticBatch::remove_instances);
     ClassDB::bind_method(D_METHOD("clear_instances"),&NativeStaticBatch::clear_instances);
     ClassDB::bind_method(D_METHOD("begin_transient_clear"),&NativeStaticBatch::begin_transient_clear);
@@ -203,6 +206,9 @@ void NativeStaticBatch::rebuild(const std::set<BlockKey> &keys,bool continuous) 
     for(auto k:keys)if(groups.count(k))upload_batch({k,0});
 }
 bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const PackedFloat32Array &transforms) {
+    return upsert_instances_impl(ids,transforms,false);
+}
+bool NativeStaticBatch::upsert_instances_impl(const PackedInt64Array &ids,const PackedFloat32Array &transforms,bool motion) {
     if(source_mesh.is_null()||ids.size()>100000||transforms.size()!=ids.size()*12)return false;
     std::map<int64_t,Placement> staged;
     std::map<BlockKey,int> counts;
@@ -225,7 +231,7 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
     for(auto &e:staged) {
         auto old=placements.find(e.first);
         if(old!=placements.end()&&old->second==e.second)continue;
-        invalidate_proxy(e.first);
+        if(motion)move_proxy(e.first,placement_transform(e.second));else invalidate_proxy(e.first);
         if(old!=placements.end()) {
             auto a=group_for(old->second),b=group_for(e.second);
             if(!(a<b)&&!(b<a)) {
@@ -265,11 +271,32 @@ bool NativeStaticBatch::upsert_instances(const PackedInt64Array &ids,const Packe
         if(!batches.count({e.first,0}))continue;
         auto multi=batches.at({e.first,0})->get_multimesh();
         for(auto id:e.second) {
-            auto &p=placements.at(id);Basis basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]);
+            auto p=placements.at(id);mask_visual(id,p.data());Basis basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]);
             multi->set_instance_transform(slots.at(id),Transform3D(basis,Vector3(p[3]-e.first.x*32,p[7]-e.first.y*32,p[11]-e.first.z*32)));instance_updates++;
         }
     }
-    if(!touched.empty()||!local_updates.empty()){for(const auto &entry:staged)change_world_render(entry.first);publish_change();}return true;
+    if(!touched.empty()||!local_updates.empty()){for(const auto &entry:staged)change_world_render(entry.first);publish_change(false,!motion);}return true;
+}
+bool NativeStaticBatch::set_instance_visual_hidden(int64_t id,bool hidden) {
+    if((visual_hidden.count(id)!=0)==hidden)return true;
+    auto found=placements.find(id);
+    if(hidden&&(found==placements.end()||(!visual_hidden.count(id)&&visual_hidden.size()>=32)))return false;
+    if(hidden)visual_hidden.insert(id);else visual_hidden.erase(id);
+    if(world_render_owner) {
+        auto *owner=Object::cast_to<NativeModelHorizon>(ObjectDB::get_instance(world_render_owner));
+        if(owner)owner->refresh_instance_visual(this,id);
+    } else {
+        if(found==placements.end())return true;
+        const auto key=group_for(found->second);auto slot=slots.find(id);
+        if(slot!=slots.end())for(auto page=batches.lower_bound({key,0});page!=batches.end()&&!(key<page->first.first)&&!(page->first.first<key);++page) {
+            const auto &ids=resident_ids.at(page->first);
+            if(slot->second>=0&&size_t(slot->second)<ids.size()&&ids[slot->second]==id) {
+                auto pose=found->second;mask_visual(id,pose.data());auto transform=placement_transform(pose);transform.origin-=Vector3(key.x,key.y,key.z)*32;
+                page->second->get_multimesh()->set_instance_transform(slot->second,transform);
+            }
+        }
+    }
+    return true;
 }
 bool NativeStaticBatch::set_removal_protected(int64_t id,bool enabled) {
     if(admission||id<=0)return false;
@@ -292,7 +319,7 @@ bool NativeStaticBatch::begin_transient_clear() {
     std::swap(retired->old_collision_index,collision_index);
     for(auto &entry:retired->old_batches)entry.second->set_visible(false);
     render_pending.clear();render_bytes=0;render_candidates=0;render_blocked=0;render_dirty=true;collision_dirty=true;
-    collection_retirement=std::move(retired);publish_change();return true;
+    visual_hidden.clear();collection_retirement=std::move(retired);publish_change();return true;
 }
 Dictionary NativeStaticBatch::advance_transient_clear(int64_t max_records,int64_t max_usec) {
     Dictionary result;result["ok"]=false;result["complete"]=false;
@@ -333,7 +360,7 @@ bool NativeStaticBatch::clear_instances() {
     render_evictions+=batches.size();
     for(auto &entry:batches)memdelete(entry.second);
     batches.clear();render_bytes=0;render_candidates=0;render_blocked=0;
-    clear_proxies();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
+    clear_proxies();visual_hidden.clear();placements.clear();groups.clear();slots.clear();appearance_birth.clear();
     resident_ids.clear();render_ids.clear();render_bounds.clear();render_pending.clear();
     collision_bounds.clear();collision_index.clear();collision_dirty=true;render_dirty=true;
     reset_world_render();publish_change();return true;
@@ -371,7 +398,7 @@ bool NativeStaticBatch::remove_instances(const PackedInt64Array &ids) {
         // Release before assigning new slots (the tail may move to another page).
         for(auto draw:resident)release_batch(draw);
         *found=ordered.back();ordered.pop_back();
-        invalidate_proxy(id);placements.erase(id);slots.erase(id);appearance_birth.erase(id);
+        invalidate_proxy(id);placements.erase(id);visual_hidden.erase(id);slots.erase(id);appearance_birth.erase(id);
         auto &members=groups.at(key);members.erase(id);if(members.empty())groups.erase(key);
         refresh_collision_bounds({key});
         for(auto draw:resident)if(render_page_size(draw))upload_batch(draw);
@@ -404,7 +431,7 @@ bool NativeStaticBatch::set_instances(const Ref<Mesh> &mesh,const PackedFloat32A
         staged[i+1]=p;staged_groups[k].insert(i+1);
     }
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);for(auto &e:staged_groups)touched.insert(e.first);
-    clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
+    clear_proxies();visual_hidden.clear();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(staged);groups=std::move(staged_groups);slots.clear();source_mesh=mesh;
     for(auto &e:batches)e.second->get_multimesh()->set_mesh(mesh);
     rebuild(touched);reset_world_render();publish_change();return true;
@@ -456,7 +483,7 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
     if(!parse(bytes,asset,&restored)||asset!=asset_id||source_mesh.is_null())return false;
     unloaded_regions.clear();unloaded_bounds.clear();unloaded_ids.clear();
     std::set<BlockKey> touched;for(auto &e:groups)touched.insert(e.first);
-    clear_proxies();collision_bounds.clear();collision_index.clear();collision_dirty=true;
+    clear_proxies();visual_hidden.clear();collision_bounds.clear();collision_index.clear();collision_dirty=true;
     placements=std::move(restored);groups.clear();slots.clear();for(auto &e:placements){auto k=group_for(e.second);groups[k].insert(e.first);touched.insert(k);}
     survey_saved_identity="snapshot-v1|"+bytes.slice(bytes.size()-32).hex_encode();
     rebuild(touched);reset_world_render();publish_change(true);return true;

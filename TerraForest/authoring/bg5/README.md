@@ -17,3 +17,7 @@ reference filenames/reconstruction notes are retained.
 `runtime_recipe.json` describes the conversion and canonical sizes. The folder
 is excluded from Godot imports and game exports. Editable masters remain in the
 repository/source archive. See `docs/BG5_RUNTIME_ASSETS.md` for the workflow.
+
+The normal wooden door now uses Open/Close from `BG5.Door.Parts.glb` through
+`tools/bake_door_animation.gd`. Its compact derivative and exact source/tool
+hashes are in `addons/structures/door_animation/`; the master remains unchanged.

@@ -65,7 +65,13 @@ func run()->void:
 	for frame in 4:await process_frame
 	horizon.advance()
 	check(horizon.represented_ids(batch)==ids and batch.render_stats().resident_batches==0,"arbitrarily distant player focus does not evict world visuals")
+	check(batch.set_instance_visual_hidden(1,true) and batch.capture_snapshot()==original,"active door rig masks only its GPU visual")
+	if DisplayServer.get_name()!="headless":check(is_zero_approx(first.multimesh.get_instance_transform(0).basis.determinant()),"active leaf has no duplicate persistent visual")
 	check(batch.unload_region(far_packet) and batch.unload_region(near_packet),"canonical model regions retire while persistent visual pages remain")
+	check(batch.set_instance_visual_hidden(1,false),"retiring rig reveals unloaded canonical horizon pose")
+	if DisplayServer.get_name()!="headless":check(first.multimesh.get_instance_transform(0).basis.is_equal_approx(Basis.IDENTITY),"unloaded leaf remains visible after rig removal")
+	check(await drain(horizon),"visual-only transition drains without gameplay hydration")
+	before=horizon.statistics()
 	before=horizon.statistics();horizon.advance()
 	check(batch.stats().instances==0 and horizon.represented_ids(batch)==ids and horizon.statistics().uploaded_bytes==before.uploaded_bytes,"cold retirement has no visual rebuild or gameplay hydration")
 	check(batch.restore_region(near_packet),"near canonical region rehydrates independently of visuals")

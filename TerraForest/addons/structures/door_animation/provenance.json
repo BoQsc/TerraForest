@@ -1,0 +1,56 @@
+{
+  "base_receipt_sha256": "fa7c4f8bd21607b6caafe0989d48de10ddf4e7ede556d40b440051c3ab511b3b",
+  "base_tool_sha256": "5fab67448a3c26d34138be7d520de8b04af8e3bc0717e45412cf65586856b2dc",
+  "clips": {
+    "Close": {
+      "channels": [
+        {
+          "keys": 70,
+          "node": "DoorPivot"
+        },
+        {
+          "keys": 70,
+          "node": "HandleFrontPivot"
+        },
+        {
+          "keys": 70,
+          "node": "HandleBackPivot"
+        },
+        {
+          "keys": 70,
+          "node": "LatchPivot"
+        }
+      ],
+      "seconds": 1.14999997615814
+    },
+    "Open": {
+      "channels": [
+        {
+          "keys": 70,
+          "node": "DoorPivot"
+        },
+        {
+          "keys": 70,
+          "node": "HandleFrontPivot"
+        },
+        {
+          "keys": 70,
+          "node": "HandleBackPivot"
+        },
+        {
+          "keys": 70,
+          "node": "LatchPivot"
+        }
+      ],
+      "seconds": 1.14999997615814
+    }
+  },
+  "license": "CC0-1.0",
+  "output": "res://addons/structures/door_animation/bg5_motion.scn",
+  "output_sha256": "31a8f6997e6e03a6d86f8b978e7c85a4cd7db9a9810055e1414c9710b152159d",
+  "retargeting": "Authored leaf timing mapped to the existing configured hinge angle; all three authored hardware channels retained in canonical fitted coordinates.",
+  "source": "res://authoring/bg5/BG5.Door.Parts.glb",
+  "source_opening_degrees": 104.999998455746,
+  "source_sha256": "6f7face8c29dbaeffc06ee218b5bc5996b08758ac61b1b38f8b52e1e91081a65",
+  "tool_sha256": "3cb45416837c246563242243d80e02a669cefa13503c5ec0166165b2887a148b"
+}

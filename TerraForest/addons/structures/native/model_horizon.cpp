@@ -88,6 +88,20 @@ void NativeModelHorizon::clear() {
     collections.clear();archive.unref();set_process(false);gpu_bytes=0;error=String();capacity_error=false;
 }
 NativeModelHorizon::~NativeModelHorizon(){clear();}
+void NativeModelHorizon::refresh_instance_visual(NativeStaticBatch *batch,int64_t identity) {
+    auto found=collections.find(batch->get_instance_id());if(found==collections.end())return;
+    auto visible=found->second.drawn.find(identity);if(visible==found->second.drawn.end())return;
+    auto &page=pages.at(visible->second.page);auto *instance=node(page.node);if(!instance)return;
+    // A moving rig may be retired after gameplay records unload. The horizon
+    // still owns its last pose and must reveal that leaf without rehydration.
+    auto record=found->second.instances.find(identity);if(record==found->second.instances.end())return;
+    auto current=batch->placements.find(identity);
+    auto values=current!=batch->placements.end()?current->second:pages.at(record->second.page).records.at(record->second.slot).transform;
+    batch->mask_visual(identity,values.data());
+    auto pose=NativeStaticBatch::placement_transform(values);pose.origin-=Vector3(page.origin.x,page.origin.y,page.origin.z)*32;
+    instance->get_multimesh()->set_instance_transform(int(visible->second.slot),pose);
+    dirty.insert(visible->second.page);
+}
 bool NativeModelHorizon::assign(Collection &collection,int64_t identity,const NativeStaticBatch::Placement &transform) {
     auto existing=collection.instances.find(identity);
     if(existing!=collection.instances.end()) {
@@ -111,7 +125,7 @@ void NativeModelHorizon::erase_drawn(Collection &collection,int64_t identity) {
     auto *instance=node(page.node);const auto last=page.drawn.back();
     if(slot+1!=page.drawn.size()) {
         page.drawn[slot]=last;collection.drawn[last.id]={found->second.page,slot};
-        if(instance) {Transform3D pose=NativeStaticBatch::placement_transform(last.transform);pose.origin-=Vector3(page.origin.x,page.origin.y,page.origin.z)*32;instance->get_multimesh()->set_instance_transform(int(slot),pose);}
+        if(instance) {auto visible=last.transform;source(collection.id)->mask_visual(last.id,visible.data());Transform3D pose=NativeStaticBatch::placement_transform(visible);pose.origin-=Vector3(page.origin.x,page.origin.y,page.origin.z)*32;instance->get_multimesh()->set_instance_transform(int(slot),pose);}
     }
     page.drawn.pop_back();if(instance)instance->get_multimesh()->set_visible_instance_count(int(page.drawn.size()));
     collection.drawn.erase(identity);--rendered;
@@ -174,7 +188,7 @@ bool NativeModelHorizon::upload(uint64_t identity) {
     for(size_t slot=0;slot<page.records.size();++slot) {
         const auto &record=page.records[slot];auto pose=NativeStaticBatch::placement_transform(record.transform);
         const auto box=pose.xform(prototype);bounds=slot?bounds.merge(box):box;
-        std::copy(record.transform.begin(),record.transform.end(),values+slot*12);
+        std::copy(record.transform.begin(),record.transform.end(),values+slot*12);batch->mask_visual(record.id,values+slot*12);
         values[slot*12+3]-=origin.x;values[slot*12+7]-=origin.y;values[slot*12+11]-=origin.z;
     }
     auto *instance=node(page.node);

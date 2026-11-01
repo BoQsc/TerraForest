@@ -118,7 +118,7 @@ void NativeStaticBatch::upload_batch(RenderKey page,uint64_t limit) {
     for(uint64_t i=start;i<start+count;i++) {
         auto id=ordered[i];
         slots[id]=offset/stride;ids.push_back(id);
-        const auto &t=placements.at(id);std::copy(t.begin(),t.end(),buffer.ptrw()+offset);
+        const auto &t=placements.at(id);std::copy(t.begin(),t.end(),buffer.ptrw()+offset);mask_visual(id,buffer.ptrw()+offset);
         buffer[offset+3]-=key.x*32;buffer[offset+7]-=key.y*32;buffer[offset+11]-=key.z*32;
         if(appearance_fade) {
             auto inserted=appearance_birth.emplace(id,birth);

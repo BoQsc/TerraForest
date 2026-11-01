@@ -1,0 +1,38 @@
+{
+  "source": "Actual Godot door_world.gd E interaction capture; 1920x1080 Forward+, VSync/60 FPS cap, 30 FPS capture. Native placement fixture above the temporary forest, separate stationary BG5 frame. Open and Close each use a stationary camera from different interaction positions. Not a populated-house/performance qualification.",
+  "source_run": "reports/checks/20261101T131952201456Z",
+  "images": [
+    {
+      "path": "closed.jpg",
+      "source": "TerraForest/reports/door_animation_world/1793539193/open/000.jpg",
+      "sha256": "22612ac8580531e0a66ce682e8c422933d80417ce50d86cc810cdd363716d147",
+      "status": "source engineering capture; player review pending"
+    },
+    {
+      "path": "opening.jpg",
+      "source": "TerraForest/reports/door_animation_world/1793539193/open/017.jpg",
+      "sha256": "c7192a67e63a124817b1784b9055924b34dd7c240745e2a867965dfc87f68bd5",
+      "status": "source engineering capture; player review pending"
+    },
+    {
+      "path": "opened.jpg",
+      "source": "TerraForest/reports/door_animation_world/1793539193/open/035.jpg",
+      "sha256": "c88c1d533c18848c36d1e618610b84d27491263e565193ed727f717a753878b3",
+      "status": "source engineering capture; player review pending"
+    },
+    {
+      "path": "closing.jpg",
+      "source": "TerraForest/reports/door_animation_world/1793539193/close/017.jpg",
+      "sha256": "067430740c310e025638a6c008c11d13e582b4daa25f250ee9dfe67a36f3d530",
+      "status": "source engineering capture; player review pending"
+    }
+  ],
+  "video": {
+    "path": "opening-closing.mp4",
+    "sha256": "c01dd8d29166431c4f56391f2186ba54dc6f48bb498b5a2b0a6ef44af8f13557",
+    "presentation": "Original capture timing resampled to 30 FPS; 0.5-second endpoint holds; no generated/interpolated artwork."
+  },
+  "license": "CC0-1.0",
+  "creator": "TerraForest contributors",
+  "rights_scope": "Original test captures and recording; depicted project assets retain their existing provenance and terms."
+}

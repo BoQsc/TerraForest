@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Authored door Open/Close](door-animation/README.md) | Source/release checked / integration pending | Supplied GLB handle/latch clips and native leaf motion; normal E, streamed visual ownership and mid-swing saves pass; combined package and main installation next |
 | [Startup and browser latency](browser-responsiveness/README.md) | Improved-partial / source checks | Catalog/photo reads run in background; bounded thumbnail cache; median first frame 1.75 → 1.24 s and filtering 45 → 2 ms with 299 saves; export timing and player review pending |
 | [Gameplay expansion](gameplay-expansion/README.md) | In progress / lookouts installed | Shared native fitting, stocked upper-deck supplies and persistent lookout sleepers; source/package travel/reload verified; broader quality, quests, progression and expanded content remain open |
 | [Building expansion materials and joints](building-expansion/README.md) | E2 approved / production integration installed | Eight individual imagegen materials alongside retained optional older sets, shape/palette improvements and nine matched revisions; source/release/PCK, save/reopen and traversal checks pass; known older NPC planning and frame-pacing limits retained |

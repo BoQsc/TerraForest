@@ -19,7 +19,7 @@ if not args.godot:
     p.error('Specify --godot PATH')
 if subprocess.call([sys.executable,str(root/'tools/build_credit_notices.py'),'--check']):
     sys.exit(1)
-if subprocess.call([sys.executable,str(root/'tools/prepare_bg5_runtime.py'),'--check']):
+if subprocess.call([sys.executable,str(root/'tools/check_door_animation_assets.py')]):
     sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_building_standards.py'),'--godot',str(args.godot)]):
     sys.exit(1)

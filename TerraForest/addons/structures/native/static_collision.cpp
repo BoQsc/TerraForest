@@ -101,6 +101,19 @@ bool NativeStaticBatch::set_navigation_interest(const PackedVector3Array &points
     return true;
 }
 void NativeStaticBatch::invalidate_proxy(int64_t id) {release_proxy(id);collision_dirty=true;}
+void NativeStaticBatch::move_proxy(int64_t id,const Transform3D &pose) {
+    auto found=collision_bodies.find(id);if(found==collision_bodies.end())return;
+    // Keep the body and shape identities throughout a hinge swing. Recreating
+    // proxies every tick would leave collision gaps and invalidate use targets.
+    const Transform3D world=(is_inside_tree()?get_global_transform():get_transform())*pose;
+    auto *server=PhysicsServer3D::get_singleton();
+    for(size_t i=0;i<proxy_parts.size();++i) {
+        PackedVector3Array points;points.resize(8);
+        for(int corner=0;corner<8;++corner)points.set(corner,world.basis.xform(proxy_parts[i].get_endpoint(corner)));
+        server->shape_set_data(found->second.shapes[i],points);
+    }
+    server->body_set_state(found->second.body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.origin));
+}
 void NativeStaticBatch::refresh_collision_bounds(const std::set<BlockKey> &keys) {
     if(source_mesh.is_null())return;
     const AABB prototype=proxy_parts.empty()?source_mesh->get_aabb():proxy_box;
