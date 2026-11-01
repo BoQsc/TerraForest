@@ -1,7 +1,7 @@
 # Town names beside approach roads
 
 - Status: Ordinary source generation and fresh-process restore pass; final UV/photo and installed verification pending.
-- Updated: 2026-11-01. Main integration pending the coordinated vehicle build window.
+- Updated: 2026-11-01. Source commit: `2c0de278`. Main integration pending coordinated mine/vehicle source commits.
 - User review: Requested one or two town/city name signs; appearance not reviewed.
 - Request: Identify towns from their roads without blocking driving or walking.
 
@@ -77,8 +77,10 @@ for unobstructed photos. These final UV/photo changes need the next rendered pas
 
 Next: reopen the owned fixture with the final driver, inspect corrected close and
 road views, integrate the focused source through the coordinator, export the combined
-build and run ordinary package creation/reopen. Mine/vehicle own the shared test
-queue after the source window was released. Keep the field/quest/vehicle changes
+build and run ordinary package creation/reopen. The coordinator confirmed that main `world.gd`, `custom_world_plan.gd` and generation
+currently contain active mine/ride edits. Integration waits for those owners
+to commit, avoiding overwrite or changed inputs during their checks. The source
+render window is released; the next combined export is the return trigger. Keep the field/quest/vehicle changes
 and current plan fingerprints on merge. Main integration and installed verification
 are completion requirements; the source results do not imply they are done.
 
