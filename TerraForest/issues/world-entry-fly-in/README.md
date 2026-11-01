@@ -1,6 +1,7 @@
 # World entry fly-in
 
-- Status: Source verified; combined installed verification pending.
+- Status: Integrated in main source; combined installed verification pending.
+- Source: `d34557e0`; main integration: `4fbca4e9`.
 - Updated: 2026-11-01.
 - User review: Enabled-by-default preference approved; motion and images not reviewed.
 - Request: An optional three-second descent from above the world into the current player's first-person camera after world loading.
@@ -71,8 +72,21 @@ no imported art or code was added.
 
 ## Remaining / resume here
 
-Coordinate the focused source commit with the active quest/clothing integration.
-Then export a matching package, run the installed normal-browser check and capture
-the buffered three-second motion. Do not overwrite concurrent work or install a
-stale PCK. Source qualification is complete for the cases above; installed
-qualification and user motion/visual approval remain separate.
+Main source integration is complete (`4fbca4e9`). The installed executable still
+requires the coordinated export: new starter-clothing/loot work and vehicle road
+travel are active in main. “Merge terrain and forest addons” owns that export and
+has been asked to wake this camera chat with the installed revision/PCK milestone
+and a released render window. Do not overwrite their working source or install an
+older package. No additional camera implementation is waiting on those features.
+
+Resume with actual-main-executable checks from the main checkout:
+
+```powershell
+python TerraForest/tools/run_godot_check.py entry_fly_in --godot "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/TerraForest.exe" --require 'failures=0' --timeout 180 -- --entry-browser --entry-output=res://reports/entry_fly_in/installed_browser
+python TerraForest/tools/run_godot_check.py entry_fly_in --godot "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/TerraForest.exe" --require 'failures=0' --timeout 180 -- --entry-slot=Exploration_1703_8f8d4c8f --entry-video --entry-output=res://reports/entry_fly_in/installed_populated
+```
+
+First confirm installed PCK and native DLLs match the coordinated source milestone.
+Inspect the buffered motion/frames, retain receipt and provenance, then update this
+tracker/index/foundation status together. These steps are required to close installed
+qualification. User motion/visual approval is a separate remaining review.
