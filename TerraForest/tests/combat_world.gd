@@ -162,7 +162,10 @@ func run()->void:
 			await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join("barrel.png"))
 		var revision:int=game.terrain.density_revision
 		var stone:=amount(201)
-		check(game.combat.damage_barrel(barrel,50),"barrel can be ignited by combat damage")
+		check(game.combat.fire(),"live trigger fires at the explosive barrel")
+		await ticks(32)
+		check(game.world_attack.durability.damage("model:%s:%d"%[game.combat.Barrel.KEY,barrel],50)==35,"swept projectile damages the placed native barrel")
+		check(game.combat.fire(),"second live shot ignites the damaged barrel")
 		deadline=Time.get_ticks_msec()+45000
 		while (game.combat.explosions<2 or game.terrain.pending_edit) and Time.get_ticks_msec()<deadline:await ticks(1)
 		await ticks(20)
