@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=31
+const VERSION:=32
 const Civic=preload("res://addons/structures/civic_catalog.gd")
 const LIMIT:=32*1024*1024
 const Recipe=preload("res://addons/world_runtime/world_recipe.gd")
@@ -11,6 +11,13 @@ const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Routes=preload("res://addons/structures/regional_route_planner.gd")
 const City=preload("res://addons/structures/city_catalog.gd")
 const Crossings=preload("res://addons/structures/lake_crossings.gd")
+# Hash loaded content: exported .tres paths are remapped to binary resources.
+# Include planning metadata (entrances, surface offsets, trader anchor), not just cells.
+static func prefab_fingerprint(asset:Resource)->String:
+ var metadata:Array=[]
+ var keys:=asset.get_meta_list();keys.sort()
+ for key:StringName in keys:metadata.append([key,asset.get_meta(key)])
+ return Survey.digest(var_to_bytes([asset.get_records(),asset.get_model_attachments(),metadata])).hex_encode()
 static func read_plan(path:String,key:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}
@@ -40,9 +47,9 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
  key+="|civic-r1" if civic_review else "|approved-e2-civic"
  if not civic_review:
-  for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+FileAccess.get_sha256("res://addons/structures/prefabs/expansion_"+id+"_e2.tres")
+  for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
  if civic_review:
-  for id:String in Civic.IDS:key+="|"+FileAccess.get_sha256("res://addons/structures/prefabs/civic_review_"+id+".tres")
+  for id:String in Civic.IDS:key+="|"+prefab_fingerprint(load("res://addons/structures/prefabs/civic_review_"+id+".tres"))
  var path:=folder.path_join("recipe_%d_%s.bin"%[VERSION,Survey.digest(key.to_utf8_buffer()).hex_encode()])
  var cached:=read_plan(path,key)
  if not cached.is_empty():cached["worker_ms"]=(Time.get_ticks_usec()-started)/1000.0;return cached

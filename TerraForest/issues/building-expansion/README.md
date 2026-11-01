@@ -16,8 +16,8 @@ The user correctly identified that approved content was still gated behind revie
 paths. Approval recording did not complete production integration. Normal catalogs
 now select the exact E2 resources and expose all nine building choices. Each normal
 recipe includes one civic district and one resident trader. Larger recipes preserve
-their residential first district and fit the civic district separately. Cache v31
-invalidates the earlier layout; existing worlds are not regenerated.
+their residential first district and fit the civic district separately. Cache v32
+invalidates earlier plans; existing worlds are not regenerated.
 
 Source/release standards pass in `reports/building_standards/20261101T031454535569Z`.
 All five UI recipes pass seed-1703 planning (44 checks) in

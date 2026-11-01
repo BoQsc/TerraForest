@@ -313,3 +313,8 @@ Near water remains the accepted editable static volumetric water. Far ocean is a
 presentation LOD of that same world water; it must not hide missing near residency,
 reset edits on approach or introduce seams. Do not allocate the entire ocean into
 the current finite water-region store or increase its limit to disguise that issue.
+
+Production plan cache identities must hash loaded prefab cells, attachments and
+planning metadata. Raw `.tres` file paths are remapped in PCK exports and cannot
+serve as the sole cache identity. Verify equal source/pack fingerprints and cache
+invalidation after cell, attachment and placement-metadata changes.
