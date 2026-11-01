@@ -7,6 +7,41 @@
 
 ## Images
 
+### Inventory navigation — source verified; package validation pending
+
+![Current-player model beside equipment and the separate backpack](images/character-navigation.png)
+
+![The same generated-world map embedded beneath the shared top navigation](images/map-navigation.png)
+
+These source captures show the owned survival fixture, not a changed player save.
+The model uses a sampled authored idle pose and one-shot viewport, not continuous
+rendering. All six destinations share the top bar and one close button; Quests
+honestly reports that contracts are not implemented yet. Equipment still uses
+real native revision-checked transactions. Clothing appearance is being authored
+separately and is not claimed by these captures. [Capture provenance](navigation-evidence.json).
+
+- Source HUD: `reports/inventory_navigation/20261101T150927066209Z`, 24 checks.
+- Source generated world, actual local viewport ESC/M input:
+  `reports/inventory_navigation/20261101T151431585586Z`, 21 checks, zero pointer captures.
+  First ESC closes inventory/map; second opens pause. Standalone M retains movement.
+  Saved journal, actual map imagery and unchanged inventory/equipment verified.
+- Source world peak private commit 3,729,375,232 bytes; dedicated GPU 1,489,530,880
+  bytes. Individual warm-model portrait creation 5,732 microseconds in
+  `20261101T150930979649Z`; isolated cold load about 1.2 seconds. Off-screen checks
+  are not a visible 60-FPS frame-pacing qualification.
+- Regressions: survival HUD `reports/player_survival/20261101T151506065883Z`;
+  progression gameplay `reports/checks/20261101T151506916110Z`; backpack
+  `reports/checks/20261101T145930327914Z`.
+- Retained failures: `20261101T150205955851Z` exposed an incorrect assumption that
+  the viewport mode property automatically switches from ONCE to DISABLED; explicit
+  post-draw disabling now matches the contract. `20261101T150412525914Z` exposed
+  wrong ESC priority and blank/oversized embedded map; corrected input ownership,
+  deferred layout and resize redraw. Intermediate clipped destination list was
+  replaced with the compact selector, not hidden or omitted.
+- Remaining: coordinated package validation, user presentation review, real
+  trader contracts/POI reset, broader input and performance, all other open rows.
+  No earlier terrain, lookout-travel or frame-pacing failure is closed by UI tests.
+
 ### Food, reading and survival — source/package verified and installed
 
 ![Installed package: a looted letter retained in Journal after consumption and reload](images/journal-restored.png)

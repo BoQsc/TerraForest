@@ -4,14 +4,19 @@ const TYPES={301:0,302:1,303:2}
 const NAMES=["Head","Body","Feet"]
 var hud: Node
 var buttons: Array[Button]=[]
+var portrait:Control
 func _ready() -> void:
-	add_theme_constant_override("separation",18)
+	add_theme_constant_override("separation",12)
 	var title:=Label.new();title.text="CHARACTER";title.add_theme_font_size_override("font_size",26);add_child(title)
-	var help:=Label.new();help.text="Drag clothing onto its matching slot.\nDrag it back to your backpack to remove.";add_child(help)
+	portrait=preload("res://addons/player_runtime/character_portrait.gd").new();add_child(portrait)
+	var row:=HBoxContainer.new();row.add_theme_constant_override("separation",8);add_child(row)
 	for i in 3:
-		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.side="equipment";button.slot=i;button.custom_minimum_size=Vector2(370,110)
-		add_child(button);buttons.append(button)
+		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.side="equipment";button.slot=i;button.custom_minimum_size=Vector2(116,84)
+		row.add_child(button);buttons.append(button)
+	var help:=Label.new();help.text="Drag clothing into Head, Body or Feet.\nDrag it back to your backpack to remove.";help.add_theme_font_size_override("font_size",14);add_child(help)
 	refresh()
+func set_active(value:bool)->void:
+	if portrait!=null:portrait.set_active(value)
 func refresh() -> void:
 	if buttons.is_empty():return
 	var state: Dictionary=hud.equipment.snapshot(1)

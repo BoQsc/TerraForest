@@ -340,6 +340,11 @@ func _input(event: InputEvent) -> void:
 	if game.vehicle_radial.consume(event):get_viewport().set_input_as_handled();return
 	if player_actions!=null and player_actions.consume(event):get_viewport().set_input_as_handled();return
 	if world_map!=null and world_map.opened:
+		if world_map.embedded:
+			if event is InputEventKey and event.pressed and not event.echo:
+				if event.physical_keycode==KEY_M:game.player_hud.show_side("Backpack");get_viewport().set_input_as_handled()
+				elif event.physical_keycode==KEY_TAB:game.player_hud.set_open(false);get_viewport().set_input_as_handled()
+			return
 		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)
 		if event is InputEventKey and event.physical_keycode not in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE,KEY_CTRL,KEY_SHIFT]:get_viewport().set_input_as_handled()
 		return

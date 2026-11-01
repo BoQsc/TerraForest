@@ -12,6 +12,7 @@ signal menu_changed(open: bool)
 signal inventory_changed
 signal progression_changed
 signal survival_changed
+signal navigation_changed(tab:String)
 signal drop_requested(slot: int, revision: int, count: int)
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
@@ -52,6 +53,9 @@ var character_panel: Control
 var skills_panel: Control
 var crafting_content: Control
 var side_tabs: HBoxContainer
+var active_tab:="Backpack"
+var backpack_panel:Control
+var quests_panel:Control
 var drop_layer: CanvasLayer
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
@@ -199,14 +203,15 @@ func _ready() -> void:
 	# Panels intercept UI input; the toolbelt remains reachable below them.
 	modal.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	var panel:=PanelContainer.new();panel.position=Vector2(660,200);panel.size=Vector2(1040,650)
+	backpack_panel=panel
 	modal.add_child(panel)
 	var margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,24)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",16);margin.add_child(column)
-	var title:=Label.new();title.text="INVENTORY";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title)
+	var title:=Label.new();title.text="BACKPACK";title.add_theme_font_size_override("font_size",28);var title_row:=HBoxContainer.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title_row.add_child(title);column.add_child(title_row)
 	var close_button:=Button.new();close_button.name="InventoryClose";close_button.text="×";close_button.custom_minimum_size=Vector2(42,42);close_button.focus_mode=Control.FOCUS_NONE
-	close_button.tooltip_text="Close inventory · Tab / Esc";close_button.add_theme_font_size_override("font_size",26);close_button.pressed.connect(func():set_open(false));title_row.add_child(close_button);column.add_child(title_row)
+	close_button.tooltip_text="Close inventory · Tab / Esc";close_button.add_theme_font_size_override("font_size",26);close_button.pressed.connect(func():set_open(false))
 	var detail:=Label.new();detail.text="Backpack: 22 slots. Toolbelt: 10 separate slots below."
 	if gameplay_construction: detail.text="Backpack and toolbelt are separate. Drag to move; Shift-drag to split."
 	column.add_child(detail)
@@ -219,9 +224,10 @@ func _ready() -> void:
 	crafting_panel=PanelContainer.new();crafting_panel.position=Vector2(220,200);crafting_panel.size=Vector2(420,650);modal.add_child(crafting_panel)
 	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
 	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
-	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,148);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
-	for tab in ["Crafting","Character","Skills","Journal"]:
-		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(97,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
+	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,142);side_tabs.size=Vector2(1480,48);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
+	for tab in ["Backpack","Character","Skills","Journal","Map","Quests"]:
+		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(150,48);button.focus_mode=Control.FOCUS_NONE;button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
+	var spacer:=Control.new();spacer.size_flags_horizontal=Control.SIZE_EXPAND_FILL;side_tabs.add_child(spacer);side_tabs.add_child(close_button)
 	var craft_margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]:craft_margin.add_theme_constant_override("margin_"+side,20)
 	crafting_panel.add_child(craft_margin)
@@ -231,6 +237,9 @@ func _ready() -> void:
 	character_panel=preload("res://addons/player_runtime/character_panel.gd").new();character_panel.hud=self;side_host.add_child(character_panel);character_panel.hide()
 	skills_panel=preload("res://addons/player_runtime/skills_panel.gd").new();skills_panel.hud=self;side_host.add_child(skills_panel);skills_panel.hide()
 	journal_panel=preload("res://addons/player_runtime/reading_journal.gd").new();journal_panel.hud=self;side_host.add_child(journal_panel);journal_panel.hide()
+	quests_panel=VBoxContainer.new();side_host.add_child(quests_panel);quests_panel.hide()
+	var quests_title:=Label.new();quests_title.text="QUESTS";quests_title.add_theme_font_size_override("font_size",26);quests_panel.add_child(quests_title)
+	var quests_notice:=Label.new();quests_notice.text="Trader contracts are not available in this development build.";quests_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quests_notice.custom_minimum_size=Vector2(370,80);quests_panel.add_child(quests_notice)
 	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
 	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
 	for i in Crafting.RECIPES.size():
@@ -297,12 +306,20 @@ func refresh() -> void:
 	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Hold Alt: tool controls | Esc: session | ~ gameplay"
 
 func show_side(tab: String) -> void:
-	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
+	if tab=="Crafting":tab="Backpack"
+	if not tab in ["Backpack","Character","Skills","Journal","Map","Quests"]:return
+	active_tab=tab
+	backpack_panel.visible=tab!="Map";crafting_panel.visible=tab!="Map"
+	crafting_content.visible=tab=="Backpack";character_panel.visible=tab=="Character"
 	skills_panel.visible=tab=="Skills"
 	journal_panel.visible=tab=="Journal"
+	quests_panel.visible=tab=="Quests"
+	character_panel.set_active(inventory_open and tab=="Character")
 	if skills_panel.visible:skills_panel.refresh()
 	if journal_panel.visible:journal_panel.refresh()
-	for button in side_tabs.get_children():button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
+	for button in side_tabs.get_children():
+		if button is Button:button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
+	if inventory_open:navigation_changed.emit(tab)
 
 # Bounded event-driven delivery. The persisted inbox is an internal safety journal,
 # not a second inventory; legacy rewards and full-inventory overflow retry on changes.
@@ -467,6 +484,8 @@ func set_open(value: bool) -> void:
 	modal.visible=value
 	drop_layer.visible=value
 	menu_changed.emit(value)
+	if value:show_side(active_tab)
+	else:character_panel.set_active(false)
 
 func _input(event: InputEvent) -> void:
 	if not enabled: return

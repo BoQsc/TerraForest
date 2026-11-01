@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-01",
+  "status": "Source verified; matching package pending",
+  "source_revision": "1f2c0d53 plus working inventory-navigation changes",
+  "world": "Owned Survival_1703_d2f72c5e fixture; played worlds untouched",
+  "images": [
+    {"path": "images/character-navigation.png", "source": "reports/inventory_navigation/20261101T151431585586Z/character-world.png", "caption": "On-demand current player model, real equipment slots and separate backpack; not new wearable art approval."},
+    {"path": "images/map-navigation.png", "source": "reports/inventory_navigation/20261101T151431585586Z/inventory-map.png", "caption": "Shared survey map with compact public destinations and the inventory top bar."}
+  ],
+  "image_provenance": "Local automated game captures, not generated images. Underlying model/asset terms and authorship unchanged. Documentation-only captures excluded from imports and exports.",
+  "checks": {"source_hud": 24, "source_world": 21, "pointer_captures": 0},
+  "performance": {"portrait_width": 384, "portrait_height": 448, "warm_model_creation_us": 5732, "source_world_peak_private_commit_bytes": 3729375232, "source_world_peak_dedicated_gpu_bytes": 1489530880, "fps_cap": 60, "power_mode": "Unchanged Legion Quiet Mode"},
+  "scope": "Local viewport input, native equipment transactions and actual generated-map reuse; not captured-mouse gameplay, visible frame-pacing, wardrobe art or whole expansion acceptance.",
+  "remaining": "Matching package, user presentation, quest contracts/reset/rewards, other expansion requirements and previously retained failures."
+}

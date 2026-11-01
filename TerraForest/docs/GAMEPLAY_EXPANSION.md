@@ -58,12 +58,39 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Books, letters and journals give mild learning | Installed three baked original items, ordinary loot/trade, shared native atomic use, held-use routing, double-click/Use menu and persistent Journal; source/package world loot/use/reopen pass; direct captured-mouse input/animation and broader art/balance review remain |
 | Accumulating right-side XP notification | Implemented in existing five-row event-driven resource feed, fixed control pool and no idle processing; gameplay adapter aggregation checked; broader player presentation review remains |
 | Hunger and food items | Installed native active-time food state, three baked food items, actual loot/trade/drop/use and binary restore; old merchant food migration preserves spent stock; source/package world checked; renewable sources and broader balance remain |
-| Inventory top tabs: backpack, character, skills, journal, map, quests | Pending shared navigation and ESC/input ownership; backpack never duplicates toolbelt |
-| Character 3D representation, equipment slots, bag on right | Pending cached/on-demand presentation, equip state and proper ordinary UI |
+| Inventory top tabs: backpack, character, skills, journal, map, quests | Source verified shared navigation, real cached map, first-ESC closes UI and standalone M movement; package verification pending; Quests is explicitly unavailable until contracts/reset are implemented |
+| Character 3D representation, equipment slots, bag on right | Source verified on-demand current player model, rotations, real equipment transactions and separate bag; package verification and user presentation review pending; wearable art is coordinated separately |
 | Extensible addon/plugin/module boundaries | Pending content registration and validation across encounters/POIs/quests/items/biomes/lights; native encounter profiles are only the first boundary |
 | Streaming, CPU/GPU/RAM/VRAM/storage efficiency under new content | Pending doubled-content generation/loading and populated travel/interaction/endurance measurements; preserve 4 GiB VRAM target and existing budgets |
 
 ## Current work and next dependency
+
+### Shared inventory navigation and character view
+
+Six top tabs share one close button. Backpack retains crafting and the 22 bag
+slots without duplicating the ten belt slots. Character shows the current player
+model beside the bag and three native equipment slots. Its 384 x 448 viewport is
+created on first use, renders once per reveal/rotation, and stops both rendering
+and animation while idle. It reuses the model resource already loaded in-world,
+not the full first-person rig. Measured source-world creation fell from 35.8 ms
+for the initial full-rig prototype to 5.7 ms for this model-only implementation;
+an isolated cold HUD still loads the model in about 1.2 s. These are individual
+measurements, not universal latency or frame-pacing guarantees.
+
+Map reuses the same survey/cache, with a compact destination selector inside the
+inventory. It does not generate a second map. First ESC closes map plus inventory;
+the next opens the pause menu. Standalone M still allows movement, whereas the
+inventory Map tab owns input. A coalesced resize and redraw correct first-open
+blank/clipped map content. There are no new per-frame inventory/portrait loops.
+
+Source HUD checks cover native equipment drag/stale-revision handling and cached
+rendering. The generated-world check dispatches actual local viewport ESC/M input,
+verifies map imagery/layout, saved Journal and unchanged carried/equipped state,
+without capturing or repositioning the desktop pointer. Evidence and earlier
+failed fixtures are retained in the expansion issue. Matching package validation
+is pending the coordinated clothing work/export. Quests currently reports that
+contracts are unavailable: mission offers, location identity/reset and rewards
+remain the next dependency, not a completed tab feature.
 
 ### Food, reading and timed effects
 

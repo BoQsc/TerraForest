@@ -5,6 +5,9 @@ const Survey=preload("res://addons/world_runtime/survey_cache.gd")
 const Layout=preload("res://addons/volumetric_terrain/generated_layout.gd")
 var game:Node
 var opened:=false
+var embedded:=false
+var close_button:Button
+var layout_queued:=false
 var warming:=false
 var warm_key:=""
 var warm_started:=0
@@ -15,6 +18,9 @@ var status:Label
 var position_label:Label
 var travel_hint:Label
 var destination_list:VBoxContainer
+var destination_scroll:ScrollContainer
+var destination_picker:OptionButton
+var map_help:Label
 var texture:ImageTexture
 var key:=""
 var worker:Thread
@@ -46,13 +52,14 @@ func _ready()->void:
  block_survey=preload("res://addons/world_runtime/survey_blocks.gd").new();block_survey.atlas=self;add_child(block_survey)
  model_survey=preload("res://addons/world_runtime/survey_models.gd").new();model_survey.atlas=self;add_child(model_survey)
  panel=PanelContainer.new();panel.position=Vector2(100,50);panel.size=Vector2(1720,980);add_child(panel)
+ panel.minimum_size_changed.connect(queue_layout)
  var style:=StyleBoxFlat.new();style.bg_color=Color("12262b")
  for side in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(side,22)
  panel.add_theme_stylebox_override("panel",style)
  var root:=VBoxContainer.new();root.add_theme_constant_override("separation",12);panel.add_child(root)
  var header:=HBoxContainer.new();root.add_child(header)
  var title:=Label.new();title.text="WORLD MAP / REGIONAL SURVEY";title.add_theme_font_size_override("font_size",26);title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;header.add_child(title)
- add_button(header,"Close  ·  M / Esc",func():set_open(false))
+ close_button=add_button(header,"Close  ·  M / Esc",func():set_open(false))
  var columns:=HBoxContainer.new();columns.add_theme_constant_override("separation",20);columns.size_flags_vertical=Control.SIZE_EXPAND_FILL;root.add_child(columns)
  view=preload("res://addons/world_runtime/world_map_view.gd").new();view.atlas=self;view.custom_minimum_size=Vector2(1100,790);view.size_flags_horizontal=Control.SIZE_EXPAND_FILL;view.size_flags_vertical=Control.SIZE_EXPAND_FILL;columns.add_child(view)
  var sidebar:=VBoxContainer.new();sidebar.custom_minimum_size.x=340;sidebar.add_theme_constant_override("separation",12);columns.add_child(sidebar)
@@ -61,7 +68,8 @@ func _ready()->void:
  add_button(buttons,"Find me",view.follow_player);add_button(buttons,"Whole world",view.overview)
  var zoom_row:=HBoxContainer.new();sidebar.add_child(zoom_row)
  add_button(zoom_row,"− Zoom",func():view.set_zoom(view.zoom/1.5,view.size*0.5));add_button(zoom_row,"+ Zoom",func():view.set_zoom(view.zoom*1.5,view.size*0.5))
- add_label(sidebar,"Drag to pan · Wheel to zoom\nRight-click: place / manage markers\nNorth is up · Mint arrow: you")
+ map_help=add_label(sidebar,"Drag to pan · Wheel to zoom\nRight-click: place / manage markers\nNorth is up · Mint arrow: you")
+ view.tooltip_text=map_help.text
  var overlays:=HBoxContainer.new();sidebar.add_child(overlays)
  for item:Array in [["Roads","show_roads","Overlay planned routes in gold; actual road surfaces remain visible when off"],["Minerals","show_deposits","Overlay mineral location symbols; visible stones keep their natural material colors"],["Places","show_places","Overlay public place names; your tracked destination stays visible"],["Grid","show_grid","Overlay coordinate lines"]]:
   var toggle:=CheckBox.new();toggle.text=item[0];toggle.name=item[1];toggle.tooltip_text=item[2];overlays.add_child(toggle)
@@ -75,8 +83,11 @@ func _ready()->void:
   else:game.destination_guide.track(game.map_markers.describe(identity))
   view.queue_redraw())
  add_label(sidebar,"PUBLIC DESTINATIONS").add_theme_font_size_override("font_size",18)
- var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;sidebar.add_child(scroll)
+ var scroll:=ScrollContainer.new();scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;sidebar.add_child(scroll);destination_scroll=scroll
  destination_list=VBoxContainer.new();destination_list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;scroll.add_child(destination_list)
+ destination_picker=OptionButton.new();destination_picker.custom_minimum_size.y=42;destination_picker.size_flags_horizontal=Control.SIZE_EXPAND_FILL;destination_picker.fit_to_longest_item=false;destination_picker.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS;sidebar.add_child(destination_picker);destination_picker.hide()
+ destination_picker.item_selected.connect(func(index:int):
+  if index>=0 and index<places.size():game.destination_guide.track(places[index]);view.queue_redraw())
  add_button(sidebar,"Stop tracking",func():game.destination_guide.clear();view.queue_redraw())
  status=add_label(root,"Survey preparing…")
  timer=Timer.new();timer.wait_time=0.2;timer.timeout.connect(update_position);add_child(timer)
@@ -125,21 +136,39 @@ func add_label(parent:Node,text:String)->Label:
  var label:=Label.new();label.text=text;label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(label);return label
 func add_button(parent:Node,text:String,action:Callable)->Button:
  var b:=Button.new();b.text=text;b.custom_minimum_size.y=42;b.focus_mode=Control.FOCUS_NONE;b.pressed.connect(action);parent.add_child(b);return b
-func set_open(value:bool)->void:
+func queue_layout()->void:
+ if layout_queued:return
+ layout_queued=true;fit_layout.call_deferred()
+func fit_layout()->void:
+ layout_queued=false
+ panel.size=Vector2(1480,650) if embedded else Vector2(1720,980)
+func set_open(value:bool,from_inventory:bool=false)->void:
  if value and (game.loading_active or game.shutdown_requested or not game.terrain.world_ready or not game.app_focused or game.benchmark_enabled):return
- if value:
+ var was_embedded:=embedded
+ embedded=value and from_inventory
+ if value and not embedded:
   game.session_menu.set_open(false);game.storage.close();game.player_hud.set_open(false)
   game.session_menu.developer_hud.mouse_access=false
  opened=value;panel.visible=value;context_menu.hide();view.dragging=false;view.teleport_click=false;set_survey_processing(value or warming)
- game.player_hud.inventory_open=false;game.player_hud.enabled=not value and not game.world_vehicle.driving
- game._cancel_edit_input();Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)
+ panel.position=Vector2(220,200) if embedded else Vector2(100,50)
+ view.custom_minimum_size=Vector2(1000,480) if embedded else Vector2(1100,790)
+ panel.size=Vector2(1480,650) if embedded else Vector2(1720,980)
+ close_button.visible=not embedded
+ map_help.visible=not embedded;destination_scroll.visible=not embedded;destination_picker.visible=embedded
+ queue_layout()
+ if not embedded and not was_embedded:
+  game.player_hud.inventory_open=false;game.player_hud.enabled=not value and not game.world_vehicle.driving
+  Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE if value else Input.MOUSE_MODE_CAPTURED)
+ game._cancel_edit_input()
  game.session_menu.refresh();game.session_menu.sync_panels()
  if value:
-  travel_hint.visible=game.session_menu.developer;travel_hint.text="DEVELOPMENT\nHold Ctrl + left-click to teleport.\nLoads terrain before resuming play."
+  travel_hint.visible=game.session_menu.developer;travel_hint.text="Ctrl + click to teleport" if embedded else "DEVELOPMENT\nHold Ctrl + left-click to teleport.\nLoads terrain before resuming play."
   for survey:Node in [water_survey,block_survey,model_survey]:
    if survey.failed:survey.stamp=""
   refresh_world();updates.recheck_identity();view.follow_player();timer.start();update_position()
- else:timer.stop()
+ else:
+  timer.stop()
+  if was_embedded and game.player_hud.inventory_open and game.player_hud.active_tab=="Map":game.player_hud.show_side("Backpack")
 func set_survey_processing(value:bool)->void:
  for survey:Node in [updates,water_survey,block_survey,model_survey]:survey.set_process(value)
 func prepare_for_play()->bool:
@@ -163,7 +192,9 @@ func teleport_to(point:Vector2)->bool:
  if game.loading_active or game.shutdown_requested or not game.app_focused or game.benchmark_enabled or not game.terrain.world_ready or game.terrain.stopping:return false
  if game.world_vehicle.driving or game.terrain.pending_edit or game.site_preparation.status=="running" or game.site_survey.busy or not game._foundation_placement.is_empty() or not game.road_palette.pending.is_empty() or not game.road_authoring.phase.is_empty() or game.construction_inventory.busy or not game.construction_inventory.pending_prefab.is_empty():
   travel_hint.text="Finish the current world edit and\nexit the vehicle before teleporting.\nHold Ctrl + left-click to teleport.";return false
+ var was_embedded:=embedded
  set_open(false)
+ if was_embedded:game.player_hud.set_open(false)
  game.teleport(Vector3(point.x,0,point.y))
  return true
 func refresh_world()->void:
@@ -187,7 +218,9 @@ func refresh_world()->void:
     var at:=16+i*44
     places.append({"title":"Large lake" if generator>=12 and i==0 else "Pond %d"%(i+1),"position":Vector3(data.decode_float(at+32)+(72 if generator>=12 and i==0 else 27),data.decode_float(at+28),data.decode_float(at+40))})
   for child in destination_list.get_children():child.queue_free()
-  for place:Dictionary in places:add_button(destination_list,place.title,func():game.destination_guide.track(place);view.queue_redraw())
+  destination_picker.clear()
+  for place:Dictionary in places:
+   add_button(destination_list,place.title,func():game.destination_guide.track(place);view.queue_redraw());destination_picker.add_item(place.title)
  roads.clear()
  var layout:Dictionary=Layout.describe(seed_value,generator)
  if not baked.is_empty():
@@ -223,7 +256,7 @@ func update_position()->void:
  if not opened:return
  if game.loading_active or game.shutdown_requested:set_open(false);return
  var at:Vector3=game.player.global_position
- position_label.text="YOUR POSITION\nE %.0f m   S %.0f m\nElevation %.0f m"%[at.x,at.z,at.y]
+ position_label.text=("" if embedded else "YOUR POSITION\n")+"E %.0f m   S %.0f m\nElevation %.0f m"%[at.x,at.z,at.y]
  view.queue_redraw()
 func _exit_tree()->void:
  if worker!=null:worker.wait_to_finish();worker=null

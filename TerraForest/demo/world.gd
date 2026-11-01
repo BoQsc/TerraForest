@@ -336,7 +336,12 @@ func _ready() -> void:
 		dialog.focus_entered.connect(func(): _refresh_frame_cap.call_deferred())
 		dialog.focus_exited.connect(func(): _refresh_frame_cap.call_deferred())
 	player_hud.tool_requested.connect(_equip_player_tool)
-	player_hud.menu_changed.connect(func(_open: bool): _clear_motion())
+	player_hud.menu_changed.connect(func(opened:bool):
+		_clear_motion()
+		if not opened and world_map.embedded:world_map.set_open(false))
+	player_hud.navigation_changed.connect(func(tab:String):
+		if tab=="Map":world_map.set_open(true,true)
+		elif world_map.embedded:world_map.set_open(false))
 	player_hud.inventory_changed.connect(func(): terrain.changed_since_save=true)
 	player_hud.drop_requested.connect(_drop_inventory_supply)
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
@@ -917,7 +922,8 @@ func _restore_gameplay_mouse(attempts:int=4) -> void:
 
 func _movement_input_available() -> bool:
 	if session_menu!=null and session_menu.pauses_world():return false
-	return super._movement_input_available() or (world_map!=null and world_map.opened) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
+	if player_hud!=null and player_hud.inventory_open:return false
+	return super._movement_input_available() or (world_map!=null and world_map.opened and not world_map.embedded) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
 
 func _input(event:InputEvent)->void:
 	super._input(event)

@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Inventory navigation and on-demand portrait — 2026-11-01
+
+Source UI and ordinary generated-world checks pass for Backpack/Character/Skills/
+Journal/Map/Quests navigation, cached current-model portrait, real equipment drag
+transactions and one close owner. Actual local viewport ESC/M input verifies that
+first ESC closes UI, second opens pause, and standalone M still permits movement.
+The inventory map reuses the survey/cache; first-open layout/redraw failures were
+reproduced and corrected. Portrait rendering/animation stops when idle. Matching
+export and package checks are pending coordination with the wearable-art chat.
+Quests is explicitly unavailable until native contracts/location reset/rewards
+are implemented. User presentation acceptance, wearable art, broader input and
+performance remain distinct. Return after export for package evidence, then quest
+ownership/reset and the rest of the [expansion contract](GAMEPLAY_EXPANSION.md).
+Exact evidence and retained failures: [expansion tracker](../issues/gameplay-expansion/README.md).
+
 ## Player experience and skills — 2026-11-01
 
 Native bounded XP/levels/points, three functional skill ranks, compact binary saves
