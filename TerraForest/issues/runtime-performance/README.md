@@ -14,6 +14,22 @@ RAM thresholds remain provisional and physical 4 GiB hardware remains unqualifie
 
 ## Movement stall isolation — 2026-11-01
 
+### Async save completion versus optional cache work
+
+The quest integration fixture exposed save-return delay: four five-second waiting
+reports despite 1.7–1.8 s durable publication. Idle cache accounting admitted its
+next slice while an asynchronous save remained reserved, postponing the worker's
+completion delivery. One guard now gives that reservation priority; accounting
+resumes after publication. No timeout, data validation or cache-budget reduction.
+The deterministic regression fails before and passes after
+(`reports/checks/20261101T162058530655Z`, `20261101T162121166420Z`); all 15 async
+save barriers pass (`20261101T162123590207Z`). On the same owned world, completion
+now measures 2.332 s including 2.070 s publication and 10.409 ms main capture;
+the new 620-byte quest component contributes 11 microseconds. Source evidence:
+`reports/quests_world/20261101T162547622901Z`, 10 checks. Matching package verification
+remains pending. This fixes the reproduced priority defect, not all storage latency
+or the separately retained gameplay frame-pacing failures.
+
 - Kept the user's Legion Quiet Mode, graphics, vegetation density, physics solver
   and production 60 FPS/VSync settings unchanged. The user explicitly declined
   removing the FPS cap after the diagnostic comparison. Saves remain read-only.

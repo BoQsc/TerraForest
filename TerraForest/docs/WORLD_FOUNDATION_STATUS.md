@@ -1,6 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Native quest ownership foundation — 2026-11-01
+
+Bounded native contract state and generation-owned location metadata are implemented,
+not playable quests. Initial default generation publishes four locations/seven
+sleepers in 620 bytes. Debug/release pass 53 native checks; streamed physical chest
+ownership, normal save-return and fresh-process restore pass 31 source checks;
+fresh generation/immediate saving/reopen pass another 35. The initial failed report
+is retained. A separate deterministic regression confirms idle cache accounting
+could delay asynchronous save completion; one priority guard reduces the same
+world's measured completion from over 20 s to 2.332 s, without changing timeouts.
+Matching package verification remains. Then implement bounded multi-owner reset,
+trader/marker interaction and live rewards. Exact scope and closure evidence:
+[expansion contract](GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state)
+and [retained test reports](../issues/gameplay-expansion/README.md).
+
 ## Wearable clothing packs and trader outfit — 2026-11-01
 
 The original woven hood/vest/footwraps are approved by the user for the trader.
