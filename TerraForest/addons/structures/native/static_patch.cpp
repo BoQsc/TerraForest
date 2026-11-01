@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #include "static_batch.hpp"
 #include <climits>
+#include <cstring>
 
 namespace terraforest {
 namespace {
@@ -21,6 +22,9 @@ bool contains(const AABB &outer,const AABB &inner){
     for(int axis=0;axis<3;++axis)
         if(inner.position[axis]<outer.position[axis]||inner.get_end()[axis]>outer.get_end()[axis])return false;
     return true;
+}
+bool same_placement(const std::array<float,12> &left,const std::array<float,12> &right){
+    return std::memcmp(left.data(),right.data(),sizeof(float)*12)==0;
 }
 }
 PackedByteArray NativeStaticBatch::placement_patch_prototype() const {
@@ -114,13 +118,13 @@ Dictionary NativeStaticBatch::restore_placement_patch(const PackedByteArray &byt
     std::set<BlockKey> touched;
     for(const auto &entry:current){
         auto found=desired.find(entry.first);
-        if(found!=desired.end()&&found->second==entry.second)continue;
+        if(found!=desired.end()&&same_placement(found->second,entry.second))continue;
         if(removal_protected.count(entry.first)||visual_hidden.count(entry.first)){result["reason"]="protected";return result;}
         changed.insert(entry.first);touched.insert(group_for(entry.second));
         if(found==desired.end())removed.insert(entry.first);
     }
     for(const auto &entry:desired){
-        auto found=current.find(entry.first);if(found!=current.end()&&found->second==entry.second)continue;
+        auto found=current.find(entry.first);if(found!=current.end()&&same_placement(found->second,entry.second))continue;
         const auto key=group_for(entry.second);
         if(unloaded_regions.count(key)){result["reason"]="unavailable";return result;}
         if(removal_protected.count(entry.first)||visual_hidden.count(entry.first)){result["reason"]="protected";return result;}

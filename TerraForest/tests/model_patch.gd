@@ -158,6 +158,23 @@ func paging_and_history() -> void:
 	check(restore(target, baseline).ok and not history.undo(), "reset revision forms undo history barrier")
 	target.free()
 
+func exact_transform_bits() -> void:
+	var target := batch()
+	put(target, 1, Vector3(2, 2, 2))
+	var values: PackedFloat32Array = target.get_instance(1)
+	var raw := values.to_byte_array()
+	raw.encode_u32(4, 0x80000000)
+	target.remove_instances(PackedInt64Array([1]))
+	target.upsert_instances(PackedInt64Array([1]), raw.to_float32_array())
+	var baseline := capture(target)
+	var expected: PackedByteArray = target.capture_snapshot()
+	target.remove_instances(PackedInt64Array([1]))
+	target.upsert_instances(PackedInt64Array([1]), values)
+	check(target.capture_snapshot() != expected, "signed-zero fixture has distinct valid canonical bytes")
+	var receipt := restore(target, baseline)
+	check(receipt.ok and receipt.changes == 1 and target.capture_snapshot() == expected, "restore retains exact IEEE transform bits")
+	target.free()
+
 func limits() -> void:
 	var target := batch()
 	var identities := PackedInt64Array()
@@ -280,6 +297,7 @@ func run() -> void:
 	else:
 		basic()
 		paging_and_history()
+		exact_transform_bits()
 		limits()
 		full_capacity()
 		await physical()

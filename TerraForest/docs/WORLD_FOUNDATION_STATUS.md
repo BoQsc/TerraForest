@@ -133,7 +133,7 @@ multi-owner transaction remain unfinished. Return to those owners and persistent
 baselines before enabling actual quest reset.
 [Container patch evidence](../issues/gameplay-expansion/container-patch-evidence.json).
 
-Static model patches now pass 50 native checks and three fresh-process restoration
+Static model patches now pass 52 native checks and three fresh-process restoration
 checks per variant, plus collision/history/render-page/horizon regressions. They
 preserve outside edits and reject unavailable, boundary-crossing or protected
 models; 4,096 selected records and 16,384 candidate records cap the work. This is

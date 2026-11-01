@@ -4,21 +4,22 @@
   "format": "TFMP1: local integer bounds, asset/prototype digest, canonical TFSI ID/transform payload and SHA-256",
   "limits": {"axis_metres": 128, "selected_models": 4096, "bytes": 229652, "group_bounds": 4096, "candidate_records": 16384, "staged_group_members": 16384},
   "verification": {
-    "report": "reports/model_patch/20261101T195632951358Z/run.json",
-    "checks_per_variant": {"create": 50, "fresh_process_reopen": 3},
-    "debug_sha256": "41ceaa6df15324c47f95af156e1760d2efd7bf9055dd8690833d3f25f44f80dc",
-    "release_sha256": "b7c09b2dec63b809d13ac76bfd6758caa20610614ca5bea3c750d8957a0cf1a7"
+    "report": "reports/model_patch/20261101T200219711849Z/run.json",
+    "checks_per_variant": {"create": 52, "fresh_process_reopen": 3},
+    "debug_sha256": "bd3b1eb1b15b22b1fb03cbbc931e63764ae98e14294062ea9241c6af2b4e492f",
+    "release_sha256": "7ed125bc4c1fa658ffd39c9a3c4937c740b2ae50d82f44a9c1d84fd591f89a19"
   },
   "regressions": [
     {"name": "building_cell_patch", "checks_per_variant": 28, "report": "reports/block_cell_patch/20261101T195359548202Z/run.json"},
     {"name": "static_placements", "checks": 235, "report": "reports/checks/20261101T195507800441Z/run.json"},
     {"name": "model_admission_history", "checks": 31, "report": "reports/checks/20261101T195522027403Z/run.json"},
     {"name": "model_render_pages", "checks": 48, "report": "reports/checks/20261101T195522874133Z/run.json"},
-    {"name": "model_horizon_including_patch", "checks": 63, "report": "reports/checks/20261101T195525918760Z/run.json"}
+    {"name": "model_horizon_including_patch", "checks": 63, "report": "reports/checks/20261101T200221814819Z/run.json"}
   ],
   "retained_failed_checks": [
     {"report": "reports/model_patch/20261101T195102028108Z/run.json", "cause": "Fixture attempted reset before cancelled streaming admission finished rollback; explicitly drain rollback before testing history. Runtime busy rejection was correct."},
-    {"report": "reports/checks/20261101T195400570956Z/run.json", "cause": "All 235 assertions passed; runner required failures=0 instead of the existing JSON completion marker. Repeated with correct marker and unchanged assertions."}
+    {"report": "reports/checks/20261101T195400570956Z/run.json", "cause": "All 235 assertions passed; runner required failures=0 instead of the existing JSON completion marker. Repeated with correct marker and unchanged assertions."},
+    {"report": "reports/model_patch/20261101T195932804673Z/run.json", "cause": "Valid signed-zero transforms were treated as numerically identical, leaving different serialized bytes. Compare exact IEEE bits; both variants now restore the canonical bytes."}
   ],
   "verified": [
     "Selected additions/removals/moves restore together; outside edits and protection remain",
@@ -28,9 +29,10 @@
     "Changed real physics bodies rebuild; outside body identity remains; no old or added ghost bodies",
     "Persistent horizon receives restored IDs/transforms and removes newly added visuals",
     "Native history establishes a revision barrier; no history edit is synthesized",
-    "A fresh process restores the exact expected binary model snapshot using its new live token"
+    "A fresh process restores the exact expected binary model snapshot using its new live token",
+    "Signed-zero basis components preserve their exact canonical IEEE representation"
   ],
-  "timing": {"scope": "Headless 4096-model baseline; no gameplay frame-pacing or GPU-readback claim", "bytes": 229533, "debug_capture_us": 2611, "debug_restore_us": 3531, "release_capture_us": 3678, "release_restore_us": 6020},
+  "timing": {"scope": "Headless 4096-model baseline; no gameplay frame-pacing or GPU-readback claim", "bytes": 229533, "debug_capture_us": 2440, "debug_restore_us": 3286, "release_capture_us": 2554, "release_restore_us": 3641},
   "remaining": [
     "Matching installed package verification",
     "Active doors, damage/durability, residents/corpses, vegetation and water ownership",
