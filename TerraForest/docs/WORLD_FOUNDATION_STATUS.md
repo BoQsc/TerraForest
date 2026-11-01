@@ -8,8 +8,9 @@ the cached portrait and animated player, with matching icons and ground models.
 Paid crafting, equip/remove, binary restore, FP/3P visibility and sampled animation
 fit pass source checks; normal generated-world save and fresh-process restoration
 also pass. Editable 0BSD generator and portable garment-only GLBs are retained.
-User visual approval and the next combined installed-package check remain
-unreviewed. Existing deep-crouch trouser clipping is reproduced in the base outfit;
+The combined installed package now passes clothing HUD and existing-world restore
+checks. User visual approval remains unreviewed. Existing deep-crouch trouser
+clipping is reproduced in the base outfit;
 return on a body/trouser fitting task with matching before/after animation evidence.
 Exact evidence, rejected trials and remaining scope: [woven clothing tracker](../issues/woven-clothes/README.md).
 
@@ -21,11 +22,13 @@ transactions and one close owner. Actual local viewport ESC/M input verifies tha
 first ESC closes UI, second opens pause, and standalone M still permits movement.
 The inventory map reuses the survey/cache; first-open layout/redraw failures were
 reproduced and corrected. Portrait rendering/animation stops when idle. Matching
-export and package checks are pending coordination with the wearable-art chat.
+export is installed; package HUD/world navigation checks pass (24 + 21), including
+actual viewport ESC/M input and shared map imagery. Existing equipped clothing
+also restores in the packaged portrait and animated player (8 checks).
 Quests is explicitly unavailable until native contracts/location reset/rewards
 are implemented. User presentation acceptance, wearable art, broader input and
-performance remain distinct. Return after export for package evidence, then quest
-ownership/reset and the rest of the [expansion contract](GAMEPLAY_EXPANSION.md).
+performance remain distinct. Return next to quest ownership/reset and the rest of
+the [expansion contract](GAMEPLAY_EXPANSION.md).
 Exact evidence and retained failures: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Player experience and skills — 2026-11-01

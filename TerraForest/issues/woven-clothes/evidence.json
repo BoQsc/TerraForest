@@ -1,6 +1,12 @@
 {
   "date": "2026-11-01",
-  "scope": "Source working tree with concurrent inventory navigation; no installed-package claim",
+  "scope": "Source clothing plus matching installed combined package; user visual acceptance and full frame pacing remain open",
+  "installed_pack_sha256": "dec302a978bf81dd2bb27b53351f00740d7587aae4fb17b44bc46df349eee835",
+  "package_checks": [
+    {"report": "reports/woven_clothes/20261101T153115340716Z", "checks": 49, "scope": "Clothing meshes, equipment transactions, portrait and sampled animation"},
+    {"report": "reports/woven_clothes/20261101T153120603692Z", "checks": 8, "scope": "Existing owned world restoration into portrait and animated player"},
+    {"report": "reports/woven_clothes/20261101T153321253890Z", "checks": 23, "scope": "New owned package world, paid craft/equip/save and fresh-process restoration"}
+  ],
   "passed": [
     {
       "name": "source",

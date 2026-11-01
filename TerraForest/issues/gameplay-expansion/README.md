@@ -7,7 +7,13 @@
 
 ## Images
 
-### Inventory navigation — source verified; package validation pending
+### Inventory navigation — source/package verified and installed
+
+![Installed package after fresh-process restoration of the equipped outfit](images/character-installed.png)
+
+This installed-build capture verifies the combined navigation and separately
+authored woven pack. It is a different owned fixture/viewpoint than the source
+captures below, not a lighting or terrain before/after comparison.
 
 ![Current-player model beside equipment and the separate backpack](images/character-navigation.png)
 
@@ -38,7 +44,20 @@ separately and is not claimed by these captures. [Capture provenance](navigation
   wrong ESC priority and blank/oversized embedded map; corrected input ownership,
   deferred layout and resize redraw. Intermediate clipped destination list was
   replaced with the compact selector, not hidden or omitted.
-- Remaining: coordinated package validation, user presentation review, real
+- Matching package: `reports/inventory_navigation/20261101T153034644333Z` (24 HUD)
+  and `20261101T153039281988Z` (21 generated-world input/layout checks).
+  Packaged clothing checks pass 49 assertions at
+  `reports/woven_clothes/20261101T153115340716Z`; fresh-process restoration of the
+  existing owned clothing world passes 8 at `20261101T153120603692Z`.
+  New package-world paid crafting/equip/save/reopen passes another 15 + 8 checks
+  at `reports/woven_clothes/20261101T153321253890Z`.
+  The installed PCK is 447,961,500 bytes, distribution 477,885,907 bytes, SHA256
+  `dec302a978bf81dd2bb27b53351f00740d7587aae4fb17b44bc46df349eee835`.
+  Credits, icon freshness, building-standard gates, 14 native DLL hashes and startup
+  pass. Package-world private commit peaks at 3,698,749,440 bytes and dedicated GPU
+  at 1,489,592,320 bytes; this remains off-screen memory evidence, not frame pacing.
+  Final package map and equipped-portrait images were inspected.
+- Remaining: user presentation review, real
   trader contracts/POI reset, broader input and performance, all other open rows.
   No earlier terrain, lookout-travel or frame-pacing failure is closed by UI tests.
 

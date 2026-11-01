@@ -1,6 +1,6 @@
 # Visible woven clothing
 
-- Status: Implemented / source and normal-world checks pass.
+- Status: Installed / source, package and normal-world checks pass.
 - Updated: 2026-11-01. Fix/build: woven woodland revision 1; see focused Git history.
 - User review: Not reviewed.
 - Symptom: Head, Body and Feet accepted the three woven items without changing
@@ -68,16 +68,22 @@ larger closed soles. Earlier evidence is preserved, not represented as accepted.
   closure requires the same base-versus-new crouch comparison plus movement poses.
 - Animation review is sampled, not all-frame or all-clip certification. Additional
   character proportions require a new fit and weight pass.
-- Main installed executable/package validation is outside this source asset-pack
-  delivery and remains unreviewed. Return on the next combined build and run the
-  same equip/save/reopen checks against the exported package. Concurrent navigation
-  edits were exercised together but are not folded into the clothing commit.
+- Combined package now passes 49 clothing checks and 8 fresh-process checks in the
+  existing owned world; the equipped portrait was visually inspected. Reports:
+  `reports/woven_clothes/20261101T153115340716Z` and `20261101T153120603692Z`.
+  New owned package-world paid crafting/equip/save and another process restoring
+  both views pass 15 + 8 checks at `20261101T153321253890Z`.
+  Installed PCK SHA256 `dec302a978bf81dd2bb27b53351f00740d7587aae4fb17b44bc46df349eee835`.
+  Package drivers verify matching native libraries and never activate or capture
+  the pointer. Full-world frame pacing and human visual acceptance remain open.
 
 ## Reproduce / history
 
 From TerraForest: `python tools/check_woven_clothes.py` for source/HUD renders;
 `python tools/check_woven_clothes.py --world` for an exclusively owned, uniquely
 named generated fixture followed by a second process. Neither targets user slots.
+Append `--pack` to use the installed PCK. `--pack --restore-report <owned-report>`
+reopens a prior `reports/woven_clothes/` fixture without creating another world.
 
 Early source fixture rejected quantized weight sums with an overly strict float
 comparison and produced unused black viewports. The check now uses the stored
