@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-01",
+  "status": "Source and rebuilt native primitive verified; not installed or connected to gameplay",
+  "scope": "Building cells only; exact terrain cubes and other location owners remain separate",
+  "binding": {
+    "report": "reports/block_cell_patch/20261101T182251975419Z/run.json",
+    "checks_per_variant": 28,
+    "maximum_cells": 262144,
+    "maximum_bytes": 524356,
+    "debug_sha256": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+    "release_sha256": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+    "includes_vehicle_streaming_changes": true,
+    "timing_scope": "Maximum-volume empty baseline, only two changed edge cells; not dense restore or foreground gameplay",
+    "debug_capture_us": 4449,
+    "debug_restore_us": 4598,
+    "release_capture_us": 6106,
+    "release_restore_us": 5720
+  },
+  "regressions": [
+    {"name": "block_regions", "checks": 73, "report": "reports/checks/20261101T182253692649Z/run.json"},
+    {"name": "prefab_transaction", "checks": 36, "report": "reports/checks/20261101T182259715732Z/run.json"},
+    {"name": "structures", "checks": 294, "report": "reports/checks/20261101T182317370278Z/run.json"},
+    {"name": "block_worker", "report": "reports/checks/20261101T182322025108Z/run.json", "scope": "Stale bake replacement, 200 repeated edits, 40 shutdown cycles"},
+    {"name": "model_admission_history", "checks": 31, "report": "reports/checks/20261101T182325668014Z/run.json"}
+  ],
+  "retained_failures": [
+    {"report": "reports/checks/20261101T181849690138Z/run.json", "cause": "Test fixture inferred a dynamic native return; explicit PackedByteArray type fixed parsing"},
+    {"report": "reports/block_cell_patch_syntax.log", "cause": "Compiler-only syntax mode returned FileNotFound; ordinary object compilation and both DLL builds succeeded"}
+  ],
+  "remaining": [
+    "Coordinated native artifact commit and matching package checks",
+    "Exact terrain voxel cubes, model/door, contents, residents, vegetation and water reset ownership",
+    "Persistent bounded baselines, admission safety and multi-owner rollback",
+    "Ordinary trader offers, marker/E activation, live objective/reward delivery and save/reopen",
+    "Dense reset, rendered collision publication, memory and gameplay pacing qualification"
+  ]
+}

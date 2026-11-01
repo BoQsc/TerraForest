@@ -101,7 +101,21 @@ page uses the normal terrain edit path's 1/1024 m density quantization when admi
 Changed page versions, geometry digests and lighting are invalidated together.
 Run this cold operation on the existing terrain worker, not a frame-loop scan.
 
-This primitive is not a complete location reset: exact voxel cubes, building cells,
+`NativeBlockWorld.capture_cell_patch` / `restore_cell_patch` now provides the
+separate building-cell primitive in source. TBP1 stores all cells, including air,
+as uint16 shape/material/orientation words, a bounded header and SHA-256 digest.
+Limits are 128 cells per axis, 262,144 cells and 524,356 serialized bytes. It uses
+local integer cell coordinates; it does not move the building grid. Current
+content revision and owner epoch are required. Unavailable regions, invalid
+words, capacity failures and reentrant admission reject without overwriting
+neighboring cells. Successful changes use existing chunk/halo invalidation and
+signals. No history command is created. Debug/release pass 28 assertions each;
+full region, prefab, history, worker and model-admission regressions pass.
+The maximum empty-baseline fixture restores two changed edge cells in 4.60–5.72 ms;
+this is not a dense restore or rendered gameplay timing guarantee.
+[Building-cell evidence](../issues/gameplay-expansion/block-patch-evidence.json).
+
+These primitives are not a complete location reset: exact terrain voxel cubes,
 models/door state, contents, residents, vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered

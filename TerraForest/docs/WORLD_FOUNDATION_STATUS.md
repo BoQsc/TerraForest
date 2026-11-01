@@ -77,6 +77,15 @@ baseline retention, worker publication or player-edit safety. Continue these
 dependencies before trader offers and marker/E acceptance; retain the explicit
 normal-world reset/reward/reopen acceptance gates in the expansion contract.
 
+The separate bounded native building-cell reset is now source-verified: 28 checks
+per debug/release variant, 73 region checks, 36 prefab transactions, 294 structure/
+history checks, worker stress and 31 model-admission checks pass. It preserves air,
+shape words and outside edits, rejects stale/unavailable/capacity-conflicting
+state, and rebuilds changed chunk halos. It is not installed or wired to quests.
+Continue exact terrain cubes and remaining model/stock/resident/vegetation/water
+owners, baseline retention, safety and coordinated rollback before enabling
+gameplay resets. [Evidence](../issues/gameplay-expansion/block-patch-evidence.json).
+
 ## Wearable clothing packs and trader outfit — 2026-11-01
 
 The user-approved woven trader outfit and trail pack are installed with the

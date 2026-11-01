@@ -210,6 +210,10 @@ public:
     bool can_place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false) const;
     bool place_prefab(const Ref<NativeBlockPrefab> &prefab,Vector3i origin,int quarter_turns,bool replace=false);
     Ref<NativeBlockPrefab> capture_prefab(Vector3i origin,Vector3i size) const;
+    Dictionary cell_patch_state() const;
+    PackedByteArray capture_cell_patch(Vector3i origin,Vector3i size,int64_t expected_revision,int64_t expected_epoch) const;
+    bool validate_cell_patch(const PackedByteArray &bytes) const;
+    Dictionary restore_cell_patch(const PackedByteArray &bytes,int64_t expected_revision,int64_t expected_epoch);
     PackedByteArray overlap_mask(const TypedArray<Transform3D> &transforms, const AABB &prototype_bounds) const;
     int get_cell(Vector3i p) const { return cell(p.x,p.y,p.z); }
     Ref<Mesh> preview_mesh(int64_t shape,int64_t rotation);

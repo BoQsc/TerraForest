@@ -65,6 +65,10 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("can_place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::can_place_prefab,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("place_prefab","prefab","origin","quarter_turns","replace"),&NativeBlockWorld::place_prefab,DEFVAL(false));
     ClassDB::bind_method(D_METHOD("capture_prefab","origin","size"),&NativeBlockWorld::capture_prefab);
+    ClassDB::bind_method(D_METHOD("cell_patch_state"),&NativeBlockWorld::cell_patch_state);
+    ClassDB::bind_method(D_METHOD("capture_cell_patch","origin","size","expected_revision","expected_epoch"),&NativeBlockWorld::capture_cell_patch);
+    ClassDB::bind_method(D_METHOD("validate_cell_patch","bytes"),&NativeBlockWorld::validate_cell_patch);
+    ClassDB::bind_method(D_METHOD("restore_cell_patch","bytes","expected_revision","expected_epoch"),&NativeBlockWorld::restore_cell_patch);
     ClassDB::bind_method(D_METHOD("get_cell","position"),&NativeBlockWorld::get_cell);
     ClassDB::bind_method(D_METHOD("overlap_mask","transforms","prototype_bounds"),&NativeBlockWorld::overlap_mask);
     ClassDB::bind_method(D_METHOD("stats"),&NativeBlockWorld::stats);
@@ -169,7 +173,8 @@ bool NativeBlockWorld::apply_cells(const PackedInt32Array &records,bool record_h
         const uint16_t bit=uint16_t(1u<<(y&15));
         column=w?uint16_t(column|bit):uint16_t(column&~bit);
     }
-    if(has_bounds&&!admits_edit(changed_bounds))return false;
+    const uint64_t admission_revision=mutation_revision,admission_epoch=storage_epoch;
+    if(has_bounds&&(!admits_edit(changed_bounds)||mutation_revision!=admission_revision||storage_epoch!=admission_epoch))return false;
     int final_count=int(chunks.size());
     for(auto &entry:staged) final_count+=(entry.second.count>0)-(chunks.count(entry.first)>0);
     if(final_count>MAX_CHUNKS) return false;

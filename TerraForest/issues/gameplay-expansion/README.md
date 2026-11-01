@@ -75,6 +75,27 @@
 - Complete multi-owner reset remains open in the
   [expansion contract](../../docs/GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state).
 
+## Bounded building-cell reset — source verified, not gameplay
+
+- TBP1 includes empty cells as well as shape words, so restoration removes new
+  construction without overwriting outside cells sharing the same chunk.
+- Both rebuilt native variants pass 28 checks. The full region suite passes 73,
+  prefab transactions 36, structures/history 294 and model-admission history 31;
+  worker replacement, 200 edits and 40 shutdown cycles also pass.
+- A reentrant edit-admission callback could previously replace a staged chunk
+  after a newer edit. Revision/epoch checks now reject that stale publication.
+- Maximum serialized patch: 524,356 bytes. Maximum-volume sparse fixture capture
+  is 4.45–6.11 ms and restoration 4.60–5.72 ms, not dense gameplay/frame-pacing
+  evidence. Chunk/neighbor mesh restoration is checked headlessly.
+- The first full-suite run failed at parsing an untyped test variable; corrected
+  and rerun, with failed evidence retained. Compiler-only syntax mode also failed;
+  ordinary compilation and both full native builds succeeded.
+- No gameplay reset, asset redesign or existing-world mutation is enabled. Native
+  artifacts include concurrent vehicle streaming changes; their source commits
+  precede the coordinated artifact commit/export. Remaining multi-owner safety,
+  baseline retention, rollback and normal-world acceptance stay open.
+- [Exact reports and native identities](block-patch-evidence.json).
+
 ## Images
 
 ### Inventory navigation — source/package verified and installed
