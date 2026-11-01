@@ -106,6 +106,33 @@ at the same spawn, and profile/correct any reproducible handoff stall. Retain
 60 FPS/VSync/Quiet Mode, scene quality and whole-world coverage. Broader gameplay
 performance remains in [runtime performance](../runtime-performance/README.md).
 
+## Requested performance follow-up — 2026-11-01
+
+The user explicitly wants to return to the rendering cost and optimization
+opportunities. Keep this work open; the current FPS measurements and functional
+checks are not performance approval. Optimization is deferred for a dedicated
+profiling pass after the coordinated build is stable. This does not cancel the
+separately pending installed feature/browser/visual checks.
+
+Resume from the existing raw timings and fixture, with no competing game renders:
+
+1. Compare entry enabled/disabled at the same saved spawn in the installed build;
+   distinguish first-load work, warmed rendering and the first-person handoff.
+2. Attribute main-thread, render-thread and GPU costs. Investigate the 143 ms first
+   first-person frame separately from the aerial view's sustained frame cost.
+3. Evaluate evidence-supported changes to LOD/culling, distant submission and
+   transition resource preparation. These are investigation candidates, not known
+   causes or promised fixes. Preserve actual world coverage, terrain/building
+   quality, player appearance, collision behavior and responsiveness.
+4. Keep 1080p, the 60 FPS cap, VSync and Quiet Mode fixed for before/after evidence.
+   Report averages, p95/p99, worst frames and hitch counts; capture visual review
+   separately so image readback/compression cannot contaminate timing. Close only
+   with measured improvement, the handoff stall addressed or explicitly attributed,
+   and matching visual/gameplay review. Averages alone cannot establish smoothness.
+
+Return trigger: the stable installed build and a dedicated performance pass/user
+request. Runtime optimization is not being added to the current integration freeze.
+
 ## Remaining / resume here
 
 Main source integration is complete (`4fbca4e9`). The installed executable still

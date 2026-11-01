@@ -28,6 +28,10 @@ Clean no-capture source probe: 53.27 FPS during entry, 59.21 FPS settled first
 person, but a 143.33 ms first-frame handoff stall remains unqualified. This is not
 a locked-60-FPS or installed/focused-presentation acceptance; compare a no-entry
 baseline and profile the handoff on the coordinated build.
+User requested a later dedicated optimization pass (2026-11-01). Keep sustained
+rendering cost and the handoff hitch open; preserve quality and fixed power/frame
+settings, and require comparable before/after measurements. Installed feature
+validation remains separate from this deferred optimization work.
 
 This file retains the wider backlog; the tracker initially covers three cases.
 
