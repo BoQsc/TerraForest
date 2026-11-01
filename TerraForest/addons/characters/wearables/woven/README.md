@@ -54,5 +54,7 @@ visibility and idle portrait rendering. Front/side/back renders cover idle, walk
 run, crouch, pickaxe swing and punch samples. This is sampled animation fit, not
 proof of all animation frames or arbitrary body proportions. The inherited
 trousers' knee clipping in deep crouch is tracked separately with a base-outfit
-comparison in `issues/woven-clothes/README.md`. User visual review and the next
-combined installed build are separate from this source asset-pack check.
+comparison in `issues/woven-clothes/README.md`. The trader's woven appearance is
+approved. Both packs are installed and package-verified; exact evidence is in
+`issues/woven-clothes/package-evidence.json`. Broader animation and frame pacing
+acceptance remain separate from these scoped checks.

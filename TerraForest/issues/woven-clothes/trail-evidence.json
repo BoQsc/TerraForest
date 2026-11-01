@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "scope": "Trader role and second trail clothing set; source verified, matching combined package pending",
+  "scope": "Trader role and both clothing packs installed and package-verified; scoped visual acceptance only",
   "user_review": "Shown woven trader and trail appearances approved on 2026-11-01; broader animation quality remains separate",
   "passed": [
     {
@@ -52,8 +52,8 @@
   ],
   "portable_bundle": {
     "path": "reports/woven_clothes/TerraForest_Clothing_Packs_R2.zip",
-    "bytes": 1005732,
-    "sha256": "ec1f6061289a20563ed7ab020f1b9ae8e0ce85782a20601495e75f99995739e6",
+    "bytes": 1005805,
+    "sha256": "4148a5473ab3cae215ca8c123c7793048af026daf40ea510af97044178c91e0d",
     "scope": "Both original garment sets and editable source; no inherited character or shared atlas"
   },
   "next_combined_build": {
@@ -73,7 +73,9 @@
     ],
     "base_outfit": "Minimal plain shirt and trousers with bare feet; no outer gear",
     "verification": "Both package recipe/equip checks, normal world save/restore and production trader interaction/respawn",
-    "status": "Handed to main build chat; matching export pending",
+    "status": "Installed and verified; package-evidence.json",
     "starter_loot_followup": "starter-loot-evidence.json"
-  }
+  },
+  "package_evidence": "package-evidence.json",
+  "installed_pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be"
 }

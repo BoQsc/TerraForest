@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-01",
+  "scope": "Installed combined package: both complete craftable sets, minimal starter, existing equipped save restoration, actual corpse loot/equip/save/fresh restore and trader role/interaction/respawn. Not universal animation or frame-pacing acceptance.",
+  "export_runtime_head": "48eac831",
+  "pack_path": "dist/TerraForest.pck",
+  "pack_bytes": 448486488,
+  "pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "db2a6ccbf0ad85b0ab1edda2306ffa78a78947c847a83e95b1d2a9f66ee47452",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "22437922b37c8a328f496a27da2d4f6643557bd3d199a6a2965dc52354937cfb",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "3185541626b3c1e3a477acfae5353fd59576ec55e3a83b285d7b84834efbe06e",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "5c130eeecf0b629713222f0668173d72f881e1bec0eca4683ed82c6abe8536e2",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "de3d6cecd2890842425c7326dd3dfc6da6d59fbb9219c781890161168c0a2f07",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "be52f284654697abc4d5291f64d00141273a1e4107596051e9fce177da49ec6f",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "56e61c3a9e4eadfd07fc3a0889828bfdb2279d55fab51592f7818d977c4a6678",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3faf0eeab0b88c13cad688c5c7d49d167ef51f03aa6a9740d3dddc1181434391",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "922aba2f65cbc9a1adcda097fd2ae7ad51c4cdd882c4b2e8a3486fb05cb6e8e3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "a5ab80fdfee980b6a93eeb529c9f743b0f73fd5d171fe92abcbd4d40ab919aa6"
+  },
+  "checks": 197,
+  "passed": [
+    {
+      "name": "package_woven",
+      "checks": 75,
+      "report": "reports/woven_clothes/20261101T165646728728Z",
+      "job": "source",
+      "log": "logs/package_woven.log",
+      "sha256": "b9c0cc452311d33d6e919085eed6cc1413cf13ce0b2ce8cf1481230b5a3b52e1",
+      "elapsed_seconds": 5.506286900024861,
+      "peak_private_commit_bytes": 1766002688,
+      "peak_dedicated_gpu_bytes": 930533376
+    },
+    {
+      "name": "package_trail",
+      "checks": 75,
+      "report": "reports/woven_clothes/20261101T165652889210Z",
+      "job": "source",
+      "log": "logs/package_trail.log",
+      "sha256": "589791e8c1dea773eafc601e0a69f5cf40076142495837298b12145a3444a02d",
+      "elapsed_seconds": 5.6678566000191495,
+      "peak_private_commit_bytes": 1762283520,
+      "peak_dedicated_gpu_bytes": 930529280
+    },
+    {
+      "name": "package_trail_restore",
+      "checks": 8,
+      "report": "reports/woven_clothes/20261101T165659239304Z",
+      "job": "restore",
+      "log": "logs/package_trail_restore.log",
+      "sha256": "078f110dd16c060b6759253cf3ba0995af944d56ca514d9bc198240c12a62cc2",
+      "elapsed_seconds": 21.808943899988662,
+      "peak_private_commit_bytes": 2848755712,
+      "peak_dedicated_gpu_bytes": 1227026432
+    },
+    {
+      "name": "package_clothing_loot",
+      "checks": 14,
+      "report": "reports/clothing_loot/20261101T165721941836Z",
+      "job": "loot",
+      "log": "logs/package_clothing_loot.log",
+      "sha256": "29913c19a945f99d294b2c14e857bab5c8b5aec436796dde4e2e14ca690d63cd",
+      "elapsed_seconds": 34.02831149997655,
+      "peak_private_commit_bytes": 3540631552,
+      "peak_dedicated_gpu_bytes": 1489268736
+    },
+    {
+      "name": "package_clothing_loot_restore",
+      "checks": 8,
+      "report": "reports/clothing_loot/20261101T165721941836Z",
+      "job": "restore",
+      "log": "logs/package_clothing_loot_restore.log",
+      "sha256": "833a49ffec3ce51c4f3091e41e2d69bce0e9b95aa57d96f6293ca4ba7b3f0051",
+      "elapsed_seconds": 29.72752670000773,
+      "peak_private_commit_bytes": 3671752704,
+      "peak_dedicated_gpu_bytes": 1489530880
+    },
+    {
+      "name": "package_trader",
+      "checks": 17,
+      "report": "reports/trader_clothes/20261101T165826723957Z",
+      "job": "",
+      "log": "logs/package_trader.log",
+      "sha256": "f8df481f7c925e54e68e71a5dc423f00dc76dda24013e1ff6ff02abe68701648",
+      "elapsed_seconds": 30.274997799948324,
+      "peak_private_commit_bytes": 3506814976,
+      "peak_dedicated_gpu_bytes": 1489190912
+    }
+  ],
+  "commands": [
+    "python tools/check_woven_clothes.py --pack",
+    "python tools/check_woven_clothes.py --trail --pack",
+    "python tools/check_woven_clothes.py --trail --pack --restore-report reports/woven_clothes/20261101T160256593464Z",
+    "python tools/check_clothing_loot.py --world --pack --source-report reports/player_survival_world/20261101T144039859117Z",
+    "python tools/check_trader_clothes.py --pack --source-report reports/player_survival_world/20261101T144039859117Z"
+  ],
+  "remaining": [
+    "Inherited crouch trouser and shirt shoulder fitting defects",
+    "Full animation/frame-pacing acceptance",
+    "Human in-game presentation review; minimal starter render not explicitly approved",
+    "Early loot-restore capture catches background trader initial T-pose; dedicated settled trader screenshot and idle/respawn checks pass"
+  ]
+}

@@ -54,30 +54,26 @@ and [retained test reports](../issues/gameplay-expansion/README.md).
 
 ## Wearable clothing packs and trader outfit — 2026-11-01
 
-The original woven hood/vest/footwraps are approved by the user for the trader.
-The production resident now wears that set, including after streaming retirement
-and recreation; interaction, finite stock and player inventory remain unchanged.
-A second original CC0 trail pack adds a blue broad-brimmed hat, rust belted jerkin
-and tall boots (IDs 304–306). Both sets can be crafted, mixed and swapped through
-Head/Body/Feet, with matching portrait/player meshes, icons and ground models.
-Trail source checks pass 62 assertions; normal world craft/equip/save and fresh
-process restore pass 15 + 8; real trader interaction/respawn passes 17. Editable
-0BSD generators, garment-only GLBs and exact asset provenance are retained.
+The user-approved woven trader outfit and trail pack are installed with the
+plain-shirt/trousers/barefoot starter and new-corpse trail drops. All six pieces
+remain craftable/equippable and can be mixed by slot; removing them returns to the
+minimal starter. New corpses can supply one trail piece, rolled once at creation;
+saved corpse contents remain unchanged. The trader retains its woven role outfit
+through streaming retirement/recreation without consuming shop stock.
 
-Woven revision 1 remains installed and verified in the previous combined package.
-The new trader role and trail set await the next coordinated export after quest
-work releases the shared build, followed by matching package HUD/world/trader
-checks. The user approved both shown outfits and requested all outfits remain
-available: all six items stay craftable/equippable. The user subsequently selected
-a minimal plain-shirt/trousers starter (no outer gear); unequip now returns to that
-look. New zombie corpses can provide one trail piece, rolled once at creation;
-saved corpse contents are unchanged. Starter/trail gallery passes 75 checks;
-loot contracts pass 10 each on debug/release, actual corpse/UI/equip/save plus
-fresh-process restore pass 14 + 8, and quest regressions pass 53 each. Matching
-combined export/package checks remain pending. Broader animation fitting and
-frame pacing remain open. Existing crouch trouser clipping and shirt shoulder defects remain outside this pack's
-scope; return on a body fitting task with matching before/after pose evidence.
-Exact checks, rejected first fits and remaining scope:
+The fixed combined PCK passes 197 package checks: both paid crafting/equipment/
+portrait suites 75 + 75, existing trail save restore 8, actual zombie death/loot/
+equip/save 14 plus fresh-process restore 8, and trader idle/interaction/respawn 17.
+All 14 native libraries match. PCK SHA256 and retained logs/metrics are in the
+[package evidence](../issues/woven-clothes/package-evidence.json). Source native
+loot checks pass 10 each on debug/release, with quest regressions 53 each.
+Original CC0 garment-only GLBs and editable 0BSD generators remain available.
+
+Broader animation fitting, frame pacing and human in-game review remain open.
+Inherited crouch trouser/shirt shoulder defects remain outside this pack's scope;
+return on a body fitting task with matching before/after poses. The early restored
+loot portrait captures a background trader T-pose; settled trader evidence is
+separate. All prior rejected trials and scoped approval remain in the
 [clothing tracker](../issues/woven-clothes/README.md).
 
 ## Inventory navigation and on-demand portrait — 2026-11-01

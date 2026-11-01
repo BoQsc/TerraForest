@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "scope": "Minimal starter appearance and common trail clothing from new zombie corpses; source verified, package validation pending",
+  "scope": "Minimal starter and new-corpse trail clothing loot installed and package-verified; user in-game review and broader animation fit remain separate",
   "user_request": "Plain shirt and trousers, no outer gear; current trail clothes as common zombie finds",
   "passed": [
     {
@@ -74,5 +74,7 @@
     "python tools/check_woven_clothes.py --trail",
     "python tools/check_quests.py",
     "python tools/check_quests.py --release"
-  ]
+  ],
+  "package_evidence": "package-evidence.json",
+  "installed_pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be"
 }

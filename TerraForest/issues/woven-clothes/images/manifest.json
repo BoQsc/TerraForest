@@ -159,5 +159,29 @@
     "sha256": "251006cb56ea73dc864715f076363a07a0b439ed8229d9259539c0abc996aadc",
     "provenance": "Godot 4.7.2 source screenshot using the retained R11 character and existing world assets; inherited notices and GAP-002 remain. No new body assets or screenshot relicensing.",
     "review": "Portrait equipment restoration verified; early background trader T-pose is not animation acceptance. Dedicated trader check remains the animation/respawn evidence."
+  },
+  {
+    "file": "package-trader.png",
+    "source": "reports/trader_clothes/20261101T165826723957Z/trader-woven.png",
+    "sha256": "2d6d496749f0fb06aff98129ae4b7bfc66f87cefa00a6f38b534ee3344cd0879",
+    "pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be",
+    "provenance": "Godot 4.7.2 installed-package screenshot. Original garments over retained R11 body and existing world assets; inherited notices/GAP-002 remain; no screenshot relicensing.",
+    "review": "Settled resident trader appearance visually inspected; role, idle, interaction and respawn assertions pass"
+  },
+  {
+    "file": "package-looted-restored.png",
+    "source": "reports/clothing_loot/20261101T165721941836Z/restore/looted-character.png",
+    "sha256": "251006cb56ea73dc864715f076363a07a0b439ed8229d9259539c0abc996aadc",
+    "pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be",
+    "provenance": "Godot 4.7.2 installed-package screenshot. Original garments over retained R11 body and existing world assets; inherited notices/GAP-002 remain; no screenshot relicensing.",
+    "review": "Portrait restoration visually inspected; background initial trader T-pose is not animation acceptance"
+  },
+  {
+    "file": "package-woven-equipped.png",
+    "source": "reports/woven_clothes/20261101T165646728728Z/source/02-equipped.png",
+    "sha256": "674a0cff9bcef0147b016c6f95e0cf259b9dc6470abcd871945125188a25a510",
+    "pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be",
+    "provenance": "Godot 4.7.2 installed-package screenshot. Original garments over retained R11 body and existing world assets; inherited notices/GAP-002 remain; no screenshot relicensing.",
+    "review": "Paid woven items shown equipped in installed HUD; assistant inspected"
   }
 ]

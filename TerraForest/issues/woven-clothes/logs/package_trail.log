@@ -1,0 +1,79 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS 301 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 301 has a matching normalized ground-item mesh
+PASS 302 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 302 has a matching normalized ground-item mesh
+PASS 303 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 303 has a matching normalized ground-item mesh
+PASS 304 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 304 has a matching normalized ground-item mesh
+PASS 305 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 305 has a matching normalized ground-item mesh
+PASS 306 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 306 has a matching normalized ground-item mesh
+PASS empty equipment selects the minimal starter outfit
+PASS starter excludes unequipped outer gear Carry_Axe belt frog
+PASS starter excludes unequipped outer gear Carry_Back cross strap
+PASS starter excludes unequipped outer gear Carry_Belt buckle
+PASS starter excludes unequipped outer gear Carry_Carbine keeper 1_066
+PASS starter excludes unequipped outer gear Carry_Carbine keeper 1_425
+PASS starter excludes unequipped outer gear Carry_Left shoulder harness
+PASS starter excludes unequipped outer gear Carry_Pickaxe keeper 1_066
+PASS starter excludes unequipped outer gear Carry_Pickaxe keeper 1_355
+PASS starter excludes unequipped outer gear Carry_Right shoulder harness
+PASS starter excludes unequipped outer gear Carry_Waist belt
+PASS starter excludes unequipped outer gear Hair_ShortCrop
+PASS starter excludes unequipped outer gear Wardrobe_Boots
+PASS starter excludes unequipped outer gear Wardrobe_FieldVest
+PASS plant fibres enter ordinary inventory
+PASS paid recipe crafts Trail hat
+PASS paid recipe crafts Trail jerkin
+PASS paid recipe crafts Trail boots
+PASS three recipes consume exactly 14 plant fibres
+PASS wrong slot rejects 304
+PASS equip 304 updates portrait and gameplay body
+PASS stale drag cannot duplicate 304
+PASS wrong slot rejects 305
+PASS equip 305 updates portrait and gameplay body
+PASS stale drag cannot duplicate 305
+PASS wrong slot rejects 306
+PASS equip 306 updates portrait and gameplay body
+PASS stale drag cannot duplicate 306
+PASS alternate pack enters backpack
+PASS swap 301 returns previous item and hides its mesh
+PASS swap 302 returns previous item and hides its mesh
+PASS swap 303 returns previous item and hides its mesh
+PASS swap 304 returns previous item and hides its mesh
+PASS swap 305 returns previous item and hides its mesh
+PASS swap 306 returns previous item and hides its mesh
+PASS unequip removes all three meshes from both views
+PASS minimal starter visibility restored for Carry_Axe belt frog
+PASS minimal starter visibility restored for Carry_Back cross strap
+PASS minimal starter visibility restored for Carry_Belt buckle
+PASS minimal starter visibility restored for Carry_Carbine keeper 1_066
+PASS minimal starter visibility restored for Carry_Carbine keeper 1_425
+PASS minimal starter visibility restored for Carry_Left shoulder harness
+PASS minimal starter visibility restored for Carry_Pickaxe keeper 1_066
+PASS minimal starter visibility restored for Carry_Pickaxe keeper 1_355
+PASS minimal starter visibility restored for Carry_Right shoulder harness
+PASS minimal starter visibility restored for Carry_Waist belt
+PASS minimal starter visibility restored for Hair_ShortCrop
+PASS minimal starter visibility restored for Wardrobe_Boots
+PASS minimal starter visibility restored for Wardrobe_FieldVest
+PASS existing binary equipment snapshot restores without a schema change
+PASS matching backpack snapshot restores without duplicating clothing
+PASS refresh after restore reapplies clothes to both views
+PASS first person hides the hood and keeps body/feet
+PASS third person restores the worn hood
+PASS unchanged equipment does not rerender the portrait
+PASS hidden portrait remains idle
+PASS rendered front/side/back Idle
+PASS rendered front/side/back Walk
+PASS rendered front/side/back Run
+PASS rendered front/side/back Player_Crouch
+PASS rendered front/side/back FP_Pickaxe_Fresh_Swing
+PASS rendered front/side/back FP_Unarmed_Punch
+PASS review never captures the pointer
+WOVEN_CLOTHES checks=75 failures=0

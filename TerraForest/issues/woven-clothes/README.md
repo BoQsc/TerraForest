@@ -1,13 +1,31 @@
 # Wearable clothing packs and trader outfit
 
-- Status: Woven revision 1 installed; trader role and trail pack source-verified,
-  minimal starter and corpse loot source-verified; awaiting the next coordinated package.
+- Status: Installed / both packs, minimal starter, trader role and corpse loot
+  pass scoped source and package checks.
 - Updated: 2026-11-01. Fix/build: woven woodland and trail revision 1; see focused Git history.
 - User review: Shown woven trader outfit and trail set approved on 2026-11-01.
   User requested both in the next combined build, with all outfits available.
   Broader character/animation quality remains separate.
 - Symptom: Head, Body and Feet accepted the three woven items without changing
   the character's 3D outfit; inventory silhouettes were generic folded boxes.
+
+## Combined installed build
+
+The combined PCK now contains the approved trader outfit, both complete craftable
+packs, minimal starter and new-corpse trail drops. Package checks pass **197**
+assertions: woven 75, trail 75, an existing saved trail outfit 8, actual zombie
+death/loot/equip/save 14 plus fresh-process restore 8, and trader interaction/idle/
+streamed respawn 17. Each run verified all 14 matching native libraries first.
+Owned fixtures only; no user save was edited. Exact logs, commands, PCK/native
+hashes and sampled RAM/VRAM readings: [package-evidence.json](package-evidence.json).
+
+![Trader in the combined installed package](images/package-trader.png)
+
+Assistant inspected the installed HUD, trail gallery, settled trader and restored
+loot portrait. The [restored portrait capture](images/package-looted-restored.png)
+also catches the background trader's initial T-pose; it is not animation acceptance.
+The dedicated settled trader check above passes separately. Broader animation
+fitting, frame pacing and human in-game review remain open.
 
 ## Minimal starter and zombie clothing
 
@@ -96,15 +114,15 @@ asset terms are in the [trail pack](../../addons/characters/wearables/trail/READ
 The shared atlas changes only through the existing dependency-aware bake; scoped
 derivative receipts and offline notices preserve other assets' terms.
 
-The next coordinated build must include the approved trader role and both player
-clothing packs. All six pieces remain craftable/equippable and can be mixed by slot;
+The installed build includes the approved trader role and both player clothing
+packs. All six pieces remain craftable/equippable and can be mixed by slot;
 unequipping restores the minimal shirt/trousers starter. There is no trader-only clothing
 restriction. The woven set costs 9 plant fibres and the trail set costs 14.
 
-The combined export and matching package HUD/world/trader checks remain pending.
-Run both woven and trail HUD checks to verify all six paid recipes, then normal
-world save/restore and trader interaction/respawn. The earlier installed evidence
-below applies to woven revision 1. The main build chat owns the next export.
+Both package HUD checks verify all six paid recipes and switching outfits. World
+restoration, actual corpse loot persistence and trader interaction/respawn also
+pass. The older installed evidence below remains historical woven revision 1
+evidence; the combined release is identified in `package-evidence.json` above.
 
 ## Images
 
@@ -141,7 +159,7 @@ First fit: inherited carry straps protruded through the vest. Run samples also
 exposed skin through the first sole. Replaced by scoped harness visibility and
 larger closed soles. Earlier evidence is preserved, not represented as accepted.
 
-## Changes and verification
+## First woven revision: changes and verification
 
 - Independently authored geometry, weave textures and ten-bone weights. Original
   asset/data dedication CC0-1.0; generator/adapter/test code 0BSD. Exact paths,
@@ -169,7 +187,7 @@ larger closed soles. Earlier evidence is preserved, not represented as accepted.
   closure requires the same base-versus-new crouch comparison plus movement poses.
 - Animation review is sampled, not all-frame or all-clip certification. Additional
   character proportions require a new fit and weight pass.
-- Combined package now passes 49 clothing checks and 8 fresh-process checks in the
+- The earlier woven R1 package passed 49 clothing checks and 8 fresh-process checks in the
   existing owned world; the equipped portrait was visually inspected. Reports:
   `reports/woven_clothes/20261101T153115340716Z` and `20261101T153120603692Z`.
   New owned package-world paid crafting/equip/save and another process restoring
