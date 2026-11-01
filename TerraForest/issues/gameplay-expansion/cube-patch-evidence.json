@@ -1,6 +1,7 @@
 {
   "date": "2026-11-01",
-  "status": "Native primitive verified; not a playable multi-owner location reset",
+  "status": "Native primitive verified and installed; not a playable multi-owner location reset",
+  "package": {"sha256": "2bf75c9e6afd2f62f6891e309fa941aa07f23d5fb7e5589b1d253730f9907d72", "checks": 35, "report": "reports/expansion_restore_pack/20261101T192700138728Z/run.json"},
   "format": "TCP1: bounded integer cell box, seed/generator identity, one material byte per cell including air, checksum",
   "limits": {"cells": 262144, "axis": 128, "bytes": 262192, "world_cubes": 2000000},
   "native": {"report": "reports/terrain_cube_patch/20261101T191844230716Z/run.json", "checks_per_variant": 38},

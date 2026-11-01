@@ -28,7 +28,7 @@
     {"report": "reports/block_cell_patch_syntax.log", "cause": "Compiler-only syntax mode returned FileNotFound; ordinary object compilation and both DLL builds succeeded"}
   ],
   "remaining": [
-    "Exact terrain voxel cubes, model/door, contents, residents, vegetation and water reset ownership",
+    "Connect verified exact-cube primitive (cube-patch-evidence.json) and remaining model/door, contents, residents, vegetation and water reset ownership",
     "Persistent bounded baselines, admission safety and multi-owner rollback",
     "Ordinary trader offers, marker/E activation, live objective/reward delivery and save/reopen",
     "Dense reset, rendered collision publication, memory and gameplay pacing qualification"

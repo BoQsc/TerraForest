@@ -35,7 +35,8 @@
     }
   ],
   "remaining": [
-    "Bounded exact voxel cube, structure/model/container/door, resident, vegetation and water baselines",
+    "Connect verified cube/building-cell primitives (cube-patch-evidence.json, block-patch-evidence.json) to the multi-owner transaction",
+    "Model/container/door, resident, vegetation and water baselines",
     "Persistent baseline retention and multi-owner reset rollback",
     "Terrain worker scheduling and rendered/collision publication",
     "Player/vehicle safety, outside-edit preservation and explicit reset interaction",

@@ -1,7 +1,28 @@
 {
   "date": "2026-11-01",
-  "status": "Published milestone; scoped package gates pass, torch player-pose save and physical mine restoration follow-up remain open",
+  "status": "Published milestone with corrected player-pose and physical mine restoration verified in the current package; full expansion remains incomplete",
+  "current_package": {
+    "sha256": "2bf75c9e6afd2f62f6891e309fa941aa07f23d5fb7e5589b1d253730f9907d72",
+    "bytes": 448922844,
+    "distribution_bytes": 479438099,
+    "matching_native_libraries": 14,
+    "restoration_fix_commit": "016e3ffb",
+    "cube_primitive_commit": "008bc4bf",
+    "mine_evidence_commit": "1aae350f",
+    "export_log": "reports/expansion_restore_export.log",
+    "required_export_gates": "reports/building_standards/20261101T192237739827Z/run.json",
+    "checks": [
+      {"name": "mine_physical_reentry_and_inside_reopen", "passed": true, "checks": 105, "report": "reports/coal_mine/20261101T184507896315Z/package_restoration_pass.json", "scope": "Engine with explicit installed PCK: actual saved underground position, all nine survivors, all catalog pose adapters, invalid pose rejection, inventory and doors; no teleport workaround"},
+      {"name": "reset_primitives_and_restoration_shape", "passed": true, "checks": 85, "report": "reports/expansion_restore_pack/20261101T192700138728Z/run.json", "scope": "Engine with explicit installed PCK: headless cube35, field35 and actual zombie capsule15; not gameplay reset or foreground performance"}
+    ],
+    "sampled_mine_peak_private_bytes": 3763073024,
+    "sampled_mine_peak_dedicated_gpu_bytes": 1502715904,
+    "pointer_captures": 0,
+    "root_user_executable_sha256_unchanged": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "visual_review": "Restored station image inspected; geometry/identity recovery verified, no new artistic approval or 60-FPS claim"
+  },
   "pack": {
+    "role": "Previous combined milestone; all verified_package_checks below refer to this retained package identity, not current_package",
     "path": "dist/TerraForest.pck",
     "sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
     "bytes": 448923068,
@@ -26,7 +47,7 @@
   "verified_package_checks": [
     {"name": "world_entry_fly_in", "passed": true, "checks": 49, "report": "reports/entry_fly_in_pack/20261101T183739770167Z/run.json", "scope": "Exact root executable; user-deferred optimization remains open"},
     {"name": "town_signs", "passed": true, "checks": 35, "report": "reports/town_signs_world/20261101T184013933118Z/run.json", "scope": "Normal generation/reopen; final UV/road views inspected by owning chat; restored Dunvale 67.10 ms outlier retained"},
-    {"name": "coal_mine", "passed": true, "checks": 100, "report": "reports/coal_mine/20261101T184507896315Z/run.json", "scope": "Uninterrupted normal generation/full journey59 plus fresh-process data reopen41; no capture and resource gates pass. Restored station image rejected: fixture teleported to surface; physical re-entry follow-up pending"},
+    {"name": "coal_mine", "passed": true, "checks": 100, "report": "reports/coal_mine/20261101T184507896315Z/run.json", "scope": "Uninterrupted normal generation/full journey59 plus fresh-process data reopen41; no capture and resource gates pass. Initial restored station image rejected: fixture teleported to surface. Corrected physical re-entry is separately verified under current_package"},
     {"name": "combat", "passed": true, "checks": 44, "report": "reports/combat_world/20261101T185025193271Z/run.json", "scope": "Exact root executable: actual firearm/barrel chain, optional integrity, partial-blast save/reopen; resource gates and zero capture pass"},
     {"name": "trader_departure", "passed": true, "checks": 24, "report": "reports/trader_ride_world/20261101T185229667074Z/run.json", "scope": "Exact root executable: quote, paid boarding and over thirty metres of physical travel; no full packaged round-trip claim"},
     {"name": "trader_paid_reopen", "passed": true, "checks": 14, "report": "reports/trader_ride_world/20261101T185356591401Z/run.json", "scope": "Exact root executable: same car, exact wallet/no repeat fare, both views, over twenty metres resumed travel and durable close"},
@@ -36,10 +57,7 @@
     {"report": "reports/coal_mine/20261101T184507896315Z/resume_reentry_rejected.json", "scope": "Physical re-entry reaches station, but fewer than nine surviving station bodies are admitted; 48 checks, one failure"},
     {"report": "reports/coal_mine/20261101T184507896315Z/inside_restore185833/console.log", "scope": "Genuine saved underground player pose differs on browser reopen; 11 checks, one failure. Torch id6 exceeds legacy pose codec0..4 and stale _saved_pose was reused"}
   ],
-  "pending_package_checks": [
-    "Corrected player-pose capture for all current catalog selections, fail-closed invalid active poses and matching package save/reopen",
-    "Coal mine physical survivor admission and genuine saved underground pose restoration without test teleport"
-  ],
+  "pending_package_checks": [],
   "scope_limits": [
     "User worlds and user-owned root TerraForest.exe remain unchanged",
     "60 FPS cap, VSync and Quiet Mode unchanged",

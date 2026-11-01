@@ -9,10 +9,14 @@
 
 The coordinated expansion package is exported and starts successfully, with all
 14 native libraries matching the verified source builds. It includes the coal
-mine, combat, trader travel, town signs and both reset primitives. This supersedes
+mine, combat, trader travel, town signs and three reset primitives. This supersedes
 the older primitives' "not installed" notes below, not their limited scope:
-gameplay resets are still absent. Exact-executable feature journeys are being
-checked serially; no complete expansion or new visual approval is claimed.
+gameplay resets are still absent. The updated package fixes stale player poses
+when saving with newer items and mismatched zombie restoration collision shapes.
+Physical mine re-entry and genuine underground reopening pass 105 checks;
+package-native field/cube/capsule checks pass another 85. Earlier exact-executable
+journeys retain their own package identity. No complete expansion, smooth-frame
+qualification or new visual approval is claimed.
 [Frozen package identity and pending gates](combined-package-evidence.json).
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests

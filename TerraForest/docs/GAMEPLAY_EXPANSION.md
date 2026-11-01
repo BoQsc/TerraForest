@@ -84,7 +84,9 @@ Return immediately after persistence qualification. Close only with normal
 generated-world accept/travel/reset/clear/claim/reopen evidence, outside-region
 preservation, failure rollback and performance measurements. Source generation,
 streamed ownership and persistence checks pass; matching package generation and
-fresh-process restore pass 25 + 10 checks. The 620-byte foundation is installed.
+fresh-process restore initially pass 25 + 10 checks. The combined content package
+then passes 27 + 10 with five locations, twenty residents and twelve stocked
+chests in 877 bytes. These are ownership checks, not playable quests.
 The expansion tracker retains the first failed save-return test and the separately
 reproduced cache-accounting priority fix.
 
