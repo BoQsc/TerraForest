@@ -7,11 +7,13 @@ Source browser now reads saved-world metadata/photos off the UI thread, caches
 eight thumbnails and loads generation code only when requested. Three alternating
 rendered comparisons with 299 saves: median first browser frame 1.75 → 1.24 s,
 filter update 45 → 2 ms. Focused concurrency/preview, presentation, credits,
-cancellation, progress and continue-last checks pass. Existing executable/PCK
-not rebuilt during concurrent native/content work. Source icon freshness
-preflight, full scene/native/GPU startup, other menus and exported timing remain
-unqualified. Return after the build stabilizes for export comparison and player
-review; do not infer general UI/performance completion. Evidence and exact remaining
+cancellation, progress and continue-last checks pass. The coordinated export is
+now installed with native/content milestone cb0c9cc8; all 42 packaged browser
+checks and rendered credits pass, as do source/package exploration-world create
+and restore checks. Source icon freshness preflight, full scene/native/GPU startup,
+other menus and exported timing remain unqualified. Return when the shared test
+window is available for exported timing comparison and player review; do not infer
+general UI/performance completion. Evidence and exact remaining
 scope: [browser issue](../issues/browser-responsiveness/README.md).
 
 ## Full gameplay expansion — 2026-11-01

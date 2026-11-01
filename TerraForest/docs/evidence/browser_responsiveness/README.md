@@ -1,7 +1,8 @@
 # Non-gameplay browser responsiveness — 2026-11-01
 
-Source implementation and scoped checks; the existing executable/PCK was not
-rebuilt while other work was changing native libraries and generation content.
+The initial source pass left the executable/PCK untouched during concurrent
+native/content work. The coordinated export is now installed and passes packaged
+browser/credits functional checks; exported startup timing remains unmeasured.
 
 ## Measured change
 
@@ -65,6 +66,30 @@ The four migrated full-world integration scripts pass Godot parse checks
 (`integration_parse.json`) but were not run end to end in this pass.
 Generation/gameplay assets and binaries were changing concurrently; the
 focused cancellation and preview checks cover the changed lazy-loading paths.
+
+## Coordinated installed-package verification
+
+The expansion chat installed the matching export with browser commit `83f09d30`
+and native/content milestone `cb0c9cc8`. PCK SHA-256:
+`0c073b05501ae387f28d38e9cbf7b1c6cd781332283205a9d5838013eec8b889`.
+
+- Packaged `world_browser_responsiveness`: all 42 checks pass, including deferred
+  preview and asynchronous catalog/thumbnail behavior.
+- Packaged `credits_licenses`: rendered check passes using an external writable
+  screenshot folder and a window that does not take focus. The first unadapted
+  headless run failed because it attempted to write under read-only `res://`;
+  that failed harness run remains recorded, not counted as a pass.
+- The expansion chat's normal source and packaged world flows each pass 76
+  create/interaction/travel checks plus 15 fresh-process restore checks. This
+  exercises the migrated exploration-world catalog wait; the other migrated
+  full-world scripts retain their parse-only qualification from this pass.
+
+See [package results and original report locations](package_validation.json),
+[browser log](package_browser.log), [credits log](package_credits.log), and
+[the integrated-world evidence](../../../issues/gameplay-expansion/watchtower-world-evidence.json).
+These close the pending export installation and browser/credits functional checks.
+They do not establish exported startup speed or user visual approval. No further
+renderer or export was started by this chat while other work used the test window.
 
 ## Remaining scope and provenance
 

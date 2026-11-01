@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-01",
+  "pack_sha256": "0c073b05501ae387f28d38e9cbf7b1c6cd781332283205a9d5838013eec8b889",
+  "implementation_commit": "83f09d30",
+  "integrated_content_commit": "cb0c9cc8",
+  "scope": "Functional verification only; no exported startup timing comparison. Tests run by the coordinated expansion chat; logs/manifests checked by browser chat.",
+  "checks": [
+    {
+      "name": "world_browser_responsiveness",
+      "report": "reports/watchtower_package_checks/20261101T122451101872Z",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--headless",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\watchtower_package_checks\\20261101T122451101872Z\\world_browser_responsiveness\\driver.gd"
+      ],
+      "result": {
+        "exit_code": 0,
+        "passed": true,
+        "diagnostics": [],
+        "elapsed_seconds": 1.558305400016252
+      }
+    },
+    {
+      "name": "credits_licenses",
+      "report": "reports/watchtower_package_checks/20261101T122451101872Z",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--headless",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\watchtower_package_checks\\20261101T122451101872Z\\credits_licenses\\driver.gd"
+      ],
+      "result": {
+        "exit_code": 4294967295,
+        "passed": false,
+        "diagnostics": [
+          "\nERROR: Could not create directory: 'res://reports'.",
+          "SCRIPT ERROR: Cannot call method 'close' on a null value."
+        ],
+        "elapsed_seconds": 98.9139109000098
+      }
+    },
+    {
+      "name": "credits_licenses_rendered",
+      "report": "reports/watchtower_package_checks/20261101T122722947826Z",
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "60",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\watchtower_package_checks\\20261101T122722947826Z\\credits_driver.gd"
+      ],
+      "scope": "Pack credits UI; external test changes only output folder and no-focus flag",
+      "result": {
+        "exit_code": 0,
+        "passed": true,
+        "diagnostics": [],
+        "elapsed_seconds": 2.379958599980455
+      }
+    }
+  ]
+}

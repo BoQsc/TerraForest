@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Startup and browser latency](browser-responsiveness/README.md) | Improved-partial / source checks | Catalog/photo reads run in background; bounded thumbnail cache; median first frame 1.75 → 1.24 s and filtering 45 → 2 ms with 299 saves; export timing and player review pending |
+| [Startup and browser latency](browser-responsiveness/README.md) | Improved-partial / installed, scoped checks | Background catalog/photo reads and bounded thumbnails; source first frame 1.75 → 1.24 s, filtering 45 → 2 ms with 299 saves; packaged browser/credits pass, export timing and player review pending |
 | [Gameplay expansion](gameplay-expansion/README.md) | In progress / lookouts installed | Shared native fitting, stocked upper-deck supplies and persistent lookout sleepers; source/package travel/reload verified; broader quality, quests, progression and expanded content remain open |
 | [Building expansion materials and joints](building-expansion/README.md) | E2 approved / production integration installed | Eight individual imagegen materials alongside retained optional older sets, shape/palette improvements and nine matched revisions; source/release/PCK, save/reopen and traversal checks pass; known older NPC planning and frame-pacing limits retained |
 | [Trader and civic buildings](civic-buildings/README.md) | R1/E2 approved / production integration installed | Full trade, four basements, nine normal catalog choices and stock/inventory restore pass without review flags; source/PCK recipes and actual main executable checked; concurrent work preserved; broader frame pacing remains open |
