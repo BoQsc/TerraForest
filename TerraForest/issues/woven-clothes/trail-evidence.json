@@ -1,7 +1,7 @@
 {
   "date": "2026-11-01",
   "scope": "Trader role and second trail clothing set; source verified, matching combined package pending",
-  "user_review": "Woven appearance approved for trader; trail set unreviewed",
+  "user_review": "Shown woven trader and trail appearances approved on 2026-11-01; broader animation quality remains separate",
   "passed": [
     {
       "name": "trail_source",
@@ -52,8 +52,27 @@
   ],
   "portable_bundle": {
     "path": "reports/woven_clothes/TerraForest_Clothing_Packs_R2.zip",
-    "bytes": 1005412,
-    "sha256": "53d93ce97a15d1d822b932052e5fcc4e14d65565c1f85e8bbd2177ee494b08d0",
+    "bytes": 1005428,
+    "sha256": "672a9735265c36e73a2df54f3dfd947f11766299f21dbe48c485e61dc9c76035",
     "scope": "Both original garment sets and editable source; no inherited character or shared atlas"
+  },
+  "next_combined_build": {
+    "required": true,
+    "trader_outfit": [
+      301,
+      302,
+      303
+    ],
+    "player_craftable_items": [
+      301,
+      302,
+      303,
+      304,
+      305,
+      306
+    ],
+    "base_outfit": "Restored on unequip",
+    "verification": "Both package recipe/equip checks, normal world save/restore and production trader interaction/respawn",
+    "status": "Handed to main build chat; matching export pending"
   }
 }

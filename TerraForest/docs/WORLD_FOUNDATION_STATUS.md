@@ -16,7 +16,9 @@ process restore pass 15 + 8; real trader interaction/respawn passes 17. Editable
 Woven revision 1 remains installed and verified in the previous combined package.
 The new trader role and trail set await the next coordinated export after quest
 work releases the shared build, followed by matching package HUD/world/trader
-checks. Trail visual approval and broader frame pacing remain open. Existing
+checks. The user approved both shown outfits and requested all outfits remain
+available: all six items stay craftable/equippable, with base clothes restored on
+unequip. Broader animation fitting and frame pacing remain open. Existing
 crouch trouser clipping and shirt shoulder defects remain outside this pack's
 scope; return on a body fitting task with matching before/after pose evidence.
 Exact checks, rejected first fits and remaining scope:

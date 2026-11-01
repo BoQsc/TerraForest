@@ -3,8 +3,9 @@
 - Status: Woven revision 1 installed; trader role and trail pack source-verified,
   awaiting the next coordinated package.
 - Updated: 2026-11-01. Fix/build: woven woodland and trail revision 1; see focused Git history.
-- User review: Woven appearance approved for the trader on 2026-11-01. Trail set
-  and broader character/animation quality remain unreviewed.
+- User review: Shown woven trader outfit and trail set approved on 2026-11-01.
+  User requested both in the next combined build, with all outfits available.
+  Broader character/animation quality remains separate.
 - Symptom: Head, Body and Feet accepted the three woven items without changing
   the character's 3D outfit; inventory silhouettes were generic folded boxes.
 
@@ -41,7 +42,7 @@ process. Source reports and preserved logs: [trail-evidence.json](trail-evidence
 Assistant inspected front/side/back Idle, Walk, Run, crouch, pickaxe and punch
 samples. The new garments remain attached in those samples; the inherited
 trouser knee clipping and shirt shoulder defects remain. This is not an all-frame
-fit guarantee or user visual acceptance of the new set.
+fit guarantee; the subsequent user approval covers the shown appearances.
 
 ![Rejected first trail fit](images/trail-rejected-first-fit.png)
 
@@ -56,9 +57,15 @@ asset terms are in the [trail pack](../../addons/characters/wearables/trail/READ
 The shared atlas changes only through the existing dependency-aware bake; scoped
 derivative receipts and offline notices preserve other assets' terms.
 
-The trader/new trail changes still need the coordinated package export and the
-same package HUD/world/trader checks. The earlier installed evidence below applies
-to woven revision 1. Return when the main quest work releases its shared build.
+The next coordinated build must include the approved trader role and both player
+clothing packs. All six pieces remain craftable/equippable and can be mixed by slot;
+unequipping restores the original base outfit. There is no trader-only clothing
+restriction. The woven set costs 9 plant fibres and the trail set costs 14.
+
+The combined export and matching package HUD/world/trader checks remain pending.
+Run both woven and trail HUD checks to verify all six paid recipes, then normal
+world save/restore and trader interaction/respawn. The earlier installed evidence
+below applies to woven revision 1. The main build chat owns the next export.
 
 ## Images
 
@@ -116,8 +123,8 @@ larger closed soles. Earlier evidence is preserved, not represented as accepted.
 
 ## Remaining / resume here
 
-- Woven appearance is approved for the trader. Trail-set visual approval and
-  broader animation review remain open; see the new sampled images above.
+- Shown woven trader and trail appearances are approved. Broader animation
+  review remains separate; see the sampled images and known inherited defects.
 - Inherited trouser skin clipping remains. Return on a body/trouser fitting task;
   closure requires the same base-versus-new crouch comparison plus movement poses.
 - Animation review is sampled, not all-frame or all-clip certification. Additional

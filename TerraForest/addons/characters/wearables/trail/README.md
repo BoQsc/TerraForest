@@ -39,4 +39,5 @@ The original 0BSD generator inherits the primitive helpers in
 exact source and output hashes; [ASSET_LICENSE.md](ASSET_LICENSE.md) identifies
 the CC0 assets and derivative scope. Sampled fit and real inventory/world evidence
 are recorded in `issues/woven-clothes/README.md`; sampling is not a guarantee of
-every animation frame. New trail-set visual approval remains pending.
+every animation frame. The shown trail appearance was approved on 2026-11-01;
+both packs must remain player-accessible in the next combined build.
