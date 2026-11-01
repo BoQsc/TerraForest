@@ -1,6 +1,15 @@
 {
   "date": "2026-11-01",
-  "status": "Source and both native variants verified; installed-package verification pending; not gameplay reset",
+  "status": "Source, both native variants and installed package verified; not gameplay reset",
+  "commits": ["2883623e", "6c034572"],
+  "package": {
+    "sha256": "008043cc4caa120d03b1fb2803242b7d44f1558782b589508b0b6f2877c45ac2",
+    "matching_native_libraries": 14,
+    "report": "reports/model_patch/20261101T200412080488Z/run.json",
+    "required_export_gates": "reports/building_standards/20261101T200305663330Z/run.json",
+    "checks": {"model": 52, "fresh_process_reopen": 3, "horizon": 63},
+    "scope": "Explicit installed PCK and matching libraries, external headless drivers; not playable location reset or previous gameplay journeys rerun"
+  },
   "format": "TFMP1: local integer bounds, asset/prototype digest, canonical TFSI ID/transform payload and SHA-256",
   "limits": {"axis_metres": 128, "selected_models": 4096, "bytes": 229652, "group_bounds": 4096, "candidate_records": 16384, "staged_group_members": 16384},
   "verification": {
@@ -34,7 +43,6 @@
   ],
   "timing": {"scope": "Headless 4096-model baseline; no gameplay frame-pacing or GPU-readback claim", "bytes": 229533, "debug_capture_us": 2440, "debug_restore_us": 3286, "release_capture_us": 2554, "release_restore_us": 3641},
   "remaining": [
-    "Matching installed package verification",
     "Active doors, damage/durability, residents/corpses, vegetation and water ownership",
     "Persistent baseline retention, player/vehicle exclusion and coordinated multi-owner rollback",
     "Actual trader offers, marker/E reset, live objectives/rewards and populated-world performance",

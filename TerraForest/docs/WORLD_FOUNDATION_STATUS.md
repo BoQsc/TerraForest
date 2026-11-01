@@ -134,7 +134,8 @@ baselines before enabling actual quest reset.
 [Container patch evidence](../issues/gameplay-expansion/container-patch-evidence.json).
 
 Static model patches now pass 52 native checks and three fresh-process restoration
-checks per variant, plus collision/history/render-page/horizon regressions. They
+checks per variant, plus collision/history/render-page/horizon regressions. Installed
+package `008043cc` passes 118 model/reset/reopen/horizon assertions. They
 preserve outside edits and reject unavailable, boundary-crossing or protected
 models; 4,096 selected records and 16,384 candidate records cap the work. This is
 not active door/corpse state or a coordinated gameplay reset. Next: those remaining

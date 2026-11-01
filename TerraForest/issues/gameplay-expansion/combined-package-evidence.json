@@ -1,7 +1,21 @@
 {
   "date": "2026-11-01",
-  "status": "Published milestone with verified restoration fixes and installed bounded container restoration; full expansion remains incomplete",
+  "status": "Published milestone with verified restoration fixes and five installed bounded reset primitives; full expansion remains incomplete",
   "current_package": {
+    "sha256": "008043cc4caa120d03b1fb2803242b7d44f1558782b589508b0b6f2877c45ac2",
+    "bytes": 448922844,
+    "distribution_bytes": 479674643,
+    "matching_native_libraries": 14,
+    "model_primitive_commits": ["2883623e", "6c034572"],
+    "export_log": "reports/expansion_model_final_export.log",
+    "required_export_gates": "reports/building_standards/20261101T200305663330Z/run.json",
+    "verification": "reports/model_patch/20261101T200412080488Z/run.json",
+    "passed": true,
+    "checks": {"model_patch": 52, "fresh_process_reopen": 3, "model_horizon": 63},
+    "root_user_executable_sha256_unchanged": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "scope": "Explicit installed-PCK headless model/reset/reopen/horizon suites. Models API not yet wired into gameplay. Earlier gameplay and container checks retain their exact package identity below; no new visual or frame-pacing acceptance."
+  },
+  "container_package": {
     "sha256": "32ded98664686b7146fa9af481ca1bf06177a86a54373f085ea08468f404fc46",
     "bytes": 448922844,
     "distribution_bytes": 479632147,
