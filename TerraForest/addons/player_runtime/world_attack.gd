@@ -163,12 +163,19 @@ func apply_target(t: Dictionary) -> bool:
 		var rows:Array=owner.resident[t.cell]
 		if t.species<0 or t.species>=rows.size() or not rows[t.species].ids.has(t.id):return false
 	if t.kind=="model" and Durability.RESOURCE_MODELS.has(t.get("asset","")) and t.collection.get_instance(t.id).is_empty():return false
-	if t.kind=="model" and t.collection.is_removal_protected(t.id):
+	var locked:bool=t.kind=="model" and t.collection==game.storage.collection and game.storage.store.is_locked(t.id)
+	if t.kind=="model" and t.collection.is_removal_protected(t.id) and not locked:
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
 	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
 	if t.kind=="cover" and t.get("species",-1)==8:damage=1
 	var harvest:=harvest_profile(t);var before:Dictionary={};var result:Dictionary
-	if not harvest.is_empty():
+	if locked:
+		if t.collection.get_instance(t.id).is_empty():return false
+		result=game.storage.store.damage_lock(t.id,damage,game.storage.store.lock_state(t.id).store_revision)
+		result["destroyed"]=false
+		if result.ok:game.storage.protect(t.id,game.storage.store.requires_protection(t.id))
+		t.name="Chest lock"
+	elif not harvest.is_empty():
 		before=hud.inventory.snapshot()
 		var planned:Dictionary=durability.preview_harvest(t.key,t.health,damage,harvest.step,Durability.HARVEST_FINISHING_BONUS)
 		if not planned.ok:game._show_lake_notice(planned.get("reason","Harvest unavailable"));return false
@@ -193,6 +200,7 @@ func apply_target(t: Dictionary) -> bool:
 	var wear: Dictionary=hud.inventory.wear_tool(hud.active_slot,1,hud.inventory.snapshot().revision) if item!=0 else {}
 	hud.refresh()
 	game._show_lake_notice((hud.CATALOG.get(item,"Tool")+" broke · Tab → Crafting to make a replacement") if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
+	if locked and result.get("opened",false):game._show_lake_notice("Lock broken · E open chest")
 	return true
 func destroy(t: Dictionary) -> bool:
 	match t.kind:

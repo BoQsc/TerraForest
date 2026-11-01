@@ -52,8 +52,16 @@ both reproduce identically in the previously installed pack, not a new regressio
 The required current source/release building-contract gate passes; retain both facts.
 Sparse underground dressing and town-to-POI/NPC routes also remain open; return
 before art acceptance. Shared
-location ownership/reset and locks are next dependencies, not completed by loot
-seeding. Arbitrary slopes and moving-obstacle review also remain open.
+location ownership/reset remains a next dependency, not completed by loot
+seeding. Native container locks, lockpicks and forced entry are implemented in
+source with 56 debug/release lock checks plus legacy suites and 24 HUD/attack
+adapter checks. Actual generated-chest picking, forced entry, loot→metal→pick
+crafting, E unlocking and compound-save/fresh-process restoration pass 30 + 11
+checks; partial lock damage and contents persist. Matching combined export/package
+verification and direct animation-input playtest remain pending. The broad
+generation test reproduced the known second-lookout return-walk stall before
+reaching locked chests; the passing dedicated interaction test does not close
+that route failure. Arbitrary slopes and moving-obstacle review also remain open.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Gameplay responsiveness verification — 2026-11-01

@@ -10,6 +10,7 @@ class NativeCorpseStore : public NativeContainerStore {
     std::map<int64_t,Corpse> records;int64_t next_id=1;
     bool decode(const godot::PackedByteArray &,std::map<int64_t,Corpse> &,int64_t &,godot::PackedByteArray &)const;
 protected:
+    bool supports_locks() const override {return false;}
     static void _bind_methods();
 public:
     int64_t create_corpse(godot::Vector3 position,double yaw,int64_t seed);

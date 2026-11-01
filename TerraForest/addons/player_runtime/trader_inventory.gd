@@ -6,7 +6,8 @@ const GOODS := {
 	101: ["Brick", 5, 2, 160], 102: ["Wood", 4, 2, 200],
 	103: ["Concrete", 6, 3, 120], 104: ["Metal", 12, 6, 60],
 	201: ["Stone", 3, 1, 120], 202: ["Iron ore", 8, 4, 50],
-	203: ["Copper ore", 10, 5, 40], 210: ["Dry twigs", 2, 1, 80]
+	203: ["Copper ore", 10, 5, 40], 210: ["Dry twigs", 2, 1, 80],
+	213: ["Lockpick", 8, 3, 24]
 }
 var stock: RefCounted
 

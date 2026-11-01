@@ -7,6 +7,47 @@
 
 ## Images
 
+### Container locks — source verified, 2026-11-01
+
+![Actual generated house chest retains 150 of 180 lock durability after a hatchet hit](images/container-lock-damaged.png)
+![Generated chest opened with a crafted lockpick; supplies and reusable picks remain](images/container-lock-picked.png)
+
+New-world generation selects one in five chests deterministically; selected empty
+house chests receive supplies, while existing exploration supplies are retained.
+Locks have 180 health (twice the normal chest). E uses a craftable/tradable pick,
+with a 10% chance of breaking one; success retains the pick. Tool damage opens the
+lock without deleting the container or its contents. Existing saves are not
+retroactively locked or replenished. Lock state, partial damage and random state
+are native, bounded and binary; no idle polling or replacement model is added.
+
+- Native debug/release: `reports/container_locks/20261101T130327483421Z` and
+  `20261101T130330320349Z`: 56 lock assertions each plus legacy container/drag/
+  capacity/transfer suites. 1,000 deterministic attempts give 105 broken picks;
+  4,096 lock-only records use 98,328 bytes. This is not gameplay frame timing.
+- Real HUD/storage/attack/crafting adapter, fake collection/picking:
+  `reports/checks/20261101T130906940034Z`, 24 assertions. Icon visually inspected.
+- New ordinary generation succeeded in
+  `reports/exploration_world/20261101T130043255160Z`, but the broad traversal test
+  failed at the previously observed second-lookout return walk before checking
+  locked chests. Retain this recurrence, not a passing world qualification.
+- Actual generated-world interaction: `reports/container_lock_world/20261101T131517785107Z`,
+  30 assertions plus 11 fresh-process assertions. Native scene rays select real
+  generated chests; hatchet contact adapter breaks the first lock, ordinary chest
+  UI collects iron, backpack crafting converts iron → metal → picks, E unlocks
+  another chest, and a third lock retains partial damage across compound saves.
+  Images inspected; [capture provenance](container-lock-evidence.json). Peak
+  sampled private commit 3,681,587,200 bytes, dedicated GPU 1,490,513,920 bytes.
+  These offscreen interaction captures do not establish 60-FPS frame pacing,
+  street-to-interior traversal or authored animation/input timing.
+- Retained fixture failures: `20261101T131146397565Z` refused launch at the free-space
+  safety reserve; `20261101T131255627535Z` assumed starter metal and omitted the
+  existing offscreen scene-transition hook. Corrected fixture collects real loot
+  and records zero pointer captures in both passing phases. No limit was disabled.
+- Remaining: matching combined export/package verification and direct player
+  animation-input playtest. The dedicated lock-world check reuses only that owned
+  `Exploration_*` save; it does not replace the failed lookout route requirement. Locked doors,
+  barricades and POI quest reset ownership remain separate unfinished work.
+
 ### Generated W1 lookouts — 2026-11-01
 
 ![Installed world: lookout on a fitted local foundation and connected footpath](images/watchtower-world-approach.png)

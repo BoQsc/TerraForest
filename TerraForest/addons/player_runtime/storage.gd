@@ -2,6 +2,7 @@
 # Event-driven scene/UI coordination. Inventory mutation and encoding are native.
 extends CanvasLayer
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
+const Rules=preload("res://addons/player_runtime/container_rules.gd")
 var store: RefCounted
 var game: Node
 var collection: Node3D
@@ -26,7 +27,7 @@ func protect(id:int,enabled:bool)->bool:
 func prepare(owner_game: Node,persistence: RefCounted) -> bool:
 	game=owner_game;collection=game.structures.model("storage/wooden_chest/v1")
 	store=ClassDB.instantiate("NativeContainerStore")
-	if collection==null or not store.configure(game.player_hud.inventory,4096,16): return false
+	if collection==null or not store.configure(game.player_hud.inventory,Rules.CAPACITY,16,Rules.PICK_ITEM): return false
 	return persistence.register_component("chest_contents",store.capture_storage_snapshot,stage_restore,store,store.capture_storage_snapshot())
 func stage_restore(bytes: PackedByteArray) -> bool:
 	if not store.validate_snapshot(bytes): return false
@@ -57,9 +58,18 @@ func try_open(shared_hit: Variant=null) -> bool:
 	if not allowed() or game.fly or game.player_hud.inventory_open: return false
 	var id:=aimed_id(shared_hit)
 	if id<=0: return false
+	if store.is_locked(id):
+		var result:Dictionary=store.attempt_unlock(id,game.player_hud.inventory,game.player_hud.inventory.snapshot().revision,store.lock_state(id).store_revision)
+		if result.ok:
+			game.terrain.changed_since_save=true;game.player_hud.refresh();protect(id,store.requires_protection(id))
+		if not result.opened:
+			game._show_lake_notice("Lockpick broke · Try another or break the lock" if result.get("broken_pick",false) else "Locked · Craft or buy a lockpick, or hit to break the lock")
+			return true
 	identity=id;opened=true;prior_mouse=Input.mouse_mode
 	game._clear_motion();game.player_hud.inventory_open=true;game.player_hud.enabled=false
 	Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE);panel.show();refresh();return true
+func prompt(id:int)->String:
+	return "E · Unlock chest (lockpick) / Hit to break lock" if store.is_locked(id) else "E · Open wooden chest"
 func close() -> void:
 	if not opened: return
 	opened=false;identity=0;panel.hide()
@@ -109,11 +119,11 @@ func move_selected(deposit: bool) -> bool:
 	var selected: PackedInt32Array=list.get_selected_items()
 	if selected.is_empty(): message.text="Select a stack first.";return false
 	quantity.apply()
-	var existed: bool=store.has_contents(identity)
+	var existed: bool=store.requires_protection(identity)
 	if deposit and not protect(identity,true):
 		message.text="Chest is currently unavailable.";return false
 	var result: Dictionary=store.deposit(identity,game.player_hud.inventory,selected[0],int(quantity.value),player_state.revision,box_state.store_revision) if deposit else store.withdraw(identity,game.player_hud.inventory,selected[0],int(quantity.value),player_state.revision,box_state.store_revision)
-	if (not result.ok and not existed) or (result.ok and not store.has_contents(identity)):
+	if (not result.ok and not existed) or (result.ok and not store.requires_protection(identity)):
 		protect(identity,false)
 	refresh()
 	if result.ok:
@@ -136,7 +146,7 @@ func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not allowed() or aimed_id()!=identity:close();return
 	if not protect(identity,true):return
 	var result: Dictionary=store.drag_slots(identity,game.player_hud.inventory,data.side=="chest",side=="chest",data.slot,slot,data.count,data.player_revision,data.store_revision)
-	if not store.has_contents(identity):protect(identity,false)
+	if not store.requires_protection(identity):protect(identity,false)
 	if result.ok:game.terrain.changed_since_save=true
 	refresh();game.player_hud.refresh()
 	message.text="Stack moved" if result.ok else "Cannot move that stack; inventories refreshed"

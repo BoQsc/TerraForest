@@ -265,6 +265,10 @@ func run()->void:
   var exploration:Dictionary=await preload("res://addons/exploration/generation.gd").publish(game,exploration_sites)
   if not exploration.get("ok",false):print("EXPLORATION_PUBLICATION_FAILED ",exploration);game.free();quit(1);return
   FileAccess.open(output_dir.path_join("exploration.json"),FileAccess.WRITE).store_string(JSON.stringify(exploration))
+ progress("Stocking locked containers")
+ var locks:Dictionary=preload("res://addons/player_runtime/container_rules.gd").seed_generated(game.storage,seed_value)
+ if not locks.get("ok",false):print("CONTAINER_LOCKS_FAILED ",locks);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("container_locks.json"),FileAccess.WRITE).store_string(JSON.stringify(locks))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

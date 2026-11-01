@@ -1,0 +1,11 @@
+{
+  "asset": "lockpick.svg",
+  "additional_assets": ["drops/213.res"],
+  "editable_mesh_source": "../../../tools/bake_lockpick.gd",
+  "license": "CC0-1.0",
+  "creator": "TerraForest project, AI-assisted original vector artwork",
+  "date": "2026-11-01",
+  "source": "Original editable SVG and procedural low-poly mesh authored for the TerraForest lockpick item; no external image, mesh or artwork used.",
+  "prompt": "A small restrained steel lockpick and tension wrench, legible on a dark inventory tile.",
+  "dedication": "Original project contribution dedicated under CC0-1.0 pursuant to the repository contribution policy."
+}
