@@ -68,5 +68,68 @@
     "sha256": "31af12766110f4f920957363c64959068bd943780746f9da14799cd4d4cbacf3",
     "provenance": "Godot 4.7.2 source screenshot. Original woven pack over existing R11 body; inherited character notice/GAP-002 retained.",
     "review": "Assistant sampled visual review; user approval pending"
+  },
+  {
+    "file": "trader-woven.png",
+    "source": "reports/trader_clothes/20261101T160159983594Z/trader-woven.png",
+    "sha256": "22ad6ab945bf8a10af0936936411e7442de1c2109f701e0c440370288e89d672",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Woven appearance approved for trader; assistant reviewed production role screenshot"
+  },
+  {
+    "file": "trail-rejected-first-fit.png",
+    "source": "reports/woven_clothes/20261101T155822132527Z/source/fit-Idle.png",
+    "sha256": "2c583835d2cd4fcb61017833f1ce0783bb26eb7dfd93b42122027ef07b8302a7",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Rejected floating hat and trouser/boot intersections"
+  },
+  {
+    "file": "trail-idle.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-Idle.png",
+    "sha256": "aba53d73eb16c9dc4570236edd507bbee4b863a22466dd5bc0df0d5692a46250",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-walk.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-Walk.png",
+    "sha256": "e75652c0c5244dd732637e63a63cbc884a7782818062ac18a8eb2af4590a414a",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-run.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-Run.png",
+    "sha256": "1d41c57db86c882f85d6d9d6a3e8677118926322d70f8d206e87a5ccf14da172",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-crouch.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-Player_Crouch.png",
+    "sha256": "b0338716aebcb09f4955660503da5f0a55573c0833e87b0f35fc598e9988155c",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-pickaxe.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-FP_Pickaxe_Fresh_Swing.png",
+    "sha256": "eac73297d054a4b0dff7c9455263ee51ed17547068fabc08830bd00dde533fe8",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-punch.png",
+    "source": "reports/woven_clothes/20261101T160141836334Z/source/fit-FP_Unarmed_Punch.png",
+    "sha256": "03d1fb358a6142b8c9b2f41f69f221939e7f0fbfc8057f22bcf181d368ba19d3",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant sampled visual review; new trail-set user approval pending; inherited body defects remain"
+  },
+  {
+    "file": "trail-world-restored.png",
+    "source": "reports/woven_clothes/20261101T160256593464Z/restore/world-third-person.png",
+    "sha256": "35a801289fd940f28e874c1c0c4e4dfad84ff5afd4d56b560b001b5be17ebd47",
+    "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
+    "review": "Assistant production binding review; new trail-set user approval pending"
   }
 ]

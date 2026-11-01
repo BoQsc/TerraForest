@@ -48,7 +48,7 @@
     },
     {
       "path": "addons/player_runtime/art/item_icons.trtex",
-      "sha256": "505ec382fe19a5942216fa7a463c263c788f952263f1f99127cccab5e25fb811",
+      "sha256": "b9599538d0c7660eee67dba25abcb20004fb9eebb2a20f595d5eebccb6a5af5f",
       "scope": "clothing tiles 301,302,303 only; other tiles retain their own terms"
     }
   ]

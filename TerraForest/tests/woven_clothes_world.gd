@@ -2,6 +2,9 @@
 extends "res://tests/window_session_flow.gd"
 var slot:=""
 var restoring:=false
+var outfit:=PackedInt32Array([301,302,303])
+var fibre_cost:=9
+var recipes:=[4,5,6]
 
 func _initialize()->void:
 	root.set_flag(Window.FLAG_NO_FOCUS,true);ProjectSettings.set_setting("terraforest/offscreen_session",true)
@@ -10,6 +13,7 @@ func _initialize()->void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--woven-slot="):slot=argument.trim_prefix("--woven-slot=")
 		restoring=restoring or argument=="--restore"
+		if argument=="--trail":outfit=PackedInt32Array([304,305,306]);fibre_cost=14;recipes=[15,16,17]
 	super._initialize()
 
 func run()->void:
@@ -19,26 +23,26 @@ func run()->void:
 	var game:=current_scene;game.background_fps=30;game.app_focused=true;game.set_physics_process(false);game._clear_motion()
 	var hud:Node=game.player_hud
 	if not restoring:
-		check(hud.inventory.grant_items(PackedInt64Array([204,9]),hud.inventory.snapshot().revision).ok,"fixture supplies nine plant fibres")
-		for recipe in [4,5,6]:check(preload("res://addons/player_runtime/crafting.gd").craft(hud.inventory,recipe,1,hud.inventory.snapshot().revision).ok,"paid recipe crafts %d"%recipe)
+		check(hud.inventory.grant_items(PackedInt64Array([204,fibre_cost]),hud.inventory.snapshot().revision).ok,"fixture supplies recipe fibres")
+		for recipe in recipes:check(preload("res://addons/player_runtime/crafting.gd").craft(hud.inventory,recipe,1,hud.inventory.snapshot().revision).ok,"paid recipe crafts %d"%recipe)
 		hud.refresh();hud.set_open(true);hud.show_side("Character")
-		for id in [301,302,303]:
+		for id in outfit:
 			var source:=-1
 			for i in 32:
 				if hud.inventory.snapshot().slots[i].item==id:source=i;break
 			if not check(source>=0,"crafted item is in the backpack"):await finish();return
-			hud.character_panel.drop_stack("equipment",id-301,hud.drag_data("player",source))
-	check(game.tool_view.human.clothing.worn==PackedInt32Array([301,302,303]),"production player_view binding presents equipped clothes after "+("fresh-process restore" if restoring else "craft/equip"))
+			hud.character_panel.drop_stack("equipment",preload("res://addons/characters/wearables/clothing.gd").SLOTS[id],hud.drag_data("player",source))
+	check(game.tool_view.human.clothing.worn==outfit,"production player_view binding presents equipped clothes after "+("fresh-process restore" if restoring else "craft/equip"))
 	hud.set_open(true);hud.show_side("Character")
 	for i in 6:await process_frame
 	check(hud.character_panel.clothing.worn==game.tool_view.human.clothing.worn,"world portrait and animated player agree")
 	await photograph("world-character")
 	hud.set_open(false);game.player_view.set_enabled(true,false)
 	for i in 5:await process_frame
-	check(game.player_view.active and game.tool_view.human.clothing.garments[301].visible,"actual third-person camera includes hood")
+	check(game.player_view.active and game.tool_view.human.clothing.garments[outfit[0]].visible,"actual third-person camera includes hood")
 	await photograph("world-third-person")
 	game.player_view.set_enabled(false,false)
-	check(not game.tool_view.human.clothing.garments[301].visible,"return to first person hides hood")
+	check(not game.tool_view.human.clothing.garments[outfit[0]].visible,"return to first person hides hood")
 	check(await leave(),"normal save and return publishes owned fixture")
 	await finish()
 

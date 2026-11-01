@@ -1,0 +1,47 @@
+{
+  "author": "TerraForest contributors with OpenAI Codex",
+  "authoring_tool": "4.7.2-stable (steam)",
+  "base_recipe_sha256": "8e427c67f08d99f0ee409e15a19d8916ef86dff93fd93dfb3ae1579c0581ef91",
+  "bones": [
+    "Hips",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "Neck",
+    "Head",
+    "LeftLeg",
+    "LeftFoot",
+    "RightLeg",
+    "RightFoot"
+  ],
+  "date": "2026-11-01",
+  "items": [
+    {
+      "id": 304,
+      "portable_sha256": "54e3a137f70a384edcf486277e578c13c32bf220cb49b83e4aa2c65078406096",
+      "resource": "res://addons/characters/wearables/trail/304.res",
+      "sha256": "3a387e6356a739085e732d1cc4e258053e9f3c0821706ed23f62d1a6e31adec5",
+      "triangles": 1440
+    },
+    {
+      "id": 305,
+      "portable_sha256": "ea0e8a65a5525a9f41b247ae5ee518d0577b45d1ec202497c542a7f10da490ca",
+      "resource": "res://addons/characters/wearables/trail/305.res",
+      "sha256": "79a49a5b8e0a993699eab807f5fa8770369dde2d629fe73444f11f1da5a74dd1",
+      "triangles": 3964
+    },
+    {
+      "id": 306,
+      "portable_sha256": "2376e172f1794d29d2f6a86f62d97803713ac1fb88f721ccb4173b6b3413021d",
+      "resource": "res://addons/characters/wearables/trail/306.res",
+      "sha256": "df2302e0cb4d4629f57d1ef1bbf8b6d0b5b36ec698d05afa0ba7f1de6e621b14",
+      "triangles": 2712
+    }
+  ],
+  "license": "CC0-1.0",
+  "prompt": "Apply the woven outfit to the trader and try more 3D clothing packs; a distinct trail hat, belted jerkin and tall boots",
+  "recipe": "tools/author_trail_clothes.gd",
+  "recipe_sha256": "a97aa4644aaecf1d94e089da684fee036fc6104b1edcc32603d549894a94f91a",
+  "source": "Original garment patterns; original woven-pack primitive helpers, no imported garment geometry or textures",
+  "version": 1
+}

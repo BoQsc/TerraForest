@@ -1,18 +1,26 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
-## Woven wearable clothing pack — 2026-11-01
+## Wearable clothing packs and trader outfit — 2026-11-01
 
-Three original CC0 garments now drive existing Head/Body/Feet equipment in both
-the cached portrait and animated player, with matching icons and ground models.
-Paid crafting, equip/remove, binary restore, FP/3P visibility and sampled animation
-fit pass source checks; normal generated-world save and fresh-process restoration
-also pass. Editable 0BSD generator and portable garment-only GLBs are retained.
-The combined installed package now passes clothing HUD and existing-world restore
-checks. User visual approval remains unreviewed. Existing deep-crouch trouser
-clipping is reproduced in the base outfit;
-return on a body/trouser fitting task with matching before/after animation evidence.
-Exact evidence, rejected trials and remaining scope: [woven clothing tracker](../issues/woven-clothes/README.md).
+The original woven hood/vest/footwraps are approved by the user for the trader.
+The production resident now wears that set, including after streaming retirement
+and recreation; interaction, finite stock and player inventory remain unchanged.
+A second original CC0 trail pack adds a blue broad-brimmed hat, rust belted jerkin
+and tall boots (IDs 304–306). Both sets can be crafted, mixed and swapped through
+Head/Body/Feet, with matching portrait/player meshes, icons and ground models.
+Trail source checks pass 62 assertions; normal world craft/equip/save and fresh
+process restore pass 15 + 8; real trader interaction/respawn passes 17. Editable
+0BSD generators, garment-only GLBs and exact asset provenance are retained.
+
+Woven revision 1 remains installed and verified in the previous combined package.
+The new trader role and trail set await the next coordinated export after quest
+work releases the shared build, followed by matching package HUD/world/trader
+checks. Trail visual approval and broader frame pacing remain open. Existing
+crouch trouser clipping and shirt shoulder defects remain outside this pack's
+scope; return on a body fitting task with matching before/after pose evidence.
+Exact checks, rejected first fits and remaining scope:
+[clothing tracker](../issues/woven-clothes/README.md).
 
 ## Inventory navigation and on-demand portrait — 2026-11-01
 

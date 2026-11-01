@@ -2,7 +2,7 @@
 extends VBoxContainer
 signal equipment_presented(slots:Array)
 var clothing:Node
-const TYPES={301:0,302:1,303:2}
+const TYPES=preload("res://addons/characters/wearables/clothing.gd").SLOTS
 const NAMES=["Head","Body","Feet"]
 var hud: Node
 var buttons: Array[Button]=[]

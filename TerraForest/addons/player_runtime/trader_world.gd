@@ -75,6 +75,8 @@ func _process(delta:float)->void:
 		add_child(actor);actor.global_position=anchor
 		var human:=preload("res://addons/characters/runtime/human_view.gd").new();actor.add_child(human)
 		human.position=Vector3.ZERO;human.rotation=Vector3.ZERO;human.set_third_person(true);human.set_process(false)
+		# Role appearance only: no goods are transferred from the finite stock.
+		human.clothing.set_slots([{"item":301,"count":1},{"item":302,"count":1},{"item":303,"count":1}])
 		human.animation_player.callback_mode_process=AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE
 		human.animation_player.play(human.clips.get("Idle",human.clips["FP_Unarmed_Idle"]))
 	if ui.opened and not reachable():ui.close()

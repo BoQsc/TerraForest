@@ -45,9 +45,11 @@ recording and preserving existing scope, not relicensing or broader redistributi
 
 ## Material already aligned with the defaults
 
-- Original woven clothing meshes, weave materials and their scoped icon/drop
-  derivatives have a CC0 dedication in `addons/characters/wearables/woven/ASSET_LICENSE.md`.
-  Its manifest records generator/output hashes and external tool provenance.
+- Original woven and trail clothing meshes, weave materials and their scoped
+  icon/drop derivatives have CC0 dedications in
+  `addons/characters/wearables/woven/ASSET_LICENSE.md` and
+  `addons/characters/wearables/trail/ASSET_LICENSE.md`.
+  Their manifests record generator/output hashes and external tool provenance.
   Portable garment GLBs contain no inherited body or skeleton; GAP-002 remains open.
 - TerraForest-authored project code is declared 0BSD in the project license and
   applicable source headers. Separately identified inherited parts keep their terms.

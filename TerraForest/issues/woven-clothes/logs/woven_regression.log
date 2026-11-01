@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS 301 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 301 has a matching normalized ground-item mesh
+PASS 302 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 302 has a matching normalized ground-item mesh
+PASS 303 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 303 has a matching normalized ground-item mesh
+PASS 304 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 304 has a matching normalized ground-item mesh
+PASS 305 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 305 has a matching normalized ground-item mesh
+PASS 306 has finite geometry and normalized named-bone weights under 5000 triangles
+PASS 306 has a matching normalized ground-item mesh
+PASS empty equipment preserves the base outfit
+PASS plant fibres enter ordinary inventory
+PASS paid recipe crafts Woven hood
+PASS paid recipe crafts Woven vest
+PASS paid recipe crafts Woven footwraps
+PASS three recipes consume exactly 9 plant fibres
+PASS wrong slot rejects 301
+PASS equip 301 updates portrait and gameplay body
+PASS stale drag cannot duplicate 301
+PASS wrong slot rejects 302
+PASS equip 302 updates portrait and gameplay body
+PASS stale drag cannot duplicate 302
+PASS wrong slot rejects 303
+PASS equip 303 updates portrait and gameplay body
+PASS stale drag cannot duplicate 303
+PASS alternate pack enters backpack
+PASS swap 304 returns previous item and hides its mesh
+PASS swap 305 returns previous item and hides its mesh
+PASS swap 306 returns previous item and hides its mesh
+PASS swap 301 returns previous item and hides its mesh
+PASS swap 302 returns previous item and hides its mesh
+PASS swap 303 returns previous item and hides its mesh
+PASS unequip removes all three meshes from both views
+PASS base visibility restored for Carry_Axe belt frog
+PASS base visibility restored for Carry_Back cross strap
+PASS base visibility restored for Carry_Belt buckle
+PASS base visibility restored for Carry_Carbine keeper 1_066
+PASS base visibility restored for Carry_Carbine keeper 1_425
+PASS base visibility restored for Carry_Left shoulder harness
+PASS base visibility restored for Carry_Pickaxe keeper 1_066
+PASS base visibility restored for Carry_Pickaxe keeper 1_355
+PASS base visibility restored for Carry_Right shoulder harness
+PASS base visibility restored for Carry_Waist belt
+PASS base visibility restored for Hair_ShortCrop
+PASS base visibility restored for Wardrobe_Boots
+PASS base visibility restored for Wardrobe_FieldVest
+PASS existing binary equipment snapshot restores without a schema change
+PASS matching backpack snapshot restores without duplicating clothing
+PASS refresh after restore reapplies clothes to both views
+PASS first person hides the hood and keeps body/feet
+PASS third person restores the worn hood
+PASS unchanged equipment does not rerender the portrait
+PASS hidden portrait remains idle
+PASS rendered front/side/back Idle
+PASS rendered front/side/back Walk
+PASS rendered front/side/back Run
+PASS rendered front/side/back Player_Crouch
+PASS rendered front/side/back FP_Pickaxe_Fresh_Swing
+PASS rendered front/side/back FP_Unarmed_Punch
+PASS review never captures the pointer
+WOVEN_CLOTHES checks=62 failures=0

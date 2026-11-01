@@ -13,6 +13,7 @@ from play_checkpoint import revision_metadata
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--trail", action="store_true", help="Exercise the trail clothing set instead of the woven set")
     parser.add_argument("--world", action="store_true", help="Create, equip and reopen a dedicated generated fixture in two processes")
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--restore-report", help="Reopen an existing owned clothing fixture without creating another world")
@@ -32,7 +33,7 @@ def main():
             parser.error("Not an owned clothing fixture")
         args.world = True
         jobs = ["restore"]
-    record = dict(pack=args.pack, restore_report=args.restore_report, slot=slot if args.world else None, results=[], **revision_metadata())
+    record = dict(trail=args.trail, pack=args.pack, restore_report=args.restore_report, slot=slot if args.world else None, results=[], **revision_metadata())
     if args.pack:
         record["native_sha256"] = verify_pack_native()
         record["pack_sha256"] = hashlib.sha256((ROOT / "dist/TerraForest.pck").read_bytes()).hexdigest()
@@ -63,6 +64,7 @@ def main():
             command = [engine, "--path", str(ROOT / "dist" if args.pack else ROOT), "--windowed", "--position", "-2400,-1600", "--resolution", "1920x1080", "--max-fps", "30", "--log-file", str(destination / "engine.log"), "--script", str(driver), "--", "--evidence=" + destination.as_posix(), "--session-evidence-dir=" + destination.as_posix(), "--woven-slot=" + slot]
             if args.pack:
                 command[1:1] = ["--main-pack", str(ROOT / "dist/TerraForest.pck")]
+            if args.trail:command.append("--trail")
             if job == "restore":command.append("--restore")
             result = execute(command, destination, 150 if args.world else 120, script.upper() + " checks=", require_resource_budget=True)
             record["results"].append(dict(job=job, command=command, result=result))

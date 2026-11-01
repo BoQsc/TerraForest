@@ -1,0 +1,35 @@
+{
+  "source": "manifest.json",
+  "derivatives": [
+    {
+      "path": "addons/characters/wearables/trail/304__albedo.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/characters/wearables/trail/305__albedo.png",
+      "sha256": "4987386a554a63031e8fbb9ae04ad07c89733f8a3ffa5cb1c9366d6825e98b17",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/304.res",
+      "sha256": "2a3ef3071a065dba4f1027a9e7dddb7c84cf230d3f8ae21ad871f16b463c6d42",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/305.res",
+      "sha256": "ece31dc32f7305ad635dea2e31d0ca549dea95213337bc2fe94d5e6f37001c9f",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/drops/306.res",
+      "sha256": "e00b30943fb905d932c77da63b05c90236bf31d6e2689792cff9d7619c9d70a8",
+      "scope": "original clothing derivative, CC0-1.0"
+    },
+    {
+      "path": "addons/player_runtime/art/item_icons.trtex",
+      "sha256": "b9599538d0c7660eee67dba25abcb20004fb9eebb2a20f595d5eebccb6a5af5f",
+      "scope": "clothing tiles 304,305,306 only; other tiles retain their own terms"
+    }
+  ]
+}

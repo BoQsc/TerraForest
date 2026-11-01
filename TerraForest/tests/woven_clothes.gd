@@ -4,6 +4,8 @@ const Clothing=preload("res://addons/characters/wearables/clothing.gd")
 var folder:="res://reports/woven_clothes"
 var failures:=0
 var checks:=0
+var outfit:=PackedInt32Array([301,302,303])
+var fibre_cost:=9
 
 func check(value:bool,label:String)->void:
 	checks+=1
@@ -14,6 +16,7 @@ func _initialize()->void:
 	root.set_flag(Window.FLAG_NO_FOCUS,true);ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--evidence="):folder=argument.trim_prefix("--evidence=")
+		if argument=="--trail":outfit=PackedInt32Array([304,305,306]);fibre_cost=14
 	run.call_deferred()
 
 func photograph(label:String)->void:
@@ -52,38 +55,51 @@ func run()->void:
 	var clothes:Node=hud.character_panel.clothing
 	check(clothes!=null and clothes.worn==PackedInt32Array([0,0,0]),"empty equipment preserves the base outfit")
 	await photograph("01-base")
-	var grant:Dictionary=hud.inventory.grant_items(PackedInt64Array([204,9]),hud.inventory.snapshot().revision)
+	var grant:Dictionary=hud.inventory.grant_items(PackedInt64Array([204,fibre_cost]),hud.inventory.snapshot().revision)
 	check(grant.ok,"plant fibres enter ordinary inventory")
 	var crafting=preload("res://addons/player_runtime/crafting.gd")
 	for index in crafting.RECIPES.size():
-		if crafting.RECIPES[index].outputs[0] in [301,302,303]:
+		if crafting.RECIPES[index].outputs[0] in outfit:
 			check(crafting.craft(hud.inventory,index,1,hud.inventory.snapshot().revision).ok,"paid recipe crafts "+crafting.RECIPES[index].title)
-	check(not hud.inventory.can_afford(PackedInt64Array([204,1]),hud.inventory.snapshot().revision).ok,"three recipes consume exactly nine plant fibres")
+	check(not hud.inventory.can_afford(PackedInt64Array([204,1]),hud.inventory.snapshot().revision).ok,"three recipes consume exactly %d plant fibres"%fibre_cost)
 	hud.refresh()
-	for id in [301,302,303]:
+	for id in outfit:
 		var source:=-1
 		for i in 32:
 			if hud.inventory.snapshot().slots[i].item==id:source=i;break
 		var data:Dictionary=hud.drag_data("player",source)
-		check(not hud.character_panel.accepts_drag("equipment",(id-300)%3,data),"wrong slot rejects %d"%id)
-		hud.character_panel.drop_stack("equipment",id-301,data)
-		check(clothes.worn[id-301]==id and human.clothing.worn[id-301]==id,"equip %d updates portrait and gameplay body"%id)
-		check(not hud.character_panel.accepts_drag("equipment",id-301,data),"stale drag cannot duplicate %d"%id)
+		check(not hud.character_panel.accepts_drag("equipment",(Clothing.SLOTS[id]+1)%3,data),"wrong slot rejects %d"%id)
+		hud.character_panel.drop_stack("equipment",Clothing.SLOTS[id],data)
+		check(clothes.worn[Clothing.SLOTS[id]]==id and human.clothing.worn[Clothing.SLOTS[id]]==id,"equip %d updates portrait and gameplay body"%id)
+		check(not hud.character_panel.accepts_drag("equipment",Clothing.SLOTS[id],data),"stale drag cannot duplicate %d"%id)
 	await photograph("02-equipped")
+	# Swapping between the two packs must return the old item to its source
+	# slot, and never display two garments in the same body slot.
+	var alternate:=PackedInt32Array([304,305,306]) if outfit[0]==301 else PackedInt32Array([301,302,303])
+	check(hud.inventory.grant_items(PackedInt64Array([alternate[0],1,alternate[1],1,alternate[2],1]),hud.inventory.snapshot().revision).ok,"alternate pack enters backpack")
+	hud.refresh()
+	for selection in [alternate,outfit]:
+		for id in selection:
+			var source:=-1
+			for i in 32:
+				if hud.inventory.snapshot().slots[i].item==id:source=i;break
+			var slot:int=Clothing.SLOTS[id];var previous:int=clothes.worn[slot]
+			hud.character_panel.drop_stack("equipment",slot,hud.drag_data("player",source))
+			check(clothes.worn[slot]==id and hud.inventory.snapshot().slots[source].item==previous and not clothes.garments[previous].visible,"swap %d returns previous item and hides its mesh"%id)
 	var saved:PackedByteArray=hud.equipment.capture_storage_snapshot()
 	var saved_inventory:PackedByteArray=hud.capture_snapshot()
-	for id in [301,302,303]:
-		var data:Dictionary=hud.character_panel.drag_data("equipment",id-301)
-		hud.drop_stack("player",29+id-301,data)
+	for id in outfit:
+		var data:Dictionary=hud.character_panel.drag_data("equipment",Clothing.SLOTS[id])
+		hud.drop_stack("player",29+Clothing.SLOTS[id],data)
 	check(clothes.worn==PackedInt32Array([0,0,0]) and human.clothing.worn==clothes.worn,"unequip removes all three meshes from both views")
 	for item:Dictionary in clothes.covered:check(item.node.visible==item.visible,"base visibility restored for "+String(item.node.name))
 	check(hud.equipment.restore_storage_snapshot(saved),"existing binary equipment snapshot restores without a schema change")
 	check(hud.restore_snapshot(saved_inventory),"matching backpack snapshot restores without duplicating clothing")
-	check(clothes.worn==PackedInt32Array([301,302,303]) and human.clothing.worn==clothes.worn,"refresh after restore reapplies clothes to both views")
+	check(clothes.worn==outfit and human.clothing.worn==clothes.worn,"refresh after restore reapplies clothes to both views")
 	human.set_third_person(false)
-	check(not human.clothing.garments[301].visible and human.clothing.garments[302].visible and human.clothing.garments[303].visible,"first person hides the hood and keeps body/feet")
+	check(not human.clothing.garments[outfit[0]].visible and human.clothing.garments[outfit[1]].visible and human.clothing.garments[outfit[2]].visible,"first person hides the hood and keeps body/feet")
 	human.set_third_person(true)
-	check(human.clothing.garments[301].visible,"third person restores the worn hood")
+	check(human.clothing.garments[outfit[0]].visible,"third person restores the worn hood")
 	var count:int=hud.character_panel.portrait.renders
 	for i in 4:hud.refresh()
 	check(count==hud.character_panel.portrait.renders,"unchanged equipment does not rerender the portrait")
@@ -105,7 +121,7 @@ func gallery()->void:
 	var actors:Array=[]
 	for i in 3:
 		var actor=preload("res://addons/characters/runtime/human_view.gd").new();viewport.add_child(actor);actor.position=Vector3((i-1)*1.2,0,0);actor.rotation=Vector3(0,[.22,PI*.5,PI+.25][i],0);actor.set_process(false);actor.set_third_person(true)
-		actor.clothing.set_slots([{"item":301,"count":1},{"item":302,"count":1},{"item":303,"count":1}]);actors.append(actor)
+		actor.clothing.set_slots([{"item":outfit[0],"count":1},{"item":outfit[1],"count":1},{"item":outfit[2],"count":1}]);actors.append(actor)
 	for pose in ["Idle","Walk","Run","Player_Crouch","FP_Pickaxe_Fresh_Swing","FP_Unarmed_Punch"]:
 		for actor in actors:
 			if pose=="FP_Pickaxe_Fresh_Swing":actor.equip(1)
