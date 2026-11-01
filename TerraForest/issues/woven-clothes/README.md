@@ -1,13 +1,52 @@
 # Wearable clothing packs and trader outfit
 
 - Status: Woven revision 1 installed; trader role and trail pack source-verified,
-  awaiting the next coordinated package.
+  minimal starter and corpse loot source-verified; awaiting the next coordinated package.
 - Updated: 2026-11-01. Fix/build: woven woodland and trail revision 1; see focused Git history.
 - User review: Shown woven trader outfit and trail set approved on 2026-11-01.
   User requested both in the next combined build, with all outfits available.
   Broader character/animation quality remains separate.
 - Symptom: Head, Body and Feet accepted the three woven items without changing
   the character's 3D outfit; inventory silhouettes were generic folded boxes.
+
+## Minimal starter and zombie clothing
+
+The user selected plain shirt and trousers with no outer gear on 2026-11-01.
+Empty equipment now shows those existing R11 layers with bare feet; the inherited
+field vest, harness and boots stay hidden. Equipped garments still appear by slot,
+and removing them returns to the minimal starter in both player and portrait.
+The trader keeps the approved woven outfit. All six pack pieces remain craftable.
+
+![Minimal starter, front/side/back](images/starter-idle.png)
+
+Assistant inspected this source Idle render. The starter is an existing-character
+visibility choice, not a new CC0 body/clothing asset or a repair of inherited
+shirt/trouser geometry. The shown new starter itself awaits user visual review.
+
+New corpses roll a roughly one-in-three chance of one trail item (304, 305 or 306).
+The existing rarer woven-hood roll remains. Native creation owns that one-time
+roll; saved corpse contents never reroll or refill. Legacy contents, full-backpack
+atomicity and stale-action rejection are covered by focused native checks.
+
+![Trail clothing in the actual corpse loot UI](images/corpse-clothing.png)
+
+![Looted garment worn over the starter](images/looted-character.png)
+
+An owned generated-world copy exercises production zombie admission, its death
+signal, actual corpse ray, ordinary loot drag and equipment, then normal save and
+fresh-process restore. The test selects a seed through the native allocator to
+obtain one clothing drop without spawning a crowd. Existing user saves are untouched.
+Exact reports, checks, native hashes and retained fixture failures:
+[starter-loot-evidence.json](starter-loot-evidence.json).
+
+The initial native harness required GPU counters for a headless check and was
+corrected to require full RAM/VRAM telemetry only for rendered world runs. Two
+early world fixtures inherited the shared browser helper's `--no-zombies` flag;
+the final fixture enables its single production-spawned resident while leaving
+ambient population off. Failed reports remain visible; no collision bypass was added.
+The [early restore capture](images/looted-restored.png) verifies the portrait item;
+its background trader is caught in the initial T-pose, so it is not animation
+acceptance. The dedicated trader test remains the role/idle/respawn evidence.
 
 ## Trader role and trail set
 
@@ -59,7 +98,7 @@ derivative receipts and offline notices preserve other assets' terms.
 
 The next coordinated build must include the approved trader role and both player
 clothing packs. All six pieces remain craftable/equippable and can be mixed by slot;
-unequipping restores the original base outfit. There is no trader-only clothing
+unequipping restores the minimal shirt/trousers starter. There is no trader-only clothing
 restriction. The woven set costs 9 plant fibres and the trail set costs 14.
 
 The combined export and matching package HUD/world/trader checks remain pending.
@@ -109,7 +148,8 @@ larger closed soles. Earlier evidence is preserved, not represented as accepted.
   provenance and hashes: [pack](../../addons/characters/wearables/woven/README.md).
 - One event-driven adapter for both views; cached meshes, no inventory polling,
   no runtime mesh authoring, no additional movement/animation owner. Remove
-  restores original clothing, harness and hair visibility. Hood is hidden in FP.
+  now restores the minimal starter; head hair returns after hood removal in 3P.
+  Hood is hidden in FP. Earlier R1 evidence below retains its older base outfit.
 - Real paid recipes and stable IDs 301–303, no inventory schema or gameplay bonus
   change. Actual garment icon tiles and compressed normalized ground models.
 - 49 focused source assertions pass: geometry/weights, normalized ground meshes, paid recipes, wrong and

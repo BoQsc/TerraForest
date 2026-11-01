@@ -17,7 +17,11 @@ can still craft and wear either set. Trader stock and save schemas are unchanged
 
 The trail hat retains the existing short hairstyle. First person hides headwear.
 The jerkin replaces the default vest/harness, and tall boots replace base boots;
-the existing shirt and trousers remain. No per-frame inventory scans or runtime
+empty equipment shows only the existing shirt and trousers with bare feet.
+New zombie corpses have roughly a one-in-three chance of one trail piece. It is
+rolled once at corpse creation; looting and saving never refill it. Existing saved
+corpse contents are preserved. Both packs remain craftable.
+No per-frame inventory scans or runtime
 geometry generation are added. The inherited deep-crouch trouser defect remains.
 
 ## Reuse and authoring

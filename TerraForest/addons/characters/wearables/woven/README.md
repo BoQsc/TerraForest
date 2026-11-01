@@ -14,8 +14,9 @@ save formats are preserved. These are cosmetic wearables; no armor, warmth or
 movement bonus is added. The default shirt and trousers remain underneath.
 
 The hood hides the short hair; the vest replaces the default field vest and its
-carry harness; footwraps replace the default boots. Removing each garment restores
-the original visibility. First person hides the hood. The two body garments use
+carry harness; footwraps supply footwear. Empty equipment now shows the minimal
+starter: plain shirt and trousers, bare feet, no outer gear. Removing garments
+returns to that starter look. First person hides the hood. The two body garments use
 the existing player body render layer; no animation owner or per-frame wardrobe
 scan is added. The portrait requests a frame only when its outfit changes.
 

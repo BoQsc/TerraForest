@@ -47,5 +47,6 @@ func refresh_visibility()->void:
 		mesh.visible=id in worn and (SLOTS[id]!=0 or third_person)
 		mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if third_person else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for original:Dictionary in covered:
-		# The open-brim trail hat keeps the short haircut; the hood covers it.
-		original.node.visible=original.visible and (third_person and worn[0]!=301 if original.item==301 else worn[SLOTS[original.item]]==0)
+		# The unequipped starter wears the existing shirt and trousers only.
+		# Outerwear/footwear comes from equipped items; the open hat keeps hair.
+		original.node.visible=original.visible and original.item==301 and third_person and worn[0]!=301

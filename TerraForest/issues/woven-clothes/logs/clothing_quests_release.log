@@ -1,0 +1,57 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS empty binary log and old-world missing section are supported
+PASS reward currency schema is immutable
+PASS invalid seed makes no mutation
+PASS generation publishes sorted stable ownership records atomically
+PASS repeated identical publication is idempotent
+PASS another world cannot take over a catalog
+PASS shared zombie identity rejects the whole registration
+PASS shared chest identity is not jointly owned
+PASS overlapping reset regions are rejected
+PASS changed definitions cannot partially append or alter reward values
+PASS integer metadata rejects coercion: key
+PASS integer metadata rejects coercion: rotation
+PASS integer metadata rejects coercion: coins
+PASS integer metadata rejects coercion: xp
+PASS malformed location rejects: marker
+PASS malformed location rejects: bounds
+PASS malformed location rejects: layout
+PASS malformed location rejects: title
+PASS malformed location rejects: coins
+PASS malformed location rejects: residents
+PASS one revision-checked contract may be accepted
+PASS kills before starting the location do not count
+PASS reset reserves a monotonic encounter token
+PASS an unfinished multi-owner reset cannot be published as a valid save
+PASS reset lock rejects abandonment and replacement of live state
+PASS another reset token cannot commit
+PASS failed reset returns to travel without awarding progress
+PASS retry receives a new token before activation
+PASS old attempts and other locations cannot advance objectives
+PASS owned defeat advances exactly one objective
+PASS duplicate death delivery is idempotent
+PASS active partial objective and its generation identities round-trip exactly
+PASS unfinished objectives cannot pay rewards
+PASS final owned defeat makes the contract returnable
+PASS invalid XP owner cannot receive a partial currency reward
+PASS full reward escrow leaves XP and quest completion untouched
+PASS native reward commits coins, XP and completion together
+PASS completed reward cannot be claimed twice
+PASS claimed state persists without resurrecting reward eligibility
+PASS repeat contract can be accepted then cancelled without undoing past rewards
+PASS persisted resetting state is rejected
+PASS objective mask cannot reference nonexistent residents
+PASS return state requires all objective bits
+PASS binary currency schema mismatch is rejected
+PASS an active cycle cannot already have paid all recorded resets
+PASS binary text cannot silently truncate at an embedded null
+PASS trailing bytes are rejected
+PASS every truncated binary prefix rejects safely
+PASS malformed restore leaves live state unchanged
+PASS full bounded location catalog is supported
+PASS maximum location catalog stays within the binary storage bound
+QUEST_CATALOG bytes=62020 validation_us=2316
+PASS catalog overflow preserves all prior locations
+PASS all 32 objective bits including the unsigned high bit survive binary validation
+QUESTS_NATIVE checks=53 failures=0

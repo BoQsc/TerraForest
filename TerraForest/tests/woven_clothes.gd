@@ -53,7 +53,8 @@ func run()->void:
 	hud.set_open(true);hud.show_side("Character")
 	await process_frame
 	var clothes:Node=hud.character_panel.clothing
-	check(clothes!=null and clothes.worn==PackedInt32Array([0,0,0]),"empty equipment preserves the base outfit")
+	check(clothes!=null and clothes.worn==PackedInt32Array([0,0,0]),"empty equipment selects the minimal starter outfit")
+	for item:Dictionary in clothes.covered:check(item.node.visible==(item.visible and item.item==301),"starter excludes unequipped outer gear "+String(item.node.name))
 	await photograph("01-base")
 	var grant:Dictionary=hud.inventory.grant_items(PackedInt64Array([204,fibre_cost]),hud.inventory.snapshot().revision)
 	check(grant.ok,"plant fibres enter ordinary inventory")
@@ -92,7 +93,7 @@ func run()->void:
 		var data:Dictionary=hud.character_panel.drag_data("equipment",Clothing.SLOTS[id])
 		hud.drop_stack("player",29+Clothing.SLOTS[id],data)
 	check(clothes.worn==PackedInt32Array([0,0,0]) and human.clothing.worn==clothes.worn,"unequip removes all three meshes from both views")
-	for item:Dictionary in clothes.covered:check(item.node.visible==item.visible,"base visibility restored for "+String(item.node.name))
+	for item:Dictionary in clothes.covered:check(item.node.visible==(item.visible and item.item==301),"minimal starter visibility restored for "+String(item.node.name))
 	check(hud.equipment.restore_storage_snapshot(saved),"existing binary equipment snapshot restores without a schema change")
 	check(hud.restore_snapshot(saved_inventory),"matching backpack snapshot restores without duplicating clothing")
 	check(clothes.worn==outfit and human.clothing.worn==clothes.worn,"refresh after restore reapplies clothes to both views")
@@ -122,6 +123,12 @@ func gallery()->void:
 	for i in 3:
 		var actor=preload("res://addons/characters/runtime/human_view.gd").new();viewport.add_child(actor);actor.position=Vector3((i-1)*1.2,0,0);actor.rotation=Vector3(0,[.22,PI*.5,PI+.25][i],0);actor.set_process(false);actor.set_third_person(true)
 		actor.clothing.set_slots([{"item":outfit[0],"count":1},{"item":outfit[1],"count":1},{"item":outfit[2],"count":1}]);actors.append(actor)
+	for actor in actors:
+		actor.clothing.set_slots([]);actor.equip(0);actor.animation_player.play(actor.clips["Idle"],0);actor.animation_player.advance(.25);actor.animation_player.pause()
+	for i in 3:await process_frame
+	await RenderingServer.frame_post_draw
+	viewport.get_texture().get_image().save_png(folder.path_join("starter-idle.png"))
+	for actor in actors:actor.clothing.set_slots([{"item":outfit[0],"count":1},{"item":outfit[1],"count":1},{"item":outfit[2],"count":1}])
 	for pose in ["Idle","Walk","Run","Player_Crouch","FP_Pickaxe_Fresh_Swing","FP_Unarmed_Punch"]:
 		for actor in actors:
 			if pose=="FP_Pickaxe_Fresh_Swing":actor.equip(1)

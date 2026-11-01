@@ -31,6 +31,12 @@ int64_t NativeCorpseStore::create_corpse(Vector3 position,double yaw,int64_t see
     uint32_t random=uint32_t(next_id)^uint32_t(seed);random^=random>>16;random*=0x7feb352du;random^=random>>15;
     PackedInt64Array loot;loot.append(201);loot.append(1+random%4);loot.append(102);loot.append(1+(random>>8)%3);
     if(random%9==0){loot.append(301);loot.append(1);}
+    // One common trail piece on roughly one third of newly created corpses.
+    // Roll once at creation; saved contents remain authoritative on restore.
+    if((random>>16)%3==0){
+        const int64_t item=304+(random>>24)%3;
+        if(schema->has_item(item)){loot.append(item);loot.append(1);}
+    }
     if(!initialize_contents(next_id,loot))return 0;
     Corpse entry;entry.position=position;entry.yaw=yaw;records[next_id]=entry;return next_id++;
 }

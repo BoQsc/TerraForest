@@ -40,9 +40,14 @@ Woven revision 1 remains installed and verified in the previous combined package
 The new trader role and trail set await the next coordinated export after quest
 work releases the shared build, followed by matching package HUD/world/trader
 checks. The user approved both shown outfits and requested all outfits remain
-available: all six items stay craftable/equippable, with base clothes restored on
-unequip. Broader animation fitting and frame pacing remain open. Existing
-crouch trouser clipping and shirt shoulder defects remain outside this pack's
+available: all six items stay craftable/equippable. The user subsequently selected
+a minimal plain-shirt/trousers starter (no outer gear); unequip now returns to that
+look. New zombie corpses can provide one trail piece, rolled once at creation;
+saved corpse contents are unchanged. Starter/trail gallery passes 75 checks;
+loot contracts pass 10 each on debug/release, actual corpse/UI/equip/save plus
+fresh-process restore pass 14 + 8, and quest regressions pass 53 each. Matching
+combined export/package checks remain pending. Broader animation fitting and
+frame pacing remain open. Existing crouch trouser clipping and shirt shoulder defects remain outside this pack's
 scope; return on a body fitting task with matching before/after pose evidence.
 Exact checks, rejected first fits and remaining scope:
 [clothing tracker](../issues/woven-clothes/README.md).

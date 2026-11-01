@@ -131,5 +131,33 @@
     "sha256": "35a801289fd940f28e874c1c0c4e4dfad84ff5afd4d56b560b001b5be17ebd47",
     "provenance": "Godot 4.7.2 source screenshot. Original garments over retained R11 character; inherited character notice and GAP-002 preserved. No asset relicensing of screenshots.",
     "review": "Assistant production binding review; new trail-set user approval pending"
+  },
+  {
+    "file": "starter-idle.png",
+    "source": "reports/woven_clothes/20261101T163122953635Z/source/starter-idle.png",
+    "sha256": "2046b7956c17ba1294974fb67ca8a876654592f70a4ce837ae7ef1f0039a5791",
+    "provenance": "Godot 4.7.2 source screenshot using the retained R11 character and existing world assets; inherited notices and GAP-002 remain. No new body assets or screenshot relicensing.",
+    "review": "Assistant visually inspected. User requested plain shirt/trousers starter; exact rendered starter review remains pending."
+  },
+  {
+    "file": "corpse-clothing.png",
+    "source": "reports/clothing_loot/20261101T163658704426Z/loot/corpse-clothing.png",
+    "sha256": "37d244fbdbe044d3c3e71f295b7fe03d2dd6b0d627d3e427357c7b0b1612117e",
+    "provenance": "Godot 4.7.2 source screenshot using the retained R11 character and existing world assets; inherited notices and GAP-002 remain. No new body assets or screenshot relicensing.",
+    "review": "Assistant visually inspected. User requested plain shirt/trousers starter; exact rendered starter review remains pending."
+  },
+  {
+    "file": "looted-character.png",
+    "source": "reports/clothing_loot/20261101T163658704426Z/loot/looted-character.png",
+    "sha256": "bb1518d375ae01a3ffca3527231655aaeccc63d504cbaa436d5e0b902e33348e",
+    "provenance": "Godot 4.7.2 source screenshot using the retained R11 character and existing world assets; inherited notices and GAP-002 remain. No new body assets or screenshot relicensing.",
+    "review": "Assistant visually inspected. User requested plain shirt/trousers starter; exact rendered starter review remains pending."
+  },
+  {
+    "file": "looted-restored.png",
+    "source": "reports/clothing_loot/20261101T163658704426Z/restore/looted-character.png",
+    "sha256": "251006cb56ea73dc864715f076363a07a0b439ed8229d9259539c0abc996aadc",
+    "provenance": "Godot 4.7.2 source screenshot using the retained R11 character and existing world assets; inherited notices and GAP-002 remain. No new body assets or screenshot relicensing.",
+    "review": "Portrait equipment restoration verified; early background trader T-pose is not animation acceptance. Dedicated trader check remains the animation/respawn evidence."
   }
 ]

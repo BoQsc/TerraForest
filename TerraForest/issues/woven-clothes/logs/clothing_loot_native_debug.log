@@ -1,0 +1,13 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS corpse creation retains compact loot and adds at most one trail piece
+PASS all trail pieces appear at a common but non-guaranteed rate in the fixed sample
+PASS same identities and seed reproduce the same new-corpse loot
+PASS saved corpse contents restore byte-for-byte without rerolling
+PASS old contents remain unchanged after enabling the new clothing catalog
+PASS clothing transfers from corpse to the real backpack
+PASS stale loot action cannot duplicate clothing
+PASS save/restore retains the looted backpack item and empty corpse slot
+PASS full backpack fixture is populated
+PASS full backpack rejects clothing loot without losing either side
+CLOTHING_LOOT checks=10 failures=0

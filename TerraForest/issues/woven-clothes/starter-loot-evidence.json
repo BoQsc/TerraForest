@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-01",
+  "scope": "Minimal starter appearance and common trail clothing from new zombie corpses; source verified, package validation pending",
+  "user_request": "Plain shirt and trousers, no outer gear; current trail clothes as common zombie finds",
+  "passed": [
+    {
+      "name": "starter_trail_gallery",
+      "checks": 75,
+      "report": "reports/woven_clothes/20261101T163122953635Z/source",
+      "log": "logs/starter_trail_gallery.log",
+      "sha256": "589791e8c1dea773eafc601e0a69f5cf40076142495837298b12145a3444a02d"
+    },
+    {
+      "name": "clothing_loot_native_debug",
+      "checks": 10,
+      "report": "reports/clothing_loot/20261101T163356393507Z/native",
+      "log": "logs/clothing_loot_native_debug.log",
+      "sha256": "b420001b8e25c7587daf170a929de368a7ddcbaccf407658cb7984f5a957c12a"
+    },
+    {
+      "name": "clothing_loot_native_release",
+      "checks": 10,
+      "report": "reports/clothing_loot/20261101T163356392692Z/native",
+      "log": "logs/clothing_loot_native_release.log",
+      "sha256": "b420001b8e25c7587daf170a929de368a7ddcbaccf407658cb7984f5a957c12a"
+    },
+    {
+      "name": "clothing_loot_world",
+      "checks": 14,
+      "report": "reports/clothing_loot/20261101T163658704426Z/loot",
+      "log": "logs/clothing_loot_world.log",
+      "sha256": "29913c19a945f99d294b2c14e857bab5c8b5aec436796dde4e2e14ca690d63cd"
+    },
+    {
+      "name": "clothing_loot_restore",
+      "checks": 8,
+      "report": "reports/clothing_loot/20261101T163658704426Z/restore",
+      "log": "logs/clothing_loot_restore.log",
+      "sha256": "833a49ffec3ce51c4f3091e41e2d69bce0e9b95aa57d96f6293ca4ba7b3f0051"
+    },
+    {
+      "name": "clothing_quests_debug",
+      "checks": 53,
+      "report": "reports/quests_native/20261101T163356394801Z",
+      "log": "logs/clothing_quests_debug.log",
+      "sha256": "7a94047732ce0f7381103cc15010256f7db4e4e4f0903f4cd07eabc756c56bcb"
+    },
+    {
+      "name": "clothing_quests_release",
+      "checks": 53,
+      "report": "reports/quests_native/20261101T163356401258Z",
+      "log": "logs/clothing_quests_release.log",
+      "sha256": "8be5a31dc89c9c4134c89c465560ae39f018ea632434efd0cbea0d772653c231"
+    }
+  ],
+  "retained_failed_reports": [
+    "reports/clothing_loot/20261101T163121107553Z",
+    "reports/clothing_loot/20261101T163357555719Z",
+    "reports/clothing_loot/20261101T163524111470Z"
+  ],
+  "failure_notes": [
+    "Headless native checks passed all10, but initial wrapper incorrectly required unavailable GPU telemetry; only graphical world runs now require full RAM/VRAM gate.",
+    "First two world fixtures inherited --no-zombies from the shared browser harness; final fixture enables only its controlled resident and keeps ambient population off."
+  ],
+  "native_sha256": {
+    "player_runtime.windows.template_debug.x86_64.dll": "db2a6ccbf0ad85b0ab1edda2306ffa78a78947c847a83e95b1d2a9f66ee47452",
+    "player_runtime.windows.template_release.x86_64.dll": "22437922b37c8a328f496a27da2d4f6643557bd3d199a6a2965dc52354937cfb"
+  },
+  "commands": [
+    "python tools/build_native.py --addon player_runtime --target all",
+    "python tools/check_clothing_loot.py",
+    "python tools/check_clothing_loot.py --release",
+    "python tools/check_clothing_loot.py --world --source-report reports/player_survival_world/20261101T144039859117Z",
+    "python tools/check_woven_clothes.py --trail",
+    "python tools/check_quests.py",
+    "python tools/check_quests.py --release"
+  ]
+}
