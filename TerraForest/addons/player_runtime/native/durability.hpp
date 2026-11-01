@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
 #include <map>
 #include <string>
 namespace terraforest {
@@ -12,6 +13,10 @@ class NativeWorldDurability : public godot::RefCounted {
     GDCLASS(NativeWorldDurability,godot::RefCounted)
     struct Entry {int health,damage;};
     std::map<std::string,Entry> damaged;
+    int64_t revision=0;
+    static bool valid_key(const std::string &);
+    void record_damage(const std::string &,int maximum,int amount);
+    static bool decode_damage_patch(const godot::PackedByteArray &,std::map<std::string,Entry> &);
     static bool decode(const godot::PackedByteArray &,std::map<std::string,Entry> *);
     godot::Dictionary quote_hit(godot::String key,int64_t maximum,int64_t amount) const;
 protected: static void _bind_methods();
@@ -26,5 +31,9 @@ public:
     godot::PackedByteArray capture_storage_snapshot() const;
     bool validate_snapshot(const godot::PackedByteArray &b) const {return decode(b,nullptr);}
     bool restore_storage_snapshot(const godot::PackedByteArray &);
+    godot::Dictionary damage_patch_state() const;
+    godot::PackedByteArray capture_damage_patch(const godot::PackedStringArray &,int64_t expected_revision,int64_t expected_owner) const;
+    bool validate_damage_patch(const godot::PackedByteArray &) const;
+    godot::Dictionary restore_damage_patch(const godot::PackedByteArray &,int64_t expected_revision,int64_t expected_owner);
 };
 }

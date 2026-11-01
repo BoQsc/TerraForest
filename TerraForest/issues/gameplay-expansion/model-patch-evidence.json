@@ -43,7 +43,8 @@
   ],
   "timing": {"scope": "Headless 4096-model baseline; no gameplay frame-pacing or GPU-readback claim", "bytes": 229533, "debug_capture_us": 2440, "debug_restore_us": 3286, "release_capture_us": 2554, "release_restore_us": 3641},
   "remaining": [
-    "Active doors, damage/durability, residents/corpses, vegetation and water ownership",
+    "Live door rig quiescence and model/hinge/damage pairing; selected hinge/damage primitives are implemented in owner-patch-evidence.json",
+    "Residents/corpses, vegetation and water ownership",
     "Persistent baseline retention, player/vehicle exclusion and coordinated multi-owner rollback",
     "Actual trader offers, marker/E reset, live objectives/rewards and populated-world performance",
     "Allocation-fault recovery and renderer-allocation failure guarantees are not qualified"

@@ -138,9 +138,12 @@ checks per variant, plus collision/history/render-page/horizon regressions. Inst
 package `008043cc` passes 118 model/reset/reopen/horizon assertions. They
 preserve outside edits and reject unavailable, boundary-crossing or protected
 models; 4,096 selected records and 16,384 candidate records cap the work. This is
-not active door/corpse state or a coordinated gameplay reset. Next: those remaining
-owners, resident/vegetation/water baselines, transactional safety and ordinary
-trader/marker/E playtests. [Evidence](../issues/gameplay-expansion/model-patch-evidence.json).
+not a coordinated gameplay reset. [Model evidence](../issues/gameplay-expansion/model-patch-evidence.json).
+Selected hinge/damage state now passes 58 owner and six fresh-process checks per
+variant plus combat/harvest/container regressions; real authored-door checks cover
+blocked mid-swing restoration. Next: live rig quiescence, scoped identity/key
+selection, resident/corpse/vegetation/water baselines, transactional safety and
+ordinary trader/marker/E playtests. [Owner evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and

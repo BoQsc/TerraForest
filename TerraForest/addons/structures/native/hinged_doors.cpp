@@ -9,15 +9,22 @@
 #include <algorithm>
 namespace terraforest {
 using namespace godot;
+namespace {
+struct DoorMutation {
+    bool &busy;
+    explicit DoorMutation(bool &value):busy(value){busy=true;}
+    ~DoorMutation(){busy=false;}
+};
+}
 static Transform3D unpack(const PackedFloat32Array &p){return Transform3D(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));}
 static PackedFloat32Array pack(const Transform3D &t){PackedFloat32Array p;p.resize(12);for(int r=0;r<3;++r){for(int c=0;c<3;++c)p.set(r*4+c,t.basis[r][c]);p.set(r*4+3,t.origin[r]);}return p;}
 bool NativeHingedDoors::legacy_profile() const {
     return leaf==AABB(Vector3(0,0,-0.07),Vector3(1,2.2,0.14))&&pivot==Vector3()&&opening_degrees==90.0;
 }
 bool NativeHingedDoors::configure(const AABB &bounds,Vector3 hinge,double degrees){
-    if(configured||!opened.empty()||!bounds.position.is_finite()||!bounds.size.is_finite()||!hinge.is_finite()||!std::isfinite(degrees))return false;
+    if(state_busy||configured||!opened.empty()||!bounds.position.is_finite()||!bounds.size.is_finite()||!hinge.is_finite()||!std::isfinite(degrees))return false;
     if(bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0||bounds.size.x>8||bounds.size.y>8||bounds.size.z>8||bounds.position.length()>16||hinge.length()>16||std::abs(degrees)<1||std::abs(degrees)>170)return false;
-    leaf=bounds;pivot=hinge;opening_degrees=float(degrees);configured=true;return true;
+    leaf=bounds;pivot=hinge;opening_degrees=float(degrees);configured=true;++revision;return true;
 }
 PackedFloat32Array NativeHingedDoors::swing(const PackedFloat32Array &p) const {
     // Preserve the exact historical quarter turn and byte-identical closed poses.
@@ -47,6 +54,10 @@ AABB NativeHingedDoors::sweep_bounds(const Transform3D &pose) const {
     return AABB(minimum,maximum-minimum);
 }
 void NativeHingedDoors::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("door_patch_state"),&NativeHingedDoors::door_patch_state);
+    ClassDB::bind_method(D_METHOD("capture_door_patch","ids","expected_revision","expected_owner"),&NativeHingedDoors::capture_door_patch);
+    ClassDB::bind_method(D_METHOD("validate_door_patch","bytes"),&NativeHingedDoors::validate_door_patch);
+    ClassDB::bind_method(D_METHOD("restore_door_patch","bytes","expected_revision","expected_owner"),&NativeHingedDoors::restore_door_patch);
     ClassDB::bind_method(D_METHOD("configure","bounds","pivot","opening_degrees"),&NativeHingedDoors::configure);
     ClassDB::bind_method(D_METHOD("configure_animation","opening","closing"),&NativeHingedDoors::configure_animation);
     ClassDB::bind_method(D_METHOD("animate_toggle","collection","id","protected_bounds"),&NativeHingedDoors::animate_toggle);
@@ -64,7 +75,7 @@ void NativeHingedDoors::_bind_methods(){
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeHingedDoors::restore_storage_snapshot);
 }
 bool NativeHingedDoors::configure_animation(const PackedFloat32Array &opening,const PackedFloat32Array &closing){
-    if(!curve_signature.is_empty()||!motions.empty())return false;
+    if(state_busy||!curve_signature.is_empty()||!motions.empty())return false;
     auto valid=[](const PackedFloat32Array &curve,bool increasing){
         if(curve.size()<4||curve.size()>1024||curve.size()%2||curve[0]!=0||curve[curve.size()-2]<=0||curve[curve.size()-2]>10)return false;
         if(curve[1]!=(increasing?0.0f:1.0f)||curve[curve.size()-1]!=(increasing?1.0f:0.0f))return false;
@@ -78,7 +89,7 @@ bool NativeHingedDoors::configure_animation(const PackedFloat32Array &opening,co
     bytes.encode_u32(0,opening.size());bytes.encode_u32(4,closing.size());int at=8;
     for(const auto *curve:{&opening,&closing})for(int i=0;i<curve->size();++i){bytes.encode_float(at,(*curve)[i]);at+=4;}
     Ref<HashingContext> hash;hash.instantiate();hash->start(HashingContext::HASH_SHA256);hash->update(bytes);curve_signature=hash->finish();
-    opening_curve=opening;closing_curve=closing;return true;
+    opening_curve=opening;closing_curve=closing;++revision;return true;
 }
 double NativeHingedDoors::fraction(const Motion &motion) const {
     const auto &curve=motion.target?opening_curve:closing_curve;
@@ -110,7 +121,7 @@ String NativeHingedDoors::obstruction(NativeStaticBatch *batch,const PackedFloat
 }
 Dictionary NativeHingedDoors::toggle(NativeStaticBatch *batch,int64_t id,const AABB &protection){
     Dictionary result;result["ok"]=false;result["reason"]="Door unavailable";
-    if(!batch||id<=0||!protection.position.is_finite()||!protection.size.is_finite())return result;
+    if(state_busy||!batch||id<=0||!protection.position.is_finite()||!protection.size.is_finite())return result;
     if(motions.count(id)){result["reason"]="Door is already moving";return result;}
     auto current=batch->get_instance(id);if(current.size()!=12)return result;
     auto found=opened.find(id);bool closing=found!=opened.end()&&swing(found->second)==current;
@@ -118,13 +129,15 @@ Dictionary NativeHingedDoors::toggle(NativeStaticBatch *batch,int64_t id,const A
     auto closed=closing?found->second:current;
     String blocked=obstruction(batch,closed,protection);if(!blocked.is_empty()){result["reason"]=blocked;return result;}
     PackedInt64Array ids;ids.push_back(id);
+    DoorMutation mutation(state_busy);
     if(!batch->upsert_instances(ids,closing?closed:swing(closed)))return result;
     if(closing)opened.erase(id);else opened[id]=closed;
+    ++revision;
     result["ok"]=true;result["open"]=!closing;result["reason"]=closing?"Door closed":"Door opened";return result;
 }
 Dictionary NativeHingedDoors::animate_toggle(NativeStaticBatch *batch,int64_t id,const AABB &protection){
     Dictionary result;result["ok"]=false;result["reason"]="Door unavailable";
-    if(!batch||id<=0||curve_signature.is_empty()||!protection.position.is_finite()||!protection.size.is_finite())return result;
+    if(state_busy||!batch||id<=0||curve_signature.is_empty()||!protection.position.is_finite()||!protection.size.is_finite())return result;
     if(motions.count(id)){result["reason"]="Door is already moving";return result;}
     if(motions.size()>=32){result["reason"]="Too many doors are moving";return result;}
     auto current=batch->get_instance(id);if(current.size()!=12)return result;
@@ -132,30 +145,32 @@ Dictionary NativeHingedDoors::animate_toggle(NativeStaticBatch *batch,int64_t id
     if(!closing&&opened.size()>=65536&&found==opened.end())return result;
     auto closed=closing?found->second:current;
     String blocked=obstruction(batch,closed,protection);if(!blocked.is_empty()){result["reason"]=blocked;return result;}
-    Motion motion;motion.target=!closing;motion.last=current;opened[id]=closed;motions.emplace(id,motion);
+    Motion motion;motion.target=!closing;motion.last=current;opened[id]=closed;motions.emplace(id,motion);++revision;
     result["ok"]=true;result["open"]=!closing;result["reason"]=closing?"Door closing":"Door opening";return result;
 }
 int64_t NativeHingedDoors::advance(NativeStaticBatch *batch,double delta){
-    if(!batch||!std::isfinite(delta)||delta<=0||motions.empty())return 0;
+    if(state_busy||!batch||!std::isfinite(delta)||delta<=0||motions.empty())return 0;
+    DoorMutation mutation(state_busy);bool altered=false;
     delta=std::min(delta,0.1);int64_t changed=0;
     for(auto it=motions.begin();it!=motions.end();){
         const int64_t id=it->first;auto &motion=it->second;auto current=batch->get_instance(id);
         if(current.size()!=12&&batch->unloaded_ids.count(id)){++it;continue;}
         if(current!=motion.last){opened.erase(id);it=motions.erase(it);++changed;continue;}
-        auto &closed=opened.at(id);motion.blocked=!obstruction(batch,closed,AABB()).is_empty();
+        auto &closed=opened.at(id);const bool blocked=!obstruction(batch,closed,AABB()).is_empty();
+        altered|=motion.blocked!=blocked;motion.blocked=blocked;
         if(motion.blocked){++it;continue;}
         Motion next=motion;const auto &curve=next.target?opening_curve:closing_curve;
         const double duration=curve[curve.size()-2];next.elapsed=std::min(duration,next.elapsed+delta);
         const bool finished=next.elapsed>=duration;auto pose=pose_at(closed,finished?(next.target?1.0:0.0):fraction(next));
         PackedInt64Array ids;ids.push_back(id);
-        if(!batch->upsert_instances_impl(ids,pose,true)){motion.blocked=true;++it;continue;}
+        if(!batch->upsert_instances_impl(ids,pose,true)){altered|=!motion.blocked;motion.blocked=true;++it;continue;}
         next.last=pose;motion=next;++changed;
         if(finished){
             // Refresh grass/footprint exclusion once at rest, not at 60 Hz.
             batch->emit_signal("exclusion_changed");
             if(!motion.target)opened.erase(id);it=motions.erase(it);
         }else ++it;
-    }return changed;
+    }if(changed||altered)++revision;return changed;
 }
 Dictionary NativeHingedDoors::motion_state(int64_t id) const {
     Dictionary result;auto it=motions.find(id);result["active"]=it!=motions.end();
@@ -163,6 +178,7 @@ Dictionary NativeHingedDoors::motion_state(int64_t id) const {
     return result;
 }
 PackedByteArray NativeHingedDoors::capture_storage_snapshot() const {
+    if(state_busy)return {};
     const bool animated=!motions.empty(),legacy=!animated&&legacy_profile();int64_t at=animated?88:legacy?8:48;
     PackedByteArray b;b.resize(at+opened.size()*56+motions.size()*72);b.fill(0);
     b.encode_u32(0,animated?0x33524454:legacy?0x31524454:0x32524454);b.encode_u32(4,opened.size());
@@ -209,7 +225,8 @@ bool NativeHingedDoors::decode(const PackedByteArray &b,std::map<int64_t,PackedF
     }return true;
 }
 bool NativeHingedDoors::restore_storage_snapshot(const PackedByteArray &b){
+    if(state_busy)return false;
     std::map<int64_t,PackedFloat32Array> staged;std::map<int64_t,Motion> moving;
-    if(!decode(b,&staged,&moving))return false;opened.swap(staged);motions.swap(moving);return true;
+    if(!decode(b,&staged,&moving))return false;opened.swap(staged);motions.swap(moving);++revision;return true;
 }
 }

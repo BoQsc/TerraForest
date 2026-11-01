@@ -153,8 +153,18 @@ three fresh-process checks and 63 horizon checks. Maximum capture/restore measur
 renderer allocation failures and foreground frame pacing are not qualified.
 [Model reset evidence](../issues/gameplay-expansion/model-patch-evidence.json).
 
-These primitives are not a complete location reset: active door state,
-residents, vegetation and any editable water require
+Selected native hinge and damage state now also have bounded patches. Door patches
+retain exact open/closed/mid-swing state, clip phase and blocked status for up to
+256 IDs; damage patches retain up to 4,096 keys, including healthy absence. Both
+use current owner/revision tokens and stage selected replacements before mutation.
+Door publication rejects reentrant changes and mixed model/hinge save capture.
+Both variants pass 58 owner checks, six fresh-process checks and existing combat,
+harvest and container suites; 29 real authored-door checks cover blocked restoration.
+Live rig quiescence and matching model/state pairing still belong to the upcoming
+transaction. [Owner-state evidence](../issues/gameplay-expansion/owner-patch-evidence.json).
+
+These primitives are not a complete location reset: residents/corpses,
+vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered
 publication, player/vehicle exclusion and rollback across owners remain prerequisites

@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-01",
+  "status": "Source and final combined native variants verified; installed-package verification pending; not gameplay reset",
+  "door_format": "TFDP1: sorted selected identities, exact closed/last poses, open/moving/blocked flags, elapsed clip time, geometry/animation profile and SHA-256",
+  "damage_format": "TFWP1: sorted selected ASCII keys, maximum/applied damage or explicit absence, SHA-256; legacy world damage storage unchanged",
+  "limits": {
+    "door_ids": 256, "door_bytes": 30840, "moving_doors_global": 32, "opened_doors_global": 65536,
+    "damage_keys": 4096, "damage_key_bytes": 160, "damage_patch_bytes": 704560, "damage_records_global": 65536
+  },
+  "verification": {
+    "report": "reports/location_owner_patches/20261101T202237676676Z/run.json",
+    "checks_per_variant": {"owners": 58, "fresh_process_reopen": 6, "combat_native": 53, "harvest": 15, "containers": 42},
+    "structures_debug_sha256": "e5df79b82462f141a9e6cfe6fb9046c3f8eb7ceca9c08117150f80acb4587906",
+    "structures_release_sha256": "6c1fa37754889c5dcebb21217c9a1ff69abffe4ca425e0639fbdac9c2768d5d9",
+    "player_debug_sha256": "888b797bc36fcbfa53526d229f20d50b50acdde25d05dba0674f1f4e1502ae8d",
+    "player_release_sha256": "5b242e37198ffd570331d86b5960910de83ffe14a06e304bdd8751910e02b225",
+    "scope": "Final combined variants include Ranger native source 9b12130f; ordinary damage retains the previous lookup count and legacy storage encoding"
+  },
+  "source_regressions": [
+    {"name": "physical_authored_door_animation", "checks": 29, "report": "reports/checks/20261101T201828272272Z/run.json"},
+    {"name": "physical_door_component", "report": "reports/checks/20261101T201830392118Z/run.json"},
+    {"name": "attack_durability", "checks": 21, "report": "reports/checks/20261101T201838937012Z/run.json"}
+  ],
+  "retained_failed_fixture": {"report": "reports/location_owner_patches/20261101T201402722701Z/run.json", "cause": "Packed array constructors were invalid constant expressions in the new GDScript fixture. Literal arrays plus explicit boundary conversions fix parsing; no runtime contract weakened."},
+  "verified": [
+    "Selected stable and mid-swing doors restore with matching model poses and resume from the saved phase",
+    "Outside moving doors and outside damage remain byte-identical",
+    "Actor-blocked real door motion retains blocked state through a scoped reset and cannot advance through the actor",
+    "Native door publication rejects reentrant reset, forget/toggle and mixed-state full snapshot capture",
+    "Malformed, profile-mismatched, stale-owner/revision and over-capacity patches reject before mutation",
+    "Net replacement works at opened/moving/damage global capacity",
+    "Actual harvesting and repair invalidate damage tokens; failed and zero-effect actions do not",
+    "Damage reset does not grant, refund or remove player items",
+    "Fresh processes restore exact expected hinge, model and damage snapshots"
+  ],
+  "timing": {
+    "scope": "Headless selected patches among 65536 entries; not gameplay frame pacing",
+    "door_selected": 256, "door_bytes": 30840, "debug_door_capture_us": 254, "debug_door_restore_us": 280,
+    "release_door_capture_us": 465, "release_door_restore_us": 220,
+    "damage_selected": 4096, "damage_bytes": 81968, "debug_damage_capture_us": 4866, "debug_damage_restore_us": 2961,
+    "release_damage_capture_us": 3031, "release_damage_restore_us": 3509
+  },
+  "remaining": [
+    "Installed-PCK verification coordinated with the Ranger combat owner",
+    "Gameplay orchestration must quiesce active visual rigs and pair metadata with model restoration",
+    "Generation-owned scoped ID/key selection and persistent baseline retention",
+    "Resident/corpse, vegetation and editable-water ownership; coordinated rollback and player/vehicle exclusion",
+    "Actual trader offers, marker/E reset, live objectives/rewards and populated-world performance",
+    "Allocation-fault/renderer-failure rollback and new visual acceptance are not qualified"
+  ]
+}

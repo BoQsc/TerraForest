@@ -28,6 +28,11 @@ qualification or new visual approval is claimed.
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
 
+- Selected hinge/damage restoration passes both native variants and fresh-process
+  checks; real blocked-door restoration passes. Live rigs, remaining world owners
+  and coordinated gameplay reset still require integration.
+  [Owner-state evidence](owner-patch-evidence.json).
+
 - Static-model restoration now passes both native variants, the package and fresh-process
   checks, including actual collision, outside edits, history barriers, full
   capacity and persistent visual publication. No gameplay reset is enabled.

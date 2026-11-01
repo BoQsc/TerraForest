@@ -7,6 +7,10 @@
 namespace terraforest {
 using namespace godot;
 void NativeWorldDurability::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("damage_patch_state"),&NativeWorldDurability::damage_patch_state);
+    ClassDB::bind_method(D_METHOD("capture_damage_patch","keys","expected_revision","expected_owner"),&NativeWorldDurability::capture_damage_patch);
+    ClassDB::bind_method(D_METHOD("validate_damage_patch","bytes"),&NativeWorldDurability::validate_damage_patch);
+    ClassDB::bind_method(D_METHOD("restore_damage_patch","bytes","expected_revision","expected_owner"),&NativeWorldDurability::restore_damage_patch);
     ClassDB::bind_method(D_METHOD("hit","key","maximum","amount"),&NativeWorldDurability::hit);
     ClassDB::bind_method(D_METHOD("preview_harvest","key","maximum","amount","damage_per_item","finishing_bonus"),&NativeWorldDurability::preview_harvest);
     ClassDB::bind_method(D_METHOD("harvest_hit","key","maximum","amount","item","damage_per_item","finishing_bonus","inventory","expected_revision"),&NativeWorldDurability::harvest_hit);
@@ -18,10 +22,15 @@ void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeWorldDurability::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeWorldDurability::restore_storage_snapshot);
 }
-static bool valid(const std::string &s){if(s.empty()||s.size()>160)return false;for(unsigned char c:s)if(c<32||c>126)return false;return true;}
+bool NativeWorldDurability::valid_key(const std::string &key){if(key.empty()||key.size()>160)return false;for(unsigned char character:key)if(character<32||character>126)return false;return true;}
+void NativeWorldDurability::record_damage(const std::string &key,int maximum,int amount){
+    auto inserted=damaged.try_emplace(key,Entry{maximum,amount});
+    if(!inserted.second&&inserted.first->second.health==maximum&&inserted.first->second.damage==amount)return;
+    inserted.first->second={maximum,amount};++revision;
+}
 Dictionary NativeWorldDurability::quote_hit(String key,int64_t maximum,int64_t amount) const {
     Dictionary out;out["ok"]=false;std::string k=key.utf8().get_data();
-    if(!valid(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
+    if(!valid_key(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
     auto at=damaged.find(k);if(at==damaged.end()&&damaged.size()>=65536){out["reason"]="Durability capacity reached";return out;}
     const int64_t previous=at==damaged.end()||at->second.health!=maximum?0:at->second.damage;
     const int64_t applied=std::min(amount,maximum-previous);
@@ -29,7 +38,7 @@ Dictionary NativeWorldDurability::quote_hit(String key,int64_t maximum,int64_t a
 }
 Dictionary NativeWorldDurability::hit(String key,int64_t maximum,int64_t amount){
     Dictionary out=quote_hit(key,maximum,amount);if(!bool(out["ok"]))return out;
-    damaged[key.utf8().get_data()]={int(maximum),int(maximum-int64_t(out["remaining"]))};return out;
+    record_damage(key.utf8().get_data(),int(maximum),int(maximum-int64_t(out["remaining"])));return out;
 }
 Dictionary NativeWorldDurability::preview_harvest(String key,int64_t maximum,int64_t amount,int64_t damage_per_item,int64_t finishing_bonus) const {
     Dictionary out;out["ok"]=false;
@@ -48,21 +57,21 @@ Dictionary NativeWorldDurability::harvest_hit(String key,int64_t maximum,int64_t
         Dictionary granted=inventory->grant_items(items,expected_revision);
         if(!bool(granted["ok"])){out["ok"]=false;out["reason"]="Make room in inventory before harvesting";return out;}
     }
-    damaged[key.utf8().get_data()]={int(maximum),int(maximum-int64_t(out["remaining"]))};out["reward_item"]=item;return out;
+    record_damage(key.utf8().get_data(),int(maximum),int(maximum-int64_t(out["remaining"])));out["reward_item"]=item;return out;
 }
-void NativeWorldDurability::forget(String key){damaged.erase(key.utf8().get_data());}
+void NativeWorldDurability::forget(String key){if(damaged.erase(key.utf8().get_data()))++revision;}
 int64_t NativeWorldDurability::damage(String key,int64_t maximum) const {
     auto at=damaged.find(key.utf8().get_data());
     return at==damaged.end()||at->second.health!=maximum?0:at->second.damage;
 }
 Dictionary NativeWorldDurability::repair(String key,int64_t maximum,int64_t amount){
     Dictionary out;out["ok"]=false;std::string k=key.utf8().get_data();
-    if(!valid(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
+    if(!valid_key(k)||maximum<1||maximum>1000000||amount<1||amount>1000000)return out;
     auto at=damaged.find(k);
     if(at==damaged.end()||at->second.health!=maximum){out["reason"]="Already fully repaired";return out;}
     int restored=std::min(at->second.damage,int(amount));at->second.damage-=restored;
     out["ok"]=true;out["restored"]=restored;out["remaining"]=maximum-at->second.damage;out["maximum"]=maximum;
-    if(!at->second.damage)damaged.erase(at);return out;
+    if(!at->second.damage)damaged.erase(at);++revision;return out;
 }
 PackedByteArray NativeWorldDurability::capture_storage_snapshot() const {
     int64_t size=8;for(const auto &e:damaged)size+=12+e.first.size();
@@ -76,8 +85,8 @@ bool NativeWorldDurability::decode(const PackedByteArray &b,std::map<std::string
         if(at+12>b.size())return false;auto n=b.decode_u32(at),h=b.decode_u32(at+4),d=b.decode_u32(at+8);
         if(n<1||n>160||at+12+n>b.size()||h<1||h>1000000||d<1||d>h)return false;
         std::string key(reinterpret_cast<const char *>(b.ptr()+at+12),n);
-        if(!valid(key)||key<=last)return false;last=key;if(out)out->emplace(key,Entry{int(h),int(d)});at+=12+n;
+        if(!valid_key(key)||key<=last)return false;last=key;if(out)out->emplace(key,Entry{int(h),int(d)});at+=12+n;
     }return at==b.size();
 }
-bool NativeWorldDurability::restore_storage_snapshot(const PackedByteArray &b){std::map<std::string,Entry> staged;if(!decode(b,&staged))return false;damaged.swap(staged);return true;}
+bool NativeWorldDurability::restore_storage_snapshot(const PackedByteArray &b){std::map<std::string,Entry> staged;if(!decode(b,&staged))return false;damaged.swap(staged);++revision;return true;}
 }
