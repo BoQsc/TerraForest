@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "scope": "Source runtime; coherent combined package pending",
+  "scope": "Source and actual root executable with exported PCK; bounded private-world verification; user visual review separate",
   "native_sha256": {
     "player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
     "player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325"
@@ -135,5 +135,389 @@
     "quest_debug": 53,
     "quest_release": 53,
     "credit_notices": 15
+  },
+  "strengthened_source": {
+    "report": "reports/combat_world/20261101T183058376372Z",
+    "checks": {
+      "create": 33,
+      "restore": 11
+    },
+    "pack": false,
+    "executable": false,
+    "native_sha256": {
+      "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+      "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+      "addons/structures/bin/structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+      "addons/structures/bin/structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+      "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+      "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+      "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+      "addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+      "addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+      "addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+      "addons/volumetric_water/bin/volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons/volumetric_water/bin/volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+      "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+    },
+    "script_sha256": "7d62b295347046ddf1e380d593b0c0a3b365b5e6a85b7860bebcbbff7f3d695c",
+    "results": [
+      {
+        "phase": "create",
+        "command": [
+          "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1280x720",
+          "--max-fps",
+          "60",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combat_world\\20261101T183058376372Z\\create\\engine.log",
+          "--script",
+          "res://tests/combat_world.gd",
+          "--",
+          "--zombies",
+          "--world-slot=Combat_5e2f10d6f28c4a80a13523b049457832",
+          "--derived-cache=user://combat_5e2f10d6f28c4a80a13523b049457832",
+          "--combat-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/combat_world/20261101T183058376372Z",
+          "--combat-save-check"
+        ],
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 30512,
+          "exit_code": 0,
+          "resources": {
+            "samples": 74,
+            "gpu_samples": 73,
+            "peak_private_commit_bytes": 2845007872,
+            "peak_working_set_bytes": 1595117568,
+            "peak_dedicated_gpu_bytes": 1203838976,
+            "checks": {
+              "ram": {
+                "bytes": 2845007872,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1203838976,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 45.406901800015476,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        }
+      },
+      {
+        "phase": "restore",
+        "command": [
+          "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1280x720",
+          "--max-fps",
+          "60",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combat_world\\20261101T183058376372Z\\restore\\engine.log",
+          "--script",
+          "res://tests/combat_world.gd",
+          "--",
+          "--zombies",
+          "--world-slot=Combat_5e2f10d6f28c4a80a13523b049457832",
+          "--derived-cache=user://combat_5e2f10d6f28c4a80a13523b049457832",
+          "--combat-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/combat_world/20261101T183058376372Z",
+          "--combat-save-check",
+          "--combat-restore"
+        ],
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 37360,
+          "exit_code": 0,
+          "resources": {
+            "samples": 22,
+            "gpu_samples": 21,
+            "peak_private_commit_bytes": 2802991104,
+            "peak_working_set_bytes": 1553358848,
+            "peak_dedicated_gpu_bytes": 1203838976,
+            "checks": {
+              "ram": {
+                "bytes": 2802991104,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1203838976,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 12.890286699985154,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        }
+      }
+    ]
+  },
+  "packaged_runtime": {
+    "report": "reports/combat_world/20261101T185025193271Z",
+    "checks": {
+      "create": 33,
+      "restore": 11
+    },
+    "pack": true,
+    "executable": true,
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+    },
+    "script_sha256": "7d62b295347046ddf1e380d593b0c0a3b365b5e6a85b7860bebcbbff7f3d695c",
+    "results": [
+      {
+        "phase": "create",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--main-pack",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1280x720",
+          "--max-fps",
+          "60",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combat_world\\20261101T185025193271Z\\create\\engine.log",
+          "--script",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\combat_world.gd",
+          "--",
+          "--zombies",
+          "--world-slot=Combat_8d54e34ed52e451f989d411c504d2306",
+          "--derived-cache=user://combat_8d54e34ed52e451f989d411c504d2306",
+          "--combat-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/combat_world/20261101T185025193271Z",
+          "--combat-save-check"
+        ],
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 38816,
+          "exit_code": 0,
+          "resources": {
+            "samples": 74,
+            "gpu_samples": 73,
+            "peak_private_commit_bytes": 2828709888,
+            "peak_working_set_bytes": 1577115648,
+            "peak_dedicated_gpu_bytes": 1203838976,
+            "checks": {
+              "ram": {
+                "bytes": 2828709888,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1203838976,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 45.02373870002339,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        }
+      },
+      {
+        "phase": "restore",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--main-pack",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1280x720",
+          "--max-fps",
+          "60",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\combat_world\\20261101T185025193271Z\\restore\\engine.log",
+          "--script",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\tests\\combat_world.gd",
+          "--",
+          "--zombies",
+          "--world-slot=Combat_8d54e34ed52e451f989d411c504d2306",
+          "--derived-cache=user://combat_8d54e34ed52e451f989d411c504d2306",
+          "--combat-output=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/combat_world/20261101T185025193271Z",
+          "--combat-save-check",
+          "--combat-restore"
+        ],
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 22916,
+          "exit_code": 0,
+          "resources": {
+            "samples": 21,
+            "gpu_samples": 20,
+            "peak_private_commit_bytes": 2792738816,
+            "peak_working_set_bytes": 1544159232,
+            "peak_dedicated_gpu_bytes": 1203838976,
+            "checks": {
+              "ram": {
+                "bytes": 2792738816,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1203838976,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 12.529733400035184,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        }
+      }
+    ],
+    "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+    "executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5"
   }
 }

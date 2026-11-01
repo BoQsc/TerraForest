@@ -1,12 +1,29 @@
 # First firearm and volumetric explosive destruction
 
-- Status: Source implemented and scoped verification passed; combined package pending.
-- Updated: 2026-11-01. Fix/build: focused combat source; shared native export coordinated separately.
+- Status: Installed package / scoped engineering checks passed; user visual review pending.
+- Updated: 2026-11-01. Source: `165a75b9`; stronger tests: `a48153ed`; combined native artifacts: `579a21c1`.
 - User review: Not reviewed.
 - Scope: Existing carbine animations, projectiles and zombie firearm responses,
   explosive barrels, volumetric craters, individual block debris, optional integrity.
 
 ## Images
+
+![Packaged carbine](images/rifle-packaged.png)
+
+Existing root game executable with the installed combined PCK. Rifle and HUD fit
+after reloading. The executable was launched and hashed, never replaced.
+
+![Packaged explosion](images/blast-packaged.png)
+
+Two actual carbine shots ignite the barrel; the chain reaction excavates the
+volumetric terrain and throws the individual building cell.
+
+![Packaged crater](images/crater-packaged.png)
+
+After the flash fades, the permanent crater is visible. The same density, destroyed
+cell state, magazine and barrel damage survive a fresh-process reopen.
+
+### Earlier source comparisons
 
 ![Carbine HUD](images/rifle-verified.png)
 
@@ -50,6 +67,17 @@ Image source/hash records are in `images/manifest.json`.
 
 ## Changes and verification
 
+- Final strengthened source: **33 creation + 11 restore**,
+  `reports/combat_world/20261101T183058376372Z`.
+- Actual root executable with installed PCK: **33 creation + 11 restore**,
+  `reports/combat_world/20261101T185025193271Z`. Both strict resource gates pass:
+  peak sampled private commit 2.63 GiB, dedicated GPU allocation 1.12 GiB.
+  Zero pointer captures; fourteen native DLL hashes match the package.
+  PCK SHA-256: `4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`.
+  Executable SHA-256: `981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5`.
+  Reviewed rifle/reload/blast/crater images. This is bounded functional evidence,
+  not universal visual approval or a sustained frame-rate guarantee.
+
 The carbine was present in `Human.r11.glb` but was not wired to inventory or
 combat. All first-person rifle clips are now used. The existing anatomical hit
 system already supports firearm impacts; travelling bullets call that path.
@@ -58,7 +86,7 @@ system already supports firearm impacts; travelling bullets call that path.
   `reports/checks/20261101T181553702672Z`.
 - Native-only storage/support: 46 checks per debug/release variant,
   `reports/combat_native/20261101T180838822840Z` and `20261101T180838832548Z`.
-- Final rendered world: 31 creation + 11 fresh-process restore checks pass,
+- Earlier rendered world: 31 creation + 11 fresh-process restore checks pass,
   `reports/combat_world/20261101T181508831902Z`. Includes live zombie anatomical
   projectile response, barrel placement/debit/overlap, chain reactions, no mining
   reward, debris pause, optional collapse, exact ammunition and partial barrel
@@ -86,12 +114,11 @@ system already supports firearm impacts; travelling bullets call that path.
 
 ## Remaining / resume here
 
-The source, response/persistence checks and image corrections are complete within
-the declared local-simulation scope. The integration coordinator owns the combined
-native artifact commit and packaged export after the concurrent trader source is
-committed. Resume packaged validation against that coherent build; record its
-hashes and a combat journey before claiming installed-build verification. User
-visual approval remains separate. See `verification.json` for retained source evidence.
+The source, response/persistence checks, image corrections and installed-package
+checks are complete within the declared local-simulation scope. User visual review
+remains separate; manual play should assess the authored aim/reload poses, simple
+explosion effect and bounded collapse behavior. See `verification.json` for retained
+source and package evidence, including exact binaries and resource measurements.
 
 The implementation uses a bounded local support model, conservatively anchors
 query boundaries, treats shaped blocks as occupied cells for support, and uses
@@ -101,7 +128,8 @@ simulation are not claimed. Full rules are in
 
 ## Reproduce
 
-Run `python tools/check_combat.py` in an available shared validation window.
+Run `python tools/check_combat.py` for source or add `--executable` for the existing
+root executable and exported PCK, in an available shared validation window.
 It creates and reopens a private saved world in a nonactivating render window. For manual
 play, craft or obtain Carbine, Carbine cartridges and Explosive barrel from Dev
 Bag. R reloads; left mouse fires; right mouse aims or places an equipped barrel.

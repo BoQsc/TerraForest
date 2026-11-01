@@ -54,5 +54,29 @@
     "creator": "TerraForest Godot runtime screenshot",
     "scope": "Existing project assets retain their provenance; screenshot is development evidence",
     "status": "Agent reviewed; source verification; user review pending"
+  },
+  {
+    "path": "rifle-packaged.png",
+    "sha256": "5e6a32f238cb34c011dd6e3359768bf5360a646b44d229fc1784f3e5e2cb98fd",
+    "source": "reports/combat_world/20261101T185025193271Z/rifle.png",
+    "creator": "TerraForest runtime screenshot using existing root executable and exported PCK",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; installed package verification; user visual review pending"
+  },
+  {
+    "path": "blast-packaged.png",
+    "sha256": "8c6f516ee0b961b459d380dd32e3796285c8b58a345eefcc300bf5cdca93344e",
+    "source": "reports/combat_world/20261101T185025193271Z/blast.png",
+    "creator": "TerraForest runtime screenshot using existing root executable and exported PCK",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; installed package verification; user visual review pending"
+  },
+  {
+    "path": "crater-packaged.png",
+    "sha256": "ba23bbc010d7f58e014ec1f82d035782900e4a5f9c8517d5e1eab2d290aba311",
+    "source": "reports/combat_world/20261101T185025193271Z/crater.png",
+    "creator": "TerraForest runtime screenshot using existing root executable and exported PCK",
+    "scope": "Existing project assets retain their provenance; screenshot is development evidence",
+    "status": "Agent reviewed; installed package verification; user visual review pending"
   }
 ]

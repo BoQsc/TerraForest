@@ -1,7 +1,7 @@
 # Firearms, explosions and optional structural integrity
 
-Source verification: 2026-11-01. The feature is implemented and checked; the
-combined installed-game export is coordinated separately. See the
+Source and packaged verification: 2026-11-01. The feature is implemented, included
+in the combined game package, and checked through the existing game executable. See the
 [combat issue](../issues/explosive-combat/README.md) for current verification.
 
 ## Play
@@ -93,8 +93,10 @@ into voxel buildings by this feature.
   debris pause and integrity toggle, followed by a fresh-process reopen.
 - Keep the existing melee timing and durability regressions as compatibility gates.
 
-The final source journey passes 31 creation and 11 fresh-process restore checks
-in `reports/combat_world/20261101T181508831902Z`. The reopened world retains exact
+The final source journey passes 33 creation and 11 fresh-process restore checks
+in `reports/combat_world/20261101T183058376372Z`. This includes two actual carbine
+shots damaging and igniting a placed barrel, followed by its chain reaction.
+The reopened world retains exact
 ammunition, barrel damage, crater density, destroyed cells, the integrity setting
 and an interrupted blast cursor. Its completed prefix is not damaged again.
 The native/animation suite passes 66, isolated debug/release native suites pass
@@ -103,10 +105,14 @@ The issue tracker retains exact report paths, native hashes, failed fixture runs
 and reviewed images. The HUD overlap/clipping and blast damage label are corrected.
 No offscreen test captures the desktop pointer.
 
-The shared native libraries also contain the concurrent trader inventory work.
-Their artifact commit and final packaged verification belong to the coordinated
-combined export after both source commits. That export is not claimed by the
-source checks. User visual review remains separate from engineering verification.
+The combined native libraries are committed in `579a21c1`. The existing root
+`TerraForest.exe` also passes the 33+11 journey with the exported package in
+`reports/combat_world/20261101T185025193271Z`. All fourteen DLLs match the export;
+strict sampled resource gates and zero pointer-capture assertions pass. The PCK
+SHA-256 is `4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`.
+Rifle, reload, blast and crater screenshots from that executable are reviewed.
+Run `python tools/check_combat.py --executable` to reproduce this gate without
+replacing the user-owned executable. User visual review remains separate.
 
 Original code is 0BSD. Original procedural barrel, icons and synthesized sound
 data are CC0-1.0; inherited rifle and character provenance is preserved. Exact
