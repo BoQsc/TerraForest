@@ -129,6 +129,10 @@ The Ranger is newly authored original geometry with retained editable Blender
 source, CC0 asset notice and 0BSD generator. The source combat journey passes
 51 creation + 12 reopen checks; native state 53 per variant, full animation/state
 79, melee timing/durability 27/21. Final aim framing and geometry connections were
-visually reviewed after the integrated source run. Final package verification is
-pending coordinated export; see [Ranger evidence](../issues/ranger-assault-rifle/README.md).
+visually reviewed, then the actual root executable passed 51 creation + 12 reopen
+checks with all fourteen matching DLLs and strict sampled resource gates. Report:
+`reports/combat_world/20261101T202958692951Z/run.json`; final PCK SHA-256
+`1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881`.
+Source is committed in `9b12130f`, combined native artifacts in `b4d1c063`.
+See [Ranger evidence](../issues/ranger-assault-rifle/README.md).
 The earlier carbine-only package hashes above are retained historical evidence.

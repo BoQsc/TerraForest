@@ -73,4 +73,4 @@ This initial index is not the entire backlog. Other work remains in
 
 - [First firearm and volumetric explosive destruction](explosive-combat/README.md) — Installed package / scoped checks pass, 2026-11-01. Source and actual game executable each pass 33 combat + 11 save/reopen checks; native and melee/quest regressions pass. Packaged rifle/reload/blast/crater images reviewed; optional integrity defaults off. User visual review remains separate.
 
-- [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — New original model, automatic fire and independent ammunition state; source51+12 and native/presentation79 checks pass. Final packaged gate pending; user visual review separate.
+- [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — Installed original model, automatic fire and independent ammunition state. Source and actual executable each pass 51 combat + 12 reopen checks; native/presentation 79. Final aim/reload images reviewed; user visual review separate.

@@ -54,5 +54,29 @@
     "sha256": "1bf65d034712258fd783c00c8c864e3cd5aef8c64308fbf9f57bf9101f77032c",
     "status": "Reviewed final source staging preview; original geometry connections and aim sightline corrected. Lighting differs from gameplay.",
     "date": "2026-11-01"
+  },
+  {
+    "file": "ranger_idle-packaged.png",
+    "source": "reports/combat_world/20261101T202958692951Z/ranger_idle.png",
+    "sha256": "9394e32a1b9a589ac1cf6fd9a2c0c249c5a2fb8be4a2b8fe467cdd66dd2c57e6",
+    "status": "Reviewed installed actual-executable gameplay; final mesh, sight framing and reload.",
+    "pack_sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "ranger_aim-packaged.png",
+    "source": "reports/combat_world/20261101T202958692951Z/ranger_aim.png",
+    "sha256": "6c73311eeb13f221f528a63b0b3ddb4d21096479192aae0650f564ba19547626",
+    "status": "Reviewed installed actual-executable gameplay; final mesh, sight framing and reload.",
+    "pack_sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "ranger_reload-packaged.png",
+    "source": "reports/combat_world/20261101T202958692951Z/ranger_reload.png",
+    "sha256": "13cdf233a374a192314539c7f6d79e690688425a268fbf3ccaf0d499e277f63b",
+    "status": "Reviewed installed actual-executable gameplay; final mesh, sight framing and reload.",
+    "pack_sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
+    "date": "2026-11-01"
   }
 ]

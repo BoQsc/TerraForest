@@ -1,10 +1,18 @@
 # Ranger automatic assault rifle
 
-- Status: Source implemented and scoped checks pass; final package check pending.
-- Updated: 2026-11-01. User review: not reviewed.
+- Status: Installed package; scoped engineering checks pass. User visual review separate.
+- Updated: 2026-11-01. Source `9b12130f`, combined native artifacts `b4d1c063`. User review: not reviewed.
 - Request: author a new automatic assault rifle, superseding the compact SMG choice.
 
 ## Images
+
+![Installed Ranger aiming](images/ranger_aim-packaged.png)
+
+Actual root executable with final PCK: clear iron sights and independent ammunition HUD.
+
+![Installed magazine removal](images/ranger_reload-packaged.png)
+
+Final connected magazine geometry follows the reload hand; reserve remains unchanged until completion.
 
 ![Final original Ranger model](images/model-final-preview.png)
 
@@ -72,12 +80,11 @@ Copies of the same weapon type share a player magazine; this is not per-item sto
 
 - Final isolated visual gate: `reports/ranger_preview_runs/20261101T202056476334Z`; model, aim, reload insertion and third-person grip reviewed. Strict sampled resource gate passes.
 
+- Final actual root executable: **51 creation + 12 reopen**, `reports/combat_world/20261101T202958692951Z/run.json`. Final mesh/sight corrections are included. Zero diagnostics and pointer captures; strict resource gates pass (peak sampled private commit 2.66 GiB, dedicated GPU 1.14 GiB). All fourteen native DLLs match the export. PCK SHA-256 `1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881`; executable remains `981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5`. Exact identities/results in `verification.json`.
+
 ## Remaining / resume here
 
-Final source package and actual executable verification are pending coordinated
-export with concurrent native owner-state work. Re-run `python tools/check_combat.py
---executable`, inspect final aim/model/reload screenshots, record the exact pack and
-DLL identities, and update this entry before claiming installation complete.
+Requested authoring, integration, installation and scoped verification are complete.
 User visual/balance feedback remains separate from scoped engineering evidence.
 Existing local support bounds and temporary debris limits remain unchanged.
 
