@@ -75,4 +75,4 @@ This initial index is not the entire backlog. Other work remains in
 
 - [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — Installed original model, automatic fire and independent ammunition state. Source and actual executable each pass 51 combat + 12 reopen checks; native/presentation 79. Final aim/reload images reviewed; user visual review separate.
 
-- [Dev Bag full-stack shortcut](dev-bag-full-stack/README.md) — Shift grants the registered stack, including ammo;12 source checks pass. Combined package validation pending.
+- [Dev Bag full-stack shortcut](dev-bag-full-stack/README.md) — Installed: Shift-click grants the registered stack, including 999 ammo. All 12 source and actual-executable checks pass; normal quantity and atomic capacity behavior preserved.

@@ -4,5 +4,12 @@
     "source": "reports/dev_bag_shift/20261101T203701/dev_bag_shift.png",
     "sha256": "c305a8692bc6872411a554f625f52243b8acbaa0845180b6b0921caec5f9c0ce",
     "caption": "Source isolated live Dev Bag UI and native inventory. Qty7 retained while Shift activation grants999 Ranger rounds; agent reviewed. Staging panel, not full world."
+  },
+  {
+    "file": "packaged.png",
+    "source": "reports/dev_bag_shift/20261101T204445/dev_bag_shift.png",
+    "sha256": "69a78d8b91a688f51e0fbd20487d12249df5b7ae0752cb54510d8f4f366b4a11",
+    "pack_sha256": "c0e972a0edeec4f99d35b0af028d6355f161e89f3f85e7e57723ecb000cc6f98",
+    "caption": "Actual existing executable and installed PCK. Isolated live Dev Bag UI, real native inventory, viewport mouse events and injected Shift. Agent reviewed."
   }
 ]
