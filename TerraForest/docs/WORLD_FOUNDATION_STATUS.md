@@ -9,18 +9,43 @@ motion capture remain open, coordinated with the active quest/clothing owners.
 [Scope, controls and remaining evidence](../issues/world-entry-fly-in/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
-## Woven wearable clothing pack — 2026-11-01
+## Native quest ownership foundation — 2026-11-01
 
-Three original CC0 garments now drive existing Head/Body/Feet equipment in both
-the cached portrait and animated player, with matching icons and ground models.
-Paid crafting, equip/remove, binary restore, FP/3P visibility and sampled animation
-fit pass source checks; normal generated-world save and fresh-process restoration
-also pass. Editable 0BSD generator and portable garment-only GLBs are retained.
-The combined installed package now passes clothing HUD and existing-world restore
-checks. User visual approval remains unreviewed. Existing deep-crouch trouser
-clipping is reproduced in the base outfit;
-return on a body/trouser fitting task with matching before/after animation evidence.
-Exact evidence, rejected trials and remaining scope: [woven clothing tracker](../issues/woven-clothes/README.md).
+Bounded native contract state and generation-owned location metadata are implemented,
+not playable quests. Initial default generation publishes four locations/seven
+sleepers in 620 bytes. Debug/release pass 53 native checks; streamed physical chest
+ownership, normal save-return and fresh-process restore pass 31 source checks;
+fresh generation/immediate saving/reopen pass another 35. The initial failed report
+is retained. A separate deterministic regression confirms idle cache accounting
+could delay asynchronous save completion; one priority guard reduces the same
+world's measured completion from over 20 s to 2.332 s, without changing timeouts.
+Matching package verification remains. Then implement bounded multi-owner reset,
+trader/marker interaction and live rewards. Exact scope and closure evidence:
+[expansion contract](GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state)
+and [retained test reports](../issues/gameplay-expansion/README.md).
+
+## Wearable clothing packs and trader outfit — 2026-11-01
+
+The original woven hood/vest/footwraps are approved by the user for the trader.
+The production resident now wears that set, including after streaming retirement
+and recreation; interaction, finite stock and player inventory remain unchanged.
+A second original CC0 trail pack adds a blue broad-brimmed hat, rust belted jerkin
+and tall boots (IDs 304–306). Both sets can be crafted, mixed and swapped through
+Head/Body/Feet, with matching portrait/player meshes, icons and ground models.
+Trail source checks pass 62 assertions; normal world craft/equip/save and fresh
+process restore pass 15 + 8; real trader interaction/respawn passes 17. Editable
+0BSD generators, garment-only GLBs and exact asset provenance are retained.
+
+Woven revision 1 remains installed and verified in the previous combined package.
+The new trader role and trail set await the next coordinated export after quest
+work releases the shared build, followed by matching package HUD/world/trader
+checks. The user approved both shown outfits and requested all outfits remain
+available: all six items stay craftable/equippable, with base clothes restored on
+unequip. Broader animation fitting and frame pacing remain open. Existing
+crouch trouser clipping and shirt shoulder defects remain outside this pack's
+scope; return on a body fitting task with matching before/after pose evidence.
+Exact checks, rejected first fits and remaining scope:
+[clothing tracker](../issues/woven-clothes/README.md).
 
 ## Inventory navigation and on-demand portrait — 2026-11-01
 

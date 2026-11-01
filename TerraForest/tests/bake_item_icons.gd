@@ -73,15 +73,15 @@ func run() -> void:
 			if id in [202,203,211]:
 				var material:=StandardMaterial3D.new();material.albedo_color=Color("797e8b") if id==202 else (Color("aa6845") if id==203 else Color("64432d"));material.roughness=0.85;object.material_override=material
 			model.add_child(object)
-		elif id in [301,302,303]:
-			model.add_child(instance(load("res://addons/characters/wearables/woven/%d.res"%id)))
+		elif id in [301,302,303,304,305,306]:
+			model.add_child(instance(preload("res://addons/characters/wearables/clothing.gd").ITEMS[id]))
 		elif key in ["Metal beam","Floor panel"]:
 			tool.part(model,Vector3(4,0.2,0.2) if key=="Metal beam" else Vector3(4,0.25,4),Vector3.ZERO,Color("3b5359"))
 		else:
 			var file: String={"Wood framed window":"window","Wooden door (E open / close)":"door","Metal guardrail":"guardrail","Wooden fence":"fence","Doorway":"doorway","Wooden table":"table","Wooden chair":"chair","Wooden shelf":"shelf","Wooden ladder":"ladder","Wooden storage chest (E open)":"storage_chest"}[key]
 			model.add_child(instance(load("res://addons/structures/prefabs/"+file+"_model.tres")))
-		if id>0 and id not in [3,5,6,301,302,303,501] and not current_models and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
-		if id in [3,5,6,301,302,303] and (not current_models or key in selected):bake_drop(model,id)
+		if id>0 and id not in [3,5,6,301,302,303,304,305,306,501] and not current_models and not "--icons-only" in OS.get_cmdline_user_args() and (not "--woody-bush-only" in OS.get_cmdline_user_args() or id==212):bake_drop(model,id)
+		if id in [3,5,6,301,302,303,304,305,306] and (not current_models or key in selected):bake_drop(model,id)
 		var box:=bounds(model);var center:=box.get_center();var radius:=box.size.length()*0.5
 		if box.size.length_squared()<.000001:push_error("No current icon geometry for "+key);model.free();viewport.free();quit(1);return
 		camera.position=center+Vector3(1.3,0.9,2).normalized()*maxf(4,radius*3);camera.look_at(center);camera.size=maxf(0.1,radius*2.2)
@@ -119,4 +119,4 @@ func bake_drop(model: Node3D,id: int) -> void:
 	if id in [1,2,4] or id>=301:
 		var material:=StandardMaterial3D.new();material.vertex_color_use_as_albedo=true;material.roughness=0.8;tool_surface.set_material(material);tool_surface.commit(output)
 	DirAccess.make_dir_recursive_absolute("res://addons/player_runtime/art/drops")
-	if ResourceSaver.save(output,"res://addons/player_runtime/art/drops/%d.res"%id,ResourceSaver.FLAG_COMPRESS if id in [3,5,6,301,302,303] else 0)!=OK:push_error("Drop mesh bake failed")
+	if ResourceSaver.save(output,"res://addons/player_runtime/art/drops/%d.res"%id,ResourceSaver.FLAG_COMPRESS if id in [3,5,6,301,302,303,304,305,306] else 0)!=OK:push_error("Drop mesh bake failed")

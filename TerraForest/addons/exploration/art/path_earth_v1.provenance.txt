@@ -1,0 +1,15 @@
+Path earth material candidate, 2026-11-01.
+Asset: path_earth_v1.png. Original TerraForest contributor work generated with
+OpenAI built-in image_gen, no external references. Dedicated CC0-1.0 under the
+repository contribution policy to the extent rights apply. AI generation alone
+does not establish uniqueness or rights in unrelated third-party material.
+Source output: exec-4e3ddf95-7243-43c4-8c24-f8136b8661ea.png.
+SHA-256: d193d8c3de0ee3cdea7aecbfd940e2f3f7483523eb646665a7abe147a3e4c5ba.
+Actual output: RGB PNG, 1254 x 1254, 4448494 bytes (requested 1024 x 1024).
+User request: new dirt paths using an image-generated texture.
+Status: visually inspected source candidate only. Not imported or installed.
+Needs tiled/surface review, runtime bake, path generation/material integration
+and ordinary-world route/map/persistence/performance checks before completion.
+
+Exact built-in prompt:
+Use case: photorealistic-natural. Asset type: original tileable albedo texture for a realistic survival game's narrow dirt walking paths. Create one square 1024x1024 flat material swatch, not a scene or a picture of a road. Orthographic straight-down texture fills the complete canvas edge to edge with uniformly compacted, weathered medium earth-brown soil, fine muted grey/tan gravel embedded in soil, tiny scattered worn stone chips, subtle organic soil variation and restrained dry dust. A quiet realistic serious tone, no cartoon appearance. Material scale: this complete tile covers about two metres of ground. Lighting must be completely diffuse, neutral and even: no shadows, highlights, ambient occlusion, vignettes, directional light or baked depth. Seamless repetition across all four edges; no obvious large recognisable marks or repeating islands. No road edges, grass borders, footprints, tyre tracks, vegetation, leaves, text, symbols, frames, cracks, pavement, water, buildings or objects. Pure base-colour only, no normal/roughness channels or split panels. New original asset without any external reference image.

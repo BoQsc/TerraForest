@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-01",
+  "scope": "Trader role and second trail clothing set; source verified, matching combined package pending",
+  "user_review": "Shown woven trader and trail appearances approved on 2026-11-01; broader animation quality remains separate",
+  "passed": [
+    {
+      "name": "trail_source",
+      "checks": 62,
+      "report": "reports/woven_clothes/20261101T160141836334Z/source",
+      "log": "logs/trail_source.log",
+      "sha256": "a8d0dccb039e0511efeb75592181e2b68901c59ab5ac328c0c7360876e04a59e"
+    },
+    {
+      "name": "trail_world_create",
+      "checks": 15,
+      "report": "reports/woven_clothes/20261101T160256593464Z/create",
+      "log": "logs/trail_world_create.log",
+      "sha256": "ca7870ee336e3fdda7fc60afe2d6d84e2dd80bdcb296e19ec53c769dbd2e6355"
+    },
+    {
+      "name": "trail_world_restore",
+      "checks": 8,
+      "report": "reports/woven_clothes/20261101T160256593464Z/restore",
+      "log": "logs/trail_world_restore.log",
+      "sha256": "078f110dd16c060b6759253cf3ba0995af944d56ca514d9bc198240c12a62cc2"
+    },
+    {
+      "name": "trader_source",
+      "checks": 17,
+      "report": "reports/trader_clothes/20261101T160159983594Z",
+      "log": "logs/trader_source.log",
+      "sha256": "f8df481f7c925e54e68e71a5dc423f00dc76dda24013e1ff6ff02abe68701648"
+    },
+    {
+      "name": "woven_regression",
+      "checks": 62,
+      "report": "reports/woven_clothes/20261101T161312336051Z/source",
+      "log": "logs/woven_regression.log",
+      "sha256": "b87c40eb5d0b67330618e76ca9a5398041aba7fb42d4df6621eb5d887e7d175c"
+    }
+  ],
+  "retained_failed_reports": [
+    "reports/woven_clothes/20261101T155822132527Z"
+  ],
+  "commands": [
+    "python tools/check_woven_clothes.py --trail",
+    "python tools/check_woven_clothes.py --trail --world",
+    "python tools/check_trader_clothes.py --source-report reports/player_survival_world/20261101T144039859117Z",
+    "python tools/build_credit_notices.py --check",
+    "python tools/check_woven_clothes.py",
+    "godot --headless --path . --script res://tools/ensure_item_icons.gd -- --check-only"
+  ],
+  "portable_bundle": {
+    "path": "reports/woven_clothes/TerraForest_Clothing_Packs_R2.zip",
+    "bytes": 1005428,
+    "sha256": "672a9735265c36e73a2df54f3dfd947f11766299f21dbe48c485e61dc9c76035",
+    "scope": "Both original garment sets and editable source; no inherited character or shared atlas"
+  },
+  "next_combined_build": {
+    "required": true,
+    "trader_outfit": [
+      301,
+      302,
+      303
+    ],
+    "player_craftable_items": [
+      301,
+      302,
+      303,
+      304,
+      305,
+      306
+    ],
+    "base_outfit": "Restored on unequip",
+    "verification": "Both package recipe/equip checks, normal world save/restore and production trader interaction/respawn",
+    "status": "Handed to main build chat; matching export pending"
+  }
+}

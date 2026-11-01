@@ -11,7 +11,7 @@ static func check_models(game:Node,asset:Resource,origin:Vector3i,rotation:int)-
 	return foundation.status=="supported"
 
 static func publish(game:Node,sites:Array)->Dictionary:
-	var layouts:=Layouts.load_catalog();var anchors:Array=[];var published:Array=[]
+	var layouts:=Layouts.load_catalog();var anchors:Array=[];var published:Array=[];var locations:Array=[]
 	if layouts.is_empty():return {"ok":false,"reason":"Exploration catalog unavailable"}
 	for site:Dictionary in sites:
 		var tower:bool=site.id=="watchtower_w1"
@@ -42,9 +42,20 @@ static func publish(game:Node,sites:Array)->Dictionary:
 			if not game.storage.store.seed_contents(identity,stock) or not game.storage.collection.set_removal_protected(identity,true):return {"ok":false,"reason":"Supply storage rejected"}
 		anchors.append_array(residents)
 		published.append({"id":site.id,"origin":site.origin,"rotation":site.rotation,"chests":ids,"sleepers":residents})
+		var bounds:AABB=asset.placement_bounds(site.origin,site.rotation)
+		if not tower:
+			var segments:=Layouts.segments(layout,site.origin,site.rotation)
+			bounds=segments[0].bounds
+			for segment:Dictionary in segments:bounds=bounds.merge(segment.bounds)
+		var keys:=PackedInt64Array()
+		for resident:Dictionary in residents:keys.append(resident.key)
+		locations.append({"key":keys[0],"layout":site.id,"title":"Wilderness lookout" if tower else layout.title,"origin":Vector3i(site.origin),"rotation":int(site.rotation),"marker":Vector3(site.origin)+Layouts.turn(Vector3(3.5,0,-2.5) if tower else Vector3(.5,0,-5.5),site.rotation),"bounds":bounds.grow(.25),"residents":keys,"containers":ids,"coins":20 if tower else 40,"xp":80 if tower else 160})
 	var store:RefCounted=game.zombies.population.store
 	if not store.initialize(game.terrain.backend.world_seed,game._initial_generation_spawn):return {"ok":false,"reason":"Exploration population mismatch"}
 	var registered:Dictionary=store.register_sleepers(anchors)
 	if not registered.get("ok",false):return registered
+	if not locations.is_empty():
+		var ownership:Dictionary=game.quests.store.register_locations(game.terrain.backend.world_seed,locations)
+		if not ownership.get("ok",false):return ownership
 	game.terrain.changed_since_save=true;game.zombies.population.reset_stream()
 	return {"ok":true,"sites":published,"population":registered}

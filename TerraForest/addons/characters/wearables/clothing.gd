@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends Node
 ## Presentation of existing inventory IDs. Owns no inventory or animation state.
-const ITEMS={301:preload("res://addons/characters/wearables/woven/301.res"),302:preload("res://addons/characters/wearables/woven/302.res"),303:preload("res://addons/characters/wearables/woven/303.res")}
+const ITEMS={301:preload("res://addons/characters/wearables/woven/301.res"),302:preload("res://addons/characters/wearables/woven/302.res"),303:preload("res://addons/characters/wearables/woven/303.res"),304:preload("res://addons/characters/wearables/trail/304.res"),305:preload("res://addons/characters/wearables/trail/305.res"),306:preload("res://addons/characters/wearables/trail/306.res")}
+const SLOTS={301:0,302:1,303:2,304:0,305:1,306:2}
 var worn:=PackedInt32Array([0,0,0])
 var garments:Dictionary={}
 var covered:Array[Dictionary]=[]
@@ -24,14 +25,15 @@ func prepare(model:Node3D)->bool:
 		var item:=302 if name=="Wardrobe_FieldVest" or name.begins_with("Carry_") or name.begins_with("Carry.") else (303 if name=="Wardrobe_Boots" else (301 if name.begins_with("Hair_") or name.begins_with("Hair.") else 0))
 		if item:covered.append({"node":node,"visible":node.visible,"item":item})
 	for id:int in ITEMS:
-		var instance:=MeshInstance3D.new();instance.name="Woven_%d"%id;instance.mesh=ITEMS[id];instance.skin=skin
+		var instance:=MeshInstance3D.new();instance.name="Garment_%d"%id;instance.mesh=ITEMS[id];instance.skin=skin
 		instance.layers=1<<19;rig.add_child(instance);instance.skeleton=instance.get_path_to(rig);garments[id]=instance
 	ready_to_wear=true;refresh_visibility();return true
 
 func set_slots(slots:Array)->bool:
 	var selected:=PackedInt32Array([0,0,0])
 	for i in mini(3,slots.size()):
-		if int(slots[i].get("item",0))==301+i and int(slots[i].get("count",0))>0:selected[i]=301+i
+		var id:=int(slots[i].get("item",0))
+		if SLOTS.get(id,-1)==i and int(slots[i].get("count",0))>0:selected[i]=id
 	if worn==selected:return false
 	worn=selected;refresh_visibility();return true
 
@@ -42,7 +44,8 @@ func refresh_visibility()->void:
 	if not ready_to_wear:return
 	for id:int in garments:
 		var mesh:MeshInstance3D=garments[id]
-		mesh.visible=id in worn and (id!=301 or third_person)
+		mesh.visible=id in worn and (SLOTS[id]!=0 or third_person)
 		mesh.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_ON if third_person else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	for original:Dictionary in covered:
-		original.node.visible=original.visible and original.item not in worn and (original.item!=301 or third_person)
+		# The open-brim trail hat keeps the short haircut; the hood covers it.
+		original.node.visible=original.visible and (third_person and worn[0]!=301 if original.item==301 else worn[SLOTS[original.item]]==0)

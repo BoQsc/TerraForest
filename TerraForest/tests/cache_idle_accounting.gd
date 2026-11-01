@@ -20,5 +20,13 @@ func _initialize() -> void:
 	ok=ok and cache.slices==1 and backend.active_kind=="idle" and backend.results.size()==1
 	cache.during=Callable();backend.jobs.clear();backend._advance_cache_when_idle()
 	ok=ok and cache.slices==3 and backend.active_kind=="idle" and backend.results.size()==2
-	print("CACHE_IDLE queued/input/stop guards, slice preemption and resumption=",ok)
+	cache=ProbeCache.new();backend.disk_cache=cache;backend.results.clear()
+	backend._save_reserved=true;backend._advance_cache_when_idle()
+	var publication_ok:bool=cache.slices==0 and backend.results.is_empty()
+	backend._save_reserved=false;cache.during=func():backend._save_reserved=true
+	backend._advance_cache_when_idle();publication_ok=publication_ok and cache.slices==1
+	backend._save_reserved=false;cache.during=Callable();backend._advance_cache_when_idle()
+	publication_ok=publication_ok and cache.slices==3 and backend.results.size()==2
+	ok=ok and publication_ok
+	print("CACHE_IDLE queued/input/stop guards, slice preemption, publication priority and resumption=",ok)
 	quit(0 if ok else 1)

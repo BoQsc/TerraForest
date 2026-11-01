@@ -40,6 +40,7 @@ var map_markers=preload("res://addons/player_runtime/map_markers.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
 var trader=preload("res://addons/player_runtime/trader_world.gd").new()
+var quests=preload("res://addons/player_runtime/quest_world.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
 var corpse_loot=preload("res://addons/player_runtime/corpse_loot.gd").new()
 var doors=preload("res://addons/structures/door_interaction.gd").new()
@@ -223,6 +224,7 @@ func _ready() -> void:
 	var persistence_steps:Array=[
 		["chest storage",func():return storage.prepare(self,persistence)],
 		["trader",func():return trader.prepare(self,persistence)],
+		["quests",func():return quests.prepare(self,persistence)],
 		["corpse storage",func():return corpse_loot.prepare(self,persistence)],
 		["zombie population",func():return zombies.prepare(self,persistence)],
 		["structure catalog",func():return structures_ready],

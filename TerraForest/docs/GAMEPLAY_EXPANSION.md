@@ -33,8 +33,8 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Off-road watchtowers | W1 installed in ordinary new worlds using shared native lot fitting, connected approaches, stocked upper-deck chest and persistent sleeper; source/package generation/travel/loot/wake/reload pass; broader seeds and visual/NPC/performance acceptance remain |
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
-| Trader quests targeting POIs | Pending stable location identities, quest objectives, rewards and trader UI |
-| Large question-mark start interaction near POI, E acceptance and location reset | Pending bounded reset transaction with explicit location ownership, player-edit safety and persisted quest state |
+| Trader quests targeting POIs | Native bounded contract state, rewards and generation-owned location metadata under verification; trader offers/UI and live defeat/reward adapters remain pending |
+| Large question-mark start interaction near POI, E acceptance and location reset | Location ownership is implemented; actual multi-owner reset, preserved baselines, player-edit safety and marker/E interaction remain pending |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
@@ -45,7 +45,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Parked vehicles in garages/warehouses | Pending footprint/clearance-aware placements, entry/exit and persistence |
 | Efficient house-light expansion: fireplace, torch and fixtures | Pending original models, bounded light residency, emissive/distant representation and indoor performance |
 | Slightly varied safe player starts | Pending second-floor house, roadside and path starts with collision/readiness and no hostile immediate spawn |
-| Paths with a new imagegen texture | Pending original generated material/provenance, path planning and natural road/terrain transitions |
+| Paths with a new imagegen texture | Original imagegen source candidate and exact prompt/provenance retained in `addons/exploration/art/`; tiled/surface review, runtime bake, path planning and natural transitions remain pending |
 | Improved main-road texture | Pending separate imagegen material, correct physical scale and populated-world comparison |
 | Ultra-thin white median/road-strip building shapes | Pending individual destructible grid-owned pieces and suitable marking textures; no continuous roadside meshes |
 | Desert, lowland snow and rubble/ruins biomes | Pending generation and map integration, not snow restricted to mountaintops |
@@ -64,6 +64,28 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Streaming, CPU/GPU/RAM/VRAM/storage efficiency under new content | Pending doubled-content generation/loading and populated travel/interaction/endurance measurements; preserve 4 GiB VRAM target and existing budgets |
 
 ## Current work and next dependency
+
+### Native location ownership and quest state
+
+`NativeQuestLog` registers generation-owned bounds, resident anchor keys and chest
+placement IDs. The TFQ1 binary component caps 128 locations, 32 residents and 16
+chests per location. Registration is atomic; shared identities, overlapping bounds,
+changed definitions and malformed storage reject. Native travel/reset/clear/return
+states use revision checks and monotonic attempt tokens. An unfinished reset is
+not saveable; rewards use the existing native inbox and progression owner.
+No per-frame catalog scan or whole-world snapshot is added. Plan version 37 emits
+metadata for newly generated caves, mines and watchtowers, without retrofitting
+existing saves.
+
+This is a foundation, not playable quests. Next: exact bounded terrain/block/model/
+stock/resident baselines and reset rollback; explicit player-edit safety; trader
+offers, question-mark/E start, live objective delivery and reward presentation.
+Return immediately after persistence qualification. Close only with normal
+generated-world accept/travel/reset/clear/claim/reopen evidence, outside-region
+preservation, failure rollback and performance measurements. Source generation,
+streamed ownership and persistence checks pass; matching package checks remain.
+The expansion tracker retains the first failed save-return test and the separately
+reproduced cache-accounting priority fix.
 
 ### Shared inventory navigation and character view
 

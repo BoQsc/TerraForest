@@ -1576,7 +1576,7 @@ func _advance_cache_when_idle() -> void:
 	var advanced:=false
 	while disk_cache.accounting_pending():
 		mutex.lock()
-		var allowed: bool=not stopping and not active_input and jobs.is_empty()
+		var allowed: bool=not stopping and not active_input and not _save_reserved and jobs.is_empty()
 		if allowed: active_kind="cache_accounting"
 		mutex.unlock()
 		if not allowed: break

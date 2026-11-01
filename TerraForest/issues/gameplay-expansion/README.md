@@ -5,6 +5,39 @@
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Quest ownership foundation — source verified, not playable quests
+
+- Native location identities and TFQ1 state are implemented; trader offers,
+  question-mark/E start and actual location reset are not yet wired to gameplay.
+- Debug/release initially pass 51 native assertions:
+  `reports/quests_native/20261101T155046082842Z` and `20261101T155046846586Z`.
+- Normal default generation published four sites, seven actual sleeper anchors
+  and seven chest IDs in 620 bytes. First integration report
+  `reports/quests_world/20261101T155047564011Z` retains two failures: remote chest
+  queries incorrectly ignored paging, and normal save-return timed out. Fallback
+  shutdown saved successfully; that is not evidence that normal return works.
+- The corrected fixture streams to each site before checking physical chests and
+  records save/pager/worker diagnostics. Two additional decoder regressions first
+  fail against the previous binary (`reports/quests_native/20261101T160606817860Z`):
+  an already-paid active cycle and a binary string silently truncated at a null.
+  Both now pass after rebuilding: debug/release 53 checks at
+  `reports/quests_native/20261101T160944750121Z` and `20261101T160945858610Z`.
+- Corrected normal streaming checks all seven physical stocked chests, followed
+  by normal save-return and fresh-process byte-exact restoration: 21 + 10 checks
+  in `reports/quests_world/20261101T161019237804Z`.
+- Fresh normal generation, immediate first reservation/save, selector reopening,
+  all four streamed locations and a fresh-process restore pass 25 + 10 checks in
+  `reports/quests_world/20261101T161638198108Z`. Save completion still waited over
+  20 s despite only 1.7–1.8 s publication. A reproduced idle-cache priority defect
+  now yields to reserved saves; the same owned-world reopen passes 10 checks in
+  `20261101T162547622901Z`, with 2.332 s end-to-end save completion. Details:
+  [runtime tracker](../runtime-performance/README.md#async-save-completion-versus-optional-cache-work).
+- Sampled source peak private commit 3,765,170,176 bytes; dedicated GPU
+  1,497,583,616 bytes, within current budgets. No foreground frame-pacing claim.
+  Matching combined-package verification remains pending.
+- No new visual acceptance is claimed. Remaining/reset closure requirements:
+  [expansion contract](../../docs/GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state).
+
 ## Images
 
 ### Inventory navigation — source/package verified and installed

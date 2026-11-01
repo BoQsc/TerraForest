@@ -1,19 +1,22 @@
 {
-  "atlas_sha256": "505ec382fe19a5942216fa7a463c263c788f952263f1f99127cccab5e25fb811",
+  "atlas_sha256": "b9599538d0c7660eee67dba25abcb20004fb9eebb2a20f595d5eebccb6a5af5f",
   "schema": 1,
   "sources": {
     "clothing": {
       "engine": "4.7.2-stable (steam)",
       "files": {
+        "res://addons/characters/wearables/trail/304.res": "3a387e6356a739085e732d1cc4e258053e9f3c0821706ed23f62d1a6e31adec5",
+        "res://addons/characters/wearables/trail/305.res": "79a49a5b8e0a993699eab807f5fa8770369dde2d629fe73444f11f1da5a74dd1",
+        "res://addons/characters/wearables/trail/306.res": "df2302e0cb4d4629f57d1ef1bbf8b6d0b5b36ec698d05afa0ba7f1de6e621b14",
         "res://addons/characters/wearables/woven/301.res": "123a701078e5db1bb87cc6dbf62cd456bbeaa53f3352b5a9905412c5f1ffe6be",
         "res://addons/characters/wearables/woven/302.res": "c3480cf771a54025f935ff4df648a593c9741b4245fc832af7312d04c4c4e5ea",
         "res://addons/characters/wearables/woven/303.res": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://addons/player_runtime/item_icons.gd": "d4d64678f9f10770cc11172720fddc4d2f51508ab33de3d7704b60b4f3f2dbce",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
-        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
+        "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
+        "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
     },
     "consumables": {
@@ -27,10 +30,10 @@
         "res://addons/player_runtime/art/consumables/219.res": "62b521c4dd2b11b0cdb8a58532e0ada87bf5156af96d7fe9557814487a27c821"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://addons/player_runtime/item_icons.gd": "d4d64678f9f10770cc11172720fddc4d2f51508ab33de3d7704b60b4f3f2dbce",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
-        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
+        "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
+        "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
     },
     "tools": {
@@ -79,7 +82,10 @@
         "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
         "res://addons/characters/runtime/torch_flame.gdshader": "fa3bb0bd7d95800568c281d0e211ca3adc5b89ea33f6ead0bc549da868600ea9",
         "res://addons/characters/runtime/torch_motes.gdshader": "9b3787987bfc55aea2cc183e05ab4efe749cfe364aa0c07e0c3d7a9bcfb58110",
-        "res://addons/characters/wearables/clothing.gd": "070e0cb7adb6e6d923034ca46a6501fabc1f2b111067906397a09dff2c4388f6",
+        "res://addons/characters/wearables/clothing.gd": "cc8370c10b64b3d4739d2f8ab3a33ef46a0c2ae8081e026045ec1ca5bfe1bdd6",
+        "res://addons/characters/wearables/trail/304.res": "3a387e6356a739085e732d1cc4e258053e9f3c0821706ed23f62d1a6e31adec5",
+        "res://addons/characters/wearables/trail/305.res": "79a49a5b8e0a993699eab807f5fa8770369dde2d629fe73444f11f1da5a74dd1",
+        "res://addons/characters/wearables/trail/306.res": "df2302e0cb4d4629f57d1ef1bbf8b6d0b5b36ec698d05afa0ba7f1de6e621b14",
         "res://addons/characters/wearables/woven/301.res": "123a701078e5db1bb87cc6dbf62cd456bbeaa53f3352b5a9905412c5f1ffe6be",
         "res://addons/characters/wearables/woven/302.res": "c3480cf771a54025f935ff4df648a593c9741b4245fc832af7312d04c4c4e5ea",
         "res://addons/characters/wearables/woven/303.res": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22",
@@ -90,10 +96,10 @@
         "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://addons/player_runtime/item_icons.gd": "d4d64678f9f10770cc11172720fddc4d2f51508ab33de3d7704b60b4f3f2dbce",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
-        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
+        "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
+        "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
     },
     "vehicle": {
@@ -116,10 +122,10 @@
         "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://addons/player_runtime/item_icons.gd": "d4d64678f9f10770cc11172720fddc4d2f51508ab33de3d7704b60b4f3f2dbce",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "d965b0d07df9646f2cb90512576a2918d8d4ff738665e0e334f6633cfa2a19b3",
-        "res://tools/item_icon_cache.gd": "2176aca3dce626a8b23c8780e561753faf9c19ffd8c85bda568d3d63ebf94fc2"
+        "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
+        "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
       }
     }
   }
