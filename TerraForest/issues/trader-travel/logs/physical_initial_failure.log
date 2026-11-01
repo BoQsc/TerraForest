@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL physical chassis arrives through two road corners
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/trader_ride_physics.gd:10)
+       [1] run (res://tests/trader_ride_physics.gd:32)
+ERROR: FAIL arrival is physical and stopped
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/trader_ride_physics.gd:10)
+       [1] run (res://tests/trader_ride_physics.gd:33)
+ERROR: FAIL car remains inside the declared road corridor
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/trader_ride_physics.gd:10)
+       [1] run (res://tests/trader_ride_physics.gd:34)
+ERROR: FAIL arrival service brake holds without reversing
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] check (res://tests/trader_ride_physics.gd:10)
+       [1] run (res://tests/trader_ride_physics.gd:37)
+TRADER_RIDE_PHYSICS checks=5 failures=4

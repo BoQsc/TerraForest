@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-01",
+  "scope": "Inert foundation only. No paid service, boarding, passenger persistence, full road footprint or distant return qualification.",
+  "native_debug_checks": 27,
+  "native_release_checks": 27,
+  "physical_checks": 9,
+  "physical_failures": 0,
+  "maximum_centre_lane_deviation_m": 2.00573348999023,
+  "ordinary_player_final_brake_speed_mps": 0.06755855679512,
+  "existing_policy_samples": 3600,
+  "existing_motion_samples": 240,
+  "source_sha256": {
+    "addons/vehicle_runtime/native/road_journey.cpp": "50f1b276cefb9f374476183b6d0ffba2a5a0fc2fb561a9b01b28971fc940d900",
+    "addons/vehicle_runtime/native/road_journey.hpp": "db57b688613ddaeb49a7a2edb2a07360dbcc928e3c215c4bd0a50c9741f501d5",
+    "vehicle_demo/scripts/car.gd": "2526ca08418c42d1eaabd9faa40c9a61fc5900a3224a6a7f243cd7cdd8f72c63",
+    "tests/trader_road_journey.gd": "b84f8e8bdd97a722e17d095417f5314b1429f377f75619141400f1e8f01efc76",
+    "tests/trader_ride_physics.gd": "7ee424ab191aea9fb66d4e8c6d5adb9b2a16a4477a90a14c5cd5920b06348996"
+  },
+  "library_sha256": {
+    "vehicle_runtime.windows.template_debug.x86_64.dll": "de3d6cecd2890842425c7326dd3dfc6da6d59fbb9219c781890161168c0a2f07",
+    "vehicle_runtime.windows.template_release.x86_64.dll": "be52f284654697abc4d5291f64d00141273a1e4107596051e9fce177da49ec6f"
+  },
+  "evidence": {
+    "native_debug.log": {
+      "source": "reports/trader_road_journey/20261101T164312099205Z/engine.log",
+      "sha256": "e79ab8bcde2f8ea9c226e02e939a707bf7818d2f7c481c977f93593b4305194b"
+    },
+    "native_release.log": {
+      "source": "reports/trader_road_journey/20261101T164312112152Z/engine.log",
+      "sha256": "e79ab8bcde2f8ea9c226e02e939a707bf7818d2f7c481c977f93593b4305194b"
+    },
+    "physical_final.log": {
+      "source": "reports/checks/20261101T164419087627Z/engine.log",
+      "sha256": "23725c1982fa7fed21a3b42bb1a651037fe6ef06b7d0a42aaa796484b4d62dc1"
+    },
+    "physical_initial_failure.log": {
+      "source": "reports/checks/20261101T163642775038Z/engine.log",
+      "sha256": "ac0bc768b1954bc5b7da4f9a2b44ec666520b4355b25d8be975b53afae045664"
+    },
+    "player_brake_fixture_failure.log": {
+      "source": "reports/checks/20261101T164241440094Z/engine.log",
+      "sha256": "97d23c86024b86f001f9a59a9a0681609e407a7757eca6c40c29dd0c0e3cba6d"
+    },
+    "vehicle_policy.log": {
+      "source": "reports/checks/20261101T164312108383Z/engine.log",
+      "sha256": "5f8ba222475c1d0f96741c52823cf1af1d39dd9fb69a0384f566a16c5a2fa54c"
+    },
+    "vehicle_motion.log": {
+      "source": "reports/checks/20261101T164312133131Z/engine.log",
+      "sha256": "ede3189448f4535f8df9bbd636ab86b6e9db66f562cd23cfd6b50607e3849175"
+    },
+    "physical_final.json": {
+      "source": "reports/trader_ride_physics/1793551493_978.json",
+      "sha256": "8b2c90dbe69a721f1cbf55cc20a72022e257c8ef887d8722c3a305d44211a6a4"
+    }
+  },
+  "retained_failures": [
+    "Corner handoff failed 4/5 assertions before nearest-adjacent-segment correction.",
+    "Fixed two-second player handbrake check failed 1/9; replaced with existing bounded eight-second braking convention; no production braking changes."
+  ],
+  "provenance": "Original AI-assisted native planner/tests for the user paid trader road-trip request; 0BSD new code. Existing driving code and assets retain their terms. No new imports."
+}

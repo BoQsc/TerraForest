@@ -1,5 +1,20 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Paid trader road travel — 2026-11-01
+
+Requested: select another town/city, pay coins, both board a car, trader drives
+there on roads, player exits, trader drives home. An inert native
+road-graph/fare/control foundation passes 27 debug + 27 release checks and nine
+physical car/input assertions. Existing steering/motion parity passes; initial
+corner and braking-fixture failures are retained. No playable paid ride yet.
+Boarding, passenger ownership, atomic payment,
+service persistence and independent distant return residency remain. Streaming
+and archived model paging currently follow one focus, which does not establish an
+unattended whole-world return. The next coordinated export is limited to the
+inactive foundation; resume integration after that shared export, coordinating
+trader UI with quest work. Missing work, prerequisites and evidence:
+[travel contract](TRADER_TRAVEL.md) and [tracker](../issues/trader-travel/README.md).
+
 ## World entry fly-in — 2026-11-01
 
 Default-on three-second entry passes 24 populated-world and 25 normal-browser

@@ -1,0 +1,721 @@
+{
+  "checks": 9,
+  "command": {
+    "brake": 1.0,
+    "cursor": 2,
+    "hold": true,
+    "state": "arrived",
+    "steer": 0.0,
+    "throttle": 0.0
+  },
+  "failures": 0,
+  "maximum_lane_m": 2.00573348999023,
+  "position": "(59.99938, 0.625823, 99.35065)",
+  "samples": [
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.00113803520798683,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 4.0)",
+        "target_speed": 8.0,
+        "throttle": 1.0
+      },
+      "position": "(0.0, 0.625823, 0.001301)",
+      "speed": 0.146336659789085
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 7.544557)",
+        "target_speed": 8.0,
+        "throttle": 1.0
+      },
+      "position": "(0.0, 0.625805, 1.153238)",
+      "speed": 4.23026609420776
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.000000476837158203125,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 12.20933)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625741, 4.338888)",
+      "speed": 7.77345275878906
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 16.23521)",
+        "target_speed": 8.0,
+        "throttle": 1.0
+      },
+      "position": "(0.0, 0.625731, 8.365866)",
+      "speed": 7.83904314041138
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 20.26338)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 12.39287)",
+      "speed": 7.76911640167236
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 24.28931)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 16.41989)",
+      "speed": 7.83471345901489
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 28.31751)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 20.44692)",
+      "speed": 7.76477527618408
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0000019073486328125,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 32.34345)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 24.47396)",
+      "speed": 7.8303804397583
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 36.37166)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 28.501)",
+      "speed": 7.76043224334717
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.000003814697265625,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 40.39763)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 32.52806)",
+      "speed": 7.82604503631592
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.0,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 44.42362)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 36.55289)",
+      "speed": 7.75618743896484
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.000003814697265625,
+        "state": "following",
+        "steer": 0.0,
+        "target": "(0.0, 0.0, 48.44965)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(0.0, 0.625731, 40.58001)",
+      "speed": 7.82180643081665
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 0.173004865646362,
+        "state": "following",
+        "steer": 0.420353247348859,
+        "target": "(1.936928, 0.0, 50.0)",
+        "target_speed": 5.94078856325181,
+        "throttle": 0.0
+      },
+      "position": "(0.190903, 0.625753, 44.39674)",
+      "speed": 6.04382610321045
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 0,
+        "hold": false,
+        "lane_error_m": 1.00895929336548,
+        "state": "following",
+        "steer": 0.783250910690417,
+        "target": "(3.339171, 0.0, 50.0)",
+        "target_speed": 4.2848302228676,
+        "throttle": 0.0
+      },
+      "position": "(1.044609, 0.625792, 46.81361)",
+      "speed": 4.29061698913574
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 1.69853210449219,
+        "state": "following",
+        "steer": 1.0,
+        "target": "(8.475187, 0.0, 50.0)",
+        "target_speed": 3.67368549089977,
+        "throttle": 0.0
+      },
+      "position": "(2.365709, 0.625802, 48.33865)",
+      "speed": 3.56864428520203
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.733058929443359,
+        "state": "following",
+        "steer": 0.826403843121893,
+        "target": "(10.28705, 0.0, 50.0)",
+        "target_speed": 4.1608709411841,
+        "throttle": 1.0
+      },
+      "position": "(4.009421, 0.625801, 49.29366)",
+      "speed": 4.02840948104858
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.0453453063964844,
+        "state": "following",
+        "steer": 0.529479456274337,
+        "target": "(13.17777, 0.0, 50.0)",
+        "target_speed": 5.27408566261555,
+        "throttle": 0.0
+      },
+      "position": "(6.215445, 0.625787, 49.9724)",
+      "speed": 5.04839420318604
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.3804931640625,
+        "state": "following",
+        "steer": 0.260754176757253,
+        "target": "(17.24183, 0.0, 50.0)",
+        "target_speed": 7.57138227245857,
+        "throttle": 1.0
+      },
+      "position": "(9.365061, 0.62575, 50.38932)",
+      "speed": 7.41233921051025
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.475299835205078,
+        "state": "following",
+        "steer": 0.103464066901276,
+        "target": "(21.24711, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(13.37615, 0.625731, 50.47367)",
+      "speed": 7.74286842346191
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.371620178222656,
+        "state": "following",
+        "steer": 0.0252558381518932,
+        "target": "(25.14275, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(17.27318, 0.625731, 50.36705)",
+      "speed": 7.83086633682251
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.231033325195313,
+        "state": "following",
+        "steer": -0.00755481313761007,
+        "target": "(29.1687, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(21.29799, 0.625731, 50.22686)",
+      "speed": 7.76081085205078
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.120403289794922,
+        "state": "following",
+        "steer": -0.0155165949561496,
+        "target": "(33.19334, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(25.32375, 0.625731, 50.11753)",
+      "speed": 7.82644653320313
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.0511856079101563,
+        "state": "following",
+        "steer": -0.0134666261601194,
+        "target": "(37.21893, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(29.34819, 0.625731, 50.04957)",
+      "speed": 7.7565712928772
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.0149116516113281,
+        "state": "following",
+        "steer": -0.00891441357166588,
+        "target": "(41.24497, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(33.37534, 0.625731, 50.01414)",
+      "speed": 7.82216453552246
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.000629425048828125,
+        "state": "following",
+        "steer": -0.00491066241499048,
+        "target": "(45.2734, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(37.4026, 0.625731, 49.9991)",
+      "speed": 7.75217723846436
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.0052490234375,
+        "state": "following",
+        "steer": -0.00224737526672677,
+        "target": "(49.29961, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(41.42991, 0.625731, 49.99471)",
+      "speed": 7.8177924156189
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.00514602661132813,
+        "state": "following",
+        "steer": -0.000770899233672552,
+        "target": "(53.32584, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(45.45497, 0.625731, 49.99489)",
+      "speed": 7.74790620803833
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.00362014770507813,
+        "state": "following",
+        "steer": -0.0000939827370544978,
+        "target": "(57.35209, 0.0, 50.0)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(49.48232, 0.625731, 49.99643)",
+      "speed": 7.81353139877319
+    },
+    {
+      "command": {
+        "brake": 1.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.0471763610839844,
+        "state": "following",
+        "steer": -0.29496820124063,
+        "target": "(60.0, 0.0, 51.37429)",
+        "target_speed": 7.11406269154052,
+        "throttle": 0.0
+      },
+      "position": "(53.49611, 0.625732, 50.05865)",
+      "speed": 7.34037637710571
+    },
+    {
+      "command": {
+        "brake": 1.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 0.731895446777344,
+        "state": "following",
+        "steer": -0.71658315255098,
+        "target": "(60.0, 0.0, 53.06377)",
+        "target_speed": 4.49599692065405,
+        "throttle": 0.0
+      },
+      "position": "(56.26551, 0.625786, 50.76347)",
+      "speed": 4.54585456848145
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 1,
+        "hold": false,
+        "lane_error_m": 1.95963287353516,
+        "state": "following",
+        "steer": -0.960455659324241,
+        "target": "(60.0, 0.0, 54.28608)",
+        "target_speed": 3.82538665460603,
+        "throttle": 0.0
+      },
+      "position": "(58.01788, 0.625799, 52.00573)",
+      "speed": 3.82983684539795
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.948799133300781,
+        "state": "following",
+        "steer": -0.877105169921266,
+        "target": "(60.0, 0.0, 59.83281)",
+        "target_speed": 4.02597753207245,
+        "throttle": 0.0
+      },
+      "position": "(59.08001, 0.625802, 53.57165)",
+      "speed": 3.83682012557983
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.196254730224609,
+        "state": "following",
+        "steer": -0.60053198966756,
+        "target": "(60.0, 0.0, 62.39331)",
+        "target_speed": 4.93820384744512,
+        "throttle": 0.0
+      },
+      "position": "(59.82363, 0.625792, 55.62103)",
+      "speed": 4.72121000289917
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.295413970947266,
+        "state": "following",
+        "steer": -0.30716685511479,
+        "target": "(60.0, 0.0, 66.37319)",
+        "target_speed": 6.96959704011472,
+        "throttle": 0.0
+      },
+      "position": "(60.307, 0.625762, 58.48424)",
+      "speed": 6.69829988479614
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.476146697998047,
+        "state": "following",
+        "steer": -0.133694525173576,
+        "target": "(60.0, 0.0, 70.27458)",
+        "target_speed": 8.0,
+        "throttle": 1.0
+      },
+      "position": "(60.47628, 0.625731, 62.40561)",
+      "speed": 7.86095952987671
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.397975921630859,
+        "state": "following",
+        "steer": -0.0376724974902049,
+        "target": "(60.0, 0.0, 74.30322)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(60.39373, 0.625731, 66.43296)",
+      "speed": 7.78819608688354
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.258213043212891,
+        "state": "following",
+        "steer": 0.00311476889784415,
+        "target": "(60.0, 0.0, 78.3252)",
+        "target_speed": 8.0,
+        "throttle": 1.0
+      },
+      "position": "(60.25381, 0.625731, 70.45602)",
+      "speed": 7.85358476638794
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.139839172363281,
+        "state": "following",
+        "steer": 0.0148648001794619,
+        "target": "(60.0, 0.0, 82.35236)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(60.1367, 0.625731, 74.48206)",
+      "speed": 7.78369140625
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.0645027160644531,
+        "state": "following",
+        "steer": 0.0142842191937507,
+        "target": "(60.0, 0.0, 86.2471)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(60.06263, 0.625731, 78.37605)",
+      "speed": 7.73792266845703
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.0214653015136719,
+        "state": "following",
+        "steer": 0.00998378903424858,
+        "target": "(60.0, 0.0, 90.27473)",
+        "target_speed": 8.0,
+        "throttle": 0.0
+      },
+      "position": "(60.02053, 0.625731, 82.4048)",
+      "speed": 7.8034782409668
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00228118896484375,
+        "state": "following",
+        "steer": 0.00586333273641718,
+        "target": "(60.0, 0.0, 94.1806)",
+        "target_speed": 7.2579327560005,
+        "throttle": 0.0
+      },
+      "position": "(60.00193, 0.625742, 86.30046)",
+      "speed": 7.19153070449829
+    },
+    {
+      "command": {
+        "brake": 1.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00417327880859375,
+        "state": "following",
+        "steer": 0.00319747230118475,
+        "target": "(60.0, 0.0, 97.59025)",
+        "target_speed": 6.20987934431477,
+        "throttle": 0.0
+      },
+      "position": "(59.99574, 0.625758, 89.81327)",
+      "speed": 6.23535203933716
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00526809692382813,
+        "state": "following",
+        "steer": 0.00177145821261567,
+        "target": "(60.0, 0.0, 99.89129)",
+        "target_speed": 5.15390704936897,
+        "throttle": 0.0
+      },
+      "position": "(59.99474, 0.625778, 92.7973)",
+      "speed": 5.27917623519897
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00441741943359375,
+        "state": "following",
+        "steer": 0.00144717270626041,
+        "target": "(60.0, 0.0, 100.0)",
+        "target_speed": 4.08729829903005,
+        "throttle": 0.0
+      },
+      "position": "(59.99563, 0.625793, 95.24207)",
+      "speed": 4.11430597305298
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00288009643554688,
+        "state": "following",
+        "steer": 0.00102832370513792,
+        "target": "(60.0, 0.0, 100.0)",
+        "target_speed": 3.01723558179176,
+        "throttle": 0.0
+      },
+      "position": "(59.99717, 0.625806, 97.12671)",
+      "speed": 3.15813159942627
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.00153350830078125,
+        "state": "following",
+        "steer": 0.000489379419607046,
+        "target": "(60.0, 0.0, 100.0)",
+        "target_speed": 1.92355196602148,
+        "throttle": 0.0
+      },
+      "position": "(59.9985, 0.625823, 98.45821)",
+      "speed": 1.99326062202454
+    },
+    {
+      "command": {
+        "brake": 0.0,
+        "cursor": 2,
+        "hold": false,
+        "lane_error_m": 0.000762939453125,
+        "state": "following",
+        "steer": 0.000147692685264209,
+        "target": "(60.0, 0.0, 100.0)",
+        "target_speed": 0.778692040406684,
+        "throttle": 0.0
+      },
+      "position": "(59.99925, 0.625823, 99.21222)",
+      "speed": 0.828386604785919
+    }
+  ]
+}

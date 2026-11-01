@@ -221,6 +221,9 @@ var handbrake_active: bool = false
 var boost_active: bool = false
 var boost_amount: float = 0.0
 var controls_enabled: bool = true
+# An authorized NPC driver supplies commands; the existing native motion pass
+# remains the only integrator. Player keys/reset/boost stay disabled in this mode.
+var autonomous_controls: Callable
 var driver_door_open: bool = false
 
 # True only when the deterministic no-slip bicycle state fully owns planar
@@ -724,7 +727,15 @@ func _physics_process(delta: float) -> void:
 	var handbrake: bool = false
 	var boost_pressed: bool = false
 
-	if controls_enabled:
+	var autonomous: bool = autonomous_controls.is_valid()
+	if autonomous:
+		var command: Dictionary = autonomous_controls.call(delta)
+		steer_input = clampf(command.get("steer", 0.0), -1.0, 1.0)
+		throttle = clampf(command.get("throttle", 0.0), 0.0, 1.0)
+		reverse_brake = clampf(command.get("brake", 1.0), 0.0, 1.0)
+		# Both pedals request the service brake, never accidental reverse.
+		if command.get("hold", true) or reverse_brake > 0.0: throttle = 1.0; reverse_brake = 1.0
+	elif controls_enabled:
 		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
 			steer_input += 1.0
 		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
@@ -743,7 +754,7 @@ func _physics_process(delta: float) -> void:
 	_update_ground_state(handbrake, delta)
 	_update_steering(steer_input, delta)
 	_apply_suspension_forces()
-	_apply_vehicle_motion(throttle, reverse_brake, handbrake, not controls_enabled, delta)
+	_apply_vehicle_motion(throttle, reverse_brake, handbrake, not controls_enabled and not autonomous, delta)
 	_apply_body_stability()
 	_update_wheel_slip_telemetry()
 	_update_wheel_visuals(delta)
@@ -753,7 +764,7 @@ func _physics_process(delta: float) -> void:
 
 	_handbrake_was_active = handbrake
 
-	if global_position.y < -10.0:
+	if global_position.y < -10.0 and not autonomous_controls.is_valid():
 		reset_vehicle()
 
 
@@ -1251,7 +1262,7 @@ func _update_wheel_visuals(delta: float) -> void:
 
 func _update_reset() -> void:
 	var reset_down: bool = Input.is_key_pressed(KEY_R)
-	if controls_enabled and reset_down and not _reset_was_down:
+	if controls_enabled and not autonomous_controls.is_valid() and reset_down and not _reset_was_down:
 		reset_vehicle()
 	_reset_was_down = reset_down
 
