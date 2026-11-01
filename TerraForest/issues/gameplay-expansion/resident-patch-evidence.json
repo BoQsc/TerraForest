@@ -1,6 +1,25 @@
 {
   "date": "2026-11-01",
-  "status": "Native source/debug/release and fresh-process tests verified; package pending; not gameplay quest reset",
+  "status": "Native source/debug/release and installed package verified; not gameplay quest reset",
+  "source_and_native_commit": "d864e990",
+  "ordinary_world_regression": {
+    "report": "reports/zombie_expansion/20261101T204556384139Z/run.json",
+    "passed": true, "checks": 47,
+    "peak_private_bytes": 2765840384, "peak_dedicated_gpu_bytes": 1221558272,
+    "intent_p95_us": 174, "intent_samples": 180,
+    "visual_review": [
+      {"path": "reports/zombie_expansion/20261101T204556384139Z/resident_1622_0.png", "caption": "Normal generated resident with pre-existing arm loss, viewed from the front/side"},
+      {"path": "reports/zombie_expansion/20261101T204556384139Z/resident_1670_1.png", "caption": "Another generated resident from the rear; retained existing mesh and posture"}
+    ],
+    "scope": "Inspected generated images and ordinary admission/whole-population restoration using the installed PCK. No new art approval, live scoped quest reset or foreground/endurance performance claim. Pointer remains uncaptured."
+  },
+  "package": {
+    "sha256": "c0e972a0edeec4f99d35b0af028d6355f161e89f3f85e7e57723ecb000cc6f98",
+    "bytes": 449320140, "distribution_bytes": 480172803, "matching_native_libraries": 14,
+    "report": "reports/resident_patch/20261101T204305963374Z/run.json",
+    "passed": true, "checks": {"resident_patch": 64, "fresh_process_reopen": 4, "population_regression": 33},
+    "scope": "Headless installed-PCK scoped-state restoration, not live location reset"
+  },
   "format": "TFRP1: seed/sanctuary profile, sorted resident IDs, exact authored anchor, position/yaw, living/dead state, vitals and sleeper phase, SHA-256",
   "limits": {"selected_authored_residents": 256, "patch_bytes": 37952, "world_residents": 2756, "spatial_cells": 2500},
   "verification": {
@@ -16,7 +35,7 @@
     "Only explicit authored residents can be captured; ambient and developer-spawned residents reject",
     "Stable anchors and IDs must still match; no new residents are appended",
     "Dead or travelled residents return to the selected baseline, including exact injuries, missing limbs, sleep/wake phase and signed-zero yaw",
-    "Outside resident bytes and player exclusion remain unchanged; old spatial membership is removed and baseline membership appears once",
+    "Outside resident bytes and ambient exclusions remain unchanged; old spatial membership is removed and baseline membership appears once",
     "Only affected spatial buckets are staged; restore publishes after all selected identities validate",
     "Malformed, over-limit, missing, different-world and stale owner/revision inputs reject without mutation",
     "No-op resets preserve the revision and do not rebuild buckets",
@@ -33,8 +52,8 @@
     {"report": "reports/resident_patch/20261101T203539593672Z/run.json", "cause": "GDScript inferred an untyped native return. Explicit integer type fixes the fixture parse error."}
   ],
   "remaining": [
-    "Installed-package verification",
     "Quiesce selected live actors and retire associated corpse/ragdoll instances before publication; preserve unselected actors",
+    "Corpse records currently lack persistent world-resident ownership; introduce a backwards-compatible link before any scoped cleanup, never guess ownership by proximity",
     "Persistent baseline retention, corpse ownership/contents, vegetation and editable-water reset",
     "Coordinated rollback, player/vehicle exclusion and actual trader/marker/E/objective/reward gameplay",
     "Allocator-failure rollback, visual acceptance and foreground performance are not qualified"

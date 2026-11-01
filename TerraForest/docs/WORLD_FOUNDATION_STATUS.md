@@ -149,8 +149,12 @@ ordinary trader/marker/E playtests. [Owner evidence](../issues/gameplay-expansio
 Selected authored-resident patches now pass 64 reset, four fresh-process and 33
 population assertions in both builds, plus 204 encounter-regression assertions
 per build. They retain outside identities and update only affected spatial buckets.
-Next: installed-package checks, live actor/corpse cleanup, retained baselines and
-the remaining reset owners before real trader/E quest integration.
+The installed package repeats all 101 resident/reset/reopen assertions and passes
+47 ordinary-world admission/restoration checks; generated resident views inspected.
+Next:
+live actor/corpse cleanup, retained baselines and the remaining reset owners before
+real trader/E quest integration. Corpses currently lack a persistent resident link;
+add backwards-compatible ownership before cleanup, never infer it from proximity.
 [Resident evidence](../issues/gameplay-expansion/resident-patch-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten

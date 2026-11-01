@@ -9,7 +9,7 @@
 
 The coordinated expansion package is exported and starts successfully, with all
 14 native libraries matching the verified source builds. It includes the coal
-mine, combat, trader travel, town signs and seven reset primitives. This supersedes
+mine, combat, trader travel, town signs and eight reset primitives. This supersedes
 the older primitives' "not installed" notes below, not their limited scope:
 gameplay resets are still absent. The updated package fixes stale player poses
 when saving with newer items and mismatched zombie restoration collision shapes.
@@ -20,10 +20,14 @@ legacy report writers initially failed against the read-only PCK; the corrected
 external report paths pass with assertions unchanged and failed logs retained.
 The model package adds static-model restoration: 52 model, three fresh-process
 and 63 persistent-rendering assertions pass. Existing gameplay journeys are not
-claimed as rerun against that package. The latest package adds hinge/damage
+claimed as rerun against that package. The following package adds hinge/damage
 restoration and Ranger assets: eight installed headless suites pass 224 counted
 assertions plus the door-component check. The actual executable Ranger journey
 passes 51 gameplay and 12 fresh-reopen checks; full location resets are not enabled.
+The latest package adds authored-resident restoration and Dev Bag full-stack clicks;
+101 resident/reset/reopen assertions, 47 ordinary-world population checks and 12
+actual-executable Dev Bag checks pass. Generated resident views were inspected;
+no new art or full gameplay-reset acceptance is implied.
 Earlier exact-executable
 journeys retain their own package identity. No complete expansion, smooth-frame
 qualification or new visual approval is claimed.
@@ -31,7 +35,7 @@ qualification or new visual approval is claimed.
 
 ## Quest ownership foundation — installed and scoped-verified, not playable quests
 
-- Selected authored-resident restoration passes both native variants: 64 reset,
+- Selected authored-resident restoration passes both native variants and the package: 64 reset,
   four fresh-process and 33 population checks each, plus encounter regressions.
   Live actor/corpse cleanup and coordinated resets remain unimplemented.
   [Resident-state evidence](resident-patch-evidence.json).

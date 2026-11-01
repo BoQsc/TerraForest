@@ -1,7 +1,23 @@
 {
   "date": "2026-11-01",
-  "status": "Published milestone with verified restoration fixes and seven installed bounded reset primitives; full expansion remains incomplete",
+  "status": "Published milestone with verified restoration fixes and eight installed bounded reset primitives; full expansion remains incomplete",
   "current_package": {
+    "sha256": "c0e972a0edeec4f99d35b0af028d6355f161e89f3f85e7e57723ecb000cc6f98",
+    "bytes": 449320140, "distribution_bytes": 480172803, "matching_native_libraries": 14,
+    "source_commits": {"resident_source_and_native": "d864e990", "dev_bag_full_stack": "a10207af"},
+    "export_log": "reports/expansion_resident_export.log",
+    "required_export_gates": "reports/building_standards/20261101T204204321103Z/run.json",
+    "verification": "reports/resident_patch/20261101T204305963374Z/run.json",
+    "passed": true,
+    "checks": {"resident_patch": 64, "fresh_process_reopen": 4, "population_regression": 33},
+    "additional_checks": [
+      {"name": "ordinary_zombie_world", "passed": true, "checks": 47, "report": "reports/zombie_expansion/20261101T204556384139Z/run.json", "scope": "Installed PCK; real generated population, injury/temperament identities and ordinary admission after restoration"},
+      {"name": "dev_bag_shift_stack", "passed": true, "checks": 12, "report": "reports/dev_bag_shift/20261101T204445/run.json", "scope": "Actual existing executable, isolated UI/native inventory with real viewport click/Shift dispatch"}
+    ],
+    "root_user_executable_sha256_unchanged": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "scope": "Installed-PCK scoped authored-resident tests, ordinary-world zombie regression and actual-executable Dev Bag check. Earlier milestones keep their exact identities below. No gameplay quest reset or foreground frame-pacing qualification."
+  },
+  "hinge_damage_ranger_package": {
     "sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
     "bytes": 449319724,
     "distribution_bytes": 480138595,
