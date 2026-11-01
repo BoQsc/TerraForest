@@ -268,6 +268,7 @@ func _retire(index: int,keep_corpse:bool=false) -> void:
 		if is_instance_valid(_obstacles[id]):_obstacles[id].queue_free()
 		_obstacles.erase(id)
 	residents.remove_at(index)
+	if population!=null and zombie.get_meta("world_zombie_id",0)>0:population.last_focus=Vector3.INF
 	if not keep_corpse:zombie.queue_free()
 
 func supported_point(around: Vector3,standing:bool=true) -> Vector3:
@@ -293,11 +294,23 @@ func supported_point(around: Vector3,standing:bool=true) -> Vector3:
 		return Vector3.INF
 	return point
 
-func spawn_at(point: Vector3,restoring_sleep:bool=false) -> CharacterBody3D:
+func supported_resident_point(point:Vector3,standing:bool)->Vector3:
+	if not point.is_finite() or not readiness.is_valid() or not readiness.call(AABB(point-Vector3(2.5,.5,2.5),Vector3(5,5,5))):return Vector3.INF
+	var space:=get_world_3d().direct_space_state
+	var hit:=space.intersect_ray(PhysicsRayQueryParameters3D.create(point+Vector3.UP*.08,point-Vector3.UP*.18,1|2|4))
+	if hit.is_empty() or hit.normal.y<.85:return Vector3.INF
+	if water_depth.is_valid() and float(water_depth.call(point+Vector3.UP*.5))>0:return Vector3.INF
+	if standing:
+		var query:=PhysicsShapeQueryParameters3D.new();query.shape=_capsule;query.transform=Transform3D(Basis.IDENTITY,point+Vector3.UP*.9)
+		query.collision_mask=1|2|4|8|CHARACTER_LAYER|RAGDOLL_LAYER
+		if not space.intersect_shape(query,1).is_empty():return Vector3.INF
+	return point
+
+func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> CharacterBody3D:
 	if not enabled or not point.is_finite() or residents.size() >= LIMIT or not is_instance_valid(target):
 		return null
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
-	var supported := supported_point(point,not restoring_sleep)
+	var supported := supported_resident_point(point,not restoring_sleep) if restoring_sleep or authored else supported_point(point)
 	if profiling_enabled:update_phase_us["admission support"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	if not supported.is_finite():
 		return null

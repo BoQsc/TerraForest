@@ -27,9 +27,9 @@ compute shaders are used where measured workloads justify them, not as a label.
 | --- | --- |
 | Zombie variety, including already missing limbs | Native recipes installed; ordinary source/pack admission and anatomy reload checked; new visual character variety and balance still pending |
 | Less irritating surface zombies, more wandering, finite pursuit and a faster minority | Native timers and configurable temperaments installed/tested; natural player encounters, jogging clip and locomotion review pending |
-| Seated and lying sleepers, awakened by hearing or damage | Live host now coordinates native clearance, footstep/accepted-impact noise, damage, wake clips and binary persistence; ordinary house/POI admission still required |
-| Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, flat live ceiling/interruption/limb-loss checks and fresh-process blocked-pose restore; slopes, tight furnished rooms, moving obstacles and ordinary-world acceptance pending |
-| Sleeper residents inside some houses and underground locations | Pending authored anchors, fair admission, persistent sleep/wake/death and player-safe placement |
+| Seated and lying sleepers, awakened by hearing or damage | Live native-clearance lifecycle integrated; default generation now registers stable house residents; crafted underground POIs and natural encounter review remain |
+| Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, live interruption checks, both poses through furnished A2/C1 collision at all rotations; arbitrary slopes, moving obstacles and player visual acceptance pending |
+| Sleeper residents inside some houses and underground locations | New-world A2/C1 anchors, bounded priority admission and persistent wake/death implemented; default generated cottage verified; populated C1 visit, crafted underground anchors and street-to-room player route evidence remain |
 | Off-road watchtowers | Pending modular destructible design, access, terrain fit, loot and approval/review |
 | Small art-directed caves and mines | Pending differentiated entrances, rooms, side spaces and some built mine structures; no generic straight tunnels |
 | Cave/mine crates and supplies | Pending meaningful placements, reachability, loot and save/reopen |
@@ -78,15 +78,29 @@ of sleep intent/pose state, with old saves retaining their original layout. Live
 flat-host tests cover ceiling refusal, hits, leg loss (including the completion
 handshake), death, suspension and fresh-process restoration. A float32 boundary
 reload defect was reproduced and fixed; rejected evidence remains available.
-Next: authored, terrain-fitting house/POI anchors and actual generated-world
-admission, then slope/furniture/moving-obstacle and player-facing acceptance.
-Do not treat isolated host coverage as completion of ordinary-world sleepers.
+House registration now runs in ordinary generation after approved buildings are
+placed. Half the eligible A2/C1 houses are selected deterministically, subject to
+the initial 40 m safe zone. Existing worlds are not populated retroactively.
+The default seed-1703 browser recipe creates two registered house residents;
+actual cottage wake, fresh-process damage/death and hidden nonloading admission
+are tested. Both poses clear both unchanged furnished resources in all four
+rotations. The C1 collision fixture is not a populated-world C1 visit; teleport
+arrival is not a street-to-room player traversal or frame-pacing qualification.
+Next: crafted watchtower/mine/cave layouts and ordinary route/terrain-fit review,
+then shared location ownership for quest reset, locks, supplies and persistence.
 
 Sleeper integration uses `ZombieWorld.put_to_sleep(actor, 1)` for seated and `2`
 for lying, or `sleep_pose` in a validated encounter descriptor. The host owns the
 native awareness handshake; standalone animation playback does not authorize
 combat or persistence. `hear_noise(source, radius)` is bounded to six residents
-and the native hearing limits. Authored resident registration and stable POI
-ownership are still prerequisites before generator admission is enabled.
+and the native hearing limits. `NativeZombiePopulation.register_sleepers` accepts
+up to 256 keyed anchors atomically and never resets existing identities. Version
+four uses 140-byte records, preserving tombstones after a house is cleared. Native
+v1-v3 readers remain; no authored keys are invented when old worlds load. The
+six-active-body and two-sight-probe limits remain. House admission prioritizes
+authored residents without removing nearby, visible or fighting inhabitants.
+Visibility uses bounded ray samples, not a universal visibility proof. Quest/POI
+reset ownership is still separate unfinished work; ordinary loading never resets
+or resurrects an authored resident.
 
 Evidence and retained failures: [expansion tracker](../issues/gameplay-expansion/README.md).

@@ -1,6 +1,6 @@
 # Gameplay expansion: encounters, exploration and progression
 
-- Status: In progress; first encounter slice installed, not a completed expansion.
+- Status: In progress; native encounters and generated house sleepers, not a completed expansion.
 - Updated: 2026-11-01.
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
@@ -86,6 +86,25 @@ three fresh-process checks, and 47 ordinary-resident world regressions. Details,
 hashes, limits and retained failures: [runtime evidence](sleeper-runtime-evidence.json).
 These images are a flat collision fixture, not approved cave/house placement.
 
+### Generated house checkpoint
+
+![Lying sleeper in an ordinarily generated cottage](images/house-generated-sleep.png)
+![Awakened resident after fresh-process world reload](images/house-awake-reloaded.png)
+
+Installed pack `d6aac5e88aa9`, default browser recipe, seed 1703,
+`SleeperHomes_1703_2a080445`, resident 2501. Exact approved A2 house; no geometry
+replacement. Assistant inspected both captures; no user visual approval claimed.
+Source and pack pass generation/wake/injury/clearing restoration. The packed
+four-process sequence passes 41 assertions including hidden nonloading admission;
+both native DLL variants pass key/capacity/legacy tests. Existing live sleeper
+47+5 and surface-resident 47 checks still pass. Exact reports, hashes and retained
+failures: [house integration evidence](house-sleeper-evidence.json).
+
+Whole packed phases peak at 3.45 GiB process private commit and 1.37 GiB dedicated
+GPU memory. These are short functional tests, not endurance/headroom proof.
+The offscreen captures show 47–50 FPS shortly after loading; they do not establish
+locked 60-FPS gameplay. The 60-FPS cap, VSync and Quiet Mode remain unchanged.
+
 ## Remaining / resume here
 
 Live wake coordination now uses the real encounter host and one collidable body,
@@ -95,10 +114,20 @@ records preserve sleep pose, animation cursor, elapsed wake time and heard sourc
 legacy saves retain their layout. Flat-host reload exposed a float32 envelope-bin
 boundary bug; the runtime lookup now uses the same boundary across serialization.
 
-Next: persistent sleepers at authored POIs and ordinary houses, with deliberate
-anchor clearance and fair residency. Flat-host tests do not qualify slopes,
-moving obstacles, furnished rooms or generated-world placement. Continue every
-remaining row in the linked full contract. Existing
+House sleepers now use stable native keys and authored anchors in unchanged A2/C1
+resources. Default ordinary generation creates them before player arrival; loading
+an older world does not add enemies. V4 binary records retain cleared-house
+tombstones and exact awake/sleeping state. A short floor probe fixes interior
+restoration selecting the roof. Both poses clear the actual furnished prefabs in
+all four rotations (80 collision/admission assertions); default source cottage
+generation, waking, damage, death and fresh-load clearing pass. Nonloading hidden
+admission is checked separately, without changing the six-active-body budget.
+
+Next: crafted off-road watchtower/mine/cave locations, their terrain-fit and route
+review, then quest ownership/reset, supplies and locks. Populated C1 arrival,
+natural street-to-room walking, arbitrary slopes and moving obstacles still need
+evidence; prefab collision coverage is not world-quality acceptance. Continue
+every remaining row in the linked full contract. Existing
 60-FPS frame-pacing defects remain separately tracked, not reset by this work.
 
 ## Reproduce / history
@@ -122,3 +151,12 @@ Live checks: `python tools/check_zombie_sleepers.py runtime` and `state`, also w
 fixture uses real characters, awareness, collisions and the contact-noise adapter;
 the adapter's input/target acceptance is stubbed to avoid taking the user's mouse.
 It is not an end-to-end player input or ordinary generated-world sleeper test.
+
+House checks: `python tools/check_house_sleepers.py`, then `--pack` after a matching
+export. These use normal Generate & play and My worlds in owned `SleeperHomes_*`
+worlds, then fresh processes for awake/injured restore, clearing and hidden
+nonloading admission. Arrival uses the normal teleport/loading path; it is not a
+walking/door-interaction playtest. `tests/house_sleepers.gd` checks native keys,
+capacity, legacy restoration and the real default plan; `--native-only` is also
+run against the release DLL. `tests/house_sleeper_visibility.gd` checks actual
+furnished prefab collisions and wall/window admission.

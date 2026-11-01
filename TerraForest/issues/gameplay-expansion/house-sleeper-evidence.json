@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "992f86a3daff4da273f1ea6679d4f08fe940f1a1",
+  "scope": "Generated house-resident integration checkpoint, not completion of the gameplay expansion. No house geometry/model replacement or existing-player-world migration.",
+  "implementation": {
+    "generation": "Deterministic half of eligible unchanged approved A2/C1 prefabs, after building placement; initial 40 m sanctuary retained. Default seed1703 recipe creates two authored residents.",
+    "native": "Atomic register_sleepers; stable keys, idempotent registration, no heal/resleep/resurrection; at most256 additional identities and2756 total.",
+    "binary": "Version4,32-byte header and140-byte records. 44-byte sleep state and8-byte anchor; tombstones persist. V1-V3 remain readable; unanchored legacy layouts unchanged.",
+    "residency": "Six active bodies,32 nearby candidates, one admission attempt/tick. Authored priority; only distant hidden idle/wandering natural residents may yield capacity. 8 m separation during play,27 conservative occlusion rays only when needed for authored admission; sampled visibility is not universal proof.",
+    "support": "Short local floor probe prevents sleeping/awakened interior residents from restoring onto roofs. Native baked pose clearance remains authoritative. No per-frame skin sampling or dormant simulation."
+  },
+  "checks": {
+    "catalog_and_binary": {
+      "report": "reports/checks/20261101T091800216504Z",
+      "checks": 28,
+      "passed": true
+    },
+    "furnished_collision_and_visibility": {
+      "report": "reports/checks/20261101T091755136120Z",
+      "checks": 80,
+      "passed": true,
+      "scope": "A2 and C1, seated/lying, all four rotations, entire native wake path; wall/window/removal and roof/floor checks. Not populated C1, slope or moving-obstacle qualification."
+    },
+    "debug_native": {
+      "report": "reports/zombie_expansion/20261101T091801600036Z",
+      "checks": [
+        58,
+        31,
+        33,
+        52,
+        23,
+        4
+      ],
+      "passed": true
+    },
+    "release_native": {
+      "report": "reports/zombie_expansion/20261101T090726214822Z",
+      "checks": [
+        58,
+        31,
+        33,
+        52,
+        23,
+        4
+      ],
+      "passed": true
+    },
+    "source_world": {
+      "report": "reports/house_sleepers/20261101T090303064554Z",
+      "phases": [
+        {
+          "phase": "create",
+          "passed": true,
+          "seconds": 78.321,
+          "private_commit_bytes": 3761516544,
+          "dedicated_gpu_bytes": 1472737280
+        },
+        {
+          "phase": "restore",
+          "passed": true,
+          "seconds": 29.373,
+          "private_commit_bytes": 3626373120,
+          "dedicated_gpu_bytes": 1472671744
+        },
+        {
+          "phase": "cleared",
+          "passed": true,
+          "seconds": 26.883,
+          "private_commit_bytes": 3627216896,
+          "dedicated_gpu_bytes": 1472671744
+        }
+      ],
+      "assertions": [
+        11,
+        12,
+        9
+      ],
+      "hidden_admission_report": "reports/house_sleepers/20261101T090303064554Z/admission.json",
+      "hidden_admission_assertions": 9
+    },
+    "packed_world": {
+      "report": "reports/house_sleepers/20261101T091306420385Z",
+      "phases": [
+        {
+          "phase": "create",
+          "passed": true,
+          "seconds": 79.824,
+          "private_commit_bytes": 3709112320,
+          "dedicated_gpu_bytes": 1472675840
+        },
+        {
+          "phase": "restore",
+          "passed": true,
+          "seconds": 27.12,
+          "private_commit_bytes": 3620573184,
+          "dedicated_gpu_bytes": 1472671744
+        },
+        {
+          "phase": "cleared",
+          "passed": true,
+          "seconds": 28.259,
+          "private_commit_bytes": 3491532800,
+          "dedicated_gpu_bytes": 1472409600
+        },
+        {
+          "phase": "admission",
+          "passed": true,
+          "seconds": 29.231,
+          "private_commit_bytes": 3642347520,
+          "dedicated_gpu_bytes": 1472671744
+        }
+      ],
+      "assertions": [
+        11,
+        12,
+        9,
+        9
+      ],
+      "passed": true
+    },
+    "packed_live_runtime": {
+      "report": "reports/zombie_sleepers/20261101T091552033058Z",
+      "checks": 47,
+      "fresh_checks": 5,
+      "passed": true
+    },
+    "packed_surface_regression": {
+      "report": "reports/zombie_expansion/20261101T091645986906Z",
+      "checks": 47,
+      "passed": true
+    },
+    "export_building_gates": "reports/building_standards/20261101T090957736911Z"
+  },
+  "build": {
+    "pack_sha256": "d6aac5e88aa9ae8496c2fd7be978d7a8fc894114604da1483a2881e69f5250b4",
+    "pack_bytes": 447062440,
+    "distribution_bytes": 476704735,
+    "debug_world_runtime_sha256": "922aba2f65cbc9a1adcda097fd2ae7ad51c4cdd882c4b2e8a3486fb05cb6e8e3",
+    "release_world_runtime_sha256": "a5ab80fdfee980b6a93eeb529c9f743b0f73fd5d171fe92abcbd4d40ab919aa6",
+    "export_log": "reports/house_sleepers_export.log",
+    "external_libraries_matched": 14
+  },
+  "retained_failures": [
+    {
+      "report": "reports/house_sleepers/20261101T084231961216Z",
+      "reason": "Per-house random skip chose none of the three default cottages. Replaced by deterministic rank-and-half selection; actual default recipe now asserted."
+    },
+    {
+      "report": "reports/house_sleepers/20261101T084622296450Z",
+      "reason": "Test offscreen flag was reset by ordinary scene arguments, allowing pointer capture. Test window is now no-focus and sets the flag before world ready. Final source/pack phases assert zero capture. No production mouse policy change."
+    },
+    {
+      "report": "reports/house_sleepers/20261101T085001459184Z/restore_resume_085347/console.log",
+      "reason": "Fixture used unrecognized hit region chest, so it did not damage/kill. Corrected to torso and asserted actual HP reduction; new source and pack pass. Earlier awake reload did not prove injury persistence."
+    },
+    {
+      "report": "reports/checks/20261101T085902432876Z",
+      "reason": "Fixture check return type was void; corrected before execution."
+    },
+    {
+      "report": "reports/checks/20261101T085929525582Z",
+      "reason": "Standalone fixture omitted enabled host/target; all spawns correctly refused. Fixture now supplies real admission prerequisites."
+    },
+    {
+      "report": "reports/zombie_expansion/20261101T090517938640Z/house_sleepers",
+      "reason": "Standalone release fixture did not explicitly load its extension. Corrected; release native key checks now pass."
+    }
+  ],
+  "preserved": [
+    "Player worlds untouched; only new owned SleeperHomes test worlds written",
+    "Existing house cells/models/approval resources unchanged",
+    "60 FPS/VSync and Legion Quiet Mode retained",
+    "All33 baseline import/project/icon files hash-preserved",
+    "No pushes; preexisting untracked TerraForest.exe retained"
+  ],
+  "limits": "Sampled process/GPU budgets pass, but offscreen functional runs and 47-50 FPS captures are not proof of smooth focused60FPS or low-end4GiB hardware compatibility. Whole phase times include generation/load, captures and save, not isolated algorithm timing.",
+  "visuals": {
+    "manifest": "images/manifest.json",
+    "files": [
+      "house-generated-sleep.png",
+      "house-awake-reloaded.png"
+    ]
+  },
+  "remaining": [
+    "Crafted off-road watchtower/mine/cave POIs and underground sleeper anchors",
+    "Natural player walking/entry, populated C1, dense-capacity encounter feel, slopes/moving obstacles and user visual acceptance",
+    "Quest-owned reset, locks, supplies and the entire unchecked expansion contract",
+    "Populated-world focused frame pacing, endurance and4GiB hardware qualification"
+  ]
+}

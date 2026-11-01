@@ -64,7 +64,7 @@
       "stage": "Flat animation review; no saved world",
       "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
       "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
-   },
+    },
     {
       "sha256": "7d7224337a74b7ab4c2d7684d4b5b674568a0a021a7087acaa8c2a1e70cbe702",
       "file": "live-sleeper-lying.png",
@@ -93,6 +93,34 @@
       "stage": "Live flat-host physics test; no saved player world",
       "review": "Inspected runtime screenshot, not user approval or ordinary POI acceptance",
       "pack_sha256": "5ccb51903d9d7549290e84b31f5374085b1bb486bdf4e0a5c0e32d436ae8b268",
+      "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
+    },
+    {
+      "file": "house-generated-sleep.png",
+      "source": "reports/house_sleepers/20261101T091306420385Z/sleeping_house.png",
+      "sha256": "44519bc398b6db44127b69d1bef1e023d274b8363608d5f91496be8916a88f78",
+      "kind": "image",
+      "world": "SleeperHomes_1703_2a080445",
+      "seed": 1703,
+      "resident": 2501,
+      "anchor": 27031753659,
+      "pack_sha256": "d6aac5e88aa9ae8496c2fd7be978d7a8fc894114604da1483a2881e69f5250b4",
+      "stage": "Unchanged normal browser default recipe, generated A2 cottage; normal teleport/loading arrival, not natural street traversal",
+      "review": "Assistant inspected; house pose and fresh-load awake state, not user visual approval or sustained frame-pacing evidence. Offscreen captures include 47-50 FPS immediately after load.",
+      "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
+    },
+    {
+      "file": "house-awake-reloaded.png",
+      "source": "reports/house_sleepers/20261101T091306420385Z/restored_house.png",
+      "sha256": "91a3fa3169d8c013107312c03c4cce505ad67837070b203e387c46c7f10749e6",
+      "kind": "image",
+      "world": "SleeperHomes_1703_2a080445",
+      "seed": 1703,
+      "resident": 2501,
+      "anchor": 27031753659,
+      "pack_sha256": "d6aac5e88aa9ae8496c2fd7be978d7a8fc894114604da1483a2881e69f5250b4",
+      "stage": "Unchanged normal browser default recipe, generated A2 cottage; normal teleport/loading arrival, not natural street traversal",
+      "review": "Assistant inspected; house pose and fresh-load awake state, not user visual approval or sustained frame-pacing evidence. Offscreen captures include 47-50 FPS immediately after load.",
       "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
     }
   ]

@@ -67,6 +67,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		token -= 1; waiting = false; sampled = false
 		initial_complete = false
 		last_focus = focus; queue = store.nearby(focus, RADIUS)
+		queue=queue.filter(func(record:Dictionary):return record.anchor!=0)+queue.filter(func(record:Dictionary):return record.anchor==0)
 		cursor = 0; examined = 0; admitted = 0; began = Time.get_ticks_msec()
 		game.terrain.changed_since_save = true
 	if not sampled:
@@ -77,7 +78,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		if points.is_empty():sampled = true
 		elif game.terrain.request_surface_batch(points, token):waiting = true
 		return false
-	if cursor >= queue.size() or host.residents.size() >= host.LIMIT:
+	if cursor >= queue.size():
 		cursor = queue.size()
 		initial_complete = true
 		return true
@@ -94,9 +95,22 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		cursor += 1; examined += 1
 		return false
 	var offset := point - focus; offset.y = 0
-	if not during_loading and (offset.length() < 40.0 or (host.spawn_visible.is_valid() and host.spawn_visible.call(point + Vector3.UP))):
+	var authored:bool=record.anchor!=0
+	if not during_loading and (offset.length() < (8.0 if authored else 40.0) or (host.spawn_visible.is_valid() and host.spawn_visible.call(point + Vector3.UP) and (not authored or not _occluded(point)))):
 		cursor += 1; examined += 1
 		return false
+	if host.residents.size()>=host.LIMIT:
+		var replacement:=-1
+		var farthest:=40.0
+		if authored:
+			for index in host.residents.size():
+				var resident:Node3D=host.residents[index]
+				var saved:Dictionary=store.resident(resident.get_meta("world_zombie_id",0))
+				if not resident.alive or saved.get("anchor",0)!=0 or host.awareness.status(resident.get_instance_id()).state not in ["idle","wander"]:continue
+				var distance:=resident.global_position.distance_to(focus)
+				if distance>farthest and host.spawn_visible.is_valid() and not host.spawn_visible.call(resident.global_position+Vector3.UP):replacement=index;farthest=distance
+		if replacement<0:cursor+=1;examined+=1;return false
+		host._retire(replacement)
 	var interest := PackedVector3Array([point])
 	for zombie in host.residents:
 		if is_instance_valid(zombie):interest.append(zombie.global_position)
@@ -109,24 +123,38 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		failure = "Zombie residency timed out waiting for terrain/object collision"
 		return false
 	cursor += 1; examined += 1
-	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty())
+	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored)
 	if zombie == null:return false
 	zombie.global_rotation.y = record.yaw
 	if not host.configure_encounter(zombie,store.encounter(record.id)):
 		failure = "Cannot configure zombie encounter %d" % record.id
+		host._retire(host.residents.find(zombie))
 		return false
 	if not record.vitals.is_empty() and not zombie.restore_population_vitals(record.vitals):
 		failure = "Invalid saved zombie health for resident %d" % record.id
+		host._retire(host.residents.find(zombie))
 		return false
 	if not host.restore_sleep(zombie,record.sleep):
 		host._retire(host.residents.find(zombie))
 		return false
 	zombie.set_meta("world_zombie_id", record.id)
-	zombie.died.connect(func():sync(zombie))
+	zombie.died.connect(func():sync(zombie);last_focus=Vector3.INF)
 	zombie.process_mode = Node.PROCESS_MODE_DISABLED if during_loading else Node.PROCESS_MODE_INHERIT
 	zombie.set_behavior(not during_loading)
 	sync(zombie); admitted += 1
 	return false
+
+func _occluded(point:Vector3)->bool:
+	var camera:Camera3D=game.get_viewport().get_camera_3d()
+	if camera==null:return false
+	var eye:Vector3=camera.global_position
+	var query:=PhysicsRayQueryParameters3D.new();query.from=eye;query.collision_mask=1|2|4;query.exclude=[game.player.get_rid()]
+	for height in [.15,.9,1.8]:
+		for side in [-1.,0.,1.]:
+			for depth in [-1.,0.,1.]:
+				query.to=point+Vector3(side*1.5,height,depth*1.5)
+				if game.get_world_3d().direct_space_state.intersect_ray(query).is_empty():return false
+	return true
 
 func _surface_ready(received_token: int, points: PackedVector3Array, normals: PackedVector3Array, epoch: int, revision: int) -> void:
 	if not waiting or received_token != token:return

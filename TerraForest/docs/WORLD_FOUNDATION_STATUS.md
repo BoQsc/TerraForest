@@ -15,8 +15,13 @@ The overall checklist remains open. Six sleeper clips now have 58 pose/bounds
 checks and a live native-clearance/animation handshake. Flat-host tests cover
 noise/hits, ceiling refusal, limb loss, death, pause and fresh-process blocked-pose
 restore. Version-three binary population state retains old-save compatibility.
-Authored house/POI anchors, ordinary generated admission and slope/furniture/moving
-obstacle acceptance remain next; the isolated host is not world integration.
+Default generation now registers keyed sleepers in some unchanged A2/C1 houses.
+Real cottage generation/wake and fresh-process injury/death checks pass; both poses
+clear both furnished resources in every rotation. V4 keeps stable authored keys
+and tombstones; old saves are not retrofitted. Hidden nonloading admission is also
+checked, but this is not natural walking/entry, populated C1, dense encounter or
+frame-pacing acceptance. Crafted terrain-fitting POIs, quest ownership/reset and
+supplies/locks are next; arbitrary slopes and moving-obstacle review remain open.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Gameplay responsiveness verification — 2026-11-01

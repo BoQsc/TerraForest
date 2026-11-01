@@ -74,12 +74,19 @@ but their identities, positions, yaw, shared health and individual limb damage/
 detachment persist. Dormant residents do not simulate. During ordinary travel,
 activation skips candidates in the camera frustum or within 40 m; it does not
 invent a replacement, relocate a zombie or refill merely because time passes.
+Authored house residents have priority within that same six-body budget. During
+play, they require at least 8 m separation and hidden admission (off-frustum or
+bounded occlusion samples). Only distant, off-screen idle/wandering natural
+residents can yield capacity; nearby/combat/authored inhabitants are retained.
 Admission still requires ready terrain/structure/tree collision, a supported
 capsule and dry ground. Simulation pauses during loading, edits, menus, inventory,
 driving and focus loss; temporarily missing collision freezes living residents.
 
-`zombie_population_v1` is a validated 210,032-byte native binary section in the
-existing compound world save. Old saves without the section initialize the seeded
+`zombie_population_v1` is a versioned native binary section in the compound world
+save: a 32-byte header and 84-byte v1/v2, 132-byte v3 or 140-byte v4 records, at most
+2,756 residents. The original 2,500-resident v1 remains 210,032 bytes. V3 stores
+44-byte sleep intent/pose state; v4 adds a stable 64-bit authored anchor key.
+Old saves without the section initialize the seeded
 population on first load, without altering their terrain or construction. Death
 marks its identity permanently dead; the existing separate corpse inventory/pose
 store owns the lootable corpse. No automatic respawn timer exists. Reload restores
@@ -112,9 +119,24 @@ encoding persists the anatomy with no population schema migration. Missing limbs
 are hidden/disabled without creating throwaway detached rigid-body groups.
 
 Native sleeper states support seated/lying intent, sound/hit wake triggers and a
-completion handshake. This is not yet playable sleeper content: animation, safe
-body transitions, persistent sleep state and authored POI placement remain pending.
+completion handshake. The six original clips use baked skin envelopes and native
+clearance checks; blocked wakes retain their pose, and no combat is enabled before
+the safe locomotion transition. Ordinary generation places persistent sleepers in
+some unchanged A2/C1 houses via `runtime/house_sleepers.gd`. Underground POIs,
+natural player encounter review and broader slope/obstacle qualification remain.
 See the [full expansion contract](../../docs/GAMEPLAY_EXPANSION.md).
+
+Generation/addon integration: `NativeZombiePopulation.register_sleepers(anchors)`
+accepts dictionaries with positive unique integer `key` (at most 2^53-1), finite
+world `position`, `yaw`, and `pose` 1 (seated) or 2 (lying). Batches are bounded to
+256; capacity and malformed-data failures are atomic. Keys inside the initial
+40 m sanctuary are skipped (returned ID 0). Existing keys return their old ID
+without relocating, healing, resleeping or resurrecting it, including tombstones.
+Choose stable, nonoverlapping addon key ranges; builtin house keys use [2^34,2^35).
+The house catalog verifies exact approved prefab cells/attachments, transforms
+anchors with the grid rotation, and selects half deterministically. Saved interior
+residents probe their own floor, not a long overhead ray that can select the roof.
+No per-frame dormant simulation or per-frame vertex skin sampling is added.
 
 Perception is staggered at a 0.15-second interval per resident, with at most two
 sight eligibility probes per physics tick. Physics supplies actual occlusion and
@@ -182,9 +204,9 @@ grounded movement. New adapters use 0BSD.
 
 ## Remaining work
 
-This is the first integration milestone. Zombie contacts emit damage feedback and
-record session damage; player health, death/respawn, balancing, loot and encounter
-persistence remain unimplemented. Local routing around obstacles and wooden-door
+Zombie contacts emit damage feedback and record session damage; the complete
+player survival/death/respawn loop and balancing remain unfinished. Encounter
+persistence and lootable corpse storage are implemented. Local obstacle routing, wooden-door
 attacks and regional walking are implemented. Actual saved tower/cave round trips
 pass; arbitrary buildings, full-domain pressure and continuous moving-target
 endurance remain unqualified. See the [regional evidence](../../docs/evidence/regional_navigation/README.md).

@@ -5,16 +5,18 @@
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+#include <godot_cpp/variant/packed_int64_array.hpp>
 #include <godot_cpp/variant/vector3.hpp>
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <vector>
+#include <unordered_set>
 
 namespace terraforest {
 class NativeZombiePopulation : public godot::RefCounted {
     GDCLASS(NativeZombiePopulation,godot::RefCounted)
-    struct Resident {godot::Vector3 position;float yaw=0;uint32_t state=0;godot::PackedByteArray vitals,sleep;};
+    struct Resident {godot::Vector3 position;float yaw=0;uint32_t state=0;godot::PackedByteArray vitals,sleep;uint64_t anchor=0;};
     std::vector<Resident> residents_;
     std::array<std::vector<int>,2500> cells_;
     int64_t seed_=-1,revision_=0;
@@ -45,6 +47,7 @@ protected:
         ClassDB::bind_method(D_METHOD("encounter","identity"),&NativeZombiePopulation::encounter);
         ClassDB::bind_method(D_METHOD("update_resident","identity","position","yaw","vitals","sleep"),&NativeZombiePopulation::update_resident,DEFVAL(PackedByteArray()));
         ClassDB::bind_method(D_METHOD("add_resident","position","yaw","vitals"),&NativeZombiePopulation::add_resident);
+        ClassDB::bind_method(D_METHOD("register_sleepers","anchors"),&NativeZombiePopulation::register_sleepers);
         ClassDB::bind_method(D_METHOD("exclude","identity"),&NativeZombiePopulation::exclude);
         ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeZombiePopulation::capture_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeZombiePopulation::validate_snapshot);
@@ -66,7 +69,7 @@ public:
     }
     godot::Dictionary resident(int64_t identity)const{
         godot::Dictionary out;if(identity<1||identity>int64_t(residents_.size()))return out;
-        const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;out["sleep"]=record.sleep;return out;
+        const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;out["sleep"]=record.sleep;out["anchor"]=int64_t(record.anchor);return out;
     }
     godot::Dictionary encounter(int64_t identity)const{
         godot::Dictionary out;if(seed_<0||identity<1||identity>int64_t(residents_.size()))return out;
@@ -119,17 +122,49 @@ public:
         const int identity=int(residents_.size())+1;
         residents_.push_back({position,float(yaw),1,vitals});cells_[cell(position)].push_back(identity-1);revision_++;return identity;
     }
+    godot::Dictionary register_sleepers(const godot::Array &anchors){
+        using namespace godot;
+        Dictionary out;out["ok"]=false;out["reason"]="Invalid authored sleeper batch";
+        if(seed_<0||anchors.size()>256)return out;
+        std::vector<Resident> additions;std::unordered_set<uint64_t> keys;PackedInt64Array identities;
+        for(int index=0;index<anchors.size();++index){
+            if(anchors[index].get_type()!=Variant::DICTIONARY)return out;
+            const Dictionary entry=anchors[index];
+            const Variant key=entry.get("key",Variant()),point=entry.get("position",Variant()),heading=entry.get("yaw",Variant()),pose=entry.get("pose",Variant());
+            if(key.get_type()!=Variant::INT||int64_t(key)<=0||int64_t(key)>9007199254740991LL||point.get_type()!=Variant::VECTOR3||pose.get_type()!=Variant::INT||(int64_t(pose)!=1&&int64_t(pose)!=2)||(heading.get_type()!=Variant::FLOAT&&heading.get_type()!=Variant::INT))return out;
+            const Vector3 position=point;const double yaw=heading;const uint64_t identity=int64_t(key);
+            if(!valid_position(position)||!std::isfinite(yaw)||std::abs(yaw)>10000||!keys.insert(identity).second)return out;
+            int existing=0;for(int item=0;item<int(residents_.size());++item)if(residents_[item].anchor==identity){existing=item+1;break;}
+            if(existing){identities.append(existing);continue;}
+            Vector3 distance=position-sanctuary_;distance.y=0;
+            if(distance.length_squared()<40*40){identities.append(0);continue;}
+            Resident record;record.position=position;record.yaw=yaw;record.state=1;record.anchor=identity;
+            record.vitals.resize(60);record.vitals.fill(0);
+            constexpr float maximum[]={180,50,50,38,24,50,38,24,65,52,32,65,52,32};
+            for(int part=0;part<14;++part)record.vitals.encode_float(part*4,maximum[part]);
+            record.sleep.resize(44);record.sleep.fill(0);record.sleep.encode_u32(0,int64_t(pose));record.sleep.encode_u32(4,1);
+            for(int axis=0;axis<3;++axis)record.sleep.encode_float(12+axis*4,position[axis]);
+            record.sleep.encode_u32(28,int64_t(pose));record.sleep.encode_u32(32,1);
+            additions.push_back(record);identities.append(residents_.size()+additions.size());
+        }
+        if(residents_.size()+additions.size()>2756){out["reason"]="Authored resident capacity exceeded";return out;}
+        for(const auto &record:additions){cells_[cell(record.position)].push_back(residents_.size());residents_.push_back(record);}
+        if(!additions.empty())++revision_;
+        out["ok"]=true;out["reason"]="";out["ids"]=identities;out["added"]=int(additions.size());return out;
+    }
     godot::PackedByteArray capture_snapshot()const{
         godot::PackedByteArray out;if(seed_<0)return out;
-        const bool sleepers=std::any_of(residents_.begin(),residents_.end(),[](const Resident &record){return !record.sleep.is_empty();});const int stride=sleepers?132:84;
-        out.resize(32+residents_.size()*stride);out.fill(0);out.encode_u32(0,0x31505a54);out.encode_u32(4,sleepers?3:residents_.size()==2500?1:2);out.encode_u32(8,seed_);out.encode_u32(12,residents_.size());
+        const bool authored=std::any_of(residents_.begin(),residents_.end(),[](const Resident &record){return record.anchor!=0;});
+        const bool sleepers=std::any_of(residents_.begin(),residents_.end(),[](const Resident &record){return !record.sleep.is_empty();});const int stride=authored?140:sleepers?132:84;
+        out.resize(32+residents_.size()*stride);out.fill(0);out.encode_u32(0,0x31505a54);out.encode_u32(4,authored?4:sleepers?3:residents_.size()==2500?1:2);out.encode_u32(8,seed_);out.encode_u32(12,residents_.size());
         for(int axis=0;axis<3;axis++)out.encode_float(16+axis*4,sanctuary_[axis]);
         for(int item=0;item<int(residents_.size());item++){
             const auto &record=residents_[item];int at=32+item*stride;
             for(int axis=0;axis<3;axis++)out.encode_float(at+axis*4,record.position[axis]);
             out.encode_float(at+12,record.yaw);out.encode_u32(at+16,record.state);out.encode_u32(at+20,record.vitals.size());
             for(int byte=0;byte<record.vitals.size();byte++)out.set(at+24+byte,record.vitals[byte]);
-            if(sleepers){out.encode_u32(at+84,record.sleep.size());for(int byte=0;byte<record.sleep.size();++byte)out.set(at+88+byte,record.sleep[byte]);}
+            if(sleepers||authored){out.encode_u32(at+84,record.sleep.size());for(int byte=0;byte<record.sleep.size();++byte)out.set(at+88+byte,record.sleep[byte]);}
+            if(authored)out.encode_u64(at+132,record.anchor);
         }
         return out;
     }
@@ -137,10 +172,10 @@ public:
         if(bytes.is_empty())return true;
         if(bytes.size()<32||bytes.decode_u32(0)!=0x31505a54||bytes.decode_u32(8)>2147483647||bytes.decode_u32(28)!=0)return false;
         const uint32_t version=bytes.decode_u32(4),count=bytes.decode_u32(12);
-        const uint32_t stride=version==3?132:84;
-        if(count<2500||count>2756||bytes.size()!=32+count*stride||!((version==1&&count==2500)||(version==2&&count>2500)||version==3))return false;
+        const uint32_t stride=version==4?140:version==3?132:84;
+        if(count<2500||count>2756||bytes.size()!=32+count*stride||!((version==1&&count==2500)||(version==2&&count>2500)||version==3||version==4))return false;
         if(!valid_position({float(bytes.decode_float(16)),float(bytes.decode_float(20)),float(bytes.decode_float(24))}))return false;
-        bool sleepers=false;
+        bool sleepers=false;std::unordered_set<uint64_t> anchors;
         for(uint32_t item=0;item<count;item++){
             int at=32+item*stride;uint32_t state=bytes.decode_u32(at+16),size=bytes.decode_u32(at+20);double yaw=bytes.decode_float(at+12);
             if(!valid_position({float(bytes.decode_float(at)),float(bytes.decode_float(at+4)),float(bytes.decode_float(at+8))})||!std::isfinite(yaw)||std::abs(yaw)>10000||state>3||(size!=0&&size!=60))return false;
@@ -149,24 +184,26 @@ public:
             if(state!=2&&size&&bytes.decode_float(at+24)<=0)return false;
             if((state==0||state==3)&&size)return false;
             if(size==0)for(int byte=0;byte<60;byte++)if(bytes[at+24+byte])return false;
-            if(version==3){
+            if(version>=3){
                 const uint32_t length=bytes.decode_u32(at+84);if(length!=0&&length!=44)return false;
                 if(length){if(state!=1||size!=60||!valid_sleep_state(bytes.slice(at+88,at+132)))return false;sleepers=true;}
                 else for(int byte=0;byte<44;++byte)if(bytes[at+88+byte])return false;
             }
+            if(version==4){const uint64_t anchor=bytes.decode_u64(at+132);if(anchor&&(anchor>9007199254740991ULL||item<2500||size!=60||(state!=1&&state!=2)||!anchors.insert(anchor).second))return false;}
         }
-        return version!=3||sleepers;
+        return version==4?!anchors.empty():version!=3||sleepers;
     }
     bool restore_snapshot(const godot::PackedByteArray &bytes){
         if(!validate_snapshot(bytes))return false;
         residents_.clear();seed_=-1;sanctuary_={};
         if(!bytes.is_empty()){
             seed_=bytes.decode_u32(8);sanctuary_={float(bytes.decode_float(16)),float(bytes.decode_float(20)),float(bytes.decode_float(24))};residents_.resize(bytes.decode_u32(12));
-            const int stride=bytes.decode_u32(4)==3?132:84;
+            const int stride=bytes.decode_u32(4)==4?140:bytes.decode_u32(4)==3?132:84;
             for(int item=0;item<int(residents_.size());item++){
                 int at=32+item*stride;auto &record=residents_[item];record.position={float(bytes.decode_float(at)),float(bytes.decode_float(at+4)),float(bytes.decode_float(at+8))};
                 record.yaw=bytes.decode_float(at+12);record.state=bytes.decode_u32(at+16);record.vitals=bytes.slice(at+24,at+24+bytes.decode_u32(at+20));
-                if(stride==132)record.sleep=bytes.slice(at+88,at+88+bytes.decode_u32(at+84));
+                if(stride>=132)record.sleep=bytes.slice(at+88,at+88+bytes.decode_u32(at+84));
+                if(stride==140)record.anchor=bytes.decode_u64(at+132);
             }
         }
         index();revision_++;return true;

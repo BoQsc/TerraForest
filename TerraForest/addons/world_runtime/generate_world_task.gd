@@ -254,6 +254,10 @@ func run()->void:
   if not placed or game.doors.collection.get_ids().size()!=doors+expected_doors:
    print("BUILDING_FAILED ",lot.label," ",game.foundation_check.status);quit(1);return
   completed_buildings+=1;progress("Placing buildings and interiors",completed_buildings,all_lots.size())
+ progress("Placing sleeping house residents")
+ var sleepers:Dictionary=preload("res://addons/characters/runtime/house_sleepers.gd").populate(game,all_lots)
+ if not sleepers.get("ok",false):print("HOUSE_SLEEPERS_FAILED ",sleepers);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("house_sleepers.json"),FileAccess.WRITE).store_string(JSON.stringify(sleepers))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

@@ -37,17 +37,19 @@ def main():
         source = ROOT / "addons/world_runtime/world_runtime.gdextension"
         (addon / source.name).write_text(source.read_text().replace("template_debug", "template_release"))
         record["release_sha256"] = hashlib.sha256((addon / "bin" / library).read_bytes()).hexdigest()
-        for relative in ["addons/characters/runtime/assets/zombie.encounters.json", *[f"tests/{name}.gd" for name in ["zombie_expansion", "zombie_awareness", "zombie_population", "zombie_anatomy"]]]:
+        for relative in ["addons/characters/runtime/assets/zombie.encounters.json", *[f"tests/{name}.gd" for name in ["zombie_expansion", "zombie_awareness", "zombie_population", "zombie_anatomy", "house_sleepers"]]]:
             target = project / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / relative, target)
     if args.mode == "native":
-        for name in ["zombie_expansion", "zombie_awareness", "zombie_population", "zombie_anatomy"]:
+        for name in ["zombie_expansion", "zombie_awareness", "zombie_population", "zombie_anatomy", "house_sleepers"]:
             folder = report / name
             folder.mkdir()
             command = [config.godot, "--headless", "--path", str(project), "--log-file", str(folder / "engine.log"), "--script", f"res://tests/{name}.gd"]
             if name == "zombie_population":
                 command += ["--", "--population-output=" + folder.as_posix()]
+            if name == "house_sleepers":
+                command += ["--", "--native-only"]
             result = execute(command, folder, 30, name.upper() + " checks=")
             record["results"].append(dict(test=name, command=command, result=result))
             print(("PASS " if result["passed"] else "FAIL ") + name, flush=True)
