@@ -1,0 +1,1214 @@
+{
+  "conditions": {
+    "renderer": "Godot 4.7.2 Forward+",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "fps_cap": 60,
+    "sample_frames": 360,
+    "warmup_frames": 90,
+    "concurrency": "Separate worktree; no other heavy checks launched by this chat during measured phases. Other Godot process 28184 was observed earlier; background workload is uncontrolled. Other chat reports overhaul paused, BG5 integrated, vegetation validation pending. No causal speedup or laboratory 60 FPS claim."
+  },
+  "candidate_manifest_sha256": "06b61bf7db24a758882dd347a967378dad67fbce11b6d4475e9fc8f3be3b1665",
+  "debug_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+  "release_sha256": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+  "datasets": [
+    {
+      "source": "reports/building_expansion/R1_1793484146_115/result.json",
+      "sha256": "043ec478f994a6d6c0539c3811b0969cc0c132253b8f32b318af97e7922db0d3",
+      "checks_before_final_shutdown": 20,
+      "failures": 0,
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 47,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 93,
+            "stale_bakes_rejected": 0,
+            "triangles": 25841,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 93,
+            "worker_results_consumed": 93,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 3.33699989318848,
+          "draw_calls": 1251.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.765,
+          "frame_worst_ms": 33.386,
+          "gpu_p95_ms": 17.048999786377,
+          "id": "trader_t1",
+          "lod": {
+            "bake_max_ms": 3.377,
+            "bake_total_ms": 59.5509,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          },
+          "primitives": 1657246.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1367050192.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 43,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 93,
+            "stale_bakes_rejected": 0,
+            "triangles": 25841,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 93,
+            "worker_results_consumed": 93,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.47800016403198,
+          "draw_calls": 1476.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.195,
+          "frame_worst_ms": 33.081,
+          "gpu_p95_ms": 17.0020008087158,
+          "id": "town_hall_t1",
+          "lod": {
+            "bake_max_ms": 3.377,
+            "bake_total_ms": 59.5509,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          },
+          "primitives": 1894715.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1331982608.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 41,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 93,
+            "stale_bakes_rejected": 0,
+            "triangles": 25841,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 93,
+            "worker_results_consumed": 93,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.50299978256226,
+          "draw_calls": 1554.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.028,
+          "frame_worst_ms": 18.694,
+          "gpu_p95_ms": 15.5500001907349,
+          "id": "church_c1",
+          "lod": {
+            "bake_max_ms": 3.377,
+            "bake_total_ms": 59.5509,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          },
+          "primitives": 1665318.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1332149856.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 30,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 93,
+            "stale_bakes_rejected": 0,
+            "triangles": 25841,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 93,
+            "worker_results_consumed": 93,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.44600009918213,
+          "draw_calls": 1718.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.206,
+          "frame_worst_ms": 19.514,
+          "gpu_p95_ms": 17.0610008239746,
+          "id": "school_s2",
+          "lod": {
+            "bake_max_ms": 3.377,
+            "bake_total_ms": 59.5509,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          },
+          "primitives": 1893747.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1331624368.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 20,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 93,
+            "stale_bakes_rejected": 0,
+            "triangles": 25841,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 93,
+            "worker_results_consumed": 93,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.36899995803833,
+          "draw_calls": 1621.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.13,
+          "frame_worst_ms": 33.227,
+          "gpu_p95_ms": 16.3850002288818,
+          "id": "warehouse_w1",
+          "lod": {
+            "bake_max_ms": 3.377,
+            "bake_total_ms": 59.5509,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          },
+          "primitives": 1765341.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1331444944.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 360448,
+            "cells": 6490,
+            "chunks": 44,
+            "collision_chunks": 26,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 137,
+            "stale_bakes_rejected": 1,
+            "triangles": 12558,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 138,
+            "worker_results_consumed": 138,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 5.86800003051758,
+          "draw_calls": 3802.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.022,
+          "frame_worst_ms": 33.381,
+          "gpu_p95_ms": 16.4689998626709,
+          "id": "shop_b2",
+          "lod": {
+            "bake_max_ms": 4.633,
+            "bake_total_ms": 82.6244,
+            "base_triangles": 12558,
+            "chunks_with_lods": 10,
+            "enabled": true,
+            "index_bytes": 88536,
+            "levels": 12,
+            "lowest_triangles": 8756
+          },
+          "primitives": 3806457.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1326956928.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 360448,
+            "cells": 6490,
+            "chunks": 44,
+            "collision_chunks": 31,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 137,
+            "stale_bakes_rejected": 1,
+            "triangles": 12558,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 138,
+            "worker_results_consumed": 138,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 5.92999982833862,
+          "draw_calls": 3934.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 17.994,
+          "frame_worst_ms": 18.808,
+          "gpu_p95_ms": 16.2609996795654,
+          "id": "cottage_a2",
+          "lod": {
+            "bake_max_ms": 4.633,
+            "bake_total_ms": 82.6244,
+            "base_triangles": 12558,
+            "chunks_with_lods": 10,
+            "enabled": true,
+            "index_bytes": 88536,
+            "levels": 12,
+            "lowest_triangles": 8756
+          },
+          "primitives": 3906976.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1326780032.0
+        },
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 360448,
+            "cells": 6490,
+            "chunks": 44,
+            "collision_chunks": 34,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 137,
+            "stale_bakes_rejected": 1,
+            "triangles": 12558,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 138,
+            "worker_results_consumed": 138,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 5.13199996948242,
+          "draw_calls": 3974.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 17.983,
+          "frame_worst_ms": 32.33,
+          "gpu_p95_ms": 16.4750003814697,
+          "id": "shop_b1",
+          "lod": {
+            "bake_max_ms": 4.633,
+            "bake_total_ms": 82.6244,
+            "base_triangles": 12558,
+            "chunks_with_lods": 10,
+            "enabled": true,
+            "index_bytes": 88536,
+            "levels": 12,
+            "lowest_triangles": 8756
+          },
+          "primitives": 3633670.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1325974992.0
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/E2_1793484337_302/result.json",
+      "sha256": "d5a9391a5498e7dcb8d8ff0ba4fb69884612423abdd9a151b66792cd16b3c76f",
+      "checks_before_final_shutdown": 52,
+      "failures": 0,
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "id": "trader_t1",
+          "publication_ms": 351.16
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 29,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 761856,
+            "cells": 14392,
+            "chunks": 93,
+            "collision_chunks": 47,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 93,
+            "published_bakes": 107,
+            "stale_bakes_rejected": 0,
+            "triangles": 25647,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 107,
+            "worker_results_consumed": 107,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 3.50600004196167,
+          "draw_calls": 1251.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.676,
+          "frame_worst_ms": 23.647,
+          "gpu_p95_ms": 16.5300006866455,
+          "id": "trader_t1",
+          "lod": {
+            "bake_max_ms": 2.4384,
+            "bake_total_ms": 52.9303,
+            "base_triangles": 25647,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209928,
+            "levels": 63,
+            "lowest_triangles": 15203
+          },
+          "primitives": 1656470.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1378220336.0
+        },
+        {
+          "id": "trader_t1",
+          "texture_1024_added_bytes": 44761088.0,
+          "texture_memory_before_1024": 719545344.0
+        },
+        {
+          "distance": 2.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 8.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 20.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 2.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 8.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 20.0,
+          "id": "trader_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "id": "town_hall_t1",
+          "publication_ms": 372.719
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 31,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 778240,
+            "cells": 14558,
+            "chunks": 95,
+            "collision_chunks": 45,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 95,
+            "published_bakes": 120,
+            "stale_bakes_rejected": 0,
+            "triangles": 27276,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 120,
+            "worker_results_consumed": 120,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.62400007247925,
+          "draw_calls": 1489.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.036,
+          "frame_worst_ms": 23.185,
+          "gpu_p95_ms": 16.6520004272461,
+          "id": "town_hall_t1",
+          "lod": {
+            "bake_max_ms": 3.6868,
+            "bake_total_ms": 64.6609,
+            "base_triangles": 27276,
+            "chunks_with_lods": 52,
+            "enabled": true,
+            "index_bytes": 231204,
+            "levels": 66,
+            "lowest_triangles": 16110
+          },
+          "primitives": 1900625.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1343385824.0
+        },
+        {
+          "id": "town_hall_t1",
+          "texture_1024_added_bytes": 44761088.0,
+          "texture_memory_before_1024": 719545344.0
+        },
+        {
+          "distance": 2.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 8.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 20.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 8388600,
+          "material_size": 512,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 2.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 8.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "distance": 20.0,
+          "id": "town_hall_t1",
+          "logical_texture_bytes": 33554424,
+          "material_size": 1024,
+          "texture_memory_both_arrays_resident": 764306432.0
+        },
+        {
+          "id": "church_c1",
+          "publication_ms": 333.565
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 31,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 778240,
+            "cells": 14558,
+            "chunks": 95,
+            "collision_chunks": 41,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 95,
+            "published_bakes": 145,
+            "stale_bakes_rejected": 0,
+            "triangles": 26946,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 145,
+            "worker_results_consumed": 145,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.58500003814697,
+          "draw_calls": 1561.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.396,
+          "frame_worst_ms": 25.237,
+          "gpu_p95_ms": 15.5600004196167,
+          "id": "church_c1",
+          "lod": {
+            "bake_max_ms": 3.6868,
+            "bake_total_ms": 82.4097,
+            "base_triangles": 26946,
+            "chunks_with_lods": 52,
+            "enabled": true,
+            "index_bytes": 237888,
+            "levels": 69,
+            "lowest_triangles": 15722
+          },
+          "primitives": 1666964.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1343487616.0
+        },
+        {
+          "id": "school_s2",
+          "publication_ms": 424.022
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 31,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 778240,
+            "cells": 14534,
+            "chunks": 95,
+            "collision_chunks": 30,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 95,
+            "published_bakes": 168,
+            "stale_bakes_rejected": 0,
+            "triangles": 26969,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 168,
+            "worker_results_consumed": 168,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.56400012969971,
+          "draw_calls": 1729.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.406,
+          "frame_worst_ms": 27.501,
+          "gpu_p95_ms": 17.0359992980957,
+          "id": "school_s2",
+          "lod": {
+            "bake_max_ms": 3.6868,
+            "bake_total_ms": 92.6982,
+            "base_triangles": 26969,
+            "chunks_with_lods": 51,
+            "enabled": true,
+            "index_bytes": 238152,
+            "levels": 69,
+            "lowest_triangles": 15745
+          },
+          "primitives": 1896164.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1342949920.0
+        },
+        {
+          "id": "warehouse_w1",
+          "publication_ms": 281.909
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 31,
+            "bake_lattice_32_chunks": 3,
+            "bake_lattice_64_chunks": 61,
+            "cell_bytes": 778240,
+            "cells": 14534,
+            "chunks": 95,
+            "collision_chunks": 20,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 95,
+            "published_bakes": 185,
+            "stale_bakes_rejected": 0,
+            "triangles": 26609,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 185,
+            "worker_results_consumed": 185,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.72399997711182,
+          "draw_calls": 1627.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.382,
+          "frame_worst_ms": 27.601,
+          "gpu_p95_ms": 16.2910003662109,
+          "id": "warehouse_w1",
+          "lod": {
+            "bake_max_ms": 3.6868,
+            "bake_total_ms": 105.6388,
+            "base_triangles": 26609,
+            "chunks_with_lods": 51,
+            "enabled": true,
+            "index_bytes": 260352,
+            "levels": 77,
+            "lowest_triangles": 15233
+          },
+          "primitives": 1765375.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1342710016.0
+        },
+        {
+          "id": "shop_b2",
+          "publication_ms": 140.383
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 1032192,
+            "cells": 20388,
+            "chunks": 126,
+            "collision_chunks": 26,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 234,
+            "stale_bakes_rejected": 1,
+            "triangles": 12362,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 235,
+            "worker_results_consumed": 235,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 6.12900018692017,
+          "draw_calls": 3805.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.366,
+          "frame_worst_ms": 27.761,
+          "gpu_p95_ms": 16.4020004272461,
+          "id": "shop_b2",
+          "lod": {
+            "bake_max_ms": 4.6254,
+            "bake_total_ms": 128.2722,
+            "base_triangles": 12362,
+            "chunks_with_lods": 10,
+            "enabled": true,
+            "index_bytes": 84768,
+            "levels": 12,
+            "lowest_triangles": 8492
+          },
+          "primitives": 3805599.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1338109632.0
+        },
+        {
+          "id": "cottage_a2",
+          "publication_ms": 111.559
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 1032192,
+            "cells": 20388,
+            "chunks": 126,
+            "collision_chunks": 31,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 237,
+            "stale_bakes_rejected": 1,
+            "triangles": 12230,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 238,
+            "worker_results_consumed": 238,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 6.30900001525879,
+          "draw_calls": 3937.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.291,
+          "frame_worst_ms": 26.628,
+          "gpu_p95_ms": 16.4780006408691,
+          "id": "cottage_a2",
+          "lod": {
+            "bake_max_ms": 4.6254,
+            "bake_total_ms": 130.363,
+            "base_triangles": 12230,
+            "chunks_with_lods": 10,
+            "enabled": true,
+            "index_bytes": 89760,
+            "levels": 13,
+            "lowest_triangles": 8314
+          },
+          "primitives": 3905688.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1337907040.0
+        },
+        {
+          "id": "shop_b1",
+          "publication_ms": 162.361
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 20,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 24,
+            "cell_bytes": 1032192,
+            "cells": 20388,
+            "chunks": 126,
+            "collision_chunks": 34,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 44,
+            "published_bakes": 243,
+            "stale_bakes_rejected": 1,
+            "triangles": 11550,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 244,
+            "worker_results_consumed": 244,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 5.43300008773804,
+          "draw_calls": 3977.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.07,
+          "frame_worst_ms": 23.638,
+          "gpu_p95_ms": 16.3810005187988,
+          "id": "shop_b1",
+          "lod": {
+            "bake_max_ms": 4.7398,
+            "bake_total_ms": 136.4762,
+            "base_triangles": 11550,
+            "chunks_with_lods": 11,
+            "enabled": true,
+            "index_bytes": 81432,
+            "levels": 14,
+            "lowest_triangles": 7194
+          },
+          "primitives": 3629848.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1336960016.0
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/house_R1_1793499576_373/result.json",
+      "sha256": "e84764321b247538fe4f0f18bbed866ca16b6eb46760e44b7eb10c12204acdc2",
+      "checks_before_final_shutdown": 7,
+      "failures": 0,
+      "phase": "house_R1",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "blocks": {
+            "appearance_layers": 0,
+            "appearance_texture_bytes": 0,
+            "bake_lattice_16_chunks": 44,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 46,
+            "cell_bytes": 737280,
+            "cells": 14698,
+            "chunks": 90,
+            "collision_chunks": 52,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 90,
+            "published_bakes": 149,
+            "stale_bakes_rejected": 1,
+            "triangles": 19878,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 150,
+            "worker_results_consumed": 150,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 5.28200006484985,
+          "draw_calls": 1539.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 21.728,
+          "frame_worst_ms": 32.763,
+          "gpu_p95_ms": 6.2519998550415,
+          "id": "house_c1",
+          "lod": {
+            "bake_max_ms": 6.1777,
+            "bake_total_ms": 81.9083,
+            "base_triangles": 19878,
+            "chunks_with_lods": 18,
+            "enabled": true,
+            "index_bytes": 92724,
+            "levels": 21,
+            "lowest_triangles": 15784
+          },
+          "primitives": 1160453.0,
+          "texture_memory": 708338688.0,
+          "video_memory": 1331849232.0
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/house_E2_1793499631_047/result.json",
+      "sha256": "0084d9b1cf14efec9d73ed60fc321154fbfc829a3eeacf4835aeda59a3ed2202",
+      "checks_before_final_shutdown": 10,
+      "failures": 0,
+      "phase": "house_E2",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "id": "house_c1",
+          "publication_ms": 282.31
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 44,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 46,
+            "cell_bytes": 737280,
+            "cells": 14698,
+            "chunks": 90,
+            "collision_chunks": 52,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 90,
+            "published_bakes": 164,
+            "stale_bakes_rejected": 1,
+            "triangles": 19636,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 165,
+            "worker_results_consumed": 165,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.59299993515015,
+          "draw_calls": 1539.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 19.614,
+          "frame_worst_ms": 29.171,
+          "gpu_p95_ms": 6.25799989700317,
+          "id": "house_c1",
+          "lod": {
+            "bake_max_ms": 6.0136,
+            "bake_total_ms": 77.1986,
+            "base_triangles": 19636,
+            "chunks_with_lods": 18,
+            "enabled": true,
+            "index_bytes": 106572,
+            "levels": 23,
+            "lowest_triangles": 15402
+          },
+          "primitives": 1159508.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1309861920.0
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/R1_1793484550_484/result.json",
+      "sha256": "433da42501aa7b041520559e59b7c1fdd2ba58c07f8380444cb963b3d3c288eb",
+      "checks_before_final_shutdown": 24,
+      "failures": 0,
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "distance": 187.697860717773,
+          "id": "travel_far",
+          "lod": {
+            "bake_max_ms": 6.6109,
+            "bake_total_ms": 121.4889,
+            "base_triangles": 18959,
+            "chunks_with_lods": 37,
+            "enabled": true,
+            "index_bytes": 153816,
+            "levels": 46,
+            "lowest_triangles": 11209
+          }
+        },
+        {
+          "distance": 100.759147644043,
+          "id": "travel_mid",
+          "lod": {
+            "bake_max_ms": 6.6109,
+            "bake_total_ms": 134.8191,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          }
+        },
+        {
+          "distance": 34.5952186584473,
+          "id": "travel_near",
+          "lod": {
+            "bake_max_ms": 6.6109,
+            "bake_total_ms": 134.8191,
+            "base_triangles": 25841,
+            "chunks_with_lods": 50,
+            "enabled": true,
+            "index_bytes": 209844,
+            "levels": 62,
+            "lowest_triangles": 15405
+          }
+        },
+        {
+          "collision_hold_ticks": 0,
+          "id": "player_travel",
+          "metres": 221.21813801676,
+          "unsupported_fall": false
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/E2_1793484627_484/result.json",
+      "sha256": "7214f7007e19efad07990a5dad172c181742b7b60fdaabd922030d71dcc5fa87",
+      "checks_before_final_shutdown": 48,
+      "failures": 0,
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "id": "trader_t1",
+          "publication_ms": 356.571
+        },
+        {
+          "id": "town_hall_t1",
+          "publication_ms": 353.083
+        },
+        {
+          "id": "church_c1",
+          "publication_ms": 333.202
+        },
+        {
+          "id": "school_s2",
+          "publication_ms": 415.013
+        },
+        {
+          "id": "warehouse_w1",
+          "publication_ms": 295.683
+        },
+        {
+          "id": "shop_b2",
+          "publication_ms": 144.362
+        },
+        {
+          "id": "cottage_a2",
+          "publication_ms": 103.758
+        },
+        {
+          "id": "shop_b1",
+          "publication_ms": 176.643
+        },
+        {
+          "distance": 187.697860717773,
+          "id": "travel_far",
+          "lod": {
+            "bake_max_ms": 6.1734,
+            "bake_total_ms": 147.7394,
+            "base_triangles": 26609,
+            "chunks_with_lods": 51,
+            "enabled": true,
+            "index_bytes": 260352,
+            "levels": 77,
+            "lowest_triangles": 15233
+          }
+        },
+        {
+          "distance": 100.759147644043,
+          "id": "travel_mid",
+          "lod": {
+            "bake_max_ms": 6.1734,
+            "bake_total_ms": 147.7394,
+            "base_triangles": 26609,
+            "chunks_with_lods": 51,
+            "enabled": true,
+            "index_bytes": 260352,
+            "levels": 77,
+            "lowest_triangles": 15233
+          }
+        },
+        {
+          "distance": 34.5952186584473,
+          "id": "travel_near",
+          "lod": {
+            "bake_max_ms": 6.1734,
+            "bake_total_ms": 147.7394,
+            "base_triangles": 26609,
+            "chunks_with_lods": 51,
+            "enabled": true,
+            "index_bytes": 260352,
+            "levels": 77,
+            "lowest_triangles": 15233
+          }
+        },
+        {
+          "collision_hold_ticks": 0,
+          "id": "player_travel",
+          "metres": 221.21813801676,
+          "unsupported_fall": false
+        }
+      ]
+    },
+    {
+      "source": "reports/building_expansion/house_E2_1793484050_544/result.json",
+      "sha256": "27cf387554634163d35d2b38cac8a6af704612b50be710c8c6309ca950a6d0ad",
+      "checks_before_final_shutdown": 29,
+      "failures": 0,
+      "phase": "house_E2",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "metrics": [
+        {
+          "id": "house_c1",
+          "publication_ms": 286.553
+        },
+        {
+          "blocks": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 44,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 46,
+            "cell_bytes": 737280,
+            "cells": 14698,
+            "chunks": 90,
+            "collision_chunks": 52,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 90,
+            "published_bakes": 164,
+            "stale_bakes_rejected": 1,
+            "triangles": 19636,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 165,
+            "worker_results_consumed": 165,
+            "worker_threads_started": 1
+          },
+          "cpu_p95_ms": 4.50600004196167,
+          "draw_calls": 1539.0,
+          "fps_cap": 60,
+          "frame_p95_ms": 18.711,
+          "frame_worst_ms": 23.77,
+          "gpu_p95_ms": 13.6149997711182,
+          "id": "house_c1",
+          "lod": {
+            "bake_max_ms": 4.4572,
+            "bake_total_ms": 65.9568,
+            "base_triangles": 19636,
+            "chunks_with_lods": 18,
+            "enabled": true,
+            "index_bytes": 106572,
+            "levels": 23,
+            "lowest_triangles": 15402
+          },
+          "primitives": 1159508.0,
+          "texture_memory": 719545344.0,
+          "video_memory": 1318607280.0
+        },
+        {
+          "fps_cap": 60,
+          "frame_max_ms": 28.215,
+          "frame_p95_ms": 21.637,
+          "geometry_lods": {
+            "bake_max_ms": 4.4572,
+            "bake_total_ms": 65.9568,
+            "base_triangles": 19636,
+            "chunks_with_lods": 18,
+            "enabled": true,
+            "index_bytes": 106572,
+            "levels": 23,
+            "lowest_triangles": 15402
+          },
+          "gpu_p95_ms": 13.5860004425049,
+          "id": "house_c1",
+          "structure_stats": {
+            "appearance_layers": 8,
+            "appearance_texture_bytes": 8388600,
+            "bake_lattice_16_chunks": 44,
+            "bake_lattice_32_chunks": 0,
+            "bake_lattice_64_chunks": 46,
+            "cell_bytes": 737280,
+            "cells": 14698,
+            "chunks": 90,
+            "collision_chunks": 40,
+            "dirty_chunks": 0,
+            "max_chunks": 2048,
+            "mesh_chunks": 90,
+            "published_bakes": 164,
+            "stale_bakes_rejected": 1,
+            "triangles": 19636,
+            "worker_jobs": 0,
+            "worker_jobs_submitted": 165,
+            "worker_results_consumed": 165,
+            "worker_threads_started": 1
+          },
+          "vegetation_owners": 1024
+        }
+      ]
+    }
+  ]
+}

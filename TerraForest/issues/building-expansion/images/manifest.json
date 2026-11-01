@@ -1,0 +1,541 @@
+{
+  "captured_by": "TerraForest Godot review scripts; unedited viewport captures",
+  "updated": "2026-11-01",
+  "images": [
+    {
+      "file": "trader_t1_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/trader_t1_roof_join.png",
+      "sha256": "0d5bbd635b36ed1d3828f5586db3585a1bff3f3100acef830546cd6eae396bac",
+      "caption": "Trader T1: aged brick, clay roof and timber ends; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "trader_t1",
+        "position": "(958.5, 57.0, 604.5)",
+        "target": "(944.5, 49.0, 586.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "trader_t1_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/trader_t1_roof_join.png",
+      "sha256": "183da76da88c5377309fd5be4a605b3c0cac6be536bbce9ad3f5decaa0db9492",
+      "caption": "Trader T1: aged brick, clay roof and timber ends; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "trader_t1",
+        "position": "(958.5, 57.0, 604.5)",
+        "target": "(944.5, 49.0, 586.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "town_hall_t1_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/town_hall_t1_roof_join.png",
+      "sha256": "2fd00e779f1e3ecb50b7ce04c9b66edb2fba318cd532b1266f1f1d61136c853f",
+      "caption": "Town hall T1: finished coping, cornice and shallow hip canopy; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "town_hall_t1",
+        "position": "(1009.5, 58.5, 598.0)",
+        "target": "(995.5, 50.5, 580.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "town_hall_t1_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/town_hall_t1_roof_join.png",
+      "sha256": "d0d962333567e125b388811407562688d8fab76504ce6138d4f180705a4ac8dd",
+      "caption": "Town hall T1: finished coping, cornice and shallow hip canopy; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "town_hall_t1",
+        "position": "(1009.5, 58.5, 598.0)",
+        "target": "(995.5, 50.5, 580.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "church_c1_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/church_c1_street.png",
+      "sha256": "79663e86f7f4fcf51b20a48bbeae2165ccb5322e559175daae0c6412da056398",
+      "caption": "Church C1: coursed limestone and slate from the street; R1 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "church_c1",
+        "position": "(950.5, 42.62912, 686.0)",
+        "target": "(940.5, 43.0, 670.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "church_c1_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/church_c1_street.png",
+      "sha256": "a9c70a71aee6393e5bf122f75ae29f718f7201679ddfb7f37c02a38c5d4461bb",
+      "caption": "Church C1: coursed limestone and slate from the street; E2 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "church_c1",
+        "position": "(950.5, 42.62912, 686.0)",
+        "target": "(940.5, 43.0, 670.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "school_s2_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/school_s2_roof_join.png",
+      "sha256": "8031188ccbd7c2469c5a9d612409272c983922fdf87f0d484ff432e916531a33",
+      "caption": "School S2: lower library roof and complete taller-wall junction; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "school_s2",
+        "position": "(1003.5, 56.5, 668.0)",
+        "target": "(989.5, 48.5, 650.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "school_s2_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/school_s2_roof_join.png",
+      "sha256": "12a1329c27c229825b0fe6616521dd0b6794bb378c81edd6213820ecfde05ab3",
+      "caption": "School S2: lower library roof and complete taller-wall junction; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "school_s2",
+        "position": "(1003.5, 56.5, 668.0)",
+        "target": "(989.5, 48.5, 650.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "warehouse_w1_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/warehouse_w1_roof_join.png",
+      "sha256": "b1984717a2970bd870ae3dff2ed997670aaf24107dd09cf7c5a41738285b1afa",
+      "caption": "Warehouse W1: continuous zinc on shell and gable slopes; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "warehouse_w1",
+        "position": "(940.5, 55.0, 732.0)",
+        "target": "(926.5, 47.0, 714.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "warehouse_w1_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/warehouse_w1_roof_join.png",
+      "sha256": "33666ebef7e0d8246f24642c032755fb35d4364405b4ae32d320f9e115de6e3f",
+      "caption": "Warehouse W1: continuous zinc on shell and gable slopes; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "warehouse_w1",
+        "position": "(940.5, 55.0, 732.0)",
+        "target": "(926.5, 47.0, 714.0)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "cottage_a2_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/cottage_a2_street.png",
+      "sha256": "d3138c7cf5f3e7385d1c3d640d2ff40e222960151353f40df04f5d68005030c5",
+      "caption": "Cottage A2: existing steps and silhouette with aged masonry and clay; R1 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "cottage_a2",
+        "position": "(964.5, 46.65, 1778.0)",
+        "target": "(954.5, 48.0, 1779.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "cottage_a2_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/cottage_a2_street.png",
+      "sha256": "7edb593e4472973ecd7f03ccc1cd85d7254212cd8bc28c87d6b32166555e9745",
+      "caption": "Cottage A2: existing steps and silhouette with aged masonry and clay; E2 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "cottage_a2",
+        "position": "(964.5, 46.65, 1778.0)",
+        "target": "(954.5, 48.0, 1779.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "shop_b2_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/shop_b2_roof_join.png",
+      "sha256": "3e517b428db3033925d00806eecbd6d202e57b1651ab55a234f787e34c83b13c",
+      "caption": "Shop B2: slate thin roof and timber ends; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "shop_b2",
+        "position": "(983.5, 64.5, 1767.5)",
+        "target": "(969.5, 56.5, 1749.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "shop_b2_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/shop_b2_roof_join.png",
+      "sha256": "85a4a75f785df880df2394747f71c344d6ef5b4c6f5c155d2ab97b7bac96517c",
+      "caption": "Shop B2: slate thin roof and timber ends; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "shop_b2",
+        "position": "(983.5, 64.5, 1767.5)",
+        "target": "(969.5, 56.5, 1749.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "shop_b1_R1.png",
+      "source": "reports/building_expansion/R1_1793484146_115/shop_b1_roof_join.png",
+      "sha256": "f8fedf703149ca5bf864d921b92f46f6233609b0b7ee28395a6c2421c66dff64",
+      "caption": "Shop B1: all four existing hip directions preserved; R1 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "R1",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "shop_b1",
+        "position": "(933.5, 62.5, 1851.5)",
+        "target": "(919.5, 54.5, 1833.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "shop_b1_E2.png",
+      "source": "reports/building_expansion/E2_1793484337_302/shop_b1_roof_join.png",
+      "sha256": "25b2f73ed6a913b51fc913188c84240c6c9aa43b480e7033bff08f238a3a511b",
+      "caption": "Shop B1: all four existing hip directions preserved; E2 roof_join",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "shop_b1",
+        "position": "(933.5, 62.5, 1851.5)",
+        "target": "(919.5, 54.5, 1833.5)",
+        "view": "roof_join"
+      }
+    },
+    {
+      "file": "house_c1_R1.png",
+      "source": "reports/building_expansion/house_R1_1793499576_373/house_c1_street.png",
+      "sha256": "7d426c6a8e4b7a1e229cb9e0e186c6c0f3e0c620899e3f27cc988fecbade30ee",
+      "caption": "House C1: preserved garage, balcony and cellar under aged brick/slate; R1 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "house_R1",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "view": {
+        "id": "house_c1",
+        "position": "(1068.5, 60.09652, 350.0)",
+        "target": "(1058.5, 59.0, 331.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "house_c1_E2.png",
+      "source": "reports/building_expansion/house_E2_1793499631_047/house_c1_street.png",
+      "sha256": "dc7f228181d31e8877d3b29c0600d6441ce2f940204f991feff5129cf76015c8",
+      "caption": "House C1: preserved garage, balcony and cellar under aged brick/slate; E2 street",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "house_E2",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "view": {
+        "id": "house_c1",
+        "position": "(1068.5, 60.09652, 350.0)",
+        "target": "(1058.5, 59.0, 331.5)",
+        "view": "street"
+      }
+    },
+    {
+      "file": "corner_intact.png",
+      "source": "reports/building_expansion/E2_1793484337_302/town_hall_corner_intact.png",
+      "sha256": "57b5350ce18a1513c9187243dc5052c9c34e741fcf560fb5321179f9befeefed",
+      "caption": "Final E2 cornice corner intact; coping runs continuously above it.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "corner_removed.png",
+      "source": "reports/building_expansion/E2_1793484337_302/town_hall_corner_removed.png",
+      "sha256": "e665f53ada88d0e107a0da51aaa7ef63cc5ce5dd9141dcf6f5004de48eb6281c",
+      "caption": "One independently addressable cornice corner removed; other cells remain.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "corner_restored.png",
+      "source": "reports/building_expansion/E2_1793484337_302/town_hall_corner_restored.png",
+      "sha256": "6f8df0160cffcf05074647a0625cea2d8d859343ffb9764e495f14c29c3fd62f",
+      "caption": "Exact styled corner restored by undo.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "school_underside.png",
+      "source": "reports/building_expansion/E2_1793484337_302/school_s2_underside.png",
+      "sha256": "353cd2c7bf5c58f04f1a3ef75347cfce20c64f27db3d9d0fd8a7881f2fd3d56c",
+      "caption": "The school roof underside uses timber; slate remains on the upward faces.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": {
+        "id": "school_s2",
+        "position": "(980.5, 47.2, 657.0)",
+        "target": "(980.5, 49.5, 661.0)",
+        "view": "underside"
+      }
+    },
+    {
+      "file": "house_basement.png",
+      "source": "reports/building_expansion/house_E2_1793499631_047/house_c1_basement.png",
+      "sha256": "66be1ae783be888708132abb3bc452d76ce460bdb955d83b590b0b8c25e1834d",
+      "caption": "C1 basement: preserved stairs, floor and partition doors.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "house_E2",
+      "world": "ExpansionHouse_1703_d7997ecc",
+      "view": {
+        "id": "house_c1",
+        "position": "(1058.5, 54.65, 327.5)",
+        "target": "(1060.5, 54.0, 319.0)",
+        "view": "basement"
+      }
+    },
+    {
+      "file": "roof_512.png",
+      "source": "reports/building_expansion/E2_1793484337_302/trader_t1_material_512_2m.png",
+      "sha256": "1d815284e5bfd7afa6008d85d88882d641182c1b11002b250472735cd5474b5d",
+      "caption": "Trader clay roof at the 2 m comparison camera, 512-pixel runtime array.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "roof_1024.png",
+      "source": "reports/building_expansion/E2_1793484337_302/trader_t1_material_1024_2m.png",
+      "sha256": "189c62c7b71e6494bed9842cc2f2722e63305450c0d17c3796e03e417fbe2534",
+      "caption": "Same clay roof and camera, 1024-pixel comparison array.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "travel_far.png",
+      "source": "reports/building_expansion/E2_1793484627_484/player_travel_far.png",
+      "sha256": "ffd001568c03f0e927c0ba7f94b7c58fc0cf41871a0c5fe3dbec2bd63fdf7f22",
+      "caption": "Actual player at the start of the 221.22 m street traverse; no later teleport.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "travel_near.png",
+      "source": "reports/building_expansion/E2_1793484627_484/player_travel_near.png",
+      "sha256": "d50c835a2072d41d8432e8e2eb0505b76cf2029a36ea0a405c46f12b366fceb2",
+      "caption": "Actual player after the street traverse; no readiness holds or unsupported fall.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "phase": "E2",
+      "world": "CivicReview_1703_8ae64a06",
+      "view": null
+    },
+    {
+      "file": "rejected_E1.png",
+      "source": "reports/building_expansion/E1_1793381132_198/town_hall_t1_roof_join.png",
+      "sha256": "b514a170cac93faa74f02b774199a0ff8ed35a24962c25d00f3096ceb18ea25f",
+      "caption": "Rejected E1 procedural art, preserved as historical evidence; not the current proposal.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": null,
+      "phase": "E1_1793381132_198",
+      "world": null,
+      "view": null
+    },
+    {
+      "file": "palette.png",
+      "source": "reports/building_expansion/palette/palette.png",
+      "sha256": "7418aa73c5738fff247945b85a8300e69a1b3036311a366db274fb2cd887e7b6",
+      "caption": "Searchable shape families with baked orientation and assembly previews; prior UI pass, unchanged behavior.",
+      "seed": 1703,
+      "resolution": [
+        1920,
+        1080
+      ],
+      "native_sha256": null,
+      "phase": "palette",
+      "world": null,
+      "view": null
+    }
+  ]
+}

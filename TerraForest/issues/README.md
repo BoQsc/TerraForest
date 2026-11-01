@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Building expansion materials and joints](building-expansion/README.md) | E1 rejected / E2 ready for review | Eight individual imagegen materials, shape/palette improvements and nine matched revisions; source/release/PCK, save/reopen and traversal checks pass; known older NPC planning and frame-pacing limits retained |
 | [Trader and civic buildings](civic-buildings/README.md) | Five R1 designs approved / scoped checks pass | Approved 2026-10-30; full trade, basement/player/NPC/vehicle routes and fresh restore verified; expansion direction approved, finished pack must demonstrate real-world gains before approval; broader frame pacing remains open |
 | [Terrain crossing building blocks](terrain-building-contact/README.md) | Shared correction / enforced checks | Native shape-derived clearance, common datums and phase ordering, real footprint and exposed-surface publication gates; 30 debug/release + 64 catalog checks; human review and further recurrence coverage remain |
 | [FPS / world overview](world-overview/README.md) | Partial / opt-in camera | Whole-world terrain/forest/boulder/static-prop/parked-vehicle coverage, archived exclusions and compact car LODs; prop paging/edit/reload checks integrated; transitions, dense costs, endurance and broader modules remain open |

@@ -1,6 +1,51 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Building expansion E2 — 2026-11-01
+
+The [stable expansion issue](../issues/building-expansion/README.md) retains the
+rejected E1 materials/images and failed checks. The user rejected the bright,
+clean procedural direction and requested individual imagegen materials matching
+the existing grim look. Eight separate originals and a timber-pattern correction
+are generated and retained with prompts/hashes and CC0 contribution provenance.
+The [material acceptance contract](BUILDING_MATERIAL_STANDARD.md) now records
+art direction, construction patterns, physical scale, UV direction and world review.
+
+Implementation includes 18 new grid-owned shapes, independent per-cell appearance
+with legacy words preserved, styled archive version 3, native crafting/salvage
+decoding, searchable palette families and baked orientation/assembly previews.
+Roof courses/drain direction are checked from actual published triangles through
+all supported mounts. E2 prefabs are separate unapproved candidates with inherited
+approval flags removed; no existing save or generation default is replaced.
+
+Engineering verification is complete for the proposed expansion scope; exact E2
+art/building approval remains pending. See the [final review](BUILDING_EXPANSION_REVIEW.md),
+[captioned before/after gallery](../issues/building-expansion/GALLERY.md) and
+[measured costs](../issues/building-expansion/PERFORMANCE.md). Mandatory source/release
+checks pass 30 contact and 490 expansion cases each, plus 80 catalog, eight material
+and 45 candidate-mesh checks. PCK startup and all 45 packed assets pass; modular
+1978, construction 26 and actual palette/placement 30 checks also pass.
+
+All nine proposed revisions have matched images and exact save/reopen evidence in
+isolated clones. C1 passes 30 player/NPC/stair/basement checks. A new shared clipping
+correction removes microscopic roof-joint triangles that caused a real Jolt error;
+joined geometry is now an enforced export gate. Actual player travel passes 221.22 m
+in both R1 and E2 without collision holds or unsupported fall. Source saves remain
+unchanged; hash-verified review launchers open checkpoints read-only.
+
+The earlier eight-lot route run retains three older market NPC planning failures;
+Shop B1 reproduces on unchanged R1. Return to those native planner fixtures before
+claiming universal NPC access. This limitation is visible in the review, not counted
+as passed. Valley shapes still lack a justified actual-building application and
+remain prototype-only for promotion. Normal/roughness and beam/chamfer/arch additions
+are assessed follow-ups, outside this pack. Full-world frame-pacing and terrain/foliage
+quality remain open; user approval is the next step for the scoped E2 candidates.
+
+Concurrency: work remains in `codex/trader-civic-buildings`. The other chat reports
+BG5 integrated and vegetation validation pending, with its overhaul paused; this
+checkout retains its verified `63337456` rendering baseline for matched evidence.
+Its separate later edits are not overwritten or silently folded into this review.
+
 ## Trader house, civic buildings and terrain contact — 2026-10-30
 
 [Final review and decisions](CIVIC_FINAL_REVIEW.md). The opt-in R1 complete world

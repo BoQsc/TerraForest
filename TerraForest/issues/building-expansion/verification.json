@@ -1,0 +1,92 @@
+{
+  "updated": "2026-11-01",
+  "scope": "E2 implementation verified; exact art/building acceptance pending",
+  "artifacts": [
+    {
+      "path": "dist/TerraForest.pck",
+      "sha256": "3030c341229416ae265ca80689424ff941f57f04e6e85083e292f65d49533b23",
+      "bytes": 406703452
+    },
+    {
+      "path": "addons/structures/bin/structures.windows.template_debug.x86_64.dll",
+      "sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "bytes": 3264512
+    },
+    {
+      "path": "addons/structures/bin/structures.windows.template_release.x86_64.dll",
+      "sha256": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+      "bytes": 3060224
+    },
+    {
+      "path": "reviews/building_expansion/provenance.json",
+      "sha256": "06b61bf7db24a758882dd347a967378dad67fbce11b6d4475e9fc8f3be3b1665",
+      "bytes": 3174
+    },
+    {
+      "path": "addons/structures/textures/expansion_v2/provenance.json",
+      "sha256": "e042a7dce28654cba65e51a47b245d0e8ea5783380601f82534e7ee183409542",
+      "bytes": 20541
+    }
+  ],
+  "reports": [
+    {
+      "path": "reports/building_standards/20261101T022117085387Z/run.json",
+      "sha256": "5940c52ee83c602f727d414d5ac2f5d44f437be351994d12014a36ccc3fbe280"
+    },
+    {
+      "path": "reports/building_expansion/packed/20261101T022208946118Z/run.json",
+      "sha256": "b44d0439c7f0a179ecee036f0e79c9ce0841c46a6c3fd6babdb59456f2e2d62f"
+    },
+    {
+      "path": "reports/building_expansion/paired_/20261031T220224276185Z/run.json",
+      "sha256": "fc95a06af2e36dc6639899e71358a17cfe028ed84240cdd41284e185374155bb"
+    },
+    {
+      "path": "reports/building_expansion/paired_/20261101T021932077386Z/run.json",
+      "sha256": "321283f6f2ee9f6df73e1e2ddfc2caae4a262bd82951642bb3321bcb673a772c"
+    },
+    {
+      "path": "reports/building_expansion/paired_/20261031T220048889486Z/run.json",
+      "sha256": "693e73add1dacf8399405fb4cbf4f1cb7947858d50a57e2c8c9571a2cfd8c2e4"
+    },
+    {
+      "path": "reports/building_expansion/paired_/20261031T220908578512Z/run.json",
+      "sha256": "a85eac42a09b73aa7939f39e3723a9fd683ddab3e7a8ea3fdbbec4af71459db9"
+    },
+    {
+      "path": "reports/building_expansion/persistent_/20261031T221148056059Z/run.json",
+      "sha256": "75b5303f2993b7d448eaf3c124dc0cbf294f239f2c5d8920e60cbc41a1b94bc7"
+    },
+    {
+      "path": "reports/building_expansion/persistent_/20261031T221305373220Z/run.json",
+      "sha256": "dea22c237ce81b22c23823cdfe594a3313b342b0bdb590a3ea195cedb063012b"
+    }
+  ],
+  "review_clones": [
+    {
+      "slot": "Expansion_E2_civic_eb73736f",
+      "source": "CivicReview_1703_8ae64a06",
+      "evidence": "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\building_expansion\\persistent_\\20261031T221148056059Z",
+      "revision": "E2",
+      "candidate_manifest_sha256": "06b61bf7db24a758882dd347a967378dad67fbce11b6d4475e9fc8f3be3b1665",
+      "world_sha256": "871cc04a9ecb64bb24bac14b1b8ad083944709e8be664de7b0e8ca9b60aefbab",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc"
+    },
+    {
+      "slot": "Expansion_E2_house_859d6a8e",
+      "source": "ExpansionHouse_1703_d7997ecc",
+      "evidence": "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\building_expansion\\persistent_\\20261031T221305373220Z",
+      "revision": "E2",
+      "candidate_manifest_sha256": "06b61bf7db24a758882dd347a967378dad67fbce11b6d4475e9fc8f3be3b1665",
+      "world_sha256": "f259399aa65fb9ac3c2abc99ec4b4094e0d84dddab22cd4b233cb2bb060de16d",
+      "native_sha256": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc"
+    }
+  ],
+  "known_limits": [
+    "Three older market NPC plans incomplete; Shop B1 reproduced on R1.",
+    "Full-world sustained frame pacing and terrain/foliage quality remain open.",
+    "Valley shapes 26/27 only have assembly-fixture evidence.",
+    "20 m texture-resolution views are obscured by foliage."
+  ],
+  "implementation_commit": "1be69743a253545cbf83cfc6c02f4cad5bec500d"
+}

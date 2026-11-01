@@ -1,0 +1,132 @@
+# Building expansion: materials, roof joints and construction display
+
+- Status: Improved-partial; E2 engineering verified and ready for visual approval.
+- Updated: 2026-11-01. Implementation is in the isolated trader/civic worktree.
+- User review: Direction approved 2026-10-30. User rejected E1's clean, bright
+  procedural materials and questioned pattern correctness. E2 is not approved.
+- Symptom: Expansion materials lost the existing grim, weathered appearance;
+  generic dominant-axis UV projection could run roof courses down the slope.
+
+Implementation commit: `1be69743a253545cbf83cfc6c02f4cad5bec500d` (native, assets, tools and regression coverage).
+
+## Changes and current evidence
+
+E2 uses eight individually generated imagegen materials, with retained masters,
+prompts, the rejected eight-board timber trial, and the selected four-board edit.
+Native roof mapping follows local drainage and rotates with the part. Original
+approved resources and their legacy appearance words remain unchanged. New
+candidate prefabs cannot inherit their originals' approval flags.
+
+The native pack adds 18 individual shapes, per-cell appearances separated from
+crafting material, version-3 styled archives, palette search/families and baked
+orientation/assembly previews. Published geometry and authoritative convex hulls
+share the same source. Closed gable ends use structural material on end faces
+and the selected roof finish on slopes in a single shared mesh.
+
+Earlier source and release contact/expansion gates passed in
+`reports/building_standards/20261031T061345365698Z`: 30 contact checks per target,
+80 source catalog checks and 469 expansion checks per target. These include
+65,536 word decoding, legacy identity, every new shape/mount, roof UV direction,
+structural costs, atomic persistence rejection, paging and local undo.
+Eight source-image identity/dimension checks passed in
+`reports/checks/20261031T061323630756Z`; all eight 3×3 repeats in
+`reports/building_expansion/materials_1793427204_061` were visually inspected.
+The completed populated-world comparisons are in the [gallery](GALLERY.md);
+user visual acceptance remains pending.
+
+## Preserved rejected and failed evidence
+
+- E1 materials: `reviews/building_expansion/rejected_e1/textures/`; authoring source
+  `tools/bake_building_appearances.py`. E1 prefabs/provenance also retained in
+  `reviews/building_expansion/rejected_e1/`.
+- Rejected bright world views: `reports/building_expansion/E1_1793381132_198`;
+  matched R1: `reports/building_expansion/R1_1793380974_602`.
+- E1 also exposed a protruding cornice corner and roof/gable color bands; these
+  led to the corrected corner hull and split gable-face finish.
+- `reports/checks/20261031T061158963429Z`: UV test incorrectly required an
+  upward sloped face on underside-only seam infills. Those are covered by hull
+  and winding tests; roof-direction checks apply to exposed sloped faces.
+- `reports/checks/20261031T061242844249Z`: review loader attempted extension-based
+  PNG loading for raw `.trtex`; corrected to PNG byte decoding.
+- Paired world attempts `20261031T061555191848Z`, `20261031T061652813693Z` and
+  `20261031T114715046912Z` remain under `reports/building_expansion/paired_/`.
+  They exposed review-script shutdown/legacy entrance assumptions. Original save
+  bytes were preserved. Fixing a fixture is not evidence that a route passed.
+
+- `paired_/20261031T115104417609Z`: R1 passed, interrupted E2 had four
+  readiness failures. The reused route fixture had retained the photography
+  camera offset and disabled controller physics before teleporting. Restoring
+  both before route checks cleared those failures; no readiness gate was relaxed.
+- `paired_/20261031T174725964794Z`: 129/132 route checks passed. All five civic
+  player/NPC routes, their stairs and basements, and both warehouse vehicles passed.
+  Market players passed, but three older market NPC plans did not finish.
+  `reports/building_expansion/nav_probe_run` reproduces Shop B1's NPC planning
+  failure on unchanged R1. Its actual player route and small-step native motion
+  guard pass. This remains a baseline route-planning limitation; no claim of
+  universal NPC access or hidden fallback movement is made.
+- That E2 image set exposed mixed slate/zinc strips at warehouse gables and slate
+  painted on school roof undersides. The final recipe uses zinc consistently;
+  native roof shells now use structural finishes beneath roofing. The four-way
+  hipped shop conversion also now preserves every old slope direction, with
+  independent solid-volume equivalence checks for all yaw directions.
+- An intermediate native focused check was 483/483 in
+  `reports/checks/20261031T180123409387Z`; palette 8/8 in `180126109655Z`;
+  actual gallery/placement/rotation/destruction checks 30/30 in `180940250743Z`.
+  Earlier UI failures `180128407067Z`, `180444312571Z`, `180652384800Z` exposed
+  fixture assumptions about startup mode, asynchronous collision publication
+  and focused-window mouse ownership. Tests now explicitly start gameplay,
+  await publication and retain the focus-aware capture policy.
+
+## Final verification
+
+- Source/release mandatory export gate: `reports/building_standards/20261101T022117085387Z`.
+  Contact 30 each; expansion 490 each; source catalog 80, materials eight,
+  candidate assets 45. This includes joined surfaces without collision slivers.
+- Final matched civic/market pass: `paired_/20261031T220224276185Z`, R1 21/21,
+  E2 53/53. C1 matched views: `paired_/20261101T021932077386Z`, R1 8/8, E2 11/11.
+  [Gallery and captions](GALLERY.md); [frame/memory/geometry costs](PERFORMANCE.md).
+- C1 player/NPC/stairs/basement pass: `paired_/20261031T220048889486Z`, 30/30.
+  `paired_/20261031T215431041202Z` is retained as a failed run: its routes passed
+  but Jolt rejected an empty collision piece. A focused probe found 1618 clipped
+  sliver triangles in the actual placed house. Coplanar classification now snaps
+  float residuals within 10 micrometres before splitting; the probe reports zero
+  slivers and 4698 valid triangles. Four joined-roof regressions and all nine
+  actual candidate meshes enforce this at source and export.
+- `paired_/20261031T215223920142Z` verified the corrected town-hall coping after
+  earlier close-ups exposed notches and missing side caps. The final full pass
+  repeats the intact/remove/restore sequence and retains exact cell identities.
+- Actual player travel: `paired_/20261031T220908578512Z`, R1 25/25, E2 49/49;
+  221.22 m, zero readiness holds, no unsupported fall. This is separate from
+  camera-only distance screenshots.
+- Fresh save/reopen: `persistent_/20261031T221148056059Z` for civic/market and
+  `persistent_/20261031T221305373220Z` for C1. Both phases pass; originals unchanged.
+  The review launchers verify candidate/native/save hashes and open read-only clones.
+- Export starts successfully; packed assets 45/45 in `packed/20261101T022208946118Z`.
+  Regression checks: modular 1978/1978 (`reports/checks/20261101T022212562137Z`),
+  construction 26/26 (`022308880333Z`), actual gallery/placement 30/30 (`022309537265Z`).
+  The preceding construction runner `022216133539Z` used the wrong expected
+  summary marker; its 26 assertions passed. Correcting the invocation passes.
+- [Verification identities](verification.json) record exact artifacts and source reports.
+
+All `paired_`, `persistent_` and `packed` references above are beneath
+`reports/building_expansion/`. The earlier failure/rejected evidence remains retained.
+
+## Remaining / resume here
+
+The proposed scope is ready for user visual approval, including exact E2 buildings
+and the 512-pixel material choice. No changed building becomes a generation default
+until that decision. Three older market NPC route plans remain an existing open
+limitation; Shop B1 reproduces it on unchanged R1. Return to the native route planner
+with those retained fixtures before claiming universal NPC access. Full-world frame
+pacing and terrain/foliage quality remain separate project issues.
+
+Valley shapes 26/27 remain optional prototypes. Promote them only after a useful
+actual building joint, traversal and cost comparison exists. Normal/roughness and
+secondary beam/chamfer/arch families were assessed as follow-ups; they are outside
+this first albedo/roof/trim proposal. The 20 m resolution-study views are obscured
+by foliage and do not establish distant material equivalence.
+
+Reproduce with `tools/check_building_expansion_world.py` (add `--house`, `--routes`,
+`--travel` or `--persist` as needed); `tools/review_building_expansion.py` opens the
+verified civic/market clone and `--house` opens C1. The [material contract](../../docs/BUILDING_MATERIAL_STANDARD.md)
+and [final expansion review](../../docs/BUILDING_EXPANSION_REVIEW.md) define acceptance.

@@ -13,7 +13,7 @@ The user approved all five exact R1 designs, the submitted trader/contact work
 and the proposed expansion direction: “I approve all.” The expansion itself
 requires a later review and approval demonstrating justified improvements in
 real-world situations. The mandatory evidence is recorded in
-[the expansion acceptance requirements](BUILDING_EXPANSION_REVIEW.md#required-real-world-review).
+[the expansion acceptance requirements](BUILDING_EXPANSION_REVIEW.md#verification-and-remaining-limitations).
 The existing performance findings remain facts; approval does not change their
 measurements. This records design acceptance without altering saved worlds.
 
