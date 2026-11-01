@@ -13,6 +13,7 @@ var movie_times:Array[float]=[]
 var last_movie_usec:=0
 var photos:Dictionary={}
 func _initialize()->void:
+	root.set_flag(Window.FLAG_NO_FOCUS,true)
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
 	run.call_deferred()
 func check(ok:bool,label:String)->void:

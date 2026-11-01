@@ -4,6 +4,7 @@ import argparse
 import datetime
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import run_godot_check as checks
@@ -38,7 +39,22 @@ def main():
         command[1:1] = ["--main-pack", str(pack)]
         command[command.index("--path") + 1] = str(root / "dist")
         command[command.index("--script") + 1] = str(driver)
-        result = checks.execute(command, output, 180, "failures=0")
+        command[command.index("--fullscreen")] = "--windowed"
+        command[1:1] = ["--position", "-2400,-1600"]
+        original = subprocess.Popen
+
+        def nonactivating(*arguments, **keywords):
+            startup = subprocess.STARTUPINFO()
+            startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup.wShowWindow = 4
+            keywords["startupinfo"] = startup
+            return original(*arguments, **keywords)
+
+        subprocess.Popen = nonactivating
+        try:
+            result = checks.execute(command, output, 180, "failures=0")
+        finally:
+            subprocess.Popen = original
         records.append(dict(test=label, command=command, cache=cache, **result))
         print(("PASS " if result["passed"] else "FAIL ") + label, flush=True)
         if not result["passed"]:
