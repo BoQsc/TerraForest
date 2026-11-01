@@ -110,6 +110,7 @@ void BlockHorizon::publish(BlockBake &&bake) {
     if(bytes-(old==visuals.end()?0:old->second.bytes)+payload>BYTE_LIMIT){++blocked;regions[active_region].retry=ticks+600;return;}
     erase(bake.key);if(bake.indices.empty())return;
     world.ensure_material();
+    for(const auto &vertex:bake.vertices)if((int(vertex.material)&15)>=4){if(!world.ensure_appearances())return;break;}
     PackedVector3Array vertices,normals;PackedVector2Array uv,uv2;PackedInt32Array indices;
     vertices.resize(bake.vertices.size());normals.resize(bake.vertices.size());uv.resize(bake.vertices.size());uv2.resize(bake.vertices.size());
     for(size_t index=0;index<bake.vertices.size();++index){const auto &vertex=bake.vertices[index];vertices.set(index,Vector3(vertex.x,vertex.y,vertex.z));normals.set(index,Vector3(vertex.nx,vertex.ny,vertex.nz));uv.set(index,Vector2(vertex.u,vertex.v));uv2.set(index,Vector2(vertex.material,0));}

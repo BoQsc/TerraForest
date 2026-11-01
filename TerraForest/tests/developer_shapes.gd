@@ -20,9 +20,9 @@ func amount(item:int)->int:
 	for row:Dictionary in game.player_hud.inventory.snapshot().slots:
 		if row.item==item:total+=row.count
 	return total
-func key(code:int,unicode_value:int=0)->void:
+func key(code:int,unicode_value:int=0,shift:bool=false)->void:
 	for pressed:bool in [true,false]:
-		var event:=InputEventKey.new();event.physical_keycode=code;event.keycode=code;event.unicode=unicode_value;event.pressed=pressed
+		var event:=InputEventKey.new();event.physical_keycode=code;event.keycode=code;event.unicode=unicode_value;event.pressed=pressed;event.shift_pressed=shift
 		Input.parse_input_event(event);Input.flush_buffered_events();await process_frame
 func click(button:Button)->void:
 	for pressed:bool in [true,false]:
@@ -40,9 +40,12 @@ func run()->void:
 	if not check(await until(func():return not game.loading_active and not game.needs_floor_spawn and game.session_menu.ready_to_dock,65),"temporary world and native construction become ready"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.zombies.population_enabled=false;game.zombies.clear()
 	var menu:CanvasLayer=game.session_menu;var shapes:RefCounted=menu.dev_shapes;var hud:CanvasLayer=game.player_hud;var inventory:RefCounted=hud.inventory
+	# Temporary test worlds can inherit the developer-mode startup preference.
+	# Start this gameplay exercise explicitly; the same test covers development later.
+	if menu.developer:menu.toggle_developer()
 	check(menu.navigation.has("Dev Shapes") and menu.pages.has("Dev Shapes") and not menu.tool_workspace.pages.has("Dev Shapes"),"shape catalog has its own ESC page beside bag/spawner, not an Alt workspace")
 	menu.show_page("Dev Shapes");await frames()
-	check(shapes.entries.size()==game.ShapeCatalog.NAMES.size() and shapes.entries.size()==18,"gallery enumerates the entire integrated native shape catalog")
+	check(shapes.entries.size()==game.ShapeCatalog.NAMES.size() and shapes.entries.size()==36,"gallery enumerates the entire integrated native shape catalog")
 	var complete:=true;var atlas:Texture2D=shapes.entries[1].icon.atlas
 	for shape:int in shapes.entries:
 		var icon:AtlasTexture=shapes.entries[shape].icon
@@ -54,7 +57,7 @@ func run()->void:
 	check(shapes.entries[11].visible and not shapes.entries[1].visible and not shapes.empty.visible,"trimmed case-insensitive search finds the separate quarter-arch piece")
 	shapes.category.select(3);shapes.filter_shapes();check(shapes.empty.visible,"category and name filters combine with a visible empty state")
 	shapes.search.clear();shapes.filter_shapes()
-	check(shapes.entries.values().filter(func(tile):return tile.visible).size()==7 and shapes.entries[18].visible,"roof category includes all seven current roof/seam pieces")
+	check(shapes.entries.values().filter(func(tile):return tile.visible).size()==21 and shapes.entries[36].visible,"roof category includes all current roof, seam and gable pieces")
 	shapes.category.select(0);shapes.search.text="18";shapes.filter_shapes()
 	check(shapes.entries[18].visible and shapes.entries.values().filter(func(tile):return tile.visible).size()==1,"native shape IDs are searchable")
 	shapes.search.clear();shapes.filter_shapes();shapes.search.release_focus();await capture("catalog_top")
@@ -81,11 +84,21 @@ func run()->void:
 		for strike in 4:all_destroyed=game.world_attack.apply_target(block) and all_destroyed
 		all_destroyed=all_destroyed and game.structures.blocks.get_cell(target)==0
 		await frames(3)
-	check(all_shapes,"all 18 gallery choices place their actual native single-cell geometry, not prefabs or models")
+	check(all_shapes,"all 36 gallery choices place their actual native single-cell geometry, not prefabs or models")
 	check(all_costs,"each selected shape uses exactly one ordinary material per accepted gameplay placement")
-	check(all_destroyed,"all 18 placed pieces can be independently destroyed through normal block health/removal")
+	check(all_destroyed,"all 36 placed pieces can be independently destroyed through normal block health/removal")
 	hud.equip_item(103)
-	check(game.structure_shape==18 and game.construction_palette.shape.selected==17 and game.construction_palette.rotation_choice.item_count==24,"returning from a weapon restores the chosen material's shape and modular rotations")
+	check(game.structure_shape==36 and game.construction_palette.shape.selected==35 and game.construction_palette.rotation_choice.item_count==24,"returning from a weapon restores the chosen material's shape and modular rotations")
+	game.construction_palette.appearance.select(5);game.construction_palette.appearance.item_selected.emit(5)
+	await key(KEY_R);await key(KEY_R,0,true)
+	check(game.structure_appearance==4 and game.structure_rotation==5,"appearance selection and real R/Shift+R input preserve selected shape and structural material")
+	var styled_before:=amount(103);game._edit_structure(false)
+	check(game.structures.blocks.get_cell(target)==game.structures.blocks.encode_block(36,5,2,4) and amount(103)==styled_before-1,"normal gameplay places the selected slate finish and mount for one concrete item")
+	hud.equip_item(1)
+	var styled_target:Dictionary={"kind":"block","key":game.world_attack.block_key(target),"health":120,"material":"stone","name":"Styled roof","cell":target}
+	for strike in 4:game.world_attack.apply_target(styled_target)
+	check(game.structures.blocks.get_cell(target)==0,"styled rotated roof retains normal local destruction")
+	hud.equip_item(103);game.construction_palette.appearance.select(0);game.construction_palette.appearance.item_selected.emit(0)
 	for material in 4:
 		menu.show_page("Dev Shapes");shapes.material.select(material);shapes.count.value=3;var before:=amount(101+material);shapes.entries[10+material%2].pressed.emit()
 		check(amount(101+material)==before+3 and game.equipped_tool==101+material and game.structure_material==material and game.structure_shape==10+material%2,"shape selection grants and equips correct material "+str(material))
@@ -95,13 +108,16 @@ func run()->void:
 	var saved:PackedByteArray=inventory.capture_storage_snapshot();var revision:int=inventory.snapshot().revision;var old_shape:int=game.structure_shape
 	shapes.entries[11].pressed.emit()
 	check(menu.opened and inventory.capture_storage_snapshot()==saved and inventory.snapshot().revision==revision and game.structure_shape==old_shape and menu.message.text.contains("Nothing was added"),"full bag leaves inventory, revision, selected shape and menu unchanged")
-	shapes.use_shape(0);shapes.use_shape(19);check(inventory.capture_storage_snapshot()==saved and game.structure_shape==old_shape,"invalid shapes cannot grant materials or change tools")
+	shapes.use_shape(0);shapes.use_shape(37);check(inventory.capture_storage_snapshot()==saved and game.structure_shape==old_shape,"invalid shapes cannot grant materials or change tools")
 	inventory.restore_storage_snapshot(original);hud.refresh();menu.toggle_developer();menu.show_page("Dev Shapes");shapes.material.select(1);shapes.count.value=3;stock=amount(102);shapes.entries[11].pressed.emit()
 	check(menu.developer and not menu.opened and hud.developer_slot==3 and game.editor_tool_active and game.structure_shape==11 and game.structure_material==1 and amount(102)==stock+3,"same gallery equips the development building tool without leaving developer mode")
-	stock=amount(102);game._edit_structure(false)
+	await frames(3);stock=amount(102);game._edit_structure(false)
 	check(game.structures.blocks.get_cell(target)==game.structures.blocks.encode_block(11,0,1) and amount(102)==stock,"developer placement retains free native authoring, not gameplay costs")
-	game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,0]));menu.show_page("Dev Shapes");await key(KEY_ESCAPE)
-	check(not menu.visible_ui() and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED,"ESC closes the shape browser directly back to play")
+	game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,0]));menu.show_page("Dev Shapes")
+	game.mouse_capture_requested=true
+	var can_capture:bool=game.get_window().has_focus() and game._mouse_capture_allowed()
+	await key(KEY_ESCAPE)
+	check(not menu.visible_ui() and Input.mouse_mode==(Input.MOUSE_MODE_CAPTURED if can_capture else Input.MOUSE_MODE_VISIBLE),"ESC closes the shape browser and respects focused-window mouse ownership")
 	await finish()
 func finish()->void:
 	if game!=null:game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await frames(2)

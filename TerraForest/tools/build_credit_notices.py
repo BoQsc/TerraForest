@@ -9,6 +9,8 @@ OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
     ("project", "TerraForest project code", "0BSD", "LICENSE.txt",
      "Use, copy, modify and distribute the project code, including commercially, under Zero-Clause BSD. Separately identified components retain their own terms."),
+    ("building_expansion", "Original building expansion materials E2", "CC0 1.0", "addons/structures/textures/expansion_v2/ASSET_LICENSE.md",
+     "Eight original image-generated materials contributed under CC0. The source manifest retains prompts, source hashes and technical preparation; existing material sets retain their own terms."),
     ("spruce", "Spruce tree assets", "CC0 1.0", "addons/vegetation/ASSET_LICENSE.md",
      "The supplied spruce model, extracted images and derived bakes retain the source's stated CC0 dedication."),
     ("characters", "Character assets", "CC0 1.0 / inherited provenance", "addons/characters/LICENSE.txt",
@@ -46,7 +48,7 @@ def main():
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != content:
             parser.exit(1, "Credit notices are stale; run tools/build_credit_notices.py\n")
-        print("PASS: all 10 offline notices match their retained source files")
+        print(f"PASS: all {len(NOTICES)} offline notices match their retained source files")
     else:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_text(content, encoding="utf-8")

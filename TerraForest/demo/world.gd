@@ -69,6 +69,7 @@ var road_preview=preload("res://addons/volumetric_terrain/road_preview.gd").new(
 var structure_shape := 1
 const ShapeCatalog = preload("res://addons/structures/shape_catalog.gd")
 var structure_material := 0
+var structure_appearance := -1
 var structure_rotation := 0
 var structure_prefabs: Array[Resource] = []
 var prefab_library=preload("res://addons/structures/prefab_library.gd").new()
@@ -513,6 +514,9 @@ func _setup_prefabs() -> void:
 	var large_house: Resource=preload("res://addons/structures/furniture_catalog.gd").large_house()
 	if large_house!=null:
 		structure_prefabs.append(large_house);large_house.changed.connect(_invalidate_prefab_preview)
+	if "--building-expansion-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
+		for candidate:Resource in preload("res://addons/structures/expansion_catalog.gd").assets():
+			structure_prefabs.append(candidate);candidate.changed.connect(_invalidate_prefab_preview)
 	# A single bounds outline is UI feedback, not another building simulation.
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -751,7 +755,7 @@ func _sync_player_tool() -> void:
 	player_hud.show_active_tool(equipped_tool)
 
 func _sync_construction_palette() -> void:
-	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index,not session_menu.ready_to_dock)
+	construction_palette.synchronize(structure_mode and not model_tool.active,structure_shape,structure_material,structure_rotation,structure_prefab_index,not session_menu.ready_to_dock,structure_appearance)
 	if session_menu.developer_hud!=null:
 		session_menu.developer_hud.displayed_slot=-1
 		session_menu.developer_hud.refresh.call_deferred()
@@ -853,6 +857,9 @@ func _construction_selection(field: String,value: int) -> void:
 		"material":
 			if value<0 or value>=4: return
 			structure_material=value
+		"appearance":
+			if value<0 or value>8:return
+			structure_appearance=value-1
 		"rotation":
 			if value<0 or value>=(4 if structure_prefab_index>=0 else ShapeCatalog.rotation_count(structure_shape)): return
 			structure_rotation=value
@@ -1240,7 +1247,7 @@ func _edit_structure(remove: bool) -> void:
 	if not remove and not _block_player_clear(target):
 		_show_lake_notice("Block placement intersects the player")
 		return
-	var word: int = 0 if remove else structures.blocks.encode_block(structure_shape,structure_rotation,structure_material)
+	var word: int = 0 if remove else structures.blocks.encode_block(structure_shape,structure_rotation,structure_material,structure_appearance)
 	var placed := false
 	if construction_inventory.place_block(structures.blocks,player_hud.inventory,target,word):
 		placed = not remove

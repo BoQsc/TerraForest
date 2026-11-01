@@ -1,0 +1,50 @@
+{
+  "license": "CC0-1.0",
+  "author": "TerraForest contributors",
+  "source": "Original mathematical patterns in tools/bake_building_appearances.py; no imported images",
+  "size": 512,
+  "version": 1,
+  "generator_sha256": "4b5629ecfd9c7f2d211781d2d3fd1e34b77b6f177818235c21fb776464d12f6d",
+  "assets": [
+    {
+      "appearance": 0,
+      "path": "addons/structures/textures/expansion_v1/warm_brick.trtex",
+      "sha256": "59ee6ea71460ee495243f73c230e607e9037dff3ed5b4b8eb5f2b7d4547900c9"
+    },
+    {
+      "appearance": 1,
+      "path": "addons/structures/textures/expansion_v1/pale_plaster.trtex",
+      "sha256": "bd7c8f3659de340131c351222ff8563070c947f851ea9a0c1bcb75f580bc5c85"
+    },
+    {
+      "appearance": 2,
+      "path": "addons/structures/textures/expansion_v1/limestone.trtex",
+      "sha256": "076bb8927466c451249d86c0a93d3030ace0db8f9b728653a9199914a907bb9b"
+    },
+    {
+      "appearance": 3,
+      "path": "addons/structures/textures/expansion_v1/timber.trtex",
+      "sha256": "7118dc1f610beb83f2619dba22723c81612741b8505fb0925c1708d26b5c63ad"
+    },
+    {
+      "appearance": 4,
+      "path": "addons/structures/textures/expansion_v1/slate.trtex",
+      "sha256": "ec311e37e6b423ed25bb19c0afccd31f8df1484465385454c6dc9da51f6995ad"
+    },
+    {
+      "appearance": 5,
+      "path": "addons/structures/textures/expansion_v1/zinc.trtex",
+      "sha256": "b49baae026afd0a14af7c82572e648b681974b282eb5eb47dbe5ad99d3094ac3"
+    },
+    {
+      "appearance": 6,
+      "path": "addons/structures/textures/expansion_v1/terracotta.trtex",
+      "sha256": "8e2452ec370198cf2986a9cfe0a1d677c9acf54904f9e334b6958efb60832956"
+    },
+    {
+      "appearance": 7,
+      "path": "addons/structures/textures/expansion_v1/chalk_trim.trtex",
+      "sha256": "e697cd1d8f5502f90f6e1c633ada6d17485b806082e03e2df88d9531ce7327b3"
+    }
+  ]
+}

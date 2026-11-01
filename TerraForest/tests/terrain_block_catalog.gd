@@ -5,12 +5,13 @@ const Civic=preload("res://addons/structures/civic_catalog.gd")
 const City=preload("res://addons/structures/city_catalog.gd")
 func run()->void:
 	for seed_value in [1703,42]:
-		for catalog in ["civic","city","neighborhood"]:
+		for catalog in ["civic","city","neighborhood","expansion"]:
 			var field:=Field.new();root.add_child(field);field.core=ClassDB.instantiate("TerrainCore")
 			field.core.execute(Codec.command(6,[seed_value,25]))
 			var layout:=preload("res://addons/volumetric_terrain/generated_layout.gd").describe(seed_value,16)
 			var plan:Dictionary
-			if catalog=="civic":plan=Planner.locate(field.core,layout.sites[3].position,[],Rect2(),Civic.recipe,Civic.streets,Vector2(180,224))
+			if catalog=="expansion":plan=Planner.locate(field.core,layout.sites[3].position,[],Rect2(),expansion_recipe,Civic.streets,Vector2(180,224))
+			elif catalog=="civic":plan=Planner.locate(field.core,layout.sites[3].position,[],Rect2(),Civic.recipe,Civic.streets,Vector2(180,224))
 			elif catalog=="city":plan=Planner.locate(field.core,layout.sites[3].position,[],Rect2(),City.recipe,City.streets,Vector2(180,224))
 			else:plan=Planner.locate(field.core,layout.sites[3].position)
 			check(plan.get("ok",false),"catalog fits full ground and approach budgets / "+catalog+" seed "+str(seed_value))
@@ -36,3 +37,8 @@ func drain(field:Node)->void:
 	var deadline:=Time.get_ticks_msec()+10000
 	while field.validator.status=="checking" and Time.get_ticks_msec()<deadline:
 		field.validator.tick(field);await process_frame
+
+func expansion_recipe(center:Vector3)->Array:
+	var lots:=Civic.recipe(center)
+	for index in lots.size():lots[index].asset=load("res://addons/structures/prefabs/expansion_"+Civic.IDS[index]+"_e2.tres")
+	return lots

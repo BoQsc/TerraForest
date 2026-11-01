@@ -1,0 +1,172 @@
+{
+  "assets": [
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/aged_brick.trtex",
+        "sha256": "979309b0206f3f21cbdb9c4d0c110d44a40bb508058f7e48d32fd01b06b4c753"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/aged_brick.trtex",
+        "sha256": "1846fe724acbf464b20f9ccb5f871165887bb7714d475c26d3972f8d10aa8e45"
+      },
+      "appearance": 0.0,
+      "name": "aged_brick",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: old fired brick masonry, deep muted burnt umber and iron-brown with soot, granular chipped faces, restrained dirt in rough gray-brown lime mortar, tiny traces of dull olive lichen. Not orange, clean, pale or saturated. Construction pattern: precisely 12 level horizontal courses across the height and 4 full brick lengths across the width in half-brick running bond, an even number of courses; nominal brick 24 cm by 7.3 cm plus 1 cm mortar within a one-meter tile. Narrow consistent mortar, slight individual wear; no random stone pattern, no vertical stack bond. Avoid a large isolated crack or patch that would repeat visibly. Make top/bottom and left/right running-bond joins exact.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/aged_brick.png",
+      "source_sha256": "122fb7d7e07e81108c8db5abf51d49604eb1c2d4e13b5d7eeb440f4184e12632"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/weathered_plaster.trtex",
+        "sha256": "34cec5a501d255b5118bcf0e52c5cfd479f2e065d4d7a2914e6f2ea77159f8fd"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/weathered_plaster.trtex",
+        "sha256": "e058864cb63a8ef7e2cf97526f97ee42f96e2d4388ed4a66191b35d5adc7ce2c"
+      },
+      "appearance": 1.0,
+      "name": "weathered_plaster",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: old mineral lime plaster rendered over a solid wall, smoky gray-brown warm taupe, darkened by decades of dust, damp and soot; delicate irregular sand aggregate, shallow pitting, worn lime speckles, restrained hairline crazing and softly mottled grime. Medium-dark desaturated values with readable detail; no cream-white expanses, no bright yellow. One-meter physical surface. Continuous plaster with no brick joints, no tiles, no board pattern, no exposed brick patches, no large fissures or large dark blobs. Grim and worn yet still usable as a civic interior/exterior wall. Natural fine-scale variation with equal edge brightness.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/weathered_plaster.png",
+      "source_sha256": "ec74559e2bdf02fb50edfb72dc1e68a295284430a111e7300fb809e289f3d6cc"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/coursed_limestone.trtex",
+        "sha256": "7e02ccef3ad525b9efe5a9efc7175f78a3ebc444a4b8542357c4cfcbe9093da5"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/coursed_limestone.trtex",
+        "sha256": "31ce96e870314b68414b87389a915a0ce96abc1d2602cdae843448926a1730ea"
+      },
+      "appearance": 2.0,
+      "name": "coursed_limestone",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: soot-aged gray limestone masonry, cool gray with muted earthy taupe undertones, uneven porous weathered stone faces, chipped edges, tiny mineral pits, restrained dull lichen traces. Construction pattern: FOUR level courses in the tile height, TWO broad rectangular stone blocks across width, alternating half-block running bond, narrow dark gray lime mortar. Nominal 50 cm wide by 25 cm high blocks in a one-meter tile. Rectangular quarried ashlar, no cobblestones, no rubble, no diagonal joints. Dark realistic old church stone, no clean pale beige, no cartoon relief, no heavy baked edge shadows. Opposite edges join the exact running bond.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/coursed_limestone.png",
+      "source_sha256": "cb035cc0d70fa15b72fdec968044054e9dbd0b21ec7497e2a5dde24f19d62e29"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/weathered_timber.trtex",
+        "sha256": "0b90e1d38dea6f3922ee0a963384e3498fe3d9d3cd993e1a6f6aa3c6fa17ec62"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/weathered_timber.trtex",
+        "sha256": "13f14353450e5ab429af9b77a95b32ecceb4bc34e628a1f34a6fe645220b7acc"
+      },
+      "appearance": 3.0,
+      "name": "weathered_timber",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: four HORIZONTAL old oak planks filling one-meter square tile, each about 25 cm high, rough dark gray-brown timber with long horizontal grain, shallow splits, worn edges and subtle varied knots. Narrow irregular dark seams between planks; aged dry fibers and small quiet remnants of old iron fastening, no repeated large shiny nail heads. Desaturated brown with charcoal dirt and a trace of muted olive weathering; no clean orange timber, varnish, glossy highlights or exaggerated black gaps. All grain and plank seams run horizontally left-to-right. Top and bottom at matching seam phase. Left/right wood grain must repeat naturally. Exactly four horizontal boards, not vertical planks.",
+      "selected_edit": {
+        "date": "2026-10-31",
+        "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-b36fbc29-69b5-4925-930d-861ab5a67e85.png",
+        "output": "weathered_timber.png",
+        "prompt": "Edit this original game albedo tile. Preserve its dark desaturated weathered gray-brown oak character, fine splintered grain and grim aged tone. Correct ONLY the plank layout and tiling: there must be exactly FOUR broad horizontal boards, each occupying one quarter of the image height, with thin seams at y=0%,25%,50%,75%,100%, no extra board divisions. The grain runs horizontally. Each board is 25cm high in a one-meter repeat. Avoid huge distinctive knots and avoid repeated nail heads. Keep subtle natural wear. Precisely seamless left/right grain and top/bottom seam phase, balanced brightness at all edges. Orthographic square texture filling all pixels. Uniform neutral albedo lighting, no added shading, no vignette, no text, no border or perspective. Opaque 1024x1024.",
+        "source": "weathered_timber_rejected_eight_boards.png",
+        "tool": "built-in image_gen.imagegen"
+      },
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/weathered_timber.png",
+      "source_sha256": "4a5c2d447858addf2fe875b6b84106a5592d3d270dfd4f611a6325fa39417a6b"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/slate.trtex",
+        "sha256": "8e2c15725a6b1e9b35a314d100064cbec38ba80dcb6bcaf1039bd181e610ea47"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/slate.trtex",
+        "sha256": "1fb81cd78897d8ab868928891b1a08c7dff7f4b2d395eccb7888d7bedee3620d"
+      },
+      "appearance": 4.0,
+      "name": "slate",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: an old charcoal-gray natural slate roof viewed exactly perpendicular to the roof plane, laid in true staggered overlapping courses. SIX horizontal courses over tile height, FOUR slate widths across tile width, half-slate stagger every other row. Nominal exposed slate rectangle 25 cm wide by 16.7 cm high in one-meter texture. Courses go horizontally; water drains DOWN the image. Lower exposed slate edges are horizontal and gently irregular, subtle narrow joints, delicate split-grain mineral texture, chipped corners and sparse gray-green lichen. Dark blue-gray charcoal, slight neutral-brown weathering, no bright blue. Not wall bricks: no mortar and no thick recessed grid. No giant missing tiles, roof ridge, buildings, shadows or perspective. Opposite edges preserve stagger and seamless row phase.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/slate.png",
+      "source_sha256": "b7cbba12435a8c91eb47387eb9355c7354ed8cd3758e53459322ade76fda8d66"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/patinated_zinc.trtex",
+        "sha256": "5e1cb8e79a7f854bde7e8e62d95b6a9716960818e1cb8222795e6f3407206f9f"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/patinated_zinc.trtex",
+        "sha256": "2ac9b80b3f35182f51e19546f594737e69c09cc78b84ca549e3b5239516b669c"
+      },
+      "appearance": 5.0,
+      "name": "patinated_zinc",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: old oxidized standing-seam zinc roofing, dark neutral pewter-gray with charcoal grime, muted weathered surface oxidation, fine scratches and sparse dull rust at aged fasteners. TWO equal vertical roofing pans per one-meter-wide square tile, approximately 50 cm each, with very narrow straight folded seams running continuously top-to-bottom. Water drainage and long seams run DOWN the image. No horizontal panel divisions or rivet grid. Restrained uneven patina, no blue paint, no bright silver, no glossy metal reflections, no large rust blotches. Render seams as narrow material color variation without baked light direction. Both axes tile seamlessly, vertical seams at consistent periodic positions.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/patinated_zinc.png",
+      "source_sha256": "01b701ed1b59b386ae22d2bd6576d62b10146fe831b2d6345dbd35909ef56f56"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/aged_terracotta.trtex",
+        "sha256": "ba323f88cff936c12eadb9894573b5bc495c0afc454211d78be3200e710819b3"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/aged_terracotta.trtex",
+        "sha256": "507dc17b993ba062f9d6d57dbbf77bf5b8825ab602f9aacfb7ea3f9cc2b0e2c3"
+      },
+      "appearance": 6.0,
+      "name": "aged_terracotta",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: weathered old FLAT plain clay roof tiles, dark muted burnt umber and brownish terra-cotta, soot-darkened with worn rough ceramic faces, tiny chips and restrained dirty olive weathering. SIX level horizontal overlapping courses over tile height, FOUR tile widths across width, half-tile stagger between adjacent courses. Approximate exposed face 25 cm wide by 16.7 cm high in one-meter texture. All lower exposed tile edges horizontal; water drains DOWN the image. Plain flat rectangular overlapping roof tiles, NOT barrel, corrugated, Spanish or Roman tiles; no curved highlights. No mortar. Not a brick wall. Restrained chromatic variation; no clean orange, bright red, beige, fantasy patterns or thick dark outlines. Tile phase must match exactly at every boundary.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/aged_terracotta.png",
+      "source_sha256": "603e25eb0649b463b02f44a9c96db900f32521d1a22e659a6ed13c621e16ff6c"
+    },
+    {
+      "1024": {
+        "path": "res://reviews/building_expansion/materials_v2/runtime_1024/soot_stone_trim.trtex",
+        "sha256": "24fb37ec4867c5a6a16ce4dc131dfa5381d27fc9e95c10df178956f4dbac1369"
+      },
+      "512": {
+        "path": "res://addons/structures/textures/expansion_v2/soot_stone_trim.trtex",
+        "sha256": "d484949c26319b83179693ee5a42ad858dc888f45701026bbd141aa4cc0c45ec"
+      },
+      "appearance": 7.0,
+      "name": "soot_stone_trim",
+      "prompt": "Use case: photorealistic-natural. Asset type: original game material albedo texture for TerraForest. Generate ONE separate opaque square 1024x1024 seamless repeating texture, not a presentation sheet. Grim, weather-beaten, neglected rural architecture; restrained dark earth colors, realistic tactile weathering, compatible with dark aged brown brick, splintered oak, pitted gray concrete and corroded charcoal metal. Orthographic straight-on surface fills every pixel. Neutral uniform diffuse illumination, base color only; no directional light, no baked cast shadows, no highlight gradients, no vignette. Opposite edges must join seamlessly in BOTH axes, including pattern phase and brightness. No text, labels, borders, objects, logos, watermark, perspective or decorative illustration. Preserve visible fine material detail at game scale without high-contrast repeating hero stains. Subject: close-up of old fine-grained cut gray limestone used for coping, cornices and door surrounds, continuous one-meter stone surface with soot ingrained in its pores, subtle gray-taupe mineral variation, softly worn granular finish and sparse delicate hairline flaws. Medium dark gray, a little lighter than weathered slate but never chalk-white; dry aged masonry. Uniform continuous material: NO mortar joints, blocks, panels, borders, carving, ornament or large isolated crack. The geometry will provide molding and seams, so do not paint a molding or lighting into the texture. Grim, sturdy, old civic architecture stone, finely detailed and plausibly weathered. Seamless and equal brightness in all directions.",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "source_path": "res://reviews/building_expansion/materials_v2/soot_stone_trim.png",
+      "source_sha256": "6d25da0f26a70b7097d3dd6969e00f82f7f1a8cbb7fafa82cedb61efe4c11367"
+    }
+  ],
+  "creator": "TerraForest contributors with OpenAI image generation",
+  "dedication": "New original asset contributions under the repository CC0-1.0 contribution policy, to the extent rights exist and are held by the contributors. No third-party rights are relicensed.",
+  "license": "CC0-1.0",
+  "preparation": "Godot Image Lanczos resize to 512 square RGB8; no artistic pixel edits",
+  "prompts": "reviews/building_expansion/materials_v2/prompts.json",
+  "source": "Original separate built-in image_gen.imagegen outputs, 2026-10-30; no external image inputs",
+  "status": "candidate; engineering and in-world visual review required",
+  "version": 2
+}

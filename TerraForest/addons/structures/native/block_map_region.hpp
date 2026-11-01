@@ -20,7 +20,7 @@ inline Dictionary block_map_columns(const std::map<BlockKey,BlockChunk>&chunks,B
    float top=shape==2?.5f:shape==3?.75f:shape==4?.5f:1.f;
    if(shape>8){top=0;int rotation=block_rotation(chunk.cells[x+16*y+256*z]);for(const auto &vertex:modular_geometry(shape).vertices)top=std::max(top,.5f+orient_block_vector(Vector3(vertex.x-.5f,vertex.y-.5f,vertex.z-.5f),rotation).y);}
    points.push_back(Vector3(k.x*16+x+.5f,k.y*16+y+top,k.z*16+z+.5f));
-   colors.push_back(block_map_material(block_material(chunk.cells[x+16*y+256*z])));
+   colors.push_back(block_map_material(block_render_material(chunk.cells[x+16*y+256*z])));
   }++offset;break;
  }
  out["ok"]=true;out["offset"]=offset;out["complete"]=offset==64;out["points"]=points;out["colors"]=colors;return out;

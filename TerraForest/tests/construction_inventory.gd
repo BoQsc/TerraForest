@@ -46,6 +46,19 @@ func run() -> void:
 	check(coordinator.place_block(blocks,inventory,Vector3i(30,0,0),192) and blocks.get_cell(Vector3i(30,0,0))==192 and not inventory.can_afford(PackedInt64Array([103,1]),inventory.snapshot().revision).ok,"upper plate consumes one concrete material through normal gameplay payment")
 	before=inventory.snapshot()
 	check(coordinator.place_block(blocks,inventory,Vector3i(30,0,0),0) and inventory.snapshot()==before,"upper plate removal is free without material duplication")
+	var styled=ClassDB.instantiate("NativePlayerInventory")
+	for material_id in 4:
+		styled.register_item(101+material_id,999)
+	for material_id in 4:styled.grant(101+material_id,8,styled.snapshot().revision)
+	var payments_ok:=true
+	for appearance_id in 8:
+		for material_id in 4:
+			var word:int=blocks.encode_block(19+appearance_id,appearance_id,material_id,appearance_id)
+			payments_ok=payments_ok and coordinator.place_block(blocks,styled,Vector3i(100+appearance_id,0,material_id),word)
+	for row:Dictionary in styled.snapshot().slots:payments_ok=payments_ok and row.item==0
+	check(payments_ok,"all eight appearances debit exactly eight of each structural material")
+	before=styled.snapshot()
+	check(not coordinator.place_block(blocks,styled,Vector3i(120,0,0),blocks.encode_block(1,0,0,4)) and styled.snapshot()==before,"a decorative finish never grants free construction")
 	blocks.free()
 	print("CONSTRUCTION_INVENTORY ",JSON.stringify({"checks":checks,"failures":failures}))
 	quit(1 if failures else 0)

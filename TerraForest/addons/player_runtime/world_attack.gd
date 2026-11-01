@@ -44,7 +44,8 @@ func target() -> Dictionary:
 	if collider==game.structures.blocks and hit.has("cell"):
 		var cell: Vector3i=hit.cell
 		var word: int=game.structures.blocks.get_cell(cell)
-		return surface_target({"kind":"block","key":block_key(cell),"health":Durability.BLOCK_MAXIMUM[(word>>5)&3],"material":"wood" if ((word>>5)&3)==1 else "stone","material_id":(word>>5)&3,"name":"Building block","cell":cell},hit)
+		var material_id: int=game.structures.blocks.decode_block(word).material
+		return surface_target({"kind":"block","key":block_key(cell),"health":Durability.BLOCK_MAXIMUM[material_id],"material":"wood" if material_id==1 else "stone","material_id":material_id,"name":"Building block","cell":cell},hit)
 	if collider!=null and collider==game.vegetation.trunk_collision:
 		var id: int=collider.placement_for_body(hit.rid)
 		if id>0:return surface_target({"kind":"tree","key":"tree:%d"%id,"id":id,"health":Durability.WORLD.tree,"material":"wood","name":"Tree"},hit)

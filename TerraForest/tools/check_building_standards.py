@@ -20,7 +20,7 @@ def main():
     report = ROOT / "reports/building_standards" / stamp
     report.mkdir(parents=True)
     results = []
-    for test in ("terrain_block_contract", "terrain_block_catalog"):
+    for test in ("terrain_block_contract", "terrain_block_catalog", "building_expansion", "building_materials", "building_expansion_pack"):
         folder = report / test
         folder.mkdir()
         command, _ = command_for(engine, test, folder, [], headless=True)
@@ -52,10 +52,12 @@ def main():
         "addons/structures/site_plan.gd",
         "addons/volumetric_terrain/mesh_codec.gd", "addons/volumetric_terrain/surface_tokens.gd",
         "addons/world_runtime/generation_earthworks.gd", "tests/terrain_block_contract.gd",
+        "tests/building_expansion.gd", "addons/structures/shape_catalog.gd",
     ):
         target = project / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / name, target)
+    shutil.copytree(ROOT / "addons/structures/textures/expansion_v2", project / "addons/structures/textures/expansion_v2")
     (project / ".godot").mkdir()
     (project / ".godot/extension_list.cfg").write_text("\n".join(extensions) + "\n")
     folder = report / "release"
@@ -64,6 +66,12 @@ def main():
     result = execute(command, folder, 120, "TERRAIN_BLOCK_CONTRACT checks=")
     results.append({"test": "terrain_block_contract_release", "command": command, "native_sha256": hashes, **result})
     print(("PASS " if result["passed"] else "FAIL ") + "release contract", flush=True)
+    folder = report / "expansion_release"
+    folder.mkdir()
+    command = [str(engine), "--headless", "--path", str(project), "--log-file", str(folder / "engine.log"), "--script", "res://tests/building_expansion.gd"]
+    result = execute(command, folder, 120, "BUILDING_EXPANSION checks=")
+    results.append({"test": "building_expansion_release", "command": command, "native_sha256": hashes, **result})
+    print(("PASS " if result["passed"] else "FAIL ") + "expansion release", flush=True)
     passed = all(row["passed"] for row in results)
     (report / "run.json").write_text(json.dumps({**revision_metadata(), "passed": passed, "results": results}, indent=2) + "\n", encoding="utf-8")
     print(("PASS " if passed else "FAIL ") + str(report))

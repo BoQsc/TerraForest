@@ -1,0 +1,42 @@
+[
+  {
+    "name": "aged_brick",
+    "appearance": 0,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-b8b5f549-924b-4e40-98b1-b7a5fb0450b0.png"
+  },
+  {
+    "name": "weathered_plaster",
+    "appearance": 1,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-9236eb88-8ca9-4504-92ca-6dd1404fe752.png"
+  },
+  {
+    "name": "coursed_limestone",
+    "appearance": 2,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-bf592252-d4cf-44a8-a8d4-0977b01a8566.png"
+  },
+  {
+    "name": "weathered_timber",
+    "appearance": 3,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-4da3543e-fcd7-4981-a78e-32c38889052c.png"
+  },
+  {
+    "name": "slate",
+    "appearance": 4,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-2c187ece-7881-4f82-9bb6-290dec96c7a8.png"
+  },
+  {
+    "name": "patinated_zinc",
+    "appearance": 5,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-db28c072-c35f-4f91-9e3c-a0c75a724b29.png"
+  },
+  {
+    "name": "aged_terracotta",
+    "appearance": 6,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-bb79c371-e99c-4b8f-9a16-7b8512174436.png"
+  },
+  {
+    "name": "soot_stone_trim",
+    "appearance": 7,
+    "generated_path": "C:\\Users\\windows10\\.codex\\generated_images\\01a18d1b-0785-7d02-ae92-47f157837634\\exec-06dc8abb-d332-4f6a-95f4-873d1f678908.png"
+  }
+]

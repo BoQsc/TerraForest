@@ -31,7 +31,7 @@ void NativeBlockWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_texture_set","name"),&NativeBlockWorld::set_texture_set);
     ClassDB::bind_method(D_METHOD("get_texture_set"),&NativeBlockWorld::get_texture_set);
     ClassDB::bind_method(D_METHOD("preview_mesh","shape","rotation"),&NativeBlockWorld::preview_mesh);
-    ClassDB::bind_method(D_METHOD("encode_block","shape","rotation","material"),&NativeBlockWorld::encode_block);
+    ClassDB::bind_method(D_METHOD("encode_block","shape","rotation","material","appearance"),&NativeBlockWorld::encode_block,DEFVAL(-1));
     ClassDB::bind_method(D_METHOD("decode_block","word"),&NativeBlockWorld::decode_block);
     ClassDB::bind_method(D_METHOD("shape_orientation","rotation"),&NativeBlockWorld::shape_orientation);
     ClassDB::bind_method(D_METHOD("solid_hulls","world_bounds"),&NativeBlockWorld::solid_hulls);
@@ -120,13 +120,13 @@ Ref<Mesh> NativeBlockWorld::preview_mesh(int64_t shape,int64_t rotation) {
     Ref<ArrayMesh> mesh;mesh.instantiate();mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES,arrays);
     cached=mesh;return cached;
 }
-int NativeBlockWorld::encode_block(int64_t shape,int64_t rotation,int64_t material) const {
-    if(shape<1||shape>BLOCK_SHAPE_COUNT||rotation<0||rotation>23||material<0||material>3)return -1;
-    return block_word(int(shape),int(rotation),int(material));
+int NativeBlockWorld::encode_block(int64_t shape,int64_t rotation,int64_t material,int64_t appearance) const {
+    if(shape<1||shape>BLOCK_SHAPE_COUNT||rotation<0||rotation>23||material<0||material>3||appearance< -1||appearance>7)return -1;
+    return block_word(int(shape),int(rotation),int(material),int(appearance));
 }
 Dictionary NativeBlockWorld::decode_block(int64_t word) const {
     Dictionary result;if(word<=0||word>65535||!valid_block_word(int(word)))return result;
-    result["shape"]=block_shape(int(word));result["rotation"]=block_rotation(int(word));result["material"]=block_material(int(word));return result;
+    result["shape"]=block_shape(int(word));result["rotation"]=block_rotation(int(word));result["material"]=block_material(int(word));result["appearance"]=block_appearance(int(word));result["format"]=styled_block(int(word))?3:extended_block(int(word))?2:1;return result;
 }
 Basis NativeBlockWorld::shape_orientation(int rotation) const {return rotation>=0&&rotation<24?block_basis(rotation):Basis();}
 bool NativeBlockWorld::set_cells(const PackedInt32Array &records) {
@@ -256,6 +256,7 @@ static void quad(BlockBake &b,const std::array<Vector3,4>&p,Vector3 n,int materi
     int axis=std::abs(n.x)>.5?0:std::abs(n.y)>.5?1:2;
     for(auto v:p) {
         float u=axis==0?v.z:v.x, t=axis==1?v.z:v.y;
+        building_uv(v,n,material,u,t);
         b.vertices.push_back({v.x,v.y,v.z,n.x,n.y,n.z,u,t,float(material)});
     }
     // Godot uses clockwise front faces.
@@ -292,9 +293,9 @@ static void bake_lattice(BlockBake &out,const std::array<uint16_t,5832> &halo) {
         int bx=x<0?-1:x/scale,by=y<0?-1:y/scale,bz=z<0?-1:z/scale;
         int w=halo[(bx+1)+18*((by+1)+18*(bz+1))],shape=block_shape(w);
         int sx=(x&(scale-1))*(4/scale),sy=(y&(scale-1))*(4/scale),sz=(z&(scale-1))*(4/scale);
-        for(int r=0;r<((w>>3)&3);r++) { int old=sx; sx=sz; sz=3-old; }
+        for(int r=0;r<block_rotation(w);r++) { int old=sx; sx=sz; sz=3-old; }
         bool full=shape==1 || (shape==2&&sy<2) || (shape==8&&sy==3) || (shape==3&&sy<=sz) || (shape==5&&sx>=1&&sx<=2&&sz>=1&&sz<=2);
-        if(full) at(x,y,z)=1+block_material(w)+(shape==8?4:0);
+        if(full) at(x,y,z)=1+block_render_material(w)+(shape==8?16:0);
     }
     // One material surface; signed mask separates opposite-facing coplanar faces.
     for(int axis=0;axis<3;axis++) {
@@ -347,13 +348,13 @@ BlockBake NativeBlockWorld::bake(BlockKey key,uint64_t ticket,std::array<uint16_
         if(block_shape(w)==6||block_shape(w)==7) {
             bool enclosed=true;for(int step:{-1,1,-18,18,-324,324})if(block_shape(halo[at+step])!=1){enclosed=false;break;}
             if(!enclosed) {
-                if(block_shape(w)==6)curved_shape(out,Vector3(x,y,z),block_rotation(w),block_material(w),sphere_template());
-                else curved_shape(out,Vector3(x,y,z),block_rotation(w),block_material(w),cylinder_template());
+                if(block_shape(w)==6)curved_shape(out,Vector3(x,y,z),block_rotation(w),block_render_material(w),sphere_template());
+                else curved_shape(out,Vector3(x,y,z),block_rotation(w),block_render_material(w),cylinder_template());
             }
             continue;
         }
         if(block_shape(w)!=4) continue;
-        Vector3 origin(x,y,z); int r=block_rotation(w),m=block_material(w);
+        Vector3 origin(x,y,z); int r=block_rotation(w),m=block_render_material(w);
         auto p=[&](float a,float b,float c){return origin+rotate_shape(Vector3(a,b,c),r);};
         auto q=[&](Vector3 a,Vector3 b,Vector3 c,Vector3 d){quad(out,{a,b,c,d},(b-a).cross(c-a).normalized(),m);};
         q(p(0,0,0),p(1,0,0),p(1,0,1),p(0,0,1));
@@ -415,6 +416,7 @@ bool NativeBlockWorld::publish(BlockBake &&b) {
     if(!admit_mesh(b.key,payload)) {budget_blocked.insert(b.key);cache_bake(std::move(b));return false;}
     if(measure_uploads){++upload_last_chunks;upload_last_bytes+=payload;}
     ensure_material();
+    for(const auto &vertex:b.vertices)if((int(vertex.material)&15)>=4){if(!ensure_appearances())return false;break;}
     PackedVector3Array vertices,normals; PackedVector2Array uv,uv2; PackedInt32Array indices;
     int count=int(b.vertices.size()); vertices.resize(count);normals.resize(count);uv.resize(count);uv2.resize(count);
     for(int i=0;i<count;i++) { auto &v=b.vertices[i];vertices.set(i,Vector3(v.x,v.y,v.z));normals.set(i,Vector3(v.nx,v.ny,v.nz));uv.set(i,Vector2(v.u,v.v));uv2.set(i,Vector2(v.material,0)); }
@@ -480,7 +482,7 @@ Dictionary NativeBlockWorld::stats() const {
         triangles+=e.second.triangles;bodies+=e.second.collision_ready;
         lattice16+=e.second.lattice_width==16;lattice32+=e.second.lattice_width==32;lattice64+=e.second.lattice_width==64;
     }
-    Dictionary d;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker_active?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;
+    Dictionary d;d["appearance_texture_bytes"]=appearances_ready?8388600:0;d["appearance_layers"]=appearances_ready?8:0;d["cells"]=cells;d["chunks"]=int(chunks.size());d["cell_bytes"]=int(chunks.size())*8192;d["mesh_chunks"]=int(visuals.size());d["triangles"]=triangles;d["collision_chunks"]=bodies;d["dirty_chunks"]=int(dirty.size());d["worker_jobs"]=worker_active?1:0;d["stale_bakes_rejected"]=int64_t(rejected);d["published_bakes"]=int64_t(published);d["max_chunks"]=MAX_CHUNKS;
     d["bake_lattice_16_chunks"]=lattice16;d["bake_lattice_32_chunks"]=lattice32;d["bake_lattice_64_chunks"]=lattice64;
     d["worker_threads_started"]=int64_t(worker_starts);d["worker_jobs_submitted"]=int64_t(worker_submissions);d["worker_results_consumed"]=int64_t(worker_consumed);return d;
 }
@@ -526,6 +528,19 @@ bool NativeBlockWorld::set_texture_set(const String &name) {
     if(texture_set==name)return true;
     return load_texture_set(name);
 }
+bool NativeBlockWorld::ensure_appearances() {
+    if(appearances_ready)return true;
+    const char *names[]={"aged_brick","weathered_plaster","coursed_limestone","weathered_timber","slate","patinated_zinc","aged_terracotta","soot_stone_trim"};
+    TypedArray<Image> images;
+    for(const char *name:names) {
+        String path=String("res://addons/structures/textures/expansion_v2/")+name+".trtex";
+        Ref<Image> img;img.instantiate();
+        if(img->load_png_from_buffer(FileAccess::get_file_as_bytes(path))!=OK||img->get_width()!=512||img->get_height()!=512){UtilityFunctions::push_error(String("Invalid building appearance: ")+path);return false;}
+        img->convert(Image::FORMAT_RGB8);if(img->generate_mipmaps()!=OK)return false;images.append(img);
+    }
+    Ref<Texture2DArray> textures;textures.instantiate();if(textures->create_from_images(images)!=OK)return false;
+    material->set_shader_parameter("appearances",textures);appearances_ready=true;return true;
+}
 void NativeBlockWorld::ensure_material() {
     if(material.is_valid()) return;
     // Original deterministic tile textures generated once. Texture arrays retain
@@ -556,16 +571,17 @@ void NativeBlockWorld::ensure_material() {
     Ref<Shader> shader;shader.instantiate();shader->set_code(R"(
 shader_type spatial;
 uniform sampler2DArray tiles : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2DArray appearances : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 void fragment() {
-    float layer = mod(UV2.x,4.0);
-    ALBEDO = texture(tiles,vec3(UV,layer)).rgb;
-    if (UV2.x > 3.5) {
+    float layer = mod(UV2.x,16.0);
+    ALBEDO = layer < 3.5 ? texture(tiles,vec3(UV,layer)).rgb : texture(appearances,vec3(UV,layer-4.0)).rgb;
+    if (UV2.x > 15.5) {
         vec2 edge = min(fract(UV),1.0-fract(UV));
         float joint = smoothstep(.006,.012+max(fwidth(UV.x),fwidth(UV.y)),min(edge.x,edge.y));
         ALBEDO *= mix(.55,1.0,joint);
     }
-    ROUGHNESS = layer > 2.5 ? 0.48 : 0.92;
-    METALLIC = layer > 2.5 ? 0.5 : 0.0;
+    ROUGHNESS = (layer == 3.0 || layer == 9.0) ? 0.48 : 0.92;
+    METALLIC = (layer == 3.0 || layer == 9.0) ? 0.5 : 0.0;
 }
 )");
     material.instantiate();material->set_shader(shader);material->set_shader_parameter("tiles",textures);
@@ -585,8 +601,8 @@ PackedByteArray NativeBlockWorld::capture_snapshot() const {
     return encode_chunks(chunks);
 }
 PackedByteArray NativeBlockWorld::encode_chunks(const std::map<BlockKey,BlockChunk> &source) {
-    bool extended=false;for(const auto &entry:source)for(uint16_t word:entry.second.cells)if(extended_block(word)){extended=true;break;}
-    std::vector<uint8_t> bytes={'T','F','B','L',uint8_t(extended?2:1),0,0,0};
+    int version=1;for(const auto &entry:source)for(uint16_t word:entry.second.cells)version=std::max(version,styled_block(word)?3:extended_block(word)?2:1);
+    std::vector<uint8_t> bytes={'T','F','B','L',uint8_t(version),0,0,0};
     auto u32=[&](uint32_t v){for(int i=0;i<4;i++)bytes.push_back(uint8_t(v>>(8*i)));};
     auto u16=[&](uint16_t v){bytes.push_back(v&255);bytes.push_back(v>>8);};
     u32(uint32_t(source.size()));
@@ -597,7 +613,7 @@ PackedByteArray NativeBlockWorld::encode_chunks(const std::map<BlockKey,BlockChu
     PackedByteArray result;result.resize(bytes.size());std::memcpy(result.ptrw(),bytes.data(),bytes.size());result.append_array(sha(result));return result;
 }
 bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,BlockChunk> *out) {
-    if(bytes.size()<44||bytes.size()>34*1024*1024||std::memcmp(bytes.ptr(),"TFBL",4)||(bytes.decode_u32(4)!=1&&bytes.decode_u32(4)!=2)) return false;
+    if(bytes.size()<44||bytes.size()>34*1024*1024||std::memcmp(bytes.ptr(),"TFBL",4)||(bytes.decode_u32(4)<1||bytes.decode_u32(4)>3)) return false;
     auto payload=bytes.slice(0,bytes.size()-32); if(sha(payload)!=bytes.slice(bytes.size()-32)) return false;
     size_t p=8,n=payload.size();const uint8_t *d=payload.ptr();
     auto u32=[&](){uint32_t v=uint32_t(d[p])|uint32_t(d[p+1])<<8|uint32_t(d[p+2])<<16|uint32_t(d[p+3])<<24;p+=4;return v;};
@@ -611,7 +627,7 @@ bool NativeBlockWorld::parse(const PackedByteArray &bytes,std::map<BlockKey,Bloc
         BlockChunk chunk;int pos=0;
         while(pos<4096) {
             if(p+4>n)return false;int run=d[p]|int(d[p+1])<<8,w=d[p+2]|int(d[p+3])<<8;p+=4;
-            if(!run||run>4096-pos||!valid_word(w)||(bytes.decode_u32(4)==1&&extended_block(w)))return false;
+            if(!run||run>4096-pos||!valid_word(w)||(bytes.decode_u32(4)==1&&extended_block(w))||(bytes.decode_u32(4)<3&&styled_block(w)))return false;
             std::fill(chunk.cells.begin()+pos,chunk.cells.begin()+pos+run,uint16_t(w));if(w)chunk.count+=run;pos+=run;
         }
         if(!chunk.count)return false;

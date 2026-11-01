@@ -21,7 +21,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	var filters:=HBoxContainer.new();parent.add_child(filters)
 	search=LineEdit.new();search.placeholder_text="Search shapes by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filters.add_child(search)
 	category=OptionButton.new()
-	for title:String in ["All shapes","Blocks & round pieces","Frame & arch pieces","Roof pieces"]:category.add_item(title)
+	for title:String in Catalog.FAMILIES:category.add_item(title)
 	filters.add_child(category)
 	var options:=HBoxContainer.new();options.add_theme_constant_override("separation",12);parent.add_child(options)
 	var material_label:Label=menu.label(options,"Material");material_label.autowrap_mode=TextServer.AUTOWRAP_OFF
@@ -39,7 +39,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	empty=menu.label(parent,"No matching shapes. Clear the search or choose another category.")
 	search.text_changed.connect(func(_value:String):filter_shapes());category.item_selected.connect(func(_index:int):filter_shapes());refresh()
 
-func shape_category(shape:int)->int:return 1 if shape<=9 else (2 if shape<=11 else 3)
+func shape_category(shape:int)->int:return Catalog.family(shape)
 func shape_for_material(item:int)->int:return int(equipped_shapes.get(item,1))
 func refresh()->void:
 	material.select(clampi(game.structure_material,0,3));filter_shapes()

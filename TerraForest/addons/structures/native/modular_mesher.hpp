@@ -1,5 +1,6 @@
 #pragma once
 #include "block_shapes.hpp"
+#include "building_uv.hpp"
 #include <algorithm>
 
 namespace terraforest {
@@ -9,7 +10,16 @@ inline void append_modular_shape(BlockBake &output,Vector3 origin,int word) {
     for(auto vertex:geometry.vertices) {
         Vector3 point=origin+Vector3(.5,.5,.5)+orient_block_vector(Vector3(vertex.x,vertex.y,vertex.z)-Vector3(.5,.5,.5),rotation);
         Vector3 normal=orient_block_vector(Vector3(vertex.nx,vertex.ny,vertex.nz),rotation);
-        output.vertices.push_back({point.x,point.y,point.z,normal.x,normal.y,normal.z,vertex.u,vertex.v,float(block_material(word))});
+        int finish=block_render_material(word);
+        // Roof shells and closed ends have roofing above structural support.
+        // Both remain in one shared batch and one authoritative cell. Rotating
+        // the piece rotates this face assignment with its local geometry.
+        const int shape=block_shape(word);
+        if(styled_block(word)&&((shape>=15&&shape<=27)||(shape>=32&&shape<=36))&&vertex.ny<.01f) {
+            constexpr int structural_finishes[]={0,3,1,5};finish=4+structural_finishes[block_material(word)];
+        }
+        building_uv(Vector3(vertex.x,vertex.y,vertex.z),Vector3(vertex.nx,vertex.ny,vertex.nz),finish,vertex.u,vertex.v);
+        output.vertices.push_back({point.x,point.y,point.z,normal.x,normal.y,normal.z,vertex.u,vertex.v,float(finish)});
     }
     for(int index:geometry.indices)output.indices.push_back(base+index);
 }
@@ -19,11 +29,17 @@ inline BlockVertex interpolate_block_vertex(const BlockVertex &first,const Block
         first.u+(second.u-first.u)*fraction,first.v+(second.v-first.v)*fraction,first.material};
 }
 inline void split_block_polygon(const std::vector<BlockVertex> &polygon,Vector3 normal,double offset,std::vector<BlockVertex> &inside,std::vector<BlockVertex> &outside) {
-    auto distance=[&](const BlockVertex &vertex){return double(normal.x)*vertex.x+double(normal.y)*vertex.y+double(normal.z)*vertex.z-offset;};
+    // Equivalent hull planes arrive through float rotations/normalization. Treat
+    // their sub-10-micrometre residual as coplanar, before splitting: otherwise
+    // shared roof edges emit slivers that Jolt discards as empty collision pieces.
+    auto distance=[&](const BlockVertex &vertex){
+        const double value=double(normal.x)*vertex.x+double(normal.y)*vertex.y+double(normal.z)*vertex.z-offset;
+        return std::abs(value)<=1e-5?0.:value;
+    };
     for(size_t index=0;index<polygon.size();++index) {
         const auto &first=polygon[index],&second=polygon[(index+1)%polygon.size()];
         double first_distance=distance(first),second_distance=distance(second);
-        bool first_inside=first_distance<=1e-7,second_inside=second_distance<=1e-7;
+        bool first_inside=first_distance<=0,second_inside=second_distance<=0;
         (first_inside?inside:outside).push_back(first);
         if(first_inside!=second_inside) {
             auto intersection=interpolate_block_vertex(first,second,float(std::clamp(first_distance/(first_distance-second_distance),0.,1.)));
@@ -79,7 +95,7 @@ inline void clip_modular_boundaries(BlockBake &output,const std::array<uint16_t,
         for(const auto &fragment:fragments)for(size_t corner=1;corner+1<fragment.size();++corner) {
             const auto &first_vertex=fragment[0],&second_vertex=fragment[corner],&third_vertex=fragment[corner+1];
             Vector3 edge_a(second_vertex.x-first_vertex.x,second_vertex.y-first_vertex.y,second_vertex.z-first_vertex.z),edge_b(third_vertex.x-first_vertex.x,third_vertex.y-first_vertex.y,third_vertex.z-first_vertex.z);
-            if(edge_a.cross(edge_b).length_squared()<1e-16)continue;
+            if(edge_a.cross(edge_b).length_squared()<1e-12)continue;
             int base=int(vertices.size());vertices.insert(vertices.end(),{first_vertex,second_vertex,third_vertex});indices.insert(indices.end(),{base,base+1,base+2});
         }
     }

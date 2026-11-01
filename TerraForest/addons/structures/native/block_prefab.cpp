@@ -54,7 +54,7 @@ Dictionary NativeBlockPrefab::survey_surface() const {
         if(found==columns.end()||cell.y>found->second.y)columns[key]=cell;
     }
     PackedVector3Array points;PackedColorArray colors;
-    for(const auto &entry:columns){const auto &cell=entry.second;points.push_back(Vector3(cell.x+.5,cell.y+1,cell.z+.5));colors.push_back(block_map_material(block_material(cell.word)));}
+    for(const auto &entry:columns){const auto &cell=entry.second;points.push_back(Vector3(cell.x+.5,cell.y+1,cell.z+.5));colors.push_back(block_map_material(block_render_material(cell.word)));}
     Dictionary result;result["points"]=points;result["colors"]=colors;return result;
 }
 namespace {

@@ -120,6 +120,72 @@ inline const ModularGeometry &modular_geometry(int shape) {
         }
         prism(result[9],{Vector3(0,.875,0),Vector3(.125,1,0),Vector3(0,1,0)});
         prism(result[9],{Vector3(.875,1,0),Vector3(1,.875,0),Vector3(1,1,0)});
+        // Original expansion geometry: intersect a unit cell with analytic planes.
+        // Render and collision share the exact clipped polyhedron. Split roof
+        // halves retain separate convex hulls but omit their shared internal face.
+        auto clipped=[&](ModularGeometry &mesh,std::vector<ModularPlane> cuts,Vector3 hidden=Vector3()) {
+            std::vector<std::vector<Vector3>> faces{
+                {{0,0,0},{0,0,1},{0,1,1},{0,1,0}},{{1,0,0},{1,1,0},{1,1,1},{1,0,1}},
+                {{0,0,0},{1,0,0},{1,0,1},{0,0,1}},{{0,1,0},{0,1,1},{1,1,1},{1,1,0}},
+                {{0,0,0},{0,1,0},{1,1,0},{1,0,0}},{{0,0,1},{1,0,1},{1,1,1},{0,1,1}}};
+            std::vector<ModularPlane> hull{{{1,0,0},1},{{-1,0,0},0},{{0,1,0},1},{{0,-1,0},0},{{0,0,1},1},{{0,0,-1},0}};
+            for(auto cut:cuts) {
+                double length=cut.normal.length();cut.normal/=length;cut.offset/=length;hull.push_back(cut);
+                std::vector<std::vector<Vector3>> next;std::vector<Vector3> cap;
+                for(const auto &face:faces) {
+                    std::vector<Vector3> polygon;
+                    for(size_t i=0;i<face.size();++i) {
+                        Vector3 a=face[i],b=face[(i+1)%face.size()];double da=cut.normal.dot(a)-cut.offset,db=cut.normal.dot(b)-cut.offset;
+                        if(da<=1e-7)polygon.push_back(a);
+                        if((da>1e-7)!=(db>1e-7)) {
+                            Vector3 p=a+(b-a)*float(da/(da-db));polygon.push_back(p);
+                            bool unique=true;for(Vector3 q:cap)if(q.distance_squared_to(p)<1e-12)unique=false;
+                            if(unique)cap.push_back(p);
+                        }
+                    }
+                    if(polygon.size()>=3)next.push_back(std::move(polygon));
+                }
+                if(cap.size()>=3) {
+                    Vector3 center;for(Vector3 p:cap)center+=p;center/=float(cap.size());
+                    Vector3 u=(cap[0]-center).normalized(),v=cut.normal.cross(u);
+                    std::sort(cap.begin(),cap.end(),[&](Vector3 a,Vector3 b){a-=center;b-=center;return std::atan2(a.dot(v),a.dot(u))<std::atan2(b.dot(v),b.dot(u));});
+                    next.push_back(std::move(cap));
+                }
+                faces=std::move(next);
+            }
+            for(const auto &face:faces)for(size_t i=1;i+1<face.size();++i) {
+                Vector3 n=(face[i]-face[0]).cross(face[i+1]-face[0]);
+                if(n.length_squared()<1e-12 || (hidden.length_squared()>.1&&n.normalized().dot(hidden.normalized())>.999))continue;
+                triangle(mesh,face[0],face[i],face[i+1]);
+            }
+            mesh.hulls.push_back(std::move(hull));
+        };
+        auto shell=[&](int id,double x,double z,double height,std::vector<ModularPlane> domain={},Vector3 hidden=Vector3()) {
+            domain.push_back({Vector3(-x,1,-z),height});domain.push_back({Vector3(x,-1,z),.125-height});
+            clipped(result[id-9],domain,hidden);
+        };
+        shell(19,.5,0,0);shell(20,.5,0,.5);
+        prism(result[12],{{0,.875,0},{.25,1,0},{0,1,0}}); // 21: phase seam
+        shell(22,.5,0,0,{{{1,0,0},.5}},{1,0,0});
+        shell(22,-.5,0,.5,{{{-1,0,0},-.5}},{-1,0,0});
+        prism(result[14],{{0,.875,0},{.25,1,0},{0,1,0}});
+        prism(result[14],{{.75,1,0},{1,.875,0},{1,1,0}}); // 23: ridge seam
+        for(int phase=0;phase<2;++phase)for(int valley=0;valley<2;++valley) {
+            int id=24+phase+valley*2;Vector3 divider=valley?Vector3(-1,0,1):Vector3(1,0,-1);
+            shell(id,.5,0,phase*.5,{{divider,0}},divider);
+            shell(id,0,.5,phase*.5,{{-divider,0}},-divider);
+        }
+        clipped(result[19],{{{1,0,0},.375},{{0,-1,0},-.75},{{1,1,0},1.125}}); // 28: crown
+        clipped(result[20],{{{1,0,0},.375},{{0,0,1},.375},{{0,-1,0},-.75},{{1,1,0},1.125},{{0,1,1},1.125}});
+        clipped(result[21],{{{0,1,0},.125},{{1,1,0},1.0625},{{-1,1,0},.0625}}); // 30: bottom-seated coping, run along Z
+        // Two exposed outer edges and an inner diagonal meet the straight
+        // run's exact cross-section on both joining faces (X=1 and Z=1).
+        clipped(result[22],{{{0,1,0},.125},{{-1,1,0},.0625},{{0,1,-1},.0625},{{1,1,1},2.0625}});
+        clipped(result[23],{{{-.5,1,0},0}}); // 32: closed low gable
+        clipped(result[24],{{{-.5,1,0},.5}}); // 33: closed high gable
+        clipped(result[25],{{{-.5,1,0},0},{{.5,1,0},.5}}); // 34: closed gable ridge
+        clipped(result[26],{{{-1,1,0},0}}); // 35: closed 1:1 gable slope
+        clipped(result[27],{{{-1,1,0},0},{{1,1,0},1}}); // 36: closed 1:1 gable ridge
         return result;
     }();
     return catalogue[shape-9];

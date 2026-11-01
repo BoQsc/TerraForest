@@ -43,6 +43,13 @@ var capture_name: LineEdit
 var capture_status: Label
 var archive_button: Button
 var shape: OptionButton
+var appearance: OptionButton
+var search: LineEdit
+var family: OptionButton
+var orientation_preview: TextureRect
+var assembly_preview: TextureRect
+var assembly_hint: Label
+var selected_shape:=1
 var material: OptionButton
 var rotation_choice: OptionButton
 var prefab: OptionButton
@@ -51,17 +58,33 @@ var editor_controls: Array[Control]=[]
 func _ready() -> void:
 	layer=15
 	panel=PanelContainer.new();panel.position=Vector2(1500,36);panel.custom_minimum_size=Vector2(380,0);add_child(panel)
+	panel.minimum_size_changed.connect(panel.reset_size)
 	var margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]: margin.add_theme_constant_override("margin_"+side,20)
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
 	var title:=Label.new();title.text="CONSTRUCTION";title.add_theme_font_size_override("font_size",22);column.add_child(title)
+	search=LineEdit.new();search.placeholder_text="Search shape name or ID";search.clear_button_enabled=true;column.add_child(search)
+	family=OptionButton.new();family.focus_mode=Control.FOCUS_NONE
+	for name: String in ShapeCatalog.FAMILIES: family.add_item(name)
+	column.add_child(family)
 	shape=_option(column,"Shape",ShapeCatalog.NAMES,"shape")
+	shape.add_theme_constant_override("icon_max_width",36)
+	search.text_changed.connect(func(_text: String): _filter_shapes())
+	family.item_selected.connect(func(_index: int): _filter_shapes())
+	var preview_row:=HBoxContainer.new();column.add_child(preview_row)
+	orientation_preview=TextureRect.new();orientation_preview.custom_minimum_size=Vector2(96,96);orientation_preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;orientation_preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;preview_row.add_child(orientation_preview)
+	assembly_hint=Label.new();assembly_hint.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;assembly_hint.custom_minimum_size.x=225;assembly_hint.size_flags_horizontal=Control.SIZE_EXPAND_FILL;preview_row.add_child(assembly_hint)
+	_filter_shapes()
 	material=_option(column,"Material",["Brick","Wood","Concrete","Metal"],"material")
+	appearance=_option(column,"Appearance",ShapeCatalog.APPEARANCES,"appearance")
+	appearance.tooltip_text="Surface finish. Construction and salvage use the structural material above."
 	rotation_choice=_option(column,"Rotation",["0°","90°","180°","270°"],"rotation")
 	rotation_choice.tooltip_text="R turns around the vertical axis. Shift+R changes the mounting direction of modular blocks."
+	assembly_preview=TextureRect.new();assembly_preview.custom_minimum_size=Vector2(160,100);assembly_preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;assembly_preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;assembly_preview.tooltip_text="Example assembly: each piece remains an individual building block.";column.add_child(assembly_preview)
 	prefab=_option(column,"Prefab",["Single blocks"],"prefab")
 	prefab.tooltip_text="Outline: red = blocked; amber = placement checks pending; green = block space clear. Materials are checked when placing."
+	var editor_start:=column.get_child_count()
 	survey_button=Button.new();survey_button.text="Survey ground for selected prefab";survey_button.focus_mode=Control.FOCUS_NONE;column.add_child(survey_button)
 	survey_button.pressed.connect(func(): survey_requested.emit())
 	preparation_status_button=Button.new();preparation_status_button.text="Reopen site preparation";preparation_status_button.focus_mode=Control.FOCUS_NONE;column.add_child(preparation_status_button);preparation_status_button.hide()
@@ -128,13 +151,13 @@ func _ready() -> void:
 	var history_row:=HBoxContainer.new();column.add_child(history_row)
 	for forward in [false,true]:
 		var history_button:=Button.new();history_button.text="Redo" if forward else "Undo";history_button.pressed.connect(func():history_requested.emit(forward));history_row.add_child(history_button)
-	for child in column.get_children().slice(9):editor_controls.append(child)
+	for child in column.get_children().slice(editor_start):editor_controls.append(child)
 	panel.hide()
 func _option(parent: Control,title: String,values: Array,field: String) -> OptionButton:
 	var label:=Label.new();label.text=title;parent.add_child(label)
 	var option:=OptionButton.new();option.custom_minimum_size=Vector2(340,36);option.focus_mode=Control.FOCUS_NONE
 	for value: String in values: option.add_item(value)
-	option.item_selected.connect(func(index: int): selection_requested.emit(field,index))
+	option.item_selected.connect(func(index: int): selection_requested.emit(field,option.get_item_id(index)))
 	parent.add_child(option)
 	return option
 func _number(parent: Control,title: String,lo: int,hi: int,value: int,step: int) -> SpinBox:
@@ -191,7 +214,7 @@ func _request_frontage() -> void:
 		frontage_sources_requested.emit(frontage_sources.get_selected_items(),int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
 	else:
 		frontage_requested.emit(int(frontage_lots.value),int(frontage_width.value),int(frontage_gap.value),int(frontage_seed.value),capture_name.text)
-func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int,manage_visibility: bool=true) -> void:
+func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,prefab_index: int,manage_visibility: bool=true,appearance_id: int=-1) -> void:
 	if panel==null: return
 	if manage_visibility:panel.visible=active
 	var rotations: int = 4 if prefab_index>=0 else ShapeCatalog.rotation_count(shape_id)
@@ -199,8 +222,14 @@ func synchronize(active: bool,shape_id: int,material_id: int,quarter_turn: int,p
 		rotation_choice.clear()
 		for orientation in rotations:
 			rotation_choice.add_item(ShapeCatalog.rotation_name(orientation) if rotations>4 else "%d°" % (orientation*90))
-	shape.select(shape_id-1);material.select(material_id);rotation_choice.select(quarter_turn);prefab.select(prefab_index+1)
-	shape.disabled=prefab_index>=0
+	selected_shape=shape_id
+	shape.select(shape.get_item_index(shape_id-1));appearance.select(appearance_id+1);material.select(material_id);rotation_choice.select(quarter_turn);prefab.select(prefab_index+1)
+	orientation_preview.texture=preload("res://addons/player_runtime/shape_orientations.gd").texture(shape_id,quarter_turn)
+	assembly_hint.text=ShapeCatalog.assembly_hint(shape_id)
+	assembly_preview.texture=preload("res://addons/player_runtime/building_assemblies.gd").texture(shape_id)
+	assembly_preview.visible=assembly_preview.texture!=null and prefab_index<0
+	appearance.disabled=prefab_index>=0
+	shape.disabled=prefab_index>=0 or shape.item_count==0
 	material.disabled=prefab_index>=0
 	stack_button.disabled=prefab_index<0
 	_selected_prefab=prefab_index
@@ -216,3 +245,14 @@ func show_survey(message: String,can_prepare: bool=false) -> void:
 	prepare_button.disabled=not can_prepare
 	survey_dialog.dialog_text=message
 	survey_dialog.popup_centered(Vector2i(600,240))
+
+func _filter_shapes() -> void:
+	shape.clear()
+	var query:=search.text.strip_edges().to_lower()
+	for id in range(1,ShapeCatalog.NAMES.size()+1):
+		if family.selected>0 and ShapeCatalog.family(id)!=family.selected:continue
+		if not query.is_empty() and not query in ShapeCatalog.NAMES[id-1].to_lower() and query!=str(id):continue
+		shape.add_icon_item(preload("res://addons/player_runtime/shape_icons.gd").texture(id),ShapeCatalog.NAMES[id-1],id-1)
+	shape.select(shape.get_item_index(selected_shape-1))
+	if shape.item_count==0:shape.text="No matching shapes"
+	shape.disabled=shape.item_count==0

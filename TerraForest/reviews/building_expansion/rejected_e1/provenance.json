@@ -1,0 +1,71 @@
+{
+  "assets": [
+    {
+      "baseline_sha256": "4305d14473cb123c87c9573db2ab0ac07ae6ee2f7ea9b88de22262487c69b06a",
+      "cells": 1019,
+      "id": "trader_t1",
+      "path": "res://addons/structures/prefabs/expansion_trader_t1_e1.tres",
+      "sha256": "e9c14180a0efc681860fafcb9c6bad885d03b8ebad8f0581f58f40a15b48aa4d"
+    },
+    {
+      "baseline_sha256": "58406cd327098b2e94ad0da59a188afe9ce2621b7edcea4003f9bf1bf047ba69",
+      "cells": 3156,
+      "id": "town_hall_t1",
+      "path": "res://addons/structures/prefabs/expansion_town_hall_t1_e1.tres",
+      "sha256": "39e6057ff452a267538a2142f0b3b0e8e0e5fdd9cc0610c122927aacf424e03a"
+    },
+    {
+      "baseline_sha256": "838c9a1213a39eec45bdf67e5e5803731f416f381b8e9f468b6a2e0c2920c912",
+      "cells": 3011,
+      "id": "church_c1",
+      "path": "res://addons/structures/prefabs/expansion_church_c1_e1.tres",
+      "sha256": "8f1de4f1897ab7d3241f0407cd8c9459fbc802999ddddd4c4ed7df1e0cea4f72"
+    },
+    {
+      "baseline_sha256": "7c2228265175ac1bd1d27512b4bd6ea7238e6b28d416a7586219e192985b95c9",
+      "cells": 2591,
+      "id": "school_s2",
+      "path": "res://addons/structures/prefabs/expansion_school_s2_e1.tres",
+      "sha256": "964b6693100ebcf4c11a6c6bd67ced0558bb9ad60449b7ddfc98763e1a253439"
+    },
+    {
+      "baseline_sha256": "01cfb3fc4b6d180d9fac04db2e1f01a92f18baa61c4e8e32be987814ad263eb5",
+      "cells": 3505,
+      "id": "warehouse_w1",
+      "path": "res://addons/structures/prefabs/expansion_warehouse_w1_e1.tres",
+      "sha256": "1a774ceb91cfc71e5b674293e3fe0d950bf76bfbb3b33c7144c8c2e2d347c033"
+    },
+    {
+      "baseline_sha256": "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30",
+      "cells": 555,
+      "id": "cottage_a2",
+      "path": "res://addons/structures/prefabs/expansion_cottage_a2_e1.tres",
+      "sha256": "2dcb2e5c3c3aad3fad36f138e076be044bc3a4e47d901532f48ca8e71cc4318a"
+    },
+    {
+      "baseline_sha256": "69dc99b3084e29709d42f3a603e75e04310ab725bfc9e7eda6e3a096f4f8dc06",
+      "cells": 1028,
+      "id": "shop_b2",
+      "path": "res://addons/structures/prefabs/expansion_shop_b2_e1.tres",
+      "sha256": "46200e7fcd4a803b5154ec021ae6703697cd7224f30d42a06a0c52b9290392d8"
+    },
+    {
+      "baseline_sha256": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+      "cells": 963,
+      "id": "shop_b1",
+      "path": "res://addons/structures/prefabs/expansion_shop_b1_e1.tres",
+      "sha256": "981f24fced4d819d33b3ad8c0b1d797abf34bf17efc2ba09e22e03047e3faacd"
+    },
+    {
+      "baseline_sha256": "b58a8813648e80f0ba0121e539a680adac0aae7d748eec304a6f3cc01575baac",
+      "cells": 1914,
+      "id": "house_c1",
+      "path": "res://addons/structures/prefabs/expansion_house_c1_e1.tres",
+      "sha256": "d1553ad5a0c3702633f646f67d9cc68fd9dbf1684397de8439413487be2791bb"
+    }
+  ],
+  "license": "CC0-1.0",
+  "revision": "E1",
+  "source": "Original TerraForest buildings and reviews/building_expansion/recipes.gd",
+  "status": "unreviewed"
+}

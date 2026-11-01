@@ -79,6 +79,10 @@ wall. Footpaths and door approaches must connect to the street.
 
 ## Buildings create places worth entering
 
+Building material authoring and roof-pattern direction additionally follow the
+[material acceptance contract](BUILDING_MATERIAL_STANDARD.md). Engineering gates
+and image generation do not substitute for inspected, matched world evidence.
+
 User direction, 2026-10-25: all building fabric uses the building-block grid.
 A shape is an individual placeable/destructible building block, not a complete
 architectural feature disguised as one asset. Arches, door/window surrounds,
