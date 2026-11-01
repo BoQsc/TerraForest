@@ -5,7 +5,7 @@
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
-## Quest ownership foundation — source verified, not playable quests
+## Quest ownership foundation — installed and scoped-verified, not playable quests
 
 - Native location identities and TFQ1 state are implemented; trader offers,
   question-mark/E start and actual location reset are not yet wired to gameplay.
@@ -34,7 +34,12 @@
   [runtime tracker](../runtime-performance/README.md#async-save-completion-versus-optional-cache-work).
 - Sampled source peak private commit 3,765,170,176 bytes; dedicated GPU
   1,497,583,616 bytes, within current budgets. No foreground frame-pacing claim.
-  Matching combined-package verification remains pending.
+  Matching combined-package verification now passes: 25 normal-generation/first-save/
+  streamed-ownership checks and 10 fresh-process restore checks at
+  `reports/quests_world/20261101T165251331454Z`. Package save completion is 1.844,
+  2.200 and 1.978 s; the quest capture adds 10–18 microseconds. Package peak private
+  commit 3,831,541,760 bytes and dedicated GPU 1,507,872,768 bytes remain within
+  current sampled budgets. [Exact installed artifact and evidence](quest-evidence.json).
 - No new visual acceptance is claimed. Remaining/reset closure requirements:
   [expansion contract](../../docs/GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state).
 

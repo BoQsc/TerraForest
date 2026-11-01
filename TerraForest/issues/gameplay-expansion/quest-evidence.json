@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "scope": "Native quest state and generated location ownership foundation; not playable quests or location resets",
+  "source_commit": "c0d2cae8",
+  "export_runtime_commit": "48eac831",
+  "pack_sha256": "d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be",
+  "pack_bytes": 448486488,
+  "distribution_bytes": 478780559,
+  "external_native_libraries_verified": 14,
+  "export_log": "reports/quests_clothing_entry_export.log",
+  "native_debug": {"report": "reports/quests_native/20261101T160944750121Z", "checks": 53},
+  "native_release": {"report": "reports/quests_native/20261101T160945858610Z", "checks": 53},
+  "source_streamed_ownership": {"report": "reports/quests_world/20261101T161019237804Z", "checks": 31},
+  "source_new_generation": {"report": "reports/quests_world/20261101T161638198108Z", "checks": 35},
+  "source_save_priority_recheck": {"report": "reports/quests_world/20261101T162547622901Z", "checks": 10, "completion_us": 2332187},
+  "package": {
+    "report": "reports/quests_world/20261101T165251331454Z",
+    "create_checks": 25,
+    "fresh_restore_checks": 10,
+    "location_count": 4,
+    "actual_sleepers": 7,
+    "streamed_stocked_chests": 7,
+    "quest_component_bytes": 620,
+    "peak_private_commit_bytes": 3831541760,
+    "peak_dedicated_gpu_bytes": 1507872768,
+    "save_completion_us": [1843911, 2200371, 1978230],
+    "save_publication_us": [1592495, 1932007, 1737394],
+    "quest_capture_us": [10, 18, 10],
+    "pointer_captures": 0,
+    "passed": true
+  },
+  "retained_failures": [
+    "reports/quests_world/20261101T155047564011Z",
+    "reports/quests_native/20261101T160606817860Z",
+    "reports/checks/20261101T162058530655Z"
+  ],
+  "limitations": [
+    "No trader quest offers, question-mark interaction, live objective adapter or actual location reset yet",
+    "Generation metadata is not a frozen terrain/block/model/stock/resident reset baseline",
+    "Offscreen functional tests are not focused frame-pacing or visual-quality acceptance",
+    "Original played worlds are not retrofitted or used as mutable fixtures",
+    "Native paid trader ride foundation is inactive; camera and clothing have separate verification owners"
+  ]
+}

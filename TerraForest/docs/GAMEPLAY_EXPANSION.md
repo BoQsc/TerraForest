@@ -83,7 +83,8 @@ offers, question-mark/E start, live objective delivery and reward presentation.
 Return immediately after persistence qualification. Close only with normal
 generated-world accept/travel/reset/clear/claim/reopen evidence, outside-region
 preservation, failure rollback and performance measurements. Source generation,
-streamed ownership and persistence checks pass; matching package checks remain.
+streamed ownership and persistence checks pass; matching package generation and
+fresh-process restore pass 25 + 10 checks. The 620-byte foundation is installed.
 The expansion tracker retains the first failed save-return test and the separately
 reproduced cache-accounting priority fix.
 

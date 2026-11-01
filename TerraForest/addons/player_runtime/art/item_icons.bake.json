@@ -82,7 +82,7 @@
         "res://addons/characters/runtime/torch_effects.gd": "1c3155ac06b11f0fca68eb767cd2d2d2609c9f6307301b45fa6fef961e8a29a7",
         "res://addons/characters/runtime/torch_flame.gdshader": "fa3bb0bd7d95800568c281d0e211ca3adc5b89ea33f6ead0bc549da868600ea9",
         "res://addons/characters/runtime/torch_motes.gdshader": "9b3787987bfc55aea2cc183e05ab4efe749cfe364aa0c07e0c3d7a9bcfb58110",
-        "res://addons/characters/wearables/clothing.gd": "cc8370c10b64b3d4739d2f8ab3a33ef46a0c2ae8081e026045ec1ca5bfe1bdd6",
+        "res://addons/characters/wearables/clothing.gd": "e96374e941a7e075bce29f666990ca629293df97e07fe8d4176f206986245bbc",
         "res://addons/characters/wearables/trail/304.res": "3a387e6356a739085e732d1cc4e258053e9f3c0821706ed23f62d1a6e31adec5",
         "res://addons/characters/wearables/trail/305.res": "79a49a5b8e0a993699eab807f5fa8770369dde2d629fe73444f11f1da5a74dd1",
         "res://addons/characters/wearables/trail/306.res": "df2302e0cb4d4629f57d1ef1bbf8b6d0b5b36ec698d05afa0ba7f1de6e621b14",
@@ -105,8 +105,8 @@
     "vehicle": {
       "engine": "4.7.2-stable (steam)",
       "files": {
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
-        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_debug.x86_64.dll": "de3d6cecd2890842425c7326dd3dfc6da6d59fbb9219c781890161168c0a2f07",
+        "res://addons/vehicle_runtime/bin/vehicle_runtime.windows.template_release.x86_64.dll": "be52f284654697abc4d5291f64d00141273a1e4107596051e9fce177da49ec6f",
         "res://addons/vehicle_runtime/vehicle_runtime.gdextension": "3158221f48bf06a5b784d5646deae71ce52d0e82dced2a0be0cfdb095f5a4100",
         "res://addons/vehicle_runtime/vehicle_streaming.gd": "7bc2c8b88b6ade1ef8e1bf08d4cd4b18e6743047d7e57171e61b9231b2b1943b",
         "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",
@@ -118,7 +118,7 @@
         "res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png": "0ea2e94d9e82290018171ba32692d2e61bae8dbd57d2ae35604f1b9b003661af",
         "res://vehicle_demo/assets/Vehicle_Rebuilt_Normal.png.import": "765bb88edc32d25b6968019f469b64d4e057d7dc0fc98cbcdb49dd95ed51488e",
         "res://vehicle_demo/scenes/car.tscn": "597766cbfe0141c3118f8762027839cdd47cbd2026ed87e93c6ae3980d8ac31a",
-        "res://vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
+        "res://vehicle_demo/scripts/car.gd": "2526ca08418c42d1eaabd9faa40c9a61fc5900a3224a6a7f243cd7cdd8f72c63",
         "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {

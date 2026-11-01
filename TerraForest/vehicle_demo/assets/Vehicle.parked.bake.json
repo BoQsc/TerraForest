@@ -1,13 +1,13 @@
 {
   "bake": {
-    "bake_us": 13297,
+    "bake_us": 25053,
     "baked_lods": 99,
     "ok": true,
     "payload_bytes": 17166352,
-    "read_us": 2950,
+    "read_us": 9503,
     "source_lods": 120,
     "source_parts": 32,
-    "upload_us": 3409
+    "upload_us": 7673
   },
   "engine": "4.7.2-stable (steam)",
   "output_sha256": "4c25c9ca8e83a5734b81b469cc0a8d3584318f6f26d95c36507da9ab3602ca53",
@@ -20,7 +20,7 @@
     "res://vehicle_demo/assets/Vehicle.glb": "c3f9742868a43447c10c3270c5499000db3d8ae22eaf6b63e63e67bf2a7aab08",
     "res://vehicle_demo/assets/Vehicle.glb.import": "72b2c3ee9405b9d902f506c4e4b60f2d178b242adda35413f6ee7c4957b61111",
     "res://vehicle_demo/scenes/car.tscn": "597766cbfe0141c3118f8762027839cdd47cbd2026ed87e93c6ae3980d8ac31a",
-    "res://vehicle_demo/scripts/car.gd": "ced1d3637e9d4aad5191a67318846efdf01bfebcc7c6896c2703a38abe3177f6",
+    "res://vehicle_demo/scripts/car.gd": "2526ca08418c42d1eaabd9faa40c9a61fc5900a3224a6a7f243cd7cdd8f72c63",
     "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
   }
 }

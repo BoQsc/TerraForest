@@ -26,8 +26,10 @@ The deterministic regression fails before and passes after
 save barriers pass (`20261101T162123590207Z`). On the same owned world, completion
 now measures 2.332 s including 2.070 s publication and 10.409 ms main capture;
 the new 620-byte quest component contributes 11 microseconds. Source evidence:
-`reports/quests_world/20261101T162547622901Z`, 10 checks. Matching package verification
-remains pending. This fixes the reproduced priority defect, not all storage latency
+`reports/quests_world/20261101T162547622901Z`, 10 checks. Matching package generation/
+fresh-process restore passes 25 + 10 checks at
+`reports/quests_world/20261101T165251331454Z`: three save completions 1.844–2.200 s.
+The guard is installed. This fixes the reproduced priority defect, not all storage latency
 or the separately retained gameplay frame-pacing failures.
 
 - Kept the user's Legion Quiet Mode, graphics, vegetation density, physics solver

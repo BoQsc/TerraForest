@@ -45,7 +45,9 @@ fresh generation/immediate saving/reopen pass another 35. The initial failed rep
 is retained. A separate deterministic regression confirms idle cache accounting
 could delay asynchronous save completion; one priority guard reduces the same
 world's measured completion from over 20 s to 2.332 s, without changing timeouts.
-Matching package verification remains. Then implement bounded multi-owner reset,
+Matching package generation and fresh-process restore pass 25 + 10 checks, with
+three measured save completions between 1.844 and 2.200 s. The 620-byte foundation
+is installed; playable quests still require bounded multi-owner reset,
 trader/marker interaction and live rewards. Exact scope and closure evidence:
 [expansion contract](GAMEPLAY_EXPANSION.md#native-location-ownership-and-quest-state)
 and [retained test reports](../issues/gameplay-expansion/README.md).
