@@ -121,6 +121,17 @@ qualification or new visual approval is claimed.
 - Multi-owner safety, persistent baselines and playable quests remain unfinished.
 - [Reports, limits and binary hashes](cube-patch-evidence.json).
 
+## Selected container reset — native verified, not gameplay
+
+- TFCP1 stores up to 64 selected inventories/locks, including empty targets.
+- Both variants pass 42 checks; existing lock/store/drag/capacity/transfer and
+  native quest suites still pass. Tool wear, water and lock random state survive.
+- Outside supplies and live nonempty views stay unchanged; player inventory is
+  not touched. Invalid/stale/schema/capacity requests reject before publication.
+- Headless 64-target restore among 2,048 containers: 0.48–0.61 ms.
+- Physical chest ownership, durable baselines and full quest reset remain open.
+- [Reports, limits and binary hashes](container-patch-evidence.json).
+
 ## Images
 
 ### Inventory navigation — source/package verified and installed

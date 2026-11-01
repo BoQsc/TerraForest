@@ -41,6 +41,10 @@ public:
     godot::Dictionary withdraw(int64_t id,const godot::Ref<NativePlayerInventory> &player,int64_t slot,int64_t count,int64_t player_revision,int64_t store_revision) {return move(id,player,slot,count,player_revision,store_revision,false);}
     godot::Dictionary drag_slots(int64_t id,const godot::Ref<NativePlayerInventory> &player,bool source_chest,bool target_chest,int64_t from,int64_t to,int64_t count,int64_t player_revision,int64_t store_revision);
     godot::PackedByteArray capture_storage_snapshot() const;
+    godot::Dictionary container_patch_state() const;
+    godot::PackedByteArray capture_container_patch(const godot::PackedInt64Array &ids,int64_t expected_revision,int64_t expected_owner) const;
+    bool validate_container_patch(const godot::PackedByteArray &bytes) const;
+    godot::Dictionary restore_container_patch(const godot::PackedByteArray &bytes,int64_t expected_revision,int64_t expected_owner);
     virtual bool validate_snapshot(const godot::PackedByteArray &bytes) const;
     bool restore_storage_snapshot(const godot::PackedByteArray &bytes);
 };

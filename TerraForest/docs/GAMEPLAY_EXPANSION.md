@@ -128,7 +128,16 @@ compacts each affected column once. Rare hash growth/tombstone cleanup visits th
 global cube map. Schedule on the existing worker, never the frame loop.
 [Cube reset evidence](../issues/gameplay-expansion/cube-patch-evidence.json).
 
-These primitives are not a complete location reset: models/door state, contents,
+`NativeContainerStore.capture_container_patch` / `restore_container_patch`
+preserves selected supplies and locks, including empty targets, tool wear and
+water volume. TFCP1 is capped at 64 containers/34,872 bytes and requires the live
+owner/revision token. Prepare all selected replacements before mutation; unrelated
+contents, locks and nonempty transfer views remain unchanged. Both native variants
+pass 42 checks plus the five existing lock/inventory suites and 53 quest assertions.
+Restoring 64 targets among 2,048 containers takes 0.48–0.61 ms headlessly, not a
+whole-reset or gameplay-frame guarantee. [Evidence](../issues/gameplay-expansion/container-patch-evidence.json).
+
+These primitives are not a complete location reset: models/door state,
 residents, vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their
 outside edits too. Persistent baseline retention, worker scheduling, rendered

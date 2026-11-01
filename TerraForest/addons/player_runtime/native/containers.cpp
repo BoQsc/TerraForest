@@ -21,6 +21,10 @@ void NativeContainerStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("deposit","id","player","slot","count","player_revision","store_revision"),&NativeContainerStore::deposit);
     ClassDB::bind_method(D_METHOD("withdraw","id","player","slot","count","player_revision","store_revision"),&NativeContainerStore::withdraw);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeContainerStore::capture_storage_snapshot);
+    ClassDB::bind_method(D_METHOD("container_patch_state"),&NativeContainerStore::container_patch_state);
+    ClassDB::bind_method(D_METHOD("capture_container_patch","ids","expected_revision","expected_owner"),&NativeContainerStore::capture_container_patch);
+    ClassDB::bind_method(D_METHOD("validate_container_patch","bytes"),&NativeContainerStore::validate_container_patch);
+    ClassDB::bind_method(D_METHOD("restore_container_patch","bytes","expected_revision","expected_owner"),&NativeContainerStore::restore_container_patch);
     ClassDB::bind_method(D_METHOD("validate_snapshot","bytes"),&NativeContainerStore::validate_snapshot);
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","bytes"),&NativeContainerStore::restore_storage_snapshot);
 }

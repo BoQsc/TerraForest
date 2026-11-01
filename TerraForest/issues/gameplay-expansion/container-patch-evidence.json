@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-01",
+  "status": "Source and native variants verified; scoped supplies/locks only, not gameplay location reset",
+  "format": "TFCP1: sorted selected IDs, container slot/pick schema, exact inventory and lock state, SHA-256",
+  "limits": {"selected_containers": 64, "bytes": 34872},
+  "verification": {
+    "report": "reports/container_patch/20261101T193542514535Z/run.json",
+    "checks_per_variant": 42,
+    "debug_sha256": "5be9d28042efd5746df9f91224f92b1a4b24e58253aa0299a0bbdf27f429ce79",
+    "release_sha256": "590a042605be9821e8edd2ba6cb38f1627159d2ca495d2ccd5bf0a56367a4c82"
+  },
+  "regressions": [
+    {"report": "reports/container_locks/20261101T193446749243Z/run.json", "variant": "debug", "suites": ["locks", "store", "drag", "capacity", "inventory_transfer"]},
+    {"report": "reports/container_locks/20261101T193450224097Z/run.json", "variant": "release", "suites": ["locks", "store", "drag", "capacity", "inventory_transfer"]},
+    {"report": "reports/quests_native/20261101T193453193384Z/run.json", "variant": "debug", "checks": 53},
+    {"report": "reports/quests_native/20261101T193453942584Z/run.json", "variant": "release", "checks": 53}
+  ],
+  "verified": [
+    "Looted contents and broken locks restore; owned empty targets remove new contents",
+    "Outside inventory, lock state and nonempty transfer tokens stay unchanged",
+    "Player inventory is never changed",
+    "Tool wear, exact water amount and deterministic lock random state survive",
+    "Malformed/stale/schema/capacity failures preserve the complete store",
+    "Full capacity allows selected removal/replacement together",
+    "Fresh owner uses a new token; ordinary storage reopening preserves restored contents",
+    "Identical restoration does not invalidate current views"
+  ],
+  "timing": {"scope": "Headless 64 selected targets among 2048 stored containers; no foreground or whole-quest claim", "debug_capture_us": 189, "debug_restore_us": 482, "release_capture_us": 369, "release_restore_us": 608},
+  "remaining": [
+    "Generation-owned persistent baselines and coordinated rollback across all location owners",
+    "Physical model/removal protection, door state, resident/corpse, vegetation and water ownership",
+    "Player/vehicle safety, actual trader offers and marker/E reset, objective and reward playtests"
+  ]
+}
