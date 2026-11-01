@@ -7,8 +7,11 @@ Approved trader/civic/E2 content was still unreachable from normal generation.
 This is an integration omission, not completed work. The production catalogs and
 all five starting-recipe planners are now connected; normal Generate & play,
 trading and fresh-process stock restoration pass in the combined exported build
-(6 creation, 53 gameplay, 22 restore checks). Main-checkout installation is awaiting
-the coordinated merge window and saved/closed game; details and
+(6 creation, 53 gameplay, 22 restore checks). Main checkout and package are now
+integrated with all 51 pre-existing changed/untracked files byte-preserved. Final
+source/PCK cache identities match; both five-recipe suites pass 48 checks, packed
+assets pass 45, and the main executable passes 22 restore/interaction checks. The
+other chat retains its unfinished performance work. Exact artifacts, scope and
 retained failures are in [the expansion issue](../issues/building-expansion/README.md#production-integration-correction--2026-11-01).
 
 ## Building expansion E2 — 2026-11-01

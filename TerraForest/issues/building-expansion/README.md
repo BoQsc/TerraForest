@@ -1,7 +1,7 @@
 # Building expansion: materials, roof joints and construction display
 
 - Status: E2 reviewed scope approved; documented wider limitations remain open.
-- Updated: 2026-11-01. Implementation is in the isolated trader/civic worktree.
+- Updated: 2026-11-01. Integrated into the main checkout and package; concurrent work retained.
 - User review: Direction approved 2026-10-30. User rejected E1's clean, bright
   procedural materials and questioned pattern correctness. Exact E2 changes approved
   2026-11-01: “I approve the new changes.” See the [approval record](../../reviews/building_expansion/approval.json).
@@ -55,10 +55,25 @@ and landscape presentation remain under their existing qualification.
 ![School basement after walking down its stairs](images/production/school_s2_basement_final.png)
 Actual player capsule settled on the basement floor. [Capture hashes](images/production/manifest.json).
 
-Remaining: install this verified integration in the main checkout during the
-coordinated merge window, preserve all concurrent edits, and check its source launch.
-The release gate now checks the production catalog. A review save alone cannot
-satisfy this requirement; see the world-building standard.
+Installed in the main checkout after the other chat granted a safe merge window.
+All **51** pre-existing changed/untracked files retain their exact bytes. The main
+`TerraForest.exe` passes **22/22** normal reopen, interaction and persistence checks.
+The final source and PCK each pass **48/48** catalog/five-recipe checks; all nine
+prefab cache identities match across processes. The final package passes **45/45**
+asset checks and the source/release standards gate. See the installation entry in
+[production_verification.json](production_verification.json) for exact artifacts.
+
+The cache follow-up hashes loaded cells, attachments and planning metadata, because
+PCK resources remap raw `.tres` paths. StringName metadata keys are converted to
+lexically sorted strings and nested dictionaries canonicalized. This avoids both
+missing exported identities and process-dependent ordering. Earlier failed fixtures
+and fingerprint comparisons remain recorded in the verification file. No building
+cells, artwork or native libraries changed during this follow-up.
+
+The release gate checks the production catalog; `check_production_buildings.py` also
+compares source/PCK identities before its normal GUI and restore cases. A review save
+alone cannot satisfy production reachability. Broader terrain/foliage, NPC navigation
+and performance qualifications remain separate; the other chat resumes its work.
 
 ## Older texture retention — 2026-11-01
 

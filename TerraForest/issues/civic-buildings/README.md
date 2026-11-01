@@ -1,6 +1,6 @@
 # Trader house and civic buildings
 
-- Status: R1 and E2 approved; normal-generation packaged integration verified, main installation pending.
+- Status: R1 and E2 approved; normal-generation integration installed; scoped source/PCK checks pass.
 - Updated: 2026-11-01. Branch `codex/trader-civic-buildings`.
 - User review: Approved 2026-10-30: Trader T1 R1, Town Hall T1 R1, Church C1 R1,
   School S2 R1 and Warehouse W1 R1, plus the expansion direction. Finished E2

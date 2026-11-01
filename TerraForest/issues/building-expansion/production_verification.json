@@ -3,7 +3,7 @@
   "runtime_source_commit": "ffff300c1af410be8d2f3f516e391475a0ab22e7",
   "implementation_commit": "6ed5f368",
   "concurrent_committed_baseline": "1adcce5a",
-  "installed_main": false,
+  "installed_main": true,
   "pack": {
     "path": "dist/TerraForest.pck",
     "sha256": "a0bf1f2739ee8536b0afb2440f5467dcc56e049cfa5fd8ef702af3a67d678091",
@@ -85,5 +85,51 @@
     "Other-chat unfinished runtime/performance changes were not part of this packaged run.",
     "All starting recipes planned at seed 1703; broader seed and world-quality qualification remains open.",
     "Earlier navigation, terrain/foliage and frame-pacing limitations remain recorded in the expansion review."
+  ],
+  "historical_full_gui_run": "The original three GUI phases above exercised the combined build ffff300c. Later changes affect cache identity only; targeted source/PCK follow-up below verifies them without repeating unrelated traversal.",
+  "installation": {
+    "runtime_commit": "543cca6e",
+    "main_root": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+    "pack_sha256": "50ed23103f2eb5f7b25d322c20069084489b3ae45fb2c2ffe947fecfa8a8e277",
+    "preserved_preexisting_files": 51,
+    "preservation_backup": "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest\\reports\\main_integration_backup\\20261101T033332599757Z",
+    "source_and_release_standards": "reports/building_standards/20261101T034042583795Z",
+    "standards_report_root": "C:\\Users\\windows10\\.codex\\worktrees\\trader-civic-buildings\\Godot Terrain\\TerraForest",
+    "all_five_source_recipes": {
+      "checks": 48,
+      "failures": 0,
+      "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\production_cache_final\\source"
+    },
+    "all_five_packed_recipes": {
+      "checks": 48,
+      "failures": 0,
+      "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\production_cache_final\\packed"
+    },
+    "matching_source_pack_fingerprints": {
+      "church_c1": "8e0550bea9b14faf98dbc408f8f98a56d92039ab200cc08d916325ed6ce103d9",
+      "cottage_a2": "05a0a5880a561d12785eb4c3c48cc224f78943970517308fd67e6bd444463951",
+      "house_c1": "e6fa36ba7aeb4b0622dbe69e7ab2d0c74858ff5ac36a8794aceb2c9a42412d73",
+      "school_s2": "311bdd1df5202db266591aacb5c33384a4502d1c35573778b7cb764caf7c2daf",
+      "shop_b1": "889332543f5861cb7d7a3ece6857ae82be97849d161d00b5b5afb31b7141abac",
+      "shop_b2": "530b22ea0dc52d396bc6d9c0de555c502faf25af6ab0e6c58f5b727513129254",
+      "town_hall_t1": "be10445d2a23a853f115f5d70c55dd44d3e848149a707f59a7be991072866c11",
+      "trader_t1": "c46cd94ccfb507f5b238a20f15bf7a3d399130ea3a74dd7c88f102a2648e6b52",
+      "warehouse_w1": "fc15761bed9246fa074026ad9aa9994e5d69a70d53701202464c598d2112ee51"
+    },
+    "packed_assets": {
+      "checks": 45,
+      "failures": 0,
+      "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\building_expansion\\packed\\20261101T034242755158Z"
+    },
+    "actual_main_executable_restore": {
+      "checks": 22,
+      "failures": 0,
+      "report": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\production_main_restore"
+    },
+    "scope": "Trader/civic/E2 integration and retained concurrent files. Ongoing effects/terrain performance experiments are not declared generally qualified."
+  },
+  "retained_followup_failures": [
+    "reports/checks/20261101T033039501528Z: regression attempted duplicate-cell mutation; native rejection was correct; fixture changed to remove a valid cell.",
+    "Main reports/production_buildings/packed/20261101T033608047723Z: source and PCK content matched but fingerprint ordering differed; StringName keys now convert to lexical strings and nested dictionaries are canonicalized."
   ]
 }
