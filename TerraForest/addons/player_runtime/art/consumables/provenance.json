@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "name": "TerraForest reading and food supplies",
+  "creator": "TerraForest project, original AI-assisted authoring",
+  "asset_license": "CC0-1.0",
+  "source": "Original geometry and narrative authored for this repository; no imported model, texture, reference image or external text.",
+  "editable_geometry": "tools/bake_consumables.gd (original 0BSD code)",
+  "meshes": ["214.res", "215.res", "216.res", "217.res", "218.res", "219.res"],
+  "world_drops": ["../drops/214.res", "../drops/215.res", "../drops/216.res", "../drops/217.res", "../drops/218.res", "../drops/219.res"],
+  "narrative": "Original text fields for items 214, 215 and 216 in addons/player_runtime/consumables.gd are dedicated under CC0-1.0; executable code remains 0BSD.",
+  "icons": "Offline atlas tiles keyed 214 through 219 derive from these exact meshes. Existing atlas tiles retain their existing sources and licenses; this dedication does not relicense the whole atlas.",
+  "dedication": "The TerraForest project dedicates its original asset contributions listed here to the public domain under CC0-1.0."
+}

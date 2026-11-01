@@ -2,7 +2,9 @@
 extends SceneTree
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
 const Cache=preload("res://tools/item_icon_cache.gd")
-func _initialize() -> void:run.call_deferred()
+func _initialize() -> void:
+	root.set_flag(Window.FLAG_NO_FOCUS,true)
+	run.call_deferred()
 func bounds(node: Node3D) -> AABB:
 	var box:=AABB();var first:=true
 	for child in node.get_children():
@@ -55,6 +57,8 @@ func run() -> void:
 			var car:RigidBody3D=load("res://vehicle_demo/scenes/car.tscn").instantiate()
 			car.freeze=true;car.process_mode=Node.PROCESS_MODE_DISABLED;viewport.add_child(car)
 			copy_visible(car,model);car.free()
+		elif id>=214 and id<=219:
+			model.add_child(instance(load("res://addons/player_runtime/art/consumables/%d.res"%id)))
 		elif id==4:
 			for child in tool.tools[id].get_children():model.add_child(child.duplicate())
 		elif id in [101,102,103,104]:

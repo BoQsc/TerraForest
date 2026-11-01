@@ -11,6 +11,7 @@ signal actions_requested
 signal menu_changed(open: bool)
 signal inventory_changed
 signal progression_changed
+signal survival_changed
 signal drop_requested(slot: int, revision: int, count: int)
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
@@ -21,7 +22,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210,212]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102,212]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs","Woody bush"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",213:"Lockpick",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins"}
+const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",213:"Lockpick",214:"Field manual",215:"Unsent letter",216:"Survey journal",217:"Tinned beans",218:"Trail bread",219:"Dried berries",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins"}
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -29,6 +30,13 @@ var inventory: RefCounted
 var reward_inbox: RefCounted
 var progression: RefCounted
 const Progression=preload("res://addons/player_runtime/progression_rules.gd")
+const Consumables=preload("res://addons/player_runtime/consumables.gd")
+var survival:RefCounted
+var survival_active:Callable
+var survival_status:Label
+var item_context:PopupMenu
+var context_item:Dictionary={}
+var journal_panel:Control
 var inventory_open:=false
 var selected_slot: int=-1
 var previous_mouse: int=Input.MOUSE_MODE_CAPTURED
@@ -112,6 +120,8 @@ func prepare() -> bool:
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	progression=Progression.create()
 	if progression==null:inventory=null;return false
+	survival=Consumables.create()
+	if survival==null:inventory=null;return false
 	for id: int in CATALOG:
 		inventory.register_item(id,1)
 		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
@@ -179,6 +189,13 @@ func _ready() -> void:
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
 	hint.position=Vector2(370,1040);add_child(hint)
 	add_child(modal);modal.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	item_context=PopupMenu.new();item_context.name="InventoryItemContext";item_context.add_item("Use",0);add_child(item_context)
+	item_context.id_pressed.connect(func(_identity:int):
+		if inventory_open and not context_item.is_empty():use_item(context_item.slot,context_item.revision))
+	survival_status=Label.new();survival_status.position=Vector2(1530,80);survival_status.size=Vector2(365,96);survival_status.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
+	survival_status.add_theme_font_size_override("font_size",16);survival_status.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	survival_status.add_theme_color_override("font_shadow_color",Color.BLACK);survival_status.add_theme_constant_override("shadow_offset_x",2);survival_status.add_theme_constant_override("shadow_offset_y",2);add_child(survival_status)
+	var survival_timer:=Timer.new();survival_timer.wait_time=1.0;survival_timer.timeout.connect(tick_survival);add_child(survival_timer);survival_timer.start()
 	# Panels intercept UI input; the toolbelt remains reachable below them.
 	modal.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	var panel:=PanelContainer.new();panel.position=Vector2(660,200);panel.size=Vector2(1040,650)
@@ -203,8 +220,8 @@ func _ready() -> void:
 	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
 	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
 	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,148);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
-	for tab in ["Crafting","Character","Skills"]:
-		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(133,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
+	for tab in ["Crafting","Character","Skills","Journal"]:
+		var button:=Button.new();button.text=tab;button.custom_minimum_size=Vector2(97,42);button.pressed.connect(show_side.bind(tab));side_tabs.add_child(button)
 	var craft_margin:=MarginContainer.new()
 	for side in ["left","right","top","bottom"]:craft_margin.add_theme_constant_override("margin_"+side,20)
 	crafting_panel.add_child(craft_margin)
@@ -213,6 +230,7 @@ func _ready() -> void:
 	var recipes:=VBoxContainer.new();recipes.size_flags_horizontal=Control.SIZE_EXPAND_FILL;recipes.add_theme_constant_override("separation",14);scroll.add_child(recipes)
 	character_panel=preload("res://addons/player_runtime/character_panel.gd").new();character_panel.hud=self;side_host.add_child(character_panel);character_panel.hide()
 	skills_panel=preload("res://addons/player_runtime/skills_panel.gd").new();skills_panel.hud=self;side_host.add_child(skills_panel);skills_panel.hide()
+	journal_panel=preload("res://addons/player_runtime/reading_journal.gd").new();journal_panel.hud=self;side_host.add_child(journal_panel);journal_panel.hide()
 	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
 	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
 	for i in Crafting.RECIPES.size():
@@ -240,6 +258,7 @@ func refresh() -> void:
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings",5:"Shovel | Hold left mouse: dig / attack | G drop",6:"Wooden torch | Lights while held | G drop | E interact"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
+	if action_hint!=null and Consumables.ITEMS.has(active_item):action_hint.text="%s | Left mouse: %s | G drop"%[Consumables.ITEMS[active_item].name,"read" if Consumables.ITEMS[active_item].xp>0 else "eat"]
 	var latest: Dictionary=inventory.snapshot()
 	if resource_feed!=null:resource_feed.observe(latest,equipment.snapshot(1))
 	var inventory_changed_since_view: bool=latest.revision!=state.get("revision",-1)
@@ -273,12 +292,16 @@ func refresh() -> void:
 	_refresh_recipes()
 	character_panel.refresh()
 	if skills_panel.visible:skills_panel.refresh()
+	if journal_panel.visible:journal_panel.refresh()
+	refresh_survival()
 	if developer_belt:mode_hint.text="Development toolbelt | 1-9 / 0 / Wheel select | Hold Alt: tool controls | Esc: session | ~ gameplay"
 
 func show_side(tab: String) -> void:
 	crafting_content.visible=tab=="Crafting";character_panel.visible=tab=="Character"
 	skills_panel.visible=tab=="Skills"
+	journal_panel.visible=tab=="Journal"
 	if skills_panel.visible:skills_panel.refresh()
+	if journal_panel.visible:journal_panel.refresh()
 	for button in side_tabs.get_children():button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
 
 # Bounded event-driven delivery. The persisted inbox is an internal safety journal,
@@ -372,7 +395,7 @@ func craft_recipe(recipe: int) -> void:
 
 func award_experience(amount:int)->int:
 	if progression==null or developer_belt or amount<=0:return 0
-	var result:Dictionary=progression.award(amount,progression.snapshot().revision)
+	var result:Dictionary=progression.award(survival.scale_experience(amount),progression.snapshot().revision)
 	if not result.ok or result.gained==0:return 0
 	progression_changed.emit()
 	if resource_feed!=null:resource_feed.gain_experience(result.gained,result.level)
@@ -380,7 +403,49 @@ func award_experience(amount:int)->int:
 	return result.gained
 
 func skill_damage(skill:int,base:int)->int:
-	return base if progression==null or developer_belt else progression.scale_action(skill,base)
+	return base if progression==null or developer_belt else survival.scale_damage(progression.scale_action(skill,base))
+
+func use_item(slot:int,expected_revision:int)->bool:
+	if not enabled or developer_belt:return false
+	var result:Dictionary=survival.use(inventory,progression,slot,expected_revision,survival.snapshot().revision)
+	if not result.ok:
+		message.text={"already_full":"Already full; food kept.","stale_revision":"Inventory changed; select the item again."}.get(result.reason,"Item cannot be used.")
+		return false
+	var entry:Dictionary=Consumables.ITEMS[result.item]
+	message.text=("Read %s · +%d XP\n%s"%[entry.name,result.xp,entry.text]) if entry.xp>0 else "Ate %s · Food restored"%entry.name
+	inventory_changed.emit();survival_changed.emit()
+	if result.xp>0:
+		progression_changed.emit()
+		if resource_feed!=null:resource_feed.gain_experience(result.xp,result.level)
+	if slot==active_slot:equip_inventory(slot)
+	else:refresh()
+	return true
+
+func item_input(slot:int,event:InputEvent)->bool:
+	if not inventory_open or developer_belt or not event is InputEventMouseButton or not event.pressed:return false
+	if slot<0 or slot>=32 or not Consumables.ITEMS.has(int(state.slots[slot].item)):return false
+	if event.button_index==MOUSE_BUTTON_LEFT and event.double_click:
+		use_item(slot,state.revision);return true
+	if event.button_index==MOUSE_BUTTON_RIGHT:
+		context_item={"slot":slot,"revision":state.revision};item_context.position=Vector2i(get_viewport().get_mouse_position());item_context.popup();return true
+	return false
+
+func tick_survival()->void:
+	if survival_active.is_valid() and survival_active.call() and survival.advance(1000):survival_changed.emit()
+	refresh_survival()
+
+func refresh_survival()->void:
+	if survival_status==null:return
+	survival_status.visible=enabled and not developer_belt and not inventory_open and survival_active.is_valid() and survival_active.call()
+	if not survival_status.visible:return
+	var condition:Dictionary=survival.snapshot()
+	var percent:=ceili(float(condition.food_ms)*100.0/condition.food_max_ms)
+	var lines:=PackedStringArray(["Food %d%%%s"%[percent," · Starving: -20% damage" if percent==0 else " · Hungry: -10% damage" if percent<=20 else ""]])
+	for identity:int in condition.effects:
+		var seconds:=ceili(condition.effects[identity]/1000.0)
+		lines.append("%s · %d:%02d"%[Consumables.EFFECTS[identity].name,seconds/60,seconds%60])
+	var text:="\n".join(lines)
+	if survival_status.text!=text:survival_status.text=text
 
 func select_slot(slot: int) -> void:
 	# Click selects; dragging moves. Selection must never relocate an item.
@@ -390,6 +455,7 @@ func select_slot(slot: int) -> void:
 func set_open(value: bool) -> void:
 	if not enabled or inventory==null or inventory_open==value: return
 	inventory_open=value
+	if not value:item_context.hide();context_item={}
 	if value:
 		if damage_feedback!=null:damage_feedback.clear()
 		previous_mouse=Input.mouse_mode
@@ -405,6 +471,8 @@ func set_open(value: bool) -> void:
 func _input(event: InputEvent) -> void:
 	if not enabled: return
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode==KEY_ESCAPE and item_context.visible:
+			item_context.hide();get_viewport().set_input_as_handled();return
 		# OS window switching must never open (or close) the inventory.
 		if event.physical_keycode==KEY_TAB and (event.alt_pressed or event.meta_pressed or Input.is_physical_key_pressed(KEY_ALT)):return
 		if event.physical_keycode==KEY_TAB or (inventory_open and event.physical_keycode==KEY_ESCAPE):

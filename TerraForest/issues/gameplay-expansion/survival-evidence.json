@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "world": "Survival_1703_d2f72c5e",
+  "seed": 1703,
+  "source_interaction_and_restore": "reports/player_survival_world/20261101T143158747842Z",
+  "package_default_generation_interaction_restore": "reports/player_survival_world/20261101T144039859117Z",
+  "final_package_restore": "reports/player_survival_world/20261101T144707459837Z",
+  "native_debug": "reports/player_survival/20261101T143513788647Z",
+  "native_release": "reports/player_survival/20261101T143514504279Z",
+  "hud_adapters": "reports/player_survival/20261101T144539436773Z",
+  "building_gates": "reports/building_standards/20261101T144619367146Z",
+  "pack_sha256": "8859abe7839adb6f15bad0af9157476db27b4ef6f96cb50653cb8547c7be8d9f",
+  "native_sha256": {
+    "debug": "4a394078d2a561aec85c9ed2f9b1002ee1cd9103b3575a61a6b98d9c18ebad15",
+    "release": "9dc12b77fc6b854c6c81cd82aa95a6a8d1bc824bcc329a839cb0757fcc511c94"
+  },
+  "images": [
+    {
+      "path": "images/journal-restored.png",
+      "source": "reports/player_survival_world/20261101T144707459837Z/journal-restored.png",
+      "sha256": "8d267bbfb8e56ca275b0d6d6cc1c01294881235a88ec292b1621e180fe5d3daf",
+      "caption": "Looted letter was consumed for mild XP; its original text survives in Journal after reopening. Baked food/journal icons remain in the separate belt/backpack. Background merchant is not a character-screen preview."
+    },
+    {
+      "path": "images/food-trade-restored.png",
+      "source": "reports/player_survival_world/20261101T144707459837Z/food-trade-restored.png",
+      "sha256": "2d905bb9c9a70a6828f2799542ff315eb46cb944994aa9812746b47cacd1c75e",
+      "caption": "Actual merchant food/readable offers and remaining stock after buying one dried-berry ration. Bottom-row selection stays visible after refresh."
+    }
+  ],
+  "image_provenance": "Local automated game captures, not image generation. Existing underlying asset licenses and authorship remain unchanged. Documentation-only images excluded from game imports and exports.",
+  "scope": "Native bounded survival, merchant migration, actual generated supply and trade owners, UI adapters and exact fresh-process restoration. Scripted travel/contact and accelerated native hunger time are not captured-mouse input, animation, traversal, endurance or frame-pacing qualification.",
+  "performance": {
+    "initial_survival_bytes": 24,
+    "maximum_survival_bytes": 344,
+    "maximum_merchant_bytes": 792,
+    "pack_bytes": 447481348,
+    "distribution_bytes": 477405755,
+    "package_generation_peak_private_commit_bytes": 3759775744,
+    "package_generation_peak_dedicated_gpu_bytes": 1472806912,
+    "final_reopen_peak_private_commit_bytes": 3626541056,
+    "final_reopen_peak_dedicated_gpu_bytes": 1472745472,
+    "fps_cap": 60,
+    "power_mode": "Unchanged Legion Quiet Mode"
+  },
+  "remaining": "Full navigation/3D character, quests/reset, remaining world/biome/light expansions, renewable food and balance, broader input/animation/art review, existing lookout traversal and frame-pacing failures. Full expansion is not complete."
+}

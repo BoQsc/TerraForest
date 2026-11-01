@@ -34,7 +34,7 @@ func _ready() -> void:
 	column.add_child(title)
 	balance = Label.new(); column.add_child(balance)
 	var welcome := Label.new()
-	welcome.text = "Welcome. I buy gathered resources and sell building supplies.\nStock and coins are finite. Prices below are per item."
+	welcome.text = "Welcome. I buy resources and sell building supplies, food and reading material.\nStock and coins are finite. Prices below are per item."
 	column.add_child(welcome)
 	rows = ItemList.new(); rows.custom_minimum_size = Vector2(940, 320)
 	rows.add_theme_font_size_override("font_size", 21)
@@ -65,6 +65,7 @@ func refresh() -> void:
 		rows.add_item("%-12s   Buy %d / Sell %d     Stock %d     Yours %d" % [offer[0], offer[1], offer[2], Trade.count(trader.stock, id), Trade.count(inventory, id)])
 		rows.set_item_metadata(rows.item_count - 1, id)
 	rows.select(selected[0] if not selected.is_empty() else 0)
+	rows.ensure_current_is_visible()
 	notice.text = "Choose an item and quantity, then Buy or Sell."
 
 func exchange(buying: bool) -> void:

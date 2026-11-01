@@ -1,7 +1,24 @@
 {
-  "atlas_sha256": "b7f7bab46e6de41a409b14046f0d69cecbd3dee1ad831792e8240189f1c3051d",
+  "atlas_sha256": "98b1662a8eead6e5b621d180395f4cb00b7c437c7cff0631b38894836f72d5e0",
   "schema": 1,
   "sources": {
+    "consumables": {
+      "engine": "4.7.2-stable (steam)",
+      "files": {
+        "res://addons/player_runtime/art/consumables/214.res": "d002874a6ab4ad22362aaec551eac064d97cc11a962b2fd69d8c6eb86c088d97",
+        "res://addons/player_runtime/art/consumables/215.res": "4b34f73a5c25519b39521da768efed4635fc844b1f3f196b686bafa630b91a36",
+        "res://addons/player_runtime/art/consumables/216.res": "d57d76cbb1417f20d727d5dc4df187694499f60c71865830834c5d106c5c55d1",
+        "res://addons/player_runtime/art/consumables/217.res": "a856d0a19d563bc9e62e76331209424789bc36c04b1a8bcf29b7db2139de0257",
+        "res://addons/player_runtime/art/consumables/218.res": "4173d63efeefe3470cbfbf5d96c8f0a0cb0f73a30eebe489589323d70206489d",
+        "res://addons/player_runtime/art/consumables/219.res": "62b521c4dd2b11b0cdb8a58532e0ada87bf5156af96d7fe9557814487a27c821"
+      },
+      "recipe": {
+        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
+        "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
+        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
+        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
+      }
+    },
     "tools": {
       "engine": "4.7.2-stable (steam)",
       "files": {
@@ -55,10 +72,10 @@
         "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "ec4459b000cd235bbfb64a63546fdb4efdb1dcb82ad84df2640430e5ccd575e5",
+        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
-        "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
+        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
+        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
       }
     },
     "vehicle": {
@@ -81,10 +98,10 @@
         "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "ec4459b000cd235bbfb64a63546fdb4efdb1dcb82ad84df2640430e5ccd575e5",
+        "res://addons/player_runtime/item_icons.gd": "282fd11c9549a0843886872e7746b25aaa42752edc7356595e7058ef1a805211",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
-        "res://tests/bake_item_icons.gd": "56b76644d2733a35c7a040bafca5823f6a5c0149ca48400788966cada4034ffd",
-        "res://tools/item_icon_cache.gd": "50a391d790a8a6141430cd3f69d457aa8be96328b46ee4e7249bf82cfe105657"
+        "res://tests/bake_item_icons.gd": "4da8dc73adc157741778714912ca71033546d65b8f8107304801912ddffaa0c4",
+        "res://tools/item_icon_cache.gd": "1f68c585aaecb1f8c6ab8ab4feae870a6cb678b60713b9833cf67c9af170579b"
       }
     }
   }

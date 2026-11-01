@@ -7,6 +7,8 @@
 #include "pose.hpp"
 #include "durability.hpp"
 #include "progression.hpp"
+#include "survival.hpp"
+#include "trader_stock.hpp"
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 using namespace godot;
@@ -20,6 +22,8 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativePlayerPose);
         GDREGISTER_CLASS(terraforest::NativeWorldDurability);
         GDREGISTER_CLASS(terraforest::NativePlayerProgression);
+        GDREGISTER_CLASS(terraforest::NativePlayerSurvival);
+        GDREGISTER_CLASS(terraforest::NativeTraderStock);
     }
 }
 static void terminate(ModuleInitializationLevel) {}

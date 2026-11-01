@@ -4,8 +4,8 @@ extends RefCounted
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
 const ATLAS="res://addons/player_runtime/art/item_icons.trtex"
 const RECEIPT="res://addons/player_runtime/art/item_icons.bake.json"
-const GROUPS={"tools":["1","2","3","5","6"],"vehicle":["501"]}
-const ROOTS={"tools":["res://addons/player_runtime/tool_view.gd"],"vehicle":["res://vehicle_demo/scenes/car.tscn"]}
+const GROUPS={"tools":["1","2","3","5","6"],"vehicle":["501"],"consumables":["214","215","216","217","218","219"]}
+const ROOTS={"tools":["res://addons/player_runtime/tool_view.gd"],"vehicle":["res://vehicle_demo/scenes/car.tscn"],"consumables":["res://addons/player_runtime/art/consumables/214.res","res://addons/player_runtime/art/consumables/215.res","res://addons/player_runtime/art/consumables/216.res","res://addons/player_runtime/art/consumables/217.res","res://addons/player_runtime/art/consumables/218.res","res://addons/player_runtime/art/consumables/219.res"]}
 const RECIPE=["res://tests/bake_item_icons.gd","res://addons/player_runtime/item_icons.gd","res://tools/item_icon_cache.gd","res://project.godot"]
 
 static func collect(path:String,files:Dictionary)->void:

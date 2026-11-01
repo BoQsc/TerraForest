@@ -14,6 +14,7 @@ static func seed_generated(storage:Node,seed_value:int)->Dictionary:
 		if random.randi_range(1,LOCK_ONE_IN)!=1:continue
 		if not storage.store.has_contents(identity):
 			var stock:=PackedInt64Array([102,random.randi_range(3,7),202,random.randi_range(2,5),601,random.randi_range(8,20)])
+			stock.append_array(PackedInt64Array([random.randi_range(217,219),random.randi_range(1,3),random.randi_range(214,216),1]))
 			if not storage.store.seed_contents(identity,stock):return {"ok":false,"reason":"Locked supply admission failed"}
 		var health:int=preload("res://addons/player_runtime/durability_catalog.gd").MODELS["storage/wooden_chest/v1"].health*LOCKED_HEALTH_MULTIPLIER
 		if not storage.store.seed_lock(identity,health,seed_value&0x7fffffffffffffff) or not storage.protect(identity,true):return {"ok":false,"reason":"Generated lock admission failed"}

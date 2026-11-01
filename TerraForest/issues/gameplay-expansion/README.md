@@ -7,6 +7,70 @@
 
 ## Images
 
+### Food, reading and survival — source/package verified and installed
+
+![Installed package: a looted letter retained in Journal after consumption and reload](images/journal-restored.png)
+
+![Installed package: finite food and readable offers, preserving selected offer visibility](images/food-trade-restored.png)
+
+These are actual generated-world UI captures, inspected for readable text, baked
+item icons and uncluttered side tabs. The merchant behind the transparent Journal
+is a world actor, not the requested character preview. [Capture provenance](survival-evidence.json).
+
+Three original readable items and three foods have baked models/icons and enter
+ordinary exploration/rare locked-chest loot and finite trade. Native atomic use
+backs held-use routing, double-click and Use context menu; read texts persist in
+Journal. Food, Well fed damage and Focused XP modifiers use bounded active-time
+counters and compact binary saves. Menus/loading/unfocused time do not drain them.
+Existing worlds gain newly introduced merchant supplies once; original stock and
+coins are not replenished, full inventory additions remain queued, and sold-out
+versioned stock stays sold out. New chests are not inserted into existing saves.
+
+- Native debug/release: `reports/player_survival/20261101T143513788647Z` and
+  `20261101T143514504279Z`, 31 checks each, including malformed/atomic restore,
+  stale and duplicate use, expiry, fullness, low-food penalties, stable catalog
+  expansion, legacy merchant migration and full-stock pending delivery.
+- Real HUD: `reports/player_survival/20261101T143608551538Z`; double-click, Use,
+  stale context rejection, held-slot shared transaction, Journal, timer, icons/drops
+  and separate backpack/toolbelt pass. Native clock is accelerated in eating tests.
+  Final `20261101T144539436773Z` passes 20 checks, adding actual finite food purchase
+  and selected-offer scrolling. The expanded merchant list previously jumped to
+  its top after refreshing a bottom-row purchase; it now retains visible selection.
+- Default browser generation: `reports/player_survival_world/20261101T142952160860Z`
+  created the owned `Survival_1703_56805d64` world. Initial fixture selected nearby
+  rare chests rather than authored underground supply chests and failed its required
+  beans/bread assertion. Corrected selection continued that same world, not a new
+  generation or test grant: `20261101T143158747842Z`, 36 interaction + 12 reload checks.
+  Actual generated chest contact/open/withdrawal, selling gathered stock/buying food,
+  dropping/picking, reading, eating, real timer pause/advance and exact save pass.
+- Current native merchant migration and corrected uncluttered Journal restore:
+  `reports/player_survival_world/20261101T143609495832Z`, 12 fresh-process checks.
+- Trader and lock-gameplay regressions: `reports/checks/20261101T143656095898Z`
+  and `20261101T143657183486Z`. Earlier survival UI parse fixture failure retained
+  at `reports/player_survival/20261101T142104330284Z`; fixed lambda scope in test.
+- Source interaction peak: 3,638,898,688 bytes private commit and 1,489,264,640
+  bytes dedicated GPU. Short offscreen scripted tests are not 60-FPS pacing,
+  traversal, captured-input or eating/reading animation qualification.
+- Package default Generate & play: `reports/player_survival_world/20261101T144039859117Z`,
+  new owned `Survival_1703_d2f72c5e`, 37 interaction and 12 reload assertions. Different
+  authored locations supply different readable items; ordinary finite trade and
+  preserved stock, food/buffs, reading/XP, looted contents and native drops pass.
+  Final UI-only correction export: `20261101T144707459837Z`, another 14 restore/UI
+  assertions and exact native parity. All 14 native libraries match the installed
+  PCK. Original played worlds are untouched; legacy migration is additionally
+  exercised on native old-format fixtures and the source-created owned save.
+- Packaged creation/travel peak: 3,759,775,744 bytes private commit and 1,472,806,912
+  bytes GPU; final reopen: 3,626,541,056 and 1,472,745,472 bytes respectively. The
+  captures show below-cap FPS during these scripted/offscreen sessions; this is
+  memory qualification only, not a claim that existing stutters are resolved.
+  PCK 447,481,348 bytes; distribution 477,405,755 bytes. Credits, building standard
+  gates, icon freshness, native parity and packaged startup pass. Progression and
+  backpack regressions: `reports/checks/20261101T143850314651Z` and `20261101T143851423007Z`.
+- Remaining: user art/presentation acceptance, broader input and
+  balance review, renewable food sources, full navigation/3D character, quests and
+  all remaining expansion requirements. Original asset provenance is adjacent to
+  `addons/player_runtime/art/consumables/`; no new third-party assets.
+
 ### Player progression — source/package verified and installed
 
 ![Installed package: earned level and Mining skill restored in the owned seed-1703 world](images/skills-restored.png)

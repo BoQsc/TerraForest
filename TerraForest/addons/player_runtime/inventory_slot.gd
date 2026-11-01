@@ -3,6 +3,8 @@ extends Button
 var controller: Object
 var side: String="player"
 var slot:=0
+func _gui_input(event:InputEvent)->void:
+	if side=="player" and controller!=null and controller.has_method("item_input") and controller.item_input(slot,event):accept_event()
 func _get_drag_data(_at: Vector2) -> Variant:
 	var data: Dictionary=controller.drag_data(side,slot)
 	if data.is_empty():return null
@@ -63,6 +65,8 @@ func present(row: Dictionary,title: String,key: String="") -> void:
 	item_label.text=title if occupied else "Empty";item_label.modulate.a=1.0 if occupied else 0.5
 	count_label.text=str(row.count) if int(row.get("count",0))>1 else ""
 	tooltip_text=title if occupied else "Empty slot"
+	if occupied and preload("res://addons/player_runtime/consumables.gd").ITEMS.has(int(row.item)):
+		tooltip_text+="\n"+preload("res://addons/player_runtime/consumables.gd").description(int(row.item))+"\nDouble-click or right-click → Use"
 	if occupied and carries_water:
 		var water_amount:int=row.water_ml
 		count_label.text="1 / 1" if water_amount==1000000 else "0 / 1" if water_amount==0 else "Refill"

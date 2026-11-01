@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=35
+const VERSION:=36
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")

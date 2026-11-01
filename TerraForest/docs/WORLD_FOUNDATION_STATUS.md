@@ -10,8 +10,15 @@ process restoration preserves XP, ranks, materials and wear (50 + 8 checks).
 Debug/release native contracts and real HUD/adapters pass. The five-row resource
 feed aggregates XP without per-frame inventory scans. Matching package restoration
 passes another 8 checks and is installed; this is not the completed progression/content request.
-Return next to consumable readables, food/hunger/buffs, the full navigation and
-3D character screen, quest ownership/reset and ordinary combat/balance evidence.
+Consumable readables and food/hunger/buffs now have native state, real generated
+loot/trade/use and exact source-world save/reopen evidence. Three food and three
+reading models/icons are baked once; original texts persist in Journal. Legacy
+merchant migration adds new goods once without replenishing old or sold-out stock.
+Matching package generation/use/reload passes (37 + 12 checks), followed by 14
+final-package reopen/UI assertions; installed. Memory remains within the declared
+budgets, not a 60-FPS frame-pacing claim. Return next to full navigation
+and the 3D character screen, quest ownership/reset, ordinary input/balance evidence,
+renewable biome food sources and the remaining content recipe/biome/light expansions.
 No player save is edited, no power/FPS setting changes, and no earlier terrain,
 lookout-route or frame-pacing failure is closed. Exact evidence and retained failed
 fixtures: [expansion tracker](../issues/gameplay-expansion/README.md).

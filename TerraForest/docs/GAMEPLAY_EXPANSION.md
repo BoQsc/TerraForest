@@ -52,18 +52,61 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Different biome traders | Pending varied original presentation/catalogs and ordinary-world reachable trade |
 | Desert aloe, medium cacti and fewer trees | Pending original asset expansion, harvesting, biome distribution and near/far rendering |
 | Snow berries and snowy-tree expansion | Pending original assets, gathering and bounded LOD/residency |
-| Player buffs | Pending native effect identities, durations/stacking, UI and persistence |
+| Player buffs | Installed native Well fed damage and Focused learning modifiers, active-time expiry, refresh-not-stack and binary persistence; source/package world use/reopen pass; balance review remains |
 | Skills, XP and skill points | Installed: native bounded XP/levels/points, three functional harvesting/combat skills, Skills panel and compound-save migration; source earned-level/reload and matching package reload verified; wider balance and remaining navigation/content pending |
 | Learn by doing and crafting | Published mining, natural harvesting, actual zombie health loss and successful paid crafting award XP; duplicate/failed/dev actions excluded; source real-world mining/felling/reload checked; broader ordinary combat and anti-grind balance remain |
-| Books, letters and journals give mild learning | Pending items, left-click use, inventory double-click and USE context action with atomic consumption |
+| Books, letters and journals give mild learning | Installed three baked original items, ordinary loot/trade, shared native atomic use, held-use routing, double-click/Use menu and persistent Journal; source/package world loot/use/reopen pass; direct captured-mouse input/animation and broader art/balance review remain |
 | Accumulating right-side XP notification | Implemented in existing five-row event-driven resource feed, fixed control pool and no idle processing; gameplay adapter aggregation checked; broader player presentation review remains |
-| Hunger and food items | Pending time-scaled hunger, consumable food effects, inventory/use UI and persistence |
+| Hunger and food items | Installed native active-time food state, three baked food items, actual loot/trade/drop/use and binary restore; old merchant food migration preserves spent stock; source/package world checked; renewable sources and broader balance remain |
 | Inventory top tabs: backpack, character, skills, journal, map, quests | Pending shared navigation and ESC/input ownership; backpack never duplicates toolbelt |
 | Character 3D representation, equipment slots, bag on right | Pending cached/on-demand presentation, equip state and proper ordinary UI |
 | Extensible addon/plugin/module boundaries | Pending content registration and validation across encounters/POIs/quests/items/biomes/lights; native encounter profiles are only the first boundary |
 | Streaming, CPU/GPU/RAM/VRAM/storage efficiency under new content | Pending doubled-content generation/loading and populated travel/interaction/endurance measurements; preserve 4 GiB VRAM target and existing budgets |
 
 ## Current work and next dependency
+
+### Food, reading and timed effects
+
+`NativePlayerSurvival` owns bounded nutrition, up to 8 effects and 32 consumables.
+The current catalog adds field manual/letter/journal (25/10/15 XP) and beans/bread/
+dried berries (35/20/10 percent food). Beans grant three active minutes of +5%
+action damage; the journal grants two minutes of +10% XP. Reuse refreshes duration,
+not strength. Food lasts one active hour from full; <=20% gives -10% damage and
+zero gives -20%, not death. These are provisional balance values, not a health system.
+One 1 Hz timer advances native counters only during focused, ready, nondeveloper
+gameplay outside menus/loading. There is no offline decay or per-item processing.
+
+One native revision-checked transaction consumes an item, awards reading XP and
+updates food/effects/history without intervening callbacks. Full-food and stale
+requests consume nothing. Three UI routes share it: held left-click, inventory
+double-click and right-click Use. The Journal retains original read text after
+consumption. No new held eating/reading animations or full navigation/3D character
+screen are claimed. The passive world card now hides while backpack tabs are open.
+Backpack still excludes the ten toolbelt slots.
+
+The TFSS v1 condition record is initially 24 bytes, bounded to 344 bytes. Stable
+added item/effect IDs accept older records; removed identities require migration.
+Original models are baked offline into six drops and six static atlas tiles;
+their adjacent provenance covers original geometry/narratives, not inherited tiles.
+No realtime icon rendering is added. New plan version 36 stocks exploration chests
+and some rare locked chests; finite merchant offers provide all six items.
+
+`NativeTraderStock` wraps the existing inventory snapshot with a 16-byte header
+and at most 32 pending item/count pairs. Legacy raw merchant records receive newly
+introduced foods/readables once, preserving original money and stock. Full stores
+retain queued additions until a successful trade creates room; saves retain that
+queue. Versioned sold-out goods never refill on reload. Existing generated chests
+are deliberately not reseeded. This is one catalog migration, not renewable food,
+automatic merchant restocking, procedural books or a complete mod-content loader.
+
+Source generated loot, actual E/hatchet-contact/storage UI, finite trade, native
+drop/pickup, reading, food use, menu pause and exact fresh-process restoration pass.
+The fixture accelerates 12 active minutes through the same native clock to test
+eating without a 12-minute wait; a separate real 1 Hz timer assertion also passes.
+It uses scripted travel and contact selection, not a movement/animation qualification.
+Package validation and evidence are recorded in the linked issue tracker.
+Next: full navigation/3D character, broader action-input and food balance checks,
+quest ownership/reset, remaining world/content expansions and measured headroom.
 
 ### Native player progression
 

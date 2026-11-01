@@ -198,6 +198,10 @@ func _ready() -> void:
 	if not persistence.register_component("player_progression",player_hud.progression.capture_storage_snapshot,player_hud.progression.restore_storage_snapshot,player_hud.progression,player_hud.progression.capture_storage_snapshot()):
 		push_error("Player progression persistence initialization failed");_abort_startup(2);return
 	player_hud.progression_changed.connect(func():terrain.changed_since_save=true)
+	if not persistence.register_component("player_survival",player_hud.survival.capture_storage_snapshot,player_hud.survival.restore_storage_snapshot,player_hud.survival,player_hud.survival.capture_storage_snapshot()):
+		push_error("Player survival persistence initialization failed");_abort_startup(2);return
+	player_hud.survival_changed.connect(func():terrain.changed_since_save=true)
+	player_hud.survival_active=func()->bool:return app_focused and terrain.world_ready and not loading_active and not shutdown_requested and not session_menu.developer and not session_menu.visible_ui() and not player_hud.inventory_open
 	mining_rewards.enabled=construction_inventory.gameplay
 	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")
@@ -722,6 +726,7 @@ func _setup_hud() -> void:
 	telemetry.add_theme_color_override("font_color", Color("bbcfc6"))
 	box.add_child(telemetry)
 	help.get_parent().add_child(panel)
+	player_hud.menu_changed.connect(func(opened:bool):panel.visible=not opened)
 	hud.position = Vector2(26, 200)
 	status.position = Vector2(26, 570)
 
@@ -956,6 +961,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			_show_lake_notice(result.reason)
 		return
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
+		if player_hud.Consumables.ITEMS.has(equipped_tool):
+			if event.pressed and _model_edit_available():
+				player_hud.use_item(player_hud.active_slot,player_hud.inventory.snapshot().revision);_show_lake_notice(player_hud.message.text.get_slice("\n",0))
+			return
 		if event.pressed:world_attack.attack()
 		return
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:

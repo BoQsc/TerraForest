@@ -11,6 +11,8 @@ namespace terraforest {
 class NativePlayerInventory : public godot::RefCounted {
     GDCLASS(NativePlayerInventory,godot::RefCounted)
     friend class NativeContainerStore;
+    friend class NativePlayerSurvival;
+    friend class NativeTraderStock;
     struct Stack {int64_t item=0,count=0,wear=0,water_ml=0;};
     std::array<Stack,32> slots{};
     std::unordered_map<int64_t,int64_t> limits;

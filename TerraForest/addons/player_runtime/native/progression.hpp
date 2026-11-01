@@ -9,6 +9,7 @@
 namespace terraforest {
 class NativePlayerProgression : public godot::RefCounted {
     GDCLASS(NativePlayerProgression, godot::RefCounted)
+    friend class NativePlayerSurvival;
     struct Skill { int64_t id=0, maximum=0, bonus=0, rank=0; };
     std::array<Skill,32> skills{};
     int64_t count=0, experience=0, revision=0;
