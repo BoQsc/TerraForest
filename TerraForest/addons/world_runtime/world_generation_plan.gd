@@ -2,7 +2,7 @@
 extends RefCounted
 # Shared preview/bake orchestration. All field, road and lot searches are native.
 # Derived plans contain plain values; prefab Resources are reconstructed from recipes.
-const VERSION:=13
+const VERSION:=14
 const CACHE_BYTES:=64*1024*1024
 const CACHE_ENTRIES:=32
 const LIMIT:=8*1024*1024
@@ -141,7 +141,7 @@ static func preview(seed_value:int,generator:int,integrated:bool=true,with_marke
  var terrain:=Survey.build(seed_value,generator)
  if not terrain.get("ok",false):return terrain
  if not integrated or generator not in [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]:return terrain
- var plan:=build(seed_value,generator,with_market,with_connection,"user://generation_plans",options,progress)
+ var plan:=build(seed_value,generator,with_market,with_connection,"user://generation_plans",options,progress,civic_review)
  if not plan.get("ok",false):return plan
  if progress!=null:progress.record("Compositing the actual regional plan",0,0,"Terrain grades, water surfaces, vegetation biome, roads and buildings")
  var sites:Array=plan.get("sites",[plan.plan,plan.market])

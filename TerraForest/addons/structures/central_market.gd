@@ -2,11 +2,11 @@
 extends RefCounted
 const Planner=preload("res://addons/structures/terrain_lot_planner.gd")
 const Lots=preload("res://addons/structures/northern_lots.gd")
-static func recipe(center:Vector3)->Array:
- var cottage=preload("res://addons/structures/furniture_catalog.gd").enclosed_cottage()
+static func recipe(center:Vector3,legacy:bool=false)->Array:
+ var cottage=preload("res://addons/structures/furniture_catalog.gd").enclosed_cottage(legacy)
  var workshop=preload("res://addons/structures/workshop_catalog.gd").workshop()
- var shop=preload("res://addons/structures/workshop_catalog.gd").village_shop()
- var hipped_shop=preload("res://addons/structures/workshop_catalog.gd").hipped_shop()
+ var shop=preload("res://addons/structures/workshop_catalog.gd").village_shop(legacy)
+ var hipped_shop=preload("res://addons/structures/workshop_catalog.gd").hipped_shop(legacy)
  var cellar=preload("res://addons/structures/cellar_catalog.gd").cottage()
  var assets:Array=[cellar,shop,workshop,cottage,cottage,workshop,hipped_shop,cottage]
  var result:Array=[]
@@ -15,7 +15,7 @@ static func recipe(center:Vector3)->Array:
    for x in [-22,22]:
     result.append({"asset":assets[result.size()],"origin":Vector3i(center)+Vector3i(x,0,street+side*15),"rotation":0 if side<0 else 2,"street_z":center.z+street,"label":"Market lot %d"%(result.size()+1)})
  return result
-static func locate(core,hint:Vector3,occupied:AABB)->Dictionary:
+static func locate(core,hint:Vector3,occupied:AABB,legacy:bool=false)->Dictionary:
  var reservations:Dictionary=Planner.reservations(core,hint)
  if not reservations.ok:return {"ok":false,"reason":"Market reservations unavailable"}
  var reserved:Array=reservations.areas.duplicate()
@@ -37,7 +37,7 @@ static func locate(core,hint:Vector3,occupied:AABB)->Dictionary:
  for candidate:Dictionary in candidates:
   attempts+=1
   var begun:=Time.get_ticks_usec()
-  var assets:Array=recipe(candidate.center)
+  var assets:Array=recipe(candidate.center,legacy)
   recipe_usec+=Time.get_ticks_usec()-begun;begun=Time.get_ticks_usec()
   var lots:Dictionary=Planner.plan(core,candidate.center,candidate.roads.segments,0,assets)
   fitting_usec+=Time.get_ticks_usec()-begun

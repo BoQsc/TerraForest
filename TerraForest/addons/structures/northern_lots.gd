@@ -2,9 +2,9 @@
 extends RefCounted
 const SitePlan=preload("res://addons/structures/site_plan.gd")
 const Quality=preload("res://addons/world_runtime/world_building_quality.gd")
-static func recipe(center:Vector3,include_large_house:bool=false)->Array:
+static func recipe(center:Vector3,include_large_house:bool=false,legacy:bool=false)->Array:
  var catalog=preload("res://addons/structures/furniture_catalog.gd")
- var sources:Array[Resource]=[catalog.enclosed_cottage(),preload("res://addons/structures/workshop_catalog.gd").workshop(),catalog.furnished_tower(2),catalog.furnished_tower(3),catalog.furnished_tower(4),preload("res://addons/structures/workshop_catalog.gd").village_shop(),catalog.large_house()]
+ var sources:Array[Resource]=[catalog.enclosed_cottage(legacy),preload("res://addons/structures/workshop_catalog.gd").workshop(),catalog.furnished_tower(2),catalog.furnished_tower(3),catalog.furnished_tower(4),preload("res://addons/structures/workshop_catalog.gd").village_shop(legacy),catalog.large_house(legacy)]
  # Lower houses at the perimeter, workshops beside the streets, taller centre.
  var choices:Array[int]=[0,0,2,5,3,4,4,3,1,2,0,0]
  if include_large_house:choices[0]=6

@@ -17,6 +17,22 @@ Unknown is not passed. Review images are evidence only after inspection. A passi
 walk down the road center does not excuse holes at the side or unusable entrances.
 Do not promote a draft as the finished foundation or silently relax a failed rule.
 
+## Production reachability is required for completion
+
+2026-11-01 correction: approval records, exported assets and review saves do not
+connect content to ordinary play. Before reporting a gameplay/content feature as
+complete, trace and verify the ordinary world-browser recipe, preview, generation,
+publication, construction catalog, interaction and fresh-process save restoration.
+Test with no review/developer content switches. Name the exact normal UI recipe
+that exposes it. Keep isolated art comparisons, but never use them as substitute
+proof of production reachability. Approval must lead to authorized integration;
+an outstanding integration dependency must remain explicit in the issue tracker.
+
+The required export gate includes `production_building_catalog`; the integrated
+`production_buildings` check starts at Generate & play, opens the published world
+from My worlds and exercises the trader through normal picking and buy/sell UI.
+Existing saves and unused older texture alternatives remain preserved.
+
 ## Terrain fit comes before construction
 
 The shared [terrain/building contact contract](TERRAIN_BUILDING_CONTRACT.md) is

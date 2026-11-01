@@ -38,7 +38,8 @@ static func workshop()->Resource:
 
 # Village service building: shares the workshop footprint/entrance contract, but
 # has its own roof silhouette and sales/storage circulation. Offline recipe only.
-static func village_shop()->Resource:
+static func village_shop(legacy:bool=false)->Resource:
+ if not legacy:return preload("res://addons/structures/expansion_catalog.gd").asset("shop_b2")
  var approved:Resource=load("res://addons/structures/prefabs/village_shop_thin_roof_b2.tres")
  return approved.duplicate() if approved!=null else null
 
@@ -75,5 +76,6 @@ static func legacy_village_shop()->Resource:
  shop.resource_name="Village general store"
  return shop
 
-static func hipped_shop()->Resource:
+static func hipped_shop(legacy:bool=false)->Resource:
+ if not legacy:return preload("res://addons/structures/expansion_catalog.gd").asset("shop_b1")
  return load("res://addons/structures/prefabs/village_shop_hipped_r1.tres")

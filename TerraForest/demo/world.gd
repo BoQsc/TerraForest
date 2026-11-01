@@ -508,15 +508,19 @@ func _setup_prefabs() -> void:
 	for asset: Resource in prefab_library.assets:
 		structure_prefabs.append(asset)
 		asset.changed.connect(_invalidate_prefab_preview)
+	var village_shop: Resource=preload("res://addons/structures/workshop_catalog.gd").village_shop()
+	if village_shop!=null:
+		structure_prefabs.append(village_shop);village_shop.changed.connect(_invalidate_prefab_preview)
 	var hipped_shop: Resource=preload("res://addons/structures/workshop_catalog.gd").hipped_shop()
 	if hipped_shop!=null:
 		structure_prefabs.append(hipped_shop);hipped_shop.changed.connect(_invalidate_prefab_preview)
 	var large_house: Resource=preload("res://addons/structures/furniture_catalog.gd").large_house()
 	if large_house!=null:
 		structure_prefabs.append(large_house);large_house.changed.connect(_invalidate_prefab_preview)
-	if "--building-expansion-review" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
-		for candidate:Resource in preload("res://addons/structures/expansion_catalog.gd").assets():
-			structure_prefabs.append(candidate);candidate.changed.connect(_invalidate_prefab_preview)
+	for index in preload("res://addons/structures/civic_catalog.gd").IDS.size():
+		var civic:Resource=preload("res://addons/structures/civic_catalog.gd").asset(index)
+		if civic!=null:
+			structure_prefabs.append(civic);civic.changed.connect(_invalidate_prefab_preview)
 	# A single bounds outline is UI feedback, not another building simulation.
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)

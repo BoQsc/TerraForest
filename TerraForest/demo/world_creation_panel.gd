@@ -3,9 +3,9 @@ const INK:=Color("e6eee7")
 const MUTED:=Color("9bafad")
 const ACCENT:=Color("91d5b4")
 const STYLES:=[
- {"name":"Forest frontier","detail":"One small woodland settlement, with unpaved tracks into the wilderness.","values":[0,0,0,0,2,true]},
- {"name":"Connected countryside","detail":"Two distant communities, varied ponds and broad lakes, wilderness tracks and timber crossings where the banks fit.","values":[0,1,0,0,1,true]},
- {"name":"Market towns","detail":"Expanded towns in a forest-and-meadow mosaic, with alternative routes and trails.","values":[1,1,1,1,2,true]},
+ {"name":"Forest frontier","detail":"One civic settlement with a resident trader, town hall, church, school and warehouse, with woodland tracks.","values":[0,0,0,0,2,true]},
+ {"name":"Connected countryside","detail":"A civic town with a resident trader and a market village with weathered homes and shops, linked through woodland, lakes and tracks.","values":[0,1,0,0,1,true]},
+ {"name":"Market towns","detail":"A civic town with a resident trader, market shops and additional town districts, with alternative routes and trails.","values":[1,1,1,1,2,true]},
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
  {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]}
 ]

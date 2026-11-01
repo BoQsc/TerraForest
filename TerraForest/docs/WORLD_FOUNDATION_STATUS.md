@@ -1,6 +1,15 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Production integration correction — 2026-11-01
+
+Approved trader/civic/E2 content was still unreachable from normal generation.
+This is an integration omission, not completed work. The production catalogs and
+all five starting-recipe planners are now connected; normal Generate & play,
+trading and fresh-process stock restoration have targeted evidence. Main-checkout
+integration, export and combined runtime validation are in progress; details and
+retained failures are in [the expansion issue](../issues/building-expansion/README.md#production-integration-correction--2026-11-01).
+
 ## Building expansion E2 — 2026-11-01
 
 User retention direction: keep every older building texture available alongside

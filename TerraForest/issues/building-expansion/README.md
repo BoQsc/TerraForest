@@ -10,6 +10,28 @@
 
 Implementation commit: `1be69743a253545cbf83cfc6c02f4cad5bec500d` (native, assets, tools and regression coverage).
 
+## Production integration correction — 2026-11-01
+
+The user correctly identified that approved content was still gated behind review
+paths. Approval recording did not complete production integration. Normal catalogs
+now select the exact E2 resources and expose all nine building choices. Each normal
+recipe includes one civic district and one resident trader. Larger recipes preserve
+their residential first district and fit the civic district separately. Cache v31
+invalidates the earlier layout; existing worlds are not regenerated.
+
+Source/release standards pass in `reports/building_standards/20261101T031454535569Z`.
+All five UI recipes pass seed-1703 planning (44 checks) in
+`reports/checks/20261101T031332333318Z`. Normal Generate & play passed six checks
+in `030806878627Z`; interaction and basement checks exposed the missing B2 palette
+entry in `031015549342Z` (52/53). That entry is fixed; ordinary fresh-process reopen
+and stock/inventory restore pass 22 checks in `031233426776Z`. Earlier larger-layout
+failures remain in `031120999290Z` and `031223385201Z`; no earthwork limit was relaxed.
+
+Remaining before completion: combine the other checkout's committed Steam/rendering
+work, preserve its uncommitted edits, export the integrated build and verify normal
+play there. The release gate now checks the production catalog. A review save alone
+cannot satisfy this requirement; see the world-building standard.
+
 ## Older texture retention — 2026-11-01
 
 The user requires all older textures to remain available as optional alternatives,

@@ -10,15 +10,15 @@ func check(ok:bool,label:String)->void:
 func run()->void:
 	var catalog=load("res://addons/structures/expansion_catalog.gd")
 	var assets:Array=catalog.assets()
-	check(assets.size()==9,"nine E2 candidates load from game resources")
+	check(assets.size()==9,"nine approved E2 buildings load from game resources")
 	var blocks:Node3D=ClassDB.instantiate("NativeBlockWorld");root.add_child(blocks);blocks.set_process(false)
 	var empty:PackedByteArray=blocks.capture_snapshot()
 	for asset:Resource in assets:
-		var valid:bool=asset.get_meta("expansion_revision","")=="E2" and asset.get_meta("review_only",false) and not asset.has_meta("approved_revision") and not asset.has_meta("approved_for_default")
+		var valid:bool=asset.get_meta("expansion_revision","")=="E2" and not asset.get_meta("review_only",true) and asset.get_meta("approved_revision","")==str(asset.get_meta("expansion_id",""))+"_e2"
 		var records:PackedInt32Array=asset.get_records()
 		for offset in range(0,records.size(),4):
 			var decoded:Dictionary=blocks.decode_block(records[offset+3]);valid=valid and not decoded.is_empty() and decoded.appearance>=0
-		check(valid,asset.resource_name+" retains review identity and valid independent cells")
+		check(valid,asset.resource_name+" retains approved identity and valid independent cells")
 		blocks.restore_snapshot(empty);check(blocks.set_cells(records),"published "+asset.resource_name)
 		blocks.flush_bakes();check(blocks.stats().appearance_layers==8,"shared eight-layer material loads in PCK")
 		var collision_mesh_valid:=true

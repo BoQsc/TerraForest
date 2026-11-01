@@ -1,18 +1,19 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
-## Opt-in R1 candidates. Uniform vertical translation preserves reviewed geometry.
+## Approved civic buildings; legacy R1 remains available for historical comparisons.
 const IDS:=["trader_t1","town_hall_t1","church_c1","school_s2","warehouse_w1"]
 const TITLES:=["Trader house","Town hall","Church","School","Warehouse"]
 const MERCHANT_PLACE:=250
-static func asset(index:int)->Resource:
+static func asset(index:int,legacy:bool=false)->Resource:
 	if index<0 or index>=IDS.size():return null
+	if not legacy:return preload("res://addons/structures/expansion_catalog.gd").asset(IDS[index])
 	var source:Resource=load("res://addons/structures/prefabs/civic_review_"+IDS[index]+".tres")
 	return source.duplicate() if source!=null else null
 
-static func recipe(center:Vector3)->Array:
+static func recipe(center:Vector3,legacy:bool=false)->Array:
 	var result:=[]
 	for index in IDS.size():
-		var prefab:=asset(index)
+		var prefab:=asset(index,legacy)
 		var bounds:AABB=prefab.placement_bounds(Vector3i.ZERO,0)
 		var street:float=center.z+[-64,0,64][index/2]
 		var target:=Vector3(center.x+(-30 if index%2==0 else 30),0,street-28)
