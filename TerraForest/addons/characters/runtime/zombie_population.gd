@@ -31,7 +31,7 @@ func reset_stream() -> void:
 func sync(zombie: Node3D) -> void:
 	var identity: int = zombie.get_meta("world_zombie_id", 0)
 	if identity == 0 or store.resident(identity).get("state", 2) >= 2:return
-	if not store.update_resident(identity, zombie.global_position, zombie.global_rotation.y, zombie.anatomy.capture_vitals()):
+	if not store.update_resident(identity, zombie.global_position, zombie.global_rotation.y, zombie.anatomy.capture_vitals(),host.capture_sleep(zombie)):
 		failure = "Cannot save world zombie %d" % identity
 		push_error(failure)
 	else:game.terrain.changed_since_save = true
@@ -109,9 +109,8 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		failure = "Zombie residency timed out waiting for terrain/object collision"
 		return false
 	cursor += 1; examined += 1
-	var zombie: CharacterBody3D = host.spawn_at(point)
+	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty())
 	if zombie == null:return false
-	zombie.set_meta("world_zombie_id", record.id)
 	zombie.global_rotation.y = record.yaw
 	if not host.configure_encounter(zombie,store.encounter(record.id)):
 		failure = "Cannot configure zombie encounter %d" % record.id
@@ -119,6 +118,10 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	if not record.vitals.is_empty() and not zombie.restore_population_vitals(record.vitals):
 		failure = "Invalid saved zombie health for resident %d" % record.id
 		return false
+	if not host.restore_sleep(zombie,record.sleep):
+		host._retire(host.residents.find(zombie))
+		return false
+	zombie.set_meta("world_zombie_id", record.id)
 	zombie.died.connect(func():sync(zombie))
 	zombie.process_mode = Node.PROCESS_MODE_DISABLED if during_loading else Node.PROCESS_MODE_INHERIT
 	zombie.set_behavior(not during_loading)

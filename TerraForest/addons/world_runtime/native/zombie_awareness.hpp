@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/vector3.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <vector>
 #include <cstdint>
 namespace terraforest {
@@ -38,6 +39,8 @@ public:
     bool set_profile(int64_t id,const godot::Dictionary &profile);
     bool set_sleeping(int64_t id,int pose);
     bool finish_waking(int64_t id);
+    godot::PackedByteArray capture_sleep(int64_t id);
+    bool restore_sleep(int64_t id,const godot::PackedByteArray &bytes);
     void remove_agent(int64_t id);
     void clear();
     bool wants_sight(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &forward,const godot::Vector3 &player);

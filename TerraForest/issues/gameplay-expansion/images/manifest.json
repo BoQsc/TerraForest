@@ -64,6 +64,36 @@
       "stage": "Flat animation review; no saved world",
       "review": "Assistant inspected rendered poses; not user approval or live gameplay validation",
       "provenance": "Unedited local TerraForest R4 runtime capture by Codex, 2026-11-01. Existing assets retain their provenance. Excluded from game imports/export."
+   },
+    {
+      "sha256": "7d7224337a74b7ab4c2d7684d4b5b674568a0a021a7087acaa8c2a1e70cbe702",
+      "file": "live-sleeper-lying.png",
+      "source": "reports/zombie_sleepers/20261101T081903519194Z/lying_sleep.png",
+      "kind": "image",
+      "stage": "Live flat-host physics test; no saved player world",
+      "review": "Inspected runtime screenshot, not user approval or ordinary POI acceptance",
+      "pack_sha256": "5ccb51903d9d7549290e84b31f5374085b1bb486bdf4e0a5c0e32d436ae8b268",
+      "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
+    },
+    {
+      "sha256": "05bca5fdb4ae76adc9a0886ef93003956e85a1ecbe2cd584cd07098a27f83d3f",
+      "file": "live-wake-reloaded-blocked.png",
+      "source": "reports/zombie_sleepers/20261101T081903519194Z/fresh/fresh_process_blocked.png",
+      "kind": "image",
+      "stage": "Live flat-host physics test; no saved player world",
+      "review": "Inspected runtime screenshot, not user approval or ordinary POI acceptance",
+      "pack_sha256": "5ccb51903d9d7549290e84b31f5374085b1bb486bdf4e0a5c0e32d436ae8b268",
+      "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
+    },
+    {
+      "sha256": "4193f55a36ca39a02531358ece71a4bf0cd8d365cf3dace708d9b0b6f5180c7c",
+      "file": "live-wake-missing-leg.png",
+      "source": "reports/zombie_sleepers/20261101T081903519194Z/missing_leg_awake.png",
+      "kind": "image",
+      "stage": "Live flat-host physics test; no saved player world",
+      "review": "Inspected runtime screenshot, not user approval or ordinary POI acceptance",
+      "pack_sha256": "5ccb51903d9d7549290e84b31f5374085b1bb486bdf4e0a5c0e32d436ae8b268",
+      "provenance": "Unedited local TerraForest R4 capture by Codex, 2026-11-01. Inherited asset terms retained; excluded from game imports/export."
     }
   ]
 }

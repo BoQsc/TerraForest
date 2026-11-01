@@ -1,4 +1,5 @@
 #pragma once
+#include "zombie_sleep_state.hpp"
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/array.hpp>
@@ -13,7 +14,7 @@
 namespace terraforest {
 class NativeZombiePopulation : public godot::RefCounted {
     GDCLASS(NativeZombiePopulation,godot::RefCounted)
-    struct Resident {godot::Vector3 position;float yaw=0;uint32_t state=0;godot::PackedByteArray vitals;};
+    struct Resident {godot::Vector3 position;float yaw=0;uint32_t state=0;godot::PackedByteArray vitals,sleep;};
     std::vector<Resident> residents_;
     std::array<std::vector<int>,2500> cells_;
     int64_t seed_=-1,revision_=0;
@@ -42,7 +43,7 @@ protected:
         ClassDB::bind_method(D_METHOD("nearby","focus","radius"),&NativeZombiePopulation::nearby);
         ClassDB::bind_method(D_METHOD("resident","identity"),&NativeZombiePopulation::resident);
         ClassDB::bind_method(D_METHOD("encounter","identity"),&NativeZombiePopulation::encounter);
-        ClassDB::bind_method(D_METHOD("update_resident","identity","position","yaw","vitals"),&NativeZombiePopulation::update_resident);
+        ClassDB::bind_method(D_METHOD("update_resident","identity","position","yaw","vitals","sleep"),&NativeZombiePopulation::update_resident,DEFVAL(PackedByteArray()));
         ClassDB::bind_method(D_METHOD("add_resident","position","yaw","vitals"),&NativeZombiePopulation::add_resident);
         ClassDB::bind_method(D_METHOD("exclude","identity"),&NativeZombiePopulation::exclude);
         ClassDB::bind_method(D_METHOD("capture_snapshot"),&NativeZombiePopulation::capture_snapshot);
@@ -65,7 +66,7 @@ public:
     }
     godot::Dictionary resident(int64_t identity)const{
         godot::Dictionary out;if(identity<1||identity>int64_t(residents_.size()))return out;
-        const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;return out;
+        const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;out["sleep"]=record.sleep;return out;
     }
     godot::Dictionary encounter(int64_t identity)const{
         godot::Dictionary out;if(seed_<0||identity<1||identity>int64_t(residents_.size()))return out;
@@ -98,10 +99,11 @@ public:
         for(int item=0;item<std::min(32,int(matches.size()));item++)out.append(resident(matches[item].second+1));
         return out;
     }
-    bool update_resident(int64_t identity,godot::Vector3 position,double yaw,const godot::PackedByteArray &vitals){
-        if(identity<1||identity>int64_t(residents_.size())||!valid_position(position)||!std::isfinite(yaw)||std::abs(yaw)>10000||!valid_vitals(vitals))return false;
+    bool update_resident(int64_t identity,godot::Vector3 position,double yaw,const godot::PackedByteArray &vitals,const godot::PackedByteArray &sleep=godot::PackedByteArray()){
+        if(identity<1||identity>int64_t(residents_.size())||!valid_position(position)||!std::isfinite(yaw)||std::abs(yaw)>10000||!valid_vitals(vitals)||!valid_sleep_state(sleep))return false;
+        if(!sleep.is_empty()&&(vitals.is_empty()||vitals.decode_float(0)<=0))return false;
         auto &record=residents_[identity-1];if(record.state>=2)return false;
-        int previous=cell(record.position);record.position=position;record.yaw=yaw;record.vitals=vitals;record.state=!vitals.is_empty()&&vitals.decode_float(0)==0?2:1;
+        int previous=cell(record.position);record.position=position;record.yaw=yaw;record.vitals=vitals;record.sleep=sleep;record.state=!vitals.is_empty()&&vitals.decode_float(0)==0?2:1;
         if(cell(position)!=previous||record.state==2){
             auto &bucket=cells_[previous];bucket.erase(std::remove(bucket.begin(),bucket.end(),int(identity-1)),bucket.end());
             if(record.state<2)cells_[cell(position)].push_back(identity-1);
@@ -119,13 +121,15 @@ public:
     }
     godot::PackedByteArray capture_snapshot()const{
         godot::PackedByteArray out;if(seed_<0)return out;
-        out.resize(32+residents_.size()*84);out.fill(0);out.encode_u32(0,0x31505a54);out.encode_u32(4,residents_.size()==2500?1:2);out.encode_u32(8,seed_);out.encode_u32(12,residents_.size());
+        const bool sleepers=std::any_of(residents_.begin(),residents_.end(),[](const Resident &record){return !record.sleep.is_empty();});const int stride=sleepers?132:84;
+        out.resize(32+residents_.size()*stride);out.fill(0);out.encode_u32(0,0x31505a54);out.encode_u32(4,sleepers?3:residents_.size()==2500?1:2);out.encode_u32(8,seed_);out.encode_u32(12,residents_.size());
         for(int axis=0;axis<3;axis++)out.encode_float(16+axis*4,sanctuary_[axis]);
         for(int item=0;item<int(residents_.size());item++){
-            const auto &record=residents_[item];int at=32+item*84;
+            const auto &record=residents_[item];int at=32+item*stride;
             for(int axis=0;axis<3;axis++)out.encode_float(at+axis*4,record.position[axis]);
             out.encode_float(at+12,record.yaw);out.encode_u32(at+16,record.state);out.encode_u32(at+20,record.vitals.size());
             for(int byte=0;byte<record.vitals.size();byte++)out.set(at+24+byte,record.vitals[byte]);
+            if(sleepers){out.encode_u32(at+84,record.sleep.size());for(int byte=0;byte<record.sleep.size();++byte)out.set(at+88+byte,record.sleep[byte]);}
         }
         return out;
     }
@@ -133,27 +137,36 @@ public:
         if(bytes.is_empty())return true;
         if(bytes.size()<32||bytes.decode_u32(0)!=0x31505a54||bytes.decode_u32(8)>2147483647||bytes.decode_u32(28)!=0)return false;
         const uint32_t version=bytes.decode_u32(4),count=bytes.decode_u32(12);
-        if(count<2500||count>2756||bytes.size()!=32+count*84||!((version==1&&count==2500)||(version==2&&count>2500)))return false;
+        const uint32_t stride=version==3?132:84;
+        if(count<2500||count>2756||bytes.size()!=32+count*stride||!((version==1&&count==2500)||(version==2&&count>2500)||version==3))return false;
         if(!valid_position({float(bytes.decode_float(16)),float(bytes.decode_float(20)),float(bytes.decode_float(24))}))return false;
+        bool sleepers=false;
         for(uint32_t item=0;item<count;item++){
-            int at=32+item*84;uint32_t state=bytes.decode_u32(at+16),size=bytes.decode_u32(at+20);double yaw=bytes.decode_float(at+12);
+            int at=32+item*stride;uint32_t state=bytes.decode_u32(at+16),size=bytes.decode_u32(at+20);double yaw=bytes.decode_float(at+12);
             if(!valid_position({float(bytes.decode_float(at)),float(bytes.decode_float(at+4)),float(bytes.decode_float(at+8))})||!std::isfinite(yaw)||std::abs(yaw)>10000||state>3||(size!=0&&size!=60))return false;
             if(!valid_vitals(bytes.slice(at+24,at+24+size)))return false;
             if(state==2&&(size!=60||bytes.decode_float(at+24)!=0))return false;
             if(state!=2&&size&&bytes.decode_float(at+24)<=0)return false;
             if((state==0||state==3)&&size)return false;
             if(size==0)for(int byte=0;byte<60;byte++)if(bytes[at+24+byte])return false;
+            if(version==3){
+                const uint32_t length=bytes.decode_u32(at+84);if(length!=0&&length!=44)return false;
+                if(length){if(state!=1||size!=60||!valid_sleep_state(bytes.slice(at+88,at+132)))return false;sleepers=true;}
+                else for(int byte=0;byte<44;++byte)if(bytes[at+88+byte])return false;
+            }
         }
-        return true;
+        return version!=3||sleepers;
     }
     bool restore_snapshot(const godot::PackedByteArray &bytes){
         if(!validate_snapshot(bytes))return false;
         residents_.clear();seed_=-1;sanctuary_={};
         if(!bytes.is_empty()){
             seed_=bytes.decode_u32(8);sanctuary_={float(bytes.decode_float(16)),float(bytes.decode_float(20)),float(bytes.decode_float(24))};residents_.resize(bytes.decode_u32(12));
+            const int stride=bytes.decode_u32(4)==3?132:84;
             for(int item=0;item<int(residents_.size());item++){
-                int at=32+item*84;auto &record=residents_[item];record.position={float(bytes.decode_float(at)),float(bytes.decode_float(at+4)),float(bytes.decode_float(at+8))};
+                int at=32+item*stride;auto &record=residents_[item];record.position={float(bytes.decode_float(at)),float(bytes.decode_float(at+4)),float(bytes.decode_float(at+8))};
                 record.yaw=bytes.decode_float(at+12);record.state=bytes.decode_u32(at+16);record.vitals=bytes.slice(at+24,at+24+bytes.decode_u32(at+20));
+                if(stride==132)record.sleep=bytes.slice(at+88,at+88+bytes.decode_u32(at+84));
             }
         }
         index();revision_++;return true;

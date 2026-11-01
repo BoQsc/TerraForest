@@ -11,11 +11,12 @@ The first encounter slice is installed: 58 native contracts plus legacy suites
 pass in debug/release; source/pack normal-world admission and reload each pass 47
 checks. Two generated amputees and all three temperaments are verified. Short
 intent work p95 is 159 microseconds, not full frame-pacing/headroom qualification.
-The overall checklist remains open. Six authored sleeper clips now have 57
-every-frame pose/bounds checks and multi-angle runtime-skin review. Their compact
-shared library and offline native envelope bake do not yet make sleepers playable.
-Wake collision/animation coordination, interruptions and persistent state are the
-next dependency before ordinary house/POI placement; preserve one body owner.
+The overall checklist remains open. Six sleeper clips now have 58 pose/bounds
+checks and a live native-clearance/animation handshake. Flat-host tests cover
+noise/hits, ceiling refusal, limb loss, death, pause and fresh-process blocked-pose
+restore. Version-three binary population state retains old-save compatibility.
+Authored house/POI anchors, ordinary generated admission and slope/furniture/moving
+obstacle acceptance remain next; the isolated host is not world integration.
 Evidence and remaining work: [expansion tracker](../issues/gameplay-expansion/README.md).
 
 ## Gameplay responsiveness verification — 2026-11-01

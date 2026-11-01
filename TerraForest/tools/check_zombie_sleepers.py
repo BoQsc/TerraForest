@@ -12,7 +12,7 @@ from run_godot_check import execute, verify_pack_native
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("stage", choices=["import", "review", "poses"])
+    parser.add_argument("stage", choices=["import", "review", "poses", "runtime", "state"])
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--missing", choices=["forearm_l", "shin_l", "thigh_r"])
     parser.add_argument("--motion", action="store_true")
@@ -27,10 +27,10 @@ def main():
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder = ROOT / "reports/zombie_sleepers" / stamp
     folder.mkdir(parents=True)
-    script = "tests/zombie_sleepers.gd" if args.stage == "poses" else f"tools/{args.stage}_zombie_sleepers.gd"
+    script = {"state": "tests/zombie_sleep_state.gd", "runtime": "tests/zombie_sleeper_runtime.gd", "poses": "tests/zombie_sleepers.gd"}.get(args.stage, f"tools/{args.stage}_zombie_sleepers.gd")
     command = [config.godot, "--path", str(ROOT), "--log-file", str(folder / "engine.log"),
                "--max-fps", "60", "--script", "res://" + script]
-    if args.stage == "review":
+    if args.stage in ["review", "runtime"]:
         command[1:1] = ["--windowed", "--position", "-2400,-1600", "--resolution", "1280x720" if args.motion else "1920x1080"]
         command += ["--", "--review-output=" + folder.as_posix()]
         if args.missing:
@@ -39,7 +39,7 @@ def main():
             command.append("--review-motion")
     else:
         command.insert(1, "--headless")
-        if args.stage == "poses":
+        if args.stage in ["poses", "state"]:
             command += ["--", "--sleeper-output=" + folder.as_posix()]
     record = dict(stage=args.stage, pack=args.pack, missing=args.missing, motion=args.motion, **revision_metadata())
     if args.pack:
@@ -61,7 +61,20 @@ def main():
     subprocess.Popen = nonactivating
     try:
         marker = "ZOMBIE_SLEEPERS checks=" if args.stage == "poses" else "ZOMBIE_SLEEPERS_" + args.stage.upper()
-        result = execute(command, folder, 90, marker, require_resource_budget=args.stage == "review")
+        result = execute(command, folder, 150 if args.stage == "runtime" else 90, marker, require_resource_budget=args.stage in ["review", "runtime"])
+        if args.stage in ["state", "runtime"] and result["passed"]:
+            fresh = folder / "fresh"
+            fresh.mkdir()
+            fresh_command = command.copy()
+            fresh_command[fresh_command.index("--log-file") + 1] = str(fresh / "engine.log")
+            if args.stage == "runtime":
+                fresh_command[fresh_command.index("--review-output=" + folder.as_posix())] = "--review-output=" + fresh.as_posix()
+                fresh_command.append("--runtime-read=" + (folder / "runtime_sleep_population.bin").as_posix())
+            else:
+                fresh_command.append("--sleep-read=" + (folder / "population_sleep.bin").as_posix())
+            fresh_result = execute(fresh_command, fresh, 30, marker, require_resource_budget=args.stage == "runtime")
+            record["fresh_process"] = fresh_result
+            result["passed"] = result["passed"] and fresh_result["passed"]
     finally:
         subprocess.Popen = original
     record.update(command=command, result=result)

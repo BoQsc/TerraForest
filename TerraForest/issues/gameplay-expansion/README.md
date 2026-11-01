@@ -70,18 +70,35 @@ The latter is replaced by authored leg arcs, not hidden geometry or a runtime li
   changing pose acceptance thresholds; packed runs use explicit writable reports.
 
 Asset checkpoint evidence: [source/pack checks, hashes and retained failures](sleeper-evidence.json).
-The matching installed pack passes 57 pose assertions and 47 ordinary resident
-world assertions; this does not test live sleepers. Redistributable content is
+That animation-only checkpoint's pack passes 57 pose assertions and 47 ordinary
+resident world assertions; it does not test live sleepers. Its content size is
 476,617,743 bytes. Quiet Mode and the 60-FPS cap are unchanged.
+
+### Live sleeper checkpoint
+
+![Living side-lying sleeper in the flat collision fixture](images/live-sleeper-lying.png)
+![Fresh-process reload preserves the crouched wake below a low ceiling](images/live-wake-reloaded-blocked.png)
+![Mid-wake leg loss exits into crawling](images/live-wake-missing-leg.png)
+
+Source and packaged runtime runs each pass 47 live checks plus five fresh-process
+checks. The matching pack also passes 58 pose checks, 25 binary-state checks plus
+three fresh-process checks, and 47 ordinary-resident world regressions. Details,
+hashes, limits and retained failures: [runtime evidence](sleeper-runtime-evidence.json).
+These images are a flat collision fixture, not approved cave/house placement.
 
 ## Remaining / resume here
 
-Connect the authored clips to safe physical transitions, including clearance,
-mid-wake hits/amputation/death and suspension. These runtime hooks are not yet
-implemented. Add persistent sleepers at authored POIs and ordinary houses; do not
-turn a test-only state machine into a claim of playable sleepers. Continue every
-remaining row in the linked full contract. Test normal generation, packaged play,
-fresh-process save restore, movement/contact and resource budgets. Existing
+Live wake coordination now uses the real encounter host and one collidable body,
+native clearance, bounded retries, physical completion before combat, damage/noise,
+leg-loss reversal and the existing ragdoll death path. Binary version-three resident
+records preserve sleep pose, animation cursor, elapsed wake time and heard source;
+legacy saves retain their layout. Flat-host reload exposed a float32 envelope-bin
+boundary bug; the runtime lookup now uses the same boundary across serialization.
+
+Next: persistent sleepers at authored POIs and ordinary houses, with deliberate
+anchor clearance and fair residency. Flat-host tests do not qualify slopes,
+moving obstacles, furnished rooms or generated-world placement. Continue every
+remaining row in the linked full contract. Existing
 60-FPS frame-pacing defects remain separately tracked, not reset by this work.
 
 ## Reproduce / history
@@ -99,3 +116,9 @@ but are not a new Generate & play recipe or POI acceptance.
 Sleeper assets: `python tools/check_zombie_sleepers.py poses`, `review`, or
 `review --missing shin_l`; add `--pack` after a matching export. Rebuild instructions
 are in [the editable animation source](../../addons/characters/authoring/Zombie.sleepers.README.md).
+
+Live checks: `python tools/check_zombie_sleepers.py runtime` and `state`, also with
+`--pack`. Each launches a second process for restoration evidence. The runtime
+fixture uses real characters, awareness, collisions and the contact-noise adapter;
+the adapter's input/target acceptance is stubbed to avoid taking the user's mouse.
+It is not an end-to-end player input or ordinary generated-world sleeper test.

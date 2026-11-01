@@ -109,6 +109,8 @@ func resolve_contact(identity:int)->void:
 	last_hit=not selected.is_empty() and (repair_target(selected) if pending.repairing else apply_target(selected))
 	if last_hit:
 		selected.repairing=pending.repairing
+		if is_instance_valid(game.zombies) and game.zombies.has_method("hear_noise"):
+			game.zombies.hear_noise(selected.get("position",game.camera.global_position),4.0 if pending.item==0 else 12.0)
 		contact_effect.emit(selected)
 	impact_resolved.emit(identity,last_hit)
 func cancel()->void:

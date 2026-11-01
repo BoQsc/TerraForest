@@ -136,6 +136,16 @@ var _contact_standoff := INF
 var _tracked_target_id := 0
 var _animation_cursor_valid := false
 var initialization_us:Dictionary={}
+var sleeper:RefCounted
+
+func sleeper_active()->bool:
+	return sleeper!=null and not sleeper.phase.is_empty() and alive
+
+func begin_sleep(pose:int,record:PackedByteArray=PackedByteArray())->bool:
+	if sleeper_active():return false
+	var candidate=preload("res://addons/characters/runtime/zombie_sleeper.gd").new()
+	if not candidate.begin(self,pose,record):return false
+	sleeper=candidate;return true
 
 
 func _ready() -> void:
@@ -615,6 +625,7 @@ func _has_standing_legs() -> bool:
 
 
 func _attack_is_eligible(action: String) -> bool:
+	if sleeper_active():return false
 	if not _r4_enabled or not alive or not R4_ATTACKS.has(action) or missing.get("head", false):
 		return false
 	if _crawling:
@@ -785,6 +796,7 @@ func _set_crawl_capsule(fraction: float) -> void:
 
 
 func _start_crawl() -> void:
+	if sleeper_active():sleeper.leg_lost();return
 	if not _r4_enabled or not alive or _crawling or _crawl_transition:
 		return
 	_cancel_attack()
@@ -808,6 +820,7 @@ func _gravity_step(delta: float) -> void:
 
 
 func _physics_r4(delta: float) -> void:
+	if sleeper_active():sleeper.tick(delta);return
 	var target_id := target.get_instance_id() if is_instance_valid(target) else 0
 	if target_id != _tracked_target_id:
 		_tracked_target_id = target_id
@@ -1092,6 +1105,7 @@ func _closest_target_surface(shape: Dictionary, world_point: Vector3) -> Diction
 
 
 func request_jump(forward_speed: float = 0.70) -> bool:
+	if sleeper_active():return false
 	if not _r4_enabled or not alive or not _has_standing_legs() or _crawling or _crawl_transition:
 		_last_rejection = "Jump requires both complete legs"
 		return false
@@ -1177,6 +1191,7 @@ func _tick_jump(delta: float) -> void:
 
 
 func request_climb(ladder: Dictionary) -> bool:
+	if sleeper_active():return false
 	if not _r4_enabled or not alive or not _has_standing_legs() or not _has_full_arm("l") or not _has_full_arm("r"):
 		_last_rejection = "Ladder climbing requires both full arm chains and both legs"
 		return false
@@ -1313,6 +1328,7 @@ func cancel_traversal() -> void:
 
 func set_behavior(enabled: bool) -> void:
 	if not alive:return
+	if sleeper_active():behavior_enabled=enabled;return
 	# The host refreshes availability every tick. Reapplying the same mode must
 	# preserve an attack's contact marker and any traversal already in progress.
 	if enabled == behavior_enabled:
@@ -1341,6 +1357,7 @@ func set_behavior_target(destination: Node3D) -> void:
 
 
 func play_clip(clip_name: String) -> void:
+	if sleeper_active():return
 	if not alive:
 		return
 	if _r4_enabled:
@@ -1499,6 +1516,7 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 	if not result.ok:return
 	health=float(result.health);limb_health=anatomy.snapshot().limbs
 	damaged.emit(part, health)
+	if sleeper_active() and not result.dead:sleeper.wake()
 	if result.sever:
 		sever_limb(part, impulse)
 		if alive and result.dead:die(impulse)
@@ -1512,6 +1530,7 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 		if _r4_enabled:
 			_cancel_attack()
 			cancel_traversal()
+			if sleeper_active():sleeper.wake();return
 			if _crawl_transition:
 				return
 			_hit_timer = _action_duration("Zombie_Crawl_Hit", 0.5) if _crawling else 0.45

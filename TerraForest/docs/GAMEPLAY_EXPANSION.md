@@ -27,8 +27,8 @@ compute shaders are used where measured workloads justify them, not as a label.
 | --- | --- |
 | Zombie variety, including already missing limbs | Native recipes installed; ordinary source/pack admission and anatomy reload checked; new visual character variety and balance still pending |
 | Less irritating surface zombies, more wandering, finite pursuit and a faster minority | Native timers and configurable temperaments installed/tested; natural player encounters, jogging clip and locomotion review pending |
-| Seated and lying sleepers, awakened by hearing or damage | Six authored clips and native sleep/wake intent exist; physical clearance, live hearing/hit integration and persistence still required |
-| Wake-animation frame-by-frame, multiple-perspective review | 57 pose/bounds checks; original runtime skin reviewed front/side and with missing limbs; actual live transition, interruptions and slope/obstacle qualification pending |
+| Seated and lying sleepers, awakened by hearing or damage | Live host now coordinates native clearance, footstep/accepted-impact noise, damage, wake clips and binary persistence; ordinary house/POI admission still required |
+| Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, flat live ceiling/interruption/limb-loss checks and fresh-process blocked-pose restore; slopes, tight furnished rooms, moving obstacles and ordinary-world acceptance pending |
 | Sleeper residents inside some houses and underground locations | Pending authored anchors, fair admission, persistent sleep/wake/death and player-safe placement |
 | Off-road watchtowers | Pending modular destructible design, access, terrain fit, loot and approval/review |
 | Small art-directed caves and mines | Pending differentiated entrances, rooms, side spaces and some built mine structures; no generic straight tunnels |
@@ -71,11 +71,22 @@ animation and persistence integration. The existing ragdoll and route owners rem
 authoritative; a sleeper is a living entity, not a corpse resurrected by a timer.
 Full body/limb health remains separate and linked. No player save is regenerated.
 
-The six-clip animation checkpoint now has editable sources, a 316,364-byte shared
-library and offline native-skin envelope baking. Rejected floating/ground-penetrating
-trials remain in the tracker. Next, connect the existing native wake handshake to
-these clips and one collision/body owner; qualify low ceilings, moving obstacles,
-hits, limb loss, death, suspension and fresh-process sleep persistence before
-admitting sleepers into ordinary houses/POIs. No live sleeper has been claimed yet.
+The six-clip library now drives living sleepers through one body owner. Native
+clearance queries hold blocked poses and retry at 10 Hz; ordinary sleep adds no
+repeating clearance queries. Version-three population records preserve 44 bytes
+of sleep intent/pose state, with old saves retaining their original layout. Live
+flat-host tests cover ceiling refusal, hits, leg loss (including the completion
+handshake), death, suspension and fresh-process restoration. A float32 boundary
+reload defect was reproduced and fixed; rejected evidence remains available.
+Next: authored, terrain-fitting house/POI anchors and actual generated-world
+admission, then slope/furniture/moving-obstacle and player-facing acceptance.
+Do not treat isolated host coverage as completion of ordinary-world sleepers.
+
+Sleeper integration uses `ZombieWorld.put_to_sleep(actor, 1)` for seated and `2`
+for lying, or `sleep_pose` in a validated encounter descriptor. The host owns the
+native awareness handshake; standalone animation playback does not authorize
+combat or persistence. `hear_noise(source, radius)` is bounded to six residents
+and the native hearing limits. Authored resident registration and stable POI
+ownership are still prerequisites before generator admission is enabled.
 
 Evidence and retained failures: [expansion tracker](../issues/gameplay-expansion/README.md).

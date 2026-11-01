@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "zombie_awareness.hpp"
+#include "zombie_sleep_state.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <algorithm>
 #include <cmath>
@@ -11,6 +12,8 @@ void NativeZombieAwareness::_bind_methods(){
     ClassDB::bind_method(D_METHOD("set_profile","id","profile"),&NativeZombieAwareness::set_profile);
     ClassDB::bind_method(D_METHOD("set_sleeping","id","pose"),&NativeZombieAwareness::set_sleeping);
     ClassDB::bind_method(D_METHOD("finish_waking","id"),&NativeZombieAwareness::finish_waking);
+    ClassDB::bind_method(D_METHOD("capture_sleep","id"),&NativeZombieAwareness::capture_sleep);
+    ClassDB::bind_method(D_METHOD("restore_sleep","id","bytes"),&NativeZombieAwareness::restore_sleep);
     ClassDB::bind_method(D_METHOD("remove_agent","id"),&NativeZombieAwareness::remove_agent);
     ClassDB::bind_method(D_METHOD("clear"),&NativeZombieAwareness::clear);
     ClassDB::bind_method(D_METHOD("wants_sight","id","feet","forward","player"),&NativeZombieAwareness::wants_sight);
@@ -87,6 +90,19 @@ void NativeZombieAwareness::wake(Agent &agent,const Vector3 &source,bool provoke
 bool NativeZombieAwareness::finish_waking(int64_t id){
     auto *agent=find(id);if(!agent||agent->state!=WAKING||agent->wake_elapsed<agent->profile.wake)return false;
     agent->state=INVESTIGATE;agent->remaining=agent->profile.forget;agent->unseen=0;agent->sleep_pose=0;++agent->revision;return true;
+}
+PackedByteArray NativeZombieAwareness::capture_sleep(int64_t id){
+    PackedByteArray bytes;const auto *agent=find(id);if(!agent||(agent->state!=SLEEPING&&agent->state!=WAKING))return bytes;
+    bytes.resize(28);bytes.fill(0);bytes.encode_u32(0,agent->sleep_pose);bytes.encode_u32(4,agent->state==SLEEPING?1:2);bytes.encode_float(8,agent->wake_elapsed);
+    for(int axis=0;axis<3;++axis)bytes.encode_float(12+axis*4,agent->goal[axis]);bytes.encode_u32(24,agent->provoked?1:0);return bytes;
+}
+bool NativeZombieAwareness::restore_sleep(int64_t id,const PackedByteArray &bytes){
+    auto *agent=find(id);if(!agent||agent->state!=IDLE||!valid_sleep_intent(bytes))return false;
+    agent->sleep_pose=bytes.decode_u32(0);agent->state=bytes.decode_u32(4)==1?SLEEPING:WAKING;
+    agent->wake_elapsed=std::min(agent->profile.wake,double(bytes.decode_float(8)));agent->provoked=bytes.decode_u32(24)!=0;
+    for(int axis=0;axis<3;++axis)agent->goal[axis]=bytes.decode_float(12+axis*4);
+    agent->last_seen=agent->goal;agent->visible=false;agent->confidence=agent->ignore=agent->unseen=0;
+    agent->interest=agent->state==WAKING?agent->profile.pursuit*(agent->provoked?1.5:1):0;++agent->revision;return true;
 }
 void NativeZombieAwareness::remove_agent(int64_t id){agents_.erase(std::remove_if(agents_.begin(),agents_.end(),[&](const Agent &a){return a.id==id;}),agents_.end());}
 void NativeZombieAwareness::clear(){agents_.clear();}

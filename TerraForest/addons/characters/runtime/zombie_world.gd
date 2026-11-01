@@ -92,6 +92,7 @@ func update(delta: float, focus: Vector3, available: bool, pursue: bool = true) 
 		if not zombie.alive:
 			_corpse_age[id] = _corpse_age.get(id, 0.0) + delta
 		var bounds := AABB(zombie.global_position - Vector3(1.5, 1, 1.5), Vector3(3, 4, 3))
+		if zombie.sleeper_active():bounds=bounds.merge(zombie.global_transform*zombie.sleeper.coverage)
 		# Include the next movement tick and ragdoll reach in readiness checks.
 		bounds = bounds.grow(zombie.velocity.length() * delta + 0.1)
 		var ready := readiness.is_valid() and bool(readiness.call(bounds))
@@ -145,7 +146,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 		var id:int=zombie.get_instance_id()
 		var active:bool=available and zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED
 		var intent:Dictionary
-		if force_pursuit:
+		if force_pursuit and not zombie.sleeper_active():
 			intent={"state":"chase","goal":target.global_position,"moving":true,"combat":true}
 		else:
 			if active:
@@ -166,6 +167,12 @@ func _update_navigation(delta: float, available: bool) -> void:
 				_roam_revision[id]=intent.revision
 				awareness.accept_roam(id,supported_point(intent.goal))
 				intent=awareness.status(id)
+		if active and zombie.sleeper_active() and intent.state=="sleeping" and zombie.sleeper.phase!="sleeping":
+			awareness.provoke(id,zombie.global_position);intent=awareness.status(id)
+		if active and zombie.sleeper_active() and intent.state=="waking":
+			zombie.sleeper.wake()
+			if zombie.sleeper.phase=="ready" and intent.wake_ready and awareness.finish_waking(id):
+				zombie.sleeper.finish();intent=awareness.status(id)
 		awareness_status[id]=intent
 		zombie.awareness_state=intent.state
 		zombie.behavior_goal=intent.goal if intent.moving else Vector3.INF
@@ -263,7 +270,7 @@ func _retire(index: int,keep_corpse:bool=false) -> void:
 	residents.remove_at(index)
 	if not keep_corpse:zombie.queue_free()
 
-func supported_point(around: Vector3) -> Vector3:
+func supported_point(around: Vector3,standing:bool=true) -> Vector3:
 	if not around.is_finite() or not readiness.is_valid():
 		return Vector3.INF
 	var bounds := AABB(around - Vector3(0.6, 4, 0.6), Vector3(1.2, 9, 1.2))
@@ -277,6 +284,7 @@ func supported_point(around: Vector3) -> Vector3:
 	var point: Vector3 = hit.position + Vector3.UP * 0.06
 	if water_depth.is_valid() and float(water_depth.call(point + Vector3.UP * 0.5)) > 0.0:
 		return Vector3.INF
+	if not standing:return point
 	var query := PhysicsShapeQueryParameters3D.new()
 	query.shape = _capsule
 	query.transform = Transform3D(Basis.IDENTITY, point + Vector3.UP * 0.9)
@@ -285,18 +293,18 @@ func supported_point(around: Vector3) -> Vector3:
 		return Vector3.INF
 	return point
 
-func spawn_at(point: Vector3) -> CharacterBody3D:
+func spawn_at(point: Vector3,restoring_sleep:bool=false) -> CharacterBody3D:
 	if not enabled or not point.is_finite() or residents.size() >= LIMIT or not is_instance_valid(target):
 		return null
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
-	var supported := supported_point(point)
+	var supported := supported_point(point,not restoring_sleep)
 	if profiling_enabled:update_phase_us["admission support"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	if not supported.is_finite():
 		return null
 	var zombie := Zombie.new()
 	if profiling_enabled:update_phase_us["admission instance"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	zombie.geometry_template=geometry_template
-	zombie.position = to_local(supported)
+	zombie.position = to_local(point if restoring_sleep else supported)
 	zombie.target = target if force_pursuit else null
 	zombie.behavior_enabled = true
 	zombie.navigator=navigator
@@ -319,6 +327,8 @@ func spawn_at(point: Vector3) -> CharacterBody3D:
 	zombie.tree_exiting.connect(func():
 		if is_instance_valid(navigator):navigator.remove_agent(id)
 		if is_instance_valid(awareness):awareness.remove_agent(id))
+	zombie.damaged.connect(func(_part:String,_health:float):
+		if zombie.sleeper_active():awareness.provoke(id,zombie.global_position))
 	return zombie
 
 func configure_encounter(zombie:CharacterBody3D,descriptor:Dictionary)->bool:
@@ -332,7 +342,34 @@ func configure_encounter(zombie:CharacterBody3D,descriptor:Dictionary)->bool:
 	zombie.walk_speed=float(intent.walk_speed)
 	zombie.chase_speed_multiplier=float(intent.chase_speed_multiplier)
 	zombie.set_meta("encounter_profile",profile_id)
+	if int(descriptor.get("sleep_pose",0))!=0:return put_to_sleep(zombie,int(descriptor.sleep_pose))
 	return true
+
+func put_to_sleep(zombie:CharacterBody3D,pose:int)->bool:
+	if zombie not in residents or awareness.status(zombie.get_instance_id()).get("state","") not in ["idle","wander"]:return false
+	if not zombie.begin_sleep(pose):return false
+	return awareness.set_sleeping(zombie.get_instance_id(),pose)
+
+func hear_noise(source:Vector3,radius:float)->int:
+	var heard:=0
+	for zombie in residents:
+		if zombie.alive and zombie.process_mode!=Node.PROCESS_MODE_DISABLED and awareness.hear(zombie.get_instance_id(),zombie.global_position,source,radius):heard+=1
+	return heard
+
+func capture_sleep(zombie:CharacterBody3D)->PackedByteArray:
+	if not zombie.sleeper_active():return PackedByteArray()
+	var id:=zombie.get_instance_id()
+	if zombie.sleeper.phase!="sleeping" and awareness.status(id).state=="sleeping":awareness.provoke(id,zombie.global_position)
+	var bytes:PackedByteArray=awareness.capture_sleep(id)
+	bytes.append_array(zombie.sleeper.capture())
+	return bytes
+
+func restore_sleep(zombie:CharacterBody3D,bytes:PackedByteArray)->bool:
+	if bytes.is_empty():return true
+	if zombie not in residents or awareness.status(zombie.get_instance_id()).get("state","")!="idle":return false
+	var validator=ClassDB.instantiate("NativeZombiePosture")
+	if not validator.validate_snapshot(bytes) or not zombie.begin_sleep(bytes.decode_u32(0),bytes):return false
+	return awareness.restore_sleep(zombie.get_instance_id(),bytes.slice(0,28))
 
 func pick(start: Vector3, end: Vector3, exclude: Array) -> Dictionary:
 	var bodies:Array=residents.duplicate()

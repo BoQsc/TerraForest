@@ -41,6 +41,15 @@ func run()->void:
 		zombie.play_clip(name);zombie.animation_player.advance(0)
 		idle[name]=poses(zombie)
 	var beginnings:={}
+	var sampler=preload("res://addons/characters/runtime/zombie_sleeper.gd").new()
+	var stable_bins:=true
+	var quantized:=PackedByteArray();quantized.resize(4)
+	for name:String in LIBRARY.get_animation_list():
+		for boundary in int(LIBRARY.get_animation(name).length*12)+1:
+			var time:=boundary/12.
+			quantized.encode_float(0,time)
+			stable_bins=stable_bins and sampler.bounds_at(name,time).is_equal_approx(sampler.bounds_at(name,quantized.decode_float(0)))
+	check(stable_bins,"clearance bins are stable across float32 save/reload boundaries")
 	for clip:String in LIBRARY.get_animation_list():
 		var animation:=LIBRARY.get_animation(clip)
 		var looping:=animation.loop_mode
@@ -77,8 +86,7 @@ func run()->void:
 			for bone in current.size():
 				finite=finite and current[bone].is_finite()
 				max_step=maxf(max_step,current[bone].origin.distance_to(previous[bone].origin))
-			var slot:=int(frame/5)*2
-			var envelope:=AABB(envelopes[slot],envelopes[slot+1]) if slot+1<envelopes.size() else AABB()
+			var envelope:AABB=sampler.bounds_at(clip,minf(frame/60.0,animation.length))
 			for part:String in zombie.PARTS:
 				var bounds:AABB=zombie.anatomy.sample_bounds(part,Transform3D.IDENTITY)
 				min_skin=minf(min_skin,bounds.position.y)

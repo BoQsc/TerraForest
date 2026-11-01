@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "358d0b0c5104165dff5fbd1cc8fb2eac242643e7",
+  "scope": "Live sleeper physics/awareness and binary persistence checkpoint. Not ordinary-world sleeper placement or completion of the gameplay expansion.",
+  "implementation": {
+    "animation_asset_unchanged": "addons/characters/runtime/assets/Zombie.sleepers.res",
+    "clearance": "Native cached shape/query resources, one body integration owner, authored skin envelopes; no runtime skin sampling or collision disabling.",
+    "budgets": "No repeating sleep clearance queries. Waking checks each advancing pose; blocked poses retry at 10 Hz. Completion separately checks the locomotion capsule.",
+    "contact_tolerance_m": 0.012,
+    "persistence": "44 bytes per sleeper: 28 native intent + 16 physical pose. Version 3 uses 132-byte resident records, maximum 2756. Old version 1/2 layouts remain unchanged when no sleepers are present.",
+    "impact_noise": "Accepted WorldAttack.resolve_contact sends bounded hearing events. Rejected contacts do not. Fixture uses the real resolution/noise path with input/target selection stubs, not OS input.",
+    "readiness": "Existing resident readiness disables the whole actor subtree; the query volume includes all authored sleep/wake poses."
+  },
+  "passed": [
+    {
+      "kind": "source poses",
+      "checks": 58,
+      "report": "reports/zombie_sleepers/20261101T080705160555Z"
+    },
+    {
+      "kind": "source live host",
+      "checks": 47,
+      "fresh_process_checks": 5,
+      "report": "reports/zombie_sleepers/20261101T081313322397Z"
+    },
+    {
+      "kind": "source binary state",
+      "checks": 25,
+      "fresh_process_checks": 3,
+      "report": "reports/zombie_sleepers/20261101T081409870159Z"
+    },
+    {
+      "kind": "packed poses",
+      "checks": 58,
+      "report": "reports/zombie_sleepers/20261101T081900559392Z"
+    },
+    {
+      "kind": "packed binary state",
+      "checks": 25,
+      "fresh_process_checks": 3,
+      "report": "reports/zombie_sleepers/20261101T081902551966Z"
+    },
+    {
+      "kind": "packed live host",
+      "checks": 47,
+      "fresh_process_checks": 5,
+      "report": "reports/zombie_sleepers/20261101T081903519194Z",
+      "peak_private_bytes": 1050816512,
+      "peak_dedicated_gpu_bytes": 411254784,
+      "fresh_peak_private_bytes": 1053147136
+    },
+    {
+      "kind": "packed ordinary resident world regression",
+      "checks": 47,
+      "report": "reports/zombie_expansion/20261101T081957219225Z",
+      "peak_private_bytes": 2749341696,
+      "peak_dedicated_gpu_bytes": 1221558272,
+      "scope": "Temporary seed-1703 world; ordinary residents, not generated sleeper locations or frame-pacing qualification."
+    },
+    {
+      "kind": "release native regression",
+      "checks": {
+        "expansion": 58,
+        "awareness": 31,
+        "population": 33,
+        "anatomy": 52,
+        "fresh_population": 4
+      },
+      "report": "reports/zombie_expansion/20261101T081408014047Z"
+    },
+    {
+      "kind": "release binary sleep state",
+      "checks": 25,
+      "report": "reports/zombie_sleepers/release_state_20261101T081820",
+      "scope": "Headless state test, not release physical/visual acceptance."
+    },
+    {
+      "kind": "source behavior regression",
+      "checks": 18,
+      "report": "reports/checks/20261101T081945817529Z"
+    },
+    {
+      "kind": "source encounter regression",
+      "checks": 17,
+      "report": "reports/checks/20261101T082030216332Z"
+    },
+    {
+      "kind": "mandatory export building gates",
+      "report": "reports/building_standards/20261101T081643428062Z"
+    }
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/zombie_sleepers/20261101T075350341859Z",
+      "cause": "Fixture initialization accidentally placed stage attachment inside a one-line lambda; corrected."
+    },
+    {
+      "report": "reports/zombie_sleepers/20261101T080223585339Z",
+      "cause": "Blocked wake could not reload across a float32 envelope-bin boundary; subsequent fixture nil error. Owned stalled test process was stopped; evidence retained."
+    },
+    {
+      "report": "reports/zombie_sleepers/20261101T080442478996Z",
+      "cause": "Clean reproduction of float32 envelope-bin mismatch. Runtime bin selection corrected; regression covers serialized 60 Hz cursors and real fresh-process blocked-body restoration."
+    }
+  ],
+  "package": {
+    "sha256": "5ccb51903d9d7549290e84b31f5374085b1bb486bdf4e0a5c0e32d436ae8b268",
+    "bytes": 447057560,
+    "redistributable_content_bytes": 476685519,
+    "matching_native_libraries": 14,
+    "debug_world_runtime_sha256": "ecca0f85a09a80125d546534adc13560ec895bc0e87ff15ff9392b049d59236c",
+    "release_world_runtime_sha256": "f81eef7701bc00c2e5e4228d04197606c1dd23afa7ddd1919234343cbe52c256",
+    "export_log": "reports/sleeper_runtime_export.log"
+  },
+  "preserved": [
+    "Player saves untouched",
+    "60 FPS/VSync and Legion Quiet Mode retained",
+    "Automated tests leave mouse uncaptured; no cursor warping",
+    "33 unrelated baseline import/project/icon files hash-verified unchanged",
+    "Previous animation checkpoint, failures and review media retained"
+  ],
+  "visuals": {
+    "manifest": "images/manifest.json",
+    "files": [
+      "live-sleeper-lying.png",
+      "live-wake-reloaded-blocked.png",
+      "live-wake-missing-leg.png"
+    ],
+    "review": "Inspected unedited packed-runtime captures. Flat test fixture only; not user approval, furnished room/slope qualification or new character-art acceptance."
+  },
+  "remaining": [
+    "Authored house/POI anchors and fair stable residency in ordinary generated worlds",
+    "Actual sloped/furnished locations and moving obstacles",
+    "Player-facing wake/locomotion feel and natural encounter balance",
+    "Populated-world frame pacing and endurance under expansion content",
+    "All other unchecked requirements in docs/GAMEPLAY_EXPANSION.md"
+  ]
+}
