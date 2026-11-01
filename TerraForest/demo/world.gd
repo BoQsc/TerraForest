@@ -202,7 +202,7 @@ func _ready() -> void:
 	if not persistence.register_component("player_survival",player_hud.survival.capture_storage_snapshot,player_hud.survival.restore_storage_snapshot,player_hud.survival,player_hud.survival.capture_storage_snapshot()):
 		push_error("Player survival persistence initialization failed");_abort_startup(2);return
 	player_hud.survival_changed.connect(func():terrain.changed_since_save=true)
-	player_hud.survival_active=func()->bool:return app_focused and terrain.world_ready and not loading_active and not shutdown_requested and not session_menu.developer and not session_menu.visible_ui() and not player_hud.inventory_open
+	player_hud.survival_active=func()->bool:return not player_view.entry.active and app_focused and terrain.world_ready and not loading_active and not shutdown_requested and not session_menu.developer and not session_menu.visible_ui() and not player_hud.inventory_open
 	mining_rewards.enabled=construction_inventory.gameplay
 	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")
@@ -923,6 +923,7 @@ func _restore_gameplay_mouse(attempts:int=4) -> void:
 	if not get_tree().process_frame.is_connected(retry):get_tree().process_frame.connect(retry,CONNECT_ONE_SHOT)
 
 func _movement_input_available() -> bool:
+	if player_view.entry.active:return false
 	if session_menu!=null and session_menu.pauses_world():return false
 	if player_hud!=null and player_hud.inventory_open:return false
 	return super._movement_input_available() or (world_map!=null and world_map.opened and not world_map.embedded) or (session_menu!=null and session_menu.developer_hud!=null and session_menu.developer_hud.mouse_access and not session_menu.visible_ui() and not player_hud.inventory_open)
@@ -932,6 +933,7 @@ func _input(event:InputEvent)->void:
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and not event.pressed:terrain_placement.held=false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if player_view.entry.blocks_actions():return
 	if session_menu.visible_ui():return
 	if player_hud.inventory_open: return
 	if _capture_mouse_click(event):return
@@ -1079,7 +1081,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	super._unhandled_input(event)
 
 func _update_edit(delta: float) -> void:
-	if player_view.overview:
+	if player_view.overview or player_view.entry.blocks_actions():
 		pointer.hide();terrain.set_brush_active(false);return
 	if not session_menu.developer:
 		if input_vector!=Vector3.ZERO:terrain.note_interaction()
@@ -1538,11 +1540,12 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 
 func _physics_process(delta: float) -> void:
 	var measured_begin:=Time.get_ticks_usec()
-	zombies.update(delta,player.global_position,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
+	zombies.update(delta,player.global_position,not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
 	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	measured_begin=Time.get_ticks_usec()
-	actors.update_simulation(delta,terrain.focus,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
+	actors.update_simulation(delta,terrain.focus,not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
 	terrain._record_stage("actor update",(Time.get_ticks_usec()-measured_begin)/1000.0)
+	if player_view.entry.active:return # The entry camera never integrates the physical body.
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
 	measured_begin=Time.get_ticks_usec()
@@ -1680,7 +1683,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	return removed
 
 func _model_edit_available(allow_pending:bool=false) -> bool:
-	return not player_view.overview and vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
+	return not player_view.entry.blocks_actions() and not player_view.overview and vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
 
 func _interact_on_foot()->void:
 	if not _model_edit_available() or session_menu.visible_ui() or Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED:return
@@ -1692,7 +1695,7 @@ func _interact_on_foot()->void:
 	_show_lake_notice(collected.reason)
 
 func _vehicle_interaction_available() -> bool:
-	return not (player_view.overview and player_view.active) and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
+	return not player_view.entry.blocks_actions() and not (player_view.overview and player_view.active) and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
 func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}

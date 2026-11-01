@@ -1,4 +1,12 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
+
+## World entry fly-in — 2026-11-01
+
+Default-on three-second entry passes 24 populated-world and 25 normal-browser
+source checks. Revised approach images are inspected; initial query/assertion and
+recording failures are retained. Combined package/browser verification and buffered
+motion capture remain open, coordinated with the active quest/clothing owners.
+[Scope, controls and remaining evidence](../issues/world-entry-fly-in/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
 ## Native quest ownership foundation — 2026-11-01

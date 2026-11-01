@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-01",
+  "base_revision": "bec5febf",
+  "source_changes": "Focused entry-fly-in commit with this manifest",
+  "images": [
+    {
+      "file": "rejected-early-turn.png",
+      "sha256": "c3b20ac8d2e9c0775f13a396442dae0e1d32ef933f3b7735c9124b6933dc2bcc",
+      "source": "reports/entry_fly_in/source/03_approach.png",
+      "caption": "Rejected: early view rotation lost the player from the approach.",
+      "world": "Exploration_1703_8f8d4c8f",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; native screenshot; no image generation or retouching",
+      "provenance": "Project runtime render; existing asset licenses retained. Documentation evidence excluded from game export."
+    },
+    {
+      "file": "aerial.png",
+      "sha256": "9ad6c5324a94596d44af5a229be4f432e8550f165e4a522685f497be47e0a043",
+      "source": "reports/entry_fly_in/revised/01_aerial.png",
+      "caption": "Revised source: actual populated world from above.",
+      "world": "Exploration_1703_8f8d4c8f",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; native screenshot; no image generation or retouching",
+      "provenance": "Project runtime render; existing asset licenses retained. Documentation evidence excluded from game export."
+    },
+    {
+      "file": "approach.png",
+      "sha256": "bba8822df420336dada4250537fe2e29f9e635c52e2960f3897e6079b36c9943",
+      "source": "reports/entry_fly_in/revised/04_handoff.png",
+      "caption": "Revised source: current player visible before the head handoff.",
+      "world": "Exploration_1703_8f8d4c8f",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; native screenshot; no image generation or retouching",
+      "provenance": "Project runtime render; existing asset licenses retained. Documentation evidence excluded from game export."
+    }
+  ]
+}

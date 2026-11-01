@@ -17,6 +17,7 @@ var settings_path:="user://player_view.cfg"
 var arm:SpringArm3D
 var third_camera:Camera3D
 var aim_point:=Vector3.ZERO
+var entry=preload("res://addons/player_runtime/entry_fly_in.gd").new()
 const PLAYER_LAYER:=1<<19
 func _init()->void:set_process(false)
 func prepare(world:Node)->void:
@@ -37,12 +38,13 @@ func prepare(world:Node)->void:
 		var config:=ConfigFile.new()
 		if config.load(settings_path)==OK:value=bool(config.get_value("camera","third_person",false))
 	set_enabled(value,false)
+	entry.prepare(self)
 func set_enabled(value:bool,persist:bool=true)->void:
 	enabled=value
 	if persist and not settings_path.is_empty() and not ProjectSettings.get_setting("terraforest/offscreen_session",false):
 		var config:=ConfigFile.new();config.load(settings_path)
 		config.set_value("camera","third_person",enabled);config.save(settings_path)
-	set_process(enabled or overview)
+	refresh_processing()
 	if not is_instance_valid(game) or third_camera==null:return
 	game.session_menu.third_person_toggle.set_pressed_no_signal(enabled)
 	update()
@@ -50,10 +52,10 @@ func _bind_view(view:Camera3D)->void:
 	view.make_current()
 	game.vegetation.camera=view
 	game.vegetation.collision_camera=game.camera
-	game.ecosystem.camera=game.camera if overview else view
-	game.ground_cover.camera=game.camera if overview else view
+	game.ecosystem.camera=game.camera if overview or entry.active else view
+	game.ground_cover.camera=game.camera if overview or entry.active else view
 	game.ground_cover.boulder_camera=view
-	game.vegetation.set_visual_distance(3500.0 if overview and view==third_camera else 0.0)
+	game.vegetation.set_visual_distance(3500.0 if (overview and view==third_camera) or entry.active else 0.0)
 	var canopy:Node=game.get_node_or_null("CanopyShadows")
 	if canopy!=null:canopy.camera=view
 	game.water_camera.configure(view,game.lakes)
@@ -71,7 +73,7 @@ func set_overview(value:bool)->void:
 	if value:
 		orbit_yaw=game.player.global_rotation.y;zoom_distance=3.4
 	game._clear_motion()
-	set_process(enabled or overview)
+	refresh_processing()
 	game.session_menu.overview_toggle.set_pressed_no_signal(value)
 	game.terrain.schedule_timer=0.0
 	update()
@@ -89,6 +91,7 @@ func consume(event:InputEvent)->bool:
 	return event is InputEventKey and event.physical_keycode in [KEY_E,KEY_K,KEY_J,KEY_V,KEY_G]
 
 func update(delta:float=0.0)->void:
+	if entry.active:return
 	game.tool_view.human.crouched=game.crouched
 	var wanted:bool=(enabled or overview) and not game.world_vehicle.driving
 	if active!=wanted or _bound_overview!=overview:
@@ -124,4 +127,14 @@ func update(delta:float=0.0)->void:
 	var hit:Dictionary=game.structures.blocks.raycast_scene(eye,end,15|(1<<16)|(1<<18),[game.player.get_rid()])
 	aim_point=hit.position if not hit.is_empty() else end
 	if third_camera.global_position.distance_squared_to(aim_point)>.01:third_camera.look_at(aim_point,game.camera.global_basis.y)
-func _process(delta:float)->void:update(delta)
+func refresh_processing()->void:set_process(enabled or overview or entry.pending or entry.active)
+func _input(event:InputEvent)->void:
+	if entry.consume(event):get_viewport().set_input_as_handled()
+func _process(delta:float)->void:
+	entry.step(delta)
+	update(delta)
+
+func _notification(what:int)->void:
+	if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT and not ProjectSettings.get_setting("terraforest/offscreen_session",false):
+		entry.held_buttons=0
+		entry.finish()
