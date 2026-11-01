@@ -1,0 +1,2636 @@
+{
+  "date": "2026-11-01",
+  "status": "Improved-partial; movement frame-pacing failures remain open",
+  "runtime_parent": "7329d917",
+  "scope": "Offscreen 1080p, 60 cap, RTX 4050 Laptop; read-only disposable seed-1703 road. Real physical movement and authored contact; test-only input admission, not click-to-photon or foreground/endurance qualification.",
+  "runs": [
+    {
+      "report": "reports\\runtime_performance\\20261101T031627687617Z_gameplay_contact_baseline",
+      "scope": "Exploratory; overlapping external Godot workloads; no impact prefetch or effects timer. Not a matched performance baseline.",
+      "report_sha256": "d3d6a00cee9c91a8497dfabad12df89ec656110f2d2988095b371899aa3d4d6e",
+      "frames_sha256": "3c8b9cc3a0840dcb8a7ff48f7e50e8c5f0f2bc9d4f3d879b896c38391b86a5cf",
+      "test_sha256": "25fcbc1024adac4eb26f40dae3703423287817bea1a79caf8ebc8228e65ec849",
+      "base_sha256": null,
+      "pack_sha256": null,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e636a4b1391115c6e3b94963d43f29bde2ca76ec2c48ecaa27e58080fbd3dd6b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "af30b3552562558461107219c57772a10aabfa1b0d4edf244a7288ba819537ce",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1a2453c4ae4fdbf9ce9083c55f968ef2cbe7021ac0337eb24ec49866f7019d8d",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "f861147200aba58c98a753b0f22a51eb8229ed304988b97106ae687be6c07066",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {},
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 5857,
+      "jumps": 22,
+      "distance_by_phase": {},
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 219.944,
+        "contact_us": 66054181,
+        "dispatch_us": 4434,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 66055763,
+          "after_worker_ms": 171.471,
+          "build_ms": 17.814,
+          "capture_wait_ms": 0.826,
+          "captured_us": 66054937,
+          "changed": true,
+          "collision_last_piece_ms": 0.122,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 592,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 219.188,
+          "draw_us": 66274125,
+          "field_ms": 0.479,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 198.722,
+          "publish_us": 66253659,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.154,
+          "worker_queue_ms": 6.47
+        },
+        "started_us": 65222714,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 52.5835,
+        "p95": 65.487,
+        "p99": 219.944,
+        "maximum": 219.944
+      },
+      "effects_dispatch_us": null,
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 458,
+            "mean": 17.4657,
+            "p95": 23.036,
+            "p99": 26.272,
+            "maximum": 37.894
+          },
+          "process_ms": {
+            "samples": 458,
+            "mean": 3.7935,
+            "p95": 7.039,
+            "p99": 9.033,
+            "maximum": 9.8
+          },
+          "gpu_ms": {
+            "samples": 458,
+            "mean": 7.1362,
+            "p95": 7.85799980163574,
+            "p99": 8.22700023651123,
+            "maximum": 8.48200035095215
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 736,
+            "mean": 19.1311,
+            "p95": 28.051,
+            "p99": 34.286,
+            "maximum": 191.002
+          },
+          "process_ms": {
+            "samples": 736,
+            "mean": 5.7055,
+            "p95": 9.589,
+            "p99": 15.173,
+            "maximum": 170.466
+          },
+          "gpu_ms": {
+            "samples": 736,
+            "mean": 5.3535,
+            "p95": 6.46299982070923,
+            "p99": 7.03999996185303,
+            "maximum": 7.56899976730347
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 693,
+            "mean": 21.6496,
+            "p95": 39.056,
+            "p99": 64.292,
+            "maximum": 77.549
+          },
+          "process_ms": {
+            "samples": 693,
+            "mean": 5.7722,
+            "p95": 12.814,
+            "p99": 20.547,
+            "maximum": 27.12
+          },
+          "gpu_ms": {
+            "samples": 693,
+            "mean": 7.4049,
+            "p95": 9.31099987030029,
+            "p99": 10.3850002288818,
+            "maximum": 11.1709995269775
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 890,
+            "mean": 16.8524,
+            "p95": 24.353,
+            "p99": 32.542,
+            "maximum": 41.556
+          },
+          "process_ms": {
+            "samples": 890,
+            "mean": 3.7655,
+            "p95": 7.733,
+            "p99": 11.861,
+            "maximum": 16.484
+          },
+          "gpu_ms": {
+            "samples": 890,
+            "mean": 7.4419,
+            "p95": 9.4060001373291,
+            "p99": 10.0699996948242,
+            "maximum": 10.8839998245239
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 830,
+            "mean": 16.88,
+            "p95": 21.504,
+            "p99": 26.466,
+            "maximum": 34.825
+          },
+          "process_ms": {
+            "samples": 830,
+            "mean": 4.1697,
+            "p95": 7.809,
+            "p99": 12.719,
+            "maximum": 17.891
+          },
+          "gpu_ms": {
+            "samples": 830,
+            "mean": 5.3753,
+            "p95": 6.40999984741211,
+            "p99": 6.81300020217896,
+            "maximum": 9.50399971008301
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 895,
+            "mean": 16.7756,
+            "p95": 23.877,
+            "p99": 29.71,
+            "maximum": 34.935
+          },
+          "process_ms": {
+            "samples": 895,
+            "mean": 4.0216,
+            "p95": 8.515,
+            "p99": 11.109,
+            "maximum": 14.558
+          },
+          "gpu_ms": {
+            "samples": 895,
+            "mean": 7.1099,
+            "p95": 9.34099960327148,
+            "p99": 10.3249998092651,
+            "maximum": 11.9680004119873
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 877,
+            "mean": 16.6643,
+            "p95": 21.432,
+            "p99": 26.581,
+            "maximum": 33.03
+          },
+          "process_ms": {
+            "samples": 877,
+            "mean": 3.4832,
+            "p95": 6.78,
+            "p99": 9.646,
+            "maximum": 15.545
+          },
+          "gpu_ms": {
+            "samples": 877,
+            "mean": 5.9962,
+            "p95": 6.9980001449585,
+            "p99": 8.33100032806396,
+            "maximum": 8.66300010681152
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 478,
+            "mean": 16.7345,
+            "p95": 20.889,
+            "p99": 26.298,
+            "maximum": 33.508
+          },
+          "process_ms": {
+            "samples": 478,
+            "mean": 2.4712,
+            "p95": 4.529,
+            "p99": 6.324,
+            "maximum": 8.129
+          },
+          "gpu_ms": {
+            "samples": 478,
+            "mean": 7.7346,
+            "p95": 8.53299999237061,
+            "p99": 8.8430004119873,
+            "maximum": 9.34799957275391
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 507,
+          "phase": "mining_idle",
+          "frame_ms": 191.002,
+          "before_process_ms": 6.438,
+          "process_ms": 170.466,
+          "draw_ms": 14.098,
+          "gpu_ms": 4.77199983596802,
+          "stages_ms": {
+            "world process": 2.624,
+            "controller process": 2.363,
+            "base controller": 2.038,
+            "zombie update": 0.478,
+            "player physics": 0.236,
+            "world vehicle": 0.185,
+            "zombie intent": 0.18,
+            "zombie residency": 0.176,
+            "notice panel sync": 0.07,
+            "actor update": 0.068
+          }
+        },
+        {
+          "frame": 1337,
+          "phase": "walking",
+          "frame_ms": 77.549,
+          "before_process_ms": 43.451,
+          "process_ms": 12.473,
+          "draw_ms": 21.625,
+          "gpu_ms": 7.15700006484985,
+          "stages_ms": {
+            "zombie update": 9.526,
+            "staging frame": 5.442,
+            "prepared subtree attach": 4.32,
+            "player physics": 4.264,
+            "receive": 3.846,
+            "receive surface_batch": 3.263,
+            "zombie intent": 1.143,
+            "zombie planning": 0.786,
+            "mesh upload/create": 0.583,
+            "receive mesh": 0.465
+          }
+        },
+        {
+          "frame": 1231,
+          "phase": "walking",
+          "frame_ms": 76.852,
+          "before_process_ms": 27.755,
+          "process_ms": 21.73,
+          "draw_ms": 27.367,
+          "gpu_ms": 7.53800010681152,
+          "stages_ms": {
+            "receive": 10.01,
+            "receive surface_batch": 8.91,
+            "retire collision/mesh": 4.484,
+            "staging frame": 2.944,
+            "player physics": 1.776,
+            "prepared subtree attach": 1.728,
+            "zombie update": 1.646,
+            "mesh upload/create": 0.738,
+            "world process": 0.457,
+            "controller process": 0.304
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3809755136,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507233792,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "report": "reports\\runtime_performance\\20261101T032652865292Z_gameplay_effects_prepared",
+      "scope": "Prepared source before civic integration; no competing Godot.",
+      "report_sha256": "11b5234f1476370676432c563d391687e049f513fb0ba23809ed3bac7f90dfd3",
+      "frames_sha256": "ff6809b688e56a435289e47162646e62fb236a7db4366c588deb687465da92a1",
+      "test_sha256": "6f20e915f4883dd3034064eb21cca85b6ae447e99336dc9bf5d2e0fc6533b235",
+      "base_sha256": null,
+      "pack_sha256": null,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "f90a4776b2a10311ea4fc1d0677cbabd40b0763ecb8aadf492d11c54cf33d75d",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eeb13d6685907c69e8f60de6d0465e6e1de482e625d9688714bfa60caecfb41d",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e636a4b1391115c6e3b94963d43f29bde2ca76ec2c48ecaa27e58080fbd3dd6b",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "af30b3552562558461107219c57772a10aabfa1b0d4edf244a7288ba819537ce",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "1a2453c4ae4fdbf9ce9083c55f968ef2cbe7021ac0337eb24ec49866f7019d8d",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "f861147200aba58c98a753b0f22a51eb8229ed304988b97106ae687be6c07066",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": false,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": false,
+        "recovery_frame_p99_20ms_max_50ms": false
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 6000,
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0,
+        "jumping": 160.004793792963,
+        "mining_after_jump": 2.32482634484768,
+        "mining_after_run": 0.285756886005402,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0,
+        "sprinting": 149.011906348169,
+        "walking": 82.6889992803335
+      },
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 30.826,
+        "contact_us": 64029180,
+        "dispatch_us": 2380,
+        "effects_us": 1926,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 64030243,
+          "after_worker_ms": 8.468,
+          "build_ms": 7.801,
+          "capture_wait_ms": 0.718,
+          "captured_us": 64029525,
+          "changed": true,
+          "collision_last_piece_ms": 0.077,
+          "collision_match_last_ms": 0,
+          "collision_pieces_built_total": 609,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 30.481,
+          "draw_us": 64060006,
+          "field_ms": 0.07,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 18.075,
+          "publish_us": 64047600,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.081,
+          "worker_queue_ms": 0.108
+        },
+        "started_us": 63199381,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 24.9446,
+        "p95": 30.826,
+        "p99": 31.519,
+        "maximum": 31.519
+      },
+      "effects_dispatch_us": {
+        "samples": 24,
+        "mean": 186,
+        "p95": 271,
+        "p99": 1926,
+        "maximum": 1926
+      },
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.6504,
+            "p95": 21.364,
+            "p99": 26.161,
+            "maximum": 30.188
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.7364,
+            "p95": 5.062,
+            "p99": 7.631,
+            "maximum": 10.099
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 7.0365,
+            "p95": 7.52600002288818,
+            "p99": 7.83699989318848,
+            "maximum": 8.00500011444092
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6601,
+            "p95": 19.92,
+            "p99": 23.384,
+            "maximum": 25.921
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.5703,
+            "p95": 5.375,
+            "p99": 7.384,
+            "maximum": 11.842
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.4593,
+            "p95": 6.37400007247925,
+            "p99": 6.66099977493286,
+            "maximum": 7.09700012207031
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 899,
+            "mean": 16.6802,
+            "p95": 21.46,
+            "p99": 27.52,
+            "maximum": 37.01
+          },
+          "process_ms": {
+            "samples": 899,
+            "mean": 2.5976,
+            "p95": 5.686,
+            "p99": 9.543,
+            "maximum": 21.92
+          },
+          "gpu_ms": {
+            "samples": 899,
+            "mean": 7.028,
+            "p95": 8.84000015258789,
+            "p99": 9.72799968719482,
+            "maximum": 12.3730001449585
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.669,
+            "p95": 21.409,
+            "p99": 26.728,
+            "maximum": 36.772
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.9803,
+            "p95": 6.224,
+            "p99": 9.232,
+            "maximum": 18.016
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 7.1612,
+            "p95": 8.78899955749512,
+            "p99": 9.35499954223633,
+            "maximum": 9.79399967193604
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6641,
+            "p95": 19.595,
+            "p99": 22.589,
+            "maximum": 27.793
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.6761,
+            "p95": 5.202,
+            "p99": 7.483,
+            "maximum": 11.076
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.4895,
+            "p95": 6.31699991226196,
+            "p99": 6.74599981307983,
+            "maximum": 9.09200000762939
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.6717,
+            "p95": 21.814,
+            "p99": 27.866,
+            "maximum": 38.264
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 3.2294,
+            "p95": 6.694,
+            "p99": 10.705,
+            "maximum": 16.892
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 7.0065,
+            "p95": 9.24600028991699,
+            "p99": 9.92300033569336,
+            "maximum": 11.2760000228882
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 879,
+            "mean": 16.6624,
+            "p95": 19.559,
+            "p99": 22.074,
+            "maximum": 27.499
+          },
+          "process_ms": {
+            "samples": 879,
+            "mean": 2.6078,
+            "p95": 5.111,
+            "p99": 7.281,
+            "maximum": 11.982
+          },
+          "gpu_ms": {
+            "samples": 879,
+            "mean": 6.0259,
+            "p95": 7.08199977874756,
+            "p99": 8.3120002746582,
+            "maximum": 9.10599994659424
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 261,
+            "mean": 16.688,
+            "p95": 19.6,
+            "p99": 23.445,
+            "maximum": 27.307
+          },
+          "process_ms": {
+            "samples": 261,
+            "mean": 2.3356,
+            "p95": 4.466,
+            "p99": 5.562,
+            "maximum": 7.545
+          },
+          "gpu_ms": {
+            "samples": 261,
+            "mean": 7.6387,
+            "p95": 8.18000030517578,
+            "p99": 8.41699981689453,
+            "maximum": 8.83300018310547
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 4188,
+          "phase": "jumping",
+          "frame_ms": 38.264,
+          "before_process_ms": 10.759,
+          "process_ms": 16.892,
+          "draw_ms": 10.613,
+          "gpu_ms": 6.33199977874756,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "stages_ms": {
+            "staging frame": 6.054,
+            "receive": 5.021,
+            "receive surface_batch": 4.851,
+            "prepared subtree attach": 4.652,
+            "world process": 0.835,
+            "controller process": 0.648,
+            "mesh upload/create": 0.6,
+            "collision piece": 0.593,
+            "world pickups": 0.501,
+            "zombie update": 0.464
+          }
+        },
+        {
+          "frame": 1964,
+          "phase": "walking",
+          "frame_ms": 37.01,
+          "before_process_ms": 12.132,
+          "process_ms": 1.83,
+          "draw_ms": 23.048,
+          "gpu_ms": 5.05999994277954,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 68,
+          "stages_ms": {
+            "zombie update": 0.29,
+            "player physics": 0.164,
+            "world process": 0.151,
+            "zombie residency": 0.112,
+            "zombie intent": 0.103,
+            "lighting schedule": 0.091,
+            "controller process": 0.06,
+            "zombie interest_spacing": 0.026,
+            "actor update": 0.024,
+            "world interaction": 0.015
+          }
+        },
+        {
+          "frame": 2954,
+          "phase": "sprinting",
+          "frame_ms": 36.772,
+          "before_process_ms": 11.933,
+          "process_ms": 18.016,
+          "draw_ms": 6.823,
+          "gpu_ms": 7.68300008773804,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "stages_ms": {
+            "staging frame": 2.415,
+            "prepared subtree attach": 1.726,
+            "zombie update": 0.385,
+            "world process": 0.352,
+            "collision piece": 0.316,
+            "mesh upload/create": 0.24,
+            "player physics": 0.233,
+            "collision node attach": 0.224,
+            "controller process": 0.155,
+            "zombie residency": 0.146
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3827589120,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507266560,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "report": "reports\\runtime_performance\\20261101T034519177638Z_gameplay_original_control",
+      "scope": "Uncontended original-effects source control after integration; candidate effects patch temporarily reversed and restored.",
+      "report_sha256": "2a1f84730c94c59962745fadf9b9d1850e2dfa5d6cde497e69ea9a2a6272c54a",
+      "frames_sha256": "4beec99ea9150c6c1b056d526b1b4ae7a33e9074774f60d32a9c93b32989904a",
+      "test_sha256": "6f20e915f4883dd3034064eb21cca85b6ae447e99336dc9bf5d2e0fc6533b235",
+      "base_sha256": null,
+      "pack_sha256": null,
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3f65e3dbf5ab1b04d4e5e7e3fcb82bf00519ecee4534f0625c453492d7d4a0e6",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "776b07d396d50b1105ccbbcf7c7b4023b75fcf3f9a4ea048f62cdb5b35417cac",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3841935727a4fbda194bacbb538d9276c22ebab1b7600395ec6f3c708f40edca",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": false,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": false,
+        "recovery_frame_p99_20ms_max_50ms": false
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 6000,
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0,
+        "jumping": 160.159226387739,
+        "mining_after_jump": 2.30788940191269,
+        "mining_after_run": 0.238424122333527,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0,
+        "sprinting": 149.010242842138,
+        "walking": 82.7815694734454
+      },
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 88.438,
+        "contact_us": 57073131,
+        "dispatch_us": 2181,
+        "effects_us": 62407,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 57073958,
+          "after_worker_ms": 66.809,
+          "build_ms": 7.923,
+          "capture_wait_ms": 0.538,
+          "captured_us": 57073420,
+          "changed": true,
+          "collision_last_piece_ms": 0.069,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 569,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 88.149,
+          "draw_us": 57161569,
+          "field_ms": 0.072,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 79.399,
+          "publish_us": 57152819,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.084,
+          "worker_queue_ms": 3.235
+        },
+        "started_us": 56239609,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 29.3756,
+        "p95": 58.023,
+        "p99": 88.438,
+        "maximum": 88.438
+      },
+      "effects_dispatch_us": {
+        "samples": 24,
+        "mean": 2695.4583,
+        "p95": 135,
+        "p99": 62407,
+        "maximum": 62407
+      },
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.6432,
+            "p95": 20.036,
+            "p99": 23.644,
+            "maximum": 29.46
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.5338,
+            "p95": 4.416,
+            "p99": 7.085,
+            "maximum": 10.353
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 7.0005,
+            "p95": 7.49399995803833,
+            "p99": 7.75500011444092,
+            "maximum": 8.00300025939941
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 838,
+            "mean": 16.717,
+            "p95": 19.562,
+            "p99": 22.845,
+            "maximum": 86.22
+          },
+          "process_ms": {
+            "samples": 838,
+            "mean": 2.6182,
+            "p95": 4.89,
+            "p99": 7.952,
+            "maximum": 67.611
+          },
+          "gpu_ms": {
+            "samples": 838,
+            "mean": 5.4459,
+            "p95": 6.27699995040894,
+            "p99": 6.60900020599365,
+            "maximum": 7.85799980163574
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.676,
+            "p95": 20.26,
+            "p99": 23.885,
+            "maximum": 52.154
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.5008,
+            "p95": 5.196,
+            "p99": 6.653,
+            "maximum": 11.179
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.8553,
+            "p95": 8.43599987030029,
+            "p99": 10.2919998168945,
+            "maximum": 11.6339998245239
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 896,
+            "mean": 16.7494,
+            "p95": 21.783,
+            "p99": 27.146,
+            "maximum": 101.424
+          },
+          "process_ms": {
+            "samples": 896,
+            "mean": 2.8927,
+            "p95": 5.879,
+            "p99": 8.998,
+            "maximum": 13.454
+          },
+          "gpu_ms": {
+            "samples": 896,
+            "mean": 6.9992,
+            "p95": 8.38700008392334,
+            "p99": 8.79199981689453,
+            "maximum": 9.80799961090088
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6652,
+            "p95": 18.896,
+            "p99": 21.428,
+            "maximum": 25.183
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.4641,
+            "p95": 4.618,
+            "p99": 7.258,
+            "maximum": 12.534
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.5144,
+            "p95": 6.32800006866455,
+            "p99": 6.72399997711182,
+            "maximum": 8.79199981689453
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 896,
+            "mean": 16.7434,
+            "p95": 21.507,
+            "p99": 27.505,
+            "maximum": 42.003
+          },
+          "process_ms": {
+            "samples": 896,
+            "mean": 3.1024,
+            "p95": 6.269,
+            "p99": 9.793,
+            "maximum": 15.025
+          },
+          "gpu_ms": {
+            "samples": 896,
+            "mean": 6.8076,
+            "p95": 8.89700031280518,
+            "p99": 10.2480001449585,
+            "maximum": 11.5629997253418
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 878,
+            "mean": 16.6611,
+            "p95": 19.131,
+            "p99": 22.176,
+            "maximum": 25.607
+          },
+          "process_ms": {
+            "samples": 878,
+            "mean": 2.6246,
+            "p95": 4.641,
+            "p99": 7.459,
+            "maximum": 9.611
+          },
+          "gpu_ms": {
+            "samples": 878,
+            "mean": 5.9387,
+            "p95": 6.85699987411499,
+            "p99": 7.92700004577637,
+            "maximum": 8.67899990081787
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 271,
+            "mean": 16.6892,
+            "p95": 19.831,
+            "p99": 26.7,
+            "maximum": 42.423
+          },
+          "process_ms": {
+            "samples": 271,
+            "mean": 2.5241,
+            "p95": 5.006,
+            "p99": 7.045,
+            "maximum": 9.54
+          },
+          "gpu_ms": {
+            "samples": 271,
+            "mean": 7.5344,
+            "p95": 8.06099987030029,
+            "p99": 8.41499996185303,
+            "maximum": 8.81799983978271
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 2784,
+          "phase": "sprinting",
+          "frame_ms": 101.424,
+          "before_process_ms": 91.928,
+          "process_ms": 5.707,
+          "draw_ms": 3.789,
+          "gpu_ms": 6.15199995040894,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "stages_ms": {
+            "zombie update": 81.892,
+            "zombie population": 81.64,
+            "staging frame": 2.067,
+            "prepared subtree attach": 1.407,
+            "receive": 1.373,
+            "receive surface_batch": 1.244,
+            "mesh upload/create": 0.312,
+            "player physics": 0.243,
+            "collision piece": 0.219,
+            "world process": 0.144
+          }
+        },
+        {
+          "frame": 531,
+          "phase": "mining_idle",
+          "frame_ms": 86.22,
+          "before_process_ms": 11.189,
+          "process_ms": 67.611,
+          "draw_ms": 7.42,
+          "gpu_ms": 5.09800004959106,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 61,
+          "stages_ms": {
+            "retire collision/mesh": 0.677,
+            "zombie update": 0.306,
+            "world process": 0.159,
+            "player physics": 0.15,
+            "zombie residency": 0.121,
+            "zombie intent": 0.109,
+            "controller process": 0.079,
+            "notice panel sync": 0.048,
+            "actor update": 0.041,
+            "zombie interest_spacing": 0.024
+          }
+        },
+        {
+          "frame": 1879,
+          "phase": "walking",
+          "frame_ms": 52.154,
+          "before_process_ms": 45.634,
+          "process_ms": 3.049,
+          "draw_ms": 3.471,
+          "gpu_ms": 6.08199977874756,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 66,
+          "stages_ms": {
+            "zombie update": 32.275,
+            "zombie population": 32.029,
+            "world process": 0.908,
+            "controller process": 0.808,
+            "base controller": 0.412,
+            "player physics": 0.288,
+            "world vehicle": 0.275,
+            "lighting schedule": 0.141,
+            "zombie residency": 0.1,
+            "zombie intent": 0.088
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3821588480,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507233792,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "report": "reports\\runtime_performance\\20261101T035133013465Z_gameplay_prepared_pack",
+      "scope": "First installed candidate; trace capped at 6000 during recovery; all 24 contacts retained. Large unexplained sprint stall retained.",
+      "report_sha256": "a6c0d1be8c3a062c8cba2275bfba79fa41017be5ec33b90766a31df1aa55e564",
+      "frames_sha256": "179ad228a55917000a25490dbb659b9301d5dd75f2d58b1585469614efdd645d",
+      "test_sha256": "6f20e915f4883dd3034064eb21cca85b6ae447e99336dc9bf5d2e0fc6533b235",
+      "base_sha256": "a84bdc7a8c05790e8dacb3be39161f4b6fb4ee4b62fa4f0dd12f29c06d34ddb2",
+      "pack_sha256": "bd5f92464806a01e44e236a3142014933dc7ffa9aa3b61279684b62b7ae7a174",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3f65e3dbf5ab1b04d4e5e7e3fcb82bf00519ecee4534f0625c453492d7d4a0e6",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "776b07d396d50b1105ccbbcf7c7b4023b75fcf3f9a4ea048f62cdb5b35417cac",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3841935727a4fbda194bacbb538d9276c22ebab1b7600395ec6f3c708f40edca",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": false,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": false,
+        "recovery_frame_p99_20ms_max_50ms": false
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 6000,
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0,
+        "jumping": 159.984459504485,
+        "mining_after_jump": 2.9429102987051,
+        "mining_after_run": 0.211864963173866,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0,
+        "sprinting": 147.030846662819,
+        "walking": 82.7815694883466
+      },
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 42.493,
+        "contact_us": 50189941,
+        "dispatch_us": 1521,
+        "effects_us": 238,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 50190247,
+          "after_worker_ms": 8.246,
+          "build_ms": 15.869,
+          "capture_wait_ms": 0.057,
+          "captured_us": 50190190,
+          "changed": true,
+          "collision_last_piece_ms": 0.242,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 577,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 42.244,
+          "draw_us": 50232434,
+          "field_ms": 0.099,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 31.278,
+          "publish_us": 50221468,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.094,
+          "worker_queue_ms": 6.051
+        },
+        "started_us": 49354857,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 27.3739,
+        "p95": 41.16,
+        "p99": 42.493,
+        "maximum": 42.493
+      },
+      "effects_dispatch_us": {
+        "samples": 24,
+        "mean": 114.6667,
+        "p95": 156,
+        "p99": 238,
+        "maximum": 238
+      },
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.6402,
+            "p95": 19.927,
+            "p99": 25.322,
+            "maximum": 32.445
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.5691,
+            "p95": 4.554,
+            "p99": 6.23,
+            "maximum": 17.83
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 7.1492,
+            "p95": 7.78800010681152,
+            "p99": 8.07900047302246,
+            "maximum": 8.28699970245361
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6635,
+            "p95": 19.841,
+            "p99": 22.507,
+            "maximum": 30.025
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.7079,
+            "p95": 5.439,
+            "p99": 7.74,
+            "maximum": 11.371
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.3291,
+            "p95": 6.26599979400635,
+            "p99": 6.69199991226196,
+            "maximum": 7.26399993896484
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 899,
+            "mean": 16.6969,
+            "p95": 20.475,
+            "p99": 23.513,
+            "maximum": 63.871
+          },
+          "process_ms": {
+            "samples": 899,
+            "mean": 2.5936,
+            "p95": 5.374,
+            "p99": 7.393,
+            "maximum": 13.373
+          },
+          "gpu_ms": {
+            "samples": 899,
+            "mean": 6.966,
+            "p95": 8.60599994659424,
+            "p99": 10.5530004501343,
+            "maximum": 11.7080001831055
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 880,
+            "mean": 17.048,
+            "p95": 21.466,
+            "p99": 27.17,
+            "maximum": 370.927
+          },
+          "process_ms": {
+            "samples": 880,
+            "mean": 2.7427,
+            "p95": 5.81,
+            "p99": 8.206,
+            "maximum": 10.521
+          },
+          "gpu_ms": {
+            "samples": 880,
+            "mean": 7.0523,
+            "p95": 8.55500030517578,
+            "p99": 9.06700038909912,
+            "maximum": 10.1359996795654
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6666,
+            "p95": 18.983,
+            "p99": 21.787,
+            "maximum": 24.798
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.5787,
+            "p95": 4.744,
+            "p99": 7.298,
+            "maximum": 9.637
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.5262,
+            "p95": 6.29099988937378,
+            "p99": 6.59299993515015,
+            "maximum": 8.35700035095215
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 899,
+            "mean": 16.6823,
+            "p95": 21.574,
+            "p99": 25.432,
+            "maximum": 31.601
+          },
+          "process_ms": {
+            "samples": 899,
+            "mean": 3.1003,
+            "p95": 6.486,
+            "p99": 10.046,
+            "maximum": 12.406
+          },
+          "gpu_ms": {
+            "samples": 899,
+            "mean": 6.8359,
+            "p95": 8.91699981689453,
+            "p99": 10.9650001525879,
+            "maximum": 11.9409999847412
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 879,
+            "mean": 16.6613,
+            "p95": 18.945,
+            "p99": 22.354,
+            "maximum": 27.908
+          },
+          "process_ms": {
+            "samples": 879,
+            "mean": 2.5028,
+            "p95": 4.639,
+            "p99": 7.549,
+            "maximum": 9.005
+          },
+          "gpu_ms": {
+            "samples": 879,
+            "mean": 5.9577,
+            "p95": 7.10300016403198,
+            "p99": 8.29100036621094,
+            "maximum": 8.98400020599365
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 282,
+            "mean": 16.6788,
+            "p95": 19.75,
+            "p99": 23.837,
+            "maximum": 28.112
+          },
+          "process_ms": {
+            "samples": 282,
+            "mean": 2.4367,
+            "p95": 4.813,
+            "p99": 6.179,
+            "maximum": 7.973
+          },
+          "gpu_ms": {
+            "samples": 282,
+            "mean": 7.9905,
+            "p95": 8.76700019836426,
+            "p99": 9.2480001449585,
+            "maximum": 9.52000045776367
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 2410,
+          "phase": "sprinting",
+          "frame_ms": 370.927,
+          "before_process_ms": 357.876,
+          "process_ms": 6.943,
+          "draw_ms": 6.108,
+          "gpu_ms": 8.2189998626709,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "stages_ms": {
+            "zombie update": 3.54,
+            "player physics": 1.945,
+            "staging frame": 1.796,
+            "prepared subtree attach": 1.017,
+            "LOD schedule/cut/evict": 0.84,
+            "LOD requests": 0.827,
+            "world process": 0.536,
+            "mesh upload/create": 0.447,
+            "controller process": 0.397,
+            "actor update": 0.305
+          }
+        },
+        {
+          "frame": 1883,
+          "phase": "walking",
+          "frame_ms": 63.871,
+          "before_process_ms": 56.834,
+          "process_ms": 2.606,
+          "draw_ms": 4.431,
+          "gpu_ms": 6.21199989318848,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 66,
+          "stages_ms": {
+            "zombie update": 42.468,
+            "zombie population": 42.225,
+            "LOD schedule/cut/evict": 0.942,
+            "LOD requests": 0.926,
+            "player physics": 0.483,
+            "world process": 0.149,
+            "zombie residency": 0.1,
+            "zombie intent": 0.087,
+            "lighting schedule": 0.082,
+            "actor update": 0.07
+          }
+        },
+        {
+          "frame": 2349,
+          "phase": "sprinting",
+          "frame_ms": 37.573,
+          "before_process_ms": 30.071,
+          "process_ms": 1.596,
+          "draw_ms": 5.906,
+          "gpu_ms": 7.29400014877319,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "stages_ms": {
+            "zombie update": 19.586,
+            "zombie population": 19.345,
+            "player physics": 0.229,
+            "world process": 0.142,
+            "lighting schedule": 0.104,
+            "zombie residency": 0.101,
+            "zombie intent": 0.08,
+            "controller process": 0.064,
+            "actor update": 0.035,
+            "world interaction": 0.017
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3829805056,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507233792,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "report": "reports\\runtime_performance\\20261101T040201346563Z_gameplay_prepared_pack_repeat",
+      "scope": "Full 6193-frame installed repeat with physics signal intervals. Retains 107.783 ms sprint and 80.405 ms jumping stalls.",
+      "report_sha256": "442234405c71045dbbbe36f987707b1454a630859c5c0ea765f2260b6091f2d8",
+      "frames_sha256": "3fa7a9ad4e8d55cff7ca727e8b6fe2e60d42066901b43f5a7b74fc394d046b29",
+      "test_sha256": "73b98ba6c0e03ba39971ea1f70f4621487235f35f6b21ee6fae0372507a9f5d7",
+      "base_sha256": "d5d669f8726096725cfaa56794afa768ecc88e9f2c02be97fdae1bac52f7a48b",
+      "pack_sha256": "bd5f92464806a01e44e236a3142014933dc7ffa9aa3b61279684b62b7ae7a174",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3f65e3dbf5ab1b04d4e5e7e3fcb82bf00519ecee4534f0625c453492d7d4a0e6",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "776b07d396d50b1105ccbbcf7c7b4023b75fcf3f9a4ea048f62cdb5b35417cac",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3841935727a4fbda194bacbb538d9276c22ebab1b7600395ec6f3c708f40edca",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": false,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": false,
+        "recovery_frame_p99_20ms_max_50ms": false
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 6193,
+      "jumps": 21,
+      "distance_by_phase": {
+        "idle": 0,
+        "jumping": 159.910910159349,
+        "mining_after_jump": 2.52859646081924,
+        "mining_after_run": 0.238424122333527,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0,
+        "sprinting": 149.177103869617,
+        "walking": 82.6889992803335
+      },
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 39.058,
+        "contact_us": 51454318,
+        "dispatch_us": 2626,
+        "effects_us": 2611,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 51455389,
+          "after_worker_ms": 14.591,
+          "build_ms": 10.485,
+          "capture_wait_ms": 0.794,
+          "captured_us": 51454595,
+          "changed": true,
+          "collision_last_piece_ms": 0.045,
+          "collision_match_last_ms": 0.007,
+          "collision_pieces_built_total": 598,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 38.781,
+          "draw_us": 51493376,
+          "field_ms": 0.067,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 30.722,
+          "publish_us": 51485317,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.142,
+          "worker_queue_ms": 3.785
+        },
+        "started_us": 50620708,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 25.5962,
+        "p95": 37.832,
+        "p99": 39.058,
+        "maximum": 39.058
+      },
+      "effects_dispatch_us": {
+        "samples": 24,
+        "mean": 217,
+        "p95": 338,
+        "p99": 2611,
+        "maximum": 2611
+      },
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.6455,
+            "p95": 20.256,
+            "p99": 23.406,
+            "maximum": 27.474
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.4713,
+            "p95": 4.557,
+            "p99": 5.476,
+            "maximum": 8.814
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 6.8547,
+            "p95": 7.39699983596802,
+            "p99": 7.75799989700317,
+            "maximum": 8.10999965667725
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6629,
+            "p95": 19.444,
+            "p99": 22.171,
+            "maximum": 28.512
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.6454,
+            "p95": 5.291,
+            "p99": 7.319,
+            "maximum": 12.416
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.3411,
+            "p95": 6.20900011062622,
+            "p99": 7.03900003433228,
+            "maximum": 7.44099998474121
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.6671,
+            "p95": 20.237,
+            "p99": 23.164,
+            "maximum": 26.072
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.4748,
+            "p95": 5.236,
+            "p99": 7.299,
+            "maximum": 12.991
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.8877,
+            "p95": 8.92800045013428,
+            "p99": 10.3529996871948,
+            "maximum": 11.8690004348755
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 896,
+            "mean": 16.7568,
+            "p95": 22.243,
+            "p99": 26.297,
+            "maximum": 107.783
+          },
+          "process_ms": {
+            "samples": 896,
+            "mean": 2.9591,
+            "p95": 6.284,
+            "p99": 9.652,
+            "maximum": 11.473
+          },
+          "gpu_ms": {
+            "samples": 896,
+            "mean": 6.9855,
+            "p95": 8.51799964904785,
+            "p99": 9.13099956512451,
+            "maximum": 9.72500038146973
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6658,
+            "p95": 19.144,
+            "p99": 22.317,
+            "maximum": 25.174
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.6444,
+            "p95": 4.743,
+            "p99": 7.506,
+            "maximum": 10.816
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.5403,
+            "p95": 6.36299991607666,
+            "p99": 6.76599979400635,
+            "maximum": 7.73799991607666
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 877,
+            "mean": 17.1019,
+            "p95": 22.405,
+            "p99": 38.637,
+            "maximum": 80.405
+          },
+          "process_ms": {
+            "samples": 877,
+            "mean": 3.5359,
+            "p95": 7.106,
+            "p99": 12.584,
+            "maximum": 21.634
+          },
+          "gpu_ms": {
+            "samples": 877,
+            "mean": 6.853,
+            "p95": 9.22299957275391,
+            "p99": 10.2360000610352,
+            "maximum": 11.8219995498657
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 879,
+            "mean": 16.6722,
+            "p95": 20.026,
+            "p99": 24.155,
+            "maximum": 28.771
+          },
+          "process_ms": {
+            "samples": 879,
+            "mean": 2.7088,
+            "p95": 5.258,
+            "p99": 7.609,
+            "maximum": 9.978
+          },
+          "gpu_ms": {
+            "samples": 879,
+            "mean": 6.0803,
+            "p95": 7.53200006484985,
+            "p99": 8.42000007629395,
+            "maximum": 9.3100004196167
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.6781,
+            "p95": 18.725,
+            "p99": 23.151,
+            "maximum": 36.027
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 2.0991,
+            "p95": 4.29,
+            "p99": 5.713,
+            "maximum": 7.967
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 7.5409,
+            "p95": 8.06999969482422,
+            "p99": 8.34000015258789,
+            "maximum": 8.44900035858154
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 2683,
+          "phase": "sprinting",
+          "frame_ms": 107.783,
+          "before_process_ms": 101.881,
+          "process_ms": 2.112,
+          "draw_ms": 3.79,
+          "gpu_ms": 7.26399993896484,
+          "physics_steps": 1,
+          "first_physics_offset_ms": 10.124,
+          "physics_to_process_ms": 91.757,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": false,
+          "stages_ms": {
+            "zombie update": 87.968,
+            "zombie population": 87.702,
+            "world process": 0.435,
+            "controller process": 0.35,
+            "world pickups": 0.285,
+            "player physics": 0.269,
+            "zombie residency": 0.104,
+            "zombie intent": 0.1,
+            "lighting schedule": 0.088,
+            "actor update": 0.061
+          }
+        },
+        {
+          "frame": 4789,
+          "phase": "jumping",
+          "frame_ms": 80.405,
+          "before_process_ms": 31.263,
+          "process_ms": 18.782,
+          "draw_ms": 30.36,
+          "gpu_ms": 7.94199991226196,
+          "physics_steps": 3,
+          "first_physics_offset_ms": 0.233,
+          "physics_to_process_ms": 31.03,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": false,
+          "stages_ms": {
+            "zombie update": 18.283,
+            "zombie population": 8.157,
+            "LOD schedule/cut/evict": 6.094,
+            "retire collision/mesh": 3.767,
+            "LOD coverage": 3.754,
+            "receive": 3.417,
+            "receive surface_batch": 3.261,
+            "LOD requests": 2.299,
+            "staging frame": 1.878,
+            "prepared subtree attach": 1.063
+          }
+        },
+        {
+          "frame": 4794,
+          "phase": "jumping",
+          "frame_ms": 60.388,
+          "before_process_ms": 11.186,
+          "process_ms": 17.556,
+          "draw_ms": 31.646,
+          "gpu_ms": 9.20899963378906,
+          "physics_steps": 2,
+          "first_physics_offset_ms": 0.291,
+          "physics_to_process_ms": 10.895,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": false,
+          "stages_ms": {
+            "receive": 3.03,
+            "receive surface_batch": 2.976,
+            "staging frame": 2.943,
+            "LOD schedule/cut/evict": 2.756,
+            "retire collision/mesh": 2.648,
+            "prepared subtree attach": 1.81,
+            "LOD requests": 1.536,
+            "LOD coverage": 1.187,
+            "zombie update": 0.874,
+            "world process": 0.724
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3855392768,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507233792,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    },
+    {
+      "report": "reports\\runtime_performance\\20261101T040831980730Z_gameplay_zombie_attribution",
+      "scope": "Full installed repeat with test-only readiness/navigation/water/visibility callback timers. Earlier large spikes do not recur; not evidence of their resolution.",
+      "report_sha256": "41ed4919478438a80729743f742d0ed25cddd9d3a4609f0022134fe18db30804",
+      "frames_sha256": "376aae5318312565574c10c9f275681177738fcdf7d689096f690fc16f1f3711",
+      "test_sha256": "3bda8377b723bd96d47ff8b017a95350ea2bdfb6cf4e7335d68cb8927579aabc",
+      "base_sha256": "d5d669f8726096725cfaa56794afa768ecc88e9f2c02be97fdae1bac52f7a48b",
+      "pack_sha256": "bd5f92464806a01e44e236a3142014933dc7ffa9aa3b61279684b62b7ae7a174",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3f65e3dbf5ab1b04d4e5e7e3fcb82bf00519ecee4534f0625c453492d7d4a0e6",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "776b07d396d50b1105ccbbcf7c7b4023b75fcf3f9a4ea048f62cdb5b35417cac",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3841935727a4fbda194bacbb538d9276c22ebab1b7600395ec6f3c708f40edca",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+      },
+      "functional_pass": true,
+      "performance_pass": false,
+      "gates": {
+        "all_24_contacts_changed": true,
+        "physical_jumps": true,
+        "contact_to_draw_max_150ms": true,
+        "idle_frame_p99_20ms_max_50ms": false,
+        "walking_frame_p99_20ms_max_50ms": false,
+        "sprinting_frame_p99_20ms_max_50ms": false,
+        "jumping_frame_p99_20ms_max_50ms": false,
+        "mining_idle_frame_p99_20ms_max_50ms": false,
+        "mining_after_run_frame_p99_20ms_max_50ms": false,
+        "mining_after_jump_frame_p99_20ms_max_50ms": false,
+        "recovery_frame_p99_20ms_max_50ms": true
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true,
+      "adapter": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "viewport": "(1920, 1080)",
+      "frame_count": 6219,
+      "jumps": 22,
+      "distance_by_phase": {
+        "idle": 0,
+        "jumping": 160.187705233693,
+        "mining_after_jump": 2.19169035553932,
+        "mining_after_run": 0.265596210956573,
+        "mining_idle": 0.228664398193359,
+        "recovery": 0,
+        "sprinting": 149.34209934622,
+        "walking": 82.6890034601092
+      },
+      "failures": [],
+      "first_contact": {
+        "accepted": true,
+        "animation_seconds": 0.833333333333333,
+        "changed": true,
+        "contact_to_draw_ms": 25.967,
+        "contact_us": 47431634,
+        "dispatch_us": 1945,
+        "effects_us": 300,
+        "identity": 10000,
+        "kind": "terrain",
+        "phase": "mining_idle",
+        "point": "(779.6832, 49.08916, 1342.733)",
+        "publication": {
+          "accepted_us": 47431976,
+          "after_worker_ms": 5.577,
+          "build_ms": 9.371,
+          "capture_wait_ms": 0.069,
+          "captured_us": 47431907,
+          "changed": true,
+          "collision_last_piece_ms": 0.064,
+          "collision_match_last_ms": 0.001,
+          "collision_pieces_built_total": 607,
+          "collision_pieces_reused_total": 2,
+          "costs_shared_by_group": false,
+          "descriptor": {
+            "a": [
+              779.683227539063,
+              49.0891647338867,
+              1342.73254394531
+            ],
+            "add": false,
+            "b": [
+              779.681457519531,
+              48.7391929626465,
+              1342.728515625
+            ],
+            "command": 2,
+            "radius": 0.649999976158142,
+            "shape": 3
+          },
+          "draw_ms": 25.694,
+          "draw_us": 47457601,
+          "field_ms": 0.076,
+          "geometry_patches": 4,
+          "group_size": 1,
+          "member_index": 0,
+          "publish_ms": 16.369,
+          "publish_us": 47448276,
+          "ticket": 1,
+          "upload_last_piece_ms": 0.066,
+          "worker_queue_ms": 0.299
+        },
+        "started_us": 46597430,
+        "ticket": 1
+      },
+      "contact_to_draw_ms": {
+        "samples": 24,
+        "mean": 25.7349,
+        "p95": 37.139,
+        "p99": 40.029,
+        "maximum": 40.029
+      },
+      "effects_dispatch_us": {
+        "samples": 24,
+        "mean": 107.4167,
+        "p95": 167,
+        "p99": 300,
+        "maximum": 300
+      },
+      "phases": {
+        "idle": {
+          "frame_ms": {
+            "samples": 481,
+            "mean": 16.6421,
+            "p95": 20.338,
+            "p99": 24.619,
+            "maximum": 27.042
+          },
+          "process_ms": {
+            "samples": 481,
+            "mean": 2.4744,
+            "p95": 4.577,
+            "p99": 6.955,
+            "maximum": 9.021
+          },
+          "gpu_ms": {
+            "samples": 481,
+            "mean": 6.9071,
+            "p95": 7.55200004577637,
+            "p99": 7.89099979400635,
+            "maximum": 8.19400024414063
+          }
+        },
+        "mining_idle": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6644,
+            "p95": 19.277,
+            "p99": 22.072,
+            "maximum": 24.197
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.4971,
+            "p95": 4.952,
+            "p99": 7.215,
+            "maximum": 9.856
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.3782,
+            "p95": 6.19799995422363,
+            "p99": 6.76599979400635,
+            "maximum": 7.2519998550415
+          }
+        },
+        "walking": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.6683,
+            "p95": 19.832,
+            "p99": 23.826,
+            "maximum": 26.552
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 2.4068,
+            "p95": 4.832,
+            "p99": 6.634,
+            "maximum": 12.665
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.7796,
+            "p95": 8.20600032806396,
+            "p99": 11.0050001144409,
+            "maximum": 11.7329998016357
+          }
+        },
+        "sprinting": {
+          "frame_ms": {
+            "samples": 901,
+            "mean": 16.6654,
+            "p95": 21.244,
+            "p99": 25.128,
+            "maximum": 32.016
+          },
+          "process_ms": {
+            "samples": 901,
+            "mean": 2.8192,
+            "p95": 5.735,
+            "p99": 8.942,
+            "maximum": 12.625
+          },
+          "gpu_ms": {
+            "samples": 901,
+            "mean": 7.1619,
+            "p95": 9.33800029754639,
+            "p99": 10.0609998703003,
+            "maximum": 10.4770002365112
+          }
+        },
+        "mining_after_run": {
+          "frame_ms": {
+            "samples": 840,
+            "mean": 16.6647,
+            "p95": 18.999,
+            "p99": 21.799,
+            "maximum": 27.535
+          },
+          "process_ms": {
+            "samples": 840,
+            "mean": 2.586,
+            "p95": 4.863,
+            "p99": 7.598,
+            "maximum": 10.88
+          },
+          "gpu_ms": {
+            "samples": 840,
+            "mean": 5.4649,
+            "p95": 6.23099994659424,
+            "p99": 6.62799978256226,
+            "maximum": 9.19499969482422
+          }
+        },
+        "jumping": {
+          "frame_ms": {
+            "samples": 900,
+            "mean": 16.6722,
+            "p95": 21.415,
+            "p99": 26.22,
+            "maximum": 29.756
+          },
+          "process_ms": {
+            "samples": 900,
+            "mean": 3.0071,
+            "p95": 6.047,
+            "p99": 9.088,
+            "maximum": 11.823
+          },
+          "gpu_ms": {
+            "samples": 900,
+            "mean": 6.863,
+            "p95": 9.22999954223633,
+            "p99": 10.5640001296997,
+            "maximum": 12.0509996414185
+          }
+        },
+        "mining_after_jump": {
+          "frame_ms": {
+            "samples": 877,
+            "mean": 16.663,
+            "p95": 19.082,
+            "p99": 22.087,
+            "maximum": 31.634
+          },
+          "process_ms": {
+            "samples": 877,
+            "mean": 2.4638,
+            "p95": 4.746,
+            "p99": 7.018,
+            "maximum": 9.918
+          },
+          "gpu_ms": {
+            "samples": 877,
+            "mean": 6.0598,
+            "p95": 7.04099988937378,
+            "p99": 8.5930004119873,
+            "maximum": 9.21100044250488
+          }
+        },
+        "recovery": {
+          "frame_ms": {
+            "samples": 480,
+            "mean": 16.6719,
+            "p95": 18.007,
+            "p99": 19.016,
+            "maximum": 37.492
+          },
+          "process_ms": {
+            "samples": 480,
+            "mean": 1.8756,
+            "p95": 2.983,
+            "p99": 5.229,
+            "maximum": 5.864
+          },
+          "gpu_ms": {
+            "samples": 480,
+            "mean": 7.3776,
+            "p95": 7.91499996185303,
+            "p99": 7.97499990463257,
+            "maximum": 8.13099956512451
+          }
+        }
+      },
+      "largest_frames": [
+        {
+          "frame": 6056,
+          "phase": "recovery",
+          "frame_ms": 37.492,
+          "before_process_ms": 8.713,
+          "process_ms": 2.928,
+          "draw_ms": 25.851,
+          "gpu_ms": 7.33300018310547,
+          "physics_steps": 1,
+          "first_physics_offset_ms": 5.719,
+          "physics_to_process_ms": 2.994,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": true,
+          "stages_ms": {
+            "zombie update": 1.15,
+            "LOD schedule/cut/evict": 0.97,
+            "LOD requests": 0.948,
+            "zombie planning": 0.873,
+            "zombie callback water_depth": 0.246,
+            "world process": 0.194,
+            "zombie callback readiness": 0.148,
+            "lighting schedule": 0.134,
+            "player physics": 0.129,
+            "zombie residency": 0.118
+          }
+        },
+        {
+          "frame": 2887,
+          "phase": "sprinting",
+          "frame_ms": 32.016,
+          "before_process_ms": 12.79,
+          "process_ms": 10.495,
+          "draw_ms": 8.731,
+          "gpu_ms": 9.19099998474121,
+          "physics_steps": 1,
+          "first_physics_offset_ms": 8.445,
+          "physics_to_process_ms": 4.345,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": true,
+          "stages_ms": {
+            "receive": 4.077,
+            "receive surface_batch": 3.94,
+            "staging frame": 1.849,
+            "mesh upload/create": 1.533,
+            "world process": 0.667,
+            "controller process": 0.52,
+            "zombie update": 0.436,
+            "world pickups": 0.414,
+            "player physics": 0.276,
+            "zombie callback readiness": 0.263
+          }
+        },
+        {
+          "frame": 5166,
+          "phase": "mining_after_jump",
+          "frame_ms": 31.634,
+          "before_process_ms": 18.169,
+          "process_ms": 5.612,
+          "draw_ms": 7.853,
+          "gpu_ms": 6.76800012588501,
+          "physics_steps": 1,
+          "first_physics_offset_ms": 6.122,
+          "physics_to_process_ms": 12.047,
+          "pipeline_draw": 0,
+          "pipeline_specialization": 71,
+          "window_focused": true,
+          "stages_ms": {
+            "zombie update": 2.629,
+            "zombie callback readiness": 1.638,
+            "zombie planning": 1.336,
+            "retire collision/mesh": 1.179,
+            "world process": 0.575,
+            "zombie residency": 0.534,
+            "zombie intent": 0.503,
+            "player physics": 0.489,
+            "zombie callback water_depth": 0.437,
+            "controller process": 0.208
+          }
+        }
+      ],
+      "resources": {
+        "ram": {
+          "bytes": 3858448384,
+          "status": "within_budget"
+        },
+        "vram": {
+          "bytes": 1507233792,
+          "status": "within_budget"
+        },
+        "redistributable": {
+          "bytes": null,
+          "status": "unavailable"
+        }
+      }
+    }
+  ],
+  "draw_page_experiment": [
+    {
+      "report": "reports\\runtime_performance\\20261030T164359553508Z_draw_page_baseline",
+      "pack_sha256": "1f507c2e25c546fa36e469228f067a27cc7f45b53ff89d68044544d0dd4a7ebe",
+      "source_sha256": "e19038e227c0c29d8a44798bbeac34e7698b99bf6b4e048a6fdeb5c3d690e60b",
+      "pending_pages": {
+        "samples": 66,
+        "mean": 190.9545,
+        "p95": 268,
+        "p99": 280,
+        "maximum": 280
+      },
+      "resident_instances": {
+        "samples": 66,
+        "mean": 57420.6667,
+        "p95": 72072,
+        "p99": 73917,
+        "maximum": 73917
+      },
+      "draw_calls": {
+        "samples": 792,
+        "mean": 1327.6275,
+        "p95": 1776,
+        "p99": 2924,
+        "maximum": 2976
+      },
+      "ground_render_us": {
+        "samples": 792,
+        "mean": 565.8232,
+        "p95": 1543,
+        "p99": 1837,
+        "maximum": 2506
+      },
+      "frame_ms": {
+        "samples": 792,
+        "mean": 16.6702,
+        "p95": 24.189,
+        "p99": 29.281,
+        "maximum": 32.31
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true
+    },
+    {
+      "report": "reports\\runtime_performance\\20261030T164605013764Z_draw_pages_32k",
+      "pack_sha256": "1f507c2e25c546fa36e469228f067a27cc7f45b53ff89d68044544d0dd4a7ebe",
+      "source_sha256": "e19038e227c0c29d8a44798bbeac34e7698b99bf6b4e048a6fdeb5c3d690e60b",
+      "pending_pages": {
+        "samples": 66,
+        "mean": 0.6061,
+        "p95": 3,
+        "p99": 5,
+        "maximum": 5
+      },
+      "resident_instances": {
+        "samples": 66,
+        "mean": 79188.3333,
+        "p95": 83417,
+        "p99": 84218,
+        "maximum": 84218
+      },
+      "draw_calls": {
+        "samples": 792,
+        "mean": 1210.3333,
+        "p95": 1592,
+        "p99": 2718,
+        "maximum": 2787
+      },
+      "ground_render_us": {
+        "samples": 792,
+        "mean": 440.1907,
+        "p95": 1245,
+        "p99": 1451,
+        "maximum": 1902
+      },
+      "frame_ms": {
+        "samples": 792,
+        "mean": 16.6674,
+        "p95": 22.765,
+        "p99": 26.493,
+        "maximum": 30.985
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true
+    },
+    {
+      "report": "reports\\runtime_performance\\20261030T164717669750Z_draw_pages_64k",
+      "pack_sha256": "1f507c2e25c546fa36e469228f067a27cc7f45b53ff89d68044544d0dd4a7ebe",
+      "source_sha256": "e19038e227c0c29d8a44798bbeac34e7698b99bf6b4e048a6fdeb5c3d690e60b",
+      "pending_pages": {
+        "samples": 66,
+        "mean": 0.1212,
+        "p95": 1,
+        "p99": 2,
+        "maximum": 2
+      },
+      "resident_instances": {
+        "samples": 66,
+        "mean": 79170.0606,
+        "p95": 83277,
+        "p99": 84236,
+        "maximum": 84236
+      },
+      "draw_calls": {
+        "samples": 792,
+        "mean": 1169.5202,
+        "p95": 1548,
+        "p99": 2665,
+        "maximum": 2748
+      },
+      "ground_render_us": {
+        "samples": 792,
+        "mean": 400.0114,
+        "p95": 1236,
+        "p99": 1521,
+        "maximum": 1839
+      },
+      "frame_ms": {
+        "samples": 792,
+        "mean": 16.6697,
+        "p95": 22.582,
+        "p99": 26.483,
+        "maximum": 30.474
+      },
+      "save_unchanged": true,
+      "mouse_untouched": true
+    }
+  ],
+  "verification": [
+    {
+      "report": "reports/runtime_views/20261101T040653903972Z",
+      "scope": "GPU impact resources, both styles and independent uniforms",
+      "passed": true,
+      "report_sha256": "ef4a60188b99c8fb3e0fee37cf4aa03f99acc42504456e1b035d6b346db7f7ca",
+      "diagnostics": []
+    },
+    {
+      "report": "reports/runtime_views/20261101T035721241962Z",
+      "scope": "Packaged sparks, dirt, stone visual fixture",
+      "passed": true,
+      "report_sha256": "4155fd7f11225dc02e473dfbd229b012ec50bc3182a9a1f522b246346f68501d",
+      "diagnostics": []
+    },
+    {
+      "report": "reports/runtime_views/20261101T035726675074Z",
+      "scope": "Native 8/32/64 KiB deletion/compaction continuity",
+      "passed": true,
+      "report_sha256": "fda94ff6ae150ff5d24a5b55918d6b0dca9ce4621bcd1dc6faedb95b5018b6a8",
+      "diagnostics": []
+    },
+    {
+      "report": "reports/runtime_views/20261101T040030807872Z",
+      "scope": "24 actual block/mining/grass continuity checks; zero captures",
+      "passed": true,
+      "report_sha256": "ea0c67eb7e1083127ba0b12f79855f7a6b2c3aa333252adb3d4442f465518798",
+      "diagnostics": [],
+      "fixture": {
+        "checks": 24,
+        "failures": 0,
+        "unaffected_grass": 886,
+        "observed_frames": 71,
+        "missing_frames": 0
+      }
+    },
+    {
+      "report": "reports/runtime_views/20261101T040114069583Z",
+      "scope": "74 six-tool, large-edit, support, persistence checks; zero captures",
+      "maximum_excavation": {
+        "instances": 18517,
+        "support_capture_ms": 1.98,
+        "support_publish_ms": 15.987,
+        "support_worker_ms": 108.621,
+        "total_ms": 984.515,
+        "assessment": "Barely below the 16 ms support-publication gate; no headroom or ordinary-pickaxe latency claim."
+      },
+      "passed": true,
+      "report_sha256": "846c229cad98c7db56020c76bd8ac12bcafe74c847a47cea5169fd654fa3f96c",
+      "diagnostics": [],
+      "fixture": {
+        "checks": 74,
+        "failures": 0,
+        "unaffected_grass": null,
+        "observed_frames": null,
+        "missing_frames": null
+      }
+    },
+    {
+      "report": "reports/checks/20261101T040555901743Z",
+      "scope": "171 ground-cover streaming assertions",
+      "passed": true,
+      "report_sha256": "b6099e82a9859a0220018d01e1360e338585947b0f6531d4b4150395c34e2d97",
+      "diagnostics": []
+    }
+  ],
+  "python_checks": {
+    "command": "python -m unittest discover -s tools -p test_profile_runtime.py -v",
+    "passed": 6
+  },
+  "distribution": {
+    "bytes": 476262387,
+    "budget": {
+      "bytes": 476262387,
+      "status": "within_budget"
+    }
+  },
+  "images": [
+    {
+      "source": "reports/runtime_performance/20261101T035133013465Z_gameplay_prepared_pack/arrival.png",
+      "path": "images/gameplay-arrival.png",
+      "sha256": "99bda3802d6ebf5ac615210d0b00a2c4fee40570451e0972eb2fe5e159509a1f",
+      "caption": "Installed populated road fixture; normal hands, foliage and rendering; not mining timing evidence.",
+      "provenance": "Captured from existing TerraForest content by repository tests; no imported asset or new game content."
+    },
+    {
+      "source": "reports/runtime_views/20261101T040030807872Z/mined.png",
+      "path": "images/gameplay-mined.png",
+      "sha256": "80f8ec643df02897bc7e18d467cfcb18879e5d24853efe66102425b1a232b9a2",
+      "caption": "Actual native excavation and surviving surrounding vegetation. Readback makes displayed FPS unsuitable as timing evidence.",
+      "provenance": "Captured from existing TerraForest content by repository tests; no imported asset or new game content."
+    },
+    {
+      "source": "reports/runtime_views/20261101T035721241962Z/frame_220.png",
+      "path": "images/gameplay-effects.png",
+      "sha256": "3827e5382903e0443b6b9a5a1491ddbef0ed55b9f971b35dcc6ccba42bfe3c24",
+      "caption": "Existing sparks, dirt and stone effects still render after resource preparation; fixture is not a quality redesign.",
+      "provenance": "Captured from existing TerraForest content by repository tests; no imported asset or new game content."
+    }
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/runtime_views/20261101T035447173032Z",
+      "reason": "Test assumed Vector4 and Color shader uniforms directly comparable; stopped owned stuck test."
+    },
+    {
+      "report": "reports/runtime_views/20261101T040028332985Z",
+      "reason": "Test relied on renderer-dependent shader defaults; corrected to explicit sentinel."
+    },
+    {
+      "report": "reports/runtime_views/20261101T040509717094Z",
+      "reason": "Sentinel used Color for vec4 uniform; corrected to Vector4 and GPU rerun passes."
+    },
+    {
+      "report": "reports/runtime_views/20261101T035732089140Z",
+      "reason": "Mouse-safety assertion failed; external fixture lacked explicit offscreen policy. Corrected fixtures pass zero-capture checks."
+    },
+    {
+      "report": "reports/gameplay_bg5_import_mismatch.log",
+      "reason": "Initial export rejected existing editor-rewritten BG5 import metadata. Verified settings used only during export; backed-up local settings and receipt restored byte-for-byte; unrelated regenerated atlas restored to original tracked bytes."
+    }
+  ],
+  "remaining": [
+    "Pre-process/physics scheduling stall attribution and zombie population spikes; no whole-frame speedup established.",
+    "Foreground human gameplay, cave/ore/continuous mining, physical vehicles, maximum cities and endurance.",
+    "Lower-end physical 4 GiB GPU testing and system-wide/instantaneous resource peaks.",
+    "Outer vegetation coverage and paused overview/modularity requirements remain open."
+  ]
+}

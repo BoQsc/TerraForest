@@ -15,7 +15,7 @@ from run_godot_check import command_for, execute, verify_pack_native
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("test", choices=["door_mod_world", "model_horizon", "model_horizon_world", "model_render_pages", "world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_horizon", "vehicle_horizon_world", "vehicle_horizon_cost", "vehicle_prototype", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
+    parser.add_argument("test", choices=["impact_resources", "impact_effects_visual", "vegetation_edit_world", "vegetation_terrain_edits", "door_mod_world", "model_horizon", "model_horizon_world", "model_render_pages", "world_overview", "forest_horizon_world", "boulder_horizon_world", "boulder_fracture_cache", "overview_terrain_coverage", "loading_progress_ui", "vehicle_horizon", "vehicle_horizon_world", "vehicle_horizon_cost", "vehicle_prototype", "vehicle_parked_renderer", "vehicle_module_pack", "vegetation_removal_continuity", "vegetation_driving_profile", "vegetation_lod_world"])
     parser.add_argument("--pack", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="Retain engine lifetime diagnostics")
     parser.add_argument("--persistence", action="store_true", help="Boulder check only: save/reopen a unique owned fixture clone")
@@ -30,6 +30,10 @@ def main():
     folder.mkdir(parents=True)
     command, cache = command_for(config.godot, args.test, folder, ["--view-output=" + folder.as_posix(), "--module-fixtures=" + (ROOT / "tests/fixtures").as_posix()])
     if args.test == "door_mod_world":command.append("--noncapturing-door-check")
+    if args.test == "impact_effects_visual":command.append("--effects-evidence=" + folder.as_posix())
+    if args.test in ("vegetation_edit_world", "vegetation_terrain_edits"):
+        command += ["--ground-cover", "--no-zombies", "--world-generator=23", "--vegetation-evidence-dir=" + folder.as_posix()]
+        if args.test == "vegetation_edit_world":command.append("--gameplay-construction")
     if args.test == "vegetation_driving_profile":
         command += ["--profile-dir=" + folder.as_posix(), "--profile-slot=recipe_generated_4644d8cfc8f97e43"]
     if args.test == "boulder_fracture_cache":
@@ -71,8 +75,8 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        marker = {"door_mod_world": "DOOR_MOD_WORLD failures=0", "model_horizon": "MODEL_HORIZON checks=", "model_horizon_world": "MODEL_HORIZON_WORLD failures=0", "model_render_pages": "MODEL_RENDER_PAGES checks=", "world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_horizon": "VEHICLE_HORIZON checks=", "vehicle_horizon_world": "VEHICLE_HORIZON_WORLD failures=0", "vehicle_horizon_cost": "VEHICLE_HORIZON_COST failures=0", "vehicle_prototype": "VEHICLE_PROTOTYPE checks=", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
-        record["result"] = execute(command, folder, 240, marker, require_resource_budget=True)
+        marker = {"impact_resources": "IMPACT_RESOURCES failures=0", "impact_effects_visual": "IMPACT_EFFECTS_VISUAL failures=0", "vegetation_edit_world": "VEGETATION_EDIT_WORLD checks=", "vegetation_terrain_edits": "VEGETATION_TERRAIN_EDITS failures=0", "door_mod_world": "DOOR_MOD_WORLD failures=0", "model_horizon": "MODEL_HORIZON checks=", "model_horizon_world": "MODEL_HORIZON_WORLD failures=0", "model_render_pages": "MODEL_RENDER_PAGES checks=", "world_overview": "WORLD_OVERVIEW", "forest_horizon_world": "FOREST_HORIZON_WORLD failures=0", "boulder_horizon_world": "BOULDER_HORIZON_WORLD failures=0", "boulder_fracture_cache": "BOULDER_FRACTURE_CACHE", "overview_terrain_coverage": "OVERVIEW_TERRAIN_COVERAGE", "loading_progress_ui": "LOADING_PROGRESS_UI", "vehicle_horizon": "VEHICLE_HORIZON checks=", "vehicle_horizon_world": "VEHICLE_HORIZON_WORLD failures=0", "vehicle_horizon_cost": "VEHICLE_HORIZON_COST failures=0", "vehicle_prototype": "VEHICLE_PROTOTYPE checks=", "vehicle_module_pack": "VEHICLE_MODULE_PACK", "vehicle_parked_renderer": "VEHICLE_PARKED_RENDERER", "vegetation_removal_continuity": "failures=0", "vegetation_driving_profile": "TRAVEL_PROFILE PASS", "vegetation_lod_world": "VEGETATION_LOD_WORLD failures=0"}[args.test]
+        record["result"] = execute(command, folder, 45 if args.test.startswith("impact_") else 240, marker, require_resource_budget=True)
     finally:
         subprocess.Popen = original
     (folder / "run.json").write_text(json.dumps(record, indent=2), encoding="utf-8")

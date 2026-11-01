@@ -1,7 +1,7 @@
 # Runtime performance
 
 - Status: Improved-partial; installed and packaged walking verified.
-- Updated: 2026-10-29. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
+- Updated: 2026-11-01. Initial baseline: `5bfe87f4`; maintenance: `304206cc`; readiness: `87afcdfe`.
 - User review: Not reviewed. No visual quality reduction intended.
 
 Resource follow-up: [4 GiB GPU / 5 GB content targets and cache policy](../../docs/RESOURCE_BUDGETS.md).
@@ -11,6 +11,65 @@ pass. World data/history/evidence remain intact. [Resource evidence](resource-bu
 The user raised the provisional terrain-cache quota to 3 GiB on 2026-10-28;
 historical receipts are unchanged. Other resource thresholds stay the same.
 RAM thresholds remain provisional and physical 4 GiB hardware remains unqualified.
+
+## Mining contact and ordinary movement — 2026-11-01
+
+- Reproduced first-hit presentation blocking ready terrain publication. In the
+  uncontended original-effects control, effect construction takes **62.407 ms**;
+  first contact-to-draw is **88.438 ms**. The initial 219.940 ms exploratory hit
+  overlapped another test workload and is not a clean speedup baseline.
+- Prepare the selected effect meshes and motion materials during existing world
+  initialization, not on the first impact. Emitters remain lazy and bounded;
+  no fake hits, early damage, extra particles or visual-quality reductions.
+- First installed run: effect dispatch **0.238 ms**, first contact-to-draw
+  **42.493 ms**, all 24 changed contacts **20.892–42.493 ms**, 22 physical jumps.
+  A prepared source run also completes 24 strikes at **22.92–31.52 ms**.
+  These are contact/publication timings, not mouse-click-to-photon latency.
+- The new repeatable workload retains ordinary physical walking, sprinting,
+  jumping, AI, foliage and authored pickaxe contact. Its test-only initiation
+  bypasses mouse capture/input debounce; production targeting, edits, collision
+  publication and rewards still execute. Fixture saves are read-only.
+- **Movement is not fully fixed.** Installed walking p99 is 23.513 ms; sprinting
+  27.170 ms; jumping 25.432 ms. A 370.927 ms sprint interval spends 357.876 ms
+  before the process callback; measured GPU time is 8.219 ms and there is no
+  shader-compilation counter change. Its cause is not established. Another
+  63.871 ms walking frame includes a 42.225 ms zombie-population update.
+
+All timing failures remain failures: the command prints functional and performance
+results separately; `--require-gameplay-performance` also fails its exit status.
+The first installed trace reaches the old 6,000-frame cap during recovery; the
+driver now allows 12,000 and fails explicitly on truncation. Full repeats retain
+6,193 and 6,219 frames, including all eight recovery seconds. Across three pack
+runs, **72/72 hits change terrain** and **65 physical jumps** complete. First-hit
+latency is **25.967–42.493 ms**. The second run still catches **107.783 ms**
+sprinting (87.702 ms in population update) and **80.405 ms** jumping. The final
+callback-instrumented run peaks at 37.492 ms without a production change: that
+non-recurrence does not fix or explain earlier spikes. Complete results,
+exact hashes, retained harness failures and resource checks are recorded in
+[gameplay evidence](gameplay-evidence.json). No universal 60 FPS claim.
+
+Reproduce: `python tools/profile_runtime.py --slot recipe_generated_4644d8cfc8f97e43 --gameplay --pack --require-resource-budget`.
+Run without competing Godot processes; it does not capture the desktop pointer.
+The source/packaging checks preserve pre-existing editor import settings and the
+icon receipt byte-for-byte; the export uses verified BG5 import settings.
+
+Six Python timing-gate checks, 171 cover assertions, native page compaction,
+both effect styles, 24 rendered block/mining continuity checks and 74 six-tool /
+large-edit / persistence checks pass. Packaged gameplay peaks around **3.57 GiB
+private RAM / 1.40 GiB dedicated GPU**; installed content is **476.3 MB**, within
+current sampled budgets, not proof of compatibility with every 4 GiB GPU.
+
+![Native excavation with surrounding grass retained](images/gameplay-mined.png)
+Packaged temporary-world regression, not a player save. GPU packet readbacks and
+screenshots affect its displayed FPS; it is visual/correctness evidence only.
+[Road playtest arrival](images/gameplay-arrival.png) and
+[existing particle appearance](images/gameplay-effects.png) were also inspected.
+Image sources, hashes and captions are in the evidence receipt.
+
+Return with engine/physics/scheduling attribution for the pre-process stall,
+zombie admission breakdown, foreground human playtesting, cave/ore/continuous
+digging, long-session and weaker-hardware runs. No persistent post-jump slowdown
+is demonstrated by these short routes; that does not exclude the player report.
 
 ## Collision readiness and actor state — 2026-10-29
 

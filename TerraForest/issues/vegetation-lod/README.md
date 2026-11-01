@@ -1,12 +1,38 @@
 # Extended vegetation LOD
 
 - Status: Improved-partial / installed; driving-speed continuity and player review remain open.
-- Updated: 2026-10-30. Original LOD implementation `e2d0e548`; driving follow-ups below.
+- Updated: 2026-11-01. Original LOD implementation `e2d0e548`; driving follow-ups below.
 - Forests: existing 6592/192/12-triangle tiers retained; visibility 448 -> 576 m.
 - Native circular preload: 640 m, maximum 405 wanted owners, 441 admission cap;
   two jobs and one 36-candidate batch/frame unchanged. No density/identity changes.
 - Ferns: distant 392 -> 154 triangles; bushes 294 -> 154; twigs 136 -> 80.
   Nearby geometry, ordinary shadows and four grass tiers remain unchanged.
+
+## Ground draw-page backlog — 2026-11-01
+
+Completed the pending draw-page experiment: the 8 KiB upload allowance forced
+128-instance pages, so dense visible owners created too many render submissions.
+Use a bounded 64 KiB allowance / 1,024-instance page instead. Existing residency
+byte ceilings, plant density, identities, ranges, shadows and meshes are unchanged.
+Native rendering still owns selection and uploads; no new per-frame script scan.
+
+Matched October 30 installed-pack 160 km/h camera sweeps, same 586 m road:
+pending pages mean/max **190.95/280 → 0.12/2**; mean draw calls **1,327.63 →
+1,169.52**; ground-render CPU **565.82 → 400.01 µs**. Actually drawn instances
+increase **57,421 → 79,170**; this is less deferred content, not reduced density.
+Frame p95 **24.189 → 22.582 ms** still misses 60 FPS. This controlled camera
+sweep does not qualify physical car handling, all coverage or seamless LOD.
+
+The combined installed build is checked for paid block placement/removal,
+per-rendered-frame grass continuity, all six terrain tools, largest-volume edits,
+removal persistence and 8/32/64 KiB native pages. Exact runs and retained failures:
+[gameplay evidence](../runtime-performance/gameplay-evidence.json). Test fixtures
+explicitly opt out of mouse capture, including external packaged drivers.
+The populated maximum excavation removes 18,517 plants: support publication is
+15.987 ms, just below the 16 ms fixture gate, and total edit latency is 984.515 ms.
+That is not comfortable performance headroom or an ordinary pickaxe timing.
+Large-edit/endurance, outer-owner coverage, foreground/weak-hardware and full-frame
+budgets remain open; do not treat this page change as their completion.
 
 ## Evidence
 

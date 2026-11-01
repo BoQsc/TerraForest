@@ -16,8 +16,12 @@ func visible_rows(batch:Node)->Dictionary:
  return result
 func run()->void:
  GDExtensionManager.load_extension("res://addons/structures/structures.gdextension")
+ for upload_bytes in [8192,32768,65536]:await run_case(upload_bytes)
+ print("REMOVAL_CONTINUITY failures=",failures);quit(1 if failures else 0)
+func run_case(upload_bytes:int)->void:
+ print("REMOVAL_PAGE_BYTES ",upload_bytes)
  var batch=ClassDB.instantiate("NativeStaticBatch");root.add_child(batch)
- check(batch.configure_asset("removal/continuity",BoxMesh.new()) and batch.configure_appearance_fade() and batch.configure_render_streaming(true,80,32,100000,1,8192),"production-size pages and strict one-page upload budget")
+ check(batch.configure_asset("removal/continuity",BoxMesh.new()) and batch.configure_appearance_fade() and batch.configure_render_streaming(true,80,32,100000,1,upload_bytes),"bounded draw pages and strict one-page upload budget")
  var ids:=PackedInt64Array();var poses:Array[Transform3D]=[]
  for i in 900:ids.append(i+1);poses.append(Transform3D(Basis.IDENTITY,Vector3(i/32.0,0,1)))
  check(batch.upsert_transforms(ids,poses),"dense group installed")
@@ -36,7 +40,7 @@ func run()->void:
    check(visible_rows(batch)==expected,"no missing or duplicate survivor on following frame")
   print("REMOVE_USEC ",elapsed)
  var after:Dictionary=batch.render_stats()
- check(after.uploaded_transform_bytes-before.uploaded_transform_bytes<=7*2*8192,"at most two bounded page uploads per removal")
+ check(after.uploaded_transform_bytes-before.uploaded_transform_bytes<=7*2*upload_bytes,"at most two bounded page uploads per removal")
  check(batch.get_ids().size()==893,"authoritative membership exact")
  # The compact index is no longer sorted: moving its swapped tail must still work.
  var moved:=Transform3D(Basis.IDENTITY,Vector3(29,0,1))
@@ -55,4 +59,3 @@ func run()->void:
  for frame in 3:await RenderingServer.frame_post_draw
  check(visible_rows(batch).is_empty(),"all retired records disappear")
  batch.free();await process_frame
- print("REMOVAL_CONTINUITY failures=",failures);quit(1 if failures else 0)

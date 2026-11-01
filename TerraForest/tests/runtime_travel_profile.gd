@@ -5,6 +5,7 @@ class ProfileWorld extends "res://demo/world.gd":
 var game:Node
 var output:="res://reports/runtime_travel_profile"
 var rows:Array[Dictionary]=[]
+var frame_limit:=6000
 var stages:Dictionary={}
 var initializations:Array[Dictionary]=[]
 var seen:Dictionary={}
@@ -45,7 +46,7 @@ func frame()->void:
   if seen.has(zombie.get_instance_id()):continue
   seen[zombie.get_instance_id()]=true
   initializations.append({"phase":phase,"frame":rows.size(),"microseconds":zombie.initialization_us.duplicate(),"geometry":zombie.anatomy.geometry_stats() if zombie.anatomy.has_method("geometry_stats") else {}})
- if rows.size()<6000:
+ if rows.size()<frame_limit:
   rows.append({"phase":phase,"frame_ms":(now-previous)/1000.0,"process_ms":(draw_started-process_started)/1000.0,"draw_ms":(now-draw_started)/1000.0,"before_process_ms":(process_started-previous)/1000.0,"gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport),"render_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(viewport),"physics_ms":Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000,"stages":stages.duplicate(),"ecosystem_us":game.ecosystem.last_process_us,"cover_us":game.ground_cover.last_process_us,"vegetation_us":game.vegetation.renderer.stats.get("update_us",0),"vegetation_phases_us":Array(game.vegetation.renderer.phase_us),"position":game.player.position,"distance":game.player.position.distance_to(origin),"queued":game.terrain.backend.queued(),"residents":game.zombies.residents.size(),"navigation":game.zombies.navigation_status.duplicate(),"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)})
  previous=now;stages.clear()
 func move(pressed:bool)->void:

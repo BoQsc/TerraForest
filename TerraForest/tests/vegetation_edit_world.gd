@@ -37,7 +37,9 @@ func observe()->void:
 func capture(label:String)->void:
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(folder.path_join(label+".png"))
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	run.call_deferred()
 func run()->void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--vegetation-evidence-dir="):folder=arg.trim_prefix("--vegetation-evidence-dir=")
@@ -46,8 +48,7 @@ func run()->void:
 	check(await until(func():return not game.loading_active,55),"actual world ready")
 	if game.loading_active:game.terrain.shutdown();game.free();quit(1);return
 	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies.population_enabled=false
-	if game.session_menu.developer:game.session_menu.toggle_developer()
-	game.session_menu.set_open(false);game.app_focused=true;Input.mouse_mode=Input.MOUSE_MODE_CAPTURED
+	check(not game.session_menu.developer and game.construction_inventory.gameplay,"player construction is enabled without capturing desktop input")
 	check(game.ground_enabled and await until(settled,45),"production ground owners finish publication")
 	var cover=game.ground_cover;var nearest:=INF
 	for key in cover.resident:
@@ -83,6 +84,7 @@ func run()->void:
 	var hidden:=true
 	for id in planted:hidden=hidden and not cover.batches[2].get_ids().has(id)
 	check(hidden,"brick excludes all three overlapping clumps")
+	check(cover.removed.capture_storage_snapshot()==before,"temporary block exclusion preserves authored durable records")
 	for i in 5:await process_frame
 	check(missing_frames==0,"placing a brick never hides or refades unrelated visible grass")
 	await capture("brick")
@@ -90,6 +92,7 @@ func run()->void:
 	check(await until(settled,25),"removed brick restores original clumps")
 	for i in 5:await process_frame
 	check(missing_frames==0,"restoration never hides neighbouring pages")
+	check(cover.removed.capture_storage_snapshot()==before,"removing the block preserves original planting records")
 	await capture("restored")
 	var revision:int=game.terrain.density_revision
 	check(game.terrain.sculpt_sphere(point,1.5,false),"real native mining edit accepted under the witnesses")
@@ -97,8 +100,13 @@ func run()->void:
 	check(await until(settled,25),"mining support and exclusion resampling completes")
 	for i in 5:await process_frame
 	check(missing_frames==0 and observed_frames>10,"every observed rendered edit frame retains unaffected grass and its original fade age")
-	check(cover.removed.capture_storage_snapshot()==before,"visual exclusion and mining preserve authored durable records")
+	var mined:bool=cover.removed.profile().placed==0
+	for id in planted:mined=mined and not cover.batches[2].get_ids().has(id)
+	check(mined,"mining removes the unsupported authored plants from storage and rendering")
 	check(cover.rejected_batches==0,"no rejected ground-cover publications")
+	var captures:int=preload("res://addons/world_runtime/mouse_ownership.gd").captures
+	print("EDIT_MOUSE captures=",captures," mode=",Input.mouse_mode)
+	check(captures==0 and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"edit verification never captures the mouse")
 	watching=false;await capture("mined")
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"unaffected_grass":monitored.size(),"observed_frames":observed_frames,"missing_frames":missing_frames,"point":point,"group":group,"scope":"Actual temporary world, paid brick coordinator, native mining and per-render-frame GPU packet continuity. Screenshot/readback overhead is not performance evidence."},"  "))
 	await finish()

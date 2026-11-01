@@ -15,6 +15,7 @@ var style:=0
 var settings_path:String=ProjectSettings.get_setting("terraforest/impact_effects_settings_path","user://impact_effects.cfg")
 var pool:Array[GPUParticles3D]=[]
 var meshes:Dictionary={}
+var motions:Dictionary={}
 var sample:Dictionary={}
 var sample_token:=700000000
 var emitted_events:=0
@@ -30,6 +31,7 @@ func attach(world:Node)->void:
 			enabled=config.get_value("effects","enabled",true)==true
 			breakup_enabled=config.get_value("effects","breakup",true)==true
 			style=maxi(0,STYLES.find(config.get_value("effects","style","grounded")))
+	prepare_resources()
 	game.world_attack.impact_preparing.connect(prepare_contact)
 	game.world_attack.contact_effect.connect(contact)
 	game.terrain.density_ray_received.connect(receive_sample)
@@ -39,6 +41,7 @@ func set_enabled(value:bool,persist:=true)->void:
 	if not enabled:
 		sample={};sample_token+=1
 		clear_emitters()
+	else:prepare_resources()
 	if persist:save_settings()
 	settings_changed.emit()
 
@@ -54,7 +57,7 @@ func clear_emitters()->void:
 func set_style(value:int,persist:=true)->void:
 	if value<0 or value>=STYLES.size():return
 	if style!=value:
-		style=value;clear_emitters();meshes.clear()
+		style=value;clear_emitters();meshes.clear();motions.clear();prepare_resources()
 	if persist:save_settings()
 	settings_changed.emit()
 
@@ -105,25 +108,9 @@ func contact(target:Dictionary)->void:
 	if material.is_empty() or (material=="flesh" and target.get("repairing",false)):return
 	burst(target.position,target.normal,material,target.get("destroyed",false) and breakup_enabled)
 
-func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
-	if not enabled or not PALETTE.has(material) or not point.is_finite() or not normal.is_finite() or normal.length_squared()<.25:return false
-	var emitter:GPUParticles3D
-	for candidate in pool:
-		if not candidate.get_meta("busy",false):emitter=candidate;break
-	if emitter==null:
-		if pool.size()>=POOL_LIMIT:dropped_events+=1;return false
-		emitter=GPUParticles3D.new();emitter.emitting=false;emitter.one_shot=true;emitter.explosiveness=1.0;emitter.amount=PARTICLES
-		emitter.local_coords=false;emitter.fixed_fps=60;emitter.interpolate=true;emitter.fract_delta=true
-		emitter.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;emitter.visibility_aabb=AABB(Vector3(-3,-3,-3),Vector3(6,6,6))
-		emitter.process_material=ShaderMaterial.new()
-		emitter.finished.connect(func():if is_instance_valid(emitter):emitter.set_meta("busy",false);emitter.hide())
-		add_child(emitter);pool.append(emitter)
-	var spark:=material=="metal"
-	var flesh:=material=="flesh"
-	var shape:="blood" if flesh else ("spark" if spark else ("wood" if material=="wood" else "oval"))
-	if style==0 and shape=="oval":shape="soil" if material in ["soil","sand","snow","foliage"] else "stone"
+func mesh_for(shape:String)->Mesh:
 	if not meshes.has(shape):
-		if flesh:
+		if shape=="blood":
 			var mesh:=QuadMesh.new();mesh.size=Vector2.ONE
 			var render:=ShaderMaterial.new();render.shader=preload("res://addons/impact_effects/blood.gdshader")
 			render.set_shader_parameter("noise_map",preload("res://addons/impact_effects/art/dust_noise.tres"))
@@ -136,17 +123,47 @@ func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
 			if shape=="oval":
 				var oval:=SphereMesh.new();oval.radius=.5;oval.height=1.0;oval.radial_segments=8;oval.rings=4;mesh=oval
 			else:mesh=BoxMesh.new()
-			var render:=ShaderMaterial.new();render.shader=preload("res://addons/impact_effects/fragments.gdshader");render.set_shader_parameter("emission_strength",2.8 if spark else 0.0)
+			var render:=ShaderMaterial.new();render.shader=preload("res://addons/impact_effects/fragments.gdshader");render.set_shader_parameter("emission_strength",2.8 if shape=="spark" else 0.0)
 			mesh.material=render;meshes[shape]=mesh
+	return meshes[shape]
+
+func prepare_resources()->void:
+	if not enabled:return
+	for shape:String in (["soil","stone","wood","spark","blood"] if style==0 else ["oval","wood","spark","blood"]):mesh_for(shape)
+	if style==0 and not meshes.has("dust"):meshes["dust"]=GROUNDED.dust_mesh()
+	if motions.is_empty():
+		var fragments:=ShaderMaterial.new()
+		fragments.shader=preload("res://addons/impact_effects/motion.gdshader") if style==1 else preload("res://addons/impact_effects/grounded_motion.gdshader")
+		var blood:=ShaderMaterial.new();blood.shader=preload("res://addons/impact_effects/blood_motion.gdshader")
+		motions={"fragments":fragments,"blood":blood}
+
+func burst(point:Vector3,normal:Vector3,material:String,broken:=false)->bool:
+	if not enabled or not PALETTE.has(material) or not point.is_finite() or not normal.is_finite() or normal.length_squared()<.25:return false
+	if motions.is_empty():prepare_resources()
+	var emitter:GPUParticles3D
+	for candidate in pool:
+		if not candidate.get_meta("busy",false):emitter=candidate;break
+	if emitter==null:
+		if pool.size()>=POOL_LIMIT:dropped_events+=1;return false
+		emitter=GPUParticles3D.new();emitter.emitting=false;emitter.one_shot=true;emitter.explosiveness=1.0;emitter.amount=PARTICLES
+		emitter.local_coords=false;emitter.fixed_fps=60;emitter.interpolate=true;emitter.fract_delta=true
+		emitter.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF;emitter.visibility_aabb=AABB(Vector3(-3,-3,-3),Vector3(6,6,6))
+		emitter.process_material=motions.fragments.duplicate()
+		emitter.finished.connect(func():if is_instance_valid(emitter):emitter.set_meta("busy",false);emitter.hide())
+		add_child(emitter);pool.append(emitter)
+	var spark:=material=="metal"
+	var flesh:=material=="flesh"
+	var shape:="blood" if flesh else ("spark" if spark else ("wood" if material=="wood" else "oval"))
+	if style==0 and shape=="oval":shape="soil" if material in ["soil","sand","snow","foliage"] else "stone"
 	emitter.draw_passes=2 if style==0 and not spark and not flesh else 1
 	if emitter.draw_passes==2:
 		if not meshes.has("dust"):meshes["dust"]=GROUNDED.dust_mesh()
 		emitter.draw_pass_2=meshes.dust
-	emitter.draw_pass_1=meshes[shape];emitter.lifetime=.48 if spark else .95
+	emitter.draw_pass_1=mesh_for(shape);emitter.lifetime=.48 if spark else .95
 	emitter.amount_ratio=(.85 if broken else .46) if spark else (.75 if broken else .29)
 	emitter.global_position=point+normal.normalized()*.035
 	var process:ShaderMaterial=emitter.process_material
-	process.shader=preload("res://addons/impact_effects/blood_motion.gdshader") if flesh else (preload("res://addons/impact_effects/motion.gdshader") if style==1 else preload("res://addons/impact_effects/grounded_motion.gdshader"))
+	process.shader=motions["blood" if flesh else "fragments"].shader
 	process.set_shader_parameter("surface_normal",normal.normalized())
 	var tint:Color=GROUNDED_COLORS.get(material,PALETTE[material]) if style==0 else PALETTE[material]
 	process.set_shader_parameter("tint",tint.srgb_to_linear())

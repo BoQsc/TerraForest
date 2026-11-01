@@ -1,6 +1,26 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 This file retains the wider backlog; the tracker initially covers three cases.
 
+## Gameplay responsiveness verification — 2026-11-01
+
+First-hit effect resource construction blocked terrain publication. Selected
+resources now prepare during existing loading, with unchanged particles/contact
+timing; uncontended first contact-to-draw 88.438 ms versus 42.493 ms in the first
+installed check. Physical walking/running/jumping and 24 mining contacts are
+instrumented separately. The pending 64 KiB ground-render page experiment is
+installed with unchanged residency ceilings and density; native removal and
+actual terrain/vegetation regression checks accompany it.
+
+Not complete: frame-pacing gates still fail, including a retained 370.927 ms
+pre-process sprint interval and a zombie-admission walking spike. Full 6,193- and
+6,219-frame repeats replace the first trace's truncated recovery. All 72 packaged
+contacts change terrain; first-hit latency is 25.967–42.493 ms. Another repeat
+retains 107.783 ms sprint / 80.405 ms jump stalls; final non-recurrence is not a fix.
+Return with engine/physics/scheduling attribution, foreground
+playtesting and continuous/cave/endurance workloads; short road tests do not
+qualify universal smoothness or close the paused architecture/LOD work.
+[Measurements, repeats, failures and resource evidence](../issues/runtime-performance/README.md#mining-contact-and-ordinary-movement--2026-11-01).
+
 ## Production integration correction — 2026-11-01
 
 Approved trader/civic/E2 content was still unreachable from normal generation.

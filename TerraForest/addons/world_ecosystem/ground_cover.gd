@@ -4,6 +4,7 @@ signal obstacles_changed(bounds:AABB)
 const Catalog=preload("res://addons/world_ecosystem/ground_catalog.gd")
 const Tokens=preload("res://addons/volumetric_terrain/surface_tokens.gd")
 const SURFACE_JOBS:=8
+const RENDER_UPLOAD_BYTES:=64*1024
 var road_regions:RefCounted
 var terrain: Node3D
 var camera: Camera3D
@@ -76,7 +77,7 @@ func _ready() -> void:
 		var geometry:Mesh=_mesh(species)
 		preview_meshes.append(geometry)
 		if species==0:stone_geometry=geometry
-		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,8192):
+		if not batch.configure_appearance_fade() or not batch.configure_asset("ground_cover/%d/v1"%species,geometry) or not batch.configure_render_streaming(true,maxf(144.0,Catalog.DISTANCES[species]),896 if species==2 else 192,7000000 if species==2 else (1600000 if species==1 else 200000),2,RENDER_UPLOAD_BYTES):
 			push_error("Ground cover renderer initialization failed");set_process(false);return
 		batch.set_casts_shadows(true)
 		batch.set_shadow_distance(24.0 if species==2 else 48.0)

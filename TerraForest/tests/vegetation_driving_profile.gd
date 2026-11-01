@@ -7,6 +7,7 @@ var path_total:=0.0
 var path_lengths:=PackedFloat32Array()
 var road_finished:=false
 var boulder_baseline:Dictionary={}
+var ground_upload_kib:=0
 
 func boulder_identities()->Dictionary:
 	var result:Dictionary={}
@@ -20,6 +21,7 @@ func _initialize()->void:
 	profile_notes="Controlled constant-speed road-camera sweep through production vegetation streaming, not physical driving or vehicle collision qualification. Disk residency is not a pixel-visible gap count."
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--drive-kph="):cruise_kph=clampf(float(argument.trim_prefix("--drive-kph=")),30,198)
+		if argument.begins_with("--ground-upload-kib="):ground_upload_kib=int(argument.trim_prefix("--ground-upload-kib="))
 	super._initialize()
 
 func move(_pressed:bool)->void:
@@ -27,6 +29,11 @@ func move(_pressed:bool)->void:
 
 func sample(label:String,seconds:float)->void:
 	if label=="settling":
+		if ground_upload_kib>0:
+			for batch:Node3D in game.ground_cover.batches:
+				var settings:Dictionary=batch.render_stats()
+				if not batch.configure_render_streaming(settings.enabled,settings.radius,settings.batch_limit,settings.byte_limit,settings.uploads_per_tick,ground_upload_kib*1024):
+					push_error("Ground renderer experiment rejected");await finish(false);return
 		boulder_baseline=boulder_identities()
 		game.fly=true;game.player.velocity=Vector3.ZERO
 		route.remove_at(0)
@@ -36,6 +43,8 @@ func sample(label:String,seconds:float)->void:
 		game.player.position=route[0]+Vector3.UP*1.0
 		if not await until(func():return game.ground_cover.resident.size()==game.ground_cover._wanted.size() and game.ground_cover._requests.is_empty(),100):
 			push_error("Ground cover did not settle before speed sweep");await finish(false);return
+		if not await until(ground_render_settled,30):
+			push_error("Ground renderer did not settle before speed sweep");await finish(false);return
 	if label!="walking":
 		await super.sample(label,seconds);return
 	phase=label
@@ -63,11 +72,23 @@ func missing_owners(wanted:Dictionary,resident:Dictionary,cell_size:float,radius
 
 func frame()->void:
 	super.frame()
+	if not rows.is_empty():
+		var render_us:=0;var selection_us:=0;var upload_us:=0;var cleanup_us:=0
+		for batch:Node3D in game.ground_cover.batches:
+			var profile:Dictionary=batch.render_frame_profile()
+			render_us+=int(profile.process_us);selection_us+=int(profile.selection_us);upload_us+=int(profile.upload_us);cleanup_us+=int(profile.cleanup_us)
+		rows[-1]["ground_render_us"]=render_us;rows[-1]["ground_selection_us"]=selection_us;rows[-1]["ground_upload_us"]=upload_us;rows[-1]["ground_cleanup_us"]=cleanup_us
 	if not rows.is_empty():rows[-1]["boulder_us"]=game.ground_cover.boulders.last_process_us
 	if rows.size()%12==0:
 		var cover=game.ground_cover
 		rows[-1]["ground_exclusion_revision"]=cover._exclusion_revision
 		rows[-1]["ground_dirty_owners"]=cover._dirty.size()
+		var render:Dictionary={"pages":0,"instances":0,"pending":0,"deferred":0,"bytes":0,"uploaded_bytes":0,"capacities":[]}
+		for batch:Node3D in cover.batches:
+			var state:Dictionary=batch.render_stats()
+			render.pages+=state.resident_batches;render.instances+=state.resident_instances;render.pending+=state.pending_batches;render.deferred+=state.budget_deferred
+			render.bytes+=state.retained_render_bytes;render.uploaded_bytes+=state.uploaded_transform_bytes;render.capacities.append(state.page_capacity)
+		rows[-1]["ground_render"]=render
 		var boulder:Dictionary=cover.boulders.coverage_status()
 		if boulder_identities()!=boulder_baseline or boulder.render.roots!=boulder_baseline.size():push_error("Boulder coverage lost during travel")
 		rows[-1]["boulders"]=boulder
@@ -76,3 +97,9 @@ func frame()->void:
 func finish(success:bool)->void:
 	FileAccess.open(output.path_join("driving.json"),FileAccess.WRITE).store_string(JSON.stringify({"cruise_kph":cruise_kph,"road_finished":road_finished,"path_distance":path_distance,"path_total":path_total,"coverage":coverage,"scope":"Controlled road-camera speed sweep, not a vehicle physics/steering qualification. Full production vegetation and terrain streaming; no density reductions. Missing-owner counts are disk residency diagnostics, not pixel-visible gaps."},"  "))
 	await super.finish(success)
+
+func ground_render_settled()->bool:
+	for batch:Node3D in game.ground_cover.batches:
+		var state:Dictionary=batch.render_stats()
+		if state.pending_batches>0 or state.selection_pending:return false
+	return true

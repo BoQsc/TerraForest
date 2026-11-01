@@ -61,7 +61,9 @@ func capture(label:String)->void:
 	if not visual:return
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(folder.path_join(label+".png"))
-func _initialize()->void:run.call_deferred()
+func _initialize()->void:
+	ProjectSettings.set_setting("terraforest/offscreen_session",true)
+	run.call_deferred()
 func run()->void:
 	visual="--vegetation-visual" in OS.get_cmdline_user_args()
 	for argument:String in OS.get_cmdline_user_args():
@@ -69,6 +71,7 @@ func run()->void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
 	game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.background_fps=60;game.player_view.settings_path="";root.add_child(game)
 	if not check(await until(func():return not game.loading_active,60),"isolated production world loaded"):await finish();return
+	if not check(game.session_menu.developer and not game.mining_rewards.enabled,"developer terrain tools are not charged against player inventory"):await finish();return
 	game.set_physics_process(false);game._clear_motion();game.needs_floor_spawn=false;game.zombies.clear();game.zombies.population_enabled=false
 	if not check(game.ground_enabled and await until(settled,55),"natural trees and all ground-cover species settled"):await finish();return
 	game.terrain.set_brush_active(true)
@@ -148,6 +151,7 @@ func run()->void:
 	await finish()
 func finish()->void:
 	game.terrain.set_brush_active(false)
+	check(preload("res://addons/world_runtime/mouse_ownership.gd").captures==0 and Input.mouse_mode==Input.MOUSE_MODE_VISIBLE,"terrain verification never captures the mouse")
 	FileAccess.open(folder.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"samples":samples,"visual":visual},"  "))
 	game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();await process_frame;await process_frame
 	print("VEGETATION_TERRAIN_EDITS failures=",failures);quit(1 if failures else 0)

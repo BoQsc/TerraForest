@@ -53,6 +53,8 @@ func run() -> void:
 	var initial: PackedByteArray=cover.removed.capture_storage_snapshot()
 	check(cover.set_grass_texture(false) and not cover.grass_texture_enabled and cover.set_grass_texture(true) and cover.removed.capture_storage_snapshot()==initial,"texture toggle preserves world records")
 	check(cover.batches.size()==9,"nine native species render collections initialized")
+	var render_settings:Dictionary=cover.batches[2].render_stats()
+	check(render_settings.page_capacity==1024 and render_settings.bytes_per_tick==65536 and render_settings.byte_limit==7000000,"whole-owner draw pages retain the existing grass residency ceiling")
 	var owner_count:int=cover.native.wanted_view(camera.position,Vector3.FORWARD,75,16.0/9.0,true).cells.size()
 	for i in range(owner_count):
 		cover._process(0.0)
