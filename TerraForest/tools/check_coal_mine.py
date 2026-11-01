@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=['review', 'world'])
     parser.add_argument('--resume')
+    parser.add_argument('--inside-only', action='store_true', help='Diagnose the saved underground pose after a retained re-entry phase')
     parser.add_argument('--pack', action='store_true', help='Test a matching installed pack after the coordinated export')
     parser.add_argument('--retry', help='Reuse only a CoalMine_* world created by a retained test report')
     parser.add_argument('--complete-return', action='store_true', help='Finish a retained journey whose only remaining walk is the sloping exterior')
@@ -22,6 +23,8 @@ def main():
         parser.error('Pack mode runs the ordinary world journey')
     if args.complete_return and (not args.retry or args.mode != 'world' or args.resume):
         parser.error('Return continuation requires --retry of an owned journey')
+    if args.inside_only and (not args.resume or args.mode != 'world'):
+        parser.error('Inside-only verification requires --resume')
     base = ROOT / 'reports/coal_mine'
     folder = (ROOT / args.resume).resolve() if args.resume else base / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     if base.resolve() not in folder.parents:
@@ -37,7 +40,7 @@ def main():
         if not reuse.startswith('CoalMine_') or not reuse.isidentifier():
             parser.error('Not an owned coal-mine test slot')
         (folder / 'created_slot.json').write_text(json.dumps({'slot': reuse, 'reused_from': str(previous)}))
-    record = dict(mode=args.mode, pack=args.pack, complete_return=args.complete_return, phases=[], **revision_metadata())
+    record = dict(mode=args.mode, pack=args.pack, complete_return=args.complete_return, inside_only=args.inside_only, phases=[], **revision_metadata())
     packed_driver = None
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -59,7 +62,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        for phase in (['review'] if args.mode == 'review' else ['restore'] if args.resume else ['create', 'restore']):
+        for phase in (['review'] if args.mode == 'review' else ['inside_restore'] if args.inside_only else ['restore', 'inside_restore'] if args.resume else ['create', 'restore', 'inside_restore']):
             destination = folder / (phase + datetime.datetime.now(datetime.timezone.utc).strftime('%H%M%S'))
             destination.mkdir()
             script = 'exploration_review' if args.mode == 'review' else 'coal_mine_world'
@@ -67,8 +70,10 @@ def main():
             if args.pack:
                 command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
             command += ['--review-output=' + folder.as_posix(), '--coal-only'] if args.mode == 'review' else ['--session-evidence-dir=' + folder.as_posix()]
-            if phase == 'restore':
+            if phase in ('restore', 'inside_restore'):
                 command.append('--restore-exploration')
+                if phase == 'inside_restore':
+                    command.append('--coal-inside-restore')
             elif reuse:
                 command.append('--coal-reuse-slot=' + reuse)
                 if args.complete_return:

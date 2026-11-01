@@ -35,6 +35,7 @@ var _navigation_exclusions: Array[RID]=[]
 var residents: Array = []
 var _corpse_age: Dictionary = {}
 var _capsule: CapsuleShape3D
+var _resident_capsule: CapsuleShape3D
 var geometry_template:RefCounted
 var profiling_enabled:=false
 var update_phase_us:Dictionary={}
@@ -52,6 +53,7 @@ func _ready() -> void:
 	_capsule = CapsuleShape3D.new()
 	_capsule.radius = 0.32
 	_capsule.height = 1.8
+	_resident_capsule=CapsuleShape3D.new();_resident_capsule.radius=.24;_resident_capsule.height=1.74
 	navigator=ClassDB.instantiate("NativeActorNavigator")
 	add_child(navigator)
 	if not navigator.configure(ENCOUNTER_LIMIT):push_error("Zombie navigation initialization failed")
@@ -303,7 +305,7 @@ func supported_resident_point(point:Vector3,standing:bool)->Vector3:
 	if hit.is_empty() or hit.normal.y<.85:return Vector3.INF
 	if water_depth.is_valid() and float(water_depth.call(point+Vector3.UP*.5))>0:return Vector3.INF
 	if standing:
-		var query:=PhysicsShapeQueryParameters3D.new();query.shape=_capsule;query.transform=Transform3D(Basis.IDENTITY,point+Vector3.UP*.9)
+		var query:=PhysicsShapeQueryParameters3D.new();query.shape=_resident_capsule;query.transform=Transform3D(Basis.IDENTITY,point+Vector3.UP*(_resident_capsule.height*.5))
 		query.collision_mask=1|2|4|8|CHARACTER_LAYER|RAGDOLL_LAYER
 		if not space.intersect_shape(query,1).is_empty():return Vector3.INF
 	return point

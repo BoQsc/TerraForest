@@ -8,6 +8,39 @@ func item_count(item:int)->int:
 		if row.item==item:total+=row.count
 	return total
 func coal_count()->int:return item_count(220)
+func verify_pose_adapter()->void:
+	var held:int=game.player_hud.active_item;var position:Vector3=game.player.position;var previous:PackedByteArray=game._saved_pose
+	for tool:int in [0]+game.player_hud.CATALOG.keys():
+		game.player_hud.active_item=tool
+		var encoded:PackedByteArray=game._capture_player_pose();var decoded:Dictionary=game.player_pose.decode(encoded)
+		check(decoded.get("ok",false) and decoded.get("position")==position and decoded.get("tool")== (tool if tool in [1,2,3,4] else 0),"live pose adapter saves current position with catalog selection "+str(tool))
+	var valid:PackedByteArray=game._saved_pose
+	var pitch:float=game.pitch;game.pitch=2.0
+	check(not game.player_pose.validate_snapshot(game._capture_player_pose()),"invalid current on-foot pose rejects the compound save instead of reusing an old pose")
+	game.pitch=pitch;game.loading_active=true
+	check(game._capture_player_pose()==valid,"loading retains the last valid player pose")
+	game.loading_active=false;game.waiting_spawn=true
+	check(game._capture_player_pose()==valid,"pending spawn retains the last valid player pose")
+	game.waiting_spawn=false;game.player_hud.active_item=held;game._saved_pose=previous
+func station_body_count(station:Array)->int:
+	var bodies:Array=game.zombies.residents.filter(func(actor:Node):return actor.get_meta("world_zombie_id",0) in station)
+	var records:Array=[]
+	for identity:int in station:
+		var record:Dictionary=game.zombies.population.store.resident(identity)
+		var row:Dictionary={"id":identity,"state":record.state,"position":record.position,"loaded":bodies.any(func(actor:Node):return actor.get_meta("world_zombie_id",0)==identity)}
+		if record.state==1 and not row.loaded:
+			row.support=game.zombies.supported_resident_point(record.position,record.sleep.is_empty())
+			var query:=PhysicsShapeQueryParameters3D.new();query.shape=game.zombies._resident_capsule
+			query.transform=Transform3D(Basis.IDENTITY,Vector3(record.position)+Vector3.UP*(game.zombies._resident_capsule.height*.5));query.collision_mask=15|(1<<16)|(1<<18)
+			row.clearance=[]
+			for hit:Dictionary in game.get_world_3d().direct_space_state.intersect_shape(query,8):
+				var collider:Node=hit.collider;var asset:=""
+				for key:String in game.structures._models:
+					if game.structures._models[key]==collider:asset=key;break
+				row.clearance.append({"type":collider.get_class(),"asset":asset,"resident":collider.get_meta("world_zombie_id",0)})
+		records.append(row)
+	print("COAL_STATION_RESIDENCY ",JSON.stringify({"bodies":bodies.size(),"limit":game.zombies.residency_limit,"population":game.zombies.population.status(),"records":records}))
+	return bodies.size()
 func build_rail()->void:
 	var before_wood:=item_count(102);var before_metal:=item_count(104)
 	var pose:=Transform3D(Basis(Vector3.UP,-site.rotation*PI*.5),local(Vector3(-3,0,31)))
@@ -34,6 +67,7 @@ func save_expected()->void:
 func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	var restore:bool="--restore-exploration" in OS.get_cmdline_user_args()
+	var inside_restore:bool="--coal-inside-restore" in OS.get_cmdline_user_args()
 	var complete_return:bool="--coal-complete-return" in OS.get_cmdline_user_args()
 	var reuse:=""
 	for argument:String in OS.get_cmdline_user_args():
@@ -68,7 +102,14 @@ func run()->void:
 		var row:Dictionary=store.resident(identity)
 		if (int(row.anchor)&(1<<43))!=0:station.append(row.id)
 	check(station.size()==10 and site.residents.size()==13,"ten deep-station residents plus three side-passage sleepers persist")
-	game.teleport(local(Vector3(.5,0,43) if restore else Vector3(.5,0,2) if complete_return else Vector3(.5,0,-7)))
+	# A separate process must resume the saved underground player pose naturally.
+	# Normal teleport resolves the surface, so every other journey enters outside.
+	if inside_restore:
+		print("COAL_PLAYER_RESTORE ",JSON.stringify({"expected":expected.get("inside_pose"),"actual":game.player.global_position,"saved":game.player_pose.decode(game._saved_pose),"saved_selection":expected.get("inside_tool"),"active_selection":game.player_hud.active_item,"torches":item_count(6)}))
+		if not check(expected.has("inside_pose") and game.player.global_position.distance_to(expected.inside_pose)<.45,"normal browser reopen restores the actual saved underground player pose"):await finish();return
+		check(item_count(6)==expected.torches,"legacy pose mode preserves the torch in its separate inventory")
+	else:
+		game.teleport(local(Vector3(.5,0,2) if complete_return else Vector3(.5,0,-7)))
 	if not check(await wait_for(func():return not game.loading_active,90),"mine collision and authored population stream before entry"):await finish();return
 	game.set_physics_process(false);game.zombies.update(0,game.player.global_position,false)
 	if complete_return:
@@ -80,6 +121,7 @@ func run()->void:
 		if not check(await walk(local(Vector3(.5,0,-7)),true),"physical exit follows the natural hillside grade"):await finish();return
 		save_expected();await photograph("coal_exit_completed");await finish();return
 	if restore:
+		if not inside_restore:verify_pose_adapter()
 		check(station==expected.station,"fresh process restores all ten stable station identities")
 		check(store.resident(expected.killed).state==2,"killed station zombie remains dead")
 		check(game.storage.store.capture_storage_snapshot()==expected.storage,"looted mine supplies remain depleted")
@@ -87,7 +129,17 @@ func run()->void:
 		for key:String in expected.rails:
 			var collection:Node=game.structures.model(key)
 			for identity:int in expected.rails[key]:check(collection.get_instance(identity)==expected.rails[key][identity],"rail placement survives fresh-process world restore")
-		game.camera.look_at(local(Vector3(.5,2,52)));await photograph("coal_station_restored")
+		game.player_hud.equip_item(6)
+		if inside_restore:
+			if not await path([Vector3(.5,0,46),Vector3(.5,0,43)]):await finish();return
+		else:
+			if not await path([Vector3(.5,0,2),Vector3(.5,0,7),Vector3(.5,0,12.5),Vector3(.5,0,22.5),Vector3(.5,0,32.5),Vector3(.5,0,43)]):await finish();return
+		check(station_body_count(station)==9,"all nine surviving station bodies restore during physical re-entry")
+		game.camera.look_at(local(Vector3(.5,2,52)));await photograph("coal_station_inside_reopened" if inside_restore else "coal_station_restored")
+		if not inside_restore:
+			expected.inside_pose=game.player.global_position
+			expected.inside_tool=game.player_hud.active_item;expected.torches=item_count(6)
+			FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE).store_var(expected)
 		await finish();return
 	expected.station=station
 	game.camera.look_at(local(Vector3(.5,2,4)));await photograph("coal_mine_entrance")
