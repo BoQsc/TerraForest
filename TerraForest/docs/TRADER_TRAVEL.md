@@ -1,8 +1,8 @@
 # Paid trader road travel
 
-Requested 2026-11-01. **Full service implemented in source. The generated-world
-paid trip, safe drop-off and distant return completed; coordinated packaging
-and user review are separate.**
+Requested 2026-11-01. **Full service installed. The generated-world paid trip,
+safe drop-off and distant return completed in source. Packaged booking/departure
+and paid save/reload pass 38 checks; user review remains separate.**
 
 The player asks the resident trader for a ride, chooses another connected town or
 city, and pays a quoted coin fare. Both enter the trader's car. The trader drives
@@ -121,6 +121,7 @@ the existing vehicle streaming guard also runs around each physics update.
 | Passenger ownership | Ordinary car/input regression checks pass; pause holds; stopped arrival and safe exit pass | Input guard retains one native movement owner; user interaction review remains separate |
 | Independent return | Same car completes the 1.69 km return and trader walks to counter while player position/focus remain in Town 2 | Road edits/obstacles stop the service until cleared; early exit refunds the fare. No unvalidated U-turn or teleport recovery |
 | Durable service identity | Native archives pass 35 per variant; unpaid reservation, paid outward and unoccupied returning fresh-process reopen pass, without another fare/refund | Arrival-only fresh-process test is not independently exercised; native phase contracts cover its archive |
+| Installed booking/reload | Actual root executable with exported PCK passes 24 booking/departure and 14 paid-reload assertions; same car, both occupants, exact wallet and resumed physical driving | Short packaged gate; full outward/exit/return journey remains source-only evidence |
 | Production reachability | Full quoted outward/return driven in one actual generated-world fixture; repeat booking reuses the same car | Conservative graph/profile can omit routes; this is not every seed/network or arbitrary edited-road acceptance |
 | Presentation/performance | Menu, arrival, departure and fitted seat images inspected; final short run wall intervals p95 19.11 ms, worst 51.84 ms. Long run private memory 3.84 GiB, dedicated GPU 1.40 GiB | Earlier long-run metrics are Godot process deltas (p95 19.09 ms, worst 133.31 ms). World active policy was 60 FPS despite launch requesting 30; no universal frame-time or world-quality acceptance |
 
@@ -136,9 +137,24 @@ stopped/refund feedback; `20261101T182722483062Z` passes all 11 unoccupied-retur
 reload checks. These are distinct from
 physical journey failures and must not be presented as wholly passing reports.
 The earlier too-high seat pose and boarding-payment failures remain in the
-tracker. The fitted final occupants were inspected in the actual world. Coordinated
-native-artifact commit/export belongs to the main work; no installed-build claim
-is made from source runs.
+tracker. The fitted final occupants were inspected in the actual world.
+
+The installed executable passes the short packaged gate in
+`reports/trader_ride_world/20261101T185229667074Z` (24/24 booking/departure) and
+`20261101T185356591401Z` (14/14 paid reload). The private copied world charges
+42 coins once (10,001 to 9,959), restores vehicle 1 and both occupants, and drives
+over 30 m before saving and over 20 m after reopening. The executable and PCK
+hashes remained unchanged; all 14 native libraries matched the exported copies.
+Both runs close durably with zero pointer captures and complete sampled resource
+telemetry within the configured limits. Peak private commit is 3,728,101,376 bytes
+and dedicated GPU allocation 1,472,753,664 bytes across the two runs. Wall-frame
+p95 is 17.634 / 17.232 ms; worst is 66.310 / 47.187 ms at the world's active 60 FPS
+policy. Startup and player fixture walking are excluded; harness sampling is
+included. These are scoped measurements, not sustained frame-time acceptance.
+Packaged menu and restored seated views were inspected; inherited garment/body
+fit and opaque exterior glass remain. Exact hashes, commands and evidence are in
+the [integration record](../issues/trader-travel/integration_verification.json).
+The complete trip and independent return were not repeated in this package gate.
 
 ## Provenance
 

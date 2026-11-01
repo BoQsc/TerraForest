@@ -1,7 +1,7 @@
 # Trader rides between settlements
 
-- Status: Implemented in source / complete generated-world trip and return
-  reproduced; final UI/cancellation and return-reload checks pass. Coordinated packaging pending.
+- Status: Installed / complete generated-world trip and return reproduced in
+  source; packaged booking/departure and paid reload pass 38 scoped checks.
 - Updated: 2026-11-01. Requested: destination selection, both occupants travelling
   by car on roads, and trader returning after the player gets out.
 - User review: Not reviewed. No visual/gameplay acceptance claimed.
@@ -52,7 +52,17 @@ one UI assertion sampled before host publication; the harness now waits for that
 update. Final UI/cancellation passes 30/30 and unoccupied return/refund reload
 passes 11/11. Original failures remain retained rather than relabelled as passes.
 
+The actual root executable with PCK
+`4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`
+now passes 24 booking/departure and 14 paid-reload checks. The fresh private world
+charges 42 coins once (10,001 to 9,959), preserves vehicle 1, restores both seated
+occupants and passenger controls, and resumes physical road travel without a
+second charge. Both closes are durable, both runs have zero pointer captures,
+all 14 native libraries match the export, and PCK/executable hashes remained
+unchanged afterward. This short package gate does not repeat the full trip/return.
+
 Retained integrated runs:
+
 - `reports/trader_ride_world/20261101T171755385121Z`: unrelated concurrently added
   mine icons were not yet imported; cancelled owned process, then re-imported.
 - `reports/trader_ride_world/20261101T172118627580Z`: 11 menu/world checks passed;
@@ -75,6 +85,11 @@ Retained integrated runs:
   30/30 pass; fitted seats inspected, exact refund, zero captures.
 - `reports/trader_ride_world/20261101T182722483062Z`: 11/11 fresh-process unoccupied
   return/refund checks pass; same car travels again, player stays on foot, no duplicated refund.
+- `reports/trader_ride_world/20261101T185229667074Z`: actual executable, 24/24
+  booking, obstacle/payment, seated UI, over 30 m departure, pause and save checks.
+- `reports/trader_ride_world/20261101T185356591401Z`: actual executable, 14/14
+  fresh-process paid reload, exact wallet/car, both occupants, UI, over 20 m road
+  travel and save checks. These use one owned `TraderRide_e81539eb1514` copy.
 
 Initial graph test: 18 assertions passed in
 `reports/checks/20261101T163427413803Z/engine.log`.
@@ -88,6 +103,15 @@ production braking changes. Original runs remain in
 Fixture results do not establish production-world travel or performance.
 
 ## Images
+
+![Packaged town selection](images/packaged-destination-menu.png)
+Actual executable and exported PCK: 1.5 km, 42 coins, charged on boarding.
+Unedited 1920×1080 capture inspected; user approval remains separate.
+
+![Packaged paid reload](images/packaged-paid-reload-seats.png)
+Actual executable after reopening the paid ride: both fitted occupants and ride
+status restored. Inspected; inherited garment fitting and opaque exterior glass
+remain separate limitations. The source and rejected comparisons below are retained.
 
 ![Town selection](images/destination-menu.png)
 Seed 1703, private generated-world copy, source 1920×1080: another town is quoted
@@ -120,14 +144,21 @@ Startup is excluded, harness sampling included. Two sampled tight-
 corner road-footprint holds recovered; home walking waited for publication. This is
 fixture evidence, not universal performance or world-quality acceptance.
 
+The packaged departure/reload runs record wall-frame p95 17.634 / 17.232 ms and
+worst 66.310 / 47.187 ms at the world's active 60 FPS policy. Startup/player
+fixture walking are excluded and harness sampling is included. Peak private
+commit is 3,728,101,376 bytes and dedicated GPU allocation 1,472,753,664 bytes
+across both runs; complete sampled telemetry stays within configured limits.
+The 66.31 ms departure maximum is retained, not presented as sustained 60 FPS.
+
 ## Remaining / resume here
 
 Exact flow, dependencies and closure evidence:
 [travel contract](../../docs/TRADER_TRAVEL.md). The requested physical trip and
-return now complete, including the short help/refund-return reload checks. Coordinate
-the combined native artifacts and packaged smoke with the
-main work. Do not represent a source run as installed-build evidence. User visual
-approval, inherited clothing fit and every possible edited/generated road network
+return now complete in source, including the short help/refund-return reload checks.
+Combined native artifacts and the packaged booking/paid-reload gate are complete.
+The full package journey was not repeated; source evidence retains that scope.
+User visual approval, inherited clothing fit and every possible edited/generated road network
 remain separate. A blocked/unpublished road stops controls; cancellation refunds
 the fare without teleporting or inventing a U-turn.
 
@@ -146,6 +177,13 @@ paid trip in a fresh process. Alternatively use
 `tools/run_godot_check.py trader_ride_physics --headless --timeout 90
 --require "TRADER_RIDE_PHYSICS checks="` for the real chassis on an isolated flat
 road fixture. These checks do not touch player saves.
+
+For the short packaged gate, add `--executable` to `--stage depart`, then reuse its
+report with `--stage paid-resume --resume-report reports/trader_ride_world/<departure-run>`
+and the same `--source-report`. `--pack` uses the configured Godot executable;
+`--executable` uses the existing root `TerraForest.exe` without replacing it. Both
+require matching exported native libraries, explicit `dist/TerraForest.pck`, and
+external assertion drivers while gameplay resources resolve inside the PCK.
 
 New code/tests are original AI-assisted 0BSD work for this request. Existing car
 code/visuals retain their notices; no imported assets or new license exception.

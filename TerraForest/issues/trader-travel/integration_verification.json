@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "scope": "Source generated-world paid ride, outward reload, safe exit, full remote return, cancellation/refund. Packaging and user approval separate.",
+  "scope": "Source generated-world paid ride, outward reload, safe exit, full remote return, cancellation/refund. Actual executable package booking/departure and paid reload pass 38 checks. Full package journey not repeated; user approval separate.",
   "road_metres": {
     "outward": 1506.95073437691,
     "return": 1690.58484250307
@@ -1631,5 +1631,284 @@
     "maximum_sampled_lane_error_m": 2.5728759765625,
     "sampled_control_holds": 2,
     "note": "Two sampled return holds report road footprint at the tight approach-road corner; both recovered under normal controls, with no pose correction. Five-second samples do not exclude shorter holds. Home walk initially waited for collision publication, then completed."
+  },
+  "packaged_validation": {
+    "scope": "Short actual-executable booking/departure and fresh-process paid reload; full outward/exit/return evidence remains source-only.",
+    "implementation_commit": "2d276dd069ca968a98724d17335f6675a9b5bfe1",
+    "validation_commit": "731fd1f8",
+    "native_artifact_commit": "579a21c1",
+    "reports": {
+      "depart": {
+        "stage": "depart",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--main-pack",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1920x1080",
+          "--max-fps",
+          "30",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261101T185229667074Z\\engine.log",
+          "--script",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261101T185229667074Z\\driver.gd",
+          "--",
+          "--session-evidence-dir=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/trader_ride_world/20261101T185229667074Z",
+          "--ride-stage=depart"
+        ],
+        "clone": {
+          "created": true,
+          "slot": "TraderRide_e81539eb1514",
+          "source_slot": "Survival_1703_d2f72c5e",
+          "source_sha256": "4530de32e9dd5cfb009796f8f357d02633f2e19a6f44e7da884fbbb09b09787d",
+          "map_cache_copied": false
+        },
+        "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+        "executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+        "native_sha256": {
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+          "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+          "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+        },
+        "external_driver_sha256": {
+          "window_session_flow.gd": "8917c437277d9e1d6a69610cda45af6951b743106e397237f463d820145e278e",
+          "driver.gd": "c1dbff89218aa8ec205b45efc2ba7c59a26b9b7b8cee456540e99fe5e91d15c8"
+        },
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 18040,
+          "exit_code": 0,
+          "resources": {
+            "samples": 128,
+            "gpu_samples": 128,
+            "peak_private_commit_bytes": 3728101376,
+            "peak_working_set_bytes": 2371006464,
+            "peak_dedicated_gpu_bytes": 1472749568,
+            "checks": {
+              "ram": {
+                "bytes": 3728101376,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1472749568,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 78.30906969995704,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        },
+        "path": "reports/trader_ride_world/20261101T185229667074Z",
+        "passed_assertions": 24,
+        "failed_assertions": [],
+        "evidence_sha256": {
+          "run.json": "8fa1bd6a945a34d91392bc20e253e3b15e720c2609cbdd4f693336fda33af56e",
+          "engine.log": "e12422f4c8071bcdb1017f70e5fd3abf6bd1d0980141cd24e4160fe5be7ca000",
+          "console.log": "4344ce31680dc1fd3d53bbc530b51a90892e2f09946a13400b6e950a2778557b",
+          "frames.json": "196531389d3a886e450680d8a485d74bf1677dcc0bd8da3ff9e498cbc4df7f4f",
+          "expected.json": "b715b2e5fbb7b03f337d5f39d137a4d243128e02d023647d31eabd0c9f9ab3f7"
+        },
+        "frames": {
+          "fps_cap": 60,
+          "measurement": "wall-clock process-frame intervals",
+          "p95_ms": 17.634,
+          "samples": 1599,
+          "scope": "Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+          "worst_ms": 66.31
+        },
+        "expected": {
+          "coins": 9959,
+          "fare": 42,
+          "vehicle": 1
+        },
+        "zero_pointer_captures": true
+      },
+      "paid_resume": {
+        "stage": "paid-resume",
+        "command": [
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+          "--main-pack",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+          "--windowed",
+          "--position",
+          "-2400,-1600",
+          "--resolution",
+          "1920x1080",
+          "--max-fps",
+          "30",
+          "--log-file",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261101T185356591401Z\\engine.log",
+          "--script",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261101T185356591401Z\\driver.gd",
+          "--",
+          "--session-evidence-dir=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/trader_ride_world/20261101T185356591401Z",
+          "--ride-stage=paid-resume"
+        ],
+        "clone": {
+          "created": true,
+          "slot": "TraderRide_e81539eb1514",
+          "source_slot": "Survival_1703_d2f72c5e",
+          "source_sha256": "4530de32e9dd5cfb009796f8f357d02633f2e19a6f44e7da884fbbb09b09787d",
+          "map_cache_copied": false
+        },
+        "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+        "executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+        "native_sha256": {
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+          "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+          "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+          "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+          "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+          "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "7c5ec850d0de630a83f2b82c299e12139018cd1adde89728d21c09003387c4fa",
+          "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "ee60388fec0649b05d215c541d14dbe36197ca8802e71cfca7d9438ef20e56ce",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+          "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+          "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+        },
+        "external_driver_sha256": {
+          "window_session_flow.gd": "8917c437277d9e1d6a69610cda45af6951b743106e397237f463d820145e278e",
+          "driver.gd": "7b4a354ff2b79daa437a6e41b786d4fb72a100a5a0757bdda2fad277dace61b8"
+        },
+        "result": {
+          "timed_out": false,
+          "launch_error": null,
+          "cancelled": false,
+          "pid": 17080,
+          "exit_code": 0,
+          "resources": {
+            "samples": 57,
+            "gpu_samples": 57,
+            "peak_private_commit_bytes": 3626614784,
+            "peak_working_set_bytes": 2094575616,
+            "peak_dedicated_gpu_bytes": 1472753664,
+            "checks": {
+              "ram": {
+                "bytes": 3626614784,
+                "status": "within_budget"
+              },
+              "vram": {
+                "bytes": 1472753664,
+                "status": "within_budget"
+              },
+              "redistributable": {
+                "bytes": null,
+                "status": "unavailable"
+              }
+            },
+            "limits": {
+              "schema": 1,
+              "vram_warning_bytes": 3758096384,
+              "vram_limit_bytes": 4294967296,
+              "ram_warning_bytes": 4294967296,
+              "ram_limit_bytes": 6442450944,
+              "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+              "redistributable_warning_bytes": 4000000000,
+              "redistributable_limit_bytes": 5000000000,
+              "derived_cache_total_bytes": 3221225472,
+              "failed_test_cache_bytes": 1073741824,
+              "saved_world_warning_bytes": 10737418240,
+              "minimum_free_bytes": 10737418240,
+              "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+            },
+            "errors": [],
+            "exceeded": false,
+            "telemetry_complete": true,
+            "within_sampled_limits": true,
+            "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+          },
+          "diagnostics": [],
+          "required_text_found": true,
+          "elapsed_seconds": 34.489002399961464,
+          "passed": true,
+          "cache_retention": {
+            "managed": false
+          }
+        },
+        "path": "reports/trader_ride_world/20261101T185356591401Z",
+        "passed_assertions": 14,
+        "failed_assertions": [],
+        "evidence_sha256": {
+          "run.json": "cb2d91a329e946bcca2dcc3b25fdc7f2b22ae36e2c3f1b8201fe6d8597de91a4",
+          "engine.log": "664ea00f6800e464f66c5d3bf905428cea447628ed92a7f2223cbf06638d3707",
+          "console.log": "84dbbf9a3690c2ebe083cd3c5c859993173558d6bb8d9ea7097160cd7e222698",
+          "frames.json": "b1af0bb1fd4fe5aa9244e189f41faa47fecae11e824c4ffc3a043983417a8527",
+          "expected.json": "b715b2e5fbb7b03f337d5f39d137a4d243128e02d023647d31eabd0c9f9ab3f7"
+        },
+        "frames": {
+          "fps_cap": 60,
+          "measurement": "wall-clock process-frame intervals",
+          "p95_ms": 17.232,
+          "samples": 277,
+          "scope": "Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+          "worst_ms": 47.187
+        },
+        "expected": {
+          "coins": 9959,
+          "fare": 42,
+          "vehicle": 1
+        },
+        "zero_pointer_captures": true
+      }
+    },
+    "limits": [
+      "Inherited garment/body fitting and opaque exterior glass remain separate limitations.",
+      "Packaged wall intervals exclude startup/player fixture walking and include harness sampling; active 60 FPS policy. Departure worst frame is 66.310 ms, not sustained frame-time acceptance.",
+      "Departure interior screenshot retains the intentionally injected obstruction's brief prior notice; restored interior does not.",
+      "No user visual approval or all-seed/edited-road acceptance claimed."
+    ],
+    "artifact_hashes_rechecked_unchanged_after_runs": true
   }
 }

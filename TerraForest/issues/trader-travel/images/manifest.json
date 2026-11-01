@@ -30,5 +30,21 @@
     "caption": "Rejected earlier pose: heads intersected roof. Later fitting lowered and scaled seat views; retained for comparison.",
     "inspection": "inspected",
     "provenance": "Unedited Godot source-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "packaged-destination-menu.png",
+    "source": "reports/trader_ride_world/20261101T185229667074Z/destination-menu.png",
+    "sha256": "50f1520c31cb1920e4fcedb84de6634c1cb79ba7fce59cff74bfc550de6b22ac",
+    "caption": "Actual root executable and exported PCK, private seed-1703 copy: 1.5 km road ride, 42 coins charged on boarding, destination/return instructions visible.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "packaged-paid-reload-seats.png",
+    "source": "reports/trader_ride_world/20261101T185356591401Z/seated-interior.png",
+    "sha256": "fb70845b0a52afb080e33ad560ee791bb796768f9553a4698a908818b26a30ef",
+    "caption": "Actual root executable after fresh-process paid reload: same car and both fitted occupants, ride status restored. Inherited garment/body fit and opaque exterior glass remain separate limitations.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
   }
 ]

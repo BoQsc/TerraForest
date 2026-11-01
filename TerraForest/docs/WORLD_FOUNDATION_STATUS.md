@@ -32,8 +32,16 @@ run is retained as an overall failure only for its offscreen pointer assertion;
 the mouse guard was fixed and subsequent zero-capture runs pass. A later UI
 assertion sampled too early; final UI/cancellation checks pass 30/30 and fresh
 unoccupied return/refund reopen passes 11/11. Fitted seated views are inspected;
-inherited garment fitting and opaque car glass remain separate. Native artifacts
-and packaging await coordinated integration; no installed-build claim. Evidence:
+inherited garment fitting and opaque car glass remain separate. Installed native
+artifacts and the actual root executable now pass 24 packaged booking/departure
+and 14 paid-reload assertions: same car and both occupants, exact 42-coin fare,
+no second charge, physical travel and durable closes. Both runs record zero
+pointer captures and sampled RAM/GPU use within budget. Wall-frame p95 is
+17.634 / 17.232 ms; worst 66.310 / 47.187 ms at the active 60 FPS policy, excluding
+startup and player fixture walking. Packaged menu/seated images were inspected.
+The full outward/exit/independent return remains source-only evidence, and user
+visual approval remains separate. Reports `20261101T185229667074Z` and
+`20261101T185356591401Z` under `reports/trader_ride_world/`. Evidence:
 [travel contract](TRADER_TRAVEL.md) and [tracker](../issues/trader-travel/README.md).
 
 ## Town roadside signs — 2026-11-01
