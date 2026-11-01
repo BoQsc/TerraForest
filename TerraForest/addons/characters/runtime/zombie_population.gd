@@ -67,6 +67,9 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 		token -= 1; waiting = false; sampled = false
 		initial_complete = false
 		last_focus = focus; queue = store.nearby(focus, RADIUS)
+		# Coal-mine authored keys reserve enough bounded bodies for the ten-person
+		# station and three side encounters. Ordinary surface admission stays six.
+		host.residency_limit=host.ENCOUNTER_LIMIT if queue.any(func(row:Dictionary):return (int(row.anchor)&(1<<42))!=0) else host.LIMIT
 		queue=queue.filter(func(record:Dictionary):return record.anchor!=0)+queue.filter(func(record:Dictionary):return record.anchor==0)
 		cursor = 0; examined = 0; admitted = 0; began = Time.get_ticks_msec()
 		game.terrain.changed_since_save = true
@@ -99,7 +102,7 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	if not during_loading and (offset.length() < (8.0 if authored else 40.0) or (host.spawn_visible.is_valid() and host.spawn_visible.call(point + Vector3.UP) and (not authored or not _occluded(point)))):
 		cursor += 1; examined += 1
 		return false
-	if host.residents.size()>=host.LIMIT:
+	if host.residents.size()>=host.residency_limit:
 		var replacement:=-1
 		var farthest:=40.0
 		if authored:

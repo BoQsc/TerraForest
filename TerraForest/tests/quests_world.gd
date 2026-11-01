@@ -61,12 +61,12 @@ func run()->void:
 			types.append(entry.layout)
 			for key in entry.residents:owned_residents[key]=entry.key
 			for identity in entry.containers:owned_chests[identity]=entry.key
-		check(types.count("survey_mine")==1 and types.count("split_rock_cave")==1 and types.count("watchtower_w1")==2,"both underground layouts and both generated watchtowers publish location identities")
+		check(types.count("survey_mine")==1 and types.count("split_rock_cave")==1 and types.count("coal_mine")==1 and types.count("watchtower_w1")==2,"all underground layouts and both generated watchtowers publish location identities")
 		var population:RefCounted=game.zombies.population.store;var found:=0
 		for identity in range(1,population.statistics().slots+1):
 			var resident:Dictionary=population.resident(identity)
 			if owned_residents.has(resident.anchor):found+=1
-		check(found==owned_residents.size() and found==7,"ownership refers to the seven actual generated sleepers, not synthetic copies")
+		check(found==owned_residents.size() and found==20,"ownership refers to all twenty actual generated sleepers, not synthetic copies")
 		var original_position:Vector3=game.player.global_position
 		for entry:Dictionary in locations:
 			if not await stream_to(entry.marker+Vector3.UP*2):await finish();return
@@ -78,7 +78,7 @@ func run()->void:
 				chests_ready=chests_ready and game.storage.store.has_contents(identity)
 			check(chests_ready,"resident location owns actual stocked chest placements: "+entry.layout)
 		if not await stream_to(original_position):await finish();return
-		check(owned_chests.size()==7,"all seven owned chests were checked through normal region streaming")
+		check(owned_chests.size()==12,"all twelve owned chests were checked through normal region streaming")
 		var registry:PackedByteArray=store.capture_storage_snapshot()
 		check(registry.size()<4096 and store.validate_snapshot(registry),"generated ownership stays compact without serializing the whole world")
 		check(not locations.is_empty() and store.accept(locations[0].key,store.snapshot().revision).ok,"native travel reservation uses a real generated location")

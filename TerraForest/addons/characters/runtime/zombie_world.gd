@@ -6,6 +6,8 @@ const CHARACTER_LAYER := 1 << 16
 const HIT_LAYER := 1 << 17
 const RAGDOLL_LAYER := 1 << 18
 const LIMIT := 6
+const ENCOUNTER_LIMIT := 16
+var residency_limit := LIMIT
 const RETIRE_RADIUS := 96.0
 var population: RefCounted
 var population_enabled := true
@@ -52,9 +54,9 @@ func _ready() -> void:
 	_capsule.height = 1.8
 	navigator=ClassDB.instantiate("NativeActorNavigator")
 	add_child(navigator)
-	if not navigator.configure(LIMIT):push_error("Zombie navigation initialization failed")
+	if not navigator.configure(ENCOUNTER_LIMIT):push_error("Zombie navigation initialization failed")
 	awareness=ClassDB.instantiate("NativeZombieAwareness")
-	if not awareness.configure(LIMIT,randi()):push_error("Zombie awareness initialization failed")
+	if not awareness.configure(ENCOUNTER_LIMIT,randi()):push_error("Zombie awareness initialization failed")
 
 func clear() -> void:
 	if is_instance_valid(corpse_host):corpse_host.clear_live()
@@ -307,7 +309,7 @@ func supported_resident_point(point:Vector3,standing:bool)->Vector3:
 	return point
 
 func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> CharacterBody3D:
-	if not enabled or not point.is_finite() or residents.size() >= LIMIT or not is_instance_valid(target):
+	if not enabled or not point.is_finite() or residents.size() >= residency_limit or not is_instance_valid(target):
 		return null
 	var measured_begin:=Time.get_ticks_usec() if profiling_enabled else 0
 	var supported := supported_resident_point(point,not restoring_sleep) if restoring_sleep or authored else supported_point(point)

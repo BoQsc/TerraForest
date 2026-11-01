@@ -24,7 +24,7 @@ def main():
         project = ROOT / ".build/exploration_release"
         project.mkdir(parents=True, exist_ok=True)
         (project / "project.godot").write_text('config_version=5\n[application]\nconfig/name="Exploration native checks"\n')
-        paths = ["addons/exploration/cave_layouts.gd", "addons/exploration/small_locations.poi.json", "addons/world_runtime/generation_earthworks.gd", "addons/volumetric_terrain/mesh_codec.gd", *[f"tests/{name}.gd" for name in tests]]
+        paths = ["addons/exploration/cave_layouts.gd", "addons/exploration/coal_mine.gd", "addons/exploration/coal_resource.gd", "addons/structures/mine_rail_catalog.gd", "addons/exploration/small_locations.poi.json", "addons/world_runtime/generation_earthworks.gd", "addons/volumetric_terrain/mesh_codec.gd", *[f"tests/{name}.gd" for name in tests]]
         for relative in paths:
             target = project / relative
             target.parent.mkdir(parents=True, exist_ok=True)

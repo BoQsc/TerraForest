@@ -24,14 +24,14 @@ func _initialize()->void:
 	node_added.connect(func(node:Node):
 		if node.scene_file_path=="res://demo/world.tscn":ProjectSettings.set_setting("terraforest/offscreen_session",true))
 	super._initialize()
-func walk(target:Vector3)->bool:
+func walk(target:Vector3,follow_ground:bool=false)->bool:
 	game.session_menu.developer_hud.mouse_access=true
 	game.fly=false;game.needs_floor_spawn=false;game.controls.clear(Time.get_ticks_usec())
 	game.camera.position=Vector3(0,1.65,0);game.camera.rotation=Vector3.ZERO
 	var began:=Time.get_ticks_usec();var previous:=began;var reached:=false
 	while Time.get_ticks_usec()-began<16000000:
 		var offset:Vector3=target-game.player.position;offset.y=0
-		if offset.length()<.25 and absf(game.player.position.y-target.y)<.4:reached=true;break
+		if offset.length()<.25 and (game.player.is_on_floor() if follow_ground else absf(game.player.position.y-target.y)<.4):reached=true;break
 		game.yaw=atan2(-offset.x,-offset.z);game.player.rotation.y=game.yaw
 		game.controls.set_key(KEY_W,true,Time.get_ticks_usec())
 		await physics_frame;game.app_focused=true;game._physics_process(1./60.)
@@ -78,9 +78,9 @@ func run()->void:
 		var origin:=Vector3i((key&2047)-1,(key>>29)&1023,((key>>11)&2047)-1)
 		if not locations.has(origin):locations[origin]={"origin":origin,"rotation":(key>>22)&3,"anchors":[]}
 		locations[origin].anchors.append(row.id)
-	if not check(anchors.size()==5 and locations.size()==2,"ordinary generation saves two underground sites and five keyed sleepers"):await finish();return
+	if not check(anchors.size()==18 and locations.size()==3,"ordinary generation saves three underground sites and eighteen keyed sleepers"):await finish();return
 	var places:Array=game.generated_region.store.get_plan().places
-	check(places.filter(func(place:Dictionary):return place.title in ["Abandoned survey mine","Split-rock cave"]).size()==2,"both actual locations are published on the map")
+	check(places.filter(func(place:Dictionary):return place.title in ["Abandoned survey mine","Split-rock cave","Blackridge coal mine"]).size()==3,"all actual underground locations are published on the map")
 	if not await check_watchtowers(restore):await finish();return
 	if restore:
 		check(game.storage.store.capture_storage_snapshot()==expected.storage,"fresh process restores exact depleted supplies without refill")
@@ -91,6 +91,9 @@ func run()->void:
 	expected.killed=0;expected.chests=[]
 	for origin:Vector3i in locations:
 		var site:Dictionary=locations[origin];var rotation:int=site.rotation
+		# The complete coal loop/station/door/harvest journey has its own normal-
+		# browser create/restore driver in coal_mine_world.gd.
+		if site.anchors.size()==13:continue
 		var layout:Dictionary=Layouts.load_catalog()[0 if site.anchors.size()==3 else 1]
 		var mouth:=Vector3(origin)+Layouts.turn(Vector3(.5,0,-7),rotation)
 		game.teleport(mouth)

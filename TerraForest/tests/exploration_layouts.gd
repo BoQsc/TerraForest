@@ -26,8 +26,8 @@ func run()->void:
 	if not ClassDB.class_exists("TerrainCore"):GDExtensionManager.load_extension("res://addons/volumetric_terrain/terrain_core.gdextension")
 	core=ClassDB.instantiate("TerrainCore")
 	var layouts:=Layouts.load_catalog()
-	check(layouts.size()==2,"both original bounded location layouts load")
-	if layouts.size()!=2:quit(1);return
+	check(layouts.size()==3,"all three bounded location layouts load")
+	if layouts.size()!=3:quit(1);return
 	var origin:=Vector3i(100,40,100)
 	var invalid:=Layouts.segments(layouts[0],origin,0)
 	for mutation:Dictionary in [{"phase":""},{"cut_only":false},{"rectangular":true},{"level_caps":true},{"shoulder":1.0},{"coefficients":PackedFloat32Array()}]:
@@ -35,7 +35,9 @@ func run()->void:
 		check(Earthworks.packets(bad_segments).is_empty(),"invalid arched generation profile rejects before baking: "+str(mutation.keys()[0]))
 	for layout:Dictionary in layouts:
 		for rotation in 4:
-			core.execute(Codec.command(6,[1703,5]));core.execute(Codec.brush(Vector3(100,50,112),Vector3(100,50,112),40,1,true,1))
+			core.execute(Codec.command(6,[1703,5]))
+			var fixture_center:=Vector3(origin)+Layouts.turn(Vector3(0,10,28),rotation)
+			check(Codec.reply_ok(core.execute(Codec.brush(fixture_center,fixture_center,40,1,true,1))),"solid fixture covers the complete authored footprint")
 			var good:=true;var began:=Time.get_ticks_usec()
 			for packet:PackedByteArray in Earthworks.packets(Layouts.segments(layout,origin,rotation)):
 				if not Codec.reply_ok(core.execute(packet)):good=false
@@ -75,7 +77,7 @@ func run()->void:
 	var before:PackedByteArray=core.execute(Codec.command(4))
 	var planned:Dictionary=core.plan_exploration_sites(layouts,[],[])
 	print("EXPLORATION_PLAN ",planned)
-	check(planned.get("ok",false) and planned.get("sites",[]).size()==2,"native search finds roof-covered natural hillsides for both layouts")
+	check(planned.get("ok",false) and planned.get("sites",[]).size()==3,"native search finds roof-covered natural hillsides for all layouts")
 	check(core.execute(Codec.command(4))==before,"site search is read-only")
 	if planned.get("ok",false):
 		var repeated:Dictionary=core.plan_exploration_sites(layouts,[],[])
@@ -91,7 +93,7 @@ func run()->void:
 	var unchanged:PackedByteArray=core.execute(Codec.command(4))
 	check(not core.plan_exploration_sites(bad,[],[]).get("ok",true) and core.execute(Codec.command(4))==unchanged,"invalid mod geometry rejects before survey/mutation")
 	var excluded:Dictionary=core.plan_exploration_sites(layouts,[Rect2(0,0,2000,2000)],[])
-	check(excluded.get("ok",false) and excluded.sites.is_empty() and excluded.skipped.size()==2 and core.execute(Codec.command(4))==unchanged,"fully reserved world skips locations instead of overriding reservations")
+	check(excluded.get("ok",false) and excluded.sites.is_empty() and excluded.skipped.size()==3 and core.execute(Codec.command(4))==unchanged,"fully reserved world skips locations instead of overriding reservations")
 	for entrance in [[0,-2,9,2,12],[0,-2,6,2,INF],[0,-2,6,0,12],[0,-2,6,2],["invalid",-2,6,2,12]]:
 		var invalid_entrance:=layouts.duplicate(true);invalid_entrance[0].entrance_cuts=[entrance]
 		check(not core.plan_exploration_sites(invalid_entrance,[],[]).get("ok",true) and core.execute(Codec.command(4))==unchanged,"invalid entrance cuts reject atomically")
@@ -107,6 +109,6 @@ func run()->void:
 		core.execute(Codec.command(6,[seed_value,29]))
 		var sampled:Dictionary=core.plan_exploration_sites(layouts,[],[])
 		print("EXPLORATION_SEED ",seed_value," sites=",sampled.get("sites",[]).size()," ms=",sampled.get("worker_ms",-1))
-		check(sampled.get("ok",false) and sampled.candidates<=32768 and sampled.sites.size()+sampled.skipped.size()==2,"bounded seeded search returns explicit placements or skipped layouts")
+		check(sampled.get("ok",false) and sampled.candidates<=49152 and sampled.sites.size()+sampled.skipped.size()==3,"bounded seeded search returns explicit placements or skipped layouts")
 	print("EXPLORATION_LAYOUTS checks=",checks," failures=",failures)
 	quit(1 if failures else 0)

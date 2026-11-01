@@ -44,7 +44,7 @@ Dictionary NativeZombieAwareness::describe(const Agent &a){
     out["wake_elapsed"]=a.wake_elapsed;out["wake_ready"]=a.state==WAKING&&a.wake_elapsed>=a.profile.wake;
     out["unseen_seconds"]=a.unseen;out["remaining_seconds"]=a.remaining;out["ignore_seconds"]=a.ignore;return out;
 }
-bool NativeZombieAwareness::configure(int capacity,int64_t seed){if(capacity_||capacity<1||capacity>6)return false;capacity_=capacity;seed_=uint32_t(seed)|1;agents_.reserve(capacity);return true;}
+bool NativeZombieAwareness::configure(int capacity,int64_t seed){if(capacity_||capacity<1||capacity>16)return false;capacity_=capacity;seed_=uint32_t(seed)|1;agents_.reserve(capacity);return true;}
 bool NativeZombieAwareness::add_agent(int64_t id,const Vector3 &feet){
     if(!capacity_||id<=0||!feet.is_finite()||find(id)||int(agents_.size())>=capacity_)return false;
     Agent a;a.id=id;a.home=a.goal=a.last_seen=feet;a.random=(seed_^uint32_t(id)^uint32_t(uint64_t(id)>>32))|1;

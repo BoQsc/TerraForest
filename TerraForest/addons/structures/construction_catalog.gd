@@ -9,6 +9,9 @@ static func salvage_recipes(objects: Dictionary = {}) -> Dictionary:
 	result[preload("res://addons/structures/guardrail_catalog.gd").KEY]=PackedInt64Array([104,2])
 	result[preload("res://addons/structures/guardrail_catalog.gd").STAIR_KEY]=PackedInt64Array([104,2])
 	result[preload("res://addons/structures/fence_catalog.gd").KEY]=PackedInt64Array([102,2])
+	var rails=preload("res://addons/structures/mine_rail_catalog.gd")
+	for part:String in rails.PARTS:result[rails.key(part)]=PackedInt64Array([102,1,104,1])
+	result[preload("res://addons/exploration/coal_resource.gd").KEY]=PackedInt64Array([220,8])
 	for id: String in objects:
 		if objects[id].salvage.is_empty():result.erase(id)
 		else:result[id]=preload("res://addons/structures/object_catalog.gd").recipe(objects[id].salvage)
@@ -29,6 +32,8 @@ static func recipes(objects: Dictionary = {}) -> Dictionary:
 	result[guardrail.STAIR_KEY]=guardrail.recipe()
 	var fence=preload("res://addons/structures/fence_catalog.gd")
 	result[fence.KEY]=fence.recipe()
+	var rails=preload("res://addons/structures/mine_rail_catalog.gd")
+	for part:String in rails.PARTS:result[rails.key(part)]=rails.recipe(part)
 	for id: String in objects:
 		result[id]=preload("res://addons/structures/object_catalog.gd").recipe(objects[id].recipe)
 	return result

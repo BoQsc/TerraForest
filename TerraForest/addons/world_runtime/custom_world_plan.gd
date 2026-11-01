@@ -60,6 +60,8 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
  key+="|civic-r1" if civic_review else "|approved-e2-civic"
  key+="|"+FileAccess.get_sha256(Exploration.PATH)
+ for mine_layout:Dictionary in Exploration.load_catalog():
+  if mine_layout.id=="coal_mine":key+="|"+prefab_fingerprint(Exploration.prefab(mine_layout))
  key+="|"+prefab_fingerprint(Watchtowers.asset())
  if not civic_review:
   for id:String in preload("res://addons/structures/expansion_catalog.gd").IDS:key+="|"+prefab_fingerprint(preload("res://addons/structures/expansion_catalog.gd").asset(id))
@@ -230,7 +232,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   navigation.places.append({"id":6000+navigation.places.size(),"title":location.title,"detail":"Destructible wilderness lookout with connected stairs, supplies and a sleeping inhabitant.","position":location.entrance.segment.start})
   navigation.roads.append({"a":location.entrance.segment.start,"b":location.entrance.road_join,"width":1.5})
  for location:Dictionary in result.get("exploration",{}).get("sites",[]):
-  navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
+   navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Coal workings, looping rails and a deep loading station with ten inhabitants." if location.id=="coal_mine" else "Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
  for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation

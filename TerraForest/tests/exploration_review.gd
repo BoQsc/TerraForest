@@ -15,12 +15,13 @@ func run()->void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	core=ClassDB.instantiate("TerrainCore");core.execute(Codec.command(6,[1703,29]))
 	var layouts:=Layouts.load_catalog();var planned:Dictionary=core.plan_exploration_sites(layouts,[],[])
-	check(planned.get("ok",false) and planned.get("sites",[]).size()==2,"natural seed-1703 locations available for review")
+	check(planned.get("ok",false) and planned.get("sites",[]).size()==3,"natural seed-1703 locations available for review")
 	if failures:quit(1);return
 	FileAccess.open(folder.path_join("sites.json"),FileAccess.WRITE).store_string(JSON.stringify(planned,"\t"))
 	physics_frame.connect(func():
 		if tick_host:host.update(1./60.,camera.global_position,true))
 	for site:Dictionary in planned.sites:
+		if "--coal-only" in OS.get_cmdline_user_args() and site.id!="coal_mine":continue
 		var layout:Dictionary=layouts.filter(func(value:Dictionary):return value.id==site.id)[0]
 		var cuts:=Layouts.segments(layout,site.origin,site.rotation);cuts.push_front(site.approach)
 		for packet:PackedByteArray in Earthworks.packets(cuts):
@@ -40,6 +41,10 @@ func run()->void:
 				await process_frame
 		var structures:=preload("res://addons/structures/structures_world.gd").new();stage.add_child(structures)
 		var crate:=preload("res://addons/structures/storage_catalog.gd").register(structures)
+		if site.id=="coal_mine":
+			check(preload("res://addons/structures/mine_rail_catalog.gd").register(structures).size()==5,"all five reusable rail modules register")
+			check(not preload("res://addons/structures/door_catalog.gd").register(structures).is_empty(),"working mine entrance door registers")
+			check(preload("res://addons/exploration/coal_resource.gd").register(structures),"harvestable coal heaps register")
 		var asset:=Layouts.prefab(layout)
 		var field:=preload("res://tests/terrain_block_contract.gd").Field.new();stage.add_child(field);field.core=core
 		field.validator=preload("res://addons/structures/foundation_check.gd").new()
@@ -62,6 +67,7 @@ func run()->void:
 		var lamp:=SpotLight3D.new();lamp.light_color=Color(1,.9,.74);lamp.light_energy=2;lamp.spot_range=18;lamp.spot_angle=48;lamp.shadow_enabled=true;camera.add_child(lamp)
 		var target:=Node3D.new();stage.add_child(target);target.position=Vector3(site.origin)+Vector3(0,0,-200)
 		host=preload("res://addons/characters/runtime/zombie_world.gd").new();host.target=target;host.enabled=true;host.population_enabled=false
+		if site.id=="coal_mine":host.residency_limit=host.ENCOUNTER_LIMIT
 		host.readiness=func(_bounds:AABB):return true
 		stage.add_child(host)
 		for frame in 20:await physics_frame

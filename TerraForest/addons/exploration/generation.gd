@@ -37,8 +37,9 @@ static func publish(game:Node,sites:Array)->Dictionary:
 		var residents:=Watchtowers.sleepers(site) if tower else Layouts.sleepers(layout,site.origin,site.rotation)
 		var random:=RandomNumberGenerator.new();random.seed=site.origin.x^(site.origin.z<<11)^(site.origin.y<<22)^layout.id.hash()^game.terrain.backend.world_seed
 		for identity in ids:
-			var stock:=PackedInt64Array([102,random.randi_range(3,7),202 if layout.id=="survey_mine" else 203,random.randi_range(2,5),6,1])
-			stock.append_array(PackedInt64Array([217,2,218,2,216 if layout.id=="survey_mine" else 215 if tower else 214,1]))
+			var stock:=PackedInt64Array([102,random.randi_range(3,7),104 if layout.id=="coal_mine" else 202 if layout.id=="survey_mine" else 203,random.randi_range(2,5),6,1])
+			stock.append_array(PackedInt64Array([217,2,218,2,216 if layout.id in ["survey_mine","coal_mine"] else 215 if tower else 214,1]))
+			if layout.id=="coal_mine":stock.append_array(PackedInt64Array([220,random.randi_range(4,9)]))
 			if not game.storage.store.seed_contents(identity,stock) or not game.storage.collection.set_removal_protected(identity,true):return {"ok":false,"reason":"Supply storage rejected"}
 		anchors.append_array(residents)
 		published.append({"id":site.id,"origin":site.origin,"rotation":site.rotation,"chests":ids,"sleepers":residents})

@@ -54,6 +54,13 @@ func _initialize()->void:
 	for id in 6:check(brain.add_agent(id+1,Vector3.ZERO),"bounded resident "+str(id+1))
 	check(not brain.add_agent(7,Vector3.ZERO),"seventh awareness record rejects")
 	brain.remove_agent(1);check(brain.add_agent(7,Vector3.ZERO),"retirement releases capacity")
+	var station=ClassDB.instantiate("NativeZombieAwareness")
+	check(station.configure(16,42),"bounded coal-station capacity configures")
+	var admitted:=true
+	for index in 16:admitted=station.add_agent(index+1,Vector3(index*2,0,0)) and admitted
+	check(admitted and not station.add_agent(17,Vector3.ZERO),"station awareness admits sixteen and rejects overflow")
+	var invalid_station=ClassDB.instantiate("NativeZombieAwareness")
+	check(not invalid_station.configure(17,42),"station cap cannot be silently widened")
 	DirAccess.make_dir_recursive_absolute("res://reports")
 	FileAccess.open("res://reports/zombie_awareness.json",FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures}))
 	print("ZOMBIE_AWARENESS checks=",checks," failures=",failures);quit(1 if failures else 0)

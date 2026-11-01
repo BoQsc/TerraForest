@@ -1,5 +1,21 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Mountain coal mine prototype — 2026-11-01
+
+Default new-world generation now includes a surveyed coal mine with short loot
+branches, a rail loop, working portal door, harvestable coal, and a deep timber
+station with exactly ten keyed zombies (13 residents across the mine). Five
+original modular rail pieces are in the construction catalog. Native terrain,
+publication and persistence checks and the rendered fixture pass. Normal source
+generation, loot branches, loop, ten bodies/wakes, paid rail placement and coal
+harvesting pass. The retained journey plus targeted hillside-exit continuation
+and fresh-process restoration verify returning outside and durable game state.
+Driver/crowding failures remain documented; one uninterrupted corrected journey
+and packaged validation await the coordinated source freeze/export. Installed
+content has not been replaced. Player visual,
+crowded combat and foreground performance acceptance remain open. Failed checks,
+return triggers and required closing evidence: [coal-mine tracker](../issues/coal-mine/README.md).
+
 ## Paid trader road travel — 2026-11-01
 
 Requested: select another town/city, pay coins, both board a car, trader drives

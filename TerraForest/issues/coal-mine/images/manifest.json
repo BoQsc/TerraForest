@@ -1,0 +1,58 @@
+[
+  {
+    "file": "station-fixture.png",
+    "source": "reports/coal_mine/20261101T171449512743Z/coal_mine_4.png",
+    "sha256": "cb9ab1b04c4fbdbdc59d10dc87acebb45c87b3e89f73cdf2f15902153fbfd5f5",
+    "caption": "Seed 1703 natural hillside fixture: ten station sleepers, original modular rails and grid timber station.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "entrance-fixture.png",
+    "source": "reports/coal_mine/20261101T171449512743Z/coal_mine_0.png",
+    "sha256": "aab60b956153f282a89556b30acccadecf6b84b7c9563d86bd120cee702a503d",
+    "caption": "Seed 1703 isolated hillside arrival: native portal timbers, personnel door, broken approach track.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "loop-fixture.png",
+    "source": "reports/coal_mine/20261101T171449512743Z/coal_mine_3.png",
+    "sha256": "e12860b127787ac25653a02b6b5ad38afd577b04c6fa773ce19e68f4bb3090fc",
+    "caption": "Seed 1703 isolated return-loop gallery: smooth turn, small chest encounter and coal.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "station-world.png",
+    "source": "reports/coal_mine/20261101T171812493734Z/coal_deep_station.png",
+    "sha256": "10781d0001cae73b8d213de8514aa809d888b5957acbc78d3a855befedf66305",
+    "caption": "Default Generate & play seed 1703, real streamed world. Capture before driver error; not full-run acceptance.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "zombies-world.png",
+    "source": "reports/coal_mine/20261101T171812493734Z/coal_station_zombies.png",
+    "sha256": "a3e06236e280310f410df57c9c50544c2797a9d10abc2680d6e96e59e47f9663",
+    "caption": "Default generated station: all ten resident identities physically present; side view before wake.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "station-current.png",
+    "source": "reports/coal_mine/20261101T174028166898Z/coal_deep_station.png",
+    "sha256": "308982ba8848dcdf7cd1a4ea1641ae17747c49bb642233d64004d9ca05f7afbf",
+    "caption": "Default seed 1703, CoalMine_1703_2db6d4b4: ten station sleepers after normal supply transfers; full route evidence with final exterior-height assertion corrected separately.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "exit-current.png",
+    "source": "reports/coal_mine/20261101T174529753475Z/coal_exit_completed.png",
+    "sha256": "d79132059a7d4c59ee6f206632a9da45b0f374e381a3dcce85ae412606f56108",
+    "caption": "Targeted continuation in the same generated save: grounded natural hillside exit and harvested coal visible; 13 exit and 41 fresh-process restore assertions pass.",
+    "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  }
+]

@@ -157,3 +157,21 @@ automatic permitted ladder/jump links; tight crawler clearance; door-destruction
 fresh-process save/reopen; populated settlement/cave journeys and measured total
 CPU/frame cost. Building layouts must also satisfy `WORLD_BUILDING_STANDARD.md`.
 Neither repeated local horizons nor these documented rules close those gates.
+
+### Coal-mine station capacity — 2026-11-01 prototype
+
+The user requested ten zombies together at the deeper coal-mine station. The
+existing native awareness/navigation services reserve at most 16 resident slots;
+ordinary world admission stays at six. The population adapter selects 16 only
+when its bounded nearby snapshot contains a coal-mine authored key (bit 42).
+This covers ten station residents (bit 43), three side encounters and up to three
+other nearby residents. No per-frame scan of all world records is added. Native
+route search budgets and single-body movement ownership are unchanged.
+
+Actual station sleeping/waking and thirteen-body fixture admission pass. This
+does not establish dense pursuit/crowding performance. A frozen awake resident
+blocked the driver's straight return; the existing station side lane was walked
+successfully. Source exit and fresh-process restoration pass; a clean packaged
+journey and foreground awake-station measurements remain tracked in
+[the coal-mine issue](../issues/coal-mine/README.md). The six-body statements above
+remain the ordinary population baseline, not the new station-specific maximum.

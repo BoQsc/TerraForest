@@ -84,6 +84,7 @@ static func prefab(layout:Dictionary)->Resource:
 			for quarter in int(frame[3]):position=Vector3i(-position.z,position.y,position.x)
 			position+=Vector3i(frame[0],frame[1],frame[2])
 			cells[position]=encoder.encode_block(part[1],int(frame[3]),1,3)
+	if layout.id=="coal_mine":preload("res://addons/exploration/coal_mine.gd").add_cells(cells,encoder)
 	encoder.free()
 	var records:=PackedInt32Array()
 	for position:Vector3i in cells:records.append_array(PackedInt32Array([position.x,position.y,position.z,cells[position]]))
@@ -91,11 +92,14 @@ static func prefab(layout:Dictionary)->Resource:
 	if not asset.configure(records):return null
 	var attachments:Array=[]
 	for crate:Array in layout.crates:attachments.append({"model":"storage/wooden_chest/v1","transform":Transform3D(Basis(Vector3.UP,crate[3]),point(crate))})
+	if layout.id=="coal_mine":attachments.append_array(preload("res://addons/exploration/coal_mine.gd").attachments())
 	if not asset.configure_model_attachments(attachments):return null
 	var envelope:=AABB();var has_envelope:=false
 	var crate_mesh:Mesh=load("res://addons/structures/prefabs/storage_chest_model.tres")
 	for attachment:Dictionary in attachments:
-		var bounds:AABB=attachment.transform*crate_mesh.get_aabb()
+		var mesh:Mesh=crate_mesh if attachment.model=="storage/wooden_chest/v1" else preload("res://addons/exploration/coal_mine.gd").mesh_for(attachment.model)
+		if mesh==null:return null
+		var bounds:AABB=attachment.transform*mesh.get_aabb()
 		envelope=envelope.merge(bounds) if has_envelope else bounds;has_envelope=true
 	if has_envelope and not asset.configure_attachment_envelope(envelope.grow(.01)):return null
 	asset.resource_name=layout.title;asset.set_meta("exploration_id",layout.id)
@@ -106,5 +110,6 @@ static func sleepers(layout:Dictionary,origin:Vector3i,rotation:int)->Array:
 	for slot in layout.sleepers.size():
 		var sleeper:Array=layout.sleepers[slot]
 		var identity:int=(1<<40)|(origin.x+1)|((origin.z+1)<<11)|(rotation<<22)|((slot+1)<<24)|(origin.y<<29)
+		if layout.id=="coal_mine":identity|=(1<<42)|((1<<43) if slot>=3 else 0)
 		result.append({"key":identity,"position":Vector3(origin)+turn(point(sleeper),rotation)+Vector3(0,.002,0),"yaw":sleeper[3]-rotation*PI*.5,"pose":int(sleeper[4])})
 	return result

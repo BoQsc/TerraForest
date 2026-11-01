@@ -10,8 +10,9 @@ const COVER_MAXIMUM=[45,10,10,10,10,10,40,10,2]
 const TOOLS={1:200,2:200,3:200,4:200,5:200}
 const HARVEST_DAMAGE_PER_ITEM=30
 const HARVEST_FINISHING_BONUS=1
-const RESOURCE_MODELS={"resources/iron_outcrop/v1":202,"resources/copper_outcrop/v1":203}
+const RESOURCE_MODELS={"resources/coal_heap/v1":220,"resources/iron_outcrop/v1":202,"resources/copper_outcrop/v1":203}
 const MODELS={
+	"resources/coal_heap/v1":{"name":"Coal heap","health":180,"material":"stone"},
 	"resources/iron_outcrop/v1":{"name":"Iron-bearing stone","health":360,"material":"stone"},
 	"resources/copper_outcrop/v1":{"name":"Copper-bearing stone","health":360,"material":"stone"},
 	"furniture/table/v1":{"name":"Wooden table","health":90,"material":"wood"},
@@ -30,6 +31,9 @@ const MODELS={
 }
 
 static func model_profile(asset:String,objects:Dictionary={})->Dictionary:
+	var rails=preload("res://addons/structures/mine_rail_catalog.gd")
+	for part:String in rails.PARTS:
+		if asset==rails.key(part):return {"name":rails.PARTS[part],"health":120,"material":"other"}
 	if asset==preload("res://addons/structures/door_catalog.gd").KEY and not objects.has(asset):
 		var definition:Dictionary=preload("res://addons/structures/door_catalog.gd").builtin_definition()
 		return {"name":definition.name,"health":definition.durability.health,"material":definition.durability.material}

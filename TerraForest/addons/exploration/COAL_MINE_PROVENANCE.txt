@@ -1,0 +1,33 @@
+Blackridge coal mine, prototype revision 1, 2026-11-01.
+
+Original TerraForest contributor work, AI-assisted with OpenAI Codex. No external
+models, photographs, layout references, code snippets or new dependencies used.
+User brief: a coal-mine POI/building embedded into mountains, looping paths,
+short sleeper/chest dead ends, larger and smaller underground spaces, modular
+rails with smooth turns, and a deeper station building with ten zombies.
+
+New original code is 0BSD, as declared in the source headers.
+New original asset data is dedicated CC0-1.0 under the contribution policy:
+  - coal_mine entry in small_locations.poi.json
+  - ../structures/prefabs/mine_rail_straight.res
+  - ../structures/prefabs/mine_rail_short.res
+  - ../structures/prefabs/mine_rail_curve.res
+  - ../structures/prefabs/mine_rail_eighth.res
+  - ../structures/prefabs/mine_rail_turnout.res
+  - ../structures/prefabs/coal_heap.res
+  - ../player_runtime/art/coal.svg and mine_rail.svg
+
+Editable geometric source: tools/bake_mine_rails.gd (original arithmetic, box
+sections, sampled circular rails and faceted coal). Models are baked with the
+already-used external Godot 4.7.2 authoring engine. No engine sample assets,
+templates or external textures are copied into the new models. Model materials
+use original plain colors. Coal-mine structure cells are authored by coal_mine.gd.
+
+Existing timber-block textures, door, chest, zombies and animations retain their
+existing provenance and terms. This record does not relicense those components.
+The new placement data uses them within their established project scope.
+
+All new models use native individually addressable model placements. The loading
+station and portal use individually destructible native grid blocks. No giant
+authoritative mine mesh or runtime excavation loop is introduced. Existing saves
+are not repopulated. Layout fit and evidence disposition: issues/coal-mine/README.md.

@@ -174,6 +174,9 @@ func _ready() -> void:
 	structures_ready = structures_ready and not guardrail.is_empty()
 	var fence: Dictionary=preload("res://addons/structures/fence_catalog.gd").register(structures)
 	structures_ready = structures_ready and not fence.is_empty()
+	var mine_rails:Array[Dictionary]=preload("res://addons/structures/mine_rail_catalog.gd").register(structures)
+	structures_ready = structures_ready and mine_rails.size()==5
+	structures_ready = structures_ready and preload("res://addons/exploration/coal_resource.gd").register(structures)
 	player_hud.ground_tools_enabled=ground_enabled
 	if not world_recipe.prepare(persistence,ecosystem):
 		push_error("World recipe persistence initialization failed");_abort_startup(2);return
@@ -285,6 +288,7 @@ func _ready() -> void:
 	object_entries.append_array(door_entries)
 	object_entries.append(guardrail)
 	object_entries.append(fence)
+	object_entries.append_array(mine_rails)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks,structures._models.values())
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):
