@@ -15,9 +15,20 @@ const Crossings=preload("res://addons/structures/lake_crossings.gd")
 # Include planning metadata (entrances, surface offsets, trader anchor), not just cells.
 static func prefab_fingerprint(asset:Resource)->String:
  var metadata:Array=[]
- var keys:=asset.get_meta_list();keys.sort()
- for key:StringName in keys:metadata.append([key,asset.get_meta(key)])
- return Survey.digest(var_to_bytes([asset.get_records(),asset.get_model_attachments(),metadata])).hex_encode()
+ var keys:=PackedStringArray(asset.get_meta_list());keys.sort()
+ for key:String in keys:metadata.append([key,asset.get_meta(key)])
+ return Survey.digest(var_to_bytes(canonical_value([asset.get_records(),asset.get_model_attachments(),metadata]))).hex_encode()
+static func canonical_value(value:Variant)->Variant:
+ if value is Dictionary:
+  var ordered:Dictionary={};var keys:Array=value.keys();keys.sort_custom(func(a,b):return str(a)<str(b))
+  for key in keys:ordered[canonical_value(key)]=canonical_value(value[key])
+  return ordered
+ if value is Array:
+  var ordered:Array=[]
+  for item in value:ordered.append(canonical_value(item))
+  return ordered
+ if value is StringName:return str(value)
+ return value
 static func read_plan(path:String,key:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ)
  if file==null or file.get_length()<40 or file.get_length()>LIMIT:return {}

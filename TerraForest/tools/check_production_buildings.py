@@ -51,19 +51,23 @@ def main():
         return 1
     print('PASS all nine source/pack prefab cache identities match', flush=True)
     for phase, arguments in [('create', ['--create-production']), ('play', []),
-                             ('restore', ['--restore-production'])]:
+                             ('restore', ['--restore-production']),
+                             ('source_restore', ['--restore-production'])]:
         run = folder / phase
         run.mkdir()
-        command = [config.godot, '--main-pack', str(ROOT / 'dist/TerraForest.pck'),
-                   '--path', str(ROOT / 'dist'), '--log-file', str(run / 'engine.log'),
+        source = phase == 'source_restore'
+        command = [config.godot, '--path', str(ROOT if source else ROOT / 'dist'),
+                   '--log-file', str(run / 'engine.log'),
                    '--fullscreen', '--resolution', '1920x1080', '--max-fps', '60',
                    '--script', str(folder / 'production_buildings.gd'), '--', *arguments]
+        if not source:
+            command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
         result = execute(command, run, 600, 'PRODUCTION_BUILDINGS checks=')
         results.append({'phase': phase, 'command': command, **result})
         (run / 'run.json').write_text(json.dumps({'native': native, **results[-1]}, indent=2))
         (folder / 'run.json').write_text(json.dumps({'native': native, 'phases': results,
             'fingerprints': fingerprints[0],
-            'passed': len(results) == 5 and all(row['passed'] for row in results)}, indent=2))
+            'passed': len(results) == 6 and all(row['passed'] for row in results)}, indent=2))
         print(('PASS ' if result['passed'] else 'FAIL ') + phase + ' ' + str(run), flush=True)
         if not result['passed']:
             return 1
