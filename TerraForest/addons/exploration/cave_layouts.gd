@@ -14,7 +14,13 @@ static func load_catalog(path:String=PATH)->Array:
 		if not entry is Dictionary or not entry.get("id") is String or not entry.get("title") is String:return reject("Missing layout identity/title")
 		if entry.id.is_empty() or not entry.id.is_valid_identifier() or entry.id.length()>48 or identities.has(entry.id) or entry.title.length()>96:return reject("Invalid/duplicate layout identity")
 		identities[entry.id]=true
-		var layout:Dictionary={"id":entry.id,"title":entry.title,"tunnels":[],"frames":[],"crates":[],"sleepers":[],"views":[]}
+		var layout:Dictionary={"id":entry.id,"title":entry.title,"tunnels":[],"entrance_cuts":[],"frames":[],"crates":[],"sleepers":[],"views":[]}
+		var entrances=entry.get("entrance_cuts",[])
+		if not entrances is Array or entrances.size()>4:return reject(entry.id+": excessive entrance cuts")
+		for recess in entrances:
+			if not recess is Array or not numbers(recess,5):return reject(entry.id+": invalid entrance cut")
+			if absf(recess[0])>4 or recess[1]<-4 or recess[1]>0 or recess[2]<1 or recess[2]>7 or recess[3]<1 or recess[3]>4 or recess[4]<8 or recess[4]>12:return reject(entry.id+": entrance cut outside authoring bounds")
+			layout.entrance_cuts.append(recess.duplicate())
 		if not entry.get("tunnels") is Array or entry.tunnels.size()<2 or entry.tunnels.size()>16:return reject(entry.id+": expected two to sixteen tunnels")
 		for tunnel in entry.tunnels:
 			if not tunnel is Array or tunnel.size()!=4 or not numbers(tunnel[0],3) or not numbers(tunnel[1],3) or not numbers(tunnel.slice(2),2):return reject(entry.id+": invalid tunnel record "+str(tunnel))
@@ -58,6 +64,11 @@ static func segments(layout:Dictionary,origin:Vector3i,rotation:int)->Array:
 		var width:float=tunnel.half_width;var height:float=tunnel.clearance
 		var lower:=start.min(finish)-Vector3(width,1,width);var upper:=start.max(finish)+Vector3(width,height,width)
 		result.append({"start":start,"finish":finish,"half_width":width,"depth":1.0,"clearance":height,"material":1,"shoulder":0.0,"arched":true,"cut_only":true,"phase":"excavation","bounds":AABB(lower,upper-lower)})
+	for recess:Array in layout.get("entrance_cuts",[]):
+		var start:=Vector3(origin)+turn(Vector3(recess[0],0,recess[1]),rotation);var finish:=Vector3(origin)+turn(Vector3(recess[0],0,recess[2]),rotation)
+		var width:float=recess[3];var height:float=recess[4]
+		var lower:=start.min(finish)-Vector3(width,1,width);var upper:=start.max(finish)+Vector3(width,height,width)
+		result.append({"start":start,"finish":finish,"half_width":width,"depth":1.0,"clearance":height,"material":1,"shoulder":0.0,"rectangular":true,"cut_only":true,"phase":"excavation","bounds":AABB(lower,upper-lower)})
 	return result
 
 static func prefab(layout:Dictionary)->Resource:

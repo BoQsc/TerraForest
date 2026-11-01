@@ -7,6 +7,9 @@ seated/lying sleeper encounters, not a straight tunnel template.
 Original layout data: small_locations.poi.json, dedicated CC0-1.0 under the
 repository contribution policy. Layout coordinates, view anchors, timber frame
 locations and supply/encounter anchors are original authoring data.
+The 2026-11-01 portal revision adds bounded rectangular entrance recesses to
+remove thin exposed roof remnants. These original cuts remain editable terrain;
+no texture repaint, imported geometry or global lighting change masks the defect.
 Code: cave_layouts.gd, generation.gd and associated native/test/authoring code
 are 0BSD. The catalog/native planning boundary is described in
 docs/GAMEPLAY_EXPANSION.md; layouts are not monolithic imported meshes.

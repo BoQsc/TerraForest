@@ -17,7 +17,8 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
  Dictionary result;result["ok"]=false;
  if(world.generator_id<17||world.generator_id>MAX_GENERATOR_ID||layouts.is_empty()||layouts.size()>8||reservations.size()>2048||earthworks.size()>16384)return result;
  struct Passage {Vector3 start,finish;double width,height;};
- struct Layout {String id;std::vector<Passage> passages;Vector3 lower,upper;};
+ struct Entrance {double across,front,back,width,height;};
+ struct Layout {String id;std::vector<Passage> passages;std::vector<Entrance> entrances;Vector3 lower,upper;};
  std::vector<Layout> compiled;std::vector<Rect2> excluded;
  for(int basin=0;basin<world.basin_count;++basin){
   const auto &lake=world.basins[basin];Vector2 radius;
@@ -32,6 +33,18 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
   Layout layout;layout.id=entry["id"];Array tunnels=entry["tunnels"];
   if(layout.id.is_empty()||layout.id.length()>48||!layout.id.is_valid_identifier()||tunnels.size()<2||tunnels.size()>16)return result;
   for(const auto &other:compiled)if(other.id==layout.id)return result;
+  if(entry.has("entrance_cuts")){
+   if(entry["entrance_cuts"].get_type()!=Variant::ARRAY)return result;
+   Array entrances=entry["entrance_cuts"];if(entrances.size()>4)return result;
+   for(int cut=0;cut<entrances.size();++cut){
+    if(entrances[cut].get_type()!=Variant::ARRAY)return result;
+    Array dimensions=entrances[cut];if(dimensions.size()!=5)return result;
+    for(int dimension=0;dimension<5;++dimension)if((dimensions[dimension].get_type()!=Variant::FLOAT&&dimensions[dimension].get_type()!=Variant::INT)||!std::isfinite(double(dimensions[dimension])))return result;
+    Entrance entrance{dimensions[0],dimensions[1],dimensions[2],dimensions[3],dimensions[4]};
+    if(std::abs(entrance.across)>4||entrance.front< -4||entrance.front>0||entrance.back<1||entrance.back>7||entrance.width<1||entrance.width>4||entrance.height<8||entrance.height>12)return result;
+    layout.entrances.push_back(entrance);
+   }
+  }
   for(int part=0;part<tunnels.size();++part){
    if(tunnels[part].get_type()!=Variant::DICTIONARY)return result;
    Dictionary tunnel=tunnels[part];
@@ -90,6 +103,9 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
     if(height(probe)<origin.y+7)continue;
     Vector3 lower=origin,upper=origin;
     for(const auto &passage:layout.passages)for(Vector3 point:{passage.start,passage.finish}){Vector3 actual=origin+rotate(point,rotation);lower=lower.min(actual-Vector3(passage.width,1,passage.width));upper=upper.max(actual+Vector3(passage.width,passage.height,passage.width));}
+    for(const auto &entrance:layout.entrances)for(double across:{entrance.across-entrance.width,entrance.across+entrance.width})for(double north:{entrance.front,entrance.back}){
+     Vector3 actual=origin+rotate(Vector3(across,0,north),rotation);lower=lower.min(actual-Vector3(0,1,0));upper=upper.max(actual+Vector3(0,entrance.height,0));
+    }
     Vector3 approach=origin+rotate(Vector3(.5,0,-7.5),rotation),mouth=origin+rotate(Vector3(.5,0,.5),rotation);
     Rect2 footprint(Vector2(lower.x,lower.z),Vector2(upper.x-lower.x,upper.z-lower.z));
     footprint=footprint.merge(Rect2(Vector2(approach.x-3,approach.z-3),Vector2(6,6)));bool blocked=false;
@@ -100,6 +116,13 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
     Vector3 across=rotate(Vector3(1.5,0,.5),rotation)-rotate(Vector3(.5,0,.5),rotation);
     for(int step=0;step<=16&&!blocked;++step)for(int side=-4;side<=4;++side){Vector3 position=approach.lerp(mouth,step/16.)+across*(side*.5);double fill=position.y-height(position);if(fill>2||fill< -3){blocked=true;break;}}
     if(blocked){++approach_rejections;continue;}
+    for(const auto &entrance:layout.entrances){
+     for(double north=entrance.front;north<=entrance.back+.01&&!blocked;north+=.5)for(double across=entrance.across-entrance.width;across<=entrance.across+entrance.width+.01;across+=.5){
+      double ground=height(origin+rotate(Vector3(across,0,north),rotation));
+      if(ground<origin.y-.25||ground>origin.y+entrance.height-1){blocked=true;break;}
+     }
+    }
+    if(blocked){++roof_rejections;continue;}
     for(int east=-3;east<=4&&!blocked;++east){
      bool covered=false;
      for(int station=1;station<16;++station){

@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "base_revision": "00a1f99f",
+  "scope": "Authored cave/mine portal recesses; not final location art, global terrain-lighting resolution or completed expansion.",
+  "license": "CC0-1.0",
+  "source": "Original TerraForest development captures; no external images or new imported assets.",
+  "diagnostic": "reports/cave_roof_diagnostic/20261101T104729939728Z/console.log",
+  "original_cave_origin": [1425, 183, 1348],
+  "new_fitted_cave_origin": [1629, 158, 569],
+  "images": [
+    {
+      "path": "images/cave-portal-original-site-after.png",
+      "source": "reports/exploration_review/20261101T105118945887Z/split_rock_cave_0.png",
+      "sha256": "56a00e62a0b7b1eb16fcff89508d3d020ee69d4a937c33905326a80bc296acb8",
+      "scope": "Prototype recess at the original defective site and same review camera. Moved into validated production schema afterward."
+    },
+    {
+      "path": "images/cave-portal-world.png",
+      "source": "reports/exploration_world/20261101T105825197235Z/split_rock_cave_world_entrance.png",
+      "sha256": "455e5247071cdcb1e95ae556bda72da97c0b9a648e4a29fc583b78279f91267d",
+      "scope": "Ordinary generation using the production schema and native fitter."
+    },
+    {
+      "path": "images/mine-portal-world.png",
+      "source": "reports/exploration_world/20261101T105825197235Z/survey_mine_world_entrance.png",
+      "sha256": "9577385778b31d028153ec46445d8d47c8ad591a430c135e2076465115a1cfab",
+      "scope": "Ordinary generated mine, same fitted site as earlier milestone."
+    }
+  ],
+  "package_sha256": "54821388364057ce0cdab0ea60427fe0250dbe7b2335496a09cd73942febcba8",
+  "packaged_world_check": {"report":"reports/exploration_world/20261101T110609763419Z","checks":[28,11],"passed":true,"private_commit_bytes":3821133824,"dedicated_gpu_bytes":1495347200,"walking_p95_ms":19.857,"walking_worst_ms":30.663,"walking_samples":466},
+  "remaining": ["Watchtower", "Richer location dressing and natural detail", "Town-to-POI and general NPC routes", "Foreground pacing and populated performance", "Remaining full expansion checklist"]
+}

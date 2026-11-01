@@ -7,6 +7,49 @@
 
 ## Images
 
+### Portal correction — 2026-11-01
+
+![Original cave location with the thin roof remnant removed](images/cave-portal-original-site-after.png)
+![Revised cave in a normal generated world](images/cave-portal-world.png)
+![Revised mine entrance in a normal generated world](images/mine-portal-world.png)
+
+The isolated patch above the old entrance was not missing mesh. Density sampling
+found only 0.1–0.2 m of rock at the affected roof column, thinner than the metre
+density lattice. The authored open-air recess removes that layer and leaves a
+readable rock face before the covered passage. No shader, global lighting, grid
+or load-time terrain patch changed. The first image uses the **original** bad
+site `(1425,183,1348)` and camera; comparison source before:
+`reports/exploration_review/20261101T102303021939Z/split_rock_cave_0.png`, after:
+`reports/exploration_review/20261101T105118945887Z/split_rock_cave_0.png`.
+This prototype was then moved into the validated ordinary catalog/native planner,
+not left as a test-only correction. Stronger footprint support fitting selects
+`(1629,158,569)`, rotation 1, for the new seed-1703 cave. The mine stays at its
+original site. Existing saved worlds retain their original excavations.
+
+- Native debug/release: `reports/exploration_native/20261101T105746209194Z` and
+  `20261101T105748357629Z`; 25 + 74 + 23 checks each. A regression reproduces the
+  old solid wafer, checks its actual removal, retains floor/covered roof support,
+  and rejects malformed/nonfinite/oversized mod entrance cuts without mutation.
+- Actual final-catalog collision/waking review: `reports/exploration_review/20261101T105630297579Z`,
+  26 checks. All four layout rotations and five native fit seeds still pass.
+- Source ordinary Generate & play + fresh restore:
+  `reports/exploration_world/20261101T105825197235Z`, 28 + 11 checks. Physical
+  entrance walks, chest withdrawal, sleeper wake, saved clearing and zero cursor
+  captures pass. Sampled peak private commit 3.44 GiB / dedicated GPU 1.39 GiB.
+  Offscreen walking p95 20.070 ms, worst 33.080 ms, 466 samples; not smooth-60 or
+  foreground headroom acceptance. Quiet Mode and 60 FPS/VSync remain unchanged.
+- Required source/release building gate: `reports/building_standards/20261101T110254579860Z`.
+- Packaged ordinary generation + fresh restore:
+  `reports/exploration_world/20261101T110609763419Z`, 28 + 11 checks; entrance
+  screenshots inspected. Sampled private commit 3.56 GiB / GPU 1.39 GiB; walking
+  p95 19.857 ms, worst 30.663 ms across 466 samples. Full harness 103.68 s create /
+  29.14 s restore, not generation-only timings. Distribution 476,782,715 bytes.
+  Installed pack hash and capture provenance are in `portal-evidence.json`.
+
+This closes the reproduced isolated portal wafer, not all terrain shading/art.
+The cave still needs richer natural detail; the mine needs more authored dressing,
+and external paths/NPC routes plus broader performance remain unqualified.
+
 ### Generated underground locations — 2026-11-01
 
 ![Survey mine in an ordinary generated world](images/survey-mine-world-entrance.png)
@@ -23,7 +66,7 @@ withdrawal, hearing/wake and separate-process restoration pass. Teleporting to t
 approach does not qualify travel from town. Dark angular cave-rim patches and
 sparse dressing remain visible defects, **not final art approval**. The separate
 [unshaded diagnostic](images/cave-entrance-geometry.png) shows surface geometry at
-that patch; it does not establish the final lighting/material cause or fix.
+that patch; the later portal correction above supplies the density diagnosis.
 
 - Native debug/release: `reports/exploration_native/20261101T103315815064Z` and
   `20261101T103318338898Z`; 25 arched-density, 66 layout/route/fitting and 23

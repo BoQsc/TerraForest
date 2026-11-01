@@ -92,6 +92,17 @@ func run()->void:
 	check(not core.plan_exploration_sites(bad,[],[]).get("ok",true) and core.execute(Codec.command(4))==unchanged,"invalid mod geometry rejects before survey/mutation")
 	var excluded:Dictionary=core.plan_exploration_sites(layouts,[Rect2(0,0,2000,2000)],[])
 	check(excluded.get("ok",false) and excluded.sites.is_empty() and excluded.skipped.size()==2 and core.execute(Codec.command(4))==unchanged,"fully reserved world skips locations instead of overriding reservations")
+	for entrance in [[0,-2,9,2,12],[0,-2,6,2,INF],[0,-2,6,0,12],[0,-2,6,2],["invalid",-2,6,2,12]]:
+		var invalid_entrance:=layouts.duplicate(true);invalid_entrance[0].entrance_cuts=[entrance]
+		check(not core.plan_exploration_sites(invalid_entrance,[],[]).get("ok",true) and core.execute(Codec.command(4))==unchanged,"invalid entrance cuts reject atomically")
+	core.execute(Codec.command(6,[1703,29]))
+	var old_cave:Dictionary=layouts[1].duplicate(true);old_cave.entrance_cuts=[]
+	var old_origin:=Vector3i(1425,183,1348);var witness:=Vector3(old_origin)+Vector3(.5,4.05,5.5)
+	for packet:PackedByteArray in Earthworks.packets(Layouts.segments(old_cave,old_origin,0)):core.execute(packet)
+	check(density(witness)<0,"reproduce thin isolated roof patch at original seed-1703 entrance")
+	for packet:PackedByteArray in Earthworks.packets(Layouts.segments(layouts[1],old_origin,0)):core.execute(packet)
+	check(density(witness)>1,"authored recess removes the thin roof rather than repainting or lighting over it")
+	check(density(Vector3(old_origin)+Vector3(.5,-.25,5.5))<0 and density(Vector3(old_origin)+Vector3(.5,5,8))<0,"entrance floor and covered roof behind the recess stay solid")
 	for seed_value in [1,42,321,99991]:
 		core.execute(Codec.command(6,[seed_value,29]))
 		var sampled:Dictionary=core.plan_exploration_sites(layouts,[],[])

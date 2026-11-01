@@ -31,7 +31,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Wake-animation frame-by-frame, multiple-perspective review | 58 pose/bounds checks, live interruption checks, both poses through furnished A2/C1 collision at all rotations; arbitrary slopes, moving obstacles and player visual acceptance pending |
 | Sleeper residents inside some houses and underground locations | New-world A2/C1 and authored underground anchors persist; cottage and both underground locations checked; populated C1 visit, broader street-to-room routes and encounter balance remain |
 | Off-road watchtowers | Pending modular destructible design, access, terrain fit, loot and approval/review |
-| Small art-directed caves and mines | Branching survey mine and bent two-chamber cave generate on fitted hillsides; native cuts, destructible mine timbers and entry walks checked; rim/material defects, set dressing and full art acceptance remain |
+| Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Pending stable location identities, quest objectives, rewards and trader UI |
 | Large question-mark start interaction near POI, E acceptance and location reset | Pending bounded reset transaction with explicit location ownership, player-edit safety and persisted quest state |
@@ -93,9 +93,11 @@ support, roof cover and shared model-ground checks precede publication. Existing
 saves never receive retroactive excavation. Five chest supplies and five keyed
 sleepers use the existing binary model/container/population owners, not a parallel
 scene or per-frame script population. Entry walks, actual chest UI, waking and
-fresh-process clearing are tested. Exterior faceting/dark rim patches and sparse
-dressing are not final art; town-to-entrance paths and general NPC routes remain.
-Next: refine those visible defects, add the watchtower, then shared stable location
+fresh-process clearing are tested. The reproduced isolated dark rim patch came
+with a thin rock layer; bounded authored entrance recesses now remove that layer
+instead of modifying global lighting. Faceting and sparse dressing are not final
+art; town-to-entrance paths and general NPC routes remain.
+Next: add the watchtower and refine location dressing, then shared stable location
 ownership for quest reset and locks. Supply grants occur only during generation;
 loading a looted location never grants or resets its contents.
 
@@ -106,6 +108,13 @@ loading a looted location never grants or resets its contents.
 per layout, finite bounded coordinates and at most 16 anchors in each group.
 Unsupported data fails rather than silently dropping pieces. Quarter-turn grid
 rotation is shared with the native prefab owner; timbers remain individual blocks.
+Optional `entrance_cuts` contains up to four `[x, front_z, back_z, half_width,
+clearance]` records. These are explicit open-air portal recesses, not covered
+tunnels: x is within ±4 m, front -4..0 m, back 1..7 m, half-width 1..4 m and
+clearance 8..12 m. Native fitting surveys the full half-metre footprint, rejects
+unsupported ground or a buried cut top, and reserves the complete envelope.
+They use existing subtractive rectangular excavation packets; ordinary road/lot
+fill and cut budgets are unchanged. Old catalogs without recesses still load.
 `TerrainCore.plan_exploration_sites` tests at most 4,096 candidates per layout and
 four rotations against bounded reservations. No eligible site means an explicit
 skip, not a destructive fallback or increased cut/fill allowance. The v33 plan key
