@@ -127,18 +127,22 @@ reports are recorded in [verification.json](../issues/building-expansion/verific
 `python tools/review_building_expansion.py` opens the verified E2 civic/market clone;
 `--house` opens its separate verified C1 clone. The launcher
 refuses a stale native, candidate or save hash. It opens read-only checkpoints;
-test edits are discarded when closing. The runtime prefab list exposes
-candidates through `--building-expansion-review`; ordinary generation does not
-silently adopt changed resources. No automatic repainting of saved worlds is added.
+test edits are discarded when closing. These historical review launchers remain
+available. The approved E2 revisions now appear in normal construction and new
+world generation without review switches. Existing saves are not repainted.
 
 The user approved the reviewed E2 implementation, artwork and exact building
 revisions on 2026-11-01, including retention of all older textures as options.
 The original bake receipts and resources stay byte-identical; the separate
 hash-bound approval record supersedes their bake-time unreviewed status.
-The current branch retains opt-in runtime exposure; recording approval does not
-change generation defaults or repaint saved worlds. These exact revisions may be
-integrated without repeating their visual review. Valley pieces remain prototypes
-and the documented navigation, frame-pacing and terrain/foliage limits stay open.
+Production integration was missing when approval was recorded. It is now corrected:
+choose **Create world → Connected countryside**, seed **1703**, and **Generate & play**.
+The first civic district contains the trader, town hall, church, school and warehouse;
+M → Places → Resident trader identifies the merchant. Larger recipes include the same
+civic group in a separate district. All nine E2 prefabs appear in normal construction.
+See the [production evidence](../issues/building-expansion/README.md#production-integration-correction--2026-11-01).
+Older textures remain optional and saved buildings keep their exact cells. Valley
+pieces remain prototypes; navigation, frame pacing and terrain/foliage limits stay open.
 
 Contracts: [world/building standard](WORLD_BUILDING_STANDARD.md),
 [material standard](BUILDING_MATERIAL_STANDARD.md),

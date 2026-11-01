@@ -27,10 +27,38 @@ entry in `031015549342Z` (52/53). That entry is fixed; ordinary fresh-process re
 and stock/inventory restore pass 22 checks in `031233426776Z`. Earlier larger-layout
 failures remain in `031120999290Z` and `031223385201Z`; no earthwork limit was relaxed.
 
-Remaining before completion: combine the other checkout's committed Steam/rendering
-work, preserve its uncommitted edits, export the integrated build and verify normal
-play there. The release gate now checks the production catalog. A review save alone
-cannot satisfy this requirement; see the world-building standard.
+Combined committed baseline `1adcce5a` (Steam, mouse focus and BG5) is merged in
+`ffff300c`. Its source/release gate passes in `reports/building_standards/20261101T031758222874Z`;
+the exported PCK passes all 45 asset checks and three actual GUI processes: normal
+creation **6/6**, full play/trade/four basement descents **53/53**, and fresh stock/
+inventory restore **22/22**. There are no engine errors in these runs.
+[Exact package, reports and scope](production_verification.json). Reproduce with
+`python tools/check_production_buildings.py`. The historical review artifact in
+`verification.json` retains its earlier identity; this is a separate production build.
+
+Use **Create world → Connected countryside → seed 1703 → Generate & play**.
+M → Places → Resident trader locates the merchant; approach and press E. A new
+world is required to obtain generated content; existing worlds are not retrofitted.
+All five recipe planners include the civic group; larger recipes keep their first
+residential district and place the civic group in another district.
+
+![Normal creation exposes the civic town and trader](images/production/create_world.png)
+The unchanged default recipe now names the content it generates.
+
+![Trading in an ordinary generated world](images/production/trader_world_trade.png)
+Real finite-stock buy/sell transactions through the normal interaction and UI.
+
+![Town hall in the ordinary generated district](images/production/town_hall_t1_overview_final.png)
+Approved E2 town hall, actual terrain and neighboring buildings. Broader foliage
+and landscape presentation remain under their existing qualification.
+
+![School basement after walking down its stairs](images/production/school_s2_basement_final.png)
+Actual player capsule settled on the basement floor. [Capture hashes](images/production/manifest.json).
+
+Remaining: install this verified integration in the main checkout during the
+coordinated merge window, preserve all concurrent edits, and check its source launch.
+The release gate now checks the production catalog. A review save alone cannot
+satisfy this requirement; see the world-building standard.
 
 ## Older texture retention — 2026-11-01
 

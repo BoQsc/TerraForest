@@ -1,16 +1,25 @@
 # Trader house and civic buildings
 
-- Status: All five R1 designs approved; integrated opt-in world and scoped checks passed.
-- Updated: 2026-10-30. Branch `codex/trader-civic-buildings`.
+- Status: R1 and E2 approved; normal-generation packaged integration verified, main installation pending.
+- Updated: 2026-11-01. Branch `codex/trader-civic-buildings`.
 - User review: Approved 2026-10-30: Trader T1 R1, Town Hall T1 R1, Church C1 R1,
-  School S2 R1 and Warehouse W1 R1, plus the expansion direction. Current runtime
-  remains opt-in; the finished expansion requires its own real-world review.
+  School S2 R1 and Warehouse W1 R1, plus the expansion direction. Finished E2
+  changes approved 2026-11-01 and connected to ordinary new-world generation.
 - Scope: One player-based trader with full commodity buying/selling, four large
   civic buildings with 81–99 m² partial basements, and shared terrain contact enforcement.
 
 [Final review, decisions and launch command](../../docs/CIVIC_FINAL_REVIEW.md).
 [Complete-world engineering evidence](../../docs/evidence/civic_buildings/world/README.md).
 [Recurring terrain/block correction](../terrain-building-contact/README.md).
+
+## Current production evidence
+
+Use **Connected countryside**, seed **1703**, with **Generate & play**. The exact
+approved E2 buildings, one resident trader, normal construction choices and saved
+trading are now connected. Combined packaged checks pass 6 creation, 53 gameplay
+and 22 fresh-restore assertions. [Current evidence, screenshots and installation
+status](../building-expansion/README.md#production-integration-correction--2026-11-01).
+The views below preserve the earlier approved R1 review.
 
 ## Complete-world views
 

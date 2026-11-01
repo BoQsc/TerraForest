@@ -181,7 +181,7 @@
   ],
   "retention_requirement": "Keep every older texture available as an optional alternative, even if unused. Do not repaint buildings to satisfy retention.",
   "artifact_policy": "The authoring receipt and baked resources remain unchanged. This later hash-bound approval supersedes their bake-time unreviewed status only for the exact listed identities; revised artwork needs its own review.",
-  "integration_state": "Approved assets remain available through the existing opt-in expansion path in this isolated branch; this record does not change world-generation defaults or saved worlds.",
+  "integration_state": "Production integration added in 6ed5f368 after an identified omission: exact approved E2 resources now populate normal catalogs and new world generation. No review flags are required. Existing saves and all older texture alternatives are preserved. Separate production evidence records packaged validation and installation.",
   "known_limits": [
     "Three older market NPC plans incomplete; Shop B1 reproduced on R1.",
     "Full-world sustained frame pacing and terrain/foliage quality remain open.",

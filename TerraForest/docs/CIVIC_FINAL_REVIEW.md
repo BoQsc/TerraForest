@@ -1,5 +1,11 @@
 # Trader, civic buildings and terrain standards — final review
 
+**Production update, 2026-11-01:** The E2 revisions are approved and now connected
+to normal world generation and construction. Use **Connected countryside**, seed
+**1703**, with **Generate & play**; M → Places → Resident trader locates the merchant.
+The opt-in descriptions and isolation notes below record the earlier R1 review
+baseline. [Current production evidence](../issues/building-expansion/README.md#production-integration-correction--2026-11-01).
+
 2026-10-30 · branch `codex/trader-civic-buildings` · code `79d38271` · **Approved by the user, 2026-10-30**.
 The trader and five-building review world are implemented. The recurring
 terrain/block contact defect has a shared correction and mandatory generation /

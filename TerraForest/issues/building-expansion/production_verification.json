@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-01",
+  "runtime_source_commit": "ffff300c1af410be8d2f3f516e391475a0ab22e7",
+  "implementation_commit": "6ed5f368",
+  "concurrent_committed_baseline": "1adcce5a",
+  "installed_main": false,
+  "pack": {
+    "path": "dist/TerraForest.pck",
+    "sha256": "a0bf1f2739ee8536b0afb2440f5467dcc56e049cfa5fd8ef702af3a67d678091",
+    "bytes": 445889976,
+    "native": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "3f65e3dbf5ab1b04d4e5e7e3fcb82bf00519ecee4534f0625c453492d7d4a0e6",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "776b07d396d50b1105ccbbcf7c7b4023b75fcf3f9a4ea048f62cdb5b35417cac",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "b413776f40c45dec7decd9869b4ce0863a01f0bda13b9e202392959d0a1045bc",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "3dd2daebb96af2fee33085a5dd6738cbc65c608a4a09bff7b7286b76c2618c8e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "c32ac8c1f3ce006357c58d723590c21d586722747e557998a54f5bb1e5884e0e",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "9b066480f706d0b86b9b98dcee161e477386d3f78969bd46b54c9d177a6b1c08",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "32a8cfcadbb4b42cda29ad057b2c67f47501b6f2d1e47c68437cd1168a11ceeb",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "3841935727a4fbda194bacbb538d9276c22ebab1b7600395ec6f3c708f40edca",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "b798e21ac960dd490c100549b559c00dcbd597cf24ef08f53d3eaae1170c78cd",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d8612f55696ae69d2020d0a54abe01ed50e11de90a85aee9895024be69ea218e"
+    }
+  },
+  "runtime_phases": [
+    {
+      "name": "create",
+      "checks": 6,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/production_buildings/packed/20261101T032000970265Z/create"
+    },
+    {
+      "name": "play",
+      "checks": 53,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/production_buildings/packed/20261101T032000970265Z/play"
+    },
+    {
+      "name": "restore",
+      "checks": 22,
+      "failures": 0,
+      "passed": true,
+      "report": "reports/production_buildings/packed/20261101T032000970265Z/restore"
+    }
+  ],
+  "slot": {
+    "report": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/dd6ba29d2d44badeab6fb61da7d2c89f",
+    "slot": "CivicTown_1703_d70a8a3f",
+    "status": "user://world_preparation_36464_2103221.json"
+  },
+  "recipe": {
+    "checks": 52,
+    "failures": 0,
+    "generation": "normal UI, no review flags",
+    "plan_digest": "7056347458de438dd553afc42cc8c4bf7e9612cd3cd13b54c63160e93a501831",
+    "recipe": {
+      "biome": 0,
+      "districts": 1,
+      "material_veins": 1,
+      "network": 0,
+      "road_grid": 3,
+      "settlements": 2,
+      "trails": 1
+    },
+    "slot": "CivicTown_1703_d70a8a3f"
+  },
+  "all_five_recipe_planners": {
+    "checks": 44,
+    "failures": 0,
+    "seed": 1703,
+    "report": "reports/checks/20261101T031332333318Z"
+  },
+  "source_and_release_standards": "reports/building_standards/20261101T031758222874Z",
+  "packed_assets": "reports/building_expansion/packed/20261101T031924177594Z",
+  "images": "images/production/manifest.json",
+  "reproduce": "python tools/check_production_buildings.py",
+  "existing_saves": "No retrofit or repaint. Tests created their own named slot.",
+  "legacy_textures": "Both original sets retained; no building reassignment requested.",
+  "limits": [
+    "Other-chat unfinished runtime/performance changes were not part of this packaged run.",
+    "All starting recipes planned at seed 1703; broader seed and world-quality qualification remains open.",
+    "Earlier navigation, terrain/foliage and frame-pacing limitations remain recorded in the expansion review."
+  ]
+}

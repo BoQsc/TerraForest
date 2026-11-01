@@ -1,0 +1,32 @@
+{
+  "license": "CC0-1.0",
+  "source_commit": "ffff300c",
+  "slot": "CivicTown_1703_d70a8a3f",
+  "generation": "Normal Create world, Connected countryside, seed 1703; no review switches.",
+  "images": [
+    {
+      "file": "create_world.png",
+      "sha256": "e9f299f7808d5ecd86044d10c742bee2f624affe77ccbabc19d6ac7748d59bc6",
+      "source": "TerraForest/reports/production_buildings/packed/20261101T032000970265Z/create_world.png",
+      "inspection": "Inspected by Codex; current normal-generation E2 assets in the packaged build."
+    },
+    {
+      "file": "trader_world_trade.png",
+      "sha256": "4ead019fe0b8a7ae903e64f5a8fbae49bdf1cdbb9e9f0d57977b355f16b6dcd8",
+      "source": "TerraForest/reports/production_buildings/packed/20261101T032000970265Z/trader_world_trade.png",
+      "inspection": "Inspected by Codex; current normal-generation E2 assets in the packaged build."
+    },
+    {
+      "file": "town_hall_t1_overview_final.png",
+      "sha256": "c3ea5084f5f9e2349cf021a8d222c908e98090081a908359c59753dc51053345",
+      "source": "TerraForest/reports/production_buildings/packed/20261101T032000970265Z/town_hall_t1_overview_final.png",
+      "inspection": "Inspected by Codex; current normal-generation E2 assets in the packaged build."
+    },
+    {
+      "file": "school_s2_basement_final.png",
+      "sha256": "96d17ef2ab63d844418fa0f45bdb789914610f35980c0d3eca5f7d738674bc80",
+      "source": "TerraForest/reports/production_buildings/packed/20261101T032000970265Z/school_s2_basement_final.png",
+      "inspection": "Inspected by Codex; current normal-generation E2 assets in the packaged build."
+    }
+  ]
+}
