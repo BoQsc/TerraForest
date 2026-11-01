@@ -47,12 +47,13 @@ func save_checkpoint(base:Vector3,word:int)->void:
 	game.combat.damage_barrel(barrel,17)
 	var sample:float=await density(crater)
 	check(is_finite(sample) and sample>=0,"checkpoint crater is air in the volumetric density field")
-	var expected:={"rounds":game.combat.state.get_rounds(),"ammo":amount(221),"job":job,"first":first,"second":second,"barrel":barrel,"crater":crater,"density":sample,"blasted_cell":blasted_cell}
+	var expected:={"rounds":game.combat.state.get_rounds(),"ammo":amount(221),"assault_rounds":game.combat.state.get_rounds(8),"assault_ammo":amount(223),"job":job,"first":first,"second":second,"barrel":barrel,"crater":crater,"density":sample,"blasted_cell":blasted_cell}
 	var file:=FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE);file.store_var(expected);file.close()
 	game.terrain.changed_since_save=true
 func restore_checkpoint()->void:
 	var file:=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ);var expected:Dictionary=file.get_var(false);file.close()
 	check(game.combat.state.get_rounds()==expected.rounds and amount(221)==expected.ammo,"fresh process restores exact magazine and reserve ammunition")
+	check(game.combat.state.get_rounds(8)==expected.assault_rounds and amount(223)==expected.assault_ammo,"fresh process independently restores Ranger magazine and cartridges")
 	check(game.combat.state.integrity_enabled(),"fresh process restores optional integrity on")
 	check(game.combat.blast_jobs==[expected.job],"fresh process restores partially completed blast and cursor")
 	check(not game.combat.barrels.get_instance(expected.barrel).is_empty() and game.world_attack.durability.damage("model:%s:%d"%[game.combat.Barrel.KEY,expected.barrel],50)==17,"fresh process restores surviving barrel and partial damage")
@@ -68,6 +69,53 @@ func finish()->void:
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"compound world shuts down after published edits")
 	game.free();await process_frame;await process_frame
 	print("COMBAT_WORLD checks=",checks," failures=",failures);quit(1 if failures else 0)
+func mouse(button:int,pressed:bool)->void:
+	var event:=InputEventMouseButton.new();event.button_index=button;event.pressed=pressed;Input.parse_input_event(event);Input.flush_buffered_events()
+func picture(name:String)->void:
+	if DisplayServer.get_name()=="headless":return
+	await RenderingServer.frame_post_draw;root.get_texture().get_image().save_png(folder.path_join(name+".png"))
+func ranger_checks(base:Vector3)->void:
+	var combat:Node=game.combat;var human:Node=game.tool_view.human
+	var carbine:int=combat.state.get_rounds();var old_reserve:=amount(221)
+	check(game.player_hud.equip_item(8),"inventory equips newly authored Ranger assault rifle")
+	await ticks(85)
+	check(human.current==8 and combat.state.get_rounds(8)==0,"Ranger starts with its own empty magazine")
+	check(combat.reload(),"Ranger accepts matching ammunition")
+	await ticks(75);await picture("ranger_reload")
+	await ticks(110)
+	check(combat.state.get_rounds(8)==30 and amount(223)==60 and combat.state.get_rounds()==carbine and amount(221)==old_reserve,"Ranger reload consumes only its cartridges and leaves carbine untouched")
+	game.camera.look_at(game.camera.global_position+Vector3(0,0,-8));await ticks(15);await picture("ranger_idle")
+	mouse(MOUSE_BUTTON_RIGHT,true);await ticks(25);await picture("ranger_aim")
+	check(human.rifle_aiming and human.active_clip=="FP_Rifle_Aim" and human.model.position.distance_to(Vector3(0,-.030,-.23))<.001,"Ranger aiming aligns its sight plane with the first-person camera")
+	var target:=Vector3i((base+Vector3(-2,3,-3)).floor());var word:int=game.structures.blocks.encode_block(1,0,1)
+	game.structures.blocks.set_cells(PackedInt32Array([target.x,target.y,target.z,word]));game.structures.blocks.flush_bakes();await ticks(3)
+	game.camera.look_at(Vector3(target)+Vector3.ONE*.5)
+	check(combat.fire(),"Ranger trigger launches an aimed projectile")
+	await picture("ranger_fire");await ticks(10)
+	check(game.world_attack.durability.damage(game.world_attack.block_key(target),60)==12 and combat.state.get_rounds(8)==29,"Ranger projectile applies its own block damage and consumes one round")
+	var before:int=combat.shots
+	mouse(MOUSE_BUTTON_LEFT,true);await ticks(33);mouse(MOUSE_BUTTON_LEFT,false)
+	var burst:int=combat.shots-before
+	check(burst>=5 and burst<=6,"holding one trigger press fires a bounded 600 RPM burst")
+	check(combat.state.get_rounds(8)==29-burst and combat.state.get_rounds()==carbine,"each automatic projectile consumes exactly one Ranger round")
+	await ticks(12);check(combat.shots==before+burst,"releasing trigger stops automatic fire")
+	mouse(MOUSE_BUTTON_RIGHT,false)
+	game.session_menu.set_open(true);check(not combat.fire() and not combat.reload(),"menus block new automatic rifle actions")
+	game.session_menu.set_open(false);game.app_focused=true;await ticks(3)
+	var reserve:=amount(223);var magazine:int=combat.state.get_rounds(8)
+	check(combat.reload(),"partial Ranger magazine can reload")
+	await ticks(20);game.player_hud.equip_item(7);await ticks(90)
+	check(combat.reload_slot<0 and amount(223)==reserve and combat.state.get_rounds(8)==magazine and combat.state.get_rounds()==carbine,"switching weapons cancels reload without transferring any ammunition")
+	game.player_hud.equip_item(8);await ticks(85)
+	# Fire away from the player and continue beyond empty; no deferred shots or underflow.
+	game.camera.look_at(game.camera.global_position+Vector3(0,.8,-8));before=combat.shots
+	mouse(MOUSE_BUTTON_LEFT,true);await ticks(190);mouse(MOUSE_BUTTON_LEFT,false)
+	check(combat.state.get_rounds(8)==0 and combat.shots-before==magazine and not combat.fire(),"held trigger exhausts exactly the remaining magazine and empty fire is rejected")
+	await ticks(30);check(combat.reload(),"empty automatic rifle can reload")
+	await ticks(185)
+	check(combat.state.get_rounds(8)==30 and amount(223)==reserve-30,"empty reload restores full thirty-round magazine")
+	check(combat.fire(),"post-reload automatic rifle fires again");await ticks(12)
+	check(combat.state.get_rounds(8)==29 and combat.state.get_rounds()==carbine,"independent non-full magazines are ready for persistence check")
 func run()->void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--combat-output="):folder=arg.trim_prefix("--combat-output=")
@@ -87,7 +135,7 @@ func run()->void:
 	if restoring:await restore_checkpoint();await finish();return
 	game.zombies.population_enabled=false;game.zombies.clear();await ticks(3)
 	var inventory:RefCounted=game.player_hud.inventory
-	inventory.grant_items(PackedInt64Array([7,1,221,90,222,3]),inventory.snapshot().revision)
+	inventory.grant_items(PackedInt64Array([7,1,221,90,222,3,8,1,223,90]),inventory.snapshot().revision)
 	check(game.player_hud.equip_item(7),"existing inventory equips carried carbine")
 	await ticks(45)
 	simulated_input=true
@@ -132,8 +180,8 @@ func run()->void:
 			shot=game.zombies.pick(game.camera.global_position,target,[game.player.get_rid()])
 		check(not shot.is_empty(),"firearm ray resolves the live anatomical surface")
 		if not shot.is_empty():
-			game.combat.launch(game.camera.global_position,(target-game.camera.global_position).normalized());await ticks(15)
-			check(zombie.health<before,"travelling projectile invokes the zombie firearm response")
+			game.combat.launch(game.camera.global_position,(target-game.camera.global_position).normalized(),8);await ticks(15)
+			check(zombie.health<before,"travelling Ranger projectile invokes the zombie firearm response even with carbine equipped")
 	game.zombies.clear();await ticks(2)
 	check(game.player_hud.equip_item(222),"barrel item is equippable")
 	var placement_ray:Dictionary=game.structures.blocks.raycast_scene(base+Vector3(0,3,2),base+Vector3(0,-3,2),1,[])
@@ -190,5 +238,6 @@ func run()->void:
 	game.combat.set_integrity(false)
 	game.structures.blocks.set_cells(PackedInt32Array([floating.x,floating.y,floating.z,word]));await ticks(120)
 	check(game.structures.blocks.get_cell(floating)==word,"turning integrity off preserves unsupported blocks")
+	await ranger_checks(base)
 	if saving:await save_checkpoint(base,word)
 	await finish()

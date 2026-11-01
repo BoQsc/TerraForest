@@ -1,0 +1,58 @@
+[
+  {
+    "file": "aim-rejected-stock.png",
+    "source": "reports/ranger_preview/aim.png",
+    "sha256": "cd52b13e198e325387a96acde8d1fc788f9757c752856843ce2491033b72bc2f",
+    "status": "Rejected: initial aim sightline is obscured by stock; captured before 30mm camera-relative correction.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "model-rejected-connections.png",
+    "source": "reports/ranger_preview/model.png",
+    "sha256": "163607d8c0a57c6bd812305e915e939d27d7e35c3c690e0efc3fd3f90873e167",
+    "status": "Rejected: magazine neck stops below receiver and lower stock brace is not joined to forward tube.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "idle-source.png",
+    "source": "reports/combat_world/20261101T201510285113Z/ranger_idle.png",
+    "sha256": "a5e8a86c951021f3c3b3df99833fa47d7c284a7d3d40770be0e85dad5c12f976",
+    "status": "Reviewed source gameplay: held new rifle and independent ammunition HUD.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "reload-source.png",
+    "source": "reports/combat_world/20261101T201510285113Z/ranger_reload.png",
+    "sha256": "5cb6f6025b4fc6fe63a6a5e660efd20680acf87ee2a1b01b51b5180db9302d28",
+    "status": "Reviewed source gameplay: hand carries detached magazine during authored reload.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "model-final-preview.png",
+    "source": "reports/ranger_preview_runs/20261101T202056476334Z/model.png",
+    "sha256": "2e9b47ae1b55ce531e37f9b18fd63d05a2c0ea309c8c99907d117442883b008a",
+    "status": "Reviewed final source staging preview; original geometry connections and aim sightline corrected. Lighting differs from gameplay.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "aim-final-preview.png",
+    "source": "reports/ranger_preview_runs/20261101T202056476334Z/aim.png",
+    "sha256": "f9fa71ff14c60aa14e8f9a3ed48b95a56893e1572869c0759c45a3e91a194caa",
+    "status": "Reviewed final source staging preview; original geometry connections and aim sightline corrected. Lighting differs from gameplay.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "reload_in-final-preview.png",
+    "source": "reports/ranger_preview_runs/20261101T202056476334Z/reload_in.png",
+    "sha256": "55620e24cb34700a56ecb0a857bb42498dcb9c4d736cc690be43f5af74c95032",
+    "status": "Reviewed final source staging preview; original geometry connections and aim sightline corrected. Lighting differs from gameplay.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "third_person-final-preview.png",
+    "source": "reports/ranger_preview_runs/20261101T202056476334Z/third_person.png",
+    "sha256": "1bf65d034712258fd783c00c8c864e3cd5aef8c64308fbf9f57bf9101f77032c",
+    "status": "Reviewed final source staging preview; original geometry connections and aim sightline corrected. Lighting differs from gameplay.",
+    "date": "2026-11-01"
+  }
+]

@@ -12,9 +12,9 @@ namespace terraforest {
 using namespace godot;
 static bool valid_records(const PackedInt32Array &r);
 void NativeCombatState::_bind_methods(){
-    ClassDB::bind_method(D_METHOD("get_rounds"),&NativeCombatState::get_rounds);
-    ClassDB::bind_method(D_METHOD("take_round"),&NativeCombatState::take_round);
-    ClassDB::bind_method(D_METHOD("load_rounds","count"),&NativeCombatState::load_rounds);
+    ClassDB::bind_method(D_METHOD("get_rounds","weapon"),&NativeCombatState::get_rounds,DEFVAL(7));
+    ClassDB::bind_method(D_METHOD("take_round","weapon"),&NativeCombatState::take_round,DEFVAL(7));
+    ClassDB::bind_method(D_METHOD("load_rounds","count","weapon"),&NativeCombatState::load_rounds,DEFVAL(7));
     ClassDB::bind_method(D_METHOD("integrity_enabled"),&NativeCombatState::integrity_enabled);
     ClassDB::bind_method(D_METHOD("set_integrity_enabled","enabled"),&NativeCombatState::set_integrity_enabled);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeCombatState::capture_storage_snapshot);
@@ -27,15 +27,17 @@ void NativeCombatState::_bind_methods(){
     ClassDB::bind_method(D_METHOD("blast_cells","records","origin","center","radius"),&NativeCombatState::blast_cells);
 }
 PackedByteArray NativeCombatState::capture_storage_snapshot() const {
-    int bytes=20;for(auto &job:blasts)bytes+=20+job.records.size()*4;
-    PackedByteArray b;b.resize(bytes);b.encode_u32(0,0x31434654);b.encode_u32(4,2);b.encode_u32(8,rounds);b.encode_u32(12,integrity?1:0);b.encode_u32(16,blasts.size());
-    int at=20;for(auto &job:blasts){for(int axis=0;axis<3;axis++)b.encode_float(at+axis*4,job.center[axis]);b.encode_u32(at+12,job.offset);b.encode_u32(at+16,job.records.size());at+=20;for(int word:job.records){b.encode_s32(at,word);at+=4;}}return b;
+    int bytes=24;for(auto &job:blasts)bytes+=20+job.records.size()*4;
+    PackedByteArray b;b.resize(bytes);b.encode_u32(0,0x31434654);b.encode_u32(4,3);b.encode_u32(8,rounds);b.encode_u32(12,integrity?1:0);b.encode_u32(16,blasts.size());b.encode_u32(20,assault_rounds);
+    int at=24;for(auto &job:blasts){for(int axis=0;axis<3;axis++)b.encode_float(at+axis*4,job.center[axis]);b.encode_u32(at+12,job.offset);b.encode_u32(at+16,job.records.size());at+=20;for(int word:job.records){b.encode_s32(at,word);at+=4;}}return b;
 }
 static bool decode_jobs(const PackedByteArray &b,std::vector<CombatBlast> *out){
     if(b.size()<16||b.size()>600000||b.decode_u32(0)!=0x31434654||b.decode_u32(8)>30||b.decode_u32(12)>1)return false;
     if(b.decode_u32(4)==1)return b.size()==16;
-    if(b.decode_u32(4)!=2||b.size()<20||b.decode_u32(16)>32)return false;
-    int at=20,total=0;for(unsigned i=0;i<b.decode_u32(16);i++){
+    const auto version=b.decode_u32(4);
+    if((version!=2&&version!=3)||b.size()<20||b.decode_u32(16)>32)return false;
+    if(version==3&&(b.size()<24||b.decode_u32(20)>30))return false;
+    int at=version==3?24:20,total=0;for(unsigned i=0;i<b.decode_u32(16);i++){
         if(at+20>b.size())return false;CombatBlast job;for(int axis=0;axis<3;axis++)job.center[axis]=b.decode_float(at+axis*4);
         auto offset=b.decode_u32(at+12),count=b.decode_u32(at+16);at+=20;
         if(!job.center.is_finite()||count>32768*4||count%4||offset>count||offset%4||at+int64_t(count)*4>b.size()||(total+=count)>131072)return false;
@@ -44,7 +46,7 @@ static bool decode_jobs(const PackedByteArray &b,std::vector<CombatBlast> *out){
     }return at==b.size();
 }
 bool NativeCombatState::validate_snapshot(const PackedByteArray &b) const {return decode_jobs(b,nullptr);}
-bool NativeCombatState::restore_storage_snapshot(const PackedByteArray &b){std::vector<CombatBlast> staged;if(!decode_jobs(b,&staged))return false;rounds=b.decode_u32(8);integrity=b.decode_u32(12)!=0;blasts.swap(staged);return true;}
+bool NativeCombatState::restore_storage_snapshot(const PackedByteArray &b){std::vector<CombatBlast> staged;if(!decode_jobs(b,&staged))return false;rounds=b.decode_u32(8);assault_rounds=b.decode_u32(4)==3?b.decode_u32(20):0;integrity=b.decode_u32(12)!=0;blasts.swap(staged);return true;}
 bool NativeCombatState::set_blast_jobs(const Array &jobs){
     if(jobs.size()>32)return false;std::vector<CombatBlast> staged;int total=0;
     for(int i=0;i<jobs.size();i++){

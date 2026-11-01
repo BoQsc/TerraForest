@@ -1,0 +1,32 @@
+TerraForest Ranger assault rifle — 2026-11-01
+SPDX-License-Identifier: CC0-1.0
+
+To the extent possible under law, the contributors dedicate the new original
+Ranger geometry, material parameters and icon artwork to the public domain under
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Asset paths:
+  addons/characters/runtime/assets/Ranger.body.glb
+  addons/characters/runtime/assets/Ranger.magazine.glb
+  addons/characters/authoring/Ranger.blend
+  addons/characters/authoring/Ranger.json
+  addons/player_runtime/art/ranger.svg
+  addons/player_runtime/art/ranger_cartridges.svg
+
+Creator: OpenAI Codex / TerraForest contributors, authored directly at the
+maintainer's request for a new automatic assault rifle. Fictional Ranger design:
+olive receiver, long fore-end and barrel, open stock, iron sights, curved magazine.
+The meshes contain original beveled primitives and flat PBR material parameters.
+No outside model, texture, font, audio, animation pack or implementation was copied.
+Editable source: tools/author_ranger_rifle.py (0BSD), Ranger.blend.
+Authoring tool: existing external Blender 5.2.3 LTS; hashes in Ranger.json.
+
+The new meshes fit the grip and magazine anchors of the existing Human.r11 rig.
+Runtime carry, equip, holster, aim and reload clips are reused; three firing clips
+are retimed in human_view.gd to 80 ms for automatic cadence. These existing clips,
+rig, hands and character textures retain their existing provenance and terms in
+addons/characters/LICENSE.txt and docs/LICENSE_INVENTORY.md. They are not contained
+in the new standalone Ranger GLBs or Blender file, and are not relicensed here.
+
+Original synthesized shot and procedural muzzle-flash parameters are covered by
+addons/player_runtime/COMBAT_PROVENANCE.txt. New runtime/tool/test code is 0BSD.

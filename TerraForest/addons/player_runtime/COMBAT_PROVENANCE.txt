@@ -22,3 +22,12 @@ Generated debris uses the existing native building-shape preview mesh.
 
 External development tools: the existing pinned Godot engine and native Zig /
 godot-cpp toolchain, with their established terms and distribution notices.
+
+RANGER AUTOMATIC ASSAULT RIFLE — 2026-11-01
+
+The new Ranger shot waveform and muzzle-flash geometry/material parameters are
+original CC0-1.0 assets under the dedication above. New rifle meshes, editable
+Blender source and icons have an exact path notice at
+addons/characters/runtime/assets/Ranger.LICENSE.txt. Authoring script, runtime
+integration and tests are original 0BSD code. Existing rifle animation clips
+remain under their retained provenance; firing clips are retimed at runtime.

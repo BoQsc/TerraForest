@@ -7,6 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
+    ("ranger", "Original Ranger assault rifle", "CC0 1.0 assets / 0BSD code", "addons/characters/runtime/assets/Ranger.LICENSE.txt",
+     "Original rifle body, moving magazine, icons and editable geometry are dedicated under CC0. Existing character rig and reused animations retain their separate provenance."),
     ("combat", "Original combat effects and barrel", "0BSD code / CC0 1.0 assets", "addons/player_runtime/COMBAT_PROVENANCE.txt",
      "Original procedural barrel, combat icons and synthesized sound are dedicated under CC0. Existing character and carbine assets retain their separate provenance."),
     ("project", "TerraForest project code", "0BSD", "LICENSE.txt",

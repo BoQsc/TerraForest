@@ -5,6 +5,8 @@ signal rifle_reload_finished
 var rifle_aiming:=false
 var rifle_holster_item:=-1
 var rifle_holster_water:=-1
+var rifle_flash_time:=0.0
+var rifle_flash:MeshInstance3D
 signal swing_contact(identity:int)
 signal swing_finished(identity:int,cancelled:bool)
 const MODEL = preload("res://addons/characters/runtime/assets/Human.r11.glb")
@@ -63,6 +65,15 @@ func _ready() -> void:
 	add_child(model)
 	# Rigid tools share the existing weapon bones and the same skinned hands.
 	var skeleton:=model.find_children("*","Skeleton3D",true,false)[0] as Skeleton3D
+	for part:Dictionary in [{"bone":"Weapon_Carbine","scene":preload("res://addons/characters/runtime/assets/Ranger.body.glb")},{"bone":"Weapon_Magazine","scene":preload("res://addons/characters/runtime/assets/Ranger.magazine.glb")}]:
+		var attachment:=BoneAttachment3D.new();attachment.bone_name=part.bone;skeleton.add_child(attachment)
+		var equipment:Node3D=part.scene.instantiate();equipment.set_meta("first_person_equipment",true);attachment.add_child(equipment)
+		equipment.transform=skeleton.get_bone_global_rest(skeleton.find_bone(part.bone)).affine_inverse()*equipment.transform
+		if part.bone=="Weapon_Carbine":
+			rifle_flash=MeshInstance3D.new();rifle_flash.name="Equipment_Ranger_Flash"
+			var flash:=SphereMesh.new();flash.radius=.022;flash.height=.10;flash.radial_segments=8;flash.rings=3
+			var glow:=StandardMaterial3D.new();glow.shading_mode=BaseMaterial3D.SHADING_MODE_UNSHADED;glow.albedo_color=Color(1,.77,.24);flash.material=glow
+			rifle_flash.mesh=flash;rifle_flash.position=Vector3(0,.127,.61);rifle_flash.rotation.x=PI/2;equipment.add_child(rifle_flash)
 	for item:int in EQUIPMENT:
 		var attachment:=BoneAttachment3D.new()
 		attachment.bone_name="RightHand" if item==6 else ("Weapon_Axe" if item==3 else "Weapon_Pickaxe")
@@ -107,6 +118,17 @@ func _ready() -> void:
 	animation_player.add_animation_library("crouch",CROUCH)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
+	# Retimed recoil keeps both hands and the weapon together at automatic cadence.
+	# All carry/equip/reload/holster actions retain their existing authored timing.
+	var automatic:=AnimationLibrary.new()
+	for source:String in ["FP_Rifle_Fire","FP_Rifle_HipFire","Rifle_Fire"]:
+		var recoil:Animation=animation_player.get_animation(clips[source]).duplicate(true)
+		var ratio:=.08/recoil.length
+		for track in recoil.get_track_count():
+			for key in recoil.track_get_key_count(track):recoil.track_set_key_time(track,key,recoil.track_get_key_time(track,key)*ratio)
+		recoil.length=.08;recoil.loop_mode=Animation.LOOP_NONE
+		var name:=source.replace("Rifle","Ranger");automatic.add_animation(name,recoil);clips[name]="ranger/"+name
+	animation_player.add_animation_library("ranger",automatic)
 	equip(current)
 
 func _collect(node: Node) -> void:
@@ -141,7 +163,7 @@ func set_third_person(value:bool)->void:
 	_sync_equipment()
 
 func equip(item: int, water_ml:int=-1) -> void:
-	if current==7 and item!=7 and model!=null and rifle_holster_item<0:
+	if current in [7,8] and item!=current and model!=null and rifle_holster_item<0:
 		cancel_rifle_reload();rifle_holster_item=item;rifle_holster_water=water_ml
 		_play("FP_Rifle_Holster",true,0.04);return
 	rifle_holster_item=-1
@@ -158,7 +180,7 @@ func equip(item: int, water_ml:int=-1) -> void:
 	if model == null:
 		return
 	_sync_equipment()
-	if current==7 and previous_item!=7:
+	if current in [7,8] and previous_item!=current:
 		_play("FP_Rifle_Equip",true,0.0);animation_player.advance(0)
 	elif current==6 and previous_item!=6:
 		# The torch has its own keyed raise. Blending another tool's hand and
@@ -176,7 +198,7 @@ func _sync_equipment() -> void:
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
 		if label.begins_with("equipment."):
-			mesh.visible = not placement_active and ((current==7 and label.contains("carbine")) or (current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==6 and label.contains("torch")) or (current==401 and label.contains("bucket")))
+			mesh.visible = not placement_active and ((current==7 and label.contains("carbine")) or (current==8 and label.contains("ranger")) or (current == 1 and label.contains("pickaxe")) or (current == 2 and label.contains("axe") and not label.contains("pickaxe")) or (current==3 and label.contains("hammer")) or (current==5 and label.contains("shovel")) or (current==6 and label.contains("torch")) or (current==401 and label.contains("bucket")))
 		elif label.begins_with("hair.") or label.begins_with("brows.") or label.begins_with("eye") or label.begins_with("upper_lashes"):
 			mesh.visible=third_person and face_meshes.get(mesh.get_instance_id(),false)
 	_sync_bucket_water()
@@ -198,16 +220,17 @@ func _sync_bucket_water()->void:
 	bucket_water.scale=Vector3(radius,1,radius)
 
 func rifle_action(action:String)->bool:
-	if current!=7 or action_remaining>0 or rifle_holster_item>=0:return false
+	if current not in [7,8] or action_remaining>0 or rifle_holster_item>=0:return false
 	var clip:String=("Rifle_" if third_person else "FP_Rifle_")+action
 	if third_person and action=="HipFire":clip="Rifle_Fire"
+	if current==8 and action in ["Fire","HipFire"]:clip=clip.replace("Rifle","Ranger");rifle_flash_time=.035
 	if not clips.has(clip):return false
 	_play(clip,true,0.025);animation_player.advance(0);return true
 func cancel_rifle_reload()->void:
-	if current==7 and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:
+	if current in [7,8] and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:
 		action_remaining=0;_play(_motion_clip("Idle"),false,0.05)
 func _motion_clip(action: String) -> String:
-	if current==7:
+	if current in [7,8]:
 		var name:String=("Rifle_" if third_person else "FP_Rifle_")+("Aim" if rifle_aiming else action)
 		return name if clips.has(name) else ("Rifle_Idle" if third_person else "FP_Rifle_Idle")
 	if current==6:return "FP_Torch_"+action if clips.has("FP_Torch_"+action) else "FP_Torch_Idle"
@@ -273,6 +296,13 @@ func bucket_use(pouring:bool)->bool:
 	return true
 
 func _process(delta: float) -> void:
+	# Align the new iron-sight plane with the FP camera while keeping the stock
+	# below the sightline. Third-person and magazine handling retain rig placement.
+	var aiming_ranger:=current==8 and not third_person and rifle_aiming and (action_remaining<=0 or active_clip=="FP_Ranger_Fire")
+	model.position=model.position.lerp(Vector3(0,-.030,-.23) if aiming_ranger else Vector3.ZERO,1-exp(-24*delta))
+	if rifle_flash!=null:
+		rifle_flash.visible=current==8 and rifle_flash_time>0 and not placement_active
+		rifle_flash_time=maxf(0,rifle_flash_time-delta)
 	animation_player.active = is_visible_in_tree()
 	if not animation_player.active:
 		cancel_swing()
@@ -299,7 +329,7 @@ func _process(delta: float) -> void:
 		if rifle_holster_item>=0:
 			var next:=rifle_holster_item;var water:=rifle_holster_water
 			current=-1;rifle_holster_item=-1;equip(next,water);return
-		if current==7 and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:rifle_reload_finished.emit()
+		if current in [7,8] and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:rifle_reload_finished.emit()
 		if not swing_clip.is_empty():
 			var identity:=swing_identity;swing_identity=0;swing_clip=""
 			swing_finished.emit(identity,false)
@@ -310,7 +340,7 @@ func _process(delta: float) -> void:
 	# Empty hands stay at rest between deliberate actions. Generic full-body
 	# Walk/Run/Jump clips can raise the unarmed hand while merely moving.
 	# Authored tools use their own locomotion presentation.
-	if (third_person or current in [1, 2, 3, 5, 6, 7, 401]) and is_instance_valid(body):
+	if (third_person or current in [1, 2, 3, 5, 6, 7, 8, 401]) and is_instance_valid(body):
 		var speed := Vector2(body.velocity.x, body.velocity.z).length()
 		if not body.is_on_floor() and absf(body.velocity.y) > 0.5:
 			motion = "Jump"

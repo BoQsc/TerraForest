@@ -1,0 +1,11 @@
+{
+  "license": "CC0-1.0",
+  "creator": "OpenAI Codex",
+  "tool": "Blender 5.2.3 LTS",
+  "source": "Original geometry authored in tools/author_ranger_rifle.py",
+  "reference": "Existing Human.r11 weapon grip/magazine anchors only; no mesh, rig, texture or animation copied into these assets.",
+  "outputs": {
+    "addons/characters/runtime/assets/Ranger.body.glb": "7bdb3aa5b96e9c02c8518b2bc94fb776b3b3479ab28ca4c8efa066595cf628c9",
+    "addons/characters/runtime/assets/Ranger.magazine.glb": "975d9199925179a189f9c9c1afbd906bf466d853cb7453b8fb7c672164eb28a6"
+  }
+}

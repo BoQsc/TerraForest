@@ -6,6 +6,8 @@ static var atlas: ImageTexture
 static var regions: Dictionary={}
 static var bucket_icon:ImageTexture
 static func texture(key: Variant) -> Texture2D:
+	if str(key)=="8":return preload("res://addons/player_runtime/art/ranger.svg")
+	if str(key)=="223":return preload("res://addons/player_runtime/art/ranger_cartridges.svg")
 	if str(key)=="7":return preload("res://addons/player_runtime/art/carbine.svg")
 	if str(key)=="221":return preload("res://addons/player_runtime/art/cartridge.svg")
 	if str(key)=="222":return preload("res://addons/player_runtime/art/explosive_barrel.svg")

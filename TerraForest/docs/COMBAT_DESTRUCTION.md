@@ -6,11 +6,15 @@ in the combined game package, and checked through the existing game executable. 
 
 ## Play
 
-Craft a **Carbine**, **Carbine cartridges**, and **Explosive barrel** in the
+Craft a **Carbine**, **Ranger assault rifle**, matching cartridges, and **Explosive barrel** in the
 inventory, or obtain them from **Esc → Dev Bag**. These are original game-balance
 recipes. The existing starter loadout and saved inventories are preserved.
 
 - Carbine: left mouse fires, right mouse aims, R reloads a 30-round magazine.
+- Ranger assault rifle: hold left mouse for automatic fire (100 ms shot interval),
+  right mouse aims, R reloads. Uses Ranger cartridges and an independent 30-round
+  magazine. Original mesh, moving magazine and icons; the existing rig supplies
+  carry, aim, reload, equip and holster, with shortened firing recoil.
 - Barrel: equip it, then right-click nearby clear ground to place one. Gunfire or
   melee damage ignites it. Nearby barrels can chain-react.
 - Esc → Player → **Structural integrity and collapse** enables the optional
@@ -28,9 +32,10 @@ No external gun or animation pack was imported.
 `NativeCombatState` owns magazine, integrity preference and queued destruction
 snapshot validation. Reload consumes cartridges only when the authored animation
 finishes. Switching item, opening a menu, losing focus, or changing world cancels
-the reload without consuming ammunition. Magazine state is shared by the player's
-single carbine weapon type; individual carried carbines do not have separate
-magazines.
+the reload without consuming ammunition. Magazine state is stored separately for the player's
+carbine and Ranger weapon types; individual copies of one type share a magazine.
+Snapshot v3 preserves both, including migration from v1/v2 with an empty Ranger
+magazine. Projectile payloads are captured at launch, independent of later equip.
 
 At most 64 travelling projectiles are resident. Each advances with gravity and a
 swept segment query against native block/scene collision and the existing live
@@ -117,3 +122,13 @@ replacing the user-owned executable. User visual review remains separate.
 Original code is 0BSD. Original procedural barrel, icons and synthesized sound
 data are CC0-1.0; inherited rifle and character provenance is preserved. Exact
 paths and origins are in `addons/player_runtime/COMBAT_PROVENANCE.txt`.
+
+## Ranger addition - 2026-11-01
+
+The Ranger is newly authored original geometry with retained editable Blender
+source, CC0 asset notice and 0BSD generator. The source combat journey passes
+51 creation + 12 reopen checks; native state 53 per variant, full animation/state
+79, melee timing/durability 27/21. Final aim framing and geometry connections were
+visually reviewed after the integrated source run. Final package verification is
+pending coordinated export; see [Ranger evidence](../issues/ranger-assault-rifle/README.md).
+The earlier carbine-only package hashes above are retained historical evidence.
