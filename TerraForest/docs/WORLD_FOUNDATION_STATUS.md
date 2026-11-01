@@ -17,12 +17,13 @@ trader UI with quest work. Missing work, prerequisites and evidence:
 
 ## World entry fly-in — 2026-11-01
 
-Default-on three-second entry passes 24 populated-world and 25 normal-browser
-source checks. Revised approach images are inspected; initial query/assertion and
-recording failures are retained. Combined package/browser verification and buffered
-motion capture remain open. Source is integrated as `4fbca4e9`; combined export
-waits for the active starter-clothing/loot and vehicle owners. The integration chat
-will wake camera validation when the installed build and render window are ready.
+Default-on entry passes 24 populated-world and 25 ordinary-browser source checks,
+plus 49 frozen-package checks. Buffered complete entry images were inspected.
+Package validation used the Steam engine; exact installed TerraForest.exe remains
+pending. The first misconfigured launch loaded mutable source; corrected exact-exe
+retry stopped before launch on changed source/dist native hashes. Vehicle now owns
+the shared build window. Preserve failed evidence and resume with the explicit
+package runner after the coordinator supplies a matching installed milestone.
 [Scope, controls and remaining evidence](../issues/world-entry-fly-in/README.md).
 Clean no-capture source probe: 53.27 FPS during entry, 59.21 FPS settled first
 person, but a 143.33 ms first-frame handoff stall remains unqualified. This is not

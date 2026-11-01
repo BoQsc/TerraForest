@@ -1,6 +1,6 @@
 # World entry fly-in
 
-- Status: Integrated in main source; combined installed verification pending.
+- Status: Main source and frozen-package checks pass; exact installed-executable check pending.
 - Source: `d34557e0`; main integration: `4fbca4e9`.
 - Updated: 2026-11-01.
 - User review: Enabled-by-default preference approved; motion and images not reviewed.
@@ -133,23 +133,39 @@ Resume from the existing raw timings and fixture, with no competing game renders
 Return trigger: the stable installed build and a dedicated performance pass/user
 request. Runtime optimization is not being added to the current integration freeze.
 
+## Frozen package qualification — 2026-11-01
+
+Explicit PCK browser/default entry passes **25 checks** and the populated read-only
+world passes **24 checks**, including unchanged source-save hash. Receipt in main:
+`reports/entry_fly_in_pack/20261101T170600240310Z/run.json`. The package SHA-256 is
+`d7b203e3062724747406624fcc2876b95f0937d18aa0dea4f095fa8f4ea078be`.
+All 14 native libraries matched that package at test launch. The driver used the
+Steam Godot 4.7.2 executable, not the separately hashed installed TerraForest.exe;
+this is package verification, not exact executable qualification.
+
+Aerial, descent, shoulder approach and restored first-person images were inspected.
+Buffered populated capture covers the complete 3.115-second entry; browser entry
+lasted 3.010 seconds. These captures still perform GPU readback and are **not clean
+performance samples**. Raw frames/timestamps remain beside the receipt. Human motion
+review and the separately requested performance follow-up remain open.
+
+Retained failed launch: `reports/checks/20261101T170350930985Z/run.json` used only
+`--godot TerraForest.exe`, so `--path` resolved mutable source and hit the unbuilt
+vehicle class before camera startup. The replacement runner explicitly sets the
+PCK, dist directory, external driver and installed executable. Its attempted exact
+executable rerun stopped before starting Godot because source/dist native parity
+had changed during concurrent work. No player save or preference was changed.
+
 ## Remaining / resume here
 
-Main source integration is complete (`4fbca4e9`). The installed executable still
-requires the coordinated export: new starter-clothing/loot work and vehicle road
-travel are active in main. “Merge terrain and forest addons” owns that export and
-has been asked to wake this camera chat with the installed revision/PCK milestone
-and a released render window. Do not overwrite their working source or install an
-older package. No additional camera implementation is waiting on those features.
-
-Resume with actual-main-executable checks from the main checkout:
+Run the exact installed-executable check after the coordinator supplies the next
+matching build and render window. Vehicle owns current native builds; do not
+replace its libraries or export an older source snapshot. The focused runner is:
 
 ```powershell
-python TerraForest/tools/run_godot_check.py entry_fly_in --godot "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/TerraForest.exe" --require 'failures=0' --timeout 180 -- --entry-browser --entry-output=res://reports/entry_fly_in/installed_browser
-python TerraForest/tools/run_godot_check.py entry_fly_in --godot "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/TerraForest.exe" --require 'failures=0' --timeout 180 -- --entry-slot=Exploration_1703_8f8d4c8f --entry-video --entry-output=res://reports/entry_fly_in/installed_populated
+python TerraForest/tools/check_entry_fly_in_pack.py --project "C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest"
 ```
 
-First confirm installed PCK and native DLLs match the coordinated source milestone.
-Inspect the buffered motion/frames, retain receipt and provenance, then update this
-tracker/index/foundation status together. These steps are required to close installed
-qualification. User motion/visual approval is a separate remaining review.
+Inspect retained buffered motion and record the actual engine/PCK/native hashes.
+The package-only result does not close exact-executable qualification. User motion
+approval and the deferred profiling/optimization pass remain separate.
