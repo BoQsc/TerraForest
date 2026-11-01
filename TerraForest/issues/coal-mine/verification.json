@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "feature_commit": "58282bdd",
+  "restoration_fix_commit": "016e3ffb",
+  "world": "CoalMine_1703_f63d8917",
+  "seed": 1703,
+  "authored_station_residents": 10,
+  "total_mine_residents": 13,
+  "surviving_station_residents_after_test_kill": 9,
+  "initial_package": {
+    "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
+    "phases": [
+      {
+        "phase": "create",
+        "checks": 59,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 132.0623805000214,
+        "report": "reports/coal_mine/20261101T184507896315Z/create184508",
+        "peak_private_commit_bytes": 3881525248,
+        "peak_dedicated_gpu_bytes": 1477021696,
+        "within_sampled_limits": true
+      },
+      {
+        "phase": "restore",
+        "checks": 41,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 30.155457700020634,
+        "report": "reports/coal_mine/20261101T184507896315Z/restore184720",
+        "peak_private_commit_bytes": 3496587264,
+        "peak_dedicated_gpu_bytes": 1474646016,
+        "within_sampled_limits": true
+      }
+    ],
+    "scope": "Uninterrupted new-world journey and data restoration passed. Initial restore camera was on the surface; subsequent physical restoration exposed two runtime defects, so this package does not pass physical restoration."
+  },
+  "source_restoration": {
+    "phases": [
+      {
+        "phase": "restore",
+        "checks": 59,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 38.55859049997525,
+        "report": "reports/coal_mine/20261101T184507896315Z/restore191448",
+        "peak_private_commit_bytes": 3708780544,
+        "peak_dedicated_gpu_bytes": 1477087232,
+        "within_sampled_limits": true
+      },
+      {
+        "phase": "inside_restore",
+        "checks": 46,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 27.939796399965417,
+        "report": "reports/coal_mine/20261101T184507896315Z/inside_restore191527",
+        "peak_private_commit_bytes": 3541368832,
+        "peak_dedicated_gpu_bytes": 1474727936,
+        "within_sampled_limits": true
+      }
+    ],
+    "clearance_fixture": {
+      "report": "reports/checks/20261101T191340874017Z",
+      "checks": 15,
+      "failures": 0
+    },
+    "saved_and_reopened_position": [
+      578.8293,
+      139.184,
+      445.4994
+    ],
+    "held_item_before_save": 6,
+    "native_pose_tool_mode": 0,
+    "selected_item_after_load": 1,
+    "torch_inventory_after_load": 1
+  },
+  "updated_package": {
+    "pack_sha256": "2bf75c9e6afd2f62f6891e309fa941aa07f23d5fb7e5589b1d253730f9907d72",
+    "pack_bytes": 448922844,
+    "runtime_revision": "008bc4bf0cd9b92c304ffa8c78f744f95296447a",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "e25fbeeb7e0ae6d8e26f4a74903a889c3020e92aa59b91978b249641d9a0b042",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "38b76fa54b6c8b3ae57b7993ca8434fb20a1ef82aadaa60ff3aaf7c109fbd325",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "264dfb5053d3a953067b3b56f49bfedf6125b2ad115c0573b3f4ebfeeacae3d4",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "4748a0911dd1ada69e5d30497195b67a9b0fc734693b7348ae1f3e1ef9e19c4e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "e5df8a377e6ba27d309126ab2c59e352e9c56ece9a52b125a1b8c49a56bb5fb4",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "bf90379eab61fb4de32623086db3526e7ae14509f962e5cd2e37145ea4e05d73",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "68b4e33395e5b4162c68b6496e9515968755e8fcdc264ad8f444339533fabe16",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "f1d27d5f55344140407892e17faf21f8d0dd3371f313a4e638e9812fa381d0e5",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "d0fab7b2daefa89384bcb352c3273145e36253df1b8a5729dc41f1a5cbb963a9",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "05d9a8dd6472c332e6ea33107f29d84f915678ff84a05707712054b4171ba645"
+    },
+    "hashes_unchanged_after": true,
+    "phases": [
+      {
+        "phase": "restore",
+        "checks": 59,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 51.0264381999732,
+        "report": "reports/coal_mine/20261101T184507896315Z/restore192411",
+        "peak_private_commit_bytes": 3763073024,
+        "peak_dedicated_gpu_bytes": 1502715904,
+        "within_sampled_limits": true,
+        "pointer_captures": 0
+      },
+      {
+        "phase": "inside_restore",
+        "checks": 46,
+        "failures": 0,
+        "passed": true,
+        "elapsed_seconds": 29.961406800022814,
+        "report": "reports/coal_mine/20261101T184507896315Z/inside_restore192502",
+        "peak_private_commit_bytes": 3725471744,
+        "peak_dedicated_gpu_bytes": 1493864448,
+        "within_sampled_limits": true,
+        "pointer_captures": 0
+      }
+    ],
+    "saved_and_reopened_position": [
+      578.7599,
+      139.184,
+      445.4368
+    ],
+    "held_item_before_save": 6,
+    "native_pose_tool_mode": 0,
+    "selected_item_after_load": 1,
+    "torch_inventory_after_load": 1,
+    "images_inspected": true,
+    "scope": "Corrected physical doorway re-entry and no-teleport inside reopening in the updated package. Original uninterrupted fresh-generation journey remains separately qualified to the original package."
+  },
+  "retained_failures": [
+    "restore185639: fewer than nine physical station survivors",
+    "inside_restore185833: stale surface player pose after torch-held save",
+    "restore190620: oversized admission capsule rejects valid standing resident beside rail",
+    "restore191036: temporary lift experiment fails; removed in favor of exact movement shape"
+  ],
+  "unqualified": [
+    "Human visual acceptance and further station/branch dressing",
+    "Foreground frame pacing and awake-station combat/crowding",
+    "Broad normal-world seed and long-run coverage",
+    "Town-to-mine travel; driver streams to outside approach"
+  ],
+  "scope": "Offscreen 1920x1080 checks with normal generated owned worlds, real walking and fresh-process load. Sampled memory budgets are not frame-pacing acceptance. Existing player saves were not used."
+}

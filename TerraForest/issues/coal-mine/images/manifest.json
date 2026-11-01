@@ -54,5 +54,61 @@
     "caption": "Targeted continuation in the same generated save: grounded natural hillside exit and harvested coal visible; 13 exit and 41 fresh-process restore assertions pass.",
     "origin": "TerraForest runtime capture, AI-assisted original recipe; inherited asset terms preserved",
     "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "station-package.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_deep_station.png",
+    "sha256": "9733e07cfcdd57a8b0f5e6c2d6b66c85f0360769a485a466f8726612d72ed06f",
+    "caption": "Installed PCK 4295d8f9, default seed 1703: ten station sleepers during the uninterrupted 59-check journey.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "entrance-package.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_mine_entrance.png",
+    "sha256": "6849553f74544e328fff0354c78898cc1a455d201a885d7cfa7833612e925b9a",
+    "caption": "Installed PCK 4295d8f9, actual generated hillside arrival: portal and exterior track before the complete physical journey.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "restore-surface-rejected.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_station_restored_surface_rejected.png",
+    "sha256": "730b01cfc9f3d7bb6babbc47a376e6d66ac3ba0ebb5a5ded26bbe20753515a17",
+    "caption": "Rejected restore presentation: data restoration passed, but the test used default surface-height teleport for an underground destination. A physical doorway re-entry check is required.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; rejected as station re-entry evidence"
+  },
+  {
+    "file": "restore-population-rejected.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_station_restored_population_rejected.png",
+    "sha256": "d6aacd5f8ce0c1ec95a3d80c9db370fb46856dcf263cb827913427b890d5f53f",
+    "caption": "Original PCK physical re-entry reached station but did not instantiate all nine survivors; retained failed restoration evidence.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; failed resident-restoration evidence"
+  },
+  {
+    "file": "station-source-reopened.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_station_inside_reopened_source_pass.png",
+    "sha256": "6866bef955d735d8115db3e267d1b9ad8f3b027b7b99172eb6d2cf32f4acdb91",
+    "caption": "Source fix 016e3ffb: fresh no-teleport reopening at the exact saved underground pose; all nine surviving station identities have actual bodies. Source 59 re-entry and 46 inside-reopen checks pass.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "station-package-reentered.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_station_restored.png",
+    "sha256": "5a5ecdc35a51dae6f98986d5a1c2df7b0c2236b0655f8adc92d04a1b161e5380",
+    "caption": "PCK 2bf75c9e: physical doorway re-entry, all nine surviving station bodies verified; 59 checks pass.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
+  },
+  {
+    "file": "station-package-reopened.png",
+    "source": "reports/coal_mine/20261101T184507896315Z/coal_station_inside_reopened.png",
+    "sha256": "f9f47ceb57e5c69a79365c21cf424884817736129a9fe505a3bdf048528c6658",
+    "caption": "PCK 2bf75c9e: fresh process restores the actual saved underground pose without teleport; nine survivor bodies and torch inventory retained; 46 checks pass. Torch re-equipped after the normal pickaxe selection on load.",
+    "origin": "TerraForest runtime capture; inherited asset terms preserved",
+    "review": "Assistant inspected; human visual acceptance pending"
   }
 ]

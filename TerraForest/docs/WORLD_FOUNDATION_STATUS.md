@@ -10,11 +10,15 @@ publication and persistence checks and the rendered fixture pass. Normal source
 generation, loot branches, loop, ten bodies/wakes, paid rail placement and coal
 harvesting pass. The retained journey plus targeted hillside-exit continuation
 and fresh-process restoration verify returning outside and durable game state.
-Driver/crowding failures remain documented; one uninterrupted corrected journey
-and packaged validation await the coordinated source freeze/export. Installed
-content has not been replaced. Player visual,
-crowded combat and foreground performance acceptance remain open. Failed checks,
-return triggers and required closing evidence: [coal-mine tracker](../issues/coal-mine/README.md).
+The original installed PCK passes an uninterrupted 59-check fresh-world journey.
+Its later physical restore failures exposed stale torch-held player poses and an
+oversized zombie admission capsule, fixed by `016e3ffb`. Updated installed PCK
+`2bf75c9e...907d72` passes physical doorway re-entry (59/0) and genuine underground
+reopen (46/0): exact saved feet, torch inventory and all nine station survivors.
+Both station images were inspected; all 14 native hashes and PCK stayed unchanged.
+These package phases have distinct hashes/scopes; earlier failures are retained.
+Player visual, crowded combat and foreground performance acceptance remain open.
+Evidence and return triggers: [coal-mine tracker](../issues/coal-mine/README.md).
 
 ## Paid trader road travel — 2026-11-01
 

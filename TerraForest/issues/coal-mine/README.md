@@ -1,11 +1,47 @@
 # Blackridge coal mine
 
-- Status: Source prototype; scoped journey and fresh-process persistence verified. Packaged and visual acceptance pending.
+- Status: Installed prototype; scoped source/package checks pass. Visual acceptance pending.
 - Updated: 2026-11-01. User visual review: not reviewed.
 - Brief: a mountain-embedded mine, short sleeper/chest dead ends, a longer rail
   loop, varied chambers, and a deeper station structure containing ten zombies.
 
 ## Images
+
+![Installed package: restored inside the station](images/station-package-reopened.png)
+![Installed package: physical doorway re-entry](images/station-package-reentered.png)
+
+Updated installed PCK `2bf75c9e6afd2f62f6891e309fa941aa07f23d5fb7e5589b1d253730f9907d72`
+passes 59 physical re-entry checks and 46 genuine underground reopen checks.
+All nine survivors have physical bodies after the test killed one of the original
+10 station zombies. Player position restores exactly from the torch-held save;
+the torch stays in inventory, while the existing load selection is the pickaxe.
+Both images were inspected; the driver re-equips the torch for visibility.
+Exact phase timings, package/native hashes and scope: [verification record](verification.json).
+
+![Source: restored inside the station](images/station-source-reopened.png)
+
+Source fix `016e3ffb`: re-entry 59/0 and fresh underground reopening 46/0 checks.
+The saved torch-held player position restores exactly; all nine surviving station
+residents are physically instantiated. The torch remains in inventory; existing
+loading behavior selects the pickaxe, and the test then re-equips the torch.
+The native v1 pose format remains unchanged. This inspected source image is
+retained alongside the later successful package captures above.
+
+![Station in the original installed package](images/station-package.png)
+![Generated package entrance](images/entrance-package.png)
+
+Installed PCK `4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe`,
+new default world `CoalMine_1703_f63d8917`, seed 1703, 1920×1080 offscreen.
+The uninterrupted journey passed 59 checks, followed by 41 data-restore checks.
+Both images were inspected. HUD FPS is not a frame-pacing measurement.
+
+![Rejected restore camera on the surface](images/restore-surface-rejected.png)
+
+The original restore driver called normal teleport at the underground station,
+which resolves the surface height plus two metres. All persisted data assertions
+passed, but this image does **not** show station re-entry. It is retained as
+rejected presentation evidence. The corrected test approaches outside, walks
+through the saved doorway and requires nine surviving station bodies.
 
 ![Current generated station with ten sleepers](images/station-current.png)
 
@@ -124,15 +160,66 @@ Inherited timber, chest, door and character terms remain intact.
   repository gates: at most 3,907,481,600 bytes private commit and 1,493,803,008 bytes
   dedicated GPU allocations. Offscreen samples do not establish frame pacing.
 
+- `reports/coal_mine/20261101T184507896315Z`: installed PCK fresh default
+  generation/full journey passes 59/0 checks in 132.062 s, then data restoration
+  passes 41/0 in 30.155 s. PCK hash and all 14 native DLL hashes match before/after.
+  Pointer captures are zero. Sampled peaks stay within gates: 3,881,525,248 bytes
+  private commit and 1,477,021,696 bytes dedicated GPU allocation. The restore
+  image above exposed a driver presentation gap; do not infer physical re-entry
+  from the 41 saved-data checks. The later physical checks exposed the runtime
+  defects below.
+
+- Corrected physical re-entry `restore185639` in the same package report reaches
+  the station through its persisted doorway, but 48 checks include one failure:
+  fewer than nine surviving station bodies are instantiated. Native identities,
+  death, loot and rails still pass. The actual station image is retained separately
+  as `coal_station_restored_population_rejected.png` in the report.
+- `inside_restore185833` has 11 checks and one failure: the reopened player pose
+  differs from the inside pose. Read-only inspection found that the world adapter
+  passes torch item 6 to the v1 native pose codec, which accepts only tool IDs 0–4;
+  the empty result retains `_saved_pose`. The saved archive confirms the older
+  surface position `(579,169.06,445.5)` instead of the station floor near Y139.
+  Source fix `016e3ffb` maps later held items to v1 pose mode 0 and rejects an
+  invalid active capture, preserving inventory and the existing loading fallback.
+- Source diagnostics `restore190620` identified the missing resident: saved feet
+  beside a rail were rejected by the oversized `.32 m / 1.8 m` admission capsule,
+  although the actual standing movement body is `.24 m / 1.74 m`. The final fix
+  uses that exact physical shape for authored/restored standing clearance. It
+  retains exact saved positions, the original `.18 m` support reach, masks,
+  water/readiness checks and conservative ambient admission.
+- Temporary six-centimetre retry experiments are retained in
+  `reports/checks/20261101T190945735251Z`, `20261101T191034789502Z`, and source
+  `restore191036`. They were removed after the actual shape mismatch was proven;
+  no position nudge or support-range expansion is in the final implementation.
+- `reports/checks/20261101T191340874017Z`: 15 physical assertions pass using the
+  baked rail proxy and an actual initialized zombie. Both recorded saved edge
+  positions restore exactly; real rail/wall/ceiling/character overlap, missing
+  residency, water and unsupported positions still reject.
+- `source_restoration_pass.json` in the package report retains source re-entry
+  `restore191448` (59/0, 38.559 s) and `inside_restore191527` (46/0, 27.940 s).
+  It exercises every current tool catalog selection, invalid active capture,
+  loading/waiting fallback, actual doorway walking, nine surviving bodies and
+  exact no-teleport underground pose restoration. Held torch6 maps to pose mode0;
+  inventory keeps the torch and normal load selection is pickaxe1. Both resource
+  gates pass. The later updated package evidence follows.
+- Updated PCK `2bf75c9e...907d72`, same owned world: `restore192411` passes
+  59/0 checks in 51.026 s; `inside_restore192502` passes 46/0 in 29.961 s.
+  Summary: `package_restoration_pass.json` in the report. This closes the two
+  discovered restoration defects in the installed package: all nine survivors
+  instantiate and saved feet `(578.7599,139.184,445.4368)` restore exactly without
+  teleporting. PCK and all 14 source/dist native hashes match before/after.
+  Zero pointer captures; sampled peaks are 3,763,073,024 bytes private commit and
+  1,502,715,904 bytes dedicated GPU allocation, within gates. Both station images
+  were inspected. The initial new-world journey remains qualified to the earlier
+  PCK; it was not repeated on this restoration-focused export.
+
 ## Remaining / resume here
 
-The next shared export requires the vehicle, camera and combat source owners to
-agree on a freeze. Then run the corrected ordinary generation-to-reopen journey
-against that matching pack with `python tools/check_coal_mine.py world --pack`.
-No mine build has replaced the installed pack. This also supplies one uninterrupted
-passing run after the driver fixes; current source functional evidence is combined
-across the retained normal journey and its targeted exit/reopen continuation.
-These remain open release gates, not completed installation claims.
+The package restoration gate is closed for PCK `2bf75c9e...907d72`. Earlier
+package failures and rejected images remain part of this record. Use the normal
+`world --pack` command after future runtime/layout changes to obtain a new full
+journey and both restoration phases on one package; `--resume` is a targeted
+restoration check on the retained owned slot, not a fresh-generation substitute.
 
 Player review should assess station repetition, mine dressing and branch variety.
 The inspected prototype has a deliberately simple timber canopy and symmetric

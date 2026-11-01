@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Mountain coal mine](coal-mine/README.md) | Source prototype / scoped checks pass | Branches, loop, five modular rails and ten-zombie station; native, source journey and targeted exit/reopen evidence pass; coordinated packaged run and visual/crowding review remain |
+| [Mountain coal mine](coal-mine/README.md) | Installed prototype / scoped checks pass | Branches, loop, five modular rails and ten-zombie station; original package full journey 59/0, updated package physical re-entry 59/0 and genuine inside reopen 46/0. Earlier failures retained; visual/crowding and foreground performance review remain |
 | [Trader rides](trader-travel/README.md) | Installed / scoped checks | Full source journey/return exercised; final UI/cancellation 30/30 and return-reopen 11/11 pass. Actual executable booking/departure 24/24 and paid-reload 14/14 pass; full package journey untested. Earlier pointer/timing failures, garment/glass limits and user review remain explicit |
 | [Town roadside signs](town-road-signs/README.md) | Installed / scoped checks | Normal generation 17 + fresh-process reopen 18 pass; two signs per seed-1703 town, final images inspected. User visual review and broader coverage remain; retain 67.10 ms stationary outlier |
 | [World entry fly-in](world-entry-fly-in/README.md) | Installed / exact executable verified | 49 exact-executable checks and complete buffered motion retained; user motion review and deferred 53 FPS flight / 143 ms handoff optimization remain open |

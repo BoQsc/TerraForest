@@ -171,7 +171,13 @@ route search budgets and single-body movement ownership are unchanged.
 Actual station sleeping/waking and thirteen-body fixture admission pass. This
 does not establish dense pursuit/crowding performance. A frozen awake resident
 blocked the driver's straight return; the existing station side lane was walked
-successfully. Source exit and fresh-process restoration pass; a clean packaged
-journey and foreground awake-station measurements remain tracked in
-[the coal-mine issue](../issues/coal-mine/README.md). The six-body statements above
-remain the ordinary population baseline, not the new station-specific maximum.
+successfully. The original installed package completes the fresh-world journey
+(59 checks); the updated package passes physical doorway re-entry (59) and actual
+inside-save reopening (46), with all nine surviving station bodies. Restored
+standing clearance now uses the zombie's actual .24 m / 1.74 m movement capsule;
+saved feet and the original .18 m support reach stay exact. Conservative ambient
+admission is unchanged. Foreground awake-station combat/crowding and frame pacing
+remain unqualified in [the coal-mine issue](../issues/coal-mine/README.md), which
+retains earlier failed restoration checks and package-specific evidence. The
+six-body statements above remain the ordinary population baseline, not the new
+station-specific maximum.
