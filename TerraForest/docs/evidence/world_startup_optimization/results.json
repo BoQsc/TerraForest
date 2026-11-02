@@ -1122,5 +1122,49 @@
     "Generation and load wall time have not meaningfully improved in this fixture.",
     "Baseline precedes unrelated quest UI and graceful-teardown commits c9e608c2/46ce8610; final build includes them.",
     "Single-run generation comparison is noisy; no cold-cache, weak-hardware or foreground smoothness claim."
-  ]
+  ],
+  "integration_followup": {
+    "pack_sha256": "aae87e1ffd96d0fbaf9538549f5e05323a269eccad0fba80ebfd725ab5946c81",
+    "change": "Admission uses the same player.global_position as readiness, including paused/offset terrain focus. Also includes the separately verified trader-list labels.",
+    "measurement_scope": "Timing rows retain the exact earlier measured 465f build; this correctness-only follow-up is validated separately.",
+    "validation_status": "Passed: new TFWG generation/save/reopen and deliberately offset-focus reset/save/reopen.",
+    "receipts": [
+      {
+        "path": "reports/quests_world/20261102T223211692663Z/run.json",
+        "sha256": "ea217a095e1834c0a4a267cab8cbe3637a97082ab274f7d587e3c35ec0920664",
+        "passed": true,
+        "checks_per_phase": [
+          88,
+          90
+        ],
+        "phase_names": [
+          "create_originals",
+          "baseline_reopen"
+        ]
+      },
+      {
+        "path": "reports/quests_world/20261102T223552833125Z/run.json",
+        "sha256": "9cd05c2276b2abb760c6ba83579d1769b3c42fda9415472ff58edb052e8370cd",
+        "passed": true,
+        "checks_per_phase": [
+          60,
+          15
+        ],
+        "phase_names": [
+          "baseline",
+          "baseline_reopen"
+        ]
+      }
+    ],
+    "post_reset_storage": {
+      "slot": "Quests_1703_fc4dd9b1",
+      "archive_checksum_valid": true,
+      "root_bytes": 481115,
+      "water_magic": "TFWG",
+      "water_root_bytes": 852,
+      "reconstructed_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab",
+      "water_directory_bytes": 11388022,
+      "scope": "Read-only outer checksum/section inspection after successful native reset/save/fresh-process reopen; directory total includes any retained versions."
+    }
+  }
 }

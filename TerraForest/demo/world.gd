@@ -453,7 +453,7 @@ func _ready() -> void:
 		canopy.name="CanopyShadows";canopy.forest=vegetation;canopy.camera=camera;canopy.material=terrain_material;add_child(canopy)
 	ecosystem.name = "Ecosystem"
 	ecosystem.world_coverage=true
-	ecosystem.admit_owner=func(key:Vector2i)->bool:return not local_landscape_readiness or lakes.offline_preparation or not loading_active or preload("res://addons/world_runtime/coverage_window.gd").required(terrain.focus,640.0,key)
+	ecosystem.admit_owner=func(key:Vector2i)->bool:return not local_landscape_readiness or lakes.offline_preparation or not loading_active or preload("res://addons/world_runtime/coverage_window.gd").required(player.global_position,640.0,key)
 	ecosystem.terrain = terrain
 	ecosystem.vegetation = vegetation
 	ecosystem.camera = camera

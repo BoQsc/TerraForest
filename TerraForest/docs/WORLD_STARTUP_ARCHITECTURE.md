@@ -229,8 +229,9 @@ The read-only `tools/audit_world_startup.py` verifies the outer archive checksum
 measures component/file sizes and summarizes retained timings. Six Python tests
 cover valid input, corruption, bounds, order/duplicates, missing terrain and
 trailing bytes. Native component-schema checks remain with the native codecs.
-The source diagnostic fix is not yet exported; no runtime speedup is claimed.
-All larger changes and the controlled full trace remain open.
+At the audit checkpoint the diagnostic fix was not yet exported and the larger
+changes remained open. The implementation and measurements below supersede that
+status; they still do not establish faster startup.
 
 ## Local landscape readiness and generated-water packs — 2026-11-03
 
@@ -250,6 +251,11 @@ photographs retain full coverage. `--whole-landscape-readiness` restores the
 previous behavior for diagnosis. Terrain, object horizons, water, actors, map and
 nearby collision retain their existing barriers; this is not yet local terrain
 or a lazy-water runtime.
+
+The volumetric world remains editable. "Immutable" describes completed files on
+disk: edits change live state, and saving publishes new file versions/references
+without overwriting the previous checkpoint's dependencies. It does not freeze
+water, terrain, or gameplay.
 
 New worlds publish `TFWG` version 1 water references. The root contains the lake
 catalog, index identity and a digest of the reconstructed native snapshot. An
@@ -303,7 +309,7 @@ Terrain and structure sections match byte-for-byte. The reconstructed water hash
 also matches the baseline exactly. The original Emerald_Meadow root still matches
 its audit hash; all readonly reopen fixtures retain their root hashes.
 
-Final PCK: `465f36fd853330e97a775925df17b78e425bca502cef6cc88db5c949aeb8da83`.
+Measured PCK: `465f36fd853330e97a775925df17b78e425bca502cef6cc88db5c949aeb8da83`.
 Baseline PCK: `988aa6eb008de18926d33d1c45fe6f423c5d7c3f7f2359ab3c7f844e7bfa7bba`.
 Both manifests include 14 matching external DLLs. Final generation receipt:
 `reports/startup_optimization/20261102T221520843140Z`; final loads:
@@ -370,3 +376,22 @@ and `--whole-landscape` selects the prior barrier/admission behavior for a load.
 `tests/generated_water_packs.gd -- --water-fixture=StartupBench_<legacy-id>` checks
 an owned legacy fixture; production failure checks are in
 `tests/water_storage_failure.gd`. Do not substitute a user save for test fixtures.
+
+### Paused-focus integration follow-up
+
+A subsequent reset check exposed a mismatch when the player moved while physics
+was paused: readiness used the player position but new work used the older
+terrain focus. Admission now uses the same player position, preserving the full
+640 m requirement. The failing check is retained at
+`reports/quests_world/20261102T221830324520Z`; its synchronized-focus repetition
+passed 56 + 15 fresh-process checks in `20261102T222352609734Z`.
+
+Integration PCK `aae87e1ffd96d0fbaf9538549f5e05323a269eccad0fba80ebfd725ab5946c81`
+contains the center correction and the other chat's trader-list labels. The timing
+table intentionally retains the earlier exact measured artifact. A new-format
+world passed generation/save/fresh-process reopening (88 + 90 checks) in
+`reports/quests_world/20261102T223211692663Z`. Its live trader/reset/cancellation
+check deliberately offset terrain focus by 40 m, verified player-centered owner
+admission, and passed reset/save/fresh-process reopening (60 + 15 checks) in
+`reports/quests_world/20261102T223552833125Z`. Both receipts passed sampled
+RAM/VRAM budgets. These are correctness checks, not additional startup samples.
