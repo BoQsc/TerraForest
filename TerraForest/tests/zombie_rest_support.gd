@@ -57,6 +57,30 @@ func stack_case()->void:
 	check(owners[2].ragdoll_stats().groups==0,"freed contact groups retire without retaining stale bodies")
 	anatomy=null;stage.free();owners.clear();pieces.clear();await ticks(3)
 
+func retired_static_contact()->void:
+	var stage:=Node3D.new();root.add_child(stage)
+	var slab:=BoxShape3D.new();slab.size=Vector3(8,1,8)
+	var floor:=PhysicsServer3D.body_create()
+	PhysicsServer3D.body_set_mode(floor,PhysicsServer3D.BODY_MODE_STATIC)
+	PhysicsServer3D.body_add_shape(floor,slab.get_rid())
+	PhysicsServer3D.body_attach_object_instance_id(floor,stage.get_instance_id())
+	PhysicsServer3D.body_set_collision_layer(floor,1)
+	PhysicsServer3D.body_set_state(floor,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(950,34.5,1130)))
+	PhysicsServer3D.body_set_space(floor,stage.get_world_3d().space)
+	body=ClassDB.instantiate("NativeZombieRigidPart");stage.add_child(body)
+	body.position=Vector3(950,35.2,1130);body.collision_layer=Zombie.RAGDOLL_LAYER;body.collision_mask=1
+	var shape:=BoxShape3D.new();shape.size=Vector3(.4,.2,.6)
+	var collision:=CollisionShape3D.new();collision.shape=shape;body.add_child(collision)
+	anatomy=ClassDB.instantiate("NativeZombieAnatomy");anatomy.configure(Zombie.PARTS)
+	var members:Array[PhysicsBody3D]=[body];anatomy.track_ragdoll(members)
+	await ticks(180)
+	check(body.is_resting(),"server-owned static collision supports a resting corpse")
+	var initial:float=body.position.y
+	PhysicsServer3D.free_rid(floor)
+	await ticks(60)
+	check(body.position.y<initial-1 and not body.is_resting(),"retired static RID releases support while its collection owner survives")
+	body=null;anatomy=null;stage.free();await ticks(3)
+
 func run()->void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--ragdoll-evidence="):output=argument.trim_prefix("--ragdoll-evidence=")
@@ -95,6 +119,7 @@ func run()->void:
 		check(is_equal_approx(float(PhysicsServer3D.body_get_param(body.get_rid(),PhysicsServer3D.BODY_PARAM_LINEAR_DAMP)),original_linear) and is_equal_approx(float(PhysicsServer3D.body_get_param(body.get_rid(),PhysicsServer3D.BODY_PARAM_ANGULAR_DAMP)),original_angular),"support loss restores original airborne damping: "+kind)
 		body=null;anatomy=null;stage.free();await ticks(2)
 	await stack_case()
+	await retired_static_contact()
 	if not output.is_empty():
 		DirAccess.make_dir_recursive_absolute(output)
 		FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify({"checks":checks,"failures":failures,"samples":samples},"  "))

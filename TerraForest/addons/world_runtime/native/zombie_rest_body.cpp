@@ -16,11 +16,11 @@ bool ragdoll_player_load(PhysicsDirectBodyState3D *state,int contact){
 bool ragdoll_rest_impact(PhysicsDirectBodyState3D *state){
     if(!state)return false;
     bool player_load=false;
-    auto *server=PhysicsServer3D::get_singleton();
     for(int contact=0;contact<state->get_contact_count();contact++){
         if(!ragdoll_contact_valid(state,contact))continue;
         if(ragdoll_player_load(state,contact)){player_load=true;continue;}
-        if(server->body_get_collision_layer(state->get_contact_collider(contact))&(1<<18))continue;
+        auto *body=Object::cast_to<PhysicsBody3D>(state->get_contact_collider_object(contact));
+        if(body&&(body->get_collision_layer()&(1<<18)))continue;
         if(state->get_contact_collider_velocity_at_position(contact).length_squared()>.1*.1)return true;
     }
     return !player_load&&(state->get_linear_velocity().length_squared()>.1*.1||state->get_angular_velocity().length_squared()>1.0);

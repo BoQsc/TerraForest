@@ -318,12 +318,22 @@ void NativeZombieAnatomy::advance_ragdolls(double delta){
                 if(!ragdoll_contact_valid(state,contact))continue;
                 RID contact_body=state->get_contact_collider(contact);
                 Vector3 normal=state->get_contact_local_normal(contact),point=state->get_contact_collider_position(contact);
-                bool support=(server->body_get_collision_layer(contact_body)&7)!=0;
+                auto *collider=Object::cast_to<PhysicsBody3D>(state->get_contact_collider_object(contact));
+                const uint32_t layer=collider?collider->get_collision_layer():0;
+                bool support=(layer&7)!=0;
+                if(!collider&&normal.y>=.2&&!group.resting){
+                    Ref<World3D> world=body->get_world_3d();
+                    if(world.is_valid()){
+                        auto ray=PhysicsRayQueryParameters3D::create(point+Vector3(0,.04,0),point-Vector3(0,.04,0),7);
+                        Dictionary hit=world->get_direct_space_state()->intersect_ray(ray);
+                        support=!hit.is_empty()&&Vector3(hit["normal"]).y>=.2;
+                    }
+                }
                 if(support&&normal.y>=.2&&!group.resting){
                     ground[index]=true;
                     if(!group.resting&&point.y<support_height){support_height=point.y;group.support_body=id;group.support_local=pose.affine_inverse().xform(point);}
                 }
-                if(!ragdoll_player_load(state,contact)&&!(server->body_get_collision_layer(contact_body)&(1<<18))&&state->get_contact_collider_velocity_at_position(contact).length_squared()>.1*.1)moving_contact=true;
+                if(!ragdoll_player_load(state,contact)&&!(layer&(1<<18))&&state->get_contact_collider_velocity_at_position(contact).length_squared()>.1*.1)moving_contact=true;
                 auto owner=owners.find(contact_body.get_id());if(owner!=owners.end()&&owner->second!=index)parents[root(index)]=root(owner->second);
             }
         }

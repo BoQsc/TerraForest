@@ -7,6 +7,18 @@
 
 ## Current correction — 2026-10-28
 
+### Streamed static contacts — 2026-11-02
+
+The real coal-mine rifle/exit test exposed a stale physics RID while its native
+collection owner remained alive (`reports/frontier_expedition/20261102T090258910289Z`).
+Owner validity alone was insufficient. Contact classification now reads live
+PhysicsBody properties; server-owned static support uses a short fresh world ray,
+never a layer query against the old contact RID. Support loss still releases rest.
+Source debug/release libraries rebuilt; 33 support checks and four-direction
+corpse walk-over pass in `reports/checks/20261102T090817955755Z_zombies`.
+Matching package and repeated streamed-world evidence remain pending; this is not
+a new universal ragdoll-stability claim.
+
 - Built-in Jolt now uses 16 velocity / 8 position steps at the unchanged 60 Hz
   physics tick. Unsupported joint softness/ERP and shape-bias overrides are skipped.
 - Removed repeated per-limb velocity/gravity suppression. Normal solver integration
