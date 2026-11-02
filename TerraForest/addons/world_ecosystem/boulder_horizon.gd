@@ -44,6 +44,13 @@ func reset()->void:
 func coverage_status()->Dictionary:
 	return {"ready":_published.size()==1024 and _requests.is_empty() and _resample.is_empty() and _reconcile.is_empty(),"owners":_published.size(),"total":1024,"pending":_requests.size(),"reconcile":_reconcile.size(),"rejected":rejected,"unchanged_publications":unchanged_publications,"process_us":last_process_us,"render":fractures.statistics()}
 
+func local_coverage_status(point:Vector3,radius:float=640.0)->Dictionary:
+	var result:=coverage_status()
+	var window:=preload("res://addons/world_runtime/coverage_window.gd").inspect(point,radius,_published,[_pending,_resample,_reconcile])
+	# Outside the owner grid retain full coverage (e.g. developer flight).
+	if window.total>0:result.merge(window,true)
+	return result
+
 func owner_available(key:Vector2i)->bool:
 	var owner:=Vector2i(key.x/2,key.y/2)
 	if _reconcile.has(owner) and not _pending.has(owner) and not _resample.has(owner):_publish(owner)
@@ -61,7 +68,6 @@ func _step()->void:
 	for key:Vector2i in _reconcile.keys().slice(0,2):
 		if _samples.has(key):_publish(key)
 	if _published.size()==1024 and _resample.is_empty():return
-	if shared_surface_ready.is_valid() and not shared_surface_ready.call():return
 	_request_pages()
 
 func _ensure_seed()->void:
@@ -74,6 +80,9 @@ func _request_pages()->void:
 	var admitted:=0
 	for key:Vector2i in _owners:
 		if (_published.has(key) and not _resample.has(key)) or _pending.has(key) or (_samples.has(key) and not _resample.has(key)):continue
+		# Forest pages already carry boulders where the combined query fits.
+		# Fill omitted owners only after that owner finishes, avoiding duplicate reads.
+		if shared_surface_ready.is_valid() and not shared_surface_ready.call(key):continue
 		var data:Dictionary=candidates_for_page(key)
 		if data.ids.is_empty():
 			_samples[key]={"ids":PackedInt64Array(),"transforms":[]};_resample.erase(key);_reconcile[key]=true

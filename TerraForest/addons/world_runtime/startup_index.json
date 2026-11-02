@@ -182,7 +182,13 @@
     "res://addons/player_runtime/entry_fly_in.gd"
   ],
   "res://addons/player_runtime/progression_rules.gd": [],
+  "res://addons/player_runtime/quest_rally.gd": [
+    "res://addons/exploration/cave_layouts.gd"
+  ],
   "res://addons/player_runtime/quest_world.gd": [
+    "res://addons/world_runtime/location_reset_live.gd",
+    "res://addons/player_runtime/quest_rally.gd",
+    "res://addons/world_runtime/location_capture.gd",
     "res://addons/player_runtime/trader_inventory.gd"
   ],
   "res://addons/player_runtime/reading_journal.gd": [],
@@ -449,7 +455,8 @@
   "res://addons/volumetric_water/water_camera.gd": [],
   "res://addons/volumetric_water/water_start.gd": [],
   "res://addons/world_ecosystem/boulder_horizon.gd": [
-    "res://addons/volumetric_terrain/surface_tokens.gd"
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/world_runtime/coverage_window.gd"
   ],
   "res://addons/world_ecosystem/ground_catalog.gd": [],
   "res://addons/world_ecosystem/ground_cover.gd": [
@@ -471,7 +478,8 @@
     "res://addons/world_ecosystem/woodland.gdshader"
   ],
   "res://addons/world_ecosystem/world_ecosystem.gd": [
-    "res://addons/volumetric_terrain/surface_tokens.gd"
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/world_runtime/coverage_window.gd"
   ],
   "res://addons/world_runtime/actor_authoring.gd": [],
   "res://addons/world_runtime/actor_mesh.gd": [],
@@ -483,6 +491,7 @@
     "res://addons/world_runtime/loading_diagnostics.gd",
     "res://addons/world_runtime/world_presentation.gd"
   ],
+  "res://addons/world_runtime/coverage_window.gd": [],
   "res://addons/world_runtime/custom_world_plan.gd": [
     "res://addons/exploration/watchtower_sites.gd",
     "res://addons/exploration/cave_layouts.gd",
@@ -563,6 +572,19 @@
   "res://addons/world_runtime/loading_timer.gd": [],
   "res://addons/world_runtime/location_capture.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/world_runtime/location_patch_scope.gd": [],
+  "res://addons/world_runtime/location_reset_batch.gd": [
+    "res://addons/world_runtime/location_patch_scope.gd"
+  ],
+  "res://addons/world_runtime/location_reset_live.gd": [
+    "res://addons/world_runtime/location_reset_plan.gd",
+    "res://addons/world_runtime/location_capture.gd"
+  ],
+  "res://addons/world_runtime/location_reset_plan.gd": [
+    "res://addons/world_runtime/location_capture.gd",
+    "res://addons/world_runtime/location_patch_scope.gd",
+    "res://addons/world_runtime/location_reset_batch.gd"
   ],
   "res://addons/world_runtime/material_deposits.gd": [
     "res://addons/world_ecosystem/woodland_mesh.gd",
@@ -799,6 +821,7 @@
     "res://addons/exploration/coal_resource.gd",
     "res://addons/structures/model_paging_coordinator.gd",
     "res://addons/vegetation/canopy_shadows.gd",
+    "res://addons/world_runtime/coverage_window.gd",
     "res://addons/volumetric_water/water_start.gd",
     "res://addons/structures/bridge_catalog.gd",
     "res://addons/structures/workshop_catalog.gd",

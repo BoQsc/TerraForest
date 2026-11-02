@@ -17,6 +17,9 @@ var actors=preload("res://addons/world_runtime/actor_world.gd").new()
 var model_paging: Node
 # Native regional residency is the normal world path; retain an explicit diagnostic fallback.
 var model_region_paging := not "--no-model-region-paging" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+# Local landscape owners may finish before distant owners. Terrain coverage and
+# all existing collision, water and horizon barriers remain required.
+var local_landscape_readiness := not "--whole-landscape-readiness" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
 var player_life=preload("res://addons/player_runtime/player_life.gd").new()
@@ -450,6 +453,7 @@ func _ready() -> void:
 		canopy.name="CanopyShadows";canopy.forest=vegetation;canopy.camera=camera;canopy.material=terrain_material;add_child(canopy)
 	ecosystem.name = "Ecosystem"
 	ecosystem.world_coverage=true
+	ecosystem.admit_owner=func(key:Vector2i)->bool:return not local_landscape_readiness or lakes.offline_preparation or not loading_active or preload("res://addons/world_runtime/coverage_window.gd").required(terrain.focus,640.0,key)
 	ecosystem.terrain = terrain
 	ecosystem.vegetation = vegetation
 	ecosystem.camera = camera
@@ -468,7 +472,7 @@ func _ready() -> void:
 	if ground_enabled and ecosystem.world_coverage:
 		ecosystem.additional_surface_candidates=ground_cover.boulders.candidates_for_page
 		ecosystem.additional_surface_ready=ground_cover.boulders.accept_surface_page
-		ground_cover.boulders.shared_surface_ready=func()->bool:return ecosystem.coverage_status().ready
+		ground_cover.boulders.shared_surface_ready=func(key:Vector2i)->bool:return ecosystem.surface_owner_ready(key) if local_landscape_readiness and not lakes.offline_preparation else ecosystem.coverage_status().ready
 	add_child(ground_preview)
 	ground_interaction.cover=ground_cover
 	ground_interaction.scene_ray=func(from: Vector3,to: Vector3):return structures.blocks.raycast_scene(from,to,7,[player.get_rid()])
@@ -1842,12 +1846,12 @@ func _additional_loading_ready() -> bool:
 		loading_work_text="Location reset: "+quests.resetter.phase
 		return false
 	if ground_enabled and ground_cover.boulders!=null:
-		var boulders:Dictionary=ground_cover.boulders.coverage_status()
+		var boulders:Dictionary=ground_cover.boulders.local_coverage_status(player.global_position) if local_landscape_readiness and not lakes.offline_preparation else ground_cover.boulders.coverage_status()
 		if not boulders.ready:
 			loading_stage_percent=77;loading_stage_text="Preparing world boulders"
 			loading_work_text="Boulder owners %d / %d · %d surface pages pending · %d exclusion retries · %d roots"%[boulders.owners,boulders.total,boulders.pending,boulders.reconcile,boulders.render.roots]
 			return false
-	var forest:Dictionary=ecosystem.coverage_status()
+	var forest:Dictionary=ecosystem.local_coverage_status(player.global_position) if local_landscape_readiness and not lakes.offline_preparation else ecosystem.coverage_status()
 	if not forest.ready:
 		loading_stage_percent=78;loading_stage_text="Preparing world forests"
 		loading_work_text="Tree owners %d / %d · %d surface pages pending · %d exclusions pending · %d retries"%[forest.owners,forest.total,forest.pending,forest.reconcile,forest.rejected]

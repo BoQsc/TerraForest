@@ -231,3 +231,142 @@ cover valid input, corruption, bounds, order/duplicates, missing terrain and
 trailing bytes. Native component-schema checks remain with the native codecs.
 The source diagnostic fix is not yet exported; no runtime speedup is claimed.
 All larger changes and the controlled full trace remain open.
+
+## Local landscape readiness and generated-water packs — 2026-11-03
+
+This first implementation is installed and engineering-verified. **Storage is
+smaller; generation/loading wall time has not meaningfully improved.** The
+[versioned measurement receipt](evidence/world_startup_optimization/results.json)
+records inputs, hashes, timing samples, memory peaks, checks and review scope.
+UTC report timestamps are November 2; local completion is November 3.
+
+Normal play requires forest/boulder owners intersecting a 640 m circle around the
+player, including pending surface reads and invalidations. Distant owner admission
+waits until first play, then resumes through existing bounded queues. Boulders
+fill omitted shared-query owners once that individual forest owner is ready,
+avoiding duplicate reads and the former global forest barrier. Outside the owner
+grid, admission and readiness both fall back to full coverage. Normal generation
+photographs retain full coverage. `--whole-landscape-readiness` restores the
+previous behavior for diagnosis. Terrain, object horizons, water, actors, map and
+nearby collision retain their existing barriers; this is not yet local terrain
+or a lazy-water runtime.
+
+New worlds publish `TFWG` version 1 water references. The root contains the lake
+catalog, index identity and a digest of the reconstructed native snapshot. An
+immutable `.windex` contains sorted coordinates, pack identity, offsets, compressed
+and decoded lengths, and a per-region decoded checksum. Independently Zstandard-
+compressed native region records share content-addressed `.wpack` files targeted
+at 1 MiB. Regions retain density, quantities, contacts, vacancies and ownership.
+The engine supplies compression; no new dependency was imported.
+
+Blobs and index are flushed and verified before the outer compound checkpoint
+is published. Existing roots/backups and their referenced blobs remain immutable;
+there is no migration or deletion pass. Legacy inline/TFWS worlds retain their
+storage family on normal save, and transient edited-ocean receipts retain their
+existing protocol. Missing/corrupt dependencies fail loading and disable writes.
+The decoder caps 4,096 regions, 64 MiB decoded input, 16 MiB packs and 8 MiB records;
+it checks lengths/indices, native records and reconstructed full snapshot identity.
+
+The reader reconstructs the full native snapshot on the worker, preserving current
+simulation/rendering behavior. Storage intermediates skip runtime mesh/query
+admission and avoid revalidating an already validated per-region catalog. Regional
+disk storage does not yet mean bounded water residency or decode-once live handoff.
+Changed records currently require recompression and can change the containing
+pack's identity. The index supports future independent region admission; that
+runtime work remains open.
+
+### Before/after measurements
+
+The ordinary browser recipe used seed 1703, unique `StartupBench_` worlds and
+read-only fresh-process reopens. Godot 4.7.2 ran frozen exported packs with debug
+native variants at 1920x1080/60 FPS in nonactivating offscreen windows. Existing
+OS/shared derived caches were retained: **not a forced cold-cache comparison**.
+First-ready excludes intro completion and optional background observation. The
+baseline precedes the unrelated quest UI and teardown commits; final artifacts
+include them. Treat these as scoped observations, not an isolated causal study.
+
+| Metric | Before | Final |
+| --- | ---: | ---: |
+| Generate through first-ready, one run | 97.516 s | 100.681 s |
+| Load median, three fresh processes | 25.257 s | 25.245 s |
+| Load samples | 24.890 / 25.257 / 27.152 s | 26.351 / 24.701 / 25.245 s |
+| Water bytes including index/packs | 42,690,700 | 11,388,874 (-73.32%) |
+| Whole compound root bytes | 43,170,851 | 481,003 |
+| Generation peak private commit | 3.722 GiB | 3.787 GiB |
+| Load peak private commit | 3.360 GiB | 3.441 GiB |
+
+The generation difference is +3.2% in a single sample; no generation speedup or
+statistically established regression is claimed. Load timing is effectively
+unchanged. The lower root size does not establish a total-world RAM improvement.
+Final water is an 852-byte reference plus 11,388,022 bytes in 11 packs and one index.
+Terrain and structure sections match byte-for-byte. The reconstructed water hash
+also matches the baseline exactly. The original Emerald_Meadow root still matches
+its audit hash; all readonly reopen fixtures retain their root hashes.
+
+Final PCK: `465f36fd853330e97a775925df17b78e425bca502cef6cc88db5c949aeb8da83`.
+Baseline PCK: `988aa6eb008de18926d33d1c45fe6f423c5d7c3f7f2359ab3c7f844e7bfa7bba`.
+Both manifests include 14 matching external DLLs. Final generation receipt:
+`reports/startup_optimization/20261102T221520843140Z`; final loads:
+`20261102T221046472745Z`, `20261102T221338100942Z`, `20261102T221405838534Z`.
+Legacy readonly reopening passed at 24.847 s in `20261102T221705506851Z`.
+
+In the observed final load, all 282 local owners and nearby collision were ready
+at release; the other owners completed 7.921 s later. The following 20-second
+sample had 18.124 ms p95 and 51.376 ms worst frame time. This is offscreen sampled
+behavior, not foreground/high-speed travel qualification. The seated first-play
+image and an elevated nearby landscape view were inspected: terrain, nearby
+trees, lake and buildings are present. Broader world-quality approval is unchanged.
+All final runs passed sampled RAM/VRAM budgets and zero-pointer-capture checks.
+
+### Validation and rejected candidate
+
+Nine focused suites pass in `reports/startup_optimization/qualified_codec/run.json`:
+local ownership/admission boundaries and invalidations; real generated-water
+byte-exact pack/reopen in debug and release; legacy snapshot compatibility;
+generated-water ownership; both-format production load/save failure protection;
+streaming save, deferred save and compound checkpoint backup retention. Tests
+cover malformed roots, missing indices, corrupt packs, explicit empty catalogs,
+repeat publication identity and unchanged source data. Export's building/catalog,
+release contract, asset provenance and PCK startup gates passed.
+
+The first candidate merely changed readiness and started boulder work earlier.
+It regressed load median to 29.019 s versus its own whole-landscape control at
+26.632 s. Its build and all six receipts remain retained. It was corrected by
+also deferring distant admission and removing storage-only render preparation;
+it is not the final installed build. This finding matters: relaxing a barrier
+without reducing competing work does not guarantee faster entry.
+
+Earlier failed diagnostic receipts remain retained: `20261102T211501295041Z`
+was stopped due to concurrent world testing; `20261102T212834585528Z` exposed a
+benchmark focus-setting reset. Neither is a passing baseline. The harness restores
+offscreen mode at handoff. The separate quest check's pre-checkpoint timeout is
+tracked with its successful clean repetition in the gameplay-expansion contract;
+it is not hidden or attributed to water without evidence.
+
+### Remaining architecture and reproduction
+
+The remaining first-play wait still includes approximately 14–15 s of whole-map
+terrain coverage and about 6 s of resource preparation. Removing the terrain gate
+requires a valid distant fallback/horizon; simply setting the nearby-terrain flag
+can expose missing landscape. Derived-cache telemetry also shows incomplete quota
+inventory and read-only cache behavior at release, so these repetitions do not
+prove a fully warmed geometry cache. Investigate persistent/bounded cache indexing
+alongside the cached-horizon work.
+
+True regional water residency needs independently validated admission, neighbor/
+solver availability, save inheritance of unloaded regions and bounded render
+products. Data-only generation and eliminating duplicate scene/resource startup
+remain the larger generation tasks. Incremental pack publication/compaction,
+cold-cache repetitions, broader seeds, weak-hardware foreground frame times and
+sustained travel remain open. Close them with matched repeated timing, memory,
+quantity, corruption/interruption and inspected visual/collision evidence; do not
+infer completion from this first storage/readiness implementation.
+
+Reproduce with the installed pack using
+`python tools/benchmark_world_startup.py --freeze --build reports/startup_optimization/<new-name>`.
+Use the reported owned slot with `--slot StartupBench_<id> --repeat 3` to measure
+readonly loads; `--observe` records background completion and local collision,
+and `--whole-landscape` selects the prior barrier/admission behavior for a load.
+`tests/generated_water_packs.gd -- --water-fixture=StartupBench_<legacy-id>` checks
+an owned legacy fixture; production failure checks are in
+`tests/water_storage_failure.gd`. Do not substitute a user save for test fixtures.

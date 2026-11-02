@@ -39,9 +39,21 @@ var _native_scatter: RefCounted
 var _terrain_support:RefCounted
 var additional_surface_candidates:Callable
 var additional_surface_ready:Callable
+# Host may defer distant startup work; normal streaming retains all owners.
+var admit_owner:Callable
 
 func coverage_status()->Dictionary:
 	return {"enabled":world_coverage,"ready":not world_coverage or (_wanted.size()==1024 and resident.size()==1024 and _reconcile.is_empty() and _resample.is_empty() and _pending_cells.is_empty()),"owners":resident.size(),"total":1024 if world_coverage else _wanted.size(),"pending":_pending_cells.size(),"reconcile":_reconcile.size(),"resample":_resample.size(),"rejected":rejected_batches}
+
+func local_coverage_status(point:Vector3,radius:float=640.0)->Dictionary:
+	var result:=coverage_status()
+	var window:=preload("res://addons/world_runtime/coverage_window.gd").inspect(point,radius,resident,[_reconcile,_resample,_pending_cells])
+	# Outside the owner grid retain full coverage (e.g. developer flight).
+	if world_coverage and window.total>0:result.merge(window,true)
+	return result
+
+func surface_owner_ready(key:Vector2i)->bool:
+	return resident.has(key) and not _pending_cells.has(key) and not _resample.has(key) and not _reconcile.has(key)
 
 func harvest_root(id: int, inventory: RefCounted,fall_direction:Vector3=Vector3.FORWARD) -> Dictionary:
 	if terrain!=null and (not terrain.world_ready or terrain.pending_edit or terrain.closing or terrain.stopping):
@@ -169,6 +181,7 @@ func _step(_delta: float) -> void:
 			continue
 		if not world_coverage and not resident.has(key) and resident.size()+_requests.size()>=max_resident_cells:
 			continue
+		if admit_owner.is_valid() and not admit_owner.call(key):continue
 		var candidates: Dictionary = _candidates(key)
 		var companion:Dictionary=additional_surface_candidates.call(key) if world_coverage and additional_surface_candidates.is_valid() else {}
 		var points:PackedVector3Array=candidates.points.duplicate()

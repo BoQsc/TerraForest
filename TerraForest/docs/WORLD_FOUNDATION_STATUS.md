@@ -1,24 +1,29 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
-## Generation/loading architecture audit — 2026-11-02
+## Generation/loading architecture — 2026-11-03
 
-[Measured findings, storage inspection and proposed implementation order](WORLD_STARTUP_ARCHITECTURE.md).
-Four retained seed-1703 runs spend 70.82–93.25 s creating, including 23.50–25.93 s
-loading/capturing preview locations. Current first-play gates include whole-map
-terrain, 1,024 forest owners and world-wide distant visuals. The audited root is
-43.17 MB, 98.89% inline water despite regional terrain/building references.
-The source timing logger now aggregates stable stages and exposes overflow;
-its isolated Godot regression and six read-only archive-audit tests pass.
-No user save changed, no runtime performance behavior changed, and no export ran.
+[Implementation, measured outcome and remaining contract](WORLD_STARTUP_ARCHITECTURE.md).
+Installed first phase: 640 m forest/boulder readiness with distant admission
+resuming after first play, plus versioned compressed water packs for new worlds.
+Legacy save families and original user saves remain intact. Whole-map terrain/
+horizons and nearby collision remain required. Water storage including sidecars
+falls 42.69 MB to 11.39 MB (-73.32%); the compound root falls 43.17 MB to 0.481 MB.
+Native terrain/structure bytes and reconstructed water identity match baseline.
 
-Open: export/collect complete controlled generation-to-play traces, define local
-safe-entry plus cached-horizon acceptance, finish generated-water region storage,
-separate data building from presentation, and measure packed/incremental saves.
-These require coordinated runtime work after the current location-reset edits,
-matched repeated cold/warm package evidence, exact fresh-process save recovery,
-bounded memory and collision/visible-world qualification. This is diagnosis and
-a tested observability correction, not a completed speedup or a relaxed readiness
-standard. Existing seed-admission and visual acceptance failures remain open.
+Generation was 97.516 -> 100.681 s (one run each); three-load medians were
+25.257 -> 25.245 s. **No meaningful generation/loading speedup is established.**
+The first scheduling candidate regressed and was corrected; receipts remain
+visible. Nine focused suites, debug/release generated-water roundtrips, production
+failure protection, fresh-process reopen, local collision, sampled resource and
+export gates pass. Inspected spawn/nearby landscape images do not establish broad
+world-quality acceptance. Local owners were ready at release; background completion
+was 7.921 s later, with 18.124 ms p95 / 51.376 ms worst in the offscreen sample.
+
+Still open: cached distant terrain/horizon and bounded cache indexing; true regional
+water residency/decode-once handoff; data-only generation and scene reuse;
+incremental packs/compaction; cold-cache, broader-seed, low-spec foreground and
+sustained travel qualification. The linked contract records prerequisites and
+closure evidence. Existing seed-admission and world-quality failures remain open.
 
 ## Door height and world entry — 2026-11-02
 
