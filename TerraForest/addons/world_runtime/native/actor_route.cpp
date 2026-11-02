@@ -71,6 +71,19 @@ bool ActorRoute::edge(PhysicsDirectSpaceState3D *space,const Vector3 &from,Vecto
     edge_failure_="step_height";if(std::abs(middle.y-from.y)>maximum_step+.03)return false;
     if(!support(to,middle.y))return false;
     edge_failure_="step_height";if(std::abs(to.y-middle.y)>maximum_step+.001)return false;
+    const Vector3 supports[3]={from,middle,to};
+    for(int half=0;half<2;++half){
+        const Vector3 &begin=supports[half],&end=supports[half+1];
+        const int intervals=std::max(1,int(std::ceil(horizontal(begin,end)/.025)));
+        Vector3 previous=begin;
+        for(int sample=1;sample<intervals;++sample){
+            Vector3 point=begin.lerp(end,double(sample)/intervals);
+            if(!support(point,previous.y))return false;
+            edge_failure_="step_height";if(std::abs(point.y-previous.y)>maximum_step+(half==0&&sample==1?.03:.001))return false;
+            previous=point;
+        }
+        edge_failure_="step_height";if(intervals>1&&std::abs(end.y-previous.y)>maximum_step+.001)return false;
+    }
     if(admission.is_valid()||water_depth.is_valid()){
         edge_failure_="hazard";
         // Conservative square footprint, including segment interiors. Endpoint

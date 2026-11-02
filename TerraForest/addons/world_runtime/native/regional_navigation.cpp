@@ -78,6 +78,27 @@ void RegionalRoute::prepare(Vector3 point,Vector3 goal,int profile,double delta)
     expected_=point;
     if(planar(point,goal)<.16&&std::abs(point.y-goal.y)<.3)state=ActorRoute::ARRIVED;
 }
+bool RegionalRoute::rejected_edge(Vector3 from,Vector3 to)const{
+    Vector3 direction=to-from;direction.y=0;
+    const double length=direction.length_squared();
+    for(const Vector3 &point:rejected_){
+        Vector3 offset=point-from;offset.y=0;
+        const double along=length>.000001?std::clamp(double(offset.dot(direction))/length,0.0,1.0):1;
+        const Vector3 nearest=from.lerp(to,along);
+        if(std::abs(nearest.y-point.y)>.5)continue;
+        if(planar(from,point)<.1&&planar(to,point)>planar(from,point)+.01)continue;
+        if(planar(nearest,point)<.1)return true;
+    }
+    return false;
+}
+void RegionalRoute::reject_motion(){
+    if(state!=ActorRoute::FOLLOWING||waypoint_>=path_.size())return;
+    const Vector3 point=path_[waypoint_];
+    if(rejected_.size()>=16||std::any_of(rejected_.begin(),rejected_.end(),[&](Vector3 previous){return previous.distance_to(point)<.05;})){
+        state=ActorRoute::BLOCKED;return;
+    }
+    rejected_.push_back(point);begin(expected_,goal_,profile_);
+}
 void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirectSpaceState3D *space,
     const Callable &readiness,const Callable &admission,const Ref<PhysicsRayQueryParameters3D> &ray,
     const Ref<PhysicsShapeQueryParameters3D> &shape){
@@ -99,6 +120,9 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
         const Vector3 from=finish_samples_.empty()?p:finish_samples_.back();
         const double distance=planar(from,goal_);Vector3 end=goal_;end.y=from.y;
         if(distance>.5)end=from+(end-from)*real_t(.5/distance);
+        if(rejected_edge(from,end)){
+            finishing_=false;direction_=current.vertex<0?8:0;return;
+        }
         if(!validator.sample_motion(space,from,end,readiness,admission,ray,shape)){
             if(validator.edge_unavailable()){graph.request(end);state=ActorRoute::UNAVAILABLE;retry_=.1;return;}
             finishing_=false;direction_=current.vertex<0?8:0;return;
@@ -117,9 +141,10 @@ void RegionalRoute::step(RegionalGraph &graph,ActorRoute &validator,PhysicsDirec
     }
     const int direction=direction_;
     // Root first tries the nearest aligned cell, then the eight neighbours.
-    const int id=graph.candidate(current.vertex,p,profile_,direction,validator,space,readiness,admission,ray,shape);
+    int id=graph.candidate(current.vertex,p,profile_,direction,validator,space,readiness,admission,ray,shape);
     if(id==-5)return;
     if(id==-3){state=ActorRoute::UNAVAILABLE;retry_=.1;waiting_=true;return;}
+    if(id>=0&&rejected_edge(p,graph.vertices[id].p))id=-1;
     waiting_=false;
     if(direction_==8){if(id>=0)expanding_=-1;else direction_=0;}
     else if(++direction_==8)expanding_=-1;
@@ -160,6 +185,7 @@ Dictionary RegionalRoute::status(const RegionalGraph &graph)const{
     Dictionary out;out["state"]=names[state];out["nodes"]=int(nodes_.size());out["expansions"]=expansions;
     out["node_limit"]=QUERY_LIMIT;out["radius_m"]=RADIUS;out["waypoints"]=int(path_.size());out["waypoint_index"]=int(waypoint_);
     out["stuck_seconds"]=stuck_;out["replans"]=stalls_;out["graph_nodes"]=int(graph.vertices.size());out["graph_node_limit"]=RegionalGraph::NODE_LIMIT;
+    out["rejected_waypoints"]=int(rejected_.size());out["rejected_waypoint_limit"]=16;
     out["graph_cache_hits"]=int64_t(graph.hits);out["graph_revision"]=int64_t(graph.revision);out["complete_path"]=!path_.empty();
     out["lowest_surface"]=graph.lowest-.93;out["highest_surface"]=graph.highest-.93;
     if(waypoint_<path_.size())out["waypoint_target"]=path_[waypoint_];

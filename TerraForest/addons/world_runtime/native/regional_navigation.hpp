@@ -40,6 +40,8 @@ class RegionalRoute {
     bool waiting_=false;
     bool finishing_=false;
     std::vector<godot::Vector3> finish_samples_;
+    std::vector<godot::Vector3> rejected_;
+    bool rejected_edge(godot::Vector3 from,godot::Vector3 to)const;
     godot::Vector3 position(const Node &node,const RegionalGraph &graph)const{return node.vertex<0?start_:graph.vertices[node.vertex].p;}
 public:
     static constexpr int QUERY_LIMIT=16384;
@@ -47,7 +49,8 @@ public:
     ActorRoute::State state=ActorRoute::IDLE;
     int expansions=0;
     void begin(godot::Vector3 start,godot::Vector3 goal,int profile);
-    void invalidate(){state=ActorRoute::IDLE;}
+    void invalidate(){state=ActorRoute::IDLE;rejected_.clear();}
+    void reject_motion();
     void prepare(godot::Vector3 point,godot::Vector3 goal,int profile,double delta);
     void step(RegionalGraph &graph,ActorRoute &validator,godot::PhysicsDirectSpaceState3D *space,
         const godot::Callable &readiness,const godot::Callable &admission,

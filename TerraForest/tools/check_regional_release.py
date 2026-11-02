@@ -1,6 +1,7 @@
 """Run navigation physics contracts with release DLLs in an isolated project."""
 # SPDX-License-Identifier: 0BSD
 import datetime
+import argparse
 import hashlib
 import json
 import shutil
@@ -10,6 +11,9 @@ from run_godot_check import execute
 from play_checkpoint import revision_metadata
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--sampling', action='store_true')
+    args = parser.parse_args()
     config, _ = parse_args([])
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     report = ROOT/'reports/regional_release'/stamp
@@ -32,8 +36,9 @@ def main():
             descriptor = descriptor.replace('terrain_core.windows.x86_64.dll', library)
         (destination/(module+'.gdextension')).write_text(descriptor)
         descriptors.append('res://addons/'+addon+'/'+module+'.gdextension')
-    shutil.copytree(ROOT/'addons/structures/prefabs', project/'addons/structures/prefabs')
-    shutil.copy2(ROOT/'addons/structures/furniture_catalog.gd', project/'addons/structures/furniture_catalog.gd')
+    if not args.sampling:
+        shutil.copytree(ROOT/'addons/structures/prefabs', project/'addons/structures/prefabs')
+        shutil.copy2(ROOT/'addons/structures/furniture_catalog.gd', project/'addons/structures/furniture_catalog.gd')
     (project/'.godot').mkdir()
     (project/'.godot/extension_list.cfg').write_text('\n'.join(descriptors)+'\n')
     (project/'tests').mkdir()
@@ -42,6 +47,9 @@ def main():
              ('navigation_residency', 'NAVIGATION_RESIDENCY checks=11 failures=0'),
              ('zombie_step_guard', 'ZOMBIE_STEP_GUARD PASS'),
              ('player_cottage_stairs', 'PLAYER_COTTAGE_STAIRS failures=0')]
+    if args.sampling:
+        tests = [('actor_route_sampling', 'ACTOR_ROUTE_SAMPLING checks='),
+                 ('actor_route_contract', 'ACTOR_ROUTE_CONTRACT checks=')]
     record = dict(project=str(project), native_sha256=libraries,
                   scope='Release DLL physics/API contracts in an isolated project; no exported-game or full-host release qualification.',
                   **revision_metadata())

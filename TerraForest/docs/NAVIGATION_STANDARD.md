@@ -40,6 +40,20 @@ must cover the full query envelope, including larger crawling clearance. Stairs
 require bounded up/forward/landing collision checks, not a position snap through a
 riser. Do not authorize unsupported drops or gaps as walkable edges.
 
+Interior support probes are now at most 2.5 cm apart, including exact-position
+root connectors. This prevents narrow steep terrain facets from being admitted
+only because their endpoints and midpoint are walkable. Step/slope limits and
+the cooperative planning deadline are unchanged. One candidate uses at most 75
+physics queries including worst-case stair clearance; ordinary short frame-motion
+guards retain their two support probes. This remains bounded sampling, not a
+continuous proof for arbitrary sub-centimetre geometry.
+
+When live movement still finds a steep facet on a regional waypoint, that query
+remembers at most 16 rejected waypoint neighbourhoods (10 cm radius, height-aware)
+and searches again. It does not repeat the same cached failing connector or move
+through it. Root rejection must try the other eight neighbours. Relevant world
+invalidation discards these derived failures; exhaustion stays explicitly blocked.
+
 Hazard admission samples the centre, edge midpoints and corners of a conservative
 square footprint, with 5 cm padding (at least a 0.4 m half-width), along the edge
 at intervals no greater than 0.1 m. Ordinary half-metre/diagonal candidates have at most 81 admission

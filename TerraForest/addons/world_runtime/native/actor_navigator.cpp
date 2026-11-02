@@ -141,7 +141,9 @@ bool NativeActorNavigator::guard_motion(int64_t id,const Vector3 &direction,doub
     Vector3 heading=direction;heading.y=0;if(heading.length_squared()<.00001)return true;
     Vector3 to=agent->position+heading.normalized()*real_t(std::max(.02,travel));
     const bool allowed=agent->route.permits_motion(get_world_3d()->get_direct_space_state(),agent->position,to,readiness_,admission_,agent->motion_ray,agent->motion_shape);
-    agent->motion_rejection=agent->route.edge_failure();return allowed;
+    agent->motion_rejection=agent->route.edge_failure();
+    if(!allowed&&agent->regional&&String(agent->motion_rejection)=="steep_support")agent->journey.reject_motion();
+    return allowed;
 }
 String NativeActorNavigator::state(int64_t id){
     auto *agent=find(id);if(!agent)return "sleeping";
