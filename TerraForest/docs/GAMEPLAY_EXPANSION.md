@@ -174,6 +174,15 @@ population/encounter regressions. Live controller quiescence and corpse cleanup
 are not part of this data primitive.
 [Resident evidence](../issues/gameplay-expansion/resident-patch-evidence.json).
 
+Corpse ownership/reset storage is now bounded to 64 explicitly keyed residents.
+TFZC2 preserves resident/anchor ownership; TFZP1 restores selected body poses and
+loot without rolling back player inventory or unrelated corpses. Legacy unowned
+bodies remain unowned. Debug/release tests each pass 60 create, 5 fresh-reopen,
+10 clothing-loot, 42 container-patch and 56 lock assertions plus capacity checks:
+`reports/corpse_patch/20261102T065327591276Z/run.json`.
+This is source/native verification, not installed-package or live cleanup evidence.
+Return to live quiescence and coordinated reset after the new-player trader journey.
+
 These primitives are not a complete location reset: live residents/corpses,
 vegetation and any editable water require
 their own bounded capture/restore and a coordinated transaction. Preserve their

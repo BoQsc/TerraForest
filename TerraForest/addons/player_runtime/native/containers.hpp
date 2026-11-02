@@ -18,6 +18,7 @@ protected:
     int slot_count=32;
     int visible_slots(const godot::Ref<NativePlayerInventory> &inventory) const;
     godot::Ref<NativePlayerInventory> empty_inventory() const;
+    godot::Ref<NativePlayerInventory> staged_inventory(const godot::PackedByteArray &,int64_t next_revision) const;
     godot::Dictionary move(int64_t id,const godot::Ref<NativePlayerInventory> &player,int64_t slot,int64_t count,int64_t player_revision,int64_t store_revision,bool deposit);
     bool initialize_contents(int64_t id,const godot::PackedInt64Array &items);
     int64_t view_revision(int64_t id) const;

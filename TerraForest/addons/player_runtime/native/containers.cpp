@@ -31,6 +31,10 @@ void NativeContainerStore::_bind_methods() {
 Ref<NativePlayerInventory> NativeContainerStore::empty_inventory() const {
     Ref<NativePlayerInventory> out;out.instantiate();out->catalog_owner=schema;out->slot_limit=slot_count;return out;
 }
+Ref<NativePlayerInventory> NativeContainerStore::staged_inventory(const PackedByteArray &bytes,int64_t next_revision) const {
+    auto value=empty_inventory();if(value.is_null()||!value->restore_storage_snapshot(bytes))return {};
+    value->slot_limit=visible_slots(value);value->revision=next_revision;return value;
+}
 int NativeContainerStore::visible_slots(const Ref<NativePlayerInventory> &inventory) const{
     int count=slot_count;for(int index=slot_count;index<32;index++)if(inventory->slots[index].count)count=index+1;return count;
 }

@@ -38,6 +38,8 @@ qualification or new visual approval is claimed.
 - Selected authored-resident restoration passes both native variants and the package: 64 reset,
   four fresh-process and 33 population checks each, plus encounter regressions.
   Live actor/corpse cleanup and coordinated resets remain unimplemented.
+  Keyed corpse body/loot reset storage passes debug/release and fresh-process tests:
+  `reports/corpse_patch/20261102T065327591276Z/run.json`. Not yet package-qualified.
   [Resident-state evidence](resident-patch-evidence.json).
 
 - Selected hinge/damage restoration passes both native variants, installed-PCK

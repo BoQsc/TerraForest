@@ -80,8 +80,8 @@ Dictionary NativeContainerStore::restore_container_patch(const PackedByteArray &
         changed[changes++]=id;active-=had_inventory||had_lock;active+=has_inventory||remaining;
         next_lock_only-=had_lock&&!had_inventory;next_lock_only+=remaining&&!has_inventory;
         if(has_inventory){
-            auto value=empty_inventory();if(value.is_null()||!value->restore_storage_snapshot(inventory))return result;
-            value->slot_limit=visible_slots(value);value->revision=revision+1;staged_contents.emplace(id,value);
+            auto value=staged_inventory(inventory,revision+1);if(value.is_null())return result;
+            staged_contents.emplace(id,value);
         }
         if(remaining)staged_locks.emplace(id,Lock{remaining,maximum,random,revision+1});
     }

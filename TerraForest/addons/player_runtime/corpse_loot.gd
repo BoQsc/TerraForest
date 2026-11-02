@@ -21,8 +21,10 @@ func clear_live()->void:
 func retain(zombie:Node3D)->bool:
 	var id:int=zombie.get_meta("corpse_identity",0)
 	if id==0:
-		id=store.create_corpse(zombie.global_position,zombie.global_rotation.y,game.ecosystem.seed)
-		if id==0:push_error("Corpse storage capacity reached; corpse retained without loot");return false
+		var resident:int=zombie.get_meta("world_zombie_id",0)
+		var anchor:int=game.zombies.population.store.resident(resident).get("anchor",0) if resident>0 else 0
+		id=store.create_corpse(zombie.global_position,zombie.global_rotation.y,game.ecosystem.seed,resident,anchor)
+		if id==0:push_error("Corpse storage rejected; corpse retained without loot");return false
 		zombie.set_meta("corpse_identity",id);game.terrain.changed_since_save=true
 		zombie.set_meta("corpse_save_after",6.0)
 	active[id]=zombie;return true
@@ -102,6 +104,7 @@ func update(delta:float,focus:Vector3,available:bool)->void:
 		if not zombie.initialized:zombie.queue_free();break
 		game.zombies.geometry_template=zombie.anatomy
 		zombie.set_meta("corpse_identity",id);active[id]=zombie
+		if int(record.resident)>0:zombie.set_meta("world_zombie_id",int(record.resident))
 		if record.pose.size()==180:
 			zombie.animation_player.stop(true);zombie.animation_player.active=false
 			zombie.skeleton.force_update_all_bone_transforms()
