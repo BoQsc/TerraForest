@@ -235,9 +235,18 @@ The installed package repeats all 101 resident/reset/reopen assertions and passe
 47 ordinary-world admission/restoration checks; generated resident views inspected.
 Next:
 live actor/corpse cleanup, retained baselines and the remaining reset owners before
-real trader/E quest integration. Corpses currently lack a persistent resident link;
-add backwards-compatible ownership before cleanup, never infer it from proximity.
+real trader/E quest integration. Corpse records now retain backwards-compatible
+resident/anchor ownership; cleanup must use that link, never infer it from proximity.
 [Resident evidence](../issues/gameplay-expansion/resident-patch-evidence.json).
+
+Native selected vegetation reset is now installed and checked: 108 assertions per
+debug/release build and 156 package assertions, including fresh-process storage,
+ordinary tree publication/collision and compound save/reload. Outside plants and
+removals survive. Corpse storage/package checks also pass; live cleanup is separate.
+Next: exact generation-owned natural-root selection, editable-water restoration,
+durable baselines and coordinated quiescence/rollback/publication before enabling
+question-mark/E quest reset. No player saves changed or gameplay reset activated.
+[Evidence, limits and retained failed fixtures](../issues/gameplay-expansion/vegetation-patch-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and

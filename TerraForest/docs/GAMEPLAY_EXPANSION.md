@@ -307,14 +307,30 @@ loot without rolling back player inventory or unrelated corpses. Legacy unowned
 bodies remain unowned. Debug/release tests each pass 60 create, 5 fresh-reopen,
 10 clothing-loot, 42 container-patch and 56 lock assertions plus capacity checks:
 `reports/corpse_patch/20261102T065327591276Z/run.json`.
-This is source/native verification, not installed-package or live cleanup evidence.
-Return to live quiescence and coordinated reset after the new-player trader journey.
+The matching installed package additionally passes 173 counted assertions and the
+capacity suite: `reports/corpse_patch/20261102T161442416769Z/run.json`.
+This qualifies body/loot storage, not live actor/corpse cleanup.
+
+Selected tree and ground-cover storage now have bounded native TFHP1/TFGP1 patches.
+Tree patches select at most 4,096 stable IDs; ground patches cover a half-open box
+up to 128 m per axis, 32,768 selected natural IDs and 8,192 authored roots. Preserve
+outside edits, exact authored transforms and monotonic IDs. Current owner/revision
+tokens, checksums, world profile and capacity checks reject before mutation. Empty
+authored baselines remove later plantings inside the region, not neighboring roots.
+Both builds pass 75 patch, six fresh-process and 27 storage assertions each; the
+package passes these plus 35 tree-publication and 13 compound-save assertions.
+The native ground selector verifies owner-cell intersection, not natural roots'
+exact XYZ; the coordinator must select those from generation-owned positions.
+Tree world identity also belongs to that enclosing baseline. Existing save formats
+are unchanged. Observed 16,384-root restore takes 5.4–8.9 ms headlessly; this cold
+reset operation is not a per-frame task or gameplay timing guarantee.
+[Vegetation reset evidence](../issues/gameplay-expansion/vegetation-patch-evidence.json).
 
 These primitives are not a complete location reset: live residents/corpses,
-vegetation and any editable water require
-their own bounded capture/restore and a coordinated transaction. Preserve their
-outside edits too. Persistent baseline retention, worker scheduling, rendered
-publication, player/vehicle exclusion and rollback across owners remain prerequisites
+falling trees/fractured boulders require quiescence; editable water still needs
+bounded capture/restore including deferred regions. Persistent baseline retention,
+exact natural-root selection, worker scheduling, local rendered publication,
+player/vehicle exclusion and rollback across owners remain prerequisites
 before enabling the marker/E interaction or trader offers.
 Evidence, retained fixture failures and an unchanged older golden-data mismatch:
 [field patch checks](../issues/gameplay-expansion/field-patch-evidence.json).

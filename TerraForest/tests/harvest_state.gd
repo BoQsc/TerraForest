@@ -7,6 +7,8 @@ class TerrainGate extends Node3D:
 	var pending_edit:=false
 	var closing:=false
 	var stopping:=false
+	var snapshot_restore_ok:=true
+	var prepared_snapshot_components:Dictionary={}
 func check(ok: bool,label: String) -> void:
 	checks+=1
 	if not ok: failures+=1
@@ -55,6 +57,7 @@ func run() -> void:
 	var ecosystem=load("res://addons/world_ecosystem/world_ecosystem.gd").new()
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	check(ecosystem.prepare_persistence(persistence),"harvest state registers in compound persistence")
+	var gate:=TerrainGate.new();ecosystem.terrain=gate;persistence._terrain=gate
 	var vegetation=load("res://addons/vegetation/vegetation_world.gd").new()
 	root.add_child(vegetation);vegetation.ready_to_render=true
 	check(vegetation.enable_trunk_collision(),"fixture uses actual native trunk collision")
@@ -63,22 +66,29 @@ func run() -> void:
 	var key:=Vector2i.ZERO
 	ecosystem._replace_samples(key,PackedInt64Array([1,2]),transforms)
 	check(vegetation.renderer.roots.size()==2,"both unharvested roots publish")
+	var patch_token:Dictionary=ecosystem.harvest_state.harvest_patch_state()
+	var tree_patch:PackedByteArray=ecosystem.harvest_state.capture_harvest_patch(PackedInt64Array([1]),patch_token.revision,patch_token.owner)
 	ecosystem.harvest_state.mark(1)
 	ecosystem._publish_samples(key)
 	check(not vegetation.renderer.roots.has(1) and vegetation.renderer.roots.has(2) and vegetation.trunk_collision.get_ids()==PackedInt64Array([2]),"harvest mask removes exactly one visual root and collider")
+	patch_token=ecosystem.harvest_state.harvest_patch_state()
+	check(ecosystem.harvest_state.restore_harvest_patch(tree_patch,patch_token.revision,patch_token.owner).ok,"selected native tree baseline restores")
+	ecosystem._publish_samples(key)
+	check(vegetation.renderer.roots.has(1) and vegetation.renderer.roots.has(2) and vegetation.trunk_collision.get_ids()==PackedInt64Array([1,2]),"ordinary publication reinstates selected tree and collision without losing its neighbor")
+	ecosystem.harvest_state.mark(1);ecosystem._publish_samples(key)
 	var sections: Dictionary=persistence._capture().sections
 	ecosystem.reset()
 	ecosystem._replace_samples(key,PackedInt64Array([1,2]),transforms)
 	check(not vegetation.renderer.roots.has(1),"cell eviction and regeneration cannot respawn harvested ID")
 	ecosystem.harvest_state.unmark(1)
 	persistence._restore(sections,1)
-	ecosystem._publish_samples(key)
+	check(persistence._terrain.snapshot_restore_ok and ecosystem._samples.is_empty(),"compound reload clears old derived surface samples")
+	ecosystem._replace_samples(key,PackedInt64Array([1,2]),transforms)
 	check(not vegetation.renderer.roots.has(1) and vegetation.renderer.roots.has(2),"compound provider restore reinstates only saved exclusions")
 	GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	var inventory=ClassDB.instantiate("NativePlayerInventory")
 	inventory.register_item(102,999)
 	var empty_inventory: PackedByteArray=inventory.capture_storage_snapshot()
-	var gate:=TerrainGate.new();ecosystem.terrain=gate
 	for field in ["world_ready","pending_edit","closing","stopping"]:
 		gate.set(field,field!="world_ready")
 		var denied: Dictionary=ecosystem.harvest_root(2,inventory)

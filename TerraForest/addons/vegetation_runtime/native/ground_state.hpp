@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 #pragma once
 #include "scatter.hpp"
+#include <godot_cpp/variant/aabb.hpp>
 #include <map>
 #include <set>
 #include <array>
@@ -18,6 +19,7 @@ class NativeGroundCoverState : public RefCounted {
     std::map<int64_t,Placement> placed;
     std::map<int,std::set<int64_t>> cells;
     int64_t seed=-1, generator=0, next_id=AUTHORED_FIRST;
+    int64_t revision=0;
     mutable bool dirty=true;
     mutable PackedByteArray cache;
     static uint64_t read(const uint8_t *p){uint64_t v=0;for(int i=0;i<8;++i)v|=uint64_t(p[i])<<(i*8);return v;}
@@ -54,33 +56,37 @@ protected:
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeGroundCoverState::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeGroundCoverState::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeGroundCoverState::restore_storage_snapshot);
+        ClassDB::bind_method(D_METHOD("ground_patch_state"),&NativeGroundCoverState::ground_patch_state);
+        ClassDB::bind_method(D_METHOD("capture_ground_patch","bounds","natural_ids","revision","owner"),&NativeGroundCoverState::capture_ground_patch);
+        ClassDB::bind_method(D_METHOD("validate_ground_patch","data"),&NativeGroundCoverState::validate_ground_patch);
+        ClassDB::bind_method(D_METHOD("restore_ground_patch","data","revision","owner"),&NativeGroundCoverState::restore_ground_patch);
     }
 public:
     bool bind_world(int64_t p_seed,int64_t p_generator){
-        if(p_seed<0||p_seed>INT32_MAX||p_generator!=1)return false;
+        if(p_seed<0||p_seed>INT32_MAX||p_generator!=1||revision==INT64_MAX)return false;
         if(seed>=0)return seed==p_seed&&generator==p_generator;
-        seed=p_seed;generator=p_generator;dirty=true;return true;
+        seed=p_seed;generator=p_generator;dirty=true;++revision;return true;
     }
     Dictionary profile() const {Dictionary d;d["seed"]=seed;d["generator"]=generator;d["removed"]=int64_t(removed.size());d["placed"]=int64_t(placed.size());return d;}
     bool contains(int64_t id) const{return removed.count(id)!=0;}
-    bool mark(int64_t id){if(seed<0||id<1||id>NATURAL_LIMIT)return false;bool ok=removed.insert(id).second;dirty|=ok;return ok;}
-    bool unmark(int64_t id){bool ok=removed.erase(id)!=0;dirty|=ok;return ok;}
+    bool mark(int64_t id){if(seed<0||id<1||id>NATURAL_LIMIT||revision==INT64_MAX)return false;bool ok=removed.insert(id).second;if(ok){dirty=true;++revision;}return ok;}
+    bool unmark(int64_t id){if(revision==INT64_MAX)return false;bool ok=removed.erase(id)!=0;if(ok){dirty=true;++revision;}return ok;}
     PackedByteArray mask(const PackedInt64Array &ids) const{
         PackedByteArray out;if(ids.size()>64)return out;out.resize(ids.size());
         for(int64_t i=0;i<ids.size();++i)out.set(i,contains(ids[i])?1:0);return out;
     }
     int64_t add(int64_t species,const Transform3D &transform){
-        if(seed<0||species<0||species>8||placed.size()>=PLACED_LIMIT||next_id==INT64_MAX)return 0;
+        if(seed<0||species<0||species>8||placed.size()>=PLACED_LIMIT||next_id==INT64_MAX||revision==INT64_MAX)return 0;
         Placement p;p.species=int(species);
         for(int r=0;r<3;++r){for(int c=0;c<3;++c)p.t[r*4+c]=transform.basis[r][c];p.t[r*4+3]=transform.origin[r];}
         if(!valid(p))return 0;
         int key=cell(p);auto owner=cells.find(key);if(owner!=cells.end()&&owner->second.size()>=CELL_LIMIT)return 0;
-        int64_t id=next_id++;placed.emplace(id,p);cells[key].insert(id);dirty=true;return id;
+        int64_t id=next_id++;placed.emplace(id,p);cells[key].insert(id);dirty=true;++revision;return id;
     }
     bool erase(int64_t id){
-        auto found=placed.find(id);if(found==placed.end())return false;
+        auto found=placed.find(id);if(found==placed.end()||revision==INT64_MAX)return false;
         int key=cell(found->second);auto &owner=cells.at(key);owner.erase(id);if(owner.empty())cells.erase(key);
-        placed.erase(found);dirty=true;return true;
+        placed.erase(found);dirty=true;++revision;return true;
     }
     Array query(Vector2i key) const{
         Array out;PackedInt64Array ids[9];PackedFloat32Array transforms[9];
@@ -90,7 +96,7 @@ public:
         for(int i=0;i<9;++i){Dictionary d;d["ids"]=ids[i];d["transforms"]=transforms[i];out.append(d);}return out;
     }
     bool remove_roots(const PackedInt64Array &ids){
-        if(seed<0||ids.size()>1280)return false;
+        if(seed<0||ids.size()>1280||revision>INT64_MAX-ids.size())return false;
         for(int64_t identity:ids)if(identity<1||(identity>NATURAL_LIMIT&&identity<AUTHORED_FIRST)||(identity>=AUTHORED_FIRST&&!placed.count(identity)))return false;
         for(int64_t identity:ids){if(identity<AUTHORED_FIRST)mark(identity);else erase(identity);}
         return true;
@@ -155,13 +161,19 @@ public:
         return true;
     }
     bool restore_storage_snapshot(const PackedByteArray &data){
-        if(!validate_snapshot(data))return false;
+        if(revision==INT64_MAX||!validate_snapshot(data))return false;
         std::set<int64_t> staged_removed;std::map<int64_t,Placement> staged_placed;std::map<int,std::set<int64_t>> staged_cells;
         const auto *p=data.ptr();size_t offset=64;
         for(uint64_t i=0;i<read(p+40);++i){staged_removed.insert(int64_t(read(p+offset)));offset+=8;}
         for(uint64_t i=0;i<read(p+48);++i){int64_t id=int64_t(read(p+offset));Placement value;value.species=int(read(p+offset+8));for(int j=0;j<12;++j)value.t[j]=read_float(p+offset+16+j*4);staged_placed.emplace(id,value);staged_cells[cell(value)].insert(id);offset+=64;}
         removed.swap(staged_removed);placed.swap(staged_placed);cells.swap(staged_cells);
-        seed=read(p+16)==UINT64_MAX?-1:int64_t(read(p+16));generator=int64_t(read(p+24));next_id=int64_t(read(p+32));cache=data;dirty=false;return true;
+        seed=read(p+16)==UINT64_MAX?-1:int64_t(read(p+16));generator=int64_t(read(p+24));next_id=int64_t(read(p+32));cache=data;dirty=false;++revision;return true;
     }
+    Dictionary ground_patch_state() const;
+    PackedByteArray capture_ground_patch(AABB bounds,const PackedInt64Array &natural_ids,int64_t expected_revision,int64_t expected_owner) const;
+    bool validate_ground_patch(const PackedByteArray &data) const;
+    Dictionary restore_ground_patch(const PackedByteArray &data,int64_t expected_revision,int64_t expected_owner);
+private:
+    static bool decode_ground_patch(const PackedByteArray &data,AABB &bounds,int64_t &world_seed,int64_t &world_generator,std::map<int64_t,bool> &natural,std::map<int64_t,Placement> &plants);
 };
 }

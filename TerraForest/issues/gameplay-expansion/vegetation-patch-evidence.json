@@ -1,0 +1,292 @@
+{
+  "date": "2026-11-02",
+  "status": "Native debug/release and installed-package state restoration verified; complete live quest reset remains unfinished",
+  "formats": {
+    "trees": "TFHP1: ordered explicit stable IDs and removed/present flags, SHA-256",
+    "ground": "TFGP1: seed/generator, half-open XYZ bounds, ordered natural flags and exact authored IDs/species/12-float transforms, SHA-256"
+  },
+  "limits": {
+    "tree_ids": 4096,
+    "tree_patch_bytes": 65584,
+    "ground_axis_metres": 128,
+    "natural_ids": 32768,
+    "authored_plants": 8192,
+    "ground_patch_bytes": 1048672,
+    "authored_per_cell": 256,
+    "authored_world": 100000
+  },
+  "verification": {
+    "reports/vegetation_patch/20261102T161657445435Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "debug",
+          "phase": "create",
+          "assertions": [
+            75,
+            0
+          ],
+          "timing": [
+            262240,
+            2466,
+            5938
+          ],
+          "passed": true,
+          "seconds": 0.5754479000461288
+        },
+        {
+          "variant": "debug",
+          "phase": "reopen",
+          "assertions": [
+            6,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.27599160000681877
+        },
+        {
+          "variant": "debug",
+          "phase": "state",
+          "assertions": [
+            27,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.27647819998674095
+        },
+        {
+          "variant": "release",
+          "phase": "create",
+          "assertions": [
+            75,
+            0
+          ],
+          "timing": [
+            262240,
+            2552,
+            5705
+          ],
+          "passed": true,
+          "seconds": 0.5588042999734171
+        },
+        {
+          "variant": "release",
+          "phase": "reopen",
+          "assertions": [
+            6,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.274039099982474
+        },
+        {
+          "variant": "release",
+          "phase": "state",
+          "assertions": [
+            27,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.26537869998719543
+        }
+      ],
+      "pack_sha256": null
+    },
+    "reports/vegetation_patch/20261102T161659951510Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "pack",
+          "phase": "create",
+          "assertions": [
+            75,
+            0
+          ],
+          "timing": [
+            262240,
+            2699,
+            6072
+          ],
+          "passed": true,
+          "seconds": 0.5631597000174224
+        },
+        {
+          "variant": "pack",
+          "phase": "reopen",
+          "assertions": [
+            6,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.37058569997316226
+        },
+        {
+          "variant": "pack",
+          "phase": "state",
+          "assertions": [
+            27,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.27888529998017475
+        },
+        {
+          "variant": "pack",
+          "phase": "harvest_publication",
+          "assertions": [
+            35,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.45917410001857206
+        },
+        {
+          "variant": "pack",
+          "phase": "harvest_persistence",
+          "assertions": [
+            13,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 3.3291929999832064
+        }
+      ],
+      "pack_sha256": "5b8c7c631d8ada051fa09e86af4563ccfb372bf8e83f025d83149832e0638920"
+    },
+    "reports/corpse_patch/20261102T161442416769Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "pack",
+          "phase": "create",
+          "assertions": [
+            60,
+            0
+          ],
+          "timing": [
+            82488,
+            943,
+            786,
+            641
+          ],
+          "passed": true,
+          "seconds": 0.4019683000515215
+        },
+        {
+          "variant": "pack",
+          "phase": "reopen",
+          "assertions": [
+            5,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.32590610004263
+        },
+        {
+          "variant": "pack",
+          "phase": "clothing_loot",
+          "assertions": [
+            10,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.4290027000242844
+        },
+        {
+          "variant": "pack",
+          "phase": "container_patch",
+          "assertions": [
+            42,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 0.4299028000095859
+        },
+        {
+          "variant": "pack",
+          "phase": "container_locks",
+          "assertions": [
+            56,
+            0
+          ],
+          "timing": null,
+          "passed": true,
+          "seconds": 1.0359722999855876
+        },
+        {
+          "variant": "pack",
+          "phase": "container_capacity",
+          "assertions": null,
+          "timing": null,
+          "passed": true,
+          "seconds": 0.2815678000333719
+        }
+      ],
+      "pack_sha256": "5b8c7c631d8ada051fa09e86af4563ccfb372bf8e83f025d83149832e0638920"
+    },
+    "libraries": {
+      "vegetation_runtime.windows.template_debug.x86_64.dll": "5aebe088910a2f7f04399922462c5eaf3cee93f7a05dd7464f244d27696b90d6",
+      "vegetation_runtime.windows.template_release.x86_64.dll": "6730ebf776682416354cb09f6065894b503eb8de6d80a90589b1288a8a3fd16f"
+    },
+    "pack_bytes": 471060252,
+    "exe_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5"
+  },
+  "regressions": [
+    {
+      "report": "reports/checks/20261102T161026058800Z/run.json",
+      "scope": "Existing terrain-support selection"
+    },
+    {
+      "report": "reports/checks/20261102T161031121050Z/run.json",
+      "scope": "Actual compound ground-cover archive write"
+    },
+    {
+      "report": "reports/checks/20261102T161032675542Z/run.json",
+      "scope": "Fresh-process exact ground-cover archive reopen"
+    }
+  ],
+  "verified": [
+    "Current live owner/revision tokens; stale, corrupt, invalid, wrong-seed and capacity rejection leave canonical state unchanged",
+    "Outside natural exclusions and authored roots survive, including roots sharing a 32m owner cell with the reset region",
+    "Empty authored baselines remove later planted roots only inside the half-open region",
+    "Exact authored transforms and monotonic next-ID allocation survive restoration and fresh processes",
+    "Selected tree restoration reapplies through the existing publication path and recreates trunk collision without removing its neighbor",
+    "Global and per-cell authored capacities, outside-region identity collisions, malformed fields and nonfinite transforms reject before mutation",
+    "No-op restoration preserves revisions; whole-owner reload invalidates stale tokens"
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/vegetation_patch/20261102T160521429988Z/run.json",
+      "cause": "Test syntax: packed-array constant and unsigned all-ones literal unsupported by GDScript; corrected fixture only."
+    },
+    {
+      "report": "reports/checks/20261102T160711537762Z/run.json",
+      "cause": "Old harvest fixture omitted terrain and staged-restore context required by existing runtime."
+    },
+    {
+      "report": "reports/checks/20261102T160946371742Z/run.json",
+      "cause": "Fixture attempted to republish old samples after normal grove restoration cleared them; now supplies new surface samples."
+    }
+  ],
+  "performance_scope": "Cold headless 128m region with 16,384 selected natural roots, 262,240 bytes; observed restore 5.4-8.9ms across retained runs. Not a whole-reset, foreground or frame-time guarantee. Schedule cold reset work, not per-frame scanning.",
+  "remaining": [
+    "Derive exact natural-root selections from generation-owned positions; the native ground patch checks selected IDs' owner-cell intersection, not each natural root's exact XYZ position",
+    "Bind tree patch identity to the enclosing world/baseline record; the harvest owner has no world seed",
+    "Retain bounded durable generation baselines and hydrate deferred editable water before capture/reset",
+    "Quiesce selected live actors, corpses, falling trees and fractured boulders; pair durability and geometry restoration",
+    "Coordinate worker scheduling, rollback, local renderer/picker/collision publication and player/vehicle exclusion across all owners",
+    "Enable ordinary trader-to-question-mark/E reset/clear/claim only after integrated save/reopen, outside preservation, failure rollback and foreground checks",
+    "Allocation-failure injection and visual acceptance remain unqualified"
+  ]
+}

@@ -53,8 +53,8 @@
   ],
   "remaining": [
     "Quiesce selected live actors and retire associated corpse/ragdoll instances before publication; preserve unselected actors",
-    "Corpse records currently lack persistent world-resident ownership; introduce a backwards-compatible link before any scoped cleanup, never guess ownership by proximity",
-    "Persistent baseline retention, corpse ownership/contents, vegetation and editable-water reset",
+    "Corpse resident/anchor ownership and bounded body/loot patches are now implemented and package-verified (reports/corpse_patch/20261102T161442416769Z/run.json); selected live corpse cleanup remains",
+    "Vegetation state patches are now package-verified (vegetation-patch-evidence.json); persistent baselines, exact natural-root selection, editable-water reset and live publication remain",
     "Coordinated rollback, player/vehicle exclusion and actual trader/marker/E/objective/reward gameplay",
     "Allocator-failure rollback, visual acceptance and foreground performance are not qualified"
   ]

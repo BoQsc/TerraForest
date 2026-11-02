@@ -25,6 +25,7 @@ func open_world() -> bool:
 	if not vegetation.enable_trunk_collision(): return false
 	ecosystem=load("res://addons/world_ecosystem/world_ecosystem.gd").new()
 	ecosystem.vegetation=vegetation
+	ecosystem.terrain=terrain
 	persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	if not ecosystem.prepare_persistence(persistence) or not persistence.register_component("player_loadout",inventory.capture_storage_snapshot,inventory.restore_storage_snapshot,inventory,inventory.capture_storage_snapshot()) or persistence.attach(terrain)!=OK: return false
 	ecosystem.harvested.connect(func(): terrain.changed_since_save=true)

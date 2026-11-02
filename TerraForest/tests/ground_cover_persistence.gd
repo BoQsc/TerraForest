@@ -19,6 +19,7 @@ func run() -> void:
 	terrain.backend.disk_cache.enabled=false;terrain.backend.world_generator=3;terrain.backend.world_seed=1703
 	root.add_child(terrain)
 	var cover=load("res://addons/world_ecosystem/ground_cover.gd").new()
+	cover.terrain=terrain
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	check(cover.prepare(persistence) and persistence.attach(terrain)==OK,"ground-cover edit provider attaches to real terrain archive")
 	terrain.save_completed.connect(func(success: bool): saved=success)

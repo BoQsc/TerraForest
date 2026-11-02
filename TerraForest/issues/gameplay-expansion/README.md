@@ -5,6 +5,18 @@
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Bounded vegetation reset — 2026-11-02
+
+- Native selected tree/ground patches preserve neighboring edits and exact planted
+  identities/transforms; empty baselines clear only later plants inside the region.
+- Debug/release: 108 assertions each. Installed package: 156, including fresh-process
+  reopen, tree collision/publication and actual compound harvest save/load.
+- Existing harvest fixtures now provide the current staged-loading context; initial
+  failed runs remain recorded. Ordinary save formats and player worlds are unchanged.
+- No complete gameplay reset is enabled. Water, exact natural-root selection,
+  durable baselines, live cleanup, rollback and coordinated publication remain.
+- [Machine-readable evidence and performance scope](vegetation-patch-evidence.json).
+
 ## Default seed admission — 2026-11-02
 
 - **Unresolved:** default seeds 8147 and 91823 cannot complete generation. Seed 1703

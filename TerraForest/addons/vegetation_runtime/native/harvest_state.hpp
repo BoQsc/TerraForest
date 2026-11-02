@@ -4,6 +4,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_int64_array.hpp>
+#include <godot_cpp/variant/dictionary.hpp>
 #include <set>
 namespace terraforest {
 using namespace godot;
@@ -12,6 +13,7 @@ using namespace godot;
 class NativeHarvestState : public RefCounted {
     GDCLASS(NativeHarvestState,RefCounted)
     std::set<int64_t> removed;
+    int64_t revision=0;
     mutable PackedByteArray snapshot_cache;
     mutable bool snapshot_dirty=true;
     static constexpr size_t LIMIT=262144;
@@ -27,22 +29,26 @@ protected:
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeHarvestState::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeHarvestState::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeHarvestState::restore_storage_snapshot);
+        ClassDB::bind_method(D_METHOD("harvest_patch_state"),&NativeHarvestState::harvest_patch_state);
+        ClassDB::bind_method(D_METHOD("capture_harvest_patch","ids","revision","owner"),&NativeHarvestState::capture_harvest_patch);
+        ClassDB::bind_method(D_METHOD("validate_harvest_patch","data"),&NativeHarvestState::validate_harvest_patch);
+        ClassDB::bind_method(D_METHOD("restore_harvest_patch","data","revision","owner"),&NativeHarvestState::restore_harvest_patch);
     }
 public:
     bool contains(int64_t id) const{return removed.count(id)!=0;}
     bool mark(int64_t id){
-        if(id<=0||contains(id)||removed.size()>=LIMIT)return false;
+        if(id<=0||contains(id)||removed.size()>=LIMIT||revision==INT64_MAX)return false;
         const bool inserted=removed.insert(id).second;
-        if(inserted)snapshot_dirty=true;
+        if(inserted){snapshot_dirty=true;++revision;}
         return inserted;
     }
-    bool unmark(int64_t id){const bool erased=removed.erase(id)!=0;if(erased)snapshot_dirty=true;return erased;}
+    bool unmark(int64_t id){if(revision==INT64_MAX)return false;const bool erased=removed.erase(id)!=0;if(erased){snapshot_dirty=true;++revision;}return erased;}
     bool remove_roots(const PackedInt64Array &ids){
-        if(ids.size()>4096)return false;
+        if(ids.size()>4096||revision==INT64_MAX)return false;
         std::set<int64_t> additions;
         for(int64_t identity:ids){if(identity<1||identity>32*32*36)return false;if(!contains(identity))additions.insert(identity);}
         if(removed.size()+additions.size()>LIMIT)return false;
-        removed.insert(additions.begin(),additions.end());snapshot_dirty|=!additions.empty();return true;
+        if(!additions.empty()){removed.merge(additions);snapshot_dirty=true;++revision;}return true;
     }
     PackedByteArray mask(const PackedInt64Array &ids) const{
         PackedByteArray out;if(ids.size()>4096)return out;
@@ -66,10 +72,14 @@ public:
         return true;
     }
     bool restore_storage_snapshot(const PackedByteArray &data){
-        if(!validate_snapshot(data))return false;
+        if(revision==INT64_MAX||!validate_snapshot(data))return false;
         std::set<int64_t> staged;const auto *p=data.ptr();const auto count=read(p+8);
         for(uint64_t i=0;i<count;++i)staged.insert(int64_t(read(p+16+i*8)));
-        removed.swap(staged);snapshot_cache=data;snapshot_dirty=false;return true;
+        removed.swap(staged);snapshot_cache=data;snapshot_dirty=false;++revision;return true;
     }
+    Dictionary harvest_patch_state() const;
+    PackedByteArray capture_harvest_patch(const PackedInt64Array &ids,int64_t expected_revision,int64_t expected_owner) const;
+    bool validate_harvest_patch(const PackedByteArray &data) const;
+    Dictionary restore_harvest_patch(const PackedByteArray &data,int64_t expected_revision,int64_t expected_owner);
 };
 }
