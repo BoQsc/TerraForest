@@ -35,6 +35,7 @@ func run()->void:
 	check(game.persistence._providers.has("player_quests") and store.snapshot().seed==1703,"native quest component participates in the actual compound world save")
 	if baselines_only or "--verify-originals" in OS.get_cmdline_user_args():
 		if "--verify-originals" in OS.get_cmdline_user_args():await verify_originals()
+		if "--verify-reset-plan" in OS.get_cmdline_user_args():await verify_reset_plan()
 		await verify_baseline_roundtrip();await finish();return
 	if not restoring and not exercising:
 		check(game.persistence.location_baselines.capture_storage_snapshot().size()==80,"ordinary generation publishes its world identity without placeholder owner patches")
@@ -116,6 +117,30 @@ func verify_baseline_roundtrip()->void:
 	check(game.persistence.location_baselines.capture_storage_snapshot()==manifest,"normal save/reopen keeps exact baseline identity")
 	check(game.quests.store.capture_storage_snapshot()==quests,"baseline persistence does not bypass introduction or start a quest")
 	check(await leave(),"baseline check closes through normal save path")
+
+func verify_reset_plan()->void:
+	var location:Dictionary=game.quests.store.get_locations()[0]
+	var original_position:Vector3=game.player.global_position
+	game.teleport(location.bounds.get_center(),location.bounds.get_center().y+2)
+	if not check(await wait_for(game_ready,120),"normal destination loading prepares the real reset location"):return
+	game.terrain.diagnostics_pause_streaming=true
+	game.ecosystem.set_process(false);game.ground_cover.set_process(false)
+	var settled:bool=await wait_for(func()->bool:return game.terrain.backend.diagnostic_queue_snapshot().queued.is_empty() and game.lakes.statistics().pending_regions==0 and not game.lakes._busy and game.lakes._builder==null and game.model_paging.last_state.get("jobs",0)==0 and game.model_paging.operation=="",45)
+	check(settled,"location jobs settle before cold reset planning")
+	var plan=load("res://addons/world_runtime/location_reset_plan.gd").new()
+	var started:=Time.get_ticks_usec()
+	var result:Dictionary=await plan.load_and_prepare(game,location)
+	print("GENERATED_RESET_PLAN ",JSON.stringify({"layout":location.layout,"bounds":str(location.bounds),"ok":result.ok,"reason":result.get("reason",""),"elapsed_us":Time.get_ticks_usec()-started,"bytes":result.get("bytes",0),"operations":plan.operations.size()}))
+	check(result.ok,"actual generated original and resident owners produce a complete scoped reset plan")
+	if result.ok:
+		var batch:RefCounted=plan.create_batch()
+		check(batch.status().phase=="prepared","real-world plan reaches preflight without recapturing or applying owners")
+		batch.cancel();batch.advance()
+		check(batch.status().phase=="rolled_back" and batch.status().applied==0,"read-only world check cancels without applying any reset")
+	game.terrain.diagnostics_pause_streaming=false
+	game.ecosystem.set_process(true);game.ground_cover.set_process(true)
+	game.teleport(original_position,original_position.y)
+	check(await wait_for(game_ready,120),"read-only planner check restores the original player destination")
 
 func verify_originals()->void:
 	var capture=load("res://addons/world_runtime/location_capture.gd")

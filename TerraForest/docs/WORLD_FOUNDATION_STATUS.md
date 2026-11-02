@@ -305,14 +305,25 @@ It includes full cave excavation plus structure/model bounds, native owner patch
 and protected model identities, not whole-world copies. Existing saves are untouched.
 [Capture contract and remaining reset semantics](GAMEPLAY_EXPANSION.md#generation-owned-location-originals--2026-11-02),
 [generated-world receipts](../issues/gameplay-expansion/location-capture-evidence.json).
-Coordinated in-memory rollback now passes 242 checks per debug/release/package:
+Coordinated in-memory rollback now passes 246 checks per debug/release/package:
 all twelve native owners, cancellation boundaries, real late model rejection,
 stale/freed ownership and the quest save barrier. One native patch runs per step;
 the fixture is not maximum-size or foreground performance evidence.
 [Batch contract and still-required live prerequisites](GAMEPLAY_EXPANSION.md#coordinated-owner-rollback--2026-11-02),
 [receipts](../issues/gameplay-expansion/location-reset-batch-evidence.json).
-Still required: transactional live reset with current player-edit ownership,
-player/vehicle exclusion, transient-owner quiescence, local publication and rollback.
+Current-edit ownership planning now passes 80 checks per debug/release/package,
+including actual native-owner restore/rollback, later in-region objects/plants and
+chunked damage selection. Outside entries and inventory remain unchanged. A generated
+survey mine reaches read-only preflight through normal destination loading, then
+cancels before mutation and survives fresh-process reopening. Unready model pages
+reject; the test now waits for actual model residency instead of assuming it.
+The heavily edited fixture retains 292,242 bytes; cold planning takes 20.7–26.1 ms
+in these headless runs, so cooperative scheduling remains necessary before gameplay.
+[Planning contract and acceptance boundaries](GAMEPLAY_EXPANSION.md#current-edit-reset-planning--2026-11-02),
+[exact evidence](../issues/gameplay-expansion/location-reset-plan-evidence.json).
+Still required: transactional live reset with player/vehicle exclusion,
+transient-owner quiescence, protection transitions, local publication and rollback,
+reader teardown/cancellation and authoritative checkpoint recovery.
 No repeatable quest is enabled yet. Resume
 those integrations and require normal generated-world marker/E/reset/reopen and timing evidence.
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).

@@ -8,6 +8,7 @@ namespace terraforest {
 using namespace godot;
 void NativeWorldDurability::_bind_methods(){
     ClassDB::bind_method(D_METHOD("damage_patch_state"),&NativeWorldDurability::damage_patch_state);
+    ClassDB::bind_method(D_METHOD("select_damage_keys","bounds","identities","expected_revision","expected_owner"),&NativeWorldDurability::select_damage_keys);
     ClassDB::bind_method(D_METHOD("capture_damage_patch","keys","expected_revision","expected_owner"),&NativeWorldDurability::capture_damage_patch);
     ClassDB::bind_method(D_METHOD("validate_damage_patch","bytes"),&NativeWorldDurability::validate_damage_patch);
     ClassDB::bind_method(D_METHOD("restore_damage_patch","bytes","expected_revision","expected_owner"),&NativeWorldDurability::restore_damage_patch);

@@ -5,6 +5,7 @@
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
+#include <godot_cpp/variant/aabb.hpp>
 #include <map>
 #include <string>
 namespace terraforest {
@@ -32,6 +33,7 @@ public:
     bool validate_snapshot(const godot::PackedByteArray &b) const {return decode(b,nullptr);}
     bool restore_storage_snapshot(const godot::PackedByteArray &);
     godot::Dictionary damage_patch_state() const;
+    godot::Dictionary select_damage_keys(godot::AABB bounds,const godot::PackedStringArray &identities,int64_t expected_revision,int64_t expected_owner) const;
     godot::PackedByteArray capture_damage_patch(const godot::PackedStringArray &,int64_t expected_revision,int64_t expected_owner) const;
     bool validate_damage_patch(const godot::PackedByteArray &) const;
     godot::Dictionary restore_damage_patch(const godot::PackedByteArray &,int64_t expected_revision,int64_t expected_owner);

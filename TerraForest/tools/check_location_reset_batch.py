@@ -15,12 +15,17 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
+    parser.add_argument('--plan', action='store_true')
     args = parser.parse_args()
     config, _ = parse_args([])
-    folder = ROOT / 'reports/location_reset_batch' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    name = 'location_reset_plan' if args.plan else 'location_reset_batch'
+    marker = name.upper()
+    folder = ROOT / 'reports' / name / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
-    sources = ['tests/location_reset_batch.gd', 'addons/world_runtime/location_reset_batch.gd',
-               'addons/world_runtime/location_capture.gd', 'addons/volumetric_terrain/mesh_codec.gd']
+    sources = [f'tests/{name}.gd', 'addons/world_runtime/location_reset_batch.gd',
+               'addons/world_runtime/location_capture.gd', 'addons/world_runtime/location_patch_scope.gd', 'addons/volumetric_terrain/mesh_codec.gd']
+    if args.plan:
+        sources += ['addons/world_runtime/location_reset_plan.gd']
     record = dict(pack=args.pack, source_sha256={name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in sources},
                   native=verify_pack_native() if args.pack else None, variants=[], **revision_metadata())
     for variant in (('pack',) if args.pack else ('debug', 'release')):
@@ -57,13 +62,14 @@ def main():
             runtime = ['--path', str(project)]
             script = 'res://' + sources[0]
         command = [config.godot, '--headless', *runtime, '--script', script, '--log-file', str(project / 'engine.log')]
-        result = execute(command, project, 90, 'LOCATION_RESET_BATCH checks=')
+        result = execute(command, project, 90, marker + ' checks=')
         log = (project / 'console.log').read_text(encoding='utf-8', errors='replace')
-        assertions = re.search(r'LOCATION_RESET_BATCH checks=(\d+) failures=(\d+)', log)
+        assertions = re.search(marker + r' checks=(\d+) failures=(\d+)', log)
         timings = re.search(r'LOCATION_RESET_TIMINGS (.+)', log)
+        measurements = {label: [json.loads(value) for value in re.findall(label + r' (.+)', log)] for label in ('LOCATION_PLAN_CAPTURE', 'DAMAGE_SELECTION_MAX')}
         record['variants'].append(dict(variant=variant, command=command, result=result, libraries=libraries,
                                        assertions=list(map(int, assertions.groups())) if assertions else None,
-                                       timings=json.loads(timings.group(1)) if timings else None))
+                                       timings=json.loads(timings.group(1)) if timings else None, measurements=measurements))
     record['passed'] = all(row['result']['passed'] and row['assertions'] and row['assertions'][1] == 0 for row in record['variants'])
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n')
     print(('PASS ' if record['passed'] else 'FAIL ') + str(folder))

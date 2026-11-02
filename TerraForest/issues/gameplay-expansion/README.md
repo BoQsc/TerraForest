@@ -9,10 +9,18 @@
 
 - Follow-up: a bounded coordinator now restores and reverses all twelve native
   owner kinds in isolated tests; debug, release and installed package each pass
-  242 checks. Protected-model rejection, cancellation, stale/freed owners and the
+  246 checks. Protected-model rejection, cancellation, stale/freed owners and the
   native quest save barrier are exercised. This is not live reset gameplay.
 - [Batch contract and live prerequisites](../../docs/GAMEPLAY_EXPANSION.md#coordinated-owner-rollback--2026-11-02),
   [exact evidence and retained failures](location-reset-batch-evidence.json).
+- Current-edit planning follow-up: 80 checks per debug/release/package cover scoped
+  originals, later player models/plants/chests, chunked damage and exact native
+  rollback. The native selector examines at most 65,536 records; no gameplay-frame
+  scan is introduced. Cached undo captures retain revision and scope guards.
+- An ordinary generated mine now reaches read-only preflight and fresh-process
+  reopen; the test cancels before applying the plan. This is not a live reset.
+- [Planning contract](../../docs/GAMEPLAY_EXPANSION.md#current-edit-reset-planning--2026-11-02),
+  [latest receipts, costs and retained failed attempts](location-reset-plan-evidence.json).
 - Generation follow-up: the ordinary recipe now preserves actual owner originals
   before presentation/player arrival. Cave bounds include both excavation and all
   prefab parts; natural tree/ground identities use exact projected roots, not
@@ -22,8 +30,9 @@
   Five originals total 576,638 bytes; the save manifest is 480 bytes. Packaged
   capture totals 305 ms, with individual main-thread capture portions 1.0–2.7 ms.
   These are scoped generation measurements, not gameplay frame-pacing acceptance.
-- Remaining: live transaction/journal, current player edits, transient cleanup,
-  water/contact/render refresh, safe player/vehicle exclusion, rollback and the
+- Remaining: live transaction/recovery, cooperative preparation, transient cleanup,
+  protection transitions, water/contact/render refresh, safe player/vehicle exclusion,
+  reader teardown/cancellation, durable rollback and the
   actual question-mark/E repeatable-quest interaction.
 - Follow-up: compound-save registration, generation-owned world identity and
   native selected-reference clone/recovery are integrated. Legacy worlds acquire

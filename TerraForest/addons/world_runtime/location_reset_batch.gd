@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
+const Scope = preload("res://addons/world_runtime/location_patch_scope.gd")
 
 const KINDS := ["field", "cube", "cell", "placement", "door", "damage", "container", "resident", "corpse", "harvest", "ground", "water"]
 const MAX_OPERATIONS := 512
@@ -50,11 +51,19 @@ func _valid_arguments(kind: String, arguments: Array) -> bool:
 		return arguments.size() == 2 and arguments[0] is PackedInt64Array and arguments[1] is PackedInt64Array
 	return arguments.size() == 1 and (arguments[0] is PackedStringArray if kind == "damage" else arguments[0] is PackedInt64Array)
 
-func prepare(entries: Array) -> Dictionary:
+func prepare(entries: Array, expected_owners: Array = []) -> Dictionary:
 	if _phase != "idle":
 		return status()
 	if entries.is_empty() or entries.size() > MAX_OPERATIONS:
 		return _reject("operation_limit")
+	if expected_owners.size() > MAX_OPERATIONS:
+		return _reject("guard_limit")
+	for guard: Variant in expected_owners:
+		if not guard is Array or guard.size() != 3 or not guard[0] is Object or not is_instance_valid(guard[0]) or not guard[1] is String or not guard[1] in KINDS or not guard[2] is Dictionary or not guard[0].has_method(guard[1] + "_patch_state"):
+			return _reject("invalid_guard")
+		if _state(guard[0], guard[1]) != guard[2]:
+			return _reject("stale_guard")
+		_owners[str(guard[0].get_instance_id()) + ":" + guard[1]] = {"target": guard[0], "kind": guard[1], "token": guard[2]}
 	for value: Variant in entries:
 		if not value is Dictionary or not value.get("target") is Object or not value.get("kind") is String or not value.get("arguments") is Array or not value.get("original") is PackedByteArray:
 			return _reject("invalid_operation")
@@ -68,11 +77,16 @@ func prepare(entries: Array) -> Dictionary:
 			if not owner.has_method(method):
 				return _reject("missing_owner_method")
 		var original: PackedByteArray = value.original.duplicate()
-		if original.is_empty() or original.size() > MAX_PATCH_BYTES or not owner.call("validate_" + kind + "_patch", original):
+		if original.is_empty() or original.size() > MAX_PATCH_BYTES:
+			return _reject("invalid_original:" + kind)
+		var original_scope := Scope.describe(owner, kind, original)
+		if original_scope.is_empty():
 			return _reject("invalid_original:" + kind)
 		var token := _state(owner, kind)
 		if not token.get("revision") is int or not token.get("owner", token.get("epoch")) is int:
 			return _reject("invalid_owner_token")
+		if value.has("expected") != value.has("captured") or (value.has("expected") and (value.expected != token or not value.captured is PackedByteArray)):
+			return _reject("stale_or_invalid_plan")
 		var identity := str(owner.get_instance_id()) + ":" + kind
 		if _owners.has(identity) and _owners[identity].token != token:
 			return _reject("owner_changed_during_capture")
@@ -80,9 +94,12 @@ func prepare(entries: Array) -> Dictionary:
 		var arguments: Array = value.arguments.duplicate(true)
 		arguments.append(token.revision)
 		arguments.append(token.get("owner", token.get("epoch", -1)))
-		var undo: PackedByteArray = owner.callv("capture_" + kind + "_patch", arguments)
-		if undo.is_empty() or undo.size() > MAX_PATCH_BYTES or not owner.call("validate_" + kind + "_patch", undo):
+		var undo: PackedByteArray = value.captured.duplicate() if value.has("captured") else owner.callv("capture_" + kind + "_patch", arguments)
+		if undo.is_empty() or undo.size() > MAX_PATCH_BYTES:
 			return _reject("undo_unavailable:" + kind)
+		var undo_scope := Scope.describe(owner, kind, undo)
+		if undo_scope.is_empty() or original_scope.arguments != undo_scope.arguments or original_scope.arguments != Scope.normalized_arguments(kind, value.arguments) or original_scope.signature != undo_scope.signature:
+			return _reject("scope_mismatch:" + kind)
 		_bytes += original.size() + undo.size()
 		if _bytes > MAX_BYTES:
 			return _reject("byte_limit")

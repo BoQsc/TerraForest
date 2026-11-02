@@ -159,7 +159,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward installed; actual executable passes mine/reward and exact fresh-process restore; broader seeds and repeatable reset quests remain separate |
-| Large question-mark start interaction near POI, E acceptance and location reset | Generation preserves owner originals; native-owner batch rollback is verified in isolation. Live ownership planning, crash recovery, player-edit safety and marker/E integration remain pending |
+| Large question-mark start interaction near POI, E acceptance and location reset | Generation preserves owner originals; scoped current-edit planning and native-owner rollback are verified. Generated mine preflight passes without mutation. Live cleanup/publication, crash recovery, player/vehicle exclusion and marker/E integration remain pending |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
@@ -424,9 +424,9 @@ explicit/deferred/cached edits retain their readiness checks. No water is invent
 or removed to make capture pass.
 
 [Generated-world evidence, measured costs and retained failures](../issues/gameplay-expansion/location-capture-evidence.json).
-This enables original preservation, not repeatable quests. Next: live transaction
-preflight/journal, transient-owner retirement, current-player-edit ownership,
-local contact/render refresh, rollback, then question-mark/E activation and trader
+This enables original preservation, not repeatable quests. Scoped preflight and
+current-player-edit ownership are implemented below. Next: durable transaction,
+transient-owner retirement, local contact/render refresh and recovery, then question-mark/E activation and trader
 offers. Require real generated-world reset/clear/reward/fresh-reload checks and
 outside-region preservation before calling that gameplay complete.
 
@@ -434,16 +434,16 @@ outside-region preservation before calling that gameplay complete.
 
 `addons/world_runtime/location_reset_batch.gd` coordinates the existing native
 patch owners; it does not add per-frame gameplay work or duplicate native stores.
-The isolated debug, release and installed-package checks each pass 242 assertions.
+The isolated debug, release and installed-package checks now each pass 246 assertions.
 All twelve owner kinds restore together and roll back to their exact selected
 pre-reset bytes, including killed residents, their corpse, looted supplies,
 changed water, plants, density, cubes and blocks. A real protected-model rejection
 rolls back five preceding operations. Cancellation at every six-operation boundary,
 stale/freed owners, rollback rejection and the quest's save barrier are covered.
 
-- Trusted internal API only: callers must first verify world/definition identity,
-  embedded native scopes, matching original/undo selectors and current ownership.
-  Patch checksum validation alone does not authorize those selections. Do not feed
+- Trusted internal API only: callers must first verify world/definition identity
+  and current ownership. The executor checks embedded native scopes and matching
+  original/undo selectors, including cached captures. Checksums alone do not authorize those selections. Do not feed
   arbitrary mod/save descriptors straight into this executor.
 - `prepare` validates and freezes original bytes and captures local undo. It is
   cold synchronous work, not a gameplay-frame API. Limit: 512 operations, 16 MiB
@@ -461,13 +461,57 @@ stale/freed owners, rollback rejection and the quest's save barrier are covered.
   can fail after compound root publication. Recovery must inspect/reopen the
   authoritative root; never roll back memory under an assumed old disk state.
 
-Still required before game activation: the actual location-scoped plan including
-later player objects/damage, bounded hydration and preparation scheduling, transient
+The location-scoped plan, including later player objects/damage, is implemented
+below. Still required before game activation: bounded hydration and preparation scheduling, transient
 body/prop cleanup, local contact/render refresh, safe player/vehicle exclusion and
 durable crash-recovery wiring. The executor is deliberately not connected to E or
 trader offers yet. Native patch restore preserves logical state, not old revision
 counters or live scene nodes. No player save was used by these tests.
 [Exact receipts and retained failures](../issues/gameplay-expansion/location-reset-batch-evidence.json).
+
+### Current-edit reset planning — 2026-11-02
+
+`location_reset_plan.gd` reads the immutable world/definition-bound original on a
+worker, then builds a read-only plan against the resident native owners. It checks
+all twelve typed envelopes, exact grid tiles, model namespaces/prototypes, authored
+resident anchors, container ownership and natural vegetation generation identity.
+Originals moved outside the region, boundary-crossing models, changed definitions,
+unready model pages and foreign owner revisions reject before any restore.
+
+Later in-region models, chests, door state and planted roots are selected for local
+removal/restoration. Protection transitions are returned for the future live
+coordinator; this planner never drops protection itself. Original and current
+selected bytes share exactly the same scope. Cached undo captures are revision
+guarded, avoiding a second capture in batch preparation. Even an empty current
+damage selection retains its owner guard so later damage cannot slip through.
+
+The native damage selector scans at most 65,536 existing damage records once per
+distinct owner. It selects canonical half-open block coordinates and exact owned
+model/ground identities, never global vehicle/actor damage. Selections larger than
+one patch are split into 4,096-key patches within the existing operation/byte caps.
+There is no per-frame scan, whole-world snapshot or new dependency.
+
+Debug, release and installed-package planner fixtures each pass 80 assertions:
+all-owner restore and exact reverse rollback after player edits; outside damage,
+containers and inventory preservation; changed/forged scopes; moved/boundary models;
+empty-selection races; and a full 65,536-record damage store. The heavily edited
+fixture retains 292,242 bytes across 16 operations; cold preparation measured
+20.7–26.1 ms. Native full-store selection measured 1.6–1.8 ms. These are individual
+headless measurements, not foreground-frame guarantees or maximum-world acceptance.
+
+Ordinary generated-world checks use an owned default seed-1703 test world, real
+destination loading and settled model pages. The survey mine produces a 32-operation
+plan; the test cancels before applying it and verifies save/reopen in another process.
+This is **read-only real-world preflight**, not a successfully reset live location.
+[Exact source/package evidence, timings and retained failures](../issues/gameplay-expansion/location-reset-plan-evidence.json).
+
+Return to live integration next: cooperatively schedule preparation/hydration;
+quiesce and retire owned bodies and transient props; manage protection transitions;
+exclude the player/vehicles; refresh contacts/rendering; establish authoritative
+checkpoint recovery; then connect question-mark/E and trader offers. Reader
+cancellation during world teardown also needs lifecycle ownership. Require a played
+generated location reset, preserved outside edits, fresh-process crash recovery and
+foreground timing before enabling and declaring repeatable quests complete.
 
 ### Shared inventory navigation and character view
 

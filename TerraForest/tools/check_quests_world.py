@@ -14,11 +14,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--originals', action='store_true')
+    parser.add_argument('--reset-plan', action='store_true')
     reuse = parser.add_mutually_exclusive_group()
     reuse.add_argument('--restore-report')
     reuse.add_argument('--exercise-report')
     reuse.add_argument('--baseline-report')
     args = parser.parse_args()
+    if args.reset_plan:
+        args.originals = True
     config, _ = parse_args([])
     base = ROOT / 'reports/quests_world'
     folder = base / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
@@ -33,7 +36,7 @@ def main():
             parser.error('Not an owned quest fixture')
         for name in (['created_slot.json'] if args.baseline_report else ['expected.bin', 'created_slot.json']):
             (folder / name).write_bytes((source / name).read_bytes())
-    record = dict(pack=args.pack, originals=args.originals, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
+    record = dict(pack=args.pack, originals=args.originals, reset_plan=args.reset_plan, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
     script = ROOT / 'tests/quests_world.gd'
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -61,6 +64,8 @@ def main():
                 command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
             if args.originals:
                 command.append('--verify-originals')
+            if args.reset_plan:
+                command.append('--verify-reset-plan')
             if phase == 'restore':
                 command.append('--restore-quests')
             elif phase == 'exercise':

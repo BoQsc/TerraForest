@@ -140,6 +140,14 @@ func reject_and_recover() -> void:
 	check(Batch.new().prepare(oversized).phase == "rejected", "operation cap enforced")
 	check(Batch.new().prepare([{"target": world.damage, "kind": "unknown", "arguments": [], "original": PackedByteArray()}]).phase == "rejected", "unknown owner kind rejected")
 	check(Batch.new().prepare([{"target": world.damage, "kind": "damage", "arguments": [1], "original": PackedByteArray()}]).phase == "rejected", "wrong argument type rejected before native dispatch")
+	var mismatched := operation(world.damage, "damage", [PackedStringArray(["inside"])])
+	mismatched.arguments = [PackedStringArray(["outside"])]
+	check(Batch.new().prepare([mismatched]).get("reason") == "scope_mismatch:damage", "valid original cannot mutate a different selection than its undo")
+	mismatched.expected = world.damage.damage_patch_state()
+	mismatched.captured = mismatched.original
+	check(Batch.new().prepare([mismatched]).get("reason") == "scope_mismatch:damage", "cached capture cannot bypass declared selector validation")
+	check(Batch.new().prepare([operation(world.damage, "damage", [PackedStringArray(["second", "inside"])])]).phase == "prepared", "unordered native identity arguments normalize safely")
+	check(Batch.new().prepare([operation(world.damage, "damage", [PackedStringArray(["inside"])])], [[123, "damage", {}]]).phase == "rejected", "non-object guard rejects without script exception")
 
 func water_fixture(wet: bool) -> PackedByteArray:
 	var catalog: PackedByteArray = ClassDB.instantiate("NativeLakeCatalog").encode([])

@@ -4,6 +4,9 @@
 #include <climits>
 #include <cstring>
 #include <vector>
+#include <set>
+#include <charconv>
+#include <cmath>
 
 namespace terraforest {
 using namespace godot;
@@ -18,6 +21,36 @@ PackedByteArray digest(const PackedByteArray &bytes){
 }
 Dictionary NativeWorldDurability::damage_patch_state() const {
     Dictionary result;result["revision"]=revision;result["owner"]=int64_t(get_instance_id());return result;
+}
+Dictionary NativeWorldDurability::select_damage_keys(AABB bounds,const PackedStringArray &identities,int64_t expected_revision,int64_t expected_owner) const {
+    Dictionary result;result["ok"]=false;result["reason"]="invalid_or_stale";
+    if(expected_revision!=revision||expected_owner!=int64_t(get_instance_id())||identities.size()>65536||!bounds.position.is_finite()||!bounds.size.is_finite())return result;
+    for(int axis=0;axis<3;++axis)if(bounds.position[axis]!=std::floor(bounds.position[axis])||bounds.size[axis]!=std::floor(bounds.size[axis])||bounds.size[axis]<1||bounds.size[axis]>128||bounds.position[axis]<-1048575||bounds.get_end()[axis]>1048575)return result;
+    std::set<std::string> exact;
+    for(int index=0;index<identities.size();++index){
+        const auto raw=identities[index].utf8();std::string key(raw.get_data(),raw.length());
+        if(!valid_key(key)||(key.rfind("model:",0)!=0&&key.rfind("cover:",0)!=0)||!exact.insert(key).second)return result;
+    }
+    PackedStringArray keys;
+    for(const auto &entry:damaged){
+        bool selected=false;
+        if(entry.first.rfind("block:",0)==0){
+            const char *cursor=entry.first.data()+6,*end=entry.first.data()+entry.first.size();int coordinate[3];bool valid=true;
+            for(int axis=0;axis<3&&valid;++axis){
+                const auto parsed=std::from_chars(cursor,end,coordinate[axis]);
+                valid=parsed.ec==std::errc()&&parsed.ptr>cursor;
+                if(!valid)break;
+                valid=std::string(cursor,parsed.ptr)==std::to_string(coordinate[axis]);cursor=parsed.ptr;
+                if(axis<2){valid=valid&&cursor<end&&*cursor==':';if(valid)++cursor;}
+                else valid=valid&&cursor==end;
+                valid=valid&&coordinate[axis]>=bounds.position[axis]&&coordinate[axis]<bounds.get_end()[axis];
+            }
+            selected=valid;
+        }else selected=exact.count(entry.first)!=0;
+        if(!selected)continue;
+        keys.append(String(entry.first.c_str()));
+    }
+    result["ok"]=true;result["reason"]="";result["keys"]=keys;result["examined"]=int64_t(damaged.size());return result;
 }
 PackedByteArray NativeWorldDurability::capture_damage_patch(const PackedStringArray &keys,int64_t expected_revision,int64_t expected_owner) const {
     if(expected_revision!=revision||expected_owner!=int64_t(get_instance_id())||keys.size()<1||keys.size()>limit)return {};

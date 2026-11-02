@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-02",
+  "status": "Scoped reset planning and isolated native mutation/rollback verified; generated-world preflight only, not live repeatable quests",
+  "provenance": "Original project code and tests, 0BSD; no new dependencies or assets",
+  "implementation": [
+    "addons/world_runtime/location_reset_plan.gd",
+    "addons/world_runtime/location_patch_scope.gd",
+    "addons/world_runtime/location_reset_batch.gd",
+    "addons/player_runtime/native/durability_patch.cpp"
+  ],
+  "receipts": {
+    "source_plan": "reports/location_reset_plan/20261102T202055155121Z/run.json",
+    "package_plan": "reports/location_reset_plan/20261102T202431168620Z/run.json",
+    "source_batch": "reports/location_reset_batch/20261102T202057522228Z/run.json",
+    "package_batch": "reports/location_reset_batch/20261102T202433105093Z/run.json",
+    "source_native_regressions": "reports/location_owner_patches/20261102T202059322956Z/run.json",
+    "package_native_regressions": "reports/location_owner_patches/20261102T202434642103Z/run.json",
+    "package_generated_world": "reports/quests_world/20261102T202447347347Z/run.json",
+    "earlier_source_generated_world": "reports/quests_world/20261102T200923337315Z/run.json"
+  },
+  "assertions": {
+    "planner_per_debug_release_package": 80,
+    "batch_per_debug_release_package": 246,
+    "native_owner_create_reopen_per_variant": [60, 6],
+    "native_combat_harvest_container_per_variant": [53, 15, 42],
+    "package_door_animation_attack_durability": [29, 21],
+    "package_door_component": "Passed; separate zero-failures marker",
+    "package_generated_world_first_and_fresh_process": [95, 96]
+  },
+  "verified": [
+    "All twelve typed original sections and native scopes match declared ownership",
+    "Later local models, door state, chest contents, plants, damage and terrain edits restore and reverse exactly in isolated native fixtures",
+    "Outside container/block/vehicle damage and player inventory are preserved",
+    "Boundary-crossing models, moved originals, forged protection identities and wrong-region native patches reject",
+    "Cached undo cannot bypass native scope/revision validation",
+    "Empty damage selection retains an owner guard against subsequent edits",
+    "More than 4096 selected damage keys use multiple bounded patches without truncation",
+    "Full 65536-record damage store selects only canonical local coordinates and exact owned identities",
+    "Generated mine reaches preflight after ordinary destination loading and model-page readiness; cancellation applies zero patches",
+    "Ordinary save/selector reopen and genuine fresh-process reopen retain exact baseline and quest identity"
+  ],
+  "generated_world": {
+    "world": "Quests_1703_202c741e",
+    "ownership": "Automated test world, not a player save; reused rather than generating another copy",
+    "recipe": "Ordinary world-browser default, seed 1703, no review content switch",
+    "location": "survey_mine",
+    "origin": [519, 127, 1521],
+    "size": [36, 15, 32],
+    "operations": 32,
+    "retained_bytes": 247162,
+    "package_read_and_plan_us": [13971, 13159],
+    "applied_patches": 0
+  },
+  "limits": {
+    "native_damage_records": 65536,
+    "keys_per_damage_patch": 4096,
+    "operations": 512,
+    "bytes_per_patch": 16777216,
+    "retained_original_plus_undo_bytes": 67108864,
+    "native_operations_per_advance": 1
+  },
+  "measurements": {
+    "heavily_edited_fixture_operations": 16,
+    "heavily_edited_fixture_retained_bytes": 292242,
+    "fixture_plan_us": {"debug": 26091, "release": 23738, "package": 20714},
+    "native_full_damage_scan_us": {"debug": 1763, "release": 1635, "package": 1755},
+    "batch_maximum_observed_step_us": {"debug": 649, "release": 1072, "package": 562},
+    "scope": "Individual headless cold-work observations. Planning is synchronous after worker I/O and still needs cooperative scheduling. No maximum-region, all-location or foreground frame-pacing claim; native/capture scratch is additional to retained bytes."
+  },
+  "native_player_sha256": {
+    "debug": "3cff17ba201ca7e36290e70f18f16a340e9b46d5a72ef60eb8183568f97aefa5",
+    "release": "d5b9ae2be7dfffb7e1f47477eefb95510642d1e4e2f88718cd7d6fb909c849dc"
+  },
+  "export": {
+    "build_log": "reports/location_reset_plan_build_final.log",
+    "log": "reports/location_reset_plan_export_final.log",
+    "gates": "reports/building_standards/20261102T202103925285Z/run.json",
+    "pack_bytes": 471096496,
+    "pack_sha256": "988aa6eb008de18926d33d1c45fe6f423c5d7c3f7f2359ab3c7f844e7bfa7bba",
+    "matching_native_libraries": 14,
+    "preserved_other_chat_commits": ["c35fe875", "9f3de60d"]
+  },
+  "retained_initial_failures": [
+    {"path": "reports/location_reset_plan/20261102T200028143085Z", "reason": "Fixture used void check as boolean and inferred a Variant dictionary; corrected declarations"},
+    {"path": "reports/quests_world/20261102T200458153643Z", "reason": "Generated world passed original checks but model pages still had two jobs during plan capture; test now waits for actual model paging readiness, keeping fail-closed runtime behavior"}
+  ],
+  "remaining": [
+    "Cooperative preparation and bounded hydration for all accepted location types",
+    "Live body/prop quiescence and retirement, protection transitions and local contact/render refresh",
+    "Safe player/vehicle and foreign-actor exclusion",
+    "Reader cancellation/world-teardown lifecycle ownership",
+    "Durable pre-reset checkpoint and authoritative-root crash recovery; failed final save does not prove old root survived",
+    "Question-mark/E, trader offer and reward integration",
+    "Played generated-location reset and outside preservation, interruption/fresh-process recovery and foreground timing"
+  ],
+  "safety": "No player saves modified, no pointer capture or power-mode changes. Planner/batch isolated harnesses reference existing DLLs instead of copying libraries. Other native regressions retain their existing harness behavior. Real-world preflight applies no reset."
+}
