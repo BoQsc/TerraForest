@@ -267,12 +267,25 @@ in the installed package. Immutable
 world/location/definition-bound payloads reuse the existing native archive writer;
 128 references occupy only 10,320 bytes. Worker I/O leaves manifest queries usable.
 The fixture restores real terrain and preserves outside edits, not a full live POI.
-Still required: generation-time capture of every owner, stable world/definition
-identities, compound-save registration, clone/retention coverage and transactional
-live reset with player/vehicle exclusion, quiescence and rollback. No repeatable
-quest is enabled by this storage primitive. The package gate passes; resume
-integration now and require normal generated-world marker/E/reset/reopen and timing evidence.
+Follow-up: the actual persistence provider now registers compact references. New
+generation creates a world identity once; existing worlds are not recaptured.
+Native clone/recovery verifies and copies only referenced originals, with six
+interruption phases tested. Read-only restore performs no directory creation or
+payload scan. Debug, release and installed package each pass 172 storage/publication
+checks; the real terrain-worker save/restore/clone path passes 15.
+Default generation also creates 51 buildings and preserves its identity through
+the ordinary selector, saves and genuine fresh-process reopen (12 + 13 scoped
+checks). The old full quest fixture's pre-introduction generic acceptance now
+correctly rejects; this follow-up does not count that as a passing quest journey.
+The older broad
+water-persistence test still fails its unfinished-lake shutdown assertions, also
+reproduced with the previous persistence script; this change does not fix that.
+Still required: generation-time capture of every owner, stable definition identities,
+exact natural vegetation selection and transactional live reset with player/vehicle
+exclusion, quiescence and rollback. No repeatable quest is enabled yet. Resume
+those integrations and require normal generated-world marker/E/reset/reopen and timing evidence.
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
+[Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and

@@ -355,13 +355,30 @@ This is an opaque storage envelope, not proof that every owner patch is semantic
 valid or complete. The coordinator must validate each native patch and its ownership
 before any world mutation. Tests restore real terrain from a fresh-process durable
 baseline while preserving an outside edit; remaining slots in that storage fixture
-are not a complete generated POI. Generation-time capture, stable identity creation,
-compound-save reference registration, world cloning/retention, exact natural-root
-selection and the live rollback transaction remain unimplemented. Both native
-builds and the installed package pass 101 baseline/reopen/archive assertions each;
-resume that integration now. Close only with ordinary generated-world
+are not a complete generated POI. The normal persistence provider now saves/restores
+`location_baselines_v1`. New generation creates one random world identity before
+its first save; legacy worlds stay unbound, without baseline-directory creation or
+invented originals. Reload binds the saved identity without payload I/O. Read-only
+worlds cannot publish originals. Native generation verification checks referenced
+payloads on its worker; native publication copies only referenced immutable files,
+then promotes the canonical root last. Six interruption phases recover only after
+verifying the selected originals. Completed generation retires its redundant
+baseline sidecar; diagnostic Python clones conservatively preserve the full sidecar.
+Generation-time capture of every owner, stable location-definition identities,
+exact natural-root selection and the live rollback transaction remain unimplemented.
+Both native builds and the installed package pass 172 baseline/publication/reopen/archive
+assertions each. The actual terrain save backend additionally passes 15 checks.
+The installed default recipe generates 51 buildings and the new identity; its
+ordinary selector/save/reopen and fresh-process follow-up pass 12 + 13 scoped
+checks without changing introduction state. The older full quest fixture still
+tries to accept a generic contract before introduction and fails that now-invalid
+assumption. This is retained, not counted as a complete quest run. Identity capture
+is 80 bytes; measured saves and bounded costs are in the linked evidence, not a
+claim of foreground frame-pacing qualification.
+Close only with ordinary generated-world
 marker/E reset, safe player/vehicle handling, clear/reward/reopen and frame timings.
 [Baseline storage evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
+[Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).
 
 These primitives are not a complete location reset: live residents/corpses,
 falling trees/fractured boulders require quiescence; water requires selected-region

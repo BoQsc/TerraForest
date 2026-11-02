@@ -5,6 +5,17 @@ import sys,tempfile,unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"tools"))
 from clone_world import clone_once
 class CacheCloneTests(unittest.TestCase):
+ def test_location_originals_follow_diagnostic_clone(self):
+  with tempfile.TemporaryDirectory() as temp:
+   root=Path(temp);(root/"source.trw").write_bytes(b"compound reference")
+   originals=root/"source.trw.baselines";originals.mkdir()
+   (originals/"original.baseline").write_bytes(b"immutable original")
+   self.assertTrue(clone_once(root,"source","copy")["created"])
+   self.assertEqual((root/"copy.trw.baselines/original.baseline").read_bytes(),b"immutable original")
+   (root/"blocked.trw.baselines").mkdir()
+   with self.assertRaises(FileExistsError):clone_once(root,"source","blocked")
+   self.assertFalse((root/"blocked.trw").exists())
+
  def test_water_checkpoint_dependencies_follow_clone(self):
   with tempfile.TemporaryDirectory() as temp:
    root=Path(temp);(root/"source.trw").write_bytes(b"checkpoint reference")

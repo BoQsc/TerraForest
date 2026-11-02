@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "world_archive.hpp"
+#include "location_baseline.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
@@ -43,13 +44,44 @@ bool valid_sections(const Dictionary &sections){
     return true;
 }
 }
+bool parse_location_baselines(const PackedByteArray &data,std::map<int64_t,LocationBaselineEntry> &parsed,PackedByteArray &identity){
+    if(data.is_empty())return true;
+    if(data.size()<manifest_header+digest_size||data.size()>manifest_header+location_limit*manifest_record+digest_size||
+        data.decode_u32(0)!=manifest_magic||data.decode_u32(4)!=1||data.decode_u32(12)!=0)return false;
+    const uint32_t count=data.decode_u32(8);
+    if(count>location_limit||data.size()!=manifest_header+int64_t(count)*manifest_record+digest_size)return false;
+    identity=data.slice(16,48);if(!valid_digest(identity)||hash_bytes(data.slice(0,data.size()-digest_size))!=data.slice(data.size()-digest_size))return false;
+    int64_t previous=0,total=0;
+    for(uint32_t index=0;index<count;++index){
+        const int offset=manifest_header+index*manifest_record;const uint64_t key=data.decode_u64(offset),size=data.decode_u64(offset+72);
+        if(key<=uint64_t(previous)||key>INT64_MAX||size==0||size>baseline_limit||size>uint64_t(total_limit-total))return false;
+        LocationBaselineEntry entry{data.slice(offset+8,offset+40),data.slice(offset+40,offset+72),int64_t(size)};
+        if(!valid_digest(entry.definition)||!valid_digest(entry.digest))return false;
+        parsed.emplace(int64_t(key),entry);previous=int64_t(key);total+=int64_t(size);
+    }
+    return true;
+}
+PackedByteArray read_location_baseline(const String &directory,int64_t key,const LocationBaselineEntry &entry,const PackedByteArray &world,Dictionary &sections){
+    const Ref<FileAccess> file=FileAccess::open(directory.path_join(entry.digest.hex_encode()+".baseline"),FileAccess::READ);
+    if(file.is_null()||entry.bytes<=0||entry.bytes>baseline_limit||file->get_length()!=uint64_t(entry.bytes))return {};
+    const auto packet=file->get_buffer(entry.bytes);
+    if(packet.size()!=entry.bytes||hash_bytes(packet)!=entry.digest)return {};
+    Ref<NativeWorldArchive> codec;codec.instantiate();const auto decoded=codec->decode(packet);
+    if(!bool(decoded["ok"]))return {};
+    sections=decoded["sections"];
+    PackedByteArray identity;identity.resize(16);identity.encode_u32(0,identity_magic);identity.encode_u32(4,1);identity.encode_u64(8,key);
+    identity.append_array(world);identity.append_array(entry.definition);
+    if(!sections.has("baseline_identity")||sections["baseline_identity"].get_type()!=Variant::PACKED_BYTE_ARRAY||PackedByteArray(sections["baseline_identity"])!=identity)return {};
+    sections.erase("baseline_identity");return valid_sections(sections)?packet:PackedByteArray();
+}
 class NativeLocationBaselineStore : public RefCounted {
     GDCLASS(NativeLocationBaselineStore,RefCounted)
-    struct Entry {PackedByteArray definition,digest;int64_t bytes=0;};
+    using Entry=LocationBaselineEntry;
     mutable std::mutex mutex;
     String directory;
     PackedByteArray world;
     Ref<NativeWorldArchive> lease;
+    bool configured=false,read_only=false;
     std::map<int64_t,Entry> entries;
     int64_t revision=0;
     mutable bool io_active=false;
@@ -58,21 +90,7 @@ class NativeLocationBaselineStore : public RefCounted {
         Dictionary output;output["ok"]=ok;output["reason"]=reason;output["revision"]=revision;return output;
     }
     static bool parse(const PackedByteArray &data,std::map<int64_t,Entry> &parsed,PackedByteArray &identity){
-        if(data.is_empty())return true;
-        if(data.size()<manifest_header+digest_size||data.size()>manifest_header+location_limit*manifest_record+digest_size||
-            data.decode_u32(0)!=manifest_magic||data.decode_u32(4)!=1||data.decode_u32(12)!=0)return false;
-        const uint32_t count=data.decode_u32(8);
-        if(count>location_limit||data.size()!=manifest_header+int64_t(count)*manifest_record+digest_size)return false;
-        identity=data.slice(16,48);if(!valid_digest(identity)||hash_bytes(data.slice(0,data.size()-digest_size))!=data.slice(data.size()-digest_size))return false;
-        int64_t previous=0,total=0;
-        for(uint32_t index=0;index<count;++index){
-            const int offset=manifest_header+index*manifest_record;const uint64_t key=data.decode_u64(offset),size=data.decode_u64(offset+72);
-            if(key<=uint64_t(previous)||key>INT64_MAX||size==0||size>baseline_limit||size>uint64_t(total_limit-total))return false;
-            Entry entry{data.slice(offset+8,offset+40),data.slice(offset+40,offset+72),int64_t(size)};
-            if(!valid_digest(entry.definition)||!valid_digest(entry.digest))return false;
-            parsed.emplace(int64_t(key),entry);previous=int64_t(key);total+=int64_t(size);
-        }
-        return true;
+        return parse_location_baselines(data,parsed,identity);
     }
     PackedByteArray read_blob(const PackedByteArray &digest,int64_t expected_size) const {
         const auto path=directory.path_join(digest.hex_encode()+".baseline");
@@ -88,30 +106,43 @@ class NativeLocationBaselineStore : public RefCounted {
 protected:
     static void _bind_methods(){
         ClassDB::bind_method(D_METHOD("open_store","absolute_directory","world_identity"),&NativeLocationBaselineStore::open_store);
+        ClassDB::bind_method(D_METHOD("configure_world","absolute_world_path","read_only"),&NativeLocationBaselineStore::configure_world);
+        ClassDB::bind_method(D_METHOD("initialize_world","world_identity"),&NativeLocationBaselineStore::initialize_world);
         ClassDB::bind_method(D_METHOD("state"),&NativeLocationBaselineStore::state);
         ClassDB::bind_method(D_METHOD("publish_baseline","key","definition","sections","revision","owner"),&NativeLocationBaselineStore::publish_baseline);
         ClassDB::bind_method(D_METHOD("load_baseline","key","definition"),&NativeLocationBaselineStore::load_baseline);
+        ClassDB::bind_method(D_METHOD("verify_references"),&NativeLocationBaselineStore::verify_references);
         ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeLocationBaselineStore::capture_storage_snapshot);
         ClassDB::bind_method(D_METHOD("validate_snapshot","data"),&NativeLocationBaselineStore::validate_snapshot);
         ClassDB::bind_method(D_METHOD("restore_storage_snapshot","data"),&NativeLocationBaselineStore::restore_storage_snapshot);
     }
 public:
+    bool configure_world(const String &path,bool readonly){
+        std::lock_guard<std::mutex> lock(mutex);
+        if(configured||!path.is_absolute_path()||path.begins_with("res://")||path.begins_with("user://")||!path.ends_with(".trw"))return false;
+        directory=path.replace("\\","/").simplify_path()+".baselines";configured=true;read_only=readonly;++revision;return true;
+    }
+    bool initialize_world(const PackedByteArray &identity){
+        std::lock_guard<std::mutex> lock(mutex);
+        if(!configured||read_only||!world.is_empty()||!entries.empty()||!valid_digest(identity)||revision==INT64_MAX)return false;
+        world=identity;++revision;return true;
+    }
     bool open_store(const String &absolute_directory,const PackedByteArray &world_identity){
         std::lock_guard<std::mutex> lock(mutex);
-        if(lease.is_valid()||!absolute_directory.is_absolute_path()||absolute_directory.begins_with("res://")||absolute_directory.begins_with("user://")||!valid_digest(world_identity))return false;
+        if(configured||!absolute_directory.is_absolute_path()||absolute_directory.begins_with("res://")||absolute_directory.begins_with("user://")||!valid_digest(world_identity))return false;
         const String path=absolute_directory.replace("\\","/").simplify_path();
         if(DirAccess::make_dir_recursive_absolute(path)!=OK)return false;
         Ref<NativeWorldArchive> writer;writer.instantiate();if(!writer->acquire(path.path_join("baselines")))return false;
-        directory=path;world=world_identity;lease=writer;++revision;return true;
+        directory=path;world=world_identity;lease=writer;configured=true;++revision;return true;
     }
     Dictionary state() const {
         std::lock_guard<std::mutex> lock(mutex);
-        auto output=result(lease.is_valid(),lease.is_valid()?"":"not_open");
+        auto output=result(configured&&!world.is_empty(),configured&&!world.is_empty()?"":"not_open");
         output["owner"]=int64_t(get_instance_id());output["locations"]=int64_t(entries.size());output["bytes"]=total_bytes();output["io_active"]=io_active;return output;
     }
     Dictionary publish_baseline(int64_t key,const PackedByteArray &definition,const Dictionary &sections,int64_t expected_revision,int64_t expected_owner){
         std::unique_lock<std::mutex> lock(mutex);
-        if(lease.is_null()||expected_revision!=revision||expected_owner!=int64_t(get_instance_id())||revision==INT64_MAX)return result(false,"invalid_or_stale");
+        if(!configured||world.is_empty()||read_only||expected_revision!=revision||expected_owner!=int64_t(get_instance_id())||revision==INT64_MAX)return result(false,"invalid_or_stale");
         if(io_active)return result(false,"busy");
         if(key<=0||!valid_digest(definition)||!valid_sections(sections))return result(false,"invalid_baseline");
         const auto found=entries.find(key);
@@ -125,6 +156,12 @@ public:
         const int64_t available=total_limit-total_bytes();
         PackedByteArray digest;int64_t size=0;io_active=true;lock.unlock();
         const char *failure=[&]()->const char *{
+            if(lease.is_null()){
+                if(DirAccess::make_dir_recursive_absolute(directory)!=OK)return "directory_unavailable";
+                Ref<NativeWorldArchive> writer;writer.instantiate();
+                if(!writer->acquire(directory.path_join("baselines")))return "writer_busy";
+                lease=writer;
+            }
             const auto packet=lease->encode(combined);if(packet.is_empty()||packet.size()>baseline_limit)return "invalid_baseline";
             size=packet.size();digest=hash_bytes(packet);if(!valid_digest(digest))return "hash_failed";
             if(!added&&(previous.digest!=digest||previous.bytes!=size))return "immutable_conflict";
@@ -145,22 +182,31 @@ public:
     Dictionary load_baseline(int64_t key,const PackedByteArray &definition) const {
         std::unique_lock<std::mutex> lock(mutex);
         const auto found=entries.find(key);
-        if(lease.is_null()||found==entries.end()||definition!=found->second.definition)return result(false,"unknown_or_changed_location");
+        if(!configured||found==entries.end()||definition!=found->second.definition)return result(false,"unknown_or_changed_location");
         if(io_active)return result(false,"busy");
-        const Entry entry=found->second;Dictionary sections;const auto identity=metadata(key,definition);
+        const Entry entry=found->second;Dictionary sections;
         io_active=true;lock.unlock();
         const char *failure=[&]()->const char *{
-            const auto packet=read_blob(entry.digest,entry.bytes);if(packet.is_empty())return "missing_or_corrupt_baseline";
-            const auto decoded=lease->decode(packet);if(!bool(decoded["ok"]))return "invalid_baseline";
-            sections=decoded["sections"];
-            if(!sections.has("baseline_identity")||sections["baseline_identity"].get_type()!=Variant::PACKED_BYTE_ARRAY||PackedByteArray(sections["baseline_identity"])!=identity)return "identity_mismatch";
-            sections.erase("baseline_identity");return valid_sections(sections)?"":"invalid_baseline";
+            return read_location_baseline(directory,key,entry,world,sections).is_empty()?"missing_or_invalid_baseline":"";
         }();
         lock.lock();io_active=false;if(*failure)return result(false,failure);
         auto output=result(true,"");output["sections"]=sections;output["digest"]=found->second.digest;return output;
     }
+    Dictionary verify_references() const {
+        std::unique_lock<std::mutex> lock(mutex);
+        if(!configured||io_active)return result(false,io_active?"busy":"not_open");
+        const auto selected=entries;const auto identity=world;int64_t checked=0,bytes=0;bool valid=true;
+        io_active=true;lock.unlock();
+        for(const auto &[key,entry]:selected){
+            Dictionary sections;
+            if(read_location_baseline(directory,key,entry,identity,sections).is_empty()){valid=false;break;}
+            ++checked;bytes+=entry.bytes;
+        }
+        lock.lock();io_active=false;
+        auto output=result(valid,valid?"":"missing_or_invalid_baseline");output["locations"]=checked;output["bytes"]=bytes;return output;
+    }
     PackedByteArray capture_storage_snapshot() const {
-        std::lock_guard<std::mutex> lock(mutex);if(lease.is_null())return {};
+        std::lock_guard<std::mutex> lock(mutex);if(!configured||world.is_empty())return {};
         PackedByteArray data;if(data.resize(manifest_header+entries.size()*manifest_record)!=OK)return {};data.fill(0);
         data.encode_u32(0,manifest_magic);data.encode_u32(4,1);data.encode_u32(8,entries.size());
         for(int index=0;index<digest_size;++index)data.set(16+index,world[index]);
@@ -177,9 +223,10 @@ public:
         return parse(data,parsed,identity)&&(world.is_empty()||identity.is_empty()||identity==world);
     }
     bool restore_storage_snapshot(const PackedByteArray &data){
-        std::lock_guard<std::mutex> lock(mutex);if(lease.is_null()||io_active||revision==INT64_MAX)return false;
+        std::lock_guard<std::mutex> lock(mutex);if(!configured||io_active||revision==INT64_MAX)return false;
         std::map<int64_t,Entry> parsed;PackedByteArray identity;
-        if(!parse(data,parsed,identity)||(!identity.is_empty()&&identity!=world))return false;
+        if(!parse(data,parsed,identity)||(!world.is_empty()&&!identity.is_empty()&&identity!=world))return false;
+        if(world.is_empty())world=identity;
         entries=std::move(parsed);++revision;return true;
     }
 };

@@ -1,6 +1,7 @@
 {
   "date": "2026-11-02",
-  "status": "Native and installed-package durable storage verified; generation capture and live repeatable POI reset are unfinished",
+  "status": "Initial durable-storage evidence; subsequent persistence/publication integration is verified separately. Generation owner capture and live repeatable reset remain unfinished",
+  "integration_follow_up": "location-baseline-integration-evidence.json",
   "formats": {
     "payload": "Existing TFWORLD1 canonical archive containing twelve explicit core-owner sections, bounded named extensions and an 80-byte TFQB1 world/location/definition identity",
     "references": "TFBI1: 48-byte header, sorted 80-byte references and SHA-256 trailer"
@@ -199,9 +200,8 @@
     "No player save changed; no new repeated quest offered"
   ],
   "remaining": [
-    "Generate stable world and location-definition identities",
+    "Generate stable location-definition identities (world identity now integrated)",
     "Capture all owner patches from pristine generation state, including exact natural vegetation roots",
-    "Register reference manifest with compound saves and clone all referenced payloads",
     "Validate each opaque patch semantically and bind its exact reset region before mutation",
     "Water hydration/contact rebuilding and local mesh/collision publication",
     "Live resident/corpse/falling-tree/fractured-boulder quiescence",

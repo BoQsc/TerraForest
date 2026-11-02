@@ -462,6 +462,7 @@ func run()->void:
    var manifest:=FileAccess.open(output_dir.path_join("world_signature.json"),FileAccess.WRITE)
    manifest.store_string(JSON.stringify({"seed":seed_value,"generator":generator,"signature":snapshot_signature(game)}));manifest.close()
   else:
+   if not game.persistence.initialize_location_baselines():print("LOCATION_BASELINE_IDENTITY_FAILED");game.free();quit(1);return
    saved_map_stamps={"blocks":game.world_map.block_survey.current_stamp(),"models":game.world_map.model_survey.current_stamp(),"water":game.world_map.water_survey.current_stamp(),"terrain":game.terrain.density_revision}
    var saved:Dictionary={"done":false,"ok":false}
    game.terrain.save_completed.connect(func(ok:bool):saved.done=true;saved.ok=ok,CONNECT_ONE_SHOT)

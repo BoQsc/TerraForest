@@ -50,8 +50,10 @@ def main():
             (project / '.godot/extension_list.cfg').write_text('\n'.join(extensions) + '\n')
             for name in ('mesh_codec.gd', 'mesh_codec.gd.uid'):
                 shutil.copy2(ROOT / 'addons/volumetric_terrain' / name, project / 'addons/volumetric_terrain' / name)
+            for name in ('world_persistence.gd', 'world_persistence.gd.uid'):
+                shutil.copy2(ROOT / 'addons/world_runtime' / name, project / 'addons/world_runtime' / name)
         runtime = ['--path', str(ROOT / 'dist'), '--main-pack', str(pack)] if args.pack else ['--path', str(project)]
-        for phase, test in [('create', 'location_baseline'), ('reopen', 'location_baseline'), ('archive', 'world_archive')]:
+        for phase, test in [('create', 'location_baseline'), ('reopen', 'location_baseline'), ('publication', 'location_baseline_publication'), ('publication_reopen', 'location_baseline_publication'), ('archive', 'world_archive')]:
             output = project / phase
             output.mkdir()
             (output / 'user').mkdir()
@@ -59,15 +61,15 @@ def main():
             driver = output / source.name
             script = source.read_text().replace('user://', output.as_posix() + '/user/').replace('res://reports', output.as_posix() + '/reports')
             driver.write_text(script)
-            marker = 'LOCATION_BASELINE checks=' if test == 'location_baseline' else 'PASS save lease released for next owner'
+            marker = 'LOCATION_PUBLICATION checks=' if test == 'location_baseline_publication' else 'LOCATION_BASELINE checks=' if test == 'location_baseline' else 'PASS save lease released for next owner'
             command = [config.godot, '--headless', *runtime, '--script', str(driver), '--log-file', str(output / 'engine.log'), '--', '--baseline-dir=' + str(project)]
-            if phase == 'reopen':
+            if phase.endswith('reopen'):
                 command.append('--reopen')
             result = execute(command, output, 150, marker)
             log = (output / 'console.log').read_text(encoding='utf-8', errors='replace')
-            match = re.search(r'LOCATION_BASELINE checks=(\d+) failures=(\d+)', log)
+            match = re.search(r'LOCATION_(?:BASELINE|PUBLICATION) checks=(\d+) failures=(\d+)', log)
             assertions = list(map(int, match.groups())) if match else None
-            if test == 'location_baseline':
+            if test.startswith('location_baseline'):
                 result['passed'] = result['passed'] and assertions is not None and assertions[0] > 0 and assertions[1] == 0
             else:
                 receipt = output / 'reports/world_archive.json'
@@ -83,10 +85,12 @@ def main():
     if args.pack and (verify_pack_native() != native or hashlib.sha256(pack.read_bytes()).hexdigest() != pack_hash):
         raise RuntimeError('Installed package changed during verification')
     record = dict(passed=all(row['result']['passed'] for row in rows), runs=rows, native_sha256=native, pack_sha256=pack_hash,
-                  scope='Immutable world/location-bound opaque patches and reference manifest. No generation capture, live reset transaction or marker/E activation.',
+                  scope='Immutable world/location-bound opaque patches, compound persistence provider, selected-reference publication/recovery. No generation owner capture, live reset transaction or marker/E activation.',
                   sources={name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in (
-                      'addons/world_runtime/native/location_baseline.cpp', 'addons/world_runtime/native/register_types.cpp',
-                      'tests/location_baseline.gd', 'tools/check_location_baseline.py')}, **revision_metadata())
+                      'addons/world_runtime/native/location_baseline.cpp', 'addons/world_runtime/native/location_baseline.hpp',
+                      'addons/world_runtime/native/world_publication.cpp', 'addons/world_runtime/world_persistence.gd',
+                      'addons/world_runtime/generate_world_task.gd', 'addons/world_runtime/native/register_types.cpp',
+                      'tests/location_baseline.gd', 'tests/location_baseline_publication.gd', 'tools/check_location_baseline.py')}, **revision_metadata())
     record['native_copy_retention'] = release_copies(copied_libraries, record['passed'])
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n')
     print(('PASS ' if record['passed'] else 'FAIL ') + str(folder), flush=True)

@@ -16,12 +16,13 @@ def main():
     reuse = parser.add_mutually_exclusive_group()
     reuse.add_argument('--restore-report')
     reuse.add_argument('--exercise-report')
+    reuse.add_argument('--baseline-report')
     args = parser.parse_args()
     config, _ = parse_args([])
     base = ROOT / 'reports/quests_world'
     folder = base / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)
-    source_report = args.restore_report or args.exercise_report
+    source_report = args.restore_report or args.exercise_report or args.baseline_report
     if source_report:
         source = (ROOT / source_report).resolve()
         if base.resolve() not in source.parents:
@@ -29,9 +30,9 @@ def main():
         receipt = json.loads((source / 'created_slot.json').read_text())
         if not receipt['slot'].startswith('Quests_'):
             parser.error('Not an owned quest fixture')
-        for name in ['expected.bin', 'created_slot.json']:
+        for name in (['created_slot.json'] if args.baseline_report else ['expected.bin', 'created_slot.json']):
             (folder / name).write_bytes((source / name).read_bytes())
-    record = dict(pack=args.pack, restore_report=args.restore_report, exercise_report=args.exercise_report, phases=[], **revision_metadata())
+    record = dict(pack=args.pack, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
     script = ROOT / 'tests/quests_world.gd'
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -51,7 +52,7 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        for phase in (['restore'] if args.restore_report else ['exercise', 'restore'] if args.exercise_report else ['create', 'restore']):
+        for phase in (['baseline', 'baseline_reopen'] if args.baseline_report else ['restore'] if args.restore_report else ['exercise', 'restore'] if args.exercise_report else ['create', 'restore']):
             destination = folder / phase
             destination.mkdir()
             command = [config.godot, '--path', str(ROOT / 'dist' if args.pack else ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(destination / 'engine.log'), '--script', str(script), '--', '--session-evidence-dir=' + folder.as_posix()]
@@ -61,6 +62,10 @@ def main():
                 command.append('--restore-quests')
             elif phase == 'exercise':
                 command.append('--exercise-quests')
+            elif phase.startswith('baseline'):
+                command.append('--baseline-check')
+                if phase == 'baseline_reopen':
+                    command.append('--baseline-reopen')
             result = execute(command, destination, 800, 'QUESTS_WORLD checks=', require_resource_budget=True)
             record['phases'].append(dict(phase=phase, command=command, result=result))
             record['passed'] = all(row['result']['passed'] for row in record['phases'])

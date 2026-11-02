@@ -13,6 +13,22 @@ var _restored_epoch: int = -1
 var _region_structures := false
 var _metadata_first := false
 var _model_metadata_first := false
+var location_baselines:RefCounted
+var _baselines_bound:=false
+
+func _bind_location_baselines()->bool:
+	if _baselines_bound:return true
+	if _terrain==null:return false
+	_baselines_bound=location_baselines.configure_world(ProjectSettings.globalize_path(_terrain.backend.save_path),_terrain.backend.readonly_snapshot or _terrain.backend.temporary)
+	return _baselines_bound
+
+func initialize_location_baselines()->bool:
+	if not _bind_location_baselines() or not _terrain.world_ready or not _terrain.snapshot_restore_ok or _restoring:return false
+	if FileAccess.file_exists(_terrain.backend.save_path):return false
+	return location_baselines.initialize_world(Crypto.new().generate_random_bytes(32))
+
+func _restore_location_baselines(data:PackedByteArray)->bool:
+	return _bind_location_baselines() and location_baselines.restore_storage_snapshot(data)
 
 func enable_region_structures(metadata_first: bool = false, model_metadata_first: bool = false) -> bool:
 	if _terrain != null or not _providers.has("structures") or not ClassDB.class_exists("NativeRegionWorldArchive"):
@@ -50,6 +66,8 @@ func attach(terrain: Node) -> Error:
 		GDExtensionManager.load_extension("res://addons/world_runtime/world_runtime.gdextension")
 	if not ClassDB.class_exists("NativeWorldArchive"):
 		return ERR_CANT_OPEN
+	location_baselines=ClassDB.instantiate("NativeLocationBaselineStore")
+	if location_baselines==null or not register_component("location_baselines_v1",location_baselines.capture_storage_snapshot,_restore_location_baselines,location_baselines,PackedByteArray()):return ERR_CANT_CREATE
 	var archive: RefCounted = ClassDB.instantiate("NativeWorldArchive")
 	if _region_structures:
 		var adapter: RefCounted = ClassDB.instantiate("NativeRegionWorldArchive")

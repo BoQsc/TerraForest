@@ -12,10 +12,11 @@ func _initialize()->void:
 func run()->void:
 	var restoring:bool="--restore-quests" in OS.get_cmdline_user_args()
 	var exercising:bool="--exercise-quests" in OS.get_cmdline_user_args()
+	var baselines_only:bool="--baseline-check" in OS.get_cmdline_user_args()
 	change_scene_to_file("res://demo/worlds.tscn");await scene_changed;await wait_for(browser_catalog_ready)
 	var browser:=current_scene
-	if restoring or exercising:
-		expected=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()
+	if restoring or exercising or baselines_only:
+		expected=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("created_slot.json"))) if baselines_only else FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()
 		if not check(str(expected.slot).begins_with("Quests_"),"reopen only an owned quest fixture"):await finish();return
 		var selected:=-1
 		for index in browser.worlds.item_count:
@@ -32,7 +33,10 @@ func run()->void:
 	game=current_scene;game.background_fps=60;game.app_focused=true;game.set_physics_process(false);game._clear_motion();game.zombies.update(0,game.player.global_position,false)
 	var store:RefCounted=game.quests.store;var locations:Array=store.get_locations()
 	check(game.persistence._providers.has("player_quests") and store.snapshot().seed==1703,"native quest component participates in the actual compound world save")
+	if baselines_only:
+		await verify_baseline_roundtrip();await finish();return
 	if not restoring and not exercising:
+		check(game.persistence.location_baselines.capture_storage_snapshot().size()==80,"ordinary generation publishes its world identity without placeholder owner patches")
 		if not check(not locations.is_empty() and store.accept(locations[0].key,store.snapshot().revision).ok,"newly generated world accepts its first real location"):await finish();return
 		remember(store)
 		game.terrain.changed_since_save=true
@@ -47,8 +51,10 @@ func run()->void:
 		game=current_scene;game.background_fps=60;game.app_focused=true;game.set_physics_process(false);game._clear_motion();game.zombies.update(0,game.player.global_position,false)
 		store=game.quests.store;locations=store.get_locations()
 		check(store.capture_storage_snapshot()==expected.quests,"first post-generation reservation restores exactly")
+		check(game.persistence.location_baselines.capture_storage_snapshot()==expected.baselines,"published generation identity survives first normal save and reopen")
 		if not check(store.abandon(store.snapshot().revision).ok,"owned first-save fixture clears its test reservation"):await finish();return
 	if restoring:
+		if expected.has("baselines"):check(game.persistence.location_baselines.capture_storage_snapshot()==expected.baselines,"fresh process preserves generation baseline identity")
 		check(store.capture_storage_snapshot()==expected.quests,"fresh process restores exact generated ownership and accepted contract")
 		check(store.snapshot().phase==1 and store.snapshot().key==expected.key,"travel reservation persists without inventing reset or kill progress")
 		check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory and game.player_hud.progression.capture_storage_snapshot()==expected.progression,"metadata and reservation add no items or XP")
@@ -88,8 +94,30 @@ func run()->void:
 	check(await leave(),"normal save and return publishes quest state with the world")
 	await finish()
 
+func verify_baseline_roundtrip()->void:
+	var manifest:PackedByteArray=game.persistence.location_baselines.capture_storage_snapshot()
+	var quests:PackedByteArray=game.quests.store.capture_storage_snapshot()
+	check(manifest.size()==80 and game.persistence.location_baselines.state().locations==0,"ordinary generated world has its own identity, not invented owner originals")
+	var expected_path:=folder.path_join("baseline_expected.bin")
+	if "--baseline-reopen" in OS.get_cmdline_user_args():
+		check(FileAccess.get_file_as_bytes(expected_path)==manifest,"fresh process restores the exact generated world identity")
+	else:FileAccess.open(expected_path,FileAccess.WRITE).store_buffer(manifest)
+	game.terrain.changed_since_save=true
+	if not check(await leave(),"normal save and return publishes baseline reference section"):return
+	var browser:=current_scene;var selected:=-1
+	for index in browser.worlds.item_count:
+		if browser.worlds.get_item_metadata(index)==expected.slot:selected=index;break
+	if not check(selected>=0,"generated world remains in ordinary selector"):return
+	browser.worlds.select(selected);browser.launch_selected(false)
+	if not check(await wait_for(game_ready,120),"normal selector reopens generated world with baseline metadata"):return
+	game=current_scene;game.background_fps=60;game.app_focused=true;game.set_physics_process(false);game._clear_motion();game.zombies.update(0,game.player.global_position,false)
+	check(game.persistence.location_baselines.capture_storage_snapshot()==manifest,"normal save/reopen keeps exact baseline identity")
+	check(game.quests.store.capture_storage_snapshot()==quests,"baseline persistence does not bypass introduction or start a quest")
+	check(await leave(),"baseline check closes through normal save path")
+
 func remember(store:RefCounted)->void:
 	expected.key=store.snapshot().key
+	expected.baselines=game.persistence.location_baselines.capture_storage_snapshot()
 	expected.quests=store.capture_storage_snapshot();expected.inventory=game.player_hud.inventory.capture_storage_snapshot();expected.progression=game.player_hud.progression.capture_storage_snapshot();expected.storage=game.storage.store.capture_storage_snapshot()
 	FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE).store_var(expected)
 

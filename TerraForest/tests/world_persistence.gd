@@ -54,6 +54,9 @@ func run() -> void:
 	Engine.max_fps = 240
 	create_world()
 	check(await until(func(): return terrain.world_ready),"new compound world ready")
+	check(persistence.initialize_location_baselines(),"new compound world binds generation baseline identity")
+	var baseline_identity:PackedByteArray=persistence.location_baselines.capture_storage_snapshot()
+	check(baseline_identity.size()==80 and not DirAccess.dir_exists_absolute(terrain.backend.save_path+".baselines"),"empty generation manifest is bounded without sidecar allocation")
 	var height: Array = []
 	terrain.height_received.connect(func(_p: Vector3,h: float,_token: int): height.append(h))
 	terrain.request_height(center,999)
@@ -78,6 +81,7 @@ func run() -> void:
 	create_world()
 	check(await until(func(): return terrain.world_ready and lakes.statistics()["ready"]==1),"new process-equivalent world instance restores and rebakes lake")
 	check(lakes.capture_snapshot()==captured,"shutdown during queued reload does not overwrite restored addon state with stale UI state")
+	check(persistence.location_baselines.capture_storage_snapshot()==baseline_identity,"actual terrain backend restores generation baseline identity")
 	check(lakes.capture_snapshot()==captured and lakes.depth_at(center-Vector3(0,6,0))>0,"persistent IDs definitions and water occupancy restored")
 	check(not terrain.natural_column_available(center),"terrain edit metadata restored with lake state")
 	close_world()

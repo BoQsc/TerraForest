@@ -75,7 +75,7 @@ static func command(slot: String,create: bool,generator: int,seed: int,gameplay:
 	if create:
 		if preparation_slot(slot):return {"ok":false,"reason":"That name is reserved for preparation. Choose a different world name."}
 		if not PRESETS.has(generator) or seed<0 or seed>2147483647 or layout not in ["connected","road","settlement"]:return {"ok":false,"reason":"Choose a generator and seed between 0 and 2147483647."}
-		for suffix in ["",".bak",".tmp",".regions",".models",".water",".terrain"]:
+		for suffix in ["",".bak",".tmp",".regions",".models",".water",".terrain",".baselines"]:
 			if FileAccess.file_exists(canonical+suffix) or DirAccess.dir_exists_absolute(canonical+suffix):return {"ok":false,"reason":"That name already has world data. Choose another name or open the saved world."}
 		if FileAccess.file_exists(directory.path_join(slot+".clone.lock")):return {"ok":false,"reason":"That world is being prepared. Choose another name."}
 		# Native leases are owned by an OS handle, not by the presence of a file.

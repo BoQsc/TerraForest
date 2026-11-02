@@ -10,6 +10,8 @@ static func verify(path:String,seed_value:int,generator:int,options:Dictionary={
  var decoded:Dictionary=raw.decode(canonical)
  if not decoded.get("ok",false):return {"ok":false,"reason":"Generated world root is invalid"}
  var sections:Dictionary=decoded.sections
+ var originals:RefCounted=ClassDB.instantiate("NativeLocationBaselineStore")
+ if not originals.configure_world(path,true) or not originals.restore_storage_snapshot(sections.get("location_baselines_v1",PackedByteArray())) or not originals.verify_references().ok:return {"ok":false,"reason":"Generated location originals are missing or invalid"}
  var recipe:RefCounted=ClassDB.instantiate("NativeWorldRecipe")
  if sections.has("world_recipe_v1") and not recipe.validate_snapshot(sections.world_recipe_v1):return {"ok":false,"reason":"Generated world recipe is invalid"}
  if not options.is_empty() and sections.get("world_recipe_v1",PackedByteArray())!=recipe.encode(options):return {"ok":false,"reason":"Generated world recipe differs from requested settings"}

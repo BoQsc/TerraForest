@@ -65,7 +65,7 @@ func _initialize()->void:
   status("recovering");publish_worker=Thread.new()
   if publish_worker.start(recover_world)!=OK:publish_worker=null;finish("failed","Cannot start recovery worker")
   return
- for suffix in [".trw",".trw.regions",".trw.models",".trw.water",".trw.terrain"]:
+ for suffix in [".trw",".trw.regions",".trw.models",".trw.water",".trw.terrain",".trw.baselines"]:
   if FileAccess.file_exists(worlds.path_join(destination+suffix)) or DirAccess.dir_exists_absolute(worlds.path_join(destination+suffix)):
    finish("failed","Destination already contains world data");return
  start_stage("creating")

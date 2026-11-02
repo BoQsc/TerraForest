@@ -92,7 +92,7 @@ def retire(worlds, row):
             raise ValueError('Working copy has unfinished save data')
         selected = []
         total = 0
-        for suffix in ('.regions', '.models', '.water', '.terrain', '.bak', ''):
+        for suffix in ('.regions', '.models', '.water', '.terrain', '.baselines', '.bak', ''):
             path = Path(str(source) + suffix)
             if not path.exists():
                 continue

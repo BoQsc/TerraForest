@@ -7,10 +7,21 @@
 
 ## Durable location baselines — 2026-11-02
 
+- Follow-up: compound-save registration, generation-owned world identity and
+  native selected-reference clone/recovery are integrated. Legacy worlds acquire
+  no invented originals or baseline directories; read-only lookup writes no locks.
+- Debug, release and installed package pass 172 storage/publication checks each;
+  the real terrain save worker passes 15 save/reopen/clone checks. Six interrupted
+  publication phases recover safely. Python diagnostic clones preserve sidecars.
+- A normal default world generates 51 buildings; ordinary selector/save/reopen
+  and fresh-process identity checks pass 12 + 13 assertions. The older broad quest
+  fixture still fails its pre-introduction generic-contract assumption; live reset
+  gameplay is not enabled or qualified by these persistence checks.
+- [Integration evidence and retained broader-test failure](location-baseline-integration-evidence.json).
 - Native immutable payloads bind world, location and definition; repeated capture
   cannot replace the original with player-modified state. Missing/corrupt data fails
   explicitly. The compact reference manifest never scans all payloads on load.
-- Both native builds and the installed package pass 66 storage, 11 fresh-process and 24 archive assertions each.
+- Initial storage verification passed 66 storage, 11 fresh-process and 24 archive assertions each.
   A worker writes the large test payload while reference queries remain available.
 - This is an opaque multi-component envelope. Real terrain restoration is tested;
   complete generation-owned capture and the live multi-owner reset are not wired.

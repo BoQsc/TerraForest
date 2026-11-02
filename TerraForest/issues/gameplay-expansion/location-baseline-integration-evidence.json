@@ -1,0 +1,294 @@
+{
+  "date": "2026-11-02",
+  "status": "Baseline generation identity, compound persistence, selected-reference native publication/recovery installed and verified; pristine owner capture and live repeatable reset remain incomplete",
+  "verification": {
+    "reports/location_baseline/20261102T182042097100Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "debug",
+          "phase": "create",
+          "assertions": [
+            66,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "debug",
+          "phase": "reopen",
+          "assertions": [
+            11,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "debug",
+          "phase": "publication",
+          "assertions": [
+            63,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "debug",
+          "phase": "publication_reopen",
+          "assertions": [
+            8,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "debug",
+          "phase": "archive",
+          "assertions": [
+            24,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "release",
+          "phase": "create",
+          "assertions": [
+            66,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "release",
+          "phase": "reopen",
+          "assertions": [
+            11,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "release",
+          "phase": "publication",
+          "assertions": [
+            63,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "release",
+          "phase": "publication_reopen",
+          "assertions": [
+            8,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "release",
+          "phase": "archive",
+          "assertions": [
+            24,
+            0
+          ],
+          "passed": true
+        }
+      ],
+      "pack_sha256": null,
+      "native_sha256": null
+    },
+    "reports/location_baseline/20261102T182403905193Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "pack",
+          "phase": "create",
+          "assertions": [
+            66,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "pack",
+          "phase": "reopen",
+          "assertions": [
+            11,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "pack",
+          "phase": "publication",
+          "assertions": [
+            63,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "pack",
+          "phase": "publication_reopen",
+          "assertions": [
+            8,
+            0
+          ],
+          "passed": true
+        },
+        {
+          "variant": "pack",
+          "phase": "archive",
+          "assertions": [
+            24,
+            0
+          ],
+          "passed": true
+        }
+      ],
+      "pack_sha256": "17df768de6b9c756dd3c96e9532488320220349233a298b0dcd5816f5fbb85b6",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "056611462bf7d3727b1b541cfec6d105a8d2d20e018a66755f0ff8d7c40a3c21",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "94a78c114856e77bd3f12afc684309cd0541ea2f671e76fcea13fa3e0da0ef7c",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "7e23116755f4bb5c53f10ddacc1226d40ccdba05879d9257de818f294387e4d6",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "01f5c6f65610b26d688eb580a43a6818c377112cd48240d72e139a60eeede0d2",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "5aebe088910a2f7f04399922462c5eaf3cee93f7a05dd7464f244d27696b90d6",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "6730ebf776682416354cb09f6065894b503eb8de6d80a90589b1288a8a3fd16f",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "ae2aa53cadc0ff7b25b842be4f4a8d31ed6ea74f113c2a4b43fbd107fd50104f",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "c976674c78a14377a60a9636ad6a57a1e9c4d84737689363df4ccb98f99d87a3",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "97eab0f9f325f454cbb2535848dcac8333c946a3e8c0c80ed80c38c8a4a7a918",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "6504c6d1082584ce8c0a1ddc288c294f40c92ff688a73b7d86e05b613ad417e2"
+      }
+    },
+    "reports/quests_world/20261102T182732069674Z/run.json": {
+      "passed": true,
+      "phases": [
+        {
+          "phase": "baseline",
+          "passed": true,
+          "assertions": [
+            [
+              "12",
+              "0"
+            ]
+          ],
+          "elapsed_seconds": 64.37734890001593,
+          "saves": [
+            {
+              "capture": {
+                "bytes": 80,
+                "us": 27
+              },
+              "elapsed_us": 1740593
+            },
+            {
+              "capture": {
+                "bytes": 80,
+                "us": 15
+              },
+              "elapsed_us": 1687169
+            }
+          ],
+          "resources": {
+            "peak_private_commit_bytes": 3863777280,
+            "peak_working_set_bytes": 2321883136,
+            "peak_dedicated_gpu_bytes": 1500532736,
+            "within_sampled_limits": true
+          }
+        },
+        {
+          "phase": "baseline_reopen",
+          "passed": true,
+          "assertions": [
+            [
+              "13",
+              "0"
+            ]
+          ],
+          "elapsed_seconds": 62.9411117999698,
+          "saves": [
+            {
+              "capture": {
+                "bytes": 80,
+                "us": 21
+              },
+              "elapsed_us": 1791389
+            },
+            {
+              "capture": {
+                "bytes": 80,
+                "us": 23
+              },
+              "elapsed_us": 2496653
+            }
+          ],
+          "resources": {
+            "peak_private_commit_bytes": 3714686976,
+            "peak_working_set_bytes": 2129580032,
+            "peak_dedicated_gpu_bytes": 1491423232,
+            "within_sampled_limits": true
+          }
+        }
+      ]
+    }
+  },
+  "actual_terrain_worker": {
+    "report": "reports/checks/20261102T182048716798Z/run.json",
+    "checks": 15,
+    "passed": true,
+    "scope": "Actual TerrainWorld backend, asynchronous original publication, compound save, runtime restore, clone and reopen. Non-terrain owner payloads are explicit empty fixtures."
+  },
+  "additional_checks": [
+    "reports/checks/20261102T181704991022Z/run.json",
+    "reports/building_standards/20261102T182212885631Z/run.json",
+    "reports/location_baseline_clone_units.log",
+    "reports/location_baseline_integration_export.log"
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/location_baseline_integration_build.log",
+      "reason": "Ambiguous String + literal in new publication code; corrected explicit String conversion."
+    },
+    {
+      "report": "reports/location_baseline/20261102T181359468541Z/run.json",
+      "reason": "Debug fixture added a StringName terrain key to the strict root archive. Fixed fixture String key and early failure checks; release phase then passed. Owned failed Godot process stopped."
+    },
+    {
+      "report": "reports/checks/20261102T181927786196Z/run.json",
+      "reason": "All 15 real-world assertions passed; launcher expected a mistaken count of 16. Re-run with correct marker passed."
+    },
+    {
+      "report": "reports/checks/20261102T181711984779Z/run.json",
+      "reason": "Existing water-persistence unfinished-lake shutdown and ID-cursor assertions fail. Reproduced with previous HEAD test/persistence scripts and current otherwise unchanged water library at reports/baseline_persistence_regression/run.json. Not fixed or hidden by this change."
+    },
+    {
+      "report": "reports/quests_world/20261102T182408307182Z/run.json",
+      "reason": "Normal default generation and world identity passed; older generic quest fixture then attempted accept before introduction and correctly hit unavailable_contract. Preserved failure. Separate explicitly scoped baseline mode reused that owned generated world without bypassing introduction; it does not replace full quest acceptance coverage."
+    }
+  ],
+  "contract": [
+    "New generated worlds initialize random 32-byte lineage identity once, persisted in location_baselines_v1; clones retain lineage identity.",
+    "Legacy worlds remain unbound and do not invent baseline captures or allocate sidecars. Normal manifest restore does not scan or read payloads.",
+    "Read-only runtime can restore and load originals without creating directories or writer locks; publishing is rejected.",
+    "References remain <=10320 bytes, <=128 locations, <=16MiB per payload and <=256MiB total referenced bytes.",
+    "Native verifier checks only manifest-selected originals on the generation worker. Clone verifies envelope checksum and world/key/definition identity, flushes each immutable original before canonical root publication.",
+    "Six interrupted promotion phases verify/recover selected originals. Missing/corrupt/forged originals reject; failed verification promotes no additional owners.",
+    "Native clone ignores unreferenced source payloads and lock files. Completed generation retires its redundant sidecar. Diagnostic Python clones conservatively copy the complete sidecar.",
+    "No player save changed. New generated test world and failed fixtures retained. No changes to FPS cap, power mode or mouse capture."
+  ],
+  "remaining": [
+    "Capture all native owner patches from pristine generation, with stable location-definition identity and exact natural vegetation roots.",
+    "Validate semantics and ownership of every opaque component before reset.",
+    "Water hydration/contact coordination and local mesh/collision publication.",
+    "Quiesce residents, corpses, falling trees and fractured boulders; ensure player/vehicle safety.",
+    "Cross-owner commit/rollback and bounded worker scheduling.",
+    "Enable and verify ordinary trader/question-mark/E repeatable quests, clear/reward/reopen, real-world visual and foreground performance evidence.",
+    "Repair the older broad quest acceptance fixture to follow current introduction rules; independent unfinished-water shutdown regression remains open."
+  ]
+}

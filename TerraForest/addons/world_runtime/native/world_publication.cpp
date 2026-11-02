@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 #include "world_archive.hpp"
+#include "location_baseline.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <filesystem>
@@ -20,6 +21,9 @@ static bool slot_name(const String &s){
 static bool ordinary_path(const fs::path &path){
  DWORD attributes=GetFileAttributesW(path.c_str());return attributes!=INVALID_FILE_ATTRIBUTES&&!(attributes&FILE_ATTRIBUTE_REPARSE_POINT);
 }
+static bool baseline_file(const fs::path &directory,const LocationBaselineEntry &entry){
+ return ordinary_path(directory)&&ordinary_path(directory/fs::u8path((entry.digest.hex_encode()+".baseline").utf8().get_data()));
+}
 static bool generation_slot(const String &slot){
  const String prefix="combined_stage_";
  if(!slot.begins_with(prefix)||slot.length()!=prefix.length()+32)return false;
@@ -34,7 +38,7 @@ static bool retire_generation_files(const fs::path &base,const fs::path &source,
  auto pending=source;pending+=".tmp";
  if(fs::exists(pending,error)||error){reason="Unfinished source save retained";return false;}
  uint64_t entries=0;
- for(const char *suffix:{".regions",".models",".water",".terrain",".bak",""}){
+ for(const char *suffix:{".regions",".models",".water",".terrain",".baselines",".bak",""}){
   auto path=source;path+=suffix;
   bool exists=fs::exists(path,error);if(error){reason="Cannot inspect source cleanup path";return false;}if(!exists)continue;
   if(path.parent_path()!=base||!ordinary_path(path)){reason="Unsupported source cleanup path";return false;}
@@ -55,7 +59,7 @@ static bool retire_generation_files(const fs::path &base,const fs::path &source,
 Dictionary NativeWorldArchive::clone_world(const String &root,const String &source,const String &destination,int64_t test_stop_after,bool retire_source) const {
  Dictionary result;result["ok"]=false;result["created"]=false;
  auto fail=[&](const char *reason){result["reason"]=reason;return result;};
- if(test_stop_after < -1 || test_stop_after > 4)return fail("Invalid publication stop phase");
+ if(test_stop_after < -1 || test_stop_after > 5)return fail("Invalid publication stop phase");
  if(!root.is_absolute_path()||root.begins_with("user://")||root.begins_with("res://")||!slot_name(source)||!slot_name(destination)||source.nocasecmp_to(destination)==0)return fail("Invalid publication path or slot");
  if(retire_source&&(!generation_slot(source)||destination.begins_with("combined_stage_")))return fail("Only completed generation work copies can be retired");
  String original=root.path_join(source+String(".trw")),target=root.path_join(destination+String(".trw"));
@@ -69,11 +73,13 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  if(retire_source&&(!ordinary_path(src)||!fs::is_regular_file(src,error)||error))return fail("Unsupported generation source root");
  if(fs::exists(dst,error))return fail("Destination already exists");
  if(error)return fail("Cannot inspect destination");
- for(const char *suffix:{".regions",".models",".water",".terrain",".bak",".tmp"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain",".baselines",".bak",".tmp"}){
   if(fs::exists(fs::u8path((target+String(suffix)).utf8().get_data()),error))return fail("Destination contains unpublished data");
   if(error)return fail("Cannot inspect destination stores");
  }
- PackedByteArray canonical=read(original);if(!bool(decode(canonical)["ok"]))return fail("Source archive is invalid");
+ PackedByteArray canonical=read(original);const auto decoded=decode(canonical);if(!bool(decoded["ok"]))return fail("Source archive is invalid");
+ const Dictionary sections=decoded["sections"];std::map<int64_t,LocationBaselineEntry> baselines;PackedByteArray world;
+ if(!parse_location_baselines(sections.get("location_baselines_v1",PackedByteArray()),baselines,world))return fail("Source location baseline manifest is invalid");
  static std::atomic<uint64_t> sequence{0};
  String stage_name=".publish_"+destination+"_"+String::num_uint64(GetCurrentProcessId())+"_"+String::num_uint64(++sequence);
  auto stage=base/fs::u8path(stage_name.utf8().get_data());
@@ -110,6 +116,22 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
   }
   if(error)return fail("Store enumeration failed; staging retained");
  }
+ if(!baselines.empty()){
+  const String directory=original+".baselines";const auto from=fs::u8path(directory.utf8().get_data()),to=stage/"baselines";
+  fs::create_directory(to,error);if(error)return fail("Cannot create staged baselines");
+  for(const auto &[key,entry]:baselines){
+   if(!baseline_file(from,entry))return fail("Unsupported source baseline path");
+   Dictionary payload;const auto packet=read_location_baseline(directory,key,entry,world,payload);
+   if(packet.is_empty())return fail("Referenced location baseline is missing or invalid");
+   const auto path=to/fs::u8path((entry.digest.hex_encode()+".baseline").utf8().get_data());
+   const String output=String::utf8(path.u8string().c_str());
+   Ref<NativeWorldArchive> writer;writer.instantiate();
+   if(!writer->acquire(output)||writer->publish(output,packet)!=OK)return fail("Baseline copy failed; staging retained");
+   writer->release();fs::remove(fs::u8path((output+String(".lock")).utf8().get_data()),error);
+   if(error)return fail("Cannot release staged baseline lock");
+   ++files;bytes+=entry.bytes;
+  }
+ }
  if(read(original)!=canonical)return fail("Source changed during publication");
  String stage_root=root.path_join(stage_name).path_join("world.trw");
  Ref<NativeWorldArchive> staged;staged.instantiate();
@@ -117,7 +139,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  staged->release();
  if(test_stop_after==0)return fail("Injected stop before store promotion");
  int promoted=0;
- for(const char *suffix:{".regions",".models",".water",".terrain"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain",".baselines"}){
   auto folder=stage/fs::path(suffix+1);bool present=fs::exists(folder,error);if(error)return fail("Cannot inspect staged store");if(!present)continue;
   fs::rename(folder,fs::u8path((target+suffix).utf8().get_data()),error);if(error)return fail("Store promotion failed; canonical root not published");
   if(++promoted==test_stop_after)return fail("Injected stop after store promotion");
@@ -203,9 +225,25 @@ Dictionary NativeWorldArchive::recover_world(const String &root,const String &de
  if(fs::file_size(stage/"world.trw",error)>256ull*1024*1024||error)return fail("Staged root exceeds recovery budget");
  if(!ordinary_path(stage/"world.trw"))return fail("Unsupported staged root");
  auto canonical=FileAccess::get_file_as_bytes(staged_root);
- if(!bool(decode(canonical)["ok"])||canonical!=read(original))return fail("Source or staged world changed after interruption");
+ const auto decoded=decode(canonical);
+ if(!bool(decoded["ok"])||canonical!=read(original))return fail("Source or staged world changed after interruption");
+ const Dictionary sections=decoded["sections"];std::map<int64_t,LocationBaselineEntry> baselines;PackedByteArray world;
+ if(!parse_location_baselines(sections.get("location_baselines_v1",PackedByteArray()),baselines,world))return fail("Staged location baseline manifest is invalid");
  // Validate every authoritative file, including already-promoted stores, before
  // performing any more renames. Source leases prevent cooperating writers.
+ const auto pending_baselines=stage/"baselines",published_baselines=fs::u8path((target+".baselines").utf8().get_data());
+ const bool pending_exists=fs::exists(pending_baselines,error);if(error)return fail("Cannot inspect staged baselines");
+ const bool published_exists=fs::exists(published_baselines,error);if(error)return fail("Cannot inspect published baselines");
+ if(pending_exists&&published_exists||baselines.empty()&&(pending_exists||published_exists)||!baselines.empty()&&!pending_exists&&!published_exists)return fail("Recovery baseline ownership mismatch");
+ if(!baselines.empty()){
+  const String directory=original+".baselines";const auto source_directory=fs::u8path(directory.utf8().get_data());
+  const auto copy_directory=pending_exists?pending_baselines:published_baselines;
+  for(const auto &[key,entry]:baselines){
+   if(!baseline_file(source_directory,entry)||!baseline_file(copy_directory,entry))return fail("Unsupported recovery baseline path");
+   Dictionary payload;
+   if(read_location_baseline(directory,key,entry,world,payload).is_empty()||read_location_baseline(String::utf8(copy_directory.u8string().c_str()),key,entry,world,payload).is_empty())return fail("Recovery baseline verification failed; no changes made");
+  }
+ }
  for(const char *suffix:{".regions",".models",".water",".terrain"}){
   auto source_store=fs::u8path((original+suffix).utf8().get_data()),pending=stage/fs::path(suffix+1),published=fs::u8path((target+suffix).utf8().get_data());
   bool a=fs::exists(source_store,error);if(error)return fail("Cannot inspect source store");
@@ -214,7 +252,7 @@ Dictionary NativeWorldArchive::recover_world(const String &root,const String &de
   if(error||b&&c||!a&&(b||c)||a&&!b&&!c)return fail("Recovery store ownership mismatch");
   if(a&&!same_store(source_store,b?pending:published,error))return fail("Recovery store verification failed; no changes made");
  }
- for(const char *suffix:{".regions",".models",".water",".terrain"}){
+ for(const char *suffix:{".regions",".models",".water",".terrain",".baselines"}){
   auto pending=stage/fs::path(suffix+1);bool exists=fs::exists(pending,error);if(error)return fail("Cannot inspect recovery store");
   if(exists){fs::rename(pending,fs::u8path((target+suffix).utf8().get_data()),error);if(error)return fail("Recovery promotion failed; journal retained");}
  }
