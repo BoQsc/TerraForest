@@ -1,9 +1,33 @@
 # Gameplay expansion: encounters, exploration and progression
 
 - Status: In progress; generated house/underground/lookout sleepers and supplies, not a completed expansion.
-- Updated: 2026-11-02.
+- Updated: 2026-11-03.
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
+
+## Packaged trader and reset integration — 2026-11-03
+
+- Real street-to-counter movement, native trader picking, offer selection, E-close,
+  mine rally/reset and fresh-process restoration pass in the coordinated package.
+  New-world compressed water and older save storage are both exercised. Travel
+  between trader and mine uses normal teleport, not a qualified walking journey.
+- Offers now distinguish repeated location names with distance, direction and map
+  coordinates. The two screenshots below were inspected for readable layout;
+  this is not user approval of the whole quest experience.
+- A measured 44.6-second checkpoint delay was waiting for cache accounting before
+  submitting the save that would preempt it. Admission now allows that background
+  work while retaining all edit, queue and publication barriers. Before/after
+  regression passes; final package repetition is recorded in the linked receipt.
+- [Package identities, timings and remaining gates](quest-rally-package-evidence.json).
+  All-layout resets, uninterrupted journeys, crash recovery, cold planning and
+  foreground performance remain open. Earlier unexplained timeout evidence stays.
+
+![Repeatable offers with distinct distances and directions](quest-trader-offers.png)
+![Reservation and explicit local-reset warning](quest-trader-reserved.png)
+
+Original in-engine captures, CC0-1.0 to the extent of original rights; depicted
+inherited assets keep their existing notices and licenses. Exact hashes and source
+report paths are recorded in the package receipt.
 
 ## Detached-owner checkpoint protection — 2026-11-03
 
@@ -22,8 +46,9 @@
   introduction no longer masks later quests; generic rewards do not depend on a car.
   [Contract and remaining gates](../../docs/GAMEPLAY_EXPANSION.md#repeatable-trader-offers-and-rally-interaction--2026-11-02),
   [rally receipts, image and retained failed runs](quest-rally-evidence.json).
-  Real trader-to-location walking, all-layout/crash coverage and packaged/focused
-  acceptance remain open. One pre-checkpoint timeout is retained, not declared fixed.
+  The later package checks above cover trader selection and mine reset/reopen.
+  Real trader-to-location walking, all-layout/crash and focused acceptance remain
+  open. One earlier pre-checkpoint timeout is retained, not universally resolved.
 - Source-only live follow-up: a generated mine now restores after real edits and
   corpse residency, locally republishes collision and survives normal save/reopen.
   Mid-transaction cancellation reopens the verified pre-reset checkpoint.
@@ -32,8 +57,8 @@
 - [Live contract and remaining gates](../../docs/GAMEPLAY_EXPANSION.md#live-location-checkpoint-recovery--2026-11-02),
   [live receipts and retained failures](location-reset-live-evidence.json).
   Diagnostic cutaway images are not player-camera/art acceptance. The older reward
-  UI crafting assertion remains failing. Installed package is unchanged pending
-  coordinated startup/water work and subsequent packaged regression checks.
+  UI crafting assertion remains failing. The coordinated startup/water package
+  follow-up is recorded above; these initial source receipts remain historical.
 - Follow-up: a bounded coordinator now restores and reverses all twelve native
   owner kinds in isolated tests; debug, release and installed package each pass
   246 checks. Protected-model rejection, cancellation, stale/freed owners and the

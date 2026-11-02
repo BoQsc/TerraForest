@@ -16,11 +16,15 @@ def main():
     parser.add_argument('--originals', action='store_true')
     parser.add_argument('--reset-plan', action='store_true')
     parser.add_argument('--live-reset', action='store_true')
+    parser.add_argument('--trader-offer', action='store_true')
+    parser.add_argument('--offset-focus', action='store_true')
     reuse = parser.add_mutually_exclusive_group()
     reuse.add_argument('--restore-report')
     reuse.add_argument('--exercise-report')
     reuse.add_argument('--baseline-report')
     args = parser.parse_args()
+    if args.trader_offer or args.offset_focus:
+        args.live_reset = True
     if args.reset_plan or args.live_reset:
         args.originals = True
     if args.live_reset and not args.baseline_report:
@@ -39,7 +43,7 @@ def main():
             parser.error('Not an owned quest fixture')
         for name in (['created_slot.json'] if args.baseline_report else ['expected.bin', 'created_slot.json']):
             (folder / name).write_bytes((source / name).read_bytes())
-    record = dict(pack=args.pack, originals=args.originals, reset_plan=args.reset_plan, live_reset=args.live_reset, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
+    record = dict(pack=args.pack, originals=args.originals, reset_plan=args.reset_plan, live_reset=args.live_reset, trader_offer=args.trader_offer, offset_focus=args.offset_focus, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
     script = ROOT / 'tests/quests_world.gd'
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -76,6 +80,10 @@ def main():
                 command.append('--verify-reset-plan')
             if args.live_reset:
                 command.append('--verify-live-reset')
+            if args.trader_offer:
+                command.append('--verify-trader-offer')
+            if args.offset_focus:
+                command.append('--offset-rally-focus')
             if phase == 'restore':
                 command.append('--restore-quests')
             elif phase == 'exercise':

@@ -1,6 +1,7 @@
 {
   "date": "2026-11-02",
   "status": "Source engineering checkpoint; overall expansion and packaged acceptance remain incomplete",
+  "followup": "quest-rally-package-evidence.json records subsequent real trader, legacy/new-water packaged reset/reopen and cache-admission correction; this receipt preserves the initial source checkpoint.",
   "scope": [
     "Trader repeatable offers use native manifest identity queries without reading original files; UI cache keyed by quest/baseline revision and terrain epoch",
     "Accept and abandon use native quest state, existing notices and map/compass guidance",

@@ -98,7 +98,7 @@ func _resume() -> void:
 	if game.model_paging!=null:game.model_paging.release_location()
 
 func _idle() -> bool:
-	return game.terrain.backend.status()=="idle" and game.terrain.backend.queued()==0 and not game.terrain.pending_edit and not game.terrain.backend.publication_pending() and not game.terrain._manual_save_requested
+	return game.terrain.backend.status() in ["idle","cache_accounting"] and game.terrain.backend.queued()==0 and not game.terrain.pending_edit and not game.terrain.backend.publication_pending() and not game.terrain._manual_save_requested
 
 func _save() -> bool:
 	if not await _wait(_idle):return false

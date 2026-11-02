@@ -117,7 +117,12 @@ func refresh_quests()->void:
 			var selected_key:int=quest_offers.get_item_metadata(selected[0]) if not selected.is_empty() else 0
 			offer_keys=keys;quest_offers.clear()
 			for offer:Dictionary in offers:
-				quest_offers.add_item("%s · %d coins · %d XP"%[offer.title,offer.coins,offer.xp])
+				var offset:Vector3=offer.marker-quests.game.player.global_position
+				var distance:=Vector2(offset.x,offset.z).length()
+				var bearing:String=["N","NE","E","SE","S","SW","W","NW"][posmod(roundi(atan2(offset.x,-offset.z)/(PI/4)),8)]
+				var range_text:="%.1f km"%(distance/1000) if distance>=1000 else "%.0f m"%distance
+				quest_offers.add_item("%s · %s %s · %d coins · %d XP"%[offer.title,range_text,bearing,offer.coins,offer.xp])
+				quest_offers.set_item_tooltip(quest_offers.item_count-1,"%s\nMap coordinates: %.0f, %.0f"%[offer.title,offer.marker.x,offer.marker.z])
 				quest_offers.set_item_metadata(quest_offers.item_count-1,offer.key)
 				if offer.key==selected_key:quest_offers.select(quest_offers.item_count-1)
 			if quest_offers.item_count>0 and quest_offers.get_selected_items().is_empty():quest_offers.select(0)

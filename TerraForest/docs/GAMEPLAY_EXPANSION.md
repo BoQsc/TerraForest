@@ -159,7 +159,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward installed; actual executable passes mine/reward and exact fresh-process restore; broader seeds and repeatable reset quests remain separate |
-| Large question-mark start interaction near POI, E acceptance and location reset | Source trader reservations and question-mark/E now use the checkpoint-backed live coordinator. Generated survey mine cancellation, restoration and outside/player preservation are checked; all-layout, crash, focused-input and packaged acceptance remain open |
+| Large question-mark start interaction near POI, E acceptance and location reset | Packaged trader selection, question-mark/E, generated survey-mine cancellation/restoration, outside/player preservation and fresh reopen pass with legacy/new water storage. All-layout, uninterrupted journey, crash and focused-input acceptance remain open |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
@@ -571,12 +571,27 @@ is bypassed in the offscreen dispatcher test; it is not a focused keyboard playt
 The question-mark image is presentation evidence, not approval of mine terrain fit.
 See [receipts and retained failures](../issues/gameplay-expansion/quest-rally-evidence.json).
 
-Remaining: actual trader approach/selection-to-location journey, all five generated
-POIs, foreign/moving occupancy cases, cooperative cold planning, teardown/crash
-injection, ordinary-camera/user review and focused performance. Investigate the
-retained first-run pre-checkpoint timeout (no reset mutation); clean repetitions
-must not be used to claim its cause is fixed. Recheck the packaged build after the
-parallel startup/water changes. The overall expansion remains incomplete.
+The 2026-11-03 package follow-up exercises actual street-to-counter movement,
+native trader picking, selection, E-close, normal teleport to the mine, rally/reset
+and fresh-process restore. It covers both old and new water storage. New worlds
+also preserve all five immutable originals through generation and fresh reopening.
+An explicit 40 m paused terrain-focus offset checks player-centered owner admission
+without weakening local geometry/collision readiness. Offer labels add cached
+distance/bearing and coordinate tooltips to distinguish repeated location names.
+
+The first new-format cancellation waited 44.6 seconds, with repeated diagnostics
+showing only background cache accounting before checkpoint submission. `_idle`
+now permits that non-world-mutating work so the existing save reservation preempts
+it at its next bounded slice. Queued work, edits, manual saves and publication
+still block admission. The focused actual-backend/cache-slice regression changes
+from three failures to seventeen passes; ordinary accounting guards still pass.
+[Package receipts and inspected images](../issues/gameplay-expansion/quest-rally-package-evidence.json).
+
+Remaining: uninterrupted trader-to-location journeys, all five generated POI resets,
+foreign/moving occupancy cases, cooperative cold planning, real-game teardown/crash
+injection, user review and focused performance. The older timeout lacked this exact
+diagnostic; fixing the observed cache starvation does not establish that every
+checkpoint timeout is resolved. The overall expansion remains incomplete.
 
 ### Detached-owner checkpoint protection — 2026-11-03
 

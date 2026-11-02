@@ -33,6 +33,7 @@ class Notices extends Node:
 	func quest_added(title:String)->void:notices.append(title)
 
 class Game extends Node:
+	var player:Dictionary={"global_position":Vector3.ZERO}
 	var terrain:Dictionary={"backend":{"readonly_snapshot":false},"epoch":1,"changed_since_save":false}
 	var temporary_world:=false
 	var persistence:Dictionary={"location_baselines":Originals.new()}
@@ -61,6 +62,7 @@ func run()->void:
 	panel.opened=true;panel.permitted=game.trader.reachable
 	panel.refresh_quests()
 	check(panel.quest_offers.item_count==1 and not panel.quest_button.disabled,"trader lists only locations with preserved originals")
+	check(panel.quest_offers.get_item_text(0).contains(" m S") and panel.quest_offers.get_item_tooltip(0).contains("Map coordinates"),"offers identify distance, compass bearing and map position")
 	var count:int=game.persistence.location_baselines.queries
 	for repeat in 10:panel.refresh_quests()
 	check(game.persistence.location_baselines.queries==count,"repeated UI refresh reuses metadata without rereading originals")

@@ -1,0 +1,132 @@
+{
+  "date": "2026-11-03",
+  "status": "Packaged survey-mine reset and trader interaction verified; full expansion remains incomplete",
+  "changes": [
+    "Trader offers distinguish repeated names with cached distance/bearing and map-coordinate tooltips.",
+    "Checkpoint admission permits background cache accounting so the existing save reservation can preempt it at the next bounded slice.",
+    "Queued world work, unpublished edits, existing manual saves and publication barriers remain mandatory."
+  ],
+  "artifacts": {
+    "coordinated_before": "aae87e1ffd96d0fbaf9538549f5e05323a269eccad0fba80ebfd725ab5946c81",
+    "final_pack": "7b153c9a853c7e3ca1d1cb8c2e2998b4f1dc971c31d6739ea2c2f930e66baac6",
+    "final_pack_bytes": 471122572,
+    "matching_native_libraries": 14,
+    "export_log": "reports/quest_reset_final_export.log",
+    "export_building_gates": "reports/building_standards/20261102T224300654083Z",
+    "new_uid": "tests/location_reset_admission.gd.uid"
+  },
+  "passed": [
+    {
+      "report": "reports/checks/20261102T222809132628Z/run.json",
+      "checks": 29,
+      "scope": "Native quest log and real trader callbacks with mocked baseline/reach providers; distance/bearing labels and cache reuse."
+    },
+    {
+      "report": "reports/quests_world/20261102T222352609734Z/run.json",
+      "checks": [
+        56,
+        15
+      ],
+      "pack_sha256": "465f36fd853330e97a775925df17b78e425bca502cef6cc88db5c949aeb8da83",
+      "scope": "Legacy-water owned world, actual street-to-counter movement, native trader picking/selection, E close, mine reset/cancellation and fresh reopen. Earlier labels, synchronized test focus."
+    },
+    {
+      "report": "reports/quests_world/20261102T223211692663Z/run.json",
+      "checks": [
+        88,
+        90
+      ],
+      "scope": "Ordinary default seed1703 generation and fresh process; all five immutable location originals, normal selector/save/reopen, no review recipe.",
+      "process_peak_ram_bytes": 3864018944,
+      "process_peak_vram_bytes": 1499435008
+    },
+    {
+      "report": "reports/quests_world/20261102T223552833125Z/run.json",
+      "checks": [
+        60,
+        15
+      ],
+      "scope": "New TFWG world; actual trader selection and mine reset/reopen, deliberate40m paused focus offset admits player-required owners outside old focus coverage. Normal local collision readiness remains required.",
+      "cancel_recovery_us": 44558383,
+      "successful_reset_us": 3120707,
+      "process_peak_ram_bytes": 3852877824,
+      "process_peak_vram_bytes": 1501532160
+    },
+    {
+      "report": "reports/checks/20261102T224200069468Z/run.json",
+      "checks": 17,
+      "scope": "Actual backend submission/cache-slice admission regression with a bounded probe cache; all edit/queue/publication guards, save preemption and accounting resumption."
+    },
+    {
+      "report": "reports/checks/20261102T224201442547Z/run.json",
+      "scope": "Existing cache accounting queued/input/stop guards, bounded slice preemption, publication priority and resumption."
+    },
+    {
+      "report": "reports/quests_world/20261102T224424204860Z/run.json",
+      "checks": [
+        58,
+        15
+      ],
+      "scope": "Final package repeats trader/reset/cancellation/40m offset and exact fresh-process field, corpse, inventory, progression, outside-block and collision restoration.",
+      "cancel_recovery_us": 2269801,
+      "cancel_checkpoint_ready_us": 925559,
+      "successful_reset_us": 2648127,
+      "successful_checkpoint_ready_us": 942190,
+      "native_patch_total_us": 8497,
+      "native_patch_maximum_us": 1184,
+      "operations": 32,
+      "patch_bytes": 247162,
+      "process_peak_ram_bytes": 3798708224,
+      "process_peak_vram_bytes": 1492684800
+    }
+  ],
+  "root_inspection": {
+    "slot": "Quests_1703_fc4dd9b1",
+    "method": "tools/audit_world_startup.py sections() validates outer archive checksum. Actual native fresh-process load validates referenced packs and reconstructed snapshot.",
+    "archive_bytes": 481115,
+    "water_component_magic": "TFWG",
+    "water_component_bytes": 852,
+    "water_reconstructed_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab",
+    "water_sidecar_bytes_including_retained_versions": 11388022,
+    "preserved": "Only owned Quests_ test fixtures modified; no player save migration."
+  },
+  "retained_failures": [
+    {
+      "report": "reports/checks/20261102T224113906513Z/run.json",
+      "checks": 17,
+      "failures": 3,
+      "scope": "Before correction, cache accounting prevented checkpoint admission and submission/preemption."
+    },
+    {
+      "report": "reports/quests_world/20261102T221830324520Z/run.json",
+      "scope": "Earlier packaged reset restored but post-reset loading did not release. Disabled test physics left terrain focus stale after manual movement; test now synchronizes focus. Production admission independently uses player position and the explicit offset regression passes."
+    },
+    {
+      "report": "reports/quests_world/20261102T214520858162Z/run.json",
+      "scope": "Earlier pre-checkpoint timeout remains retained. Its cause was not captured as precisely as the newer cache-accounting wait; do not claim every timeout resolved."
+    }
+  ],
+  "images": [
+    {
+      "path": "quest-trader-offers.png",
+      "source": "reports/quests_world/20261102T223552833125Z/repeatable_trader_offers.png",
+      "sha256": "ff16d584bb778c291e54c7ff51c3f2509069fd7350cd7432105262885c70e872",
+      "caption": "Real generated trader UI, five ordinary offers, repeated lookout names distinguished by1.3km/1.5km distances. Readable layout inspected."
+    },
+    {
+      "path": "quest-trader-reserved.png",
+      "source": "reports/quests_world/20261102T223552833125Z/repeatable_trader_reserved.png",
+      "sha256": "1dcb22c09cfee4ca3a9295d6443d4cd23220d94d7658c787a7300522b018243c",
+      "caption": "Accepted survey-mine reservation explicitly warns that starting restores local terrain/buildings/contents, while outside edits remain."
+    }
+  ],
+  "image_provenance": "Original in-engine captures from this checkout; CC0-1.0 to extent of original rights. Depicted inherited assets retain existing notices/licenses. Presentation inspected, not user visual approval.",
+  "limits": [
+    "Offscreen1920x1080 functional checks at60FPS; no desktop mouse capture/reposition. Test dispatcher bypasses only captured-input availability, not picking or local readiness.",
+    "Street-to-counter movement uses real player movement; trader-to-mine transfer is normal teleport, not an uninterrupted walking/NPC/vehicle journey.",
+    "Cancellation timings are individual functional runs, not a controlled cold/warm performance distribution or foreground frame-pacing claim.",
+    "All five immutable originals were checked, but full mutation/reset/reopen gameplay coverage here is survey mine only.",
+    "Native direct-teardown regression remains source-scoped; full real-game crash/fault injection and cooperative cold planning remain pending.",
+    "Earlier reward-UI crafting failure, broader seeds, user review and remaining expansion requirements remain open."
+  ]
+}

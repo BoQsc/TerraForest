@@ -359,11 +359,18 @@ range-checked question-mark/E rally using that live coordinator. Native manifest
 eligibility avoids loading original files for UI. Generic active/completed guidance
 and reward controls work after the introductory expedition. [Rally contract](GAMEPLAY_EXPANSION.md#repeatable-trader-offers-and-rally-interaction--2026-11-02),
 [receipts and retained failures](../issues/gameplay-expansion/quest-rally-evidence.json).
-Remaining: real trader-to-location journey, cooperative cold planning, all
-POI/occupancy cases, teardown/crash injection, ordinary-camera acceptance and
-foreground timing. A first-run pre-checkpoint timeout remains unexplained; retain
-its failed evidence and add admission diagnostics before claiming it fixed.
-Revalidate the packaged build after the parallel regional-water/loading work.
+Packaged follow-up now passes actual street-to-counter movement, trader selection,
+mine reset/cancellation and fresh reopen with legacy and new compressed water.
+The 40 m paused-focus regression preserves actual-player landscape admission.
+Offer distance/bearing distinguishes repeated names. A measured 44.6-second
+checkpoint wait exposed cache-accounting admission starvation; the coordinator now
+allows its existing save reservation to preempt background accounting, with all
+edit/queue/publication guards retained. Seventeen before/after admission checks
+and existing cache preemption checks pass. [Package evidence and images](../issues/gameplay-expansion/quest-rally-package-evidence.json).
+Remaining: uninterrupted trader-to-location journey, cooperative cold planning,
+all POI/occupancy cases, real-game teardown/crash injection, user acceptance and
+foreground timing. Retain the earlier unexplained timeout; this specific diagnosis
+does not establish universal timeout resolution.
 The legacy reward-UI crafting assertion also remains failing.
 Direct scene teardown now preserves the last verified checkpoint instead of
 recapturing already-detached sibling providers. Real native before/after and
