@@ -25,6 +25,8 @@ def main():
     retained = sum(record['bytes'] for record in records)
     limits = load_budgets()
     result = dict(distributable=checks['redistributable'], free_bytes=free,
+                  free_space_warning_bytes=limits['free_space_warning_bytes'],
+                  free_space_status='exceeded' if free<limits['minimum_free_bytes'] else 'warning' if free<limits['free_space_warning_bytes'] else 'within_budget',
                   minimum_free_bytes=limits['minimum_free_bytes'], registered_failed_cache_bytes=retained,
                   failed_cache_budget_bytes=limits['failed_test_cache_bytes'], runtime='Not measured by this static check',
                   scope='Installed game content, not source/history. Saved worlds and development evidence are excluded from automatic quotas.')

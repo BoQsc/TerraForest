@@ -56,9 +56,10 @@ compute shaders are used where measured workloads justify them, not as a label.
   [tracker](../issues/gameplay-expansion/README.md). This does not close the older
   broad-seed road admission, foreground frame pacing or full expansion backlog.
 - Installed ordinary route/save: 188 checks; fresh-process reload: 12. The final
-  selected-item idle-return correction passes 23 source assertions, but remains
-  unexported until disk space satisfies the unchanged 11 GiB working reserve.
-  Packaged waking/equipment verification must follow that export.
+  selected-item idle-return correction now passes 23 packaged assertions. After
+  correcting the overly restrictive disk reserve, the final export also passes
+  guidance/posture checks and a new installed-executable reload. Exact pack
+  identities and scopes are retained in the tracker.
 
 ### Frontier expedition continuation — 2026-11-02, installed scoped verification
 

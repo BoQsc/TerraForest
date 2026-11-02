@@ -8,7 +8,7 @@ import sys
 import configparser
 import json
 import time
-from resource_limits import distribution_size, evaluate, export_working_bytes, require_free_space
+from resource_limits import distribution_size, evaluate, export_working_bytes, require_free_space, load_budgets
 
 root=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(description=__doc__)
@@ -23,7 +23,10 @@ staging.mkdir(parents=True,exist_ok=True)
 working_bytes=export_working_bytes(installed_pack)
 require_free_space(root)
 require_free_space(staging,working_bytes)
-print(f'Export working-space estimate: {working_bytes:,} bytes, in addition to the unchanged safety reserve',flush=True)
+limits=load_budgets()
+print(f'Export working-space estimate: {working_bytes:,} bytes + {limits["minimum_free_bytes"] / 2**30:.2f} GiB hard reserve',flush=True)
+if shutil.disk_usage(staging).free-working_bytes<limits['free_space_warning_bytes']:
+    print(f'WARNING: Estimated free space after export is below {limits["free_space_warning_bytes"] / 2**30:.2f} GiB; enough for the planned work and hard reserve, continuing.',flush=True)
 if subprocess.call([sys.executable,str(root/'tools/build_credit_notices.py'),'--check']):
     sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_door_animation_assets.py')]):

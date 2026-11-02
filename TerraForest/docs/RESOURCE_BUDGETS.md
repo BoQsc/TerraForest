@@ -13,7 +13,7 @@ has been qualified. No visual quality, world density or draw distance is reduced
 | Registered failed-check cache data | — | 1 GiB retention quota |
 | Saved worlds, backups and associated data | 10 GiB total | Warning only; never auto-delete or refuse a player save |
 | Successful unique temporary-check cache | — | Remove after the check completes |
-| Free disk space before automated game checks / exports | — | Keep 10 GiB, plus export staging space |
+| Free disk space before automated game checks / exports | Below 10 GiB | Keep 2 GiB, plus estimated export staging space |
 
 GB means decimal bytes; GiB means 1,073,741,824 bytes. The 5 GB content limit
 does not include developer Git history, source, compiler/import caches, reports,
@@ -24,6 +24,13 @@ presented as the game's install requirement.
 The user increased the terrain-cache quota from 2 to 3 GiB on 2026-10-28.
 This is a provisional storage policy, not a benchmark-derived optimum. Earlier
 cleanup receipts and Usage screenshots retain their original 2 GiB setting.
+
+On 2026-11-02, the user rejected repeated export blocks despite sufficient free
+space. The former 10 GiB hard reserve is now a warning; the hard floor is 2 GiB.
+Exports still reserve their estimated working space and recheck actual free
+space before publication. This is a development policy, not extra storage needed
+by the game or permission to delete saves. RAM, VRAM, content and cache limits
+are unchanged; historical reports retain their original thresholds.
 
 ## Enforcement and interpretation
 
@@ -49,12 +56,13 @@ cleanup receipts and Usage screenshots retain their original 2 GiB setting.
 - Export working space is not the 5 GB content ceiling. For an existing pack,
   estimate twice its file size, at least 1 GiB and at most the content ceiling;
   a missing/empty pack retains the conservative 5 GB estimate. This uses one
-  file's metadata, not a project scan. The 10 GiB free-space reserve is unchanged.
+  file's metadata, not a project scan. Add the 2 GiB hard reserve, not the 10 GiB
+  warning threshold. Crossing the warning does not block checks or export.
   Check actual remaining space after packing, before copying native libraries and
   before publication; external staging also reserves the actual installation copy.
   The estimate is not a hard exporter allocation cap. Unexpected growth can fail
   the later gate without publishing the pack. Ten resource tests cover the estimate,
-  unchanged limits and low-space rejection (2026-11-02).
+  unchanged content/cache/GPU limits and low-space rejection (2026-11-02).
 - Completed checks remove only their unique, declared temporary cache. Failed
   checks retain logs, screenshots and world evidence. When their registered cache
   quota is exceeded, only old verified TRC mesh packets are pruned; unknown files

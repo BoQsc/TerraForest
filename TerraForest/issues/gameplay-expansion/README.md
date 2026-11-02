@@ -28,7 +28,7 @@
   missing lifecycle, not completed by presentation. User posture/combat feel and
   foreground performance acceptance remain open.
 
-### Installed evidence and remaining export
+### Installed evidence
 
 - Source ordinary generation / upstairs / stairs / road / trader / supplies /
   physical car departure / durable save: 188 checks, report
@@ -51,11 +51,22 @@
   restores the selected weapon: `reports/checks/20261102T105130586598Z`.
   This correction switches directly to the selected idle during the final
   0.6 seconds, rather than allowing a longer equip clip past the five-second end.
-- That final correction is **not in the installed pack yet**. Re-export was
-  refused at 10.60 GiB free versus the unchanged 11 GiB reserve-plus-working
-  requirement (`reports/upstairs_equipment_export.log`). Return when at least
-  0.5 GB is freed; re-export and run packaged `wakeup_runtime`, guidance/posture
-  and `intro_reload` checks. No saves, evidence or safety limits were removed.
+- The first re-export was refused at 10.60 GiB free versus the former 11 GiB
+  reserve-plus-working requirement (`reports/upstairs_equipment_export.log`).
+  Following the user's request to resolve the unnecessary block, 10 GiB is now
+  warning-only; the hard reserve is 2 GiB plus estimated working space. No player
+  saves, source or evidence were removed. [Policy correction](../resource-usage/README.md#export-reserve-correction--2026-11-02).
+- **Final correction exported and installed**:
+  `8cd6f0574a9ab6b7ce925c10f712f96d113da7e88187cee0f42ba725acbc4957`,
+  449,657,104-byte PCK, all 14 external native libraries match; root executable
+  unchanged. Export: `reports/upstairs_reserve_export.log`.
+- Final-pack waking/equipment: 23 checks,
+  `reports/expedition_motion/20261102T110834801889Z`; guidance: seven,
+  `reports/expedition_motion/20261102T110837875908Z`; posture: four,
+  `reports/expedition_motion/20261102T110840232809Z`; actual installed executable
+  fresh-process reload: 12,
+  `reports/frontier_expedition/20261102T110842820893Z`. These targeted final checks
+  supplement, not relabel, the earlier pack's 188-check creation/physical route.
 
 ### Captioned review media
 

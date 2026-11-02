@@ -3,7 +3,9 @@
   "date": "2026-11-02",
   "approval": "User approved five-second first-person waking proposal",
   "approved_motion_sha256": "a2153c88a9c9614fe9fc250e6567cb4fb7b99bdfb3c09da28048e3842b00f931",
-  "installed_pack_sha256": "9048699f92d580113b2a60c455f687d019c13aa9d37439e4436cc0e1ca6b2342",
+  "initial_pack_sha256": "9048699f92d580113b2a60c455f687d019c13aa9d37439e4436cc0e1ca6b2342",
+  "installed_pack_sha256": "8cd6f0574a9ab6b7ce925c10f712f96d113da7e88187cee0f42ba725acbc4957",
+  "installed_pack_bytes": 449657104,
   "unchanged_root_executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
   "checks": [
     {"scope": "Four rotated upstairs routes and church sleeper envelopes", "passed": 161, "report": "reports/checks/20261102T101535526682Z"},
@@ -14,12 +16,15 @@
     {"scope": "Installed fresh-process reload", "passed": 12, "report": "reports/frontier_expedition/20261102T105403589841Z"},
     {"scope": "Installed native quest/UI contact fixture", "passed": 7, "report": "reports/expedition_motion/20261102T105357717976Z"},
     {"scope": "Installed aggressive walk posture", "passed": 4, "report": "reports/expedition_motion/20261102T105400842929Z"},
-    {"scope": "Source final selected-item return, seven item types and focus loss", "passed": 23, "report": "reports/checks/20261102T105130586598Z"}
+    {"scope": "Source final selected-item return, seven item types and focus loss", "passed": 23, "report": "reports/checks/20261102T105130586598Z"},
+    {"scope": "Final pack selected-item return, seven item types and focus loss", "passed": 23, "report": "reports/expedition_motion/20261102T110834801889Z"},
+    {"scope": "Final pack quest guidance", "passed": 7, "report": "reports/expedition_motion/20261102T110837875908Z"},
+    {"scope": "Final pack pursuit posture", "passed": 4, "report": "reports/expedition_motion/20261102T110840232809Z"},
+    {"scope": "Final pack installed executable reload", "passed": 12, "report": "reports/frontier_expedition/20261102T110842820893Z"}
   ],
   "installed_trip_sampled_peak_bytes": {"private_commit": 4287389696, "dedicated_gpu": 1757569024},
   "retained_failed_harness": "reports/frontier_expedition/20261102T102649420509Z",
   "pending": [
-    "Final selected-idle correction re-export blocked by disk reserve; repeat packaged motion checks and reload when space is available",
     "Player health/death/respawn lifecycle does not exist; reusable approved-animation hook is not a completed death loop",
     "Foreground frame pacing, player pursuit-posture acceptance and broader seeds remain unqualified"
   ]

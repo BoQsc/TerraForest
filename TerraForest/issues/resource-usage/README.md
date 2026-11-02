@@ -1,7 +1,7 @@
 # Resource usage visibility
 
 - Status: Implemented; scoped engineering checks, not user visual approval.
-- Updated: 2026-10-28. Builds on resource-budget checkpoint `3e8ae48e`.
+- Updated: 2026-11-02. Builds on resource-budget checkpoint `3e8ae48e`.
 - Request: Inspect the sources of storage/memory usage from ESC and see limits.
 - Policy follow-up: user raised terrain-cache maintenance from 2 to 3 GiB on
   2026-10-28. The shared policy updates Usage and maintenance together; original
@@ -10,6 +10,27 @@
   check pass; logs: `reports/cache_policy_3gib/{unit,export,packed}.log`.
 
 ## Cached readings and targeted discovery
+
+### Export reserve correction — 2026-11-02
+
+The 10 GiB hard reserve plus 1 GiB estimated export work repeatedly blocked a
+roughly 450 MB pack while the drive had over 10 GiB free. The user requested a
+resolution instead of more deletion requests. The shared policy now distinguishes
+a **10 GiB warning** from a **2 GiB hard reserve plus planned work**. Usage labels
+both and colors low-space warnings separately. The export still checks actual
+space before publication and retains its pending-pack validation. No saves,
+evidence, source or caches were removed to make room; content/GPU/cache limits
+are unchanged. Ten Python policy tests and eleven UI boundary assertions pass;
+`reports/disk_reserve_units.log`, `reports/checks/20261102T110552972091Z`.
+The same eleven UI checks pass against the installed pack:
+`reports/disk_reserve/20261102T111025800972Z`. Export succeeds without cleanup:
+`reports/upstairs_reserve_export.log`, 449,657,104-byte PCK
+`8cd6f0574a9ab6b7ce925c10f712f96d113da7e88187cee0f42ba725acbc4957`.
+All 14 native libraries match; the waiting animation correction and fresh-process
+reload also pass in that pack. Earlier screenshots below retain the former disk
+reserve; they document cached discovery, not this updated threshold.
+
+### Existing cached discovery
 
 Removal commit `fe80b322` was reverted in `fd9c98d6`, as requested. The size
 display remains: opening reads a small persisted summary without walking folders.

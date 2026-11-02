@@ -10,6 +10,7 @@
   "derived_cache_total_bytes": 3221225472,
   "failed_test_cache_bytes": 1073741824,
   "saved_world_warning_bytes": 10737418240,
-  "minimum_free_bytes": 10737418240,
+  "free_space_warning_bytes": 10737418240,
+  "minimum_free_bytes": 2147483648,
   "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
 }

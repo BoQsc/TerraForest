@@ -68,10 +68,14 @@ class ResourceLimitTests(unittest.TestCase):
         with patch('resource_limits.shutil.disk_usage') as usage:
             usage.return_value.free = 14 * 1024**3
             require_free_space('.', 1024**3)
-            usage.return_value.free = 10 * 1024**3
+            for available in [10 * 1024**3, 4 * 1024**3, 3 * 1024**3]:
+                usage.return_value.free = available
+                require_free_space('.', 1024**3)
+            usage.return_value.free = 3 * 1024**3 - 1
             with self.assertRaises(OSError):
                 require_free_space('.', 1024**3)
-        self.assertEqual(load_budgets()['minimum_free_bytes'], 10 * 1024**3)
+        self.assertEqual(load_budgets()['minimum_free_bytes'], 2 * 1024**3)
+        self.assertEqual(load_budgets()['free_space_warning_bytes'], 10 * 1024**3)
         self.assertEqual(load_budgets()['redistributable_limit_bytes'], 5_000_000_000)
 
     def test_runner_fails_over_budget_and_required_unknown_telemetry(self):

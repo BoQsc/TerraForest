@@ -12,10 +12,11 @@ respawn hook, not a completed death loop. Return when that lifecycle is added;
 require real death-to-respawn, selected-item recovery and save/reload evidence.
 Other biome/seed road and foreground performance limitations remain unchanged.
 Installed generation/physical route/save passes 188 checks; fresh-process reload
-passes 12. Final selected-item idle-return correction passes 23 source checks
-but its re-export is blocked by the unchanged disk reserve (10.60 GiB available,
-11 GiB required). Return after 0.5 GB is freed; export and verify the packaged
-waking/equipment cases and reload before claiming final package parity.
+passes 12. The final selected-item idle-return correction is now exported and
+passes all 23 packaged checks. The user-requested disk-policy correction made
+the former 10 GiB hard reserve warning-only, retaining a 2 GiB hard reserve plus
+planned work. No player data was removed. Final pack `8cd6f057...cbc4957` also
+passes guidance/posture checks and a fresh-process reload; see the tracker.
 
 ## Mountain coal mine prototype — 2026-11-01
 
@@ -696,12 +697,13 @@ first-counter initialization and net in-game memory costs remain separate work.
 User targets: 4 GiB VRAM and 5 GB redistributable content. Provisional process-RAM
 warning/limit: 4/6 GiB; not a system-RAM minimum. Automated checks now record
 process RAM/GPU counters, fail observed budget violations and stop new work below
-a 10 GiB disk reserve. Successful unique test caches are removed; registered
+a 2 GiB disk reserve plus planned export space; below 10 GiB is warning-only
+(2026-11-02 user-requested correction). Successful unique test caches are removed; registered
 failed caches have a 1 GiB quota without discarding logs/images/saves.
 Offline, leased and digest-verified maintenance targets 3 GiB of recognized
 terrain cache across roots. [Policy, commands and limits](RESOURCE_BUDGETS.md).
 The user raised this provisional storage quota from 2 to 3 GiB on 2026-10-28;
-historical receipts/screenshots keep their original setting. Other limits are unchanged.
+historical receipts/screenshots keep their original setting. RAM/VRAM/content limits are unchanged.
 Current installed-pack walking checks pass with complete telemetry: observed
 peaks 3.94 GiB private RAM / 1.65 GiB GPU; content is 423 MB. The profiler now
 preserves its launcher-owned cache argument instead of replacing it when loading

@@ -90,7 +90,7 @@ func build(host:Node)->void:
 		var button:=Button.new();button.text="Open folder";button.custom_minimum_size=Vector2(110,34);button.tooltip_text=paths[key];button.disabled=not DirAccess.dir_exists_absolute(paths[key]);button.pressed.connect(open_folder.bind(key));row.add_child(button);folder_buttons[key]=button
 	text("Storage policies",20)
 	if not budgets.is_empty():
-		text("Game content: %s target · warning %s\nTerrain cache: %s maintenance quota · failed test caches: %s retention quota\nWorlds + backups: warn at %s; never auto-delete or refuse a save\nSuccessful temporary-check caches are removed by the shared test runner.\nDisk reserve for automated checks: %s. RAM limits are provisional."%[size_text(int(budgets.redistributable_limit_bytes),true),size_text(int(budgets.redistributable_warning_bytes),true),size_text(int(budgets.derived_cache_total_bytes)),size_text(int(budgets.failed_test_cache_bytes)),size_text(int(budgets.saved_world_warning_bytes)),size_text(int(budgets.minimum_free_bytes))],14)
+		text("Game content: %s target · warning %s\nTerrain cache: %s maintenance quota · failed test caches: %s retention quota\nWorlds + backups: warn at %s; never auto-delete or refuse a save\nSuccessful temporary-check caches are removed by the shared test runner.\nDisk: warning below %s; hard reserve %s plus planned export space. RAM limits are provisional."%[size_text(int(budgets.redistributable_limit_bytes),true),size_text(int(budgets.redistributable_warning_bytes),true),size_text(int(budgets.derived_cache_total_bytes)),size_text(int(budgets.failed_test_cache_bytes)),size_text(int(budgets.saved_world_warning_bytes)),size_text(int(budgets.free_space_warning_bytes)),size_text(int(budgets.minimum_free_bytes))],14)
 	else:text("Budget data is unavailable. Re-export the game to include its shared resource policy.")
 	text("Folder figures are timestamped snapshots, not live filesystem totals. Active-cache accounting is read from the terrain worker. Cache estimates are not safe-deletion audits; links are skipped.",13)
 	notice=text("",14)
@@ -152,8 +152,8 @@ func refresh_live()->void:
 	meter("ram","RAM · private commit",int(live.get("private_bytes",-1)),int(budgets.ram_limit_bytes),int(budgets.ram_warning_bytes),int(live.get("private_peak_bytes",-1)))
 	meter("gpu","GPU · process allocations",int(live.get("gpu_bytes",-1)),int(budgets.vram_limit_bytes),int(budgets.vram_warning_bytes))
 	var free:int=live.get("disk_free_bytes",-1)
-	meters.free.label.text="Free storage · game-data drive: %s · keep at least %s"%[size_text(free),size_text(int(budgets.minimum_free_bytes))]
-	meters.free.label.modulate=Color("ed8f83") if free>=0 and free<int(budgets.minimum_free_bytes) else Color("8daca8")
+	meters.free.label.text="Free storage · game-data drive: %s · warn below %s · hard reserve %s"%[size_text(free),size_text(int(budgets.free_space_warning_bytes)),size_text(int(budgets.minimum_free_bytes))]
+	meters.free.label.modulate=Color("ed8f83") if free>=0 and free<int(budgets.minimum_free_bytes) else Color("e4bc6b") if free>=0 and free<int(budgets.free_space_warning_bytes) else Color("8daca8")
 	meters.free.bar.visible=false
 	live_note.text="Resident RAM: %s. Process counters, not whole-device usage. GPU sampling runs only while Usage is visible."%size_text(int(live.get("working_bytes",-1)))
 	if terrain_source is Object:

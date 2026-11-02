@@ -15,6 +15,8 @@ def load_budgets():
     for name in ['ram', 'vram', 'redistributable']:
         if limits[name + '_warning_bytes'] > limits[name + '_limit_bytes']:
             raise ValueError('Resource warning exceeds limit: ' + name)
+    if limits['minimum_free_bytes'] > limits['free_space_warning_bytes']:
+        raise ValueError('Free-space warning must be above the hard reserve')
     return limits
 
 
@@ -29,9 +31,10 @@ def evaluate(private_bytes=None, vram_bytes=None, distribution_bytes=None, limit
 
 def require_free_space(path, extra_bytes=0):
     available = shutil.disk_usage(path).free
-    required = load_budgets()['minimum_free_bytes'] + extra_bytes
+    reserve = load_budgets()['minimum_free_bytes']
+    required = reserve + extra_bytes
     if available < required:
-        raise OSError(f'Low storage: {available / 2**30:.2f} GiB free; need {required / 2**30:.2f} GiB including the safety reserve. Run storage maintenance first.')
+        raise OSError(f'Low storage: {available / 2**30:.2f} GiB free; need {required / 2**30:.2f} GiB ({reserve / 2**30:.2f} GiB hard reserve + {extra_bytes / 2**30:.2f} GiB planned work).')
 
 
 def export_working_bytes(installed_pack):
