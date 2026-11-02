@@ -84,6 +84,7 @@ var state := "idle"
 var health := 180.0
 var limb_health: Dictionary = {}
 var anatomy:RefCounted
+var hit_reaction:Node3D
 var geometry_template:RefCounted
 var missing: Dictionary = {}
 var part_meshes: Dictionary = {}
@@ -215,6 +216,8 @@ func configure(scene: PackedScene = null) -> void:
 	_build_hit_areas()
 	initialization_us["hit areas"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	_build_ragdoll()
+	hit_reaction=ClassDB.instantiate("NativeZombieHitReaction");skeleton.add_child(hit_reaction)
+	if not hit_reaction.configure(PARTS):push_error("Zombie impact modifier initialization failed");return
 	initialization_us["ragdoll"]=Time.get_ticks_usec()-measured_begin;measured_begin=Time.get_ticks_usec()
 	initialized = true
 	_load_behavior_contract()
@@ -1516,6 +1519,7 @@ func receive_hit(part: String, damage: float, world_point: Vector3 = Vector3.ZER
 	if not result.ok:return
 	health=float(result.health);limb_health=anatomy.snapshot().limbs
 	damaged.emit(part, health)
+	if alive and not result.dead and impact=="firearm":hit_reaction.hit(part,world_point,impulse,damage)
 	if sleeper_active() and not result.dead:sleeper.wake()
 	if result.sever:
 		sever_limb(part, impulse)
@@ -1628,6 +1632,7 @@ func die(impulse: Vector3 = Vector3.ZERO) -> void:
 	if not initialized or not alive:
 		return
 	alive = false
+	if is_instance_valid(hit_reaction):hit_reaction.clear()
 	anatomy.kill();health=0.0;limb_health=anatomy.snapshot().limbs
 	state = "ragdoll"
 	behavior_enabled = false

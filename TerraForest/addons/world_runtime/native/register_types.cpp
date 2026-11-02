@@ -7,6 +7,7 @@
 #include "zombie_population.hpp"
 #include "zombie_anatomy.hpp"
 #include "zombie_posture.hpp"
+#include "zombie_hit_reaction.hpp"
 #include "zombie_rest_body.hpp"
 #include "entity_renderer.hpp"
 #include "world_archive.hpp"
@@ -34,6 +35,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeZombieRigidPart);
         GDREGISTER_CLASS(terraforest::NativeZombieAnatomy);
         GDREGISTER_CLASS(terraforest::NativeZombiePosture);
+        GDREGISTER_CLASS(terraforest::NativeZombieHitReaction);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);
