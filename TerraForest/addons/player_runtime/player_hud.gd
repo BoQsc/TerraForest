@@ -337,7 +337,7 @@ func deliver_mining_rewards() -> int:
 	for i in range(0,pending.size(),2):
 		var id: int=pending[i]
 		if not (id in CATALOG or id in MATERIALS or id in RESOURCES):continue
-		var limit:=1 if id in CATALOG or id>=301 else 999
+		var limit:=stack_limit(id)
 		var current: Dictionary=inventory.snapshot();var space:=0
 		for row: Dictionary in current.slots:
 			if row.count==0:space+=limit
