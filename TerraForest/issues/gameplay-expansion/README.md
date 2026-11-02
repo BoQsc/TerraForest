@@ -5,6 +5,18 @@
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Bounded water reset — 2026-11-02
+
+- Native sparse patches restore exact water/vacancy state within selected bounds;
+  dry baselines are 96 bytes and still clear later water in that region.
+- Both builds and the installed package pass 108 patch/reopen/real-terrain-contact assertions each, plus
+  ocean residency, map identity, region transfer and existing storage regressions.
+- Ordinary publication removes emptied meshes/pick caches. Unhydrated deferred
+  or cached ocean state rejects instead of being erased. No flow or save migration.
+- Dense maximum patches take tens of milliseconds: cold-work scheduling, durable
+  baselines, live multi-owner cleanup/rollback and marker/E gameplay remain open.
+- [Exact evidence, limits and retained earlier failures](water-patch-evidence.json).
+
 ## Bounded vegetation reset — 2026-11-02
 
 - Native selected tree/ground patches preserve neighboring edits and exact planted
@@ -13,7 +25,7 @@
   reopen, tree collision/publication and actual compound harvest save/load.
 - Existing harvest fixtures now provide the current staged-loading context; initial
   failed runs remain recorded. Ordinary save formats and player worlds are unchanged.
-- No complete gameplay reset is enabled. Water, exact natural-root selection,
+- No complete gameplay reset is enabled. Water coordination, exact natural-root selection,
   durable baselines, live cleanup, rollback and coordinated publication remain.
 - [Machine-readable evidence and performance scope](vegetation-patch-evidence.json).
 

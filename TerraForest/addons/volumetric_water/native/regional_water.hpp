@@ -227,8 +227,12 @@ class NativeRegionalWater : public godot::RefCounted {
     bool decode(const godot::PackedByteArray &data,bool install);
 protected: static void _bind_methods();
 public:
-    void set_western_ocean(bool enabled){western_ocean=enabled;}
-    void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;++map_revision;}}
+    void set_western_ocean(bool enabled){if(western_ocean!=enabled){western_ocean=enabled;invalidate_snapshot();}}
+    void set_surrounding_ocean(bool enabled){if(surrounding_ocean!=enabled){surrounding_ocean=enabled;invalidate_snapshot();}}
+    godot::Dictionary water_patch_state() const;
+    godot::PackedByteArray capture_water_patch(const godot::Vector3i &origin,const godot::Vector3i &size,int64_t revision,int64_t owner) const;
+    bool validate_water_patch(const godot::PackedByteArray &data) const;
+    godot::Dictionary restore_water_patch(const godot::PackedByteArray &data,int64_t revision,int64_t owner);
     godot::Dictionary survey_ocean(int64_t cursor,int64_t expected_revision) const;
     // Single-region transfer primitive; the caller must establish checkpoint and
     // terrain identity before reusing occupancy. It never retires live data.

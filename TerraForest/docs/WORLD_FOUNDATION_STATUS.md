@@ -243,10 +243,23 @@ Native selected vegetation reset is now installed and checked: 108 assertions pe
 debug/release build and 156 package assertions, including fresh-process storage,
 ordinary tree publication/collision and compound save/reload. Outside plants and
 removals survive. Corpse storage/package checks also pass; live cleanup is separate.
-Next: exact generation-owned natural-root selection, editable-water restoration,
+Next: exact generation-owned natural-root selection, water hydration/contact coordination,
 durable baselines and coordinated quiescence/rollback/publication before enabling
 question-mark/E quest reset. No player saves changed or gameplay reset activated.
 [Evidence, limits and retained failed fixtures](../issues/gameplay-expansion/vegetation-patch-evidence.json).
+
+Native bounded water restoration now preserves exact selected quantities/vacancies
+and outside cells, with 96-byte dry baselines and bounded sparse wet patches.
+Both native builds and the installed package pass 108 patch/reopen/real-contact
+assertions plus eight ocean/storage regression scripts. Deferred/cached sea must
+be hydrated before reset; unknown water never
+silently becomes dry. Normal mesh/pick publication is reused. Dense maximum patches
+take tens of milliseconds and still need cold-work scheduling in the coordinator.
+This does not enable complete quest resets: durable world-bound baselines, live
+quiescence, cross-owner rollback and normal marker/E gameplay remain prerequisites.
+Matching package verification is complete; resume those dependencies now. Acceptance needs
+real generated-world reset/reopen, outside preservation and foreground timing.
+[Water evidence](../issues/gameplay-expansion/water-patch-evidence.json).
 
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and

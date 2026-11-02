@@ -326,9 +326,23 @@ are unchanged. Observed 16,384-root restore takes 5.4–8.9 ms headlessly; this 
 reset operation is not a per-frame task or gameplay timing guarantee.
 [Vegetation reset evidence](../issues/gameplay-expansion/vegetation-patch-evidence.json).
 
+Water now has a bounded native TFWP1 patch: exact quantities and vacancies inside
+a half-metre-cell box, with untouched cells in the same region preserved. Sparse
+records make an empty baseline 96 bytes without losing its explicit clearing bounds.
+Limits are 128 m per axis, 262,144 cells, 1,024 intersected regions and 4,194,400 bytes.
+Owner/revision, checksum, ocean configuration, availability and capacity checks
+reject before mutation. Unhydrated deferred/cached sea regions reject rather than
+being treated as empty. Existing hydration and terrain-contact sampling are reused;
+changed water uses ordinary mesh/pick publication. No flow is added. Native tests
+cover fresh-process restoration, ocean overrides, deferred/cache re-entry and real
+terrain contacts; the installed package repeats all 108 assertions and eight
+water/storage/ocean regression scripts. A dense maximum patch takes tens of milliseconds, so the future
+coordinator must schedule cold reset work rather than call it from a frame hot path.
+[Water reset evidence](../issues/gameplay-expansion/water-patch-evidence.json).
+
 These primitives are not a complete location reset: live residents/corpses,
-falling trees/fractured boulders require quiescence; editable water still needs
-bounded capture/restore including deferred regions. Persistent baseline retention,
+falling trees/fractured boulders require quiescence; water requires selected-region
+hydration and terrain/contact coordination. Persistent baseline retention,
 exact natural-root selection, worker scheduling, local rendered publication,
 player/vehicle exclusion and rollback across owners remain prerequisites
 before enabling the marker/E interaction or trader offers.

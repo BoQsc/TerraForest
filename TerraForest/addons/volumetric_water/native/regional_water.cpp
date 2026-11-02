@@ -215,6 +215,10 @@ Dictionary NativeWaterTerrainPatch::statistics() const {Dictionary d;d["status"]
 
 
 void NativeRegionalWater::_bind_methods(){
+    ClassDB::bind_method(D_METHOD("water_patch_state"),&NativeRegionalWater::water_patch_state);
+    ClassDB::bind_method(D_METHOD("capture_water_patch","origin","size","revision","owner"),&NativeRegionalWater::capture_water_patch);
+    ClassDB::bind_method(D_METHOD("validate_water_patch","data"),&NativeRegionalWater::validate_water_patch);
+    ClassDB::bind_method(D_METHOD("restore_water_patch","data","revision","owner"),&NativeRegionalWater::restore_water_patch);
     ClassDB::bind_method(D_METHOD("set_surrounding_ocean","enabled"),&NativeRegionalWater::set_surrounding_ocean);
     ClassDB::bind_method(D_METHOD("ocean_publication_mask"),&NativeRegionalWater::ocean_publication_mask);
     ClassDB::bind_method(D_METHOD("update_ocean_residency","center","budget"),&NativeRegionalWater::update_ocean_residency);

@@ -1,0 +1,460 @@
+{
+  "date": "2026-11-02",
+  "status": "Native and installed-package water-state restoration verified; full live repeatable POI reset is unfinished",
+  "format": {
+    "name": "TFWP1",
+    "units": "Half-metre water cells; X-fastest, then Y, then Z",
+    "header_bytes": 64,
+    "record_bytes": 16,
+    "digest_bytes": 32,
+    "records": "Sorted unique nonzero water/vacancy records; omitted cells inside explicit bounds mean dry",
+    "digest": "SHA-256",
+    "flags": "Western/surrounding ocean configuration"
+  },
+  "limits": {
+    "axis_cells": 256,
+    "cells": 262144,
+    "intersected_regions": 1024,
+    "dry_patch_bytes": 96,
+    "maximum_patch_bytes": 4194400,
+    "world_quantity_ml": 4503599627370496,
+    "vacancy_per_cell_ml": 125000
+  },
+  "verification": {
+    "reports/water_patch/20261102T165448897210Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "debug",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            94,
+            0
+          ],
+          "timing": [
+            4194400,
+            27302,
+            39211
+          ],
+          "dry_timing": [
+            96,
+            167,
+            102
+          ],
+          "seconds": 1.1370477000018582
+        },
+        {
+          "variant": "debug",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            5,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.3188220000010915
+        },
+        {
+          "variant": "debug",
+          "phase": "water_patch_contacts",
+          "passed": true,
+          "assertions": [
+            9,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.29767709999578074
+        },
+        {
+          "variant": "debug",
+          "phase": "water_static_editing",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.26591249997727573
+        },
+        {
+          "variant": "debug",
+          "phase": "water_region_store",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.26345450000371784
+        },
+        {
+          "variant": "debug",
+          "phase": "water_storage_snapshot",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.27731129998574033
+        },
+        {
+          "variant": "debug",
+          "phase": "water_region_io",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.27336779999313876
+        },
+        {
+          "variant": "debug",
+          "phase": "water_region_retirement",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.37426230002893135
+        },
+        {
+          "variant": "debug",
+          "phase": "water_map_identity",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2851308000390418
+        },
+        {
+          "variant": "debug",
+          "phase": "water_region_transfer",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2827047999599017
+        },
+        {
+          "variant": "debug",
+          "phase": "ocean_residency",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.45567039999878034
+        },
+        {
+          "variant": "release",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            94,
+            0
+          ],
+          "timing": [
+            4194400,
+            19876,
+            21908
+          ],
+          "dry_timing": [
+            96,
+            80,
+            55
+          ],
+          "seconds": 1.021033399971202
+        },
+        {
+          "variant": "release",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            5,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.27327150001656264
+        },
+        {
+          "variant": "release",
+          "phase": "water_patch_contacts",
+          "passed": true,
+          "assertions": [
+            9,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2662614000146277
+        },
+        {
+          "variant": "release",
+          "phase": "water_static_editing",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.28862690000096336
+        },
+        {
+          "variant": "release",
+          "phase": "water_region_store",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.27096159994835034
+        },
+        {
+          "variant": "release",
+          "phase": "water_storage_snapshot",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2744611999951303
+        },
+        {
+          "variant": "release",
+          "phase": "water_region_io",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2820230000070296
+        },
+        {
+          "variant": "release",
+          "phase": "water_region_retirement",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.36263420002069324
+        },
+        {
+          "variant": "release",
+          "phase": "water_map_identity",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.28428229998098686
+        },
+        {
+          "variant": "release",
+          "phase": "water_region_transfer",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.28856650000670925
+        },
+        {
+          "variant": "release",
+          "phase": "ocean_residency",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.5516189999761991
+        }
+      ]
+    },
+    "reports/water_patch/20261102T165457756437Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "pack",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            94,
+            0
+          ],
+          "timing": [
+            4194400,
+            26312,
+            37591
+          ],
+          "dry_timing": [
+            96,
+            83,
+            59
+          ],
+          "seconds": 1.0725200999877416
+        },
+        {
+          "variant": "pack",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            5,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.4225702999974601
+        },
+        {
+          "variant": "pack",
+          "phase": "water_patch_contacts",
+          "passed": true,
+          "assertions": [
+            9,
+            0
+          ],
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.2925674999714829
+        },
+        {
+          "variant": "pack",
+          "phase": "water_static_editing",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.30144320003455505
+        },
+        {
+          "variant": "pack",
+          "phase": "water_region_store",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.5120084999944083
+        },
+        {
+          "variant": "pack",
+          "phase": "water_storage_snapshot",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.4127015999983996
+        },
+        {
+          "variant": "pack",
+          "phase": "water_region_io",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.41465779999271035
+        },
+        {
+          "variant": "pack",
+          "phase": "water_region_retirement",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.3858287999755703
+        },
+        {
+          "variant": "pack",
+          "phase": "water_map_identity",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.29291590000502765
+        },
+        {
+          "variant": "pack",
+          "phase": "water_region_transfer",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.40442109998548403
+        },
+        {
+          "variant": "pack",
+          "phase": "ocean_residency",
+          "passed": true,
+          "assertions": null,
+          "timing": null,
+          "dry_timing": null,
+          "seconds": 0.5912187999929301
+        }
+      ]
+    }
+  },
+  "installed_pack_sha256": "5b8c7c631d8ada051fa09e86af4563ccfb372bf8e83f025d83149832e0638920",
+  "native_sha256": {
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "056611462bf7d3727b1b541cfec6d105a8d2d20e018a66755f0ff8d7c40a3c21",
+    "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "94a78c114856e77bd3f12afc684309cd0541ea2f671e76fcea13fa3e0da0ef7c",
+    "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "7e23116755f4bb5c53f10ddacc1226d40ccdba05879d9257de818f294387e4d6",
+    "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "01f5c6f65610b26d688eb580a43a6818c377112cd48240d72e139a60eeede0d2",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "5aebe088910a2f7f04399922462c5eaf3cee93f7a05dd7464f244d27696b90d6",
+    "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "6730ebf776682416354cb09f6065894b503eb8de6d80a90589b1288a8a3fd16f",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+    "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+    "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "ae2aa53cadc0ff7b25b842be4f4a8d31ed6ea74f113c2a4b43fbd107fd50104f",
+    "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "c976674c78a14377a60a9636ad6a57a1e9c4d84737689363df4ccb98f99d87a3",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "721ba8438e897ceea7110cfb35efe70b462870de78f3cf894d9dd5b045a03264",
+    "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "61bba0291ce7495dbfcd6a98cf0ec84a87cb3899e79e5076f145547bc60d1539"
+  },
+  "sources": {
+    "tests\\water_patch.gd": "2850d1a220484b2d32d49a9075724b4ad4aea5ad89354711153e1f26ffa31d57",
+    "tests\\water_patch_contacts.gd": "d6b40a0eb72d828f51d5512974d6a8cf55016f8f17e4ad2701836d091edacebe",
+    "tests\\water_static_editing.gd": "d24d68ea463d14b9a73898f8860cf2ffbee1fdea55b28fa2f5c694034081d7a3",
+    "tests\\water_region_store.gd": "5883dcd13fbefac60f86c2bf848f5b60f914ec96d75f5392275ebc4f4359adae",
+    "tests\\water_storage_snapshot.gd": "40a38d2e6453463adbdd901c21a778185ec0ab45567f749d16cec81231e18b8b",
+    "tests\\water_region_io.gd": "e412e10a108fbb33122dc7d52bae5915b7c8ea52d934cf300b0c92ea4db3ca49",
+    "tests\\water_region_retirement.gd": "e0b213b0f91836d199c1491072354779aa47599c4cc06cb91f01cdcddac621a4",
+    "tests\\water_map_identity.gd": "5c0c4dc9db54eae18e17cb61f608b951b0fe2bb5785b4ac8fd692a935b40da4b",
+    "tests\\water_region_transfer.gd": "7511871e9e07ba6bc492a528fa4d347026608264143cd20710f9f05ba4fe3f19",
+    "tests\\ocean_residency.gd": "b7c7ab9a0c48c0534e6575ae6d507ac994a1e3c10e9894aa318d52803e5c7fa4",
+    "tools\\check_water_patch.py": "06f34fe4e8ef3fc73285e520becfa2b8e5780d9040a1371cbeae4078a571e976",
+    "addons\\volumetric_water\\native\\water_patch.cpp": "8898b93a5380a532567a420bca2ed39e0b6b90025e778d7caeb85ea440dd815a",
+    "addons\\volumetric_water\\native\\regional_water.hpp": "e434d76c18331c5125fdef957cba7e68947f7485e4c6bce76fbd2112a2841320",
+    "addons\\volumetric_water\\native\\regional_water.cpp": "8489776334753dc524529284cdf2812ff4160113850b01fb7d5546070183e4a6"
+  },
+  "export_log": "reports/water_patch_export.log",
+  "import_log": "reports/water_patch_import.log",
+  "build_log": "reports/water_patch_final_build.log",
+  "bucket_regression": "reports/checks/20261102T165137728065Z/run.json",
+  "retained_earlier_failures": [
+    {
+      "path": "reports/water_patch_build.log",
+      "reason": "Helper name conflicted with member decode; renamed decode_patch"
+    },
+    {
+      "path": "reports/water_patch/20261102T163233359704Z/run.json",
+      "reason": "Mesh fixture had too little water to guarantee a pick mesh; increased fixture quantities, no production bypass"
+    },
+    {
+      "path": "reports/water_patch_sparse_build.log",
+      "reason": "Sparse conversion cursor redeclaration; corrected"
+    },
+    {
+      "path": "reports/checks/20261102T164338745923Z/run.json",
+      "reason": "Runner required a nonexistent WATER_BUCKET marker; original test exited zero and reported zero failures; repeated with actual completion marker"
+    },
+    {
+      "path": "reports/water_patch/20261102T165338979131Z/run.json",
+      "reason": "Package excludes tests; inherited regression scripts required res://tests; isolated runner now copies and rewrites test-only dependencies outside the pack"
+    }
+  ],
+  "scope": [
+    "Selected quantities/vacancies restore while outside cells in the same region survive",
+    "Dry overrides remove normal water meshes and pick cache; ocean edits remain explicit overrides",
+    "Malformed/stale/unavailable/capacity failures reject without state mutation; allocation-failure injection not qualified",
+    "Deferred records and cached/implicit ocean must be hydrated by existing runtime paths before reset",
+    "Actual TerrainCore contact resampling preserves restored amounts and does not enable automatic flow",
+    "No player saves modified; no visible gameplay-reset flow enabled"
+  ],
+  "remaining": [
+    "Durable location baselines bound to world identity and content definitions",
+    "Exact generation-owned vegetation root selection",
+    "Live resident/corpse/tree-fall/boulder quiescence",
+    "Water hydration and coordinated terrain/contact rebuild",
+    "Cross-owner transactional commit/rollback and player/vehicle exclusion",
+    "Worker/incremental reset scheduling: dense maximum exceeds a 60 FPS frame",
+    "Normal trader/question-mark/E activation, clear/reward and fresh-world reopen",
+    "Rendered world review and foreground frame pacing"
+  ]
+}
