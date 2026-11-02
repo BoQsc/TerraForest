@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-02",
+  "scope": "Prevent new successful tests retaining their own duplicate native libraries; not historical cleanup or a 100 GB recovery claim",
+  "unit_tests": {
+    "passed": 7,
+    "skipped": 1,
+    "skip": "Windows symlink creation unavailable",
+    "log": "reports/native_test_retention_units.log"
+  },
+  "verification": {
+    "reports/location_baseline/20261102T174906307191Z/run.json": {
+      "passed": true,
+      "removed_files": 6,
+      "released_bytes": 13423104,
+      "errors": []
+    },
+    "reports/water_patch/20261102T174047233815Z/run.json": {
+      "passed": true,
+      "removed_files": 4,
+      "released_bytes": 7783424,
+      "errors": []
+    },
+    "reports/building_standards/20261102T174932131023Z/run.json": {
+      "passed": true,
+      "removed_files": 2,
+      "released_bytes": 5165568,
+      "errors": []
+    }
+  },
+  "logical_byte_measurements": {
+    "main_checkout": 27229836759,
+    "reports": 12205660936,
+    "build": 4430508060,
+    "editor_imports_and_cache": 159843706,
+    "toolchains": 1042741754,
+    "additional_worktrees": 18376283017,
+    "codex_sessions": 8190436874
+  },
+  "measurement_scope": "Read-only file-length sums, not NTFS allocated-byte accounting. User-data scan was partial and excluded from totals. No complete attribution of the former 100 GB.",
+  "system_observation": {
+    "pagefile_allocated_mib": 22264,
+    "automatically_managed": true,
+    "changed_by_this_task": false
+  },
+  "preservation": [
+    "Source and installed DLLs",
+    "Git and old worktrees",
+    "Player worlds and all pre-existing saves",
+    "Original screenshots and other review evidence",
+    "All failed-test library copies",
+    "Test fixture data and logs"
+  ],
+  "retrospective_cleanup": false,
+  "remaining": [
+    "Retained automated worlds and report payloads need provenance-aware retention",
+    "Older worktrees and historical snapshots are not removed",
+    "Other applications and Windows storage are outside this cleanup",
+    "The 100 GB free-space objective is not achieved"
+  ],
+  "sources": {
+    "tools/native_test_retention.py": "f0ae904d8948355c28616003951619011b2c411b9b6de898eaf676c13273637e",
+    "tools/test_native_test_retention.py": "d81aecb56e86908eeed1f3b18489827f606b0264c86a68d9f9244a39a6717d70",
+    "tools/check_building_standards.py": "15f1fd03120e10b790fa22de7b09e6f504dbc122a7b192eb5555ff7117249084",
+    "tools/check_water_patch.py": "4e438e39af21b1ddae1fedbfd87cc81f49492de82ec59be60d05b28fa13bac5e"
+  }
+}

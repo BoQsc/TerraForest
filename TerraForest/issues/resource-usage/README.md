@@ -13,6 +13,23 @@
 
 ### Storage recurrence — 2026-11-02
 
+Evening follow-up: the complete main checkout measures 25.36 GiB of logical file
+lengths, including 11.37 GiB of reports, 4.13 GiB of build data and 4.41 GiB of Git
+objects. Three additional worktrees total 17.11 GiB; Codex session files separately
+total 7.63 GiB. The bounded user-data scan remains partial and is not a total-drive
+accounting. Windows also reports a 22,264 MiB automatically managed pagefile; it is
+not a TerraForest cache and was not modified. Free space changes independently of
+this work. These observations do not prove where all the former 100 GB went.
+
+New successful native-baseline, water-patch and building-standard checks now release
+their own hash-verified DLL copies after completion. Failed runs, fixtures, logs,
+images, installed/source libraries and pre-existing evidence remain. No historical
+worktree, played world or compiler cache was removed in this follow-up. This closes
+one ongoing source of duplicate test data, not the larger retained-data problem.
+Seven retention unit tests pass; the Windows symlink-creation fixture is skipped.
+The complete building/export gate and isolated native runs exercise actual cleanup.
+[Exact scope and receipts](native-test-retention-20261102.json).
+
 The low-space report was real, not the former export-reserve threshold. A bounded,
 read-only audit found 23.29 GiB in worlds, 11.13 GiB in reports, 5.55 GiB in editor
 data, 4.02 GiB in build data and 17.11 GiB in additional worktrees. These are

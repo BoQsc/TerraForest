@@ -9,6 +9,7 @@ from pathlib import Path
 
 from run import ROOT, parse_args
 from run_godot_check import command_for, execute, revision_metadata
+from native_test_retention import release_copies
 
 
 def main():
@@ -35,6 +36,7 @@ def main():
     (project / "project.godot").write_text('config_version=5\n[application]\nconfig/name="Building Contract Release Check"\n')
     extensions = []
     hashes = {}
+    copied_libraries = {}
     for addon, descriptor, library in (
         ("structures", "structures.gdextension", "structures.windows.template_release.x86_64.dll"),
         ("volumetric_terrain", "terrain_core.gdextension", "terrain_core.windows.template_release.x86_64.dll"),
@@ -44,6 +46,7 @@ def main():
         (target / "bin").mkdir(parents=True)
         shutil.copy2(source / "bin" / library, target / "bin" / library)
         hashes[library] = hashlib.sha256((source / "bin" / library).read_bytes()).hexdigest()
+        copied_libraries[target / 'bin' / library] = hashes[library]
         text = (source / descriptor).read_text().replace("template_debug", "template_release").replace("terrain_core.windows.x86_64.dll", library)
         (target / descriptor).write_text(text)
         extensions.append("res://addons/" + addon + "/" + descriptor)
@@ -73,7 +76,8 @@ def main():
     results.append({"test": "building_expansion_release", "command": command, "native_sha256": hashes, **result})
     print(("PASS " if result["passed"] else "FAIL ") + "expansion release", flush=True)
     passed = all(row["passed"] for row in results)
-    (report / "run.json").write_text(json.dumps({**revision_metadata(), "passed": passed, "results": results}, indent=2) + "\n", encoding="utf-8")
+    retention = release_copies({project: copied_libraries}, passed)
+    (report / "run.json").write_text(json.dumps({**revision_metadata(), "passed": passed, "results": results, "native_copy_retention": retention}, indent=2) + "\n", encoding="utf-8")
     print(("PASS " if passed else "FAIL ") + str(report))
     return 0 if passed else 1
 

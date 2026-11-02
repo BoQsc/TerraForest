@@ -10,6 +10,7 @@ import shutil
 from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 from play_checkpoint import revision_metadata
+from native_test_retention import release_copies
 
 
 def main():
@@ -23,6 +24,7 @@ def main():
     pack = ROOT / 'dist/TerraForest.pck'
     pack_hash = hashlib.sha256(pack.read_bytes()).hexdigest() if args.pack else None
     runs = []
+    copied_libraries = {}
     tests = ['water_patch', 'water_patch_contacts', 'water_static_editing', 'water_region_store', 'water_storage_snapshot', 'water_region_io', 'water_region_retirement', 'water_map_identity', 'water_region_transfer', 'ocean_residency']
     for variant in (('pack',) if args.pack else ('debug', 'release')):
         project = folder / variant
@@ -48,6 +50,7 @@ def main():
             terrain_library = ROOT / 'addons/volumetric_terrain/bin' / terrain_name
             shutil.copy2(terrain_library, terrain / 'bin' / terrain_name)
             terrain_hash = hashlib.sha256(terrain_library.read_bytes()).hexdigest()
+            copied_libraries[project] = {addon / 'bin' / library.name: library_hash, terrain / 'bin' / terrain_name: terrain_hash}
             terrain_descriptor = (ROOT / 'addons/volumetric_terrain/terrain_core.gdextension').read_text()
             if variant == 'release':
                 terrain_descriptor = terrain_descriptor.replace('terrain_core.windows.x86_64.dll', terrain_name)
@@ -98,6 +101,7 @@ def main():
                                         ROOT / 'addons/volumetric_water/native/regional_water.hpp',
                                         ROOT / 'addons/volumetric_water/native/regional_water.cpp']},
                   **revision_metadata())
+    record['native_copy_retention'] = release_copies(copied_libraries, record['passed'])
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n')
     print(('PASS ' if record['passed'] else 'FAIL ') + str(folder), flush=True)
     return 0 if record['passed'] else 1
