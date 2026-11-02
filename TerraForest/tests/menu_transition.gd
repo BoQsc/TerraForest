@@ -17,7 +17,8 @@ func _initialize()->void:
 	run.call_deferred()
 func _process(_delta:float)->bool:
 	var now:=Time.get_ticks_usec()
-	if last_tick>0:samples.append({"phase":phase,"ms":(now-last_tick)/1000.0})
+	var stage:String=current_scene.startup_stage if is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" else "resources"
+	if last_tick>0:samples.append({"phase":phase,"stage":stage,"ms":(now-last_tick)/1000.0})
 	last_tick=now;return false
 func check(ok:bool,label:String)->void:
 	if not ok:failures+=1

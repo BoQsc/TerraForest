@@ -75,7 +75,32 @@ have no reported engine errors or leak warnings.
 
 ## Remaining / resume here
 
-Not instant: a roughly 0.6-second opening interval remains. Recorded main-thread
+### Follow-through, 2026-11-02
+
+The earlier "structure materials" label grouped actor/vegetation/pickup setup too.
+Splitting it measured pickup initialization at 400 ms. The fixed pickup meshes
+are now warmed through the authoring-time index; texture mipmaps are baked once,
+byte-verified, and reused. Developer catalog construction yields between groups.
+Graphical texture readback passes all 17 checks in
+`reports/block_texture_bake_gpu/console.log`; startup/cancellation passes five in
+`reports/checks/20261102T144302281206Z`, and atomic pickup initialization passes in
+`reports/checks/20261102T144310741363Z`.
+
+Installed pack `5b8c7c63...638920`: read-only seed-1703 test, 1920x1080 Forward+,
+60 FPS, zero captures, clean teardown, unchanged world hash. Play callback 6.065 ms,
+largest opening interval 309.931 ms, selector 91.150 ms, preview 93.063 ms; entire
+harness 36.339 s. Pickup setup 62.685 ms, structure material setup 41.852 ms.
+Sampled private commit 3.37 GiB / dedicated GPU 1.39 GiB, within configured budgets.
+Receipt: `reports/menu_transition/20261102T144641939776Z/run.json` and `latency.json`.
+This is another warm-cache/offscreen observation, not a matched statistical speedup
+or reduced total-time claim. Resource/setup/restore calls still reach about 0.3 s.
+
+Rejected broad literal-`load()` indexing leaked one RefCounted on shutdown:
+`reports/menu_transition/20261102T141939119237Z`. Restricting the added warmup to
+the explicit pickup catalog restores clean shutdown. Both this failed trial and
+earlier failures remain evidence, not passing qualification.
+
+Not instant: the previous package had a roughly 0.6-second opening interval. Its recorded main-thread
 steps include structure materials (595 ms), menu construction (341 ms), terrain
 initialization (296 ms) and first-person setup (260 ms). The forest phase's 591 ms
 includes yielded worker waiting and is not itself a blocking-frame measurement.

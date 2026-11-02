@@ -1,0 +1,10 @@
+Derived texture bundles, 2026-11-02.
+original.res: existing ../original/*.png, exported legacy procedural tiles.
+terraforest.res: existing ../terraforest/*.png; retain ../terraforest/generation.json.
+expansion_v2.res: existing ../expansion_v2/*.trtex; retain that folder's
+ASSET_LICENSE.md and provenance.json (CC0-1.0 original contribution).
+No new imagery, external input, relicensing or broadened asset use.
+tools/bake_block_textures.gd converts the existing images to RGB8, generates
+their existing mip algorithm once, and stores losslessly compressed Image arrays.
+bake.json records exact input/output hashes. Reloaded bytes are checked against
+the source-derived mip bytes. Runtime shader, UVs and layer order are unchanged.

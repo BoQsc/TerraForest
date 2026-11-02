@@ -43,6 +43,7 @@ var current_page:="Session"
 var scroll: ScrollContainer
 var content: VBoxContainer
 var ready_to_dock:=false
+var built:=false
 var spawner:RefCounted
 var dev_bag:RefCounted
 var dev_shapes:RefCounted
@@ -56,7 +57,7 @@ func page(title: String) -> VBoxContainer:
 	var out:=VBoxContainer.new();out.add_theme_constant_override("separation",12);content.add_child(out);pages[title]=out;out.hide();return out
 func _ready() -> void:
 	layer=40;developer=not game.construction_inventory.gameplay;game.help.hide()
-	panel=PanelContainer.new();panel.position=Vector2(380,100);panel.size=Vector2(1160,800);add_child(panel)
+	panel=PanelContainer.new();panel.position=Vector2(380,100);panel.size=Vector2(1160,800);panel.hide();add_child(panel)
 	var style:=StyleBoxFlat.new();style.bg_color=Color(0.025,0.045,0.05,0.98)
 	for edge in [SIDE_LEFT,SIDE_RIGHT,SIDE_TOP,SIDE_BOTTOM]:style.set_content_margin(edge,24)
 	panel.add_theme_stylebox_override("panel",style)
@@ -145,8 +146,11 @@ func _ready() -> void:
 		breakup_toggle=CheckButton.new();breakup_toggle.text="Extra particles when objects break"
 		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);developer_page.add_child(breakup_toggle)
 		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
+	if game.get("startup_cooperative")==true:await get_tree().process_frame
 	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
+	if game.get("startup_cooperative")==true:await get_tree().process_frame
 	dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,page("Dev Shapes"))
+	if game.get("startup_cooperative")==true:await get_tree().process_frame
 	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",save_and_quit)
@@ -159,7 +163,7 @@ func _ready() -> void:
 	tool_workspace=preload("res://addons/player_runtime/tool_workspace.gd").new();tool_workspace.game=game;tool_workspace.menu=self;add_child(tool_workspace)
 	developer_hud=preload("res://addons/player_runtime/developer_hud.gd").new();developer_hud.game=game;add_child(developer_hud)
 	player_actions=preload("res://addons/player_runtime/player_actions.gd").new();player_actions.game=game;player_actions.menu=self;add_child(player_actions)
-	panel.hide();refresh();dock_palettes.call_deferred()
+	panel.hide();refresh();dock_palettes.call_deferred();built=true
 func dock_palettes() -> void:
 	for pair in [["Building",game.construction_palette.panel],["Objects",game.model_tool.panel],["Roads",game.road_palette.panel]]:tool_workspace.dock(pair[0],pair[1])
 	ready_to_dock=true;sync_panels()

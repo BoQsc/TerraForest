@@ -24,6 +24,14 @@ Export checks freshness. Dynamic loads and external mod entry points retain thei
 existing behavior; this index is not a new mod restriction or a complete asset
 manifest. Each root is limited to its own graph. Cycles are visited once.
 
+The fixed built-in pickup mesh directory is included by the authoring index tool,
+not discovered at runtime. Building texture arrays use lossless, precomputed RGB8
+mip chains from `tools/bake_block_textures.gd`; export verifies source/output hashes
+and rebuilds stale bundles. Original pixels, layer order, shader and UVs stay the
+same, with the old source-image path retained when a bundle is absent. GPU array
+creation remains on the owner thread. Menus yield between developer catalog groups
+and finish before world input is enabled. No lazy first-click gameplay work is added.
+
 World initialization yields between real setup stages, keeping the incomplete
 world's processing disabled. The scene host and generation task explicitly wait
 for `startup_complete`; palette setup finishes before deferred docking. Forest

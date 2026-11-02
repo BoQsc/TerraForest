@@ -148,7 +148,7 @@ func _ready() -> void:
 	startup_cooperative=get_tree().root.has_node("WorldSession") or get_viewport().has_meta("terraforest_scene_task")
 	var previous_process_mode:=process_mode
 	if startup_cooperative:process_mode=Node.PROCESS_MODE_DISABLED
-	await _startup_step("Registering structure materials")
+	await _startup_step("Connecting actor services")
 	construction_inventory.gameplay="--gameplay-construction" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
@@ -161,16 +161,20 @@ func _ready() -> void:
 		push_error("Actor persistence initialization failed");_abort_startup(2);return
 	if "--actors" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and not actors.enable():
 		push_error("Actor activation initialization failed");_abort_startup(2);return
+	await _startup_step("Connecting ground cover storage")
 	if not ground_cover.prepare(persistence):
 		push_error("Ground-cover persistence initialization failed");_abort_startup(2);return
+	await _startup_step("Connecting vegetation storage")
 	if not ecosystem.prepare_persistence(persistence):
 		push_error("Vegetation persistence initialization failed")
 		_abort_startup(2)
 		return
+	await _startup_step("Connecting pickup storage")
 	if not pickups.prepare(persistence):
 		push_error("Material pickup initialization failed")
 		_abort_startup(2)
 		return
+	await _startup_step("Registering structure materials")
 	structures.name = "Structures"
 	add_child(structures)
 	var beam := BoxMesh.new()
@@ -352,6 +356,7 @@ func _ready() -> void:
 	if ProjectSettings.get_setting("terraforest/impact_effects",true) and "--no-impact-effects" not in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())) and ResourceLoader.exists(effects_path):
 		impact_effects=load(effects_path).new();add_child(impact_effects);impact_effects.attach(self)
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
+	while not session_menu.built:await get_tree().process_frame
 	session_menu.world_map=world_map;world_map.game=self;add_child(world_map)
 	destination_guide.game=self;add_child(destination_guide)
 	player_notices.allowed=func()->bool:return not loading_active and not shutdown_requested and app_focused and not player_view.entry.pending and not player_view.entry.active and not session_menu.visible_ui() and not player_hud.inventory_open and not player_hud.developer_belt and not world_map.opened and not trader.ui.opened

@@ -493,6 +493,14 @@ Dictionary NativeBlockWorld::stats() const {
 }
 bool NativeBlockWorld::load_texture_set(const String &name) {
     if(name!="original"&&name!="terraforest")return false;
+    const String baked_path=String("res://addons/structures/textures/arrays/")+name+".res";
+    if(ResourceLoader::get_singleton()->exists(baked_path)){
+        Ref<Resource> bundle=ResourceLoader::get_singleton()->load(baked_path);
+        TypedArray<Image> images=bundle.is_valid()?TypedArray<Image>(bundle->get_meta("images",Array())):TypedArray<Image>();
+        Ref<Texture2DArray> baked;baked.instantiate();
+        if(images.size()==4&&baked->create_from_images(images)==OK){material->set_shader_parameter("tiles",baked);texture_set=name;return true;}
+        return false;
+    }
     const char *names[]={"brick","wood","concrete","metal"};
     TypedArray<Image> images;
     int size=0;
@@ -535,6 +543,14 @@ bool NativeBlockWorld::set_texture_set(const String &name) {
 }
 bool NativeBlockWorld::ensure_appearances() {
     if(appearances_ready)return true;
+    const String baked_path="res://addons/structures/textures/arrays/expansion_v2.res";
+    if(ResourceLoader::get_singleton()->exists(baked_path)){
+        Ref<Resource> bundle=ResourceLoader::get_singleton()->load(baked_path);
+        TypedArray<Image> images=bundle.is_valid()?TypedArray<Image>(bundle->get_meta("images",Array())):TypedArray<Image>();
+        Ref<Texture2DArray> baked;baked.instantiate();
+        if(images.size()==8&&baked->create_from_images(images)==OK){material->set_shader_parameter("appearances",baked);appearances_ready=true;return true;}
+        return false;
+    }
     const char *names[]={"aged_brick","weathered_plaster","coursed_limestone","weathered_timber","slate","patinated_zinc","aged_terracotta","soot_stone_trim"};
     TypedArray<Image> images;
     for(const char *name:names) {

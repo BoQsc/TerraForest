@@ -5,6 +5,7 @@ var checks := 0
 var blocks: Node3D
 
 func _initialize() -> void:
+	root.set_flag(Window.FLAG_NO_FOCUS,true)
 	run.call_deferred()
 
 func check(ok: bool, label: String) -> void:

@@ -28,6 +28,9 @@ def build():
                 visit(dependency)
     for path in ENTRIES:
         visit('res://' + path)
+    graph['res://addons/world_runtime/material_pickups.gd'].extend(
+        'res://' + path.relative_to(ROOT).as_posix()
+        for path in sorted((ROOT / 'addons/player_runtime/art/drops').glob('*.res')))
     return json.dumps(graph, indent=2, sort_keys=True) + '\n'
 
 if __name__ == '__main__':
@@ -39,5 +42,5 @@ if __name__ == '__main__':
         if not TARGET.exists() or TARGET.read_text(encoding='utf-8') != contents:
             raise SystemExit('Startup dependency index is stale; run tools/build_startup_index.py')
     else:
-        TARGET.write_text(contents, encoding='utf-8')
+        TARGET.write_text(contents, encoding='utf-8', newline='\n')
     print('STARTUP_INDEX current')

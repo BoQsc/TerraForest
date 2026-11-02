@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
+const DEFAULT_TILES=preload("res://addons/structures/textures/arrays/original.res")
+const TERRAFOREST_TILES=preload("res://addons/structures/textures/arrays/terraforest.res")
+const APPEARANCES=preload("res://addons/structures/textures/arrays/expansion_v2.res")
 static func prepare(blocks: Node) -> bool:
 	# Initialize textures/mipmaps before interactive mesh publication. Match the
 	# native initial selection policy, including the command-line override.

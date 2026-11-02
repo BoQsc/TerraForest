@@ -1,0 +1,27 @@
+{
+	"inputs": {
+		"expansion_v2/aged_brick.trtex": "1846fe724acbf464b20f9ccb5f871165887bb7714d475c26d3972f8d10aa8e45",
+		"expansion_v2/aged_terracotta.trtex": "507dc17b993ba062f9d6d57dbbf77bf5b8825ab602f9aacfb7ea3f9cc2b0e2c3",
+		"expansion_v2/coursed_limestone.trtex": "31ce96e870314b68414b87389a915a0ce96abc1d2602cdae843448926a1730ea",
+		"expansion_v2/patinated_zinc.trtex": "2ac9b80b3f35182f51e19546f594737e69c09cc78b84ca549e3b5239516b669c",
+		"expansion_v2/slate.trtex": "1fb81cd78897d8ab868928891b1a08c7dff7f4b2d395eccb7888d7bedee3620d",
+		"expansion_v2/soot_stone_trim.trtex": "d484949c26319b83179693ee5a42ad858dc888f45701026bbd141aa4cc0c45ec",
+		"expansion_v2/weathered_plaster.trtex": "e058864cb63a8ef7e2cf97526f97ee42f96e2d4388ed4a66191b35d5adc7ce2c",
+		"expansion_v2/weathered_timber.trtex": "13f14353450e5ab429af9b77a95b32ecceb4bc34e628a1f34a6fe645220b7acc",
+		"original/brick_albedo.png": "0ef9e7d66882734a569958eb755777a86286472c4bd0e8812bb6f0c7ecd940ad",
+		"original/concrete_albedo.png": "47dcb2b1bfeb7f76660b3d08b96e6c7b8c9c2657d8a7f2f5f035278bac564df2",
+		"original/metal_albedo.png": "414de5b3844e4588e3789135cc2f81b427b46680bb374fd8fe9d6dd73a9ba93c",
+		"original/wood_albedo.png": "462c1d1f99e39a4cd5f1a12870f8491ef84f12f6fa0476ca74249677e4c606f9",
+		"terraforest/brick_albedo.png": "f3fe53042e4b0636964aa4137aefc8c64b7513be86146d82867690be5712d1f3",
+		"terraforest/concrete_albedo.png": "204c3ee3dbf15a30e7e5e89eb6fd7a3ba45b4a9bb8b7c6d6f47f36f50c6d11fc",
+		"terraforest/metal_albedo.png": "3375c5cdde3e6f7e878ba9347c3b7e7d019b609fde6672e49e04931c4a72c862",
+		"terraforest/wood_albedo.png": "b3cf18bf82e0bca41323e34433b6592b7dcd2e91182b9d36a016bdd1acf720f2"
+	},
+	"outputs": {
+		"expansion_v2": "b72233f4784c474aae70efe954fd99eecf4bd6bdc451e205aa743c11b6062e00",
+		"original": "051b62a81f58f52004d08d012e50fca43df2652ebc83ae2a70861348d485b91d",
+		"terraforest": "6f53668caf1c502ef1f4c2b576013cc04b8b7791a1c225ca9e760353cd0ec5c1"
+	},
+	"provenance": "Lossless texture-array/mipmap bake of existing project textures; inherited source notices and provenance unchanged.",
+	"version": 1
+}
