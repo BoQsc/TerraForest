@@ -41,6 +41,8 @@ func run()->void:
  game.terrain.stage_measured.connect(func(label:String,ms:float):
   if label=="restore volumetric_water" or label=="receive startup":print("PREPARED_LOAD_STAGE ",label," ms=",ms))
  root.add_child(game)
+ while is_instance_valid(game) and result<0 and not game.startup_complete:await process_frame
+ if result>=0 or not is_instance_valid(game):return
  # Whole-world offline signatures require every model resident, unlike gameplay.
  # Offline staging is committed explicitly after the complete generation batch.
  # A periodic save between survey and grading can invalidate admission.

@@ -101,8 +101,7 @@ func start_stage(state:String)->void:
  else:
   var task_path:String="res://addons/world_runtime/generate_world_task.gd" if fitted else "res://addons/world_runtime/prepare_combined_world_task.gd"
   local_stage=preload("res://addons/world_runtime/scene_job.gd").new();add_child(local_stage)
-  local_stage.start(load(task_path),preload("res://addons/world_runtime/session_options.gd").user_arguments(args))
-  if review_generation:local_stage.task.qualification=true
+  local_stage.start_path(task_path,preload("res://addons/world_runtime/session_options.gd").user_arguments(args),true,{"qualification":review_generation} if fitted else {})
   child=OS.get_process_id()
  metadata.phases.append({"stage":state,"pid":child,"mode":"external_cli" if external_stages else "same_window","arguments":args,"started_usec":Time.get_ticks_usec()})
  deadline=Time.get_ticks_msec()+(540000 if state=="creating" else 270000)

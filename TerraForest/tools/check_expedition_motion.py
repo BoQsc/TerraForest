@@ -8,7 +8,7 @@ from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 
 parser = argparse.ArgumentParser()
-parser.add_argument('stage', choices=['wakeup', 'zombie', 'guidance', 'wakeup_runtime'])
+parser.add_argument('stage', choices=['wakeup', 'zombie', 'guidance', 'wakeup_runtime', 'notices'])
 parser.add_argument('--pack', action='store_true')
 args = parser.parse_args()
 if args.pack and args.stage == 'wakeup':
@@ -16,7 +16,7 @@ if args.pack and args.stage == 'wakeup':
 config, _ = parse_args([])
 folder = ROOT / 'reports/expedition_motion' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
 folder.mkdir(parents=True)
-script = {'wakeup': 'tools/review_player_wakeup.gd', 'zombie': 'tests/zombie_alert.gd', 'guidance': 'tests/quest_guidance.gd', 'wakeup_runtime': 'tests/wakeup_runtime.gd'}[args.stage]
+script = {'wakeup': 'tools/review_player_wakeup.gd', 'zombie': 'tests/zombie_alert.gd', 'guidance': 'tests/quest_guidance.gd', 'wakeup_runtime': 'tests/wakeup_runtime.gd', 'notices': 'tests/player_notices.gd'}[args.stage]
 command = [config.godot, '--path', str(ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1280x720', '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', 'res://' + script, '--', '--review-output=' + folder.as_posix()]
 native = verify_pack_native() if args.pack else {}
 if args.pack:
@@ -27,7 +27,7 @@ if args.pack:
     command[command.index('--script') + 1] = str(driver)
     command[command.index('--path') + 1] = str(ROOT / 'dist')
     command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
-if args.stage == 'wakeup_runtime':
+if args.stage in ['wakeup_runtime', 'notices']:
     command.insert(1, '--headless')
 original = subprocess.Popen
 def nonactivating(*arguments, **keywords):
@@ -38,7 +38,7 @@ def nonactivating(*arguments, **keywords):
     return original(*arguments, **keywords)
 subprocess.Popen = nonactivating
 try:
-    result = execute(command, folder, 300, {'wakeup': 'PLAYER_WAKEUP_REVIEW frames=150', 'zombie': 'ZOMBIE_ALERT checks=', 'guidance': 'QUEST_GUIDANCE checks=', 'wakeup_runtime': 'WAKEUP_RUNTIME checks='}[args.stage], require_resource_budget=args.stage != 'wakeup_runtime')
+    result = execute(command, folder, 300, {'wakeup': 'PLAYER_WAKEUP_REVIEW frames=150', 'zombie': 'ZOMBIE_ALERT checks=', 'guidance': 'QUEST_GUIDANCE checks=', 'wakeup_runtime': 'WAKEUP_RUNTIME checks=', 'notices': 'PLAYER_NOTICES checks='}[args.stage], require_resource_budget=args.stage not in ['wakeup_runtime', 'notices'])
 finally:
     subprocess.Popen = original
 record = {'command': command, 'result': result, 'native_sha256': native, 'test_sha256': hashlib.sha256((ROOT / script).read_bytes()).hexdigest()}

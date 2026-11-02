@@ -117,6 +117,9 @@ func run()->void:
  FileAccess.open(output_dir.path_join("generation_plan_identity.json"),FileAccess.WRITE).store_string(JSON.stringify({"version":prepared.version,"seed":seed_value,"generator":generator,"digest":prepared.plan_digest,"options":world_options}))
 
  if cancelled():quit(2);return
+ var resources:=preload("res://addons/world_runtime/startup_resources.gd").new()
+ if not await resources.prepare(self,"res://demo/world.gd",func(done:int,total:int):progress("Initializing generated terrain data",done,total,{"activity":"Loading game resources · %d / %d"%[done,total]})):quit(1);return
+ if cancelled():quit(2);return
  var game=load("res://demo/world.tscn").instantiate()
  var bake:bool="--save-terrain-lots" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var reopen:bool="--reopen-terrain-lots" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
@@ -141,6 +144,11 @@ func run()->void:
   if not game.terrain.backend.configure_initial_earthworks(packets,prepared.plan_digest,not qualification):print("OFFLINE_PACKETS_REJECTED");game.free();quit(1);return
   progress("Baking roads, foundations and connected mineral veins before terrain loading")
  game.lakes.offline_preparation=true;game.model_region_paging=false;game.temporary_world=not bake;game.max_fps=60;game.background_fps=60;root.add_child(game)
+ while is_instance_valid(game) and result<0 and not game.startup_complete:
+  progress("Initializing generated terrain data",0,0,{"activity":game.startup_stage})
+  await process_frame
+ if result>=0 or not is_instance_valid(game):return
+ resources=null
  if not qualification:
   game.set_process_input(false);game.set_process_unhandled_input(false);game.set_process_unhandled_key_input(false);game.set_process_shortcut_input(false)
   generation_screen.reparent(game)

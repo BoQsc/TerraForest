@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
+signal wake_finished
 # A disposable presentation camera. Physical focus, eye aim and saved pose stay put.
 const DURATION:=3.0
 const PLAYER_LAYER:=1<<19
@@ -189,6 +190,7 @@ func present(progress:float)->void:
 
 func finish()->void:
 	if not active:return
+	var finished_waking:=waking
 	if waking:
 		if not wake_returned:return_wake_item()
 		game.tool_view.human.set_process(true);waking=false
@@ -203,3 +205,4 @@ func finish()->void:
 	if is_instance_valid(camera):camera.queue_free()
 	overlay=null;camera=null
 	view.refresh_processing()
+	if finished_waking:wake_finished.emit()

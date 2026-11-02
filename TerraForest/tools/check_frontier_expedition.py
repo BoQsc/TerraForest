@@ -14,7 +14,8 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reuse-report')
-    parser.add_argument('--stage', choices=['create', 'intro_reload', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'home_resume', 'reward_reload'], default='create')
+    parser.add_argument('--stage', choices=['create', 'notices_reload', 'intro_reload', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'home_resume', 'reward_reload'], default='create')
+    parser.add_argument('--notices-only', action='store_true')
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--installed-executable', action='store_true')
     args = parser.parse_args()
@@ -46,6 +47,8 @@ def main():
         script = folder / 'driver.gd'
         script.write_text((ROOT / 'tests/frontier_expedition_world.gd').read_text().replace('res://tests/trader_ride_world.gd', ride.as_posix()), encoding='utf-8')
     command = [config.godot, '--path', str(ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', str(script), '--', '--session-evidence-dir=' + folder.as_posix(), '--ride-stage=' + args.stage, '--wakeup-test']
+    if args.notices_only:
+        command.append('--notices-only')
     if args.installed_executable:
         command[0] = str(ROOT / 'TerraForest.exe')
     if args.pack:

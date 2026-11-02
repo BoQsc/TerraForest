@@ -47,13 +47,13 @@ func _init() -> void:
 func _ready() -> void:
 	set_process(false)
 
-func initialize() -> Error:
+func initialize(prepared_assets:RefCounted=null) -> Error:
 	if ready_to_render:
 		return ERR_ALREADY_IN_USE
 	if transform != Transform3D.IDENTITY or (is_inside_tree() and global_transform != Transform3D.IDENTITY):
 		return ERR_INVALID_PARAMETER
-	assets = Assets.new()
-	if not assets.build():
+	assets = prepared_assets if prepared_assets!=null else Assets.new()
+	if prepared_assets==null and not assets.build():
 		initialization_failed.emit("Vegetation geometry or view data could not be loaded")
 		return ERR_FILE_CORRUPT
 	renderer.setup(assets.meshes, visual_distance_override if visual_distance_override>0 else draw_distance)

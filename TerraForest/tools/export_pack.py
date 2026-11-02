@@ -29,6 +29,8 @@ if shutil.disk_usage(staging).free-working_bytes<limits['free_space_warning_byte
     print(f'WARNING: Estimated free space after export is below {limits["free_space_warning_bytes"] / 2**30:.2f} GiB; enough for the planned work and hard reserve, continuing.',flush=True)
 if subprocess.call([sys.executable,str(root/'tools/build_credit_notices.py'),'--check']):
     sys.exit(1)
+if subprocess.call([sys.executable,str(root/'tools/build_startup_index.py'),'--check']):
+    sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_door_animation_assets.py')]):
     sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_building_standards.py'),'--godot',str(args.godot)]):

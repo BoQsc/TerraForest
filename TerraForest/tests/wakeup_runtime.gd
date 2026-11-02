@@ -22,6 +22,7 @@ class View extends Node:
 	func _bind_view(_camera:Camera3D)->void:pass
 var failures:=0
 var checks:=0
+var completed:=0
 func check(value:bool,label:String)->void:
 	checks+=1
 	if not value:failures+=1
@@ -32,6 +33,7 @@ func run()->void:
 	game.tool_view=preload("res://addons/player_runtime/tool_view.gd").new();game.camera.add_child(game.tool_view)
 	var view:=View.new();game.add_child(view)
 	var entry=preload("res://addons/player_runtime/entry_fly_in.gd").new();entry.game=game;entry.view=view
+	entry.wake_finished.connect(func():completed+=1)
 	for item:int in [0,1,2,3,6,8,405]:
 		game.player_hud.active_item=item;entry.wake_pending=true
 		check(entry.begin() and entry.waking and entry.blocks_actions(),"waking starts with actions blocked; item "+str(item))
@@ -39,7 +41,9 @@ func run()->void:
 		var human:Node=game.tool_view.human
 		check(not entry.active and not entry.wake_pending and human.is_processing(),"five seconds returns normal animation processing")
 		check(game.tool_view.current==(401 if item==405 else item) and human.active_clip==human._motion_clip("Idle") and human.action_remaining==0,"selected item is already idle at completion: "+str(item))
+	check(completed==7,"each completed wake emits one notice event after selected-item return")
 	game.player_hud.active_item=8;entry.wake_pending=true;entry.begin();entry.step(.2);game.app_focused=false;entry.step(.01)
 	check(not entry.active and game.tool_view.current==8 and game.tool_view.human.is_processing(),"focus loss returns selected weapon without replaying waking")
+	check(completed==8,"interrupted wake still queues one notice for focus return")
 	check(Input.mouse_mode!=Input.MOUSE_MODE_CAPTURED,"waking never takes mouse ownership")
 	game.free();print("WAKEUP_RUNTIME checks=",checks," failures=",failures);quit(1 if failures else 0)

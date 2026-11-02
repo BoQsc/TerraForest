@@ -40,6 +40,7 @@ var world_map=preload("res://addons/world_runtime/world_map.gd").new()
 var map_markers=preload("res://addons/player_runtime/map_markers.gd").new()
 var session_menu=preload("res://addons/player_runtime/session_menu.gd").new()
 var destination_guide=preload("res://addons/player_runtime/destination_guide.gd").new()
+var player_notices=preload("res://addons/player_runtime/player_notices.gd").new()
 var trader=preload("res://addons/player_runtime/trader_world.gd").new()
 var quests=preload("res://addons/player_runtime/quest_world.gd").new()
 var storage=preload("res://addons/player_runtime/storage.gd").new()
@@ -123,12 +124,31 @@ func teleport(point: Vector3, fixed_y: float = -1.0) -> void:
 	super.teleport(point,fixed_y)
 
 var _initial_generation_spawn:=Vector3(800,0,1310)
+var startup_timings:Dictionary={}
+var startup_tick:int
+var startup_complete:=false
+var startup_stage:="Starting world services"
+var startup_cooperative:=false
+var startup_worker:Thread
+func _exit_tree()->void:
+	if startup_worker!=null and startup_worker.is_started():startup_worker.wait_to_finish()
+func _startup_step(stage:String)->void:
+	var now:=Time.get_ticks_usec()
+	startup_timings[startup_stage]=(now-startup_tick)/1000.0
+	startup_stage=stage
+	if startup_cooperative:await get_tree().process_frame
+	startup_tick=Time.get_ticks_usec()
 func configure_generation_spawn(point:Vector3)->bool:
 	if is_inside_tree() or not point.is_finite() or point.x<0 or point.x>2000 or point.z<0 or point.z>2000:return false
 	_initial_generation_spawn=point
 	return true
 
 func _ready() -> void:
+	startup_tick=Time.get_ticks_usec()
+	startup_cooperative=get_tree().root.has_node("WorldSession") or get_viewport().has_meta("terraforest_scene_task")
+	var previous_process_mode:=process_mode
+	if startup_cooperative:process_mode=Node.PROCESS_MODE_DISABLED
+	await _startup_step("Registering structure materials")
 	construction_inventory.gameplay="--gameplay-construction" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	player_hud.gameplay_construction=construction_inventory.gameplay
 	tree_exiting.connect(prefab_library.shutdown_frontage)
@@ -158,6 +178,7 @@ func _ready() -> void:
 	beam_material.albedo_color = Color("3b5359")
 	beam.material = beam_material
 	var structures_ready: bool = structures.prepare() and structures.register_model("architecture/metal_beam/v1",beam) != null
+	await _startup_step("Registering building parts")
 	combat.barrels=preload("res://addons/player_runtime/combat_barrel.gd").register(structures)
 	structures_ready=structures_ready and combat.barrels!=null
 	var doorway: Mesh = load("res://addons/structures/prefabs/doorway_model.tres")
@@ -165,6 +186,7 @@ func _ready() -> void:
 	structures_ready = structures_ready and door_models != null
 	structures_ready = structures_ready and preload("res://addons/structures/paving_catalog.gd").register(structures)
 	var furniture: Array[Dictionary]=preload("res://addons/structures/furniture_catalog.gd").register(structures)
+	await _startup_step("Registering furniture and storage")
 	structures_ready = structures_ready and furniture.size()==3
 	var ladder: Dictionary=preload("res://addons/structures/ladder_catalog.gd").register(structures)
 	structures_ready = structures_ready and not ladder.is_empty()
@@ -173,6 +195,7 @@ func _ready() -> void:
 	var window: Dictionary=preload("res://addons/structures/window_catalog.gd").register(structures)
 	structures_ready = structures_ready and not window.is_empty()
 	var door_entries: Array[Dictionary]=preload("res://addons/structures/door_catalog.gd").register_all(structures,object_mod_config)
+	await _startup_step("Registering doors and outdoor objects")
 	structures_ready = structures_ready and not door_entries.is_empty() and doors.prepare(self)
 	var guardrail: Dictionary=preload("res://addons/structures/guardrail_catalog.gd").register(structures)
 	structures_ready = structures_ready and not guardrail.is_empty()
@@ -182,6 +205,7 @@ func _ready() -> void:
 	structures_ready = structures_ready and mine_rails.size()==5
 	structures_ready = structures_ready and preload("res://addons/exploration/coal_resource.gd").register(structures)
 	player_hud.ground_tools_enabled=ground_enabled
+	await _startup_step("Connecting saved world components")
 	if not world_recipe.prepare(persistence,ecosystem):
 		push_error("World recipe persistence initialization failed");_abort_startup(2);return
 	if not generated_region.prepare(persistence):
@@ -247,9 +271,11 @@ func _ready() -> void:
 		["regional archive",func():return persistence.enable_region_structures(true,model_region_paging)],
 		["terrain attachment",func():return persistence.attach(terrain)==OK]]
 	for step:Array in persistence_steps:
+		await _startup_step("Connecting "+step[0])
 		if not step[1].call():
 			push_error("World persistence initialization failed: "+step[0]);_abort_startup(2);return
 	_setup_prefabs()
+	await _startup_step("Initializing terrain and collision")
 	terrain.density_batch_ready.connect(foundation_check.receive)
 	structures.blocks.configure_history(16*1024*1024,128)
 	structures.blocks.configure_streaming(true,384,256,64*1024*1024,32*1024*1024)
@@ -260,10 +286,12 @@ func _ready() -> void:
 	pending_spawn = _initial_generation_spawn
 	terrain.focus = pending_spawn
 	super._ready()
+	await _startup_step("Preparing first-person character")
 	movement.configure_ladders(ladder.collection)
 	camera.add_child(headlamp)
 	camera.add_child(tool_view)
 	tool_view.human.body=player
+	await _startup_step("Connecting player interactions")
 	player.add_child(zombie_target)
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
 	add_child(trader)
@@ -312,6 +340,7 @@ func _ready() -> void:
 	player_hud.temporary_world=temporary_world
 	player_hud.resource_gains_allowed=func()->bool:return not loading_active and not shutdown_requested and not world_vehicle.driving and not session_menu.visible_ui() and not ProjectSettings.get_setting("terraforest/offscreen_session",false)
 	add_child(player_hud)
+	await _startup_step("Preparing world menus")
 	add_child(storage)
 	add_child(corpse_loot)
 	session_menu.world_page_factory=_make_world_locations
@@ -325,6 +354,11 @@ func _ready() -> void:
 	session_menu.game=self;session_menu.world_browser_path="res://demo/worlds.tscn";add_child(session_menu)
 	session_menu.world_map=world_map;world_map.game=self;add_child(world_map)
 	destination_guide.game=self;add_child(destination_guide)
+	player_notices.allowed=func()->bool:return not loading_active and not shutdown_requested and app_focused and not player_view.entry.pending and not player_view.entry.active and not session_menu.visible_ui() and not player_hud.inventory_open and not player_hud.developer_belt and not world_map.opened and not trader.ui.opened
+	player_notices.general_top=func()->float:return player_hud.action_hint.position.y-44
+	add_child(player_notices)
+	player_view.entry.wake_finished.connect(func():
+		if quests.store.snapshot().introduction==1:player_notices.quest_added("A friendly face"))
 	construction_palette.history_requested.connect(_construction_history)
 	add_child(construction_palette)
 	add_child(road_palette)
@@ -335,6 +369,7 @@ func _ready() -> void:
 	terrain.add_child(site_preview)
 	road_palette.selection_changed.connect(_update_road_preview)
 	construction_palette.configure(structure_prefabs)
+	await _startup_step("Connecting terrain tools")
 	construction_palette.selection_requested.connect(_construction_selection)
 	construction_palette.capture_requested.connect(_capture_construction)
 	construction_palette.supply_requested.connect(_place_material_supply)
@@ -381,6 +416,7 @@ func _ready() -> void:
 		if actors.pool!=null:actors.pool.invalidate_navigation()
 		zombies.invalidate_navigation())
 	_sync_player_tool()
+	await _startup_step("Preparing forest renderer")
 	if not ProjectSettings.get_setting("terraforest/offscreen_session",false):DisplayServer.window_set_title("TerraForest")
 	vegetation.name = "Vegetation"
 	vegetation.draw_distance=3500.0
@@ -389,9 +425,16 @@ func _ready() -> void:
 	vegetation.camera = camera
 	vegetation.sun_direction = sun.global_basis.z.normalized()
 	add_child(vegetation)
-	if vegetation.initialize() != OK:
+	var prepared_forest:RefCounted
+	if startup_cooperative:
+		prepared_forest=vegetation.Assets.new();startup_worker=Thread.new()
+		if startup_worker.start(prepared_forest.build)!=OK:startup_worker=null;_abort_startup(2);return
+		while startup_worker.is_alive():await get_tree().process_frame
+		var prepared:bool=startup_worker.wait_to_finish();startup_worker=null
+		if not prepared:_abort_startup(2);return
+	if vegetation.initialize(prepared_forest) != OK:
 		_message("Vegetation initialization failed; inspect the log")
-		return
+		_abort_startup(2);return
 	if not vegetation.enable_trunk_collision():
 		push_error("Tree collision initialization failed");_abort_startup(2);return
 	if not "--no-tree-shadow-substitutes" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
@@ -407,6 +450,7 @@ func _ready() -> void:
 	ecosystem.road_regions=generated_region.store
 	ground_cover.road_regions=generated_region.store
 	add_child(ecosystem)
+	await _startup_step("Preparing ground cover and water")
 	ground_cover.terrain=terrain;ground_cover.camera=camera;ground_cover.structures=structures;ground_cover.water=lakes
 	ground_cover.seed_source=func():return terrain.backend.world_seed
 	ground_cover.world_boulders=true;ground_cover.collision_focus=player
@@ -443,12 +487,15 @@ func _ready() -> void:
 	lakes.lake_failed.connect(func(_id: int, code: int): _show_lake_notice("Lake rejected (%d): open basin or blocked seed" % code))
 	add_child(player_view);player_view.prepare(self)
 	add_child(first_person_view);first_person_view.prepare(self)
+	await _startup_step("Loading saved world data")
+	startup_complete=true;process_mode=previous_process_mode
 
 func _show_lake_notice(text: String) -> void:
 	var sync_started:=Time.get_ticks_usec()
 	_sync_construction_palette()
 	terrain._record_stage("notice panel sync",(Time.get_ticks_usec()-sync_started)/1000.0)
 	_lake_notice = text
+	if not loading_active and not shutdown_requested:player_notices.notify(text)
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_telemetry_time = 0.5 # Publish action feedback on the next frame.
 	var message_started:=Time.get_ticks_usec()

@@ -79,7 +79,9 @@ func start_expedition()->Dictionary:
 		if location.layout!="coal_mine" or (state.introduction==3 and state.key!=location.key):continue
 		var offer:Dictionary=game.trader.ride.expedition_offer(location)
 		if offer.is_empty():continue
-		return game.trader.ride.book_expedition(offer,location.key)
+		var booked:Dictionary=game.trader.ride.book_expedition(offer,location.key)
+		if booked.get("ok",false) and state.introduction==2:game.player_notices.quest_added("Coal-mine expedition")
+		return booked
 	return {"ok":false,"reason":"No safe connected road stop near a coal-mine entrance is available."}
 
 func claim()->Dictionary:

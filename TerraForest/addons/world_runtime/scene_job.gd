@@ -13,7 +13,17 @@ var previous_offscreen:=false
 var previous_title:=""
 var previous_fps:=60
 var main_window_id:=-1
-func start(script:Script,arguments:PackedStringArray,render_world:bool=true)->void:
+var resources:RefCounted
+var loading_resources:=false
+func start_path(path:String,arguments:PackedStringArray,render_world:bool=true,configuration:Dictionary={})->void:
+	loading_resources=true;resources=preload("res://addons/world_runtime/startup_resources.gd").new()
+	var prepared:bool=await resources.prepare(self,path)
+	loading_resources=false
+	if not prepared:
+		code=2 if resources.cancelled else 1;resources=null;done=true;completed.emit(code);return
+	start(load(path),arguments,render_world,configuration)
+	resources=null
+func start(script:Script,arguments:PackedStringArray,render_world:bool=true,configuration:Dictionary={})->void:
 	had_override=ProjectSettings.has_setting(Options.KEY);previous_arguments=Options.arguments()
 	previous_offscreen=ProjectSettings.get_setting(Options.OFFSCREEN,false)
 	previous_title=get_tree().root.title;previous_fps=Engine.max_fps
@@ -24,9 +34,11 @@ func start(script:Script,arguments:PackedStringArray,render_world:bool=true)->vo
 		viewport.use_taa=get_tree().root.use_taa;viewport.scaling_3d_scale=1.0
 		viewport.gui_disable_input=true;viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS;add_child(viewport)
 	task=script.new();task.root=viewport if render_world else get_tree().root
+	for key:String in configuration:task.set(key,configuration[key])
 	if render_world:viewport.set_meta("terraforest_scene_task",task)
 	task.finished.connect(_finish);add_child(task)
 func cancel()->void:
+	if loading_resources:resources.cancelled=true;return
 	if not done and is_instance_valid(task):task.request_cancel()
 func _finish(value:int)->void:
 	code=value;_cleanup.call_deferred()

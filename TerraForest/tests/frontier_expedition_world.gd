@@ -35,9 +35,25 @@ func run()->void:
 		browser.worlds.select(selected);browser.launch_selected(false)
 		if not check(await wait_for(game_ready,150),"normal loading restores the expedition"):await finish();return
 	var game:=current_scene;game.background_fps=60;game.app_focused=true
+	if stage=="create":check(game.player_notices.shown==0,"quest announcement waits until first-spawn animation finishes")
 	if not check(await wait_for(func():return not game.player_view.entry.pending and not game.player_view.entry.active,20),"entry finishes before interaction"):await finish();return
 	if stage=="create":check(game.player_view.entry.wake_starts==1 and not game.player_view.entry.wake_pending,"approved wake animation runs once on initial upstairs spawn")
 	else:check(game.player_view.entry.wake_starts==0,"ordinary saved-world loading does not replay waking")
+	if stage=="create":
+		check(await wait_for(func():return game.player_notices.shown==1 and game.player_notices.toast.modulate.a>.99,3),"Added quest notice animates after waking")
+		game._show_lake_notice("Your journey begins")
+		check(await wait_for(func():return game.player_notices.general.visible and game.player_notices.general_age>=.15 and game.player_notices.general.modulate.a>.99,2),"general notice fades in above the toolbar")
+		await photograph("quest-notice")
+	else:check(game.player_notices.shown==0,"reload does not repeat Added quest notice")
+	if stage=="create" and "--notices-only" in OS.get_cmdline_user_args():
+		check(game.player_notices.toast.size.y<120,"rendered quest toast remains compact")
+		check(game.destination_guide.panel.position.x>root.size.x*.65 and game.destination_guide.caption.text=="Talk to trader","active objective appears at upper right")
+		FileAccess.open(folder.path_join("expected.bin"),FileAccess.WRITE).store_var({"quests":game.quests.store.capture_storage_snapshot(),"inventory":game.player_hud.inventory.capture_storage_snapshot()})
+		await finish();return
+	if stage=="notices_reload":
+		var expected:Dictionary=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()
+		check(game.quests.store.capture_storage_snapshot()==expected.quests and game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"reload preserves introduction and inventory without another notice")
+		await photograph("notice-reload");await finish();return
 	game.set_physics_process(false);game._clear_motion();game.fly=false;game.needs_floor_spawn=false
 	physics_frame.connect(update_population)
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open

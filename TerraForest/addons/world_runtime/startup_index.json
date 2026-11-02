@@ -1,0 +1,777 @@
+{
+  "res://addons/characters/runtime/house_sleepers.gd": [
+    "res://addons/structures/expansion_catalog.gd"
+  ],
+  "res://addons/characters/runtime/human_view.gd": [
+    "res://addons/characters/runtime/assets/Human.r11.glb",
+    "res://addons/characters/runtime/assets/Human.crouch.res",
+    "res://addons/characters/runtime/assets/Human.placement.res",
+    "res://addons/characters/runtime/assets/Human.unarmed.res",
+    "res://addons/characters/runtime/assets/Human.unarmed_body.res",
+    "res://addons/characters/runtime/assets/Human.pickaxe_diagonal.res",
+    "res://addons/characters/runtime/assets/Human.pickaxe_side_pullback.res",
+    "res://addons/characters/runtime/assets/Human.pickaxe_fresh.res",
+    "res://addons/characters/runtime/assets/Human.pickaxe_locomotion.res",
+    "res://addons/characters/runtime/assets/Human.hammer.res",
+    "res://addons/characters/runtime/assets/Human.shovel.res",
+    "res://addons/characters/runtime/assets/Human.torch.res",
+    "res://addons/characters/runtime/assets/Human.bucket.res",
+    "res://addons/volumetric_water/bucket_model.gd",
+    "res://addons/characters/runtime/assets/Torch.glb",
+    "res://addons/characters/runtime/assets/Hammer.glb",
+    "res://addons/characters/runtime/assets/Shovel.glb",
+    "res://addons/characters/runtime/hidden_surface.gdshader",
+    "res://addons/characters/wearables/clothing.gd",
+    "res://addons/characters/runtime/assets/Ranger.body.glb",
+    "res://addons/characters/runtime/assets/Ranger.magazine.glb",
+    "res://addons/characters/runtime/torch_effects.gd"
+  ],
+  "res://addons/characters/runtime/obstacle_target.gd": [],
+  "res://addons/characters/runtime/torch_effects.gd": [
+    "res://addons/characters/runtime/torch_flame.gdshader",
+    "res://addons/characters/runtime/torch_motes.gdshader"
+  ],
+  "res://addons/characters/runtime/zombie.gd": [
+    "res://addons/characters/runtime/assets/Zombie.drag_walk.res",
+    "res://addons/characters/runtime/assets/Zombie.alert.res",
+    "res://addons/characters/runtime/zombie_sleeper.gd"
+  ],
+  "res://addons/characters/runtime/zombie_population.gd": [],
+  "res://addons/characters/runtime/zombie_sleeper.gd": [
+    "res://addons/characters/runtime/assets/Zombie.sleepers.res"
+  ],
+  "res://addons/characters/runtime/zombie_target.gd": [],
+  "res://addons/characters/runtime/zombie_world.gd": [
+    "res://addons/characters/runtime/zombie.gd",
+    "res://addons/characters/runtime/zombie_population.gd"
+  ],
+  "res://addons/characters/wearables/clothing.gd": [
+    "res://addons/characters/wearables/woven/301.res",
+    "res://addons/characters/wearables/woven/302.res",
+    "res://addons/characters/wearables/woven/303.res",
+    "res://addons/characters/wearables/trail/304.res",
+    "res://addons/characters/wearables/trail/305.res",
+    "res://addons/characters/wearables/trail/306.res"
+  ],
+  "res://addons/exploration/cave_layouts.gd": [
+    "res://addons/exploration/coal_mine.gd"
+  ],
+  "res://addons/exploration/coal_mine.gd": [
+    "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/exploration/coal_resource.gd"
+  ],
+  "res://addons/exploration/coal_resource.gd": [],
+  "res://addons/exploration/generation.gd": [
+    "res://addons/exploration/cave_layouts.gd",
+    "res://addons/exploration/watchtower_sites.gd",
+    "res://addons/structures/foundation_check.gd"
+  ],
+  "res://addons/exploration/watchtower_sites.gd": [
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/exploration/cave_layouts.gd"
+  ],
+  "res://addons/player_runtime/building_assemblies.gd": [],
+  "res://addons/player_runtime/character_panel.gd": [
+    "res://addons/characters/wearables/clothing.gd",
+    "res://addons/player_runtime/character_portrait.gd",
+    "res://addons/player_runtime/inventory_slot.gd"
+  ],
+  "res://addons/player_runtime/character_portrait.gd": [],
+  "res://addons/player_runtime/combat_barrel.gd": [],
+  "res://addons/player_runtime/combat_world.gd": [
+    "res://addons/player_runtime/combat_barrel.gd",
+    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/player_runtime/destruction_effects.gd",
+    "res://addons/player_runtime/structural_integrity.gd"
+  ],
+  "res://addons/player_runtime/compass.gd": [],
+  "res://addons/player_runtime/construction_inventory.gd": [],
+  "res://addons/player_runtime/consumables.gd": [],
+  "res://addons/player_runtime/container_rules.gd": [
+    "res://addons/player_runtime/durability_catalog.gd"
+  ],
+  "res://addons/player_runtime/corpse_loot.gd": [
+    "res://addons/characters/runtime/zombie.gd",
+    "res://addons/player_runtime/storage.gd"
+  ],
+  "res://addons/player_runtime/crafting.gd": [],
+  "res://addons/player_runtime/destination_guide.gd": [
+    "res://addons/player_runtime/compass.gd"
+  ],
+  "res://addons/player_runtime/destruction_effects.gd": [],
+  "res://addons/player_runtime/developer_bag.gd": [
+    "res://addons/player_runtime/item_icons.gd"
+  ],
+  "res://addons/player_runtime/developer_hud.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd"
+  ],
+  "res://addons/player_runtime/developer_shapes.gd": [
+    "res://addons/structures/shape_catalog.gd",
+    "res://addons/player_runtime/shape_icons.gd"
+  ],
+  "res://addons/player_runtime/developer_spawn.gd": [],
+  "res://addons/player_runtime/durability_catalog.gd": [
+    "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/structures/door_catalog.gd"
+  ],
+  "res://addons/player_runtime/entry_fly_in.gd": [
+    "res://addons/characters/runtime/assets/Human.wakeup.res"
+  ],
+  "res://addons/player_runtime/escape_policy.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd"
+  ],
+  "res://addons/player_runtime/first_person_depth.gd": [],
+  "res://addons/player_runtime/first_person_meshes.gd": [
+    "res://addons/characters/runtime/assets/first_person/body_body.res",
+    "res://addons/characters/runtime/assets/first_person/body_arms.res",
+    "res://addons/characters/runtime/assets/first_person/unarmed_body.res",
+    "res://addons/characters/runtime/assets/first_person/unarmed_arms.res",
+    "res://addons/characters/runtime/assets/first_person/shirt_body.res",
+    "res://addons/characters/runtime/assets/first_person/shirt_arms.res",
+    "res://addons/player_runtime/first_person_depth.gd"
+  ],
+  "res://addons/player_runtime/first_person_shadows.gd": [],
+  "res://addons/player_runtime/first_person_view.gd": [
+    "res://addons/player_runtime/first_person_meshes.gd",
+    "res://addons/player_runtime/first_person_shadows.gd"
+  ],
+  "res://addons/player_runtime/headlamp.gd": [],
+  "res://addons/player_runtime/inventory_grid.gd": [
+    "res://addons/player_runtime/inventory_slot.gd"
+  ],
+  "res://addons/player_runtime/inventory_slot.gd": [
+    "res://addons/player_runtime/item_icons.gd",
+    "res://addons/player_runtime/consumables.gd"
+  ],
+  "res://addons/player_runtime/item_icons.gd": [
+    "res://addons/player_runtime/art/ranger.svg",
+    "res://addons/player_runtime/art/ranger_cartridges.svg",
+    "res://addons/player_runtime/art/carbine.svg",
+    "res://addons/player_runtime/art/cartridge.svg",
+    "res://addons/player_runtime/art/explosive_barrel.svg",
+    "res://addons/player_runtime/art/coal.svg",
+    "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/player_runtime/art/mine_rail.svg",
+    "res://addons/player_runtime/art/lockpick.svg",
+    "res://addons/player_runtime/art/coins.svg"
+  ],
+  "res://addons/player_runtime/map_markers.gd": [],
+  "res://addons/player_runtime/mining_rewards.gd": [],
+  "res://addons/player_runtime/player_actions.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd"
+  ],
+  "res://addons/player_runtime/player_hud.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/player_runtime/progression_rules.gd",
+    "res://addons/player_runtime/consumables.gd",
+    "res://addons/player_runtime/crafting.gd",
+    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/player_runtime/target_durability.gd",
+    "res://addons/player_runtime/inventory_slot.gd",
+    "res://addons/player_runtime/world_drop_target.gd",
+    "res://addons/player_runtime/character_panel.gd",
+    "res://addons/player_runtime/skills_panel.gd",
+    "res://addons/player_runtime/reading_journal.gd",
+    "res://addons/player_runtime/resource_gain_feed.gd"
+  ],
+  "res://addons/player_runtime/player_notices.gd": [],
+  "res://addons/player_runtime/player_view.gd": [
+    "res://addons/player_runtime/entry_fly_in.gd"
+  ],
+  "res://addons/player_runtime/progression_rules.gd": [],
+  "res://addons/player_runtime/quest_world.gd": [
+    "res://addons/player_runtime/trader_inventory.gd"
+  ],
+  "res://addons/player_runtime/reading_journal.gd": [],
+  "res://addons/player_runtime/resource_gain_feed.gd": [
+    "res://addons/player_runtime/item_icons.gd"
+  ],
+  "res://addons/player_runtime/session_menu.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/player_runtime/usage_panel.gd",
+    "res://addons/structures/building_lod.gd",
+    "res://addons/player_runtime/developer_bag.gd",
+    "res://addons/player_runtime/developer_shapes.gd",
+    "res://addons/player_runtime/developer_spawn.gd",
+    "res://addons/player_runtime/tool_workspace.gd",
+    "res://addons/player_runtime/developer_hud.gd",
+    "res://addons/player_runtime/player_actions.gd",
+    "res://addons/player_runtime/escape_policy.gd"
+  ],
+  "res://addons/player_runtime/shape_icons.gd": [
+    "res://addons/structures/shape_catalog.gd"
+  ],
+  "res://addons/player_runtime/shape_orientations.gd": [],
+  "res://addons/player_runtime/skills_panel.gd": [
+    "res://addons/player_runtime/progression_rules.gd"
+  ],
+  "res://addons/player_runtime/storage.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/player_runtime/container_rules.gd",
+    "res://addons/player_runtime/inventory_grid.gd"
+  ],
+  "res://addons/player_runtime/structural_integrity.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/player_runtime/target_durability.gd": [],
+  "res://addons/player_runtime/target_overlay.gd": [],
+  "res://addons/player_runtime/terrain_placement.gd": [],
+  "res://addons/player_runtime/terrain_placement_preview.gd": [
+    "res://addons/player_runtime/terrain_placement_preview.gdshader"
+  ],
+  "res://addons/player_runtime/tool_view.gd": [
+    "res://addons/characters/runtime/human_view.gd"
+  ],
+  "res://addons/player_runtime/tool_workspace.gd": [
+    "res://addons/volumetric_water/lake_editor.gd"
+  ],
+  "res://addons/player_runtime/trader_inventory.gd": [],
+  "res://addons/player_runtime/trader_panel.gd": [
+    "res://addons/player_runtime/trader_inventory.gd"
+  ],
+  "res://addons/player_runtime/trader_ride.gd": [
+    "res://addons/player_runtime/trader_inventory.gd",
+    "res://addons/player_runtime/trader_seat.gd",
+    "res://addons/vehicle_runtime/vehicle_placement.gd",
+    "res://addons/structures/civic_catalog.gd"
+  ],
+  "res://addons/player_runtime/trader_seat.gd": [
+    "res://addons/characters/runtime/human_view.gd"
+  ],
+  "res://addons/player_runtime/trader_world.gd": [
+    "res://addons/player_runtime/trader_inventory.gd",
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/structures/civic_catalog.gd",
+    "res://addons/player_runtime/trader_panel.gd",
+    "res://addons/player_runtime/trader_ride.gd",
+    "res://addons/characters/runtime/human_view.gd"
+  ],
+  "res://addons/player_runtime/usage_panel.gd": [],
+  "res://addons/player_runtime/world_attack.gd": [
+    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/player_runtime/progression_rules.gd"
+  ],
+  "res://addons/player_runtime/world_drop_target.gd": [],
+  "res://addons/presentation/fullscreen_policy.gd": [],
+  "res://addons/structures/bridge_catalog.gd": [],
+  "res://addons/structures/building_lod.gd": [
+    "res://addons/presentation/fullscreen_policy.gd"
+  ],
+  "res://addons/structures/capture_selection.gd": [],
+  "res://addons/structures/cellar_catalog.gd": [
+    "res://addons/structures/furniture_catalog.gd"
+  ],
+  "res://addons/structures/central_market.gd": [
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/workshop_catalog.gd",
+    "res://addons/structures/cellar_catalog.gd"
+  ],
+  "res://addons/structures/city_catalog.gd": [
+    "res://addons/structures/northern_lots.gd"
+  ],
+  "res://addons/structures/civic_catalog.gd": [
+    "res://addons/structures/expansion_catalog.gd",
+    "res://addons/structures/city_catalog.gd"
+  ],
+  "res://addons/structures/construction_catalog.gd": [
+    "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/window_catalog.gd",
+    "res://addons/structures/door_catalog.gd",
+    "res://addons/structures/guardrail_catalog.gd",
+    "res://addons/structures/fence_catalog.gd",
+    "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/exploration/coal_resource.gd",
+    "res://addons/structures/object_catalog.gd",
+    "res://addons/structures/ladder_catalog.gd",
+    "res://addons/structures/storage_catalog.gd"
+  ],
+  "res://addons/structures/construction_palette.gd": [
+    "res://addons/structures/shape_catalog.gd",
+    "res://addons/player_runtime/shape_orientations.gd",
+    "res://addons/player_runtime/building_assemblies.gd",
+    "res://addons/player_runtime/shape_icons.gd"
+  ],
+  "res://addons/structures/door_catalog.gd": [
+    "res://addons/structures/object_catalog.gd"
+  ],
+  "res://addons/structures/door_interaction.gd": [
+    "res://addons/structures/door_animation/bg5_motion.scn"
+  ],
+  "res://addons/structures/expansion_catalog.gd": [],
+  "res://addons/structures/fence_catalog.gd": [],
+  "res://addons/structures/foundation_check.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/structures/terrain_contact.gd"
+  ],
+  "res://addons/structures/furniture_catalog.gd": [
+    "res://addons/structures/expansion_catalog.gd"
+  ],
+  "res://addons/structures/guardrail_catalog.gd": [],
+  "res://addons/structures/ladder_catalog.gd": [],
+  "res://addons/structures/lake_crossings.gd": [
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/structures/bridge_catalog.gd"
+  ],
+  "res://addons/structures/material_startup.gd": [],
+  "res://addons/structures/mine_catalog.gd": [],
+  "res://addons/structures/mine_rail_catalog.gd": [],
+  "res://addons/structures/model_paging_coordinator.gd": [],
+  "res://addons/structures/model_tool.gd": [
+    "res://addons/player_runtime/item_icons.gd"
+  ],
+  "res://addons/structures/neighborhood_common.gd": [],
+  "res://addons/structures/northern_lots.gd": [
+    "res://addons/structures/site_plan.gd",
+    "res://addons/world_runtime/world_building_quality.gd",
+    "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/workshop_catalog.gd",
+    "res://addons/structures/neighborhood_common.gd"
+  ],
+  "res://addons/structures/object_catalog.gd": [
+    "res://addons/structures/object_mesh.gd"
+  ],
+  "res://addons/structures/object_mesh.gd": [],
+  "res://addons/structures/paving_catalog.gd": [],
+  "res://addons/structures/prefab_library.gd": [],
+  "res://addons/structures/regional_districts.gd": [],
+  "res://addons/structures/regional_route_planner.gd": [
+    "res://addons/structures/terrain_lot_planner.gd"
+  ],
+  "res://addons/structures/shape_catalog.gd": [],
+  "res://addons/structures/site_plan.gd": [
+    "res://addons/structures/terrain_contact.gd"
+  ],
+  "res://addons/structures/site_preparation.gd": [
+    "res://addons/world_runtime/generation_earthworks.gd"
+  ],
+  "res://addons/structures/site_preview.gd": [],
+  "res://addons/structures/site_survey.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/structures/storage_catalog.gd": [],
+  "res://addons/structures/structures_world.gd": [
+    "res://addons/structures/building_lod.gd",
+    "res://addons/structures/material_startup.gd"
+  ],
+  "res://addons/structures/terrain_contact.gd": [],
+  "res://addons/structures/terrain_lot_planner.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/world_runtime/world_building_quality.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/structures/terrain_contact.gd",
+    "res://addons/structures/site_plan.gd"
+  ],
+  "res://addons/structures/window_catalog.gd": [],
+  "res://addons/structures/workshop_catalog.gd": [
+    "res://addons/structures/expansion_catalog.gd"
+  ],
+  "res://addons/vegetation/assets.gd": [
+    "res://addons/vegetation/source.gd"
+  ],
+  "res://addons/vegetation/canopy_shadows.gd": [],
+  "res://addons/vegetation/forest.gd": [],
+  "res://addons/vegetation/source.gd": [],
+  "res://addons/vegetation/vegetation_world.gd": [
+    "res://addons/vegetation/forest.gd",
+    "res://addons/vegetation/assets.gd"
+  ],
+  "res://addons/vehicle_runtime/fleet_activation.gd": [],
+  "res://addons/vehicle_runtime/vehicle_adapter.gd": [],
+  "res://addons/vehicle_runtime/vehicle_item.gd": [],
+  "res://addons/vehicle_runtime/vehicle_packs.gd": [
+    "res://addons/world_runtime/runtime_modules.gd",
+    "res://addons/vehicle_runtime/vehicle_adapter.gd"
+  ],
+  "res://addons/vehicle_runtime/vehicle_placement.gd": [],
+  "res://addons/vehicle_runtime/vehicle_radial.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd"
+  ],
+  "res://addons/vehicle_runtime/world_vehicle.gd": [
+    "res://addons/vehicle_runtime/vehicle_packs.gd",
+    "res://addons/vehicle_runtime/fleet_activation.gd",
+    "res://addons/vehicle_runtime/vehicle_placement.gd"
+  ],
+  "res://addons/volumetric_terrain/derived_cache.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/volumetric_terrain/generated_lakes.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/volumetric_terrain/generated_layout.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/volumetric_terrain/mesh_codec.gd": [],
+  "res://addons/volumetric_terrain/road_authoring.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/volumetric_terrain/road_palette.gd": [],
+  "res://addons/volumetric_terrain/road_preview.gd": [],
+  "res://addons/volumetric_terrain/runtime_assets.gd": [],
+  "res://addons/volumetric_terrain/surface_tokens.gd": [],
+  "res://addons/volumetric_terrain/terrain_backend.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/volumetric_terrain/derived_cache.gd",
+    "res://addons/volumetric_terrain/generated_lakes.gd"
+  ],
+  "res://addons/volumetric_terrain/terrain_stream.gd": [
+    "res://addons/volumetric_terrain/terrain_backend.gd",
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/volumetric_terrain/terrain_world.gd": [
+    "res://addons/volumetric_terrain/terrain_stream.gd",
+    "res://addons/volumetric_terrain/runtime_assets.gd"
+  ],
+  "res://addons/volumetric_water/bucket_model.gd": [
+    "res://addons/volumetric_water/assets/Bucket.pickup.res",
+    "res://addons/volumetric_water/assets/Bucket.held.res",
+    "res://addons/volumetric_water/assets/Bucket.bail.res"
+  ],
+  "res://addons/volumetric_water/coastal_inlet.gd": [],
+  "res://addons/volumetric_water/lake_editor.gd": [],
+  "res://addons/volumetric_water/lake_world.gd": [
+    "res://addons/volumetric_water/publication_budget.gd",
+    "res://addons/volumetric_water/water.gdshader",
+    "res://addons/volumetric_water/textures/water_ripples_normal.png",
+    "res://addons/volumetric_water/ocean_presentation.gd",
+    "res://addons/volumetric_water/coastal_inlet.gd"
+  ],
+  "res://addons/volumetric_water/ocean_presentation.gd": [],
+  "res://addons/volumetric_water/publication_budget.gd": [],
+  "res://addons/volumetric_water/water_camera.gd": [],
+  "res://addons/volumetric_water/water_start.gd": [],
+  "res://addons/world_ecosystem/boulder_horizon.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/world_ecosystem/ground_catalog.gd": [],
+  "res://addons/world_ecosystem/ground_cover.gd": [
+    "res://addons/world_ecosystem/ground_catalog.gd",
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/world_ecosystem/boulder_material.tres",
+    "res://addons/world_ecosystem/woodland_mesh.gd",
+    "res://addons/world_ecosystem/boulder_horizon.gd"
+  ],
+  "res://addons/world_ecosystem/ground_interaction.gd": [
+    "res://addons/world_ecosystem/ground_catalog.gd"
+  ],
+  "res://addons/world_ecosystem/ground_preview.gd": [],
+  "res://addons/world_ecosystem/woodland_authoring.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd",
+    "res://addons/volumetric_terrain/generated_layout.gd"
+  ],
+  "res://addons/world_ecosystem/woodland_mesh.gd": [
+    "res://addons/world_ecosystem/woodland.gdshader"
+  ],
+  "res://addons/world_ecosystem/world_ecosystem.gd": [
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/world_runtime/actor_authoring.gd": [],
+  "res://addons/world_runtime/actor_mesh.gd": [],
+  "res://addons/world_runtime/actor_world.gd": [
+    "res://addons/world_runtime/actor_mesh.gd"
+  ],
+  "res://addons/world_runtime/capture_world_previews_task.gd": [
+    "res://addons/world_runtime/scene_task.gd",
+    "res://addons/world_runtime/loading_diagnostics.gd",
+    "res://addons/world_runtime/world_presentation.gd"
+  ],
+  "res://addons/world_runtime/custom_world_plan.gd": [
+    "res://addons/exploration/watchtower_sites.gd",
+    "res://addons/exploration/cave_layouts.gd",
+    "res://addons/structures/civic_catalog.gd",
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/structures/central_market.gd",
+    "res://addons/world_runtime/survey_cache.gd",
+    "res://addons/structures/regional_route_planner.gd",
+    "res://addons/structures/city_catalog.gd",
+    "res://addons/structures/lake_crossings.gd",
+    "res://addons/structures/expansion_catalog.gd",
+    "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/world_runtime/road_normalization.gd",
+    "res://addons/world_runtime/generated_region.gd",
+    "res://addons/world_runtime/town_sign_plan.gd"
+  ],
+  "res://addons/world_runtime/generate_world_task.gd": [
+    "res://addons/world_runtime/scene_task.gd",
+    "res://addons/world_runtime/generation_progress.gd",
+    "res://addons/world_runtime/world_presentation.gd",
+    "res://addons/world_runtime/survey_cache.gd",
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/world_runtime/generation_screen.gd",
+    "res://addons/world_runtime/world_plan_progress.gd",
+    "res://addons/world_runtime/world_generation_plan.gd",
+    "res://addons/world_runtime/generation_earthworks.gd",
+    "res://addons/world_runtime/startup_resources.gd",
+    "res://addons/world_runtime/introduction_spawn.gd",
+    "res://addons/world_runtime/loading_diagnostics.gd",
+    "res://addons/structures/site_preparation.gd",
+    "res://addons/characters/runtime/house_sleepers.gd",
+    "res://addons/exploration/generation.gd",
+    "res://addons/player_runtime/container_rules.gd",
+    "res://addons/structures/lake_crossings.gd",
+    "res://addons/volumetric_water/coastal_inlet.gd",
+    "res://addons/structures/civic_catalog.gd",
+    "res://addons/world_runtime/survey_patch_cache.gd"
+  ],
+  "res://addons/world_runtime/generated_region.gd": [],
+  "res://addons/world_runtime/generation_coordinator.gd": [
+    "res://addons/world_runtime/scene_task.gd",
+    "res://demo/world_launch.gd",
+    "res://addons/world_runtime/loading_timer.gd",
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/world_runtime/scene_job.gd",
+    "res://addons/world_runtime/session_options.gd",
+    "res://addons/world_runtime/generation_progress.gd",
+    "res://addons/world_runtime/verify_generated_world.gd",
+    "res://addons/world_runtime/survey_patch_cache.gd"
+  ],
+  "res://addons/world_runtime/generation_earthworks.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/world_runtime/generation_progress.gd": [],
+  "res://addons/world_runtime/generation_screen.gd": [
+    "res://addons/world_runtime/progress_meter.gd",
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/world_runtime/loading_background.gd",
+    "res://addons/world_runtime/loading_details.gd",
+    "res://addons/world_runtime/loading_panel.gd",
+    "res://addons/world_runtime/loading_timer.gd"
+  ],
+  "res://addons/world_runtime/introduction_spawn.gd": [
+    "res://addons/structures/expansion_catalog.gd"
+  ],
+  "res://addons/world_runtime/loading_background.gd": [],
+  "res://addons/world_runtime/loading_details.gd": [],
+  "res://addons/world_runtime/loading_diagnostics.gd": [],
+  "res://addons/world_runtime/loading_panel.gd": [
+    "res://addons/world_runtime/loading_timer.gd"
+  ],
+  "res://addons/world_runtime/loading_timer.gd": [],
+  "res://addons/world_runtime/material_deposits.gd": [
+    "res://addons/world_ecosystem/woodland_mesh.gd",
+    "res://addons/world_ecosystem/mineral_stone.gdshader",
+    "res://addons/world_ecosystem/art/boulder_granite_v1.png"
+  ],
+  "res://addons/world_runtime/material_pickups.gd": [
+    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/volumetric_water/bucket_model.gd",
+    "res://addons/vehicle_runtime/vehicle_item.gd"
+  ],
+  "res://addons/world_runtime/mouse_ownership.gd": [],
+  "res://addons/world_runtime/navigation_residency.gd": [],
+  "res://addons/world_runtime/prepare_combined_world_task.gd": [
+    "res://addons/world_runtime/scene_task.gd",
+    "res://addons/world_runtime/world_building_quality.gd",
+    "res://addons/world_runtime/survey_cache.gd",
+    "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/structures/regional_districts.gd",
+    "res://addons/structures/site_plan.gd",
+    "res://addons/world_runtime/settlement_actors.gd",
+    "res://addons/world_runtime/settlement_supplies.gd",
+    "res://addons/structures/mine_catalog.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/world_ecosystem/woodland_authoring.gd",
+    "res://addons/structures/cellar_catalog.gd",
+    "res://addons/structures/neighborhood_common.gd"
+  ],
+  "res://addons/world_runtime/progress_meter.gd": [],
+  "res://addons/world_runtime/road_normalization.gd": [
+    "res://addons/structures/terrain_lot_planner.gd"
+  ],
+  "res://addons/world_runtime/runtime_modules.gd": [],
+  "res://addons/world_runtime/scene_job.gd": [
+    "res://addons/world_runtime/session_options.gd",
+    "res://addons/world_runtime/startup_resources.gd"
+  ],
+  "res://addons/world_runtime/scene_task.gd": [
+    "res://addons/world_runtime/session_options.gd"
+  ],
+  "res://addons/world_runtime/session_options.gd": [],
+  "res://addons/world_runtime/settlement_actors.gd": [],
+  "res://addons/world_runtime/settlement_supplies.gd": [],
+  "res://addons/world_runtime/startup_resources.gd": [],
+  "res://addons/world_runtime/survey_blocks.gd": [
+    "res://addons/world_runtime/survey_overlay.gd"
+  ],
+  "res://addons/world_runtime/survey_cache.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://addons/world_runtime/survey_models.gd": [
+    "res://addons/world_runtime/survey_overlay.gd"
+  ],
+  "res://addons/world_runtime/survey_overlay.gd": [
+    "res://addons/world_runtime/survey_patch_cache.gd"
+  ],
+  "res://addons/world_runtime/survey_patch_cache.gd": [
+    "res://addons/world_runtime/survey_cache.gd"
+  ],
+  "res://addons/world_runtime/survey_updates.gd": [
+    "res://addons/world_runtime/survey_patch_cache.gd"
+  ],
+  "res://addons/world_runtime/survey_water.gd": [
+    "res://addons/world_runtime/survey_overlay.gd"
+  ],
+  "res://addons/world_runtime/town_sign_plan.gd": [],
+  "res://addons/world_runtime/town_signs.gd": [
+    "res://addons/world_runtime/town_sign_plan.gd",
+    "res://addons/volumetric_terrain/surface_tokens.gd"
+  ],
+  "res://addons/world_runtime/verify_generated_world.gd": [
+    "res://addons/world_runtime/survey_cache.gd"
+  ],
+  "res://addons/world_runtime/world_building_quality.gd": [],
+  "res://addons/world_runtime/world_generation_plan.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/structures/terrain_lot_planner.gd",
+    "res://addons/structures/central_market.gd",
+    "res://addons/structures/northern_lots.gd",
+    "res://addons/world_runtime/survey_cache.gd",
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/world_runtime/custom_world_plan.gd",
+    "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/structures/regional_route_planner.gd",
+    "res://addons/volumetric_terrain/generated_lakes.gd",
+    "res://addons/exploration/watchtower_sites.gd",
+    "res://addons/world_runtime/survey_patch_cache.gd",
+    "res://addons/world_runtime/generation_earthworks.gd",
+    "res://addons/structures/lake_crossings.gd"
+  ],
+  "res://addons/world_runtime/world_map.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/world_runtime/survey_cache.gd",
+    "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/world_runtime/survey_updates.gd",
+    "res://addons/world_runtime/survey_water.gd",
+    "res://addons/world_runtime/survey_blocks.gd",
+    "res://addons/world_runtime/survey_models.gd",
+    "res://addons/world_runtime/world_map_view.gd"
+  ],
+  "res://addons/world_runtime/world_map_view.gd": [],
+  "res://addons/world_runtime/world_persistence.gd": [],
+  "res://addons/world_runtime/world_plan_progress.gd": [],
+  "res://addons/world_runtime/world_presentation.gd": [],
+  "res://addons/world_runtime/world_recipe.gd": [],
+  "res://demo/benchmark.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://demo/brush_stroke.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
+  "res://demo/controller.gd": [
+    "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/presentation/fullscreen_policy.gd",
+    "res://addons/volumetric_terrain/terrain_world.gd",
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://demo/benchmark.gd",
+    "res://addons/volumetric_terrain/runtime_assets.gd",
+    "res://demo/controller_state.gd",
+    "res://demo/brush_stroke.gd",
+    "res://addons/world_runtime/loading_background.gd",
+    "res://addons/world_runtime/world_presentation.gd",
+    "res://addons/world_runtime/loading_details.gd",
+    "res://addons/world_runtime/loading_panel.gd",
+    "res://addons/world_runtime/loading_timer.gd",
+    "res://addons/world_runtime/progress_meter.gd",
+    "res://addons/world_runtime/loading_diagnostics.gd"
+  ],
+  "res://demo/controller_state.gd": [],
+  "res://demo/world.gd": [
+    "res://demo/controller.gd",
+    "res://addons/vegetation/vegetation_world.gd",
+    "res://addons/world_ecosystem/world_ecosystem.gd",
+    "res://addons/volumetric_water/lake_world.gd",
+    "res://addons/world_runtime/world_persistence.gd",
+    "res://addons/structures/structures_world.gd",
+    "res://addons/world_runtime/generated_region.gd",
+    "res://addons/world_runtime/world_recipe.gd",
+    "res://addons/world_runtime/town_signs.gd",
+    "res://addons/world_runtime/material_deposits.gd",
+    "res://addons/world_runtime/actor_authoring.gd",
+    "res://addons/characters/runtime/zombie_world.gd",
+    "res://addons/characters/runtime/zombie_target.gd",
+    "res://addons/world_runtime/navigation_residency.gd",
+    "res://addons/world_runtime/actor_world.gd",
+    "res://addons/world_runtime/material_pickups.gd",
+    "res://addons/vehicle_runtime/world_vehicle.gd",
+    "res://addons/world_ecosystem/ground_cover.gd",
+    "res://addons/world_ecosystem/ground_interaction.gd",
+    "res://addons/world_ecosystem/ground_preview.gd",
+    "res://addons/volumetric_water/water_camera.gd",
+    "res://addons/player_runtime/player_hud.gd",
+    "res://addons/world_runtime/world_map.gd",
+    "res://addons/player_runtime/map_markers.gd",
+    "res://addons/player_runtime/session_menu.gd",
+    "res://addons/player_runtime/destination_guide.gd",
+    "res://addons/player_runtime/player_notices.gd",
+    "res://addons/player_runtime/trader_world.gd",
+    "res://addons/player_runtime/quest_world.gd",
+    "res://addons/player_runtime/storage.gd",
+    "res://addons/player_runtime/corpse_loot.gd",
+    "res://addons/structures/door_interaction.gd",
+    "res://demo/world_interaction.gd",
+    "res://addons/player_runtime/terrain_placement.gd",
+    "res://addons/player_runtime/terrain_placement_preview.gd",
+    "res://addons/player_runtime/target_overlay.gd",
+    "res://addons/vehicle_runtime/vehicle_radial.gd",
+    "res://addons/player_runtime/construction_inventory.gd",
+    "res://addons/player_runtime/combat_world.gd",
+    "res://addons/player_runtime/world_attack.gd",
+    "res://addons/player_runtime/tool_view.gd",
+    "res://addons/player_runtime/player_view.gd",
+    "res://addons/player_runtime/first_person_view.gd",
+    "res://addons/player_runtime/headlamp.gd",
+    "res://addons/player_runtime/mining_rewards.gd",
+    "res://addons/structures/model_tool.gd",
+    "res://addons/structures/construction_palette.gd",
+    "res://addons/volumetric_terrain/road_palette.gd",
+    "res://addons/volumetric_terrain/road_authoring.gd",
+    "res://addons/volumetric_terrain/road_preview.gd",
+    "res://addons/structures/shape_catalog.gd",
+    "res://addons/structures/prefab_library.gd",
+    "res://addons/structures/capture_selection.gd",
+    "res://addons/structures/foundation_check.gd",
+    "res://addons/structures/site_survey.gd",
+    "res://addons/structures/site_preparation.gd",
+    "res://addons/structures/site_preview.gd",
+    "res://addons/player_runtime/combat_barrel.gd",
+    "res://addons/structures/paving_catalog.gd",
+    "res://addons/structures/furniture_catalog.gd",
+    "res://addons/structures/ladder_catalog.gd",
+    "res://addons/structures/storage_catalog.gd",
+    "res://addons/structures/window_catalog.gd",
+    "res://addons/structures/door_catalog.gd",
+    "res://addons/structures/guardrail_catalog.gd",
+    "res://addons/structures/fence_catalog.gd",
+    "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/exploration/coal_resource.gd",
+    "res://addons/structures/model_paging_coordinator.gd",
+    "res://addons/vegetation/canopy_shadows.gd",
+    "res://addons/volumetric_water/water_start.gd",
+    "res://addons/structures/bridge_catalog.gd",
+    "res://addons/structures/workshop_catalog.gd",
+    "res://addons/structures/civic_catalog.gd",
+    "res://addons/structures/site_plan.gd",
+    "res://addons/structures/construction_catalog.gd",
+    "res://addons/characters/runtime/obstacle_target.gd",
+    "res://addons/world_runtime/settlement_actors.gd",
+    "res://demo/world_locations.gd"
+  ],
+  "res://demo/world_interaction.gd": [
+    "res://addons/world_ecosystem/ground_catalog.gd"
+  ],
+  "res://demo/world_launch.gd": [
+    "res://addons/world_runtime/world_presentation.gd",
+    "res://addons/world_runtime/world_recipe.gd"
+  ],
+  "res://demo/world_locations.gd": [
+    "res://addons/volumetric_terrain/generated_layout.gd",
+    "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/world_ecosystem/woodland_authoring.gd"
+  ]
+}

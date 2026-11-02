@@ -1,0 +1,19 @@
+[
+  {
+    "file": "rejected-oversized.png",
+    "source": "reports/frontier_expedition/20261102T114941576580Z/quest-notice.png",
+    "sha256": "c1e3a4d532bc9e85e1ef3655cba566d45956259fbc3efbf7eda72a73bc7771d8",
+    "caption": "Rejected first source layout: seed 1703 upstairs C1, 1920x1080 Forward+, 60 FPS. Quest card too tall; general line captured at the start of its fade. Source trial based on 39f97200, not the final pack. Overall run failed shutdown cleanliness despite passing route assertions.",
+    "edited": false,
+    "provenance": "Godot viewport capture of existing project UI/assets. Existing component/asset terms remain; no new third-party material imported."
+  },
+  {
+    "file": "installed-notices.png",
+    "source": "reports/frontier_expedition/20261102T122547219827Z/quest-notice.png",
+    "sha256": "ac65b05b71b6beaea47e1963ba08637d2d8d9e2f6b9036fdf17ee9db866fc47c",
+    "pack_sha256": "fcafbcee37ecb0eb33a94c7efcf162d0b93b2a8822064b09755167ad39a9360a",
+    "caption": "Installed normal Frontier expedition first spawn, Expedition_1703_1414eac1, seed 1703, upstairs C1 after waking. Compact Added quest card, upper-right trader objective and test-triggered general message at full opacity. 1920x1080 Forward+, 60 FPS. Inspected; player visual review pending.",
+    "edited": false,
+    "provenance": "Godot viewport capture of existing project UI/assets. Existing component/asset terms remain; no new third-party material imported."
+  }
+]

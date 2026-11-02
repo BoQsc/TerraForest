@@ -38,6 +38,8 @@ var saved_title:Label
 var preview_view:TextureRect
 var preview_status:Label
 var preview_worker:Thread
+var preview_loading:=false
+var preview_resources:RefCounted
 var preview_key:=""
 var preview_button:Button
 var generate_button:Button
@@ -239,14 +241,14 @@ func start_preparation(result:Dictionary,slot:String)->void:
 	preparation_panel.show_progress("Generating "+slot,"Finishing the current preview…" if preview_worker!=null else "Starting world generation…",0)
 	cancel_button.disabled=false
 	# Reuse the finished plan without racing its cache writer or blocking the UI.
-	while preview_worker!=null:await get_tree().process_frame
+	while preview_worker!=null or preview_loading:await get_tree().process_frame
 	if cancel_pending:
 		preparation_pid=-1;_set_creation_busy(false)
 		notice.text="Generation cancelled. Existing saves are preserved."
 		if quit_pending:get_tree().quit()
 		return
 	preparation_job=preload("res://addons/world_runtime/scene_job.gd").new();session.add_child(preparation_job)
-	preparation_job.start(load("res://addons/world_runtime/generation_coordinator.gd"),preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
+	preparation_job.start_path("res://addons/world_runtime/generation_coordinator.gd",preload("res://addons/world_runtime/session_options.gd").user_arguments(result.args),false)
 	Engine.max_fps=60
 	notice.text="Generating %s. Your world will load automatically when it is ready."%slot
 
@@ -318,6 +320,7 @@ func _process(delta:float)->void:
 
 func _open_game(args:PackedStringArray)->void:
 	# This scene is about to be destroyed; the persistent host owns the await.
+	if preview_loading:preview_resources.cancelled=true
 	session.open_world(args)
 
 func _update_preparation_notice()->void:
@@ -379,17 +382,23 @@ func invalidate_preview()->void:
 	preview_empty.show();preview_metrics.text="UPDATING PREVIEW…";update_recipe_summary()
 	preview_status.text="The preview updates automatically after you finish changing settings."
 func start_preview()->void:
-	if preview_worker!=null or preparation_pid>=0 or photograph_pid>=0:return
+	if preview_worker!=null or preview_loading or preparation_pid>=0 or photograph_pid>=0 or session.transitioning:return
 	preview_due_ms=-1
 	var generator:int=Launch.terrain_generator(ocean.button_pressed,buildable_ground.button_pressed)
 	if preset.get_selected_id()!=Launch.INTEGRATED_PRESET:generator=preset.get_selected_id()
 	if generator>=10000:preview_status.text="Select the current regional world to preview terrain.";return
 	preview_started=Time.get_ticks_msec();preview_key=selected_preview_key();preview_status.text="Surveying terrain, fitting districts and connecting roads…";preview_button.disabled=true;preview_empty.hide()
+	preview_loading=true;preview_resources=preload("res://addons/world_runtime/startup_resources.gd").new()
+	var prepared:bool=await preview_resources.prepare(self,"res://addons/world_runtime/world_generation_plan.gd")
+	preview_loading=false
+	if not prepared:preview_resources=null;preview_button.disabled=preparation_pid>=0;return
+	if preview_key!=selected_preview_key():preview_resources=null;preview_button.disabled=preparation_pid>=0;return
 	preview_worker=Thread.new()
 	plan_progress=preload("res://addons/world_runtime/world_plan_progress.gd").new()
 	# Load native helper initializers on the owner thread, only when requested.
 	var job:Callable=load("res://addons/world_runtime/world_generation_plan.gd").preview.bind(int(seed_field.value),generator,preset.get_selected_id()==Launch.INTEGRATED_PRESET,true,true,"user://cartography/generation",selected_options(),plan_progress)
 	if preview_worker.start(job)!=OK:preview_worker=null;preview_button.disabled=false;preview_status.text="Could not start terrain preview."
+	preview_resources=null
 func poll_preview()->void:
 	if preview_worker==null:
 		if preview_due_ms>=0 and Time.get_ticks_msec()>=preview_due_ms and world_tabs.current_tab==1:start_preview()

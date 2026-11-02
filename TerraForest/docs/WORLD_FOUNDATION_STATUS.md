@@ -1,5 +1,26 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Player notices / staged startup — 2026-11-02
+
+Installed Added quest animation after first waking, general messages above the
+toolbar and a compact upper-right objective. Packaged notice, selected-item return,
+guidance, ordinary generation and fresh-process save/reload checks pass. User
+visual approval remains separate; player death/respawn is still not implemented.
+[Notice images, rejected first layout and evidence](../issues/player-notices/README.md).
+
+Selector/generation/loading now yield between indexed resource loads and setup
+stages, with forest asset work off-thread and no extra game window. In a matched
+packaged pair, largest opening interval falls 5428 → 597 ms, but total harness
+time is 26.4 → 29.2 s: this improves responsiveness, not proven total load speed.
+The remaining single-call native/material/UI costs need incremental setup or
+prebaking before entry can be called seamless. Return with repeated cold/warm
+package measurements, cancellation and foreground evidence; gameplay HUD
+performance is explicitly outside this task. 60 FPS, VSync and Quiet Mode stay.
+[Startup evidence and exact remaining work](../issues/browser-responsiveness/README.md).
+Installed pack `fcafbcee...9360a` replaces `8cd6f057...cbc4957`; the executable,
+native code and player saves are unchanged. Failed threaded-script trials remain
+documented, not counted as passing qualification.
+
 ## Upstairs introduction / quest search — 2026-11-02
 
 Approved wake-up motion, upstairs C1 start, circular active quests, awake/sleeper
