@@ -34,6 +34,17 @@ def require_free_space(path, extra_bytes=0):
         raise OSError(f'Low storage: {available / 2**30:.2f} GiB free; need {required / 2**30:.2f} GiB including the safety reserve. Run storage maintenance first.')
 
 
+def export_working_bytes(installed_pack):
+    limit = load_budgets()['redistributable_limit_bytes']
+    try:
+        previous = Path(installed_pack).stat().st_size
+    except FileNotFoundError:
+        return limit
+    if previous <= 0:
+        return limit
+    return min(limit, max(1024**3, previous * 2))
+
+
 def distribution_size(root, pack=None):
     root = Path(root)
     files = [Path(pack) if pack else root / 'TerraForest.pck']

@@ -8,7 +8,7 @@ import sys
 import configparser
 import json
 import time
-from resource_limits import distribution_size, evaluate, load_budgets, require_free_space
+from resource_limits import distribution_size, evaluate, export_working_bytes, require_free_space
 
 root=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(description=__doc__)
@@ -17,13 +17,20 @@ p.add_argument('--staging-directory',type=Path)
 args=p.parse_args()
 if not args.godot:
     p.error('Specify --godot PATH')
+installed_pack=root/'dist/TerraForest.pck'
+staging=args.staging_directory.resolve() if args.staging_directory else root/'dist'
+staging.mkdir(parents=True,exist_ok=True)
+working_bytes=export_working_bytes(installed_pack)
+require_free_space(root)
+require_free_space(staging,working_bytes)
+print(f'Export working-space estimate: {working_bytes:,} bytes, in addition to the unchanged safety reserve',flush=True)
 if subprocess.call([sys.executable,str(root/'tools/build_credit_notices.py'),'--check']):
     sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_door_animation_assets.py')]):
     sys.exit(1)
 if subprocess.call([sys.executable,str(root/'tools/check_building_standards.py'),'--godot',str(args.godot)]):
     sys.exit(1)
-require_free_space(root, load_budgets()['redistributable_limit_bytes'])
+require_free_space(staging,working_bytes)
 engine=Path(args.godot)
 direct=engine.parent/'godot.windows.opt.tools.64.exe'
 if direct.exists():engine=direct
@@ -35,9 +42,6 @@ if subprocess.call([str(engine),'--headless','--path',str(root),'--script','res:
     sys.exit(1)
 (root/'dist').mkdir(exist_ok=True)
 (root/'reports').mkdir(exist_ok=True)
-installed_pack=root/'dist/TerraForest.pck'
-staging=args.staging_directory.resolve() if args.staging_directory else root/'dist'
-staging.mkdir(parents=True,exist_ok=True)
 pack=staging/'TerraForest.pending.pck'
 result=subprocess.run([str(engine),'--headless','--path',str(root),'--export-pack','Windows Desktop',str(pack)],capture_output=True,text=True,timeout=180)
 log=result.stdout+'\n'+result.stderr
@@ -64,6 +68,7 @@ for descriptor in (root/'addons').rglob('*.gdextension'):
             prospective_bytes += source.stat().st_size
 if evaluate(distribution_bytes=prospective_bytes)['redistributable']['status'] == 'exceeded':
     raise ValueError('Prospective pack and native libraries exceed 5 GB; installed pack/libraries retained')
+require_free_space(staging,prospective_bytes-pack.stat().st_size)
 for descriptor in (root/'addons').rglob('*.gdextension'):
     config=configparser.ConfigParser()
     config.read(descriptor,encoding='utf-8')
@@ -99,8 +104,7 @@ print(smoke_log[-4000:])
 if smoke.returncode or 'ERROR:' in smoke_log or 'SCRIPT ERROR' in smoke_log:
     sys.exit(1)
 if staging!=root/'dist':
-    if shutil.disk_usage(root/'dist').free<pack.stat().st_size+16*1024*1024:
-        raise OSError('Insufficient space to install the staged pack safely; existing pack retained')
+    require_free_space(root/'dist',prospective_bytes)
     for library in libraries:
         destination=root/'dist'/library
         destination.parent.mkdir(parents=True,exist_ok=True)
@@ -113,6 +117,7 @@ if staging!=root/'dist':
     shutil.copy2(pack,pending)
     pending.replace(installed_pack)
 else:
+    require_free_space(staging)
     pack.replace(installed_pack)
 usage_metadata = dict(schema=1, bytes=distribution_size(root/'dist'), pack_bytes=installed_pack.stat().st_size,
                       measured_at=time.time())

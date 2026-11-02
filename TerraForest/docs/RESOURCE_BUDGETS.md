@@ -46,6 +46,15 @@ cleanup receipts and Usage screenshots retain their original 2 GiB setting.
 - Export checks the prospective pack plus external runtime files against 5 GB.
   `python tools/check_resource_budgets.py` checks the installed content and disk
   reserve without launching Godot. Developer source/addon archives are separate.
+- Export working space is not the 5 GB content ceiling. For an existing pack,
+  estimate twice its file size, at least 1 GiB and at most the content ceiling;
+  a missing/empty pack retains the conservative 5 GB estimate. This uses one
+  file's metadata, not a project scan. The 10 GiB free-space reserve is unchanged.
+  Check actual remaining space after packing, before copying native libraries and
+  before publication; external staging also reserves the actual installation copy.
+  The estimate is not a hard exporter allocation cap. Unexpected growth can fail
+  the later gate without publishing the pack. Ten resource tests cover the estimate,
+  unchanged limits and low-space rejection (2026-11-02).
 - Completed checks remove only their unique, declared temporary cache. Failed
   checks retain logs, screenshots and world evidence. When their registered cache
   quota is exceeded, only old verified TRC mesh packets are pruned; unknown files

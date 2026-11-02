@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from cache_retention import finalize_cache
 import maintain_terrain_cache as packets
-from resource_limits import distribution_size, evaluate, load_budgets, require_free_space, ResourceMonitor
+from resource_limits import distribution_size, evaluate, export_working_bytes, load_budgets, require_free_space, ResourceMonitor
 from storage_maintenance import maintain
 from run_godot_check import execute
 
@@ -55,6 +55,24 @@ class ResourceLimitTests(unittest.TestCase):
         self.assertFalse(report['within_sampled_limits'])
         self.assertEqual(report['checks']['vram']['status'], 'unavailable')
         reader.close()
+
+    def test_export_estimate_keeps_disk_reserve_and_content_limit_separate(self):
+        with patch('resource_limits.Path.stat') as metadata:
+            metadata.side_effect = FileNotFoundError
+            self.assertEqual(export_working_bytes('missing.pck'), 5_000_000_000)
+            metadata.side_effect = None
+            for previous, expected in [(0, 5_000_000_000), (450_000_000, 1024**3),
+                                       (1_500_000_000, 3_000_000_000), (4_000_000_000, 5_000_000_000)]:
+                metadata.return_value.st_size = previous
+                self.assertEqual(export_working_bytes('installed.pck'), expected)
+        with patch('resource_limits.shutil.disk_usage') as usage:
+            usage.return_value.free = 14 * 1024**3
+            require_free_space('.', 1024**3)
+            usage.return_value.free = 10 * 1024**3
+            with self.assertRaises(OSError):
+                require_free_space('.', 1024**3)
+        self.assertEqual(load_budgets()['minimum_free_bytes'], 10 * 1024**3)
+        self.assertEqual(load_budgets()['redistributable_limit_bytes'], 5_000_000_000)
 
     def test_runner_fails_over_budget_and_required_unknown_telemetry(self):
         for exceeded, complete, required, expected in [(True, True, False, False), (False, False, True, False), (False, True, True, True)]:
