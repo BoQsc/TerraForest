@@ -5,6 +5,32 @@
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Default seed admission — 2026-11-02
+
+- **Unresolved:** default seeds 8147 and 91823 cannot complete generation. Seed 1703
+  passes ordinary packaged generation; this does not qualify arbitrary seeds.
+- 8147: crossing conflict between two streets in the same district, not only a
+  regional link. Failed 1 m connector at `(1064, 40, 616)` meets a 12.8 m curved
+  ramp. Exact records: `reports/checks/20261102T142748652968Z/console.log`.
+- 91823: full-width permitted cut/fill intervals do not overlap at
+  `(432, 45.39585, 1824)`: low 46.00354 > high 45.94585. Receipt:
+  `reports/checks/20261102T143042633572Z/console.log`.
+- Rejected dense corridor survey trial: `20261102T142438674649Z`,
+  `20261102T142509010856Z`, `20261102T142558997988Z` under `reports/checks/`.
+  Still fails and regresses seed 1703's junction. Reverted.
+- Rejected crossing hold-range trial: `20261102T143025065348Z` /
+  `20261102T143042633572Z`; 1703 passes `20261102T143123485112Z`, others fail. Reverted.
+- Rejected site pre-admission / longer rerouting trial: `20261102T143343592046Z`,
+  `20261102T143432775579Z`, `20261102T143523486096Z`; all reach missing connected
+  coal-mine failures, including 1703. Reverted patch retained at
+  `reports/rejected_road_site_admission.patch`.
+- No generator algorithms, cut/fill budgets, requested content, road-grid defaults
+  or existing saves changed. Failures now expose offending road identities.
+- Return to joint settlement/road/mine admission, not larger earthworks limits or
+  silent content omission. Require all three seeds, ordinary generation, actual
+  trader roundtrip, terrain/contact checks, inspected world views and durable reload
+  before replacing the working default. Current trials are not safe to ship.
+
 ## Upstairs start, waking and search assistance — 2026-11-02
 
 - User approved the five-second first-person waking motion. New Frontier worlds

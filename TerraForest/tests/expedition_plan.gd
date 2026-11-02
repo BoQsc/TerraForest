@@ -17,6 +17,7 @@ func run()->void:
 	while worker.is_alive():await process_frame
 	var plan:Dictionary=worker.wait_to_finish()
 	check(plan.get("ok",false),"default recipe fits terrain: "+str(plan.get("reason","")))
+	if not plan.get("ok",false):print("EXPEDITION_PLAN_REJECTION ",plan)
 	if plan.get("ok",false):
 		var anchor:=Vector3.INF
 		for place:Dictionary in plan.navigation.places:

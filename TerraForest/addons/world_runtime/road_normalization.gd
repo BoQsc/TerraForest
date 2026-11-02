@@ -42,6 +42,8 @@ static func apply(core:RefCounted,sites:Array,network:Dictionary,connected:bool=
 	if not result.get("ok",false):
 		var failed:int=int(result.get("road",-1))
 		var other:int=int(result.get("other_road",-1))
+		if failed>=0 and failed<roads.size():result["failed_road"]=roads[failed]
+		if other>=0 and other<roads.size():result["crossed_road"]=roads[other]
 		if other>=0 and other<roads.size() and int(roads[other].normalization_owner)<0:failed=other
 		if connected and failed>=0 and failed<roads.size() and int(roads[failed].normalization_owner)<0:
 			result["reroute_position"]=result.get("position",(roads[failed].start+roads[failed].finish)*.5)

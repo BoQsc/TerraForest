@@ -1,5 +1,30 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Recent-request follow-through — 2026-11-02
+
+Verified commits: `26c5132b` startup/prebakes; `7d9c9e64` player lifecycle.
+
+Persistent native player health/death/shelter state now connects real damage to
+safe respawn and the approved five-second waking. Ordinary new-world generation,
+fresh-process health/shelter restoration, fatal return upstairs, selected-item
+recovery, inventory preservation and blocked-anchor fallback pass in the package.
+Legacy saves adopt a safe on-foot anchor without relocation. Full moving-service
+death and catastrophic obstruction remain qualification work, not universal recovery.
+[Actual upstairs image, checks and return criteria](../issues/player-respawn/README.md).
+
+Startup now warms fixed pickup meshes, reuses byte-identical baked texture mipmaps
+and yields between developer catalog construction groups. Latest installed Play
+callback is 6 ms and largest opening interval 310 ms; remaining resource/restore
+calls still hitch. This warm offscreen sample is not a total-time speedup or
+foreground smoothness claim. [Measurements and remaining work](../issues/browser-responsiveness/README.md).
+Installed pack `5b8c7c63...638920` is 471,060,252 bytes; 14 native files match.
+60 FPS, VSync, Quiet Mode, user saves and the root executable remain unchanged.
+
+Default seed 1703 generates and plays; seeds 8147/91823 still fail road admission.
+Corridor/crossing/site-filter experiments introduced mine-placement regressions
+and were reverted. Diagnostic road identities remain, not relaxed rules or a
+claim that those seeds work. [Failures, rejected trials and required closure](../issues/gameplay-expansion/README.md#default-seed-admission--2026-11-02).
+
 ## Storage recurrence / approved cleanup — 2026-11-02
 
 Real free-space exhaustion interrupted the recent-requirements audit. Approved
@@ -12,10 +37,10 @@ source, not ordinary world clones. [Audit, checks and receipts](../issues/resour
 The broader 100 GB recovery goal remains open: review persistent test destinations,
 report retention and historical/additional checkouts with explicit approval rather
 than deleting worlds or history by name. Require ownership evidence, preservation
-checks and measured removal receipts. The original recent-work audit is also not
-complete: startup single-call stalls, player health/death/respawn and generation
-admission failures for seeds 8147/91823 still need their existing scoped work and
-validation. Resume these after storage recovery; this cleanup is not gameplay
+checks and measured removal receipts. The follow-through above implements the
+missing health/death/respawn loop. Startup single-call stalls and generation
+admission failures for seeds 8147/91823 still need their scoped work and validation.
+This cleanup is not gameplay
 completion and does not change the 60 FPS limit, VSync or Quiet Mode.
 
 ## Player notices / staged startup — 2026-11-02
@@ -23,7 +48,7 @@ completion and does not change the 60 FPS limit, VSync or Quiet Mode.
 Installed Added quest animation after first waking, general messages above the
 toolbar and a compact upper-right objective. Packaged notice, selected-item return,
 guidance, ordinary generation and fresh-process save/reload checks pass. User
-visual approval remains separate; player death/respawn is still not implemented.
+visual approval remains separate; player death/respawn is implemented by the follow-through above.
 [Notice images, rejected first layout and evidence](../issues/player-notices/README.md).
 
 Selector/generation/loading now yield between indexed resource loads and setup
@@ -46,9 +71,9 @@ compass search assistance, ten-resident churches and baked pursuit posture are
 implemented. Native persistence and rotated prefab clearance/traversal pass;
 ordinary-world/package evidence is tracked with the
 [gameplay expansion](../issues/gameplay-expansion/README.md).
-Player health/death/respawn is still missing: the approved motion has a reusable
-respawn hook, not a completed death loop. Return when that lifecycle is added;
-require real death-to-respawn, selected-item recovery and save/reload evidence.
+The then-missing player health/death/respawn lifecycle is now implemented with real
+death-to-respawn, selected-item recovery and fresh-process save/reload evidence;
+see the player-respawn tracker linked above for remaining qualification.
 Other biome/seed road and foreground performance limitations remain unchanged.
 Installed generation/physical route/save passes 188 checks; fresh-process reload
 passes 12. The final selected-item idle-return correction is now exported and
