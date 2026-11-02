@@ -3,6 +3,7 @@
 #include "block_map_region.hpp"
 #include "region_world_archive.hpp"
 #include <atomic>
+#include <deque>
 
 namespace terraforest {
 class BlockHorizon {
@@ -18,9 +19,9 @@ class BlockHorizon {
     static constexpr uint64_t BYTE_LIMIT=128*1024*1024;
     uint64_t published=0,rejected=0,failed=0,blocked=0;
     double upload_max_ms=0;
-    bool enabled=false,active=false,stopping=false,pending=false,ready=false;
+    bool enabled=false,active=false,stopping=false,pending=false;
     std::thread worker;
-    std::mutex mutex;
+    mutable std::mutex mutex;
     std::condition_variable wake;
     std::atomic<uint64_t> serial{1};
     uint64_t active_serial=0,active_version=0;
@@ -29,9 +30,13 @@ class BlockHorizon {
     PackedByteArray read_digest;
     std::map<BlockKey,BlockChunk> source;
     Ref<NativeBlockMapRegion> decoded;
-    BlockBake result;
-    bool result_last=false;
-    std::set<BlockKey> result_keys;
+    struct Completion {BlockBake bake;bool last=false;std::set<BlockKey> keys;uint64_t charge=0;};
+    std::deque<Completion> completed;
+    static constexpr size_t RESULT_LIMIT=8;
+    static constexpr uint64_t RESULT_BYTES=32*1024*1024;
+    uint64_t result_bytes=0,peak_result_bytes=0;
+    size_t peak_results=0;
+    int last_step_uploads=0,max_step_uploads=0;
     void run();
     void start(std::map<BlockKey,BlockChunk> &&chunks,const Ref<NativeBlockMapRegion> &packet={});
     bool deliver(BlockBake &&bake,bool last,uint64_t ticket,const std::set<BlockKey> &keys={});

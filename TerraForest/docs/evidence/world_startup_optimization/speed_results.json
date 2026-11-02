@@ -1,0 +1,2002 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Original AI-assisted performance analysis of TerraForest local benchmark outputs; user requested full generation/loading improvement without changing existing saves. No external material imported.",
+  "scope": "Normal seed1703 browser recipe, frozen PCK plus14 DLLs, Godot4.7.2, offscreen1920x1080 at60FPS, retained OS/shared derived caches. Qualified combined samples include fly-in and wake once. Legacy read-only load samples skip map readiness; only normal_load samples represent ordinary opening. Observation with through-control begins after intro.",
+  "builds": {
+    "speed_before_build": {
+      "TerraForest.pck": "7b153c9a853c7e3ca1d1cb8c2e2998b4f1dc971c31d6739ea2c2f930e66baac6",
+      "assets\\branding\\GODOT_LOGO_LICENSE.txt": "36fb9e928ab137d29d45f232eee15f281f83637a27678bd9d0eccf22a42fa4cc",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "c8d8211ecba4dff875ba499617856437c775c4638887e1abd2f585c93086b0be",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "f33023046dac164c7a10290c6f93a5eaf9139684975e7fa432f4d2df5262ae06",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672"
+    },
+    "speed_after_build": {
+      "TerraForest.pck": "19ab6e4033439fdd108d3fdafc22f2dac3b28110fb238ebde099211244ed920b",
+      "assets\\branding\\GODOT_LOGO_LICENSE.txt": "36fb9e928ab137d29d45f232eee15f281f83637a27678bd9d0eccf22a42fa4cc",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "c8d8211ecba4dff875ba499617856437c775c4638887e1abd2f585c93086b0be",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "f33023046dac164c7a10290c6f93a5eaf9139684975e7fa432f4d2df5262ae06",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672"
+    },
+    "speed_final_build": {
+      "TerraForest.pck": "9ff6baf17795c708a8cc48478104d4d698ebe75921a1706ba72dd43f3e782124",
+      "assets\\branding\\GODOT_LOGO_LICENSE.txt": "36fb9e928ab137d29d45f232eee15f281f83637a27678bd9d0eccf22a42fa4cc",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "c8d8211ecba4dff875ba499617856437c775c4638887e1abd2f585c93086b0be",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "f33023046dac164c7a10290c6f93a5eaf9139684975e7fa432f4d2df5262ae06",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672"
+    },
+    "speed_qualified_build": {
+      "TerraForest.pck": "a465003ac63f7360d140eff68bfec9313d368f690fe1288383b54f0ba89bd801",
+      "assets\\branding\\GODOT_LOGO_LICENSE.txt": "36fb9e928ab137d29d45f232eee15f281f83637a27678bd9d0eccf22a42fa4cc",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "982b5771466596f3e896b70f688d5dad3e48cb35fd245f891839bff1c77a00f0",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "42ffe3b9699b3c48100979dadcf5a6717806aeae022f9e74a06db0e4444803a4",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672"
+    }
+  },
+  "summary": {
+    "speed_before_build/generate": {
+      "samples_ms": [
+        101283.229
+      ],
+      "median_ms": 101283.229
+    },
+    "speed_before_build/normal_load": {
+      "samples_ms": [
+        36663.681
+      ],
+      "median_ms": 36663.681
+    },
+    "speed_qualified_build/generate": {
+      "samples_ms": [
+        83910.851,
+        83176.051
+      ],
+      "median_ms": 83543.451
+    },
+    "speed_qualified_build/normal_load": {
+      "samples_ms": [
+        30438.032
+      ],
+      "median_ms": 30438.032
+    }
+  },
+  "runs": [
+    {
+      "receipt": "reports/startup_optimization/20261102T224902777091Z",
+      "result_sha256": "d2ea32ded48967ee1b2df2b1f1bce44656adc219fca850b7ced715d4fd395d51",
+      "run_sha256": "bd2a513aca3394db6d3f151d5188f35163c847ca7cee973586294a21762db342",
+      "build": "speed_before_build",
+      "driver_sha256": "dd655dd44edef94e7b921003c562bb9cf1ff82fdde9a722c75f3a966f99365e8",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 26159.221,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 48,
+        "gpu_samples": 47,
+        "peak_private_commit_bytes": 3577794560,
+        "peak_dedicated_gpu_bytes": 1490579456,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 276,
+          "collision_pieces_reused": 0,
+          "in_flight": 2,
+          "mesh_cache_bytes": 213400768,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 294,
+          "triangles": 3717964,
+          "worker_builds": 298
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T224931838943Z",
+      "result_sha256": "19686a0b42ff48a102a621971b22c2724be90106375a4964ef448be1adb23461",
+      "run_sha256": "396c9e3c12c3e8a23c290a0d9457c3cb9def22eb2cb7b13a8c2e37fa22a704fa",
+      "build": "speed_before_build",
+      "driver_sha256": "dd655dd44edef94e7b921003c562bb9cf1ff82fdde9a722c75f3a966f99365e8",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 26092.486,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 48,
+        "gpu_samples": 47,
+        "peak_private_commit_bytes": 3573895168,
+        "peak_dedicated_gpu_bytes": 1490579456,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 276,
+          "collision_pieces_reused": 0,
+          "in_flight": 2,
+          "mesh_cache_bytes": 213357924,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 293,
+          "triangles": 3717964,
+          "worker_builds": 298
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T225000783303Z",
+      "result_sha256": "6b9fe70b47ab4898a1b25f841e064ff5782ad606af9829ec8cf98c441a04b05b",
+      "run_sha256": "294bc902502bc8c96cd58fd92a823382137aa311b2388c83a76bb8e51405efe1",
+      "build": "speed_before_build",
+      "driver_sha256": "dd655dd44edef94e7b921003c562bb9cf1ff82fdde9a722c75f3a966f99365e8",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 27570.114,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 50,
+        "gpu_samples": 49,
+        "peak_private_commit_bytes": 3448127488,
+        "peak_dedicated_gpu_bytes": 1490317312,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 271,
+          "collision_pieces_reused": 0,
+          "in_flight": 3,
+          "mesh_cache_bytes": 213040636,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 287,
+          "triangles": 3717964,
+          "worker_builds": 293
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T225047521951Z",
+      "result_sha256": "bd71a22bcb4334b4aabaedb455ce88897dfef61569636407063ae9032c89c5cf",
+      "run_sha256": "18f615e26c73aada0b3bdda50e944ff15c49ce8e79bc93da17169b49d875fb39",
+      "build": "speed_before_build",
+      "driver_sha256": "dd655dd44edef94e7b921003c562bb9cf1ff82fdde9a722c75f3a966f99365e8",
+      "passed": true,
+      "slot": "StartupBench_2676f90b30314552",
+      "generate": true,
+      "first_ready_ms": 96518.761,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 164,
+        "gpu_samples": 164,
+        "peak_private_commit_bytes": 3991388160,
+        "peak_dedicated_gpu_bytes": 1490587648,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "b1ce50821e5c785c2be1d4fb6be6c689",
+        "run_sha256": "908f47fae96bce9ecc228384b89e0ad38c68a864e77ce04d2582ad2e0f2b7ca4",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 21.836,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 68.849907,
+            "stage_timings": [
+              {
+                "microseconds": 328093.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 8238914.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1444.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 9119550.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 3299814.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 394578.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 27799.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 27425.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7273950.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 12636.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 803894.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1275.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 81328.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 716005.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 2125.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 850075.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1992.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 547981.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 22500951.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7659416.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6454862.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 352,
+          "batch_remaining": 0,
+          "collision_pieces_built": 368,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 227854072,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 360,
+          "triangles": 3797412,
+          "worker_builds": 365
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T225501835410Z",
+      "result_sha256": "e41ad98df09ecf1cc22a8285b33be7cf615316bdcbeeea81d560586520ceebf7",
+      "run_sha256": "0fda5981db9c6408ec6ec7c8b4b33cac27f7a24075c915c05a0317dd1e0649d7",
+      "build": "speed_after_build",
+      "driver_sha256": "07ae6fdb16e8aa6bdb55c9e8d8c43b5cbcfe9be94905cad85cee21baa5a3e605",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 21116.807,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 40,
+        "gpu_samples": 39,
+        "peak_private_commit_bytes": 3538489344,
+        "peak_dedicated_gpu_bytes": 1490579456,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 160,
+          "batch_remaining": 0,
+          "collision_pieces_built": 294,
+          "collision_pieces_reused": 0,
+          "in_flight": 2,
+          "mesh_cache_bytes": 179878452,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 237,
+          "triangles": 3554088,
+          "worker_builds": 237
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T225526401845Z",
+      "result_sha256": "fe91370bd6976b39346e17dda9cbd0f31bd4076c8a3b080692032f80e7a69227",
+      "run_sha256": "d2550396c3c37b45a2fbaba573955cf4a5bc2a472ccf1035cfd7ad29cf079a58",
+      "build": "speed_after_build",
+      "driver_sha256": "07ae6fdb16e8aa6bdb55c9e8d8c43b5cbcfe9be94905cad85cee21baa5a3e605",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 18601.229,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 36,
+        "gpu_samples": 34,
+        "peak_private_commit_bytes": 3576680448,
+        "peak_dedicated_gpu_bytes": 1490579456,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 271,
+          "collision_pieces_reused": 0,
+          "in_flight": 3,
+          "mesh_cache_bytes": 213040636,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 287,
+          "triangles": 3717964,
+          "worker_builds": 293
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T225547764458Z",
+      "result_sha256": "9ddc003121895c5dbc2a365743094ee2d618a81ab0d29183e26636250fa3b260",
+      "run_sha256": "12de38cc8d3a80e21fe91cc15000f0fe2db8a26090d893f9614ee267d8b66829",
+      "build": "speed_after_build",
+      "driver_sha256": "07ae6fdb16e8aa6bdb55c9e8d8c43b5cbcfe9be94905cad85cee21baa5a3e605",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 18746.215,
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 36,
+        "gpu_samples": 35,
+        "peak_private_commit_bytes": 3576033280,
+        "peak_dedicated_gpu_bytes": 1490579456,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 274,
+          "collision_pieces_reused": 0,
+          "in_flight": 4,
+          "mesh_cache_bytes": 213241204,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 291,
+          "triangles": 3717964,
+          "worker_builds": 296
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T230132476231Z",
+      "result_sha256": "1792c85e3d748232c67e5bc9234ff7f03aac31c411380574f6efd1ca5b4c4033",
+      "run_sha256": "9c3555440c45f2d9d59a008babf3713b179da0c84492dd700761ec68ef394dde",
+      "build": "speed_before_build",
+      "driver_sha256": "07ae6fdb16e8aa6bdb55c9e8d8c43b5cbcfe9be94905cad85cee21baa5a3e605",
+      "passed": true,
+      "slot": "StartupBench_6c4fc82221b245bd",
+      "generate": false,
+      "first_ready_ms": 24751.129,
+      "controllable_ms": 32796.542,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 1
+      },
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 59,
+        "gpu_samples": 59,
+        "peak_private_commit_bytes": 3641233408,
+        "peak_dedicated_gpu_bytes": 1492684800,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 262,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 212893440,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 284,
+          "triangles": 3717964,
+          "worker_builds": 284
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T230316965713Z",
+      "result_sha256": "49658b9fb291280958478affd4e8c58f2e9344338921a10d1f3c09510d02c1fa",
+      "run_sha256": "3f0696ace1f538fffb101bfb55992a15d3b780cc1463e3a3079b792a4db4c0f2",
+      "build": "speed_before_build",
+      "driver_sha256": "07ae6fdb16e8aa6bdb55c9e8d8c43b5cbcfe9be94905cad85cee21baa5a3e605",
+      "passed": true,
+      "slot": "StartupBench_7d93bb802e4a4fa0",
+      "generate": true,
+      "first_ready_ms": 90684.214,
+      "controllable_ms": 93804.28,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 0
+      },
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 160,
+        "gpu_samples": 159,
+        "peak_private_commit_bytes": 4004540416,
+        "peak_dedicated_gpu_bytes": 1507364864,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": false,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "75e0df636b17abd95df21d98b169abed",
+        "run_sha256": "18855c2b5b2dc8bbd324ca5a30326df16d1422c58dbb2bd027258fd3a7996b83",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 19.231,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 65.380157,
+            "stage_timings": [
+              {
+                "microseconds": 328483.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 8722052.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1213.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 9435653.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 3016489.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 400699.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 31574.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 17521.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7069474.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 13631.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 781497.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1435.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 66452.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 608371.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1618.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 758623.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1700.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 474324.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 19825826.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6897206.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6429845.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 352,
+          "batch_remaining": 0,
+          "collision_pieces_built": 368,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 227854072,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 360,
+          "triangles": 3797412,
+          "worker_builds": 365
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T230703102620Z",
+      "result_sha256": "a91eb6f974f201b1c336d0657b34aaaee7fe4646bac476adbd5f36b10aa2020c",
+      "run_sha256": "52c584e4dcc533641f6252a5e59618eb099e004b98ef5b23f19e17e2a9a3f5f2",
+      "build": "speed_before_build",
+      "driver_sha256": "5a07471a7014485ff9547e37b59fb2efac2e73b0e33a47a1a75a05d8e8459fe7",
+      "passed": true,
+      "slot": "StartupBench_a90bb9564b224dfe",
+      "generate": true,
+      "first_ready_ms": 93228.16,
+      "controllable_ms": 101283.229,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 1
+      },
+      "mouse_captures": 0,
+      "resources": {
+        "samples": 172,
+        "gpu_samples": 171,
+        "peak_private_commit_bytes": 3988393984,
+        "peak_dedicated_gpu_bytes": 1506967552,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "e9da452c59102753779f3fbe7e85daa6",
+        "run_sha256": "d313732882cc12eb05f47b7b4aacae6e9652878e20caa3fa6f3751a6ece33eb1",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 22.564,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 65.735525,
+            "stage_timings": [
+              {
+                "microseconds": 311778.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 8132617.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1247.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7549485.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 3016486.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 342275.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 29728.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7635.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6919100.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 11183.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 785797.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1305.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 64209.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 677208.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1435.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 707795.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1481.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 382921.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 23247816.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 5633190.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7428224.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 352,
+          "batch_remaining": 0,
+          "collision_pieces_built": 368,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 227854072,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 360,
+          "triangles": 3797412,
+          "worker_builds": 365
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T231210364579Z",
+      "result_sha256": "781e5f088702e51d6c85dbab7b235485009e7b211b866c74beffe7b9bee200e0",
+      "run_sha256": "07283373bbac9fb0026d11daee5e3e89b3bc396484b34c92bf6cbf2787d061b8",
+      "build": "speed_final_build",
+      "driver_sha256": "7f4c88eca1211c226356bb26a8dd621842004d20f49e1a61c929cd7551a4219b",
+      "passed": true,
+      "slot": "StartupBench_88a3c87bc11645b4",
+      "generate": true,
+      "first_ready_ms": 83103.36,
+      "controllable_ms": 91130.439,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 1
+      },
+      "mouse_captures": 0,
+      "local_at_release": {
+        "boulders": {
+          "owners": 282,
+          "pending": 0,
+          "process_us": 4,
+          "radius": 640.0,
+          "ready": true,
+          "reconcile": 0,
+          "rejected": 0,
+          "render": {
+            "cached_triangles": 4366,
+            "capacity": 4096,
+            "draw_groups": 8,
+            "far": 332,
+            "horizon": true,
+            "near": 7,
+            "roots": 335
+          },
+          "scope": "local landscape",
+          "total": 282,
+          "unchanged_publications": 6
+        },
+        "collision": true,
+        "forest": {
+          "enabled": true,
+          "owners": 282,
+          "pending": 0,
+          "radius": 640.0,
+          "ready": true,
+          "reconcile": 0,
+          "rejected": 0,
+          "resample": 0,
+          "scope": "local landscape",
+          "total": 282
+        }
+      },
+      "background": {
+        "frame_max_ms": 19.246,
+        "frame_p95_ms": 17.037,
+        "frames": 1202,
+        "full_landscape_after_release_ms": 12.737,
+        "observation_ms": 20009.506
+      },
+      "observation_ok": true,
+      "resources": {
+        "samples": 191,
+        "gpu_samples": 190,
+        "peak_private_commit_bytes": 4000378880,
+        "peak_dedicated_gpu_bytes": 1509462016,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "94961eaa15e053d2efcf5a7e5f9fe4dc",
+        "run_sha256": "9a587255075db960f139e5c3b4c143404783836fc4dfbbdeefedc5b9b924c221",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 20.548,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 60.493693,
+            "stage_timings": [
+              {
+                "microseconds": 348563.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 5713362.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1163.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7444350.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 2499898.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 387762.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 29132.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 24273.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6738280.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 11694.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 784866.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1259.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 64643.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 609991.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1428.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 656254.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1516.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 398770.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 21235219.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 5718863.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7340196.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 352,
+          "batch_remaining": 0,
+          "collision_pieces_built": 368,
+          "collision_pieces_reused": 0,
+          "generation_mesh_hits": 233,
+          "in_flight": 0,
+          "mesh_cache_bytes": 227854072,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 360,
+          "triangles": 3797412,
+          "worker_builds": 365
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T232636952552Z",
+      "result_sha256": "a253117e92df0a2e6864eddabe5fb132cf9b3e271dbe09ef0c980caaa8210923",
+      "run_sha256": "09c77e95b164e9220060d52ebcb2bdc259ae34ef2fd6fc63a5608e7cb4988109",
+      "build": "speed_qualified_build",
+      "driver_sha256": "7f4c88eca1211c226356bb26a8dd621842004d20f49e1a61c929cd7551a4219b",
+      "passed": true,
+      "slot": "StartupBench_8bad30cf33a94371",
+      "generate": true,
+      "first_ready_ms": 75877.016,
+      "controllable_ms": 83910.851,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 1
+      },
+      "mouse_captures": 0,
+      "local_at_release": {
+        "boulders": {
+          "owners": 282,
+          "pending": 0,
+          "process_us": 608,
+          "radius": 640.0,
+          "ready": true,
+          "reconcile": 5,
+          "rejected": 0,
+          "render": {
+            "cached_triangles": 4366,
+            "capacity": 4096,
+            "draw_groups": 8,
+            "far": 332,
+            "horizon": true,
+            "near": 7,
+            "roots": 335
+          },
+          "scope": "local landscape",
+          "total": 282,
+          "unchanged_publications": 9
+        },
+        "collision": true,
+        "forest": {
+          "enabled": true,
+          "owners": 282,
+          "pending": 0,
+          "radius": 640.0,
+          "ready": true,
+          "reconcile": 0,
+          "rejected": 0,
+          "resample": 0,
+          "scope": "local landscape",
+          "total": 282
+        }
+      },
+      "background": {
+        "frame_max_ms": 18.451,
+        "frame_p95_ms": 17.025,
+        "frames": 1202,
+        "full_landscape_after_release_ms": 41.107,
+        "observation_ms": 20011.274
+      },
+      "observation_ok": true,
+      "resources": {
+        "samples": 179,
+        "gpu_samples": 178,
+        "peak_private_commit_bytes": 4007362560,
+        "peak_dedicated_gpu_bytes": 1509462016,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "1ca55f57cc4fdc3c64c10e1969395509",
+        "run_sha256": "c873bb6571190680d80fc0f8bd84ff396b2093e30316dba2ea01e171b8d5112e",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 19.814,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 63.725191,
+            "stage_timings": [
+              {
+                "microseconds": 345570.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6905870.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1969.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 8161207.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 2499859.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 395146.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 24932.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 22717.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7249994.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 12034.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 934242.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1571.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 64121.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 611023.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1802.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 676363.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 2116.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 387589.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 20479217.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 8106040.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6394678.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 286,
+          "collision_pieces_reused": 0,
+          "generation_mesh_hits": 211,
+          "in_flight": 4,
+          "mesh_cache_bytes": 214007252,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 301,
+          "triangles": 3717964,
+          "worker_builds": 303
+        },
+        "addons": {
+          "distant_buildings": {
+            "budget_rejections": 0,
+            "byte_limit": 134217728,
+            "enabled": true,
+            "failed_reads": 0,
+            "last_step_uploads": 0,
+            "max_step_uploads": 4,
+            "mesh_bytes": 6721128,
+            "mesh_chunks": 587,
+            "peak_queued_bytes": 162792,
+            "peak_queued_results": 8,
+            "published_chunks": 587,
+            "queue_byte_limit": 33554432,
+            "queue_result_limit": 8,
+            "queued_bytes": 0,
+            "queued_results": 0,
+            "read_pending": false,
+            "ready": true,
+            "ready_regions": 64,
+            "regions": 64,
+            "stale_results": 2,
+            "triangles": 90021,
+            "upload_max_ms": 0.3722,
+            "visible_chunks": 405,
+            "worker_active": false
+          },
+          "map": {
+            "warm_error": "",
+            "warm_started": 71810,
+            "warming": false
+          }
+        }
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T232839777732Z",
+      "result_sha256": "85203a6966f4571211e5294d975e0f61789517a6ff585fb95acdd248f603ce40",
+      "run_sha256": "a92b21518b2de64f9250376ad06f3ba0e05b4f776b3a464f6cf425d3df0f189c",
+      "build": "speed_qualified_build",
+      "driver_sha256": "105896159be1dfd92220ef89c989c46d38cf733c0f64db7e11767a049c2dead9",
+      "passed": true,
+      "slot": "StartupBench_51ed9a20e0214e9c",
+      "generate": true,
+      "normal_load": false,
+      "first_ready_ms": 75151.932,
+      "controllable_ms": 83176.051,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 1
+      },
+      "mouse_captures": 0,
+      "observation_after_control": true,
+      "resources": {
+        "samples": 143,
+        "gpu_samples": 142,
+        "peak_private_commit_bytes": 3993882624,
+        "peak_dedicated_gpu_bytes": 1509462016,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "generation": {
+        "report_id": "ecb428f835a1f4118dee979e0c435b06",
+        "run_sha256": "86725a4611b953ab6da63a366349ad4e0ff87dac9b7a8d968e38dd146b038406",
+        "published": true,
+        "seed": 1703,
+        "generator": 29,
+        "photograph_seconds": 21.115,
+        "phases": [
+          {
+            "stage": "creating",
+            "wall_seconds": 61.389206,
+            "stage_timings": [
+              {
+                "microseconds": 378933.0,
+                "stage": "Planning terrain, streets and building sites",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 4951701.0,
+                "stage": "Initializing generated terrain data",
+                "visits": 2.0
+              },
+              {
+                "microseconds": 1434.0,
+                "stage": "Baking roads, foundations and connected mineral veins before terrain loading",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7446888.0,
+                "stage": "Building roads and foundations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 2599873.0,
+                "stage": "Preparing water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 319809.0,
+                "stage": "Preparing generated world data",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 24715.0,
+                "stage": "Loading water sources",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 14003.0,
+                "stage": "Baking terrain overview",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6975776.0,
+                "stage": "Placing buildings and interiors",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 13843.0,
+                "stage": "Placing sleeping house residents",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 779829.0,
+                "stage": "Placing off-road locations, supplies and sleepers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1458.0,
+                "stage": "Stocking locked containers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 64334.0,
+                "stage": "Baking streets and location metadata",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 644810.0,
+                "stage": "Baking destructible sidewalk plates",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1569.0,
+                "stage": "Placing mineral-bearing stones and map markers",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 671505.0,
+                "stage": "Placing town entrance signs",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 1499.0,
+                "stage": "Finishing quest-location water contacts",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 430094.0,
+                "stage": "Preserving original quest locations",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 21840180.0,
+                "stage": "Photographing the generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 6717420.0,
+                "stage": "Saving generated world",
+                "visits": 1.0
+              },
+              {
+                "microseconds": 7076744.0,
+                "stage": "Caching the saved world map",
+                "visits": 1.0
+              }
+            ]
+          }
+        ]
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 256,
+          "batch_remaining": 0,
+          "collision_pieces_built": 290,
+          "collision_pieces_reused": 0,
+          "generation_mesh_hits": 208,
+          "in_flight": 0,
+          "mesh_cache_bytes": 213640380,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 3,
+          "tiles": 293,
+          "triangles": 3717964,
+          "worker_builds": 309
+        },
+        "addons": {
+          "distant_buildings": {
+            "budget_rejections": 0,
+            "byte_limit": 134217728,
+            "enabled": true,
+            "failed_reads": 0,
+            "last_step_uploads": 0,
+            "max_step_uploads": 4,
+            "mesh_bytes": 6721128,
+            "mesh_chunks": 587,
+            "peak_queued_bytes": 149664,
+            "peak_queued_results": 8,
+            "published_chunks": 587,
+            "queue_byte_limit": 33554432,
+            "queue_result_limit": 8,
+            "queued_bytes": 0,
+            "queued_results": 0,
+            "read_pending": false,
+            "ready": true,
+            "ready_regions": 64,
+            "regions": 64,
+            "stale_results": 2,
+            "triangles": 90021,
+            "upload_max_ms": 0.3843,
+            "visible_chunks": 405,
+            "worker_active": false
+          },
+          "map": {
+            "warm_error": "",
+            "warm_started": 68819,
+            "warming": false
+          }
+        }
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T233049529346Z",
+      "result_sha256": "7bd21e8ed0ed03eb16f659fdf8d0a7258e6da4ec4825b1c4644ed1fd6427e826",
+      "run_sha256": "6fda26e807bdbcb869d1bc2feba36e9ac76778f4b130aaa4d673457af9451000",
+      "build": "speed_before_build",
+      "driver_sha256": "105896159be1dfd92220ef89c989c46d38cf733c0f64db7e11767a049c2dead9",
+      "passed": false,
+      "slot": "StartupBench_8bad30cf33a94371",
+      "generate": false,
+      "normal_load": true,
+      "first_ready_ms": 33694.201,
+      "controllable_ms": 36824.542,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 0
+      },
+      "source_unchanged": false,
+      "mouse_captures": 0,
+      "observation_after_control": true,
+      "resources": {
+        "samples": 67,
+        "gpu_samples": 67,
+        "peak_private_commit_bytes": 3643453440,
+        "peak_dedicated_gpu_bytes": 1490325504,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {},
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 288,
+          "batch_remaining": 0,
+          "collision_pieces_built": 299,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 218805584,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 312,
+          "triangles": 3748162,
+          "worker_builds": 312
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T233259442447Z",
+      "result_sha256": "332359657c3ec9145ead6a74cdb8a499b01fc63496dd7436d814c3c2136e6ce4",
+      "run_sha256": "ab8de237d6bb30cf500da593ef7a7386e4840a2087ff5a851cc6091ec4268bb8",
+      "build": "speed_before_build",
+      "driver_sha256": "47afe6b297185060079ee6f56ed1d2d655bdf9595445c501dd4e4138f6aa8ed6",
+      "passed": true,
+      "slot": "StartupBench_2a6bf6773fc5463f",
+      "generate": false,
+      "normal_load": true,
+      "first_ready_ms": 33500.617,
+      "controllable_ms": 36663.681,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 0
+      },
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "observation_after_control": true,
+      "resources": {
+        "samples": 67,
+        "gpu_samples": 66,
+        "peak_private_commit_bytes": 3790024704,
+        "peak_dedicated_gpu_bytes": 1490587648,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {
+        "source_fixture_unchanged": true,
+        "source_fixture": "StartupBench_8bad30cf33a94371",
+        "source_fixture_sha256": "1fa64935857e57eb3c4e9cb2ea174c43cc0865f981d9236df04540c8b3dbb6bd"
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 352,
+          "batch_remaining": 0,
+          "collision_pieces_built": 367,
+          "collision_pieces_reused": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 226344560,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 352,
+          "triangles": 3778508,
+          "worker_builds": 356
+        },
+        "addons": {}
+      }
+    },
+    {
+      "receipt": "reports/startup_optimization/20261102T233408058696Z",
+      "result_sha256": "2713d053e59b08730a0fe089d0e781468ed54b12ed46db581981fd313aa7f550",
+      "run_sha256": "5652acadc5c0433631912094c34301f90d61191f112809163f8afd1216dc9ccc",
+      "build": "speed_qualified_build",
+      "driver_sha256": "47afe6b297185060079ee6f56ed1d2d655bdf9595445c501dd4e4138f6aa8ed6",
+      "passed": true,
+      "slot": "StartupBench_0c33c45815de4733",
+      "generate": false,
+      "normal_load": true,
+      "first_ready_ms": 27280.632,
+      "controllable_ms": 30438.032,
+      "entry": {
+        "controlled": true,
+        "starts": 1,
+        "wake_starts": 0
+      },
+      "source_unchanged": true,
+      "mouse_captures": 0,
+      "observation_after_control": true,
+      "resources": {
+        "samples": 57,
+        "gpu_samples": 57,
+        "peak_private_commit_bytes": 3787976704,
+        "peak_dedicated_gpu_bytes": 1490587648,
+        "within_sampled_limits": true,
+        "exceeded": false
+      },
+      "qualified_control": true,
+      "source_fixture": {
+        "source_fixture_unchanged": true,
+        "source_fixture": "StartupBench_8bad30cf33a94371",
+        "source_fixture_sha256": "1fa64935857e57eb3c4e9cb2ea174c43cc0865f981d9236df04540c8b3dbb6bd"
+      },
+      "readiness": {
+        "readiness": {
+          "coverage_ready": 64,
+          "coverage_scope": "whole map",
+          "coverage_total": 64,
+          "local": 9,
+          "local_total": 9,
+          "queued": 0,
+          "ready": true,
+          "root_total": 64,
+          "roots": 64,
+          "worker": "cache_accounting"
+        },
+        "terrain_stream": {
+          "active_leaves": 368,
+          "batch_remaining": 0,
+          "collision_pieces_built": 391,
+          "collision_pieces_reused": 0,
+          "generation_mesh_hits": 0,
+          "in_flight": 0,
+          "mesh_cache_bytes": 228858872,
+          "pending_edit": false,
+          "revision": 6458,
+          "sdf_pages": 2549,
+          "staging": 0,
+          "tiles": 364,
+          "triangles": 3802378,
+          "worker_builds": 378
+        },
+        "addons": {
+          "distant_buildings": {
+            "budget_rejections": 0,
+            "byte_limit": 134217728,
+            "enabled": true,
+            "failed_reads": 0,
+            "last_step_uploads": 0,
+            "max_step_uploads": 4,
+            "mesh_bytes": 6717792,
+            "mesh_chunks": 587,
+            "peak_queued_bytes": 128124,
+            "peak_queued_results": 8,
+            "published_chunks": 587,
+            "queue_byte_limit": 33554432,
+            "queue_result_limit": 8,
+            "queued_bytes": 0,
+            "queued_results": 0,
+            "read_pending": false,
+            "ready": true,
+            "ready_regions": 64,
+            "regions": 64,
+            "stale_results": 2,
+            "triangles": 89965,
+            "upload_max_ms": 0.5356,
+            "visible_chunks": 405,
+            "worker_active": false
+          },
+          "map": {
+            "warm_error": "",
+            "warm_started": 9263,
+            "warming": false
+          }
+        }
+      }
+    }
+  ],
+  "preserved_worlds": {
+    "Emerald_Meadow": {
+      "root_sha256": "f6b8f026dfaca9c59d3655de98839bc639a446f5790e1ab3d006630e2e320cfa",
+      "terrain_sha256": "8f3cd49c7a4872dc34316799d51218c01fabe379cd3fc01d89e05c60f8996f8e",
+      "structures_sha256": "d130c2fc3d17bef9337b22858425a040a5af308cde7c1d4910fe7287355708fa",
+      "decoded_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab"
+    },
+    "StartupBench_a90bb9564b224dfe": {
+      "root_sha256": "676174a98f1fe76322b3221a4e3b14f72b5c7b871b2a0e002601c9e7dba7db3c",
+      "terrain_sha256": "8f3cd49c7a4872dc34316799d51218c01fabe379cd3fc01d89e05c60f8996f8e",
+      "structures_sha256": "811c2aa040cd418ddccca11a5ee244d17f7ae8185ab9545b843d9a5b5ad893c2",
+      "decoded_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab"
+    },
+    "StartupBench_88a3c87bc11645b4": {
+      "root_sha256": "9a7ea9038276dee8ea712c01fb3eed944932261944424247f8f56227098d8f3b",
+      "terrain_sha256": "8f3cd49c7a4872dc34316799d51218c01fabe379cd3fc01d89e05c60f8996f8e",
+      "structures_sha256": "811c2aa040cd418ddccca11a5ee244d17f7ae8185ab9545b843d9a5b5ad893c2",
+      "decoded_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab"
+    },
+    "StartupBench_8bad30cf33a94371": {
+      "root_sha256": "1fa64935857e57eb3c4e9cb2ea174c43cc0865f981d9236df04540c8b3dbb6bd",
+      "terrain_sha256": "8f3cd49c7a4872dc34316799d51218c01fabe379cd3fc01d89e05c60f8996f8e",
+      "structures_sha256": "811c2aa040cd418ddccca11a5ee244d17f7ae8185ab9545b843d9a5b5ad893c2",
+      "decoded_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab"
+    },
+    "StartupBench_51ed9a20e0214e9c": {
+      "root_sha256": "602db0731b0ddadc8e4b42638768081d96137bff237d1803249b701f4d68ea00",
+      "terrain_sha256": "8f3cd49c7a4872dc34316799d51218c01fabe379cd3fc01d89e05c60f8996f8e",
+      "structures_sha256": "811c2aa040cd418ddccca11a5ee244d17f7ae8185ab9545b843d9a5b5ad893c2",
+      "decoded_water_sha256": "44eb871d65250f9048630cc7c93f9a1c433352982a9c0badfe79f977125d20ab"
+    }
+  },
+  "checks": [
+    {
+      "receipt": "reports/checks/20261102T224815585355Z",
+      "run_sha256": "e405d2937d053da887914a3bb2c0a037de17e0a1816403e4fd8d1f451fc41624",
+      "console_sha256": "86170c25ccc447cd655c5a7e29ab512914c29cc1b8f00aa2561f16317c54eb0b"
+    },
+    {
+      "receipt": "reports/checks/20261102T230020914615Z",
+      "run_sha256": "58905bb5d2518bcca99712532d43df68d70693969c1e3f011fb27b312acff7e6",
+      "console_sha256": "86170c25ccc447cd655c5a7e29ab512914c29cc1b8f00aa2561f16317c54eb0b"
+    },
+    {
+      "receipt": "reports/checks/20261102T225244103367Z",
+      "run_sha256": "ceb526dcf7de6d6984e309621d88b6c7bf9f801751d221e901e32d1b6c63f8b7",
+      "console_sha256": "4d8c86ecf05c562ef24d2549cb8b007b866403e892718cb8bc135ce69d9f54c0"
+    },
+    {
+      "receipt": "reports/checks/20261102T230516591220Z",
+      "run_sha256": "a265e9db4c13a247e25b301be8b5c5ba5216c93f96d3413405f482759bca8c94",
+      "console_sha256": "837603ff24723e44e1211b20f897bb4b88cda83bb845cdc7bbb37edc1ab5f13c"
+    },
+    {
+      "receipt": "reports/checks/20261102T232009855828Z",
+      "run_sha256": "ac87f438f9274d5aaaa22d4c5c1e5c31f384fdb286485f10c3f36403f5ae724f",
+      "console_sha256": "6e961f66a909c6a570078b6dcf3a0d44fed9a743751cac7447003fc749150828"
+    },
+    {
+      "receipt": "reports/startup_optimization/horizon_release",
+      "run_sha256": "7c10146d7bfcf2073fa465dc04b042be1dc84fff5109c5f9bd3e46d1e35686bb",
+      "console_sha256": "6e961f66a909c6a570078b6dcf3a0d44fed9a743751cac7447003fc749150828"
+    }
+  ],
+  "export_gates": "reports/building_standards/20261102T232538046885Z",
+  "invalid_control_receipt": "20261102T230316965713Z enabled entry in the generation subviewport and consumed waking early; excluded from full-control comparisons.",
+  "failed_normal_load_receipt": "20261102T233049529346Z used an overly strict wake-once/unchanged-root assertion for normal reopening. Normal resume correctly had no first-entry waking and checkpointed its owned fixture. Later normal-load runs use unique full fixture copies, verify source hash, and allow normal resume without waking. No user save touched.",
+  "remaining": "No forced cold-cache or low-spec foreground qualification; user-reported >2minute delay not reproduced here. Data-only generation, snapshot decode reuse, regional water residency and durable cache indexing remain separate architectural work."
+}

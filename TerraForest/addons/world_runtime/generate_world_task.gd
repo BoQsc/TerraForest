@@ -138,6 +138,7 @@ func run()->void:
   introduction_spawn=introduction_room.position
  if not qualification and not game.configure_generation_spawn(introduction_spawn):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
  if not qualification:game.terrain.diagnostics_pause_streaming=true
+ if not qualification:game.terrain.backend.capture_generation_meshes=true
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
   var packets:=preload("res://addons/world_runtime/generation_earthworks.gd").packets(works.segments,prepared.get("material_deposits",[]))
@@ -475,6 +476,7 @@ func run()->void:
    if not await bake_map_layers(game):game.free();quit(1);return
   game.shutdown_requested=true
   if not await game.terrain.shutdown_after_edits():print("BAKE_SAVE_FAILED");game.free();quit(1);return
+ if not qualification and bake:print("GENERATION_MESH_HANDOFF staged=",game.terrain.backend.publish_generation_meshes())
  progress("World generation complete")
  print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=" if qualification else "WORLD_GENERATED failures=0 buildings=",all_lots.size()+prepared.get("watchtowers",{}).get("sites",[]).size()," edits=",completed_edits)
  game.free();quit()

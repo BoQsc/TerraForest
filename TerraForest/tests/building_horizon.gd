@@ -59,6 +59,8 @@ func run() -> void:
 	check(await settle(), "all distant regions finish without visiting them")
 	check(blocks.capture_snapshot() == authored, "horizon does not modify authoritative blocks")
 	var initial: Dictionary = blocks.distant_rendering_stats()
+	check(initial.queued_results==0 and initial.queued_bytes==0 and initial.peak_queued_results<=initial.queue_result_limit and initial.peak_queued_bytes<=initial.queue_byte_limit,"worker queue stays bounded and drains completely")
+	check(initial.max_step_uploads<=4,"main-thread uploads respect the packet limit")
 	check(initial.visible_chunks > 0 and initial.mesh_chunks > blocks.stats().mesh_chunks, "far buildings survive the 64 m near-render cutoff")
 	var overlap := false
 	for near in blocks.get_children():

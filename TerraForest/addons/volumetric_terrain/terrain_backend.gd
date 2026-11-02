@@ -24,6 +24,20 @@ var profile_regions: bool = "--profile-owned-regions" in PackedStringArray(Proje
 var _snapshot_token: int = 0
 # New worlds use generated region packs; legacy saves retain their storage family.
 var _water_pack_storage := true
+const MeshHandoff=preload("res://addons/world_runtime/generation_mesh_handoff.gd")
+var capture_generation_meshes:=false
+var _generation_meshes:RefCounted
+var _startup_meshes:RefCounted
+var handoff_hits:=0
+
+func _handoff_signature(compatibility:String)->String:
+	return compatibility+str([surface_style,local_terrain,brick_terrain,region_terrain,snapshot_terrain,_collision_piece_triangles])
+
+func publish_generation_meshes()->bool:
+	if thread.is_started() or not _last_save_success or not cache_valid or _generation_meshes==null:return false
+	if not _generation_meshes.seal(snapshot_id,_handoff_signature(survey_compatibility),build_epoch):return false
+	MeshHandoff.publish(_generation_meshes);_generation_meshes=null;return true
+
 
 func configure_collision_piece_size(triangles: int) -> bool:
 	# Configuration is immutable while the native-world worker is running.
@@ -265,6 +279,8 @@ func configure_initial_lake_bake()->bool:
 	return _initial_lake_bake!=null
 
 func start(use_temporary: bool) -> Error:
+	_startup_meshes=MeshHandoff.consume()
+	if capture_generation_meshes:_generation_meshes=MeshHandoff.new()
 	_startup_mark("main_initialization")
 	temporary = use_temporary
 	for arg: String in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):
@@ -1037,7 +1053,16 @@ func _service_density_query() -> void:
 		else: _execute_density_query(query)
 
 func _execute_mesh(job: Dictionary, interactive: bool=false) -> void:
-	var result: Dictionary=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive)
+	var result:Dictionary={}
+	if _startup_meshes!=null:
+		if cache_valid and _startup_meshes.identity==snapshot_id:result=_startup_meshes.take(job.key)
+		else:_startup_meshes=null
+	if result.is_empty():result=_build(job.key,bool(job.get("base",false)),int(job.build_epoch),bool(job.get("relight_cache",false)),[],interactive)
+	else:
+		handoff_hits+=1
+		result["cache_stats"]=disk_cache.counters()
+		if _call(Codec.command(13)).decode_u32(12)!=job.build_epoch:result={"cancelled":true}
+	if _generation_meshes!=null:_generation_meshes.remember(job.key,result,int(job.build_epoch))
 	result["kind"]="mesh"
 	result["key"]=job.key
 	result["stamp"]=job.stamp
@@ -1332,6 +1357,7 @@ func _run() -> void:
 	survey_compatibility=compatibility
 	_startup_mark("cache_configuration")
 	disk_cache.configure(compatibility, snapshot_id, surface_style, cache_path)
+	if _startup_meshes!=null and (not write_allowed or load_message.begins_with("ERROR:") or not cache_valid or not _startup_meshes.accepts(snapshot_id,_handoff_signature(compatibility))):_startup_meshes=null
 	_startup_mark("native_configuration")
 	_call(Codec.command(14, [surface_style]))
 	if profile_regions: _call(Codec.command(18,[1]))

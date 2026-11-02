@@ -196,6 +196,7 @@ func publish_presentation()->void:
  var identity:=source_report.path_join("generation_plan_identity.json")
  if FileAccess.file_exists(identity):DirAccess.copy_absolute(identity,prefix+".generation.json")
 func finish(state:String,reason:String="")->void:
+ if state!="ready":preload("res://addons/world_runtime/generation_mesh_handoff.gd").publish(null)
  if not report.is_empty():
   var file:=FileAccess.open(report.path_join("run.json"),FileAccess.WRITE)
   if file!=null:file.store_string(JSON.stringify(metadata,"  "));file.close()

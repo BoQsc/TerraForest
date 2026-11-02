@@ -351,13 +351,12 @@ it is not hidden or attributed to water without evidence.
 
 ### Remaining architecture and reproduction
 
-The remaining first-play wait still includes approximately 14–15 s of whole-map
-terrain coverage and about 6 s of resource preparation. Removing the terrain gate
-requires a valid distant fallback/horizon; simply setting the nearby-terrain flag
-can expose missing landscape. Derived-cache telemetry also shows incomplete quota
-inventory and read-only cache behavior at release, so these repetitions do not
-prove a fully warmed geometry cache. Investigate persistent/bounded cache indexing
-alongside the cached-horizon work.
+The first audit attributed roughly 14-15 seconds to whole-map terrain coverage
+from the displayed stage label. The later sampled readiness trace below corrects
+that attribution: water publication remained unfinished after terrain was ready.
+Whole-map terrain coverage still requires a valid fallback before its gate can
+be removed. Derived-cache accounting and cold-cache behavior remain separate
+qualification work.
 
 True regional water residency needs independently validated admission, neighbor/
 solver availability, save inheritance of unloaded regions and bounded render
@@ -395,3 +394,109 @@ check deliberately offset terrain focus by 40 m, verified player-centered owner
 admission, and passed reset/save/fresh-process reopening (60 + 15 checks) in
 `reports/quests_world/20261102T223552833125Z`. Both receipts passed sampled
 RAM/VRAM budgets. These are correctness checks, not additional startup samples.
+
+
+## End-to-end speed follow-up — 2026-11-03
+
+The user's target is one continuous wait: **Generate & play through player
+control**, including generation, verified publication, opening, fly-in and waking.
+The earlier storage result did not address that target. The speed changes below
+keep normal world contents and readiness gates, and add no save migration.
+
+Implemented and exported:
+
+- Keep up to four imported resources loading concurrently, retain dependency order,
+  compile scripts on the main thread and drain submitted requests on cancellation.
+- During loading, publish up to 16 water mesh packets / 4 ms per call, returning to
+  the existing 4 packets / 1 ms gameplay budget afterward. Complete mesh/query
+  batches still publish atomically; water quantity and editing are unchanged.
+- Pass up to 192 MiB / 512 terrain mesh results from generation to opening within
+  the same process. Accept only the exact verified terrain checkpoint and matching
+  native/codec/style/meshing signature. Canonical world restoration still runs.
+  Edits, checkpoint mismatches and cancellation invalidate reuse; fresh processes
+  reconstruct normally. No scene, live world or disk format is retained by this cache.
+- Queue up to eight distant-building results / 32 MiB between the native worker
+  and main thread. Drain at most four per frame within a 1 ms soft upload slice,
+  preserving chunk versions, stale-result rejection and editable block ownership.
+- Start map preparation after verified restoration while visual work completes.
+  The existing final map readiness/error handling remains in place.
+
+A sampled trace corrected the earlier displayed-stage interpretation: terrain was
+ready around 16 seconds into a diagnostic load while water still built until
+roughly 27 seconds. After addressing that bottleneck and duplicate terrain work,
+serial distant-building delivery and late map preparation became visible. In the
+qualified generation, map warming overlaps building reconstruction; both finish
+before the final barrier. 233 terrain mesh results were reused in the earlier
+handoff candidate; exact hit counts and final queue statistics are in the receipt.
+
+| Timed boundary | Before | Qualified |
+| --- | ---: | ---: |
+| Generate & play through control | 101.283 s (one run) | 83.911 / 83.176 s; median 83.543 s |
+| Generate & play through first-ready | 93.228 s | 75.877 / 75.152 s |
+| Normal saved-world reopening through control | 36.664 s | 30.438 s |
+| Normal reopening through first-ready | 33.501 s | 27.281 s |
+
+The combined median is 17.740 seconds / 17.5% lower; ordinary reopening is
+6.226 seconds / 17.0% lower (one paired sample). These are observed warm-cache
+results, not a statistical or universal hardware claim. Both combined repetitions
+include the normal eight-second fly-in/waking sequence. All qualified runs pass
+sampled RAM/VRAM limits; the observed combined run peaks at 3.732 GiB private commit
+and 1.406 GiB dedicated GPU allocation versus 3.714 / 1.403 GiB before. There is
+no claimed memory reduction. Reopening has zero process-local terrain handoff hits,
+confirming independent reconstruction rather than dependence on generation's cache.
+
+The normal reopening comparison makes a unique full copy of the same owned
+generated fixture for each run, with normal map preparation. The source fixture
+hash remains unchanged; the disposable copy may checkpoint normal entry state. Older read-only load samples
+remain in the evidence but set the session temporary and skip map preparation;
+they are **not** substituted for ordinary opening. The first attempted combined
+control receipt (20261102T230316965713Z) accidentally triggered entry inside the
+generation viewport, consuming waking early. It is retained and excluded. Correct
+generation runs require one fly-in, one waking and unblocked player controls.
+Ordinary reopening of an already-entered save correctly has no first-entry waking.
+Receipt 20261102T233049529346Z failed the initial overly strict test assertions
+for waking and root immutability. It changed only its owned benchmark fixture.
+Subsequent normal-load runs use independent copies and verify the source hash.
+
+Machine-readable [speed receipts](evidence/world_startup_optimization/speed_results.json)
+record exact frozen manifests, driver hashes, run hashes, native checks, save
+identities and sampled resource measurements. Before PCK: `7b153c9a...66baac6`;
+qualified PCK: `a465003a...89bd801`, with matching external native libraries.
+The intervening queue-free handoff candidate took 91.130 seconds through control;
+it is retained as an intermediate result, not the installed candidate.
+
+Verification: startup resource/cancellation checks pass; the 64-region water test
+needs 50 gameplay publication calls versus 13 loading calls with identical water,
+mesh faces and queries, and subsequent editing still works. Fourteen real terrain
+handoff checks cover exact arrays/collision recipes, owned columns, incompatible
+checkpoints, changed terrain, epochs and limits. Thirty-four building-horizon
+checks pass with both debug and release DLLs, including edits, undo, paging,
+replacement, disable/re-enable and teardown. Export/catalog/release gates pass.
+
+Generated terrain and structure sections match the before world byte for byte;
+the reconstructed water identity also matches. Emerald_Meadow retains its original
+root SHA-256 `f6b8f026...20cfa`. The final observed run has full 64/64 terrain roots,
+9/9 local collision coverage, local forest/boulder readiness and no map error.
+The room and elevated landscape screenshots were inspected: nearby interiors,
+terrain, lake, trees and distant buildings are present. This is coverage evidence,
+not approval of the existing settlement layout or tool animation. The 20-second
+sample **after control** had 17.025 ms p95 / 18.451 ms worst frame time. It does not
+qualify foreground responsiveness, high-speed travel or weaker hardware.
+
+The remaining wait is substantial. In one qualified run, generation itself takes
+63.725 seconds, including 20.479 seconds of preview photographs, 8.161 seconds of
+earthworks, 7.250 seconds placing buildings, 8.106 seconds saving and 6.395 seconds
+caching the map. These are observations, not additive estimates for every run.
+The next major architectural work is data-only generation and reuse/deferment of
+derived preview/map work, with immutable checkpoint ownership, cancellation,
+publication and visual checks before changing that pipeline. Regional water
+residency, snapshot decode reuse, persistent cache indexing, cold-cache and broader
+seed/hardware qualification remain open. Return to these with matched full-control
+measurements; the user's reported two-plus-minute case is not reproduced by this
+warm-cache seed1703 sample and is not declared solved.
+
+Reproduce the combined metric with `tools/benchmark_world_startup.py --build
+reports/startup_optimization/speed_qualified_build --through-control --profile`.
+Add `--observe` for post-control collision/image/frame evidence. For normal opening,
+add `--slot StartupBench_<owned-id> --normal-load --through-control`. The harness
+accepts only owned StartupBench slots and retains receipts; never use a user save.

@@ -2,28 +2,33 @@ Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
 ## Generation/loading architecture — 2026-11-03
 
-[Implementation, measured outcome and remaining contract](WORLD_STARTUP_ARCHITECTURE.md).
-Installed first phase: 640 m forest/boulder readiness with distant admission
-resuming after first play, plus versioned compressed water packs for new worlds.
-Legacy save families and original user saves remain intact. Whole-map terrain/
-horizons and nearby collision remain required. Water storage including sidecars
-falls 42.69 MB to 11.39 MB (-73.32%); the compound root falls 43.17 MB to 0.481 MB.
-Native terrain/structure bytes and reconstructed water identity match baseline.
+[Implementation, exact measurements and remaining contract](WORLD_STARTUP_ARCHITECTURE.md).
+The completed speed pass measures **Generate & play through player control**:
+101.283 s before; 83.911 / 83.176 s after (median 83.543 s, 17.5% lower).
+Normal saved-world reopening is 36.664 -> 30.438 s through control in one paired
+fresh-process sample. These retain OS/shared caches; the user's two-plus-minute
+case is not reproduced or declared solved. The earlier water-storage/readiness
+phase alone established no meaningful speedup; its original receipts remain.
 
-Generation was 97.516 -> 100.681 s (one run each); three-load medians were
-25.257 -> 25.245 s. **No meaningful generation/loading speedup is established.**
-The first scheduling candidate regressed and was corrected; receipts remain
-visible. Nine focused suites, debug/release generated-water roundtrips, production
-failure protection, fresh-process reopen, local collision, sampled resource and
-export gates pass. Inspected spawn/nearby landscape images do not establish broad
-world-quality acceptance. Local owners were ready at release; background completion
-was 7.921 s later, with 18.124 ms p95 / 51.376 ms worst in the offscreen sample.
+Implemented bounded resource prefetch, loading-specific water publication,
+exact-checkpoint terrain mesh handoff from generation, bounded native distant
+building lookahead and map warming overlapping reconstruction. Whole-map terrain,
+water, building horizons, map and nearby collision remain required. Debug/release
+horizon regressions, water quantity/edit checks, mesh invalidation tests, integrated
+normal generation/reopening and export gates pass. Saves retain their storage
+families; terrain/structure bytes and decoded water match baseline. Original
+Emerald_Meadow hash is unchanged. The observed post-control sample has 17.025 ms
+p95 / 18.451 ms worst frames; this is not foreground/low-spec qualification.
 
-Still open: cached distant terrain/horizon and bounded cache indexing; true regional
-water residency/decode-once handoff; data-only generation and scene reuse;
-incremental packs/compaction; cold-cache, broader-seed, low-spec foreground and
-sustained travel qualification. The linked contract records prerequisites and
-closure evidence. Existing seed-admission and world-quality failures remain open.
+Compressed new-world water remains 11.39 MB versus 42.69 MB previously; the mutable
+live world is unchanged by immutable checkpoint blobs. Engineering coverage images
+were inspected, without granting broader settlement or animation approval.
+
+Still open: data-only generation and derived preview/map reuse (photographs alone
+still cost about 20 s); persistent cache indexing; true regional water residency
+and snapshot decode reuse; incremental packs; cold-cache, broader-seed, low-spec
+foreground and sustained-travel qualification. The linked contract records return
+triggers and closure evidence. Existing seed-admission/world-quality failures remain.
 
 ## Door height and world entry — 2026-11-02
 

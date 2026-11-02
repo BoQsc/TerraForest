@@ -87,8 +87,36 @@ func connected_run(count:int,repeated:bool=false):
  check(first_commit>0 and first_commit<=4,"Connected lake local edit first publishes within four simulated frames (%d regions)"%count)
  check(final.active_cells==0 and final.dirty_meshes==0,"Connected lake local disturbance becomes idle within 240 frames (%d regions)"%count)
  connected_rows.append({"regions":count,"edit_attempts":edits,"removed_ml":removed,"initial":initial,"settle_frames":frames,"first_commit_frame":first_commit,"packets":packets,"max_dirty":max_dirty,"max_batch_frames":max_batch_frames,"simulation_us":simulation_us,"mesh_us":mesh_us,"max_mesh_call_us":max_call_us,"final":final})
+func scene_publication()->void:
+ var nodes:Array=[]
+ var frames:Array[int]=[]
+ var catalog:PackedByteArray=ClassDB.instantiate("NativeLakeCatalog").encode([])
+ for loading:bool in [false,true]:
+  var lake=load("res://addons/volumetric_water/lake_world.gd").new()
+  lake.water=fixture(64)
+  lake.loading_active=func()->bool:return loading
+  var before:PackedByteArray=lake.water.capture_snapshot(catalog)
+  var count:=0
+  while not lake.statistics().render_ready and count<1024:
+   lake._publish_meshes();count+=1
+  check(lake.statistics().render_ready and lake.water.capture_snapshot(catalog)==before,"Scene publication preserves restored water in loading mode %s"%loading)
+  nodes.append(lake);frames.append(count)
+ var matching:bool=nodes[0]._mesh_faces.size()==nodes[1]._mesh_faces.size()
+ for coordinate:Vector3i in nodes[0]._mesh_faces:
+  matching=matching and nodes[1]._mesh_faces.has(coordinate) and nodes[0]._mesh_faces[coordinate]==nodes[1]._mesh_faces[coordinate]
+ check(matching,"Loading and gameplay budgets publish identical surface geometry")
+ var start:=Vector3(41.75,45,41.75);var finish:=Vector3(41.75,40,41.75)
+ check(nodes[0].water.raycast_surface(start,finish)==nodes[1].water.raycast_surface(start,finish),"Loading and gameplay budgets publish identical water queries")
+ # The same node returns to the gameplay path after the loading cover ends.
+ nodes[1].loading_active=func()->bool:return false
+ var removed:int=nodes[1].water.brush(Vector3(41.75,41.75,41.75),0.0,-1000)
+ for frame in 16:nodes[1]._publish_meshes()
+ check(removed==1000 and nodes[1].statistics().render_ready and nodes[1].water.statistics().water_ml==64000000*4-1000,"Edited water remains publishable after loading mode ends")
+ print("WATER_LOADING_PUBLICATION calls_gameplay=",frames[0]," calls_loading=",frames[1])
+ for lake:Node in nodes:lake.free()
 func _initialize():
  GDExtensionManager.load_extension("res://addons/volumetric_water/volumetric_water.gdextension")
+ scene_publication()
  for count in [1,16,64,256]:
   var water=fixture(count)
   if water==null:quit(2);return

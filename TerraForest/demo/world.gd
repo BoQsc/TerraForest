@@ -489,6 +489,7 @@ func _ready() -> void:
 		else:player_hud.refresh())
 	lakes.name = "Lakes"
 	lakes.terrain = terrain
+	lakes.loading_active=func()->bool:return loading_active or lakes.offline_preparation
 	lakes.blocks = structures.blocks
 	add_child(lakes)
 	add_child(water_camera)
@@ -1820,6 +1821,10 @@ func _prefab_placement_text(asset: Resource) -> String:
 
 func _update_loading() -> void:
 	if not loading_active:return
+	# Survey preparation overlaps visual reconstruction after verified restore.
+	# The final readiness barrier still requires the completed map.
+	if startup_complete and terrain.world_ready and terrain.snapshot_restore_ok and not temporary_world and not lakes.offline_preparation and not quests.resetter.busy:
+		world_map.prepare_for_play()
 	super._update_loading()
 	if not loading_active:
 		player_hud.equip_first_tool_if_unselected()
@@ -1836,6 +1841,8 @@ func _additional_loading_diagnostics() -> Dictionary:
 		"structure_exclusions":structures.exclusion_stats(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
+		"distant_buildings":structures.blocks.distant_rendering_stats(),
+		"map":{"warming":world_map.warming,"warm_started":world_map.warm_started,"warm_error":world_map.warm_error},
 		"structures":{"asset_collections":structures._models.size(),"paging_failures":structures._model_paging_failures,"last_failure":structures._model_paging_last_failure,"paging":model_paging.last_state if model_paging!=null else {"active":false}}
 	}
 

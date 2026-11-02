@@ -32,6 +32,7 @@ var _token:=0
 var _epoch:=-1
 # Offline preparation publishes completed generated fills, not each frontier.
 var offline_preparation:=false
+var loading_active:Callable
 var _filling_id:=0
 var _meshes:Dictionary={}
 var _staged_meshes:Dictionary={}
@@ -269,7 +270,10 @@ func _publish_meshes() -> void:
  # Build/upload within the existing soft budget; only a complete immutable
  # batch becomes visible. Flow may advance between calls without mixed edges.
  var mesh_started:=Time.get_ticks_usec()
- for publication in PublicationBudget.MAX_PACKETS:
+ var loading:bool=loading_active.is_valid() and loading_active.call()
+ var packets:int=PublicationBudget.LOADING_MAX_PACKETS if loading else PublicationBudget.MAX_PACKETS
+ var budget_us:int=PublicationBudget.LOADING_SOFT_TIME_US if loading else PublicationBudget.SOFT_TIME_US
+ for publication in packets:
   var update:Dictionary=water.next_mesh_batch()
   if update.is_empty():break
   if update.batch!=_mesh_batch_id:
@@ -298,7 +302,7 @@ func _publish_meshes() -> void:
    if _surrounding_ocean!=null:_surrounding_ocean.publish(water.ocean_publication_mask())
    _staged_meshes.clear()
    _mesh_commit_us=Time.get_ticks_usec()-commit_started;_mesh_max_commit_us=maxi(_mesh_max_commit_us,_mesh_commit_us)
-  if Time.get_ticks_usec()-mesh_started>=PublicationBudget.SOFT_TIME_US:break
+  if Time.get_ticks_usec()-mesh_started>=budget_us:break
  _mesh_publish_us=Time.get_ticks_usec()-mesh_started;_mesh_max_publish_us=maxi(_mesh_max_publish_us,_mesh_publish_us)
 func _prepare_ocean_batch() -> void:
  _discard_builder()

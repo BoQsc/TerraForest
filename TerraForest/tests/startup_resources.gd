@@ -14,6 +14,7 @@ func run()->void:
 	var resources=preload("res://addons/world_runtime/startup_resources.gd").new()
 	var ok:bool=await resources.prepare(owner,"res://demo/world.gd")
 	check(ok and not resources.retained.is_empty(),"startup retains successfully loaded resources")
+	check(resources.peak_pending>1 and resources.peak_pending<=resources.PREFETCH_LIMIT,"cold resources use a bounded prefetch window")
 	check(beats>5,"cold loading yields to the UI between real work")
 	resources.retained.clear();resources=null;owner.free()
 	var options=preload("res://addons/world_runtime/session_options.gd")

@@ -70,11 +70,15 @@ void BlockHorizon::start(std::map<BlockKey,BlockChunk> &&chunks,const Ref<Native
     active=true;wake.notify_all();
 }
 bool BlockHorizon::deliver(BlockBake &&bake,bool last,uint64_t ticket,const std::set<BlockKey> &keys) {
+    const uint64_t charge=bake.payload_bytes()+keys.size()*sizeof(BlockKey);
     std::unique_lock<std::mutex> lock(mutex);
-    wake.wait(lock,[&]{return stopping||!ready;});
-    if(stopping)return false;
-    if(ticket!=serial&&!last)return false;
-    result=std::move(bake);result_last=last;result_keys=keys;ready=true;wake.notify_all();return true;
+    // Bounded lookahead decouples native baking from the display frame rate.
+    // One legal chunk is always admissible; subsequent results share the quota.
+    wake.wait(lock,[&]{return stopping||(!last&&ticket!=serial)||(completed.size()<RESULT_LIMIT&&(completed.empty()||result_bytes+charge<=RESULT_BYTES));});
+    if(stopping||(!last&&ticket!=serial))return false;
+    completed.push_back({std::move(bake),last,keys,charge});result_bytes+=charge;
+    peak_results=std::max(peak_results,completed.size());peak_result_bytes=std::max(peak_result_bytes,result_bytes);
+    wake.notify_all();return true;
 }
 void BlockHorizon::run() {
     for(;;) {
@@ -122,25 +126,31 @@ void BlockHorizon::publish(BlockBake &&bake) {
 }
 void BlockHorizon::step() {
     ++ticks;if(enabled)sync();
-    BlockBake completed;bool consumed=false,last=false;std::set<BlockKey> keys;
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(ready){completed=std::move(result);last=result_last;keys=std::move(result_keys);ready=false;consumed=true;}
-    }
-    if(consumed) {
+    const auto began=std::chrono::steady_clock::now();last_step_uploads=0;
+    // Keep a small main-thread upload slice; consume ready work instead of
+    // forcing every individual worker result to wait for another whole frame.
+    for(int slot=0;slot<4;++slot) {
+        Completion item;
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            if(completed.empty())break;
+            item=std::move(completed.front());completed.pop_front();result_bytes-=item.charge;
+        }
         wake.notify_all();auto region=regions.find(active_region);
-        const bool valid=enabled&&completed.revision==serial&&region!=regions.end()&&region->second.version==active_version;
+        const bool valid=enabled&&item.bake.revision==serial&&region!=regions.end()&&region->second.version==active_version;
         if(valid) {
-            if(last) {
-                for(int depth=0;depth<4;++depth)for(int height=0;height<4;++height)for(int width=0;width<4;++width){BlockKey key{active_region.x*4+width,active_region.y*4+height,active_region.z*4+depth};if(!keys.count(key))erase(key);}
+            if(item.last) {
+                for(int depth=0;depth<4;++depth)for(int height=0;height<4;++height)for(int width=0;width<4;++width){BlockKey key{active_region.x*4+width,active_region.y*4+height,active_region.z*4+depth};if(!item.keys.count(key))erase(key);}
                 region->second.ready=region->second.retry==0;
             } else {
-                const auto begin=std::chrono::steady_clock::now();publish(std::move(completed));
+                const auto begin=std::chrono::steady_clock::now();publish(std::move(item.bake));++last_step_uploads;
                 upload_max_ms=std::max(upload_max_ms,std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count());
             }
         } else ++rejected;
-        if(last)active=false;
+        if(item.last){active=false;break;}
+        if(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()-began).count()>=1000)break;
     }
+    max_step_uploads=std::max(max_step_uploads,last_step_uploads);
     if(!enabled||active)return;
     if(read_ticket) {
         Dictionary response=archive->take_survey_region_read(read_ticket);if(response.is_empty())return;read_ticket=0;
@@ -173,6 +183,8 @@ Dictionary BlockHorizon::stats() const {
     for(const auto &entry:visuals){visible+=entry.second.instance->is_visible();triangles+=entry.second.triangles;}
     Dictionary out;out["enabled"]=enabled;out["regions"]=int(regions.size());out["ready_regions"]=complete;out["ready"]=enabled&&seen_mutation==world.mutation_revision&&complete==int(regions.size())&&!active&&!read_ticket;
     out["mesh_chunks"]=int(visuals.size());out["visible_chunks"]=visible;out["triangles"]=triangles;out["mesh_bytes"]=int64_t(bytes);out["byte_limit"]=int64_t(BYTE_LIMIT);
+    {std::lock_guard<std::mutex> lock(mutex);out["queued_results"]=int(completed.size());out["queued_bytes"]=int64_t(result_bytes);out["peak_queued_results"]=int(peak_results);out["peak_queued_bytes"]=int64_t(peak_result_bytes);}
+    out["queue_result_limit"]=int(RESULT_LIMIT);out["queue_byte_limit"]=int64_t(RESULT_BYTES);out["last_step_uploads"]=last_step_uploads;out["max_step_uploads"]=max_step_uploads;
     out["worker_active"]=active;out["read_pending"]=read_ticket!=0;out["published_chunks"]=int64_t(published);out["stale_results"]=int64_t(rejected);out["failed_reads"]=int64_t(failed);out["budget_rejections"]=int64_t(blocked);out["upload_max_ms"]=upload_max_ms;return out;
 }
 void NativeBlockWorld::set_distant_rendering_enabled(bool enabled) {

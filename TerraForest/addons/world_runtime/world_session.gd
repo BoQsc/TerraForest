@@ -2,6 +2,7 @@
 extends Node
 # Persistent host: scenes may change, the root Window and graphics device do not.
 const Options=preload("res://addons/world_runtime/session_options.gd")
+const MeshHandoff=preload("res://addons/world_runtime/generation_mesh_handoff.gd")
 var transitioning:=false
 var cover:CanvasLayer
 var last_error:=""

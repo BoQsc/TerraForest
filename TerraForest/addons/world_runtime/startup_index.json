@@ -425,6 +425,7 @@
   "res://addons/volumetric_terrain/surface_tokens.gd": [],
   "res://addons/volumetric_terrain/terrain_backend.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd",
+    "res://addons/world_runtime/generation_mesh_handoff.gd",
     "res://addons/volumetric_terrain/derived_cache.gd",
     "res://addons/volumetric_terrain/generated_lakes.gd"
   ],
@@ -546,11 +547,13 @@
     "res://addons/world_runtime/session_options.gd",
     "res://addons/world_runtime/generation_progress.gd",
     "res://addons/world_runtime/verify_generated_world.gd",
-    "res://addons/world_runtime/survey_patch_cache.gd"
+    "res://addons/world_runtime/survey_patch_cache.gd",
+    "res://addons/world_runtime/generation_mesh_handoff.gd"
   ],
   "res://addons/world_runtime/generation_earthworks.gd": [
     "res://addons/volumetric_terrain/mesh_codec.gd"
   ],
+  "res://addons/world_runtime/generation_mesh_handoff.gd": [],
   "res://addons/world_runtime/generation_progress.gd": [],
   "res://addons/world_runtime/generation_screen.gd": [
     "res://addons/world_runtime/progress_meter.gd",
