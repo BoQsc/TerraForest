@@ -360,6 +360,12 @@ foreground timing. A first-run pre-checkpoint timeout remains unexplained; retai
 its failed evidence and add admission diagnostics before claiming it fixed.
 Revalidate the packaged build after the parallel regional-water/loading work.
 The legacy reward-UI crafting assertion also remains failing.
+Direct scene teardown now preserves the last verified checkpoint instead of
+recapturing already-detached sibling providers. Real native before/after and
+normal graceful-close regression checks pass; packaged real-game fault coverage
+remains required. This does not resolve the separate pre-reset save timeout.
+[Teardown contract](GAMEPLAY_EXPANSION.md#detached-owner-checkpoint-protection--2026-11-03),
+[receipts](../issues/gameplay-expansion/direct-teardown-evidence.json).
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
 [Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).
 

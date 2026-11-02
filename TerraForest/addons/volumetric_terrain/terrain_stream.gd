@@ -265,6 +265,8 @@ func shutdown() -> void:
 	_surface_replies.clear()
 
 func _exit_tree() -> void:
+	if require_published_shutdown and not stopping:
+		backend.disable_snapshot_writes("scene removed before graceful shutdown; previous checkpoint retained")
 	shutdown()
 
 func _process(delta: float) -> void:

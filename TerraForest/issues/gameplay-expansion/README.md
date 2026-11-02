@@ -5,6 +5,15 @@
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Detached-owner checkpoint protection — 2026-11-03
+
+- Direct scene teardown no longer attempts a late save after sibling state owners
+  leave the tree. The last verified checkpoint is retained; attached graceful
+  Save and Quit remains unchanged. Native before/after and shutdown ordering pass.
+- [Evidence and remaining package/fault gates](direct-teardown-evidence.json).
+  This fixes teardown following a failed reset test, **not** the preceding intermittent
+  checkpoint timeout. Overall expansion and broad crash acceptance remain unfinished.
+
 ## Durable location baselines — 2026-11-02
 
 - Source rally follow-up: repeatable trader offers, local-restoration warning,

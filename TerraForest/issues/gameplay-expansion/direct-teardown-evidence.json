@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-03",
+  "status": "Source regression fixed; packaged fault check pending",
+  "cause": "An unexpected scene removal reached terrain._exit_tree and backend.stop after sibling state owners had left the tree. stop captured addon state again, allowing detached zombie/corpse transforms or other teardown-time state to replace the previous compound checkpoint.",
+  "correction": "For gameplay worlds requiring published shutdown, _exit_tree disables new snapshot writes unless graceful shutdown already stopped the terrain. Explicit attached-world shutdown remains unchanged. No readiness, scheduling, mining or native storage format change.",
+  "scope": "Direct scene teardown is not a substitute for Save and Quit. It preserves the verified checkpoint instead of attempting a late snapshot from unavailable providers.",
+  "before": {
+    "report": "reports/checks/20261102T220753609369Z/run.json",
+    "checks": 14,
+    "failures": 4,
+    "evidence": "Real native terrain/archive and inventory provider; direct scene removal invoked a detached sibling capture, changed canonical file bytes and restored unsaved teardown state in a fresh worker. A later expectation then failed because it inherited that wrong state."
+  },
+  "after": [
+    {
+      "report": "reports/checks/20261102T220822620935Z/run.json",
+      "checks": 14,
+      "failures": 0,
+      "evidence": "Direct removal makes no detached capture and preserves exact canonical hash; fresh worker restores old inventory. Attached graceful shutdown still persists new inventory and does not recapture on removal."
+    },
+    {
+      "report": "reports/checks/20261102T220823934196Z/run.json",
+      "checks": 17,
+      "failures": 0,
+      "evidence": "Existing shutdown ordering regression: excavation publication, inventory reward ordering, fresh reload, rejected edit during close, failed publication and invalid addon capture retain canonical checkpoint."
+    }
+  ],
+  "identity_import": "reports/direct_teardown_import_console.log",
+  "remaining": [
+    "Packaged real-game scene-removal and reset/save/reopen checks after coordinated export",
+    "The separate first-run pre-reset checkpoint timeout is not explained or fixed by this guard",
+    "Location-reset crash fault injection, broader POI/occupancy and full expansion acceptance remain open"
+  ]
+}

@@ -73,7 +73,7 @@
   "remaining": [
     "Real trader approach, offer selection and ordinary journey to rally",
     "All five generated POI layouts and foreign/moving occupancy cases",
-    "Diagnose pre-checkpoint admission timeout and teardown transform-read failures",
+    "Diagnose pre-checkpoint admission timeout; detached-owner teardown correction is tracked separately in direct-teardown-evidence.json",
     "Cooperative cold planning and explicit teardown/crash fault injection",
     "User visual review and focused frame-pacing/input evidence",
     "Reverify packaged reset/reopen after coordinated startup/water export",

@@ -578,6 +578,22 @@ retained first-run pre-checkpoint timeout (no reset mutation); clean repetitions
 must not be used to claim its cause is fixed. Recheck the packaged build after the
 parallel startup/water changes. The overall expansion remains incomplete.
 
+### Detached-owner checkpoint protection — 2026-11-03
+
+The failed reset test exposed an independent teardown bug: direct scene removal
+could invoke a new compound snapshot after sibling zombie/corpse nodes left the
+tree. A real native persistence regression reproduces detached provider capture,
+changed canonical bytes and incorrect fresh-worker state. Gameplay terrain now
+blocks new snapshot writes from `_exit_tree` unless it already stopped gracefully.
+This preserves the verified checkpoint; ordinary Save and Quit still captures the
+attached owners before removal. No readiness or storage format changes.
+
+The new 14-check regression and existing 17-check shutdown ordering suite pass.
+[Before/after receipts](../issues/gameplay-expansion/direct-teardown-evidence.json).
+The original pre-reset save timeout remains unresolved; this guard fixes unsafe
+teardown afterward, not its cause. Return after coordinated export for packaged
+real-game teardown, reset/reopen and remaining crash/POI coverage.
+
 ### Shared inventory navigation and character view
 
 Six top tabs share one close button. Backpack retains crafting and the 22 bag
