@@ -286,6 +286,12 @@ It includes full cave excavation plus structure/model bounds, native owner patch
 and protected model identities, not whole-world copies. Existing saves are untouched.
 [Capture contract and remaining reset semantics](GAMEPLAY_EXPANSION.md#generation-owned-location-originals--2026-11-02),
 [generated-world receipts](../issues/gameplay-expansion/location-capture-evidence.json).
+Coordinated in-memory rollback now passes 242 checks per debug/release/package:
+all twelve native owners, cancellation boundaries, real late model rejection,
+stale/freed ownership and the quest save barrier. One native patch runs per step;
+the fixture is not maximum-size or foreground performance evidence.
+[Batch contract and still-required live prerequisites](GAMEPLAY_EXPANSION.md#coordinated-owner-rollback--2026-11-02),
+[receipts](../issues/gameplay-expansion/location-reset-batch-evidence.json).
 Still required: transactional live reset with current player-edit ownership,
 player/vehicle exclusion, transient-owner quiescence, local publication and rollback.
 No repeatable quest is enabled yet. Resume

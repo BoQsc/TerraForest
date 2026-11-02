@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-02",
+  "status": "Isolated coordinated native-owner restore/rollback verified; not live quest reset",
+  "implementation": "addons/world_runtime/location_reset_batch.gd",
+  "provenance": "Original project code and tests, 0BSD; no new dependencies or assets",
+  "source_receipt": "reports/location_reset_batch/20261102T193530154900Z/run.json",
+  "package_receipt": "reports/location_reset_batch/20261102T193825846242Z/run.json",
+  "assertions_per_variant": {"debug": 242, "release": 242, "package": 242},
+  "owner_kinds": ["field", "cube", "cell", "placement", "door", "damage", "container", "resident", "corpse", "harvest", "ground", "water"],
+  "verified": [
+    "All twelve real native owner types restore selected original bytes then exact pre-reset bytes",
+    "Density/cubes share a coherent revision domain; repeated operations share one damage owner",
+    "Real protected-model failure rolls back five preceding native operations",
+    "Cancellation before and after each boundary, including after all forward restores",
+    "Invalid original and stale/freed owner reject before mutation",
+    "Mid-batch foreign mutation or rollback failure requires recovery rather than blind overwrite",
+    "Native quest phase two refuses valid save bytes during every forward/rollback step",
+    "No player inventory changes or outside selected container/damage loss"
+  ],
+  "limits": {"operations": 512, "patch_bytes": 16777216, "retained_bytes": 67108864, "native_operations_per_advance": 1},
+  "fixture_retained_bytes_all_owners": 155096,
+  "maximum_observed_step_us": {"debug": 744, "release": 2259, "package": 617},
+  "timing_scope": "Isolated small fixtures; consult per-case receipts. Not largest-region, live-world, foreground-frame or cold preparation acceptance.",
+  "export": {
+    "log": "reports/location_reset_batch_export.log",
+    "gates": "reports/building_standards/20261102T193702705021Z/run.json",
+    "pack_bytes": 471078396,
+    "pack_sha256": "ebf19c9d066124526c5021fc0b57e14c752a7b002ec0cf6744f55a0d1dd65e62",
+    "matching_native_libraries": 14
+  },
+  "retained_initial_failures": [
+    {"path": "reports/checks/20261102T192545602643Z", "reason": "Freed node passed to typed Object parameter; now checked before dispatch"},
+    {"path": "reports/checks/20261102T192929105960Z", "reason": "Corpse fixture lacked registered loot items; fixture corrected and actual corpse verified"},
+    {"path": "reports/location_reset_batch/20261102T193432554011Z", "reason": "Quest fixture registered currency after inventory catalog froze; registration moved before store configuration"},
+    {"path": "reports/location_reset_batch/20261102T193753593249Z", "reason": "All package assertions passed, then runner misread native hash receipt as status dictionary; reporting corrected and test rerun"}
+  ],
+  "remaining": [
+    "Live world/definition/scope validation and ownership plan including later player additions",
+    "Hydration, cooperative cold preparation, live body/prop cleanup and local geometry/contact refresh",
+    "Safe player/vehicle exclusion and authoritative-checkpoint crash recovery",
+    "Question-mark/E and trader offer integration",
+    "Generated played-location reset, outside preservation, fresh-process recovery and foreground timing"
+  ],
+  "safety": "No player saves, mouse capture, power changes or compiled-library test copies. Tests reference existing DLLs by absolute descriptor paths. Memory rollback alone does not imply a durable transaction."
+}

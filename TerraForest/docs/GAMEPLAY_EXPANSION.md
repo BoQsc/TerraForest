@@ -159,7 +159,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward installed; actual executable passes mine/reward and exact fresh-process restore; broader seeds and repeatable reset quests remain separate |
-| Large question-mark start interaction near POI, E acceptance and location reset | Location ownership is implemented; actual multi-owner reset, preserved baselines, player-edit safety and marker/E interaction remain pending |
+| Large question-mark start interaction near POI, E acceptance and location reset | Generation preserves owner originals; native-owner batch rollback is verified in isolation. Live ownership planning, crash recovery, player-edit safety and marker/E integration remain pending |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
@@ -429,6 +429,45 @@ preflight/journal, transient-owner retirement, current-player-edit ownership,
 local contact/render refresh, rollback, then question-mark/E activation and trader
 offers. Require real generated-world reset/clear/reward/fresh-reload checks and
 outside-region preservation before calling that gameplay complete.
+
+### Coordinated owner rollback — 2026-11-02
+
+`addons/world_runtime/location_reset_batch.gd` coordinates the existing native
+patch owners; it does not add per-frame gameplay work or duplicate native stores.
+The isolated debug, release and installed-package checks each pass 242 assertions.
+All twelve owner kinds restore together and roll back to their exact selected
+pre-reset bytes, including killed residents, their corpse, looted supplies,
+changed water, plants, density, cubes and blocks. A real protected-model rejection
+rolls back five preceding operations. Cancellation at every six-operation boundary,
+stale/freed owners, rollback rejection and the quest's save barrier are covered.
+
+- Trusted internal API only: callers must first verify world/definition identity,
+  embedded native scopes, matching original/undo selectors and current ownership.
+  Patch checksum validation alone does not authorize those selections. Do not feed
+  arbitrary mod/save descriptors straight into this executor.
+- `prepare` validates and freezes original bytes and captures local undo. It is
+  cold synchronous work, not a gameplay-frame API. Limit: 512 operations, 16 MiB
+  per patch and 64 MiB retained original/undo bytes, plus native/capture scratch.
+- `advance` applies or reverses one native patch. Shared owner revisions (density
+  and cubes, repeated damage patches) update coherently. This is an operation
+  bound, not a hard time deadline; maximum-size-world timing remains unqualified.
+- Gameplay, autosaves and mutating workers must remain quiescent throughout.
+  Hold native quest phase 2 until the batch settles; it refuses valid save bytes.
+  `restored` means **memory restored**, not durable commit or live publication.
+- `cancel` can undo a fully restored batch before durable publication. A foreign
+  mutation or failed rollback returns `recovery_required`, never false success or
+  a blind overwrite. Keep play blocked and reopen the authoritative checkpoint.
+- A failed final save is not proof the old root remains: terrain baseline commit
+  can fail after compound root publication. Recovery must inspect/reopen the
+  authoritative root; never roll back memory under an assumed old disk state.
+
+Still required before game activation: the actual location-scoped plan including
+later player objects/damage, bounded hydration and preparation scheduling, transient
+body/prop cleanup, local contact/render refresh, safe player/vehicle exclusion and
+durable crash-recovery wiring. The executor is deliberately not connected to E or
+trader offers yet. Native patch restore preserves logical state, not old revision
+counters or live scene nodes. No player save was used by these tests.
+[Exact receipts and retained failures](../issues/gameplay-expansion/location-reset-batch-evidence.json).
 
 ### Shared inventory navigation and character view
 

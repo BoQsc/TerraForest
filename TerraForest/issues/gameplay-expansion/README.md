@@ -7,6 +7,12 @@
 
 ## Durable location baselines — 2026-11-02
 
+- Follow-up: a bounded coordinator now restores and reverses all twelve native
+  owner kinds in isolated tests; debug, release and installed package each pass
+  242 checks. Protected-model rejection, cancellation, stale/freed owners and the
+  native quest save barrier are exercised. This is not live reset gameplay.
+- [Batch contract and live prerequisites](../../docs/GAMEPLAY_EXPANSION.md#coordinated-owner-rollback--2026-11-02),
+  [exact evidence and retained failures](location-reset-batch-evidence.json).
 - Generation follow-up: the ordinary recipe now preserves actual owner originals
   before presentation/player arrival. Cave bounds include both excavation and all
   prefab parts; natural tree/ground identities use exact projected roots, not
