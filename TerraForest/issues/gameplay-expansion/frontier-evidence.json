@@ -1,0 +1,362 @@
+{
+  "schema": 1,
+  "date": "2026-11-02",
+  "scope": "One-time Frontier expedition and native firearm deflection installed; scoped seed-1703 verification, not complete expansion or broad generator/performance acceptance.",
+  "package": {
+    "sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+    "bytes": 449331180,
+    "dist_bytes": 480311843,
+    "dist_plus_unchanged_root_executable_bytes": 661172779,
+    "root_executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "native_artifacts_commit": "0ff09b8a",
+    "runtime_source_commit": "efadf604",
+    "export_guard_commit": "ed1148d7",
+    "export_log": "reports/expedition_final_export.log",
+    "export_gates": "reports/building_standards/20261102T093200143682Z",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ec63902c97ae52a99afa31c9b4cf8c497e097dc8c5ed8d446137a0ad8c7f7b59",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "3d8684b5e988d177a9447c0df53fd5db6867f5f6214962837843101e873bf14c",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "e5df79b82462f141a9e6cfe6fb9046c3f8eb7ceca9c08117150f80acb4587906",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "6c1fa37754889c5dcebb21217c9a1ff69abffe4ca425e0639fbdac9c2768d5d9",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "b896b902da7f30278340a64bc974c2cc2df917c15582dd291c44ada465d90f0e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "30b86c0fa380f433d2dbf9b07b7a25feff3421102becc5528c785b38f055cfa9",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "3bc211e3b76c547ff39421e2c0d08373b74cb9f776133fdba13e14755564a3a1",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "628623baaf45e0140ca6b1d6ddfb5ff01552d93a05b0185a4bce0370bbea2f98",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "f2004b4fdcc6e0028df82e82ba669b933b08d6f56efe5038d481b61d5856ad1c",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "ff7ad265efa1d20079b794b74a0915cf48080b3852e36e334e18c9d6f84fbfac"
+    }
+  },
+  "tests": [
+    {
+      "name": "ordinary_default_creation_and_departure",
+      "report": "reports/frontier_expedition/20261102T094124645675Z/run.json",
+      "actual_installed_executable": true,
+      "passed": true,
+      "checks": 26,
+      "world": "Expedition_1703_677bc222",
+      "scope": "Normal browser Generate & play with unchanged Frontier defaults, initial marker/spawn, physical player route to trader, Quests/Trade, atomic supplies, driver/player walk and wheel-physics departure. Warm plan/map caches, not cold timing.",
+      "resources": {
+        "samples": 273,
+        "gpu_samples": 272,
+        "peak_private_commit_bytes": 4231757824,
+        "peak_working_set_bytes": 2587181056,
+        "peak_dedicated_gpu_bytes": 1757573120,
+        "checks": {
+          "ram": {
+            "bytes": 4231757824,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1757573120,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      }
+    },
+    {
+      "name": "unfinished_round_trip_with_stationary_player_obstruction",
+      "report": "reports/frontier_expedition/20261102T094412000415Z/run.json",
+      "actual_installed_executable": true,
+      "passed": false,
+      "checks": 19,
+      "failures": 1,
+      "scope": "Saved ride/supplies, drive to mine, waiting, unfinished return drive, E exit home and retained active quest pass. Overall test fails when its stationary player blocks the driver's home-walk capsule. Retained failure, not an end-to-end pass."
+    },
+    {
+      "name": "unfinished_return_saved_obstruction_recovery",
+      "report": "reports/frontier_expedition/20261102T094839105930Z/run.json",
+      "actual_installed_executable": true,
+      "passed": true,
+      "checks": 10,
+      "scope": "Reopens the preceding owned failed fixture, physically walks player clear to counter, driver replans/walks home and saves without collision bypass. A fresh-process continuation, not proof of same-process arbitrary crowd avoidance.",
+      "resources": {
+        "samples": 107,
+        "gpu_samples": 106,
+        "peak_private_commit_bytes": 3851145216,
+        "peak_working_set_bytes": 2297524224,
+        "peak_dedicated_gpu_bytes": 1497579520,
+        "checks": {
+          "ram": {
+            "bytes": 3851145216,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1497579520,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      }
+    },
+    {
+      "name": "first_expedition_mine_clear_and_reward",
+      "report": "reports/frontier_expedition/20261102T093348769676Z/run.json",
+      "actual_installed_executable": true,
+      "passed": true,
+      "checks": 48,
+      "residents_defeated": 13,
+      "shots": 162,
+      "rounds_remaining": 18,
+      "world": "Expedition_1703_369e92bd",
+      "scope": "Restored first outbound passenger, physical drive to mine, native movement through authored mine, supplied rifle real impacts/reloads, physical exit, return drive/walk, normal trader reward and durable save. No fake kills, teleport or additional supplies.",
+      "resources": {
+        "samples": 424,
+        "gpu_samples": 422,
+        "peak_private_commit_bytes": 4385349632,
+        "peak_working_set_bytes": 2748436480,
+        "peak_dedicated_gpu_bytes": 1779068928,
+        "checks": {
+          "ram": {
+            "bytes": 4385349632,
+            "status": "warning"
+          },
+          "vram": {
+            "bytes": 1779068928,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      },
+      "frames": {
+        "fps_cap": 60,
+        "measurement": "wall-clock process-frame intervals",
+        "p95_ms": 22.162,
+        "samples": 5638,
+        "scope": "Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 122.188
+      }
+    },
+    {
+      "name": "reward_fresh_process_reload",
+      "report": "reports/frontier_expedition/20261102T093853957204Z/run.json",
+      "actual_installed_executable": true,
+      "passed": true,
+      "checks": 10,
+      "scope": "Byte-exact quest and inventory restoration, same trader/car at home.",
+      "resources": {
+        "samples": 62,
+        "gpu_samples": 62,
+        "peak_private_commit_bytes": 3615784960,
+        "peak_working_set_bytes": 2071605248,
+        "peak_dedicated_gpu_bytes": 1491419136,
+        "checks": {
+          "ram": {
+            "bytes": 3615784960,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 1491419136,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      }
+    },
+    {
+      "name": "native_hit_deflection_actual_models",
+      "report": "reports/zombie_sleepers/20261102T094107055814Z/run.json",
+      "passed": true,
+      "checks": 31,
+      "scope": "Final PCK with matching native libraries; standing, missing forearm and seated sleeper, three views, bounded deflection/recovery and spring cleared before death. Offscreen Godot runner, not root executable.",
+      "resources": {
+        "samples": 29,
+        "gpu_samples": 29,
+        "peak_private_commit_bytes": 1076994048,
+        "peak_working_set_bytes": 649449472,
+        "peak_dedicated_gpu_bytes": 393547776,
+        "checks": {
+          "ram": {
+            "bytes": 1076994048,
+            "status": "within_budget"
+          },
+          "vram": {
+            "bytes": 393547776,
+            "status": "within_budget"
+          },
+          "redistributable": {
+            "bytes": null,
+            "status": "unavailable"
+          }
+        },
+        "limits": {
+          "schema": 1,
+          "vram_warning_bytes": 3758096384,
+          "vram_limit_bytes": 4294967296,
+          "ram_warning_bytes": 4294967296,
+          "ram_limit_bytes": 6442450944,
+          "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+          "redistributable_warning_bytes": 4000000000,
+          "redistributable_limit_bytes": 5000000000,
+          "derived_cache_total_bytes": 3221225472,
+          "failed_test_cache_bytes": 1073741824,
+          "saved_world_warning_bytes": 10737418240,
+          "minimum_free_bytes": 10737418240,
+          "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+        },
+        "errors": [],
+        "exceeded": false,
+        "telemetry_complete": true,
+        "within_sampled_limits": true,
+        "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+      }
+    },
+    {
+      "name": "corpse_support_and_walk",
+      "report": "reports/checks/20261102T094000735287Z_zombies_pack/summary.json",
+      "passed": true,
+      "support_checks": 33,
+      "walk_directions": 4,
+      "scope": "Headless final PCK; stale server-owned contact RID support invalidation and actual player walk-over."
+    }
+  ],
+  "earlier_source_verification": {
+    "unfinished_round_trip": "reports/frontier_expedition/20261102T084348393166Z",
+    "counter_booking_departure": "reports/frontier_expedition/20261102T092544678312Z",
+    "native_quest_debug": "reports/quests_native/20261102T071429449517Z",
+    "native_quest_release": "reports/quests_native/20261102T071430861649Z",
+    "native_ride_debug": "reports/trader_ride_state/20261102T071431599637Z",
+    "native_ride_release": "reports/trader_ride_state/20261102T071432236865Z"
+  },
+  "retained_failures": [
+    {
+      "report": "reports/frontier_expedition/20261102T075144079467Z",
+      "reason": "Raised trader entrance lip; corrected by surveyed trader-only landing."
+    },
+    {
+      "report": "reports/frontier_expedition/20261102T080453594352Z",
+      "reason": "Narrow support facet trapped driver; denser route support sampling/rejected connector replanning."
+    },
+    {
+      "report": "reports/frontier_expedition/20261102T090258910289Z",
+      "reason": "Mine clear reached return but stale static contact RID and return-walk test failed; not an end-to-end pass."
+    },
+    {
+      "report": "reports/frontier_expedition/20261102T092236953171Z",
+      "reason": "Visible trader surface inside reach but actor centre outside three metres; corrected first-hit reach."
+    },
+    {
+      "report": "reports/checks/20261102T091524745580Z",
+      "reason": "Seed 8147 road crossing admission fails bounded layout retries; unresolved."
+    },
+    {
+      "report": "reports/checks/20261102T091540307279Z",
+      "reason": "Seed 91823 road cut/fill admission fails bounded layout retries; unresolved."
+    },
+    {
+      "report": "reports/checks/20261102T082555035676Z",
+      "reason": "Separate three-storey tower route fails with unchanged baseline; unresolved, not general navigation qualification."
+    }
+  ],
+  "disk_guard": {
+    "reason": "Old preflight reserved the full 5 GB distribution cap plus 10 GiB disk reserve, despite an approximately 450 MB PCK.",
+    "correction": "One previous-pack stat; staging estimate min(5 GB,max(1 GiB,2*previous size)); conservative full cap if no prior pack. Actual post-export and publication guards retain 10 GiB reserve and 5 GB distribution ceiling.",
+    "tests": "python -m unittest discover -s tools -p test_resource_limits.py",
+    "passed_tests": 10,
+    "compiler_cache_deleted": false
+  },
+  "remaining": [
+    "Seeds 8147 and 91823 need safe corridor/site replanning and ordinary publication with physical pedestrian/vehicle routes.",
+    "4.08 GiB mine-run private commit exceeds warning; 22.162 ms p95 and 122.188 ms worst offscreen wall frame do not establish foreground smoothness or performance headroom.",
+    "Player combat/UI/road visual acceptance, broader seeds and endurance remain unqualified.",
+    "One-time introductory quest is not a repeatable multi-owner POI reset; question-mark activation and full expansion backlog remain open.",
+    "New default applies to newly generated worlds; existing player worlds are not regenerated or retrofitted.",
+    "Tests run offscreen/nonactivating with zero pointer capture, 60 FPS policy, unchanged VSync and power mode; normal player physics functions are invoked through test adapters."
+  ]
+}

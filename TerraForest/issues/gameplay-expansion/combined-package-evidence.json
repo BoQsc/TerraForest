@@ -1,5 +1,6 @@
 {
   "date": "2026-11-01",
+  "superseded_by": "frontier-evidence.json",
   "status": "Published milestone with verified restoration fixes and eight installed bounded reset primitives; full expansion remains incomplete",
   "current_package": {
     "sha256": "c0e972a0edeec4f99d35b0af028d6355f161e89f3f85e7e57723ecb000cc6f98",

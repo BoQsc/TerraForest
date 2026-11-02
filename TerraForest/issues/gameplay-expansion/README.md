@@ -5,19 +5,55 @@
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
-## Combined package milestone — 2026-11-01
+## Frontier expedition — 2026-11-02
 
-Latest source continuation, not yet exported: default Frontier expedition,
+Installed default Frontier expedition:
 Quests/Trade choice, talk-to-trader start marker, one-time native supplies and
-free mine trip with waiting/unfinished return. Seed-1703 generation, spawn,
-saved round trip and subsequent real 13-zombie rifle clear/reward pass in source
-continuations. The raised trader approach and narrow-facet route failures are
-corrected without altering approved buildings or collision/slope limits. See the
-[active continuation and retained failures](../../docs/GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-not-yet-installed).
-Gun-hit recovery passes 31 actual-model assertions; front/side/rear recoil,
-recovery and death images are inspected. Player feel remains unreviewed. Seeds
-8147/91823 still reject road crossing/cut-fill plans; broad generator reliability
-is not resolved. The package identity below remains the older installed version.
+free mine trip with waiting/unfinished return. The actual installed executable
+passes the physical mine trip, all 13 real rifle kills, drive/walk home, reward
+and durable save (48 checks), then exact fresh-process restoration (10 checks).
+The raised trader approach, narrow-facet route and visible-surface reach failures
+are corrected without altering approved buildings or collision/slope limits.
+Native firearm deflection/recovery passes 31 actual-model assertions in the
+matching package; standing and seated multi-angle images are inspected.
+The additional unfinished-return run reaches home and retains the quest but fails
+its final counter-walk assertion because the stationary test player blocks the
+driver. Its saved continuation passes after physically walking clear (10 checks).
+The failed run stays recorded; this is not arbitrary crowd-avoidance qualification.
+[Implementation and retained failures](../../docs/GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-installed-scoped-verification).
+[Frozen installed artifact, reports and limits](frontier-evidence.json).
+
+Peak mine-run private commit is 4.08 GiB (warning, below the provisional 6 GiB
+limit), sampled dedicated GPU 1.66 GiB. Offscreen p95 22.162 ms/worst 122.188 ms
+do not qualify smooth foreground gameplay. Performance headroom, player feel and
+broader seed reliability remain open. Seeds 8147/91823 reject road crossing/cut-fill
+plans; fix corridor/site planning and verify ordinary publication/physical routes,
+not looser safety gates. No repeatable location reset or entire-expansion claim.
+
+![Trader expedition offer](images/frontier-quest-offer.png)
+Seed 1703, new owned fixture `Expedition_1703_677bc222`, ordinary Generate & play
+through the final installed executable. Physical spawn-to-counter approach,
+Quests/Trade, one-time supplies, boarding and actual departure pass 26 checks.
+Plan/map caches were warm; this is not a cold generation benchmark.
+
+![Completed coal-mine contract](images/frontier-quest-reward.png)
+Seed 1703, owned fixture `Expedition_1703_369e92bd`, final installed package:
+ordinary Quests panel after the real mine clear and physical return. Forty coins
+are visible. Assistant inspected; UI/player acceptance remains separate.
+
+![Actual mine clear](images/frontier-mine-cleared.png)
+Same run, underground after defeating thirteen authored residents with 162 real
+rifle shots. Eighteen of the supplied rounds remain. This downward combat view
+shows corpses/rail and the return marker, not whole-mine art acceptance.
+
+![Gun-impact deflection](images/firearm-impact.png)
+![Recovery](images/firearm-recovery.png)
+Final-package isolated standing model, front/side/rear at 0.1 s and 1 s after
+impact. Bounded local deflection returns to animation; the native spring clears
+before death. Still images plus assertions, not player motion/feel approval.
+[Capture origins and hashes](images/manifest.json).
+
+## Previous combined package milestone — 2026-11-01
 
 The coordinated expansion package is exported and starts successfully, with all
 14 native libraries matching the verified source builds. It includes the coal
@@ -64,8 +100,9 @@ qualification or new visual approval is claimed.
   capacity and persistent visual publication. No gameplay reset is enabled.
   [Model evidence and remaining integration](model-patch-evidence.json).
 
-- Native location identities and TFQ1 state are implemented; trader offers,
-  question-mark/E start and actual location reset are not yet wired to gameplay.
+- Native location identities and TFQ1 state were the first foundation; the Frontier
+  continuation now adds one-time trader offers. Question-mark/E start and actual
+  repeatable location reset are still not wired to gameplay.
 - Debug/release initially pass 51 native assertions:
   `reports/quests_native/20261101T155046082842Z` and `20261101T155046846586Z`.
 - Normal default generation published four sites, seven actual sleeper anchors

@@ -51,6 +51,11 @@ func run()->void:
 	if stage=="claim_resume":
 		if not check(game.quests.store.snapshot().phase==4 and ride.state.phase in [ride.HOME_WALK,ride.IDLE],"completed mine persists while trader returns home"):await finish();return
 		await claim_reward(game,ride);return
+	if stage=="home_resume":
+		if not check(game.quests.store.snapshot().introduction==3 and ride.state.phase==ride.HOME_WALK,"unfinished expedition persists after return-home obstruction"):await finish();return
+		if not check(await trader_approach(game,false),"player physically clears the saved vehicle-exit obstruction"):await finish();return
+		check(await watch(func():return ride.state.phase==ride.IDLE,120),"trader recovers and returns to the counter without collision bypass")
+		await photograph("home-again");await finish();return
 	if stage=="reward_reload":
 		var expected:Dictionary=FileAccess.open(folder.path_join("completed.bin"),FileAccess.READ).get_var()
 		check(game.quests.store.snapshot().introduction==4 and game.quests.store.capture_storage_snapshot()==expected.quests,"completed quest restores exactly")
@@ -87,7 +92,8 @@ func run()->void:
 		if not check(await watch(func():return ride.state.phase==ride.HOME_ARRIVED,240),"native driver physically brings the passenger home"):await photograph("return-failed");await finish();return
 		check(game.world_vehicle.exit_vehicle(game).contains("Home") and game.world_vehicle.passenger==null,"normal E exit releases the passenger at home")
 		check(game.quests.store.snapshot().introduction==3 and game.quests.store.snapshot().phase==3,"unfinished quest remains active after returning")
-		check(await watch(func():return ride.state.phase==ride.IDLE or ride.navigator.state(1)=="blocked",120) and ride.state.phase==ride.IDLE,"trader walks back to the counter")
+		if not check(await trader_approach(game,false),"player walks clear of the vehicle exit before waiting at the counter"):await finish();return
+		check(await watch(func():return ride.state.phase==ride.IDLE,120),"trader walks back to the counter")
 		await photograph("home-again");await finish();return
 	if not check(game.quests.store.snapshot().introduction==1,"new player starts with talk-to-trader objective"):await finish();return
 	if not check(await wait_for(func():return is_instance_valid(game.trader.actor),30),"spawn admits the nearby resident trader"):await finish();return

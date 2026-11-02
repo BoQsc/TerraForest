@@ -14,7 +14,7 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reuse-report')
-    parser.add_argument('--stage', choices=['create', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'reward_reload'], default='create')
+    parser.add_argument('--stage', choices=['create', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'home_resume', 'reward_reload'], default='create')
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--installed-executable', action='store_true')
     args = parser.parse_args()

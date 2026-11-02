@@ -16,8 +16,13 @@ PhysicsBody properties; server-owned static support uses a short fresh world ray
 never a layer query against the old contact RID. Support loss still releases rest.
 Source debug/release libraries rebuilt; 33 support checks and four-direction
 corpse walk-over pass in `reports/checks/20261102T090817955755Z_zombies`.
-Matching package and repeated streamed-world evidence remain pending; this is not
-a new universal ragdoll-stability claim.
+Matching package repeats support/walk-over checks at
+`reports/checks/20261102T094000735287Z_zombies_pack`. Actual installed executable
+clears thirteen mine residents, walks out and drives home without the stale-RID
+error (`reports/frontier_expedition/20261102T093348769676Z`). Artifact identity is
+in [Frontier evidence](../gameplay-expansion/frontier-evidence.json).
+This closes the reproduced streamed-contact error, not repeated endurance or
+universal ragdoll stability.
 
 - Built-in Jolt now uses 16 velocity / 8 position steps at the unchanged 60 Hz
   physics tick. Unsupported joint softness/ERP and shape-bias overrides are skipped.

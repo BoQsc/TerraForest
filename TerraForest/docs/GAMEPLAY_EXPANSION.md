@@ -23,14 +23,14 @@ compute shaders are used where measured workloads justify them, not as a label.
 
 ## Full requested scope
 
-### Frontier expedition continuation — 2026-11-02, not yet installed
+### Frontier expedition continuation — 2026-11-02, installed scoped verification
 
 - New default recipe: three towns, two districts each, woodland base biome, connected
   roads/trails, mineral veins and trader introduction. Seed 1703 publishes 51
   buildings; this is not evidence that the largest recipe was doubled.
 - Native introduction grants a torch, automatic rifle and 180 rounds atomically,
   once. Quests/Trade UI, initial trader marker, defeat/reward adapter and free
-  expedition/wait/unfinished-return states are implemented, under world testing.
+  expedition/wait/unfinished-return states are installed and scoped-tested below.
 - Native planning selects mine candidates near the trader's connected road
   component, surveys the footpath and requires an outbound/forward-return route.
   No collision bypass or increased earthwork allowance. Initial disconnected-road
@@ -44,8 +44,11 @@ compute shaders are used where measured workloads justify them, not as a label.
   checks and 31 actual-model standing/missing-forearm/sleeper/death assertions
   (`reports/zombie_sleepers/20261102T082449634385Z`). Front/side/rear impact,
   recovery and death frames inspected: visible recoil, preserved anatomy and
-  return to animation, with no continuing spring after death. Player combat
-  feel and matching installed-package verification remain unreviewed.
+  return to animation, with no continuing spring after death. The final package
+  repeats all 31 assertions in `reports/zombie_sleepers/20261102T094107055814Z`;
+  standing impact/recovery and seated impact images were inspected. Player combat
+  feel remains unreviewed; this is bounded skeletal deflection, not a second
+  freely simulated living-body physics owner.
 - Trader counter interaction and exact one-time supplies pass in ordinary seed
   1703. The driver initially stopped on a narrow terrain facet; retained reproduction
   `reports/frontier_expedition/20261102T080453594352Z`. Native route support
@@ -69,15 +72,41 @@ compute shaders are used where measured workloads justify them, not as a label.
   actual first scene hit within three metres, retaining wall occlusion. Source
   booking/departure passes 27 checks in `reports/frontier_expedition/20261102T092544678312Z`.
   The failed packaged approach `20261102T092236953171Z` remains evidence.
+- Final installed PCK `00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6`
+  creates another seed-1703 world through ordinary Generate & play, then passes
+  physical spawn-to-counter/Quests/Trade/supplies/boarding/departure (26 checks):
+  `reports/frontier_expedition/20261102T094124645675Z`. Existing plan/map caches
+  were warm; not a cold generation benchmark. The same PCK
+  and all 14 matching libraries pass actual-executable mine travel, physical
+  traversal, all 13 rifle kills, return drive/walk, reward and durable save:
+  `reports/frontier_expedition/20261102T093348769676Z`, 48 checks. This run uses
+  162 of the supplied 180 rounds. Fresh-process exact quest/inventory/car restore
+  passes 10 checks at `20261102T093853957204Z`. No fabricated kills, extra ammo,
+  teleport or pointer capture. Final packaged support/walk-over regressions pass
+  at `reports/checks/20261102T094000735287Z_zombies_pack`.
+- Final-package unfinished return (`20261102T094412000415Z`) passes the drive,
+  waiting, E exits and retained quest, but the overall 19-check run has one failure:
+  its stationary player blocks the trader's home-walk capsule. Retain that failure.
+  Reopening the owned fixture and physically walking clear lets the trader replan
+  and return to the counter (`20261102T094839105930Z`, 10 checks). The harness now
+  walks away after exit, as the successful completed-mine test already did.
+  No collision bypass was added. Arbitrary crowd avoidance and same-process
+  recovery after a prolonged obstruction are not qualified by this continuation.
+- The full mine run peaks at 4.08 GiB private commit (above the 4 GiB warning,
+  below the provisional 6 GiB cap) and 1.66 GiB dedicated GPU allocations.
+  Offscreen wall-frame p95 is 22.162 ms, worst 122.188 ms; **not smooth-frame
+  qualification**. Keep 60 FPS/VSync/Quiet Mode. Return to focused populated
+  travel/combat profiling before closing performance headroom.
 - Broader default-recipe qualification is **not complete**. Seeds 8147 and 91823
   fail crossing/road cut-fill admission after bounded layout retries:
   `reports/checks/20261102T091524745580Z` and `20261102T091540307279Z`.
   Generation refuses unsafe publication; no terrain budget was increased and no
   content was silently omitted. Return to corridor/site planning for these seeds;
   require successful ordinary publication and physical routes before closing.
-- Return trigger: verify completed reward restoration and matching packaged
-  creation/travel/combat; inspect images. None of this closes repeatable POI resets,
-  question-mark activation or the other pending expansion requirements below.
+- [Frozen package evidence and images](../issues/gameplay-expansion/README.md#frontier-expedition--2026-11-02)
+  distinguish source continuations, earlier failed packages and final checks.
+  None of this closes repeatable POI resets, question-mark activation or the
+  other pending expansion requirements below.
 
 | Requirement | Current state / closure evidence needed |
 | --- | --- |
@@ -89,7 +118,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Off-road watchtowers | W1 installed in ordinary new worlds using shared native lot fitting, connected approaches, stocked upper-deck chest and persistent sleeper; source/package generation/travel/loot/wake/reload pass; broader seeds and visual/NPC/performance acceptance remain |
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
-| Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward verified in source continuations; matching package/fresh reward restore pending; repeatable reset quests remain separate |
+| Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward installed; actual executable passes mine/reward and exact fresh-process restore; broader seeds and repeatable reset quests remain separate |
 | Large question-mark start interaction near POI, E acceptance and location reset | Location ownership is implemented; actual multi-owner reset, preserved baselines, player-edit safety and marker/E interaction remain pending |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
@@ -133,9 +162,11 @@ No per-frame catalog scan or whole-world snapshot is added. Plan version 37 emit
 metadata for newly generated caves, mines and watchtowers, without retrofitting
 existing saves.
 
-This is a foundation, not playable quests. Next: exact bounded terrain/block/model/
-stock/resident baselines and reset rollback; explicit player-edit safety; trader
-offers, question-mark/E start, live objective delivery and reward presentation.
+This historical ownership milestone alone did not provide playable quests. The
+Frontier continuation above now implements the one-time non-reset introduction,
+offers, live mine clear and reward. Next for repeatable quests: exact bounded
+terrain/block/model/stock/resident baselines and reset rollback; explicit player-edit
+safety and question-mark/E start.
 Return immediately after persistence qualification. Close only with normal
 generated-world accept/travel/reset/clear/claim/reopen evidence, outside-region
 preservation, failure rollback and performance measurements. Source generation,

@@ -2,6 +2,52 @@
   "schema": 1,
   "images": [
     {
+      "file": "frontier-quest-offer.png",
+      "source": "reports/frontier_expedition/20261102T094124645675Z/quests.png",
+      "sha256": "7db3492f425a883a36590130dff33a94d7cb1f36dd4720a6197799d601553c0d",
+      "world": "Expedition_1703_677bc222",
+      "seed": 1703,
+      "pack_sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+      "review": "Assistant inspected final installed executable's normal Quests offer after actual spawn-to-counter walk; not user UI approval or a cold-generation benchmark.",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-02. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
+      "file": "frontier-quest-reward.png",
+      "source": "reports/frontier_expedition/20261102T093348769676Z/quest-reward.png",
+      "sha256": "bacd154819ee55f32ec2c7dbff60c8197de7f12880bfc2fe2d1fe41c9a2c0470",
+      "world": "Expedition_1703_369e92bd",
+      "seed": 1703,
+      "review": "Assistant inspected final installed executable; ordinary quest completion and 40-coin reward after physical mine clear/return. Not user UI approval.",
+      "pack_sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-02. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
+      "file": "frontier-mine-cleared.png",
+      "source": "reports/frontier_expedition/20261102T093348769676Z/mine-cleared.png",
+      "sha256": "23ad7f8c46d39a728df73c4d2e034c0cb6ccc309f5a0aea89b09331e87ba2ab6",
+      "world": "Expedition_1703_369e92bd",
+      "seed": 1703,
+      "review": "Assistant inspected downward mine view after 13 real rifle kills; 162 shots, 18 supplied rounds remain. Not whole-mine art or frame-pacing acceptance.",
+      "pack_sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-02. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
+      "file": "firearm-impact.png",
+      "source": "reports/zombie_sleepers/20261102T094107055814Z/standing_006.png",
+      "sha256": "8c0bac659930343f096cd07ad8e6d92c524f0bec7beb8be52add29f17a8c1063",
+      "review": "Assistant inspected front/side/rear standing deflection at 0.1 seconds in final-package isolated rig; intact anatomy, not player combat-feel approval.",
+      "pack_sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-02. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
+      "file": "firearm-recovery.png",
+      "source": "reports/zombie_sleepers/20261102T094107055814Z/standing_060.png",
+      "sha256": "b37bfc202c82df0c094c077e1b371f9913f17df541bd4ab48f5d903f03017ea2",
+      "review": "Assistant inspected matching front/side/rear standing recovery at 1 second in final-package isolated rig; return to animation, not player combat-feel approval.",
+      "pack_sha256": "00fbf8673149224998f2e9e299457e265ae6476388f997ae8efbd753a3060eb6",
+      "provenance": "Unedited local TerraForest game capture by Codex, 2026-11-02. Existing project assets retain their original licensing/provenance; no third-party assets relicensed. Excluded from game imports/export."
+    },
+    {
       "file": "seed1703-forearm-variant.png",
       "sha256": "61badee3308fd4340e6cf9c54732d35178a642c590cb2832e6db873d280370de",
       "source": "reports/zombie_expansion/20261101T065543316413Z/resident_1622_1.png",

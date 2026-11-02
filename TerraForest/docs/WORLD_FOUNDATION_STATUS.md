@@ -6269,14 +6269,20 @@ Shift-click now grants the registered full stack, including 999 rounds for eithe
 
 ## Frontier expedition and physical hit reactions — 2026-11-02
 
-Source seed-1703 generation, near-trader spawn, Quests/Trade, one-time supplies,
-saved outbound/wait/unfinished-return and actual rifle clear/reward are verified
-in retained continuations. Trader landing and regional connector fixes preserve
-approved geometry and collision limits. Native hit recovery has 31 actual-model
-checks with inspected multi-angle images. A streamed stale corpse-contact error
-is corrected with support/walk-over regressions. Matching package qualification
-and exact reward reload remain pending. Seeds 8147/91823 still fail safe road
+Seed-1703 generation, near-trader spawn, Quests/Trade, one-time supplies and
+saved outbound/wait/unfinished-return are implemented. Final installed executable
+passes 48 mine-trip/13-rifle-kill/return/reward/save checks and 10 exact fresh-process
+quest/inventory/car restore checks. Native artifacts are committed in `0ff09b8a`.
+Trader landing and regional connector fixes preserve approved geometry/collision
+limits. Matching package hit recovery passes 31 actual-model checks with inspected
+multi-angle images; stale corpse-contact correction passes support/walk-over and
+the streamed mine trip. Resource peak 4.08 GiB private commit reaches the warning
+but stays below the provisional 6 GiB cap; dedicated GPU is 1.66 GiB. Offscreen
+p95 22.162 ms/worst 122.188 ms is not foreground smooth-frame qualification.
+Return to focused populated profiling for performance headroom and player feel.
+Seeds 8147/91823 still fail safe road
 crossing/cut-fill admission; corridor/site planning and successful world publication
 are required before claiming broad generator reliability. Continue the
-[existing expansion contract](GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-not-yet-installed)
-after these checks; none of the earlier expansion backlog is silently closed.
+[existing expansion contract](GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-installed-scoped-verification)
+and [package evidence](../issues/gameplay-expansion/frontier-evidence.json);
+none of the earlier expansion backlog is silently closed.
