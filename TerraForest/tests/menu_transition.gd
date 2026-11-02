@@ -43,6 +43,7 @@ func run()->void:
 	check(handler_ms<100,"open handler acknowledges without waiting: "+str(handler_ms)+" ms")
 	check(await wait_for(func():return is_instance_valid(current_scene) and current_scene.scene_file_path=="res://demo/world.tscn" and not current_scene.loading_active),"world opens from selector")
 	phase="ready";current_scene.player_view.entry.pending=false;current_scene.player_view.refresh_processing()
+	await exercise(current_scene)
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(output.path_join("loaded.png"))
 	var worst:Dictionary={}
@@ -55,3 +56,5 @@ func run()->void:
 	check(Mouse.captures==0,"test never captures mouse")
 	for frame in 3:await process_frame
 	print("MENU_TRANSITION failures=",failures);quit(1 if failures else 0)
+
+func exercise(_game:Node)->void:pass

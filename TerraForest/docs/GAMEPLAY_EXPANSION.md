@@ -31,8 +31,10 @@ compute shaders are used where measured workloads justify them, not as a label.
 - Approved five-second first-person waking motion: 4.4 seconds of hand gestures,
   then selected-item return. First-spawn intent occupies one bit in the existing
   56-byte native pose record; legacy/played saves do not replay it. ESC/UI/focus
-  interruption returns equipment and control. `arm_respawn()` is ready, but a
-  full player health/death/respawn gameplay system does not yet exist.
+  interruption returns equipment and control. Native persistent health now connects
+  actual zombie/explosion damage to shelter respawn and the approved wake motion.
+  Inventory is retained; health resets to 100. See
+  [lifecycle checks and bounds](../issues/player-respawn/README.md).
 - Native quest arrival replaces the destination point with a circular active
   area. A bounded 2 Hz adapter supplies awake red blinking compass spheres.
   After one kill and 60 active in-area seconds without another kill, remaining

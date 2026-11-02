@@ -1,0 +1,11 @@
+[
+  {
+    "file": "upstairs-respawn.png",
+    "source": "reports/frontier_expedition/20261102T145238142464Z/respawn-anchor.png",
+    "sha256": "b3ab8a0c3aab605cdea6b4ec4de8ab8d841f3ea4b2757a4be31099c3504ca7e4",
+    "pack_sha256": "5b8c7c631d8ada051fa09e86af4563ccfb372bf8e83f025d83149832e0638920",
+    "caption": "Packaged Frontier expedition Expedition_1703_90a67059, seed 1703, actual upstairs shelter after fresh-process health restoration, fatal hit and completed wake. 1920x1080 Forward+, 60 FPS. Selected pickaxe and inventory retained; inspected, user review pending.",
+    "edited": false,
+    "provenance": "Godot viewport capture of existing project UI/assets. Inherited component/asset terms remain applicable; no new third-party material imported."
+  }
+]

@@ -19,6 +19,7 @@ var model_paging: Node
 var model_region_paging := not "--no-model-region-paging" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var pickups = preload("res://addons/world_runtime/material_pickups.gd").new()
 var player_pose: RefCounted
+var player_life=preload("res://addons/player_runtime/player_life.gd").new()
 var world_vehicle=preload("res://addons/vehicle_runtime/world_vehicle.gd").new()
 var _vehicle_ui_active:=false
 var _walking_help:=""
@@ -243,13 +244,15 @@ func _ready() -> void:
 	if not persistence.register_component("player_survival",player_hud.survival.capture_storage_snapshot,player_hud.survival.restore_storage_snapshot,player_hud.survival,player_hud.survival.capture_storage_snapshot()):
 		push_error("Player survival persistence initialization failed");_abort_startup(2);return
 	player_hud.survival_changed.connect(func():terrain.changed_since_save=true)
-	player_hud.survival_active=func()->bool:return not player_view.entry.active and app_focused and terrain.world_ready and not loading_active and not shutdown_requested and not session_menu.developer and not session_menu.visible_ui() and not player_hud.inventory_open
+	player_hud.survival_active=func()->bool:return not player_life.dead and not player_view.entry.active and app_focused and terrain.world_ready and not loading_active and not shutdown_requested and not session_menu.developer and not session_menu.visible_ui() and not player_hud.inventory_open
 	mining_rewards.enabled=construction_inventory.gameplay
 	if not mining_rewards.attach(terrain,player_hud):
 		push_error("Mining reward initialization failed")
 		_abort_startup(2)
 		return
 	player_pose=ClassDB.instantiate("NativePlayerPose")
+	if not player_life.prepare(self):
+		push_error("Player life persistence initialization failed");_abort_startup(2);return
 	if not persistence.register_component("player_pose",_capture_player_pose,_restore_player_pose,player_pose,PackedByteArray()):
 		push_error("Player pose persistence initialization failed")
 		_abort_startup(2)
@@ -297,7 +300,7 @@ func _ready() -> void:
 	tool_view.human.body=player
 	await _startup_step("Connecting player interactions")
 	player.add_child(zombie_target)
-	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
+	zombie_target.attacked.connect(player_life.damage)
 	add_child(trader)
 	add_child(quests)
 	add_child(zombies)
@@ -995,6 +998,7 @@ func _restore_gameplay_mouse(attempts:int=4) -> void:
 	if not get_tree().process_frame.is_connected(retry):get_tree().process_frame.connect(retry,CONNECT_ONE_SHOT)
 
 func _movement_input_available() -> bool:
+	if player_life.dead:return false
 	if player_view.entry.active:return false
 	if session_menu!=null and session_menu.pauses_world():return false
 	if player_hud!=null and player_hud.inventory_open:return false
@@ -1005,6 +1009,7 @@ func _input(event:InputEvent)->void:
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_RIGHT and not event.pressed:terrain_placement.held=false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if player_life.dead:return
 	if player_view.entry.blocks_actions():return
 	if session_menu.visible_ui():return
 	if player_hud.inventory_open: return
@@ -1612,12 +1617,16 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	return obstacle
 
 func _physics_process(delta: float) -> void:
+	player_life.step(delta)
 	var measured_begin:=Time.get_ticks_usec()
-	zombies.update(delta,player.global_position,not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
+	zombies.update(delta,player.global_position,not player_life.dead and not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
 	terrain._record_stage("zombie update",(Time.get_ticks_usec()-measured_begin)/1000.0)
 	measured_begin=Time.get_ticks_usec()
 	actors.update_simulation(delta,terrain.focus,not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit,_actor_collision_ready)
 	terrain._record_stage("actor update",(Time.get_ticks_usec()-measured_begin)/1000.0)
+	if player_life.dead:
+		if needs_floor_spawn:super._physics_process(delta)
+		return
 	if player_view.entry.active:return # The entry camera never integrates the physical body.
 	if world_vehicle.driving:
 		return # The bound vehicle owns terrain focus and physics while occupied.
@@ -1756,6 +1765,7 @@ func _remove_inventory_model(history: RefCounted, collection: Node3D, identity: 
 	return removed
 
 func _model_edit_available(allow_pending:bool=false) -> bool:
+	if player_life.dead:return false
 	return not player_view.entry.blocks_actions() and not player_view.overview and vehicle_radial.held_since<0 and not world_vehicle.driving and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and (allow_pending or not terrain.pending_edit)
 
 func _interact_on_foot()->void:
@@ -1768,6 +1778,7 @@ func _interact_on_foot()->void:
 	_show_lake_notice(collected.reason)
 
 func _vehicle_interaction_available() -> bool:
+	if player_life.dead:return false
 	return not player_view.entry.blocks_actions() and not (player_view.overview and player_view.active) and not loading_active and not shutdown_requested and not benchmark_enabled and not player_hud.inventory_open and app_focused and terrain.world_ready and not terrain.pending_edit and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
 
 func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:

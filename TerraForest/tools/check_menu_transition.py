@@ -10,6 +10,7 @@ from run_godot_check import execute, verify_pack_native
 parser = argparse.ArgumentParser()
 parser.add_argument('--pack', action='store_true')
 parser.add_argument('--verbose', action='store_true')
+parser.add_argument('--respawn', action='store_true')
 parser.add_argument('--reuse-report', default='reports/frontier_expedition/20261102T110842820893Z')
 args = parser.parse_args()
 source = (ROOT / args.reuse_report).resolve()
@@ -21,17 +22,24 @@ if not slot.startswith('Expedition_1703_'):
 folder = ROOT / 'reports/menu_transition' / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
 folder.mkdir(parents=True)
 (folder / '.gdignore').touch()
-script = ROOT / 'tests/menu_transition.gd'
+script = ROOT / ('tests/player_respawn.gd' if args.respawn else 'tests/menu_transition.gd')
 native = verify_pack_native() if args.pack else {}
 if args.pack:
+    content = script.read_text()
+    if args.respawn:
+        parent = folder / 'menu_transition.gd'
+        parent.write_bytes((ROOT / 'tests/menu_transition.gd').read_bytes())
+        content = content.replace('res://tests/menu_transition.gd', parent.as_posix())
     script = folder / 'driver.gd'
-    script.write_bytes((ROOT / 'tests/menu_transition.gd').read_bytes())
+    script.write_text(content, encoding='utf-8')
 config, _ = parse_args([])
 command = [config.godot, '--path', str(ROOT / 'dist' if args.pack else ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', str(script), '--', '--ui-output=' + folder.as_posix(), '--ui-slot=' + slot]
 if args.pack:
     command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
 if args.verbose:
     command.insert(1, '--verbose')
+if args.respawn:
+    command.append('--wakeup-test')
 original = subprocess.Popen
 def nonactivating(*arguments, **keywords):
     startup = subprocess.STARTUPINFO()

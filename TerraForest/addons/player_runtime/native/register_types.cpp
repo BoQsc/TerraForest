@@ -5,6 +5,7 @@
 #include "reward_inbox.hpp"
 #include "movement.hpp"
 #include "pose.hpp"
+#include "life.hpp"
 #include "durability.hpp"
 #include "progression.hpp"
 #include "survival.hpp"
@@ -22,6 +23,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeRewardInbox);
         GDREGISTER_CLASS(terraforest::NativePlayerMovement);
         GDREGISTER_CLASS(terraforest::NativePlayerPose);
+        GDREGISTER_CLASS(terraforest::NativePlayerLife);
         GDREGISTER_CLASS(terraforest::NativeWorldDurability);
         GDREGISTER_CLASS(terraforest::NativePlayerProgression);
         GDREGISTER_CLASS(terraforest::NativePlayerSurvival);

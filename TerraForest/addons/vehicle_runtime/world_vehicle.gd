@@ -317,6 +317,18 @@ func _exit_vehicle(world: Node) -> String:
 	Engine.physics_ticks_per_second=_physics_ticks
 	world.terrain.focus=feet;world.terrain.travel_velocity=Vector3.ZERO
 	return "On foot · E nearby to enter vehicle"
+func release_for_respawn(world:Node)->void:
+	if not driving:return
+	var service_driven:bool=passenger!=null
+	if passenger!=null:passenger.abandon_for_respawn()
+	passenger=null
+	if is_instance_valid(car):
+		adapter(car).controls(car,false)
+		if not service_driven:coasting[car_identity]=car;_coast_quiet[car_identity]=0.0;set_physics_process(true)
+	world.player.collision_layer=_player_layer;world.player.collision_mask=_player_mask
+	world.camera.transform=_camera_local;world.player.velocity=Vector3.ZERO
+	driving=false;Engine.physics_ticks_per_second=_physics_ticks
+
 func _guard_exit_contact(player:PhysicsBody3D) -> void:
 	var key:=car.get_instance_id()
 	# An existing host-owned exception must survive our temporary transition.

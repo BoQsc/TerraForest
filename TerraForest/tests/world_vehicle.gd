@@ -10,6 +10,9 @@ class Fixture extends Node3D:
 	var structures:=ReadyProvider.new()
 	var player:=CharacterBody3D.new()
 	var camera:=Camera3D.new()
+class Passenger extends Node:
+	var abandoned:=false
+	func abandon_for_respawn()->void:abandoned=true
 var failures:=0
 func check(ok: bool,label: String) -> void:
 	print(("PASS " if ok else "FAIL ")+label)
@@ -68,6 +71,18 @@ func run() -> void:
 	world.structures.available=true
 	check(session.exit_vehicle(world).begins_with("On foot") and not session.driving,"clear loaded exit restores walking")
 	check(world.camera.transform.is_equal_approx(original_camera) and Engine.physics_ticks_per_second==old_ticks and world.player.collision_mask==1,"camera physics rate and collision restored")
+	world.player.position=session.car.position+Vector3.RIGHT*2.8
+	check(session.enter(world),"reenter for fatal-driver occupancy test")
+	session.car.linear_velocity=Vector3(0,0,10);world.structures.available=false;session.interaction_available=func():return false
+	session.release_for_respawn(world)
+	check(not session.driving and world.player.collision_mask==1 and world.camera.transform.is_equal_approx(original_camera) and world.player.velocity==Vector3.ZERO and Engine.physics_ticks_per_second==old_ticks,"respawn releases moving driver without requiring an exit target")
+	check(session.coasting.has(session.car_identity),"released driver car retains coasting owner")
+	world.structures.available=true;session.interaction_available=func():return true
+	world.player.position=session.car.position+Vector3.RIGHT*2.8
+	check(session.enter(world),"reenter for fatal-passenger occupancy test")
+	var passenger:=Passenger.new();world.add_child(passenger);session.passenger=passenger
+	session.release_for_respawn(world)
+	check(passenger.abandoned and session.passenger==null and not session.driving and not session.coasting.has(session.car_identity),"respawn releases passenger once without a second vehicle simulation owner")
 	session.car.position=Vector3(400,50,400);session.car.rotation=Vector3(.1,.3,.2)
 	var saved: PackedByteArray=session.capture_snapshot()
 	var pose: Transform3D=session.car.transform

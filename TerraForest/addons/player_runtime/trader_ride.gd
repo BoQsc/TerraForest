@@ -224,6 +224,12 @@ func cancel_reservation()->String:
 	state.phase=HOME_WALK;state.seated=false;state.passenger=false;state.cursor=0;changed()
 	return "Ride cancelled. No coins were charged."
 
+func abandon_for_respawn()->void:
+	state.passenger=false;restore_passenger=false;_remove_passenger_view()
+	if state.phase==OUTBOUND:state.phase=STOPPING
+	elif state.phase==RETURNING:state.phase=RETURN_STOPPED
+	command.clear();changed()
+
 func request_exit()->String:
 	if game.world_vehicle.passenger!=self:return ""
 	if state.expedition:return _expedition_exit()

@@ -14,7 +14,7 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reuse-report')
-    parser.add_argument('--stage', choices=['create', 'notices_reload', 'intro_reload', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'home_resume', 'reward_reload'], default='create')
+    parser.add_argument('--stage', choices=['create', 'life_save', 'life_reload', 'notices_reload', 'intro_reload', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'home_resume', 'reward_reload'], default='create')
     parser.add_argument('--notices-only', action='store_true')
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--installed-executable', action='store_true')
@@ -34,7 +34,7 @@ def main():
         receipt = json.loads((source / 'world.json').read_text())
         if not receipt['slot'].startswith('Expedition_1703_'):
             parser.error('Not an owned expedition fixture')
-        for name in ['world.json', 'expected.bin', 'completed.bin']:
+        for name in ['world.json', 'expected.bin', 'completed.bin', 'life.bin']:
             if (source / name).is_file():
                 (folder / name).write_bytes((source / name).read_bytes())
     script = ROOT / 'tests/frontier_expedition_world.gd'

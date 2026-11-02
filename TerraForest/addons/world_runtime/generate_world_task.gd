@@ -454,6 +454,7 @@ func run()->void:
    var direction:Vector3=introduction_room.exit[1]-introduction_spawn
    game.yaw=atan2(-direction.x,-direction.z);game.pitch=0.;game.player.rotation.y=game.yaw;game.camera.rotation.x=0.
    game.player_view.entry.wake_pending=true
+   if not game.player_life.set_spawn(introduction_spawn,game.yaw):game.free();quit(1);return
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)

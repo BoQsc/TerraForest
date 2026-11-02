@@ -39,6 +39,7 @@ func run()->void:
 	if not check(await wait_for(func():return not game.player_view.entry.pending and not game.player_view.entry.active,20),"entry finishes before interaction"):await finish();return
 	if stage=="create":check(game.player_view.entry.wake_starts==1 and not game.player_view.entry.wake_pending,"approved wake animation runs once on initial upstairs spawn")
 	else:check(game.player_view.entry.wake_starts==0,"ordinary saved-world loading does not replay waking")
+	if stage=="create":check(game.player_life.state.snapshot().has_spawn and game.player_life.state.snapshot().spawn.distance_to(game.player.position)<.25,"new generation persists introductory shelter before play")
 	if stage=="create":
 		check(await wait_for(func():return game.player_notices.shown==1 and game.player_notices.toast.modulate.a>.99,3),"Added quest notice animates after waking")
 		game._show_lake_notice("Your journey begins")
@@ -54,6 +55,23 @@ func run()->void:
 		var expected:Dictionary=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()
 		check(game.quests.store.capture_storage_snapshot()==expected.quests and game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"reload preserves introduction and inventory without another notice")
 		await photograph("notice-reload");await finish();return
+	if stage in ["life_save","life_reload"]:
+		if stage=="life_save":
+			check(await wait_for(func():return game.player_life.anchored,5),"legacy owned world gains a safe persisted shelter")
+			game.zombie_target.receive_zombie_attack(13)
+			check(game.player_life.state.snapshot().health==87,"ordinary target damage before save")
+			FileAccess.open(folder.path_join("life.bin"),FileAccess.WRITE).store_var({"life":game.player_life.state.capture_storage_snapshot(),"inventory":game.player_hud.capture_snapshot()})
+		else:
+			var expected:Dictionary=FileAccess.open(folder.path_join("life.bin"),FileAccess.READ).get_var()
+			check(game.player_life.state.capture_storage_snapshot()==expected.life,"fresh process restores exact native health and shelter")
+			var anchor:Vector3=game.player_life.state.snapshot().spawn
+			game.zombie_target.receive_zombie_attack(1000)
+			check(game.player_life.dead,"restored player can die from ordinary damage")
+			check(await wait_for(func():return not game.player_life.dead and not game.player_view.entry.pending and not game.player_view.entry.active,60),"death streams shelter and completes approved wake")
+			check(game.player.position.distance_to(anchor)<.25 and game.player_view.entry.wake_starts==1,"exact persisted anchor returns once")
+			check(game.player_hud.capture_snapshot()==expected.inventory,"durable respawn preserves inventory")
+			await photograph("respawn-anchor")
+		await finish();return
 	game.set_physics_process(false);game._clear_motion();game.fly=false;game.needs_floor_spawn=false
 	physics_frame.connect(update_population)
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open

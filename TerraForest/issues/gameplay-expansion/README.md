@@ -24,8 +24,8 @@
   Its disabled player physics left terrain focus behind; corrected harness
   advances normal streaming focus, without changing production scheduler guards.
 - Waking source/approval: [review record](../../reviews/player_wakeup/README.md).
-  A respawn animation hook exists; player health/death/respawn remains a separate
-  missing lifecycle, not completed by presentation. User posture/combat feel and
+  The respawn hook now connects to native health, durable shelter state and actual
+  damage: [implementation and checks](../player-respawn/README.md). User posture/combat feel and
   foreground performance acceptance remain open.
 
 ### Installed evidence
