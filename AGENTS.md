@@ -28,9 +28,10 @@ its focused-commit, identity-file and verification rules.
 ## Branch workflow
 
 - `master` is the current development integration, not a production-release claim.
-- Start focused, short-lived `codex/<topic>` branches from current `master`; merge
-  verified work regularly instead of accumulating unrelated features on one branch.
-- Parallel chats use separate worktrees. Coordinate shared tests and exports.
+- Develop directly on `master` by default, using focused commits and relevant tests.
+- Do not create feature branches or worktrees unless the user requests them.
+- Coordinate parallel chats before overlapping edits, native builds or exports;
+  serialize conflicting work rather than silently creating another branch.
 - Tag approved playtest/release milestones. Keep known limitations explicit.
 - Audit unique commits and worktree ownership before retiring old branches; do not
   rewrite published history or force-push as part of routine integration.

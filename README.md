@@ -26,9 +26,9 @@ See the [structures API and limitations](TerraForest/addons/structures/README.md
 
 ## Development workflow
 
-`master` is the current development mainline. Features and fixes use short-lived
-topic branches, with separate worktrees for parallel work and regular verified
-integration. Tags identify checkpoints and approved playtest/release milestones;
+Develop directly on `master` with focused commits and relevant tests. Coordinate
+parallel work to avoid overlapping edits, builds and exports; separate branches or
+worktrees are optional and used only when requested. Tags identify checkpoints and approved playtest/release milestones;
 the mainline is not a claim that the game is complete. Current limitations and
 verification evidence live in the [foundation status](TerraForest/docs/WORLD_FOUNDATION_STATUS.md)
 and [issue tracker](TerraForest/issues/README.md).
