@@ -1,0 +1,2020 @@
+{
+  "schema": 1,
+  "observed_at_utc": "2026-11-02T21:04:03.300616+00:00",
+  "scope": "Read-only saved evidence and storage inspection; no fresh world benchmark, no cold-cache claim. Publication byte counts exclude the root archive.",
+  "generation": [
+    {
+      "report_id": "866836a85c1cbd8345e78a18748f5975",
+      "destination": "Quests_1703_202c741e",
+      "seed": 1703,
+      "generator": 29,
+      "published": true,
+      "phases": [
+        {
+          "stage": "creating",
+          "exit_code": 0,
+          "wall_seconds": 81.427634,
+          "profile_seconds": 80.414007,
+          "named_completed_seconds": 3.099099,
+          "current_stage_seconds": 0.0,
+          "explicit_dropped_seconds": 0.0,
+          "unaccounted_seconds": 77.314908,
+          "timing_schema": 1,
+          "timing_rows": 64,
+          "stage_timings": [
+            {
+              "microseconds": 19758.0,
+              "stage": "Planning terrain, streets and building sites"
+            },
+            {
+              "microseconds": 529451.0,
+              "stage": "Checking the binary placement-plan cache"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 1 / 164"
+            },
+            {
+              "microseconds": 33326.0,
+              "stage": "Loading game resources \u00b7 2 / 164"
+            },
+            {
+              "microseconds": 66663.0,
+              "stage": "Loading game resources \u00b7 3 / 164"
+            },
+            {
+              "microseconds": 49999.0,
+              "stage": "Loading game resources \u00b7 4 / 164"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 5 / 164"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 6 / 164"
+            },
+            {
+              "microseconds": 33339.0,
+              "stage": "Loading game resources \u00b7 7 / 164"
+            },
+            {
+              "microseconds": 33675.0,
+              "stage": "Loading game resources \u00b7 8 / 164"
+            },
+            {
+              "microseconds": 32999.0,
+              "stage": "Loading game resources \u00b7 9 / 164"
+            },
+            {
+              "microseconds": 33340.0,
+              "stage": "Loading game resources \u00b7 10 / 164"
+            },
+            {
+              "microseconds": 133345.0,
+              "stage": "Loading game resources \u00b7 11 / 164"
+            },
+            {
+              "microseconds": 49950.0,
+              "stage": "Loading game resources \u00b7 12 / 164"
+            },
+            {
+              "microseconds": 50004.0,
+              "stage": "Loading game resources \u00b7 13 / 164"
+            },
+            {
+              "microseconds": 50013.0,
+              "stage": "Loading game resources \u00b7 14 / 164"
+            },
+            {
+              "microseconds": 83327.0,
+              "stage": "Loading game resources \u00b7 15 / 164"
+            },
+            {
+              "microseconds": 49977.0,
+              "stage": "Loading game resources \u00b7 16 / 164"
+            },
+            {
+              "microseconds": 66717.0,
+              "stage": "Loading game resources \u00b7 17 / 164"
+            },
+            {
+              "microseconds": 49959.0,
+              "stage": "Loading game resources \u00b7 18 / 164"
+            },
+            {
+              "microseconds": 33375.0,
+              "stage": "Loading game resources \u00b7 19 / 164"
+            },
+            {
+              "microseconds": 49958.0,
+              "stage": "Loading game resources \u00b7 20 / 164"
+            },
+            {
+              "microseconds": 33340.0,
+              "stage": "Loading game resources \u00b7 21 / 164"
+            },
+            {
+              "microseconds": 33320.0,
+              "stage": "Loading game resources \u00b7 22 / 164"
+            },
+            {
+              "microseconds": 33381.0,
+              "stage": "Loading game resources \u00b7 23 / 164"
+            },
+            {
+              "microseconds": 33293.0,
+              "stage": "Loading game resources \u00b7 24 / 164"
+            },
+            {
+              "microseconds": 33349.0,
+              "stage": "Loading game resources \u00b7 25 / 164"
+            },
+            {
+              "microseconds": 33312.0,
+              "stage": "Loading game resources \u00b7 26 / 164"
+            },
+            {
+              "microseconds": 33353.0,
+              "stage": "Loading game resources \u00b7 27 / 164"
+            },
+            {
+              "microseconds": 33304.0,
+              "stage": "Loading game resources \u00b7 28 / 164"
+            },
+            {
+              "microseconds": 33343.0,
+              "stage": "Loading game resources \u00b7 29 / 164"
+            },
+            {
+              "microseconds": 33325.0,
+              "stage": "Loading game resources \u00b7 30 / 164"
+            },
+            {
+              "microseconds": 33333.0,
+              "stage": "Loading game resources \u00b7 31 / 164"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 32 / 164"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 33 / 164"
+            },
+            {
+              "microseconds": 33334.0,
+              "stage": "Loading game resources \u00b7 34 / 164"
+            },
+            {
+              "microseconds": 33345.0,
+              "stage": "Loading game resources \u00b7 35 / 164"
+            },
+            {
+              "microseconds": 33320.0,
+              "stage": "Loading game resources \u00b7 36 / 164"
+            },
+            {
+              "microseconds": 33329.0,
+              "stage": "Loading game resources \u00b7 37 / 164"
+            },
+            {
+              "microseconds": 33367.0,
+              "stage": "Loading game resources \u00b7 38 / 164"
+            },
+            {
+              "microseconds": 99978.0,
+              "stage": "Loading game resources \u00b7 39 / 164"
+            },
+            {
+              "microseconds": 33343.0,
+              "stage": "Loading game resources \u00b7 40 / 164"
+            },
+            {
+              "microseconds": 33311.0,
+              "stage": "Loading game resources \u00b7 41 / 164"
+            },
+            {
+              "microseconds": 33326.0,
+              "stage": "Loading game resources \u00b7 42 / 164"
+            },
+            {
+              "microseconds": 33353.0,
+              "stage": "Loading game resources \u00b7 43 / 164"
+            },
+            {
+              "microseconds": 33322.0,
+              "stage": "Loading game resources \u00b7 44 / 164"
+            },
+            {
+              "microseconds": 33352.0,
+              "stage": "Loading game resources \u00b7 45 / 164"
+            },
+            {
+              "microseconds": 33347.0,
+              "stage": "Loading game resources \u00b7 46 / 164"
+            },
+            {
+              "microseconds": 99954.0,
+              "stage": "Loading game resources \u00b7 47 / 164"
+            },
+            {
+              "microseconds": 50001.0,
+              "stage": "Loading game resources \u00b7 48 / 164"
+            },
+            {
+              "microseconds": 43670.0,
+              "stage": "Loading game resources \u00b7 49 / 164"
+            },
+            {
+              "microseconds": 23002.0,
+              "stage": "Loading game resources \u00b7 50 / 164"
+            },
+            {
+              "microseconds": 33335.0,
+              "stage": "Loading game resources \u00b7 51 / 164"
+            },
+            {
+              "microseconds": 33325.0,
+              "stage": "Loading game resources \u00b7 52 / 164"
+            },
+            {
+              "microseconds": 33341.0,
+              "stage": "Loading game resources \u00b7 53 / 164"
+            },
+            {
+              "microseconds": 33320.0,
+              "stage": "Loading game resources \u00b7 54 / 164"
+            },
+            {
+              "microseconds": 33380.0,
+              "stage": "Loading game resources \u00b7 55 / 164"
+            },
+            {
+              "microseconds": 33292.0,
+              "stage": "Loading game resources \u00b7 56 / 164"
+            },
+            {
+              "microseconds": 33450.0,
+              "stage": "Loading game resources \u00b7 57 / 164"
+            },
+            {
+              "microseconds": 33228.0,
+              "stage": "Loading game resources \u00b7 58 / 164"
+            },
+            {
+              "microseconds": 33349.0,
+              "stage": "Loading game resources \u00b7 59 / 164"
+            },
+            {
+              "microseconds": 33300.0,
+              "stage": "Loading game resources \u00b7 60 / 164"
+            },
+            {
+              "microseconds": 33367.0,
+              "stage": "Loading game resources \u00b7 61 / 164"
+            },
+            {
+              "microseconds": 33285.0,
+              "stage": "Loading game resources \u00b7 62 / 164"
+            }
+          ]
+        }
+      ],
+      "verification_ms": 896.71,
+      "publication": {
+        "bytes": 36272782,
+        "files": 916,
+        "source_retired": true
+      },
+      "run_sha256": "08a1a16c9fb608b5465aebf1180d4a8def867488cddd06270f2b5cc544d96e54",
+      "earthworks": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 7471104,
+        "checkpoints": 111,
+        "completed": 7007,
+        "ok": true,
+        "resident_high": 2549,
+        "resident_limit": 16384,
+        "revision": 6458,
+        "storage": {
+          "region_reads": 664,
+          "reused_files": 0,
+          "reused_regions": 16849,
+          "workers": 1,
+          "written_bytes": 35115054,
+          "written_files": 221
+        },
+        "worker_ms": 8016.0597
+      },
+      "water_bake": {
+        "lakes": 12,
+        "milliseconds": 2819.657,
+        "ok": true,
+        "patches": 2455,
+        "peak_native_state_bytes": 79271816,
+        "regions": 2455,
+        "slices": 2455,
+        "snapshot_bytes": 42690700,
+        "status": 2,
+        "steps": 2508,
+        "water_ml": 27351242997
+      },
+      "photographs": [
+        {
+          "capture_ms": 762,
+          "loading_ms": 17342,
+          "vegetation_ms": 37,
+          "view": "north"
+        },
+        {
+          "capture_ms": 675,
+          "loading_ms": 1285,
+          "vegetation_ms": 1211,
+          "view": "road"
+        },
+        {
+          "capture_ms": 721,
+          "loading_ms": 877,
+          "vegetation_ms": 1670,
+          "view": "market"
+        }
+      ],
+      "photograph_seconds": 24.58
+    },
+    {
+      "report_id": "1b35464f949fc30ee81ad45db82df40f",
+      "destination": "Emerald_Meadow",
+      "seed": 1703,
+      "generator": 29,
+      "published": true,
+      "phases": [
+        {
+          "stage": "creating",
+          "exit_code": 0,
+          "wall_seconds": 93.250854,
+          "profile_seconds": 92.134195,
+          "named_completed_seconds": 15.859261,
+          "current_stage_seconds": 0.0,
+          "explicit_dropped_seconds": 0.0,
+          "unaccounted_seconds": 76.274934,
+          "timing_schema": 1,
+          "timing_rows": 64,
+          "stage_timings": [
+            {
+              "microseconds": 72061.0,
+              "stage": "Planning terrain, streets and building sites"
+            },
+            {
+              "microseconds": 552195.0,
+              "stage": "Checking the binary placement-plan cache"
+            },
+            {
+              "microseconds": 33362.0,
+              "stage": "Loading game resources \u00b7 1 / 164"
+            },
+            {
+              "microseconds": 35404.0,
+              "stage": "Loading game resources \u00b7 2 / 164"
+            },
+            {
+              "microseconds": 101748.0,
+              "stage": "Loading game resources \u00b7 3 / 164"
+            },
+            {
+              "microseconds": 68222.0,
+              "stage": "Loading game resources \u00b7 4 / 164"
+            },
+            {
+              "microseconds": 24961.0,
+              "stage": "Loading game resources \u00b7 5 / 164"
+            },
+            {
+              "microseconds": 37818.0,
+              "stage": "Loading game resources \u00b7 6 / 164"
+            },
+            {
+              "microseconds": 66149.0,
+              "stage": "Loading game resources \u00b7 7 / 164"
+            },
+            {
+              "microseconds": 47825.0,
+              "stage": "Loading game resources \u00b7 8 / 164"
+            },
+            {
+              "microseconds": 31865.0,
+              "stage": "Loading game resources \u00b7 9 / 164"
+            },
+            {
+              "microseconds": 47546.0,
+              "stage": "Loading game resources \u00b7 10 / 164"
+            },
+            {
+              "microseconds": 1400626.0,
+              "stage": "Loading game resources \u00b7 11 / 164"
+            },
+            {
+              "microseconds": 119905.0,
+              "stage": "Loading game resources \u00b7 12 / 164"
+            },
+            {
+              "microseconds": 77748.0,
+              "stage": "Loading game resources \u00b7 13 / 164"
+            },
+            {
+              "microseconds": 71070.0,
+              "stage": "Loading game resources \u00b7 14 / 164"
+            },
+            {
+              "microseconds": 132688.0,
+              "stage": "Loading game resources \u00b7 15 / 164"
+            },
+            {
+              "microseconds": 84195.0,
+              "stage": "Loading game resources \u00b7 16 / 164"
+            },
+            {
+              "microseconds": 88412.0,
+              "stage": "Loading game resources \u00b7 17 / 164"
+            },
+            {
+              "microseconds": 103797.0,
+              "stage": "Loading game resources \u00b7 18 / 164"
+            },
+            {
+              "microseconds": 36839.0,
+              "stage": "Loading game resources \u00b7 19 / 164"
+            },
+            {
+              "microseconds": 67837.0,
+              "stage": "Loading game resources \u00b7 20 / 164"
+            },
+            {
+              "microseconds": 36047.0,
+              "stage": "Loading game resources \u00b7 21 / 164"
+            },
+            {
+              "microseconds": 32291.0,
+              "stage": "Loading game resources \u00b7 22 / 164"
+            },
+            {
+              "microseconds": 31464.0,
+              "stage": "Loading game resources \u00b7 23 / 164"
+            },
+            {
+              "microseconds": 36603.0,
+              "stage": "Loading game resources \u00b7 24 / 164"
+            },
+            {
+              "microseconds": 47558.0,
+              "stage": "Loading game resources \u00b7 25 / 164"
+            },
+            {
+              "microseconds": 36894.0,
+              "stage": "Loading game resources \u00b7 26 / 164"
+            },
+            {
+              "microseconds": 33177.0,
+              "stage": "Loading game resources \u00b7 27 / 164"
+            },
+            {
+              "microseconds": 31462.0,
+              "stage": "Loading game resources \u00b7 28 / 164"
+            },
+            {
+              "microseconds": 32285.0,
+              "stage": "Loading game resources \u00b7 29 / 164"
+            },
+            {
+              "microseconds": 34406.0,
+              "stage": "Loading game resources \u00b7 30 / 164"
+            },
+            {
+              "microseconds": 34692.0,
+              "stage": "Loading game resources \u00b7 31 / 164"
+            },
+            {
+              "microseconds": 30312.0,
+              "stage": "Loading game resources \u00b7 32 / 164"
+            },
+            {
+              "microseconds": 34658.0,
+              "stage": "Loading game resources \u00b7 33 / 164"
+            },
+            {
+              "microseconds": 31435.0,
+              "stage": "Loading game resources \u00b7 34 / 164"
+            },
+            {
+              "microseconds": 34726.0,
+              "stage": "Loading game resources \u00b7 35 / 164"
+            },
+            {
+              "microseconds": 33582.0,
+              "stage": "Loading game resources \u00b7 36 / 164"
+            },
+            {
+              "microseconds": 31688.0,
+              "stage": "Loading game resources \u00b7 37 / 164"
+            },
+            {
+              "microseconds": 38191.0,
+              "stage": "Loading game resources \u00b7 38 / 164"
+            },
+            {
+              "microseconds": 132350.0,
+              "stage": "Loading game resources \u00b7 39 / 164"
+            },
+            {
+              "microseconds": 30365.0,
+              "stage": "Loading game resources \u00b7 40 / 164"
+            },
+            {
+              "microseconds": 35416.0,
+              "stage": "Loading game resources \u00b7 41 / 164"
+            },
+            {
+              "microseconds": 33126.0,
+              "stage": "Loading game resources \u00b7 42 / 164"
+            },
+            {
+              "microseconds": 32417.0,
+              "stage": "Loading game resources \u00b7 43 / 164"
+            },
+            {
+              "microseconds": 32214.0,
+              "stage": "Loading game resources \u00b7 44 / 164"
+            },
+            {
+              "microseconds": 36085.0,
+              "stage": "Loading game resources \u00b7 45 / 164"
+            },
+            {
+              "microseconds": 35231.0,
+              "stage": "Loading game resources \u00b7 46 / 164"
+            },
+            {
+              "microseconds": 130614.0,
+              "stage": "Loading game resources \u00b7 47 / 164"
+            },
+            {
+              "microseconds": 198459.0,
+              "stage": "Loading game resources \u00b7 48 / 164"
+            },
+            {
+              "microseconds": 66582.0,
+              "stage": "Loading game resources \u00b7 49 / 164"
+            },
+            {
+              "microseconds": 33543.0,
+              "stage": "Loading game resources \u00b7 50 / 164"
+            },
+            {
+              "microseconds": 32982.0,
+              "stage": "Loading game resources \u00b7 51 / 164"
+            },
+            {
+              "microseconds": 32634.0,
+              "stage": "Loading game resources \u00b7 52 / 164"
+            },
+            {
+              "microseconds": 34712.0,
+              "stage": "Loading game resources \u00b7 53 / 164"
+            },
+            {
+              "microseconds": 34447.0,
+              "stage": "Loading game resources \u00b7 54 / 164"
+            },
+            {
+              "microseconds": 45945.0,
+              "stage": "Loading game resources \u00b7 55 / 164"
+            },
+            {
+              "microseconds": 55668.0,
+              "stage": "Loading game resources \u00b7 56 / 164"
+            },
+            {
+              "microseconds": 47882.0,
+              "stage": "Loading game resources \u00b7 57 / 164"
+            },
+            {
+              "microseconds": 35788.0,
+              "stage": "Loading game resources \u00b7 58 / 164"
+            },
+            {
+              "microseconds": 34139.0,
+              "stage": "Loading game resources \u00b7 59 / 164"
+            },
+            {
+              "microseconds": 10728592.0,
+              "stage": "Loading game resources \u00b7 60 / 164"
+            },
+            {
+              "microseconds": 23027.0,
+              "stage": "Loading game resources \u00b7 61 / 164"
+            },
+            {
+              "microseconds": 33299.0,
+              "stage": "Loading game resources \u00b7 62 / 164"
+            }
+          ]
+        }
+      ],
+      "verification_ms": 869.091,
+      "publication": {
+        "bytes": 36272366,
+        "files": 916,
+        "source_retired": true
+      },
+      "run_sha256": "5f51e62604943e9fb3506443e58a2350fabafad085805564c66c454f5a5a70d8",
+      "earthworks": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 7471104,
+        "checkpoints": 111,
+        "completed": 7007,
+        "ok": true,
+        "resident_high": 2549,
+        "resident_limit": 16384,
+        "revision": 6458,
+        "storage": {
+          "region_reads": 664,
+          "reused_files": 0,
+          "reused_regions": 16849,
+          "workers": 1,
+          "written_bytes": 35115054,
+          "written_files": 221
+        },
+        "worker_ms": 8879.3955
+      },
+      "water_bake": {
+        "lakes": 12,
+        "milliseconds": 3100.955,
+        "ok": true,
+        "patches": 2455,
+        "peak_native_state_bytes": 79271816,
+        "regions": 2455,
+        "slices": 2464,
+        "snapshot_bytes": 42690700,
+        "status": 2,
+        "steps": 2519,
+        "water_ml": 27351242997
+      },
+      "photographs": [
+        {
+          "capture_ms": 851,
+          "loading_ms": 18416,
+          "vegetation_ms": 65,
+          "view": "north"
+        },
+        {
+          "capture_ms": 784,
+          "loading_ms": 1587,
+          "vegetation_ms": 1222,
+          "view": "road"
+        },
+        {
+          "capture_ms": 658,
+          "loading_ms": 1063,
+          "vegetation_ms": 1285,
+          "view": "market"
+        }
+      ],
+      "photograph_seconds": 25.931
+    },
+    {
+      "report_id": "6bad3582193b7fc14d22e8df1205c235",
+      "destination": "Quests_1703_796e068b",
+      "seed": 1703,
+      "generator": 29,
+      "published": true,
+      "phases": [
+        {
+          "stage": "creating",
+          "exit_code": 0,
+          "wall_seconds": 70.815274,
+          "profile_seconds": 70.218177,
+          "named_completed_seconds": 3.176209,
+          "current_stage_seconds": 0.0,
+          "explicit_dropped_seconds": 0.0,
+          "unaccounted_seconds": 67.041968,
+          "timing_schema": 1,
+          "timing_rows": 64,
+          "stage_timings": [
+            {
+              "microseconds": 21205.0,
+              "stage": "Planning terrain, streets and building sites"
+            },
+            {
+              "microseconds": 554166.0,
+              "stage": "Checking the binary placement-plan cache"
+            },
+            {
+              "microseconds": 83244.0,
+              "stage": "Loading game resources \u00b7 3 / 164"
+            },
+            {
+              "microseconds": 49988.0,
+              "stage": "Loading game resources \u00b7 4 / 164"
+            },
+            {
+              "microseconds": 33333.0,
+              "stage": "Loading game resources \u00b7 5 / 164"
+            },
+            {
+              "microseconds": 33388.0,
+              "stage": "Loading game resources \u00b7 6 / 164"
+            },
+            {
+              "microseconds": 33268.0,
+              "stage": "Loading game resources \u00b7 7 / 164"
+            },
+            {
+              "microseconds": 33391.0,
+              "stage": "Loading game resources \u00b7 8 / 164"
+            },
+            {
+              "microseconds": 33289.0,
+              "stage": "Loading game resources \u00b7 9 / 164"
+            },
+            {
+              "microseconds": 33330.0,
+              "stage": "Loading game resources \u00b7 10 / 164"
+            },
+            {
+              "microseconds": 166667.0,
+              "stage": "Loading game resources \u00b7 11 / 164"
+            },
+            {
+              "microseconds": 66639.0,
+              "stage": "Loading game resources \u00b7 12 / 164"
+            },
+            {
+              "microseconds": 49959.0,
+              "stage": "Loading game resources \u00b7 13 / 164"
+            },
+            {
+              "microseconds": 50014.0,
+              "stage": "Loading game resources \u00b7 14 / 164"
+            },
+            {
+              "microseconds": 83321.0,
+              "stage": "Loading game resources \u00b7 15 / 164"
+            },
+            {
+              "microseconds": 49980.0,
+              "stage": "Loading game resources \u00b7 16 / 164"
+            },
+            {
+              "microseconds": 50026.0,
+              "stage": "Loading game resources \u00b7 17 / 164"
+            },
+            {
+              "microseconds": 66664.0,
+              "stage": "Loading game resources \u00b7 18 / 164"
+            },
+            {
+              "microseconds": 33324.0,
+              "stage": "Loading game resources \u00b7 19 / 164"
+            },
+            {
+              "microseconds": 50138.0,
+              "stage": "Loading game resources \u00b7 20 / 164"
+            },
+            {
+              "microseconds": 33738.0,
+              "stage": "Loading game resources \u00b7 21 / 164"
+            },
+            {
+              "microseconds": 32806.0,
+              "stage": "Loading game resources \u00b7 22 / 164"
+            },
+            {
+              "microseconds": 33305.0,
+              "stage": "Loading game resources \u00b7 23 / 164"
+            },
+            {
+              "microseconds": 33341.0,
+              "stage": "Loading game resources \u00b7 24 / 164"
+            },
+            {
+              "microseconds": 33326.0,
+              "stage": "Loading game resources \u00b7 25 / 164"
+            },
+            {
+              "microseconds": 33367.0,
+              "stage": "Loading game resources \u00b7 26 / 164"
+            },
+            {
+              "microseconds": 33301.0,
+              "stage": "Loading game resources \u00b7 27 / 164"
+            },
+            {
+              "microseconds": 33440.0,
+              "stage": "Loading game resources \u00b7 28 / 164"
+            },
+            {
+              "microseconds": 33424.0,
+              "stage": "Loading game resources \u00b7 29 / 164"
+            },
+            {
+              "microseconds": 33458.0,
+              "stage": "Loading game resources \u00b7 30 / 164"
+            },
+            {
+              "microseconds": 33075.0,
+              "stage": "Loading game resources \u00b7 31 / 164"
+            },
+            {
+              "microseconds": 33420.0,
+              "stage": "Loading game resources \u00b7 32 / 164"
+            },
+            {
+              "microseconds": 33556.0,
+              "stage": "Loading game resources \u00b7 33 / 164"
+            },
+            {
+              "microseconds": 33875.0,
+              "stage": "Loading game resources \u00b7 34 / 164"
+            },
+            {
+              "microseconds": 32544.0,
+              "stage": "Loading game resources \u00b7 35 / 164"
+            },
+            {
+              "microseconds": 34475.0,
+              "stage": "Loading game resources \u00b7 36 / 164"
+            },
+            {
+              "microseconds": 33196.0,
+              "stage": "Loading game resources \u00b7 37 / 164"
+            },
+            {
+              "microseconds": 32302.0,
+              "stage": "Loading game resources \u00b7 38 / 164"
+            },
+            {
+              "microseconds": 84375.0,
+              "stage": "Loading game resources \u00b7 39 / 164"
+            },
+            {
+              "microseconds": 33257.0,
+              "stage": "Loading game resources \u00b7 40 / 164"
+            },
+            {
+              "microseconds": 33488.0,
+              "stage": "Loading game resources \u00b7 41 / 164"
+            },
+            {
+              "microseconds": 40192.0,
+              "stage": "Loading game resources \u00b7 42 / 164"
+            },
+            {
+              "microseconds": 30915.0,
+              "stage": "Loading game resources \u00b7 43 / 164"
+            },
+            {
+              "microseconds": 36686.0,
+              "stage": "Loading game resources \u00b7 44 / 164"
+            },
+            {
+              "microseconds": 30876.0,
+              "stage": "Loading game resources \u00b7 45 / 164"
+            },
+            {
+              "microseconds": 35370.0,
+              "stage": "Loading game resources \u00b7 46 / 164"
+            },
+            {
+              "microseconds": 92315.0,
+              "stage": "Loading game resources \u00b7 47 / 164"
+            },
+            {
+              "microseconds": 33503.0,
+              "stage": "Loading game resources \u00b7 48 / 164"
+            },
+            {
+              "microseconds": 49856.0,
+              "stage": "Loading game resources \u00b7 49 / 164"
+            },
+            {
+              "microseconds": 33591.0,
+              "stage": "Loading game resources \u00b7 50 / 164"
+            },
+            {
+              "microseconds": 32994.0,
+              "stage": "Loading game resources \u00b7 51 / 164"
+            },
+            {
+              "microseconds": 32574.0,
+              "stage": "Loading game resources \u00b7 52 / 164"
+            },
+            {
+              "microseconds": 34207.0,
+              "stage": "Loading game resources \u00b7 53 / 164"
+            },
+            {
+              "microseconds": 33444.0,
+              "stage": "Loading game resources \u00b7 54 / 164"
+            },
+            {
+              "microseconds": 33312.0,
+              "stage": "Loading game resources \u00b7 55 / 164"
+            },
+            {
+              "microseconds": 32280.0,
+              "stage": "Loading game resources \u00b7 56 / 164"
+            },
+            {
+              "microseconds": 34448.0,
+              "stage": "Loading game resources \u00b7 57 / 164"
+            },
+            {
+              "microseconds": 33261.0,
+              "stage": "Loading game resources \u00b7 58 / 164"
+            },
+            {
+              "microseconds": 33249.0,
+              "stage": "Loading game resources \u00b7 59 / 164"
+            },
+            {
+              "microseconds": 33473.0,
+              "stage": "Loading game resources \u00b7 60 / 164"
+            },
+            {
+              "microseconds": 33382.0,
+              "stage": "Loading game resources \u00b7 61 / 164"
+            },
+            {
+              "microseconds": 33199.0,
+              "stage": "Loading game resources \u00b7 62 / 164"
+            },
+            {
+              "microseconds": 32542.0,
+              "stage": "Loading game resources \u00b7 63 / 164"
+            },
+            {
+              "microseconds": 34137.0,
+              "stage": "Loading game resources \u00b7 64 / 164"
+            }
+          ]
+        }
+      ],
+      "verification_ms": 875.845,
+      "publication": {
+        "bytes": 36272366,
+        "files": 916,
+        "source_retired": true
+      },
+      "run_sha256": "f1c7421b580be3ffb217e56cd73b2017aa7765a81196a8e4e3e23e58583cfcbc",
+      "earthworks": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 7471104,
+        "checkpoints": 111,
+        "completed": 7007,
+        "ok": true,
+        "resident_high": 2549,
+        "resident_limit": 16384,
+        "revision": 6458,
+        "storage": {
+          "region_reads": 664,
+          "reused_files": 0,
+          "reused_regions": 16849,
+          "workers": 1,
+          "written_bytes": 35115054,
+          "written_files": 221
+        },
+        "worker_ms": 9383.4264
+      },
+      "water_bake": {
+        "lakes": 12,
+        "milliseconds": 2977.595,
+        "ok": true,
+        "patches": 2455,
+        "peak_native_state_bytes": 79271816,
+        "regions": 2455,
+        "slices": 2455,
+        "snapshot_bytes": 42690700,
+        "status": 2,
+        "steps": 2509,
+        "water_ml": 27351242997
+      },
+      "photographs": [
+        {
+          "capture_ms": 701,
+          "loading_ms": 17120,
+          "vegetation_ms": 36,
+          "view": "north"
+        },
+        {
+          "capture_ms": 744,
+          "loading_ms": 1190,
+          "vegetation_ms": 1216,
+          "view": "road"
+        },
+        {
+          "capture_ms": 704,
+          "loading_ms": 1356,
+          "vegetation_ms": 1386,
+          "view": "market"
+        }
+      ],
+      "photograph_seconds": 24.453
+    },
+    {
+      "report_id": "69811f0aaa20f709b768e1eb67b6af81",
+      "destination": "Quests_1703_eaa2ed4f",
+      "seed": 1703,
+      "generator": 29,
+      "published": true,
+      "phases": [
+        {
+          "stage": "creating",
+          "exit_code": 0,
+          "wall_seconds": 82.845422,
+          "profile_seconds": 82.136663,
+          "named_completed_seconds": 2.945829,
+          "current_stage_seconds": 0.0,
+          "explicit_dropped_seconds": 0.0,
+          "unaccounted_seconds": 79.190834,
+          "timing_schema": 1,
+          "timing_rows": 64,
+          "stage_timings": [
+            {
+              "microseconds": 18142.0,
+              "stage": "Planning terrain, streets and building sites"
+            },
+            {
+              "microseconds": 461113.0,
+              "stage": "Checking the binary placement-plan cache"
+            },
+            {
+              "microseconds": 33325.0,
+              "stage": "Loading game resources \u00b7 2 / 164"
+            },
+            {
+              "microseconds": 49985.0,
+              "stage": "Loading game resources \u00b7 3 / 164"
+            },
+            {
+              "microseconds": 33345.0,
+              "stage": "Loading game resources \u00b7 4 / 164"
+            },
+            {
+              "microseconds": 33339.0,
+              "stage": "Loading game resources \u00b7 5 / 164"
+            },
+            {
+              "microseconds": 33324.0,
+              "stage": "Loading game resources \u00b7 6 / 164"
+            },
+            {
+              "microseconds": 33349.0,
+              "stage": "Loading game resources \u00b7 7 / 164"
+            },
+            {
+              "microseconds": 33338.0,
+              "stage": "Loading game resources \u00b7 8 / 164"
+            },
+            {
+              "microseconds": 33333.0,
+              "stage": "Loading game resources \u00b7 9 / 164"
+            },
+            {
+              "microseconds": 33323.0,
+              "stage": "Loading game resources \u00b7 10 / 164"
+            },
+            {
+              "microseconds": 133360.0,
+              "stage": "Loading game resources \u00b7 11 / 164"
+            },
+            {
+              "microseconds": 66632.0,
+              "stage": "Loading game resources \u00b7 12 / 164"
+            },
+            {
+              "microseconds": 49998.0,
+              "stage": "Loading game resources \u00b7 13 / 164"
+            },
+            {
+              "microseconds": 50045.0,
+              "stage": "Loading game resources \u00b7 14 / 164"
+            },
+            {
+              "microseconds": 66608.0,
+              "stage": "Loading game resources \u00b7 15 / 164"
+            },
+            {
+              "microseconds": 49998.0,
+              "stage": "Loading game resources \u00b7 16 / 164"
+            },
+            {
+              "microseconds": 50000.0,
+              "stage": "Loading game resources \u00b7 17 / 164"
+            },
+            {
+              "microseconds": 50000.0,
+              "stage": "Loading game resources \u00b7 18 / 164"
+            },
+            {
+              "microseconds": 33337.0,
+              "stage": "Loading game resources \u00b7 19 / 164"
+            },
+            {
+              "microseconds": 49998.0,
+              "stage": "Loading game resources \u00b7 20 / 164"
+            },
+            {
+              "microseconds": 33326.0,
+              "stage": "Loading game resources \u00b7 21 / 164"
+            },
+            {
+              "microseconds": 33319.0,
+              "stage": "Loading game resources \u00b7 22 / 164"
+            },
+            {
+              "microseconds": 33353.0,
+              "stage": "Loading game resources \u00b7 23 / 164"
+            },
+            {
+              "microseconds": 33316.0,
+              "stage": "Loading game resources \u00b7 24 / 164"
+            },
+            {
+              "microseconds": 33356.0,
+              "stage": "Loading game resources \u00b7 25 / 164"
+            },
+            {
+              "microseconds": 33680.0,
+              "stage": "Loading game resources \u00b7 26 / 164"
+            },
+            {
+              "microseconds": 32959.0,
+              "stage": "Loading game resources \u00b7 27 / 164"
+            },
+            {
+              "microseconds": 33337.0,
+              "stage": "Loading game resources \u00b7 28 / 164"
+            },
+            {
+              "microseconds": 33318.0,
+              "stage": "Loading game resources \u00b7 29 / 164"
+            },
+            {
+              "microseconds": 33373.0,
+              "stage": "Loading game resources \u00b7 30 / 164"
+            },
+            {
+              "microseconds": 33291.0,
+              "stage": "Loading game resources \u00b7 31 / 164"
+            },
+            {
+              "microseconds": 33673.0,
+              "stage": "Loading game resources \u00b7 32 / 164"
+            },
+            {
+              "microseconds": 32995.0,
+              "stage": "Loading game resources \u00b7 33 / 164"
+            },
+            {
+              "microseconds": 33981.0,
+              "stage": "Loading game resources \u00b7 34 / 164"
+            },
+            {
+              "microseconds": 32741.0,
+              "stage": "Loading game resources \u00b7 35 / 164"
+            },
+            {
+              "microseconds": 33300.0,
+              "stage": "Loading game resources \u00b7 36 / 164"
+            },
+            {
+              "microseconds": 33323.0,
+              "stage": "Loading game resources \u00b7 37 / 164"
+            },
+            {
+              "microseconds": 33347.0,
+              "stage": "Loading game resources \u00b7 38 / 164"
+            },
+            {
+              "microseconds": 83317.0,
+              "stage": "Loading game resources \u00b7 39 / 164"
+            },
+            {
+              "microseconds": 33324.0,
+              "stage": "Loading game resources \u00b7 40 / 164"
+            },
+            {
+              "microseconds": 33343.0,
+              "stage": "Loading game resources \u00b7 41 / 164"
+            },
+            {
+              "microseconds": 33330.0,
+              "stage": "Loading game resources \u00b7 42 / 164"
+            },
+            {
+              "microseconds": 33327.0,
+              "stage": "Loading game resources \u00b7 43 / 164"
+            },
+            {
+              "microseconds": 33479.0,
+              "stage": "Loading game resources \u00b7 44 / 164"
+            },
+            {
+              "microseconds": 33184.0,
+              "stage": "Loading game resources \u00b7 45 / 164"
+            },
+            {
+              "microseconds": 33331.0,
+              "stage": "Loading game resources \u00b7 46 / 164"
+            },
+            {
+              "microseconds": 83355.0,
+              "stage": "Loading game resources \u00b7 47 / 164"
+            },
+            {
+              "microseconds": 33302.0,
+              "stage": "Loading game resources \u00b7 48 / 164"
+            },
+            {
+              "microseconds": 50008.0,
+              "stage": "Loading game resources \u00b7 49 / 164"
+            },
+            {
+              "microseconds": 33341.0,
+              "stage": "Loading game resources \u00b7 50 / 164"
+            },
+            {
+              "microseconds": 33326.0,
+              "stage": "Loading game resources \u00b7 51 / 164"
+            },
+            {
+              "microseconds": 33325.0,
+              "stage": "Loading game resources \u00b7 52 / 164"
+            },
+            {
+              "microseconds": 33334.0,
+              "stage": "Loading game resources \u00b7 53 / 164"
+            },
+            {
+              "microseconds": 33360.0,
+              "stage": "Loading game resources \u00b7 54 / 164"
+            },
+            {
+              "microseconds": 33308.0,
+              "stage": "Loading game resources \u00b7 55 / 164"
+            },
+            {
+              "microseconds": 33333.0,
+              "stage": "Loading game resources \u00b7 56 / 164"
+            },
+            {
+              "microseconds": 33335.0,
+              "stage": "Loading game resources \u00b7 57 / 164"
+            },
+            {
+              "microseconds": 33357.0,
+              "stage": "Loading game resources \u00b7 58 / 164"
+            },
+            {
+              "microseconds": 33297.0,
+              "stage": "Loading game resources \u00b7 59 / 164"
+            },
+            {
+              "microseconds": 33334.0,
+              "stage": "Loading game resources \u00b7 60 / 164"
+            },
+            {
+              "microseconds": 33346.0,
+              "stage": "Loading game resources \u00b7 61 / 164"
+            },
+            {
+              "microseconds": 33345.0,
+              "stage": "Loading game resources \u00b7 62 / 164"
+            },
+            {
+              "microseconds": 33308.0,
+              "stage": "Loading game resources \u00b7 63 / 164"
+            }
+          ]
+        }
+      ],
+      "verification_ms": 962.084,
+      "publication": {
+        "bytes": 36272366,
+        "files": 916,
+        "source_retired": true
+      },
+      "run_sha256": "20affa7e410cba306311bd88bd1b34dad291d537d7e2f6b1658d4088ac04fdf9",
+      "earthworks": {
+        "admission_retries": 0,
+        "capture_sample_bytes_high": 7471104,
+        "checkpoints": 111,
+        "completed": 7007,
+        "ok": true,
+        "resident_high": 2549,
+        "resident_limit": 16384,
+        "revision": 6458,
+        "storage": {
+          "region_reads": 664,
+          "reused_files": 0,
+          "reused_regions": 16849,
+          "workers": 1,
+          "written_bytes": 35115054,
+          "written_files": 221
+        },
+        "worker_ms": 8976.6072
+      },
+      "water_bake": {
+        "lakes": 12,
+        "milliseconds": 2755.301,
+        "ok": true,
+        "patches": 2455,
+        "peak_native_state_bytes": 79271816,
+        "regions": 2455,
+        "slices": 2456,
+        "snapshot_bytes": 42690700,
+        "status": 2,
+        "steps": 2504,
+        "water_ml": 27351242997
+      },
+      "photographs": [
+        {
+          "capture_ms": 677,
+          "loading_ms": 16438,
+          "vegetation_ms": 30,
+          "view": "north"
+        },
+        {
+          "capture_ms": 682,
+          "loading_ms": 1314,
+          "vegetation_ms": 1078,
+          "view": "road"
+        },
+        {
+          "capture_ms": 730,
+          "loading_ms": 1134,
+          "vegetation_ms": 1415,
+          "view": "market"
+        }
+      ],
+      "photograph_seconds": 23.498
+    }
+  ],
+  "world": {
+    "slot": "Emerald_Meadow",
+    "root_bytes": 43170851,
+    "root_sha256": "f6b8f026dfaca9c59d3655de98839bc639a446f5790e1ab3d006630e2e320cfa",
+    "outer_digest_valid": true,
+    "component_schema_validation": "not performed",
+    "sections": {
+      "actor_orders": {
+        "bytes": 16,
+        "prefix_hex": "54414f3101000000"
+      },
+      "chest_contents": {
+        "bytes": 26832,
+        "prefix_hex": "5446435304000000"
+      },
+      "combat": {
+        "bytes": 24,
+        "prefix_hex": "5446433103000000"
+      },
+      "door_hinges": {
+        "bytes": 8,
+        "prefix_hex": "5444523100000000"
+      },
+      "generated_region": {
+        "bytes": 85556,
+        "prefix_hex": "5447523101000000"
+      },
+      "ground_cover_edits_v1": {
+        "bytes": 64,
+        "prefix_hex": "474f554e44535431"
+      },
+      "harvested_trees": {
+        "bytes": 304,
+        "prefix_hex": "4841525645535431"
+      },
+      "location_baselines_v1": {
+        "bytes": 480,
+        "prefix_hex": "5446424901000000"
+      },
+      "map_markers_v1": {
+        "bytes": 16,
+        "prefix_hex": "54464d4b01000000"
+      },
+      "material_deposits_v1": {
+        "bytes": 2384,
+        "prefix_hex": "5447523101000000"
+      },
+      "pending_rewards": {
+        "bytes": 400,
+        "prefix_hex": "5446523120000000"
+      },
+      "pickup_stacks_1": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_101": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_102": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_103": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_104": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_2": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_201": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_202": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_203": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_204": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_205": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_206": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_207": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_208": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_209": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_210": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_211": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_212": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_213": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_214": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_215": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_216": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_217": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_218": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_219": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_3": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_301": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_302": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_303": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_304": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_305": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_306": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_4": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_401": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_5": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_501": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickup_stacks_6": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "pickups_1": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_101": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_102": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_103": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_104": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_2": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_201": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_202": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_203": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_204": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_205": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_206": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_207": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_208": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_209": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_210": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_211": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_212": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_213": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_214": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_215": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_216": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_217": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_218": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_219": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_3": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_301": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_302": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_303": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_304": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_305": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_306": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_4": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_401": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_5": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_501": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "pickups_6": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "player_equipment": {
+        "bytes": 16,
+        "prefix_hex": "5446435303000000"
+      },
+      "player_life": {
+        "bytes": 56,
+        "prefix_hex": "54464c3101000000"
+      },
+      "player_loadout": {
+        "bytes": 520,
+        "prefix_hex": "5446563320000000"
+      },
+      "player_pose": {
+        "bytes": 56,
+        "prefix_hex": "5446503101000000"
+      },
+      "player_progression": {
+        "bytes": 48,
+        "prefix_hex": "5446585001000000"
+      },
+      "player_quests": {
+        "bytes": 877,
+        "prefix_hex": "5446513102000000"
+      },
+      "player_survival": {
+        "bytes": 24,
+        "prefix_hex": "5446535301000000"
+      },
+      "road_anchors": {
+        "bytes": 0,
+        "prefix_hex": ""
+      },
+      "road_editor": {
+        "bytes": 48,
+        "prefix_hex": "5245533101000000"
+      },
+      "structures": {
+        "bytes": 2481,
+        "prefix_hex": "5446535201000000"
+      },
+      "terrain": {
+        "bytes": 40,
+        "prefix_hex": "5446545201000000"
+      },
+      "town_signs_v1": {
+        "bytes": 350,
+        "prefix_hex": "5447523101000000"
+      },
+      "trader_civic_01": {
+        "bytes": 536,
+        "prefix_hex": "5446545301000000"
+      },
+      "trader_ride_v1": {
+        "bytes": 96,
+        "prefix_hex": "5452443101000000"
+      },
+      "tree_groves_v1": {
+        "bytes": 8,
+        "prefix_hex": "4752563100000000"
+      },
+      "vehicles": {
+        "bytes": 0,
+        "prefix_hex": ""
+      },
+      "volumetric_water": {
+        "bytes": 42690700,
+        "prefix_hex": "5652573108000000"
+      },
+      "world_actors": {
+        "bytes": 24,
+        "prefix_hex": "5446453102000000"
+      },
+      "world_durability": {
+        "bytes": 8,
+        "prefix_hex": "5446443100000000"
+      },
+      "world_recipe_v1": {
+        "bytes": 40,
+        "prefix_hex": "5243503107000000"
+      },
+      "zombie_corpses_v1": {
+        "bytes": 48,
+        "prefix_hex": "54465a4301000000"
+      },
+      "zombie_population_v1": {
+        "bytes": 354932,
+        "prefix_hex": "545a503104000000"
+      }
+    },
+    "storage": {
+      "": {
+        "files": 1,
+        "bytes": 43170851,
+        "by_extension": {
+          ".trw": {
+            "files": 1,
+            "bytes": 43170851,
+            "median_bytes": 43170851
+          }
+        }
+      },
+      ".bak": {
+        "files": 1,
+        "bytes": 43170851,
+        "by_extension": {
+          ".bak": {
+            "files": 1,
+            "bytes": 43170851,
+            "median_bytes": 43170851
+          }
+        }
+      },
+      ".terrain": {
+        "files": 222,
+        "bytes": 35115054,
+        "by_extension": {
+          "": {
+            "files": 1,
+            "bytes": 0,
+            "median_bytes": 0
+          },
+          ".tindex": {
+            "files": 111,
+            "bytes": 2374896,
+            "median_bytes": 24124
+          },
+          ".tpack": {
+            "files": 110,
+            "bytes": 32740158,
+            "median_bytes": 252850.5
+          }
+        }
+      },
+      ".regions": {
+        "files": 69,
+        "bytes": 277576,
+        "by_extension": {
+          ".bak": {
+            "files": 1,
+            "bytes": 52,
+            "median_bytes": 52
+          },
+          ".lock": {
+            "files": 1,
+            "bytes": 0,
+            "median_bytes": 0
+          },
+          ".tfcp": {
+            "files": 1,
+            "bytes": 76,
+            "median_bytes": 76
+          },
+          ".tfrc": {
+            "files": 2,
+            "bytes": 6248,
+            "median_bytes": 3124.0
+          },
+          ".tfrg": {
+            "files": 64,
+            "bytes": 271200,
+            "median_bytes": 3276.0
+          }
+        }
+      },
+      ".models": {
+        "files": 619,
+        "bytes": 303098,
+        "by_extension": {
+          ".bak": {
+            "files": 17,
+            "bytes": 1428,
+            "median_bytes": 84
+          },
+          ".lock": {
+            "files": 23,
+            "bytes": 0,
+            "median_bytes": 0
+          },
+          ".tfcp": {
+            "files": 23,
+            "bytes": 1748,
+            "median_bytes": 76
+          },
+          ".tfmd": {
+            "files": 23,
+            "bytes": 61293,
+            "median_bytes": 507
+          },
+          ".tfrc": {
+            "files": 46,
+            "bytes": 50616,
+            "median_bytes": 228.0
+          },
+          ".tfrg": {
+            "files": 487,
+            "bytes": 188013,
+            "median_bytes": 245
+          }
+        }
+      },
+      ".water": {
+        "files": 1,
+        "bytes": 0,
+        "by_extension": {
+          ".lock": {
+            "files": 1,
+            "bytes": 0,
+            "median_bytes": 0
+          }
+        }
+      },
+      ".baselines": {
+        "files": 5,
+        "bytes": 576638,
+        "by_extension": {
+          ".baseline": {
+            "files": 5,
+            "bytes": 576638,
+            "median_bytes": 77434
+          }
+        }
+      }
+    },
+    "previews": {
+      "files": 3,
+      "bytes": 8171648,
+      "by_extension": {
+        ".png": {
+          "files": 3,
+          "bytes": 8171648,
+          "median_bytes": 2702639
+        }
+      }
+    },
+    "compression_experiment": [
+      {
+        "codec": "Python zlib 1.3.1.zlib-ng",
+        "level": 1,
+        "raw_bytes": 42690700,
+        "compressed_bytes": 13674948,
+        "encode_ms": 163.62139995908365,
+        "decode_ms": 89.25899997120723,
+        "byte_exact": true
+      },
+      {
+        "codec": "Python zlib 1.3.1.zlib-ng",
+        "level": 6,
+        "raw_bytes": 42690700,
+        "compressed_bytes": 10054682,
+        "encode_ms": 750.2435999922454,
+        "decode_ms": 109.33599999407306,
+        "byte_exact": true
+      }
+    ],
+    "root_unchanged": true
+  },
+  "loading": {
+    "source": "reports/menu_transition/20261102T144641939776Z/latency.json",
+    "source_sha256": "962b9e347497a1d9edba4830ed37b15bf0b67decd94db1a9f065d11606c7de79",
+    "sampled_phase_seconds": {
+      "selector": 0.14084,
+      "preview": 1.073831,
+      "opening": 31.543125999999962
+    },
+    "stages": {
+      "instantiate_ms": 21.044,
+      "ready_ms": 2302.931,
+      "resources_ms": 7002.108,
+      "slowest_resource": {
+        "ms": 1133.44,
+        "path": "res://addons/characters/runtime/assets/Human.r11.glb"
+      }
+    },
+    "startup": {
+      "Connecting actor services": 24.725,
+      "Connecting chest storage": 0.077,
+      "Connecting corpse storage": 0.134,
+      "Connecting ground cover storage": 0.091,
+      "Connecting pickup storage": 62.685,
+      "Connecting player interactions": 93.366,
+      "Connecting quests": 0.106,
+      "Connecting regional archive": 0.017,
+      "Connecting saved world components": 91.562,
+      "Connecting structure catalog": 0.012,
+      "Connecting structure registration": 0.219,
+      "Connecting terrain attachment": 44.172,
+      "Connecting terrain tools": 2.033,
+      "Connecting trader": 0.107,
+      "Connecting vegetation storage": 0.101,
+      "Connecting water": 0.051,
+      "Connecting water registration": 0.134,
+      "Connecting zombie population": 0.114,
+      "Initializing terrain and collision": 207.63,
+      "Preparing first-person character": 134.569,
+      "Preparing forest renderer": 583.261,
+      "Preparing ground cover and water": 167.314,
+      "Preparing world menus": 384.552,
+      "Registering building parts": 138.084,
+      "Registering doors and outdoor objects": 5.6,
+      "Registering furniture and storage": 46.702,
+      "Registering structure materials": 41.852,
+      "Starting world services": 0.011
+    },
+    "max_frame_ms": {
+      "opening": 309.931,
+      "preview": 93.063,
+      "selector": 91.15
+    },
+    "scope": "Retained harness observations; phase-boundary frames and yielding included. Not cold-cache or CPU-exclusive times."
+  }
+}

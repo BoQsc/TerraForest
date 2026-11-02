@@ -5,15 +5,23 @@ static var observations:Dictionary={}
 static func write(path:String,stage:String,completed:int=0,total:int=0,details:Dictionary={})->bool:
  if path.is_empty() or completed<0 or total<0 or (total>0 and completed>total):return false
  var now:=Time.get_ticks_usec()
- var activity:String=str(details.get("activity",stage))
- if not observations.has(path):observations[path]={"started":now,"stage":activity,"since":now,"timings":[]}
+ # Activity text includes counters/resource names. Timing it as separate stages
+ # exhausted the record budget before baking began. Aggregate stable stage names.
+ if not observations.has(path):observations[path]={"started":now,"stage":stage,"since":now,"timings":[],"dropped_us":0,"dropped_transitions":0}
  var profile:Dictionary=observations[path]
- if profile.stage!=activity:
-  if profile.timings.size()<64:profile.timings.append({"stage":profile.stage,"microseconds":now-int(profile.since)})
-  profile.stage=activity;profile.since=now
+ if profile.stage!=stage:
+  var elapsed:=now-int(profile.since)
+  var recorded:=false
+  for timing:Dictionary in profile.timings:
+   if timing.stage==profile.stage:
+    timing.microseconds+=elapsed;timing.visits+=1;recorded=true;break
+  if not recorded:
+   if profile.timings.size()<64:profile.timings.append({"stage":profile.stage,"microseconds":elapsed,"visits":1})
+   else:profile.dropped_us+=elapsed;profile.dropped_transitions+=1
+  profile.stage=stage;profile.since=now
  var file:=FileAccess.open(path+".pending",FileAccess.WRITE)
  if file==null:return false
- file.store_string(JSON.stringify({"stage":stage,"completed":completed,"total":total,"details":details,"elapsed_microseconds":now-int(profile.started),"stage_microseconds":now-int(profile.since),"timings":profile.timings}));file.close()
+ file.store_string(JSON.stringify({"timing_schema":2,"stage":stage,"completed":completed,"total":total,"details":details,"elapsed_microseconds":now-int(profile.started),"stage_microseconds":now-int(profile.since),"timings":profile.timings,"timings_dropped_microseconds":profile.dropped_us,"timings_dropped_transitions":profile.dropped_transitions}));file.close()
  return DirAccess.rename_absolute(path+".pending",path)==OK
 static func read(path:String)->Dictionary:
  var file:=FileAccess.open(path,FileAccess.READ) if FileAccess.file_exists(path) else null

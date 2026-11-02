@@ -1,0 +1,26 @@
+{
+  "git_head_at_audit": "788892f7f3a28efbf29bcd16a64a0b67a2649670",
+  "source_sha256": {
+    "addons/world_runtime/generation_progress.gd": "785e146067ee3b60b2470223a5bdbe67d6ecae8b080e12edab3407e3df7786af",
+    "addons/world_runtime/generation_coordinator.gd": "d0ac4664dbc670f5467b592c1d87e30b07d3dd6a6ad483a48123fedc52e5fb8c",
+    "addons/world_runtime/generate_world_task.gd": "702cbef2bf2a0d2e844d6202a452e203483919525efa964a0d59e14db5c93d3b",
+    "addons/world_runtime/startup_resources.gd": "83618b92675439befae1ffae18db0273e19dfe7eae63f1dd49e6acb148a7cea5",
+    "addons/world_runtime/world_session.gd": "71c969b3f1e7f0be1a603d5d9889a2c1e76e41c876f9da15f0c0a74b87945079",
+    "addons/world_runtime/native/world_publication.cpp": "4a3c8d7374e043af292aa6649da6bf7816c641f4aa57d227ac2b1bedb53446aa",
+    "addons/volumetric_water/native/water_region_store.hpp": "0d933a12559fd028a3ea9d6bc664ba1f5654896b22e9d0a68d1a82a2fa3278dd",
+    "addons/volumetric_terrain/terrain_stream.gd": "c5d67545d7f73355f79b39277ca0baa8f901147f257c1671cb3f4b7a9e146218",
+    "addons/world_ecosystem/world_ecosystem.gd": "85298f27600d497131c74353641a13ee7712b188bcd901a0bd0acbaca92c0e75",
+    "demo/world.gd": "0169cde2e5c4388521edb06577c52559d41ca3f21744a4f5e4eac8dd277aad90",
+    "tools/audit_world_startup.py": "7f7e39bc00b6e828a726abfb7a6c5916e8a91a5dbc417bdccc63107ffaa4e04f",
+    "tests/generation_progress.gd": "8b347fd5a0d2bb0ff5e735fd0979d9443f9fab0e15b69c737f72c4c75e996b41"
+  },
+  "scope": "Shared dirty checkout; runtime files owned by concurrent location-reset work were read only. Source hashes distinguish inspected files from retained historical timing receipts.",
+  "verification": {
+    "godot": "4.7.2.stable.steam.ed1daf0bf",
+    "generation_progress": "GENERATION_PROGRESS failures=0",
+    "python_unittest_cases": 6,
+    "python_unittest_result": "OK",
+    "exported": false,
+    "fresh_world_benchmark": false
+  }
+}

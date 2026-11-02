@@ -1,5 +1,25 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Generation/loading architecture audit — 2026-11-02
+
+[Measured findings, storage inspection and proposed implementation order](WORLD_STARTUP_ARCHITECTURE.md).
+Four retained seed-1703 runs spend 70.82–93.25 s creating, including 23.50–25.93 s
+loading/capturing preview locations. Current first-play gates include whole-map
+terrain, 1,024 forest owners and world-wide distant visuals. The audited root is
+43.17 MB, 98.89% inline water despite regional terrain/building references.
+The source timing logger now aggregates stable stages and exposes overflow;
+its isolated Godot regression and six read-only archive-audit tests pass.
+No user save changed, no runtime performance behavior changed, and no export ran.
+
+Open: export/collect complete controlled generation-to-play traces, define local
+safe-entry plus cached-horizon acceptance, finish generated-water region storage,
+separate data building from presentation, and measure packed/incremental saves.
+These require coordinated runtime work after the current location-reset edits,
+matched repeated cold/warm package evidence, exact fresh-process save recovery,
+bounded memory and collision/visible-world qualification. This is diagnosis and
+a tested observability correction, not a completed speedup or a relaxed readiness
+standard. Existing seed-admission and visual acceptance failures remain open.
+
 ## Door height and world entry — 2026-11-02
 
 The shared city/civic authoring helper used a 2.75 m door and a three-cell cut.
