@@ -100,7 +100,7 @@ func _ready() -> void:
 	button(session,"Load saved world",func():confirm("Discard unsaved changes and reload?",reload_world))
 	button(session,"Headlamp on / off",func():game.headlamp.toggle();refresh())
 	entry_fly_in_toggle=CheckButton.new();entry_fly_in_toggle.text="World entry fly-in (3 seconds)"
-	entry_fly_in_toggle.tooltip_text="Start above the world and descend into first person after loading. Space skips. Covered indoor spawns enter directly. Applies on the next world load."
+	entry_fly_in_toggle.tooltip_text="Start above the world after loading, then enter first person and play waking when applicable. Indoor arrivals fade into the character view. Space skips. Applies on the next world load."
 	entry_fly_in_toggle.toggled.connect(game.player_view.entry.set_enabled);player.add_child(entry_fly_in_toggle)
 	third_person_toggle=CheckButton.new();third_person_toggle.text="Third-person camera"
 	third_person_toggle.toggled.connect(game.player_view.set_enabled);player.add_child(third_person_toggle)

@@ -1,5 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Door height and world entry — 2026-11-02
+
+The shared city/civic authoring helper used a 2.75 m door and a three-cell cut.
+Production prefabs, future baking and player placement now use a 2 m door with
+matching independent lintel cells. All 15 normal city/E2 buildings pass native
+publication, size, clearance and lintel checks; matched renders were inspected.
+Existing saves retain their independently authored cells and transforms. Any
+retrofit requires an edit-preserving migration and saved-world roundtrip evidence;
+no automatic migration is implemented or claimed. [Door issue](../issues/door-height/README.md).
+
+The newer upstairs wake-up bypassed the fly-in, while indoor resumes also skipped
+it. The user requested fly-in followed by waking. The corrected sequence approaches
+the exterior roof, fades to the saved eye and plays waking once; focus loss pauses
+flight. The actual upstairs-world source check passes with its first-entry flag
+rearmed in memory only; source save hash is unchanged. Installed executable checks pass: 75 entry assertions across browser, populated
+reload and upstairs room; 48 door assertions and all building export gates pass.
+Door correction commit: `c35fe875`. User motion review and the older performance investigation remain open.
+[Entry issue](../issues/world-entry-fly-in/README.md).
+
 ## Recent-request follow-through — 2026-11-02
 
 Verified commits: `26c5132b` startup/prebakes; `7d9c9e64` player lifecycle.

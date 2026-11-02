@@ -137,4 +137,4 @@ func _process(delta:float)->void:
 func _notification(what:int)->void:
 	if what==NOTIFICATION_WM_WINDOW_FOCUS_OUT and not ProjectSettings.get_setting("terraforest/offscreen_session",false):
 		entry.held_buttons=0
-		entry.finish()
+		if entry.waking:entry.finish()

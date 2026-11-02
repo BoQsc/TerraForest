@@ -1,8 +1,8 @@
 # World entry fly-in
 
-- Status: Installed; exact executable passes 49 checks. User motion review and deferred performance work remain open.
-- Source: `d34557e0`; main integration: `4fbca4e9`.
-- Updated: 2026-11-01.
+- Status: Fixed for reproduced entry/waking cases; installed executable passes 75 checks. User motion review and older performance work remain open.
+- Original implementation: `d34557e0`; original integration: `4fbca4e9`. Entry/waking correction accompanies this 2026-11-02 update.
+- Updated: 2026-11-02.
 - User review: Enabled-by-default preference approved; motion and images not reviewed.
 - Request: An optional three-second descent from above the world into the current player's first-person camera after world loading.
 
@@ -11,9 +11,11 @@
 ESC → Player → **World entry fly-in (3 seconds)**. Enabled by default, saved in
 `user://player_view.cfg` independently of world saves. The next ordinary world load
 runs the entry after terrain, forest, buildings and physical spawn are ready.
-Space skips; Escape ends the entry and opens the ordinary pause menu. Opening
-inventory/map or losing focus also ends it. Indoor/cave and submerged spawns enter
-directly. Enabling the setting mid-session takes effect at the next world load.
+Space skips the flight and still starts pending waking; Escape opens the ordinary
+pause menu, deferring pending waking until it closes. Flight pauses on focus loss.
+Indoor/cave and submerged arrivals approach above the exterior surface, fade out,
+then reveal the saved character view. Enabling the setting mid-session takes effect
+at the next world load. Respawn retains its direct wake-up sequence.
 The entry ends in first person for that session; it does not erase a stored
 third-person preference. Disable entry to retain that preference on every load.
 
@@ -23,6 +25,38 @@ interaction, player movement, survival and nearby actor simulation are suspended
 for the entry. Near collision/ecology stay at the player; remote rendering uses
 the existing overview path. The camera is freed and its processing stops afterward.
 Tools/offscreen/temporary diagnostics opt out unless given `--entry-fly-in`.
+
+## Missing entry / waking correction — 2026-11-02
+
+The new upstairs introduction set `wake_pending`, and `begin()` returned directly
+to waking before creating the fly-in camera. Subsequent indoor reloads also bypassed
+the flight at the roof guard. The user explicitly requested fly-in followed by
+waking. The revised sequence uses a bounded top-down exterior roof query and a
+fade into the saved eye, then consumes waking once. Camera progress measures
+visible frame time, so focus loss and loading stalls cannot consume it unseen.
+
+Earlier failed checks remain in `reports/entry_fly_in_pack`: async startup made
+the old harness inspect unbuilt menu controls and change offscreen eligibility
+before later saved-pose rearming. The harness now waits for the actual entry owner,
+verifies ordinary eligibility, and opts its later offscreen rearming in explicitly.
+An isolated repeat-wake test also needed to arm a new entry before testing Space.
+These failures are retained rather than counted as passing feature evidence.
+
+Final installed check: **75/75** across browser entry (31), populated read-only
+reload (30), and the actual upstairs room (14). [Receipt](../../reports/entry_fly_in_pack/20261102T195333848002Z/run.json).
+Pack SHA-256: `cb2b9313a8406ecdfa17ab73aa48ad86907d946fda98d32f2c20e7838eb58e00`;
+all 14 external native libraries match. Source waking isolation also passes 25/25.
+The upstairs test re-arms only the in-memory waking bit after genuine restoration;
+previously played saves had consumed it. An earlier copy-only fixture failed because
+regional archives depend on external owner files; it was discarded and the verified
+test copy removed. Original save hashes remain unchanged.
+
+![Installed exterior approach](images/indoor-roof-approach.png)
+Actual saved upstairs building: the camera remains above its roof before the fade.
+
+![Installed first-person return](images/indoor-ready.png)
+Same saved position after one fly-in and one wake-up, with the selected tool returned.
+These images were inspected; motion approval and foreground performance are separate.
 
 ## Verification / images
 

@@ -14,12 +14,15 @@ from run import ROOT
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project", type=Path, default=ROOT)
+    parser.add_argument("--source", action="store_true", help="Check current source before exporting")
+    parser.add_argument("--wake-slot", help="Read-only upstairs introduction fixture")
+    parser.add_argument("--case", choices=["browser", "populated", "upstairs"])
     args = parser.parse_args()
     root = args.project.resolve()
     checks.ROOT = root
-    native = checks.verify_pack_native(root)
+    native = checks.verify_pack_native(root) if not args.source else {}
     pack = root / "dist/TerraForest.pck"
-    engine = root / "TerraForest.exe"
+    engine = Path(checks.parse_args([])[0].godot) if args.source else root / "TerraForest.exe"
     if not engine.is_file():
         parser.error("Installed TerraForest.exe is required")
     pack_hash = hashlib.sha256(pack.read_bytes()).hexdigest()
@@ -30,14 +33,22 @@ def main():
     driver = folder / source.name
     driver.write_bytes(source.read_bytes())
     records = []
-    for label, extra in (("browser", ["--entry-browser"]),
-                         ("populated", ["--entry-slot=Exploration_1703_8f8d4c8f", "--entry-video"])):
+    cases = [("browser", ["--entry-browser"]),
+             ("populated", ["--entry-slot=Exploration_1703_8f8d4c8f", "--entry-video"])]
+    if args.wake_slot:
+        cases.append(("upstairs", ["--entry-slot=" + args.wake_slot, "--entry-wakeup"]))
+    if args.case:
+        cases = [case for case in cases if case[0] == args.case]
+        if not cases:
+            parser.error("The upstairs case requires --wake-slot")
+    for label, extra in cases:
         output = folder / label
         output.mkdir()
         command, cache = checks.command_for(engine, "entry_fly_in", output,
                                            [*extra, "--entry-output=" + output.as_posix()])
-        command[1:1] = ["--main-pack", str(pack)]
-        command[command.index("--path") + 1] = str(root / "dist")
+        if not args.source:
+            command[1:1] = ["--main-pack", str(pack)]
+            command[command.index("--path") + 1] = str(root / "dist")
         command[command.index("--script") + 1] = str(driver)
         command[command.index("--fullscreen")] = "--windowed"
         command[1:1] = ["--position", "-2400,-1600"]
@@ -59,9 +70,9 @@ def main():
         print(("PASS " if result["passed"] else "FAIL ") + label, flush=True)
         if not result["passed"]:
             break
-    passed = len(records) == 2 and all(row["passed"] for row in records)
+    passed = len(records) == len(cases) and all(row["passed"] for row in records)
     passed = passed and hashlib.sha256(pack.read_bytes()).hexdigest() == pack_hash
-    record = dict(passed=passed, tests=records, pack_sha256=pack_hash, native_sha256=native,
+    record = dict(passed=passed, source=args.source, tests=records, pack_sha256=pack_hash, native_sha256=native,
                   engine_sha256=hashlib.sha256(engine.read_bytes()).hexdigest(),
                   test_sha256=hashlib.sha256(driver.read_bytes()).hexdigest())
     (folder / "run.json").write_text(json.dumps(record, indent=2), encoding="utf-8")

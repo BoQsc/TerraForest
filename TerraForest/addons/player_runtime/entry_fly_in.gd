@@ -13,6 +13,9 @@ var elapsed:=0.0
 var started_usec:=0
 var camera:Camera3D
 var start_offset:=Vector3.ZERO
+var arrival_offset:=Vector3.ZERO
+var fade:ColorRect
+var fly_before_wake:=true
 var fog_density:=0.0
 var overlay:CanvasLayer
 var hidden:Array[Node]=[]
@@ -47,6 +50,7 @@ func set_enabled(value:bool,persist:bool=true)->void:
 
 func arm()->void:
 	finish()
+	fly_before_wake=true
 	var args:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	# Tools and offscreen jobs retain their established camera, unless a check opts in.
 	var diagnostic:bool=game.temporary_world or game.benchmark_enabled or ProjectSettings.get_setting("terraforest/offscreen_session",false)
@@ -67,7 +71,7 @@ func consume(event:InputEvent)->bool:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode in [KEY_ESCAPE,KEY_TAB,KEY_M]:
 			finish();return false # The ordinary UI owner receives its opening key.
-		if event.physical_keycode==KEY_SPACE:finish()
+		if event.physical_keycode==KEY_SPACE:finish(true)
 	return event is InputEventKey or event is InputEventMouse
 
 func _unavailable()->bool:
@@ -77,7 +81,8 @@ func step(_delta:float)->void:
 	if pending:
 		if _unavailable():
 			if not game.loading_active:game.loading_layer.hide()
-			pending=false;view.refresh_processing();return
+			if game.shutdown_requested:pending=false;view.refresh_processing()
+			return
 		if game.loading_active:return
 		# The floor snap runs on the next physics tick after loading. Keep the
 		# existing cover for that tick so first person never flashes before entry.
@@ -89,8 +94,10 @@ func step(_delta:float)->void:
 		view.refresh_processing()
 		return
 	if not active:return
+	# An unfocused loading window must not consume the presentation unseen.
+	if not game.app_focused and not waking:
+		held_buttons=0;return
 	if _unavailable() or not game.app_focused or game.loading_active or (not enabled and not waking):
-		if not game.app_focused:held_buttons=0
 		finish();return
 	if waking:
 		elapsed=minf(5.0,elapsed+minf(_delta,.1))
@@ -102,22 +109,26 @@ func step(_delta:float)->void:
 			human.animation_player.advance(minf(_delta,.1))
 		if elapsed>=5.0:finish()
 		return
-	elapsed=minf(DURATION,(Time.get_ticks_usec()-started_usec)/1000000.0)
-	if elapsed>=DURATION:finish();return
+	# Advance visible animation time; loading/render stalls cannot eat the flight.
+	elapsed=minf(DURATION,elapsed+minf(_delta,.1))
+	if elapsed>=DURATION:present(1.0);finish(true);return
 	present(elapsed/DURATION)
 
 func begin()->bool:
 	if game.loading_active or game.waiting_spawn or game.needs_floor_spawn or _unavailable():return false
-	if wake_pending:return begin_wake()
+	if wake_pending and (not enabled or not fly_before_wake):return begin_wake()
 	if not enabled:return false
-	# Indoors/underground resumes go straight to the saved first-person view.
 	var eye:Vector3=game.camera.global_position
-	if game.lakes.depth_at(eye)>0:return false
+	arrival_offset=Vector3.ZERO
+	if game.lakes.depth_at(eye)>0:
+		arrival_offset=Vector3.UP*(game.lakes.depth_at(eye)+2.5)
 	# Native authored-cell rays have a 256 m cap. Two bounded segments cover the
-	# vertical world column without admitting any distant collision residency.
-	for height:float in [0.0,240.0]:
-		var roof:Dictionary=game.structures.blocks.raycast_scene(eye+Vector3.UP*height,eye+Vector3.UP*(height+240),15|(1<<18),[game.player.get_rid()])
-		if not roof.is_empty():return false
+	# column from above, finding the exterior roof rather than its underside.
+	for height:float in [480.0,240.0]:
+		var roof:Dictionary=game.structures.blocks.raycast_scene(eye+Vector3.UP*height,eye+Vector3.UP*(height-240),15|(1<<18),[game.player.get_rid()])
+		if not roof.is_empty():
+			arrival_offset.y=maxf(arrival_offset.y,roof.position.y-eye.y+2.5)
+			break
 	view.set_overview(false);view.set_enabled(false,false)
 	game._clear_motion();game.pointer.hide()
 	active=true;elapsed=0.0;started_usec=Time.get_ticks_usec();starts+=1
@@ -137,6 +148,9 @@ func begin()->bool:
 	for node:Node in [game.player_hud,game.help.get_parent(),game.destination_guide]:
 		if node!=null and node.visible:hidden.append(node);node.hide()
 	overlay=CanvasLayer.new();overlay.layer=39;game.add_child(overlay)
+	if arrival_offset!=Vector3.ZERO:
+		fade=ColorRect.new();fade.color=Color(0,0,0,0);fade.mouse_filter=Control.MOUSE_FILTER_IGNORE
+		overlay.add_child(fade);fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var hint:=Label.new();hint.text="Entering world · Space to skip";hint.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	hint.mouse_filter=Control.MOUSE_FILTER_IGNORE;hint.add_theme_font_size_override("font_size",20)
 	overlay.add_child(hint);hint.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -157,6 +171,7 @@ func begin_wake()->bool:
 
 func arm_respawn()->void:
 	wake_pending=true;arm()
+	fly_before_wake=false # Death keeps its existing immediate waking presentation.
 
 func return_wake_item()->void:
 	game.tool_view.equip(wake_item)
@@ -173,13 +188,15 @@ static func offset_at(start:Vector3,progress:float,backward:Vector3)->Vector3:
 
 func present(progress:float)->void:
 	var eye:Vector3=game.camera.global_position
-	var offset:=offset_at(start_offset,progress,game.player.global_basis.z)
+	var target:=eye+arrival_offset
+	var offset:=offset_at(start_offset-arrival_offset,progress,game.player.global_basis.z)
 	# Only query loaded near-player geometry; aerial rendering never requests physics.
 	if offset.length()<48.0 and offset.length()>.25:
-		var hit:Dictionary=game.structures.blocks.raycast_scene(eye,eye+offset,15|(1<<18),[game.player.get_rid()])
-		if not hit.is_empty():finish();return
-	var looking:=Basis.looking_at(-offset,game.player.global_basis.z if Vector2(offset.x,offset.z).length()<.001 else Vector3.UP)
-	camera.global_transform=Transform3D(looking.slerp(game.camera.global_basis,smoothstep(.84,1.0,progress)),eye+offset)
+		var hit:Dictionary=game.structures.blocks.raycast_scene(target,target+offset,15|(1<<18),[game.player.get_rid()])
+		if not hit.is_empty():offset=(hit.position-target)*.85
+	var looking:Basis=Basis.looking_at(-offset,game.player.global_basis.z if Vector2(offset.x,offset.z).length()<.001 else Vector3.UP) if offset.length_squared()>.000001 else game.camera.global_basis
+	camera.global_transform=Transform3D(looking.slerp(game.camera.global_basis,smoothstep(.84,1.0,progress)),target+offset)
+	if is_instance_valid(fade):fade.color.a=smoothstep(.78,1.0,progress)
 	camera.fov=game.camera.fov;camera.far=maxf(3300,camera.global_position.distance_to(Vector3(1024,128,1024))+1600)
 	camera.cull_mask=game.camera.cull_mask
 	if offset.length()<.85:camera.cull_mask&=~PLAYER_LAYER
@@ -188,7 +205,7 @@ func present(progress:float)->void:
 	game.terrain.render_view=camera.global_position
 	game.terrain.render_projection_scale=clampf(camera.get_viewport().get_visible_rect().size.y/1080.0*tan(deg_to_rad(75.0)*.5)/tan(deg_to_rad(camera.fov)*.5),.25,2.0)
 
-func finish()->void:
+func finish(continue_entry:bool=false)->void:
 	if not active:return
 	var finished_waking:=waking
 	if waking:
@@ -201,8 +218,19 @@ func finish()->void:
 	game._clear_motion()
 	for node:Node in hidden:if is_instance_valid(node):node.show()
 	hidden.clear()
-	if is_instance_valid(overlay):overlay.queue_free()
+	if is_instance_valid(overlay):
+		if continue_entry and is_instance_valid(fade):
+			var ending:=overlay
+			for child:Node in ending.get_children():
+				if child!=fade:child.queue_free()
+			var reveal:=game.create_tween();reveal.tween_property(fade,"color:a",0.0,.3)
+			reveal.tween_callback(ending.queue_free)
+		else:overlay.queue_free()
 	if is_instance_valid(camera):camera.queue_free()
-	overlay=null;camera=null
+	overlay=null;camera=null;fade=null
+	if not finished_waking and wake_pending:
+		fly_before_wake=false
+		if continue_entry:begin_wake()
+		else:pending=true
 	view.refresh_processing()
 	if finished_waking:wake_finished.emit()

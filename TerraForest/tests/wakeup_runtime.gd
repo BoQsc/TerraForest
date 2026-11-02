@@ -33,6 +33,7 @@ func run()->void:
 	game.tool_view=preload("res://addons/player_runtime/tool_view.gd").new();game.camera.add_child(game.tool_view)
 	var view:=View.new();game.add_child(view)
 	var entry=preload("res://addons/player_runtime/entry_fly_in.gd").new();entry.game=game;entry.view=view
+	entry.enabled=false # Isolate waking; world-entry tests cover the preceding flight.
 	entry.wake_finished.connect(func():completed+=1)
 	for item:int in [0,1,2,3,6,8,405]:
 		game.player_hud.active_item=item;entry.wake_pending=true

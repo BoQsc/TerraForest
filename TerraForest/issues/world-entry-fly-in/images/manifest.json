@@ -50,6 +50,36 @@
       "world": "Exploration_1703_8f8d4c8f",
       "pack_sha256": "4295d8f9717cda70175cba36671fc10b259f39e0b8b6454f2fed6211d3a14afe",
       "provenance": "Runtime evidence, inherited content licenses retained. Video encoded with external FFmpeg9.0.2 from original timestamped frames, no retouching."
+    },
+    {
+      "file": "indoor-roof-approach.png",
+      "source": "reports/entry_fly_in_pack/20261102T195333848002Z/upstairs/02_roof_approach.png",
+      "sha256": "e4e010f2ae62b73283e2f2d58877dca1f23b45e09d02003bfdda606ae9bfc357",
+      "caption": "Installed package, actual saved upstairs room; first-entry waking flag rearmed in memory for verification. 02_roof_approach.png",
+      "world": "Expedition_1703_90a67059",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; offscreen native screenshot, no retouching",
+      "provenance": "Existing project asset licenses retained; documentation evidence excluded from game export."
+    },
+    {
+      "file": "indoor-waking.png",
+      "source": "reports/entry_fly_in_pack/20261102T195333848002Z/upstairs/03_waking.png",
+      "sha256": "4b40e2a455d4086e32a018d56c990dff3f867f3cd4af66dafe2caec985ccfe5f",
+      "caption": "Installed package, actual saved upstairs room; first-entry waking flag rearmed in memory for verification. 03_waking.png",
+      "world": "Expedition_1703_90a67059",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; offscreen native screenshot, no retouching",
+      "provenance": "Existing project asset licenses retained; documentation evidence excluded from game export."
+    },
+    {
+      "file": "indoor-ready.png",
+      "source": "reports/entry_fly_in_pack/20261102T195333848002Z/upstairs/04_upstairs_ready.png",
+      "sha256": "f84d594c73069445af24aff204722504d733ef733166c69f883baab1e5e42641",
+      "caption": "Installed package, actual saved upstairs room; first-entry waking flag rearmed in memory for verification. 04_upstairs_ready.png",
+      "world": "Expedition_1703_90a67059",
+      "seed": 1703,
+      "capture": "Godot 4.7.2 Vulkan Forward+, 1920x1080; offscreen native screenshot, no retouching",
+      "provenance": "Existing project asset licenses retained; documentation evidence excluded from game export."
     }
   ]
 }
