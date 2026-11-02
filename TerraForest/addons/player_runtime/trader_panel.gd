@@ -19,6 +19,12 @@ var towns: OptionButton
 var reserve: Button
 var cancel: Button
 var travel_info: Label
+var quests:Node
+var trade_panel:VBoxContainer
+var quest_panel:VBoxContainer
+var quest_text:Label
+var quest_button:Button
+var quest_error:=""
 
 func _ready() -> void:
 	layer = 30
@@ -33,10 +39,20 @@ func _ready() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 15)
 	panel.add_child(column)
-	var title := Label.new()
+	var header:=HBoxContainer.new();column.add_child(header)
+	var title := Label.new();title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	title.text = "TRADER / GENERAL SUPPLIES"
 	title.add_theme_font_size_override("font_size", 28)
-	column.add_child(title)
+	header.add_child(title)
+	var dismiss:=Button.new();dismiss.text="X";dismiss.custom_minimum_size=Vector2(44,44);dismiss.pressed.connect(close);header.add_child(dismiss)
+	var modes:=HBoxContainer.new();column.add_child(modes)
+	for mode:String in ["Quests","Trade"]:
+		var button:=Button.new();button.text=mode;button.custom_minimum_size=Vector2(200,44);modes.add_child(button)
+		button.pressed.connect(func():select_mode(mode))
+	quest_panel=VBoxContainer.new();column.add_child(quest_panel)
+	quest_text=Label.new();quest_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quest_text.custom_minimum_size=Vector2(940,220);quest_panel.add_child(quest_text)
+	quest_button=Button.new();quest_button.custom_minimum_size.y=48;quest_button.pressed.connect(quest_action);quest_panel.add_child(quest_button)
+	trade_panel=VBoxContainer.new();column.add_child(trade_panel);column=trade_panel
 	balance = Label.new(); column.add_child(balance)
 	var welcome := Label.new()
 	welcome.text = "Welcome. I buy resources and sell building supplies, food and reading material.\nStock and coins are finite. Prices below are per item."
@@ -64,7 +80,32 @@ func _ready() -> void:
 func open_for(merchant: RefCounted, player_inventory: RefCounted, reach_check: Callable) -> bool:
 	if not reach_check.is_valid() or not reach_check.call(): return false
 	trader = merchant; inventory = player_inventory; permitted = reach_check
-	opened = true; panel.show(); refresh(); rows.grab_focus(); return true
+	quest_error=""
+	opened = true; panel.show(); refresh(); select_mode("Quests" if is_instance_valid(quests) and quests.store.snapshot().introduction>0 else "Trade"); return true
+
+func select_mode(mode:String)->void:
+	trade_panel.visible=mode=="Trade";quest_panel.visible=mode=="Quests"
+	refresh_quests()
+	if trade_panel.visible:rows.grab_focus()
+	else:quest_button.grab_focus()
+
+func refresh_quests()->void:
+	if not is_instance_valid(quests):return
+	var state:Dictionary=quests.store.snapshot()
+	quest_text.text=quests.description()+("\n\n"+quest_error if not quest_error.is_empty() else "")
+	quest_button.visible=state.introduction in [2,3]
+	var loading_car:bool=is_instance_valid(ride) and state.phase!=4 and not ride.game.world_vehicle.scene_ready()
+	quest_button.disabled=loading_car or (is_instance_valid(ride) and ride.active())
+	quest_button.text="Collect reward" if state.phase==4 else "Accept expedition · supplies & free ride" if state.introduction==2 else "Return to the coal mine · free ride"
+	if loading_car:quest_button.text="Preparing the trader's car…"
+
+func quest_action()->void:
+	if not opened or not is_instance_valid(quests):return
+	if not permitted.is_valid() or not permitted.call():close();return
+	quest_error=""
+	var result:Dictionary=quests.claim() if quests.store.snapshot().phase==4 else quests.start_expedition()
+	if not result.ok:quest_error=str(result.reason)
+	refresh_quests()
 
 func refresh() -> void:
 	var selected := rows.get_selected_items()

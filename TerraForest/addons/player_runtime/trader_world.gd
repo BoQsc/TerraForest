@@ -20,7 +20,7 @@ func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	return trader.register_persistence(persistence) and ride.prepare(self,persistence)
 
 func _ready()->void:
-	add_child(ride);ui.ride=ride
+	add_child(ride);ui.ride=ride;ui.quests=game.quests
 	add_child(ui)
 	ui.closed.connect(_closed)
 	ui.traded.connect(func():game.terrain.changed_since_save=true;game.player_hud.refresh())
@@ -42,6 +42,8 @@ func reachable()->bool:
 func try_open(target:Dictionary)->bool:
 	if not aimed(target) or not allowed() or game.player_hud.inventory_open:return false
 	if not ui.open_for(trader,game.player_hud.inventory,reachable):return false
+	game.quests.talk();ui.refresh_quests()
+	if game.quests.store.snapshot().introduction in [2,3]:game.world_vehicle.request_scene()
 	prior_mouse=Input.mouse_mode;game._clear_motion()
 	game.player_hud.inventory_open=true;game.player_hud.enabled=false
 	Mouse.set_mode(game,Input.MOUSE_MODE_VISIBLE)

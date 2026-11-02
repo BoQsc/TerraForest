@@ -1,8 +1,76 @@
 # SPDX-License-Identifier: 0BSD
-extends RefCounted
+extends Node
 var store:RefCounted
+var game:Node
+var elapsed:=0.0
+var tracked_key:=0
+var tracked_cycle:=-1
+var identities:=PackedInt64Array()
 
-func prepare(game:Node,persistence:RefCounted)->bool:
+func prepare(owner_game:Node,persistence:RefCounted)->bool:
+	game=owner_game
 	store=ClassDB.instantiate("NativeQuestLog")
 	if store==null or not store.configure(game.player_hud.inventory,preload("res://addons/player_runtime/trader_inventory.gd").CURRENCY):return false
 	return persistence.register_component("player_quests",store.capture_storage_snapshot,store.restore_storage_snapshot,store,PackedByteArray())
+
+func _process(delta:float)->void:
+	elapsed-=delta
+	if elapsed>0 or game.loading_active or game.shutdown_requested:return
+	elapsed=.5
+	var state:Dictionary=store.snapshot()
+	if state.phase==3:
+		if tracked_key!=state.key or tracked_cycle!=state.cycle:
+			tracked_key=state.key;tracked_cycle=state.cycle
+			identities=game.zombies.population.store.authored_identities(state.location.residents)
+		for index in identities.size():
+			var resident:Dictionary=game.zombies.population.store.resident(identities[index])
+			if resident.get("anchor",0)!=state.location.residents[index]:continue
+			if resident.get("state",0)==2:store.record_defeated(resident.anchor,state.cycle)
+		if store.snapshot().revision!=state.revision:game.terrain.changed_since_save=true
+	game.player_hud.quests_notice.text=description()
+	game.destination_guide.refresh()
+	if game.trader.ui.opened:game.trader.ui.refresh_quests()
+
+func description()->String:
+	var state:Dictionary=store.snapshot()
+	match int(state.introduction):
+		1:return "A friendly face\nTalk to the trader. Follow the gold quest marker on your map and compass."
+		2:return "Coal-mine expedition\nAsk the trader about Quests. He provides a torch, automatic rifle, ammunition and a return ride."
+		3:
+			return "Coal-mine expedition\nClear the mine: %d / %d zombies.\nThe trader waits at the car. Return whenever you want, even with the quest unfinished."%[state.defeated,state.target_count] if state.phase==3 else "Coal-mine expedition complete\nReturn to the trader to collect your reward. The car is waiting."
+		4:return "Coal-mine expedition completed."
+	return "No active quest."
+
+func marker()->Dictionary:
+	var state:Dictionary=store.snapshot()
+	if state.introduction in [1,2] or (state.introduction==3 and state.phase==4):
+		var point:Vector3=game.trader.ride.spawn_position()
+		if point.is_finite():return {"position":point,"title":"Talk to trader" if state.introduction==1 else "Trader · quests","quest":true}
+	if state.introduction==3 and state.phase==3:
+		return {"position":state.location.marker,"title":"Coal mine · %d / %d"%[state.defeated,state.target_count],"quest":true}
+	return {}
+
+func talk()->void:
+	var state:Dictionary=store.snapshot()
+	if state.introduction==1 and store.talk_to_trader(state.revision).ok:game.terrain.changed_since_save=true
+
+func start_expedition()->Dictionary:
+	if not game.trader.reachable():return {"ok":false,"reason":"Approach the trader first."}
+	var state:Dictionary=store.snapshot()
+	if state.introduction not in [2,3]:return {"ok":false,"reason":"No expedition is available."}
+	for location:Dictionary in store.get_locations():
+		if location.layout!="coal_mine" or (state.introduction==3 and state.key!=location.key):continue
+		var offer:Dictionary=game.trader.ride.expedition_offer(location)
+		if offer.is_empty():continue
+		return game.trader.ride.book_expedition(offer,location.key)
+	return {"ok":false,"reason":"No safe connected road stop near a coal-mine entrance is available."}
+
+func claim()->Dictionary:
+	if not game.trader.reachable():return {"ok":false,"reason":"Approach the trader first."}
+	var hud:Node=game.player_hud
+	var result:Dictionary=store.claim(hud.reward_inbox,hud.progression,store.snapshot().revision)
+	if result.ok:
+		hud.deliver_mining_rewards();hud.refresh();hud.progression_changed.emit()
+		if hud.resource_feed!=null:hud.resource_feed.gain_experience(result.gained,result.level)
+		game.terrain.changed_since_save=true
+	return result

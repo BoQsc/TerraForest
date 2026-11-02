@@ -106,4 +106,36 @@ func _initialize()->void:
 	maximum.accept(1,maximum.snapshot().revision);var full_cycle:Dictionary=maximum.begin_reset(maximum.snapshot().revision);maximum.finish_reset(full_cycle.cycle,true,maximum.snapshot().revision)
 	for target in definitions[0].residents:maximum.record_defeated(target,full_cycle.cycle)
 	check(maximum.snapshot().phase==4 and maximum.snapshot().defeated==32 and maximum.validate_snapshot(maximum.capture_storage_snapshot()),"all 32 objective bits including the unsigned high bit survive binary validation")
+	check_introduction()
 	print("QUESTS_NATIVE checks=",checks," failures=",failures);quit(1 if failures else 0)
+
+func check_introduction()->void:
+	for identity:int in [6,8,223,999]:inventory.register_item(identity,999 if identity in [223,999] else 1)
+	var intro:=make_store();var mine:=location();mine.layout="coal_mine"
+	check(not intro.initialize_introduction(intro.snapshot().revision).ok,"introduction requires a generated coal mine")
+	intro.register_locations(1703,[mine])
+	check(intro.initialize_introduction(intro.snapshot().revision).ok and intro.snapshot().introduction==1,"new world starts with talk-to-trader objective")
+	check(not intro.accept_first_visit(1,inventory,intro.snapshot().revision,inventory.snapshot().revision).ok,"supplies require actually talking to trader")
+	var bytes:PackedByteArray=intro.capture_storage_snapshot();var reopened:=make_store()
+	check(bytes.decode_u32(4)==2 and reopened.restore_storage_snapshot(bytes) and reopened.snapshot().introduction==1,"introduction survives binary save/reopen")
+	check(reopened.talk_to_trader(reopened.snapshot().revision).ok and not reopened.talk_to_trader(reopened.snapshot().revision).ok,"talk advances once")
+	var full:Dictionary=inventory.snapshot()
+	for index in full.slots.size():full.slots[index]={"item":999,"count":999}
+	inventory.restore(full,inventory.snapshot().revision)
+	var before:PackedByteArray=inventory.capture_storage_snapshot()
+	check(not reopened.accept_first_visit(1,inventory,reopened.snapshot().revision,inventory.snapshot().revision).ok and inventory.capture_storage_snapshot()==before and reopened.snapshot().introduction==2,"full backpack grants no partial kit or quest")
+	for index in full.slots.size():full.slots[index]={"item":0,"count":0}
+	inventory.restore(full,inventory.snapshot().revision)
+	check(not reopened.accept_first_visit(1,inventory,reopened.snapshot().revision,inventory.snapshot().revision-1).ok,"stale inventory rejects starter grant")
+	check(reopened.accept_first_visit(1,inventory,reopened.snapshot().revision,inventory.snapshot().revision).ok,"torch rifle and ammo granted atomically")
+	var counts:Dictionary={}
+	for slot:Dictionary in inventory.snapshot().slots:counts[slot.item]=int(counts.get(slot.item,0))+slot.count
+	check(counts.get(6,0)==1 and counts.get(8,0)==1 and counts.get(223,0)==180,"exact starter supplies")
+	before=inventory.capture_storage_snapshot()
+	check(not reopened.accept_first_visit(1,inventory,reopened.snapshot().revision,inventory.snapshot().revision).ok and inventory.capture_storage_snapshot()==before,"starter supply replay cannot duplicate items")
+	check(not reopened.abandon(reopened.snapshot().revision).ok,"unfinished first expedition is retained after returning home")
+	var active:=make_store();check(active.restore_storage_snapshot(reopened.capture_storage_snapshot()) and active.snapshot().phase==3,"active first visit restores without resetting mine")
+	for resident:int in mine.residents:active.record_defeated(resident,active.snapshot().cycle)
+	var inbox:RefCounted=ClassDB.instantiate("NativeRewardInbox");var progression:RefCounted=ClassDB.instantiate("NativePlayerProgression");progression.configure(PackedInt64Array([1,5,50]))
+	check(active.claim(inbox,progression,active.snapshot().revision).ok and active.snapshot().introduction==4,"mine completion rewards once and finishes introduction")
+	check(reopened.restore_storage_snapshot(active.capture_storage_snapshot()) and reopened.snapshot().introduction==4,"completed introduction persists")

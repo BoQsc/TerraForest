@@ -23,6 +23,57 @@ compute shaders are used where measured workloads justify them, not as a label.
 
 ## Full requested scope
 
+### Frontier expedition continuation — 2026-11-02, not yet installed
+
+- New default recipe: three towns, two districts each, mixed biomes, connected
+  roads/trails, mineral veins and trader introduction. Seed 1703 publishes 51
+  buildings; this is not evidence that the largest recipe was doubled.
+- Native introduction grants a torch, automatic rifle and 180 rounds atomically,
+  once. Quests/Trade UI, initial trader marker, defeat/reward adapter and free
+  expedition/wait/unfinished-return states are implemented, under world testing.
+- Native planning selects mine candidates near the trader's connected road
+  component, surveys the footpath and requires an outbound/forward-return route.
+  No collision bypass or increased earthwork allowance. Initial disconnected-road
+  failures remain in `reports/checks/20261102T073607631203Z`.
+- Ordinary new-world generation and near-trader spawn pass. The physical player
+  walk exposed an entrance lip (`reports/frontier_expedition/20261102T075144079467Z`).
+  A surveyed level landing now passes actual player/trader traversal; other buildings
+  retain their existing approaches and exact approved geometry. The attempted
+  universal landing caused layout rejection and was not retained.
+- Native bounded gun-hit spring and automatic recovery pass synthetic skeletal
+  checks and 31 actual-model standing/missing-forearm/sleeper/death assertions
+  (`reports/zombie_sleepers/20261102T082449634385Z`). Front/side/rear impact,
+  recovery and death frames inspected: visible recoil, preserved anatomy and
+  return to animation, with no continuing spring after death. Player combat
+  feel and matching installed-package verification remain unreviewed.
+- Trader counter interaction and exact one-time supplies pass in ordinary seed
+  1703. The driver initially stopped on a narrow terrain facet; retained reproduction
+  `reports/frontier_expedition/20261102T080453594352Z`. Native route support
+  sampling and bounded rejected-connector replanning are corrected in `bb941b06`,
+  without relaxing slope/collision guards (10 sampling checks, debug/release).
+  The separate three-storey tower route also fails with the unchanged baseline
+  (`reports/checks/20261102T082555035676Z`); do not call navigation universally
+  verified.
+- Source saved outbound/wait/unfinished return passes 19 checks in
+  `reports/frontier_expedition/20261102T084348393166Z`. A revisit does not duplicate
+  supplies. Physical mine traversal and real rifle fire kill all 13 residents,
+  using 145 of 180 rounds (`20261102T090258910289Z` in the same report family).
+  That run exposed a stale streamed static-contact RID and stopped at the return
+  walk: retain it as a failed run, not an end-to-end pass. `0b4a4139` removes the
+  stale query; 33 support checks and four-direction corpse walk-over pass.
+  Corrected continuation `20261102T091419444955Z` walks back, pays the reward and
+  saves the completed quest (12 checks). Earlier door/selection/tight-waypoint
+  harness failures are retained; no teleport, fabricated kills or extra ammunition.
+- Broader default-recipe qualification is **not complete**. Seeds 8147 and 91823
+  fail crossing/road cut-fill admission after bounded layout retries:
+  `reports/checks/20261102T091524745580Z` and `20261102T091540307279Z`.
+  Generation refuses unsafe publication; no terrain budget was increased and no
+  content was silently omitted. Return to corridor/site planning for these seeds;
+  require successful ordinary publication and physical routes before closing.
+- Return trigger: verify completed reward restoration and matching packaged
+  creation/travel/combat; inspect images. None of this closes repeatable POI resets,
+  question-mark activation or the other pending expansion requirements below.
+
 | Requirement | Current state / closure evidence needed |
 | --- | --- |
 | Zombie variety, including already missing limbs | Native recipes installed; ordinary source/pack admission and anatomy reload checked; new visual character variety and balance still pending |
@@ -33,7 +84,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Off-road watchtowers | W1 installed in ordinary new worlds using shared native lot fitting, connected approaches, stocked upper-deck chest and persistent sleeper; source/package generation/travel/loot/wake/reload pass; broader seeds and visual/NPC/performance acceptance remain |
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
-| Trader quests targeting POIs | Native bounded contract state, rewards and generation-owned location metadata under verification; trader offers/UI and live defeat/reward adapters remain pending |
+| Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward verified in source continuations; matching package/fresh reward restore pending; repeatable reset quests remain separate |
 | Large question-mark start interaction near POI, E acceptance and location reset | Location ownership is implemented; actual multi-owner reset, preserved baselines, player-edit safety and marker/E interaction remain pending |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |

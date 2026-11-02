@@ -127,7 +127,16 @@ func run()->void:
   if slot.is_empty() or FileAccess.file_exists("user://worlds/"+slot+".trw"):
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
  var offline_grading:=bake and not "--interactive-generation-grading" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
- if not qualification and not game.configure_generation_spawn(plan.roads[4].start):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
+ var introduction_spawn:Vector3=plan.roads[4].start
+ if int(world_options.get("introduction",0))==1:
+  var found_trader:=false
+  for site:Dictionary in sites:
+   for lot:Dictionary in site.get("lots",[]):
+    if lot.asset.has_meta("trader_anchor"):
+     introduction_spawn=lot.entrance.segment.start.lerp(lot.entrance.segment.finish,.35);found_trader=true;break
+   if found_trader:break
+  if not found_trader:print("INTRODUCTION_TRADER_UNAVAILABLE");game.free();quit(1);return
+ if not qualification and not game.configure_generation_spawn(introduction_spawn):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
  if not qualification:game.terrain.diagnostics_pause_streaming=true
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
  if offline_grading:
@@ -430,6 +439,12 @@ func run()->void:
    await RenderingServer.frame_post_draw
    root.get_texture().get_image().save_png(output_dir.path_join("coastal_inlet.png"))
  if bake:
+  if not qualification and int(world_options.get("introduction",0))==1:
+   var introduction:Dictionary=game.quests.store.initialize_introduction(game.quests.store.snapshot().revision)
+   if not introduction.ok:print("INTRODUCTION_UNAVAILABLE ",introduction.reason);game.free();quit(1);return
+   game.teleport(introduction_spawn)
+   if not await ready_world(game):game.free();quit(1);return
+   game.set_physics_process(false);game._clear_motion()
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)

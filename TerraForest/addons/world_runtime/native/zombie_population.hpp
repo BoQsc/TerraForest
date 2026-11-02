@@ -45,6 +45,7 @@ protected:
         ClassDB::bind_method(D_METHOD("initialize","seed","sanctuary"),&NativeZombiePopulation::initialize);
         ClassDB::bind_method(D_METHOD("nearby","focus","radius"),&NativeZombiePopulation::nearby);
         ClassDB::bind_method(D_METHOD("resident","identity"),&NativeZombiePopulation::resident);
+        ClassDB::bind_method(D_METHOD("authored_identities","anchors"),&NativeZombiePopulation::authored_identities);
         ClassDB::bind_method(D_METHOD("encounter","identity"),&NativeZombiePopulation::encounter);
         ClassDB::bind_method(D_METHOD("update_resident","identity","position","yaw","vitals","sleep"),&NativeZombiePopulation::update_resident,DEFVAL(PackedByteArray()));
         ClassDB::bind_method(D_METHOD("add_resident","position","yaw","vitals"),&NativeZombiePopulation::add_resident);
@@ -79,6 +80,13 @@ public:
     godot::Dictionary resident(int64_t identity)const{
         godot::Dictionary out;if(identity<1||identity>int64_t(residents_.size()))return out;
         const auto &record=residents_[identity-1];out["id"]=identity;out["position"]=record.position;out["yaw"]=record.yaw;out["state"]=record.state;out["vitals"]=record.vitals;out["sleep"]=record.sleep;out["anchor"]=int64_t(record.anchor);return out;
+    }
+    godot::PackedInt64Array authored_identities(const godot::PackedInt64Array &anchors)const{
+        godot::PackedInt64Array result;if(anchors.size()>32)return result;
+        result.resize(anchors.size());result.fill(0);
+        for(int item=2500;item<int(residents_.size());++item)if(residents_[item].anchor)
+            for(int target=0;target<anchors.size();++target)if(int64_t(residents_[item].anchor)==anchors[target])result.set(target,item+1);
+        return result;
     }
     godot::Dictionary encounter(int64_t identity)const{
         godot::Dictionary out;if(seed_<0||identity<1||identity>int64_t(residents_.size()))return out;

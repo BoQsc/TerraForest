@@ -33,6 +33,12 @@ These are independent causes; a different soil offset alone is insufficient.
    removal. Width is at least 1.5 m; clearance is between one and 1.75 widths.
    Unknown bits and invalid geometry fail before edits. Arches are excavation,
    never support/fill operations or a different floor-grid datum.
+   The resident trader's pedestrian approach has a surveyed 1–1.5 m level entry
+   landing before its slope when the span permits two valid one-metre segments.
+   Outside the occupied floor it targets finished-floor height; authoritative
+   native surface-clearance cuts still preserve the normal reveal under slabs.
+   Survey and baking consume the same segments. Other approved building geometry
+   and ordinary approaches are unchanged; no existing world is regraded.
 4. Native block convex geometry supplies exposed surface probes, including
    half-slabs, plates, stairs and all supported shape mounts. Fully covered joins
    are excluded. Full flat cells receive nine corner/edge/centre probes; other

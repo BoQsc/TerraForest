@@ -56,6 +56,7 @@ var side_tabs: HBoxContainer
 var active_tab:="Backpack"
 var backpack_panel:Control
 var quests_panel:Control
+var quests_notice:Label
 var drop_layer: CanvasLayer
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
@@ -245,7 +246,7 @@ func _ready() -> void:
 	journal_panel=preload("res://addons/player_runtime/reading_journal.gd").new();journal_panel.hud=self;side_host.add_child(journal_panel);journal_panel.hide()
 	quests_panel=VBoxContainer.new();side_host.add_child(quests_panel);quests_panel.hide()
 	var quests_title:=Label.new();quests_title.text="QUESTS";quests_title.add_theme_font_size_override("font_size",26);quests_panel.add_child(quests_title)
-	var quests_notice:=Label.new();quests_notice.text="Trader contracts are not available in this development build.";quests_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quests_notice.custom_minimum_size=Vector2(370,80);quests_panel.add_child(quests_notice)
+	quests_notice=Label.new();quests_notice.text="No active quest.";quests_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quests_notice.custom_minimum_size=Vector2(370,80);quests_panel.add_child(quests_notice)
 	var craft_label:=Label.new();craft_label.text="CRAFTING";craft_label.add_theme_font_size_override("font_size",26);recipes.add_child(craft_label)
 	var craft_help:=Label.new();craft_help.text="Click a recipe to craft one batch.";recipes.add_child(craft_help)
 	for i in Crafting.RECIPES.size():

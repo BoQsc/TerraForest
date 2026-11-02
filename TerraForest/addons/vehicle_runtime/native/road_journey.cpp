@@ -21,7 +21,9 @@ double parameter(Vector3 p,Vector3 a,Vector3 b){auto d=flat(b-a);return std::cla
 Dictionary fail(const char *reason){Dictionary d;d["ok"]=false;d["reason"]=reason;return d;}
 }
 void NativeRoadJourney::_bind_methods(){
-    ClassDB::bind_method(D_METHOD("configure","roads"),&NativeRoadJourney::configure);
+    ClassDB::bind_method(D_METHOD("configure","roads","stop_spacing"),&NativeRoadJourney::configure,DEFVAL(0.0));
+    ClassDB::bind_method(D_METHOD("get_stops"),&NativeRoadJourney::get_stops);
+    ClassDB::bind_method(D_METHOD("connected_stops","start","maximum_snap"),&NativeRoadJourney::connected_stops);
     ClassDB::bind_method(D_METHOD("route","start","destination","maximum_snap","heading"),&NativeRoadJourney::route,DEFVAL(Vector3()));
     ClassDB::bind_method(D_METHOD("follow","points"),&NativeRoadJourney::follow);
     ClassDB::bind_method(D_METHOD("resume","points","waypoint"),&NativeRoadJourney::resume);
@@ -29,9 +31,23 @@ void NativeRoadJourney::_bind_methods(){
     ClassDB::bind_method(D_METHOD("get_state"),&NativeRoadJourney::get_state);
     ClassDB::bind_method(D_METHOD("get_path"),&NativeRoadJourney::get_path);
 }
-Dictionary NativeRoadJourney::configure(const Array &source){
+PackedVector3Array NativeRoadJourney::get_stops()const{
+    PackedVector3Array result;result.resize(nodes.size());for(int index=0;index<int(nodes.size());++index)result.set(index,nodes[index]);return result;
+}
+PackedVector3Array NativeRoadJourney::connected_stops(Vector3 start,double maximum_snap)const{
+    PackedVector3Array result;
+    if(!start.is_finite()||!std::isfinite(maximum_snap)||maximum_snap<0||maximum_snap>128)return result;
+    int first=-1;double best=maximum_snap*maximum_snap;
+    for(int index=0;index<int(nodes.size());++index){const double distance=nodes[index].distance_squared_to(start);if(distance<=best){first=index;best=distance;}}
+    if(first<0)return result;
+    std::vector<bool> visited(nodes.size(),false);std::vector<int> pending{first};visited[first]=true;
+    for(size_t cursor=0;cursor<pending.size();++cursor)for(const auto &edge:edges[pending[cursor]])if(!visited[edge.to]){visited[edge.to]=true;pending.push_back(edge.to);}
+    for(int index=0;index<int(nodes.size());++index)if(visited[index])result.push_back(nodes[index]);
+    return result;
+}
+Dictionary NativeRoadJourney::configure(const Array &source,double stop_spacing){
     roads.clear();nodes.clear();edges.clear();path.clear();state="unavailable";
-    if(source.is_empty()||source.size()>8192)return fail("road_limit");
+    if(source.is_empty()||source.size()>8192||!std::isfinite(stop_spacing)||(stop_spacing!=0&&(stop_spacing<8||stop_spacing>64)))return fail("road_limit");
     std::map<std::pair<int,int>,std::vector<int>> bins;
     int references=0;
     for(int i=0;i<source.size();i++){
@@ -43,6 +59,7 @@ Dictionary NativeRoadJourney::configure(const Array &source){
         // Footpaths/trails are not taxi roads. Reject grades beyond the service
         // profile even if their metadata connects to a street.
         if(r.width<5||std::abs(r.a.y-r.b.y)>flat(r.b-r.a).length()*.25)continue;
+        if(stop_spacing>0){const int count=int(std::ceil(r.a.distance_to(r.b)/stop_spacing));for(int stop=1;stop<count;++stop)r.cuts.push_back(double(stop)/count);}
         int id=int(roads.size());roads.push_back(r);
         for(int z=int(std::floor((std::min(r.a.z,r.b.z)-.75)/32));z<=int(std::floor((std::max(r.a.z,r.b.z)+.75)/32));z++)
             for(int x=int(std::floor((std::min(r.a.x,r.b.x)-.75)/32));x<=int(std::floor((std::max(r.a.x,r.b.x)+.75)/32));x++){

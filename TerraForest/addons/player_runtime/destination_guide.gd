@@ -48,6 +48,7 @@ static func guidance(at:Vector3,facing:Vector3,target:Vector3)->Dictionary:
  var arrived:bool=distance<=12 and absf(delta.y)<=8
  return {"distance":distance,"direction":direction,"arrived":arrived,"height":delta.y}
 func refresh()->void:
+ if destination.is_empty() or destination.get("quest",false):destination=game.quests.marker()
  if destination.is_empty():timer.stop();panel.hide();return
  if timer.is_stopped():timer.start()
  panel.visible=not game.loading_active and not game.session_menu.visible_ui() and not game.player_hud.inventory_open

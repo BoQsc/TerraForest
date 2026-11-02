@@ -6266,3 +6266,17 @@ New original CC0 rifle body/magazine/icons and 0BSD authoring/runtime code are i
 ## Dev Bag full-stack shortcut — 2026-11-01
 
 Shift-click now grants the registered full stack, including 999 rounds for either ammunition type; normal clicks retain the quantity box. Stack definitions are shared with native inventory registration. Source `a10207af` is installed. All 12 focused checks pass in the actual executable using mouse events and Shift input, including atomic capacity rejection and zero pointer captures. Report: `reports/dev_bag_shift/20261101T204445/run.json`; PCK `c0e972a0edeec4f99d35b0af028d6355f161e89f3f85e7e57723ecb000cc6f98`, with fourteen matching DLLs. Packaged UI reviewed; no requested implementation or installation work remains. See [Dev Bag issue](../issues/dev-bag-full-stack/README.md).
+
+## Frontier expedition and physical hit reactions — 2026-11-02
+
+Source seed-1703 generation, near-trader spawn, Quests/Trade, one-time supplies,
+saved outbound/wait/unfinished-return and actual rifle clear/reward are verified
+in retained continuations. Trader landing and regional connector fixes preserve
+approved geometry and collision limits. Native hit recovery has 31 actual-model
+checks with inspected multi-angle images. A streamed stale corpse-contact error
+is corrected with support/walk-over regressions. Matching package qualification
+and exact reward reload remain pending. Seeds 8147/91823 still fail safe road
+crossing/cut-fill admission; corridor/site planning and successful world publication
+are required before claiming broad generator reliability. Continue the
+[existing expansion contract](GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-not-yet-installed)
+after these checks; none of the earlier expansion backlog is silently closed.

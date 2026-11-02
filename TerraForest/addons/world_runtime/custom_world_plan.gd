@@ -1,5 +1,5 @@
 extends RefCounted
-const VERSION:=38
+const VERSION:=46
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 const Exploration=preload("res://addons/exploration/cave_layouts.gd")
 const Civic=preload("res://addons/structures/civic_catalog.gd")
@@ -59,6 +59,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
  var terrain_library:="res://addons/volumetric_terrain/bin/terrain_core.windows.template_release.x86_64.dll" if suffix=="template_release" else "res://addons/volumetric_terrain/bin/terrain_core.windows.x86_64.dll"
  var key:="%d|%d|%d|%s|%s|%s"%[VERSION,seed_value,generator,encoded.hex_encode(),FileAccess.get_sha256(terrain_library),FileAccess.get_sha256("res://addons/structures/bin/structures.windows.%s.x86_64.dll"%suffix)]
  key+="|civic-r1" if civic_review else "|approved-e2-civic"
+ if int(options.get("introduction",0))==1:key+="|"+FileAccess.get_sha256("res://addons/vehicle_runtime/bin/vehicle_runtime.windows.%s.x86_64.dll"%suffix)
  key+="|"+FileAccess.get_sha256(Exploration.PATH)
  for mine_layout:Dictionary in Exploration.load_catalog():
   if mine_layout.id=="coal_mine":key+="|"+prefab_fingerprint(Exploration.prefab(mine_layout))
@@ -200,14 +201,35 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   if progress!=null:progress.record("Fitting small mines and caves",0,0,"Native bounded hillside search / authored rooms / roof cover and dry approaches")
   var layouts:=Exploration.load_catalog()
   if layouts.is_empty():return {"ok":false,"reason":"Invalid exploration layout catalog"}
-  var exploration:Dictionary=core.plan_exploration_sites(layouts,reserved,works.segments)
+  var road_stops:=PackedVector3Array()
+  var journey:RefCounted
+  var trader:=Vector3.INF
+  if int(options.get("introduction",0))==1:
+   journey=ClassDB.instantiate("NativeRoadJourney")
+   var roads:=navigation_metadata(sites,network,seed_value)
+   if not journey.configure(roads.roads,12).get("ok",false):return {"ok":false,"reason":"Expedition road graph unavailable"}
+   for place:Dictionary in roads.places:
+    if place.id==250:trader=place.position;break
+   road_stops=journey.connected_stops(trader,80)
+   if road_stops.is_empty():return {"ok":false,"reason":"The introduction needs a trader on a connected vehicle road"}
+  var exploration:Dictionary=core.plan_exploration_sites(layouts,reserved,works.segments,road_stops)
   if not exploration.get("ok",false):return {"ok":false,"reason":"Exploration site survey failed"}
+  if journey!=null:
+   var connected:=false
+   for location:Dictionary in exploration.sites:
+    if location.id!="coal_mine" or not location.has("road_access"):continue
+    var outward:Dictionary=journey.route(trader,location.road_access.start,80)
+    if not outward.get("ok",false):continue
+    var back:Dictionary=journey.route(outward.points[-1],outward.points[0],1,outward.points[-1]-outward.points[-2])
+    connected=back.get("ok",false) and outward.points.size()+back.points.size()<=8192
+   if not connected:return retry(seed_value,generator,options,folder,layout_variant,started,{"ok":false,"reason":"No terrain-fitted coal mine with a connected trader round trip"},progress,civic_review)
   result["exploration"]=exploration
   for location:Dictionary in exploration.sites:
    var layout_entry:Dictionary=layouts.filter(func(value:Dictionary):return value.id==location.id)[0]
    location["title"]=layout_entry.title
    var segments:=Exploration.segments(layout_entry,location.origin,location.rotation)
    segments.push_front(location.approach)
+   if location.has("road_access"):segments.push_front(location.road_access)
    for segment:Dictionary in segments:works.segments.append(segment);works.bounds=works.bounds.merge(segment.bounds)
  if generator>=29:
   if progress!=null:progress.record("Fitting wilderness lookouts",0,2,"Bounded native lot survey / existing roads / separate stair decks and supplies")
@@ -215,6 +237,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   for district:Dictionary in sites:tower_roads.append_array(district.roads)
   for location:Dictionary in result.get("exploration",{}).get("sites",[]):
    var protected_bounds:AABB=location.bounds.grow(12)
+   if location.has("road_access"):protected_bounds=protected_bounds.merge(location.road_access.bounds.grow(2))
    tower_reserved.append(Rect2(Vector2(protected_bounds.position.x,protected_bounds.position.z),Vector2(protected_bounds.size.x,protected_bounds.size.z)))
   var towers:=Watchtowers.build(core,tower_roads,tower_reserved,seed_value)
   if not towers.get("ok",false):return towers
@@ -233,6 +256,7 @@ static func build(seed_value:int,generator:int,options:Dictionary,folder:String,
   navigation.roads.append({"a":location.entrance.segment.start,"b":location.entrance.road_join,"width":1.5})
  for location:Dictionary in result.get("exploration",{}).get("sites",[]):
    navigation.places.append({"id":400+navigation.places.size(),"title":location.title,"detail":"Coal workings, looping rails and a deep loading station with ten inhabitants." if location.id=="coal_mine" else "Small underground exploration site with supplies and sleeping inhabitants.","position":location.approach.start})
+   if location.has("road_access"):navigation.roads.append({"a":location.road_access.start,"b":location.road_access.finish,"width":4.0})
  for bridge:Dictionary in result.get("bridges",[]):navigation.places.append({"id":200+int(bridge.lake_id),"title":"Timber lake crossing","detail":"Destructible grid-block footbridge with connected bank paths.","position":(bridge.banks[0]+bridge.banks[1])*.5})
  if not ClassDB.instantiate("NativeGeneratedRegion").set_plan(seed_value,generator,navigation.places,navigation.roads):return {"ok":false,"reason":"Regional navigation exceeds native storage limits"}
  result["navigation"]=navigation

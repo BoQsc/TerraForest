@@ -108,6 +108,12 @@ func _draw()->void:
   draw_circle(at,10 if selected else 8,Color("10252b"))
   draw_colored_polygon(PackedVector2Array([at+Vector2(0,-7),at+Vector2(6,0),at+Vector2(0,7),at+Vector2(-6,0)]),color)
   draw_string(font,at+Vector2(11,5),str(marker.id),HORIZONTAL_ALIGNMENT_LEFT,-1,15,color)
+ var quest:Dictionary=atlas.game.quests.marker()
+ if not quest.is_empty():
+  var at:=world_to_map(quest.position)
+  if Rect2(Vector2.ZERO,size).grow(-10).has_point(at):
+   draw_circle(at,12,Color("10252b"));draw_string(font,at+Vector2(-4,6),"!",HORIZONTAL_ALIGNMENT_LEFT,-1,21,Color("f5ca78"))
+   draw_string(font,at+Vector2(15,-12),quest.title,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("f5ca78"))
  var player:Vector3=atlas.game.player.global_position;var p:=world_to_map(player)
  var forward:Vector3=-atlas.game.camera.global_basis.z
  var angle:=atan2(forward.x,-forward.z)

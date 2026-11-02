@@ -1,5 +1,5 @@
 extends RefCounted
-const DEFAULTS:={"biome":0,"settlements":2,"districts":1,"network":0,"trails":1,"road_grid":3,"material_veins":1}
+const DEFAULTS:={"biome":0,"settlements":3,"districts":2,"network":2,"trails":2,"road_grid":3,"material_veins":1,"introduction":1}
 var store:RefCounted
 var ecosystem:Node
 static func codec()->RefCounted:

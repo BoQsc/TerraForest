@@ -74,7 +74,7 @@ protected:
     static void _bind_methods() {
         godot::ClassDB::bind_method(godot::D_METHOD("execute","packet"), &TerrainCore::execute);
         godot::ClassDB::bind_method(godot::D_METHOD("plan_material_deposits","earthworks"), &TerrainCore::material_deposits);
-        godot::ClassDB::bind_method(godot::D_METHOD("plan_exploration_sites","layouts","reservations","earthworks"), &TerrainCore::exploration_sites);
+        godot::ClassDB::bind_method(godot::D_METHOD("plan_exploration_sites","layouts","reservations","earthworks","road_stops"), &TerrainCore::exploration_sites,DEFVAL(godot::PackedVector3Array()));
         godot::ClassDB::bind_method(godot::D_METHOD("capture_storage_snapshot"),&TerrainCore::capture_storage_snapshot);
         godot::ClassDB::bind_method(godot::D_METHOD("field_patch_state"),&TerrainCore::field_patch_state);
         godot::ClassDB::bind_method(godot::D_METHOD("capture_field_patch","origin","size","expected_revision","expected_epoch"),&TerrainCore::capture_field_patch);
@@ -183,8 +183,8 @@ public:
     godot::Dictionary material_deposits(const godot::Array &earthworks){
         std::lock_guard<std::mutex> lock(mutex_);return terraforest::plan_material_deposits(world_,earthworks);
     }
-    godot::Dictionary exploration_sites(const godot::Array &layouts,const godot::Array &reservations,const godot::Array &earthworks){
-        std::lock_guard<std::mutex> lock(mutex_);return terraforest::plan_exploration_sites(world_,layouts,reservations,earthworks);
+    godot::Dictionary exploration_sites(const godot::Array &layouts,const godot::Array &reservations,const godot::Array &earthworks,const godot::PackedVector3Array &road_stops){
+        std::lock_guard<std::mutex> lock(mutex_);return terraforest::plan_exploration_sites(world_,layouts,reservations,earthworks,road_stops);
     }
     godot::Dictionary fit_road_network(const godot::Array &roads,const godot::Array &protected_areas,bool footprint_policy=false){
         std::lock_guard<std::mutex> lock(mutex_);tr_oom=false;auto result=fit_generated_road_network(world_,roads,protected_areas,footprint_policy);return tr_oom?godot::Dictionary():result;

@@ -68,14 +68,10 @@ static func plan(core,center:Vector3,roads:Array=[],variant:int=0,recipe:Array=[
  return result
 
 static func _access_quality(core,lot:Dictionary)->Dictionary:
- var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
- if lot.asset.has_meta("garage_entrance"):
-  var start:Vector3=lot.asset.get_meta("garage_entrance")
-  for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
-  paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
+ var paths:=access_segments(lot)
  var probes:=PackedVector3Array()
  for path:Dictionary in paths:
-  var start:Vector3=path.start-Vector3.UP*Contact.inset(lot.asset)
+  var start:Vector3=path.start
   var finish:Vector3=path.finish
   var horizontal:=Vector2(finish.x-start.x,finish.z-start.z)
   var steps:=ceili(horizontal.length()*2)
@@ -90,6 +86,26 @@ static func _access_quality(core,lot:Dictionary)->Dictionary:
  for i in raw.size():
   fill=maxf(fill,probes[i].y-raw[i]);cut=maxf(cut,raw[i]-probes[i].y)
  return {"status":"pass" if fill<=Quality.MAX_FILL and cut<=Quality.MAX_CUT else "rejected","max_fill":fill,"max_cut":cut,"samples":raw.size()}
+
+static func access_segments(lot:Dictionary)->Array:
+ var paths:Array=[lot.entrance.segment]+lot.get("vehicle_paths",[])
+ if lot.asset.has_meta("garage_entrance"):
+  var start:Vector3=lot.asset.get_meta("garage_entrance")
+  for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
+  paths.append({"start":start+Vector3(lot.origin),"finish":lot.entrance.segment.finish,"half_width":2.5})
+ var segments:Array=[]
+ for index in paths.size():
+  var path:Dictionary=paths[index]
+  var start:Vector3=path.start-Vector3.UP*Contact.inset(lot.asset)
+  var finish:Vector3=path.finish
+  var direction:=Vector3(finish.x-start.x,0,finish.z-start.z)
+  var landing_distance:=clampf(direction.length()*.2,1.0,1.5) if index==0 and lot.asset.has_meta("trader_anchor") and direction.length()>=2.0 else 0.0
+  if landing_distance>0:start.y=path.start.y
+  var landing:Vector3=start+direction.normalized()*landing_distance
+  var material:=1 if index==0 else 4
+  if start.distance_to(landing)>.05:segments.append(_approach(start,landing,path.half_width,material))
+  segments.append(_approach(landing,finish,path.half_width,material))
+ return segments
 
 # Planning reservations come from the same native world instance being surveyed.
 # They are exclusions, never public map markers or evidence of baked construction.
@@ -193,16 +209,7 @@ static func earthworks(plan:Dictionary)->Dictionary:
    bed["rectangular"]=true
    segments.append(bed)
  for lot:Dictionary in plan.lots:
-  var path:Dictionary=lot.entrance.segment.duplicate()
-  path.start.y-=Contact.inset(lot.asset)
-  segments.append(_approach(path.start,path.finish,path.half_width,1))
-  for driveway:Dictionary in lot.get("vehicle_paths",[]):
-   segments.append(_approach(driveway.start-Vector3.UP*Contact.inset(lot.asset),driveway.finish,driveway.half_width,4))
-  if lot.asset.has_meta("garage_entrance"):
-   var start:Vector3=lot.asset.get_meta("garage_entrance")
-   for turn in lot.rotation:start=Vector3(1-start.z,start.y,start.x)
-   start+=Vector3(lot.origin)
-   segments.append(_approach(start-Vector3.UP*Contact.inset(lot.asset),path.finish,2.5,4))
+  segments.append_array(access_segments(lot))
  for road:Dictionary in plan.roads:
   segments.append(road_support(road))
  for road:Dictionary in plan.roads:

@@ -267,6 +267,7 @@ func _ready() -> void:
 	player.add_child(zombie_target)
 	zombie_target.attacked.connect(func(damage:float):_show_lake_notice("Zombie hit · %.0f damage"%damage))
 	add_child(trader)
+	add_child(quests)
 	add_child(zombies)
 	zombies.corpse_host=corpse_loot
 	zombies.enabled=(construction_inventory.gameplay or "--zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))) and not "--no-zombies" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))

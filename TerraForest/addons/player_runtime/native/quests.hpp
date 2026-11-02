@@ -23,6 +23,7 @@ class NativeQuestLog : public godot::RefCounted {
     std::vector<Location> locations;
     int64_t seed=-1,currency=0,active=0,revision=0;
     uint32_t phase=0,cycle=0,defeated=0;
+    uint32_t introduction=0;
     static constexpr int MAX_LOCATIONS=128,MAX_RESIDENTS=32,MAX_CONTAINERS=16,MAX_BYTES=131072;
     static bool valid(const Location &location);
     static bool valid_ownership(const std::vector<Location> &locations);
@@ -40,6 +41,9 @@ public:
     godot::Array get_locations() const;
     godot::Dictionary snapshot() const;
     godot::Dictionary accept(int64_t key,int64_t expected_revision);
+    godot::Dictionary initialize_introduction(int64_t expected_revision);
+    godot::Dictionary talk_to_trader(int64_t expected_revision);
+    godot::Dictionary accept_first_visit(int64_t key,const godot::Ref<NativePlayerInventory> &inventory,int64_t expected_revision,int64_t inventory_revision);
     godot::Dictionary begin_reset(int64_t expected_revision);
     godot::Dictionary finish_reset(int64_t token,bool committed,int64_t expected_revision);
     godot::Dictionary record_defeated(int64_t resident_key,int64_t token);

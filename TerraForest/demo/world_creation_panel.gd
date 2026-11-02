@@ -7,7 +7,8 @@ const STYLES:=[
  {"name":"Connected countryside","detail":"A civic town with a resident trader and a market village with weathered homes and shops, linked through woodland, lakes and tracks.","values":[0,1,0,0,1,true]},
  {"name":"Market towns","detail":"A civic town with a resident trader, market shops and additional town districts, with alternative routes and trails.","values":[1,1,1,1,2,true]},
  {"name":"City region · experimental","detail":"Three connected districts around one center. Existing approved buildings; not a finished urban design.","values":[1,0,2,2,1,true]},
- {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]}
+ {"name":"Regional belt · experimental","detail":"Nine terrain-fitted districts among woodland and clearings, linked by long roads and offroads. Some seeds may not fit.","values":[0,2,2,2,2,true]},
+ {"name":"Frontier expedition","detail":"Six connected districts, a trader introduction and coal-mine expedition. Includes wilderness locations, sleepers, supplies, lakes and material veins.","values":[0,2,1,2,2,true]}
 ]
 static func apply_style(host:Control,index:int)->void:
  if index<0 or index>=STYLES.size():return
@@ -15,12 +16,13 @@ static func apply_style(host:Control,index:int)->void:
  var controls:Array=[host.biome,host.settlement_count,host.district_count,host.road_network,host.offroads]
  for field in controls.size():controls[field].select(values[field])
  host.ocean.set_pressed_no_signal(values[5])
+ host.introduction.set_pressed_no_signal(index==5)
  host.invalidate_preview()
 static func sync_style(host:Control)->void:
  if host.world_style==null:return
  var values:Array=[host.biome.selected,host.settlement_count.selected,host.district_count.selected,host.road_network.selected,host.offroads.selected,host.ocean.button_pressed]
  for index in STYLES.size():
-  if values==STYLES[index].values:
+  if values==STYLES[index].values and host.introduction.button_pressed==(index==5):
    host.world_style.select(index);host.style_description.text=STYLES[index].detail;return
  host.world_style.select(STYLES.size())
  host.style_description.text="Custom recipe. Adjust landscape and settlement controls; the survey shows the actual result."
@@ -75,8 +77,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  var recipe_label:=VBoxContainer.new();recipe_row.add_child(recipe_label);label(recipe_label,"STARTING RECIPE",13,ACCENT)
  host.world_style=OptionButton.new();host.world_style.custom_minimum_size=Vector2(290,40);recipe_label.add_child(host.world_style)
  for style:Dictionary in STYLES:host.world_style.add_item(style.name)
- host.world_style.add_item("Custom");host.world_style.select(1)
- host.style_description=paragraph(recipe_row,STYLES[1].detail,17);host.style_description.size_flags_horizontal=Control.SIZE_EXPAND_FILL;host.style_description.size_flags_vertical=Control.SIZE_SHRINK_CENTER
+ host.world_style.add_item("Custom");host.world_style.select(5)
+ host.style_description=paragraph(recipe_row,STYLES[5].detail,17);host.style_description.size_flags_horizontal=Control.SIZE_EXPAND_FILL;host.style_description.size_flags_vertical=Control.SIZE_SHRINK_CENTER
  host.world_style.item_selected.connect(func(index:int):apply_style(host,index))
  var body:=HBoxContainer.new();body.add_theme_constant_override("separation",24);body.size_flags_vertical=Control.SIZE_EXPAND_FILL;page.add_child(body)
  var left:=VBoxContainer.new();left.custom_minimum_size.x=470;left.add_theme_constant_override("separation",12);body.add_child(left)
@@ -98,6 +100,8 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.ocean=CheckBox.new();host.ocean.text="Ocean coastline & beaches";host.ocean.button_pressed=true;settings.add_child(host.ocean)
  host.material_veins=CheckBox.new();host.material_veins.text="Material veins & surface stones";host.material_veins.button_pressed=true;settings.add_child(host.material_veins)
  host.material_veins.tooltip_text="New worlds: durable, mineable iron/copper stones identify real underground veins. Disabling omits these surface clues and map markers; existing underground geology remains unchanged."
+ host.introduction=CheckBox.new();host.introduction.text="Trader introduction & coal-mine expedition";host.introduction.button_pressed=true;settings.add_child(host.introduction)
+ host.introduction.toggled.connect(func(_value:bool):host.invalidate_preview())
  var grid_panel:=PanelContainer.new();grid_panel.name="BuildingGridFit";grid_panel.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(grid_panel)
  var grid_settings:=VBoxContainer.new();grid_panel.add_child(grid_settings)
  label(grid_settings,"Building-grid fit",20,ACCENT)
@@ -107,10 +111,12 @@ static func build(host:Control,tabs:TabContainer)->void:
  host.buildable_roads=CheckBox.new();host.buildable_roads.text="Roads & shoulders";host.buildable_roads.button_pressed=true;grid_settings.add_child(host.buildable_roads)
  host.buildable_roads.tooltip_text="Plan roads and their support beds against building-block footprints before baking. Protect entrances and terrain-fit budgets. No terrain changes when placing blocks; gaps or deeper embedding can still occur on transitions."
  settings=category(categories,"Settlements");section(settings,"","Places & connections")
- host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network"]);host.settlement_count.select(1)
+ host.settlement_count=choice(settings,"Settlements",["1 · isolated community","2 · linked communities","3 · regional network"]);host.settlement_count.select(2)
  host.district_count=choice(settings,"Settlement scale",["Village · 1 district each","Town · 2 districts each","City layout · 3 districts (experimental)"])
+ host.district_count.select(1)
  host.road_network=choice(settings,"Regional roads",["Direct connections","One alternate route","Interconnected network"])
- host.offroads=choice(settings,"Unpaved offroads",["None","Up to 1 per district","Up to 2 per district"]);host.offroads.select(1)
+ host.road_network.select(2)
+ host.offroads=choice(settings,"Unpaved offroads",["None","Up to 1 per district","Up to 2 per district"]);host.offroads.select(2)
  paragraph(settings,"All districts connect. Additional routes and trails depend on safe terrain. Roads remain editable; sidewalks remain individual flat plates.")
  var future:=PanelContainer.new();future.add_theme_stylebox_override("panel",box(Color("1b2b30")));settings.add_child(future)
  paragraph(future,"City layouts assemble larger connected groups of approved buildings, not new skyscrapers or a finished city design. Sites must still fit the terrain; impossible plans fail clearly rather than flattening the landscape.",15)

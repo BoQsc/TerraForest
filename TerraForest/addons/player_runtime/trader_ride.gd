@@ -10,6 +10,8 @@ const ARRIVED=3
 const RETURNING=4
 const HOME_WALK=5
 const STOPPING=6
+const HOME_ARRIVED=7
+const RETURN_STOPPED=8
 var host:Node3D
 var game:Node3D
 var store:RefCounted
@@ -95,7 +97,7 @@ func destinations()->Array:
 	if active():return result
 	var plan:Dictionary=game.generated_region.store.get_plan()
 	if graph_revision!=game.generated_region.revision():
-		graph_revision=game.generated_region.revision();graph_result=planner.configure(plan.get("roads",[]))
+		graph_revision=game.generated_region.revision();graph_result=planner.configure(plan.get("roads",[]),12 if game.quests.store.snapshot().introduction>0 else 0)
 	if not graph_result.get("ok",false):return result
 	var start:Vector3=host.anchor
 	var heading:=Vector3.ZERO
@@ -126,6 +128,36 @@ func book(destination:int,revision:int)->Dictionary:
 	for candidate:Dictionary in destinations():
 		if candidate.id==destination:offer=candidate;break
 	if offer.is_empty():return {"ok":false,"reason":"No connected road journey and return are available."}
+	return _book_offer(offer)
+
+func expedition_offer(location:Dictionary)->Dictionary:
+	if active():return {}
+	destinations()
+	if not graph_result.get("ok",false):return {}
+	var start:Vector3=host.anchor
+	var heading:=Vector3.ZERO
+	if identity()>0:
+		var record:Dictionary=game.world_vehicle.fleet.get_record(identity())
+		if not record.get("present",false):return {}
+		start=record.pose.origin;heading=record.pose.basis.z
+	var stop:=Vector3.INF
+	for road:Dictionary in game.generated_region.store.get_plan().get("roads",[]):
+		if is_equal_approx(float(road.width),4.0) and Vector3(road.b).distance_to(location.marker)<4:
+			stop=road.a;break
+	if not stop.is_finite():return {}
+	var outward:Dictionary=planner.route(start,stop,80,heading)
+	if not outward.get("ok",false):return {}
+	var points:PackedVector3Array=outward.points
+	if points.size()<2 or points[-1].distance_to(stop)>.75:return {}
+	var back:Dictionary=planner.route(points[-1],points[0],1,points[-1]-points[-2])
+	if not back.get("ok",false) or points.size()+back.points.size()>8192:return {}
+	return {"id":0,"title":"Coal mine","fare":0,"outbound":points,"return_route":back.points,"revision":graph_revision}
+
+func book_expedition(offer:Dictionary,key:int)->Dictionary:
+	if active() or not host.reachable() or offer.get("revision",-1)!=game.generated_region.revision():return {"ok":false,"reason":"The trader or road is unavailable."}
+	return _book_offer(offer,key)
+
+func _book_offer(offer:Dictionary,quest_key:int=0)->Dictionary:
 	if Trade.count(game.player_hud.inventory,Trade.CURRENCY)<offer.fare:return {"ok":false,"reason":"You need %d coins for this ride."%offer.fare}
 	if not game.world_vehicle.fleet_enabled:return {"ok":false,"reason":"This world has no vehicle fleet."}
 	if identity()==0:
@@ -141,16 +173,25 @@ func book(destination:int,revision:int)->Dictionary:
 		var id:int=game.world_vehicle.last_spawn_identity
 		if id==0:return {"ok":false,"reason":"The trader's car cannot be placed here."}
 		state.vehicle=id
+		state.driver_position=host.actor.global_position;state.driver_yaw=host.actor.rotation.y
+	if quest_key>0:
+		var quest:Dictionary=game.quests.store.snapshot()
+		if quest.introduction==2:
+			var accepted:Dictionary=game.quests.store.accept_first_visit(quest_key,game.player_hud.inventory,quest.revision,game.player_hud.inventory.snapshot().revision)
+			if not accepted.ok:changed();return {"ok":false,"reason":"Make room in your backpack for the torch, rifle and ammunition. No supplies were taken or duplicated."}
+		elif quest.introduction!=3 or quest.key!=quest_key:return {"ok":false,"reason":"The expedition changed. Review your quest."}
+		game.player_hud.refresh()
+	state.expedition=quest_key>0
 	state.phase=BOARDING;state.fare=offer.fare;state.destination=offer.id;state.title=offer.title
 	state.outbound=offer.outbound;state.return_route=offer.return_route;state.cursor=0;state.paid=false;state.passenger=false;state.seated=false
 	state.home=host.anchor;state.driver_position=host.actor.global_position;state.driver_yaw=host.actor.rotation.y
 	boarding_goal=Vector3.INF;pilot_bound=false;changed();host.ui.close()
-	status_text="Ride reserved to %s · %d coins when you board\nFollow the trader to the car. Hold E by the car to cancel."%[state.title,state.fare]
+	status_text="Coal-mine expedition · supplies received · free return ride\nFollow the trader to the car." if state.expedition else "Ride reserved to %s · %d coins when you board\nFollow the trader to the car. Hold E by the car to cancel."%[state.title,state.fare]
 	return {"ok":true,"reason":status_text}
 
 func board()->bool:
 	if not active():game._show_lake_notice("Choose a destination at the trader's shop first.");return false
-	if state.phase in [RETURNING,HOME_WALK]:game._show_lake_notice("The trader is returning home.");return false
+	if state.phase==HOME_WALK or (state.phase==RETURNING and not state.expedition):game._show_lake_notice("The trader is returning home.");return false
 	if not world_active():return false
 	if not state.seated or not is_instance_valid(car):
 		game._show_lake_notice("The trader is still walking to the car.");return false
@@ -159,17 +200,21 @@ func board()->bool:
 		if not probe_ready or not probe_clear:
 			game._show_lake_notice("The departure road is still loading." if not probe_ready else "Clear the road ahead before boarding. No coins charged.");return false
 		var fare:=PackedInt64Array([Trade.CURRENCY,state.fare])
-		if not game.player_hud.inventory.can_afford(fare,game.player_hud.inventory.snapshot().revision).ok or not host.trader.stock.can_receive(fare,host.trader.stock.snapshot().revision).ok:
+		if not state.expedition and (not game.player_hud.inventory.can_afford(fare,game.player_hud.inventory.snapshot().revision).ok or not host.trader.stock.can_receive(fare,host.trader.stock.snapshot().revision).ok):
 			game._show_lake_notice("Payment unavailable. Check your coins and the trader's purse.");return false
 	if not game.world_vehicle.enter_passenger(game,identity(),self):return false
-	if not state.paid:
+	if not state.paid and not state.expedition:
 		var inventory:RefCounted=game.player_hud.inventory
 		var paid:Dictionary=inventory.transfer_items_to(host.trader.stock,PackedInt64Array([Trade.CURRENCY,state.fare]),inventory.snapshot().revision,host.trader.stock.snapshot().revision)
 		if not paid.ok:
 			game.world_vehicle.exit_passenger(game,self);game._show_lake_notice("Payment failed. Check your coins and the trader's purse.");return false
 		host.trader.saved_stock.flush_pending();state.paid=true
+	if state.expedition:state.paid=true
+	var restoring:=restore_passenger
 	state.passenger=true;restore_passenger=false
 	if state.phase==BOARDING:state.phase=OUTBOUND;state.cursor=0;pilot_bound=false
+	elif state.expedition and not restoring and state.phase==ARRIVED:state.phase=RETURNING;state.cursor=0;pilot_bound=false;command.clear()
+	elif state.expedition and not restoring and state.phase in [STOPPING,RETURN_STOPPED]:state.phase=RETURNING if state.phase==RETURN_STOPPED else OUTBOUND;pilot_bound=false;command.clear()
 	_make_passenger_view();changed();game.player_hud.refresh();return true
 
 func cancel_reservation()->String:
@@ -181,6 +226,7 @@ func cancel_reservation()->String:
 
 func request_exit()->String:
 	if game.world_vehicle.passenger!=self:return ""
+	if state.expedition:return _expedition_exit()
 	if state.phase==OUTBOUND:
 		state.phase=STOPPING;changed();return "The trader is stopping. Press E again when stopped to cancel and get your fare back."
 	if car.linear_velocity.length()>.25:return "Wait for the car to stop."
@@ -200,6 +246,18 @@ func request_exit()->String:
 	status_text="The trader is returning home."
 	if cancelled:return "Ride cancelled; fare refunded." if state.refund==0 else "Ride cancelled; make room in your backpack to receive the fare refund."
 	return "You have arrived. The trader is driving home."
+
+func _expedition_exit()->String:
+	if state.phase in [OUTBOUND,RETURNING]:
+		state.phase=STOPPING if state.phase==OUTBOUND else RETURN_STOPPED;changed();return "Stopping safely. Press E again once stopped."
+	if car.linear_velocity.length()>.25:return "Wait for the car to stop."
+	var message:String=game.world_vehicle.exit_passenger(game,self)
+	if game.world_vehicle.passenger==self:return message
+	state.passenger=false;_remove_passenger_view()
+	if state.phase==HOME_ARRIVED:
+		if _driver_exit():state.phase=HOME_WALK;state.cursor=0;pilot_bound=false;command.clear()
+	changed()
+	return "Home again. Talk to the trader about your quest." if state.phase in [HOME_WALK,HOME_ARRIVED] else "The trader is waiting here. Press E by the car to return or continue."
 
 func _refund()->void:
 	if int(state.refund)<=0:return
@@ -229,31 +287,37 @@ func _physics_process(delta:float)->void:
 	if restore_passenger and game.world_vehicle.passenger!=self and game.world_vehicle.can_interact():
 		if not board():status_text="Saved ride · approach the trader's car and press E to resume without another fare."
 	if state.phase in [BOARDING,HOME_WALK]:_walk(delta)
-	if state.phase in [OUTBOUND,RETURNING,ARRIVED,STOPPING]:
+	if state.phase in [OUTBOUND,RETURNING,ARRIVED,STOPPING,HOME_ARRIVED,RETURN_STOPPED]:
 		if not pilot_bound and state.phase in [OUTBOUND,RETURNING]:
 			pilot_bound=pilot.resume(state.return_route if state.phase==RETURNING else state.outbound,int(state.cursor))
 			if not pilot_bound:status_text="Trader ride · saved road route is unavailable";return
 			command.clear()
-		if state.phase in [OUTBOUND,RETURNING] and (state.phase==RETURNING or game.world_vehicle.passenger==self):
+		if state.phase in [OUTBOUND,RETURNING] and ((state.phase==RETURNING and not state.expedition) or game.world_vehicle.passenger==self):
 			car.autonomous_controls=_controls;car.set_controls_enabled(false);car.set_physics_process(true)
 			if car.freeze and not car.streaming.waiting:car.freeze=false
 		if command.get("state","")=="arrived" and state.phase in [OUTBOUND,RETURNING]:
 			if state.phase==OUTBOUND:
 				state.phase=ARRIVED;changed()
+			elif state.expedition and state.passenger:
+				state.phase=HOME_ARRIVED;changed()
 			elif _driver_exit():
 				state.phase=HOME_WALK;state.cursor=0;pilot_bound=false;command.clear();changed()
-	if state.phase==ARRIVED:status_text="Arrived at %s · E to get out\nThe trader will drive home after you leave."%state.title
+	if state.phase==HOME_ARRIVED and not state.passenger and _driver_exit():state.phase=HOME_WALK;state.cursor=0;pilot_bound=false;command.clear();changed()
+	if state.expedition and state.phase==ARRIVED:status_text=("Coal mine · E to get out" if state.passenger else "Trader waiting · board the car to return")+"\nI'll wait here. Board again to go home, whether or not the quest is finished."
+	elif state.phase==HOME_ARRIVED:status_text="Home again · E to get out"
+	elif state.expedition and state.phase in [STOPPING,RETURN_STOPPED]:status_text="Stopping safely…" if car.linear_velocity.length()>.25 else "Stopped · E to get out. Board again to continue."
+	elif state.phase==ARRIVED:status_text="Arrived at %s · E to get out\nThe trader will drive home after you leave."%state.title
 	elif state.phase==STOPPING:status_text="Stopping safely…" if car.linear_velocity.length()>.25 else "Stopped · E to cancel, get out and receive your fare refund."
 	_update_seated_actor();_present()
 
 func _controls(delta:float)->Dictionary:
-	if not world_active() or state.phase in [ARRIVED,STOPPING,BOARDING,HOME_WALK] or (state.phase==OUTBOUND and game.world_vehicle.passenger!=self):return {"hold":true}
+	if not world_active() or state.phase in [ARRIVED,STOPPING,BOARDING,HOME_WALK,HOME_ARRIVED,RETURN_STOPPED] or ((state.phase==OUTBOUND or state.expedition) and game.world_vehicle.passenger!=self):return {"hold":true}
 	probe_remaining-=delta
 	if probe_remaining<=0:probe_remaining=.1;_probe()
 	command=pilot.advance(car.global_transform,car.linear_velocity,delta,probe_ready,probe_clear)
 	state.cursor=command.cursor
-	if command.state=="following":status_text=("Returning home" if state.phase==RETURNING else "Riding to "+state.title)+" · %.0f km/h"%(car.linear_velocity.length()*3.6)+("\nE · Ask to stop and cancel" if state.passenger else "")
-	elif command.state in ["blocked","unavailable"]:status_text="Trader ride · "+("road obstructed" if command.state=="blocked" else "waiting for road collision")+"\n"+("E · Stop, cancel and get your fare back" if state.passenger else "The trader will continue when the road is clear.")
+	if command.state=="following":status_text=("Returning home" if state.phase==RETURNING else "Riding to "+state.title)+" · %.0f km/h"%(car.linear_velocity.length()*3.6)+(("\nE · Ask to stop" if state.expedition else "\nE · Ask to stop and cancel") if state.passenger else "")
+	elif command.state in ["blocked","unavailable"]:status_text="Trader ride · "+("road obstructed" if command.state=="blocked" else "waiting for road collision")+"\n"+(("E · Ask to stop" if state.expedition else "E · Stop, cancel and get your fare back") if state.passenger else "The trader will continue when the road is clear.")
 	if command.state=="blocked":
 		next_retry-=delta
 		if next_retry<=0:next_retry=2;pilot.resume(state.return_route if state.phase==RETURNING else state.outbound,int(state.cursor))
@@ -326,7 +390,7 @@ func _walk(delta:float)->void:
 			if opened.ok:game.terrain.changed_since_save=true
 			door_retry=1
 	if state.phase==BOARDING and state.seated:
-		status_text="Ready for %s · %d coins · E by the car to board\nHold E and choose Cancel reservation to cancel free."%[state.title,state.fare];return
+		status_text="Coal-mine expedition · E by the car to board\nFree return ride. I'll wait at the mine." if state.expedition else "Ready for %s · %d coins · E by the car to board\nHold E and choose Cancel reservation to cancel free."%[state.title,state.fare];return
 	if state.phase==BOARDING and not boarding_goal.is_finite():boarding_goal=game.world_vehicle.safe_exit_for(game,car,actor.get_rid())
 	var goal:Vector3=state.home if state.phase==HOME_WALK else boarding_goal
 	if not goal.is_finite():status_text="Trader ride · waiting for a safe boarding place";return
@@ -344,7 +408,7 @@ func _walk(delta:float)->void:
 	if movement.length_squared()>.01:actor.rotation.y=lerp_angle(actor.rotation.y,atan2(movement.x,movement.z),minf(1,delta*8))
 	host.animate_walk(movement.length_squared()>.01)
 	state.driver_position=actor.global_position;state.driver_yaw=actor.rotation.y
-	status_text=("Trader walking home" if state.phase==HOME_WALK else "Follow the trader to the car · no coins charged yet")+(" · "+walk_status if walk_status in ["blocked","unavailable","search_limit"] else "")
+	status_text=("Trader walking home" if state.phase==HOME_WALK else "Follow the trader to the car · free expedition" if state.expedition else "Follow the trader to the car · no coins charged yet")+(" · "+walk_status if walk_status in ["blocked","unavailable","search_limit"] else "")
 	if actor.global_position.distance_to(goal)<.65 and walk_status=="arrived":
 		if state.phase==HOME_WALK:
 			state.phase=IDLE;state.paid=false;state.seated=false;state.passenger=false;state.cursor=0;state.outbound=PackedVector3Array();state.return_route=PackedVector3Array()
@@ -417,7 +481,7 @@ func _interest(points:PackedVector3Array)->void:
 	if points==_last_interest:return
 	_last_interest=points;game.navigation_residency.set_service(points)
 func _present()->void:
-	label.visible=active() and (state.passenger or game.player.global_position.distance_to(state.driver_position)<100)
+	label.visible=active() and (state.passenger or game.player.global_position.distance_to(state.driver_position)<(8 if state.expedition and state.phase==ARRIVED else 100))
 	label.text=status_text+("\nRefund waiting: make room for %d coins."%state.refund if state.refund>0 else "")
 func _exit_tree()->void:
 	_unbind_visuals()

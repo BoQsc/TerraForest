@@ -1,11 +1,23 @@
 # Gameplay expansion: encounters, exploration and progression
 
 - Status: In progress; generated house/underground/lookout sleepers and supplies, not a completed expansion.
-- Updated: 2026-11-01.
+- Updated: 2026-11-02.
 - User review: implementation requested; no new asset/animation approval claimed.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
 ## Combined package milestone — 2026-11-01
+
+Latest source continuation, not yet exported: default Frontier expedition,
+Quests/Trade choice, talk-to-trader start marker, one-time native supplies and
+free mine trip with waiting/unfinished return. Seed-1703 generation, spawn,
+saved round trip and subsequent real 13-zombie rifle clear/reward pass in source
+continuations. The raised trader approach and narrow-facet route failures are
+corrected without altering approved buildings or collision/slope limits. See the
+[active continuation and retained failures](../../docs/GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-not-yet-installed).
+Gun-hit recovery passes 31 actual-model assertions; front/side/rear recoil,
+recovery and death images are inspected. Player feel remains unreviewed. Seeds
+8147/91823 still reject road crossing/cut-fill plans; broad generator reliability
+is not resolved. The package identity below remains the older installed version.
 
 The coordinated expansion package is exported and starts successfully, with all
 14 native libraries matching the verified source builds. It includes the coal

@@ -20,8 +20,8 @@ protected:
 public:
     godot::PackedByteArray encode(const godot::Dictionary &options) const {
         godot::PackedByteArray bytes;
-        const char *names[]={"biome","settlements","districts","network","trails","road_grid","material_veins"};
-        if(options.size()<5||options.size()>7)return bytes;
+        const char *names[]={"biome","settlements","districts","network","trails","road_grid","material_veins","introduction"};
+        if(options.size()<5||options.size()>8)return bytes;
         const int count=options.size();
         bytes.resize(8+count*4);bytes.fill(0);bytes.encode_u32(0,0x31504352);bytes.encode_u32(4,count==5?1:2);
         for(int index=0;index<count;++index){
@@ -33,16 +33,18 @@ public:
         if(count==6&&bytes.decode_u32(28)>=2)bytes.encode_u32(4,bytes.decode_u32(28)+1);
         if(count==7)bytes.encode_u32(4,5);
         if(count==7&&(bytes.decode_u32(16)>2||bytes.decode_u32(20)>1))bytes.encode_u32(4,6);
+        if(count==8)bytes.encode_u32(4,7);
         return validate_snapshot(bytes)?bytes:godot::PackedByteArray();
     }
     bool validate_snapshot(const godot::PackedByteArray &bytes) const {
         if(bytes.is_empty())return true;
-        if((bytes.size()!=28&&bytes.size()!=32&&bytes.size()!=36)||bytes.decode_u32(0)!=0x31504352)return false;
+        if((bytes.size()!=28&&bytes.size()!=32&&bytes.size()!=36&&bytes.size()!=40)||bytes.decode_u32(0)!=0x31504352)return false;
         if(bytes.size()==28&&bytes.decode_u32(4)!=1)return false;
         if(bytes.size()==32&&(bytes.decode_u32(28)>3||bytes.decode_u32(4)!=(bytes.decode_u32(28)>=2?bytes.decode_u32(28)+1:2)))return false;
         if(bytes.size()==36&&((bytes.decode_u32(4)!=5&&bytes.decode_u32(4)!=6)||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1))return false;
+        if(bytes.size()==40&&(bytes.decode_u32(4)!=7||bytes.decode_u32(28)>3||bytes.decode_u32(32)>1||bytes.decode_u32(36)>1))return false;
         const auto settlements=bytes.decode_u32(12),districts=bytes.decode_u32(16);
-        const bool expanded=bytes.decode_u32(4)==6;
+        const bool expanded=bytes.decode_u32(4)>=6;
         return bytes.decode_u32(8)<=2&&settlements>=1&&settlements<=3&&districts>=1&&districts<=(expanded?3u:2u)
             &&settlements*districts<=(expanded?9u:6u)&&bytes.decode_u32(20)<=(expanded?2u:1u)&&bytes.decode_u32(24)<=2;
     }
@@ -52,7 +54,8 @@ public:
         const char *names[]={"biome","settlements","districts","network","trails"};
         for(int index=0;index<5;++index)result[names[index]]=int(bytes.decode_u32(8+index*4));
         if(bytes.size()>=32)result["road_grid"]=int(bytes.decode_u32(28));
-        if(bytes.size()==36)result["material_veins"]=int(bytes.decode_u32(32));
+        if(bytes.size()>=36)result["material_veins"]=int(bytes.decode_u32(32));
+        if(bytes.size()==40)result["introduction"]=int(bytes.decode_u32(36));
         return result;
     }
     godot::PackedByteArray capture_snapshot() const {return state;}

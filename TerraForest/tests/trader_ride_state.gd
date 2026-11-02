@@ -36,4 +36,12 @@ func run()->void:
 	var excess:=saved.duplicate();excess.append(0)
 	check(not store.restore_storage_snapshot(excess),"unconsumed archive suffix rejects")
 	check(store.restore_storage_snapshot(PackedByteArray()) and store.snapshot().vehicle==0,"restoring an old world clears another world's reservation")
+	state.expedition=true;state.fare=0;state.refund=0;state.paid=true
+	for phase:int in [2,3,4,6,7,8]:
+		state.phase=phase;state.passenger=true
+		check(store.set_state(state) and copy.restore_storage_snapshot(store.capture_storage_snapshot()) and copy.snapshot().expedition and copy.snapshot().phase==phase,"free expedition occupied phase %d survives reload"%phase)
+		state.passenger=false
+		check(store.set_state(state) and copy.restore_storage_snapshot(store.capture_storage_snapshot()) and not copy.snapshot().passenger,"waiting expedition phase %d survives reload"%phase)
+	state.fare=1
+	check(not store.set_state(state),"expedition cannot accidentally charge a fare")
 	print("TRADER_RIDE_STATE checks=",checks," failures=",failures);quit(1 if failures else 0)

@@ -19,6 +19,9 @@ void NativeQuestLog::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_locations"),&NativeQuestLog::get_locations);
     ClassDB::bind_method(D_METHOD("snapshot"),&NativeQuestLog::snapshot);
     ClassDB::bind_method(D_METHOD("accept","key","expected_revision"),&NativeQuestLog::accept);
+    ClassDB::bind_method(D_METHOD("initialize_introduction","expected_revision"),&NativeQuestLog::initialize_introduction);
+    ClassDB::bind_method(D_METHOD("talk_to_trader","expected_revision"),&NativeQuestLog::talk_to_trader);
+    ClassDB::bind_method(D_METHOD("accept_first_visit","key","inventory","expected_revision","inventory_revision"),&NativeQuestLog::accept_first_visit);
     ClassDB::bind_method(D_METHOD("begin_reset","expected_revision"),&NativeQuestLog::begin_reset);
     ClassDB::bind_method(D_METHOD("finish_reset","token","committed","expected_revision"),&NativeQuestLog::finish_reset);
     ClassDB::bind_method(D_METHOD("record_defeated","resident_key","token"),&NativeQuestLog::record_defeated);
@@ -116,11 +119,28 @@ Dictionary NativeQuestLog::snapshot() const {
     Dictionary out;out["revision"]=revision;out["seed"]=seed;out["phase"]=int64_t(phase);out["cycle"]=int64_t(cycle);out["key"]=active;out["locations"]=int64_t(locations.size());
     const auto location=find(active);int count=0;
     for(uint32_t mask=defeated;mask;mask>>=1)count+=mask&1;
-    out["defeated"]=count;out["target_count"]=location?int(location->residents.size()):0;out["location"]=location?describe(*location):Dictionary();return out;
+    out["introduction"]=introduction;out["defeated"]=count;out["target_count"]=location?int(location->residents.size()):0;out["location"]=location?describe(*location):Dictionary();return out;
+}
+Dictionary NativeQuestLog::initialize_introduction(int64_t expected_revision){
+    if(expected_revision!=revision||seed<0||phase||cycle||introduction)return result(false,"unavailable_introduction");
+    if(std::none_of(locations.begin(),locations.end(),[](const Location &location){return location.layout=="coal_mine";}))return result(false,"coal_mine_unavailable");
+    introduction=1;++revision;return result(true,"");
+}
+Dictionary NativeQuestLog::talk_to_trader(int64_t expected_revision){
+    if(expected_revision!=revision||introduction!=1)return result(false,"unavailable_introduction");
+    introduction=2;++revision;return result(true,"");
+}
+Dictionary NativeQuestLog::accept_first_visit(int64_t key,const Ref<NativePlayerInventory> &inventory,int64_t expected_revision,int64_t inventory_revision){
+    const auto location=find(key);
+    if(expected_revision!=revision||introduction!=2||phase||cycle==UINT32_MAX||!location||location->layout!="coal_mine"||location->completed||inventory.is_null())return result(false,"unavailable_first_visit");
+    PackedInt64Array supplies;for(int64_t value:{6,1,8,1,223,180})supplies.append(value);
+    const Dictionary granted=inventory->grant_items(supplies,inventory_revision);
+    if(!bool(granted["ok"]))return result(false,"make_room_for_supplies");
+    active=key;phase=3;defeated=0;++cycle;introduction=3;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::accept(int64_t key,int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
-    if(phase||!find(key))return result(false,"unavailable_contract");
+    if(phase||introduction==1||introduction==2||!find(key))return result(false,"unavailable_contract");
     active=key;phase=1;defeated=0;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::begin_reset(int64_t expected_revision) {
@@ -146,7 +166,7 @@ Dictionary NativeQuestLog::record_defeated(int64_t resident_key,int64_t token) {
 }
 Dictionary NativeQuestLog::abandon(int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
-    if(!phase||phase==2)return result(false,"unavailable_abandon");
+    if(!phase||phase==2||introduction==3)return result(false,"unavailable_abandon");
     phase=0;active=0;defeated=0;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::claim(const Ref<NativeRewardInbox> &inbox,const Ref<NativePlayerProgression> &progression,int64_t expected_revision) {
@@ -160,7 +180,7 @@ Dictionary NativeQuestLog::claim(const Ref<NativeRewardInbox> &inbox,const Ref<N
     if(!bool(allowed["ok"]))return result(false,"reward_inbox_full");
     const Dictionary experience=progression->award(location->xp,progression->revision);
     inbox->accept(reward,receipt);
-    const int coins=location->coins;++location->completed;
+    const int coins=location->coins;++location->completed;if(introduction==3)introduction=4;
     phase=0;active=0;defeated=0;++revision;
     auto out=result(true,"");out["coins"]=coins;out["gained"]=experience["gained"];out["levels"]=experience["levels"];out["level"]=experience["level"];return out;
 }
@@ -168,7 +188,7 @@ PackedByteArray NativeQuestLog::capture_storage_snapshot() const {
     PackedByteArray out;if(!currency||phase==2){out.resize(1);out.set(0,0);return out;}
     int size=48;
     for(const auto &location:locations)size+=84+location.layout.utf8().length()+location.title.utf8().length()+8*(location.residents.size()+location.containers.size());
-    out.resize(size);out.fill(0);out.encode_u32(0,0x31514654);out.encode_u32(4,1);out.encode_s32(8,seed);out.encode_u32(12,locations.size());out.encode_u64(16,active);
+    out.resize(size);out.fill(0);out.encode_u32(0,0x31514654);out.encode_u32(4,introduction?2:1);out.encode_s32(8,seed);out.encode_u32(12,locations.size());out.encode_u64(16,active);out.encode_u32(36,introduction);
     out.encode_u32(24,cycle);out.encode_u32(28,phase);out.encode_u32(32,defeated);out.encode_u32(40,currency);
     int at=48;
     for(const auto &location:locations) {
@@ -188,7 +208,8 @@ bool NativeQuestLog::decode(const PackedByteArray &data,std::vector<Location> &p
     world_seed=-1;active_key=0;state=0;iteration=0;mask=0;parsed.clear();
     if(!currency)return false;
     if(data.is_empty())return true;
-    if(data.size()<48||data.size()>MAX_BYTES||data.decode_u32(0)!=0x31514654||data.decode_u32(4)!=1||data.decode_u32(36)||data.decode_u32(44)||data.decode_u32(40)!=currency)return false;
+    if(data.size()<48||data.size()>MAX_BYTES||data.decode_u32(0)!=0x31514654||(data.decode_u32(4)!=1&&data.decode_u32(4)!=2)||data.decode_u32(44)||data.decode_u32(40)!=currency)return false;
+    const auto intro=data.decode_u32(36);if(intro>4||(data.decode_u32(4)==1&&intro)||(data.decode_u32(4)==2&&!intro))return false;
     world_seed=data.decode_s32(8);active_key=int64_t(data.decode_u64(16));iteration=data.decode_u32(24);state=data.decode_u32(28);mask=data.decode_u32(32);
     const uint32_t count=data.decode_u32(12);
     if(world_seed< -1||count>MAX_LOCATIONS||(world_seed<0&&count)||active_key<0||state>4||state==2)return false;
@@ -216,6 +237,10 @@ bool NativeQuestLog::decode(const PackedByteArray &data,std::vector<Location> &p
     uint64_t completed=0;for(const auto &location:parsed)completed+=location.completed;
     if(completed>iteration)return false;
     const auto found=std::find_if(parsed.begin(),parsed.end(),[active_key](const Location &location){return location.key==active_key;});
+    if(intro&&std::none_of(parsed.begin(),parsed.end(),[](const Location &location){return location.layout=="coal_mine";}))return false;
+    if((intro==1||intro==2)&&(state||iteration||completed))return false;
+    if(intro==3&&(found==parsed.end()||found->layout!="coal_mine"||(state!=3&&state!=4)||found->completed))return false;
+    if(intro==4&&!completed)return false;
     if(!state)return active_key==0&&mask==0;
     if(found==parsed.end())return false;
     if(state==1)return mask==0;
@@ -230,6 +255,6 @@ bool NativeQuestLog::restore_storage_snapshot(const PackedByteArray &data) {
     if(phase==2)return false;
     std::vector<Location> parsed;int64_t world_seed,active_key;uint32_t state,iteration,mask;
     if(!decode(data,parsed,world_seed,active_key,state,iteration,mask))return false;
-    locations=std::move(parsed);seed=world_seed;active=active_key;phase=state;cycle=iteration;defeated=mask;++revision;return true;
+    locations=std::move(parsed);seed=world_seed;active=active_key;phase=state;cycle=iteration;defeated=mask;introduction=data.is_empty()?0:data.decode_u32(36);++revision;return true;
 }
 }

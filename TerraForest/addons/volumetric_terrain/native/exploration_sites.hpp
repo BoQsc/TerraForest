@@ -6,16 +6,24 @@
 #include <godot_cpp/variant/rect2.hpp>
 #include <godot_cpp/variant/vector3i.hpp>
 #include <godot_cpp/variant/aabb.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <map>
 #include <algorithm>
 #include <cmath>
 #include <chrono>
 #include <vector>
 
 namespace terraforest {
-inline godot::Dictionary plan_exploration_sites(const World &world,const godot::Array &layouts,const godot::Array &reservations,const godot::Array &earthworks){
+inline godot::Dictionary plan_exploration_sites(const World &world,const godot::Array &layouts,const godot::Array &reservations,const godot::Array &earthworks,const godot::PackedVector3Array &road_stops={}){
  using namespace godot;
  Dictionary result;result["ok"]=false;
  if(world.generator_id<17||world.generator_id>MAX_GENERATOR_ID||layouts.is_empty()||layouts.size()>8||reservations.size()>2048||earthworks.size()>16384)return result;
+ if(road_stops.size()>32768)return result;
+ std::map<std::pair<int,int>,std::vector<Vector3>> stop_bins;
+ for(int index=0;index<road_stops.size();++index){
+  const Vector3 point=road_stops[index];if(!point.is_finite()||point.x<0||point.x>2000||point.z<0||point.z>2000||point.y< -256||point.y>512)return result;
+  stop_bins[{int(std::floor(point.x/64)),int(std::floor(point.z/64))}].push_back(point);
+ }
  struct Passage {Vector3 start,finish;double width,height;};
  struct Entrance {double across,front,back,width,height;};
  struct Layout {String id;std::vector<Passage> passages;std::vector<Entrance> entrances;Vector3 lower,upper;};
@@ -92,6 +100,11 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
   for(int attempt=0;attempt<4096&&!accepted;++attempt){
    u32 choice=hash32(u32(world.seed)^u32(attempt)*0x9e3779b9u^u32(layout_index+1)*0x68bc21ebu);
    Vector3 origin(320+int(choice&65535)%1360,0,320+int(choice>>16)%1360);
+   if(layout.id=="coal_mine"&&!road_stops.is_empty()){
+    const Vector3 stop=road_stops[choice%road_stops.size()];const u32 scatter=hash32(choice^0xe527a31du);
+    origin=Vector3(std::round(stop.x)+int(scatter&65535)%113-56,0,std::round(stop.z)+int(scatter>>16)%113-56);
+    if(origin.x<128||origin.x>1872||origin.z<128||origin.z>1872)continue;
+   }
    origin.y=std::floor(height(origin+Vector3(.5,0,.5)))-1;
    if(origin.y<12||origin.y>225)continue;
    bool wet=false;
@@ -113,6 +126,31 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
     if(blocked){++occupied_rejections;continue;}
     approach.y=height(approach);
     if(std::abs(approach.y-mouth.y)>2){++approach_rejections;continue;}
+    Dictionary road_access;
+    if(layout.id=="coal_mine"&&!road_stops.is_empty()){
+     std::vector<std::pair<double,Vector3>> nearby;
+     const int cell_x=int(std::floor(approach.x/64)),cell_z=int(std::floor(approach.z/64));
+     for(int offset_z=-2;offset_z<=2;++offset_z)for(int offset_x=-2;offset_x<=2;++offset_x){
+      auto found=stop_bins.find({cell_x+offset_x,cell_z+offset_z});if(found==stop_bins.end())continue;
+      for(Vector3 stop:found->second){double distance=stop.distance_squared_to(approach);if(distance>=100&&distance<=64*64)nearby.push_back({distance,stop});}
+     }
+     std::stable_sort(nearby.begin(),nearby.end(),[](const auto &left,const auto &right){return left.first<right.first;});
+     for(int candidate=0;candidate<std::min(8,int(nearby.size()))&&road_access.is_empty();++candidate){
+      const Vector3 stop=nearby[candidate].second;Vector3 direction=approach-stop;direction.y=0;
+      const double span=direction.length();if(span<1||std::abs(approach.y-stop.y)>span*.25)continue;
+      const Vector3 side=Vector3(0,1,0).cross(direction/span);bool clear=true;
+      for(int step=0;step<=int(std::ceil(span*2))&&clear;++step)for(int lateral=-4;lateral<=4;++lateral){
+       const Vector3 point=stop.lerp(approach,std::min(1.,step*.5/span))+side*(lateral*.5);
+       const double fill=point.y-height(point);if(fill>2||fill< -3){clear=false;break;}
+       for(int reservation=0;reservation<reservations.size();++reservation)if(Rect2(reservations[reservation]).grow(1).has_point(Vector2(point.x,point.z))){clear=false;break;}
+       if(!clear)break;
+      }
+      if(!clear)continue;
+      road_access["start"]=stop;road_access["finish"]=approach;road_access["half_width"]=2.;road_access["depth"]=2.;road_access["clearance"]=3.;road_access["shoulder"]=1.;road_access["material"]=1;road_access["level_caps"]=true;
+      const Vector3 low=stop.min(approach)-Vector3(3,2,3),high=stop.max(approach)+Vector3(3,3,3);road_access["bounds"]=AABB(low,high-low);
+     }
+     if(road_access.is_empty()){++approach_rejections;continue;}
+    }
     Vector3 across=rotate(Vector3(1.5,0,.5),rotation)-rotate(Vector3(.5,0,.5),rotation);
     for(int step=0;step<=16&&!blocked;++step)for(int side=-4;side<=4;++side){Vector3 position=approach.lerp(mouth,step/16.)+across*(side*.5);double fill=position.y-height(position);if(fill>2||fill< -3){blocked=true;break;}}
     if(blocked){++approach_rejections;continue;}
@@ -142,6 +180,7 @@ inline godot::Dictionary plan_exploration_sites(const World &world,const godot::
     Dictionary site;site["id"]=layout.id;site["origin"]=Vector3i(origin);site["rotation"]=rotation;site["bounds"]=AABB(lower,upper-lower);
     Dictionary entry;entry["start"]=approach;entry["finish"]=mouth;entry["half_width"]=2.;entry["depth"]=2.;entry["clearance"]=3.;entry["shoulder"]=1.;entry["material"]=1;entry["level_caps"]=true;
     Vector3 entry_lower=approach.min(mouth)-Vector3(3,2,3),entry_upper=approach.max(mouth)+Vector3(3,3,3);entry["bounds"]=AABB(entry_lower,entry_upper-entry_lower);site["approach"]=entry;
+    if(!road_access.is_empty())site["road_access"]=road_access;
     sites.append(site);excluded.push_back(footprint.grow(64));accepted=true;
    }
   }
