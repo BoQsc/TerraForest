@@ -1522,7 +1522,7 @@ PackedByteArray NativeRegionalWater::capture_snapshot(const PackedByteArray &cat
     if(out.size()+catalog.size()<=64*1024*1024){saved_snapshot=out;saved_catalog=catalog;snapshot_cached=true;}
     return out;
 }
-bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
+bool NativeRegionalWater::decode(const PackedByteArray &data,bool install,bool prepare_render){
     if(data.size()<32||data.decode_u32(0)!=MAGIC||(data.decode_u32(4)<1||data.decode_u32(4)>10)||(data.decode_u32(4)<6&&data.decode_u64(24)!=0)||data.decode_u64(24)>64*1024*1024)return false;
     const bool shaped=data.decode_u32(4)>=2;
     const uint32_t record_bytes=shaped?REGION_BYTES:OLD_REGION_BYTES;
@@ -1580,6 +1580,8 @@ bool NativeRegionalWater::decode(const PackedByteArray &data,bool install){
     if(sum!=expected)return false;if(!install)return true;
     deferred_regions.clear();
     ocean_cache.clear();ocean_cache_bytes=0;ocean_cache_hits=0;invalidate_snapshot();cancel_mesh_batch();published_regions.clear();staged_ready.clear();published_surfaces.clear();published_batch=0;query_cache_bytes=0;query_builds=0;query_cache_hits=0;regions.swap(staged);solid_cache_bytes=structure_bytes;restored_cache.clear();cache_rebuilds=0;requests.clear();request_set.clear();meshes.clear();mesh_set.clear();fill=Fill{};total=sum;sampled=0;cache_hits=0;changes=0;last_us=max_us=mesh_us=max_mesh_us=0;limit=false;
+    // Storage intermediates need validated records, not meshing/query admission.
+    if(!prepare_render)return true;
     for(auto &[k,r]:regions){if(r.valid){++cache_hits;restored_cache.insert(k);}else request(k);
         // Version 1 remains playable during one-time terrain-shape cache upgrade.
         if(!r.has_density)request(k);

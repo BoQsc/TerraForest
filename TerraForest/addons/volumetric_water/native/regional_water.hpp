@@ -98,6 +98,7 @@ class NativeRegionalWater : public godot::RefCounted {
     GDCLASS(NativeRegionalWater,godot::RefCounted)
     friend class NativeWaterSnapshot;
     friend class NativeWaterMapIdentity;
+    friend class NativeWaterRegionStore;
     friend class NativeGeneratedLakeBake;
     using Key=uint64_t;
     struct Region {
@@ -224,7 +225,7 @@ class NativeRegionalWater : public godot::RefCounted {
     };
     bool surface_ready(Key owner,bool snapshot=false) const;
     SurfaceMesh build_surface(Key owner,bool snapshot=false,bool include_contacts=false) const;
-    bool decode(const godot::PackedByteArray &data,bool install);
+    bool decode(const godot::PackedByteArray &data,bool install,bool prepare_render=true);
 protected: static void _bind_methods();
 public:
     void set_western_ocean(bool enabled){if(western_ocean!=enabled){western_ocean=enabled;invalidate_snapshot();}}

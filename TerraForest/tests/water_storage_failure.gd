@@ -5,10 +5,13 @@ const Backend=preload("res://addons/volumetric_terrain/terrain_backend.gd")
 func write_bytes(path:String,bytes:PackedByteArray)->void:
  var f:=FileAccess.open(path,FileAccess.WRITE);f.store_buffer(bytes);f.close()
 func _initialize()->void:
+ for generated in [false,true]:exercise(generated)
+ print("WATER_STORAGE_FAILURE failures=",failures);quit(1 if failures else 0)
+func exercise(generated:bool)->void:
  var folder:=ProjectSettings.globalize_path("user://water_failure_check_"+str(Time.get_ticks_usec()))
  DirAccess.make_dir_recursive_absolute(folder)
  var path:=folder.path_join("world.trw");var archive=ClassDB.instantiate("NativeWorldArchive");check(archive.acquire(path),"isolated archive leased")
- var backend=Backend.new();backend.save_path=path;backend.snapshot_codec=archive;backend.native=ClassDB.instantiate("TerrainCore")
+ var backend=Backend.new();backend._water_pack_storage=generated;backend.save_path=path;backend.snapshot_codec=archive;backend.native=ClassDB.instantiate("TerrainCore")
  backend.native.execute(Codec.command(6,[42,19]))
  var terrain:PackedByteArray=backend.native.execute(Codec.command(4)).slice(12)
  var sections:Dictionary={"terrain":terrain,"volumetric_water":packet(125000)}
@@ -17,6 +20,7 @@ func _initialize()->void:
  if converted.is_empty():archive.release();quit(1);return
  var canonical:PackedByteArray=archive.encode(converted);check(archive.publish(path,canonical)==OK,"canonical fixture published")
  check(backend._load()=="World loaded" and backend.write_allowed,"production load accepts complete checkpoint")
+ check(backend._water_pack_storage==generated,"load preserves legacy or generated storage family")
  var store=ClassDB.instantiate("NativeWaterRegionStore");check(store.open_store(path+".water"),"exclusive sidecar lease acquired")
  backend.write_allowed=true
  check(backend._load().begins_with("ERROR: water checkpoint") and not backend.write_allowed,"competing sidecar owner blocks load and writes")
@@ -24,15 +28,21 @@ func _initialize()->void:
  store.close()
  var checkpoint:PackedByteArray=converted.volumetric_water.slice(16,48)
  check(store.open_store(path+".water"),"sidecar inspection opens")
- var page:Dictionary=store.checkpoint_page(checkpoint,0,1);var digest:PackedByteArray=page.digests;store.close()
- var blob_path:=path+".water/"+digest.hex_encode()+".water"
+ var digest:PackedByteArray
+ if generated:
+  var index:=FileAccess.get_file_as_bytes(path+".water/"+checkpoint.hex_encode()+".windex")
+  digest=index.slice(20,52)
+ else:
+  var page:Dictionary=store.checkpoint_page(checkpoint,0,1);digest=page.digests
+ store.close()
+ var blob_path:=path+".water/"+digest.hex_encode()+(".wpack" if generated else ".water")
  var original:PackedByteArray=FileAccess.get_file_as_bytes(blob_path)
  write_bytes(blob_path,PackedByteArray([1,2,3]));backend.write_allowed=true
  check(backend._load().begins_with("ERROR: water checkpoint") and not backend.write_allowed,"corrupt blob blocks production load and writes")
  check(archive.read(path)==canonical,"corrupt sidecar leaves canonical bytes unchanged")
  write_bytes(blob_path,original);backend.write_allowed=true
  check(backend._load()=="World loaded","repair of dependency permits exact load")
- var checkpoint_path:=path+".water/"+checkpoint.hex_encode()+".checkpoint"
+ var checkpoint_path:=path+".water/"+checkpoint.hex_encode()+(".windex" if generated else ".checkpoint")
  var manifest:PackedByteArray=FileAccess.get_file_as_bytes(checkpoint_path)
  check(DirAccess.remove_absolute(checkpoint_path)==OK,"test removes only its own checkpoint")
  backend.write_allowed=true
@@ -43,4 +53,3 @@ func _initialize()->void:
  var result:Dictionary=backend._publish_frozen(sections,terrain,path,archive)
  check(not result.success and archive.read(path)==canonical,"frozen save failure retains canonical archive")
  store.close();archive.release()
- print("WATER_STORAGE_FAILURE failures=",failures);quit(1 if failures else 0)

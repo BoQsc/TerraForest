@@ -22,6 +22,8 @@ var region_terrain: bool = "--region-terrain" in PackedStringArray(ProjectSettin
 var local_terrain: bool = not "--whole-patch-terrain" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var profile_regions: bool = "--profile-owned-regions" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 var _snapshot_token: int = 0
+# New worlds use generated region packs; legacy saves retain their storage family.
+var _water_pack_storage := true
 
 func configure_collision_piece_size(triangles: int) -> bool:
 	# Configuration is immutable while the native-world worker is running.
@@ -562,13 +564,20 @@ func _terrain_storage_sections(sections:Dictionary,path:String,writing:bool,prof
 func _water_storage_sections(sections:Dictionary,path:String,writing:bool)->Dictionary:
 	if not sections.has("volumetric_water"):return sections
 	var bytes:PackedByteArray=sections.volumetric_water
-	var checkpoint:bool=bytes.size()>=4 and bytes.slice(0,4).get_string_from_ascii()=="TFWS"
+	var magic:String=bytes.slice(0,4).get_string_from_ascii() if bytes.size()>=4 else ""
+	var checkpoint:bool=magic in ["TFWS","TFWG"]
+	if not writing:_water_pack_storage=magic=="TFWG"
 	if not writing and not checkpoint:return sections
 	if not ClassDB.class_exists("NativeWaterRegionStore"):return {}
 	if not writing and not DirAccess.dir_exists_absolute(path+".water"):return {}
 	var store:RefCounted=ClassDB.instantiate("NativeWaterRegionStore")
 	if not store.open_store(path+".water"):return {}
-	var converted:PackedByteArray=store.publish_water_snapshot(bytes) if writing else store.expand_water_snapshot(bytes)
+	var converted:PackedByteArray
+	if writing:
+		# Streaming edited-ocean captures retain their existing receipt protocol.
+		converted=store.pack_generated_snapshot(bytes) if _water_pack_storage and magic!="TFWT" else store.publish_water_snapshot(bytes)
+	else:
+		converted=store.unpack_generated_snapshot(bytes) if magic=="TFWG" else store.expand_water_snapshot(bytes)
 	store.close()
 	if converted.is_empty():return {}
 	var result:Dictionary=sections.duplicate();result.volumetric_water=converted;return result

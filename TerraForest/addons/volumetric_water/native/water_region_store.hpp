@@ -4,6 +4,7 @@
 #include "lake_catalog.hpp"
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>
+#include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <mutex>
 #include <atomic>
@@ -73,6 +74,8 @@ class NativeWaterRegionStore : public godot::RefCounted {
  void close_unlocked(){if(lease!=INVALID_HANDLE_VALUE)CloseHandle(lease);lease=INVALID_HANDLE_VALUE;directory=godot::String();indexed_id=Bytes();indexed_catalog=Bytes();index_loads=index_hits=0;}
 protected:
  static void _bind_methods(){
+  godot::ClassDB::bind_method(godot::D_METHOD("pack_generated_snapshot","snapshot"),&NativeWaterRegionStore::pack_generated_snapshot);
+  godot::ClassDB::bind_method(godot::D_METHOD("unpack_generated_snapshot","snapshot"),&NativeWaterRegionStore::unpack_generated_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("merge_water_snapshot","resident","inherited_checkpoint"),&NativeWaterRegionStore::merge_water_snapshot);
   godot::ClassDB::bind_method(godot::D_METHOD("checkpoint_window","checkpoint","minimum","maximum","cursor","limit"),&NativeWaterRegionStore::checkpoint_window);
   godot::ClassDB::bind_method(godot::D_METHOD("describe_water_snapshot","snapshot"),&NativeWaterRegionStore::describe_water_snapshot);
@@ -87,6 +90,73 @@ protected:
   godot::ClassDB::bind_method(godot::D_METHOD("read_region","checkpoint","coordinate"),&NativeWaterRegionStore::read_region);
  }
 public:
+ // Versioned generated-water packs. Each record is an independently compressed
+ // native region snapshot, including original ownership/contacts/vacancies.
+ // Existing edited-ocean APIs and their strict packet contract are unchanged.
+ Bytes pack_generated_snapshot(const Bytes &snapshot){
+  std::lock_guard<std::mutex> lock(mutex);
+  if(lease==INVALID_HANDLE_VALUE||snapshot.size()>64*1024*1024)return {};
+  godot::Ref<NativeRegionalWater> water;water.instantiate();
+  if(!water->decode(snapshot,true,false)||water->regions.size()>NativeRegionalWater::MAX_REGIONS)return {};
+  auto catalog=snapshot.slice(32,32+snapshot.decode_u32(8));
+  auto canonical=water->capture_snapshot(catalog);if(canonical.is_empty())return {};
+  godot::Ref<NativeRegionalWater> empty;empty.instantiate();auto base=empty->capture_snapshot(catalog);
+  godot::Ref<NativeLakeCatalog> lake_catalog;lake_catalog.instantiate();auto region_catalog=lake_catalog->encode(godot::Array());
+  Bytes index;index.resize(12+water->regions.size()*84);index.fill(0);
+  std::memcpy(index.ptrw(),"TFWI\1\0\0\0",8);index.encode_u32(8,water->regions.size());
+  Bytes pack;std::vector<int64_t> rows;
+  auto flush=[&](){
+   if(rows.empty())return true;Bytes id;if(!publish(pack,".wpack",id))return false;
+   for(auto row:rows)std::memcpy(index.ptrw()+row+8,id.ptr(),32);
+   pack=Bytes();rows.clear();return true;
+  };
+  int64_t row=12,decoded_bytes=base.size();
+  for(const auto &[k,r]:water->regions){
+   godot::Ref<NativeRegionalWater> single;single.instantiate();single->regions.emplace(k,r);
+   for(auto amount:r.water)single->total+=amount;
+   auto raw=single->capture_snapshot(region_catalog);if(raw.is_empty()||raw.size()>REGION_LIMIT||decoded_bytes+raw.size()>64*1024*1024)return {};
+   decoded_bytes+=raw.size();
+   auto compressed=raw.compress(godot::FileAccess::COMPRESSION_ZSTD);
+   if(compressed.is_empty()||compressed.size()>16*1024*1024)return {};
+   if(pack.size()+compressed.size()>1024*1024&&!flush())return {};
+   index.encode_u64(row,k);index.encode_u32(row+40,pack.size());index.encode_u32(row+44,compressed.size());index.encode_u32(row+48,raw.size());
+   auto digest=hash(raw);if(digest.size()!=32)return {};
+   std::memcpy(index.ptrw()+row+52,digest.ptr(),32);rows.push_back(row);pack.append_array(compressed);row+=84;
+  }
+  if(!flush())return {};Bytes id;if(!publish(index,".windex",id))return {};
+  Bytes out;out.resize(80+base.size());out.fill(0);std::memcpy(out.ptrw(),"TFWG\1\0\0\0",8);
+  out.encode_u64(8,base.size());std::memcpy(out.ptrw()+16,id.ptr(),32);
+  auto digest=hash(canonical);std::memcpy(out.ptrw()+48,digest.ptr(),32);std::memcpy(out.ptrw()+80,base.ptr(),base.size());return out;
+ }
+ Bytes unpack_generated_snapshot(const Bytes &snapshot){
+  std::lock_guard<std::mutex> lock(mutex);
+  if(lease==INVALID_HANDLE_VALUE||snapshot.size()<112||snapshot.size()>64*1024*1024||std::memcmp(snapshot.ptr(),"TFWG\1\0\0\0",8)||snapshot.decode_u64(8)!=uint64_t(snapshot.size()-80))return {};
+  Bytes index;if(!read(snapshot.slice(16,48),".windex",8*1024*1024,index)||index.size()<12||std::memcmp(index.ptr(),"TFWI\1\0\0\0",8))return {};
+  auto count=index.decode_u32(8);if(count>NativeRegionalWater::MAX_REGIONS||index.size()!=12+int64_t(count)*84)return {};
+  godot::Ref<NativeRegionalWater> water;water.instantiate();auto base=snapshot.slice(80);
+  if(!water->restore_snapshot(base)||!water->regions.empty())return {};
+  auto catalog=water->snapshot_catalog(base);
+  godot::Ref<NativeLakeCatalog> lake_catalog;lake_catalog.instantiate();auto region_catalog=lake_catalog->encode(godot::Array());
+  Bytes cached_id,pack;uint64_t previous=0;int64_t decoded_bytes=base.size();
+  for(uint32_t i=0;i<count;++i){
+   int64_t at=12+int64_t(i)*84;auto k=index.decode_u64(at);auto p=coordinate(k);
+   if(!valid(p)||key(p)!=k||(i&&k<=previous))return {};previous=k;
+   Bytes id=index.slice(at+8,at+40);
+   if(id!=cached_id){if(!read(id,".wpack",16*1024*1024,pack))return {};cached_id=id;}
+   uint64_t offset=index.decode_u32(at+40),length=index.decode_u32(at+44),size=index.decode_u32(at+48);
+   if(!length||size<32||size>REGION_LIMIT||offset+length>uint64_t(pack.size())||decoded_bytes+int64_t(size)>64*1024*1024)return {};
+   decoded_bytes+=size;
+   auto raw=pack.slice(offset,offset+length).decompress(size,godot::FileAccess::COMPRESSION_ZSTD);
+   if(raw.size()!=int64_t(size)||hash(raw)!=index.slice(at+52,at+84))return {};
+   godot::Ref<NativeRegionalWater> single;single.instantiate();
+   if(!single->decode(raw,true,false)||single->regions.size()!=1||!single->regions.count(k)||raw.slice(32,32+raw.decode_u32(8))!=region_catalog)return {};
+   if(single->total>NativeRegionalWater::MAX_TOTAL-water->total)return {};
+   water->regions.emplace(k,single->regions.begin()->second);water->total+=single->total;
+  }
+  water->invalidate_snapshot(false);
+  auto result=water->capture_snapshot(catalog);
+  return !result.is_empty()&&hash(result)==snapshot.slice(48,80)&&water->validate_snapshot(result)?result:Bytes();
+ }
  ~NativeWaterRegionStore(){close();}
  bool open_store(const godot::String &absolute_directory){std::lock_guard<std::mutex> lock(mutex);if(lease!=INVALID_HANDLE_VALUE||!absolute_directory.is_absolute_path())return false;
   if(godot::DirAccess::make_dir_recursive_absolute(absolute_directory)!=godot::OK)return false;
@@ -198,6 +268,7 @@ public:
   std::memcpy(out.ptrw()+16,id.ptr(),32);std::memcpy(out.ptrw()+48,base.ptr(),base.size());return out;
  }
  Bytes expand_water_snapshot(const Bytes &snapshot){
+  if(snapshot.size()>=8&&!std::memcmp(snapshot.ptr(),"TFWG\1\0\0\0",8))return unpack_generated_snapshot(snapshot);
   if(snapshot.size()>=4&&snapshot.decode_u32(0)==0x54574654)return {};
   godot::Ref<NativeRegionalWater> water;water.instantiate();
   if(snapshot.size()<8||std::memcmp(snapshot.ptr(),"TFWS\1\0\0\0",8))return water->validate_snapshot(snapshot)?snapshot:Bytes();
