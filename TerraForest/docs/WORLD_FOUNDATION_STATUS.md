@@ -261,6 +261,19 @@ Matching package verification is complete; resume those dependencies now. Accept
 real generated-world reset/reopen, outside preservation and foreground timing.
 [Water evidence](../issues/gameplay-expansion/water-patch-evidence.json).
 
+Durable location-baseline storage now passes 66 native creation/failure/capacity
+checks, 11 fresh-process checks and 24 existing archive checks per native build and
+in the installed package. Immutable
+world/location/definition-bound payloads reuse the existing native archive writer;
+128 references occupy only 10,320 bytes. Worker I/O leaves manifest queries usable.
+The fixture restores real terrain and preserves outside edits, not a full live POI.
+Still required: generation-time capture of every owner, stable world/definition
+identities, compound-save registration, clone/retention coverage and transactional
+live reset with player/vehicle exclusion, quiescence and rollback. No repeatable
+quest is enabled by this storage primitive. The package gate passes; resume
+integration now and require normal generated-world marker/E/reset/reopen and timing evidence.
+[Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
+
 The combined package `4295d8f9` additionally passes 27 normal-generation and ten
 fresh-process ownership checks: five locations, twenty sleeper identities and
 twelve streamed stocked chests in 877 bytes. Three saves complete in 1.61–1.84 s;

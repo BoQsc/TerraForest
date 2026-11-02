@@ -5,6 +5,17 @@
 - User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
 
+## Durable location baselines — 2026-11-02
+
+- Native immutable payloads bind world, location and definition; repeated capture
+  cannot replace the original with player-modified state. Missing/corrupt data fails
+  explicitly. The compact reference manifest never scans all payloads on load.
+- Both native builds and the installed package pass 66 storage, 11 fresh-process and 24 archive assertions each.
+  A worker writes the large test payload while reference queries remain available.
+- This is an opaque multi-component envelope. Real terrain restoration is tested;
+  complete generation-owned capture and the live multi-owner reset are not wired.
+- [Limits, exact receipts and retained failed runs](location-baseline-evidence.json).
+
 ## Bounded water reset — 2026-11-02
 
 - Native sparse patches restore exact water/vacancy state within selected bounds;

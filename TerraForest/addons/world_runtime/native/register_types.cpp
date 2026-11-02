@@ -21,6 +21,7 @@
 #include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
+namespace terraforest {void register_location_baseline();}
 static void initialize(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         GDREGISTER_CLASS(terraforest::NativeEntityStore);
@@ -38,6 +39,7 @@ static void initialize(ModuleInitializationLevel level) {
         GDREGISTER_CLASS(terraforest::NativeZombieHitReaction);
         GDREGISTER_CLASS(terraforest::NativeEntityRenderer);
         GDREGISTER_CLASS(terraforest::NativeWorldArchive);
+        terraforest::register_location_baseline();
         GDREGISTER_CLASS(terraforest::NativeDerivedCacheIndex);
         GDREGISTER_CLASS(terraforest::NativeResourceUsage);
         GDREGISTER_CLASS(terraforest::NativeRoadAnchors);

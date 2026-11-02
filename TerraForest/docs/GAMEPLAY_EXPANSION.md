@@ -340,9 +340,32 @@ water/storage/ocean regression scripts. A dense maximum patch takes tens of mill
 coordinator must schedule cold reset work rather than call it from a frame hot path.
 [Water reset evidence](../issues/gameplay-expansion/water-patch-evidence.json).
 
+`NativeLocationBaselineStore` now provides the durable envelope for those patches.
+Immutable, SHA-256-addressed files reuse `NativeWorldArchive`'s verified atomic
+writer. Each file binds world identity, location key and definition identity;
+changed originals, missing files and corrupted data are never silently recaptured
+from the player's current edits. A TFBI1 reference manifest stores at most 128
+locations in 10,320 bytes, with 16 MiB per payload and 256 MiB of referenced payloads.
+These are reference/payload limits, not garbage collection of unreferenced files.
+Manifest loading performs no payload scan; selected payloads verify on demand.
+Native I/O can run on a worker without locking manifest reads for the whole write.
+Twelve explicit owner slots and bounded named extensions preserve modularity.
+
+This is an opaque storage envelope, not proof that every owner patch is semantically
+valid or complete. The coordinator must validate each native patch and its ownership
+before any world mutation. Tests restore real terrain from a fresh-process durable
+baseline while preserving an outside edit; remaining slots in that storage fixture
+are not a complete generated POI. Generation-time capture, stable identity creation,
+compound-save reference registration, world cloning/retention, exact natural-root
+selection and the live rollback transaction remain unimplemented. Both native
+builds and the installed package pass 101 baseline/reopen/archive assertions each;
+resume that integration now. Close only with ordinary generated-world
+marker/E reset, safe player/vehicle handling, clear/reward/reopen and frame timings.
+[Baseline storage evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
+
 These primitives are not a complete location reset: live residents/corpses,
 falling trees/fractured boulders require quiescence; water requires selected-region
-hydration and terrain/contact coordination. Persistent baseline retention,
+hydration and terrain/contact coordination. Generation-owned baseline capture/integration,
 exact natural-root selection, worker scheduling, local rendered publication,
 player/vehicle exclusion and rollback across owners remain prerequisites
 before enabling the marker/E interaction or trader offers.

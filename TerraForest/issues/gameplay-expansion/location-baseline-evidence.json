@@ -1,0 +1,211 @@
+{
+  "date": "2026-11-02",
+  "status": "Native and installed-package durable storage verified; generation capture and live repeatable POI reset are unfinished",
+  "formats": {
+    "payload": "Existing TFWORLD1 canonical archive containing twelve explicit core-owner sections, bounded named extensions and an 80-byte TFQB1 world/location/definition identity",
+    "references": "TFBI1: 48-byte header, sorted 80-byte references and SHA-256 trailer"
+  },
+  "limits": {
+    "locations": 128,
+    "manifest_bytes": 10320,
+    "payload_bytes": 16777216,
+    "referenced_payload_bytes": 268435456,
+    "components": 64
+  },
+  "verification": {
+    "reports/location_baseline/20261102T174906307191Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "debug",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            66,
+            0
+          ],
+          "timing": [
+            10320,
+            99,
+            15735740,
+            196469,
+            121631
+          ],
+          "worker": {
+            "queries": 31,
+            "observed_busy": true,
+            "maximum_query_us": 43
+          }
+        },
+        {
+          "variant": "debug",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            11,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        },
+        {
+          "variant": "debug",
+          "phase": "archive",
+          "passed": true,
+          "assertions": [
+            24,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        },
+        {
+          "variant": "release",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            66,
+            0
+          ],
+          "timing": [
+            10320,
+            105,
+            15735740,
+            181345,
+            107417
+          ],
+          "worker": {
+            "queries": 29,
+            "observed_busy": true,
+            "maximum_query_us": 48
+          }
+        },
+        {
+          "variant": "release",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            11,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        },
+        {
+          "variant": "release",
+          "phase": "archive",
+          "passed": true,
+          "assertions": [
+            24,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        }
+      ]
+    },
+    "reports/location_baseline/20261102T175158726087Z/run.json": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "pack",
+          "phase": "create",
+          "passed": true,
+          "assertions": [
+            66,
+            0
+          ],
+          "timing": [
+            10320,
+            186,
+            15735740,
+            242763,
+            164101
+          ],
+          "worker": {
+            "queries": 38,
+            "observed_busy": true,
+            "maximum_query_us": 66
+          }
+        },
+        {
+          "variant": "pack",
+          "phase": "reopen",
+          "passed": true,
+          "assertions": [
+            11,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        },
+        {
+          "variant": "pack",
+          "phase": "archive",
+          "passed": true,
+          "assertions": [
+            24,
+            0
+          ],
+          "timing": null,
+          "worker": null
+        }
+      ]
+    }
+  },
+  "installed_pack_sha256": "5b8c7c631d8ada051fa09e86af4563ccfb372bf8e83f025d83149832e0638920",
+  "changed_native_sha256": {},
+  "sources": {
+    "addons/world_runtime/native/location_baseline.cpp": "11a1dba7d1225e828767923dbb3b967d15dfba8e11ac70cac43ec7c841751126",
+    "addons/world_runtime/native/register_types.cpp": "e0364fc8f95c9ab5cb51c572d226ae6e3f4f4abd2f0f964489383f614215f789",
+    "tests/location_baseline.gd": "4cf6a7f4c3a00a7c176f352317eb9b81d03a2bc7033c5051f349323239d205db",
+    "tools/check_location_baseline.py": "b725731a52eefaac7274a2bc6b100ee427cd6f007078cd0b903cf57e9e7d9682"
+  },
+  "export_log": "reports/location_baseline_export.log",
+  "import_log": "reports/location_baseline_import.log",
+  "build_log": "reports/location_baseline_keys_build.log",
+  "additional_passes": [
+    "reports/water_patch/20261102T175203548069Z/run.json",
+    "reports/quests_native/20261102T175211367350Z/run.json",
+    "reports/quests_native/20261102T175212439488Z/run.json",
+    "reports/building_standards/20261102T174932131023Z/run.json"
+  ],
+  "retained_failed_runs": [
+    {
+      "path": "reports/location_baseline/20261102T171339695169Z/run.json",
+      "reason": "Disk reserve rejected launches; no gameplay test ran"
+    },
+    {
+      "path": "reports/location_baseline/20261102T172335831546Z/run.json",
+      "reason": "StringName extension key rejected; debug script then accessed a missing result field; stopped only its failed owned process"
+    },
+    {
+      "path": "reports/location_baseline/20261102T172638689296Z/run.json",
+      "reason": "Isolated StringName-versus-String key mismatch; fixed by normalizing at baseline API boundary, without weakening the existing archive format"
+    },
+    {
+      "path": "reports/location_baseline/20261102T174105330668Z/run.json",
+      "reason": "66 debug creation assertions passed, then free-space reserve prevented reopen/release launches"
+    }
+  ],
+  "scope": [
+    "Only immutable original component bytes and reference ownership are implemented",
+    "Fresh process restores real terrain through TerrainCore and preserves an outside edit; other empty owner slots are storage fixtures, not a complete POI",
+    "Missing/corrupt payloads and changed world/location/definition reject; original state is not silently recaptured",
+    "Canonical native archive writer provides durable publication; failed publication adds no manifest reference",
+    "Worker writes permit bounded manifest reads; measured headless cold timings are not foreground gameplay guarantees",
+    "Payload loading also needs worker scheduling in the future coordinator",
+    "Reference-byte limit does not collect unreferenced immutable blobs",
+    "No player save changed; no new repeated quest offered"
+  ],
+  "remaining": [
+    "Generate stable world and location-definition identities",
+    "Capture all owner patches from pristine generation state, including exact natural vegetation roots",
+    "Register reference manifest with compound saves and clone all referenced payloads",
+    "Validate each opaque patch semantically and bind its exact reset region before mutation",
+    "Water hydration/contact rebuilding and local mesh/collision publication",
+    "Live resident/corpse/falling-tree/fractured-boulder quiescence",
+    "Player/vehicle exclusion and cross-owner rollback",
+    "Normal trader/question-mark/E start, clear/reward, fresh-process reopen and foreground timings"
+  ]
+}
