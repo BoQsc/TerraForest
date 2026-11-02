@@ -180,7 +180,7 @@ func recover_world()->Dictionary:
  return archive.recover_world(ProjectSettings.globalize_path("user://worlds"),destination)
 func publish_world()->Dictionary:
  var archive=ClassDB.instantiate("NativeWorldArchive")
- return archive.clone_world(ProjectSettings.globalize_path("user://worlds"),stage,destination)
+ return archive.clone_world(ProjectSettings.globalize_path("user://worlds"),stage,destination,-1,true)
 func publish_presentation()->void:
  var cache_source:String=str(metadata.get("recovered_source",stage))
  metadata["terrain_map_cache"]=preload("res://addons/world_runtime/survey_patch_cache.gd").promote(cache_source,destination)

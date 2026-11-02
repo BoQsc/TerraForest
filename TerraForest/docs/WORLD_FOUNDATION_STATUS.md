@@ -1,5 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Storage recurrence / approved cleanup — 2026-11-02
+
+Real free-space exhaustion interrupted the recent-requirements audit. Approved
+cleanup removes 89 verified published generation work copies and regenerable
+report-image imports: 12.67 GiB of file lengths. Playable destinations, original
+images, failed evidence, Git and other worktrees remain. Reports/reviews now avoid
+Godot imports; native successful publication explicitly retires its generated
+source, not ordinary world clones. [Audit, checks and receipts](../issues/resource-usage/README.md#storage-recurrence--2026-11-02).
+
+The broader 100 GB recovery goal remains open: review persistent test destinations,
+report retention and historical/additional checkouts with explicit approval rather
+than deleting worlds or history by name. Require ownership evidence, preservation
+checks and measured removal receipts. The original recent-work audit is also not
+complete: startup single-call stalls, player health/death/respawn and generation
+admission failures for seeds 8147/91823 still need their existing scoped work and
+validation. Resume these after storage recovery; this cleanup is not gameplay
+completion and does not change the 60 FPS limit, VSync or Quiet Mode.
+
 ## Player notices / staged startup — 2026-11-02
 
 Installed Added quest animation after first waking, general messages above the

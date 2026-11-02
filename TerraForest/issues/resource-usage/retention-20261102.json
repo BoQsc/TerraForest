@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-02",
+  "scope": "User-approved verified redundant generation working copies and regenerable screenshot imports only",
+  "measurement": "Logical file lengths, not allocated bytes or a complete C-drive attribution",
+  "initial_measured_bytes": {
+    "worlds": 25008717733,
+    "reports": 11950597886,
+    "godot_editor_data": 5961183348,
+    "project_build_data": 4318363640,
+    "additional_worktrees": 18376283017,
+    "git": 4714340362
+  },
+  "removed": {
+    "report_import_files": 13066,
+    "report_import_bytes": 5797846445,
+    "generation_work_copies": 89,
+    "generation_work_copy_bytes": 7806284611,
+    "total_bytes": 13604131056
+  },
+  "preservation": {
+    "original_image_identities_checked": 6533,
+    "changed_original_images": 0,
+    "published_world_root_hashes_checked_after_cleanup": 89,
+    "changed_published_roots": 0,
+    "remaining_eligible_work_copies": 0,
+    "remaining_mapped_report_imports_after_export": 0,
+    "ordinary_worlds_removed": 0,
+    "git_worktrees_or_original_evidence_removed": false
+  },
+  "receipts": [
+    "reports/report_import_cleanup_20261102T124947088998Z.json",
+    "reports/generation_retention_20261102T125508031937Z.json.cleanup.json",
+    "reports/generation_retention_20261102T130224152072Z.json.cleanup.json"
+  ],
+  "verification": {
+    "python_tests_passed": 14,
+    "python_tests_skipped": 1,
+    "skip_reason": "Windows symlink creation unavailable",
+    "native_source_publication": "reports/checks/20261102T131232988382Z",
+    "archive_24_checks": "reports/checks/20261102T131403538439Z",
+    "native_build": "reports/generation_retention_native_retry.log",
+    "export": "reports/generation_retention_export.log",
+    "building_gates": "reports/building_standards/20261102T131408997980Z",
+    "exact_installed_executable_publication": "reports/generation_retention_pack/20261102T131717181085Z",
+    "pack_sha256": "ec20b6423a25d18865e5d2e12ff5ba6472dd30628a54c0ea907cc1709e3db432",
+    "unchanged_executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+    "matching_native_libraries": 14
+  },
+  "failed_attempts_retained": [
+    "First cleanup verification retained JSON float options until integral normalization was added; no recipe equality check was relaxed.",
+    "Initial native build encountered the active verification process DLL lock; retry passed after it exited.",
+    "Archive harness initially requested a nonexistent success token; all 24 assertions passed, and corrected invocation passes."
+  ],
+  "remaining": [
+    "100 GB free-space goal is not achieved or attributed completely.",
+    "Persistent automated-test destination worlds and historical/additional checkouts require separate ownership review and approval.",
+    "Original report media and failed or unpublished generation evidence remain retained.",
+    "No new full-world generation, visual or performance qualification is claimed."
+  ]
+}

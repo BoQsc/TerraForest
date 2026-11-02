@@ -41,6 +41,27 @@ func _initialize()->void:
  check(not FileAccess.file_exists(folder.path_join("damaged.trw")) and DirAccess.dir_exists_absolute(str(damaged.staging).path_join("models")),"failed recovery leaves stores and root unpromoted")
  check(copier.recover_world(folder,"unknown").ok and not copier.recover_world(folder,"unknown").found,"no interrupted publication is a no-op")
  check(FileAccess.get_file_as_bytes(source)==bytes,"source retained")
+ check(not copier.clone_world(folder,"source","unsafe_retirement",-1,true).ok,"ordinary worlds cannot be retired")
+ for index in 3:
+  var generated:="combined_stage_"+str(index).repeat(32)
+  var generated_path:=folder.path_join(generated+".trw")
+  check(copier.clone_world(folder,"source",generated).ok,"create isolated generation fixture")
+  var backup:=FileAccess.open(generated_path+".bak",FileAccess.WRITE);backup.store_buffer(bytes);backup.close()
+  if index==2:
+   var pending:=FileAccess.open(generated_path+".tmp",FileAccess.WRITE);pending.store_buffer(bytes);pending.close()
+  var published:Dictionary=copier.clone_world(folder,generated,"published_%d"%index,1 if index==1 else -1,true)
+  if index==1:
+   check(not published.ok and FileAccess.file_exists(generated_path),"interrupted generation retains source")
+   check(DirAccess.dir_exists_absolute(generated_path+".terrain"),"interrupted generation retains source stores")
+  else:
+   check(published.ok,"generation publication succeeds")
+   check(published.get("source_retired",false)==(index==0),"only finished work copy retired")
+   check(FileAccess.get_file_as_bytes(folder.path_join("published_%d.trw"%index))==bytes,"retirement preserves published root")
+   for suffix:String in ["regions","models","water","terrain"]:
+    check(FileAccess.get_file_as_bytes(folder.path_join("published_%d.trw."%index+suffix+"/nested/data.bin"))==PackedByteArray([9,8,7]),"retirement preserves published stores")
+    check(DirAccess.dir_exists_absolute(generated_path+"."+suffix)==(index==2),"source store lifetime")
+   check(FileAccess.file_exists(generated_path)==(index==2) and FileAccess.file_exists(generated_path+".bak")==(index==2),"source root and backup lifetime")
+   if index==2:check(published.has("retention_reason") and FileAccess.file_exists(generated_path+".tmp"),"unfinished source retained explicitly")
  var script=load("res://addons/world_runtime/generation_job.gd")
  check(script!=null and script.can_instantiate(),"generation coordinator parses")
  print("NATIVE_PUBLICATION failures=",failures," fixture=",folder)

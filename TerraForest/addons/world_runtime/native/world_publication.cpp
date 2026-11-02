@@ -6,6 +6,7 @@
 #include <atomic>
 #include <fstream>
 #include <array>
+#include <vector>
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -16,11 +17,47 @@ static bool slot_name(const String &s){
  if(s.is_empty()||s.length()>48)return false;
  for(int i=0;i<s.length();i++){char32_t c=s[i];bool letter=(c>='a'&&c<='z')||(c>='A'&&c<='Z')||c=='_';if(!letter&&(i==0||c<'0'||c>'9'))return false;}return true;
 }
-Dictionary NativeWorldArchive::clone_world(const String &root,const String &source,const String &destination,int64_t test_stop_after) const {
+static bool ordinary_path(const fs::path &path){
+ DWORD attributes=GetFileAttributesW(path.c_str());return attributes!=INVALID_FILE_ATTRIBUTES&&!(attributes&FILE_ATTRIBUTE_REPARSE_POINT);
+}
+static bool generation_slot(const String &slot){
+ const String prefix="combined_stage_";
+ if(!slot.begins_with(prefix)||slot.length()!=prefix.length()+32)return false;
+ for(int index=prefix.length();index<slot.length();++index){
+  const char32_t character=slot[index];
+  if(!((character>='0'&&character<='9')||(character>='a'&&character<='f')))return false;
+ }
+ return true;
+}
+static bool retire_generation_files(const fs::path &base,const fs::path &source,String &reason){
+ std::error_code error;std::vector<fs::path> selected;
+ auto pending=source;pending+=".tmp";
+ if(fs::exists(pending,error)||error){reason="Unfinished source save retained";return false;}
+ uint64_t entries=0;
+ for(const char *suffix:{".regions",".models",".water",".terrain",".bak",""}){
+  auto path=source;path+=suffix;
+  bool exists=fs::exists(path,error);if(error){reason="Cannot inspect source cleanup path";return false;}if(!exists)continue;
+  if(path.parent_path()!=base||!ordinary_path(path)){reason="Unsupported source cleanup path";return false;}
+  if(fs::is_directory(path,error)){
+   for(fs::recursive_directory_iterator iterator(path,fs::directory_options::none,error),end;!error&&iterator!=end;iterator.increment(error)){
+    if(++entries>1000000||!ordinary_path(iterator->path())||(!iterator->is_directory(error)&&!iterator->is_regular_file(error))){reason="Unsupported source cleanup entry";return false;}
+   }
+  }else if(!fs::is_regular_file(path,error)){reason="Unsupported source cleanup file";return false;}
+  if(error){reason="Cannot enumerate source cleanup entries";return false;}
+  selected.push_back(path);
+ }
+ for(const auto &path:selected){
+  if(path.parent_path()!=base||!ordinary_path(path)){reason="Source cleanup path changed";return false;}
+  fs::remove_all(path,error);if(error){reason="Source cleanup incomplete; published world retained";return false;}
+ }
+ return true;
+}
+Dictionary NativeWorldArchive::clone_world(const String &root,const String &source,const String &destination,int64_t test_stop_after,bool retire_source) const {
  Dictionary result;result["ok"]=false;result["created"]=false;
  auto fail=[&](const char *reason){result["reason"]=reason;return result;};
  if(test_stop_after < -1 || test_stop_after > 4)return fail("Invalid publication stop phase");
  if(!root.is_absolute_path()||root.begins_with("user://")||root.begins_with("res://")||!slot_name(source)||!slot_name(destination)||source.nocasecmp_to(destination)==0)return fail("Invalid publication path or slot");
+ if(retire_source&&(!generation_slot(source)||destination.begins_with("combined_stage_")))return fail("Only completed generation work copies can be retired");
  String original=root.path_join(source+String(".trw")),target=root.path_join(destination+String(".trw"));
  // Acquire the same OS leases used by ordinary world saves. No live writer can
  // change either canonical root while immutable regional files are copied.
@@ -29,6 +66,7 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  std::error_code error;auto base=fs::weakly_canonical(fs::u8path(root.utf8().get_data()),error);
  if(error||!fs::is_directory(base,error))return fail("World directory unavailable");
  auto src=base/fs::u8path((source+String(".trw")).utf8().get_data()),dst=base/fs::u8path((destination+String(".trw")).utf8().get_data());
+ if(retire_source&&(!ordinary_path(src)||!fs::is_regular_file(src,error)||error))return fail("Unsupported generation source root");
  if(fs::exists(dst,error))return fail("Destination already exists");
  if(error)return fail("Cannot inspect destination");
  for(const char *suffix:{".regions",".models",".water",".terrain",".bak",".tmp"}){
@@ -88,11 +126,16 @@ Dictionary NativeWorldArchive::clone_world(const String &root,const String &sour
  auto from=fs::u8path(stage_root.utf8().get_data());
  if(!MoveFileExW(from.c_str(),dst.c_str(),MOVEFILE_WRITE_THROUGH))return fail("Canonical promotion failed; staged data retained");
  fs::remove(fs::u8path((stage_root+".lock").utf8().get_data()),error);fs::remove(stage/"publication.txt",error);fs::remove(stage,error);
- result["ok"]=true;result["created"]=true;result["files"]=int64_t(files);result["bytes"]=int64_t(bytes);result["slot"]=destination;return result;
-}
-
-static bool ordinary_path(const fs::path &path){
- DWORD attributes=GetFileAttributesW(path.c_str());return attributes!=INVALID_FILE_ATTRIBUTES&&!(attributes&FILE_ATTRIBUTE_REPARSE_POINT);
+ result["ok"]=true;result["created"]=true;result["files"]=int64_t(files);result["bytes"]=int64_t(bytes);result["slot"]=destination;
+ if(retire_source){
+  String reason;
+  bool retired=false;
+  if(read(original)!=canonical||read(target)!=canonical)reason="Published root differs; source retained";
+  else retired=retire_generation_files(base,src,reason);
+  result["source_retired"]=retired;
+  if(!retired)result["retention_reason"]=reason;
+ }
+ return result;
 }
 static bool same_file(const fs::path &a,const fs::path &b,std::error_code &error){
  if(!ordinary_path(a)||!ordinary_path(b))return false;

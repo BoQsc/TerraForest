@@ -70,6 +70,14 @@ are unchanged; historical reports retain their original thresholds.
 
 ## Offline maintenance
 
+The 2026-11-02 approved retention cleanup removes another 12.67 GiB of file lengths,
+not ordinary terrain-cache packets: 89 verified published generation work copies
+and duplicate Godot imports of retained report images. Reports/reviews now have
+root `.gdignore` files; successful native generation publication retires its working
+copy after durable publication. Ordinary clones and failed generations retain their
+sources. The 3 GiB cache quota never covered these categories. [Exact scope,
+receipts, protection checks and remaining storage work](../issues/resource-usage/README.md#storage-recurrence--2026-11-02).
+
 Close Godot, then run `python tools/storage_maintenance.py --apply --offline`.
 Without `--apply` it only inventories candidates. It acquires each native-compatible
 cache lease, validates path layout, file identity, mesh header and full SHA-256

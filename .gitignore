@@ -1,7 +1,8 @@
 /TerraForest.zip
 /TerraForest/.godot/
 /TerraForest/.build/
-/TerraForest/reports/
+/TerraForest/reports/*
+!/TerraForest/reports/.gdignore
 /TerraForest/dist/
 /TerraForest/addons/**/bin/~*.dll
 __pycache__/

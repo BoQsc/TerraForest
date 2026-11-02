@@ -11,6 +11,73 @@
 
 ## Cached readings and targeted discovery
 
+### Storage recurrence — 2026-11-02
+
+The low-space report was real, not the former export-reserve threshold. A bounded,
+read-only audit found 23.29 GiB in worlds, 11.13 GiB in reports, 5.55 GiB in editor
+data, 4.02 GiB in build data and 17.11 GiB in additional worktrees. These are
+logical-byte snapshots, not a complete attribution of C: or proof that the game
+consumed all previously free space. The installed pack and libraries are about
+0.45 GiB; development evidence and duplicate worlds are not runtime content.
+
+Two concrete retention defects were identified:
+- `reports/` lacked a root `.gdignore`, so Godot imported test screenshots again.
+  Root ignores now cover reports and reviews. Only mapped report-image `.ctex`
+  and `.md5` products were removed: **5,797,846,445 bytes**. All 6,533 associated
+  original images retain their recorded file identities; import mappings remain.
+- Successful generation copied its whole working world into the destination but
+  retained the original. The approved cleanup removed **89** published working
+  copies, **7,806,284,611 bytes**, after checking publication receipts, native
+  terrain/building/model/water integrity, saved recipes and identity, unchanged
+  root hashes and exclusive world leases. No destination worlds were removed.
+
+Total removed file lengths: **13,604,131,056 bytes (12.67 GiB)**. Free space also
+changed independently during the audit; do not equate its net change to these
+deletions. No eligible receipt-backed copy remains after this cleanup. The initial
+128-name estimate was not a deletion list; unpublished/unverified copies
+and failed-test evidence remain. The 3 GiB derived-terrain-cache policy does not
+cover worlds, screenshots, editor imports, builds, worktrees or Git.
+
+Native publication now has an explicit generation-only retirement mode, used by
+the coordinator. It removes only its generated source after durable destination
+publication, while both leases remain held. Ordinary clones retain their source;
+failed/interrupted publication, pending saves and unsupported cleanup paths retain
+evidence. Cleanup failure is reported separately and never invalidates a published
+world. There is no gameplay/background directory scan or global save deletion.
+
+Commands are dry-run by default:
+`python tools/cleanup_report_imports.py` and
+`python tools/cleanup_generation_copies.py --godot <engine>`.
+`--apply --offline` requires the editor/game closed. Receipts stay in reports.
+The first native verification pass conservatively retained JSON-float recipe
+options; integral options are now converted to native integers before verification,
+without relaxing recipe equality. Both source and destination are verified.
+
+Evidence: `reports/report_import_cleanup_20261102T124947088998Z.json`,
+`reports/generation_retention_20261102T125508031937Z.json.cleanup.json` and
+`reports/generation_retention_20261102T130224152072Z.json.cleanup.json`.
+Six import tests and eight retention tests pass; the Windows symlink-creation
+fixture is skipped on this machine. Native publication checks pass in
+`reports/checks/20261102T131232988382Z`; all 24 archive checks pass in
+`reports/checks/20261102T131403538439Z`. The earlier archive harness used a nonexistent
+success token, despite zero assertion failures; that failed receipt is preserved.
+The initial build encountered this audit's own verification-process DLL lock;
+the retry builds both native configurations successfully after verification exits.
+Export and its eight building gates pass; the exact installed executable/release
+library passes publication checks in
+`reports/generation_retention_pack/20261102T131717181085Z`. Pack SHA-256 is
+`ec20b6423a25d18865e5d2e12ff5ba6472dd30628a54c0ea907cc1709e3db432`;
+all 14 native libraries match. All 89 published root hashes remain unchanged
+after cleanup, and the editor/export does not recreate report-image imports.
+No new full-world generation or visual/performance qualification is claimed by
+these storage checks. [Compact measurements and receipts](retention-20261102.json).
+
+Remaining: persistent automated-test destination worlds, the 11 GiB report archive,
+historical build copies and additional worktrees need their own provenance/retention
+review and approval before removal or archiving. They were not silently deleted.
+The 100 GB free-space goal is **not achieved**. Broader startup/respawn/generation
+work remains in the foundation tracker; this cleanup does not complete it.
+
 ### Export reserve correction — 2026-11-02
 
 The 10 GiB hard reserve plus 1 GiB estimated export work repeatedly blocked a

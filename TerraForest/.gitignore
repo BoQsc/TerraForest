@@ -1,6 +1,7 @@
 .godot/
 .build/
-reports/
+reports/*
+!reports/.gdignore
 dist/
 *.tmp.*
 __pycache__/
