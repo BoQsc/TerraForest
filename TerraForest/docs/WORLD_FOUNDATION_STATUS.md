@@ -280,9 +280,15 @@ correctly rejects; this follow-up does not count that as a passing quest journey
 The older broad
 water-persistence test still fails its unfinished-lake shutdown assertions, also
 reproduced with the previous persistence script; this change does not fix that.
-Still required: generation-time capture of every owner, stable definition identities,
-exact natural vegetation selection and transactional live reset with player/vehicle
-exclusion, quiescence and rollback. No repeatable quest is enabled yet. Resume
+Generation now captures the twelve owner sections at the pre-presentation barrier,
+with stable definition identities and exact three-dimensional natural-root selection.
+It includes full cave excavation plus structure/model bounds, native owner patches
+and protected model identities, not whole-world copies. Existing saves are untouched.
+[Capture contract and remaining reset semantics](GAMEPLAY_EXPANSION.md#generation-owned-location-originals--2026-11-02),
+[generated-world receipts](../issues/gameplay-expansion/location-capture-evidence.json).
+Still required: transactional live reset with current player-edit ownership,
+player/vehicle exclusion, transient-owner quiescence, local publication and rollback.
+No repeatable quest is enabled yet. Resume
 those integrations and require normal generated-world marker/E/reset/reopen and timing evidence.
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
 [Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).

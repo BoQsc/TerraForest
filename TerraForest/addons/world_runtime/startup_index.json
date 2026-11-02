@@ -524,6 +524,7 @@
     "res://addons/structures/lake_crossings.gd",
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
+    "res://addons/world_runtime/location_capture.gd",
     "res://addons/world_runtime/survey_patch_cache.gd"
   ],
   "res://addons/world_runtime/generated_region.gd": [],
@@ -560,6 +561,9 @@
     "res://addons/world_runtime/loading_timer.gd"
   ],
   "res://addons/world_runtime/loading_timer.gd": [],
+  "res://addons/world_runtime/location_capture.gd": [
+    "res://addons/volumetric_terrain/mesh_codec.gd"
+  ],
   "res://addons/world_runtime/material_deposits.gd": [
     "res://addons/world_ecosystem/woodland_mesh.gd",
     "res://addons/world_ecosystem/mineral_stone.gdshader",

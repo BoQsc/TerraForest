@@ -54,7 +54,7 @@ bool decode_patch(const PackedByteArray &data,Patch &patch){
     return total==patch.total&&digest(data)==data.slice(data.size()-digest_bytes);
 }
 bool implicit_ocean(const Vector3i &coordinate,bool western,bool surrounding){
-    if(coordinate.y<7||coordinate.y>10)return false;
+    if(coordinate.y<7||coordinate.y>=10)return false;
     return (western&&coordinate.x<35)||(surrounding&&std::min({coordinate.x,coordinate.z,499-coordinate.x,499-coordinate.z})<35);
 }
 }

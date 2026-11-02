@@ -87,6 +87,10 @@ func doors() -> void:
 	var baseline := door_capture(state)
 	var model_baseline := model_capture(target)
 	check(not baseline.is_empty() and not model_baseline.is_empty() and state.validate_door_patch(baseline), "selected baseline includes open moving and absent states")
+	var members:Dictionary=target.placement_patch_members(model_baseline)
+	check(members.ok and members.asset=="test/door_patch" and members.ids==PackedInt64Array([1,2]) and members.bounds==AABB(Vector3.ZERO,Vector3.ONE*32),"validated model original exposes exact namespaced membership")
+	var invalid_model:=model_baseline.duplicate();invalid_model[80]^=1
+	check(not target.placement_patch_members(invalid_model).ok,"corrupt model original never exposes trusted identities")
 	var token: Dictionary = state.door_patch_state()
 	check(door_restore(state, baseline).changes == 0 and state.door_patch_state() == token, "door no-op retains token")
 	state.advance(target, 0.1)

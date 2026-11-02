@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-02",
+  "status": "generation-original capture implemented; live multi-owner reset remains unfinished",
+  "scope": "Ordinary default browser recipe, seed 1703; five generated exploration locations. Existing player worlds are not migrated or recaptured. No reset, rollback, marker/E interaction or repeatable quest completion is claimed.",
+  "source_world": {
+    "report": "reports/quests_world/20261102T190303238726Z/run.json",
+    "slot": "Quests_1703_eaa2ed4f",
+    "assertions": [88, 90],
+    "note": "Pre-final-token-guard source checkpoint; packaged generation below exercises the final guard. Separate processes verify original lookup, native payload validity, ordinary save/selector reload and unchanged introduction/storage state."
+  },
+  "package_world": {
+    "report": "reports/quests_world/20261102T190827698546Z/run.json",
+    "generation_receipt": "C:/Users/windows10/AppData/Roaming/Godot/app_userdata/TerraForest/generation_reports/6bad3582193b7fc14d22e8df1205c235/location_originals.json",
+    "assertions": [88, 90],
+    "pack_bytes": 471073528,
+    "pack_sha256": "092373e7c6ba7ddb9ebd8855a93a406dcb09fd27df45f6f136629b768c670fd5",
+    "peak_private_commit_bytes": 3993374720,
+    "peak_dedicated_gpu_bytes": 1491693568,
+    "resource_scope": "Half-second process-specific samples over generation/load/save. Not foreground frame pacing, instantaneous peaks or whole-device memory qualification. 60 FPS, VSync and Quiet Mode unchanged."
+  },
+  "capture": {
+    "manifest_bytes": 480,
+    "referenced_original_bytes": 576638,
+    "total_location_capture_us": 304986,
+    "measurement_scope": "Sum of five location captures including worker scheduling and file publication; excludes progress-frame yields before each capture and water readiness. Main-thread scene captures are separately recorded, not gameplay-frame guarantees.",
+    "locations": [
+      {"layout": "survey_mine", "capture_us": 71416, "scene_us": 1590, "ground_roots": 152, "tree_roots": 0},
+      {"layout": "split_rock_cave", "capture_us": 50058, "scene_us": 1418, "ground_roots": 81, "tree_roots": 0},
+      {"layout": "watchtower_w1", "capture_us": 33388, "scene_us": 1159, "ground_roots": 132, "tree_roots": 0},
+      {"layout": "watchtower_w1", "capture_us": 66705, "scene_us": 1014, "ground_roots": 140, "tree_roots": 0},
+      {"layout": "coal_mine", "capture_us": 83419, "scene_us": 2669, "ground_roots": 785, "tree_roots": 5}
+    ]
+  },
+  "regressions": [
+    {"report": "reports/checks/20261102T190858462439Z/run.json", "scope": "47 bounds, rotation, tiling, root selection and binary-envelope assertions"},
+    {"report": "reports/location_owner_patches/20261102T190050696184Z/run.json", "scope": "debug/release each: 60 owner assertions, six fresh-process assertions, combat/harvest/container regressions"},
+    {"report": "reports/location_owner_patches/20261102T190844367429Z/run.json", "scope": "same owner checks in package, plus door animation/component and attack durability"},
+    {"report": "reports/model_patch/20261102T190401449684Z/run.json", "scope": "debug/release each: 52 model patch assertions and three fresh-process assertions"},
+    {"report": "reports/water_patch/20261102T190313479082Z/run.json", "scope": "debug/release each: 96 patch, five fresh-process, nine terrain-contact assertions; eight water storage/residency/map regressions"},
+    {"report": "reports/water_patch/20261102T190837924050Z/run.json", "scope": "same water checks in installed package"},
+    {"report": "reports/building_standards/20261102T190700515248Z/run.json", "scope": "eight export gates including production catalog"},
+    {"report": "reports/location_capture_export.log", "scope": "export and startup with all 14 matching external native libraries"}
+  ],
+  "retained_failures": [
+    {"report": "reports/quests_world/20261102T185621130225Z/run.json", "cause": "Test GDScript inferred two dynamic booleans; corrected explicit bool annotations."},
+    {"report": "reports/quests_world/20261102T185650700423Z/run.json", "cause": "Initial capture rejected water. Live water capture moved to its main-thread owner and generation waits for pending contacts. Owned failed test process 32640 stopped after generation reported failure."},
+    {"report": "reports/quests_world/20261102T190030358048Z/run.json", "cause": "Coastal lookout above 40 m was rejected by coarse implicit-ocean ownership despite no pending water contacts. Corrected exact sea ceiling without relaxing below-sea or explicit/deferred/cached edit checks. Owned failed test process 6660 stopped after generation reported failure."}
+  ],
+  "native_sha256": {
+    "structures_debug": "c8d8211ecba4dff875ba499617856437c775c4638887e1abd2f585c93086b0be",
+    "structures_release": "f33023046dac164c7a10290c6f93a5eaf9139684975e7fa432f4d2df5262ae06",
+    "water_debug": "a77ce1ff33fea312f7bd26509c402de739db1bb3333ef9eb240708654baf6a06",
+    "water_release": "866c843ded802f9ee87fc57b4ad7c633ce1952bcd837a1e795e9a025cf7f8e71"
+  },
+  "remaining": [
+    "Transaction preflight and durable rollback journal before live changes.",
+    "Current owned damage keys, player-added structures/plants/water and other local player changes; never clear a global store using the pristine damage original.",
+    "Quiesce live residents, corpses, falling trees and fractured boulders; protect players and vehicles.",
+    "Selected-region hydration, local collision/render/contact refresh and failure rollback.",
+    "Ordinary question-mark/E activation, trader offers, repeatable clear/reward and fresh-process restoration.",
+    "Broader seeds and recipes; existing road admission failures for 8147/91823 remain separate."
+  ]
+}

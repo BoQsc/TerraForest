@@ -13,6 +13,7 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
+    parser.add_argument('--originals', action='store_true')
     reuse = parser.add_mutually_exclusive_group()
     reuse.add_argument('--restore-report')
     reuse.add_argument('--exercise-report')
@@ -32,7 +33,7 @@ def main():
             parser.error('Not an owned quest fixture')
         for name in (['created_slot.json'] if args.baseline_report else ['expected.bin', 'created_slot.json']):
             (folder / name).write_bytes((source / name).read_bytes())
-    record = dict(pack=args.pack, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
+    record = dict(pack=args.pack, originals=args.originals, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
     script = ROOT / 'tests/quests_world.gd'
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -52,12 +53,14 @@ def main():
 
     subprocess.Popen = nonactivating
     try:
-        for phase in (['baseline', 'baseline_reopen'] if args.baseline_report else ['restore'] if args.restore_report else ['exercise', 'restore'] if args.exercise_report else ['create', 'restore']):
+        for phase in (['create_originals', 'baseline_reopen'] if args.originals and not source_report else ['baseline', 'baseline_reopen'] if args.baseline_report else ['restore'] if args.restore_report else ['exercise', 'restore'] if args.exercise_report else ['create', 'restore']):
             destination = folder / phase
             destination.mkdir()
             command = [config.godot, '--path', str(ROOT / 'dist' if args.pack else ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(destination / 'engine.log'), '--script', str(script), '--', '--session-evidence-dir=' + folder.as_posix()]
             if args.pack:
                 command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
+            if args.originals:
+                command.append('--verify-originals')
             if phase == 'restore':
                 command.append('--restore-quests')
             elif phase == 'exercise':

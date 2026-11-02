@@ -204,8 +204,8 @@ existing saves.
 
 This historical ownership milestone alone did not provide playable quests. The
 Frontier continuation above now implements the one-time non-reset introduction,
-offers, live mine clear and reward. Next for repeatable quests: exact bounded
-terrain/block/model/stock/resident baselines and reset rollback; explicit player-edit
+offers, live mine clear and reward. Generation now captures bounded owner originals
+as described below. Next for repeatable quests: reset rollback; explicit player-edit
 safety and question-mark/E start.
 Return immediately after persistence qualification. Close only with normal
 generated-world accept/travel/reset/clear/claim/reopen evidence, outside-region
@@ -364,8 +364,8 @@ payloads on its worker; native publication copies only referenced immutable file
 then promotes the canonical root last. Six interruption phases recover only after
 verifying the selected originals. Completed generation retires its redundant
 baseline sidecar; diagnostic Python clones conservatively preserve the full sidecar.
-Generation-time capture of every owner, stable location-definition identities,
-exact natural-root selection and the live rollback transaction remain unimplemented.
+Generation-time capture and stable location-definition identities now follow the
+integration below. The live rollback transaction remains unimplemented.
 Both native builds and the installed package pass 172 baseline/publication/reopen/archive
 assertions each. The actual terrain save backend additionally passes 15 checks.
 The installed default recipe generates 51 buildings and the new identity; its
@@ -382,12 +382,53 @@ marker/E reset, safe player/vehicle handling, clear/reward/reopen and frame timi
 
 These primitives are not a complete location reset: live residents/corpses,
 falling trees/fractured boulders require quiescence; water requires selected-region
-hydration and terrain/contact coordination. Generation-owned baseline capture/integration,
-exact natural-root selection, worker scheduling, local rendered publication,
+hydration and terrain/contact coordination. Reset-time worker scheduling, local rendered publication,
 player/vehicle exclusion and rollback across owners remain prerequisites
 before enabling the marker/E interaction or trader offers.
 Evidence, retained fixture failures and an unchanged older golden-data mismatch:
 [field patch checks](../issues/gameplay-expansion/field-patch-evidence.json).
+
+### Generation-owned location originals — 2026-11-02
+
+Ordinary new-world generation captures the twelve owner sections after structures,
+locks and landscape edits, before photographs or player arrival. Cave ownership
+now unions excavation and complete prefab/model envelopes, rounded outward to the
+integer lattice. Existing saved definitions are unchanged. Model capture refuses
+boundary-crossing placements instead of cutting them into unrelated reset tiles.
+
+Terrain density/material includes the positive sample boundary; blocks/cubes use
+the cell volume; water uses the matching half-metre volume. Native tiles stay at
+most 64 cubed entries. Full native model patches retain exact namespaced identities
+and removal-protection lists. Hinge, container, sleeping-resident and corpse patches
+are captured from their actual owners. Empty model/hinge scopes remain explicit.
+
+Deterministic tree/ground candidates use the ordinary scatter, shelter and native
+surface projection, independently of render residency. Half-open three-dimensional
+root selection preserves nearby roots outside the volume. The ground patch also
+owns planted roots. Terrain sampling and immutable disk publication run on a worker;
+scene-owned native captures, including water, remain on the main thread. Owner
+revision checks reject mixed snapshots. Generation shows the current location and
+capture stage; no new per-frame gameplay job is introduced.
+
+Version-one binary owner envelopes contain native patches, not duplicated world
+saves. Definition hashes exclude mutable quest completion. Damage originals are
+explicitly pristine, verified against empty native damage stores before capture.
+They are a scoped clearing instruction, **not permission to restore an empty global
+damage store**. The live reset must select current owned block/model/tree/ground
+damage keys, including later player changes, while preserving outside entries.
+
+The coastal test exposed an overly conservative unknown-water region: procedural
+sea fills only below 40 m, although its residency includes the 40–44 m region.
+Absent cells at/above that ceiling can be captured as dry; crossing below it and
+explicit/deferred/cached edits retain their readiness checks. No water is invented
+or removed to make capture pass.
+
+[Generated-world evidence, measured costs and retained failures](../issues/gameplay-expansion/location-capture-evidence.json).
+This enables original preservation, not repeatable quests. Next: live transaction
+preflight/journal, transient-owner retirement, current-player-edit ownership,
+local contact/render refresh, rollback, then question-mark/E activation and trader
+offers. Require real generated-world reset/clear/reward/fresh-reload checks and
+outside-region preservation before calling that gameplay complete.
 
 ### Shared inventory navigation and character view
 

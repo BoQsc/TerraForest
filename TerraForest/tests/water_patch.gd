@@ -144,6 +144,9 @@ func run()->void:
 	var ocean:=owner();var ocean_token:Dictionary=ocean.water_patch_state();ocean.set_surrounding_ocean(true)
 	check(ocean.water_patch_state().revision>ocean_token.revision and not restore(ocean,baseline).ok,"ocean-mode change invalidates token and mismatched patch")
 	check(capture(ocean,Vector3i(8,72,2000),SIZE).is_empty(),"unresident implicit sea cannot be captured as dry")
+	var above_sea:=capture(ocean,Vector3i(8,80,2000),SIZE)
+	check(above_sea.size()==96 and above_sea.decode_u64(40)==0 and restore(ocean,above_sea).ok,"unresident coastal volume at or above the exact 40m sea ceiling is dry")
+	check(capture(ocean,Vector3i(8,79,2000),SIZE).is_empty(),"volume crossing below the sea ceiling still requires residency")
 	var ocean_rows:=[{"coordinate":Vector3i(1,9,250),"ocean":1,"water":{0:125000,7:100000}}]
 	var pristine:=owner(ocean_rows);pristine.set_surrounding_ocean(true)
 	var sea_patch:=capture(pristine,Vector3i(8,72,2000),Vector3i(1,1,1))

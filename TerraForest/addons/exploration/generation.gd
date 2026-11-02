@@ -3,6 +3,14 @@ extends RefCounted
 const Layouts=preload("res://addons/exploration/cave_layouts.gd")
 const Watchtowers=preload("res://addons/exploration/watchtower_sites.gd")
 
+static func location_bounds(asset:Resource,layout:Dictionary,origin:Vector3i,rotation:int,tower:bool)->AABB:
+	var bounds:AABB=asset.placement_bounds(origin,rotation)
+	if not tower:
+		for segment:Dictionary in Layouts.segments(layout,origin,rotation):bounds=bounds.merge(segment.bounds)
+	var lower:Vector3=bounds.grow(.25).position.floor()
+	var upper:Vector3=bounds.grow(.25).end.ceil()
+	return AABB(lower,upper-lower)
+
 static func check_models(game:Node,asset:Resource,origin:Vector3i,rotation:int)->bool:
 	var foundation:RefCounted=game.foundation_check
 	if not foundation.begin_ground_models(game.terrain,asset,origin,rotation,game.structures.model_collections()):return false
@@ -43,14 +51,10 @@ static func publish(game:Node,sites:Array)->Dictionary:
 			if not game.storage.store.seed_contents(identity,stock) or not game.storage.collection.set_removal_protected(identity,true):return {"ok":false,"reason":"Supply storage rejected"}
 		anchors.append_array(residents)
 		published.append({"id":site.id,"origin":site.origin,"rotation":site.rotation,"chests":ids,"sleepers":residents})
-		var bounds:AABB=asset.placement_bounds(site.origin,site.rotation)
-		if not tower:
-			var segments:=Layouts.segments(layout,site.origin,site.rotation)
-			bounds=segments[0].bounds
-			for segment:Dictionary in segments:bounds=bounds.merge(segment.bounds)
+		var bounds:=location_bounds(asset,layout,site.origin,site.rotation,tower)
 		var keys:=PackedInt64Array()
 		for resident:Dictionary in residents:keys.append(resident.key)
-		locations.append({"key":keys[0],"layout":site.id,"title":"Wilderness lookout" if tower else layout.title,"origin":Vector3i(site.origin),"rotation":int(site.rotation),"marker":Vector3(site.origin)+Layouts.turn(Vector3(3.5,0,-2.5) if tower else Vector3(.5,0,-5.5),site.rotation),"bounds":bounds.grow(.25),"residents":keys,"containers":ids,"coins":20 if tower else 40,"xp":80 if tower else 160})
+		locations.append({"key":keys[0],"layout":site.id,"title":"Wilderness lookout" if tower else layout.title,"origin":Vector3i(site.origin),"rotation":int(site.rotation),"marker":Vector3(site.origin)+Layouts.turn(Vector3(3.5,0,-2.5) if tower else Vector3(.5,0,-5.5),site.rotation),"bounds":bounds,"residents":keys,"containers":ids,"coins":20 if tower else 40,"xp":80 if tower else 160})
 	var store:RefCounted=game.zombies.population.store
 	if not store.initialize(game.terrain.backend.world_seed,game._initial_generation_spawn):return {"ok":false,"reason":"Exploration population mismatch"}
 	var registered:Dictionary=store.register_sleepers(anchors)

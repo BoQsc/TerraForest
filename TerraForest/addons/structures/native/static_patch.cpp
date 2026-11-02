@@ -100,6 +100,13 @@ bool NativeStaticBatch::decode_placement_patch(const PackedByteArray &bytes,AABB
 bool NativeStaticBatch::validate_placement_patch(const PackedByteArray &bytes) const {
     AABB bounds;std::map<int64_t,Placement> selected;return decode_placement_patch(bytes,bounds,selected);
 }
+Dictionary NativeStaticBatch::placement_patch_members(const PackedByteArray &bytes) const {
+    Dictionary result;result["ok"]=false;
+    AABB bounds;std::map<int64_t,Placement> selected;
+    if(!decode_placement_patch(bytes,bounds,selected))return result;
+    PackedInt64Array ids;for(const auto &entry:selected)ids.push_back(entry.first);
+    result["ok"]=true;result["bounds"]=bounds;result["asset"]=asset_id;result["ids"]=ids;return result;
+}
 Dictionary NativeStaticBatch::restore_placement_patch(const PackedByteArray &bytes,int64_t expected_revision,int64_t expected_owner){
     Dictionary result;result["ok"]=false;result["changes"]=0;result["revision"]=int64_t(edit_revision);
     result["owner"]=int64_t(get_instance_id());result["reason"]="stale";

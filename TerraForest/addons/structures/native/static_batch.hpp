@@ -184,6 +184,7 @@ public:
     Dictionary placement_patch_state() const;
     PackedByteArray capture_placement_patch(Vector3i origin,Vector3i size,int64_t expected_revision,int64_t expected_owner) const;
     bool validate_placement_patch(const PackedByteArray &bytes) const;
+    Dictionary placement_patch_members(const PackedByteArray &bytes) const;
     Dictionary restore_placement_patch(const PackedByteArray &bytes,int64_t expected_revision,int64_t expected_owner);
     bool set_instance_visual_hidden(int64_t id,bool hidden);
     bool is_instance_visual_hidden(int64_t id) const {return visual_hidden.count(id)!=0;}

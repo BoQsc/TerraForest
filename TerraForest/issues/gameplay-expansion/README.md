@@ -7,6 +7,18 @@
 
 ## Durable location baselines — 2026-11-02
 
+- Generation follow-up: the ordinary recipe now preserves actual owner originals
+  before presentation/player arrival. Cave bounds include both excavation and all
+  prefab parts; natural tree/ground identities use exact projected roots, not
+  currently visible vegetation. Existing saves are not recaptured.
+- [Generation capture, source/package checks and costs](location-capture-evidence.json).
+- Source and installed default worlds each pass 88 + 90 ordinary-flow assertions.
+  Five originals total 576,638 bytes; the save manifest is 480 bytes. Packaged
+  capture totals 305 ms, with individual main-thread capture portions 1.0–2.7 ms.
+  These are scoped generation measurements, not gameplay frame-pacing acceptance.
+- Remaining: live transaction/journal, current player edits, transient cleanup,
+  water/contact/render refresh, safe player/vehicle exclusion, rollback and the
+  actual question-mark/E repeatable-quest interaction.
 - Follow-up: compound-save registration, generation-owned world identity and
   native selected-reference clone/recovery are integrated. Legacy worlds acquire
   no invented originals or baseline directories; read-only lookup writes no locks.
@@ -23,8 +35,8 @@
   explicitly. The compact reference manifest never scans all payloads on load.
 - Initial storage verification passed 66 storage, 11 fresh-process and 24 archive assertions each.
   A worker writes the large test payload while reference queries remain available.
-- This is an opaque multi-component envelope. Real terrain restoration is tested;
-  complete generation-owned capture and the live multi-owner reset are not wired.
+- The storage envelope alone is opaque. Generation now validates/captures owner
+  sections; the live multi-owner reset is still not wired.
 - [Limits, exact receipts and retained failed runs](location-baseline-evidence.json).
 
 ## Bounded water reset — 2026-11-02

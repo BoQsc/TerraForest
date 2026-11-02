@@ -33,7 +33,8 @@ func run()->void:
 	game=current_scene;game.background_fps=60;game.app_focused=true;game.set_physics_process(false);game._clear_motion();game.zombies.update(0,game.player.global_position,false)
 	var store:RefCounted=game.quests.store;var locations:Array=store.get_locations()
 	check(game.persistence._providers.has("player_quests") and store.snapshot().seed==1703,"native quest component participates in the actual compound world save")
-	if baselines_only:
+	if baselines_only or "--verify-originals" in OS.get_cmdline_user_args():
+		if "--verify-originals" in OS.get_cmdline_user_args():await verify_originals()
 		await verify_baseline_roundtrip();await finish();return
 	if not restoring and not exercising:
 		check(game.persistence.location_baselines.capture_storage_snapshot().size()==80,"ordinary generation publishes its world identity without placeholder owner patches")
@@ -97,7 +98,8 @@ func run()->void:
 func verify_baseline_roundtrip()->void:
 	var manifest:PackedByteArray=game.persistence.location_baselines.capture_storage_snapshot()
 	var quests:PackedByteArray=game.quests.store.capture_storage_snapshot()
-	check(manifest.size()==80 and game.persistence.location_baselines.state().locations==0,"ordinary generated world has its own identity, not invented owner originals")
+	var count:int=game.persistence.location_baselines.state().locations
+	check(manifest.size()==80+count*80,"ordinary generated world has its bounded identity and original references")
 	var expected_path:=folder.path_join("baseline_expected.bin")
 	if "--baseline-reopen" in OS.get_cmdline_user_args():
 		check(FileAccess.get_file_as_bytes(expected_path)==manifest,"fresh process restores the exact generated world identity")
@@ -114,6 +116,43 @@ func verify_baseline_roundtrip()->void:
 	check(game.persistence.location_baselines.capture_storage_snapshot()==manifest,"normal save/reopen keeps exact baseline identity")
 	check(game.quests.store.capture_storage_snapshot()==quests,"baseline persistence does not bypass introduction or start a quest")
 	check(await leave(),"baseline check closes through normal save path")
+
+func verify_originals()->void:
+	var capture=load("res://addons/world_runtime/location_capture.gd")
+	var locations:Array=game.quests.store.get_locations()
+	var originals:RefCounted=game.persistence.location_baselines
+	check(originals.state().locations==locations.size() and locations.size()==5,"ordinary default recipe publishes all five original locations")
+	var containers:PackedByteArray=game.storage.store.capture_storage_snapshot()
+	var definitions:PackedByteArray=game.quests.store.capture_storage_snapshot()
+	var collections:Dictionary=game.structures.model_collections()
+	for location:Dictionary in locations:
+		var worker:=Thread.new()
+		worker.start(originals.load_baseline.bind(location.key,capture.definition(location)))
+		while worker.is_alive():await process_frame
+		var original:Dictionary=worker.wait_to_finish()
+		if not check(original.ok,"published "+location.layout+" resolves original from its own sidecar"):continue
+		var decoded:Dictionary={};var complete:=true
+		for kind:String in capture.OWNERS:
+			decoded[kind]=capture.unpack(original.sections.get(kind,PackedByteArray()),kind,location.bounds)
+			complete=complete and not decoded[kind].is_empty()
+		if not check(complete,"all twelve "+location.layout+" owners have typed non-placeholder envelopes"):continue
+		for row:Array in [["terrain",game.terrain.backend.native,"field"],["cubes",game.terrain.backend.native,"cube"],["blocks",game.structures.blocks,"cell"],["water",game.lakes.water,"water"],["containers",game.storage.store,"container"],["residents",game.zombies.population.store,"resident"],["corpses",game.corpse_loot.store,"corpse"]]:
+			var valid:bool=not decoded[row[0]].records.is_empty()
+			for bytes:PackedByteArray in decoded[row[0]].records:valid=valid and row[1].call("validate_"+row[2]+"_patch",bytes)
+			check(valid,location.layout+" native "+row[0]+" payloads validate")
+		var model_ids:Dictionary={};var models_valid:bool=decoded.models.records.size()==collections.size()
+		for record:Array in decoded.models.records:
+			models_valid=models_valid and collections.has(record[0]) and collections[record[0]].validate_placement_patch(record[1])
+			model_ids[record[0]]=record[2]
+		check(models_valid,location.layout+" originals include every model namespace, including empty scopes")
+		check(model_ids.get("storage/wooden_chest/v1",PackedInt64Array())==location.containers,location.layout+" container identities match geometric ownership")
+		var valid_doors:=true
+		for record:Array in decoded.doors.records:valid_doors=valid_doors and game.doors.types.has(record[0]) and (record[1].is_empty() if record[2].is_empty() else game.doors.types[record[0]].state.validate_door_patch(record[2]))
+		check(valid_doors,location.layout+" hinge originals retain namespaced ownership")
+		check(game.ground_cover.removed.validate_ground_patch(decoded.ground.records[1]),location.layout+" native exact-root ground original validates")
+		check(decoded.trees.records[0].is_empty() if decoded.trees.records[1].is_empty() else game.ecosystem.harvest_state.validate_harvest_patch(decoded.trees.records[1]),location.layout+" explicit natural tree original validates")
+		check(decoded.damage.records[0]=="pristine_generation" and game.world_attack.durability.validate_snapshot(decoded.damage.records[1]) and decoded.damage.records[1].decode_u32(4)==0,location.layout+" original damage explicitly records validated pristine generation")
+	check(game.storage.store.capture_storage_snapshot()==containers and game.quests.store.capture_storage_snapshot()==definitions,"loading originals cannot refill containers or progress quests")
 
 func remember(store:RefCounted)->void:
 	expected.key=store.snapshot().key

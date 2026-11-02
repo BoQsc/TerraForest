@@ -13,6 +13,7 @@ void NativeStaticBatch::_bind_methods() {
     ClassDB::bind_method(D_METHOD("placement_patch_state"),&NativeStaticBatch::placement_patch_state);
     ClassDB::bind_method(D_METHOD("capture_placement_patch","origin","size","expected_revision","expected_owner"),&NativeStaticBatch::capture_placement_patch);
     ClassDB::bind_method(D_METHOD("validate_placement_patch","bytes"),&NativeStaticBatch::validate_placement_patch);
+    ClassDB::bind_method(D_METHOD("placement_patch_members","bytes"),&NativeStaticBatch::placement_patch_members);
     ClassDB::bind_method(D_METHOD("restore_placement_patch","bytes","expected_revision","expected_owner"),&NativeStaticBatch::restore_placement_patch);
     ClassDB::bind_method(D_METHOD("survey_prototype_bounds"),&NativeStaticBatch::survey_prototype_bounds);
     ClassDB::bind_method(D_METHOD("survey_cache_identity"),&NativeStaticBatch::survey_cache_identity);
