@@ -9,6 +9,7 @@ func _initialize()->void:
 	for index in Recipes.IDS.size():
 		var asset:=Recipes.build(blocks,index)
 		if asset==null:blocks.free();quit(1);return
+		if preload("res://tools/doorway_dimensions.gd").normalize(asset,blocks)<0:blocks.free();quit(1);return
 		var path:String="res://addons/structures/prefabs/expansion_"+Recipes.IDS[index]+"_e2.tres"
 		if ResourceSaver.save(asset,path)!=OK:blocks.free();quit(1);return
 		manifest.assets.append({"id":Recipes.IDS[index],"path":path,"baseline_sha256":asset.get_meta("baseline_sha256"),"sha256":FileAccess.get_sha256(path),"cells":asset.get_cell_count()})

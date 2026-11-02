@@ -3,6 +3,7 @@ extends SceneTree
 const Catalog=preload("res://addons/structures/city_catalog.gd")
 
 func _initialize()->void:
+	var blocks:Node=ClassDB.instantiate("NativeBlockWorld")
 	var entrances:=[Vector3(12.5,1,27.5),Vector3(10,1,19.5),Vector3(12,1,25.5),Vector3(12,1,23.5),Vector3(31.5,1,29.5),Vector3(11.5,1,19.5)]
 	var vehicle_entries:=[PackedVector3Array([Vector3(4.5,1,27),Vector3(13.5,1,27)]),PackedVector3Array([Vector3(22.5,1,19)]),PackedVector3Array(),PackedVector3Array(),PackedVector3Array([Vector3(4.5,1,25),Vector3(13.5,1,25),Vector3(22.5,1,25)]),PackedVector3Array()]
 	for index in Catalog.IDS.size():
@@ -18,5 +19,6 @@ func _initialize()->void:
 		approved.set_meta("site_sample_band",1)
 		approved.set_meta("site_entrance",entrances[index])
 		approved.set_meta("vehicle_entrances",vehicle_entries[index])
-		if ResourceSaver.save(approved,"res://addons/structures/prefabs/city_"+Catalog.IDS[index]+".tres")!=OK:quit(1);return
-	print("APPROVED_CITY_BAKE failures=0");quit()
+		if preload("res://tools/doorway_dimensions.gd").normalize(approved,blocks)<0:blocks.free();quit(1);return
+		if ResourceSaver.save(approved,"res://addons/structures/prefabs/city_"+Catalog.IDS[index]+".tres")!=OK:blocks.free();quit(1);return
+	blocks.free();print("APPROVED_CITY_BAKE failures=0");quit()

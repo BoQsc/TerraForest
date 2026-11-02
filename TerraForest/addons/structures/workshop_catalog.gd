@@ -21,7 +21,7 @@ static func workshop()->Resource:
  for cell:Vector3i in cells:records.append_array(PackedInt32Array([cell.x,cell.y,cell.z,cells[cell]]))
  var asset:Resource=ClassDB.instantiate("NativeBlockPrefab")
  if not asset.configure(records):return null
- var models:Array=[{"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,8.5))}]
+ var models:Array=[{"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,2.0/2.2,1)),Vector3(0,1,8.5))}]
  for x in [-3.0,4.0]:
   models.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,2,8.5))})
  for x in [-5.5,6.5]:

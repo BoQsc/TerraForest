@@ -21,7 +21,7 @@ static func add_cells(cells:Dictionary,encoder:Node)->void:
 	for x in [-5,5]:
 		for z in [48,52,54]:cells[Vector3i(x,0,z)]=encoder.encode_block(2,0,1,3)
 static func attachments()->Array:
-	var result:Array=[{"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,.9,1)),Vector3(0,0,4.5))}]
+	var result:Array=[{"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,2.0/2.2,1)),Vector3(0,0,4.5))}]
 	add_rail(result,"short",Vector3(.5,0,.5),0)
 	add_rail(result,"short",Vector3(.5,0,6.5),0)
 	for z in [8.5,12.5,16.5,20.5,24.5,28.5]:add_rail(result,"turnout" if z==16.5 else "straight",Vector3(.5,0,z),0)

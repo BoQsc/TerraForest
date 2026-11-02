@@ -21,7 +21,7 @@ def main():
     report = ROOT / "reports/building_standards" / stamp
     report.mkdir(parents=True)
     results = []
-    for test in ("terrain_block_contract", "terrain_block_catalog", "building_expansion", "building_materials", "building_expansion_pack", "production_building_catalog"):
+    for test in ("terrain_block_contract", "terrain_block_catalog", "building_expansion", "building_materials", "building_expansion_pack", "production_building_catalog", "door_dimensions"):
         folder = report / test
         folder.mkdir()
         command, _ = command_for(engine, test, folder, [], headless=True)

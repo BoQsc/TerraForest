@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends RefCounted
 ## Approved E2 resources. Names and approval metadata are presentation only;
-## the hash-reviewed cells and attachment transforms are never rewritten.
+## source resources include the 2026-11-02 two-block doorway correction.
 const IDS=["trader_t1","town_hall_t1","church_c1","school_s2","warehouse_w1","cottage_a2","shop_b2","shop_b1","house_c1"]
 const TITLES=["Trader's house","Town hall","Church","School","Warehouse","Furnished cottage with door and windows","Village general store","Village shop B / hipped roof","Large two-storey house C1"]
 static func asset(id:String)->Resource:

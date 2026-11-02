@@ -65,7 +65,8 @@ func register_all(world: Node3D) -> Array[Dictionary]:
 		var costs := recipe(definition.recipe)
 		var labels: Array[String] = []
 		for material: String in definition.recipe: labels.append("%d %s" % [definition.recipe[material], material])
-		entries.append({"id":id, "title":definition.name + " (E open / close)", "mesh":definition.mesh, "collection":collection, "scale":Vector3.ONE, "costs":costs, "cost_label":", ".join(labels)})
+		var placement_scale:=Vector3(1,2.0/2.2,1) if id=="architecture/wooden_door/v1" else Vector3.ONE
+		entries.append({"id":id, "title":definition.name + " (E open / close)", "mesh":definition.mesh, "collection":collection, "scale":placement_scale, "costs":costs, "cost_label":", ".join(labels)})
 	return entries
 
 static func recipe(values: Dictionary) -> PackedInt64Array:

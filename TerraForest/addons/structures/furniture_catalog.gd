@@ -49,7 +49,7 @@ static func legacy_enclosed_cottage() -> Resource:
 	if asset==null:return null
 	var attachments: Array=asset.get_model_attachments()
 	# Existing one-metre-wide, two-metre-high doorway; retain its stair approach.
-	attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,5.5))})
+	attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,2.0/2.2,1)),Vector3(0,1,5.5))})
 	for z in [-4.5,5.5]:
 		for x in [-1.5,2.5]:
 			attachments.append({"model":"architecture/wooden_window/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(0.5,1,1)),Vector3(x,2,z))})
@@ -96,7 +96,7 @@ static func furnished_tower(floors: int=3) -> Resource:
 		if not module.configure(records):return null
 		var attachments: Array=[]
 		if level==0:
-			attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,0.9,1)),Vector3(0,1,8.5))})
+			attachments.append({"model":"architecture/wooden_door/v1","transform":Transform3D(Basis.IDENTITY.scaled(Vector3(1,2.0/2.2,1)),Vector3(0,1,8.5))})
 		if level>0:
 			for x in [-1.1,2.1]:
 				attachments.append({"model":"architecture/metal_guardrail/v1","transform":Transform3D(Basis.IDENTITY,Vector3(x,1,2))})

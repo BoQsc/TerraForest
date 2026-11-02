@@ -16,7 +16,7 @@ model_attachments = [{
 "transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2, 0)
 }, {
 "model": "architecture/wooden_door/v1",
-"transform": Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1, 0, 2, 5.5)
+"transform": Transform3D(1, 0, 0, 0, 0.90909094, 0, 0, 0, 1, 0, 2, 5.5)
 }, {
 "model": "architecture/wooden_window/v1",
 "transform": Transform3D(0.5, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 3, -4.5)
@@ -48,3 +48,4 @@ metadata/expansion_revision = "E2"
 metadata/expansion_id = "cottage_a2"
 metadata/review_only = true
 metadata/baseline_sha256 = "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30"
+metadata/doorway_height_m = 2.0

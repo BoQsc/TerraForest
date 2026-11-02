@@ -43,5 +43,8 @@ func asset(index:int)->Resource:
 		result.set_meta("cellar_floor",.75)
 		result.set_meta("cellar_height",5.0)
 	if index==4:result.set_meta("vehicle_entrances",PackedVector3Array([Vector3(13.5,5,34),Vector3(22.5,5,34)]))
-	return result
+	var blocks:Node=ClassDB.instantiate("NativeBlockWorld")
+	var corrected:int=preload("res://tools/doorway_dimensions.gd").normalize(result,blocks)
+	blocks.free()
+	return result if corrected>=0 else null
 

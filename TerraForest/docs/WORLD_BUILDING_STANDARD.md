@@ -95,6 +95,13 @@ wall. Footpaths and door approaches must connect to the street.
 
 ## Buildings create places worth entering
 
+User direction, 2026-11-02: personnel doors and their openings are always two
+block cells (2 m) high. Use the same height in cottages, city and civic buildings,
+mine entrances and default player placement. Wider entrances may use multiple
+leaves; do not stretch their height to match a taller storey. The lintel remains
+independent building-block geometry. Preserve existing saved edits; any retrofit
+needs a deliberate migration rather than silently rebuilding saved buildings.
+
 Building material authoring and roof-pattern direction additionally follow the
 [material acceptance contract](BUILDING_MATERIAL_STANDARD.md). Engineering gates
 and image generation do not substitute for inspected, matched world evidence.

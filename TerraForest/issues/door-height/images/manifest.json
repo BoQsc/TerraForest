@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "images": [
+    {
+      "path": "baseline.png",
+      "source": "reports/door_dimensions/20261102T195119988005Z/baseline/church_baseline.png",
+      "sha256": "5670897016b8f9c019c7e844501f09ddc6c3beadc39b366af43b74014bdbf195",
+      "caption": "Same production E2 church doorway and camera; 2.75 m leaf with three-cell opening",
+      "provenance": "Native game render; existing TerraForest assets and original CC0 doorway edits; no imported artwork"
+    },
+    {
+      "path": "corrected.png",
+      "source": "reports/door_dimensions/20261102T195119988005Z/corrected/church_two_blocks.png",
+      "sha256": "90e8c2b0c98a2fb21aa9d10b0615a15577f1ad9101d251230e928ee977341ecf",
+      "caption": "Same production E2 church doorway and camera; 2 m leaf with matching solid lintel",
+      "provenance": "Native game render; existing TerraForest assets and original CC0 doorway edits; no imported artwork"
+    }
+  ]
+}

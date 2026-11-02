@@ -1,0 +1,146 @@
+[
+  {
+    "after_sha256": "8aa6c8d3f684dcaf3ec568f812a4908fa8b14a647b162babdb03c1b09c9c2e9f",
+    "before_sha256": "19a18528836cf1420b1f70d80785e8833fc79046c2e38e9a44e5f16bde24e0ce",
+    "doors": 23,
+    "path": "res://addons/structures/prefabs/city_apartments_a3.tres"
+  },
+  {
+    "after_sha256": "3c53d263cce07cea723a9203717086dc2cf469fc64434290e9f795684677a120",
+    "before_sha256": "1cead31ebd94e5149b8e4944baeb46b7fc6b101a299b392a2b130dd03a190143",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/city_factory_f1.tres"
+  },
+  {
+    "after_sha256": "00c347867e9a59e1154bee41b234642518127986617c65481ce9d8ea9f7b98b7",
+    "before_sha256": "fd3873640df9d308bcae72b4f7cab1b2f1fe909a9482083c586d2dfcd317e22b",
+    "doors": 8,
+    "path": "res://addons/structures/prefabs/city_medical_h1.tres"
+  },
+  {
+    "after_sha256": "0a9cd4561f5dca0fc77b3f336aef193181d21acede6032ada70252445dc741f1",
+    "before_sha256": "d71db439427b8b98a596f5faf145a4f50b201bc0049740928ad8b9ef2f3a8796",
+    "doors": 10,
+    "path": "res://addons/structures/prefabs/city_police_p1.tres"
+  },
+  {
+    "after_sha256": "15cf4f173863399f044d02ec9fc4a793d4b9a94efde4b032dbf7575628a56e53",
+    "before_sha256": "d5be31c2c0cfe9ed608de603cb59245ce144f9a5ad363b8daa1d6a76c86017ee",
+    "doors": 9,
+    "path": "res://addons/structures/prefabs/city_research_r1.tres"
+  },
+  {
+    "after_sha256": "0878c1fb76b939007ae1d08324263e232035b0dc15bf0b0a27e30960934bb8c9",
+    "before_sha256": "f4278e99f8930663f1ef925b202aa738ad40037d06149bfe2df09708bbd1693e",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/city_storage_s1.tres"
+  },
+  {
+    "after_sha256": "2ad4db3590ca1d7d045122015cd5b58dca9414847ffcbbf30e460076e1b125d9",
+    "before_sha256": "838c9a1213a39eec45bdf67e5e5803731f416f381b8e9f468b6a2e0c2920c912",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/civic_review_church_c1.tres"
+  },
+  {
+    "after_sha256": "c56712ac3f5e93164562895c1c3e1ede2db597a5c4e35f5f68dfc9d8e6087073",
+    "before_sha256": "7c2228265175ac1bd1d27512b4bd6ea7238e6b28d416a7586219e192985b95c9",
+    "doors": 6,
+    "path": "res://addons/structures/prefabs/civic_review_school_s2.tres"
+  },
+  {
+    "after_sha256": "be013cd62298a97216d899fa009b43e339a2a022f7892ff41fece95f9b25cb3c",
+    "before_sha256": "58406cd327098b2e94ad0da59a188afe9ce2621b7edcea4003f9bf1bf047ba69",
+    "doors": 6,
+    "path": "res://addons/structures/prefabs/civic_review_town_hall_t1.tres"
+  },
+  {
+    "after_sha256": "8dc21c9a72dc9b68ed53a14e0269beee98c79c8e84664ac59df71069f2dabb8d",
+    "before_sha256": "4305d14473cb123c87c9573db2ab0ac07ae6ee2f7ea9b88de22262487c69b06a",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/civic_review_trader_t1.tres"
+  },
+  {
+    "after_sha256": "621bcb36290e8515f13633b66981e48736610231c9630e8c89266a484c410aae",
+    "before_sha256": "01cfb3fc4b6d180d9fac04db2e1f01a92f18baa61c4e8e32be987814ad263eb5",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/civic_review_warehouse_w1.tres"
+  },
+  {
+    "after_sha256": "9ec6d2bf1db21a46f17393188f9ccc4837ba39b46b3c01c1d6a2e8083b5c93c5",
+    "before_sha256": "0ca77d63eeff5e1e6c678306965114bfa1fb9447d540ff9ac3d9f069aa584f30",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/cottage_thin_roof_a2.tres"
+  },
+  {
+    "after_sha256": "ffe6a06d97d3b04ce796b304901729d6349debca88bd76c586d76cbea36e4be4",
+    "before_sha256": "e7f6e52d4b4891d218152aa50a63fee3f88fc1fbc06eb8952a4742ce4acbf6e9",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/expansion_church_c1_e2.tres"
+  },
+  {
+    "after_sha256": "3077738695d7d2ef5004cf4c654fd6dc1e4d391d387a5f5822aa891d8bc5ea2c",
+    "before_sha256": "6fe6bbcb06e2a8288e26eeb5f9ec5373b97160691b1690b0378a59651f2bac0c",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/expansion_cottage_a2_e2.tres"
+  },
+  {
+    "after_sha256": "b4405b40f6894c9706d0c29e0c36af5554b5399417ea78c58f51f16e3857390a",
+    "before_sha256": "f8cc1e4add4b2cfbb28b60538371501e82b4031ee78b4bd8797b2dbbef61c970",
+    "doors": 9,
+    "path": "res://addons/structures/prefabs/expansion_house_c1_e2.tres"
+  },
+  {
+    "after_sha256": "de11ed573f7dfd44f8df6c9abb6606035df40b18f2601b9c52425447e3778b93",
+    "before_sha256": "7f32609d086367a58243fbb681b41628398599d057371bff75d111640b4dec6e",
+    "doors": 6,
+    "path": "res://addons/structures/prefabs/expansion_school_s2_e2.tres"
+  },
+  {
+    "after_sha256": "c3035a52ffb418290799d1aa28e31c451f9c835389bcabe338d894a76ed9db46",
+    "before_sha256": "58b39d831a0c637c1916b24597974060f2f8730559ff4d0293760e1cf2a42e90",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/expansion_shop_b1_e2.tres"
+  },
+  {
+    "after_sha256": "e4195ae88348f9b8c75afdf851925c198787ca7b1ac22e1fcdb71eed85e5fc2c",
+    "before_sha256": "f25573acfd5daa0c04167de4cdbc645aae0a1e1f72076f6c28d6bc5b8476ccf9",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/expansion_shop_b2_e2.tres"
+  },
+  {
+    "after_sha256": "ddaf302527d49c7c8688db66b96c67edb64281c0f52675d633e5a7009f26ad6a",
+    "before_sha256": "2d7a8243bde25625caadfcb5d80fe74895b19e0bf78ddb4cc1e82f005580cb4e",
+    "doors": 6,
+    "path": "res://addons/structures/prefabs/expansion_town_hall_t1_e2.tres"
+  },
+  {
+    "after_sha256": "4435208ed5e71e282d6d45018c0d0e8efc5bed60e7d4cadd20a3f23608fbb3ba",
+    "before_sha256": "2d541c7e2c2141dcca53df0d03d86d87bdd6a0b89f6d2736b7a206cdbf9c0b7f",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/expansion_trader_t1_e2.tres"
+  },
+  {
+    "after_sha256": "31188d916feb76b5c1e5e7fcd0788f44775e488446c46ab30194ac2d2a6e95c0",
+    "before_sha256": "ef2798d35604c7a2f969c3fd21e0a4fb33ad71fb64583b5dba3f669f7f8dd4d4",
+    "doors": 2,
+    "path": "res://addons/structures/prefabs/expansion_warehouse_w1_e2.tres"
+  },
+  {
+    "after_sha256": "792468db76a930a22ddc588883707ffd978a695a98fd86ac833b8176af7bb32f",
+    "before_sha256": "b58a8813648e80f0ba0121e539a680adac0aae7d748eec304a6f3cc01575baac",
+    "doors": 9,
+    "path": "res://addons/structures/prefabs/large_house_c1.tres"
+  },
+  {
+    "after_sha256": "0877f032570ba829c450c1d5b0e72d729e79cf27bbbb0899e6b7847f2c8ca93a",
+    "before_sha256": "5e7baa28b77f7e6e84f81b3d0486d479bd11b26128caa2e97b8beb2399e1aed4",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/village_shop_hipped_r1.tres"
+  },
+  {
+    "after_sha256": "cb64e8af2c3da3d74e42e04ed9d1f41982bbe4fff5471b5d06d07928c64f1ab6",
+    "before_sha256": "69dc99b3084e29709d42f3a603e75e04310ab725bfc9e7eda6e3a096f4f8dc06",
+    "doors": 1,
+    "path": "res://addons/structures/prefabs/village_shop_thin_roof_b2.tres"
+  }
+]

@@ -85,14 +85,14 @@ class Builder:
 		attachments.append({"model": key, "transform": Transform3D(Basis(Vector3.UP, yaw), position)})
 
 	func door(origin: Vector3i, side: bool = false, width: int = 1) -> void:
-		erase(origin, Vector3i(1 if side else width, 3, width if side else 1))
+		erase(origin, Vector3i(1 if side else width, 2, width if side else 1))
 		for offset in width:
 			var location := Vector3(origin) + Vector3(.5 if side else offset, 0, offset + 1 if side else .5)
 			var yaw := PI / 2 if side else 0.0
 			if offset % 2 == 1:
 				location += Vector3(0, 0, -1) if side else Vector3.RIGHT
 				yaw += PI
-			attachments.append({"model": "architecture/wooden_door/v1", "transform": Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3(1, 1.25, 1)), location)})
+			attachments.append({"model": "architecture/wooden_door/v1", "transform": Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3(1, 2.0/2.2, 1)), location)})
 		var middle := Vector3(origin) + Vector3(.5 if side else width * .5, 0, width * .5 if side else .5)
 		doors.append({"center": middle, "side": side})
 
