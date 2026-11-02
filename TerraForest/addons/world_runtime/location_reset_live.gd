@@ -157,6 +157,7 @@ func _run(state: Dictionary) -> void:
 		for operation: Dictionary in plan.operations:
 			if operation.kind=="ground":game.ground_cover.fractures.refresh_damage(operation.arguments[1])
 	game.doors.update(0)
+	game.doors.refresh_locks()
 	game.zombies.invalidate_navigation(state.location.bounds)
 	phase="publishing"
 	var revision: int = game.terrain.backend.native.field_patch_state().revision

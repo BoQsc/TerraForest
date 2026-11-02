@@ -24,6 +24,13 @@ func prepare(world: Node) -> bool:
 		if batch == null or not hinges.configure(definition.bounds, Vector3(pivot[0], pivot[1], pivot[2]), definition.behavior.opening_degrees): return false
 		if not hinges.configure_animation(MOTION.get_meta("open_curve"),MOTION.get_meta("close_curve")):return false
 		var entry := {"id":id, "collection":batch, "state":hinges, "definition":definition,"visuals":{}}
+		if ClassDB.class_exists("NativeContainerStore") and ClassDB.class_exists("NativePlayerInventory"):
+			var locks=preload("res://addons/structures/door_locks.gd").new()
+			if locks.store==null:return false
+			entry.locks=locks
+			var reinforcement=preload("res://addons/structures/door_reinforcement.gd").new()
+			add_child(reinforcement);reinforcement.configure(batch,locks,definition.bounds);entry.reinforcement=reinforcement
+			providers.append({"name":"door_lock_"+id.sha256_text().left(32),"capture":locks.capture_storage_snapshot,"restore":locks.restore_storage_snapshot,"validator":locks,"empty":locks.capture_storage_snapshot()})
 		types[id] = entry
 		_by_collection[batch.get_instance_id()] = entry
 		# Stable model-ID digest avoids cross-type placement-ID collisions.
@@ -51,11 +58,23 @@ func describe(hit: Dictionary) -> String:
 	var target := aimed(hit)
 	if target.is_empty(): return ""
 	var entry: Dictionary = target.type
+	if lock_for(entry.collection,target.identity)!=null:return "E · Unlock reinforced door (lockpick) · Hit to break boards"
 	return "E · %s %s%s" % ["Close" if entry.state.is_open(target.identity) else "Open", entry.definition.name.to_lower()," (swing blocked)" if entry.state.is_blocked(target.identity) else ""]
+
+func lock_for(batch:Node3D,identity:int)->RefCounted:
+	var entry:=for_collection(batch)
+	var locks:RefCounted=entry.get("locks")
+	return locks if locks!=null and locks.store.is_locked(identity) else null
+
+func refresh_locks()->void:
+	for entry:Dictionary in types.values():
+		if entry.has("reinforcement"):entry.reinforcement.invalidate()
 
 func forget(batch: Node3D, identity: int) -> void:
 	var entry := for_collection(batch)
-	if not entry.is_empty(): entry.state.forget(identity)
+	if not entry.is_empty():
+		entry.state.forget(identity)
+		if entry.has("locks"):entry.locks.forget(identity)
 
 func try_interact(shared_hit: Variant = null) -> bool:
 	if not game._model_edit_available(): return false
@@ -64,6 +83,13 @@ func try_interact(shared_hit: Variant = null) -> bool:
 	var target := aimed(hit)
 	if target.is_empty(): return false
 	var entry: Dictionary = target.type
+	var locks:=lock_for(entry.collection,target.identity)
+	if locks!=null:
+		var unlocked:Dictionary=locks.attempt(target.identity,game.player_hud.inventory)
+		if unlocked.ok:game.terrain.changed_since_save=true;game.player_hud.refresh()
+		if not unlocked.opened:
+			game._show_lake_notice("Lockpick broke · Try another or break the reinforcement" if unlocked.get("broken_pick",false) else "Locked · Use a lockpick or break the reinforcement")
+			return true
 	var result: Dictionary = entry.state.animate_toggle(entry.collection, target.identity, AABB())
 	if result.ok:
 		game.terrain.changed_since_save = true
@@ -77,6 +103,7 @@ func _physics_process(delta:float)->void:
 
 func update(delta:float)->void:
 	for entry:Dictionary in types.values():
+		if entry.has("reinforcement") and game.get("player")!=null:entry.reinforcement.set_focus(game.player.global_position)
 		if entry.state.advance(entry.collection,delta)>0:game.terrain.changed_since_save=true
 		_sync_visuals(entry)
 

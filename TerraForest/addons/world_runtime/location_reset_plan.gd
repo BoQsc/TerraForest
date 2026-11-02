@@ -146,7 +146,7 @@ func prepare(owners: Dictionary, location: Dictionary, sections: Dictionary) -> 
 	if records.doors.size() != owners.doors.size():
 		return _fail("door_namespaces_changed")
 	for row: Variant in records.doors:
-		if not row is Array or row.size() != 3 or not row[0] is String or not row[1] is PackedInt64Array or not row[2] is PackedByteArray or not owners.doors.has(row[0]) or door_names.has(row[0]) or ordered(row[1]) != model_ids.get(row[0]):
+		if not row is Array or row.size() not in [3,4] or not row[0] is String or not row[1] is PackedInt64Array or not row[2] is PackedByteArray or not owners.doors.has(row[0]) or door_names.has(row[0]) or ordered(row[1]) != model_ids.get(row[0]):
 			return _fail("door_record")
 		door_names[row[0]] = true
 		var hinges: RefCounted = owners.doors[row[0]].state
@@ -158,6 +158,16 @@ func prepare(owners: Dictionary, location: Dictionary, sections: Dictionary) -> 
 		var extra := added(current_ids[row[0]], model_ids[row[0]])
 		if not extra.is_empty() and _append(hinges, "door", [extra], closed_doors(hinges, extra)).is_empty():
 			return _fail(reason)
+		if row.size()==4 and not row[3] is PackedByteArray:return _fail("door_lock_record")
+		if owners.doors[row[0]].has("locks"):
+			var locks:RefCounted=owners.doors[row[0]].locks.store
+			if not row[1].is_empty():
+				var original:PackedByteArray=row[3] if row.size()==4 else preload("res://addons/structures/door_locks.gd").empty_patch(ordered(row[1]))
+				if not preload("res://addons/structures/door_locks.gd").validate_lock_patch(original):return _fail("door_lock_contents")
+				if _append(locks,"container",[ordered(row[1])],original).is_empty():return _fail("door_lock_patch:"+reason)
+			elif row.size()==4 and not row[3].is_empty():return _fail("nonempty_unowned_door_lock_patch")
+			if not extra.is_empty() and _append(locks,"container",[extra],preload("res://addons/structures/door_locks.gd").empty_patch(extra)).is_empty():return _fail("extra_door_lock_patch:"+reason)
+		elif row.size()==4 and not row[3].is_empty():return _fail("door_lock_owner_unavailable")
 	var resident_ids: PackedInt64Array = owners.residents.authored_identities(location.residents)
 	if resident_ids.size() != location.residents.size():
 		return _fail("resident_identity")

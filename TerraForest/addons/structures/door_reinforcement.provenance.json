@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "assets": "Procedural rough timber boards and exposed nail geometry emitted by door_reinforcement_mesh.gd",
+  "creator": "TerraForest project, AI-assisted original geometry",
+  "license": "CC0-1.0 for new original geometry; generator code remains 0BSD",
+  "source": "Original box-based geometry authored for the request for unprofessional-looking reinforced locked doors; no imported model or external reference",
+  "dependencies": ["Existing addons/structures/textures/terraforest/wood_albedo.png, unchanged; existing texture provenance and notices retained"],
+  "design": "Three mismatched tilted boards and visible nail heads on both faces; native batched, derived presentation follows authoritative lock durability; not a replacement building wall or monolithic building asset"
+}

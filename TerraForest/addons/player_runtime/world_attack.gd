@@ -174,6 +174,7 @@ func apply_target(t: Dictionary) -> bool:
 		if t.species<0 or t.species>=rows.size() or not rows[t.species].ids.has(t.id):return false
 	if t.kind=="model" and Durability.RESOURCE_MODELS.has(t.get("asset","")) and t.collection.get_instance(t.id).is_empty():return false
 	var locked:bool=t.kind=="model" and t.collection==game.storage.collection and game.storage.store.is_locked(t.id)
+	var door_lock:RefCounted=game.doors.lock_for(t.collection,t.id) if t.kind=="model" and game.get("doors")!=null else null
 	if t.kind=="model" and t.collection.is_removal_protected(t.id) and not locked:
 		game._show_lake_notice("Empty stored contents before damaging this container");return false
 	var damage:int=30 if item==5 and t.kind=="terrain" else TOOLS[item][t.material]
@@ -181,7 +182,10 @@ func apply_target(t: Dictionary) -> bool:
 	var harvest:=harvest_profile(t);var before:Dictionary={};var result:Dictionary
 	if t.kind=="terrain" or not harvest.is_empty():
 		damage=hud.skill_damage(Progression.MINING if t.material=="stone" else Progression.WOODCRAFT,damage)
-	if locked:
+	if door_lock!=null:
+		if t.collection.get_instance(t.id).is_empty():return false
+		result=door_lock.damage(t.id,damage);result["destroyed"]=false;t.name="Door reinforcement"
+	elif locked:
 		if t.collection.get_instance(t.id).is_empty():return false
 		result=game.storage.store.damage_lock(t.id,damage,game.storage.store.lock_state(t.id).store_revision)
 		result["destroyed"]=false
@@ -215,6 +219,7 @@ func apply_target(t: Dictionary) -> bool:
 	hud.refresh()
 	game._show_lake_notice((hud.CATALOG.get(item,"Tool")+" broke · Tab → Crafting to make a replacement") if wear.get("broken",false) else (t.name+" destroyed" if result.destroyed else "%s: %d / %d durability"%[t.name,result.remaining,result.maximum]))
 	if locked and result.get("opened",false):game._show_lake_notice("Lock broken · E open chest")
+	if door_lock!=null and result.get("opened",false):game._show_lake_notice("Reinforcement broken · E open door")
 	return true
 func destroy(t: Dictionary) -> bool:
 	match t.kind:

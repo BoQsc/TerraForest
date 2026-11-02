@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Improvised door reinforcement](door-reinforcement/README.md) | Installed / scoped checks | Rough boards, native locks and player entry; packaged new-world/save/reopen and native lock/paging/reset pass. Source zombie forced entry passes; full generated-house journeys and visual approval remain |
 | [Player health and respawn](player-respawn/README.md) | Installed / scoped checks | Native persistent health, real damage/death, safe shelter return and approved waking; fresh packaged upstairs save/reload and blocked-anchor fallback pass. Inventory retained; catastrophic obstruction and full moving-service death need further qualification |
 | [Player notices and active objective](player-notices/README.md) | Installed / scoped checks | Added quest after waking, general notices above toolbar and upper-right objective; packaged creation/reload and notice/wake/guidance checks pass. Oversized first layout retained as rejected; user visual review pending |
 | [Mountain coal mine](coal-mine/README.md) | Installed prototype / scoped checks pass | Branches, loop, five modular rails and ten-zombie station; original package full journey 59/0, updated package physical re-entry 59/0 and genuine inside reopen 46/0. Earlier failures retained; visual/crowding and foreground performance review remain |

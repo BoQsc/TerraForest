@@ -137,7 +137,12 @@ static func capture_scene(game:Node,location:Dictionary)->Dictionary:
 		if game.doors.types.has(asset):
 			var hinges:=patch(game.doors.types[asset].state,"door",[members.ids]) if not members.ids.is_empty() else PackedByteArray()
 			if not members.ids.is_empty() and hinges.is_empty():return {"ok":false,"reason":"door_patch:"+asset}
-			doors.append([asset,members.ids,hinges])
+			var row:Array=[asset,members.ids,hinges]
+			if game.doors.types[asset].has("locks"):
+				var locks:=patch(game.doors.types[asset].locks.store,"container",[members.ids]) if not members.ids.is_empty() else PackedByteArray()
+				if not members.ids.is_empty() and locks.is_empty():return {"ok":false,"reason":"door_lock_patch:"+asset}
+				row.append(locks)
+			doors.append(row)
 	sections["models"]=envelope("models",bounds,models)
 	sections["doors"]=envelope("doors",bounds,doors)
 	if game.world_attack.durability.record_count()!=0 or game.ground_cover.rock_damage.record_count()!=0:return {"ok":false,"reason":"generation_has_damage"}
@@ -164,7 +169,9 @@ static func owner_tokens(game:Node)->Array:
 	var collections:Dictionary=game.structures.model_collections();var names:Array=collections.keys();names.sort()
 	for name:String in names:
 		result.append([name,collections[name].placement_patch_state()])
-		if game.doors.types.has(name):result.append([name,game.doors.types[name].state.door_patch_state()])
+		if game.doors.types.has(name):
+			result.append([name,game.doors.types[name].state.door_patch_state()])
+			if game.doors.types[name].has("locks"):result.append([name+"/locks",game.doors.types[name].locks.store.container_patch_state()])
 	return result
 
 static func publish_generated(game:Node,progress:Callable,cancelled:Callable)->Dictionary:

@@ -306,8 +306,18 @@
     "res://addons/structures/object_catalog.gd"
   ],
   "res://addons/structures/door_interaction.gd": [
-    "res://addons/structures/door_animation/bg5_motion.scn"
+    "res://addons/structures/door_animation/bg5_motion.scn",
+    "res://addons/structures/door_locks.gd",
+    "res://addons/structures/door_reinforcement.gd"
   ],
+  "res://addons/structures/door_locks.gd": [
+    "res://addons/world_runtime/location_capture.gd"
+  ],
+  "res://addons/structures/door_reinforcement.gd": [
+    "res://addons/structures/door_reinforcement_mesh.gd"
+  ],
+  "res://addons/structures/door_reinforcement_generation.gd": [],
+  "res://addons/structures/door_reinforcement_mesh.gd": [],
   "res://addons/structures/expansion_catalog.gd": [],
   "res://addons/structures/fence_catalog.gd": [],
   "res://addons/structures/foundation_check.gd": [
@@ -531,6 +541,7 @@
     "res://addons/characters/runtime/house_sleepers.gd",
     "res://addons/exploration/generation.gd",
     "res://addons/player_runtime/container_rules.gd",
+    "res://addons/structures/door_reinforcement_generation.gd",
     "res://addons/structures/lake_crossings.gd",
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
@@ -587,7 +598,8 @@
   "res://addons/world_runtime/location_reset_plan.gd": [
     "res://addons/world_runtime/location_capture.gd",
     "res://addons/world_runtime/location_patch_scope.gd",
-    "res://addons/world_runtime/location_reset_batch.gd"
+    "res://addons/world_runtime/location_reset_batch.gd",
+    "res://addons/structures/door_locks.gd"
   ],
   "res://addons/world_runtime/material_deposits.gd": [
     "res://addons/world_ecosystem/woodland_mesh.gd",

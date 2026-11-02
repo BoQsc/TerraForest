@@ -284,6 +284,10 @@ func run()->void:
  var locks:Dictionary=preload("res://addons/player_runtime/container_rules.gd").seed_generated(game.storage,seed_value)
  if not locks.get("ok",false):print("CONTAINER_LOCKS_FAILED ",locks);game.free();quit(1);return
  FileAccess.open(output_dir.path_join("container_locks.json"),FileAccess.WRITE).store_string(JSON.stringify(locks))
+ progress("Reinforcing occasional house doors")
+ var reinforced:Dictionary=preload("res://addons/structures/door_reinforcement_generation.gd").seed_generated(game,all_lots,seed_value)
+ if not reinforced.get("ok",false):print("DOOR_REINFORCEMENT_FAILED ",reinforced);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("door_reinforcement.json"),FileAccess.WRITE).store_string(JSON.stringify(reinforced))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

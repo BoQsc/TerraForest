@@ -1613,11 +1613,16 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	obstacle.validity=func():return _model_edit_available() and batch.placement_for_body(obstacle.body_rid)==identity and batch.get_instance(identity)==transform and not hinges.is_open(identity) and not batch.is_removal_protected(identity)
 	obstacle.damage_callback=func(damage:float):
 		var key:String="model:%s:%d"%[entry.id,identity]
+		var reinforcement:RefCounted=doors.lock_for(batch,identity)
+		if reinforcement!=null:
+			var damaged:Dictionary=reinforcement.damage(identity,maxi(1,int(roundf(damage))))
+			if damaged.ok:terrain.changed_since_save=true
+			return
 		var result:Dictionary=world_attack.durability.hit(key,int(entry.definition.durability.health),maxi(1,int(roundf(damage))))
 		if not result.ok:return
 		terrain.changed_since_save=true
 		if result.destroyed and batch.remove_instances(PackedInt64Array([identity])):
-			hinges.forget(identity);world_attack.durability.forget(key)
+			doors.forget(batch,identity);world_attack.durability.forget(key)
 			_show_lake_notice("Zombie broke a " + entry.definition.name.to_lower())
 	return obstacle
 

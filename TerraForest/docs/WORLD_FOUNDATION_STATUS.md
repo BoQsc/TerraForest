@@ -1,5 +1,12 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Improvised door reinforcement — 2026-11-03
+
+Installed rough boards and native locks: packaged generation/reopen (12 + 8),
+lock/paging/reset (30 + 109), plus source zombie forced entry (17) pass.
+[Images, exact evidence and remaining acceptance](../issues/door-reinforcement/README.md).
+Visual approval and full generated-house journeys remain; played saves are unchanged.
+
 ## Generation/loading architecture — 2026-11-03
 
 [Implementation, exact measurements and remaining contract](WORLD_STARTUP_ARCHITECTURE.md).

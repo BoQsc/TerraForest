@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-03",
+  "status": "Installed; scoped source and packaged checks pass; user visual approval pending",
+  "package": {"sha256": "94ccbd02d996557d46493827dc746875488ba9cec29c92cc98cb839730361dfe", "bytes": 471142656, "matching_native_libraries": 14, "export_log": "reports/door_reinforcement/export.log", "normal_generation_reopen": "reports/door_reinforcement_world/20261102T234603786798Z/run.json", "checks": [12,8], "native_regressions": "reports/door_reinforcement_pack/20261102T234824Z/run.json", "native_checks": [30,109], "failures": 0, "peak_ram_bytes": 2627244032, "peak_dedicated_gpu_bytes": 1490587648, "performance_scope": "Offscreen functional run with sampled resource budgets; not foreground frame-pacing qualification", "visual_inspection": "Packaged generated door image inspected; same boards and damage states as retained source comparisons"},
+  "base_commit": "55e0d175",
+  "checks": [
+    {"report": "reports/checks/20261102T233546036012Z/run.json", "checks": 30, "failures": 0, "scope": "Native locks, namespaces, binary restoration, picks, render stages, paging retirement/readmission and rotated generation fixture"},
+    {"report": "reports/checks/20261102T232135766606Z/run.json", "checks": 17, "failures": 0, "scope": "Production door mesh, actual physics picking, player damage adapter, E lockpicking and real opening collision; not animation-input or populated-world proof"},
+    {"report": "reports/checks/20261102T233554010713Z/run.json", "checks": 109, "failures": 0, "scope": "Native location reset including new/partial/outside door locks, rollback, legacy originals and rejection of hidden container contents"},
+    {"report": "reports/checks/20261102T232151832779Z/run.json", "checks": 60, "failures": 0, "scope": "Existing door content regression"},
+    {"report": "reports/checks/20261102T232153251145Z/run.json", "failures": 0, "scope": "Existing door collision/component regression"},
+    {"report": "reports/door_reinforcement/20261102T232353Z/run.json", "failures": 0, "scope": "Inspected front/rear/detail offscreen renders"},
+    {"report": "reports/door_reinforcement_world/20261102T233555489565Z/run.json", "checks": [12,8], "failures": 0, "scope": "Normal recipe generation, three rare doors, native picking/player contact and exact partial-lock fresh-process restoration; owned test save only"},
+    {"report": "reports/checks/20261102T234249272959Z/run.json", "checks": 17, "failures": 0, "scope": "Real host/zombie/native navigation/attack contacts: reinforcement first, leaf destruction, blocked traversal until destruction, then player reached; no orphan state or player rewards. Isolated flat entrance, not a generated house journey"}
+  ],
+  "retained_failures": [
+    {"report": "reports/checks/20261102T232134949926Z/run.json", "reason": "Test-only inferred Variant failed parse; explicit integer type corrected before successful repetition"},
+    {"report": "reports/checks/20261102T233836635273Z/run.json", "reason": "Fixture launched without required --zombies flag; no zombie admitted, so no door destruction occurred"},
+    {"report": "reports/checks/20261102T234059751027Z/run.json", "reason": "Waiting for wake animation did not fix disabled encounter fixture; diagnostics confirmed enabled=false. Corrected invocation with --zombies passes"}
+  ],
+  "limits": {"locks_per_door_type": 4096, "derived_ids_per_frame": 16, "shared_damage_meshes": 3, "render_radius_m": 384, "shadow_radius_m": 64, "one_native_lock_snapshot_bytes": 48, "empty_snapshot_bytes": 16},
+  "remaining": ["Full street-to-door walking and generated-house zombie coverage", "User visual review", "No falling-board animation implemented"]
+}

@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-03",
+  "creator": "TerraForest project, original in-engine captures",
+  "license": "CC0-1.0 to the extent of original screenshot rights; depicted inherited assets retain their existing licenses and notices",
+  "world": "Isolated production door mesh, no saved player world",
+  "inspection": "Front, rear and oblique inspected; no user approval yet",
+  "files": [
+    {"file": "world-reinforced.png", "source": "reports/door_reinforcement_world/20261102T233555489565Z/reinforced.png", "sha256": "87bd81f32537efa4ad425ed29f0819e5dced4b8b3fbc8a13e599817afa7910c5", "status": "inspected generated house, seed1703, door36, (1836.5,50,1002)"},
+    {"file": "world-damaged.png", "source": "reports/door_reinforcement_world/20261102T233555489565Z/damaged.png", "sha256": "b5dc59cd0c798c61d38f97de279eaab4e4d0351f09fdd54909301d854a6ea72d", "status": "inspected same camera after two accepted hatchet contacts"},
+    {"file": "world-restored.png", "source": "reports/door_reinforcement_world/20261102T233555489565Z/restored.png", "sha256": "7f0d50513a7282216b0464befd10388d4e84a0dd246cae7db2c6d41c47f2b1b2", "status": "inspected fresh-process restoration, same internal camera"},
+    {"file": "front.png", "source": "reports/door_reinforcement/20261102T232353Z/front.png", "sha256": "9c94a0b49a4fc6a224c25180828dfc5fd1e1c88bc3cb9572652d0f8593ac3fc0", "status": "current"},
+    {"file": "detail.png", "source": "reports/door_reinforcement/20261102T232353Z/detail.png", "sha256": "316afe7a1db226b224f7e2c7aef606ad1d32635a86a71e2a52175431243b7efb", "status": "current"},
+    {"file": "rear.png", "source": "reports/door_reinforcement/20261102T232353Z/rear.png", "sha256": "a8a064a03a53c26f3e295a68e2577046cc90f95dd35499cc9bb807741efd35fb", "status": "current"},
+    {"file": "first-detail.png", "source": "reports/door_reinforcement/20261102T232231Z/detail.png", "sha256": "6e3e89e216be985d7bbe6ce5feb42165d2e28765aaafd2667690c125e928eb70", "status": "rejected coarse grain mapping and excessive panel clearance"}
+  ]
+}
