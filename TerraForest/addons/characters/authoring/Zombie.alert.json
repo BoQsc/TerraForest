@@ -1,0 +1,13 @@
+{
+  "creator": "TerraForest original AI-assisted motion authoring",
+  "license": "CC0-1.0 new animation; preserved original zombie notices",
+  "source": "addons/characters/authoring/Zombie.drag_walk.blend",
+  "source_sha256": "c7db827d395ab3e3ff30f46ff1f7e3a64d0611b1f8055564b3ea0512ee680e7c",
+  "tool": "Blender 5.2.3 LTS",
+  "purpose": "Upper-body alert hunch and reaching arms; original drag-walk hips and feet remain unchanged",
+  "files": [
+    "Zombie.alert.blend",
+    "Zombie.alert.glb",
+    "../runtime/assets/Zombie.alert.res"
+  ]
+}

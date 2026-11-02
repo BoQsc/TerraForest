@@ -128,14 +128,11 @@ func run()->void:
    print("REFUSING_EXISTING_OR_UNNAMED_BAKE");game.free();quit(1);return
  var offline_grading:=bake and not "--interactive-generation-grading" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
  var introduction_spawn:Vector3=plan.roads[4].start
+ var introduction_room:Dictionary={}
  if int(world_options.get("introduction",0))==1:
-  var found_trader:=false
-  for site:Dictionary in sites:
-   for lot:Dictionary in site.get("lots",[]):
-    if lot.asset.has_meta("trader_anchor"):
-     introduction_spawn=lot.entrance.segment.start.lerp(lot.entrance.segment.finish,.35);found_trader=true;break
-   if found_trader:break
-  if not found_trader:print("INTRODUCTION_TRADER_UNAVAILABLE");game.free();quit(1);return
+  introduction_room=preload("res://addons/world_runtime/introduction_spawn.gd").select(sites)
+  if not introduction_room.ok:print("INTRODUCTION_ROOM_UNAVAILABLE ",introduction_room.reason);game.free();quit(1);return
+  introduction_spawn=introduction_room.position
  if not qualification and not game.configure_generation_spawn(introduction_spawn):print("GENERATION_SPAWN_REJECTED");game.free();quit(1);return
  if not qualification:game.terrain.diagnostics_pause_streaming=true
  if native_lakes and not game.terrain.backend.configure_initial_lake_bake():print("OFFLINE_LAKE_JOB_UNAVAILABLE");game.free();quit(1);return
@@ -442,9 +439,13 @@ func run()->void:
   if not qualification and int(world_options.get("introduction",0))==1:
    var introduction:Dictionary=game.quests.store.initialize_introduction(game.quests.store.snapshot().revision)
    if not introduction.ok:print("INTRODUCTION_UNAVAILABLE ",introduction.reason);game.free();quit(1);return
-   game.teleport(introduction_spawn)
+   game.teleport(introduction_spawn,introduction_spawn.y)
    if not await ready_world(game):game.free();quit(1);return
    game.set_physics_process(false);game._clear_motion()
+   if not preload("res://addons/world_runtime/introduction_spawn.gd").clear(game,introduction_spawn):print("INTRODUCTION_ROOM_COLLISION_REJECTED");game.free();quit(1);return
+   var direction:Vector3=introduction_room.exit[1]-introduction_spawn
+   game.yaw=atan2(-direction.x,-direction.z);game.pitch=0.;game.player.rotation.y=game.yaw;game.camera.rotation.x=0.
+   game.player_view.entry.wake_pending=true
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)

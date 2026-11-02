@@ -1,0 +1,19 @@
+{
+  "creator": "TerraForest original AI-assisted motion authoring",
+  "license": "CC0-1.0 for new motion; inherited Human R11 rig notices remain applicable",
+  "source": "addons/characters/Human_R11_Complete_Repost/Human.r11.blend",
+  "source_sha256": "8ad2d2c2d570f9adfa487cfd469957ff61b4fbe172f0b60d28a44529b8d822d3",
+  "files": [
+    "Human.wakeup.blend",
+    "Human.wakeup.glb",
+    "Human.wakeup.res"
+  ],
+  "purpose": "First-person confused waking motion, 4.4 seconds plus 0.6 second equipment return",
+  "approval": "User approved the five-second preview on 2026-11-02; exact resource installed as addons/characters/runtime/assets/Human.wakeup.res",
+  "tool": "Blender 5.2.3 LTS",
+  "frames": [
+    0,
+    132
+  ],
+  "fps": 30
+}

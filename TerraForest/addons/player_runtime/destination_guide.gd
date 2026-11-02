@@ -24,7 +24,7 @@ func layout()->void:
 func _process(_delta:float)->void:
  var showing:bool=not game.loading_active and not game.shutdown_requested and not game.session_menu.visible_ui() and not game.player_hud.inventory_open
  compass.visible=showing;panel.visible=showing and not destination.is_empty()
- if showing:compass.update_view(game.player.global_position,-game.camera.global_basis.z,destination)
+ if showing:compass.update_view(game.player.global_position,-game.camera.global_basis.z,destination,game.quests.contacts)
 func sync_marker()->void:
  if game.map_markers.active_id>0:destination=game.map_markers.describe(game.map_markers.active_id)
  elif destination.has("marker_id"):destination.clear()
@@ -53,6 +53,9 @@ func refresh()->void:
  if timer.is_stopped():timer.start()
  panel.visible=not game.loading_active and not game.session_menu.visible_ui() and not game.player_hud.inventory_open
  if not panel.visible:return
+ if destination.get("area",false):
+  caption.text=destination.title;caption.tooltip_text="Red: awakened quest zombies · yellow: remaining sleepers after a minute without another kill"
+  return
  var target:Vector3=destination.position
  if destination.has("marker_id"):target.y=game.player.global_position.y
  var result:=guidance(game.player.global_position,-game.camera.global_basis.z,target)

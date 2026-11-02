@@ -10,6 +10,11 @@ func _initialize() -> void:
 	var data: PackedByteArray=codec.encode(Vector3(800,50,1200),0.4,-0.2,false,3)
 	var decoded: Dictionary=codec.decode(data)
 	check(data.size()==56 and decoded.ok and decoded.position==Vector3(800,50,1200) and decoded.tool==3 and not decoded.fly,"native player pose roundtrip")
+	check(not decoded.wake_pending,"existing saved poses do not replay waking")
+	var first:PackedByteArray=codec.encode(Vector3(800,50,1200),.4,-.2,false,3,true)
+	check(first.size()==56 and first.decode_u32(4)==2 and codec.decode(first).wake_pending,"new-player waking intent uses one persisted bit with no larger save")
+	var old:=first.duplicate();old.encode_u32(4,1)
+	check(not codec.validate_snapshot(old),"legacy version rejects new mode bits")
 	check(codec.validate_snapshot(PackedByteArray()) and not codec.decode(PackedByteArray()).has("position"),"legacy empty pose requests default spawn")
 	for offset in [8,16,24,32,40]:
 		var bad:=data.duplicate();bad.encode_double(offset,NAN)

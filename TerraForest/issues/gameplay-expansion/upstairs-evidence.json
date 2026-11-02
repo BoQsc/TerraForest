@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "date": "2026-11-02",
+  "approval": "User approved five-second first-person waking proposal",
+  "approved_motion_sha256": "a2153c88a9c9614fe9fc250e6567cb4fb7b99bdfb3c09da28048e3842b00f931",
+  "installed_pack_sha256": "9048699f92d580113b2a60c455f687d019c13aa9d37439e4436cc0e1ca6b2342",
+  "unchanged_root_executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+  "checks": [
+    {"scope": "Four rotated upstairs routes and church sleeper envelopes", "passed": 161, "report": "reports/checks/20261102T101535526682Z"},
+    {"scope": "Native quest debug", "passed": 81, "report": "reports/quests_native/20261102T103543911400Z"},
+    {"scope": "Native quest release", "passed": 81, "report": "reports/quests_native/20261102T103544564914Z"},
+    {"scope": "Source ordinary generation to physical trader departure and save", "passed": 188, "report": "reports/frontier_expedition/20261102T103700498440Z"},
+    {"scope": "Installed executable ordinary generation to physical trader departure and save", "passed": 188, "report": "reports/frontier_expedition/20261102T104339798167Z"},
+    {"scope": "Installed fresh-process reload", "passed": 12, "report": "reports/frontier_expedition/20261102T105403589841Z"},
+    {"scope": "Installed native quest/UI contact fixture", "passed": 7, "report": "reports/expedition_motion/20261102T105357717976Z"},
+    {"scope": "Installed aggressive walk posture", "passed": 4, "report": "reports/expedition_motion/20261102T105400842929Z"},
+    {"scope": "Source final selected-item return, seven item types and focus loss", "passed": 23, "report": "reports/checks/20261102T105130586598Z"}
+  ],
+  "installed_trip_sampled_peak_bytes": {"private_commit": 4287389696, "dedicated_gpu": 1757569024},
+  "retained_failed_harness": "reports/frontier_expedition/20261102T102649420509Z",
+  "pending": [
+    "Final selected-idle correction re-export blocked by disk reserve; repeat packaged motion checks and reload when space is available",
+    "Player health/death/respawn lifecycle does not exist; reusable approved-animation hook is not a completed death loop",
+    "Foreground frame pacing, player pursuit-posture acceptance and broader seeds remain unqualified"
+  ]
+}

@@ -35,11 +35,20 @@ func run()->void:
 		browser.worlds.select(selected);browser.launch_selected(false)
 		if not check(await wait_for(game_ready,150),"normal loading restores the expedition"):await finish();return
 	var game:=current_scene;game.background_fps=60;game.app_focused=true
-	if not check(await wait_for(func():return not game.player_view.entry.active,20),"entry finishes before interaction"):await finish();return
+	if not check(await wait_for(func():return not game.player_view.entry.pending and not game.player_view.entry.active,20),"entry finishes before interaction"):await finish();return
+	if stage=="create":check(game.player_view.entry.wake_starts==1 and not game.player_view.entry.wake_pending,"approved wake animation runs once on initial upstairs spawn")
+	else:check(game.player_view.entry.wake_starts==0,"ordinary saved-world loading does not replay waking")
 	game.set_physics_process(false);game._clear_motion();game.fly=false;game.needs_floor_spawn=false
 	physics_frame.connect(update_population)
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open
 	var ride:Node=game.trader.ride
+	if stage=="intro_reload":
+		var expected:Dictionary=FileAccess.open(folder.path_join("expected.bin"),FileAccess.READ).get_var()
+		check(not game.player_view.entry.wake_pending and game.player_view.entry.wake_starts==0,"consumed first-spawn presentation remains consumed after reload")
+		check(game.quests.store.capture_storage_snapshot()==expected.quests,"introduction quest state restores exactly")
+		check(game.player_hud.inventory.capture_storage_snapshot()==expected.inventory,"selected inventory and expedition supplies restore without duplication")
+		check(ride.state.expedition and ride.identity()==expected.vehicle,"same expedition vehicle restores")
+		await finish();return
 	if stage in ["clear","clear_resume"]:await complete_mine(game,ride);return
 	if stage=="mine_resume":
 		if not check(ride.state.expedition and game.quests.store.snapshot().introduction==3,"saved first expedition remains active"):await finish();return
@@ -96,8 +105,7 @@ func run()->void:
 		check(await watch(func():return ride.state.phase==ride.IDLE,120),"trader walks back to the counter")
 		await photograph("home-again");await finish();return
 	if not check(game.quests.store.snapshot().introduction==1,"new player starts with talk-to-trader objective"):await finish();return
-	if not check(await wait_for(func():return is_instance_valid(game.trader.actor),30),"spawn admits the nearby resident trader"):await finish();return
-	check(game.player.position.distance_to(game.trader.anchor)<60,"new player spawns within walking distance of trader")
+	check(game.player.position.distance_to(game.trader.anchor)<200,"new player spawns in the trader neighbourhood")
 	check(game.quests.marker().get("quest",false) and game.quests.marker().position==game.trader.anchor,"map and compass share the initial trader marker")
 	await photograph("first-play")
 	var worker:=Thread.new();worker.start(Plan.build.bind(1703,game.terrain.backend.world_generator,true,true,"user://generation_plans",Recipe.DEFAULTS))
@@ -108,6 +116,34 @@ func run()->void:
 		for candidate:Dictionary in district.lots:
 			if candidate.asset.has_meta("trader_anchor"):lot=candidate;break
 	if not check(not lot.is_empty(),"approved trader lot exists"):await finish();return
+	var spawn=preload("res://addons/world_runtime/introduction_spawn.gd")
+	var room:Dictionary=spawn.select(planned.sites)
+	if stage=="create":
+		var homes=preload("res://addons/characters/runtime/house_sleepers.gd")
+		var churches:=0
+		for district:Dictionary in planned.sites:
+			for church:Dictionary in district.lots:
+				if church.asset.get_meta("expansion_id","")!="church_c1":continue
+				churches+=1
+				var anchors:Array=homes.plan([church],1703).anchors;var keys:=PackedInt64Array()
+				for anchor:Dictionary in anchors:keys.append(anchor.key)
+				var ids:PackedInt64Array=game.zombies.population.store.authored_identities(keys)
+				check(ids.size()==10 and not ids.has(0),"generated church has ten persistent authored residents")
+		check(churches>0,"default recipe publishes occupied churches")
+		if not check(room.ok and game.player.position.distance_to(room.position)<.25,"ordinary new world starts in the approved upstairs room"):await finish();return
+		for local:Vector3 in spawn.EXIT.slice(1):
+			if not check(await walk_to(game,spawn.point(room.lot,local)),"player descends existing house stairs and leaves through the door"):await photograph("upstairs-exit-failed");await finish();return
+		for target:Vector3 in [room.lot.entrance.segment.finish,room.lot.entrance.segment.start]:
+			if not check(await walk_to(game,target),"house entrance reaches the road without teleporting"):await finish();return
+		var journey:RefCounted=ClassDB.instantiate("NativeRoadJourney")
+		journey.configure(game.generated_region.store.get_plan().roads,0)
+		var route:Dictionary=journey.route(game.player.position,lot.entrance.segment.start,80,Vector3.ZERO)
+		if not check(route.get("ok",false),"road graph connects upstairs neighbourhood to trader"):await finish();return
+		for waypoint:Vector3 in route.points:
+			var begin:Vector3=game.player.position
+			var count:=maxi(1,ceili(begin.distance_to(waypoint)/20))
+			for index in range(1,count+1):
+				if not check(await walk_to(game,begin.lerp(waypoint,float(index)/count)),"player follows the connected road to trader"):await photograph("road-walk-failed");await finish();return
 	for target:Vector3 in [lot.entrance.segment.finish,point(lot,lot.asset.get_meta("site_entrance")),point(lot,Vector3(6.5,1,10.9))]:
 		if not check(await walk_to(game,target),"player physically walks from spawn toward counter: "+str(target)):
 			await photograph("walk-failed");await finish();return
@@ -265,4 +301,6 @@ func finish()->void:
 func update_population()->void:
 	if not game_ready():return
 	var game:=current_scene
+	if not game.world_vehicle.driving:
+		game.terrain.focus=game.player.position;game.terrain.require_collision=true
 	game.zombies.update(1.0/Engine.physics_ticks_per_second,game.player.global_position,not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.terrain.world_ready and not game.terrain.pending_edit and not game.session_menu.pauses_world() and not game.player_hud.inventory_open and not game.world_vehicle.driving and game.app_focused,not game.fly)

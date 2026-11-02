@@ -1,5 +1,22 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Upstairs introduction / quest search — 2026-11-02
+
+Approved wake-up motion, upstairs C1 start, circular active quests, awake/sleeper
+compass search assistance, ten-resident churches and baked pursuit posture are
+implemented. Native persistence and rotated prefab clearance/traversal pass;
+ordinary-world/package evidence is tracked with the
+[gameplay expansion](../issues/gameplay-expansion/README.md).
+Player health/death/respawn is still missing: the approved motion has a reusable
+respawn hook, not a completed death loop. Return when that lifecycle is added;
+require real death-to-respawn, selected-item recovery and save/reload evidence.
+Other biome/seed road and foreground performance limitations remain unchanged.
+Installed generation/physical route/save passes 188 checks; fresh-process reload
+passes 12. Final selected-item idle-return correction passes 23 source checks
+but its re-export is blocked by the unchanged disk reserve (10.60 GiB available,
+11 GiB required). Return after 0.5 GB is freed; export and verify the packaged
+waking/equipment cases and reload before claiming final package parity.
+
 ## Mountain coal mine prototype — 2026-11-01
 
 Default new-world generation now includes a surveyed coal mine with short loot

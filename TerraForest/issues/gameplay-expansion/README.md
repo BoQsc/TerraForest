@@ -2,8 +2,80 @@
 
 - Status: In progress; generated house/underground/lookout sleepers and supplies, not a completed expansion.
 - Updated: 2026-11-02.
-- User review: implementation requested; no new asset/animation approval claimed.
+- User review: five-second waking motion approved on 2026-11-02; other new motion and integrated gameplay remain reviewable.
 - Scope: [full requirements and acceptance](../../docs/GAMEPLAY_EXPANSION.md).
+
+## Upstairs start, waking and search assistance — 2026-11-02
+
+- User approved the five-second first-person waking motion. New Frontier worlds
+  start upstairs in the nearest approved C1 house; existing player saves stay put.
+- Active quest area circle replaces the point; awake enemies blink red on the
+  compass. Yellow sleepers appear after a kill and a minute without another kill.
+  Only active in-area gameplay advances that timer; progress persists natively.
+- Ten authored church sleepers, six-live-body streaming cap unchanged. New
+  pursuing posture is baked from the existing planted walk, not added physics.
+- Native quest checks: 81/debug and 81/release; upstairs exit / church wake
+  envelopes: 161 assertions, all four rotations. Guidance: seven; posture: four.
+- Reports: `reports/checks/20261102T101535526682Z`,
+  `reports/quests_native/20261102T103543911400Z`,
+  `reports/quests_native/20261102T103544564914Z`, and
+  `reports/expedition_motion/20261102T102644782010Z` / `20261102T102647849118Z`.
+- Retained failed walking harness: `reports/frontier_expedition/20261102T102649420509Z`.
+  Its disabled player physics left terrain focus behind; corrected harness
+  advances normal streaming focus, without changing production scheduler guards.
+- Waking source/approval: [review record](../../reviews/player_wakeup/README.md).
+  A respawn animation hook exists; player health/death/respawn remains a separate
+  missing lifecycle, not completed by presentation. User posture/combat feel and
+  foreground performance acceptance remain open.
+
+### Installed evidence and remaining export
+
+- Source ordinary generation / upstairs / stairs / road / trader / supplies /
+  physical car departure / durable save: 188 checks, report
+  `reports/frontier_expedition/20261102T103700498440Z`.
+- Actual root executable repeats all 188 checks with installed PCK
+  `9048699f92d580113b2a60c455f687d019c13aa9d37439e4436cc0e1ca6b2342`:
+  `reports/frontier_expedition/20261102T104339798167Z`.
+- Fresh-process installed reload: 12 checks, no waking replay, exact quest,
+  inventory and service-car identity:
+  `reports/frontier_expedition/20261102T105403589841Z`.
+- Installed guidance fixture: seven checks,
+  `reports/expedition_motion/20261102T105357717976Z`; installed posture: four,
+  `reports/expedition_motion/20261102T105400842929Z`. The map fixture deliberately
+  omits world textures; it qualifies marker rendering/state, not mine traversal.
+- Sampled installed trip peak: 4,287,389,696 bytes process private commit and
+  1,757,569,024 bytes dedicated GPU allocations. RAM is close to its 4 GiB
+  warning. This offscreen functional check does not qualify foreground pacing.
+- Final equipment-return correction passes 23 source checks across empty hands,
+  pickaxe, hatchet, hammer, torch, rifle and held block; focus interruption also
+  restores the selected weapon: `reports/checks/20261102T105130586598Z`.
+  This correction switches directly to the selected idle during the final
+  0.6 seconds, rather than allowing a longer equip clip past the five-second end.
+- That final correction is **not in the installed pack yet**. Re-export was
+  refused at 10.60 GiB free versus the unchanged 11 GiB reserve-plus-working
+  requirement (`reports/upstairs_equipment_export.log`). Return when at least
+  0.5 GB is freed; re-export and run packaged `wakeup_runtime`, guidance/posture
+  and `intro_reload` checks. No saves, evidence or safety limits were removed.
+
+### Captioned review media
+
+- `wakeup-approved.mp4`: exact user-approved five-second Godot first-person
+  proposal; original `reports/expedition_motion/20261102T102506379981Z/Wakeup.proposal.mp4`.
+- `upstairs-installed.png`: actual installed new-world upstairs spawn, selected
+  pickaxe restored, trader 189 m away; ordinary house unchanged. Source:
+  `reports/frontier_expedition/20261102T104339798167Z/first-play.png`.
+- `quest-search-installed.png`: installed UI fixture after one kill and the
+  search delay; circle replaces destination point, yellow sleeper and red awake
+  contact. Source: `reports/expedition_motion/20261102T105357717976Z/search-assist-yellow-contact.png`.
+- `zombie-alert-installed.png`: actual chase animation, frame 30, front/side/rear.
+  Source: `reports/expedition_motion/20261102T105400842929Z/Zombie_Alert_Walk_030.png`.
+- Earlier source images `upstairs-source.png`, `quest-search-assist.png` and
+  `zombie-alert.png` remain for comparison. The earlier guidance image predates
+  the generic quest-description correction; it is not the installed text.
+- These are unedited project-rendered captures, not concept art; inherited rig
+  and game-asset notices remain applicable. New motion provenance is recorded in
+  `addons/characters/runtime/assets/expedition_motion.json`. Review media stays
+  out of game exports. [Machine-readable evidence](upstairs-evidence.json).
 
 ## Frontier expedition — 2026-11-02
 

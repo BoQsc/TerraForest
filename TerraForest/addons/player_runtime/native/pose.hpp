@@ -11,7 +11,7 @@ protected:
     static void _bind_methods();
 public:
     bool validate_snapshot(const godot::PackedByteArray &data) const;
-    godot::PackedByteArray encode(godot::Vector3 position,double yaw,double pitch,bool fly,int64_t tool) const;
+    godot::PackedByteArray encode(godot::Vector3 position,double yaw,double pitch,bool fly,int64_t tool,bool wake_pending=false) const;
     godot::Dictionary decode(const godot::PackedByteArray &data) const;
 };
 }

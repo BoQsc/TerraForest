@@ -466,7 +466,7 @@ func _capture_player_pose() -> PackedByteArray:
 		# Reject the compound save if no safe on-foot restore point exists.
 		return captured if not captured.is_empty() else PackedByteArray([0])
 	if not loading_active and not waiting_spawn and not world_vehicle.driving:
-		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,saved_tool)
+		var captured: PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,saved_tool,player_view.entry.wake_pending)
 		if captured.is_empty():return PackedByteArray([0])
 		_saved_pose=captured
 	return _saved_pose
@@ -474,6 +474,8 @@ func _capture_player_pose() -> PackedByteArray:
 func _restore_player_pose(data: PackedByteArray) -> bool:
 	var decoded: Dictionary=player_pose.decode(data)
 	if not decoded.ok: return false
+	player_view.entry.wake_pending=decoded.get("wake_pending",false)
+	if player_view.entry.view!=null:player_view.entry.arm()
 	zombies.clear()
 	zombie_target.damage_received=0.0
 	ground_mode=false;equipped_tool=0;editor_tool_active=false

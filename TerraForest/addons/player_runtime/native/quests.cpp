@@ -25,6 +25,7 @@ void NativeQuestLog::_bind_methods() {
     ClassDB::bind_method(D_METHOD("begin_reset","expected_revision"),&NativeQuestLog::begin_reset);
     ClassDB::bind_method(D_METHOD("finish_reset","token","committed","expected_revision"),&NativeQuestLog::finish_reset);
     ClassDB::bind_method(D_METHOD("record_defeated","resident_key","token"),&NativeQuestLog::record_defeated);
+    ClassDB::bind_method(D_METHOD("advance_search","position","milliseconds"),&NativeQuestLog::advance_search);
     ClassDB::bind_method(D_METHOD("abandon","expected_revision"),&NativeQuestLog::abandon);
     ClassDB::bind_method(D_METHOD("claim","inbox","progression","expected_revision"),&NativeQuestLog::claim);
     ClassDB::bind_method(D_METHOD("capture_storage_snapshot"),&NativeQuestLog::capture_storage_snapshot);
@@ -119,6 +120,7 @@ Dictionary NativeQuestLog::snapshot() const {
     Dictionary out;out["revision"]=revision;out["seed"]=seed;out["phase"]=int64_t(phase);out["cycle"]=int64_t(cycle);out["key"]=active;out["locations"]=int64_t(locations.size());
     const auto location=find(active);int count=0;
     for(uint32_t mask=defeated;mask;mask>>=1)count+=mask&1;
+    out["arrived"]=arrived;out["search_ms"]=search_ms;out["reveal_sleepers"]=phase==3&&arrived&&search_ms>=60000;
     out["introduction"]=introduction;out["defeated"]=count;out["target_count"]=location?int(location->residents.size()):0;out["location"]=location?describe(*location):Dictionary();return out;
 }
 Dictionary NativeQuestLog::initialize_introduction(int64_t expected_revision){
@@ -136,12 +138,12 @@ Dictionary NativeQuestLog::accept_first_visit(int64_t key,const Ref<NativePlayer
     PackedInt64Array supplies;for(int64_t value:{6,1,8,1,223,180})supplies.append(value);
     const Dictionary granted=inventory->grant_items(supplies,inventory_revision);
     if(!bool(granted["ok"]))return result(false,"make_room_for_supplies");
-    active=key;phase=3;defeated=0;++cycle;introduction=3;++revision;return result(true,"");
+    active=key;phase=3;defeated=0;arrived=false;search_ms=0;++cycle;introduction=3;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::accept(int64_t key,int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
     if(phase||introduction==1||introduction==2||!find(key))return result(false,"unavailable_contract");
-    active=key;phase=1;defeated=0;++revision;return result(true,"");
+    active=key;phase=1;defeated=0;arrived=false;search_ms=0;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::begin_reset(int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
@@ -151,14 +153,25 @@ Dictionary NativeQuestLog::begin_reset(int64_t expected_revision) {
 Dictionary NativeQuestLog::finish_reset(int64_t token,bool committed,int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
     if(phase!=2||token!=int64_t(cycle))return result(false,"stale_reset");
-    phase=committed?3:1;defeated=0;++revision;return result(true,"");
+    phase=committed?3:1;defeated=0;arrived=false;search_ms=0;++revision;return result(true,"");
+}
+bool NativeQuestLog::advance_search(Vector3 position,int64_t milliseconds) {
+    if(phase!=3||!position.is_finite()||milliseconds<0||milliseconds>1000)return false;
+    const auto location=find(active);
+    if(!location)return false;
+    const bool inside=location->bounds.grow(3).has_point(position)||position.distance_to(location->marker)<=8;
+    if(!inside)return false;
+    bool changed=!arrived;arrived=true;
+    if(defeated&&search_ms<60000&&milliseconds){search_ms=std::min(uint32_t(60000),search_ms+uint32_t(milliseconds));changed=true;}
+    if(changed)++revision;
+    return changed;
 }
 Dictionary NativeQuestLog::record_defeated(int64_t resident_key,int64_t token) {
     if(phase!=3||token!=int64_t(cycle))return result(false,"inactive_encounter");
     const auto location=find(active);
     for(size_t index=0;index<location->residents.size();++index)if(location->residents[index]==resident_key) {
         const uint32_t bit=uint32_t(1)<<index;
-        if(!(defeated&bit)){defeated|=bit;++revision;}
+        if(!(defeated&bit)){defeated|=bit;search_ms=0;++revision;}
         if(defeated==all_targets(location->residents.size()))phase=4;
         return result(true,"");
     }
@@ -167,7 +180,7 @@ Dictionary NativeQuestLog::record_defeated(int64_t resident_key,int64_t token) {
 Dictionary NativeQuestLog::abandon(int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
     if(!phase||phase==2||introduction==3)return result(false,"unavailable_abandon");
-    phase=0;active=0;defeated=0;++revision;return result(true,"");
+    phase=0;active=0;defeated=0;arrived=false;search_ms=0;++revision;return result(true,"");
 }
 Dictionary NativeQuestLog::claim(const Ref<NativeRewardInbox> &inbox,const Ref<NativePlayerProgression> &progression,int64_t expected_revision) {
     if(expected_revision!=revision)return result(false,"stale_revision");
@@ -181,14 +194,15 @@ Dictionary NativeQuestLog::claim(const Ref<NativeRewardInbox> &inbox,const Ref<N
     const Dictionary experience=progression->award(location->xp,progression->revision);
     inbox->accept(reward,receipt);
     const int coins=location->coins;++location->completed;if(introduction==3)introduction=4;
-    phase=0;active=0;defeated=0;++revision;
+    phase=0;active=0;defeated=0;arrived=false;search_ms=0;++revision;
     auto out=result(true,"");out["coins"]=coins;out["gained"]=experience["gained"];out["levels"]=experience["levels"];out["level"]=experience["level"];return out;
 }
 PackedByteArray NativeQuestLog::capture_storage_snapshot() const {
     PackedByteArray out;if(!currency||phase==2){out.resize(1);out.set(0,0);return out;}
     int size=48;
     for(const auto &location:locations)size+=84+location.layout.utf8().length()+location.title.utf8().length()+8*(location.residents.size()+location.containers.size());
-    out.resize(size);out.fill(0);out.encode_u32(0,0x31514654);out.encode_u32(4,introduction?2:1);out.encode_s32(8,seed);out.encode_u32(12,locations.size());out.encode_u64(16,active);out.encode_u32(36,introduction);
+    out.resize(size);out.fill(0);out.encode_u32(0,0x31514654);out.encode_u32(4,arrived?3:introduction?2:1);out.encode_s32(8,seed);out.encode_u32(12,locations.size());out.encode_u64(16,active);out.encode_u32(36,introduction);
+    out.encode_u32(44,arrived?(uint32_t(1)<<31)|search_ms:0);
     out.encode_u32(24,cycle);out.encode_u32(28,phase);out.encode_u32(32,defeated);out.encode_u32(40,currency);
     int at=48;
     for(const auto &location:locations) {
@@ -208,9 +222,12 @@ bool NativeQuestLog::decode(const PackedByteArray &data,std::vector<Location> &p
     world_seed=-1;active_key=0;state=0;iteration=0;mask=0;parsed.clear();
     if(!currency)return false;
     if(data.is_empty())return true;
-    if(data.size()<48||data.size()>MAX_BYTES||data.decode_u32(0)!=0x31514654||(data.decode_u32(4)!=1&&data.decode_u32(4)!=2)||data.decode_u32(44)||data.decode_u32(40)!=currency)return false;
+    if(data.size()<48||data.size()>MAX_BYTES||data.decode_u32(0)!=0x31514654||data.decode_u32(4)<1||data.decode_u32(4)>3||data.decode_u32(40)!=currency)return false;
+    const uint32_t guidance=data.decode_u32(44),search=guidance&0x7fffffffu;
+    if(data.decode_u32(4)<3?guidance!=0:(!(guidance&0x80000000u)||search>60000))return false;
     const auto intro=data.decode_u32(36);if(intro>4||(data.decode_u32(4)==1&&intro)||(data.decode_u32(4)==2&&!intro))return false;
     world_seed=data.decode_s32(8);active_key=int64_t(data.decode_u64(16));iteration=data.decode_u32(24);state=data.decode_u32(28);mask=data.decode_u32(32);
+    if(guidance&&((state!=3&&state!=4)||(search&&(!mask||state!=3))))return false;
     const uint32_t count=data.decode_u32(12);
     if(world_seed< -1||count>MAX_LOCATIONS||(world_seed<0&&count)||active_key<0||state>4||state==2)return false;
     if(!count&&(world_seed!=-1||active_key||state||iteration||mask))return false;
@@ -255,6 +272,7 @@ bool NativeQuestLog::restore_storage_snapshot(const PackedByteArray &data) {
     if(phase==2)return false;
     std::vector<Location> parsed;int64_t world_seed,active_key;uint32_t state,iteration,mask;
     if(!decode(data,parsed,world_seed,active_key,state,iteration,mask))return false;
-    locations=std::move(parsed);seed=world_seed;active=active_key;phase=state;cycle=iteration;defeated=mask;introduction=data.is_empty()?0:data.decode_u32(36);++revision;return true;
+    locations=std::move(parsed);seed=world_seed;active=active_key;phase=state;cycle=iteration;defeated=mask;introduction=data.is_empty()?0:data.decode_u32(36);
+    const uint32_t guidance=data.is_empty()?0:data.decode_u32(44);arrived=(guidance&0x80000000u)!=0;search_ms=guidance&0x7fffffffu;++revision;return true;
 }
 }

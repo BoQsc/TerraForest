@@ -111,7 +111,12 @@ func _draw()->void:
  var quest:Dictionary=atlas.game.quests.marker()
  if not quest.is_empty():
   var at:=world_to_map(quest.position)
-  if Rect2(Vector2.ZERO,size).grow(-10).has_point(at):
+  if quest.get("area",false):
+   var radius:float=quest.radius*pixels_per_metre()
+   draw_circle(at,radius,Color(.95,.65,.2,.1))
+   draw_arc(at,radius,0,TAU,96,Color(.95,.73,.33,.9),2,true)
+   if Rect2(Vector2.ZERO,size).grow(-10).has_point(at):draw_string(font,at+Vector2(15,-12),quest.title,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("f5ca78"))
+  elif Rect2(Vector2.ZERO,size).grow(-10).has_point(at):
    draw_circle(at,12,Color("10252b"));draw_string(font,at+Vector2(-4,6),"!",HORIZONTAL_ALIGNMENT_LEFT,-1,21,Color("f5ca78"))
    draw_string(font,at+Vector2(15,-12),quest.title,HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("f5ca78"))
  var player:Vector3=atlas.game.player.global_position;var p:=world_to_map(player)

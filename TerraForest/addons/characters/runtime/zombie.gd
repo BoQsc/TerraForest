@@ -16,6 +16,7 @@ signal movement_mode_changed(mode: String)
 
 const MODEL_PATH := "res://addons/characters/runtime/assets/Zombie.r4.glb"
 const DRAG_WALK = preload("res://addons/characters/runtime/assets/Zombie.drag_walk.res")
+const ALERT_WALK = preload("res://addons/characters/runtime/assets/Zombie.alert.res")
 const DRAG_WALK_REFERENCE_SPEED := 0.45
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
@@ -170,6 +171,7 @@ func configure(scene: PackedScene = null) -> void:
 	animation_player = _find_type(model, "AnimationPlayer") as AnimationPlayer
 	if animation_player!=null and revision_id=="r4":
 		animation_player.add_animation_library("drag_walk",DRAG_WALK)
+		animation_player.add_animation_library("alert_walk",ALERT_WALK)
 	if skeleton == null:
 		push_error("Zombie model requires a Skeleton3D.")
 		return
@@ -880,7 +882,7 @@ func _physics_r4(delta: float) -> void:
 		navigation_motor.move_grounded(self,delta)
 	else:
 		move_and_slide()
-	if dragging_walk and not _crawling and state == "shamble" and _current_clip == _animation_key("Zombie_Walk_Drag_Right"):
+	if dragging_walk and not _crawling and state == "shamble" and _current_clip in [_animation_key("Zombie_Walk_Drag_Right"),_animation_key("Zombie_Alert_Walk")]:
 		# The next pose advances by the distance the body actually travelled.
 		# Collision/route guards can reduce a requested step to zero. Advancing
 		# at the requested speed would make the planted boots skate in place.
@@ -1405,6 +1407,7 @@ func get_walk_multiplier() -> float:
 	return multiplier
 
 func _standing_walk_clip() -> String:
+	if dragging_walk and _r4_enabled and awareness_state=="chase":return "Zombie_Alert_Walk"
 	return "Zombie_Walk_Drag_Right" if dragging_walk and _r4_enabled else "Zombie_Walk"
 
 func _standing_walk_reference_speed() -> float:

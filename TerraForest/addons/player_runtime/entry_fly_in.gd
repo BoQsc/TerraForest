@@ -17,6 +17,12 @@ var overlay:CanvasLayer
 var hidden:Array[Node]=[]
 var held_buttons:=0
 var starts:=0
+var wake_pending:=false
+var waking:=false
+var wake_item:=0
+var wake_returned:=false
+var wake_starts:=0
+const WAKEUP=preload("res://addons/characters/runtime/assets/Human.wakeup.res")
 
 func prepare(owner_view:Node)->void:
 	view=owner_view;game=view.game
@@ -35,7 +41,7 @@ func set_enabled(value:bool,persist:bool=true)->void:
 	game.session_menu.entry_fly_in_toggle.set_pressed_no_signal(enabled)
 	if not enabled:
 		if pending and not game.loading_active:game.loading_layer.hide()
-		pending=false;finish()
+		pending=wake_pending;finish()
 	view.refresh_processing()
 
 func arm()->void:
@@ -43,7 +49,7 @@ func arm()->void:
 	var args:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
 	# Tools and offscreen jobs retain their established camera, unless a check opts in.
 	var diagnostic:bool=game.temporary_world or game.benchmark_enabled or ProjectSettings.get_setting("terraforest/offscreen_session",false)
-	pending=enabled and (not diagnostic or "--entry-fly-in" in args)
+	pending=(enabled and (not diagnostic or "--entry-fly-in" in args)) or (wake_pending and (not diagnostic or OS.get_cmdline_user_args().has("--wakeup-test")))
 	view.refresh_processing()
 
 func blocks_actions()->bool:return active or held_buttons!=0
@@ -82,15 +88,27 @@ func step(_delta:float)->void:
 		view.refresh_processing()
 		return
 	if not active:return
-	if _unavailable() or not game.app_focused or game.loading_active or not enabled:
+	if _unavailable() or not game.app_focused or game.loading_active or (not enabled and not waking):
 		if not game.app_focused:held_buttons=0
 		finish();return
+	if waking:
+		elapsed=minf(5.0,elapsed+minf(_delta,.1))
+		var human:Node=game.tool_view.human
+		if elapsed<4.4:human.animation_player.seek(elapsed,true);human.animation_player.advance(0)
+		else:
+			if not wake_returned:
+				return_wake_item();wake_returned=true
+			human.animation_player.advance(minf(_delta,.1))
+		if elapsed>=5.0:finish()
+		return
 	elapsed=minf(DURATION,(Time.get_ticks_usec()-started_usec)/1000000.0)
 	if elapsed>=DURATION:finish();return
 	present(elapsed/DURATION)
 
 func begin()->bool:
-	if not enabled or game.loading_active or game.waiting_spawn or game.needs_floor_spawn or _unavailable():return false
+	if game.loading_active or game.waiting_spawn or game.needs_floor_spawn or _unavailable():return false
+	if wake_pending:return begin_wake()
+	if not enabled:return false
 	# Indoors/underground resumes go straight to the saved first-person view.
 	var eye:Vector3=game.camera.global_position
 	if game.lakes.depth_at(eye)>0:return false
@@ -125,6 +143,26 @@ func begin()->bool:
 	present(0.0);view.refresh_processing()
 	return true
 
+func begin_wake()->bool:
+	view.set_overview(false);view.set_enabled(false,false)
+	game._clear_motion();game.tool_view.cancel_attack()
+	var human:Node=game.tool_view.human
+	wake_item=game.player_hud.active_item;human.set_process(false);human.current=0
+	game.tool_view.equip(0)
+	if not human.animation_player.has_animation_library("wakeup"):human.animation_player.add_animation_library("wakeup",WAKEUP)
+	human.animation_player.play("wakeup/FP_Wake_Confused_Review",0);human.animation_player.advance(0)
+	active=true;waking=true;wake_pending=false;wake_returned=false;elapsed=0.0;wake_starts+=1
+	game.terrain.changed_since_save=true;view.refresh_processing();return true
+
+func arm_respawn()->void:
+	wake_pending=true;arm()
+
+func return_wake_item()->void:
+	game.tool_view.equip(wake_item)
+	var human:Node=game.tool_view.human
+	human.active_clip=human._motion_clip("Idle");human.action_remaining=0.0
+	human.animation_player.play(human.clips[human.active_clip],.6)
+
 static func offset_at(start:Vector3,progress:float,backward:Vector3)->Vector3:
 	var remaining:=1.0-clampf(progress,0.0,1.0)
 	# A short shoulder approach keeps the actual player visible before the head
@@ -151,6 +189,9 @@ func present(progress:float)->void:
 
 func finish()->void:
 	if not active:return
+	if waking:
+		if not wake_returned:return_wake_item()
+		game.tool_view.human.set_process(true);waking=false
 	active=false
 	view._bind_view(game.camera)
 	game.tool_view.human.set_third_person(false);game.tool_view.transform=Transform3D.IDENTITY

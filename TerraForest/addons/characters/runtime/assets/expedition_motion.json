@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "creator": "TerraForest original AI-assisted animation authoring",
+  "new_motion_license": "CC0-1.0",
+  "inherited_material": "Human R11 and Zombie R4 rigs retain their existing notices and provenance; no inherited material is relicensed.",
+  "animations": [
+    {
+      "path": "Human.wakeup.res",
+      "source": "reviews/player_wakeup/Human.wakeup.blend",
+      "recipe": "tools/author_player_wakeup.py",
+      "approved": "User approved five-second first-person preview, 2026-11-02",
+      "scope": "4.4-second motion plus selected-item return; runtime entry_fly_in presentation only"
+    },
+    {
+      "path": "Zombie.alert.res",
+      "source": "addons/characters/authoring/Zombie.alert.blend",
+      "recipe": "tools/author_zombie_alert.py",
+      "scope": "Chasing posture; original dragging-walk lower-body tracks retained. No awareness or speed changes."
+    }
+  ]
+}

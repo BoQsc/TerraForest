@@ -23,6 +23,43 @@ compute shaders are used where measured workloads justify them, not as a label.
 
 ## Full requested scope
 
+### Upstairs introduction and quest search — 2026-11-02
+
+- New Frontier starts select a collision-qualified upper floor of the nearest
+  approved C1 house within 200 m of the trader (seed 1703: about 190 m). No house
+  geometry is changed; rejected room/site selection fails publication explicitly.
+- Approved five-second first-person waking motion: 4.4 seconds of hand gestures,
+  then selected-item return. First-spawn intent occupies one bit in the existing
+  56-byte native pose record; legacy/played saves do not replay it. ESC/UI/focus
+  interruption returns equipment and control. `arm_respawn()` is ready, but a
+  full player health/death/respawn gameplay system does not yet exist.
+- Native quest arrival replaces the destination point with a circular active
+  area. A bounded 2 Hz adapter supplies awake red blinking compass spheres.
+  After one kill and 60 active in-area seconds without another kill, remaining
+  sleepers gain yellow spheres. Focus loss/UI pauses time; kills reset it;
+  completion clears contacts. Binary quest v1/v2 loads remain supported.
+- New churches receive ten keyed sleeper anchors across nave, crypt and vestry,
+  retaining the initial sanctuary and existing six-live-body budget. Existing
+  played worlds are not populated retroactively. All forty rotated anchors
+  admit and complete their wake animation against unchanged furnished geometry.
+- Pursuit uses a baked aggressive upper-body hunch/reach; wandering, speed,
+  detection, attacks and ragdoll ownership remain unchanged. All 121 sampled
+  frames preserve original hips and feet (maximum positional difference <1 µm).
+- Focused evidence: 81 native quest checks in each build; 161 room/stair/church
+  checks; seven quest UI checks; four posture checks. Wake approval video:
+  `reports/expedition_motion/20261102T102506379981Z/Wakeup.proposal.mp4`.
+- The first long walking harness failed because it bypassed normal player
+  physics without advancing terrain focus; corrected test updates the same focus
+  before actor residency. No production scheduler guard was relaxed. Failure:
+  `reports/frontier_expedition/20261102T102649420509Z`.
+- Package/ordinary-world evidence and remaining acceptance live in the
+  [tracker](../issues/gameplay-expansion/README.md). This does not close the older
+  broad-seed road admission, foreground frame pacing or full expansion backlog.
+- Installed ordinary route/save: 188 checks; fresh-process reload: 12. The final
+  selected-item idle-return correction passes 23 source assertions, but remains
+  unexported until disk space satisfies the unchanged 11 GiB working reserve.
+  Packaged waking/equipment verification must follow that export.
+
 ### Frontier expedition continuation — 2026-11-02, installed scoped verification
 
 - New default recipe: three towns, two districts each, woodland base biome, connected

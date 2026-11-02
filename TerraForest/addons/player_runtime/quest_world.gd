@@ -6,6 +6,7 @@ var elapsed:=0.0
 var tracked_key:=0
 var tracked_cycle:=-1
 var identities:=PackedInt64Array()
+var contacts:Array=[]
 
 func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	game=owner_game
@@ -16,8 +17,10 @@ func prepare(owner_game:Node,persistence:RefCounted)->bool:
 func _process(delta:float)->void:
 	elapsed-=delta
 	if elapsed>0 or game.loading_active or game.shutdown_requested:return
+	var milliseconds:=mini(1000,maxi(0,roundi((.5-elapsed)*1000)))
 	elapsed=.5
 	var state:Dictionary=store.snapshot()
+	contacts.clear()
 	if state.phase==3:
 		if tracked_key!=state.key or tracked_cycle!=state.cycle:
 			tracked_key=state.key;tracked_cycle=state.cycle
@@ -26,6 +29,16 @@ func _process(delta:float)->void:
 			var resident:Dictionary=game.zombies.population.store.resident(identities[index])
 			if resident.get("anchor",0)!=state.location.residents[index]:continue
 			if resident.get("state",0)==2:store.record_defeated(resident.anchor,state.cycle)
+		if game.app_focused and not game.session_menu.pauses_world() and not game.player_hud.inventory_open:
+			store.advance_search(game.player.global_position,milliseconds)
+		var current:Dictionary=store.snapshot()
+		if current.phase==3 and current.arrived:
+			for index in identities.size():
+				var resident:Dictionary=game.zombies.population.store.resident(identities[index])
+				if resident.get("anchor",0)!=state.location.residents[index] or resident.get("state",2)!=1:continue
+				var sleep:PackedByteArray=resident.sleep
+				var sleeping:=not sleep.is_empty() and sleep.size()>=36 and sleep.decode_u32(32)==1
+				if not sleeping or current.reveal_sleepers:contacts.append({"position":resident.position,"sleeping":sleeping,"id":resident.id})
 		if store.snapshot().revision!=state.revision:game.terrain.changed_since_save=true
 	game.player_hud.quests_notice.text=description()
 	game.destination_guide.refresh()
@@ -39,6 +52,7 @@ func description()->String:
 		3:
 			return "Coal-mine expedition\nClear the mine: %d / %d zombies.\nThe trader waits at the car. Return whenever you want, even with the quest unfinished."%[state.defeated,state.target_count] if state.phase==3 else "Coal-mine expedition complete\nReturn to the trader to collect your reward. The car is waiting."
 		4:return "Coal-mine expedition completed."
+	if state.phase in [1,3,4]:return "%s\n%d / %d zombies cleared."%[state.location.title,state.defeated,state.target_count]
 	return "No active quest."
 
 func marker()->Dictionary:
@@ -46,8 +60,11 @@ func marker()->Dictionary:
 	if state.introduction in [1,2] or (state.introduction==3 and state.phase==4):
 		var point:Vector3=game.trader.ride.spawn_position()
 		if point.is_finite():return {"position":point,"title":"Talk to trader" if state.introduction==1 else "Trader · quests","quest":true}
-	if state.introduction==3 and state.phase==3:
-		return {"position":state.location.marker,"title":"Coal mine · %d / %d"%[state.defeated,state.target_count],"quest":true}
+	if state.phase in [1,3]:
+		if state.phase==3 and state.arrived:
+			var bounds:AABB=state.location.bounds
+			return {"position":bounds.get_center(),"radius":Vector2(bounds.size.x,bounds.size.z).length()*.5+3,"area":true,"title":"%s · Active · %d / %d cleared"%[state.location.title,state.defeated,state.target_count],"quest":true}
+		return {"position":state.location.marker,"title":"%s · %d / %d"%[state.location.title,state.defeated,state.target_count],"quest":true}
 	return {}
 
 func talk()->void:
