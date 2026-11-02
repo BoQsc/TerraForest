@@ -5,6 +5,7 @@ import datetime
 import hashlib
 import json
 import subprocess
+from pathlib import Path
 from run import ROOT, parse_args
 from run_godot_check import execute, verify_pack_native
 from play_checkpoint import revision_metadata
@@ -13,9 +14,12 @@ from play_checkpoint import revision_metadata
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reuse-report')
-    parser.add_argument('--stage', choices=['create', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'claim_resume', 'reward_reload'], default='create')
+    parser.add_argument('--stage', choices=['create', 'boarding', 'driver', 'depart', 'resume', 'clear', 'clear_resume', 'mine_resume', 'claim_resume', 'reward_reload'], default='create')
     parser.add_argument('--pack', action='store_true')
+    parser.add_argument('--installed-executable', action='store_true')
     args = parser.parse_args()
+    if args.installed_executable and not args.pack:
+        parser.error('The installed executable must use the installed pack')
     if (args.stage != 'create') != bool(args.reuse_report):
         parser.error('Existing stages require an owned report; create uses a new world')
     config, _ = parse_args([])
@@ -42,6 +46,8 @@ def main():
         script = folder / 'driver.gd'
         script.write_text((ROOT / 'tests/frontier_expedition_world.gd').read_text().replace('res://tests/trader_ride_world.gd', ride.as_posix()), encoding='utf-8')
     command = [config.godot, '--path', str(ROOT), '--windowed', '--position', '-2400,-1600', '--resolution', '1920x1080', '--max-fps', '60', '--log-file', str(folder / 'engine.log'), '--script', str(script), '--', '--session-evidence-dir=' + folder.as_posix(), '--ride-stage=' + args.stage]
+    if args.installed_executable:
+        command[0] = str(ROOT / 'TerraForest.exe')
     if args.pack:
         command[command.index('--path') + 1] = str(ROOT / 'dist')
         command[1:1] = ['--main-pack', str(ROOT / 'dist/TerraForest.pck')]
@@ -60,6 +66,7 @@ def main():
     finally:
         subprocess.Popen = original
     record = dict(stage=args.stage, pack=args.pack, native_sha256=native, reused=args.reuse_report, command=command, result=result, test_sha256=hashlib.sha256(script.read_bytes()).hexdigest(), **revision_metadata())
+    record['executable_sha256'] = hashlib.sha256(Path(command[0]).read_bytes()).hexdigest()
     if args.pack:
         record['pack_sha256'] = hashlib.sha256((ROOT / 'dist/TerraForest.pck').read_bytes()).hexdigest()
     (folder / 'run.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')

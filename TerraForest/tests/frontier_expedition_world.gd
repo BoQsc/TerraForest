@@ -41,6 +41,13 @@ func run()->void:
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open
 	var ride:Node=game.trader.ride
 	if stage in ["clear","clear_resume"]:await complete_mine(game,ride);return
+	if stage=="mine_resume":
+		if not check(ride.state.expedition and game.quests.store.snapshot().introduction==3,"saved first expedition remains active"):await finish();return
+		if not check(await watch(func():return game.world_vehicle.passenger==ride,30),"saved expedition passenger restores before combat trip"):await finish();return
+		if not check(await watch(func():return ride.state.phase==ride.ARRIVED,180),"saved expedition reaches the mine for combat"):await finish();return
+		game.world_vehicle.exit_vehicle(game)
+		if not check(game.world_vehicle.passenger==null,"player exits for first mine clear"):await finish();return
+		await explore_mine(game,ride);return
 	if stage=="claim_resume":
 		if not check(game.quests.store.snapshot().phase==4 and ride.state.phase in [ride.HOME_WALK,ride.IDLE],"completed mine persists while trader returns home"):await finish();return
 		await claim_reward(game,ride);return

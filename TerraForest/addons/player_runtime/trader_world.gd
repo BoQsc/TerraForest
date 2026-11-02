@@ -35,8 +35,9 @@ func reachable()->bool:
 	if not allowed() or not is_instance_valid(actor):return false
 	var origin:Vector3=game.camera.global_position
 	var target:Vector3=actor.global_position+Vector3.UP*1.45
-	if origin.distance_squared_to(target)>9:return false
-	var hit:Dictionary=game.structures.blocks.raycast_scene(origin,target,15,[game.player.get_rid()])
+	var offset:=target-origin
+	if offset.length_squared()<.000001:return false
+	var hit:Dictionary=game.structures.blocks.raycast_scene(origin,origin+offset.normalized()*3,15,[game.player.get_rid()])
 	return aimed(hit)
 
 func try_open(target:Dictionary)->bool:

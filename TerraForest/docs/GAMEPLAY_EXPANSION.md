@@ -25,7 +25,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 
 ### Frontier expedition continuation — 2026-11-02, not yet installed
 
-- New default recipe: three towns, two districts each, mixed biomes, connected
+- New default recipe: three towns, two districts each, woodland base biome, connected
   roads/trails, mineral veins and trader introduction. Seed 1703 publishes 51
   buildings; this is not evidence that the largest recipe was doubled.
 - Native introduction grants a torch, automatic rifle and 180 rounds atomically,
@@ -64,6 +64,11 @@ compute shaders are used where measured workloads justify them, not as a label.
   Corrected continuation `20261102T091419444955Z` walks back, pays the reward and
   saves the completed quest (12 checks). Earlier door/selection/tight-waypoint
   harness failures are retained; no teleport, fabricated kills or extra ammunition.
+- Packaged counter testing found a real range edge case: the visible trader capsule
+  was reachable but its centre was just beyond three metres. Reach now uses the
+  actual first scene hit within three metres, retaining wall occlusion. Source
+  booking/departure passes 27 checks in `reports/frontier_expedition/20261102T092544678312Z`.
+  The failed packaged approach `20261102T092236953171Z` remains evidence.
 - Broader default-recipe qualification is **not complete**. Seeds 8147 and 91823
   fail crossing/road cut-fill admission after bounded layout retries:
   `reports/checks/20261102T091524745580Z` and `20261102T091540307279Z`.
