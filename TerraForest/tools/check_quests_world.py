@@ -15,13 +15,16 @@ def main():
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--originals', action='store_true')
     parser.add_argument('--reset-plan', action='store_true')
+    parser.add_argument('--live-reset', action='store_true')
     reuse = parser.add_mutually_exclusive_group()
     reuse.add_argument('--restore-report')
     reuse.add_argument('--exercise-report')
     reuse.add_argument('--baseline-report')
     args = parser.parse_args()
-    if args.reset_plan:
+    if args.reset_plan or args.live_reset:
         args.originals = True
+    if args.live_reset and not args.baseline_report:
+        parser.error('Live reset requires an existing owned baseline report')
     config, _ = parse_args([])
     base = ROOT / 'reports/quests_world'
     folder = base / datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
@@ -36,7 +39,7 @@ def main():
             parser.error('Not an owned quest fixture')
         for name in (['created_slot.json'] if args.baseline_report else ['expected.bin', 'created_slot.json']):
             (folder / name).write_bytes((source / name).read_bytes())
-    record = dict(pack=args.pack, originals=args.originals, reset_plan=args.reset_plan, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
+    record = dict(pack=args.pack, originals=args.originals, reset_plan=args.reset_plan, live_reset=args.live_reset, restore_report=args.restore_report, exercise_report=args.exercise_report, baseline_report=args.baseline_report, phases=[], **revision_metadata())
     script = ROOT / 'tests/quests_world.gd'
     if args.pack:
         record['native_sha256'] = verify_pack_native()
@@ -44,7 +47,12 @@ def main():
         parent = folder / 'window_session_flow.gd'
         parent.write_bytes((ROOT / 'tests/window_session_flow.gd').read_bytes())
         script = folder / 'driver.gd'
-        script.write_text((ROOT / 'tests/quests_world.gd').read_text().replace('res://tests/window_session_flow.gd', parent.as_posix()), encoding='utf-8')
+        contents = (ROOT / 'tests/quests_world.gd').read_text().replace('res://tests/window_session_flow.gd', parent.as_posix())
+        if args.live_reset:
+            helper = folder / 'location_reset_live_case.gd'
+            helper.write_bytes((ROOT / 'tests/location_reset_live_case.gd').read_bytes())
+            contents = contents.replace('res://tests/location_reset_live_case.gd', helper.as_posix())
+        script.write_text(contents, encoding='utf-8')
     original = subprocess.Popen
 
     def nonactivating(*arguments, **keywords):
@@ -66,6 +74,8 @@ def main():
                 command.append('--verify-originals')
             if args.reset_plan:
                 command.append('--verify-reset-plan')
+            if args.live_reset:
+                command.append('--verify-live-reset')
             if phase == 'restore':
                 command.append('--restore-quests')
             elif phase == 'exercise':

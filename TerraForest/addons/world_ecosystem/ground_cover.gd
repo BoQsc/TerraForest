@@ -437,7 +437,7 @@ func _apply_terrain_support(snapshot:Dictionary,result:Dictionary)->bool:
 	return true
 
 func _terrain_changed(bounds: AABB,_revision: int) -> void:
-	if terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28):_exclusion_changed(bounds);return
+	if terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28 or member.descriptor.get("source")=="location_reset"):_exclusion_changed(bounds);return
 	for key:Vector2i in _wanted:
 		if not resident.has(key) and AABB(Vector3(key.x*32,0,key.y*32),Vector3(32,256,32)).grow(1).intersects(bounds):_dirty[key]=true
 func _exclusion_changed(bounds: AABB) -> void:

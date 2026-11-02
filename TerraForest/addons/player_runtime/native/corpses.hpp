@@ -3,6 +3,7 @@
 #include "containers.hpp"
 #include <godot_cpp/variant/packed_float32_array.hpp>
 #include <godot_cpp/variant/vector3.hpp>
+#include <godot_cpp/variant/aabb.hpp>
 #include <vector>
 namespace terraforest {
 class NativeCorpseStore : public NativeContainerStore {
@@ -29,6 +30,7 @@ public:
     godot::Dictionary corpse(int64_t id)const;
     godot::PackedInt64Array corpse_ids()const;
     godot::PackedInt64Array nearby_corpses(godot::Vector3 focus,double radius,const godot::PackedInt64Array &excluded)const;
+    bool foreign_corpse_in_region(godot::AABB bounds,const godot::PackedInt64Array &residents)const;
     bool erase_corpse(int64_t id);
     godot::PackedByteArray capture_corpse_snapshot()const;
     bool validate_corpse_snapshot(const godot::PackedByteArray &bytes)const;

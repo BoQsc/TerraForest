@@ -18,6 +18,7 @@ void NativeCorpseStore::_bind_methods(){
     ClassDB::bind_method(D_METHOD("corpse","id"),&NativeCorpseStore::corpse);
     ClassDB::bind_method(D_METHOD("corpse_ids"),&NativeCorpseStore::corpse_ids);
     ClassDB::bind_method(D_METHOD("nearby_corpses","focus","radius","excluded"),&NativeCorpseStore::nearby_corpses);
+    ClassDB::bind_method(D_METHOD("foreign_corpse_in_region","bounds","residents"),&NativeCorpseStore::foreign_corpse_in_region);
     ClassDB::bind_method(D_METHOD("erase_corpse","id"),&NativeCorpseStore::erase_corpse);
     ClassDB::bind_method(D_METHOD("capture_corpse_snapshot"),&NativeCorpseStore::capture_corpse_snapshot);
     ClassDB::bind_method(D_METHOD("validate_corpse_snapshot","bytes"),&NativeCorpseStore::validate_corpse_snapshot);
@@ -70,6 +71,18 @@ PackedInt64Array NativeCorpseStore::nearby_corpses(Vector3 focus,double radius,c
     for(size_t i=0;i<count;++i)out.append(nearest[i].second);return out;
 }
 bool NativeCorpseStore::erase_corpse(int64_t id){auto found=records.find(id);if(found==records.end()||has_contents(id))return false;if(found->second.resident)resident_corpses.erase(found->second.resident);if(found->second.anchor)anchor_corpses.erase(found->second.anchor);records.erase(found);++revision;return true;}
+bool NativeCorpseStore::foreign_corpse_in_region(AABB bounds,const PackedInt64Array &residents)const{
+    if(!bounds.position.is_finite()||!bounds.size.is_finite()||residents.size()>32||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return true;
+    std::set<int64_t> owned;
+    for(auto identity:residents)if(identity<=0||!owned.insert(identity).second)return true;
+    bounds=bounds.grow(1.0);
+    for(const auto &[identity,corpse]:records){
+        if(owned.count(corpse.resident))continue;
+        if(corpse.pose.is_empty()){if(bounds.has_point(corpse.position))return true;}
+        else for(int offset=0;offset<corpse.pose.size();offset+=12)if(bounds.has_point(Vector3(corpse.pose[offset+3],corpse.pose[offset+7],corpse.pose[offset+11])))return true;
+    }
+    return false;
+}
 PackedByteArray NativeCorpseStore::capture_corpse_snapshot()const{
     auto inventory=NativeContainerStore::capture_storage_snapshot();if(inventory.is_empty())return {};
     const bool owned=!resident_corpses.empty();const int stride=owned?768:752;

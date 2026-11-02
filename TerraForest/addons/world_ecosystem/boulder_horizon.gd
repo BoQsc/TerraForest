@@ -190,7 +190,7 @@ func _apply_support(snapshot:Dictionary,result:Dictionary)->bool:
 	return _replace(snapshot.key,_support.filter_ground(resident[snapshot.key],verdict.ids))
 
 func _terrain_changed(bounds:AABB,_revision:int)->void:
-	var road:bool=terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28)
+	var road:bool=terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28 or member.descriptor.get("source")=="location_reset")
 	for key:Vector2i in _owners:
 		if (road or not _published.has(key)) and AABB(Vector3(key.x*64,bounds.position.y,key.y*64),Vector3(64,maxf(1,bounds.size.y),64)).intersects(bounds):_resample[key]=true
 

@@ -331,7 +331,7 @@ func _publish_samples(key: Vector2i) -> void:
 func _region_changed(bounds: AABB, _revision: int) -> void:
 	# Preserve live rows until authoritative support samples arrive. Only owners
 	# intersecting the footprint need revalidation, including underground edits.
-	var road:bool=terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28)
+	var road:bool=terrain.latest_edit_members.any(func(member:Dictionary):return member.descriptor.command==28 or member.descriptor.get("source")=="location_reset")
 	for key in _wanted:
 		var low := Vector3(key.x * CELL_SIZE, bounds.position.y, key.y * CELL_SIZE)
 		var footprint := AABB(low, Vector3(CELL_SIZE, maxf(bounds.size.y, 1.0), CELL_SIZE))

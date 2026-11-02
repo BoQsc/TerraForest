@@ -86,6 +86,7 @@ void NativeBoulderFracture::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure_horizon","distant"),&NativeBoulderFracture::configure_horizon);
     ClassDB::bind_method(D_METHOD("upsert_rows","ids","transforms"),&NativeBoulderFracture::upsert_rows);
     ClassDB::bind_method(D_METHOD("sync_damage","id","hit_from"),&NativeBoulderFracture::sync_damage,DEFVAL(Vector3()));
+    ClassDB::bind_method(D_METHOD("refresh_damage","ids"),&NativeBoulderFracture::refresh_damage);
     ClassDB::bind_method(D_METHOD("finish","id"),&NativeBoulderFracture::finish);
     ClassDB::bind_method(D_METHOD("remove_rows","ids"),&NativeBoulderFracture::remove_rows);
     ClassDB::bind_method(D_METHOD("clear"),&NativeBoulderFracture::clear);
@@ -175,6 +176,14 @@ bool NativeBoulderFracture::upsert_rows(const PackedInt64Array &ids,const Packed
     for(int i=0;i<ids.size();++i){auto id=ids[i];const float *p=values.ptr()+i*12;Transform3D t(Basis(p[0],p[1],p[2],p[4],p[5],p[6],p[8],p[9],p[10]),Vector3(p[3],p[7],p[11]));int stage=damage_stage(id);
         auto at=rocks.find(id);if(at!=rocks.end()&&at->second.pose==t&&at->second.stage==stage)continue;
         if(at!=rocks.end())detach(id);Rock rock;rock.pose=t;rock.stage=stage;rock.began=clock_seconds()-1.;rocks[id]=rock;attach(id);}
+    flush();return true;
+}
+bool NativeBoulderFracture::refresh_damage(const PackedInt64Array &ids){
+    if(ids.size()>65536)return false;
+    for(auto identity:ids){
+        auto found=rocks.find(identity);if(found==rocks.end())continue;
+        detach(identity);auto &rock=found->second;rock.stage=damage_stage(identity);rock.began=clock_seconds()-1.;rock.tap=false;attach(identity);
+    }
     flush();return true;
 }
 bool NativeBoulderFracture::sync_damage(int64_t id,Vector3 hit_from){auto at=rocks.find(id);if(at==rocks.end()||at->second.stage==3||!hit_from.is_finite())return false;

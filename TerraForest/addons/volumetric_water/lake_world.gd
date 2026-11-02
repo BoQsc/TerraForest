@@ -123,9 +123,22 @@ func _ready() -> void:
  # Accepted terrain occupancy patches remove water replaced by solid terrain.
  if blocks!=null:
   blocks.set_edit_admission(func(bounds:AABB)->bool:return not water.has_deferred_overlap(blocks.global_transform*bounds))
-  blocks.cells_changed.connect(func(bounds:AABB):water.invalidate_buildings(blocks.global_transform*bounds);_occupancy_failure="";_discard_builder())
+  blocks.cells_changed.connect(_building_changed)
   blocks.changed.connect(func():_structure_revision+=1)
  _epoch=terrain.epoch
+var location_reset_hold:=false
+var _held_buildings:=AABB()
+func _building_changed(bounds:AABB)->void:
+ bounds=blocks.global_transform*bounds
+ if location_reset_hold:
+  _held_buildings=bounds if not _held_buildings.has_volume() else _held_buildings.merge(bounds)
+  return
+ water.invalidate_buildings(bounds);_occupancy_failure="";_discard_builder()
+func release_location_reset()->void:
+ location_reset_hold=false
+ if _held_buildings.has_volume():
+  water.invalidate_buildings(_held_buildings);_occupancy_failure="";_discard_builder()
+ _held_buildings=AABB()
 func add_lake(origin:Vector3,cells:Vector3i,spacing:float,level:float,seed:Vector3) -> int:
  if _lakes.size()>=max_lakes:return 0
  var record:Dictionary={"id":_next_id,"origin":origin,"cells":cells,"spacing":spacing,"level":level,"seed":seed}

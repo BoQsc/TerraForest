@@ -1837,6 +1837,10 @@ func _additional_loading_diagnostics() -> Dictionary:
 
 # Cached water surfaces must be visible before entering the playable world.
 func _additional_loading_ready() -> bool:
+	if quests.resetter.busy:
+		loading_stage_percent=50;loading_stage_text="Restoring quest location"
+		loading_work_text="Location reset: "+quests.resetter.phase
+		return false
 	if ground_enabled and ground_cover.boulders!=null:
 		var boulders:Dictionary=ground_cover.boulders.coverage_status()
 		if not boulders.ready:

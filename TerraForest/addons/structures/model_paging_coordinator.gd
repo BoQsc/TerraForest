@@ -53,6 +53,14 @@ func _restored(_sections: Dictionary, _epoch: int) -> void:
 	if operation!="shutdown":operation=""
 
 var last_process_us:int=0
+func hold_location() -> bool:
+	if operation not in ["","location"] or waiting_save:return false
+	operation="location"
+	return structures.drain_model_paging()
+
+func release_location() -> void:
+	if operation=="location":operation="resume"
+
 func _process(_delta: float) -> void:
 	var measured_begin:=Time.get_ticks_usec()
 	_measured_step(_delta)

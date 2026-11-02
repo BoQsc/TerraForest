@@ -24,12 +24,21 @@ protected:
         ClassDB::bind_method(D_METHOD("start","pose","direction","seed"),&NativeTreeFall::start);
         ClassDB::bind_method(D_METHOD("advance","delta","clock"),&NativeTreeFall::advance);
         ClassDB::bind_method(D_METHOD("clear"),&NativeTreeFall::clear);
+        ClassDB::bind_method(D_METHOD("clear_region","bounds"),&NativeTreeFall::clear_region);
         ClassDB::bind_method(D_METHOD("count"),&NativeTreeFall::count);
     }
 public:
     bool configure(const Ref<Mesh> &mesh){if(source.is_valid()||mesh.is_null())return false;source=mesh;return true;}
     int64_t count()const{return active.size();}
     void clear(){for(auto &fall:active)fall.node->queue_free();active.clear();}
+    void clear_region(AABB bounds){
+        if(!bounds.position.is_finite()||!bounds.size.is_finite()||bounds.size.x<=0||bounds.size.y<=0||bounds.size.z<=0)return;
+        for(size_t index=0;index<active.size();){
+            const auto point=active[index].root.origin+Vector3(0,.2,0);
+            if(bounds.has_point(point)){active[index].node->queue_free();active.erase(active.begin()+index);}
+            else ++index;
+        }
+    }
     bool start(const Transform3D &pose,Vector3 direction,double seed){
         if(source.is_null()||!is_inside_tree()||!pose.is_finite()||!direction.is_finite()||!std::isfinite(seed))return false;
         direction.y=0;if(direction.length_squared()<.001)direction=Vector3(0,0,1);direction=direction.normalized();

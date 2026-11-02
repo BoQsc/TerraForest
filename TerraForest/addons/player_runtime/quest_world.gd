@@ -7,12 +7,23 @@ var tracked_key:=0
 var tracked_cycle:=-1
 var identities:=PackedInt64Array()
 var contacts:Array=[]
+var resetter=preload("res://addons/world_runtime/location_reset_live.gd").new()
+
+func _ready()->void:
+	resetter.game=game;add_child(resetter)
 
 func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	game=owner_game
 	store=ClassDB.instantiate("NativeQuestLog")
 	if store==null or not store.configure(game.player_hud.inventory,preload("res://addons/player_runtime/trader_inventory.gd").CURRENCY):return false
-	return persistence.register_component("player_quests",store.capture_storage_snapshot,store.restore_storage_snapshot,store,PackedByteArray())
+	return persistence.register_component("player_quests",store.capture_storage_snapshot,restore,store,PackedByteArray())
+
+func restore(bytes:PackedByteArray)->bool:
+	var state:Dictionary=store.snapshot()
+	if state.phase==2:
+		if not resetter.busy or resetter.phase!="recovering" or not store.validate_snapshot(bytes):return false
+		if not store.finish_reset(state.cycle,false,state.revision).ok:return false
+	return store.restore_storage_snapshot(bytes)
 
 func _process(delta:float)->void:
 	elapsed-=delta

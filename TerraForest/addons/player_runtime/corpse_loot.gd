@@ -13,6 +13,13 @@ func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	ui.prepare_external(game,store,aimed_id)
 	return persistence.register_component("zombie_corpses_v1",capture,restore,store,store.capture_corpse_snapshot())
 func _ready()->void:add_child(ui)
+func retire_location(identities:PackedInt64Array)->void:
+	ui.close()
+	for identity:int in active.keys():
+		var zombie:Node3D=active[identity]
+		if is_instance_valid(zombie) and identities.has(int(zombie.get_meta("world_zombie_id",0))):
+			sync(identity,zombie);active.erase(identity);zombie.queue_free()
+
 func clear_live()->void:
 	ui.close()
 	for zombie:Node in active.values():

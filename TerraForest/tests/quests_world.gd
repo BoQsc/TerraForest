@@ -34,6 +34,9 @@ func run()->void:
 	var store:RefCounted=game.quests.store;var locations:Array=store.get_locations()
 	check(game.persistence._providers.has("player_quests") and store.snapshot().seed==1703,"native quest component participates in the actual compound world save")
 	if baselines_only or "--verify-originals" in OS.get_cmdline_user_args():
+		if "--verify-live-reset" in OS.get_cmdline_user_args():
+			await load("res://tests/location_reset_live_case.gd").new().run(self)
+			await finish();return
 		if "--verify-originals" in OS.get_cmdline_user_args():await verify_originals()
 		if "--verify-reset-plan" in OS.get_cmdline_user_args():await verify_reset_plan()
 		await verify_baseline_roundtrip();await finish();return

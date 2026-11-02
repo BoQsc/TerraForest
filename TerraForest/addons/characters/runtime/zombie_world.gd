@@ -60,6 +60,11 @@ func _ready() -> void:
 	awareness=ClassDB.instantiate("NativeZombieAwareness")
 	if not awareness.configure(ENCOUNTER_LIMIT,randi()):push_error("Zombie awareness initialization failed")
 
+func retire_location(identities: PackedInt64Array) -> void:
+	for index in range(residents.size()-1,-1,-1):
+		if is_instance_valid(residents[index]) and identities.has(int(residents[index].get_meta("world_zombie_id",0))):_retire(index)
+	population.reset_stream()
+
 func clear() -> void:
 	if is_instance_valid(corpse_host):corpse_host.clear_live()
 	for zombie in residents:

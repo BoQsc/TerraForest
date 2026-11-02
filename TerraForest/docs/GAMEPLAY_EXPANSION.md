@@ -505,13 +505,48 @@ plan; the test cancels before applying it and verifies save/reopen in another pr
 This is **read-only real-world preflight**, not a successfully reset live location.
 [Exact source/package evidence, timings and retained failures](../issues/gameplay-expansion/location-reset-plan-evidence.json).
 
-Return to live integration next: cooperatively schedule preparation/hydration;
-quiesce and retire owned bodies and transient props; manage protection transitions;
-exclude the player/vehicles; refresh contacts/rendering; establish authoritative
-checkpoint recovery; then connect question-mark/E and trader offers. Reader
-cancellation during world teardown also needs lifecycle ownership. Require a played
-generated location reset, preserved outside edits, fresh-process crash recovery and
-foreground timing before enabling and declaring repeatable quests complete.
+The source-only live integration below supersedes the initial preflight limitation.
+Cooperative preparation/hydration, crash fault injection and normal question-mark/E
+and trader-offer interaction still require verification before repeatable gameplay.
+
+### Live location checkpoint recovery — 2026-11-02
+
+`location_reset_live.gd` coordinates existing native owners behind the normal loading
+gate. It first saves a verified compound checkpoint, drains model paging, pauses
+producers, reads the immutable original on a worker and applies one native patch per
+frame. Player/vehicle/foreign-body occupancy rejects before mutation. Native corpse
+occupancy includes dormant bodies, rather than relying on twelve rendered corpses.
+Owned zombie/corpse nodes retire before planning so their exit callbacks cannot
+overwrite restored records. Native tree-fall and boulder-fracture cleanup is scoped.
+
+Block-driven water invalidation is accumulated during the transaction and applied
+after the authoritative owner patches. Local terrain republishing uses the ordinary
+mesh/collision publication barrier, with explicitly zero excavation yield. On success
+the world does not reload. Cancellation after partial application reloads the saved
+checkpoint; the native quest's invalid-save barrier remains until checkpoint restore
+validates its replacement. The reader is joined on teardown. These are internal
+coordination APIs, **not yet a player-facing repeatable-quest feature**.
+
+Source tests exercise a generated survey mine after excavation, block placement,
+looting and an actual resident corpse. They check cancellation recovery, exact field
+restoration, changed collision, corpse retirement, outside block and inventory/XP
+preservation, normal saves and fresh-process reopening. Native debug/release tests
+also cover dormant/posed corpse exclusion and scoped transient cleanup. A separate
+six-check regression fixes coin reward delivery to use the existing catalog stack
+limit; the old one-item estimate could leave coins pending and falsely block mining.
+
+The diagnostic observer images are cutaway/inside-terrain views, **not accepted
+mine visuals or proof of ordinary player-camera readiness**. Do not promote them
+to art approval. The retained `reward_claim_ui` run also fails its older crafting
+assertion; that unmodified recipe expectation is not silently declared fixed.
+[Receipts, images, measurements and retained failed attempts](../issues/gameplay-expansion/location-reset-live-evidence.json).
+
+Remaining: question-mark/E and repeatable trader offers; cooperative cold planning;
+all five POI layouts, moving vehicles/foreign actors, teardown/crash fault injection,
+ordinary player-camera comparison and focused performance evidence. Test the new
+regional-water/loading implementation against this checkpoint before packaging.
+The installed package is deliberately unchanged while the parallel startup chat
+measures its frozen baseline; require package reset/reopen checks after integration.
 
 ### Shared inventory navigation and character view
 

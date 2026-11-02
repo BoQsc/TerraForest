@@ -341,11 +341,19 @@ The heavily edited fixture retains 292,242 bytes; cold planning takes 20.7–26.
 in these headless runs, so cooperative scheduling remains necessary before gameplay.
 [Planning contract and acceptance boundaries](GAMEPLAY_EXPANSION.md#current-edit-reset-planning--2026-11-02),
 [exact evidence](../issues/gameplay-expansion/location-reset-plan-evidence.json).
-Still required: transactional live reset with player/vehicle exclusion,
-transient-owner quiescence, protection transitions, local publication and rollback,
-reader teardown/cancellation and authoritative checkpoint recovery.
-No repeatable quest is enabled yet. Resume
-those integrations and require normal generated-world marker/E/reset/reopen and timing evidence.
+Source-only live reset now coordinates checkpoint saving, scoped native patches,
+owned scene-body retirement, protection transitions, deferred water invalidation
+and local mesh/collision publication. Generated-mine cancellation reloads its verified
+checkpoint; successful restoration preserves outside edits and player rewards.
+Native corpse exclusion includes dormant bodies; transient tree/boulder cleanup is
+scoped. Coin delivery now respects its existing stack limit instead of leaving a
+false full-inventory backlog. [Live contract and exact remaining gates](GAMEPLAY_EXPANSION.md#live-location-checkpoint-recovery--2026-11-02),
+[receipts and retained failures](../issues/gameplay-expansion/location-reset-live-evidence.json).
+No repeatable quest is enabled yet. Remaining: question-mark/E/trader offers,
+cooperative cold planning, all POI/occupancy cases, teardown/crash injection,
+ordinary-camera visuals and foreground timing. The installed pack remains unchanged
+for the other chat's frozen startup baseline; revalidate after its regional-water
+work before packaging. The legacy reward-UI crafting assertion also remains failing.
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
 [Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).
 

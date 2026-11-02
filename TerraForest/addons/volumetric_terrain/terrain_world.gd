@@ -212,6 +212,35 @@ func _commit_batch() -> void:
 	var high: Vector3 = geometry_hi.max(edit_hi)
 	region_changed.emit(AABB(low, high - low), published_revision)
 
+func recover_native_region() -> void:
+	if pending_edit and latest_edit_descriptor.get("source")!="location_reset":return
+	pending_edit=false
+	reload_world(false)
+
+func republish_native_region(bounds: AABB, expected_revision: int) -> bool:
+	if not world_ready or pending_edit or stopping or closing or not bounds.position.is_finite() or not bounds.size.is_finite():return false
+	for axis in 3:
+		if bounds.size[axis]<=0 or bounds.size[axis]>128:return false
+	if backend.native.field_patch_state().revision!=expected_revision:return false
+	_cancel_partition()
+	edit_started_us=Time.get_ticks_usec();edit_accepted_us=edit_started_us
+	last_capture_wait_ms=0;last_density_tiles=0;last_relight_tiles=0
+	latest_edit_descriptor={"command":0,"source":"location_reset"}
+	latest_edit_members=[{"captured_us":edit_started_us,"descriptor":latest_edit_descriptor}]
+	latest_member_changes.clear();_edit_support_snapshots.clear();_edit_support_result.clear()
+	edit_lo=bounds.position;edit_hi=bounds.end
+	geometry_lo=edit_lo-Vector3.ONE*2;geometry_hi=edit_hi+Vector3.ONE*2
+	var reach:=maxf(0,edit_hi.y)*5.47
+	shadow_lo=edit_lo-Vector3(reach,0,reach);shadow_hi=edit_hi+Vector3(reach,0,reach)
+	edit_rollback.clear()
+	var affected:=_invalidate(geometry_lo,geometry_hi)
+	edit_ticket+=1;pending_edit=true;edit_worker_done=false;batch_remaining=0
+	if not backend.submit({"kind":"republish","tiles":affected,"epoch":epoch,"ticket":edit_ticket,"revision":expected_revision,"geometry_lo":geometry_lo,"geometry_hi":geometry_hi},true):
+		pending_edit=false;_rollback_dirty();return false
+	_cancel_density_requests("stale")
+	region_invalidated.emit(AABB(geometry_lo,geometry_hi-geometry_lo))
+	return true
+
 func edit(data: PackedByteArray, lo: Vector3, hi: Vector3, captured_us: int = 0, commands: Array[PackedByteArray] = [], member_captures: Array[Dictionary] = []) -> bool:
 	# Validate the complete transaction before the base stream decodes or mutates it.
 	if not lo.is_finite() or not hi.is_finite() or commands.size() > 4:

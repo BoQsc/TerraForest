@@ -16,9 +16,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pack', action='store_true')
     parser.add_argument('--plan', action='store_true')
+    parser.add_argument('--runtime', action='store_true')
     args = parser.parse_args()
     config, _ = parse_args([])
-    name = 'location_reset_plan' if args.plan else 'location_reset_batch'
+    name = 'location_reset_runtime' if args.runtime else 'location_reset_plan' if args.plan else 'location_reset_batch'
     marker = name.upper()
     folder = ROOT / 'reports' / name / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     folder.mkdir(parents=True)

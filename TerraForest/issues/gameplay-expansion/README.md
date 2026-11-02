@@ -7,6 +7,16 @@
 
 ## Durable location baselines — 2026-11-02
 
+- Source-only live follow-up: a generated mine now restores after real edits and
+  corpse residency, locally republishes collision and survives normal save/reopen.
+  Mid-transaction cancellation reopens the verified pre-reset checkpoint.
+  Native dormant-corpse exclusion and scoped tree/boulder cleanup are covered.
+  Quest coin delivery also uses its real stack limit, avoiding false mining blockage.
+- [Live contract and remaining gates](../../docs/GAMEPLAY_EXPANSION.md#live-location-checkpoint-recovery--2026-11-02),
+  [live receipts and retained failures](location-reset-live-evidence.json).
+  Diagnostic cutaway images are not player-camera/art acceptance. The older reward
+  UI crafting assertion remains failing. Installed package is unchanged pending
+  coordinated startup/water work and subsequent packaged regression checks.
 - Follow-up: a bounded coordinator now restores and reverses all twelve native
   owner kinds in isolated tests; debug, release and installed package each pass
   246 checks. Protected-model rejection, cancellation, stale/freed owners and the
@@ -30,10 +40,9 @@
   Five originals total 576,638 bytes; the save manifest is 480 bytes. Packaged
   capture totals 305 ms, with individual main-thread capture portions 1.0–2.7 ms.
   These are scoped generation measurements, not gameplay frame-pacing acceptance.
-- Remaining: live transaction/recovery, cooperative preparation, transient cleanup,
-  protection transitions, water/contact/render refresh, safe player/vehicle exclusion,
-  reader teardown/cancellation, durable rollback and the
-  actual question-mark/E repeatable-quest interaction.
+- Remaining: cooperative preparation, all five layouts and occupancy cases,
+  teardown/crash fault injection, player-camera/performance acceptance, packaged
+  validation and the actual question-mark/E repeatable-quest interaction.
 - Follow-up: compound-save registration, generation-owned world identity and
   native selected-reference clone/recovery are integrated. Legacy worlds acquire
   no invented originals or baseline directories; read-only lookup writes no locks.

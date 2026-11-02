@@ -398,9 +398,9 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if stopping or jobs.size() >= 96 or jobs.size() + results.size() >= 128:
 		mutex.unlock()
 		return false
-	if priority and str(job.get("kind", "")) in ["edit", "reset", "load"]:
+	if priority and str(job.get("kind", "")) in ["edit", "republish", "reset", "load"]:
 		for index in range(jobs.size() - 1, -1, -1):
-			if str(job.get("kind", "")) == "edit" and str(jobs[index].get("kind", "")) == "mesh":
+			if str(job.get("kind", "")) in ["edit","republish"] and str(jobs[index].get("kind", "")) == "mesh":
 				var queued: Dictionary = jobs[index]
 				var key: Vector3i = queued["key"]
 				var low: Vector3 = job.get("geometry_lo", Vector3(-INF,-INF,-INF))
@@ -431,11 +431,11 @@ func submit(job: Dictionary, priority: bool = false) -> bool:
 	if job.get("kind","")=="density_batch": _site_pending+=1
 	if priority:
 		var insertion:=0
-		if str(job.get("kind","")) in ["edit","load","reset"]:
+		if str(job.get("kind","")) in ["edit","republish","load","reset"]:
 			# Captured addon snapshots belong to their accepted world order.
 			# Prioritize over background work, never over a save or mutation.
 			for index in range(jobs.size()):
-				if str(jobs[index].get("kind","")) in ["save","edit","load","reset","material_edit"]:
+				if str(jobs[index].get("kind","")) in ["save","edit","republish","load","reset","material_edit"]:
 					insertion=index+1
 		jobs.insert(insertion,job)
 	else:
@@ -1293,6 +1293,23 @@ func _relight(item: Dictionary, expected_build_epoch: int) -> Dictionary:
 	result["worker_ms"] = float(Time.get_ticks_usec() - begin) / 1000.0
 	return result
 
+func _execute_republish(job:Dictionary,queue_ms:float)->void:
+	var current_stats:PackedByteArray=_call(Codec.command(0))
+	if not Codec.reply_ok(current_stats) or current_stats.decode_u32(12)!=job.revision:
+		_push({"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket,"error":"Location terrain changed before publication"})
+		return
+	cache_valid=false;latest_packets.clear();latest_packet_bytes=0
+	var removed_samples:=PackedInt64Array();removed_samples.resize(16);removed_samples.fill(0)
+	_push({"kind":"edit_begin","epoch":job.epoch,"ticket":job.ticket,"count":job.tiles.size(),"edit_ms":0.0,"queue_ms":queue_ms,"stats":current_stats,"member_changed":[true],"removed_samples":removed_samples})
+	var build_total:=0.0
+	for item:Dictionary in job.tiles:
+		var chunk:Dictionary=_build(item.key,false,int(job.build_epoch),false,[],true)
+		if chunk.get("cancelled",false):chunk={"error":"Location terrain publication cancelled"}
+		build_total+=float(chunk.get("worker_ms",0))
+		chunk.merge({"stamp":item.stamp,"key":item.key,"kind":"edit_chunk","epoch":job.epoch,"ticket":job.ticket},true)
+		_push(chunk)
+	_push({"kind":"edit_done","epoch":job.epoch,"ticket":job.ticket,"stats":current_stats,"build_total_ms":build_total,"worker_finished_us":Time.get_ticks_usec()})
+
 func _run() -> void:
 	_startup_mark("world_load_or_generate")
 	if _generation_requires_admission:
@@ -1409,6 +1426,8 @@ func _run() -> void:
 			_push(partition)
 		elif kind == "mesh":
 			_execute_mesh(job,bool(job.get("interaction_mesh",false)))
+		elif kind == "republish":
+			_execute_republish(job,queue_ms)
 		elif kind == "edit":
 			_apply_components(job.get("component_snapshot", {}))
 			var before_stats: PackedByteArray = _call(Codec.command(0))

@@ -39,6 +39,7 @@ public:
     bool configure_horizon(const godot::Ref<godot::Mesh> &distant);
     bool upsert_rows(const godot::PackedInt64Array &ids,const godot::PackedFloat32Array &transforms);
     bool sync_damage(int64_t id,godot::Vector3 hit_from=godot::Vector3());
+    bool refresh_damage(const godot::PackedInt64Array &ids);
     bool finish(int64_t id);
     void remove_rows(const godot::PackedInt64Array &ids);
     void clear();

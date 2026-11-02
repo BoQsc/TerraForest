@@ -1,0 +1,221 @@
+{
+  "checks": [
+    {
+      "path": "reports/location_reset_runtime/20261102T211008257537Z/run.json",
+      "passed": true,
+      "assertions": [
+        {
+          "variant": "debug",
+          "assertions": [
+            22,
+            0
+          ]
+        },
+        {
+          "variant": "release",
+          "assertions": [
+            22,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reports/location_reset_plan/20261102T211004800379Z/run.json",
+      "passed": true,
+      "assertions": [
+        {
+          "variant": "debug",
+          "assertions": [
+            80,
+            0
+          ]
+        },
+        {
+          "variant": "release",
+          "assertions": [
+            80,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reports/location_reset_batch/20261102T211006723388Z/run.json",
+      "passed": true,
+      "assertions": [
+        {
+          "variant": "debug",
+          "assertions": [
+            246,
+            0
+          ]
+        },
+        {
+          "variant": "release",
+          "assertions": [
+            246,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reports/corpse_patch/20261102T211154107547Z/run.json",
+      "passed": true,
+      "assertions": []
+    },
+    {
+      "path": "reports/location_owner_patches/20261102T211159111124Z/run.json",
+      "passed": true,
+      "assertions": []
+    }
+  ],
+  "native_sha256": {
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+    "addons/vegetation_runtime/bin/vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+    "addons/player_runtime/bin/player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+    "addons/player_runtime/bin/player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672"
+  },
+  "installed_pack_sha256": "988aa6eb008de18926d33d1c45fe6f423c5d7c3f7f2359ab3c7f844e7bfa7bba",
+  "schema": 1,
+  "date": "2026-11-02",
+  "status": "Source-only live coordinator; repeatable gameplay not enabled",
+  "world": {
+    "path": "reports/quests_world/20261102T212258990129Z/run.json",
+    "passed": true,
+    "phases": [
+      {
+        "phase": "baseline",
+        "passed": true,
+        "assertions": [
+          [
+            "41",
+            "0"
+          ]
+        ],
+        "reset_results": [
+          {
+            "batch": {
+              "applied": 3,
+              "bytes": 247162,
+              "elapsed_us": 3729,
+              "maximum_step_us": 3112,
+              "phase": "applying",
+              "reason": "",
+              "remaining": 29,
+              "terminal": false
+            },
+            "checkpoint": true,
+            "elapsed_us": 4088263,
+            "mutation_started": true,
+            "ok": false,
+            "operations": 32,
+            "phase": "cancelled",
+            "reason": "Location reset cancelled or an owner rejected restoration."
+          },
+          {
+            "batch": {
+              "applied": 32,
+              "bytes": 247162,
+              "elapsed_us": 12407,
+              "maximum_step_us": 3040,
+              "phase": "restored",
+              "reason": "",
+              "remaining": 0,
+              "terminal": true
+            },
+            "checkpoint": true,
+            "elapsed_us": 4789015,
+            "mutation_started": true,
+            "ok": true,
+            "operations": 32,
+            "phase": "complete",
+            "reason": ""
+          }
+        ]
+      },
+      {
+        "phase": "baseline_reopen",
+        "passed": true,
+        "assertions": [
+          [
+            "15",
+            "0"
+          ]
+        ],
+        "reset_results": []
+      }
+    ],
+    "images": [
+      {
+        "path": "reports/quests_world/20261102T212258990129Z/mine_edited.png",
+        "sha256": "85e3369bd8a4c433186d1498bdbdca330f1e6faf93afc3b0a0724d27b73c267c"
+      },
+      {
+        "path": "reports/quests_world/20261102T212258990129Z/mine_restored.png",
+        "sha256": "f3838138c3bad283789611211753229d002f233d920a296007d9594f2ff0147f"
+      }
+    ]
+  },
+  "reward_delivery": {
+    "receipt": "reports/checks/20261102T212004957929Z/run.json",
+    "checks": 6,
+    "failures": 0,
+    "commit": "917a7480"
+  },
+  "installed_pack_unchanged": true,
+  "pack_reason": "Parallel startup/regional-water chat is measuring frozen installed baseline. Revalidate after its integration before export.",
+  "image_review": {
+    "accepted": false,
+    "caption": "Off-screen diagnostic observer sits inside/cuts through terrain. Images show timbered mine/cutaway surfaces, not an acceptable player-camera comparison; do not treat as mine art approval.",
+    "provenance": "Original game captures generated by tests/location_reset_live_case.gd in the owned Quests_1703_202c741e fixture. User saves not touched."
+  },
+  "performance_scope": "Off-screen functional tests at the retained 60-FPS cap. No foreground frame-pacing or maximum-world claim. Final reset uses 32 patches/247162 bytes, 12.4ms native batch total, 3.04ms largest patch; 4.79s including checkpoint/publication/save. Earlier cold checkpoint attempts took 15-29s; further startup/storage work is separate.",
+  "retained_failures": [
+    {
+      "path": "reports/quests_world/20261102T205602308776Z/run.json",
+      "reason": "Backend local-variable name conflict prevented script loading; corrected by dedicated republish method."
+    },
+    {
+      "path": "reports/quests_world/20261102T205816310413Z/run.json",
+      "reason": "Ordinary edit rejected; subsequent admission telemetry exposed quest coin backlog."
+    },
+    {
+      "path": "reports/quests_world/20261102T210005242091Z/run.json",
+      "reason": "Checkpoint restore rejected resetting quest phase; validated recovery wrapper added without removing native save barrier."
+    },
+    {
+      "path": "reports/quests_world/20261102T210225039300Z/run.json",
+      "reason": "Republish lacked excavation accounting; now explicitly publishes zero yield. Fixture also assumed no prior corpse."
+    },
+    {
+      "path": "reports/quests_world/20261102T210849989080Z/run.json",
+      "reason": "Real coin reward backlog falsely blocked mining; fixed with catalog stack limit."
+    },
+    {
+      "path": "reports/quests_world/20261102T211109462710Z/run.json",
+      "reason": "Corpse scene fixture raced block collider publication; now waits for actual readiness."
+    },
+    {
+      "path": "reports/quests_world/20261102T211526259916Z/run.json",
+      "reason": "Repeated quest coin reward exposed backlog again; corrected production delivery."
+    },
+    {
+      "path": "reports/quests_world/20261102T211901574656Z/run.json",
+      "reason": "Cancellation test compared pre-checkpoint corpse pose. Now compares the verified checkpoint's captured pose; runtime reset and actual collision checks passed."
+    },
+    {
+      "path": "reports/checks/20261102T211854662693Z/run.json",
+      "reason": "Legacy reward_claim_ui crafting assertion fails. Coin-specific assertions passed; crafting expectation is unmodified and still unresolved."
+    }
+  ],
+  "remaining": [
+    "Player-facing question-mark/E and repeatable trader offers",
+    "Cooperative cold plan preparation/hydration",
+    "Other POI layouts and live vehicle/foreign actor occupancy scenarios",
+    "Crash/teardown fault injection and failed-save recovery",
+    "Ordinary player-camera visual comparison and foreground performance",
+    "Post-regional-water integration and packaged reset/reopen checks"
+  ]
+}
