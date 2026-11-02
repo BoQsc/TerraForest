@@ -9,6 +9,7 @@ func hit(game: Node) -> Dictionary:
 	var origin: Vector3=game.camera.global_position
 	return game.structures.blocks.raycast_scene(origin,origin-game.camera.global_basis.z*3.0,15,[game.player.get_rid()],true)
 func describe(game: Node, target: Dictionary) -> String:
+	if game.quests.rally.aimed(target):return "E · Start quest / restore this location"
 	if game.trader.aimed(target):return "E · Trade supplies"
 	if game.corpse_loot.aimed_id(target)>0:return "E · Search zombie corpse"
 	var chest:int=game.storage.aimed_id(target)
@@ -54,6 +55,7 @@ func interact(game: Node) -> bool:
 	if not available(game):return false
 	# Re-pick at the input event: the presentation cache is never authoritative.
 	var target:=hit(game)
+	if game.quests.rally.try_interact(target):remaining=0.0;return true
 	var handled: bool=game.trader.try_open(target) or game.corpse_loot.ui.try_open(target) or game.storage.try_open(target) or game.doors.try_interact(target)
 	var loose: Dictionary={} if handled else loose_target(game,target)
 	if not handled and loose.get("kind")=="pickup":

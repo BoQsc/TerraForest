@@ -8,9 +8,50 @@ var tracked_cycle:=-1
 var identities:=PackedInt64Array()
 var contacts:Array=[]
 var resetter=preload("res://addons/world_runtime/location_reset_live.gd").new()
+var rally=preload("res://addons/player_runtime/quest_rally.gd").new()
+var offer_token: Array=[]
+var cached_offers: Array=[]
 
 func _ready()->void:
 	resetter.game=game;add_child(resetter)
+	rally.quests=self;add_child(rally)
+	resetter.completed.connect(_reset_completed)
+
+func _reset_completed(result:Dictionary)->void:
+	game._show_lake_notice("Quest started. Clear the location." if result.get("ok",false) else str(result.get("reason","Location could not be restored.")))
+	game.destination_guide.refresh()
+
+func offers()->Array:
+	var state:Dictionary=store.snapshot()
+	if state.phase!=0 or state.introduction in [1,2,3] or game.temporary_world or game.terrain.backend.readonly_snapshot:return []
+	var originals:RefCounted=game.persistence.location_baselines
+	var manifest:Dictionary=originals.state()
+	var token:Array=[state.revision,manifest.owner,manifest.revision,game.terrain.epoch]
+	if token==offer_token:return cached_offers
+	offer_token=token;cached_offers=[]
+	for location:Dictionary in store.get_locations():
+		if originals.has_baseline_reference(location.key,preload("res://addons/world_runtime/location_capture.gd").definition(location)):cached_offers.append(location)
+	return cached_offers
+
+func accept(key:int)->Dictionary:
+	if not game.trader.reachable():return {"ok":false,"reason":"Approach the trader first."}
+	var eligible:=false
+	for location:Dictionary in offers():
+		if location.key==key:eligible=true;break
+	if not eligible:return {"ok":false,"reason":"This location has no preserved generation original for a repeatable quest."}
+	var result:Dictionary=store.accept(key,store.snapshot().revision)
+	if result.ok:
+		game.terrain.changed_since_save=true
+		game.destination_guide.track(marker())
+		game.player_notices.quest_added(store.snapshot().location.title)
+	return result
+
+func abandon()->Dictionary:
+	if not game.trader.reachable():return {"ok":false,"reason":"Approach the trader first."}
+	var result:Dictionary=store.abandon(store.snapshot().revision)
+	if result.ok:
+		contacts.clear();game.terrain.changed_since_save=true;game.destination_guide.refresh()
+	return result
 
 func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	game=owner_game
@@ -62,16 +103,18 @@ func description()->String:
 		2:return "Coal-mine expedition\nAsk the trader about Quests. He provides a torch, automatic rifle, ammunition and a return ride."
 		3:
 			return "Coal-mine expedition\nClear the mine: %d / %d zombies.\nThe trader waits at the car. Return whenever you want, even with the quest unfinished."%[state.defeated,state.target_count] if state.phase==3 else "Coal-mine expedition complete\nReturn to the trader to collect your reward. The car is waiting."
-		4:return "Coal-mine expedition completed."
-	if state.phase in [1,3,4]:return "%s\n%d / %d zombies cleared."%[state.location.title,state.defeated,state.target_count]
-	return "No active quest."
+	if state.phase==1:return "%s\nGo to the gold question mark and press E to start.\nStarting restores this location, replacing terrain, buildings and contents inside its boundary. Changes outside stay untouched."%state.location.title
+	if state.phase==3:return "%s\n%d / %d zombies cleared."%[state.location.title,state.defeated,state.target_count]
+	if state.phase==4:return "%s complete\nReturn to the trader to collect your reward."%state.location.title
+	return "No active quest.\nAsk the trader for another location to clear."
 
 func marker()->Dictionary:
 	var state:Dictionary=store.snapshot()
-	if state.introduction in [1,2] or (state.introduction==3 and state.phase==4):
+	if state.introduction in [1,2] or state.phase==4:
 		var point:Vector3=game.trader.ride.spawn_position()
 		if point.is_finite():return {"position":point,"title":"Talk to trader" if state.introduction==1 else "Trader · quests","quest":true}
 	if state.phase in [1,3]:
+		if state.phase==1:return {"position":rally.global_position if rally.ready_key==state.key else rally.anchor(state.location),"title":state.location.title+" · Start at ?","quest":true}
 		if state.phase==3 and state.arrived:
 			var bounds:AABB=state.location.bounds
 			return {"position":bounds.get_center(),"radius":Vector2(bounds.size.x,bounds.size.z).length()*.5+3,"area":true,"title":"%s · Active · %d / %d cleared"%[state.location.title,state.defeated,state.target_count],"quest":true}

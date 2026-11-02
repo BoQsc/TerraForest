@@ -82,6 +82,7 @@ func run()->void:
 		check(restored.load_baseline(20,digest("location-v1")).ok,"other location still loads independently")
 		finish();return
 	var unopened:RefCounted=ClassDB.instantiate("NativeLocationBaselineStore")
+	check(not unopened.has_baseline_reference(10,digest("location-v1")),"unopened store has no eligible quest originals")
 	check(not unopened.open_store("relative",digest("world-one")) and not unopened.open_store(folder.path_join("invalid"),PackedByteArray()),"relative paths and missing world identity rejected")
 	check(not unopened.restore_storage_snapshot(PackedByteArray()) and not publish(unopened,10,sections).ok,"unopened store cannot mutate or publish")
 	var store:=create_store("durable");var before:PackedByteArray=store.capture_storage_snapshot()
@@ -103,6 +104,8 @@ func run()->void:
 	large=PackedByteArray();missing={}
 	var first:=publish(store,10,sections)
 	check(first.ok and first.added and first.digest==blob_id(packet(10,sections)),"baseline publishes canonically through native archive: "+str(first))
+	check(store.has_baseline_reference(10,digest("location-v1")),"published location is eligible without loading its original")
+	check(not store.has_baseline_reference(11,digest("location-v1")) and not store.has_baseline_reference(10,digest("changed")) and not store.has_baseline_reference(10,PackedByteArray()),"missing and changed definitions are not eligible")
 	if not first.ok:
 		finish();return
 	check(store.load_baseline(10,digest("location-v1")).sections==sections,"exact component bytes roundtrip")

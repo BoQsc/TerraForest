@@ -159,7 +159,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Small art-directed caves and mines | Branching mine and bent two-chamber cave generate on fitted hillsides; recessed portals remove the reproduced thin-roof patch; native cuts, timbers and entry walks checked; richer art/dressing and full acceptance remain |
 | Cave/mine crates and supplies | Five grounded stocked chests across the two layouts; actual UI withdrawal and fresh-process contents persistence checked; loot balance, locks and quest ownership remain |
 | Trader quests targeting POIs | Introductory Quests/Trade, supplies, real mine clear, waiting/free return and reward installed; actual executable passes mine/reward and exact fresh-process restore; broader seeds and repeatable reset quests remain separate |
-| Large question-mark start interaction near POI, E acceptance and location reset | Generation preserves owner originals; scoped current-edit planning and native-owner rollback are verified. Generated mine preflight passes without mutation. Live cleanup/publication, crash recovery, player/vehicle exclusion and marker/E integration remain pending |
+| Large question-mark start interaction near POI, E acceptance and location reset | Source trader reservations and question-mark/E now use the checkpoint-backed live coordinator. Generated survey mine cancellation, restoration and outside/player preservation are checked; all-layout, crash, focused-input and packaged acceptance remain open |
 | Locked wilderness/building containers | Source verified: rare new-world locks, craftable/tradable picks, E unlock with 10% break chance; ordinary generated-chest interaction and fresh-process restore pass; matching export/package verification pending |
 | Locked-container forced entry | Source verified: 180-health lock, live picking/contact adapter unlock preserving supplies, partial damage and fresh-process reload; package verification and direct animation-input playtest pending |
 | Rare locked/barricaded doors | Pending locally destructible barriers, entry choices, navigation and saved state |
@@ -541,12 +541,42 @@ to art approval. The retained `reward_claim_ui` run also fails its older craftin
 assertion; that unmodified recipe expectation is not silently declared fixed.
 [Receipts, images, measurements and retained failed attempts](../issues/gameplay-expansion/location-reset-live-evidence.json).
 
-Remaining: question-mark/E and repeatable trader offers; cooperative cold planning;
+Remaining at this checkpoint: question-mark/E and repeatable trader offers; cooperative cold planning;
 all five POI layouts, moving vehicles/foreign actors, teardown/crash fault injection,
 ordinary player-camera comparison and focused performance evidence. Test the new
 regional-water/loading implementation against this checkpoint before packaging.
 The installed package is deliberately unchanged while the parallel startup chat
 measures its frozen baseline; require package reset/reopen checks after integration.
+
+### Repeatable trader offers and rally interaction — 2026-11-02
+
+Source adds an ordinary trader quest list after the introductory expedition (also
+available in non-intro worlds with preserved originals). Native manifest lookups
+validate location definitions without reading original files. UI refresh reuses a
+revision-keyed offer cache. Accepting reserves one location, posts the existing quest
+notice and tracks its rally marker; it does not reset anything at the trader.
+
+One depth-tested gold question mark appears near the reserved location, outside its
+reset bounds and on a ready, ray-tested surface. The existing E interaction dispatcher
+re-picks against solid occlusion/range before invoking the existing live coordinator.
+The trader description and E prompt disclose restoration of local changes. A missing
+original fails before mutation; old worlds are not silently recaptured. Abandonment
+keeps current world changes. Active/complete guidance and reward buttons no longer
+get masked by the already-completed introductory quest or require an unrelated car.
+
+Tests cover actual trader button callbacks with a native quest log and mocked reach/
+baseline providers, native manifest durability in debug/release, and the real rally
+dispatcher on the generated survey-mine fixture. Only the mouse-capture input gate
+is bypassed in the offscreen dispatcher test; it is not a focused keyboard playtest.
+The question-mark image is presentation evidence, not approval of mine terrain fit.
+See [receipts and retained failures](../issues/gameplay-expansion/quest-rally-evidence.json).
+
+Remaining: actual trader approach/selection-to-location journey, all five generated
+POIs, foreign/moving occupancy cases, cooperative cold planning, teardown/crash
+injection, ordinary-camera/user review and focused performance. Investigate the
+retained first-run pre-checkpoint timeout (no reset mutation); clean repetitions
+must not be used to claim its cause is fixed. Recheck the packaged build after the
+parallel startup/water changes. The overall expansion remains incomplete.
 
 ### Shared inventory navigation and character view
 

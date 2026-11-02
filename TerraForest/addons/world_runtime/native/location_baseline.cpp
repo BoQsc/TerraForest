@@ -109,6 +109,7 @@ protected:
         ClassDB::bind_method(D_METHOD("configure_world","absolute_world_path","read_only"),&NativeLocationBaselineStore::configure_world);
         ClassDB::bind_method(D_METHOD("initialize_world","world_identity"),&NativeLocationBaselineStore::initialize_world);
         ClassDB::bind_method(D_METHOD("state"),&NativeLocationBaselineStore::state);
+        ClassDB::bind_method(D_METHOD("has_baseline_reference","key","definition"),&NativeLocationBaselineStore::has_baseline_reference);
         ClassDB::bind_method(D_METHOD("publish_baseline","key","definition","sections","revision","owner"),&NativeLocationBaselineStore::publish_baseline);
         ClassDB::bind_method(D_METHOD("load_baseline","key","definition"),&NativeLocationBaselineStore::load_baseline);
         ClassDB::bind_method(D_METHOD("verify_references"),&NativeLocationBaselineStore::verify_references);
@@ -139,6 +140,12 @@ public:
         std::lock_guard<std::mutex> lock(mutex);
         auto output=result(configured&&!world.is_empty(),configured&&!world.is_empty()?"":"not_open");
         output["owner"]=int64_t(get_instance_id());output["locations"]=int64_t(entries.size());output["bytes"]=total_bytes();output["io_active"]=io_active;return output;
+    }
+    bool has_baseline_reference(int64_t key,const PackedByteArray &definition) const {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(!configured||world.is_empty()||!valid_digest(definition))return false;
+        const auto found=entries.find(key);
+        return found!=entries.end()&&found->second.definition==definition;
     }
     Dictionary publish_baseline(int64_t key,const PackedByteArray &definition,const Dictionary &sections,int64_t expected_revision,int64_t expected_owner){
         std::unique_lock<std::mutex> lock(mutex);

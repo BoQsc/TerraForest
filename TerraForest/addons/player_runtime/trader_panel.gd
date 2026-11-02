@@ -25,6 +25,9 @@ var quest_panel:VBoxContainer
 var quest_text:Label
 var quest_button:Button
 var quest_error:=""
+var quest_offers:ItemList
+var quest_abandon:Button
+var offer_keys:=PackedInt64Array()
 
 func _ready() -> void:
 	layer = 30
@@ -51,7 +54,9 @@ func _ready() -> void:
 		button.pressed.connect(func():select_mode(mode))
 	quest_panel=VBoxContainer.new();column.add_child(quest_panel)
 	quest_text=Label.new();quest_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quest_text.custom_minimum_size=Vector2(940,220);quest_panel.add_child(quest_text)
+	quest_offers=ItemList.new();quest_offers.custom_minimum_size=Vector2(940,200);quest_offers.add_theme_font_size_override("font_size",21);quest_panel.add_child(quest_offers)
 	quest_button=Button.new();quest_button.custom_minimum_size.y=48;quest_button.pressed.connect(quest_action);quest_panel.add_child(quest_button)
+	quest_abandon=Button.new();quest_abandon.text="Abandon quest · keep current world changes";quest_abandon.custom_minimum_size.y=44;quest_abandon.pressed.connect(abandon_quest);quest_panel.add_child(quest_abandon)
 	trade_panel=VBoxContainer.new();column.add_child(trade_panel);column=trade_panel
 	balance = Label.new(); column.add_child(balance)
 	var welcome := Label.new()
@@ -81,6 +86,7 @@ func open_for(merchant: RefCounted, player_inventory: RefCounted, reach_check: C
 	if not reach_check.is_valid() or not reach_check.call(): return false
 	trader = merchant; inventory = player_inventory; permitted = reach_check
 	quest_error=""
+	offer_keys=PackedInt64Array();quest_offers.clear()
 	opened = true; panel.show(); refresh(); select_mode("Quests" if is_instance_valid(quests) and quests.store.snapshot().introduction>0 else "Trade"); return true
 
 func select_mode(mode:String)->void:
@@ -93,18 +99,51 @@ func refresh_quests()->void:
 	if not is_instance_valid(quests):return
 	var state:Dictionary=quests.store.snapshot()
 	quest_text.text=quests.description()+("\n\n"+quest_error if not quest_error.is_empty() else "")
-	quest_button.visible=state.introduction in [2,3]
-	var loading_car:bool=is_instance_valid(ride) and state.phase!=4 and not ride.game.world_vehicle.scene_ready()
-	quest_button.disabled=loading_car or (is_instance_valid(ride) and ride.active())
-	quest_button.text="Collect reward" if state.phase==4 else "Accept expedition · supplies & free ride" if state.introduction==2 else "Return to the coal mine · free ride"
+	var repeatable:bool=state.phase==0 and state.introduction not in [1,2,3]
+	quest_offers.visible=repeatable
+	quest_abandon.visible=state.phase in [1,3] and state.introduction!=3
+	quest_button.visible=state.phase==4 or state.introduction in [2,3] or repeatable
+	var needs_car:bool=state.phase!=4 and state.introduction in [2,3]
+	var loading_car:bool=needs_car and is_instance_valid(ride) and not ride.game.world_vehicle.scene_ready()
+	quest_button.disabled=loading_car or (needs_car and is_instance_valid(ride) and ride.active())
+	quest_button.text="Collect reward" if state.phase==4 else "Accept expedition · supplies & free ride" if state.introduction==2 else "Return to the coal mine · free ride" if state.introduction==3 else "Accept selected quest"
 	if loading_car:quest_button.text="Preparing the trader's car…"
+	if repeatable:
+		var offers:Array=quests.offers()
+		var keys:=PackedInt64Array()
+		for offer:Dictionary in offers:keys.append(offer.key)
+		if keys!=offer_keys:
+			var selected:=quest_offers.get_selected_items()
+			var selected_key:int=quest_offers.get_item_metadata(selected[0]) if not selected.is_empty() else 0
+			offer_keys=keys;quest_offers.clear()
+			for offer:Dictionary in offers:
+				quest_offers.add_item("%s · %d coins · %d XP"%[offer.title,offer.coins,offer.xp])
+				quest_offers.set_item_metadata(quest_offers.item_count-1,offer.key)
+				if offer.key==selected_key:quest_offers.select(quest_offers.item_count-1)
+			if quest_offers.item_count>0 and quest_offers.get_selected_items().is_empty():quest_offers.select(0)
+		quest_button.disabled=quest_offers.item_count==0
+		quest_text.text+="\n\nAccept here, then start at the question mark outside the location. Starting replaces changes inside that location; it does not reset the world." if not offers.is_empty() else "\n\nNo repeatable locations with preserved generation originals are available in this world."
 
 func quest_action()->void:
 	if not opened or not is_instance_valid(quests):return
 	if not permitted.is_valid() or not permitted.call():close();return
 	quest_error=""
-	var result:Dictionary=quests.claim() if quests.store.snapshot().phase==4 else quests.start_expedition()
+	var state:Dictionary=quests.store.snapshot()
+	var result:Dictionary
+	if state.phase==4:result=quests.claim()
+	elif state.introduction in [2,3]:result=quests.start_expedition()
+	else:
+		var selected:=quest_offers.get_selected_items()
+		if selected.is_empty():return
+		result=quests.accept(quest_offers.get_item_metadata(selected[0]))
 	if not result.ok:quest_error=str(result.reason)
+	refresh_quests()
+
+func abandon_quest()->void:
+	if not opened or not is_instance_valid(quests):return
+	if not permitted.is_valid() or not permitted.call():close();return
+	var result:Dictionary=quests.abandon()
+	quest_error="" if result.ok else str(result.reason)
 	refresh_quests()
 
 func refresh() -> void:

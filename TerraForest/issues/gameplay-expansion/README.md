@@ -7,6 +7,14 @@
 
 ## Durable location baselines — 2026-11-02
 
+- Source rally follow-up: repeatable trader offers, local-restoration warning,
+  abandonment and question-mark/E now use the existing live reset coordinator.
+  Native cached manifest eligibility avoids disk reads in the trader UI. Completed
+  introduction no longer masks later quests; generic rewards do not depend on a car.
+  [Contract and remaining gates](../../docs/GAMEPLAY_EXPANSION.md#repeatable-trader-offers-and-rally-interaction--2026-11-02),
+  [rally receipts, image and retained failed runs](quest-rally-evidence.json).
+  Real trader-to-location walking, all-layout/crash coverage and packaged/focused
+  acceptance remain open. One pre-checkpoint timeout is retained, not declared fixed.
 - Source-only live follow-up: a generated mine now restores after real edits and
   corpse residency, locally republishes collision and survives normal save/reopen.
   Mid-transaction cancellation reopens the verified pre-reset checkpoint.

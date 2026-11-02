@@ -349,11 +349,17 @@ Native corpse exclusion includes dormant bodies; transient tree/boulder cleanup 
 scoped. Coin delivery now respects its existing stack limit instead of leaving a
 false full-inventory backlog. [Live contract and exact remaining gates](GAMEPLAY_EXPANSION.md#live-location-checkpoint-recovery--2026-11-02),
 [receipts and retained failures](../issues/gameplay-expansion/location-reset-live-evidence.json).
-No repeatable quest is enabled yet. Remaining: question-mark/E/trader offers,
-cooperative cold planning, all POI/occupancy cases, teardown/crash injection,
-ordinary-camera visuals and foreground timing. The installed pack remains unchanged
-for the other chat's frozen startup baseline; revalidate after its regional-water
-work before packaging. The legacy reward-UI crafting assertion also remains failing.
+Source now exposes repeatable trader reservations, abandonment and one occluded,
+range-checked question-mark/E rally using that live coordinator. Native manifest
+eligibility avoids loading original files for UI. Generic active/completed guidance
+and reward controls work after the introductory expedition. [Rally contract](GAMEPLAY_EXPANSION.md#repeatable-trader-offers-and-rally-interaction--2026-11-02),
+[receipts and retained failures](../issues/gameplay-expansion/quest-rally-evidence.json).
+Remaining: real trader-to-location journey, cooperative cold planning, all
+POI/occupancy cases, teardown/crash injection, ordinary-camera acceptance and
+foreground timing. A first-run pre-checkpoint timeout remains unexplained; retain
+its failed evidence and add admission diagnostics before claiming it fixed.
+Revalidate the packaged build after the parallel regional-water/loading work.
+The legacy reward-UI crafting assertion also remains failing.
 [Baseline evidence](../issues/gameplay-expansion/location-baseline-evidence.json).
 [Persistence/publication evidence](../issues/gameplay-expansion/location-baseline-integration-evidence.json).
 

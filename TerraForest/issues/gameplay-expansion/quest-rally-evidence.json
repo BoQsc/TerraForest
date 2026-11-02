@@ -1,0 +1,82 @@
+{
+  "date": "2026-11-02",
+  "status": "Source engineering checkpoint; overall expansion and packaged acceptance remain incomplete",
+  "scope": [
+    "Trader repeatable offers use native manifest identity queries without reading original files; UI cache keyed by quest/baseline revision and terrain epoch",
+    "Accept and abandon use native quest state, existing notices and map/compass guidance",
+    "One depth-tested question mark on ready ground outside reset bounds; ordinary E dispatcher uses shared native hit, range and solid occlusion",
+    "E invokes existing live checkpoint/reset coordinator; local replacement is disclosed in trader description and prompt",
+    "Completed introduction no longer masks subsequent quests; generic reward button does not require trader car readiness"
+  ],
+  "native": {
+    "debug_sha256": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+    "release_sha256": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9"
+  },
+  "passed": [
+    {
+      "report": "reports/checks/20261102T215210690579Z/run.json",
+      "checks": 28,
+      "scope": "Real trader button callbacks and native quest log; baseline metadata/reach/notice providers mocked. Includes legacy/read-only eligibility, cache reuse, completed introduction, restored reservation and rally geometry. Not a real trader approach."
+    },
+    {
+      "report": "reports/location_baseline/20261102T214413364385Z/run.json",
+      "variants": ["debug", "release"],
+      "checks_each": [69, 11, 63, 8, 24],
+      "scope": "Native original publication, definition eligibility, fresh-process durability, compound publication and archive regression"
+    },
+    {
+      "report": "reports/quests_world/20261102T215211726561Z/run.json",
+      "checks": [44, 15],
+      "slot": "Quests_1703_202c741e",
+      "scope": "Owned generated survey mine; normal streaming, edited field/blocks/supplies and actual corpse; cancellation/checkpoint recovery; native rally picking and dispatcher start; exact restoration, collision, outside/player preservation, normal save and fresh process",
+      "input_limit": "Test subclass bypasses only mouse-capture availability. No desktop mouse capture or keyboard simulation; not focused-input qualification.",
+      "timings": {
+        "cancel_recovery_us": 2690752,
+        "successful_reset_us": 4006518,
+        "native_batch_total_us": 10324,
+        "native_batch_maximum_step_us": 2372,
+        "operations": 32,
+        "patch_bytes": 247162,
+        "qualification": "One offscreen functional run, not worst-case or foreground frame-pacing evidence"
+      }
+    },
+    {
+      "report": "reports/quest_rally_import_console.log",
+      "scope": "Headless editor import, exit 0, no script errors; Godot-generated new UID sidecars"
+    }
+  ],
+  "retained_failures": [
+    {
+      "report": "reports/checks/20261102T214332093119Z/run.json",
+      "reason": "Test constant shadowed native Panel class; renamed and subsequent test passed"
+    },
+    {
+      "report": "reports/checks/20261102T214902981869Z/run.json",
+      "reason": "Test attempted introduction on already-used quest cycle; fixture now uses a fresh native log"
+    },
+    {
+      "report": "reports/quests_world/20261102T214520858162Z/run.json",
+      "reason": "Pre-reset checkpoint timed out before mutation; idle queue observed. Cause unresolved, not attributed to water. Subsequent clean reset checks pass but do not prove the intermittent admission issue fixed. Teardown also logged detached zombie transform reads."
+    },
+    {
+      "report": "reports/quests_world/20261102T214908663082Z/run.json",
+      "reason": "Prior failed run left owned corpse outside rendered residency; corpse-body fixture assertion failed. Rally interaction and scoped restoration passed; that reset removed stale owned corpse and clean repetition passed all assertions."
+    }
+  ],
+  "image": {
+    "path": "quest-rally-source.png",
+    "source": "reports/quests_world/20261102T215211726561Z/quest_rally.png",
+    "sha256": "f0f245852efefeb001c7f254f8e9794c28e656fed7863748b7c09d6f0fdf0c52",
+    "caption": "Gold rally at generated survey-mine entrance, 2 m test-camera range. Presentation inspected; not user art approval. Normal offscreen input gate clears the transient E hint, so this image proves the marker, not keyboard interaction or prompt presentation.",
+    "provenance": "Original Godot capture from this checkout, no external image import. New capture CC0-1.0 to extent of original rights; depicted inherited assets retain their existing notices and licenses."
+  },
+  "remaining": [
+    "Real trader approach, offer selection and ordinary journey to rally",
+    "All five generated POI layouts and foreign/moving occupancy cases",
+    "Diagnose pre-checkpoint admission timeout and teardown transform-read failures",
+    "Cooperative cold planning and explicit teardown/crash fault injection",
+    "User visual review and focused frame-pacing/input evidence",
+    "Reverify packaged reset/reopen after coordinated startup/water export",
+    "Unrelated retained reward-UI crafting assertion and remaining full expansion requirements"
+  ]
+}

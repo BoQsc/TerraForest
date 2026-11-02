@@ -7,6 +7,11 @@ var game:Node
 var location:Dictionary
 var checkpoint_corpses:=PackedByteArray()
 
+class UncapturedInteraction:
+	extends "res://demo/world_interaction.gd"
+	func available(owner:Node)->bool:
+		return owner._model_edit_available() and not owner.fly and not owner.session_menu.visible_ui()
+
 func check(value:bool,label:String)->bool:
 	return test.check(value,label)
 
@@ -69,6 +74,8 @@ func wait_reset(cancel_after:int=-1)->bool:
 			reset.cancel();cancel_after=-1
 		if Time.get_ticks_msec()>=next_report:
 			next_report=Time.get_ticks_msec()+10000
+			test.save_diagnostic()
+			print("RESET_SAVE_ADMISSION ",JSON.stringify({"terrain_processing":game.terrain.is_processing(),"terrain_mode":game.terrain.process_mode,"world_processing":game.is_processing(),"status":game.terrain.backend.status(),"publication":game.terrain.backend.publication_pending()}))
 			print("LIVE_RESET_WAIT ",JSON.stringify({"phase":reset.phase,"water":game.lakes.statistics(),"queue":game.terrain.backend.diagnostic_queue_snapshot(),"pager":game.model_paging.operation,"error":game.terrain.latest_error}))
 		await test.process_frame
 	print("LIVE_RESET_RESULT ",JSON.stringify(reset.last_result))
@@ -176,8 +183,22 @@ func run(owner:SceneTree)->void:
 	check(Capture.patch(containers,"container",[location.containers])==before_supplies,"cancel preserves original current supplies")
 	check(Capture.patch(game.structures.blocks,"cell",[outside_cell,Vector3i.ONE])==outside_block,"cancel preserves neighboring block")
 	var epoch:int=game.terrain.epoch
-	started=reset.begin();print("LIVE_RESET_BEGIN ",JSON.stringify(started))
-	if not check(started.ok and await wait_reset() and reset.last_result.ok,"live reset restores and compound-saves the actual mine"):return
+	var rally:Node3D=game.quests.rally
+	if not check(await test.wait_for(func()->bool:return rally.visible and rally.ready_key==location.key,15),"reserved generated mine presents its question mark on ready ground"):return
+	var outward:Vector3=(rally.global_position-bounds.get_center())*Vector3(1,0,1)
+	outward=outward.normalized()
+	game.fly=false;game.player.global_position=rally.global_position+outward*2-Vector3.UP*1.4
+	game.camera.global_position=rally.global_position+outward*2;game.camera.look_at(rally.global_position)
+	game.set_physics_process(false)
+	await test.process_frame
+	var interaction:=UncapturedInteraction.new()
+	var aimed:Dictionary=interaction.hit(game)
+	print("RALLY_AIM ",JSON.stringify({"marker":rally.global_position,"player":game.player.global_position,"target":aimed,"available":interaction.available(game)}))
+	check(interaction.describe(game,aimed).contains("Start quest"),"shared native picking presents the actual rally E prompt")
+	interaction.update(game,1);game.destination_guide.refresh()
+	await test.photograph("quest_rally")
+	if not check(interaction.interact(game) and reset.busy,"ordinary interaction dispatcher starts scoped reset without mouse capture"):return
+	if not check(await wait_reset() and reset.last_result.ok,"live reset restores and compound-saves the actual mine"):return
 	if not check(await test.wait_for(test.game_ready,120),"restored geometry and contacts admit gameplay"):return
 	check(game.terrain.epoch==epoch,"successful reset locally republishes terrain without whole-world reload")
 	check(terrain_bytes()==original_field,"successful reset restores exact original field")
