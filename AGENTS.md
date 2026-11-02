@@ -24,3 +24,13 @@ permission for that existing use. Recheck provenance and terms on upgrades.
 
 For changes inside `TerraForest/`, also follow `TerraForest/AGENTS.md`, including
 its focused-commit, identity-file and verification rules.
+
+## Branch workflow
+
+- `master` is the current development integration, not a production-release claim.
+- Start focused, short-lived `codex/<topic>` branches from current `master`; merge
+  verified work regularly instead of accumulating unrelated features on one branch.
+- Parallel chats use separate worktrees. Coordinate shared tests and exports.
+- Tag approved playtest/release milestones. Keep known limitations explicit.
+- Audit unique commits and worktree ownership before retiring old branches; do not
+  rewrite published history or force-push as part of routine integration.

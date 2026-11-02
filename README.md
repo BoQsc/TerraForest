@@ -24,6 +24,15 @@ python TerraForest/tools/run.py --scene structures
 
 See the [structures API and limitations](TerraForest/addons/structures/README.md) and [validation evidence](TerraForest/docs/STRUCTURES_VALIDATION.md). This is a building foundation; city streaming, LOD and multiplayer are still pending.
 
+## Development workflow
+
+`master` is the current development mainline. Features and fixes use short-lived
+topic branches, with separate worktrees for parallel work and regular verified
+integration. Tags identify checkpoints and approved playtest/release milestones;
+the mainline is not a claim that the game is complete. Current limitations and
+verification evidence live in the [foundation status](TerraForest/docs/WORLD_FOUNDATION_STATUS.md)
+and [issue tracker](TerraForest/issues/README.md).
+
 ## Documentation
 
 - [Project guide and addon layout](TerraForest/README.md)
