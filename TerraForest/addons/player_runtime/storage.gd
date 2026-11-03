@@ -3,6 +3,7 @@
 extends CanvasLayer
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Rules=preload("res://addons/player_runtime/container_rules.gd")
+const WindowNav=preload("res://addons/player_runtime/window_navigation.gd")
 var town_loot:=preload("res://addons/player_runtime/town_loot.gd").new()
 var _loot_retry:=0.0
 var store: RefCounted
@@ -134,8 +135,10 @@ func move_selected(deposit: bool) -> bool:
 	var explanations: Dictionary={"stale_container_view":"Contents changed. Select the stack again.","stale_revision":"Inventory changed. Select the stack again.","invalid_count_or_slot":"Choose a nonempty stack and an available quantity.","destination_rejected":"There is not enough compatible space in the destination.","container_capacity":"The world's storage limit has been reached.","empty_container":"This chest is empty."}
 	message.text=explanations.get(result.reason,"These items could not be moved.");return false
 func _input(event: InputEvent) -> void:
-	if opened and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_E,KEY_ESCAPE,KEY_TAB]:
-		close();get_viewport().set_input_as_handled()
+	if not opened or not event is InputEventKey or not event.pressed or event.echo:return
+	if event.physical_keycode==KEY_E:
+		close();get_viewport().set_input_as_handled();return
+	WindowNav.close_window(self,event,close)
 
 func drag_data(side: String,slot: int) -> Dictionary:
 	if not opened or not (player_list if side=="player" else storage_list).contains_slot(slot):return {}

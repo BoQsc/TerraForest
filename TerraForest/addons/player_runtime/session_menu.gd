@@ -340,6 +340,8 @@ func developer_command(key:int)->void:
 	if not developer:message.text="Enter development mode above to use world diagnostics.";return
 	run_command(key)
 func _input(event: InputEvent) -> void:
+	if (opened or workspace) and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_TAB:
+		set_open(false);get_viewport().set_input_as_handled();return
 	if event is InputEventKey and event.physical_keycode==KEY_ESCAPE:
 		if event.pressed and not event.echo and not leaving_world:preload("res://addons/player_runtime/escape_policy.gd").close_or_pause(self)
 		get_viewport().set_input_as_handled();return
@@ -354,7 +356,8 @@ func _input(event: InputEvent) -> void:
 				if event.physical_keycode==KEY_M:game.player_hud.show_side("Backpack");get_viewport().set_input_as_handled()
 				elif event.physical_keycode==KEY_TAB:game.player_hud.set_open(false);get_viewport().set_input_as_handled()
 			return
-		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE]:world_map.set_open(false)
+		if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_M,KEY_ESCAPE,KEY_TAB]:
+			world_map.set_open(false)
 		if event is InputEventKey and event.physical_keycode not in [KEY_W,KEY_A,KEY_S,KEY_D,KEY_SPACE,KEY_CTRL,KEY_SHIFT]:get_viewport().set_input_as_handled()
 		return
 	if world_map!=null and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_M and tilde_down<0:

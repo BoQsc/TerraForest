@@ -4,6 +4,7 @@ const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 
 static func close_or_pause(menu:CanvasLayer)->void:
 	var game:Node=menu.game
+	var trader:Variant=game.get("trader")
 	if menu.confirmation.visible:
 		menu.confirmation.hide()
 	elif menu.world_map!=null and menu.world_map.context_menu.visible:
@@ -15,6 +16,8 @@ static func close_or_pause(menu:CanvasLayer)->void:
 		menu.player_actions.cancel()
 	elif game.vehicle_radial.opened or game.vehicle_radial.held_since>=0:
 		game.vehicle_radial.cancel()
+	elif trader!=null and trader.ui!=null and trader.ui.opened:
+		trader.ui.close()
 	elif game.corpse_loot.ui.opened:
 		game.corpse_loot.ui.close()
 	elif game.storage.opened:

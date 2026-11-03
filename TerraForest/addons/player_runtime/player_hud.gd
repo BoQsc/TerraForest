@@ -64,6 +64,7 @@ const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
 var enabled:=true
 var drag_layer_raised:=false
+var base_layer:=UI_LAYER
 var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
@@ -362,7 +363,7 @@ func equip(slot: int) -> void:
 	equip_inventory(slot)
 
 func equip_inventory(slot: int) -> void:
-	if not enabled or inventory==null or slot<0 or slot>=32:return
+	if (not enabled and not inventory_open) or inventory==null or slot<0 or slot>=32:return
 	state=inventory.snapshot()
 	if slot>=10:
 		# Equip from the backpack by moving/swapping into an actual belt slot.
@@ -435,7 +436,7 @@ func skill_damage(skill:int,base:int)->int:
 	return base if progression==null or developer_belt else survival.scale_damage(progression.scale_action(skill,base))
 
 func use_item(slot:int,expected_revision:int)->bool:
-	if not enabled or developer_belt:return false
+	if (not enabled and not inventory_open) or developer_belt:return false
 	var result:Dictionary=survival.use(inventory,progression,slot,expected_revision,survival.snapshot().revision)
 	if not result.ok:
 		message.text={"already_full":"Already full; food kept.","stale_revision":"Inventory changed; select the item again."}.get(result.reason,"Item cannot be used.")
@@ -530,9 +531,13 @@ func raise_drag_layer()->void:
 
 func restore_drag_layer()->void:
 	if not drag_layer_raised:return
-	drag_layer_raised=false;layer=UI_LAYER
+	drag_layer_raised=false;layer=base_layer
+
+func set_above_ui(value:bool)->void:
+	base_layer=DRAG_LAYER if value else UI_LAYER
+	if not drag_layer_raised:layer=base_layer
 func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
-	return enabled and inventory_open and not (developer_belt and _slot<10) and data is Dictionary and data.get("owner",0)==get_instance_id()
+	return inventory_open and not (developer_belt and _slot<10) and data is Dictionary and data.get("owner",0)==get_instance_id()
 func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if not accepts_drag(side,slot,data):return
 	var result: Dictionary
