@@ -3,7 +3,9 @@ extends "res://addons/world_runtime/scene_task.gd"
 var game:Node
 var completed_views:=0
 func diagnostics()->Dictionary:
- return preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game) if is_instance_valid(game) else {}
+ if not is_instance_valid(game):return {}
+ if not game.startup_complete:return {"startup":{"stage":game.startup_stage}}
+ return preload("res://addons/world_runtime/loading_diagnostics.gd").snapshot(game)
 func _initialize()->void:run.call_deferred()
 func ready_world(game:Node)->bool:
  var deadline:=Time.get_ticks_msec()+90000;var next_poll:=0
@@ -16,14 +18,19 @@ func ready_world(game:Node)->bool:
 func run()->void:
  if not "--snapshot-readonly" in PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args())):quit(2);return
  game=load("res://demo/world.tscn").instantiate();game.temporary_world=true;game.max_fps=60;game.background_fps=60;root.add_child(game)
- if not await ready_world(game):quit(1);return
+ # Let cooperative construction finish before cancellation tears its nodes down.
+ while is_instance_valid(game) and not game.startup_complete and result<0:await process_frame
+ if not is_instance_valid(game) or result>=0:return
+ if cancelled() or not await ready_world(game):
+  await close_game();quit(1);return
  var plan:Dictionary=game.generated_region.store.get_plan()
  var places:Array=plan.get("places",[])
  if places.is_empty():
   # Older worlds have no generated-place catalog. Photograph their saved arrival
   # from three angles rather than inventing unrelated locations.
   places=[{"position":game.player.global_position}]
- var directory:String="user://worlds/"+game.terrain.save_slot+".preview"
+ var game_slot:String=game.terrain.save_slot
+ var directory:String="user://worlds/"+game_slot+".preview"
  DirAccess.make_dir_recursive_absolute(directory)
  var failures:=0
  var rng:=RandomNumberGenerator.new();rng.seed=game.terrain.backend.world_seed
@@ -44,7 +51,16 @@ func run()->void:
   progress_changed.emit("Saving world photograph",i,3,{"activity":"Photograph %d / 3 · Capturing and encoding image"%(i+1)})
   var path:=directory.path_join(["north","road","market"][i]+".png")
   if await preload("res://addons/world_runtime/world_presentation.gd").capture(game,root,path)!=OK:failures+=1
- game.shutdown_requested=true;await game.terrain.shutdown_after_edits();game.free();game=null
+ if not await close_game():failures+=1
+ if not preload("res://addons/world_runtime/world_presentation.gd").record_photographs(game_slot):failures+=1
  if cancelled():print("WORLD_PREVIEWS cancelled");quit(2);return
  progress_changed.emit("World photographs ready",3,3,{})
  print("WORLD_PREVIEWS failures=",failures);quit(1 if failures else 0)
+
+func close_game()->bool:
+ if not is_instance_valid(game):return true
+ game.shutdown_requested=true
+ var closed:bool=await game.terrain.shutdown_after_edits()
+ game.free();game=null
+ await process_frame
+ return closed

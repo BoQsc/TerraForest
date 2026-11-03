@@ -1,4 +1,5 @@
 extends "res://addons/world_runtime/generate_world_task.gd"
+func _init()->void:capture_review_photographs=true
 func snapshot_signature(game:Node)->Dictionary:
 	var result:=super.snapshot_signature(game)
 	if not qualification:

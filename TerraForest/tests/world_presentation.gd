@@ -22,4 +22,13 @@ func _initialize()->void:
  if presentation.details("../alpha",directory)!={}:failures+=1
  if presentation.details("gamma",directory).has("seed"):failures+=1
  if FileAccess.get_file_as_string(directory.path_join("alpha.trw"))!="unchanged":failures+=1
+ var before:Dictionary=presentation.metadata("alpha",directory)
+ DirAccess.make_dir_recursive_absolute(directory.path_join("alpha.preview"))
+ var image:=Image.create(2,2,false,Image.FORMAT_RGB8);image.fill(Color.GREEN)
+ image.save_png(directory.path_join("alpha.preview/north.png"))
+ if not presentation.record_photographs("alpha",directory):failures+=1
+ var updated:Dictionary=presentation.metadata("alpha",directory)
+ if updated.get("preview_count")!=1 or updated.get("created")!=before.created or updated.get("last_played")!=before.last_played:failures+=1
+ if presentation.image_for("alpha",directory)==null or FileAccess.get_file_as_string(directory.path_join("alpha.trw"))!="unchanged":failures+=1
+ if presentation.record_photographs("../alpha",directory) or presentation.record_photographs("missing",directory):failures+=1
  print("WORLD_PRESENTATION failures=",failures);quit(1 if failures else 0)

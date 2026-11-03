@@ -114,7 +114,7 @@ func _ready() -> void:
 	button(saved,"Open selected world",func():launch_selected(false))
 	var library_actions:=HBoxContainer.new();saved.add_child(library_actions)
 	button(library_actions,"Refresh saved worlds",refresh)
-	photograph_button=button(library_actions,"Refresh photographs",refresh_photographs)
+	photograph_button=button(library_actions,"Create / refresh photographs",refresh_photographs)
 	photograph_cancel=button(library_actions,"Cancel photographs",cancel_photographs);photograph_cancel.hide()
 	button(library_actions,"Recover interrupted publication",show_recovery)
 	preload("res://demo/world_creation_panel.gd").build(self,columns)
@@ -204,7 +204,7 @@ func _saved_details_ready(slot:String,data:Dictionary,picture:Texture2D)->void:
 	var options:Dictionary=data.get("world_options",{})
 	if options.has_all(["settlements","districts","biome"]) and int(options.biome) in [0,1,2]:lines.append("%d settlements · %d districts · %s"%[int(options.settlements),int(options.settlements)*int(options.districts),["Woodland","Woodland & meadow mosaic","Open grassland with groves"][int(options.biome)]])
 	if options.has("road_grid"):lines.append("Road grid preference: "+("On" if int(options.road_grid)>0 else "Off"))
-	if saved_picture.texture==null:lines.append("No cached photograph yet.")
+	if saved_picture.texture==null:lines.append("No photograph yet. Use Create / refresh photographs when you want one.")
 	lines.append("Opening uses this world's saved generation settings.")
 	saved_details.text="\n".join(lines)
 func launch_selected(create: bool) -> void:

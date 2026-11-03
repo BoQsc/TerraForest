@@ -517,6 +517,15 @@ func _show_lake_notice(text: String) -> void:
 	_present_message(text,log_action_messages or text.begins_with("ERROR:"))
 	terrain._record_stage("notice message",(Time.get_ticks_usec()-message_started)/1000.0)
 
+func capture_generation_pose()->bool:
+	# Offline arrival validation does not release the playable-world loading gate.
+	# Persist its explicit pose without pretending the whole scene is ready to play.
+	if not lakes.offline_preparation or not terrain.world_ready or terrain.pending_edit or waiting_spawn:return false
+	var saved_tool:int=player_hud.active_item if player_hud.active_item in [1,2,3,4] else 0
+	var captured:PackedByteArray=player_pose.encode(player.position,wrapf(yaw,-PI,PI),pitch,fly,saved_tool,player_view.entry.wake_pending)
+	if captured.is_empty():return false
+	_saved_pose=captured;return true
+
 func _capture_player_pose() -> PackedByteArray:
 	# Resource placement is transient; the v1 pose stores only original tool IDs.
 	var saved_tool: int=player_hud.active_item if player_hud.active_item in [1,2,3,4] else 0
@@ -1846,7 +1855,7 @@ func _additional_loading_diagnostics() -> Dictionary:
 		"structure_exclusions":structures.exclusion_stats(),
 		"ground_cover":{"enabled":ground_cover.is_processing(),"wanted_regions":ground_cover._wanted.size(),"resident_regions":ground_cover.resident.size(),"requested":ground_cover._requests.size(),"pending":ground_cover._pending.size(),"dirty":ground_cover._dirty.size(),"rejected_batches":ground_cover.rejected_batches},
 		"water":lakes.statistics() if lakes.water!=null else {"state":"not_initialized"},
-		"distant_buildings":structures.blocks.distant_rendering_stats(),
+		"distant_buildings":structures.blocks.distant_rendering_stats() if structures.blocks!=null else {"state":"not_initialized"},
 		"map":{"warming":world_map.warming,"warm_started":world_map.warm_started,"warm_error":world_map.warm_error},
 		"structures":{"asset_collections":structures._models.size(),"paging_failures":structures._model_paging_failures,"last_failure":structures._model_paging_last_failure,"paging":model_paging.last_state if model_paging!=null else {"active":false}}
 	}

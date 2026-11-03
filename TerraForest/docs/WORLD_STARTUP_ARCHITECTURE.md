@@ -500,3 +500,93 @@ reports/startup_optimization/speed_qualified_build --through-control --profile`.
 Add `--observe` for post-control collision/image/frame evidence. For normal opening,
 add `--slot StartupBench_<owned-id> --normal-load --through-control`. The harness
 accepts only owned StartupBench slots and retains receipts; never use a user save.
+
+
+## Optional photographs and local generation validation — 2026-11-03
+
+Normal Generate & play no longer takes launcher photographs. Previously it loaded
+three scenic destinations, waited for their terrain/vegetation and read back PNGs
+before publishing the world. That was presentation work on the path to player
+control. My worlds already had a separate capture task; the action now reads
+**Create / refresh photographs**, and empty previews explain that action. Existing
+photographs remain usable. There is no automatic capture competing with gameplay.
+
+Generation validates only the actual starting area: native urgent terrain
+collision with its required coverage bridges, structure/model collision, local
+tree/boulder owners and the existing floor-ray/capsule check. The observed local
+validation took about 0.18 seconds. It explicitly saves the starting pose without
+pretending the generation scene satisfies the full playable-world loading gate.
+Map data warms without opening the interactive map UI. After publication, ordinary
+opening still requires full terrain coverage, local landscape/collision, water,
+distant buildings, map and normal fly-in/waking. Explicit developer photograph/
+traversal review tasks retain their opt-in capture path.
+
+| Complete Generate & play boundary | Before | After |
+| --- | ---: | ---: |
+| Player control, repeated samples | 86.535 / 95.697 s | 66.623 / 59.073 / 57.579 s |
+| Median through control | 91.116 s | 59.073 s (-35.2%) |
+| Latest exact final pack, first-ready / control | — | 49.561 / 57.579 s |
+
+The exact final pack is `d1d51ed749c57581d55fcc1c85d6abc35b7bdcb1298eeddb399ef82c70ec73db`. The earlier two after samples
+use the same generation scheduling with the later optional-photo cancellation and
+early-diagnostics fixes absent. All three require one fly-in and one waking. The
+normal browser recipe creates no PNGs before control. Generation itself dropped
+from 66.249 seconds in the first matched baseline to 38.465 / 38.084 seconds in
+the first two after runs. Photography took 23.410 seconds in that baseline; some
+required mesh work moves to ordinary opening, so the end-to-end figure remains
+the primary result. Run variation is visible rather than hidden by quoting only
+the fastest sample. The previous 83.543-second result belongs to the earlier
+speed-pass artifact; these fresh before/after builds both include door integration.
+
+Normal saved-world opening through control was 26.089 s before and 26.411 s
+after in a fresh-process pair using separate copies of the same owned checkpoint.
+There is no standalone reopening speedup in this pass. Both source-fixture hashes
+remain unchanged; the generation-to-control reduction comes from removing the
+pre-publication photo tour and its duplicate scene preparation.
+
+The paired builds include the same verified door integration. They use seed 1703,
+Godot 4.7.2, 1920x1080/60FPS and retained OS/shared derived caches. This is not a
+cold-cache or weak-hardware claim. No user save is used for generation or capture.
+Full manifests, hashes and receipt scopes are in
+[preview speed evidence](evidence/world_startup_optimization/preview_results.json).
+
+The first cancelled candidate exposed a hidden dependency: `bake_map_layers` tried
+to open an interactive map while the scene was still loading, so map processing
+never started. Receipt `20261102T235327147626Z` and its unpublished staging remain
+retained; it is excluded from timing. The corrected path enables map-data warming
+directly. The first optional-photograph test produced all images and preserved the
+save, but failed the clean-error/teardown gate: diagnostics ran before structures
+initialized, and cancellation freed a cooperatively initializing scene. That failed
+receipt is `preview_photographs_20261103T000108Z`. Capture now waits for cooperative
+construction before graceful cancellation, and reports initialization diagnostics
+without dereferencing unfinished services. Failures are not counted as passes.
+
+The optional browser photography check passes all 15 assertions on the final pack:
+cancel during startup, return to browser, three lossless 1920x1080 images, updated
+metadata/thumbnail, unchanged canonical save and zero pointer capture. No script
+errors or exit-leak diagnostics remain. Receipt:
+`reports/startup_optimization/preview_photographs_20261103T000934Z`. Its browser
+thumbnail was inspected. The first-play room and elevated landscape in the first
+after run were also inspected; terrain, water, local trees and buildings are
+present. Existing world-quality and animation judgments remain unchanged.
+
+Resource/cancellation checks, metadata tests, 636 native terrain-planner assertions,
+photograph-view helper tests, all export/catalog/release gates and normal integrated
+generation pass. Terrain and structure sections and decoded water identity match
+the before fixture. Original Emerald_Meadow still matches its original SHA-256.
+The first observed after run had full 64/64 terrain coverage and local collision,
+no map error, and post-control 20-second frame sampling of 16.948 ms p95 / 19.734 ms max.
+Peak sampled private commit was 3.591 GiB / dedicated GPU 1.390 GiB, versus 3.738 / 1.414
+in the first baseline. These are sampled observations, not hard memory guarantees.
+
+Reproduce with `python tools/benchmark_world_startup.py --build
+reports/startup_optimization/preview_final_build --through-control --profile
+--no-photographs`. `--observe` adds post-control collision/images/frame sampling.
+`tests/deferred_world_previews.gd` operates only an owned StartupBench fixture with
+`--preview-slot` and `--preview-output`; it invokes the real My worlds controls.
+
+Generation still performs earthworks, object placement, verified saving and map
+caching. Those remain measurable costs. Persistent derived-cache indexing, regional
+water residency/decode reuse, broader seeds, cold caches, foreground responsiveness
+and sustained travel remain open as documented above. Optional preview capture is
+now outside the play wait; this does not establish universal startup performance.

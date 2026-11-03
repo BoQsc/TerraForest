@@ -21,6 +21,8 @@ var derived_metrics: Dictionary = {}
 var foreground_brush: bool = false
 var foreground_attack: bool = false
 var diagnostics_pause_streaming: bool = false
+# Offline generation validates only arrival collision; gameplay keeps full coverage.
+var generation_collision_only: bool = false
 var latest_edit_descriptor: Dictionary = {}
 var latest_edit_members: Array[Dictionary] = []
 var latest_member_changes: Array = []
@@ -288,9 +290,9 @@ func _process(delta: float) -> void:
 		return
 	_flush_manual_save()
 	schedule_timer -= delta
-	if schedule_timer <= 0.0 and foreground_brush and not pending_edit and not diagnostics_pause_streaming:
+	if schedule_timer <= 0.0 and (foreground_brush or generation_collision_only) and not pending_edit and not diagnostics_pause_streaming:
 		_schedule_urgent_collision()
-	if schedule_timer <= 0.0 and not pending_edit and not foreground_brush and not diagnostics_pause_streaming:
+	if schedule_timer <= 0.0 and not pending_edit and not foreground_brush and not generation_collision_only and not diagnostics_pause_streaming:
 		schedule_timer = 0.025 if initial_loading else 0.10
 		var schedule_begin: int = Time.get_ticks_usec()
 		var planned_coverage:=_schedule()
@@ -1316,7 +1318,7 @@ func _queue_lighting_refresh() -> void:
 		last_relight_tiles += 1
 
 func _schedule_lighting() -> void:
-	if not world_ready or pending_edit or stopping or foreground_brush or diagnostics_pause_streaming:
+	if not world_ready or pending_edit or stopping or foreground_brush or generation_collision_only or diagnostics_pause_streaming:
 		return
 	# Coalesce remote roof-light changes during a stroke. Local lighting is
 	# already committed with geometry; distant irradiance catches up separately.

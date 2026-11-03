@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--whole-landscape', action='store_true', help='Load-only diagnostic control for the previous landscape barrier')
     parser.add_argument('--observe', action='store_true', help='Record 20 seconds of background completion after first-ready timing')
     parser.add_argument('--through-control', action='store_true', help='Include normal fly-in/wakeup and report time to player control')
+    parser.add_argument('--no-photographs', action='store_true', help='Require the new-world path to publish no optional preview photographs')
     parser.add_argument('--profile', action='store_true', help='Record terrain worker stages and readiness timeline')
     parser.add_argument('--repeat', type=int, default=1)
     args = parser.parse_args()
@@ -89,6 +90,8 @@ def main():
             command.append('--benchmark-whole-landscape')
         if args.through_control:
             command.extend(['--benchmark-through-control', '--wakeup-test'])
+        if args.no_photographs:
+            command.append('--benchmark-no-photographs')
         if args.profile:
             command.append('--benchmark-profile')
         if args.observe:

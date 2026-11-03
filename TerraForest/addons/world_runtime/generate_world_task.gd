@@ -2,6 +2,7 @@
 extends "res://addons/world_runtime/scene_task.gd"
 # Production world creation. Developer review uses the compatibility wrapper.
 var qualification:=false
+var capture_review_photographs:=false # Explicit review subclasses only; never normal generation.
 var seed_value:=42
 var output_dir:="res://reports"
 var progress_path:=""
@@ -358,12 +359,14 @@ func run()->void:
  game.construction_palette.survey_dialog.hide()
  var road:Dictionary=plan.roads[4]
  if not qualification:
-  # Data generation precedes presentation. No terrain mesh/collision is loaded
-  # for an empty draft and invalidated again while its buildings are inserted.
-  game.terrain.diagnostics_pause_streaming=false
-  game.ecosystem.set_process(true);game.ground_cover.set_process(true);game.vegetation.set_process(true)
-  progress("Photographing the generated world",0,3 if not market.is_empty() else 2 if not connection.is_empty() else 1)
-  if not await bake_photographs(game,plan,market,connection):game.free();quit(1);return
+  # Explicit review tasks may still exercise their photographed traversal checks.
+  if capture_review_photographs:
+   game.terrain.diagnostics_pause_streaming=false
+   game.ecosystem.set_process(true);game.ground_cover.set_process(true);game.vegetation.set_process(true)
+   if not await bake_photographs(game,plan,market,connection):game.free();quit(1);return
+  # Optional launcher photographs are captured explicitly from My worlds.
+  # Validate the actual arrival locally; never tour scenic destinations here.
+  if not await prepare_arrival(game,introduction_spawn,not introduction_room.is_empty()):game.free();quit(1);return
  else:
   progress("Capturing world photographs")
   var center:Vector3=plan.center
@@ -456,14 +459,13 @@ func run()->void:
   if not qualification and int(world_options.get("introduction",0))==1:
    var introduction:Dictionary=game.quests.store.initialize_introduction(game.quests.store.snapshot().revision)
    if not introduction.ok:print("INTRODUCTION_UNAVAILABLE ",introduction.reason);game.free();quit(1);return
-   game.teleport(introduction_spawn,introduction_spawn.y)
-   if not await ready_world(game):game.free();quit(1);return
    game.set_physics_process(false);game._clear_motion()
    if not preload("res://addons/world_runtime/introduction_spawn.gd").clear(game,introduction_spawn):print("INTRODUCTION_ROOM_COLLISION_REJECTED");game.free();quit(1);return
    var direction:Vector3=introduction_room.exit[1]-introduction_spawn
    game.yaw=atan2(-direction.x,-direction.z);game.pitch=0.;game.player.rotation.y=game.yaw;game.camera.rotation.x=0.
    game.player_view.entry.wake_pending=true
    if not game.player_life.set_spawn(introduction_spawn,game.yaw):game.free();quit(1);return
+  if not qualification and not game.capture_generation_pose():print("GENERATION_POSE_REJECTED");game.free();quit(1);return
   progress("Saving generated world")
   if qualification:
    var file=FileAccess.open(output_dir.path_join("terrain_lot_region_expected.bin"),FileAccess.WRITE)
@@ -485,9 +487,41 @@ func run()->void:
  print("TERRAIN_LOT_WORLD_REVIEW failures=0 buildings=" if qualification else "WORLD_GENERATED failures=0 buildings=",all_lots.size()+prepared.get("watchtowers",{}).get("sites",[]).size()," edits=",completed_edits)
  game.free();quit()
 
+func prepare_arrival(game:Node,point:Vector3,fixed_height:bool)->bool:
+ progress("Validating starting area")
+ game.terrain.generation_collision_only=true
+ game.terrain.require_collision=true
+ game.terrain.diagnostics_pause_streaming=false
+ game.ecosystem.admit_owner=func(key:Vector2i)->bool:return preload("res://addons/world_runtime/coverage_window.gd").required(point,32.0,key)
+ game.ground_cover.boulders.shared_surface_ready=func(key:Vector2i)->bool:return game.ecosystem.surface_owner_ready(key)
+ game.ecosystem.set_process(true);game.ground_cover.set_process(true);game.vegetation.set_process(true)
+ game.teleport(point,point.y if fixed_height else -1.0)
+ var started:=Time.get_ticks_msec();var deadline:=started+120000;var next_poll:=0
+ var ready:=false
+ while not ready and Time.get_ticks_msec()<deadline and not cancelled():
+  if not game.terrain.latest_error.is_empty():break
+  var bounds:=AABB(game.player.global_position-Vector3(2,2,2),Vector3(4,5,4))
+  var forest:Dictionary=game.ecosystem.local_coverage_status(point,32.0)
+  var boulders:Dictionary=game.ground_cover.boulders.local_coverage_status(point,32.0)
+  ready=not game.waiting_spawn and not game.terrain.pending_edit and game.terrain.is_collision_region_ready(bounds) and game.structures.is_collision_region_ready(bounds) and game.vegetation.is_collision_region_ready(bounds) and forest.ready and boulders.ready
+  if Time.get_ticks_msec()>=next_poll:
+   next_poll=Time.get_ticks_msec()+250
+   progress("Validating starting area",int(ready),1,{"activity":"Checking starting-area terrain and object collision","forest":forest,"boulders":boulders,"terrain":game.terrain.loading_state(game.player.position,false)})
+  if not ready:await process_frame
+ game.terrain.diagnostics_pause_streaming=true
+ game.ecosystem.set_process(false);game.ground_cover.set_process(false);game.vegetation.set_process(false)
+ if not ready:print("GENERATION_ARRIVAL_UNAVAILABLE");return false
+ # Godot physics publishes newly admitted bodies at the next physics boundary.
+ await physics_frame
+ await process_frame
+ FileAccess.open(output_dir.path_join("arrival_validation.json"),FileAccess.WRITE).store_string(JSON.stringify({"ready":ready,"milliseconds":Time.get_ticks_msec()-started,"terrain":game.terrain.loading_state(game.player.position,false),"forest":game.ecosystem.local_coverage_status(point,32.0),"boulders":game.ground_cover.boulders.local_coverage_status(point,32.0)}))
+ return not cancelled()
+
 func bake_map_layers(game:Node)->bool:
- game.app_focused=true;game.world_map.refresh_world();game.world_map.set_open(true)
+ game.app_focused=true
  var atlas:Node=game.world_map
+ # Cache data while loading; opening the interactive map is intentionally blocked.
+ atlas.warming=true;atlas.refresh_world();atlas.set_survey_processing(true);atlas.updates.recheck_identity()
  atlas.updates.in_flight_limit=4
  var ready:=false;var deadline:=Time.get_ticks_msec()+120000;var next_poll:=0
  while not ready and Time.get_ticks_msec()<deadline and not cancelled():
@@ -500,7 +534,7 @@ func bake_map_layers(game:Node)->bool:
    next_poll=Time.get_ticks_msec()+250
    progress("Caching the saved world map",4-pending.size(),4,{"activity":"Preparing world map layers","work":"Remaining: "+", ".join(pending) if not ready else "Map layers ready; verifying saved identities","stage_fraction":0.8*float(4-pending.size())/4.0})
   if not ready:await process_frame
- atlas.set_open(false)
+ atlas.warming=false;atlas.set_survey_processing(false)
  atlas.updates.in_flight_limit=1
  if not ready:print("WORLD_MAP_GENERATION_FAILED ",atlas.status.text)
  if not ready:return false

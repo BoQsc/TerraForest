@@ -546,6 +546,7 @@
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
     "res://addons/world_runtime/location_capture.gd",
+    "res://addons/world_runtime/coverage_window.gd",
     "res://addons/world_runtime/survey_patch_cache.gd"
   ],
   "res://addons/world_runtime/generated_region.gd": [],

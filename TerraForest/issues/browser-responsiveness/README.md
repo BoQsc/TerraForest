@@ -1,7 +1,7 @@
 # Startup and saved-world browser latency
 
 - Status: Improved-partial / installed, source and package functional checks pass.
-- Updated: 2026-11-02. Earlier fix: `83f09d30`; current startup changes build on `39f97200`.
+- Updated: 2026-11-03. Earlier fix: `83f09d30`; current startup changes build on `39f97200`.
 - User review: Pending.
 - Symptom: Startup waits for save/photo work; filtering or changing worlds hitches.
 
@@ -120,3 +120,28 @@ Open My worlds with a substantial save library, type in the filter, switch world
 refresh and use Continue last. The regression uses a unique disposable fixture
 and checks saved bytes. Source benchmarks read the existing library without
 opening worlds; no player save is overwritten.
+
+
+## Generation photographs removed from the wait — 2026-11-03
+
+Normal Generate & play now reaches control in 57.579–66.623 seconds across three
+warm-cache exported runs (median 59.073), versus 86.535 / 95.697 seconds in two
+matched before runs. The previous scene toured three photograph destinations
+before publishing. Photos are now optional through My worlds → Create / refresh
+photographs. Existing photos and canonical saves remain intact. Nearby arrival
+validation, verified publication and the full playable-world readiness gates remain.
+Saved-world reopening alone is unchanged at roughly 26 seconds in the paired test.
+
+All 15 optional-photo browser checks pass, including cancellation during startup,
+clean teardown, full-size PNGs, thumbnail refresh and unchanged saved bytes.
+The initial map-UI warmup dependency and early-cancellation cleanup failures were
+corrected; their failed receipts remain visible. Repeated full-control generation,
+fresh-process opening, resource and export gates pass.
+[Exact builds, timings, evidence and remaining work](../../docs/WORLD_STARTUP_ARCHITECTURE.md#optional-photographs-and-local-generation-validation--2026-11-03).
+
+[After: inspected browser with an optional captured thumbnail](../../reports/startup_optimization/preview_photographs_20261103T000934Z/browser.png).
+The image renders existing inventoried project assets in Godot 4.7.2 on an owned
+benchmark world; no new external assets were imported. Its hash and scope are in
+[the performance evidence](../../docs/evidence/world_startup_optimization/preview_results.json).
+This still does not qualify cold caches, broader seeds, foreground frame pacing,
+weak hardware or general world quality. Those remain open in the linked contract.

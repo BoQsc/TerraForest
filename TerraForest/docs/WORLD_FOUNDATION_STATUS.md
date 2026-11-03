@@ -10,32 +10,39 @@ Visual approval and full generated-house journeys remain; played saves are uncha
 ## Generation/loading architecture — 2026-11-03
 
 [Implementation, exact measurements and remaining contract](WORLD_STARTUP_ARCHITECTURE.md).
-The completed speed pass measures **Generate & play through player control**:
-101.283 s before; 83.911 / 83.176 s after (median 83.543 s, 17.5% lower).
-Normal saved-world reopening is 36.664 -> 30.438 s through control in one paired
-fresh-process sample. These retain OS/shared caches; the user's two-plus-minute
-case is not reproduced or declared solved. The earlier water-storage/readiness
-phase alone established no meaningful speedup; its original receipts remain.
+Normal **Generate & play through player control** now takes 57.579–66.623 s across
+three runs (median 59.073 s), versus 86.535 / 95.697 s in matched before runs
+(median 91.116 s). The latest exact installed pack takes 57.579 s. These retain
+OS/shared caches and include normal fly-in/waking; they do not qualify cold-cache,
+weak-hardware or the user's unreproduced two-plus-minute scenario. Historical
+101.283 -> 83.543 s results and the earlier storage-only non-speedup remain recorded.
 
-Implemented bounded resource prefetch, loading-specific water publication,
-exact-checkpoint terrain mesh handoff from generation, bounded native distant
-building lookahead and map warming overlapping reconstruction. Whole-map terrain,
-water, building horizons, map and nearby collision remain required. Debug/release
-horizon regressions, water quantity/edit checks, mesh invalidation tests, integrated
-normal generation/reopening and export gates pass. Saves retain their storage
-families; terrain/structure bytes and decoded water match baseline. Original
-Emerald_Meadow hash is unchanged. The observed post-control sample has 17.025 ms
-p95 / 18.451 ms worst frames; this is not foreground/low-spec qualification.
+Preview photographs no longer block generation/publication/opening. My worlds
+provides **Create / refresh photographs** on demand. Generation validates nearby
+terrain/object/forest/boulder collision and the existing starting-room floor/capsule
+in about 0.18 s, then saves the explicit arrival pose without releasing full-world
+readiness. Map data warms independently of the interactive map UI. Ordinary opening
+still requires full terrain, water, building horizons, map and local collision.
+Fresh-process saved-world reopening remains approximately 26 s in this pass
+(26.089 before / 26.411 after); no separate reopening speedup is claimed.
 
-Compressed new-world water remains 11.39 MB versus 42.69 MB previously; the mutable
-live world is unchanged by immutable checkpoint blobs. Engineering coverage images
-were inspected, without granting broader settlement or animation approval.
+Fifteen optional-photo assertions pass, including early cancellation/clean teardown,
+three full-size images, thumbnail/metadata update, unchanged save and no pointer
+capture. Resource, metadata, 636 terrain-planner checks, integrated full-control
+repetitions and export gates pass. Earlier map-warmup and preview-cancellation
+failures remain recorded with their corrections. Terrain/structure bytes and
+decoded water match baseline; original Emerald_Meadow hash is unchanged. Room,
+landscape and browser evidence was inspected without broad world-quality approval.
 
-Still open: data-only generation and derived preview/map reuse (photographs alone
-still cost about 20 s); persistent cache indexing; true regional water residency
-and snapshot decode reuse; incremental packs; cold-cache, broader-seed, low-spec
-foreground and sustained-travel qualification. The linked contract records return
-triggers and closure evidence. Existing seed-admission/world-quality failures remain.
+The previous bounded prefetch, water publication, terrain-mesh handoff and native
+building queue remain. New-world water is 11.39 MB versus 42.69 MB historically;
+immutable checkpoint blobs do not change live-world mutability or old save families.
+
+Still open: generation earthworks/object placement/saving and map work; persistent
+cache indexing; true regional water residency and snapshot decode reuse; incremental
+packs; cold-cache, broader-seed, low-spec foreground and sustained-travel tests.
+The linked contract records return triggers and closure evidence. Existing seed
+admission and world-quality failures remain open.
 
 ## Door height and world entry — 2026-11-02
 

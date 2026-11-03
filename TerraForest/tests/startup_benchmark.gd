@@ -98,6 +98,10 @@ func run()->void:
  if not generate:
   result.source_unchanged=source_hash==FileAccess.get_sha256(path)
   if not result.normal_load:result.ok=result.ok and result.source_unchanged
+ result.preview_files=[]
+ for name:String in ["north","road","market"]:
+  if FileAccess.file_exists("user://worlds/"+slot+".preview/"+name+".png"):result.preview_files.append(name)
+ if generate and "--benchmark-no-photographs" in OS.get_cmdline_user_args():result.ok=result.ok and result.preview_files.is_empty()
  result.mouse_captures=preload("res://addons/world_runtime/mouse_ownership.gd").captures
  result.ok=result.ok and result.mouse_captures==0
  FileAccess.open(output.path_join("result.json"),FileAccess.WRITE).store_string(JSON.stringify(result,"  "))

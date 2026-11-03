@@ -21,6 +21,20 @@ static func mark_played(slot:String,directory:String="user://worlds")->bool:
  file.store_string(JSON.stringify(state));file.close()
  return DirAccess.rename_absolute(path+".tmp",path)==OK
 
+static func record_photographs(slot:String,directory:String="user://worlds")->bool:
+ if not slot.is_valid_identifier() or slot.length()>48:return false
+ if not FileAccess.file_exists(directory.path_join(slot+".trw")):return false
+ var state:=metadata(slot,directory)
+ var count:=0
+ for name:String in ["north","road","market"]:
+  if FileAccess.file_exists(directory.path_join(slot+".preview/"+name+".png")):count+=1
+ state["preview_count"]=count
+ var path:=directory.path_join(slot+".presentation.json")
+ var file:=FileAccess.open(path+".tmp",FileAccess.WRITE)
+ if file==null:return false
+ file.store_string(JSON.stringify(state));file.close()
+ return DirAccess.rename_absolute(path+".tmp",path)==OK
+
 static func image_for(slot:String,directory:String="user://worlds")->Texture2D:
  if not slot.is_valid_identifier() or slot.length()>48:return null
  var candidates:PackedStringArray=[]
