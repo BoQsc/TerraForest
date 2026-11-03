@@ -2,6 +2,14 @@
   "schema": 1,
   "notices": [
     {
+      "id": "nox_audio",
+      "title": "NOX Essentials sound recordings",
+      "license": "CC0 1.0",
+      "source": "addons/audio_runtime/packs/nox/NOTICE.txt",
+      "summary": "Selected footsteps, forest ambience and a small-fire loop by Nox_Sound_Design. The retained notice records the source, CC0 evidence, archive identity and runtime conversions.",
+      "text": "NOX Essentials Series - curated TerraForest audio subset\nCreator: Nox_Sound_Design\nSource: https://nox-sound-design.itch.io/essentials-series-sfx-nox-sound\nRetrieved: 2026-11-03\nTerms: CC0-1.0 (Public Domain Dedication)\nhttps://creativecommons.org/publicdomain/zero/1.0/\n\nThe upstream Essentials_Series_README.pdf states:\n\"All these sounds are under CC0 license.\"\nThe source page also explicitly declares all sounds CC0.\n\nArchive: Essentials_Series_NOX_SOUND.zip (1,036,374,981 bytes)\nSHA-256: 0df9a98cc8d0499787cb3c29f3e278fdacd75ca3e94106828ea8b5c115ae8d3d\nExact source-member and derivative hashes are in provenance.json.\n\nThis directory contains 80 selected individual footsteps converted to 48 kHz\nmono PCM16 and two complete ambience/fire loops converted to 48 kHz Ogg Vorbis.\nThe .bin suffix preserves the codec bytes through Godot export; these are WAV\nand Ogg files, not executable resources. No promotional artwork was imported.\nThe source archive is retained in the external development source-asset cache.\n\nTerraForest's original pack.audio.module.json authoring data and example pack metadata are\ndedicated to the public domain under CC0-1.0. NOX recordings retain the author's\nCC0 dedication. Attribution is retained voluntarily for provenance.\nThe example_audio/soft_grass.wav.bin copy derives from grass_walk_01.wav.bin;\nits original archive member and hashes are recorded in provenance.json here."
+    },
+    {
       "id": "ranger",
       "title": "Original Ranger assault rifle",
       "license": "CC0 1.0 assets / 0BSD code",

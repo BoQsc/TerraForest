@@ -1,0 +1,67 @@
+WorkerThreadPool: 12 threads, 3 max low-priority.
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/audio_runtime.gd remapped: res://tests/audio_runtime.gd
+Completed load for: 'res://tests/audio_runtime.gd' remapped 'res://tests/audio_runtime.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://addons/world_runtime/world_session.gd remapped: res://addons/world_runtime/world_session.gd
+Completed load for: 'res://addons/world_runtime/world_session.gd' remapped 'res://addons/world_runtime/world_session.gd' at thread -1
+Loaded system CA certificates
+PASS bundled raw WAV/Ogg content loads without editor imports
+PASS curated pack has all definitions and recordings
+PASS curated content remains below five MiB
+PASS specific surface and gait resolve
+PASS unknown surface resolves declared fallback
+PASS missing event is silent
+PASS data-only example replaces bundled sound
+PASS replacement changes selected definition
+PASS loose user audio pack loads
+PASS invalid pack 0 rejects atomically
+PASS invalid pack 1 rejects atomically
+PASS invalid pack 2 rejects atomically
+PASS invalid pack 3 rejects atomically
+PASS invalid pack 4 rejects atomically
+PASS invalid pack 5 rejects atomically
+PASS invalid pack 6 rejects atomically
+PASS invalid pack 7 rejects atomically
+PASS invalid pack 8 rejects atomically
+PASS invalid pack 9 rejects atomically
+PASS manifest traversal rejects
+PASS removing all audio content is valid
+PASS runtime prepares fixed pools
+PASS random variants avoid immediate repeats
+PASS distant effects cull before playback
+PASS nonfinite sound position rejects
+PASS loop handle starts and moves
+PASS out-of-range loop retires and invalidates handle
+PASS retired handles never alias new playback
+PASS disable clears every voice and blocks new sounds
+PASS custom event pack installs without gameplay changes
+PASS overflow steals only lower-priority one-shots within fixed pool
+PASS low-priority overflow drops
+PASS world reset clears transients
+PASS spatial loops leave capacity for immediate feedback
+PASS background layer capacity remains fixed
+PASS one-shot feedback remains available with both loop pools full
+PASS muting clears positional loops and background beds together
+PASS pack removal preserves a functional silent runtime
+AUDIO_RUNTIME checks=38 failures=0
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+Leaked instance: AudioStreamPlaybackWAV:9223372147081086578 - Reference count: 1
+Leaked instance: AudioStreamPlaybackWAV:9223372147097863822 - Reference count: 1
+Leaked instance: AudioStreamPlaybackWAV:9223372147114641039 - Reference count: 1
+Leaked instance: AudioStreamWAV:9223372146862982800 - Reference count: 4
+Leaked instance: AudioStreamPlaybackWAV:9223372147131418258 - Reference count: 1
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+Orphan StringName: TerraForestEffects (static: 0, total: 4)
+StringName: 1 unclaimed string names at exit.
+WARNING: 5 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

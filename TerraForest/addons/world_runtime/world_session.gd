@@ -7,6 +7,15 @@ var transitioning:=false
 var cover:CanvasLayer
 var last_error:=""
 var stage_timings:Dictionary={}
+func _ready()->void:
+	get_tree().scene_changed.connect(_attach_optional_audio)
+	_attach_optional_audio.call_deferred()
+func _attach_optional_audio()->void:
+	var world:=get_tree().current_scene
+	var path:="res://addons/audio_runtime/world_audio.gd"
+	var args:=PackedStringArray(ProjectSettings.get_setting("terraforest/session_arguments",OS.get_cmdline_user_args()))
+	if world==null or world.scene_file_path!="res://demo/world.tscn" or world.has_node("WorldAudio") or "--no-audio" in args or not ProjectSettings.get_setting("terraforest/audio",true) or not ResourceLoader.exists(path):return
+	var adapter:Node3D=load(path).new();world.add_child(adapter);adapter.attach(world)
 static func obtain(tree:SceneTree)->Node:
 	var host:=tree.root.get_node_or_null("WorldSession")
 	if host==null:

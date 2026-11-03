@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "example.soft-grass.v1",
+  "requires": [
+    "nox.essentials.v1"
+  ],
+  "sounds": [
+    {
+      "id": "nox.step.grass.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "grass",
+        "gait": "walk"
+      },
+      "files": [
+        "soft_grass.wav.bin"
+      ],
+      "gain_db": -18,
+      "priority": 80,
+      "limit": 4,
+      "range": 20,
+      "replace": true
+    }
+  ]
+}

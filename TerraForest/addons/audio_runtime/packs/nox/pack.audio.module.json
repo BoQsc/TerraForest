@@ -1,0 +1,406 @@
+{
+  "schema": 1,
+  "id": "nox.essentials.v1",
+  "sounds": [
+    {
+      "id": "nox.step.dirt.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "dirt",
+        "gait": "walk"
+      },
+      "files": [
+        "dirt_walk_01.wav.bin",
+        "dirt_walk_02.wav.bin",
+        "dirt_walk_03.wav.bin",
+        "dirt_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.dirt.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "dirt",
+        "gait": "run"
+      },
+      "files": [
+        "dirt_run_01.wav.bin",
+        "dirt_run_02.wav.bin",
+        "dirt_run_03.wav.bin",
+        "dirt_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.grass.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "grass",
+        "gait": "walk"
+      },
+      "files": [
+        "grass_walk_01.wav.bin",
+        "grass_walk_02.wav.bin",
+        "grass_walk_03.wav.bin",
+        "grass_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.grass.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "grass",
+        "gait": "run"
+      },
+      "files": [
+        "grass_run_01.wav.bin",
+        "grass_run_02.wav.bin",
+        "grass_run_03.wav.bin",
+        "grass_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.gravel.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "gravel",
+        "gait": "walk"
+      },
+      "files": [
+        "gravel_walk_01.wav.bin",
+        "gravel_walk_02.wav.bin",
+        "gravel_walk_03.wav.bin",
+        "gravel_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.gravel.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "gravel",
+        "gait": "run"
+      },
+      "files": [
+        "gravel_run_01.wav.bin",
+        "gravel_run_02.wav.bin",
+        "gravel_run_03.wav.bin",
+        "gravel_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.leaves.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "leaves",
+        "gait": "walk"
+      },
+      "files": [
+        "leaves_walk_01.wav.bin",
+        "leaves_walk_02.wav.bin",
+        "leaves_walk_03.wav.bin",
+        "leaves_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.leaves.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "leaves",
+        "gait": "run"
+      },
+      "files": [
+        "leaves_run_01.wav.bin",
+        "leaves_run_02.wav.bin",
+        "leaves_run_03.wav.bin",
+        "leaves_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.metal.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "metal",
+        "gait": "walk"
+      },
+      "files": [
+        "metal_walk_01.wav.bin",
+        "metal_walk_02.wav.bin",
+        "metal_walk_03.wav.bin",
+        "metal_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.metal.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "metal",
+        "gait": "run"
+      },
+      "files": [
+        "metal_run_01.wav.bin",
+        "metal_run_02.wav.bin",
+        "metal_run_03.wav.bin",
+        "metal_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.rock.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "rock",
+        "gait": "walk"
+      },
+      "files": [
+        "rock_walk_01.wav.bin",
+        "rock_walk_02.wav.bin",
+        "rock_walk_03.wav.bin",
+        "rock_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.rock.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "rock",
+        "gait": "run"
+      },
+      "files": [
+        "rock_run_01.wav.bin",
+        "rock_run_02.wav.bin",
+        "rock_run_03.wav.bin",
+        "rock_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.sand.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "sand",
+        "gait": "walk"
+      },
+      "files": [
+        "sand_walk_01.wav.bin",
+        "sand_walk_02.wav.bin",
+        "sand_walk_03.wav.bin",
+        "sand_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.sand.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "sand",
+        "gait": "run"
+      },
+      "files": [
+        "sand_run_01.wav.bin",
+        "sand_run_02.wav.bin",
+        "sand_run_03.wav.bin",
+        "sand_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.snow.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "snow",
+        "gait": "walk"
+      },
+      "files": [
+        "snow_walk_01.wav.bin",
+        "snow_walk_02.wav.bin",
+        "snow_walk_03.wav.bin",
+        "snow_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.snow.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "snow",
+        "gait": "run"
+      },
+      "files": [
+        "snow_run_01.wav.bin",
+        "snow_run_02.wav.bin",
+        "snow_run_03.wav.bin",
+        "snow_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.water.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "water",
+        "gait": "walk"
+      },
+      "files": [
+        "water_walk_01.wav.bin",
+        "water_walk_02.wav.bin",
+        "water_walk_03.wav.bin",
+        "water_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.water.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "water",
+        "gait": "run"
+      },
+      "files": [
+        "water_run_01.wav.bin",
+        "water_run_02.wav.bin",
+        "water_run_03.wav.bin",
+        "water_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.wood.walk",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "wood",
+        "gait": "walk"
+      },
+      "files": [
+        "wood_walk_01.wav.bin",
+        "wood_walk_02.wav.bin",
+        "wood_walk_03.wav.bin",
+        "wood_walk_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.wood.run",
+      "event": "movement.footstep",
+      "match": {
+        "surface": "wood",
+        "gait": "run"
+      },
+      "files": [
+        "wood_run_01.wav.bin",
+        "wood_run_02.wav.bin",
+        "wood_run_03.wav.bin",
+        "wood_run_04.wav.bin"
+      ],
+      "gain_db": -8,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.step.fallback",
+      "event": "movement.footstep",
+      "files": [
+        "dirt_walk_01.wav.bin",
+        "dirt_walk_02.wav.bin"
+      ],
+      "gain_db": -10,
+      "priority": 80,
+      "limit": 4,
+      "range": 20
+    },
+    {
+      "id": "nox.ambience.forest",
+      "event": "ambience.forest",
+      "files": [
+        "forest.ogg.bin"
+      ],
+      "bus": "Ambience",
+      "gain_db": -18,
+      "pitch": 1,
+      "range": 32,
+      "priority": 40,
+      "limit": 1,
+      "loop": true
+    },
+    {
+      "id": "nox.fire.burn",
+      "event": "fire.burn",
+      "files": [
+        "campfire.ogg.bin"
+      ],
+      "bus": "Effects",
+      "gain_db": -12,
+      "pitch": 1,
+      "range": 16,
+      "priority": 40,
+      "limit": 8,
+      "loop": true
+    }
+  ]
+}

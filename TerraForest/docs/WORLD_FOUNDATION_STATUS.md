@@ -6609,3 +6609,11 @@ are required before claiming broad generator reliability. Continue the
 [existing expansion contract](GAMEPLAY_EXPANSION.md#frontier-expedition-continuation--2026-11-02-installed-scoped-verification)
 and [package evidence](../issues/gameplay-expansion/frontier-evidence.json);
 none of the earlier expansion backlog is silently closed.
+
+## Optional modular audio — 2026-11-03
+
+The NOX-based audio foundation and first playable slice are integrated: replaceable
+data packs, bounded playback, surface footsteps, forest ambience and fire loops.
+See [audio scope, verified evidence and required follow-up](AUDIO_STATUS.md).
+Listening acceptance, full environment/vehicle/character/combat adapters, precise
+acoustics and representative large-world performance remain open there.

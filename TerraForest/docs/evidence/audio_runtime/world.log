@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary real world reaches play
+PASS session host honors optional module flag
+PASS session host attaches audio after startup
+PASS real menu exposes sound controls and bundled pack
+PASS authored wood floor has actual published collision
+PASS real ground hit selects wood footstep
+PASS muting stops presentation without touching the floor
+PASS audio does not mutate gameplay data
+PASS real world supports spatial fire loop
+PASS epoch reset retires voices and pending queries
+PASS visible held torch registers its physical fire source
+PASS putting away torch retires its fire sound
+PASS paused menu suppresses world sound
+[TerrainRewrite] Temporary test world: save skipped
+AUDIO_WORLD checks=13 failures=0

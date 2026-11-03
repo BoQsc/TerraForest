@@ -1,0 +1,671 @@
+{
+  "schema": 1,
+  "creator": "Nox_Sound_Design",
+  "source": "https://nox-sound-design.itch.io/essentials-series-sfx-nox-sound",
+  "retrieved": "2026-11-03",
+  "license": "CC0-1.0",
+  "archive_sha256": "0df9a98cc8d0499787cb3c29f3e278fdacd75ca3e94106828ea8b5c115ae8d3d",
+  "archive_bytes": 1036374981,
+  "upstream_readme_sha256": "c1a46c29dfe5a03dcf0f033396aa5ec6cb1761300ff3bde1212a53247a5cba84",
+  "evidence": "README PDF: All these sounds are under CC0 license. Source page also declares all sounds CC0.",
+  "scope": "Selected sound recordings and runtime derivatives only; no upstream promotional images or branding imported.",
+  "files": [
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Walk/Footsteps_DirtyGround_Walk_01.wav",
+      "source_sha256": "40b8e0b0463906a8edc7adf1defaa93e5ac1b42943c5482d5b474432cedd3f27",
+      "path": "dirt_walk_01.wav.bin",
+      "sha256": "b09d4db9db116ffd1e67e734659b4da9c1b71af23b697efdf541c8e12353a517",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 34614
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Walk/Footsteps_DirtyGround_Walk_02.wav",
+      "source_sha256": "d22b36470e485dc0d9f15f4c2032764b82cf6d3588af30d979655b874c32bb71",
+      "path": "dirt_walk_02.wav.bin",
+      "sha256": "db66cbd8d1cfac39120519467d91062ac5a885a4591cce07ee8b544e8fdba734",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 33150
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Walk/Footsteps_DirtyGround_Walk_03.wav",
+      "source_sha256": "3ed78b8176418af355c0abb137d7f81422446f2c099e78e5299438eeb123f07a",
+      "path": "dirt_walk_03.wav.bin",
+      "sha256": "15458406c31d7b52d519e3f2d125b79ee0f6ca93241faa18bfb7aded626c5941",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 37492
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Walk/Footsteps_DirtyGround_Walk_04.wav",
+      "source_sha256": "6440c3ecb81f57c2053ecbdfc36919e00d3a466e345de5d6344971daae5d984d",
+      "path": "dirt_walk_04.wav.bin",
+      "sha256": "a3708dfa16878dd33922382f60e2cc4a4f087f02277ed634f48c81c5267dec0f",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 38532
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Run/Footsteps_DirtyGround_Run_01.wav",
+      "source_sha256": "7f5f61d5fc2cc927df92b2f6875812e4f923a7229b79d6d6814cf9532d964b14",
+      "path": "dirt_run_01.wav.bin",
+      "sha256": "da2c1d7a30d7b4a0a9750666b627257a169714a343297bff2ec4b668eda6d096",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 29160
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Run/Footsteps_DirtyGround_Run_02.wav",
+      "source_sha256": "494bec9b02025e5d06e81e1d1ff60c23e2377a4e5c661b6fcb560dcda62d0633",
+      "path": "dirt_run_02.wav.bin",
+      "sha256": "72e7cd3cdf2947ad0f0adc9bf32b90b55e528b907f239ab1d1fc28dfb2b74907",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 30994
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Run/Footsteps_DirtyGround_Run_03.wav",
+      "source_sha256": "cdd34efb909cfb65e5c70640292db6bb774a44b648285fbf78224efc781a76aa",
+      "path": "dirt_run_03.wav.bin",
+      "sha256": "d05f681292b2a07cf172a38ba02136bc28a2fdd5683632707dab1f3e150b560e",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 30722
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_DirtyGround/Footsteps_DirtyGround_Run/Footsteps_DirtyGround_Run_04.wav",
+      "source_sha256": "210a6a9a3395b74441f181de7c60a03995ac208ada7ab9b70eb24eb83022ae4a",
+      "path": "dirt_run_04.wav.bin",
+      "sha256": "716b458cf8a2b5780a3c40cb9aa52543027fc83dce4a6aad99297bfc42c53211",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 30038
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Walk/Footsteps_Walk_Grass_Mono_01.wav",
+      "source_sha256": "a452be5e6489743a6b9218b1a1e13c82af5e4a2f5c8317c5aed7890ffdd74b6f",
+      "path": "grass_walk_01.wav.bin",
+      "sha256": "5869f177bb85bc2d760b9a0ca69738697105da02d2a78bc723acf3d5fc3f2968",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 54106
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Walk/Footsteps_Walk_Grass_Mono_02.wav",
+      "source_sha256": "a6e4e427da32c2fb3ebcd80d413d614db94859ec4997516f9b388e49ce9aa0b3",
+      "path": "grass_walk_02.wav.bin",
+      "sha256": "bda1ed45ea033047d1cf70e094f11a79b4566f9b102ecead492633e7498d064b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 52104
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Walk/Footsteps_Walk_Grass_Mono_03.wav",
+      "source_sha256": "e2d20fb7aa3a4da66ff09a043fffa7959387b78c3242605573cb24520c748f37",
+      "path": "grass_walk_03.wav.bin",
+      "sha256": "d0ad0e65341d8148aaada95df0590e2aee6943662dcf4e53168152036558a0ec",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 54112
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Walk/Footsteps_Walk_Grass_Mono_04.wav",
+      "source_sha256": "c9ce406b3d21b8f185092529ea9bfc8e14c4e412869b37fc1f6b62348e971bb2",
+      "path": "grass_walk_04.wav.bin",
+      "sha256": "b055b1ddcc4bba133213d900e6ca725258659e7553c0c60584ae2bf466d66faa",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 44204
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Run/Footsteps_Grass_Run_01.wav",
+      "source_sha256": "2058e6f0f9bf089be490002e092338bc0f5317564eeef0ca2636fccd245e3fa2",
+      "path": "grass_run_01.wav.bin",
+      "sha256": "4eafc244fe58e1373999bcd092e3c30f8203a58558b073c721ec643f60e4bdb4",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 39262
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Run/Footsteps_Grass_Run_02.wav",
+      "source_sha256": "7fac87331403117f17d3735f2eacf32bda6a47dbaede0d9e33d73f0d5cf1cc30",
+      "path": "grass_run_02.wav.bin",
+      "sha256": "75414634c80af9cee882e0dfcb0f7368ec53d699e6f601735e33f17fa0160a1b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 39380
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Run/Footsteps_Grass_Run_03.wav",
+      "source_sha256": "beafe4845f8eb2bdf38b86e747e07b61df5e224665ea073e8ff3b55c2e477361",
+      "path": "grass_run_03.wav.bin",
+      "sha256": "583741bf5225c8df1c575b844fa9031402c35ce57eca7d382394c81824123b49",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 36874
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Grass/Footsteps_Grass_Run/Footsteps_Grass_Run_04.wav",
+      "source_sha256": "db5f6a03b412078111cb1588a316c24b78f641fdc6e5be7279817fbcd3e1559a",
+      "path": "grass_run_04.wav.bin",
+      "sha256": "118585d2dacc56f97a9091c82caae2476539961b9e3801a67a72d3c8e3d07045",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 43826
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Walk/Footsteps_Gravel_Walk_01.wav",
+      "source_sha256": "bcfc3d7966423f71ba89917944961299802403bd4c1af7f1839e7df4ba0d9cde",
+      "path": "gravel_walk_01.wav.bin",
+      "sha256": "72750b84b6f68f1d0d7667506fbce562027ff7147a7781211c0067f8ddeade90",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 72432
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Walk/Footsteps_Gravel_Walk_02.wav",
+      "source_sha256": "f42d3b6e6afc5854a83788a63e6d936144026481fbcd50e82fff10fb659c4f36",
+      "path": "gravel_walk_02.wav.bin",
+      "sha256": "0540beb43ac7c06290ac05aa3f433276efe81e390c22c9f647eb7cf73973bcb4",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 58710
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Walk/Footsteps_Gravel_Walk_03.wav",
+      "source_sha256": "cfe44c1607d975e6098980ace7e341691fe9bc12f5c82091143e840a76976369",
+      "path": "gravel_walk_03.wav.bin",
+      "sha256": "0d060c201c35251a2d001f9e623987834337599b97e16dd9654d9d210028b370",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 46142
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Walk/Footsteps_Gravel_Walk_04.wav",
+      "source_sha256": "d653359f4a6875f027197d5b6691afa892e1c7182471c32652575339374bc89e",
+      "path": "gravel_walk_04.wav.bin",
+      "sha256": "aec234d639392e2712f6a2fb9bee73ba3f69d4fea3e4ca30e6c15cc498fb7723",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 58520
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Run/Footsteps_Gravel_Run_01.wav",
+      "source_sha256": "c2ccab74ebd28eff2389c9fa4b6c74803b1283b991f6268964053d32784ce106",
+      "path": "gravel_run_01.wav.bin",
+      "sha256": "caefaa71ca382d3d41e92047a90b3cd5c540091fcd3219ce385f6a8b3ab1a3ff",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 41066
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Run/Footsteps_Gravel_Run_02.wav",
+      "source_sha256": "90de9ae930461383ad6e4f93761354b6b4260c29f31b99d0d7b530214fd72844",
+      "path": "gravel_run_02.wav.bin",
+      "sha256": "d88ad80d9179f8a54a6bf5f62556cb56c0215f3683487ee2a4e15c19182a17ca",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 41018
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Run/Footsteps_Gravel_Run_03.wav",
+      "source_sha256": "83be6ae57bc01c166aa5274dc809d28341174213dc7eff0e07cddaebae33ff19",
+      "path": "gravel_run_03.wav.bin",
+      "sha256": "fe3716443211c0fb71c27e17e624a15c8d557fe0aa844e848bbd0f9cff8ea3a5",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 40930
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Gravel/Footsteps_Gravel_Run/Footsteps_Gravel_Run_04.wav",
+      "source_sha256": "c6b035bc31bc485234d013d134a9faeb5017913e5703be3c97da2fa78af38407",
+      "path": "gravel_run_04.wav.bin",
+      "sha256": "8356bbfb7376b91c2a1fc42a50baa7219452740ad7b7fd5dc60ac33e64d32d04",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 38802
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Walk/Footsteps_Leaves_Walk_01.wav",
+      "source_sha256": "42a2a2d2f3d80792bcc3a37bf06fe5d127a70b23de935d46ff6e8a3a40b23c6b",
+      "path": "leaves_walk_01.wav.bin",
+      "sha256": "048b53f49fde1cc113540761b9904ee325cd2fa5e065e19acea79d91fcf2fc28",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 67132
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Walk/Footsteps_Leaves_Walk_02.wav",
+      "source_sha256": "bf17fde9102b6fe3b1fa39f98cad3029e45be49fa81afa271ecc8ddfa34c84dc",
+      "path": "leaves_walk_02.wav.bin",
+      "sha256": "9ab23d4114c1f79b3c3093667e38727a758bc3a7f95277181428c72dad724239",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 46474
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Walk/Footsteps_Leaves_Walk_03.wav",
+      "source_sha256": "b709c595af9f62e002eee6f4645b47a32797e7028819f494452df42ca116f308",
+      "path": "leaves_walk_03.wav.bin",
+      "sha256": "d6fd4f8e13830dc87d29d96a2c3cbe6e24e9fad1be3e84d2a195843a5526ef37",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 48078
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Walk/Footsteps_Leaves_Walk_04.wav",
+      "source_sha256": "65ee00e0d9aa6023749059bebb91c0fe428b097d53910fbe59c94e9b71fb2c18",
+      "path": "leaves_walk_04.wav.bin",
+      "sha256": "7d197b7f158cff2b973f207f50c41dff036b265a3ec086c1683d37e21aed63e2",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 52374
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Run/Footsteps_Leaves_Run_01.wav",
+      "source_sha256": "a863cac9e05acb12a643883488b343b7c4ee95de97f3deb268671625ffaf02ab",
+      "path": "leaves_run_01.wav.bin",
+      "sha256": "09854d82dde86ce7276629dec93c0a0e7eeacb7d8010d825026955fe1cd738bc",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 57348
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Run/Footsteps_Leaves_Run_02.wav",
+      "source_sha256": "317ccd6a14f2bab32a6879806f635e12d73915f95a8e345e2e8049623e2fc622",
+      "path": "leaves_run_02.wav.bin",
+      "sha256": "ce83c3f1c3da4e3e46ff852e21dbc70efb8c4c73f6bc2487cd3f121eebd37106",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 51560
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Run/Footsteps_Leaves_Run_03.wav",
+      "source_sha256": "dcd5eb45ab9b333e9fd5874ca329be5e3d35e4a1cf599c963d147787c830ede9",
+      "path": "leaves_run_03.wav.bin",
+      "sha256": "cf147149b27f97e98e63485a9638cbd55744fe786e4636e846d7f98939067690",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 46618
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Leaves/Footsteps_Leaves_Run/Footsteps_Leaves_Run_04.wav",
+      "source_sha256": "049bb7318b41dba236a165ddf654980d8208b5b9ed8a60b99c5d42567f82804f",
+      "path": "leaves_run_04.wav.bin",
+      "sha256": "bc5da1f6412a88afb27bf5237257f74297e8e37344ef986035f241eff69c778c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 48840
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Walk/Footsteps_MetalV1_Walk_01.wav",
+      "source_sha256": "d9bae47bd010c9ca3e607616144cfe214e9c065c0bf10266ceddcf1aa08b7489",
+      "path": "metal_walk_01.wav.bin",
+      "sha256": "498a3a31ca9fb5e6c0b3bd9d832704db07a2de4b0b48ac510d640edd8ee63e64",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 50760
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Walk/Footsteps_MetalV1_Walk_02.wav",
+      "source_sha256": "9a3f95723dd87b865a1d5d53bed61bcb42c367472abf1b2561c122ac2925f7e0",
+      "path": "metal_walk_02.wav.bin",
+      "sha256": "0bfadb85805604edd70a0c0651d6dbaa6657635ee66812d734a6a8c6e5d26f48",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 48256
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Walk/Footsteps_MetalV1_Walk_03.wav",
+      "source_sha256": "f2553de2416bdfa4820471a471c5be620d0cf837dc0ae37abc36e9698fd5d83f",
+      "path": "metal_walk_03.wav.bin",
+      "sha256": "9188b521d9fa2084e175dcf72a610bb1921e3f413c2e6ff8206a56113c9bbc5f",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 51914
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Walk/Footsteps_MetalV1_Walk_04.wav",
+      "source_sha256": "4194b7636a70bf8140b1aeca9bd21f8dd64bab2da916b6026657dce01bca153f",
+      "path": "metal_walk_04.wav.bin",
+      "sha256": "5a48e699be6a62dbf78dbfae03d84fd7a3f7a262083b45e28b344b316997752b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 50540
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Run/Footsteps_MetalV1_Run_01.wav",
+      "source_sha256": "ab6aae27d9f54253478ff5d02952f80849e02002cb68ed37d6a03bf755fa1ade",
+      "path": "metal_run_01.wav.bin",
+      "sha256": "17f998261348ca9a98deb09ead0a801d69a28e718cbbf7dfeaaa161372f844d7",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 42974
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Run/Footsteps_MetalV1_Run_02.wav",
+      "source_sha256": "19e77a46f37b46df2959486c8b1913a78536ee756bceb277ea8e9d7d034bae7f",
+      "path": "metal_run_02.wav.bin",
+      "sha256": "18c9391b2ee365c31e225d7c70f59ee79829033379ed18c5b474a96e9b0eb734",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 34990
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Run/Footsteps_MetalV1_Run_03.wav",
+      "source_sha256": "2bb153ddebc4d808646d33c298e6d1072d14b16d4aae571af23da3e2ed097f83",
+      "path": "metal_run_03.wav.bin",
+      "sha256": "e565409ce49539eb1ed5ebe0dbb75f2a102817fe337b88a3add90d15177dcd27",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 32332
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Metal/Footsteps_Metal_Run/Footsteps_MetalV1_Run_04.wav",
+      "source_sha256": "396b6cc46836b8681ace00d50ec60dc5f3eb14f6017101eaab3ab0304775f1e0",
+      "path": "metal_run_04.wav.bin",
+      "sha256": "5c1f605d03825af13f1f9d3afbe329a90d3830562040e7844b97123d8efd991a",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 37748
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Walk/Footsteps_Rock_Walk_01.wav",
+      "source_sha256": "156069957f17b89d191497184a409b7f12ac7ff1c64596256bcfcd5922f7bd4e",
+      "path": "rock_walk_01.wav.bin",
+      "sha256": "9bcc58c4156f7d8058e6300b853b498a5f2b5ba324f6b28729421261ca85b9a7",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 41944
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Walk/Footsteps_Rock_Walk_02.wav",
+      "source_sha256": "8a50ae1e8a324dea229d736277f8f99616295ce596bb9359cff269723fd1b65f",
+      "path": "rock_walk_02.wav.bin",
+      "sha256": "18f0c603b2e98f33d274a9496e4823a856d92ad0799e60ea7bc3b5954c7beb9c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 40410
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Walk/Footsteps_Rock_Walk_03.wav",
+      "source_sha256": "bcae0ee8297decd9a2ced9552465ca44163492517b94ce1c449e833ff7fb4506",
+      "path": "rock_walk_03.wav.bin",
+      "sha256": "ac85bb85a27b72580d83514c6488068de22ef2041429e89aeb569febb06ac38c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 43160
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Walk/Footsteps_Rock_Walk_04.wav",
+      "source_sha256": "f887cccec86aa8caf36e9308f1e184a6300a1dc694ad225437d9ecb08149856e",
+      "path": "rock_walk_04.wav.bin",
+      "sha256": "c364704d3c25bf0ee12782abab843a213c20d90cbd4d2203414f952a98c0d5ab",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 36572
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Run/Footsteps_Rock_Run_01.wav",
+      "source_sha256": "4eb3688a0de5ccab7cbcab3f60cb026e45f8b39d32efa011452d399e8389cef3",
+      "path": "rock_run_01.wav.bin",
+      "sha256": "359e02fa87598cdeb7b2a78bf21333f02920dccbc8cb631634806d25d427908d",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 38126
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Run/Footsteps_Rock_Run_02.wav",
+      "source_sha256": "88a4dbe78df5e27f9c19844094593318783cfb5ebca0fb42ad3df76b5d74fa05",
+      "path": "rock_run_02.wav.bin",
+      "sha256": "60f15f8e6135adbee2b354e01ae35044a7966d8779e5388a181abab1d84d8d8b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 32776
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Run/Footsteps_Rock_Run_03.wav",
+      "source_sha256": "0e76846da1b6740d9f9932d39ad99272813fac2a122069b66e9d7d6d58f79020",
+      "path": "rock_run_03.wav.bin",
+      "sha256": "e0abd80c063576ed9c9b88fee23ebe6cdf457e96f9fe354f35cc38b116ea5ab3",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 36758
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Rock/Footsteps_Rock_Run/Footsteps_Rock_Run_04.wav",
+      "source_sha256": "a42a0686b37968bf2454cccdc9f83b8d852641e095fc7106751c89a5bacff9df",
+      "path": "rock_run_04.wav.bin",
+      "sha256": "c12e72f72da2e4f24a667cb54f00f8871d4166baa181effd357e7bd943cfb860",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 34978
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Walk/Footsteps_Sand_Walk_01.wav",
+      "source_sha256": "babd2df42b28eb830e14932a5299c76725b402acefb6592963dcfd75ced9fe2d",
+      "path": "sand_walk_01.wav.bin",
+      "sha256": "de184f3a64cd8f3e07fe12c88870838d5b20970878c0f268e9487799802c09d1",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 48078
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Walk/Footsteps_Sand_Walk_02.wav",
+      "source_sha256": "3bc1c79f428cea16dd1bc7d46b017385548b4b356ca58d1f217c1d16e880c5e6",
+      "path": "sand_walk_02.wav.bin",
+      "sha256": "d4de0aac1182d1ccfe86f182a9016a47c68043cd2a1b4029be59b8118b423ebd",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 63590
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Walk/Footsteps_Sand_Walk_03.wav",
+      "source_sha256": "70895d1ba23ac3cc8445f3a8b50edee7b6af20114eaea0b260b9c8db135c5158",
+      "path": "sand_walk_03.wav.bin",
+      "sha256": "f111b063f5e40205d0acf46e94bc1371d119bdda95895f9ead41857a2c16e68e",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 70578
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Walk/Footsteps_Sand_Walk_04.wav",
+      "source_sha256": "0d30060fc00fb3592200be4a8508117e98175c25fc79a41548721aa73ef57bf9",
+      "path": "sand_walk_04.wav.bin",
+      "sha256": "d1ac0f18f226a0e824809b8c499fe6ec42d0d12f811c9967b2ba9f61a1e3fbb3",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 67964
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Run/Footsteps_Sand_Run_01.wav",
+      "source_sha256": "5bfa93a9939bae9dda26f4738e77e37dd1ab99cede2c377dbc1e0910346cdad3",
+      "path": "sand_run_01.wav.bin",
+      "sha256": "c96d9b00a82f82b5a592790650e281e21d04c6abb71f050b51c36f1d064b77ad",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 28476
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Run/Footsteps_Sand_Run_02.wav",
+      "source_sha256": "b00a71afe160b3ff730d8c09eed9b3b517c7fe3cf2c9531bfef48d1cb39b18ef",
+      "path": "sand_run_02.wav.bin",
+      "sha256": "1cab18b50208cf3ef60fac59d4932a52fe477b0f6e0c5ba855b3cebc968e3c29",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 35768
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Run/Footsteps_Sand_Run_03.wav",
+      "source_sha256": "65717ba7df1978031a479087e8de738ee0f89c157e314c81afe13c9f300f98c2",
+      "path": "sand_run_03.wav.bin",
+      "sha256": "749ab9fbe73380d512f7a9a23c897a18b64157768e30f6f57ce4542b4f47ee5f",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 31758
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Sand/Footsteps_Sand_Run/Footsteps_Sand_Run_04.wav",
+      "source_sha256": "671e2c1cba5367887613256882159d35e5bc1e587e51f0b0a019e596c327cf05",
+      "path": "sand_run_04.wav.bin",
+      "sha256": "81f8601028edb8459e5be1ba1191c1bf0cacef8ae7ed6216cc46ccb309d0fff1",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 40042
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Walk/Footsteps_Snow_Hard_Walk_01.wav",
+      "source_sha256": "0a827e14aab336bf4862d8760f7bea1626d01b260cf3b2256cbc6b41789cef26",
+      "path": "snow_walk_01.wav.bin",
+      "sha256": "f9775b1340b4a0bfea30abcf36dbd273a8ebcbc7d73cae2476b18dee6ef9a526",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 51368
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Walk/Footsteps_Snow_Hard_Walk_02.wav",
+      "source_sha256": "3b6143fe5b4ddd58c8139d4d65004a99e2bfd47cabc0429a9e9989d210a5b878",
+      "path": "snow_walk_02.wav.bin",
+      "sha256": "f8a719e6731072362ec6e871ce6da5dac574f3f1b353ddc1a68a1919f3ebac03",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 56934
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Walk/Footsteps_Snow_Hard_Walk_03.wav",
+      "source_sha256": "5b282fca1996df4f36364a84fa2226cec61b546471f9ff3afcbea848d60129cd",
+      "path": "snow_walk_03.wav.bin",
+      "sha256": "62ec57626a9545d5a42a2e1ef8b83837fd446934d101294bdd9bfb933a9560b4",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 56270
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Walk/Footsteps_Snow_Hard_Walk_04.wav",
+      "source_sha256": "5cad1040513b8cc322e8dfb51303edc8480ae4b273dd68e810f408c0c540885c",
+      "path": "snow_walk_04.wav.bin",
+      "sha256": "cc2f95ba6b52bc12270a5a4c3ddb0ec2ac9a239d528208c6705422c3f356abfb",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 44462
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Run/Footsteps_Snow_Hard_Run_01.wav",
+      "source_sha256": "46b632b85edba79050893b8aafd06c26e0ca4b152a4e8d5d1295ba51299adfe4",
+      "path": "snow_run_01.wav.bin",
+      "sha256": "1f9e4c0ea9d50d6a809159b0b46f770172447416b6c7a4b277ad9f1c5805ac9f",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 30288
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Run/Footsteps_Snow_Hard_Run_02.wav",
+      "source_sha256": "1aef9f274dac63c3a6fd3d0a836d33f027ccecb5b994119a6fd576c943136a76",
+      "path": "snow_run_02.wav.bin",
+      "sha256": "2fecb1e0aeb5c028985cb70478bae09e7c875edd6207b659715e5c7e2c8d1204",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 27106
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Run/Footsteps_Snow_Hard_Run_03.wav",
+      "source_sha256": "7c5fea6993469e5aff98aaf58d97ef4933b55dac739f323f99e6512521887de8",
+      "path": "snow_run_03.wav.bin",
+      "sha256": "9455dc6a96bfb1be33a61737955b1737ae78edad229a5cb9158b661371798960",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 25542
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Snow/Footsteps_Snow_Run/Footsteps_Snow_Hard_Run_04.wav",
+      "source_sha256": "4456652fb08ddd19f38ae3ef833cb655707c4603c6c1626d6d30586e1bc780f5",
+      "path": "snow_run_04.wav.bin",
+      "sha256": "b1c11f106bc4b63ef9575bab8118995f87ba331c41cd580a4681d7ba4d0b683e",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 23872
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Walk/Footsteps_WaterV1_Walk_01.wav",
+      "source_sha256": "3e46819574ac259547da70a8cc6374767561298e2d3a1765d5448ba65195d579",
+      "path": "water_walk_01.wav.bin",
+      "sha256": "ae2f3568b43f68ac97276ec06aef88db7ebede6ca689007e70b0bcd9dd80252b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 61068
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Walk/Footsteps_WaterV1_Walk_02.wav",
+      "source_sha256": "6fd9de088303d7d4a476f97c66adc7553a9b996d66de3ec2e594cdd6a675aa4d",
+      "path": "water_walk_02.wav.bin",
+      "sha256": "869f8dbc055fd616aebf69876530900721daf3cfa32fcd8d5824a4273d5d8077",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 81018
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Walk/Footsteps_WaterV1_Walk_03.wav",
+      "source_sha256": "a38c557fd248ad22b01945e988a19f37a45d0b8bf4a8603a36b16991cd1c63f6",
+      "path": "water_walk_03.wav.bin",
+      "sha256": "1fd4f3efc5cf1fa123a82e6d33955edfdaacf3b7fcc33f55f79ea82e0545895b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 49018
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Walk/Footsteps_WaterV1_Walk_04.wav",
+      "source_sha256": "c2b774b54493d9c6708b95c11ed377e11875aa0dcf2bb2928d28d820185a4c73",
+      "path": "water_walk_04.wav.bin",
+      "sha256": "d538f9607dd39c48df93717cf3cbe2510a5f4e1d089f664345897668f6fed16e",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 62346
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Run/Footsteps_Water_Run_01.wav",
+      "source_sha256": "9fab0a5e98d303d9ea9e7e918a16f231f08abb861eb1992818699646ebd47ba8",
+      "path": "water_run_01.wav.bin",
+      "sha256": "01c413142083a2ffe7deea522b9899b0cd323ed150eab5a8f7130bad234c1b9c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 104124
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Run/Footsteps_Water_Run_02.wav",
+      "source_sha256": "9bc56b01e3cc6d487bf13466123104c77ae57e857eaa5310af46fc84e59471fc",
+      "path": "water_run_02.wav.bin",
+      "sha256": "91fb577c33b572fdeb353687097410dd27c266f5e34c1d5c25ff2257189920b6",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 112614
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Run/Footsteps_Water_Run_03.wav",
+      "source_sha256": "da5088a9b6298db432296a5349951b1c2bdc5959effe0418511da617f802531e",
+      "path": "water_run_03.wav.bin",
+      "sha256": "a4eaf6023577a9c258a7c1b2a512cbdabac6942d8fd797970860305419e4341c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 127618
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Water/Footsteps_Water_Run/Footsteps_Water_Run_04.wav",
+      "source_sha256": "1551e8adb1e7b4ee5707ed8b8a0d96602849e96f965c0339cd35b97b863de571",
+      "path": "water_run_04.wav.bin",
+      "sha256": "565c0e2e4f1b625deaedc2d6590ef9f7d41608964ee33b18cdd4984ad8054a0a",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 112614
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Walk/Footsteps_Wood_Walk_01.wav",
+      "source_sha256": "ced3c3e067d9e9e7d46075a5cfdcc8063153c0099c076fdfa27cd171f16f18d6",
+      "path": "wood_walk_01.wav.bin",
+      "sha256": "22e2cca506b873f3ac5068130dd26aaf8b4cbe7bab0bd589f0b706c8942cb0dc",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 43106
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Walk/Footsteps_Wood_Walk_02.wav",
+      "source_sha256": "0fbf01e67ceeefa6489d3b82d070c3b03df67ea4daf12503da7aa46a97c9b03b",
+      "path": "wood_walk_02.wav.bin",
+      "sha256": "746485e41ef834adbdc1898ef2eb78ce17539b18c3ce718d231f3ad1ce9128ed",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 45410
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Walk/Footsteps_Wood_Walk_03.wav",
+      "source_sha256": "7b732ddaf1f3586571a6790ebeeea8400f1acf9e4921c64a987d29bb4764756f",
+      "path": "wood_walk_03.wav.bin",
+      "sha256": "b485a336d76846ac3105d2b682a6ec1ec65f6f65734ff87171581a7860f66d40",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 49034
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Walk/Footsteps_Wood_Walk_04.wav",
+      "source_sha256": "8d8c46c46c9743a436b92f971ffdc893ea8a82bb29d1197d767520d5885a666c",
+      "path": "wood_walk_04.wav.bin",
+      "sha256": "305d264d86728dae4238efd9254676837e4630a88332868580c1573f760fe4e4",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 55848
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Run/Footsteps_Wood_Run_01.wav",
+      "source_sha256": "3d37662bab3f4b1fc103a0ff041a2eb4944427b9d7b9e063ff79a0f53e2786d1",
+      "path": "wood_run_01.wav.bin",
+      "sha256": "69f00cfef0bce85617480d14cb09e75ff5550676a416e6bfa204b4b931ef273c",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 27308
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Run/Footsteps_Wood_Run_02.wav",
+      "source_sha256": "b5f79757b5ff82c7ba3a2ddc4a5730694c4f578da3b44b0f6c831ae9fc0fea5c",
+      "path": "wood_run_02.wav.bin",
+      "sha256": "af3785ecc70ac10fbd1a72f9eba6d13c53973fb2884fb0f69f32b2bd94b4753b",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 34060
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Run/Footsteps_Wood_Run_03.wav",
+      "source_sha256": "57a8352479a7064dcc060dfac85776b1ba5b4cecc10da63db953dc6748982883",
+      "path": "wood_run_03.wav.bin",
+      "sha256": "9596c032a21f00bfa661c23379509ef94a105758215dae9795783d8e9fe332f1",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 31088
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Footsteps_Essentials_NOX_SOUND/Footsteps_Wood/Footsteps_Wood_Run/Footsteps_Wood_Run_04.wav",
+      "source_sha256": "6eea5992ade2b622a87e334a27fb77ef03d672a485b5aa0043dbfc1c30dbdf66",
+      "path": "wood_run_04.wav.bin",
+      "sha256": "d64278ef0cdb90778bc2c9afb4bb7d5350c120dd0d8730b644f05bc69169b991",
+      "conversion": "48kHz mono PCM16",
+      "bytes": 31352
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Nature_Essentials_NOX_SOUND/Ambiance_Forest_Birds_Loop_Stereo.wav",
+      "source_sha256": "98b1d9ea7542b496d97a182fcee828bc5d0df39b857ef3b7323c592912e1d372",
+      "path": "forest.ogg.bin",
+      "sha256": "40dba8fb80f1dc4d191b8ca89a3e002058cdbd1c74748dbe80b69cbc90d9d4ce",
+      "conversion": "48kHz Vorbis q5",
+      "bytes": 543608
+    },
+    {
+      "source_member": "Essentials_Series_NOX_SOUND/Nature_Essentials_NOX_SOUND/Ambiance_Firecamp_Small_Loop_Mono.wav",
+      "source_sha256": "54e84f0d4cda818248a9ea2a970330f53757354a93ce8b1fbab2e5d7937121c6",
+      "path": "campfire.ogg.bin",
+      "sha256": "808b53f2c796e9cb37c1a44e0543f686009ec9b8581521667c523b1d4703a934",
+      "conversion": "48kHz Vorbis q5",
+      "bytes": 128194
+    }
+  ],
+  "authoring_tool": "ffmpeg version 9.0.2-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+}

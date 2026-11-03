@@ -1,0 +1,26 @@
+NOX Essentials Series - curated TerraForest audio subset
+Creator: Nox_Sound_Design
+Source: https://nox-sound-design.itch.io/essentials-series-sfx-nox-sound
+Retrieved: 2026-11-03
+Terms: CC0-1.0 (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The upstream Essentials_Series_README.pdf states:
+"All these sounds are under CC0 license."
+The source page also explicitly declares all sounds CC0.
+
+Archive: Essentials_Series_NOX_SOUND.zip (1,036,374,981 bytes)
+SHA-256: 0df9a98cc8d0499787cb3c29f3e278fdacd75ca3e94106828ea8b5c115ae8d3d
+Exact source-member and derivative hashes are in provenance.json.
+
+This directory contains 80 selected individual footsteps converted to 48 kHz
+mono PCM16 and two complete ambience/fire loops converted to 48 kHz Ogg Vorbis.
+The .bin suffix preserves the codec bytes through Godot export; these are WAV
+and Ogg files, not executable resources. No promotional artwork was imported.
+The source archive is retained in the external development source-asset cache.
+
+TerraForest's original pack.audio.module.json authoring data and example pack metadata are
+dedicated to the public domain under CC0-1.0. NOX recordings retain the author's
+CC0 dedication. Attribution is retained voluntarily for provenance.
+The example_audio/soft_grass.wav.bin copy derives from grass_walk_01.wav.bin;
+its original archive member and hashes are recorded in provenance.json here.

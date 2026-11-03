@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS temporary real world reaches play
+PASS session host honors optional module flag
+PASS session host attaches audio after startup
+SCRIPT ERROR: Invalid call. Nonexistent function 'cancel' in base 'RefCounted (entry_fly_in.gd)'.
+   at: run (res://tests/audio_world.gd:34)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/audio_world.gd:34)
+       [1] wait_for (res://tests/audio_world.gd:18)

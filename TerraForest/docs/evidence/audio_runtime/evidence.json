@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-03",
+  "engine": "Godot 4.7.2 stable Steam ed1daf0bf",
+  "source_checks": 41,
+  "packed_checks": 41,
+  "world_checks": 13,
+  "omitted_checks": 2,
+  "awareness_checks": 34,
+  "files_sha256": {
+    "source.log": "714e1f87b2f5b50999d17b09ea53ced2d8ca459447391212c2b4c8613de146cb",
+    "packed.log": "714e1f87b2f5b50999d17b09ea53ced2d8ca459447391212c2b4c8613de146cb",
+    "world.log": "0d9c8dc4504a4e33b6c0b868143a748cc3f70ceddd63ae9c41455965d257e13a",
+    "omitted.log": "7870deacdba6b441216be5770580ceebdb85a3ff64927f09d7c3fc7668cf861f",
+    "awareness.log": "f468f7608affcaaefed715290678ae3e6470c29da7595706d9dc62e0e42a2e58",
+    "initial-world-failure.log": "9564512a8f6f6dd886a01dfc40f19241fd48e7c81fa69a890a9774b54e39428c",
+    "initial-loop-leak.log": "da0d494d5605c3d14482f40cc2ea08f4c5f2c395b6e41d463fa2362e87408faa",
+    "audio-menu.png": "c371c0a95cca94b8342169f8140dd79470c11e4c759850ed35545c27d73de0d2",
+    "full-export.log": "ceccd2d74bd033a625abbad3687fe9792443120c714b881992bfed4d4d25fb61",
+    "full-pack-world.log": "da8be2495335ab01b1130b2ff969907b3fa907eda538f6583efb53e44168435b"
+  },
+  "full_pack_world_checks": 13,
+  "full_pack_sha256": "6d32d5c667011b0d7711403999d4a5cd8d818afd626764d4b37a62dc9553c337",
+  "full_pack_bytes": 476064680,
+  "runtime_sha256": {
+    "addons\\audio_runtime\\audio_runtime.gd": "18e9beafbec1d4800c6ee02b1f9676186b313d1d1f595fe6d471e89b68ac3942",
+    "addons\\audio_runtime\\catalog.gd": "dda5d2664486793e844e170bf07dc3bcc595e08d3f31d43efc09a75dfe72fbbb",
+    "addons\\audio_runtime\\world_audio.gd": "8789c84c02a1e99015da746015ce29a749986f54518477edf03968a4b8fe0218",
+    "addons\\world_runtime\\world_session.gd": "fb62f126fd29973c7c8f23de2544a277afbec0624833a06cd4562194da963731"
+  }
+}
