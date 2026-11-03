@@ -165,6 +165,18 @@ These package phases have distinct hashes/scopes; earlier failures are retained.
 Player visual, crowded combat and foreground performance acceptance remain open.
 Evidence and return triggers: [coal-mine tracker](../issues/coal-mine/README.md).
 
+## Trader return obstruction — 2026-11-03
+
+Player-reported expedition hold reproduced on a private save copy: downhill
+creep left the car behind the return start, causing a false route obstruction
+with live road checks clear. Scoped recovery preserves the original outward
+approach; stopped waiting phases now park the chassis. Full source recovery,
+home stop, safe exit, parked waiting and walk to shop pass (18 source assertions).
+Installed executable also completes all 18 functional assertions, but its overall
+runner retains a two-object exit cleanup warning. Export/smoke pass; updated pack
+is installed. Original player save preserved. Evidence, retained diagnostic
+warning and limits: [trader tracker](../issues/trader-travel/README.md).
+
 ## Paid trader road travel — 2026-11-01
 
 Requested: select another town/city, pay coins, both board a car, trader drives

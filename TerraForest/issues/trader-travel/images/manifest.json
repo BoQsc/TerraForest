@@ -46,5 +46,13 @@
     "caption": "Actual root executable after fresh-process paid reload: same car and both fitted occupants, ride status restored. Inherited garment/body fit and opaque exterior glass remain separate limitations.",
     "inspection": "inspected",
     "provenance": "Unedited Godot packaged-runtime screenshot. Existing world, human, garment and vehicle assets retain their existing notices; no external assets imported."
+  },
+  {
+    "image": "return-recovered-package.png",
+    "source": "reports/trader_ride_world/20261103T003700445135Z/return-recovered.png",
+    "sha256": "ab9123a4e30b743ed657e61f60332cea3a263554e7c519f8f7f8026d2f9d066d",
+    "caption": "Installed executable on a private copy of the stuck save: returning home at28km/h on the original road after approach recovery. Functional return completed; overall test retains exit cleanup warning.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot; inherited assets retain their notices, no external assets imported."
   }
 ]

@@ -6,6 +6,46 @@
   by car on roads, and trader returning after the player gets out.
 - User review: Not reviewed. No visual/gameplay acceptance claimed.
 
+## Return obstruction follow-up — 2026-11-03
+
+The reported expedition return was reproduced in a private copy of the recent
+player save. The car was stopped about 5.5 metres behind the return route's first
+point. Live road, chassis and wheel checks were clear; the native follower's
+endpoint distance was reported as a road obstruction. Service braking had allowed
+slow downhill creep while waiting.
+
+The service now parks the real chassis after it stops at a waiting phase.
+Existing interrupted returns can retain up to 32 original outward approach
+segments when they match the return endpoint and the current forward direction.
+Recovery requires less than one metre lateral error, at most 12 metres from the
+endpoint, compatible height and the existing archive bound. It keeps normal
+road-footprint, readiness, obstacle and wheel guards. No car/player pose is moved
+by recovery. The original save is never opened by these test drivers.
+
+Source recovery and complete homecoming pass in
+`reports/trader_ride_world/20261103T003132223513Z` (17 assertions). That report
+precedes the added waiting-park regression; final source/package checks below
+qualify the finished patch. Initial diagnostic reports under
+`reports/trader_return/20261103T002749Z` retain the original blocked state;
+the first diagnostic also retained an exit-leak warning. Final source `20261103T003340554322Z` passes 18/18 and strict
+resource/diagnostic gates, including waiting-park verification. Actual executable
+`20261103T003700445135Z` completes all 18 functional assertions, the entire return,
+safe exit and walk home, with zero pointer captures and sampled resources within
+budget. Its overall runner result is retained as failed for two ObjectDB instances
+leaked at exit; this cleanup cause is not established by this patch. Export gates
+and smoke pass; installed PCK is
+`9b4d7cc15e0e0f6582822c99a96d60cef75e1a1305804a1aacf564d669845e1d`.
+Original save bytes are unchanged. Exact hashes, resources, frame metrics and
+retained warnings: [recovery record](return-recovery-verification.json).
+
+![Recovered return in the installed game](images/return-recovered-package.png)
+Inspected packaged view after the interrupted return resumes on the saved road.
+User review and inherited visual limits remain separate.
+
+Reproduce using `python tools/check_trader_ride_world.py --source-slot <slot>
+--stage return-recovery`; it creates and runs only a new owned copy. Add
+`--executable` for the installed package.
+
 ## Changes and verification
 
 Native published-road graph, road-distance quotes, heading-constrained departure

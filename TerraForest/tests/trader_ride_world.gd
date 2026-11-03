@@ -23,6 +23,27 @@ func run()->void:
 	# Headless input ownership substitute only: retain all interaction gates
 	# except pointer capture, so this offscreen check never steals user input.
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open
+	if stage=="return-recovery":
+		if not check(ride.state.expedition and ride.state.phase in [ride.RETURN_STOPPED,ride.RETURNING],"copied save retains the interrupted expedition return"):await finish();return
+		if not check(await wait_for(func():return is_instance_valid(ride.car),20),"same service car is admitted"):await finish();return
+		var identity:int=ride.identity();var origin:Vector3=ride.car.position
+		var coins:int=Trade.count(game.player_hud.inventory,Trade.CURRENCY)
+		check(ride.board(),"ordinary passenger boarding resumes the stopped return")
+		if not check(await watch(func():return ride.car.position.distance_to(origin)>20,35),"car physically rejoins the saved road and continues home"):await photograph("return-failure");await finish();return
+		check(ride.identity()==identity and game.world_vehicle.passenger==ride,"same car and passenger retain ownership")
+		check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==coins,"return recovery does not charge coins")
+		check(ride.store.validate_snapshot(ride.capture()),"rejoined return route remains archive-valid")
+		await photograph("return-recovered")
+		if not check(await watch(func():return ride.state.phase==ride.HOME_ARRIVED,180),"recovered expedition reaches its home road stop"):await photograph("return-home-failure");await finish();return
+		var parked:Vector3=ride.car.position
+		for tick in 120:await physics_frame
+		check(ride.car.freeze and ride.car.position.distance_to(parked)<.01,"waiting service parks the stopped chassis without rolling downhill")
+		var message:String=game.world_vehicle.exit_vehicle(game)
+		check(game.world_vehicle.passenger==null,"passenger gets out safely at home: "+message)
+		check(await watch(func():return not ride.active(),90),"trader walks back to the shop and becomes available")
+		check(ride.identity()==identity,"homecoming preserves the same service car")
+		await photograph("return-home")
+		await finish();return
 	if stage=="return-resume":
 		var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("expected.json")))
 		if not check(ride.state.phase==ride.RETURNING and ride.identity()==int(expected.vehicle) and not ride.state.passenger,"fresh process restores the same unoccupied return after cancellation"):await finish();return

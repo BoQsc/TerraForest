@@ -162,3 +162,13 @@ New planner, tests and design are original AI-assisted work for this user reques
 with code under 0BSD. Existing driving code/assets retain their terms and notices.
 No external code, asset, dependency upgrade or license exception is introduced.
 Evidence and failed trials: [trader travel tracker](../issues/trader-travel/README.md).
+
+## Interrupted return recovery — 2026-11-03
+
+Waiting service cars park after physically stopping to prevent downhill creep.
+A saved return at cursor zero can retain its original outward approach when the
+car is within 12 m of the shared endpoint, within 1 m laterally of a matching
+segment, within 3 m vertically, and forward-aligned (dot product at least 0.8).
+Only the final 32 original segments are considered; the combined 8,192-point
+archive limit and all live road/collision/wheel guards remain. Recovery changes
+the saved itinerary, never a body transform. See the [follow-up evidence](../issues/trader-travel/README.md).

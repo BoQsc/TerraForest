@@ -21,8 +21,10 @@ def sha256(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-report", required=True)
-    parser.add_argument("--stage", choices=["inspect", "full", "resume", "depart", "complete", "paid-resume", "cancel", "return-resume"], default="full")
+    source_group = parser.add_mutually_exclusive_group(required=True)
+    source_group.add_argument("--source-report")
+    source_group.add_argument("--source-slot", help="Diagnose a saved world only through a new private copy")
+    parser.add_argument("--stage", choices=["inspect", "full", "resume", "depart", "complete", "paid-resume", "cancel", "return-resume", "return-recovery"], default="full")
     parser.add_argument("--resume-report", help="Reuse only this runner's owned copied fixture")
     parser.add_argument("--pack", action="store_true", help="Check the exported PCK with matching native libraries")
     parser.add_argument("--executable", action="store_true", help="Use the existing root TerraForest.exe and exported PCK; never replace it")
@@ -46,12 +48,17 @@ def main():
         metadata["executable_sha256"] = sha256(engine)
     if args.stage in ("complete", "paid-resume", "return-resume") and not args.resume_report:
         parser.error("This stage requires --resume-report from the prior owned ride run")
-    source = (ROOT / args.source_report).resolve()
-    if (ROOT / "reports/player_survival_world").resolve() not in source.parents:
-        parser.error("Source must be an owned survival test report")
-    source_slot = json.loads((source / "created_slot.json").read_text())["slot"]
-    if not source_slot.startswith("Survival_"):
-        parser.error("Source is not an owned fixture")
+    if args.source_slot:
+        if args.stage != "return-recovery" or args.resume_report:
+            parser.error("--source-slot is restricted to a fresh return-recovery copy")
+        source_slot = args.source_slot
+    else:
+        source = (ROOT / args.source_report).resolve()
+        if (ROOT / "reports/player_survival_world").resolve() not in source.parents:
+            parser.error("Source must be an owned survival test report")
+        source_slot = json.loads((source / "created_slot.json").read_text())["slot"]
+        if not source_slot.startswith("Survival_"):
+            parser.error("Source is not an owned fixture")
     folder = ROOT / "reports/trader_ride_world" / datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     folder.mkdir(parents=True)
     if args.resume_report:
@@ -99,7 +106,7 @@ def main():
         result = execute(command, folder, 180 if args.stage in ("inspect", "paid-resume", "return-resume") else 1000, "TRADER_RIDE_WORLD checks=", require_resource_budget=True)
     finally:
         subprocess.Popen = original
-    record = dict(stage=args.stage, source_report=args.source_report, resume_report=args.resume_report, clone=receipt, native_sha256=native_hashes, source_sha256=source_hashes, command=command, result=result, **metadata, **revision_metadata())
+    record = dict(stage=args.stage, source_report=args.source_report, source_slot=args.source_slot, resume_report=args.resume_report, clone=receipt, native_sha256=native_hashes, source_sha256=source_hashes, command=command, result=result, **metadata, **revision_metadata())
     (folder / "run.json").write_text(json.dumps(record, indent=2) + "\n")
     print(("PASS " if result["passed"] else "FAIL ") + str(folder))
     return 0 if result["passed"] else 1

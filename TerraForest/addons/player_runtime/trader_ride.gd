@@ -295,6 +295,7 @@ func _physics_process(delta:float)->void:
 	if state.phase in [BOARDING,HOME_WALK]:_walk(delta)
 	if state.phase in [OUTBOUND,RETURNING,ARRIVED,STOPPING,HOME_ARRIVED,RETURN_STOPPED]:
 		if not pilot_bound and state.phase in [OUTBOUND,RETURNING]:
+			_restore_return_approach()
 			pilot_bound=pilot.resume(state.return_route if state.phase==RETURNING else state.outbound,int(state.cursor))
 			if not pilot_bound:status_text="Trader ride · saved road route is unavailable";return
 			command.clear()
@@ -308,6 +309,10 @@ func _physics_process(delta:float)->void:
 				state.phase=HOME_ARRIVED;changed()
 			elif _driver_exit():
 				state.phase=HOME_WALK;state.cursor=0;pilot_bound=false;command.clear();changed()
+	# Service brakes can creep on a slope while the expedition waits. Once the
+	# real chassis has stopped, park it until boarding enables the motor again.
+	if state.phase in [ARRIVED,STOPPING,HOME_ARRIVED,RETURN_STOPPED] and car.linear_velocity.length()<.25:
+		car.streaming.discard_motion(car);car.freeze=true;car.set_physics_process(false)
 	if state.phase==HOME_ARRIVED and not state.passenger and _driver_exit():state.phase=HOME_WALK;state.cursor=0;pilot_bound=false;command.clear();changed()
 	if state.expedition and state.phase==ARRIVED:status_text=("Coal mine · E to get out" if state.passenger else "Trader waiting · board the car to return")+"\nI'll wait here. Board again to go home, whether or not the quest is finished."
 	elif state.phase==HOME_ARRIVED:status_text="Home again · E to get out"
@@ -315,6 +320,35 @@ func _physics_process(delta:float)->void:
 	elif state.phase==ARRIVED:status_text="Arrived at %s · E to get out\nThe trader will drive home after you leave."%state.title
 	elif state.phase==STOPPING:status_text="Stopping safely…" if car.linear_velocity.length()>.25 else "Stopped · E to cancel, get out and receive your fare refund."
 	_update_seated_actor();_present()
+
+func _restore_return_approach()->void:
+	# A stopped car can roll downhill while the passenger is away. The native
+	# follower measures distance to its first endpoint, so a car behind that
+	# endpoint must retain the already driven approach rather than invent a link.
+	if state.phase!=RETURNING or int(state.cursor)!=0 or not is_instance_valid(car):return
+	var outward:PackedVector3Array=state.outbound
+	var returning:PackedVector3Array=state.return_route
+	if outward.size()<2 or returning.size()<2 or outward.size()+returning.size()>8192:return
+	if outward[-1].distance_to(returning[0])>.05:return
+	var position:Vector3=car.global_position
+	if position.distance_to(returning[0])>12:return
+	var forward:Vector3=car.global_basis.z;forward.y=0
+	var best:=-1;var nearest:=1.0
+	for index in range(maxi(0,outward.size()-33),outward.size()-1):
+		var direction:Vector3=outward[index+1]-outward[index];direction.y=0
+		if direction.length_squared()<.001 or direction.normalized().dot(forward.normalized())<.8:continue
+		var offset:Vector3=position-outward[index];offset.y=0
+		var fraction:float=offset.dot(direction)/direction.length_squared()
+		if fraction<0 or fraction>1:continue
+		var projected:Vector3=outward[index].lerp(outward[index+1],fraction)
+		var lateral:Vector3=position-projected;lateral.y=0
+		if absf(position.y-projected.y)>3 or lateral.length_squared()>=nearest:continue
+		nearest=lateral.length_squared();best=index
+	if best<0:return
+	var restored:PackedVector3Array=outward.slice(best)
+	restored.append_array(returning.slice(1))
+	if outward.size()+restored.size()>8192:return
+	state.return_route=restored;changed()
 
 func _controls(delta:float)->Dictionary:
 	if not world_active() or state.phase in [ARRIVED,STOPPING,BOARDING,HOME_WALK,HOME_ARRIVED,RETURN_STOPPED] or ((state.phase==OUTBOUND or state.expedition) and game.world_vehicle.passenger!=self):return {"hold":true}
