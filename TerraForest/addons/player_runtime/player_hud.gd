@@ -58,6 +58,11 @@ var side_tabs: HBoxContainer
 var active_tab:="Backpack"
 var backpack_panel:Control
 var quests_panel:Control
+var developer_panel:PanelContainer
+var developer_scroll:ScrollContainer
+var developer_content:VBoxContainer
+var developer_pages:Dictionary={}
+var developer_menu:Node
 var quests_notice:Label
 var drop_layer: CanvasLayer
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
@@ -234,6 +239,10 @@ func _ready() -> void:
 		grid.add_child(button);slots[i]=button
 
 	crafting_panel=PanelContainer.new();crafting_panel.position=Vector2(220,200);crafting_panel.size=Vector2(420,650);modal.add_child(crafting_panel)
+	developer_panel=PanelContainer.new();developer_panel.position=Vector2(220,200);developer_panel.size=Vector2(1480,650);developer_panel.visible=false;modal.add_child(developer_panel)
+	var developer_style:=StyleBoxFlat.new();developer_style.bg_color=Color(0.025,0.045,0.05,0.98);developer_style.set_corner_radius_all(8);developer_panel.add_theme_stylebox_override("panel",developer_style)
+	developer_scroll=ScrollContainer.new();developer_scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL;developer_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;developer_panel.add_child(developer_scroll)
+	developer_content=VBoxContainer.new();developer_content.size_flags_horizontal=Control.SIZE_EXPAND_FILL;developer_content.add_theme_constant_override("separation",12);developer_scroll.add_child(developer_content)
 	drop_layer=CanvasLayer.new();drop_layer.layer=19;add_child(drop_layer)
 	var drop_target=preload("res://addons/player_runtime/world_drop_target.gd").new();drop_target.hud=self;drop_layer.add_child(drop_target);drop_target.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);drop_layer.hide()
 	side_tabs=HBoxContainer.new();side_tabs.position=Vector2(220,142);side_tabs.size=Vector2(1480,48);side_tabs.add_theme_constant_override("separation",10);modal.add_child(side_tabs)
@@ -321,8 +330,22 @@ func refresh() -> void:
 
 func show_side(tab: String) -> void:
 	if tab=="Crafting":tab="Backpack"
+	if developer_pages.has(tab):
+		active_tab=tab
+		backpack_panel.visible=false;crafting_panel.visible=false;crafting_content.visible=false
+		character_panel.visible=false;skills_panel.visible=false;journal_panel.visible=false;quests_panel.visible=false
+		character_panel.set_active(false);developer_panel.visible=true
+		for title in developer_pages:developer_pages[title].visible=title==tab
+		if tab=="Dev Spawner" and developer_menu.get("spawner")!=null:developer_menu.spawner.refresh()
+		if tab=="Dev Shapes" and developer_menu.get("dev_shapes")!=null:developer_menu.dev_shapes.refresh()
+		for button in side_tabs.get_children():
+			if button is Button:button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
+		if inventory_open:navigation_changed.emit(tab)
+		return
 	if not tab in ["Backpack","Character","Skills","Journal","Map","Quests"]:return
 	active_tab=tab
+	developer_panel.visible=false
+	for page in developer_pages.values():page.visible=false
 	backpack_panel.visible=tab!="Map";crafting_panel.visible=tab!="Map"
 	crafting_content.visible=tab=="Backpack";character_panel.visible=tab=="Character"
 	skills_panel.visible=tab=="Skills"
@@ -334,6 +357,25 @@ func show_side(tab: String) -> void:
 	for button in side_tabs.get_children():
 		if button is Button:button.modulate=Color(0.55,1,0.8) if button.text==tab else Color.WHITE
 	if inventory_open:navigation_changed.emit(tab)
+
+func mount_developer_pages(menu:Node,pages:Dictionary)->void:
+	developer_menu=menu
+	for title in ["Dev Bag","Dev Shapes","Dev Spawner"]:
+		var page:Control=pages.get(title)
+		if page==null:continue
+		page.reparent(developer_content);page.visible=false;page.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		developer_pages[title]=page
+		var tab:=Button.new();tab.text=title;tab.custom_minimum_size=Vector2(132,48);tab.focus_mode=Control.FOCUS_NONE;tab.pressed.connect(show_side.bind(title));side_tabs.add_child(tab);side_tabs.move_child(tab,side_tabs.get_child_count()-2)
+	refresh_developer_tabs()
+
+func show_developer_page(title:String)->void:
+	if not developer_pages.has(title):return
+	if not inventory_open:set_open(true)
+	show_side(title)
+
+func refresh_developer_tabs()->void:
+	if developer_pages.is_empty():return
+	if active_tab in developer_pages:show_side(active_tab)
 
 # Bounded event-driven delivery. The persisted inbox is an internal safety journal,
 # not a second inventory; legacy rewards and full-inventory overflow retry on changes.

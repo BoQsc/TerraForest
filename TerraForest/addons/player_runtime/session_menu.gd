@@ -38,6 +38,7 @@ var confirmation: ConfirmationDialog
 var pending_action: Callable
 var leaving_world:=false
 var pages: Dictionary={}
+var developer_pages: Dictionary={}
 var navigation: Dictionary={}
 var current_page:="Session"
 var scroll: ScrollContainer
@@ -73,9 +74,6 @@ func _ready() -> void:
 	navigation["Player"]=button(sidebar,"Player",show_page.bind("Player"))
 	navigation["Graphics"]=button(sidebar,"Graphics",show_page.bind("Graphics"))
 	navigation["Usage"]=button(sidebar,"Usage",show_page.bind("Usage"))
-	navigation["Dev Bag"]=button(sidebar,"Dev Bag",show_page.bind("Dev Bag"))
-	navigation["Dev Shapes"]=button(sidebar,"Dev Shapes",show_page.bind("Dev Shapes"))
-	navigation["Dev Spawner"]=button(sidebar,"Dev Spawner",show_page.bind("Dev Spawner"))
 	navigation["Developer"]=button(sidebar,"Developer",show_page.bind("Developer"))
 	if world_page_factory.is_valid():navigation["World"]=button(sidebar,"Destinations",show_page.bind("World"))
 	quit_button=button(sidebar,"Save and quit",save_and_quit);quit_button.name="QuickSaveAndQuit"
@@ -147,11 +145,15 @@ func _ready() -> void:
 		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);developer_page.add_child(breakup_toggle)
 		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,page("Dev Bag"))
+	var dev_bag_page:=page("Dev Bag");dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,dev_bag_page);developer_pages["Dev Bag"]=dev_bag_page
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,page("Dev Shapes"))
+	var dev_shapes_page:=page("Dev Shapes");dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,dev_shapes_page);developer_pages["Dev Shapes"]=dev_shapes_page
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,page("Dev Spawner"))
+	var dev_spawner_page:=page("Dev Spawner");spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,dev_spawner_page);developer_pages["Dev Spawner"]=dev_spawner_page
+	for page_title in developer_pages:
+		var nav:Variant=navigation.get(page_title);if nav!=null:nav.queue_free();navigation.erase(page_title)
+		pages.erase(page_title)
+	if game.player_hud.has_method("mount_developer_pages"):game.player_hud.mount_developer_pages(self,developer_pages)
 	if not world_browser_path.is_empty():button(session,"World browser",func():confirm("Leave this temporary world and discard its changes?" if game.temporary_world else "Save this world and return to the world browser?",leave_to_browser))
 	button(session,"Save and quit",save_and_quit)
 	session_message=label(root,"")
@@ -190,6 +192,11 @@ func set_open(value: bool) -> void:
 	if value:current_page="Session"
 	refresh();sync_panels()
 func show_page(title: String) -> void:
+	if developer_pages.has(title):
+		if game.player_hud.has_method("show_developer_page"):game.player_hud.show_developer_page(title)
+		if title=="Dev Spawner":spawner.refresh()
+		if title=="Dev Shapes":dev_shapes.refresh()
+		return
 	# Compatibility for addon callers; tool pages never enter the session window.
 	if title=="Development":title="World tools"
 	if title in tool_workspace.pages:open_tool_page(title);return
@@ -235,6 +242,7 @@ func refresh() -> void:
 	mode_button.text="Return to gameplay" if developer else "Enter development (~)"
 	for title in navigation:navigation[title].modulate=Color(0.65,1,0.8) if title==current_page else Color.WHITE
 	if developer_hud!=null:developer_hud.refresh()
+	if game.player_hud.has_method("refresh_developer_tabs"):game.player_hud.refresh_developer_tabs()
 func choose_plant(species: int) -> void:
 	if not game.ground_enabled:message.text="Ground cover is disabled in this launch.";return
 	set_open(false)
