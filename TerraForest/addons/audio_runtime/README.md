@@ -26,12 +26,16 @@ Callers own moving loops and must update/stop them; the world adapter does so at
 4 Hz. A changed terrain epoch, pause, focus loss, shutdown or disable clears
 adapter-owned playback and pending queries. Short one-shots naturally finish.
 
-The world adapter samples the one player's actual displacement at 20 Hz, emits
-grounded steps at 1.8 m walk / 2.7 m run intervals, and suppresses idle, flight,
+The world adapter samples the one player's actual displacement at 60 Hz, emits
+the first grounded step after 0.15 m, then uses 1.8 m walk / 2.7 m run intervals.
+It suppresses idle, flight,
 swimming, driving and teleport steps. It uses the actual floor collision, authored
 block material, object material or optional `audio_surface` collider metadata.
-Natural terrain requests one bounded native worker material ray per step; stale,
-edited, epoch-mismatched or >100 ms results fall back without delaying movement.
+Natural terrain requests one bounded native worker material ray per step. Playback
+starts immediately using the floor estimate or a same-revision material cached
+within 3 m; the reply updates the next step's cache without emitting another sound.
+Stale, edited, epoch-mismatched or >100 ms results are discarded. A surface change
+may use the preceding estimate for one step; worker latency never delays playback.
 Explicit materials, shallow water and high-altitude snow have mappings.
 
 Forest ambience uses existing forest-cell occupancy and one roof probe at 4 Hz,

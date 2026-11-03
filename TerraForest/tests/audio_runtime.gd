@@ -2,6 +2,7 @@
 extends SceneTree
 const Catalog = preload("res://addons/audio_runtime/catalog.gd")
 const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
+const Cadence = preload("res://addons/audio_runtime/footstep_cadence.gd")
 const BUILTIN := "res://addons/audio_runtime/packs/nox/pack.audio.module.json"
 var checks := 0
 var failures := 0
@@ -20,6 +21,21 @@ func write_pack(value: Dictionary) -> String:
 func _initialize() -> void: run.call_deferred()
 
 func run() -> void:
+	var cadence := Cadence.new()
+	check(not cadence.advance(0, 0, true), "standing still has no step")
+	var first_tick := 0
+	for i in 60:
+		if cadence.advance(5.5 / 60, 5.5, true): first_tick = i + 1; break
+	check(first_tick > 0 and first_tick <= 3, "walking onset triggers within 50 ms at 60 Hz")
+	var next_tick := 0
+	for i in 60:
+		if cadence.advance(5.5 / 60, 5.5, true): next_tick = i + 1; break
+	check(next_tick >= 18 and next_tick <= 21, "continuous walking retains ordinary stride cadence")
+	check(not cadence.advance(0, 0, true) and not cadence.walking, "stopping rearms the short lead-in")
+	check(not cadence.advance(.1, 5.5, true) and cadence.advance(.1, 5.5, true), "resuming movement gets a prompt first step")
+	check(not cadence.advance(.2, 9.9, false) and not cadence.walking, "airborne or disabled movement cannot emit steps")
+	check(not cadence.advance(5, 5.5, true), "teleport discontinuity does not emit a footstep")
+	check(not cadence.advance(INF, 5.5, true), "invalid displacement is rejected")
 	DirAccess.make_dir_recursive_absolute(folder)
 	var sample := FileAccess.get_file_as_bytes("res://addons/audio_runtime/packs/nox/grass_walk_01.wav.bin")
 	var file := FileAccess.open(folder + "/sample.wav", FileAccess.WRITE); file.store_buffer(sample); file.close()

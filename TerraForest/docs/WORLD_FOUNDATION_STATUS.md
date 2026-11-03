@@ -6617,3 +6617,6 @@ data packs, bounded playback, surface footsteps, forest ambience and fire loops.
 See [audio scope, verified evidence and required follow-up](AUDIO_STATUS.md).
 Listening acceptance, full environment/vehicle/character/combat adapters, precise
 acoustics and representative large-world performance remain open there.
+The [footstep onset correction](../issues/footstep-delay/README.md) reduces the
+initial travel threshold and removes the terrain-worker playback wait; player
+listening acceptance remains pending.

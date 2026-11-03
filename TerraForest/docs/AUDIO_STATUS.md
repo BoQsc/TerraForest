@@ -20,6 +20,8 @@ See the [addon/API/content guide](../addons/audio_runtime/README.md),
   source-member and derivative hashes plus retained CC0 evidence and credits.
 - One-player actual-distance steps with floor/material lookup, bounded native
   terrain queries, fallback and pause/flight/swim/drive/teleport suppression.
+- Onset correction: 0.15 m lead-in sampled at 60 Hz; material lookup updates a
+  cache without delaying playback. See [footstep delay](../issues/footstep-delay/README.md).
 - Forest-cell/roof-based ambience and bounded existing nearby fire placements,
   plus visible held torch sound. Mixer controls for addon playback.
 

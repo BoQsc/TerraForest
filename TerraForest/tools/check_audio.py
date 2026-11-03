@@ -29,7 +29,7 @@ def main():
     log = run("runtime", ["--headless", "--path", str(ROOT), "--script", "res://tests/audio_runtime.gd"])
     if "AUDIO_RUNTIME checks=" not in log:
         raise RuntimeError("Source checks did not finish")
-    for name in ["addons/audio_runtime/catalog.gd", "addons/audio_runtime/audio_runtime.gd"]:
+    for name in ["addons/audio_runtime/catalog.gd", "addons/audio_runtime/audio_runtime.gd", "addons/audio_runtime/footstep_cadence.gd"]:
         target = folder / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / name, target)

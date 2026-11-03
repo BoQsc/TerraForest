@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Cannot infer the type of "natural" variable because the value doesn't have a set type.
+   at: GDScript::reload (res://addons/audio_runtime/world_audio.gd:115)
+   GDScript backtrace (most recent call first):
+       [0] _attach_optional_audio (res://addons/world_runtime/world_session.gd:18)
+       [1] run (res://tests/audio_world.gd:26)
+ERROR: Failed to load script "res://addons/audio_runtime/world_audio.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _attach_optional_audio (res://addons/world_runtime/world_session.gd:18)
+       [1] run (res://tests/audio_world.gd:26)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.
+   at: _attach_optional_audio (res://addons/world_runtime/world_session.gd:18)
+   GDScript backtrace (most recent call first):
+       [0] _attach_optional_audio (res://addons/world_runtime/world_session.gd:18)
+       [1] run (res://tests/audio_world.gd:26)
+SCRIPT ERROR: Invalid call. Nonexistent function 'new' in base 'GDScript'.

@@ -2,14 +2,15 @@
 extends Node3D
 ## Single-player presentation adapter. Timer work is independent of world size.
 const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
+const Cadence = preload("res://addons/audio_runtime/footstep_cadence.gd")
+var cadence := Cadence.new()
 var game: Node
 var audio: Node3D
 var timer: Timer
 var initialized := false
 var epoch := -1
 var last_position := Vector3.ZERO
-var distance := 0.0
-var ticks := 0
+var soundscape_seconds := 0.0
 var bed := 0
 var bed_gain := -60.0
 var fire_handles: Dictionary = {}
@@ -20,10 +21,13 @@ var persist_settings := false
 var sample_token := 810000000
 var pending: Dictionary = {}
 var last_surface := ""
+var surface_cache: Dictionary = {}
+var suspended := false
 
 func attach(host: Node) -> void:
 	game = host; name = "WorldAudio"
-	timer = Timer.new(); timer.wait_time = .05; timer.timeout.connect(tick); add_child(timer); timer.start()
+	timer = Timer.new(); timer.wait_time = 1.0 / 60.0; timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	timer.timeout.connect(tick); add_child(timer); timer.start()
 
 func initialize() -> void:
 	initialized = true
@@ -66,7 +70,7 @@ func preference(key: String, value: Variant) -> void:
 	if persist_settings: settings.save("user://audio_preferences.cfg")
 
 func reset_world() -> void:
-	audio.clear(); bed = 0; bed_gain = -60; fire_handles.clear(); pending.clear(); distance = 0
+	audio.clear(); bed = 0; bed_gain = -60; fire_handles.clear(); pending.clear(); surface_cache.clear(); cadence.reset(); soundscape_seconds = 0
 	epoch = game.terrain.epoch; last_position = game.player.global_position
 
 func active() -> bool:
@@ -80,25 +84,22 @@ func tick() -> void:
 	if epoch != game.terrain.epoch: reset_world()
 	audio.listener = game.camera.global_position
 	if not active() or not audio.enabled:
-		reset_world(); return
-	ticks += 1
-	if not pending.is_empty() and Time.get_ticks_msec() - pending.started > 100: finish_step(pending.surface)
+		if not suspended: reset_world()
+		suspended = true; return
+	if suspended: last_position = game.player.global_position; cadence.reset()
+	suspended = false
+	if not pending.is_empty() and Time.get_ticks_msec() - pending.started > 100: pending.clear()
 	var position: Vector3 = game.player.global_position
 	var travelled := Vector2(position.x - last_position.x, position.z - last_position.z).length()
 	last_position = position
-	if game.fly or game.world_vehicle.driving or not game.player.is_on_floor() or travelled > 2 or travelled < .001:
-		distance = 0
-	else:
-		distance += travelled
-		var gait := "run" if Vector2(game.player.velocity.x, game.player.velocity.z).length() > 7 else "walk"
-		var stride := 2.7 if gait == "run" else 1.8
-		if distance >= stride:
-			distance = fmod(distance, stride)
-			footstep(position, gait)
-	if ticks % 5 == 0: soundscape()
+	var speed := Vector2(game.player.velocity.x, game.player.velocity.z).length()
+	if cadence.advance(travelled, speed, not game.fly and not game.world_vehicle.driving and game.player.is_on_floor()):
+		footstep(position, "run" if speed > 7 else "walk")
+	soundscape_seconds += timer.wait_time
+	if soundscape_seconds >= .25:
+		soundscape_seconds = fmod(soundscape_seconds, .25); soundscape()
 
 func footstep(position: Vector3, gait: String) -> void:
-	if not pending.is_empty(): finish_step(pending.surface)
 	var hit: Dictionary = game.structures.blocks.raycast_scene(position + Vector3.UP * .35, position - Vector3.UP * .65, 7, [game.player.get_rid()])
 	if hit.is_empty(): return
 	var surface := "grass" if hit.get("normal", Vector3.UP).y > .8 else "rock"
@@ -110,12 +111,18 @@ func footstep(position: Vector3, gait: String) -> void:
 	var point: Vector3 = hit.position
 	if game._player_water_depth() > .05: return
 	if game.lakes.depth_at(point + Vector3.UP * .05) > .03: surface = "water"
-	pending = {"position": point, "gait": gait, "surface": surface, "started": Time.get_ticks_msec()}
-	# Native worker supplies painted terrain material; at most one pending request.
-	if surface in ["grass", "rock"] and (collider == null or not surfaces.has(collider.get_instance_id())) and collider != game.structures.blocks:
-		sample_token += 1
-		if game.terrain.request_density_ray(point + Vector3.UP * .3, point - Vector3.UP * .5, sample_token, 32, true): return
-	finish_step(surface)
+	# Cached native material improves the next step; playback never waits for it.
+	var natural: bool = surface in ["grass", "rock"] and (collider == null or not surfaces.has(collider.get_instance_id())) and collider != game.structures.blocks
+	if natural:
+		var fallback_surface := surface
+		if not surface_cache.is_empty() and surface_cache.revision == game.terrain.native_revision and surface_cache.position.distance_squared_to(point) <= 9:
+			surface = surface_cache.surface
+		if pending.is_empty():
+			sample_token += 1
+			pending = {"position": point, "surface": fallback_surface, "started": Time.get_ticks_msec()}
+			if not game.terrain.request_density_ray(point + Vector3.UP * .3, point - Vector3.UP * .5, sample_token, 32, true): pending.clear()
+	last_surface = surface
+	audio.emit_event("movement.footstep", {"position": point, "surface": surface, "gait": gait})
 
 func receive_surface(reply: Dictionary) -> void:
 	if pending.is_empty() or game.terrain.epoch != epoch or reply.get("token") != sample_token or reply.get("epoch") != epoch or reply.get("revision") != game.terrain.native_revision: return
@@ -124,12 +131,7 @@ func receive_surface(reply: Dictionary) -> void:
 	var surface: String = {1: "rock", 2: "wood", 3: "metal", 4: "rock", 8: "metal", 9: "metal", 10: "dirt"}.get(material, pending.surface)
 	if material == 0 and (reply.get("surface_depth", 0) > 1.5 or reply.normal.y < .65): surface = "rock"
 	if material == 0 and pending.position.y > 175 and reply.normal.y > .8: surface = "snow"
-	finish_step(surface)
-
-func finish_step(surface: String) -> void:
-	if pending.is_empty(): return
-	last_surface = surface
-	audio.emit_event("movement.footstep", {"position": pending.position, "surface": surface, "gait": pending.gait})
+	surface_cache = {"position": reply.position, "surface": surface, "revision": reply.revision}
 	pending.clear()
 
 func soundscape() -> void:

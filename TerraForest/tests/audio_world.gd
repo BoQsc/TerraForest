@@ -33,6 +33,16 @@ func run() -> void:
 	game.set_physics_process(false); game._clear_motion(); adapter.timer.stop()
 	game.session_menu.set_open(false); game.player_view.entry.finish()
 	check(game.session_menu.pages.has("Audio") and adapter.audio.catalog.packs == ["nox.essentials.v1"], "real menu exposes sound controls and bundled pack")
+	var ground: Dictionary = game.structures.blocks.raycast_scene(game.player.global_position + Vector3.UP * 2, game.player.global_position - Vector3.UP * 3, 7, [game.player.get_rid()])
+	if check(not ground.is_empty(), "spawn has actual floor collision for onset check"):
+		adapter.audio.listener = game.camera.global_position
+		var immediate_before: int = adapter.audio.played
+		adapter.footstep(ground.position + Vector3.UP * .02, "walk")
+		check(adapter.audio.played == immediate_before + 1, "floor step starts synchronously without waiting for material worker")
+		if not adapter.pending.is_empty():
+			var query: Dictionary = adapter.pending.duplicate()
+			adapter.receive_surface({"token": adapter.sample_token, "epoch": adapter.epoch, "revision": game.terrain.native_revision, "status": "hit", "position": query.position, "normal": Vector3.UP, "surface_material": 3})
+			check(adapter.audio.played == immediate_before + 1 and adapter.surface_cache.surface == "metal", "late material result updates cache without a delayed duplicate step")
 	var base: Vector3 = game.player.position + Vector3(0, 8, 0)
 	var cell := Vector3i(base.floor())
 	game.structures.blocks.set_focus(Vector3(cell))

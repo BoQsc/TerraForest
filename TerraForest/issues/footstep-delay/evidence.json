@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-03",
+  "source_checks": 49,
+  "isolated_pck_checks": 49,
+  "world_checks": 16,
+  "full_pack_world_checks": 16,
+  "walking_onset_fixture_ms": 33.333333333333336,
+  "scope": "Cadence/event scheduling, excluding device output-buffer and speaker latency. Listening review pending.",
+  "runtime_sha256": {
+    "addons\\audio_runtime\\world_audio.gd": "f361b5ab65b80fd3c2c8ba660334ba8b76a383de0bb49a3d3574608e5be27bbc",
+    "addons\\audio_runtime\\footstep_cadence.gd": "a0b1ee5357ade4e4e58668a879717eb8d6454fea83492251743266dca202ee94"
+  },
+  "full_pack_sha256": "e27466c107ecd7e01c9c8ce7e5fafe1d5f4af4248fd041eaf357d12459a88be4",
+  "evidence_sha256": {
+    "full-export.log": "76d250035917db7d6f8aa7b021350526999021f2c58b5b04cb056889be2882a6",
+    "full-pack-world.log": "7095a8454a2a6758a0f03d32e71eaa2bccd41a24fae5c5f5d9a2ae4808d9f545",
+    "initial-adapter-parse-failure.log": "7ab2c344b518add0e086c82a2d20eaa54ccfc25fa3d8c2848e390872058a747d",
+    "packed.log": "93be230003f1d805c2604c390f762f94ed5f833e251c36b0edb2bb9780ba114a",
+    "source.log": "93be230003f1d805c2604c390f762f94ed5f833e251c36b0edb2bb9780ba114a",
+    "world.log": "7095a8454a2a6758a0f03d32e71eaa2bccd41a24fae5c5f5d9a2ae4808d9f545"
+  }
+}

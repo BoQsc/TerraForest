@@ -1,0 +1,22 @@
+Export working-space estimate: 1,073,741,824 bytes + 2.00 GiB hard reserve
+PASS: all 17 offline notices match their retained source files
+STARTUP_INDEX current
+PASS BG5 masters, recipe, tool, textures and runtime outputs match
+PASS authored door source, bake tools, fitted mesh receipt and runtime rig match
+PASS terrain_block_contract
+PASS terrain_block_catalog
+PASS building_expansion
+PASS building_materials
+PASS building_expansion_pack
+PASS production_building_catalog
+PASS door_dimensions
+PASS release contract
+PASS expansion release
+PASS C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\reports\building_standards\20261103T082257087600Z
+Created C:\Users\windows10\Documents\ChatGPT\Godot Terrain\TerraForest\dist\TerraForest.pending.pck (476,065,892 bytes)
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+
+
+PASS packaged house-light definitions, native residency and room publication
+PASS exported pack starts with 14 external native libraries; keep dist/addons beside the PCK
