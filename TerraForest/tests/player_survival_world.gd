@@ -82,7 +82,9 @@ func run()->void:
 		check(hud.journal_panel.choices.item_count>=1,"read narrative remains available after item consumption and reopening")
 		hud.set_open(false)
 		if check(game.trader.try_open({"collider":game.trader.actor}),"restored merchant remains reachable through ordinary interaction"):
+			game.trader.ui.select_mode("Trade")
 			game.trader.ui.rows.select(game.trader.ui.rows.item_count-1);game.trader.ui.refresh()
+			for frame in 2:await process_frame
 			await process_frame;await process_frame
 			check(game.trader.ui.rows.get_v_scroll_bar().value>0,"last food offer remains visible after UI refresh")
 			await photograph("food-trade-restored")
@@ -128,6 +130,7 @@ func run()->void:
 		if game.trader.reachable():reachable=true;break
 	if not check(reachable and game.trader.try_open({"collider":game.trader.actor}),"real reachable trader opens through normal adapter"):await finish();return
 	var trade:Node=game.trader.ui
+	trade.select_mode("Trade")
 	for index in trade.rows.item_count:
 		if trade.rows.get_item_metadata(index)==102:trade.rows.select(index)
 	trade.quantity.get_line_edit().text="3";trade.exchange(false)

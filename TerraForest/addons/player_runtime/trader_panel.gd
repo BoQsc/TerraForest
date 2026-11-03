@@ -8,6 +8,13 @@ var inventory: RefCounted
 var permitted: Callable
 var panel: PanelContainer
 var rows: ItemList
+var selling:ItemList
+var search:LineEdit
+var buy_button:Button
+var sell_button:Button
+var selection_info:Label
+var session_token:=0
+var mode_buttons:Dictionary={}
 var quantity: SpinBox
 var balance: Label
 var notice: Label
@@ -32,8 +39,8 @@ var offer_keys:=PackedInt64Array()
 func _ready() -> void:
 	layer = 30
 	panel = PanelContainer.new()
-	panel.position = Vector2(460, 145)
-	panel.custom_minimum_size = Vector2(1000, 730)
+	panel.position = Vector2(370, 90)
+	panel.custom_minimum_size = Vector2(1180, 810)
 	add_child(panel)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("17252b")
@@ -50,27 +57,34 @@ func _ready() -> void:
 	var dismiss:=Button.new();dismiss.text="X";dismiss.custom_minimum_size=Vector2(44,44);dismiss.pressed.connect(close);header.add_child(dismiss)
 	var modes:=HBoxContainer.new();column.add_child(modes)
 	for mode:String in ["Quests","Trade"]:
-		var button:=Button.new();button.text=mode;button.custom_minimum_size=Vector2(200,44);modes.add_child(button)
+		var button:=Button.new();button.text=mode;button.toggle_mode=true;mode_buttons[mode]=button;button.custom_minimum_size=Vector2(200,44);modes.add_child(button)
 		button.pressed.connect(func():select_mode(mode))
 	quest_panel=VBoxContainer.new();column.add_child(quest_panel)
-	quest_text=Label.new();quest_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quest_text.custom_minimum_size=Vector2(940,220);quest_panel.add_child(quest_text)
-	quest_offers=ItemList.new();quest_offers.custom_minimum_size=Vector2(940,200);quest_offers.add_theme_font_size_override("font_size",21);quest_panel.add_child(quest_offers)
+	quest_text=Label.new();quest_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;quest_text.custom_minimum_size=Vector2(1120,220);quest_panel.add_child(quest_text)
+	quest_offers=ItemList.new();quest_offers.custom_minimum_size=Vector2(1120,200);quest_offers.add_theme_font_size_override("font_size",21);quest_panel.add_child(quest_offers)
 	quest_button=Button.new();quest_button.custom_minimum_size.y=48;quest_button.pressed.connect(quest_action);quest_panel.add_child(quest_button)
 	quest_abandon=Button.new();quest_abandon.text="Abandon quest · keep current world changes";quest_abandon.custom_minimum_size.y=44;quest_abandon.pressed.connect(abandon_quest);quest_panel.add_child(quest_abandon)
 	trade_panel=VBoxContainer.new();column.add_child(trade_panel);column=trade_panel
 	balance = Label.new(); column.add_child(balance)
 	var welcome := Label.new()
-	welcome.text = "Welcome. I buy resources and sell building supplies, food and reading material.\nStock and coins are finite. Prices below are per item."
+	welcome.text = "Drag an item across to buy or sell. Quantity applies to each trade. Prices are per item; coins and stock are finite."
 	column.add_child(welcome)
-	rows = ItemList.new(); rows.custom_minimum_size = Vector2(940, 250)
-	rows.add_theme_font_size_override("font_size", 21)
-	column.add_child(rows)
-	var buttons := HBoxContainer.new(); column.add_child(buttons)
-	quantity = SpinBox.new(); quantity.min_value = 1; quantity.max_value = 999; quantity.value = 1
-	buttons.add_child(quantity)
-	for buying in [true, false]:
-		var button := Button.new(); button.text = "Buy" if buying else "Sell"
-		button.custom_minimum_size.x = 180; button.pressed.connect(exchange.bind(buying)); buttons.add_child(button)
+	search=LineEdit.new();search.placeholder_text="Search supplies, food, salvage…";search.text_changed.connect(func(_value:String):refresh());column.add_child(search)
+	var listings:=HBoxContainer.new();listings.add_theme_constant_override("separation",20);column.add_child(listings)
+	for side:String in ["merchant","player"]:
+		var section:=VBoxContainer.new();section.size_flags_horizontal=Control.SIZE_EXPAND_FILL;listings.add_child(section)
+		var heading:=Label.new();heading.text="TRADER STOCK · drag here to sell" if side=="merchant" else "YOUR ITEMS · drag here to buy";heading.add_theme_color_override("font_color",Color("9cffe0"));section.add_child(heading)
+		var listing:=preload("res://addons/player_runtime/trade_list.gd").new();listing.trade=self;listing.side=side
+		listing.custom_minimum_size=Vector2(550,290);listing.add_theme_font_size_override("font_size",18);listing.fixed_icon_size=Vector2i(42,42);listing.item_selected.connect(func(_index:int):_selection_changed());section.add_child(listing)
+		if side=="merchant":rows=listing
+		else:selling=listing
+	selection_info=Label.new();selection_info.text="Select a listing to see the total.";column.add_child(selection_info)
+	var buttons := HBoxContainer.new();buttons.add_theme_constant_override("separation",12);column.add_child(buttons)
+	var amount_label:=Label.new();amount_label.text="Quantity";buttons.add_child(amount_label)
+	quantity = SpinBox.new(); quantity.min_value = 1; quantity.max_value = 999; quantity.value = 1;quantity.custom_minimum_size.x=110
+	quantity.value_changed.connect(func(_value:float):_selection_changed());buttons.add_child(quantity)
+	buy_button=Button.new();buy_button.text="Buy selected";buy_button.custom_minimum_size.x=240;buy_button.pressed.connect(_trade_selected.bind(true));buttons.add_child(buy_button)
+	sell_button=Button.new();sell_button.text="Sell selected";sell_button.custom_minimum_size.x=240;sell_button.pressed.connect(_trade_selected.bind(false));buttons.add_child(sell_button)
 	var close_button := Button.new(); close_button.text = "Close / Esc"
 	close_button.pressed.connect(close); buttons.add_child(close_button)
 	var travel := HBoxContainer.new(); column.add_child(travel)
@@ -87,12 +101,13 @@ func open_for(merchant: RefCounted, player_inventory: RefCounted, reach_check: C
 	trader = merchant; inventory = player_inventory; permitted = reach_check
 	quest_error=""
 	offer_keys=PackedInt64Array();quest_offers.clear()
-	opened = true; panel.show(); refresh(); select_mode("Quests" if is_instance_valid(quests) and quests.store.snapshot().introduction>0 else "Trade"); return true
+	session_token+=1;search.text="";opened = true; panel.show(); refresh(); select_mode("Quests" if is_instance_valid(quests) and quests.store.snapshot().introduction>0 else "Trade"); return true
 
 func select_mode(mode:String)->void:
 	trade_panel.visible=mode=="Trade";quest_panel.visible=mode=="Quests"
+	for key in mode_buttons:mode_buttons[key].set_pressed_no_signal(key==mode)
 	refresh_quests()
-	if trade_panel.visible:rows.grab_focus()
+	if trade_panel.visible:rows.grab_focus();rows.call_deferred("ensure_current_is_visible")
 	else:quest_button.grab_focus()
 
 func refresh_quests()->void:
@@ -153,16 +168,32 @@ func abandon_quest()->void:
 
 func refresh() -> void:
 	var selected := rows.get_selected_items()
-	rows.clear()
+	var selected_id:int=rows.get_item_metadata(selected[0]) if not selected.is_empty() else 0
+	var player_selected:=selling.get_selected_items()
+	var player_id:int=selling.get_item_metadata(player_selected[0]) if not player_selected.is_empty() else 0
+	rows.clear();selling.clear()
 	player_revision = inventory.snapshot().revision; stock_revision = trader.stock.snapshot().revision
-	balance.text = "Your coins: %d     Trader coins: %d" % [Trade.count(inventory, Trade.CURRENCY), Trade.count(trader.stock, Trade.CURRENCY)]
+	balance.text = "YOUR PURSE  %d coins                                      TRADER'S PURSE  %d coins" % [Trade.count(inventory, Trade.CURRENCY), Trade.count(trader.stock, Trade.CURRENCY)]
 	for id: int in Trade.GOODS:
 		var offer: Array = Trade.GOODS[id]
-		rows.add_item("%-12s   Buy %d / Sell %d     Stock %d     Yours %d" % [offer[0], offer[1], offer[2], Trade.count(trader.stock, id), Trade.count(inventory, id)])
-		rows.set_item_metadata(rows.item_count - 1, id)
-	rows.select(selected[0] if not selected.is_empty() else 0)
-	rows.ensure_current_is_visible()
-	notice.text = "Choose an item and quantity, then Buy or Sell."
+		if not search.text.strip_edges().is_empty() and not str(offer[0]).to_lower().contains(search.text.strip_edges().to_lower()):continue
+		var available:int=Trade.count(trader.stock,id);var owned:int=Trade.count(inventory,id)
+		var icon:Texture2D=preload("res://addons/player_runtime/item_icons.gd").texture(id)
+		rows.add_item("%s    ·    %d coins    ·    Stock %d"%[offer[0],offer[1],available],icon)
+		var index:=rows.item_count-1;rows.set_item_metadata(index,id)
+		rows.set_item_tooltip(index,"Buy %s · %d coins each · stock %d"%[offer[0],offer[1],available])
+		if available==0:rows.set_item_custom_fg_color(index,Color("7b8d92"))
+		if id==selected_id:rows.select(index)
+		if owned>0:
+			selling.add_item("%s    ·    %d coins    ·    You have %d"%[offer[0],offer[2],owned],icon)
+			selling.set_item_metadata(selling.item_count-1,id)
+			if id==player_id:selling.select(selling.item_count-1)
+	if rows.item_count>0 and rows.get_selected_items().is_empty():rows.select(0)
+	if selling.item_count>0 and selling.get_selected_items().is_empty():selling.select(0)
+	rows.ensure_current_is_visible();selling.ensure_current_is_visible()
+	rows.call_deferred("ensure_current_is_visible");selling.call_deferred("ensure_current_is_visible")
+	notice.text = "Drag trader stock to Your items to buy; drag your items to Trader stock to sell."
+	_selection_changed()
 	_refresh_travel()
 
 func _refresh_travel() -> void:
@@ -194,25 +225,74 @@ func _cancel() -> void:
 	var message: String = ride.cancel_reservation()
 	_refresh_travel(); notice.text = message
 
-func exchange(buying: bool) -> void:
-	if not opened: return
-	if not permitted.is_valid() or not permitted.call(): close(); return
-	var selected := rows.get_selected_items()
-	if selected.is_empty(): return
+func _selection_changed()->void:
+	if quantity==null:return
+	var amount:=int(quantity.value)
+	var buy:=rows.get_selected_items();var sell:=selling.get_selected_items()
+	buy_button.disabled=buy.is_empty();sell_button.disabled=sell.is_empty()
+	var summaries:=PackedStringArray()
+	if not buy.is_empty():
+		var id:int=rows.get_item_metadata(buy[0]);var price:int=Trade.GOODS[id][1]*amount
+		buy_button.text="Buy %d · %d coins"%[amount,price]
+		buy_button.disabled=Trade.count(trader.stock,id)<amount or Trade.count(inventory,Trade.CURRENCY)<price
+		summaries.append("Buy: %s"%Trade.GOODS[id][0])
+	if not sell.is_empty():
+		var id:int=selling.get_item_metadata(sell[0]);var price:int=Trade.GOODS[id][2]*amount
+		sell_button.text="Sell %d · %d coins"%[amount,price]
+		sell_button.disabled=Trade.count(inventory,id)<amount or Trade.count(trader.stock,Trade.CURRENCY)<price
+		summaries.append("Sell: %s"%Trade.GOODS[id][0])
+	selection_info.text="    /    ".join(summaries) if not summaries.is_empty() else "No matching listings."
+
+func drag_offer(side:String,index:int)->Dictionary:
+	if not opened or side not in ["merchant","player"]:return {}
+	var listing:ItemList=rows if side=="merchant" else selling
+	if index<0 or index>=listing.item_count:return {}
 	quantity.apply()
-	var response: Dictionary = trader.exchange(inventory, rows.get_item_metadata(selected[0]), int(quantity.value), buying, player_revision, stock_revision)
+	var id:int=listing.get_item_metadata(index)
+	return {"owner":get_instance_id(),"session":session_token,"side":side,"item":id,"quantity":int(quantity.value),"player_revision":player_revision,"stock_revision":stock_revision}
+
+func drag_caption(data:Dictionary)->String:
+	var buying:bool=data.side=="merchant"
+	return "%s %d × %s · %d coins"%["Buy" if buying else "Sell",data.quantity,Trade.GOODS[data.item][0],Trade.GOODS[data.item][1 if buying else 2]*data.quantity]
+
+func accepts_offer(side:String,data:Variant)->bool:
+	return opened and side in ["merchant","player"] and data is Dictionary and data.get("owner",0)==get_instance_id() and data.get("session",-1)==session_token and data.get("side","") in ["merchant","player"] and data.side!=side and Trade.GOODS.has(data.get("item",0)) and data.get("quantity",0) is int and data.quantity>0 and data.quantity<=999 and data.get("player_revision") is int and data.get("stock_revision") is int
+
+func drop_offer(side:String,data:Variant)->void:
+	if not accepts_offer(side,data):return
+	_commit(data.item,data.quantity,data.side=="merchant",data.player_revision,data.stock_revision)
+
+func _trade_selected(buying:bool)->void:
+	var listing:ItemList=rows if buying else selling
+	var selected:=listing.get_selected_items()
+	if selected.is_empty():return
+	quantity.apply()
+	_commit(listing.get_item_metadata(selected[0]),int(quantity.value),buying,player_revision,stock_revision)
+
+func exchange(buying: bool) -> void:
+	# Existing callers can still transact the selected merchant listing.
+	var selected:=rows.get_selected_items()
+	if selected.is_empty():return
+	quantity.apply()
+	_commit(rows.get_item_metadata(selected[0]),int(quantity.value),buying,player_revision,stock_revision)
+
+func _commit(item:int,amount:int,buying:bool,expected_player:int,expected_stock:int)->void:
+	if not opened:return
+	if not permitted.is_valid() or not permitted.call():close();return
+	var response:Dictionary=trader.exchange(inventory,item,amount,buying,expected_player,expected_stock)
 	refresh()
 	if response.ok:
-		notice.text = "Bought %d item(s)." % int(quantity.value) if buying else "Sold %d item(s)." % int(quantity.value)
+		notice.text="%s %d × %s · %d coins"%["Bought" if buying else "Sold",amount,Trade.GOODS[item][0],Trade.GOODS[item][1 if buying else 2]*amount]
 		traded.emit()
 	else:
-		var messages := {"stale_revision":"Stock or inventory changed. Review the refreshed offer.", "insufficient_items":"You do not have enough coins or goods.", "full":"Your backpack is full.", "peer_rejected":"The trader lacks stock, coins, or storage space.", "invalid_offer":"Choose an available item and quantity from 1 to 999."}
-		notice.text = messages.get(response.reason, "The exchange could not be completed. No items or coins changed.")
+		var messages:={"stale_revision":"Stock or inventory changed. Review the refreshed offer.","insufficient_items":"You do not have enough coins or goods.","full":"Your backpack is full.","peer_rejected":"The trader lacks stock, coins, or storage space.","invalid_offer":"Choose an available item and quantity from 1 to 999."}
+		notice.text=messages.get(response.reason,"The exchange could not be completed. No items or coins changed.")
 
 func close() -> void:
 	if not opened: return
 	opened = false; panel.hide(); closed.emit()
 
 func _input(event: InputEvent) -> void:
+	if opened and event is InputEventKey and event.pressed and get_viewport().gui_get_focus_owner() is LineEdit and event.physical_keycode!=KEY_ESCAPE:return
 	if opened and event is InputEventKey and event.pressed and event.physical_keycode in [KEY_ESCAPE, KEY_E, KEY_TAB]:
 		close(); get_viewport().set_input_as_handled()

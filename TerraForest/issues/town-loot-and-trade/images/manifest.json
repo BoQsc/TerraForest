@@ -1,0 +1,18 @@
+[
+  {
+    "image": "trade-lists.png",
+    "source": "reports/trader_ride_world/20261103T011745187404Z/trade-lists.png",
+    "sha256": "b813990e8ea5582775e5b6913a16d1db6c7e452be899a25d1e571d5d1b8fae8f",
+    "caption": "Installed game: real merchant-to-player GUI drag purchases three wood for12coins; return sale pays6. Two item listings, per-item prices, balances, quantity and ride/quest access remain readable.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot. Original salvage vectors are CC0-1.0; inherited world/character/item assets retain existing notices."
+  },
+  {
+    "image": "salvage-listings.png",
+    "source": "reports/trader_ride_world/20261103T011745187404Z/salvage-listings.png",
+    "sha256": "b7bbd91cbc64cb15cc9971db1a778e43a618d889fa521ec252e181ba8072f940",
+    "caption": "Installed diagnostic listing view after collecting a one-time chest bundle. Original salvage icons and owned cloth/fasteners are visible. This scripted selection view retains the prior button-summary selection; normal GUI selection and transactions are checked separately.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot. Original salvage vectors are CC0-1.0; inherited world/character/item assets retain existing notices."
+  }
+]

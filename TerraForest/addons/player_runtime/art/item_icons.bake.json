@@ -13,7 +13,7 @@
         "res://addons/characters/wearables/woven/303.res": "391e03cea91be16d4c0d07dd0f0c6ba172327be7392ec4296af00266c75c0e22"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "dc77d57a76b5f2d3a75ad3c0d796670e1b07451b5bd00e9bd42627eec9468e1d",
+        "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
@@ -30,7 +30,7 @@
         "res://addons/player_runtime/art/consumables/219.res": "62b521c4dd2b11b0cdb8a58532e0ada87bf5156af96d7fe9557814487a27c821"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "dc77d57a76b5f2d3a75ad3c0d796670e1b07451b5bd00e9bd42627eec9468e1d",
+        "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
@@ -100,7 +100,7 @@
         "res://addons/volumetric_water/bucket_model.gd": "1bd5a3cd1a025bff89ab4d35fe4104eb22cd4f7002b08038838d02fdceaba7c8"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "dc77d57a76b5f2d3a75ad3c0d796670e1b07451b5bd00e9bd42627eec9468e1d",
+        "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"
@@ -126,7 +126,7 @@
         "res://vehicle_demo/scripts/car_native.gd": "75c7ab02bb9782886dc274077224c13d4eff421347579103e198ca42cf16cd55"
       },
       "recipe": {
-        "res://addons/player_runtime/item_icons.gd": "dc77d57a76b5f2d3a75ad3c0d796670e1b07451b5bd00e9bd42627eec9468e1d",
+        "res://addons/player_runtime/item_icons.gd": "8aface772bf7136615d5843eab6a88556c6a2fc3a65b33772ff7f6dd90e0b60a",
         "res://project.godot": "d0bb265fd940954d4e1796437722af8e0fe7f60ef73149ec9ce30a7848b900fb",
         "res://tests/bake_item_icons.gd": "f0928d1c69a56f5423d96f810dd6346f42580b135bb8457718993459f9e067f6",
         "res://tools/item_icon_cache.gd": "9470db80a6baf152861e6cf61e7ccf8354aa7f58bd702b6997f0146708ca3551"

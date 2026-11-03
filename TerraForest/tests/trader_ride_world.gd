@@ -23,6 +23,17 @@ func run()->void:
 	# Headless input ownership substitute only: retain all interaction gates
 	# except pointer capture, so this offscreen check never steals user input.
 	game.world_vehicle.interaction_available=func():return not game.player_view.entry.active and not game.loading_active and not game.shutdown_requested and game.app_focused and game.terrain.world_ready and not game.terrain.pending_edit and not game.player_hud.inventory_open
+	if stage=="shop-restore":
+		var expected:Dictionary=JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("expected.json")))
+		check(await wait_for(func():return game.storage.town_loot.complete,10),"one-time chest pass restores and reconciles current paging")
+		check(Trade.count(game.player_hud.inventory,601)==int(expected.coins),"shop wallet restores exactly")
+		check(Trade.count(game.trader.trader.stock,102)==int(expected.stock),"finite trader stock restores exactly")
+		for id in [224,225,226,227]:check(Trade.count(game.player_hud.inventory,id)==int(expected.scrap[str(id)]),"salvage inventory survives a fresh-process reload: "+str(id))
+		var empty:=true
+		for slot:Dictionary in game.storage.store.snapshot(int(expected.chest)).slots:empty=empty and slot.count==0
+		check(empty,"emptied town chest stays empty after reopening")
+		check(game.storage.town_loot.visited.has(int(expected.chest)),"emptied chest retains its one-time marker")
+		await finish();return
 	if stage=="return-recovery":
 		if not check(ride.state.expedition and ride.state.phase in [ride.RETURN_STOPPED,ride.RETURNING],"copied save retains the interrupted expedition return"):await finish();return
 		if not check(await wait_for(func():return is_instance_valid(ride.car),20),"same service car is admitted"):await finish();return
@@ -110,6 +121,9 @@ func run()->void:
 	game.player_hud.inventory.grant_items(PackedInt64Array([Trade.CURRENCY,10000]),game.player_hud.inventory.snapshot().revision)
 	check(game.trader.try_open({"collider":game.trader.actor}),"normal interaction opens travel and trade choices")
 	await photograph("destination-menu")
+	if stage=="shop":
+		await shop_check(game)
+		return
 	if stage=="inspect":await finish();return
 	var offer:Dictionary=offers[0]
 	var before:=Trade.count(game.player_hud.inventory,Trade.CURRENCY)
@@ -184,6 +198,69 @@ func run()->void:
 		FileAccess.open(folder.path_join("expected.json"),FileAccess.WRITE).store_string(JSON.stringify({"vehicle":identity,"coins":before-offer.fare,"fare":offer.fare},"  "))
 		await finish();return
 	await complete_journey(game,ride,offer.outbound[-1],before-offer.fare,identity,point)
+func shop_check(game:Node)->void:
+	var ui:Node=game.trader.ui;ui.select_mode("Trade")
+	check(await wait_for(func():return game.storage.town_loot.complete,10),"existing town chests complete their bounded one-time loot pass")
+	var stocked:=0
+	for id in game.storage.collection.get_ids():
+		if game.storage.store.has_contents(id):stocked+=1
+	check(stocked>10,"actual generated town contains stocked chests")
+	game._show_lake_notice("Holding pickaxe")
+	check(game.player_notices.general.text.is_empty(),"routine action does not enqueue an animated toolbelt notice")
+	var wood:int=Trade.count(game.player_hud.inventory,102);var coins:int=Trade.count(game.player_hud.inventory,601)
+	var index:=0
+	for row in ui.rows.item_count:
+		if ui.rows.get_item_metadata(row)==102:index=row
+	ui.quantity.get_line_edit().text="3"
+	ui.rows.select(index)
+	var offer:Dictionary=ui.drag_offer("merchant",index)
+	ui.rows.force_drag(offer,Label.new())
+	check(root.gui_is_dragging(),"Godot GUI starts a real merchant-list drag")
+	var target:Vector2=ui.selling.get_global_rect().get_center()
+	var motion:=InputEventMouseMotion.new();motion.position=target;motion.global_position=target;motion.button_mask=MOUSE_BUTTON_MASK_LEFT;Input.parse_input_event(motion)
+	await process_frame
+	var release:=InputEventMouseButton.new();release.position=target;release.global_position=target;release.button_index=MOUSE_BUTTON_LEFT;release.pressed=false;Input.parse_input_event(release)
+	for tick in 3:await process_frame
+	check(Trade.count(game.player_hud.inventory,102)==wood+3 and Trade.count(game.player_hud.inventory,601)==coins-12,"native GUI drop buys the chosen quantity at the visible price")
+	for row in ui.selling.item_count:
+		if ui.selling.get_item_metadata(row)==102:index=row
+	ui.drop_offer("merchant",ui.drag_offer("player",index))
+	check(Trade.count(game.player_hud.inventory,102)==wood and Trade.count(game.player_hud.inventory,601)==coins-6,"return drag sale pays the bid price without free items")
+	await photograph("trade-lists")
+	var expected:Dictionary={"coins":Trade.count(game.player_hud.inventory,601),"stock":Trade.count(game.trader.trader.stock,102)}
+	ui.close()
+	var chest:=0;var nearest:=INF
+	for id in game.storage.collection.get_ids():
+		if game.storage.store.is_locked(id) or not game.storage.store.has_contents(id):continue
+		var values:PackedFloat32Array=game.storage.collection.get_instance(id)
+		var point:=Vector3(values[3],values[7],values[11])
+		var distance:float=point.distance_squared_to(game.player.position)
+		if distance<nearest:nearest=distance;chest=id
+	if not check(chest>0,"nearby town chest contains persistent loot"):await finish();return
+	# Storage mutations retain the native transfer contract; fixture camera setup
+	# is not movement/path acceptance. Original player saves are never opened.
+	var box:Dictionary=game.storage.store.snapshot(chest)
+	var had_scrap:=false
+	for slot:Dictionary in box.slots:
+		if slot.item in [224,225,226,227]:had_scrap=true
+	check(had_scrap,"unlocked town storage offers newly authored salvage")
+	for slot in int(box.get("capacity",16)):
+		box=game.storage.store.snapshot(chest)
+		if box.slots[slot].count>0:
+			check(game.storage.store.withdraw(chest,game.player_hud.inventory,slot,box.slots[slot].count,game.player_hud.inventory.snapshot().revision,box.store_revision).ok,"town loot transfers through native storage")
+	game.player_hud.refresh();expected.chest=chest;expected.scrap={}
+	for id in [224,225,226,227]:expected.scrap[str(id)]=Trade.count(game.player_hud.inventory,id)
+	check(game.trader.try_open({"collider":game.trader.actor}),"return to the trader with looted salvage")
+	ui.select_mode("Trade")
+	for row in ui.rows.item_count:
+		if ui.rows.get_item_metadata(row)==227:ui.rows.select(row)
+	ui.rows.ensure_current_is_visible()
+	if ui.selling.item_count>0:ui.selling.select(ui.selling.item_count-1);ui.selling.ensure_current_is_visible()
+	await photograph("salvage-listings")
+	ui.close()
+	FileAccess.open(folder.path_join("expected.json"),FileAccess.WRITE).store_string(JSON.stringify(expected,"  "))
+	await finish()
+
 func complete_journey(game:Node,ride:Node,stop:Vector3,coins:int,identity:int,home:Vector3)->void:
 	if not check(await watch(func():return ride.state.phase==ride.ARRIVED,360),"car follows the published roads and stops at the selected town"):await photograph("outbound-failure");await finish();return
 	check(ride.car.linear_velocity.length()<.25 and ride.car.position.distance_to(stop)<3,"arrival is stopped at the quoted road stop")

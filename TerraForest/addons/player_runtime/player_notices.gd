@@ -10,6 +10,8 @@ var current:=""
 var quest_age:=0.0
 var general_age:=0.0
 var shown:=0
+var known_effects:Dictionary={}
+var effects_initialized:=false
 const QUEST_DURATION:=3.6
 const GENERAL_DURATION:=4.0
 
@@ -39,11 +41,19 @@ func quest_added(title:String)->void:
 	if queued.size()==4:queued.pop_front()
 	queued.append(value);set_process(true)
 
-func notify(text:String)->void:
-	if general==null:return
+func notify(text:String,kind:String="routine")->void:
+	if general==null or kind not in ["buff","quest"]:return
 	var value:=text.get_slice("\n",0).strip_edges().left(140)
 	if value.is_empty():return
 	general.text=value;general_age=0.0;set_process(true)
+
+func observe_effects(effects:Dictionary,reset:bool=false)->void:
+	if effects_initialized and not reset:
+		for identity in effects:
+			if not known_effects.has(identity):notify("%s gained"%preload("res://addons/player_runtime/consumables.gd").EFFECTS[identity].name,"buff")
+		for identity in known_effects:
+			if not effects.has(identity):notify("%s ended"%preload("res://addons/player_runtime/consumables.gd").EFFECTS[identity].name,"buff")
+	known_effects=effects.duplicate();effects_initialized=true
 
 func _process(delta:float)->void:
 	if allowed.is_valid() and not allowed.call():toast.hide();general.hide();return

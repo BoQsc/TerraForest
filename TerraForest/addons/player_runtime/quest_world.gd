@@ -92,6 +92,7 @@ func _process(delta:float)->void:
 				var sleeping:=not sleep.is_empty() and sleep.size()>=36 and sleep.decode_u32(32)==1
 				if not sleeping or current.reveal_sleepers:contacts.append({"position":resident.position,"sleeping":sleeping,"id":resident.id})
 		if store.snapshot().revision!=state.revision:game.terrain.changed_since_save=true
+	if state.phase!=store.snapshot().phase and store.snapshot().phase==4:game.player_notices.notify("Quest complete · Return to the trader","quest")
 	game.player_hud.quests_notice.text=description()
 	game.destination_guide.refresh()
 	if game.trader.ui.opened:game.trader.ui.refresh_quests()
@@ -144,6 +145,7 @@ func claim()->Dictionary:
 	var result:Dictionary=store.claim(hud.reward_inbox,hud.progression,store.snapshot().revision)
 	if result.ok:
 		hud.deliver_mining_rewards();hud.refresh();hud.progression_changed.emit()
+		game.player_notices.notify("Quest reward collected","quest")
 		if hud.resource_feed!=null:hud.resource_feed.gain_experience(result.gained,result.level)
 		game.terrain.changed_since_save=true
 	return result

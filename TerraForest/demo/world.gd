@@ -368,6 +368,8 @@ func _ready() -> void:
 	player_notices.allowed=func()->bool:return not loading_active and not shutdown_requested and app_focused and not player_view.entry.pending and not player_view.entry.active and not session_menu.visible_ui() and not player_hud.inventory_open and not player_hud.developer_belt and not world_map.opened and not trader.ui.opened
 	player_notices.general_top=func()->float:return player_hud.action_hint.position.y-44
 	add_child(player_notices)
+	player_notices.observe_effects(player_hud.survival.snapshot().effects,true)
+	player_hud.survival_changed.connect(func():player_notices.observe_effects(player_hud.survival.snapshot().effects,loading_active))
 	player_view.entry.wake_finished.connect(func():
 		if quests.store.snapshot().introduction==1:player_notices.quest_added("A friendly face"))
 	construction_palette.history_requested.connect(_construction_history)
@@ -503,12 +505,12 @@ func _ready() -> void:
 	await _startup_step("Loading saved world data")
 	startup_complete=true;process_mode=previous_process_mode
 
-func _show_lake_notice(text: String) -> void:
+func _show_lake_notice(text: String,kind:String="routine") -> void:
 	var sync_started:=Time.get_ticks_usec()
 	_sync_construction_palette()
 	terrain._record_stage("notice panel sync",(Time.get_ticks_usec()-sync_started)/1000.0)
 	_lake_notice = text
-	if not loading_active and not shutdown_requested:player_notices.notify(text)
+	if not loading_active and not shutdown_requested:player_notices.notify(text,kind)
 	_lake_notice_until = Time.get_ticks_msec()+6000
 	_telemetry_time = 0.5 # Publish action feedback on the next frame.
 	var message_started:=Time.get_ticks_usec()

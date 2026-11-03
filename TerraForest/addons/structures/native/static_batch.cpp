@@ -496,6 +496,8 @@ bool NativeStaticBatch::restore_snapshot(const PackedByteArray &bytes) {
 Dictionary NativeStaticBatch::stats() const {
     // Retirement is excluded from live placements but remains explicitly accounted.
     Dictionary d;d["removal_protected"]=int(removal_protected.size());d["instances"]=int(placements.size()-hidden_record_count());d["staged_instances"]=int(admission_retiring?0:hidden_record_count());d["retiring_instances"]=int(admission_retiring?hidden_record_count():0);d["spatial_batches"]=int(batches.size());d["transform_bytes"]=int(placements.size())*48;
+    // Stable upper identity includes paged-out records; admission order is not identity.
+    d["last_identity"]=std::max(placements.empty()?int64_t(0):placements.rbegin()->first,unloaded_ids.empty()?int64_t(0):*unloaded_ids.rbegin());
     d["retired_collection_units"]=int64_t(collection_retirement?collection_retirement->units:0);
     d["retired_transform_bytes"]=int64_t(collection_retirement?collection_retirement->old_placements.size()*48:0);
     d["asset_id"]=asset_id;d["batch_uploads"]=int64_t(uploads);d["instance_updates"]=int64_t(instance_updates);d["slot_entries"]=int(slots.size());return d;

@@ -42,7 +42,7 @@ func run()->void:
 	if stage=="create":check(game.player_life.state.snapshot().has_spawn and game.player_life.state.snapshot().spawn.distance_to(game.player.position)<.25,"new generation persists introductory shelter before play")
 	if stage=="create":
 		check(await wait_for(func():return game.player_notices.shown==1 and game.player_notices.toast.modulate.a>.99,3),"Added quest notice animates after waking")
-		game._show_lake_notice("Your journey begins")
+		game._show_lake_notice("Your journey begins","quest")
 		check(await wait_for(func():return game.player_notices.general.visible and game.player_notices.general_age>=.15 and game.player_notices.general.modulate.a>.99,2),"general notice fades in above the toolbar")
 		await photograph("quest-notice")
 	else:check(game.player_notices.shown==0,"reload does not repeat Added quest notice")

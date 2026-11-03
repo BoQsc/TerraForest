@@ -3,6 +3,7 @@ extends RefCounted
 # Starter recipes are game rules, not physical manufacturing ratios.
 # Definitions and bounded UI orchestration may be modded; slot work is native.
 const RECIPES=[
+
 	{"title":"Ranger assault rifle","costs":[104,18,102,6],"outputs":[8,1]},
 	{"title":"Ranger cartridges × 30","costs":[104,3,201,2],"outputs":[223,30]},
 	{"title":"Carbine","costs":[104,12,102,4],"outputs":[7,1]},
@@ -25,7 +26,11 @@ const RECIPES=[
 	{"title":"Lockpicks · 1 metal → 3 lockpicks","costs":[104,1],"outputs":[213,3]},
 	{"title":"Trail hat","costs":[204,3],"outputs":[304,1]},
 	{"title":"Trail jerkin","costs":[204,6],"outputs":[305,1]},
-	{"title":"Trail boots","costs":[204,5],"outputs":[306,1]}
+	{"title":"Trail boots","costs":[204,5],"outputs":[306,1]},
+	{"title":"Recycle metal offcuts · 3 → 1 metal","costs":[224,3],"outputs":[104,1]},
+	{"title":"Unravel cloth scraps · 2 → 3 plant fibre","costs":[225,2],"outputs":[204,3]},
+	{"title":"Strip copper wire · 2 → 1 copper ore","costs":[226,2],"outputs":[203,1]},
+	{"title":"Recycle fasteners · 4 → 1 metal","costs":[227,4],"outputs":[104,1]}
 ]
 static func craft(inventory: RefCounted, recipe: int, batches: int, revision: int) -> Dictionary:
 	if recipe<0 or recipe>=RECIPES.size() or batches<1 or batches>1000: return {"ok":false,"reason":"invalid_recipe_or_quantity"}

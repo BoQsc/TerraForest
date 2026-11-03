@@ -1,5 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Quiet notices, town salvage and trading - 2026-11-03
+
+Installed: routine actions no longer animate centre toolbelt notices; explicit
+buff and quest changes remain. Four original salvage items have icons, batched
+drops, recycling and finite trade prices. New unlocked generated chests receive
+modest supplies. A bounded one-time pass upgrades empty existing town storage,
+preserving nonempty contents and preventing marked-chest refills; paging retains
+the original identity bound. Trader/player goods have searchable icon lists,
+quantity drag trades and buttons. Native inventory remains transaction owner;
+native model stats add only an upper identity including unloaded records.
+
+Executable shop23 + reload15 checks pass, including real GUI drag, exact saved
+wallet/stock/scrap and a chest staying empty. Generation37, source restore14,
+salvage24, notices15, interaction10, merchant16, quest offers29 and native model60
+per variant pass. Export gates/smoke pass. Earlier setup, list visibility and
+stale-index failures remain recorded. Images inspected; user visual/economy
+acceptance and broad performance/world qualification remain separate.
+[Evidence and limits](../issues/town-loot-and-trade/README.md).
+
 ## Improvised door reinforcement — 2026-11-03
 
 Installed rough boards and native locks: packaged generation/reopen (12 + 8),

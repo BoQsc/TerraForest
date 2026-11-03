@@ -3,6 +3,8 @@
 extends CanvasLayer
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 const Rules=preload("res://addons/player_runtime/container_rules.gd")
+var town_loot:=preload("res://addons/player_runtime/town_loot.gd").new()
+var _loot_retry:=0.0
 var store: RefCounted
 var game: Node
 var collection: Node3D
@@ -28,10 +30,11 @@ func prepare(owner_game: Node,persistence: RefCounted) -> bool:
 	game=owner_game;collection=game.structures.model("storage/wooden_chest/v1")
 	store=ClassDB.instantiate("NativeContainerStore")
 	if collection==null or not store.configure(game.player_hud.inventory,Rules.CAPACITY,16,Rules.PICK_ITEM): return false
-	return persistence.register_component("chest_contents",store.capture_storage_snapshot,stage_restore,store,store.capture_storage_snapshot())
+	collection.changed.connect(func():town_loot.rescan();set_process(true))
+	return town_loot.prepare(persistence) and persistence.register_component("chest_contents",store.capture_storage_snapshot,stage_restore,store,store.capture_storage_snapshot())
 func stage_restore(bytes: PackedByteArray) -> bool:
 	if not store.validate_snapshot(bytes): return false
-	close();pending_restore=bytes;return true
+	close();pending_restore=bytes;set_process(true);return true
 func restore_structures(bytes: PackedByteArray) -> bool:
 	# Called once all component bytes have passed native archive validation.
 	close()
@@ -150,3 +153,9 @@ func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if result.ok:game.terrain.changed_since_save=true
 	refresh();game.player_hud.refresh()
 	message.text="Stack moved" if result.ok else "Cannot move that stack; inventories refreshed"
+
+func _process(delta:float)->void:
+	if external:set_process(false);return
+	if _loot_retry>0:_loot_retry-=delta;return
+	if game!=null and town_loot.step(self):set_process(false)
+	elif not town_loot.started:_loot_retry=.5

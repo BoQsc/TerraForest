@@ -24,7 +24,7 @@ def main():
     source_group = parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("--source-report")
     source_group.add_argument("--source-slot", help="Diagnose a saved world only through a new private copy")
-    parser.add_argument("--stage", choices=["inspect", "full", "resume", "depart", "complete", "paid-resume", "cancel", "return-resume", "return-recovery", "doors"], default="full")
+    parser.add_argument("--stage", choices=["inspect", "full", "resume", "depart", "complete", "paid-resume", "cancel", "return-resume", "return-recovery", "doors", "shop", "shop-restore"], default="full")
     parser.add_argument("--resume-report", help="Reuse only this runner's owned copied fixture")
     parser.add_argument("--pack", action="store_true", help="Check the exported PCK with matching native libraries")
     parser.add_argument("--executable", action="store_true", help="Use the existing root TerraForest.exe and exported PCK; never replace it")
@@ -46,10 +46,10 @@ def main():
         metadata["pack_sha256"] = sha256(pack)
     if args.executable:
         metadata["executable_sha256"] = sha256(engine)
-    if args.stage in ("complete", "paid-resume", "return-resume") and not args.resume_report:
+    if args.stage in ("complete", "paid-resume", "return-resume", "shop-restore") and not args.resume_report:
         parser.error("This stage requires --resume-report from the prior owned ride run")
     if args.source_slot:
-        if args.stage != "return-recovery" or args.resume_report:
+        if args.stage not in ("return-recovery","shop") or args.resume_report:
             parser.error("--source-slot is restricted to a fresh return-recovery copy")
         source_slot = args.source_slot
     else:

@@ -8,6 +8,8 @@ const GOODS := {
 	201: ["Stone", 3, 1, 120], 202: ["Iron ore", 8, 4, 50],
 	203: ["Copper ore", 10, 5, 40], 210: ["Dry twigs", 2, 1, 80],
 	213: ["Lockpick", 8, 3, 24],
+	224: ["Metal offcuts",3,1,8],225: ["Cloth scraps",2,1,12],
+	226: ["Copper wire",4,2,8],227: ["Loose fasteners",2,1,12],
 	214: ["Field manual", 30, 10, 4], 215: ["Unsent letter", 8, 2, 6], 216: ["Survey journal", 24, 8, 4],
 	217: ["Tinned beans", 12, 4, 16], 218: ["Trail bread", 8, 3, 24], 219: ["Dried berries", 5, 2, 24]
 }

@@ -11,7 +11,12 @@ static func seed_generated(storage:Node,seed_value:int)->Dictionary:
 	var locked:=PackedInt64Array()
 	for identity in ids:
 		var random:=RandomNumberGenerator.new();random.seed=seed_value^identity^0x3e29c45b
-		if random.randi_range(1,LOCK_ONE_IN)!=1:continue
+		var is_locked:bool=random.randi_range(1,LOCK_ONE_IN)==1
+		if not is_locked and not storage.store.has_contents(identity):
+			if not storage.store.seed_contents(identity,preload("res://addons/player_runtime/salvage_catalog.gd").supplies(seed_value,identity)):return {"ok":false,"reason":"Scrap supply admission failed"}
+		if not is_locked:
+			if not storage.protect(identity,true):return {"ok":false,"reason":"Scrap chest protection failed"}
+			continue
 		if not storage.store.has_contents(identity):
 			var stock:=PackedInt64Array([102,random.randi_range(3,7),202,random.randi_range(2,5),601,random.randi_range(8,20)])
 			stock.append_array(PackedInt64Array([random.randi_range(217,219),random.randi_range(1,3),random.randi_range(214,216),1]))
