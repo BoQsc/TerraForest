@@ -33,6 +33,7 @@ The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
 | `steam/lib/install_log.py` | the run log in `steam/logs/`, which flags repairs and refusals as WARN |
 | `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
 | `steam/lib/steam_confirm.py` | the restart approval dialog (non-Steam shortcut, Steam restart) |
+| `steam/lib/ensure_deps.py` | the dependency pass the launchers run before their window |
 | `steam/lib/steam_gui.py` | the windowed front end: approval and the same bar, no console |
 | `steam/lib/install_to_steam.py` | the install entry point (also behind `install_to_steam.pyw`) |
 | `steam/lib/uninstall_from_steam.py` | the uninstall entry point (also behind `uninstall_from_steam.pyw`) |
@@ -43,6 +44,10 @@ The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
 `.pyw` runs under `pythonw`, so no command prompt appears; their output is appended to
 `steam/logs/gui.log` instead.
 
+Before the window, `install_to_steam.pyw` runs `steam/lib/ensure_deps.py`, which installs
+anything missing (see [Dependencies](#dependencies)); one double-click is still the whole
+procedure.
+
 One Tk window does both jobs: it explains the non-Steam shortcut and the Steam restart,
 then draws the same bar the console build draws - identical weights, the measured drift
 through the 24 s window wait, 99 before 100 - with the stage line and the live note under
@@ -51,6 +56,24 @@ reports `Finished.` or the exit code.
 
 Flags still work, e.g. `pythonw steam/install_to_steam.pyw --last-world --artwork`.
 Without a display the launcher falls back to the headless tool.
+
+### Dependencies
+
+Nothing has to be installed by hand. The install chain imports only the standard library
+(`ctypes`, `winreg`, `subprocess`, `zlib`, `queue`, `threading`, ...) plus `tkinter` for the
+window and Pillow for the icon tool, and `ensure_deps.py` covers the last one:
+
+| Need | Source |
+|---|---|
+| Python 3 with Tcl/Tk (`tkinter`) | the python.org Windows installer; without it the launcher runs headless |
+| Pillow (`PIL`) | installed automatically when `steam/app_icon/make_app_icon.py` has to rebuild `terraforest.ico` |
+| everything else | standard library of the running interpreter |
+
+An install goes to the user site first; an interpreter that refuses `--user` (Store
+Python, managed virtualenvs) gets it under `steam/vendor/`, which is added to `sys.path`
+for that run. The check appends one `deps     :` line per action to `steam/logs/gui.log`
+and never blocks the install it prepares. Check it by hand with
+`python steam/lib/ensure_deps.py` (status) or `--check` (install what is missing).
 
 ### Restart approval
 

@@ -7,6 +7,7 @@
 /TerraForest/addons/**/bin/~*.dll
 __pycache__/
 *.pyc
+/TerraForest/steam/vendor/
 .env
 .env.*
 !.env.example
