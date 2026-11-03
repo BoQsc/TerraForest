@@ -367,10 +367,10 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled();return
 	if game.player_view.consume(event):get_viewport().set_input_as_handled();return
 	if event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
-		if not visible_ui() and not game.player_hud.inventory_open and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
-			var slot: int=game.player_hud.developer_slot if developer else game.player_hud.active_slot
+		var over_belt:bool=game.player_hud.pointer_over_toolbelt()
+		if not visible_ui() and (not game.player_hud.inventory_open or over_belt) and not game.storage.opened and not game.world_vehicle.driving and not game.loading_active and game.app_focused and (Input.mouse_mode==Input.MOUSE_MODE_CAPTURED or over_belt):
 			var step:=1 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -1
-			game.player_hud.equip(posmod(slot+step,10) if slot>=0 and slot<10 else (0 if step>0 else 9))
+			game.player_hud.cycle_toolbelt(step)
 			get_viewport().set_input_as_handled()
 		return
 	if not event is InputEventKey or event.echo:return

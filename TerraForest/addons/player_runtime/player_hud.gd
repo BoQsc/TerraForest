@@ -69,6 +69,7 @@ var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
 var active_slot: int=-1
+var belt_cursor: int=-1
 var ground_species: int=-1
 var ground_hint: Label
 var mode_hint: Label
@@ -198,7 +199,7 @@ func _ready() -> void:
 		var button=preload("res://addons/player_runtime/inventory_slot.gd").new();button.controller=self;button.slot=i
 		button.custom_minimum_size=Vector2(110,84)
 		button.focus_mode=Control.FOCUS_NONE
-		button.pressed.connect(func(): select_slot(i) if inventory_open and not developer_belt else equip(i))
+		button.pressed.connect(func(): select_slot(i) if inventory_open and not developer_belt else select_belt_slot(i))
 		bar.add_child(button);belt.append(button)
 	var hint:=Label.new();mode_hint=hint;hint.text="1–9 / 0 / Wheel equip    ·    Tab inventory    ·    Esc menu"
 	hint.text += "    ·    " + ("Gameplay construction" if gameplay_construction else "Free editor")
@@ -308,7 +309,7 @@ func refresh() -> void:
 				belt[i].set_appearance(i==9,i==developer_slot,false)
 			else:
 				belt[i].present(row,item_name,str((i+1)%10))
-				belt[i].set_appearance(row.count==0,i==active_slot,inventory_open and i==selected_slot)
+				belt[i].set_appearance(row.count==0,i==active_slot,i==selected_slot)
 	_refresh_ground_hint()
 
 	_refresh_recipes()
@@ -365,6 +366,8 @@ func equip(slot: int) -> void:
 func equip_inventory(slot: int) -> void:
 	if (not enabled and not inventory_open) or inventory==null or slot<0 or slot>=32:return
 	state=inventory.snapshot()
+	if slot<10 and int(state.slots[slot].count)==0:
+		active_slot=-1;active_item=0;selected_slot=slot;belt_cursor=slot;tool_requested.emit(0);refresh();return
 	if slot>=10:
 		# Equip from the backpack by moving/swapping into an actual belt slot.
 		var destination: int=active_slot if active_slot>=0 and active_slot<10 else 0
@@ -378,6 +381,7 @@ func equip_inventory(slot: int) -> void:
 			active_slot=-1;active_item=0;tool_requested.emit(0);refresh();return
 		slot=destination
 	active_slot=slot;active_item=int(state.slots[slot].item)
+	selected_slot=-1;belt_cursor=slot
 	tool_requested.emit(active_item);refresh()
 
 func equip_item(item: int) -> bool:
@@ -480,7 +484,46 @@ func refresh_survival()->void:
 func select_slot(slot: int) -> void:
 	# Click selects; dragging moves. Selection must never relocate an item.
 	selected_slot=-1 if selected_slot==slot else slot
+	belt_cursor=slot if slot>=0 and slot<10 else belt_cursor
 	refresh()
+
+func select_belt_slot(slot:int)->void:
+	if slot<0 or slot>=10:return
+	belt_cursor=slot
+	if developer_belt:
+		developer_slot=slot;developer_tool_requested.emit(slot);refresh();return
+	if inventory_open:
+		select_slot(slot);return
+	var state_now:Dictionary=inventory.snapshot()
+	if int(state_now.slots[slot].count)>0:
+		equip_inventory(slot)
+	else:
+		active_slot=-1;active_item=0;selected_slot=slot;tool_requested.emit(0);refresh()
+
+func cycle_toolbelt(direction:int)->void:
+	if direction==0:return
+	var current:=belt_cursor
+	if current<0:current=active_slot
+	if current<0:
+		current=9 if direction<0 else 0
+	else:
+		current=posmod(current+direction,10)
+	belt_cursor=current
+	if developer_belt:
+		developer_slot=current;developer_tool_requested.emit(current);refresh();return
+	if inventory_open:
+		selected_slot=current;refresh();return
+	var state_now:Dictionary=inventory.snapshot()
+	if int(state_now.slots[current].count)>0:
+		equip_inventory(current)
+	else:
+		active_slot=-1;active_item=0;selected_slot=current;tool_requested.emit(0);refresh()
+
+func pointer_over_toolbelt()->bool:
+	var point:=get_viewport().get_mouse_position()
+	for button in belt:
+		if is_instance_valid(button) and button.is_visible_in_tree() and button.get_global_rect().has_point(point):return true
+	return false
 
 func set_open(value: bool) -> void:
 	if not enabled or inventory==null or inventory_open==value: return
