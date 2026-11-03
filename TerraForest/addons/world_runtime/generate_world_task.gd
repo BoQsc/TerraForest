@@ -289,6 +289,17 @@ func run()->void:
  var reinforced:Dictionary=preload("res://addons/structures/door_reinforcement_generation.gd").seed_generated(game,all_lots,seed_value)
  if not reinforced.get("ok",false):print("DOOR_REINFORCEMENT_FAILED ",reinforced);game.free();quit(1);return
  FileAccess.open(output_dir.path_join("door_reinforcement.json"),FileAccess.WRITE).store_string(JSON.stringify(reinforced))
+ progress("Parking vehicles in clear garages and warehouses")
+ var parking_roads:Array=[]
+ for site:Dictionary in sites:parking_roads.append_array(site.get("roads",[]))
+ for lot:Dictionary in all_lots:
+  if lot.has("entrance"):parking_roads.append(lot.entrance.segment)
+ for route:Dictionary in prepared.get("navigation",{}).get("roads",[]):
+  parking_roads.append({"start":route.a,"finish":route.b,"half_width":float(route.width)*.5})
+ var parked:Dictionary=preload("res://addons/vehicle_runtime/building_parking.gd").seed_generated(game,all_lots,parking_roads,seed_value)
+ if not parked.ok:print("BUILDING_PARKING_FAILED ",parked);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("building_parking.bin"),FileAccess.WRITE).store_var(parked)
+ FileAccess.open(output_dir.path_join("building_parking.json"),FileAccess.WRITE).store_string(JSON.stringify(parked))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

@@ -417,6 +417,9 @@
     "res://addons/vegetation/forest.gd",
     "res://addons/vegetation/assets.gd"
   ],
+  "res://addons/vehicle_runtime/building_parking.gd": [
+    "res://addons/characters/runtime/house_sleepers.gd"
+  ],
   "res://addons/vehicle_runtime/fleet_activation.gd": [],
   "res://addons/vehicle_runtime/vehicle_adapter.gd": [],
   "res://addons/vehicle_runtime/vehicle_item.gd": [],
@@ -559,6 +562,7 @@
     "res://addons/exploration/generation.gd",
     "res://addons/player_runtime/container_rules.gd",
     "res://addons/structures/door_reinforcement_generation.gd",
+    "res://addons/vehicle_runtime/building_parking.gd",
     "res://addons/structures/lake_crossings.gd",
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",

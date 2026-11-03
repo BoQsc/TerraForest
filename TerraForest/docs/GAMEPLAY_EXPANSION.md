@@ -167,7 +167,7 @@ compute shaders are used where measured workloads justify them, not as a label.
 | Less chaotic main roads linking towns and cities | Pending corridor planning and actual connected on-foot/vehicle routes |
 | Large interesting-shaped lakes | Existing varied lakes are baseline only; requested larger-content layout still needs world evidence |
 | New medium-sized bridge | Existing timber bridge is not this new deliverable; pending new modular design and land/vehicle/water approaches |
-| Parked vehicles in garages/warehouses | Pending footprint/clearance-aware placements, entry/exit and persistence |
+| Parked vehicles in garages/warehouses | Installed native admission, unchanged C1/W1 bays, player aisle/entry/exit/drive-out and packaged default generation/fresh restore pass; broader street/NPC/endurance and visual acceptance remain in [parking issue](../issues/building-parking/README.md) |
 | Efficient house-light expansion: fireplace, torch and fixtures | Pending original models, bounded light residency, emissive/distant representation and indoor performance |
 | Slightly varied safe player starts | Pending second-floor house, roadside and path starts with collision/readiness and no hostile immediate spawn |
 | Paths with a new imagegen texture | Original imagegen source candidate and exact prompt/provenance retained in `addons/exploration/art/`; tiled/surface review, runtime bake, path planning and natural transitions remain pending |

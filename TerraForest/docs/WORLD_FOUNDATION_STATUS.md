@@ -1,5 +1,23 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Indoor generated vehicle parking - 2026-11-03
+
+Installed / scoped checks: [parking issue and evidence](../issues/building-parking/README.md).
+New-world C1 garage and W1 warehouse parking uses bounded generation-time native
+block/model occupancy and support queries, pedestrian/departure clearance, public
+approach separation, encounter/quest reservations and the existing native fleet.
+No approved building geometry or existing save is rewritten. The new-world C1
+sleeper anchor moves from the garage drive lane into a supported furnished room.
+All four rotations pass 93 parking and 80 actual sleeping/waking collision checks.
+Packaged default generation passes 34 walking/entry/exit/drive-out/save checks;
+fresh package/source reopening pass 12 each. Positions, IDs and module state are
+exact; quaternion basis roundtrip tolerance is explicit, not byte equality.
+Installed PCK d218c056, 14 matching DLLs, no new native build. Inspected images and
+failed trials are retained. Three-candidate parking work took 9.188 ms; short
+offscreen departures p95 17.219/17.063 ms do not establish general headroom.
+Broad seeds, populated street journeys and foreground performance remain open;
+this milestone does not close the larger expansion contract.
+
 ## Quiet notices, town salvage and trading - 2026-11-03
 
 Installed: routine actions no longer animate centre toolbelt notices; explicit

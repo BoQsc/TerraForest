@@ -1,5 +1,23 @@
 # Native vehicle runtime
 
+## Generated indoor parking
+
+`building_parking.gd` runs only during new-world publication. The approved C1 garage
+and W1 warehouse have qualified Ranger bay/departure and pedestrian-exit envelopes;
+the buildings themselves are unchanged. Deterministically ranked fallback bays
+target at most one car per three C1 homes, plus warehouses, with a total cap of 32.
+Native block/model masks and exact solid samples reject obstruction, missing floor,
+public approaches, sleepers and resettable quest reservations. Unusable bays remain
+empty rather than forcing a vehicle through existing content. New C1 sleepers use
+the main room instead of occupying the garage lane. Existing saves are untouched.
+
+Cars enter the existing `NativeVehicleFleet` component and its native near/far
+presentation, activation and binary storage. Parking adds no per-car script node,
+per-frame search or new save owner. Unknown vehicle packs are not assigned a Ranger
+bay; qualify their geometry and entry/exit contract before adding an authoring row.
+See [the parking tracker](../../issues/building-parking/README.md) for acceptance,
+failed trials and remaining populated-world/performance coverage.
+
 Current module host/API: [vehicle packs](../../docs/VEHICLE_PACKS.md).
 That contract supersedes the early single-car/fleet-limit notes below. The built-in
 Ranger retains its native driving policy; independent pack controllers use adapters.

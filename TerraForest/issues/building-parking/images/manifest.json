@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-03",
+  "creator": "TerraForest project, original in-engine captures",
+  "license": "CC0-1.0 to the extent of original screenshot rights; depicted inherited assets retain their existing licenses and notices",
+  "world": "Normal default Generate & play, seed 1703, owned Parking_1703_026842eb save",
+  "pack_sha256": "d218c056e5c4ec274cc9bff7b9605ebd14fb723a005ce100ccdc33817e2429c0",
+  "inspection": "Both packaged bay views inspected; broader surroundings and user visual approval remain unqualified",
+  "files": [
+    {"file": "house-c1.png", "source": "reports/building_parking_world/20261103T063617512537Z/house_c1_parked.png", "sha256": "27a8742af2da3e8d3ee7305753b1f1365ea60a391b3e39f8e79985d920fb59ee"},
+    {"file": "warehouse-w1.png", "source": "reports/building_parking_world/20261103T063617512537Z/warehouse_w1_parked.png", "sha256": "ecb8810aa9a14ffcb8cbd3f5bbce7b361f3e1bc662a60d7a0f9076580011ca25"}
+  ]
+}

@@ -2,7 +2,7 @@
 extends RefCounted
 
 const Catalog=preload("res://addons/structures/expansion_catalog.gd")
-const HOMES={"cottage_a2":Vector3(1.1,2.002,2.8),"house_c1":Vector3(9,5.002,5.5)}
+const HOMES={"cottage_a2":Vector3(1.1,2.002,2.8),"house_c1":Vector3(2,5.002,1)}
 const CHURCH=[Vector3(6.5,5.002,14),Vector3(6.5,5.002,19),Vector3(6.5,5.002,24),Vector3(6.5,5.002,30),Vector3(2,5.002,12),Vector3(10.5,5.002,12),Vector3(7,1.002,10),Vector3(3.5,1.002,10),Vector3(17,5.002,3),Vector3(17,5.002,10)]
 
 static func key(origin:Vector3i,rotation:int,slot:int=1)->int:
