@@ -54,5 +54,21 @@
     "caption": "Installed executable on a private copy of the stuck save: returning home at28km/h on the original road after approach recovery. Functional return completed; overall test retains exit cleanup warning.",
     "inspection": "inspected",
     "provenance": "Unedited Godot packaged-runtime screenshot; inherited assets retain their notices, no external assets imported."
+  },
+  {
+    "image": "door-choice-private-door-closed.png",
+    "source": "reports/trader_ride_world/20261103T004838731997Z/private-door-closed.png",
+    "sha256": "611b8c46c902be68570d414fe074bfaf1b5ffe0595df7ad03674bc1dd72d4942",
+    "caption": "Private stockroom leaf retains its closed native state after trader boarding. Oblique inspection view; door/frame asset fit is not changed by this interaction fix.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot; inherited assets and notices retained, no external assets imported."
+  },
+  {
+    "image": "door-choice-entrance-open.png",
+    "source": "reports/trader_ride_world/20261103T004838731997Z/entrance-open.png",
+    "sha256": "90886b11274d19388469c62542c6a0428967e7422c587012c96860b4fa39b528",
+    "caption": "Entrance leaf is open after the trader walks out and seats in the service car; inherited door model and swing retained.",
+    "inspection": "inspected",
+    "provenance": "Unedited Godot packaged-runtime screenshot; inherited assets and notices retained, no external assets imported."
   }
 ]

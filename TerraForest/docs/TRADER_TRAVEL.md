@@ -172,3 +172,13 @@ segment, within 3 m vertically, and forward-aligned (dot product at least 0.8).
 Only the final 32 original segments are considered; the combined 8,192-point
 archive limit and all live road/collision/wheel guards remain. Recovery changes
 the saved itinerary, never a body transform. See the [follow-up evidence](../issues/trader-travel/README.md).
+
+## Shop door interaction — 2026-11-03
+
+Door permissions apply only to the original shop footprint. A walking trader
+requests a closed door only within 3 m, ahead of the current native steering
+(dot product at least 0.5) and toward the walk goal, with the physical leaf as the
+first ray hit. Permission alone does not open nearby stockroom doors. Queries
+run at most four times per second across the existing 16-door list; a swing
+request sets a one-second retry and returns immediately. Native motion and swing
+clearance stay authoritative. The shared walker serves quests and paid rides.

@@ -165,6 +165,17 @@ These package phases have distinct hashes/scopes; earlier failures are retained.
 Player visual, crowded combat and foreground performance acceptance remain open.
 Evidence and return triggers: [coal-mine tracker](../issues/coal-mine/README.md).
 
+## Trader shop door choice — 2026-11-03
+
+Proximity-only door opening after booking is replaced by a bounded visible-door
+approach in the native walking direction and toward the goal. A private fixture
+with both shop doors shut passes 20 source checks: stockroom stays closed,
+entrance opens, trader seats in the car. Actual executable also passes 20/20,
+with zero diagnostics/captures and sampled memory within budget. Export/smoke pass;
+the updated package is installed. Packaged p95 17.664 ms, worst 59.310 ms; rejected
+short-ray and wall-hit trials remain in the [trader tracker](../issues/trader-travel/README.md).
+Quest and paid rides share this walker; quest-acceptance UI is not requalified here.
+
 ## Trader return obstruction — 2026-11-03
 
 Player-reported expedition hold reproduced on a private save copy: downhill

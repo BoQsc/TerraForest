@@ -119,8 +119,30 @@ func run()->void:
 	if not check(ride.state.phase==ride.BOARDING and not game.trader.ui.opened,"reserve button creates one service and closes the shop"):print("BOOK_NOTICE ",game.trader.ui.notice.text);await finish();return
 	check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==before,"reservation does not charge before boarding")
 	var identity:int=ride.identity()
-	if not check(await watch(func():return ride.state.seated,120),"trader physically walks from counter to car"):await photograph("boarding-failure");await finish();return
+	var private_door:Dictionary={};var entrance_door:Dictionary={}
+	if stage=="doors":
+		ride._shop_door_access()
+		for door:Dictionary in ride.shop_doors:
+			if door.position.distance_to(point+Vector3(3,0,-1.6))<.2:private_door=door
+			if door.position.distance_to(point+Vector3(0,0,8.4))<.2:entrance_door=door
+		if not check(not private_door.is_empty() and not entrance_door.is_empty(),"real shop has a private door and a separate entrance"):await finish();return
+		for door:Dictionary in [private_door,entrance_door]:
+			if door.entry.state.is_open(door.id):door.entry.state.toggle(door.entry.collection,door.id,AABB())
+		check(not private_door.entry.state.is_open(private_door.id) and not entrance_door.entry.state.is_open(entrance_door.id),"both doors start closed in the private fixture")
+	if not check(await watch(func():return ride.state.seated,45 if stage=="doors" else 120),"trader physically walks from counter to car"):await photograph("boarding-failure");await finish();return
 	await photograph("driver-boarded")
+	if stage=="doors":
+		check(not private_door.entry.state.is_open(private_door.id) and not private_door.entry.state.is_moving(private_door.id),"boarding walk leaves the unrelated private-room door closed")
+		check(entrance_door.entry.state.is_open(entrance_door.id),"boarding walk opens the closed entrance on its native route")
+		check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==before,"walking to the car charges no fare")
+		game.camera.position=Vector3.ZERO
+		game.camera.global_position=point+Vector3(1,1.65,2)
+		game.camera.look_at(private_door.position+Vector3(.5,1,0))
+		await photograph("private-door-closed")
+		game.camera.global_position=point+Vector3(2,1.65,5)
+		game.camera.look_at(entrance_door.position+Vector3(.5,1,0))
+		await photograph("entrance-open")
+		await finish();return
 	if not check(await walk_player_to_car(game,ride),"player physically walks to the parked service car"):await photograph("player-walk-failure");await finish();return
 	var obstruction:=StaticBody3D.new();var obstacle_shape:=CollisionShape3D.new();var box:=BoxShape3D.new();box.size=Vector3(2,2,1);obstacle_shape.shape=box;obstruction.add_child(obstacle_shape);game.add_child(obstruction)
 	obstruction.global_position=ride.car.global_transform*Vector3(0,.8,2.6)

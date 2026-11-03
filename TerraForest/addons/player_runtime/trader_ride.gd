@@ -423,12 +423,6 @@ func _walk(delta:float)->void:
 	if not is_instance_valid(host.actor):return
 	var actor:CharacterBody3D=host.actor
 	door_retry=maxf(0,door_retry-delta)
-	if door_retry==0:
-		for door:Dictionary in shop_doors:
-			if actor.global_position.distance_to(door.position)>3 or door.entry.state.is_open(door.id) or door.entry.state.is_moving(door.id):continue
-			var opened:Dictionary=door.entry.state.animate_toggle(door.entry.collection,door.id,AABB())
-			if opened.ok:game.terrain.changed_since_save=true
-			door_retry=1
 	if state.phase==BOARDING and state.seated:
 		status_text="Coal-mine expedition · E by the car to board\nFree return ride. I'll wait at the mine." if state.expedition else "Ready for %s · %d coins · E by the car to board\nHold E and choose Cancel reservation to cancel free."%[state.title,state.fare];return
 	if state.phase==BOARDING and not boarding_goal.is_finite():boarding_goal=game.world_vehicle.safe_exit_for(game,car,actor.get_rid())
@@ -439,6 +433,7 @@ func _walk(delta:float)->void:
 	walk_status=navigator.state(1)
 	var target:Vector3=navigator.steering_target(1);var movement:=Vector3.ZERO
 	if walk_status=="following" and target.is_finite():
+		_open_route_door(actor,target)
 		movement=target-actor.global_position;movement.y=0
 		if movement.length()>.03:movement=movement.normalized()*2.1
 		if not navigator.guard_motion(1,movement,movement.length()*delta):movement=Vector3.ZERO
@@ -458,6 +453,30 @@ func _walk(delta:float)->void:
 			state.seated=true;actor.collision_layer=0;actor.collision_mask=0;actor.hide()
 			driver_view=Seat.create(car,[{"item":301,"count":1},{"item":302,"count":1},{"item":303,"count":1}],true)
 		changed()
+
+func _open_route_door(actor:CharacterBody3D,target:Vector3)->void:
+	if door_retry>0:return
+	door_retry=.25
+	# Door permission is not a request to open every nearby leaf. Approach a
+	# visible door only when it is ahead of both the native steering direction
+	# and the walk's goal. Open early enough to stand outside the swing envelope.
+	var origin:Vector3=actor.global_position+Vector3.UP*.9
+	var heading:Vector3=target-actor.global_position;heading.y=0
+	var goal:Vector3=(state.home if state.phase==HOME_WALK else boarding_goal)-actor.global_position;goal.y=0
+	if heading.length_squared()<.0001 or goal.length_squared()<.0001:return
+	for door:Dictionary in shop_doors:
+		if door.entry.state.is_open(door.id) or door.entry.state.is_moving(door.id):continue
+		var values:PackedFloat32Array=door.entry.collection.get_instance(door.id)
+		if values.size()!=12:continue
+		var center:Vector3=door.position+Vector3(values[0],values[4],values[8])*.5
+		var offset:Vector3=center-actor.global_position;offset.y=0
+		if offset.length_squared()>9 or offset.dot(goal)<=0 or offset.normalized().dot(heading.normalized())<.5:continue
+		var query:=PhysicsRayQueryParameters3D.create(origin,center+Vector3.UP*.9,15,[actor.get_rid()])
+		var hit:Dictionary=game.get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.is_empty() or hit.rid!=door.entry.collection.collision_body_for(door.id):continue
+		var opened:Dictionary=door.entry.state.animate_toggle(door.entry.collection,door.id,AABB())
+		if opened.ok:game.terrain.changed_since_save=true
+		door_retry=1;return
 
 func _shop_door_access()->void:
 	# Explicit trader permission is limited to the original shop footprint.

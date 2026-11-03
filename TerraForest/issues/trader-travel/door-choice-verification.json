@@ -1,0 +1,235 @@
+{
+  "date": "2026-11-03",
+  "scope": "Shared trader walk after paid booking in a copied generated seed1703 fixture, with both shop doors initially closed. Quest acceptance UI not newly exercised.",
+  "cause": "The prior walker opened every permitted nearby door, without route direction or visible leaf selection.",
+  "reports": {
+    "source": {
+      "path": "reports/trader_ride_world/20261103T004650996510Z",
+      "run_sha256": "05f3f97b13f60122cf171c22d777b8cc180867144e6e2cd4ec313c377f21ea60",
+      "log_sha256": "180213f6b4732af30149072bf780af4ebed9158126868982afb98944bbd5c04b",
+      "passed_assertions": 20,
+      "command": [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "30",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261103T004650996510Z\\engine.log",
+        "--script",
+        "res://tests/trader_ride_world.gd",
+        "--",
+        "--session-evidence-dir=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/trader_ride_world/20261103T004650996510Z",
+        "--ride-stage=doors"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 28616,
+        "exit_code": 0,
+        "resources": {
+          "samples": 87,
+          "gpu_samples": 86,
+          "peak_private_commit_bytes": 3703300096,
+          "peak_working_set_bytes": 2157936640,
+          "peak_dedicated_gpu_bytes": 1490579456,
+          "checks": {
+            "ram": {
+              "bytes": 3703300096,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1490579456,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 52.84547249996103,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "frames": {
+        "fps_cap": 60,
+        "measurement": "wall-clock process-frame intervals",
+        "p95_ms": 19.211,
+        "samples": 1332,
+        "scope": "Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 66.333
+      },
+      "source_sha256": {
+        "addons/player_runtime/trader_ride.gd": "5213f7bc95068ca4d4250dbfe0321f8186949fb339f72b659f0527e98a9d3616",
+        "tests/trader_ride_world.gd": "21c11a27e8f195ad2f55b623fe6e16830dec08b7413846c1540387a0c5524f14"
+      }
+    },
+    "executable": {
+      "path": "reports/trader_ride_world/20261103T004838731997Z",
+      "run_sha256": "cae094e56e409dea08c00f38ab22bffe0b9b1a6eadbc817a93cc4ff435d2191e",
+      "log_sha256": "52a37a53d0449bc83774cf7b9591646bb5c6684cd449217ce22b2e9d434adfa0",
+      "passed_assertions": 20,
+      "command": [
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+        "--main-pack",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+        "--path",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist",
+        "--windowed",
+        "--position",
+        "-2400,-1600",
+        "--resolution",
+        "1920x1080",
+        "--max-fps",
+        "30",
+        "--log-file",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261103T004838731997Z\\engine.log",
+        "--script",
+        "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\trader_ride_world\\20261103T004838731997Z\\driver.gd",
+        "--",
+        "--session-evidence-dir=C:/Users/windows10/Documents/ChatGPT/Godot Terrain/TerraForest/reports/trader_ride_world/20261103T004838731997Z",
+        "--ride-stage=doors"
+      ],
+      "result": {
+        "timed_out": false,
+        "launch_error": null,
+        "cancelled": false,
+        "pid": 18564,
+        "exit_code": 0,
+        "resources": {
+          "samples": 86,
+          "gpu_samples": 85,
+          "peak_private_commit_bytes": 3718942720,
+          "peak_working_set_bytes": 2344914944,
+          "peak_dedicated_gpu_bytes": 1490579456,
+          "checks": {
+            "ram": {
+              "bytes": 3718942720,
+              "status": "within_budget"
+            },
+            "vram": {
+              "bytes": 1490579456,
+              "status": "within_budget"
+            },
+            "redistributable": {
+              "bytes": null,
+              "status": "unavailable"
+            }
+          },
+          "limits": {
+            "schema": 1,
+            "vram_warning_bytes": 3758096384,
+            "vram_limit_bytes": 4294967296,
+            "ram_warning_bytes": 4294967296,
+            "ram_limit_bytes": 6442450944,
+            "ram_status": "Provisional process-private-commit targets; not system RAM requirements",
+            "redistributable_warning_bytes": 4000000000,
+            "redistributable_limit_bytes": 5000000000,
+            "derived_cache_total_bytes": 3221225472,
+            "failed_test_cache_bytes": 1073741824,
+            "saved_world_warning_bytes": 10737418240,
+            "free_space_warning_bytes": 10737418240,
+            "minimum_free_bytes": 2147483648,
+            "scope": "Budgets detect regressions; they are not allocator caps or proof of 4 GiB GPU compatibility. Saves, history and evidence are not disposable caches."
+          },
+          "errors": [],
+          "exceeded": false,
+          "telemetry_complete": true,
+          "within_sampled_limits": true,
+          "scope": "Process-specific Windows counters, sampled every 0.5 s; driver/instantaneous peaks and other workloads remain unqualified. GPU value sums dedicated allocations across adapters, not whole-device desktop usage."
+        },
+        "diagnostics": [],
+        "required_text_found": true,
+        "elapsed_seconds": 52.57786670001224,
+        "passed": true,
+        "cache_retention": {
+          "managed": false
+        }
+      },
+      "frames": {
+        "fps_cap": 60,
+        "measurement": "wall-clock process-frame intervals",
+        "p95_ms": 17.664,
+        "samples": 1323,
+        "scope": "Offscreen run under the world's active FPS policy; includes harness sampling and excludes startup/player fixture walking",
+        "worst_ms": 59.31
+      },
+      "source_sha256": {
+        "addons/player_runtime/trader_ride.gd": "5213f7bc95068ca4d4250dbfe0321f8186949fb339f72b659f0527e98a9d3616",
+        "tests/trader_ride_world.gd": "6de882a85ccb12e9577b368bdf1f0510f070e5ae3659fa5eaf36e380ede205c5"
+      },
+      "pack_sha256": "30a867616809b641a37949611ae17b592447d4d1ddee9fb18997ca97300a6e77",
+      "executable_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+      "native_sha256": {
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+        "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+        "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "982b5771466596f3e896b70f688d5dad3e48cb35fd245f891839bff1c77a00f0",
+        "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "42ffe3b9699b3c48100979dadcf5a6717806aeae022f9e74a06db0e4444803a4",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+        "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+        "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+        "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+        "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+        "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9"
+      },
+      "external_driver_sha256": {
+        "window_session_flow.gd": "8917c437277d9e1d6a69610cda45af6951b743106e397237f463d820145e278e",
+        "driver.gd": "6706d0f38d07ea617fe8de864113de93fc88990cde5a68e66b777566d873fe4a"
+      }
+    }
+  },
+  "retained_trials": {
+    "next_segment_too_late": "reports/trader_ride_world/20261103T004126208727Z",
+    "heading_ray_wall_hits_stopped": [
+      "reports/trader_ride_world/20261103T004404779550Z",
+      "reports/trader_ride_world/20261103T004522569544Z"
+    ]
+  },
+  "limits": [
+    "Bounded original-shop interaction, not whole-world door-route planning or all edited layouts.",
+    "Literal segment-only interaction was rejected because the trader entered the swing envelope; final implementation requests the visible door ahead toward the goal before reaching it.",
+    "Historical garment/glass, cleanup-warning and user review entries remain separate."
+  ],
+  "export": {
+    "log": "reports/trader_doors/export/console.log",
+    "log_sha256": "fabde6536141515efd739e49a8a680fa88b31fa0a45b378071cb6af1c6bafec7",
+    "gates_and_smoke_passed": true,
+    "unqualified_parking_excluded_and_files_restored": true
+  }
+}

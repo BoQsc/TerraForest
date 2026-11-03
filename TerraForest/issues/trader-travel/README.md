@@ -6,6 +6,41 @@
   by car on roads, and trader returning after the player gets out.
 - User review: Not reviewed. No visual/gameplay acceptance claimed.
 
+## Door choice follow-up — 2026-11-03
+
+The trader's walker previously animated every permitted closed shop door within
+three metres, even when that leaf was unrelated to the trip. This explains the
+private-stockroom opening after accepting the quest. The shared quest/paid-ride
+walker now requires the door to be ahead of both its current native steering
+and walking goal, with a clear ray to the actual door leaf. It requests at most
+one swing per retry and waits for ordinary clearance. Seated traders skip door
+interaction. Native planning, actor motion and door swing obstruction remain
+unchanged; this is bounded shop interaction, not a new navigation planner.
+
+A private saved-world fixture begins with both the stockroom and entrance shut.
+Source report `reports/trader_ride_world/20261103T004650996510Z` passes 20 checks:
+private door stays closed, entrance opens, trader walks to and seats in the car,
+and no fare is charged on the walk. Actual executable
+`reports/trader_ride_world/20261103T004838731997Z` also passes all 20 checks with
+zero diagnostics/captures and sampled memory within budget. Packaged wall-frame
+p95 is 17.664 ms and worst 59.310 ms; no sustained performance claim. Export gates
+and smoke pass. Exact hashes/commands and preserved failures are in the
+[door-choice record](door-choice-verification.json).
+
+![Private door after boarding](images/door-choice-private-door-closed.png)
+Closed native state retained; oblique inspected view. Door/frame fitting is unchanged.
+
+![Entrance after boarding](images/door-choice-entrance-open.png)
+The trader opened this entrance before walking through it and seating in the car.
+Inspected packaged view; user acceptance remains separate.
+An initial literal next-segment ray opened too late for the safe swing and
+failed the walk (`20261103T004126208727Z`, 17 checks / 1 failure). Direction-only
+lookahead still hit the entrance wall before the route's turn; diagnostic runs
+`20261103T004404779550Z` and `20261103T004522569544Z` were stopped after reproducing
+that hold. The final visible-leaf approach opens before entering the swing area.
+These trials remain retained. This fixture uses the paid booking UI and the
+shared walking implementation; it does not newly exercise quest acceptance.
+
 ## Return obstruction follow-up — 2026-11-03
 
 The reported expedition return was reproduced in a private copy of the recent
