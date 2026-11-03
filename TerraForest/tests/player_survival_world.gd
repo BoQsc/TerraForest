@@ -83,10 +83,14 @@ func run()->void:
 		hud.set_open(false)
 		if check(game.trader.try_open({"collider":game.trader.actor}),"restored merchant remains reachable through ordinary interaction"):
 			game.trader.ui.select_mode("Trade")
-			game.trader.ui.rows.select(game.trader.ui.rows.item_count-1);game.trader.ui.refresh()
+			var food_row:=-1
+			for row in game.trader.ui.rows.item_count:
+				if int(game.trader.ui.rows.get_item_metadata(row)) in [217,218,219]:food_row=row
+			if food_row>=0:game.trader.ui.rows.select(food_row)
+			game.trader.ui.refresh()
 			for frame in 2:await process_frame
 			await process_frame;await process_frame
-			check(game.trader.ui.rows.get_v_scroll_bar().value>0,"last food offer remains visible after UI refresh")
+			check(food_row>=0 and game.trader.ui.rows.get_v_scroll_bar().value>0,"selected food offer remains visible after UI refresh")
 			await photograph("food-trade-restored")
 		await finish();return
 	check(game.persistence._providers.has("player_survival") and game.persistence._providers.size()<127,"survival fits bounded compound save registry")

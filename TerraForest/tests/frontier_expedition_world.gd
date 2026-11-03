@@ -183,7 +183,9 @@ func run()->void:
 			await photograph("walk-failed");await finish();return
 	game.camera.look_at(game.trader.anchor+Vector3.UP*1.45)
 	if not check(game.trader.try_open(game.world_interaction.hit(game)),"ordinary scene picking opens trader"):await finish();return
-	check(game.quests.store.snapshot().introduction==2 and game.trader.ui.quest_panel.visible,"talk completes the introduction and opens Quests")
+	check(game.quests.store.snapshot().introduction==2 and game.trader.ui.choice_panel.visible and game.trader.ui.choice_quest.visible and game.trader.ui.choice_trade.visible,"talk completes the introduction and opens the Quests/Trading choice")
+	game.trader.ui.select_mode("Quests")
+	check(game.trader.ui.quest_panel.visible and not game.trader.ui.trade_panel.visible,"Quests opens from the choice screen")
 	await photograph("quests")
 	game.trader.ui.select_mode("Trade")
 	check(game.trader.ui.trade_panel.visible and not game.trader.ui.quest_panel.visible,"Trade remains independently available")

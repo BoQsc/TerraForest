@@ -14,7 +14,7 @@ func _get_drag_data(at:Vector2)->Variant:
 	return data
 
 func _can_drop_data(_at:Vector2,data:Variant)->bool:
-	return trade.accepts_offer(side,data)
+	return trade.accepts_drop(side,data)
 
 func _drop_data(_at:Vector2,data:Variant)->void:
-	trade.drop_offer(side,data)
+	trade.drop_data(side,data)

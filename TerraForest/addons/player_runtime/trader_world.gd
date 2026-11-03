@@ -20,7 +20,7 @@ func prepare(owner_game:Node,persistence:RefCounted)->bool:
 	return trader.register_persistence(persistence) and ride.prepare(self,persistence)
 
 func _ready()->void:
-	add_child(ride);ui.ride=ride;ui.quests=game.quests
+	add_child(ride);ui.ride=ride;ui.quests=game.quests;ui.hud=game.player_hud
 	add_child(ui)
 	ui.closed.connect(_closed)
 	ui.traded.connect(func():game.terrain.changed_since_save=true;game.player_hud.refresh())

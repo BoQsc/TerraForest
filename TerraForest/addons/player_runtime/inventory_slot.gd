@@ -8,6 +8,7 @@ func _gui_input(event:InputEvent)->void:
 func _get_drag_data(_at: Vector2) -> Variant:
 	var data: Dictionary=controller.drag_data(side,slot)
 	if data.is_empty():return null
+	if controller.has_method("raise_drag_layer"):controller.raise_drag_layer()
 	var preview:=Label.new();preview.text=tooltip_text;preview.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	if item_texture!=null:
 		var picture:=TextureRect.new();picture.texture=item_texture;picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;picture.custom_minimum_size=Vector2(64,64);picture.position=Vector2(0,-68);picture.mouse_filter=Control.MOUSE_FILTER_IGNORE;preview.add_child(picture)
@@ -17,6 +18,10 @@ func _can_drop_data(_at: Vector2,data: Variant) -> bool:
 	return controller.accepts_drag(side,slot,data)
 func _drop_data(_at: Vector2,data: Variant) -> void:
 	controller.drop_stack(side,slot,data)
+
+func _notification(what:int)->void:
+	if what==NOTIFICATION_DRAG_END and controller!=null and controller.has_method("restore_drag_layer"):
+		controller.restore_drag_layer()
 
 var appearance: int=-1
 var styles: Dictionary={}

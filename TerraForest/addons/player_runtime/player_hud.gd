@@ -16,6 +16,8 @@ signal navigation_changed(tab:String)
 signal drop_requested(slot: int, revision: int, count: int)
 const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch",7:"Carbine",8:"Ranger assault rifle"}
 const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
+const UI_LAYER:=20
+const DRAG_LAYER:=31
 # UI metadata is local so this addon remains independently loadable.
 # woodland_accents checks it against the ecosystem catalog.
 class GroundCatalog:
@@ -61,6 +63,7 @@ var drop_layer: CanvasLayer
 const Crafting=preload("res://addons/player_runtime/crafting.gd")
 var state: Dictionary={}
 var enabled:=true
+var drag_layer_raised:=false
 var default_loadout:=PackedByteArray()
 var temporary_world:=true
 var active_item:=0
@@ -167,7 +170,7 @@ func restore_snapshot(data: PackedByteArray) -> bool:
 	return true
 
 func _ready() -> void:
-	layer=20
+	layer=UI_LAYER
 	if not prepare(): return
 	damage_feedback=preload("res://addons/player_runtime/target_durability.gd").new()
 	damage_feedback.allowed=func()->bool:return enabled and not inventory_open and not developer_belt and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED
@@ -283,7 +286,9 @@ func refresh() -> void:
 		var water_amount:int=state.slots[active_slot].water_ml
 		var bucket_state:String="Full" if water_amount==1000000 else "Empty" if water_amount==0 else "Older partial: refill first"
 		action_hint.text="Bucket - %s | Left mouse: collect 1 water unit | Right mouse: place 1 water unit | G drop"%bucket_state
-	if inventory_changed_since_view and active_slot>=0 and active_item!=int(state.slots[active_slot].item):
+	if active_slot>=0 and active_slot<32 and int(state.slots[active_slot].count)==0:
+		active_slot=-1;active_item=0;tool_requested.emit(0)
+	elif inventory_changed_since_view and active_slot>=0 and active_item!=int(state.slots[active_slot].item):
 		active_item=int(state.slots[active_slot].item);tool_requested.emit(active_item)
 	for i in range(32):
 		var row: Dictionary=state.slots[i]
@@ -495,6 +500,7 @@ func set_open(value: bool) -> void:
 	else:character_panel.set_active(false)
 
 func _input(event: InputEvent) -> void:
+	if drag_layer_raised and event is InputEventMouseButton and not event.pressed:restore_drag_layer()
 	if not enabled: return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode==KEY_ESCAPE and item_context.visible:
@@ -511,11 +517,20 @@ func _unhandled_key_input(_event: InputEvent) -> void:
 	if inventory_open: get_viewport().set_input_as_handled()
 
 func drag_data(_side: String,slot: int) -> Dictionary:
-	if not enabled or not inventory_open or (developer_belt and slot<10):return {}
-	var row: Dictionary=state.slots[slot]
+	if inventory==null or not inventory_open or (developer_belt and slot<10):return {}
+	var current:Dictionary=inventory.snapshot()
+	var row: Dictionary=current.slots[slot]
 	if row.count==0:return {}
 	selected_slot=-1
-	return {"owner":get_instance_id(),"side":"player","equipment_revision":equipment.snapshot(1).store_revision,"slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":state.revision}
+	return {"owner":get_instance_id(),"side":"player","equipment_revision":equipment.snapshot(1).store_revision,"slot":slot,"count":maxi(1,int(row.count)/2) if Input.is_key_pressed(KEY_SHIFT) else row.count,"revision":current.revision}
+
+func raise_drag_layer()->void:
+	if drag_layer_raised:return
+	drag_layer_raised=true;layer=DRAG_LAYER
+
+func restore_drag_layer()->void:
+	if not drag_layer_raised:return
+	drag_layer_raised=false;layer=UI_LAYER
 func accepts_drag(_side: String,_slot: int,data: Variant) -> bool:
 	return enabled and inventory_open and not (developer_belt and _slot<10) and data is Dictionary and data.get("owner",0)==get_instance_id()
 func drop_stack(side: String,slot: int,data: Variant) -> void:
@@ -530,3 +545,26 @@ func drop_stack(side: String,slot: int,data: Variant) -> void:
 	if result.ok:inventory_changed.emit()
 	message.text="Stack moved" if result.ok else "Cannot move that stack; inventory refreshed"
 	selected_slot=-1;refresh()
+
+func move_belt_to_backpack(slot:int,count:int,expected_revision:int)->Dictionary:
+	if inventory==null or not inventory_open or slot<0 or slot>=10 or count<1:return {"ok":false,"reason":"invalid_transfer"}
+	var current:Dictionary=inventory.snapshot()
+	if current.revision!=expected_revision:return {"ok":false,"reason":"stale_revision"}
+	var row:Dictionary=current.slots[slot]
+	var item:int=row.item
+	if item<=0 or int(row.count)<count:return {"ok":false,"reason":"insufficient_items"}
+	var destination:=-1
+	if stack_limit(item)>1:
+		for index in range(10,32):
+			var target:Dictionary=current.slots[index]
+			if target.item==item and int(target.count)+count<=stack_limit(item):destination=index;break
+	if destination<0:
+		for index in range(10,32):
+			if int(current.slots[index].count)==0:destination=index;break
+	if destination<0:return {"ok":false,"reason":"full"}
+	var result:Dictionary=inventory.transfer(slot,destination,count,expected_revision)
+	if not result.ok:return result
+	if slot==active_slot and int(inventory.snapshot().slots[slot].count)==0:
+		active_slot=-1;active_item=0;tool_requested.emit(0)
+	inventory_changed.emit();refresh()
+	return {"ok":true,"destination":destination}
