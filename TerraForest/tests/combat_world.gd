@@ -111,7 +111,7 @@ func ranger_checks(base:Vector3)->void:
 	game.camera.look_at(game.camera.global_position+Vector3(0,.8,-8));before=combat.shots
 	mouse(MOUSE_BUTTON_LEFT,true);await ticks(190);mouse(MOUSE_BUTTON_LEFT,false)
 	check(combat.state.get_rounds(8)==0 and combat.shots-before==magazine and not combat.fire(),"held trigger exhausts exactly the remaining magazine and empty fire is rejected")
-	await ticks(30);check(combat.reload(),"empty automatic rifle can reload")
+	await ticks(30);check(combat.reload_slot>=0 and not combat.reload() and amount(223)==reserve,"empty held trigger starts one automatic reload without early ammo consumption")
 	await ticks(185)
 	check(combat.state.get_rounds(8)==30 and amount(223)==reserve-30,"empty reload restores full thirty-round magazine")
 	check(combat.fire(),"post-reload automatic rifle fires again");await ticks(12)
@@ -122,13 +122,16 @@ func run()->void:
 		saving=saving or arg=="--combat-save-check"
 		restoring=restoring or arg=="--combat-restore"
 	ProjectSettings.set_setting("terraforest/offscreen_session",true)
-	game=load("res://demo/world.tscn").instantiate();game.temporary_world=not saving;root.add_child(game)
-	game.combat.action_input_owned=func()->bool:return simulated_input
+	game=load("res://demo/world.tscn").instantiate();game.temporary_world=not saving
+	if restoring:game.combat.ready.connect(func():game.combat.set_physics_process(false),CONNECT_ONE_SHOT)
+	root.add_child(game)
 	if restoring:game.combat.set_physics_process(false)
 	var deadline:=Time.get_ticks_msec()+90000
 	while game.loading_active and Time.get_ticks_msec()<deadline:await process_frame
 	check(not game.loading_active,"integrated world becomes ready")
 	if game.loading_active:game.free();quit(1);return
+	# Async world preparation installs the default owner; override it only once ready.
+	game.combat.action_input_owned=func()->bool:return simulated_input
 	game.player_view.entry.finish();game._clear_motion();game.app_focused=true
 	if game.session_menu.developer:game.session_menu.toggle_developer()
 	game.session_menu.set_open(false);simulated_input=true

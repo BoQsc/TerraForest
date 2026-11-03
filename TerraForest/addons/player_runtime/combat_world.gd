@@ -87,7 +87,7 @@ func fire()->bool:
 	var human:Node=game.tool_view.human
 	if human.current!=weapon or human.action_remaining>0:return false
 	if state.get_rounds(weapon)<=0:
-		next_shot=timer+.4;game._show_lake_notice(WEAPONS[weapon].title+" empty · R reload");return false
+		next_shot=timer+.4;reload();return false
 	var origin:Vector3=game.camera.global_position
 	var direction:Vector3=-game.camera.global_basis.z
 	if weapon==8:

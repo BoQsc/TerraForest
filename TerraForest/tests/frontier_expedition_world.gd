@@ -195,6 +195,7 @@ func run()->void:
 	if not check(ride.state.phase==ride.BOARDING and ride.state.expedition,"quest button reserves a free expedition: "+game.trader.ui.quest_error):await finish();return
 	check(Trade.count(game.player_hud.inventory,6)==before[6]+1 and Trade.count(game.player_hud.inventory,8)==before[8]+1 and Trade.count(game.player_hud.inventory,223)==before[223]+180,"trader grants one torch, one automatic rifle and 180 rounds")
 	check(Trade.count(game.player_hud.inventory,Trade.CURRENCY)==before[Trade.CURRENCY],"expedition does not charge coins")
+	check(game.player_hud.active_item==8 and game.player_hud.active_slot>=0 and game.player_hud.active_slot<10 and game.equipped_tool==8,"trader handoff automatically equips the gifted Ranger on the toolbelt")
 	await depart(game,ride)
 
 func depart(game:Node,ride:Node)->void:

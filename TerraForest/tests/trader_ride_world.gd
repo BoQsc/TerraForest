@@ -119,8 +119,15 @@ func run()->void:
 	FileAccess.open(folder.path_join("offers.json"),FileAccess.WRITE).store_string(JSON.stringify(offers,"  "))
 	if not check(not offers.is_empty(),"published roads offer a complete town trip and forward return"):await finish();return
 	game.player_hud.inventory.grant_items(PackedInt64Array([Trade.CURRENCY,10000]),game.player_hud.inventory.snapshot().revision)
+	if stage=="weapon":
+		# A full belt puts the actual gift in the backpack, exercising the swap.
+		for slot in 10:
+			if game.player_hud.inventory.snapshot().slots[slot].count==0:game.player_hud.inventory.grant(1,1,game.player_hud.inventory.snapshot().revision)
+		game.player_hud.inventory.grant(8,1,game.player_hud.inventory.snapshot().revision)
+		game.player_hud.equip(0)
 	check(game.trader.try_open({"collider":game.trader.actor}),"normal interaction opens travel and trade choices")
 	await photograph("destination-menu")
+	if stage=="weapon":await weapon_check(game);return
 	if stage=="shop":
 		await shop_check(game)
 		return
@@ -198,6 +205,52 @@ func run()->void:
 		FileAccess.open(folder.path_join("expected.json"),FileAccess.WRITE).store_string(JSON.stringify({"vehicle":identity,"coins":before-offer.fare,"fare":offer.fare},"  "))
 		await finish();return
 	await complete_journey(game,ride,offer.outbound[-1],before-offer.fare,identity,point)
+func weapon_check(game:Node)->void:
+	var hud:Node=game.player_hud;var combat:Node=game.combat;var human:Node=game.tool_view.human
+	var reserve:int=Trade.count(hud.inventory,223)
+	var tools:int=Trade.count(hud.inventory,1);var rifles:int=Trade.count(hud.inventory,8)
+	var original_rifle_slot:=-1
+	for slot in 32:
+		if hud.inventory.snapshot().slots[slot].item==8:original_rifle_slot=slot;break
+	if not check(game.quests.store.snapshot().introduction==2,"owned fixture can accept the trader's first expedition"):await finish();return
+	game.trader.ui.select_mode("Quests");game.trader.ui.quest_button.pressed.emit()
+	if not check(game.trader.ride.state.expedition and not game.trader.ui.opened,"ordinary quest button accepts supplies and closes the trader"):await finish();return
+	check(hud.enabled and hud.active_item==8 and hud.active_slot==0 and game.equipped_tool==8,"gifted automatic rifle replaces the active slot on a full toolbelt")
+	check(original_rifle_slot>=10 and hud.inventory.snapshot().slots[original_rifle_slot].item==8,"new gift is selected while an older rifle keeps its backpack slot")
+	check(Trade.count(hud.inventory,1)==tools and Trade.count(hud.inventory,8)==rifles+1 and Trade.count(hud.inventory,223)==reserve+180,"belt swap preserves the displaced tool and exact gift counts")
+	var owned:={"value":true};combat.action_input_owned=func():return owned.value
+	if not check(await wait_for(func():return human.current==8 and human.action_remaining<=0 and combat.can_use(),8),"gifted rifle finishes its ordinary draw animation"):await finish();return
+	game.camera.look_at(game.camera.global_position+Vector3(0,3,-8))
+	var shots:int=combat.shots;reserve=combat.rounds_in_bag(8)
+	var click:=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true
+	check(combat.handle_input(click) and combat.reload_slot==hud.active_slot and combat.state.get_rounds(8)==0,"empty shoot click starts the real reload instead of a dry-fire dead end")
+	check(not combat.fire() and combat.shots==shots and combat.rounds_in_bag(8)==reserve,"repeated clicks neither restart reload nor consume ammunition early")
+	for tick in 45:await physics_frame
+	await photograph("automatic-reload")
+	hud.equip_item(1)
+	for tick in 3:await physics_frame
+	check(combat.reload_slot<0 and combat.state.get_rounds(8)==0 and combat.rounds_in_bag(8)==reserve,"switching tools cancels the automatic reload without losing reserve")
+	hud.equip_item(8)
+	await wait_for(func():return human.current==8 and human.action_remaining<=0,8)
+	game.session_menu.set_open(true)
+	check(not combat.fire() and combat.reload_slot<0,"menu blocks an empty-trigger reload")
+	game.session_menu.set_open(false);game.app_focused=true;owned.value=false
+	check(not combat.fire() and combat.reload_slot<0,"missing action ownership blocks automatic reload")
+	owned.value=true;combat.handle_input(click)
+	check(await wait_for(func():return combat.reload_slot<0 and combat.state.get_rounds(8)==30,6) and combat.rounds_in_bag(8)==reserve-30,"animation completion loads exactly thirty matching rounds")
+	var press:=InputEventMouseButton.new();press.button_index=MOUSE_BUTTON_LEFT;press.pressed=true;Input.parse_input_event(press);Input.flush_buffered_events()
+	var depleted:bool=await wait_for(func():return combat.state.get_rounds(8)==0 and combat.reload_slot>=0,8)
+	press.pressed=false;Input.parse_input_event(press);Input.flush_buffered_events()
+	check(depleted and combat.shots-shots==30 and combat.state.get_rounds(8)==0 and combat.reload_slot>=0,"holding fire exhausts one magazine and automatically begins the next reload")
+	check(await wait_for(func():return combat.reload_slot<0 and combat.state.get_rounds(8)==30,6) and combat.rounds_in_bag(8)==reserve-60,"automatic second reload conserves the exact reserve")
+	check(combat.shots-shots==30,"releasing the trigger during reload does not fire a deferred shot")
+	var remaining:int=combat.rounds_in_bag(8)
+	hud.inventory.consume_items(PackedInt64Array([223,remaining]),hud.inventory.snapshot().revision)
+	for round_index in 30:combat.state.take_round(8)
+	check(not combat.fire() and combat.reload_slot<0 and combat.state.get_rounds(8)==0 and combat.rounds_in_bag(8)==0,"empty rifle with no matching reserve cannot manufacture ammunition")
+	await photograph("gifted-rifle-equipped")
+	await finish()
+
 func shop_check(game:Node)->void:
 	var ui:Node=game.trader.ui;ui.select_mode("Trade")
 	check(await wait_for(func():return game.storage.town_loot.complete,10),"existing town chests complete their bounded one-time loot pass")

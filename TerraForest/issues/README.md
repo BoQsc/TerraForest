@@ -81,6 +81,6 @@ This initial index is not the entire backlog. Other work remains in
 
 - [First firearm and volumetric explosive destruction](explosive-combat/README.md) — Installed package / scoped checks pass, 2026-11-01. Source and actual game executable each pass 33 combat + 11 save/reopen checks; native and melee/quest regressions pass. Packaged rifle/reload/blast/crater images reviewed; optional integrity defaults off. User visual review remains separate.
 
-- [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — Installed original model, automatic fire and independent ammunition state. Source and actual executable each pass 51 combat + 12 reopen checks; native/presentation 79. Final aim/reload images reviewed; user visual review separate.
+- [Ranger automatic assault rifle](ranger-assault-rifle/README.md) — Installed original model, automatic fire and independent ammunition state. November 3 follow-up auto-equips the trader gift and reloads on an empty trigger; targeted source 27 and actual executable 28 checks pass, with broad results and retained harness failures linked in the issue. Source and actual executable each pass 51 combat + 12 reopen checks; native/presentation 79. Final aim/reload images reviewed; user visual review separate.
 
 - [Dev Bag full-stack shortcut](dev-bag-full-stack/README.md) — Installed: Shift-click grants the registered stack, including 999 ammo. All 12 source and actual-executable checks pass; normal quantity and atomic capacity behavior preserved.

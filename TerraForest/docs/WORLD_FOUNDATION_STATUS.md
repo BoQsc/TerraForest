@@ -1,5 +1,15 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Trader rifle handoff and empty-trigger reload - 2026-11-03
+
+Installed usability follow-up: [Ranger issue](../issues/ranger-assault-rifle/README.md).
+The first successful trader gift selects the newly added rifle using ordinary
+toolbelt moves/swaps, preserving displaced tools even with a full belt. Empty
+fire starts the existing matching-ammunition reload; R remains available.
+Targeted source 27 and installed 28 checks pass. Exact broad combat/save results,
+retained harness failures and package identities are recorded with that issue.
+No new assets, native rebuild or player-save migration was required.
+
 ## Breakable room-light props - 2026-11-03
 
 Installed / scoped checks: [house-light issue](../issues/house-lights/README.md).

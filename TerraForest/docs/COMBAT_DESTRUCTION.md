@@ -21,6 +21,12 @@ recipes. The existing starter loadout and saved inventories are preserved.
   support simulation. It defaults off and is saved with each world. Blast damage
   and flying debris still work while the integrity option is off.
 
+Clicking fire with an empty magazine automatically starts a reload when matching
+cartridges are available. R remains available for manual reloads. The trader
+automatically equips the newly gifted Ranger after the first expedition handoff,
+using an empty toolbelt slot or swapping the active slot into the backpack when
+the belt is full. Existing carried items are preserved.
+
 The existing `Human.r11.glb` contains the carbine and all ten first-person clips:
 idle, walk, run, jump, aim, aimed fire, hip fire, reload, equip and holster.
 Third-person rifle locomotion, aim, fire and reload clips are also reused.

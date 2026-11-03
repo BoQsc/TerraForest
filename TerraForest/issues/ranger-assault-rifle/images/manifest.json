@@ -78,5 +78,13 @@
     "status": "Reviewed installed actual-executable gameplay; final mesh, sight framing and reload.",
     "pack_sha256": "1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881",
     "date": "2026-11-01"
+  },
+  {
+    "file": "automatic-reload-packaged.png",
+    "source": "reports/trader_ride_world/20261103T100516797153Z/automatic-reload.png",
+    "sha256": "373a56358459a3698f18a2e18e58d2b582d6f0d4442e4f6723ae23537486a1a1",
+    "status": "Agent reviewed installed private-fixture gameplay: gifted rifle active in full toolbelt; automatic reload underway with reserve unconsumed. Existing pose/hand fit inherited; user visual review separate.",
+    "pack_sha256": "0678d71176cbecf144338cd01281331ac83cccb70427073996d94c16c8c28310",
+    "date": "2026-11-03"
   }
 ]

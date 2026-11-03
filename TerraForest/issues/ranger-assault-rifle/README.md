@@ -1,7 +1,7 @@
 # Ranger automatic assault rifle
 
 - Status: Installed package; scoped engineering checks pass. User visual review separate.
-- Updated: 2026-11-01. Source `9b12130f`, combined native artifacts `b4d1c063`. User review: not reviewed.
+- Updated: 2026-11-03; usability follow-up below. Original model source `9b12130f`, combined native artifacts `b4d1c063`. User review: not reviewed.
 - Request: author a new automatic assault rifle, superseding the compact SMG choice.
 
 ## Images
@@ -81,6 +81,45 @@ Copies of the same weapon type share a player magazine; this is not per-item sto
 - Final isolated visual gate: `reports/ranger_preview_runs/20261101T202056476334Z`; model, aim, reload insertion and third-person grip reviewed. Strict sampled resource gate passes.
 
 - Final actual root executable: **51 creation + 12 reopen**, `reports/combat_world/20261101T202958692951Z/run.json`. Final mesh/sight corrections are included. Zero diagnostics and pointer captures; strict resource gates pass (peak sampled private commit 2.66 GiB, dedicated GPU 1.14 GiB). All fourteen native DLLs match the export. PCK SHA-256 `1229d8b836902aa74c67352997ecfb0fc17a58c878c46e6c30b4f93f446da881`; executable remains `981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5`. Exact identities/results in `verification.json`.
+
+## Trader handoff and automatic reload - 2026-11-03
+
+The first successful expedition handoff selects the newly granted rifle, including
+when another Ranger is already carried. Ordinary toolbelt move/swap rules preserve
+the displaced tool when all ten slots are occupied. Resuming an expedition does
+not grant or equip a second rifle. Clicking fire on an empty firearm starts the
+existing reload action with matching reserve ammunition; R still works. Repeated
+clicks cannot restart it or consume ammunition early. Weapon/menu/input ownership
+cancellation and independent carbine/Ranger magazines remain in force.
+
+![Installed empty-trigger reload](images/automatic-reload-packaged.png)
+
+Actual executable in a private trader fixture: newly gifted rifle selected in
+slot 1, empty-trigger reload underway, 180 reserve rounds still unconsumed. The
+existing reload pose and hand fit are inherited; no animation/art acceptance is
+claimed by this behavior check.
+
+Targeted source **27/27** and actual executable **28/28** pass. The latter also
+checks that an older carried rifle remains in its original backpack slot. Broad
+source creation **51/51** passes; final installed creation/reopen results and exact
+source/PCK identities are recorded in `rifle-usability-verification.json`. Private
+fixtures only; no player save or root executable was overwritten.
+
+Earlier failed reports remain visible: `reports/trader_ride_world/20261103T095356449615Z`
+used an insufficient fixed-frame hold and failed three timing assertions; the
+fixture now waits for exhaustion with a bounded deadline. Broad
+`reports/combat_world/20261103T095753456742Z` failed 28 assertions because async
+world preparation overwrote the offscreen input-owner callback. Moving that test
+callback after world readiness produced 51 passing creation checks in
+`reports/combat_world/20261103T100039736326Z`, whose reopen still failed one blast
+cursor check because processing resumed before inspection. The restore fixture
+now freezes combat at node readiness; these are harness changes, without weaker
+production input or save validation.
+
+Reproduce the handoff using
+`python tools/check_trader_ride_world.py --executable --source-report reports/player_survival_world/20261103T011107911505Z --stage weapon`;
+use `python tools/check_combat.py --executable` for independent magazines,
+reload cancellation and fresh-process saves.
 
 ## Remaining / resume here
 

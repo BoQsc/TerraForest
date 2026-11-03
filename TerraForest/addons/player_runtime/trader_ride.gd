@@ -174,11 +174,16 @@ func _book_offer(offer:Dictionary,quest_key:int=0)->Dictionary:
 		if id==0:return {"ok":false,"reason":"The trader's car cannot be placed here."}
 		state.vehicle=id
 		state.driver_position=host.actor.global_position;state.driver_yaw=host.actor.rotation.y
+	var gifted_slot:=-1
 	if quest_key>0:
 		var quest:Dictionary=game.quests.store.snapshot()
 		if quest.introduction==2:
+			var before:Dictionary=game.player_hud.inventory.snapshot()
 			var accepted:Dictionary=game.quests.store.accept_first_visit(quest_key,game.player_hud.inventory,quest.revision,game.player_hud.inventory.snapshot().revision)
 			if not accepted.ok:changed();return {"ok":false,"reason":"Make room in your backpack for the torch, rifle and ammunition. No supplies were taken or duplicated."}
+			var received:Dictionary=game.player_hud.inventory.snapshot()
+			for slot in received.slots.size():
+				if received.slots[slot].item==8 and before.slots[slot].item!=8:gifted_slot=slot;break
 		elif quest.introduction!=3 or quest.key!=quest_key:return {"ok":false,"reason":"The expedition changed. Review your quest."}
 		game.player_hud.refresh()
 	state.expedition=quest_key>0
@@ -186,6 +191,8 @@ func _book_offer(offer:Dictionary,quest_key:int=0)->Dictionary:
 	state.outbound=offer.outbound;state.return_route=offer.return_route;state.cursor=0;state.paid=false;state.passenger=false;state.seated=false
 	state.home=host.anchor;state.driver_position=host.actor.global_position;state.driver_yaw=host.actor.rotation.y
 	boarding_goal=Vector3.INF;pilot_bound=false;changed();host.ui.close()
+	# Closing the trader restores HUD input; use ordinary belt move/swap rules.
+	if gifted_slot>=0:game.player_hud.equip_inventory(gifted_slot)
 	status_text="Coal-mine expedition · supplies received · free return ride\nFollow the trader to the car." if state.expedition else "Ride reserved to %s · %d coins when you board\nFollow the trader to the car. Hold E by the car to cancel."%[state.title,state.fare]
 	return {"ok":true,"reason":status_text}
 
