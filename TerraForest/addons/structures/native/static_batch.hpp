@@ -28,6 +28,7 @@ class NativeStaticBatch : public Node3D {
     friend class ModelRenderPageData;
     friend class NativeModelHorizon;
     friend class NativeHingedDoors;
+    friend class NativeResidentLights;
     bool upsert_instances_impl(const PackedInt64Array &,const PackedFloat32Array &,bool motion);
     void move_proxy(int64_t,const Transform3D &);
     std::set<int64_t> visual_hidden;

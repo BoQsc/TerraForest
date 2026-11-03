@@ -7,6 +7,7 @@ var _block_content_revision:=0
 var blocks: Node3D
 var _models: Dictionary = {}
 var object_definitions: Dictionary = {}
+var resident_lights: Node3D
 var _model_list: Array = []
 var _empty_models: Dictionary = {}
 var _empty_blocks := PackedByteArray()
@@ -233,6 +234,7 @@ func prepare() -> bool:
 	return true
 
 func set_model_focus(world_position: Vector3) -> void:
+	if resident_lights != null: resident_lights.set_focus(world_position)
 	for collection: Node3D in _model_list:
 		collection.set_collision_focus(world_position)
 		collection.set_render_focus(world_position)

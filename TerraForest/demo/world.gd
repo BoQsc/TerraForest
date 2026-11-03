@@ -211,6 +211,12 @@ func _ready() -> void:
 	structures_ready = structures_ready and not fence.is_empty()
 	var mine_rails:Array[Dictionary]=preload("res://addons/structures/mine_rail_catalog.gd").register(structures)
 	structures_ready = structures_ready and mine_rails.size()==5
+	var house_lights := preload("res://addons/house_lights/catalog.gd").new()
+	var light_entries: Array[Dictionary] = []
+	if house_lights.prepare(): light_entries = house_lights.register(structures)
+	structures_ready = structures_ready and light_entries.size() >= 3
+	if not light_entries.is_empty(): structures.resident_lights = house_lights.runtime(structures)
+	structures_ready = structures_ready and structures.resident_lights != null
 	structures_ready = structures_ready and preload("res://addons/exploration/coal_resource.gd").register(structures)
 	player_hud.ground_tools_enabled=ground_enabled
 	await _startup_step("Connecting saved world components")
@@ -338,6 +344,7 @@ func _ready() -> void:
 	object_entries.append(guardrail)
 	object_entries.append(fence)
 	object_entries.append_array(mine_rails)
+	object_entries.append_array(light_entries)
 	model_tool.configure(camera,player,object_entries,help.get_parent(),structures.blocks,structures._models.values())
 	model_tool.notice.connect(_show_lake_notice)
 	if model_region_paging and (not temporary_world or terrain.backend.readonly_snapshot):

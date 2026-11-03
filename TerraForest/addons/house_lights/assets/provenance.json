@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-03",
+  "creator": "TerraForest, original AI-assisted models",
+  "license": "CC0-1.0",
+  "authoring_source": "tools/author_house_lights.gd",
+  "authoring_sha256": "8353d733300498b339dc03e4e11e598404bf3a75c138b65e9e6b211f562c88d0",
+  "engine": "Godot 4.7.2 stable steam",
+  "files": [
+    {
+      "file": "iron_fireplace.glb",
+      "bytes": 69868,
+      "sha256": "40e7256c1407cb5c0fe299917a924e341a75f1746601c75756ff173c43893d58"
+    },
+    {
+      "file": "iron_fireplace_model.res",
+      "bytes": 49818,
+      "sha256": "a8115ea95173fa5c24ffa2a9a8cbb5e0c5738687fb27c77b1ba27091fe77a973"
+    },
+    {
+      "file": "room_lamp.glb",
+      "bytes": 75880,
+      "sha256": "1daadcd9e0b6cce2e2136497b9e453b9877c96faddf3f1e2874388cb7274a865"
+    },
+    {
+      "file": "room_lamp_model.res",
+      "bytes": 59217,
+      "sha256": "8a8174c68d93b365f16bd4407d19981f2590e579aea69669658f2437e39f5428"
+    },
+    {
+      "file": "standing_torch.glb",
+      "bytes": 44004,
+      "sha256": "7cb61879e512b743c3d40b627e4e8468a0f3047cee5b786b1267cd93d7dcda67"
+    },
+    {
+      "file": "standing_torch_model.res",
+      "bytes": 36460,
+      "sha256": "4984952d634cc8a56197ed3bec19fe04bacb5b019491263d1d8c42eb6725997d"
+    }
+  ]
+}

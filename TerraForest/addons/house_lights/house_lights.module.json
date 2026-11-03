@@ -1,0 +1,9 @@
+{
+  "api": 1,
+  "id": "terraforest.house_lights",
+  "providers": [
+    {"capability": "world_light", "id": "terraforest.room_lamp.v1", "definition": "res://addons/house_lights/room_lamp.json"},
+    {"capability": "world_light", "id": "terraforest.standing_torch.v1", "definition": "res://addons/house_lights/standing_torch.json"},
+    {"capability": "world_light", "id": "terraforest.iron_fireplace.v1", "definition": "res://addons/house_lights/iron_fireplace.json"}
+  ]
+}

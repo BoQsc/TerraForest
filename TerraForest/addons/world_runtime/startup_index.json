@@ -70,6 +70,17 @@
     "res://addons/structures/terrain_lot_planner.gd",
     "res://addons/exploration/cave_layouts.gd"
   ],
+  "res://addons/house_lights/catalog.gd": [
+    "res://addons/world_runtime/runtime_modules.gd",
+    "res://addons/structures/object_mesh.gd",
+    "res://addons/house_lights/flame.gdshader",
+    "res://addons/structures/object_catalog.gd"
+  ],
+  "res://addons/house_lights/generation.gd": [
+    "res://addons/house_lights/catalog.gd",
+    "res://addons/vehicle_runtime/building_parking.gd",
+    "res://addons/characters/runtime/house_sleepers.gd"
+  ],
   "res://addons/player_runtime/building_assemblies.gd": [],
   "res://addons/player_runtime/character_panel.gd": [
     "res://addons/characters/wearables/clothing.gd",
@@ -563,6 +574,7 @@
     "res://addons/player_runtime/container_rules.gd",
     "res://addons/structures/door_reinforcement_generation.gd",
     "res://addons/vehicle_runtime/building_parking.gd",
+    "res://addons/house_lights/generation.gd",
     "res://addons/structures/lake_crossings.gd",
     "res://addons/volumetric_water/coastal_inlet.gd",
     "res://addons/structures/civic_catalog.gd",
@@ -856,6 +868,7 @@
     "res://addons/structures/guardrail_catalog.gd",
     "res://addons/structures/fence_catalog.gd",
     "res://addons/structures/mine_rail_catalog.gd",
+    "res://addons/house_lights/catalog.gd",
     "res://addons/exploration/coal_resource.gd",
     "res://addons/structures/model_paging_coordinator.gd",
     "res://addons/vegetation/canopy_shadows.gd",

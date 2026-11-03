@@ -1,0 +1,1 @@
+{"schema":1,"asset":"lighting/standing_torch/v1","name":"Standing pitch torch","mesh":"assets/standing_torch.glb","bounds":[[-0.3,0,-0.3],[0.6,1.76,0.6]],"offset":[0,1.48,0],"color":"ffb263","energy":1.5,"range":7,"health":60,"material":"wood","costs":{"wood":3,"metal":2},"salvage":{"wood":1,"metal":1}}

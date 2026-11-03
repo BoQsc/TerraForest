@@ -110,6 +110,15 @@ smoke_log=smoke.stdout+'\n'+smoke.stderr
 print(smoke_log[-4000:])
 if smoke.returncode or 'ERROR:' in smoke_log or 'SCRIPT ERROR' in smoke_log:
     sys.exit(1)
+light_check=subprocess.run([str(engine),'--headless','--path',str(staging),'--main-pack',str(pack),
+                            '--max-fps','60','--script',str(root/'tests/house_lights.gd')],
+                           cwd=staging,capture_output=True,text=True,timeout=60)
+light_log=light_check.stdout+'\n'+light_check.stderr
+(root/'reports/house_lights_pack_gate.log').write_text(light_log,encoding='utf-8')
+if light_check.returncode or 'HOUSE_LIGHTS checks=' not in light_log or 'failures=0' not in light_log or 'ERROR:' in light_log or 'SCRIPT ERROR' in light_log or 'ObjectDB instance' in light_log:
+    print(light_log[-6000:])
+    sys.exit(1)
+print('PASS packaged house-light definitions, native residency and room publication')
 if staging!=root/'dist':
     require_free_space(root/'dist',prospective_bytes)
     for library in libraries:

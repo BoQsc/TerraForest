@@ -1,0 +1,1 @@
+{"schema":1,"asset":"lighting/iron_fireplace/v1","name":"Cast iron fireplace","mesh":"assets/iron_fireplace.glb","bounds":[[-0.66,0,-0.4],[1.32,2.2,0.8]],"offset":[0,0.75,0.15],"color":"ffa968","energy":1.8,"range":8,"health":180,"material":"other","costs":{"metal":12,"wood":4},"salvage":{"metal":6,"wood":1}}

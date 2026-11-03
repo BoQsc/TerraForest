@@ -300,6 +300,11 @@ func run()->void:
  if not parked.ok:print("BUILDING_PARKING_FAILED ",parked);game.free();quit(1);return
  FileAccess.open(output_dir.path_join("building_parking.bin"),FileAccess.WRITE).store_var(parked)
  FileAccess.open(output_dir.path_join("building_parking.json"),FileAccess.WRITE).store_string(JSON.stringify(parked))
+ progress("Furnishing rooms with breakable light objects")
+ var lighting:Dictionary=preload("res://addons/house_lights/generation.gd").publish(game,all_lots)
+ if not lighting.ok:print("HOUSE_LIGHT_PUBLICATION_FAILED ",lighting);game.free();quit(1);return
+ FileAccess.open(output_dir.path_join("house_lights.bin"),FileAccess.WRITE).store_var(lighting)
+ FileAccess.open(output_dir.path_join("house_lights.json"),FileAccess.WRITE).store_string(JSON.stringify(lighting))
  var crossings:Array=prepared.get("bridges",[])
  for bridge_index in crossings.size():
   if cancelled():game.free();quit(2);return

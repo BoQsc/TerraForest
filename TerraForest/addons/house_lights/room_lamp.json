@@ -1,0 +1,1 @@
+{"schema":1,"asset":"lighting/room_lamp/v1","name":"Caged room lamp","mesh":"assets/room_lamp.glb","bounds":[[-0.3,0,-0.3],[0.6,2.12,0.6]],"offset":[0,1.94,0],"color":"ffcd90","energy":1.1,"range":8,"health":70,"material":"other","costs":{"metal":6},"salvage":{"metal":3}}

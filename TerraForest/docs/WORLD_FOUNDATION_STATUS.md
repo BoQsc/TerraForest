@@ -1,5 +1,24 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Breakable room-light props - 2026-11-03
+
+Installed / scoped checks: [house-light issue](../issues/house-lights/README.md).
+User clarified GLB light objects, including the freestanding fireplace, rather
+than block assemblies. New original lamp/torch/fireplace GLBs reuse native model
+collision, health, salvage and saves. Existing grid, house geometry and saves are
+unchanged. A native four-light pool and GPU flame surfaces replace per-prop nodes
+or script ticks. Native room survey plus generation-only support/occupancy checks
+published 203 props in 203 default-seed-1703 detected rooms, with no skipped sites.
+32 native checks, source and package 27/14 generation/destruction/salvage/reopen,
+and 16 strict old-save checks pass. PCK 5b54b611, 14 matching DLLs; both native
+targets rebuilt. GLBs remain editable source, with checksum-labelled offline
+baked mesh/LOD resources to avoid Godot's exported GLB remapping and runtime import.
+203 props publish in 60.411 ms; package off/on p95 16.860/16.732 ms is only a short
+capped offscreen sample, not GPU headroom. Current images and rejected first art
+are retained; user art review remains. Earlier admission, export and strict-cleanup
+failures stay explicit. Broad authored-room/entrance/NPC coverage and long/focused GPU/FPS
+tests remain open; the larger expansion goal is not complete.
+
 ## Indoor generated vehicle parking - 2026-11-03
 
 Installed / scoped checks: [parking issue and evidence](../issues/building-parking/README.md).

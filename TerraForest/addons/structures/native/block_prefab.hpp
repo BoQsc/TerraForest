@@ -45,6 +45,7 @@ public:
     void set_records(const PackedInt32Array &records);
     PackedInt32Array get_records() const;
     Dictionary survey_surface() const;
+    Dictionary interior_light_sites() const;
     int get_cell_count() const { return int(cells.size()); }
     PackedInt64Array get_material_counts() const;
     bool configure_attachment_envelope(AABB box);

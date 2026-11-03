@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Breakable room-light objects](house-lights/README.md) | Installed / scoped checks | Three GLB props, GPU flames, native four-light pool and 203 room placements; packaged salvage/destruction/reload and old-save compatibility pass. Art acceptance and broader route/performance coverage remain |
 | [Vehicles in garages and warehouses](building-parking/README.md) | Installed / scoped checks | Native admission, player aisle/entry/exit, drive-out and packaged generation/fresh reopening pass; broader street/NPC/endurance and visual review remain |
 | [Improvised door reinforcement](door-reinforcement/README.md) | Installed / scoped checks | Rough boards, native locks and player entry; packaged new-world/save/reopen and native lock/paging/reset pass. Source zombie forced entry passes; full generated-house journeys and visual approval remain |
 | [Player health and respawn](player-respawn/README.md) | Installed / scoped checks | Native persistent health, real damage/death, safe shelter return and approved waking; fresh packaged upstairs save/reload and blocked-anchor fallback pass. Inventory retained; catastrophic obstruction and full moving-service death need further qualification |

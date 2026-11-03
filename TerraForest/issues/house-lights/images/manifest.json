@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-03",
+  "creator": "TerraForest original in-engine captures",
+  "license": "CC0-1.0 to the extent of original screenshot rights; depicted inherited assets retain their existing licenses and notices",
+  "world": "Normal default Generate & play, seed 1703, owned HouseLights_1703_1280db5e fixture",
+  "pack_sha256": "5b54b611856efdb8315707f21e48a95fc1f59735320516d381e501c36e38ff6a",
+  "inspection": "Three current packaged prop views inspected; first overbright rounded flame rejected. User approval pending.",
+  "files": [
+    {"file":"iron-fireplace.png","source":"reports/house_lights_world/20261103T074114692671Z/iron_fireplace.png","sha256":"079ddf5104b1f2760b6721e1d586464ce1e064fc7bafd40bdac8c425a75e8b66"},
+    {"file":"standing-torch.png","source":"reports/house_lights_world/20261103T074114692671Z/standing_torch.png","sha256":"f9128e48499047e5828f12e8fb7103bf15734af7279e015d471df6f66af84d69"},
+    {"file":"room-lamp.png","source":"reports/house_lights_world/20261103T074114692671Z/room_lamp.png","sha256":"b3b9b05bb59b745c8618342ff88e6699898470608af8d8818546c3fd050a5218"},
+    {"file":"rejected-rounded-fireplace.png","source":"reports/house_lights_world/20261103T071138483469Z/iron_fireplace.png","sha256":"208ef14b132ff83277b11dfa687832088199fd28a7eca3b58ec04efacc2701e9","status":"rejected overbright rounded flame geometry"}
+  ]
+}
