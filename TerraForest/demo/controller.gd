@@ -599,9 +599,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_2: tool = 2
 			KEY_3: tool = 3
 			KEY_4: tool = 4
-			KEY_G:
-				fly = not fly
-				player.velocity = Vector3.ZERO
 			KEY_Q: material_id = 1 + posmod(material_id - 2, 3)
 			KEY_E: material_id = 1 + material_id % 3
 			KEY_F:

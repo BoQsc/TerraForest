@@ -174,7 +174,7 @@ func _ready() -> void:
 		_abort_startup(2)
 		return
 	await _startup_step("Connecting pickup storage")
-	if not pickups.prepare(persistence):
+	if not player_hud.prepare() or not pickups.prepare(persistence,player_hud.inventory):
 		push_error("Material pickup initialization failed")
 		_abort_startup(2)
 		return
@@ -1811,7 +1811,7 @@ func _vehicle_interaction_available() -> bool:
 
 func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	var result := {"ok":false,"reason":"Stand on foot in a ready world to drop supplies"}
-	if (player_hud.inventory_open or Input.mouse_mode==Input.MOUSE_MODE_CAPTURED) and app_focused and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
+	if (player_hud.inventory_open or Input.mouse_mode==Input.MOUSE_MODE_CAPTURED) and app_focused and not player_life.dead and not player_view.entry.blocks_actions() and not session_menu.visible_ui() and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
 		var forward := -player.global_basis.z
 		forward.y=0;forward=forward.normalized()
 		for offset: float in [0.0,0.55,-0.55,1.1,-1.1]:

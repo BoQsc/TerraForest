@@ -1,5 +1,20 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Held-item G drop standard - 2026-11-04
+
+[Item-dropping issue](../issues/item-dropping/README.md): G drops one held item
+only during active gameplay. Inventory selections, menus, text entry and developer
+tools cannot invoke it. Every current/future registered inventory item inherits
+native metadata-preserving drop/recollection and save support; new items without
+ground art use one shared bounded parcel batch. Legacy drops keep their identities.
+Source checks pass: 440 universal assertions, 21 actual-world input assertions,
+13 disk autosave/reopen assertions and inventory/transfer/label/setup regressions.
+The final 42-batch pressure check passes the existing 0.5 ms p95 threshold; earlier
+failures remain linked. Actual executable/PCK verification of the gameplay-only
+scope also passes all 21 assertions, with no errors/leaks or sampled resource
+violations; installed PCK `55344a34`, 14 matching native libraries. Agent inspected
+the final capture. Player visual review remains separate.
+
 ## Windowed mode across stages - 2026-11-04
 
 [Windowed-mode issue](../issues/windowed-mode/README.md): the persistent host owns

@@ -156,6 +156,9 @@
     "res://addons/player_runtime/salvage_catalog.gd",
     "res://addons/player_runtime/consumables.gd"
   ],
+  "res://addons/player_runtime/item_catalog.gd": [
+    "res://addons/player_runtime/durability_catalog.gd"
+  ],
   "res://addons/player_runtime/item_icons.gd": [
     "res://addons/player_runtime/art/salvage/224.svg",
     "res://addons/player_runtime/art/salvage/225.svg",
@@ -179,10 +182,10 @@
   ],
   "res://addons/player_runtime/player_hud.gd": [
     "res://addons/world_runtime/mouse_ownership.gd",
+    "res://addons/player_runtime/item_catalog.gd",
     "res://addons/player_runtime/progression_rules.gd",
     "res://addons/player_runtime/consumables.gd",
     "res://addons/player_runtime/crafting.gd",
-    "res://addons/player_runtime/durability_catalog.gd",
     "res://addons/player_runtime/target_durability.gd",
     "res://addons/player_runtime/inventory_slot.gd",
     "res://addons/player_runtime/world_drop_target.gd",
@@ -650,7 +653,7 @@
     "res://addons/world_ecosystem/art/boulder_granite_v1.png"
   ],
   "res://addons/world_runtime/material_pickups.gd": [
-    "res://addons/player_runtime/durability_catalog.gd",
+    "res://addons/player_runtime/item_catalog.gd",
     "res://addons/player_runtime/salvage_mesh.gd",
     "res://addons/volumetric_water/bucket_model.gd",
     "res://addons/vehicle_runtime/vehicle_item.gd",

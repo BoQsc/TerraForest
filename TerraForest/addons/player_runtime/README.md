@@ -53,11 +53,18 @@ wood, which can also be harvested from reachable forest trunks with E. The
 mode defaults at launch and can be changed through the development menu; it is not stored in the world file or enforced by a
 multiplayer authority. Opening the gameplay slot in editor mode allows editing.
 
-In the inventory, select brick, wood, concrete, metal, stone, iron ore or copper
-ore and press **Drop one
-selected supply**. On foot, this places one unit on clear supported ground in
+Press **G** to drop one held item during active gameplay. Inventory selections,
+menus, text entry and developer tools cannot invoke this shortcut. Every current
+and future registered inventory item supports dropping when held, including
+firearms, ammunition and coins. On foot,
+this places one unit on clear supported ground in
 front of the player. It rejects unavailable collision, occupied positions and
-world updates without consuming the item. Tools can be dropped; native stack metadata preserves their wear.
+world updates without consuming the item. Native stack metadata preserves
+quantity, tool wear and exact bucket contents. Text entry and menus suppress G.
+Definitions live in `item_catalog.gd`, shared by inventory and pickup containers.
+Legacy drops retain their save sections; the shared universal batch uses a small
+parcel for items without dedicated ground art. See the
+[required item-drop standard](../../docs/ITEM_DROP_STANDARD.md).
 The editor uses the same paid inventory drop action; its separate free
 supply authoring tool remains available.
 

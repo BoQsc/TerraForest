@@ -23,7 +23,7 @@ func run() -> void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false;game.fly=false
 	var hud=game.player_hud
 	var valid:=true
-	for id in game.pickups.ITEMS:
+	for id in game.pickups.stores:
 		var renderer: MultiMeshInstance3D=game.pickups.renderers[id]
 		var mesh: Mesh=renderer.multimesh.mesh
 		if mesh.get_surface_count()!=1 or mesh.get_aabb().size.length()>=0.62:print("DROP_MESH ",id," surfaces=",mesh.get_surface_count()," bounds=",mesh.get_aabb())

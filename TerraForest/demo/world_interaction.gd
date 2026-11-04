@@ -17,7 +17,7 @@ func describe(game: Node, target: Dictionary) -> String:
 	var door_hint: String=game.doors.describe(target)
 	if not door_hint.is_empty():return door_hint
 	var loose:=loose_target(game,target)
-	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.ITEMS[loose.item]
+	if loose.get("kind")=="pickup":return "E · Pick up "+game.pickups.item_name(loose.item)
 	if loose.get("kind")=="ground":
 		if loose.hit.get("large",false) or not GroundCatalog.WORLD_HINTS[loose.hit.species]:return ""
 		var name: String=GroundCatalog.NAMES[loose.hit.species]

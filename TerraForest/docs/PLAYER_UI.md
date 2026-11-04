@@ -219,10 +219,19 @@ The initial clothing has no armor bonuses or worn-model art yet.
 
 Release a dragged backpack/belt item outside UI panels and the belt to drop it
 on clear ground in front of the player. Normal drag drops the whole stack;
-Shift-drag drops half. G drops one currently held item during gameplay; it does not toggle flight. Invalid/blocked drops preserve items. Each dropped stack
+Shift-drag drops half. **G drops one held item** while aiming in the world.
+G applies only during active gameplay, to the item equipped on the gameplay belt.
+Inventory selections, menus, text entry and developer tools do not invoke G
+dropping. All inventory item types, including guns, ammunition, coins and future
+registered items, support dropping when held. G never toggles flight.
+Invalid/blocked drops preserve items. Each dropped stack
 is one world pickup; E recollects its contents. Pickup quantity and equipment
 use native transactions and world snapshots. The old Equip/Drop buttons are gone.
 [Character and drop evidence](evidence/character_drops/README.md).
+
+Items without dedicated ground art use a small parcel with their actual item name
+in the E pickup prompt. Quantity, tool wear and exact bucket contents survive
+drop/recollection and saving. [Required item-drop standard](ITEM_DROP_STANDARD.md).
 
 
 ## Separate development toolbelt

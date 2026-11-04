@@ -14,8 +14,9 @@ signal progression_changed
 signal survival_changed
 signal navigation_changed(tab:String)
 signal drop_requested(slot: int, revision: int, count: int)
-const CATALOG: Dictionary={1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch",7:"Carbine",8:"Ranger assault rifle"}
-const MATERIALS: Dictionary={101:"Brick",102:"Wood",103:"Concrete",104:"Metal"}
+const ItemCatalog=preload("res://addons/player_runtime/item_catalog.gd")
+const CATALOG: Dictionary=ItemCatalog.CATALOG
+const MATERIALS: Dictionary=ItemCatalog.MATERIALS
 const UI_LAYER:=20
 const DRAG_LAYER:=31
 # UI metadata is local so this addon remains independently loadable.
@@ -25,7 +26,7 @@ class GroundCatalog:
 	const ITEMS: Array[int]=[201,204,205,206,207,208,209,210,212]
 	const COSTS: Array[int]=[201,204,205,206,207,208,209,102,212]
 	const NAMES: Array[String]=["Stone","Fern","Grass clump","White wildflower","Golden wildflower","Violet wildflower","Low bush","Dry twigs","Woody bush"]
-const RESOURCES: Dictionary={201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",212:"Woody bush",213:"Lockpick",214:"Field manual",215:"Unsent letter",216:"Survey journal",217:"Tinned beans",218:"Trail bread",219:"Dried berries",220:"Coal",221:"Carbine cartridges",222:"Explosive barrel",223:"Ranger cartridges",224:"Metal offcuts",225:"Cloth scraps",226:"Copper wire",227:"Loose fasteners",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",304:"Trail hat",305:"Trail jerkin",306:"Trail boots",401:"Water bucket",402:"Water bucket",403:"Water bucket",404:"Water bucket",405:"Water bucket",406:"Water bucket",407:"Water bucket",408:"Water bucket",409:"Water bucket",410:"Water bucket",411:"Water bucket",501:"Vehicle",601:"Coins"}
+const RESOURCES: Dictionary=ItemCatalog.RESOURCES
 const GROUND_ITEMS: Dictionary={201:0,204:1,205:2,206:3,207:4,208:5,209:6,210:7,212:8}
 var ground_tools_enabled:=false
 const STARTER_MATERIAL_COUNT:=64
@@ -126,10 +127,7 @@ func _refresh_ground_hint() -> void:
 	if not ground_feedback.is_empty(): ground_hint.text+="\n"+ground_feedback
 
 static func stack_limit(item:int)->int:
-	if CATALOG.has(item):return 1
-	if MATERIALS.has(item):return 999
-	if RESOURCES.has(item):return 1000000 if item==601 else (1 if item>=301 else 999)
-	return 0
+	return ItemCatalog.stack_limit(item)
 
 func prepare() -> bool:
 	if inventory!=null: return true
@@ -137,18 +135,13 @@ func prepare() -> bool:
 		GDExtensionManager.load_extension("res://addons/player_runtime/player_runtime.gdextension")
 	if not ClassDB.class_exists("NativePlayerInventory"):
 		push_error("Player inventory extension unavailable");enabled=false;return false
-	inventory=ClassDB.instantiate("NativePlayerInventory")
+	inventory=ItemCatalog.create_inventory()
+	if inventory==null:return false
 	reward_inbox=ClassDB.instantiate("NativeRewardInbox")
 	progression=Progression.create()
 	if progression==null:inventory=null;return false
 	survival=Consumables.create()
 	if survival==null:inventory=null;return false
-	for id: int in CATALOG:
-		inventory.register_item(id,stack_limit(id))
-		if id in preload("res://addons/player_runtime/durability_catalog.gd").TOOLS:inventory.register_durable(id,preload("res://addons/player_runtime/durability_catalog.gd").TOOLS[id])
-	for id: int in MATERIALS: inventory.register_item(id,stack_limit(id))
-	for id: int in RESOURCES: inventory.register_item(id,stack_limit(id))
-	inventory.register_durable(501,preload("res://addons/player_runtime/durability_catalog.gd").WORLD.vehicle)
 	equipment=ClassDB.instantiate("NativeContainerStore")
 	if not equipment.configure(inventory,1):return false
 	# Preserve the established starter belt; the new shovel is crafted or spawned.
@@ -288,6 +281,7 @@ func refresh() -> void:
 	if action_hint!=null:
 		action_hint.text=editor_hint if not editor_hint.is_empty() else {0:"Empty hands | Left mouse: punch / dig | E interact",1:"Pickaxe | Hold left mouse: attack / dig | Best against stone",2:"Hatchet | Hold left mouse: attack / dig | Best against wood",3:"Repair hammer | Left mouse: attack | Right mouse: repair",4:"Assembly tool | Right mouse: place | Left mouse: attack | Hold Alt: tool settings",5:"Shovel | Hold left mouse: dig / attack | G drop",6:"Wooden torch | Lights while held | G drop | E interact",7:"Carbine | Left mouse: fire | Right mouse: aim | R reload",8:"Ranger AR | Hold left mouse: automatic fire | Right mouse: aim | R reload",222:"Explosive barrel | Right mouse: place | Shoot to detonate"}.get(active_item,"Holding "+MATERIALS.get(active_item,RESOURCES.get(active_item,"item"))+(" | Right mouse: place | G drop" if active_item in MATERIALS or active_item in GROUND_ITEMS or active_item in [202,203,211,501] else " | G drop | E interact"))
 	if mode_hint!=null:mode_hint.text="1–9 / 0"+" / Wheel equip · Tab inventory · M map · Esc menu · "+("Gameplay" if gameplay_construction else "Development")
+	if action_hint!=null and active_item>0 and not developer_belt and not "G drop" in action_hint.text:action_hint.text+=" | G drop"
 	if action_hint!=null and Consumables.ITEMS.has(active_item):action_hint.text="%s | Left mouse: %s | G drop"%[Consumables.ITEMS[active_item].name,"read" if Consumables.ITEMS[active_item].xp>0 else "eat"]
 	var latest: Dictionary=inventory.snapshot()
 	if resource_feed!=null:resource_feed.observe(latest,equipment.snapshot(1))

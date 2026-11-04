@@ -17,10 +17,10 @@ func sample(pickups: Node3D,label: String,expected: bool,visits: int) -> void:
 		var result: Dictionary=pickups.aimed(Vector3.ZERO,Vector3(2,0,0),reachable)
 		times.append(Time.get_ticks_usec()-start)
 		max_visits=maxi(max_visits,result.visited);max_calls=maxi(max_calls,reach_calls)
-		stable=stable and result.ok==expected and result.queries<=pickups.ITEMS.size()
+		stable=stable and result.ok==expected and result.queries<=pickups.stores.size()
 		await process_frame
 	times.sort()
-	var row: Dictionary={"label":label,"p50_us":times[60],"p95_us":times[114],"max_us":times[119],"max_candidates":max_visits,"max_occlusion_calls":max_calls,"catalog_types":pickups.ITEMS.size()}
+	var row: Dictionary={"label":label,"p50_us":times[60],"p95_us":times[114],"max_us":times[119],"max_candidates":max_visits,"max_occlusion_calls":max_calls,"catalog_types":pickups.stores.size()}
 	rows.append(row);print("PICKUP_TARGET_PRESSURE ",JSON.stringify(row))
 	check(stable and max_visits==visits and max_calls<=1,label+" exact work bound and target outcome")
 	check(times[114]<=500,label+" query p95 within 0.5 ms component budget")
@@ -29,13 +29,18 @@ func run() -> void:
 	var pickups=preload("res://addons/world_runtime/material_pickups.gd").new();root.add_child(pickups)
 	var persistence=preload("res://addons/world_runtime/world_persistence.gd").new()
 	if not pickups.prepare(persistence):quit(1);return
-	pickups.stores[1].spawn(Vector3(1,0,0),Vector3.ZERO)
+	var local:int=pickups.stores[1].spawn(Vector3(1,0,0),Vector3.ZERO)
 	await sample(pickups,"one_local",true,1)
+	pickups.stores[1].despawn(local)
+	var universal:int=pickups.spawn(601,Vector3(1,0,0))
+	await sample(pickups,"one_universal",true,1)
+	pickups.stores[0].despawn(pickups.stores[0].resolve_identity(universal))
+	pickups.stores[1].spawn(Vector3(1,0,0),Vector3.ZERO)
 	var count:=1
 	for item: int in pickups.stores:
 		var amount: int=4095 if item==1 else 4096
 		count+=pickups.stores[item].spawn_grid(amount,Vector3(1000,0,1000),1,Vector3.ZERO).size()
-	check(count==pickups.ITEMS.size()*4096,"every item store filled with distant population")
+	check(count==pickups.stores.size()*4096,"every legacy and universal store filled with distant population")
 	await sample(pickups,"full_distant_population",true,1)
 	# Move enough distant records into the ray's cell to exhaust the global budget.
 	var store: RefCounted=pickups.stores[1]

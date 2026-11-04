@@ -19,7 +19,7 @@ func run() -> void:
 	var persistence=load("res://addons/world_runtime/world_persistence.gd").new()
 	root.add_child(pickups)
 	check(pickups.prepare(persistence),"all catalog pickup stores and renderers initialize")
-	var catalog_count: int=pickups.ITEMS.size()
+	var catalog_count: int=pickups.ITEMS.size()+1
 	check(pickups.stores.size()==catalog_count,"every catalog type participates in pressure workload")
 	for item: int in pickups.stores:
 		var ids: PackedInt64Array=pickups.stores[item].spawn_grid(4096,Vector3.ZERO,0.5,Vector3.ZERO)

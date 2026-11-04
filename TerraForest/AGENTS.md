@@ -78,6 +78,14 @@ Keep tracker images out of Godot imports and game exports.
 
 ## Design and validation
 
+For inventory items or input changes, follow [the item-drop standard](docs/ITEM_DROP_STANDARD.md).
+G is reserved for dropping one held item during active gameplay, never from
+inventory selections, menus, text entry or developer tools. Every current and future
+inventory item must support drop, recollection and save/reload without a per-item
+permission flag or required custom drop art. Register items in the shared catalog;
+retain the universal pickup fallback and metadata-preserving native transactions.
+Run the universal-item and G-input regressions when changing these paths.
+
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.
 

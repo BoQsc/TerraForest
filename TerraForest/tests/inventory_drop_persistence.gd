@@ -63,14 +63,14 @@ func run() -> void:
 		identity=dropped.get("id",0)
 		check(dropped.ok and terrain.changed_since_save,"drop marks compound world dirty")
 		expected_inventory=inventory.capture_storage_snapshot()
-		expected_pickup=pickups.stores[item].capture_storage_snapshot()
+		expected_pickup=pickups.stores[pickups.store_item(item)].capture_storage_snapshot()
 		check(await autosave(),"drop reaches verified disk archive before shutdown")
 	close_world()
 	opened=await open_world()
 	check(opened,"fresh worker and providers reopen dropped state")
 	if opened:
 		check(inventory.capture_storage_snapshot()==expected_inventory and inventory.snapshot().slots[0].count==4,"reopened inventory contains exactly four remaining resources")
-		var store: RefCounted=pickups.stores[item]
+		var store: RefCounted=pickups.stores[pickups.store_item(item)]
 		check(store.capture_storage_snapshot()==expected_pickup and store.statistics().active==1,"reopened world contains exactly the dropped supply")
 		var handle: int=store.resolve_identity(identity)
 		check(handle>0 and store.get_position(handle)==point,"disk round trip preserves pickup identity and location")
@@ -84,7 +84,7 @@ func run() -> void:
 	check(opened,"second fresh reopen loads recollected state")
 	if opened:
 		check(inventory.capture_storage_snapshot()==expected_inventory and inventory.snapshot().slots[0].count==5,"second reopen preserves exact recovered inventory")
-		check(pickups.stores[item].statistics().active==0 and pickups.stores[item].resolve_identity(identity)==0,"second reopen cannot resurrect collected supply")
+		check(pickups.stores[pickups.store_item(item)].statistics().active==0 and pickups.stores[pickups.store_item(item)].resolve_identity(identity)==0,"second reopen cannot resurrect collected supply")
 	close_world()
 	for suffix in [".trw",".trw.bak",".trw.lock"]: DirAccess.remove_absolute("user://worlds/"+slot+suffix)
 	print("INVENTORY_DROP_PERSISTENCE item=",item," checks=",checks," failures=",failures)

@@ -1,0 +1,16 @@
+[
+  {
+    "file": "superseded-backpack-shortcut.png",
+    "source": "reports/universal_item_drop/packed/20261104T020009726029Z/backpack.png",
+    "sha256": "dae22f83dd12bf8733ecba0d4865fd1cff3561e516cbaa5babb310814acca4ad",
+    "caption": "Superseded scope: earlier actual executable/PCK capture with selected-backpack G support. User clarified G applies only during active gameplay to held items; that shortcut was removed. Retained for history, not final acceptance.",
+    "provenance": "Original repository runtime capture. Inherited project code and asset notices remain applicable; no external image imported."
+  },
+  {
+    "file": "gameplay-held-item-result.png",
+    "source": "reports/universal_item_drop/packed/20261104T020440475918Z/backpack.png",
+    "sha256": "7434b97c9683568491201d27a9de416214dceabc8d4cdbf5ff5928e2757ce39b",
+    "caption": "Final gameplay-only scope. Actual executable/PCK, temporary seed-1703 woodland and elevated support fixture, 1920x1080. Three coins were equipped and G pressed during gameplay; inventory opened afterward shows the held stack reduced to two. G in inventory and developer tools was separately checked to preserve contents. Agent inspected; user visual review pending.",
+    "provenance": "Original repository runtime capture; inherited project code/asset notices remain applicable. No external image imported."
+  }
+]
