@@ -129,7 +129,10 @@ func advance(focus: Vector3, during_loading: bool) -> bool:
 	var zombie: CharacterBody3D = host.spawn_at(point,not record.sleep.is_empty(),authored)
 	if zombie == null:return false
 	zombie.global_rotation.y = record.yaw
-	if not host.configure_encounter(zombie,store.encounter(record.id)):
+	var descriptor:Dictionary=store.encounter(record.id)
+	# Authored sleeper identity survives after its transient waking bytes are cleared.
+	descriptor["ambusher"]=record.anchor!=0
+	if not host.configure_encounter(zombie,descriptor):
 		failure = "Cannot configure zombie encounter %d" % record.id
 		host._retire(host.residents.find(zombie))
 		return false

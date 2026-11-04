@@ -165,10 +165,13 @@ func _update_navigation(delta: float, available: bool) -> void:
 					var seen:bool=awareness.wants_sight(id,zombie.global_position,zombie.global_basis.z,target.global_position)
 					if seen:
 						var eye:Vector3=zombie.global_position+Vector3.UP*(0.45 if zombie._crawling else 1.35)
+						if zombie.sleeper_active():
+							var head:AABB=zombie.anatomy.sample_bounds("head",zombie.global_transform)
+							eye=head.get_center()
 						var player_eye:Vector3=target.global_position+Vector3.UP*1.1
 						var sight_bounds:=AABB(eye,Vector3.ZERO).expand(player_eye).grow(0.1)
 						seen=readiness.is_valid() and bool(readiness.call(sight_bounds)) and get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye,player_eye,7,excluded)).is_empty()
-					awareness.observe(id,target.global_position,seen)
+					awareness.observe(id,target.global_position,seen,zombie.global_position.distance_to(target.global_position))
 					if not seen and noise_speed>1.0:awareness.hear(id,zombie.global_position,target.global_position,12.0 if noise_speed>7.0 else 7.0)
 			intent=awareness.advance(id,zombie.global_position,minf(delta,0.1),active,navigator.state(id))
 			if intent.is_empty():continue
@@ -179,10 +182,12 @@ func _update_navigation(delta: float, available: bool) -> void:
 		if active and zombie.sleeper_active() and intent.state=="sleeping" and zombie.sleeper.phase!="sleeping":
 			awareness.provoke(id,zombie.global_position);intent=awareness.status(id)
 		if active and zombie.sleeper_active() and intent.state=="waking":
+			zombie.sleeper.wake_speed=float(intent.wake_speed)
 			zombie.sleeper.wake()
 			if zombie.sleeper.phase=="ready" and intent.wake_ready and awareness.finish_waking(id):
 				zombie.sleeper.finish();intent=awareness.status(id)
 		awareness_status[id]=intent
+		if intent.has("chase_speed_multiplier"):zombie.chase_speed_multiplier=float(intent.chase_speed_multiplier)
 		zombie.awareness_state=intent.state
 		zombie.behavior_goal=intent.goal if intent.moving else Vector3.INF
 		var may_break_door:bool=intent.state in ["chase","investigate"]
@@ -350,14 +355,17 @@ func spawn_at(point: Vector3,restoring_sleep:bool=false,authored:bool=false) -> 
 		if is_instance_valid(navigator):navigator.remove_agent(id)
 		if is_instance_valid(awareness):awareness.remove_agent(id))
 	zombie.damaged.connect(func(_part:String,_health:float):
-		if zombie.sleeper_active():awareness.provoke(id,zombie.global_position))
+		if zombie.alive and is_instance_valid(target):awareness.provoke(id,target.global_position))
 	return zombie
 
 func configure_encounter(zombie:CharacterBody3D,descriptor:Dictionary)->bool:
 	if zombie not in residents or not zombie.alive:return false
 	var profile_id:String=descriptor.get("profile","")
 	var profile:Variant=encounter_profiles.get(profile_id)
-	if not profile is Dictionary or not awareness.set_profile(zombie.get_instance_id(),profile):return false
+	if not profile is Dictionary:return false
+	profile=profile.duplicate()
+	profile["ambusher"]=bool(descriptor.get("ambusher",false))
+	if not awareness.set_profile(zombie.get_instance_id(),profile):return false
 	var vitals:PackedByteArray=descriptor.get("initial_vitals",PackedByteArray())
 	if not vitals.is_empty() and not zombie.restore_population_vitals(vitals):return false
 	var intent:Dictionary=awareness.status(zombie.get_instance_id())

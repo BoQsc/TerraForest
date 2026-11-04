@@ -63,7 +63,7 @@ func _initialize()->void:
 		var asleep:Dictionary=brain.status(1)
 		advance(brain,60)
 		check(brain.status(1)==asleep and not asleep.moving and not asleep.combat,"sleepers perform no roaming or countdown work")
-		check(not brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,1)),"sleepers do not magically see player")
+		check(brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,1)) and not brain.wants_sight(1,Vector3.ZERO,Vector3.BACK,Vector3(0,0,4)),"sleepers request host occlusion checks only at close range")
 		brain.observe(1,Vector3(0,0,1),true)
 		check(brain.status(1)==asleep,"accidental sight callback cannot wake sleeper")
 		if pose==1:

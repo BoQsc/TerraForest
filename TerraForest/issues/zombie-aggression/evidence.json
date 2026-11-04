@@ -1,0 +1,131 @@
+{
+  "date": "2026-11-04",
+  "scope": "Scoped engineering verification; gameplay balance and dense mine pursuit remain unreviewed",
+  "checks": {
+    "source_aggression": {
+      "report": "reports/zombie_aggression/20261104T141732443487Z",
+      "summary": [
+        "ZOMBIE_AGGRESSION checks=43 failures=0"
+      ],
+      "passed": true
+    },
+    "executable_aggression": {
+      "report": "reports/zombie_aggression/20261104T142502726969Z",
+      "summary": [
+        "ZOMBIE_AGGRESSION checks=43 failures=0"
+      ],
+      "passed": true,
+      "pack_sha256": "d5537403b7db5339da0850e13a1d6776834f644d95027d730b7fcfa364a9229a"
+    },
+    "profile_contract": {
+      "report": "reports/checks/20261104T141648867572Z",
+      "summary": [
+        "ZOMBIE_EXPANSION checks=58 failures=0"
+      ],
+      "passed": true
+    },
+    "sleeper_runtime": {
+      "report": "reports/zombie_sleepers/20261104T141637942554Z",
+      "summary": [
+        "ZOMBIE_SLEEPERS_RUNTIME checks=47 failures=0"
+      ],
+      "passed": true
+    },
+    "sleeper_fresh_restore": {
+      "report": "reports/zombie_sleepers/20261104T141637942554Z/fresh",
+      "summary": [
+        "ZOMBIE_SLEEPERS_RUNTIME checks=5 failures=0"
+      ]
+    },
+    "route_sampling": {
+      "report": "reports/checks/20261104T141924742690Z",
+      "summary": [
+        "ACTOR_ROUTE_SAMPLING checks=10 failures=0"
+      ],
+      "passed": true
+    },
+    "route_contract": {
+      "report": "reports/checks/20261104T141928616762Z",
+      "summary": [
+        "ACTOR_ROUTE_CONTRACT checks=14 failures=0"
+      ],
+      "passed": true
+    },
+    "zombie_navigation": {
+      "report": "reports/checks/20261104T141934516707Z",
+      "summary": [
+        "ZOMBIE_NAVIGATION checks=15 failures=0"
+      ],
+      "passed": true
+    },
+    "generated_houses": {
+      "report": "reports/house_sleepers/20261104T141821378613Z",
+      "phases": {
+        "admission": [
+          "HOUSE_SLEEPERS_WORLD checks=7 failures=1"
+        ],
+        "admission_resume_142206": [
+          "HOUSE_SLEEPERS_WORLD checks=10 failures=0"
+        ],
+        "cleared": [
+          "HOUSE_SLEEPERS_WORLD checks=9 failures=0"
+        ],
+        "create": [
+          "HOUSE_SLEEPERS_WORLD checks=12 failures=0"
+        ],
+        "restore": [
+          "HOUSE_SLEEPERS_WORLD checks=13 failures=0"
+        ]
+      },
+      "note": "Original admission phase did not find selected identity. Fresh-process retry admitted that same identity and passed without using a proposed fallback; fallback removed from final fixture. Cause of first failure remains unqualified. Original run remains marked failed; successful create/restore/cleared and admission retry are recorded separately."
+    },
+    "native_awareness_debug": {
+      "report": "reports/checks/20261104T142720489434Z",
+      "checks": 34,
+      "failures": 0,
+      "passed": true
+    },
+    "native_awareness_release": {
+      "report": "reports/zombie_awareness_release.json",
+      "checks": 34,
+      "failures": 0,
+      "library": "world_runtime.windows.template_release.x86_64.dll"
+    }
+  },
+  "native_builds": {
+    "template_debug": {
+      "sha256": "85b9e3cf0282d6cddb2ecfd3595dd85183e5b6363b365deddf0f1eea2e7979f7",
+      "seconds": 1.9420423000119627,
+      "compiled_extension_sources": [
+        "zombie_awareness.cpp"
+      ],
+      "linked": true
+    },
+    "template_release": {
+      "sha256": "75484c882431821d8996fdab7e73012bde180b2518913f5faf3f7a02af4226dc",
+      "seconds": 1.9220621000276878,
+      "compiled_extension_sources": [
+        "zombie_awareness.cpp"
+      ],
+      "linked": true
+    }
+  },
+  "files": {
+    "addons/world_runtime/bin/world_runtime.windows.template_debug.x86_64.dll": "85b9e3cf0282d6cddb2ecfd3595dd85183e5b6363b365deddf0f1eea2e7979f7",
+    "addons/world_runtime/bin/world_runtime.windows.template_release.x86_64.dll": "75484c882431821d8996fdab7e73012bde180b2518913f5faf3f7a02af4226dc",
+    "addons/world_runtime/native/zombie_awareness.cpp": "b1830ba644d4fb2d25a7e74a67819d6b1ea1addfb2f3b05f4c6b50824a938b13",
+    "addons/world_runtime/native/zombie_awareness.hpp": "9b3cbda97f9cea3b6d29b9a8236ec576ca3ee89a8280344715d7eb55076d6e72",
+    "addons/characters/runtime/assets/zombie.encounters.json": "f6c31db60cf7bd3e3542f3716f5fc273c0c7e87f77a38ddd2714bf02d07c0464",
+    "addons/characters/runtime/zombie_world.gd": "7b692f3f12437ef3a9bfc9e481677859ac76d5a8ca1f863ac520da45b522c094",
+    "addons/characters/runtime/zombie_population.gd": "bbe72ef88d7a631b11d9396f287ac93e7d7e7b2b1a22817d659759afa9c3c951",
+    "addons/characters/runtime/zombie_sleeper.gd": "4a175d47a9f1268b67758b7bb905adde3c8d646af0e9f04c4a6ff7910f7575b6",
+    "tests/zombie_aggression.gd": "5794db5b2d68d7f4f64bf94813c31057404b6d243168e0b16a8c448c37aa0b54",
+    "dist/TerraForest.pck": "d5537403b7db5339da0850e13a1d6776834f644d95027d730b7fcfa364a9229a"
+  },
+  "export": {
+    "passed": true,
+    "pack_bytes": 476538720,
+    "native_library_count": 14,
+    "excluded": "Existing unused addons/audio_runtime/packs/Kaino source inputs have unsupported WAV containers. Temporary .gdignore removed and original WAVs retained. Final export smoke/house-light gates pass."
+  }
+}

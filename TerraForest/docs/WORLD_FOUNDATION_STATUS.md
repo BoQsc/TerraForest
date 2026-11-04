@@ -1,5 +1,18 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Zombie close threats and sleeper ambushes — 2026-11-04
+
+Sleepers cautiously recognize a nearby unobstructed player, rise faster through
+their existing clearance guards, then pursue a visible target immediately.
+Ordinary zombies retain distant temperament but react promptly to close threats
+and accepted damage. Last-sighting, blocked-route and search expiry still allow
+escape. Authored sleeper temperament survives awake save/reload.
+[Changes, verification and retained failures](../issues/zombie-aggression/README.md).
+Player balance/animation review and dense coal-mine pursuit remain open: revisit
+on outdoor/house/mine playtest feedback, then tune the declared encounter fields
+and repeat the physical sensing/combat, sleeper safety and house reload checks.
+Native route budgets and existing broader navigation acceptance are unchanged.
+
 ## Steam installation consistency - 2026-11-04
 
 [Installation issue](../issues/steam-installation/README.md): the first discovery

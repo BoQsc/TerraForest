@@ -1,0 +1,30 @@
+[
+  {
+    "file": "sleeping-house.png",
+    "source": "reports/house_sleepers/20261104T141821378613Z/sleeping_house.png",
+    "sha256": "74d4c51ec2503deeb862ca35df6f7b3ad058e3ef6da383065b2f085b9ace519d",
+    "seed": 1703,
+    "build": "2026-11-04 source working tree",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "status": "current scoped evidence; user review pending",
+    "provenance": "Diagnostic capture of TerraForest; inherited character/environment asset terms preserved."
+  },
+  {
+    "file": "awakened-house.png",
+    "source": "reports/house_sleepers/20261104T141821378613Z/awakened_house.png",
+    "sha256": "7aff1e657e532acf3ab567db930da46f4c0492edf83fadf1d8a1dc365b0cf492",
+    "seed": 1703,
+    "build": "2026-11-04 source working tree",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "status": "current scoped evidence; user review pending",
+    "provenance": "Diagnostic capture of TerraForest; inherited character/environment asset terms preserved."
+  }
+]

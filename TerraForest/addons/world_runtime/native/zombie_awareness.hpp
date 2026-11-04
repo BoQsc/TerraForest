@@ -15,12 +15,13 @@ class NativeZombieAwareness : public godot::RefCounted {
         godot::String name="legacy";
         double sight=32,tracking=44,near_sense=5,notice=0,pursuit=30,forget=18,search=6,ignore=10;
         double roam_min=4,roam_max=9,idle_min=1.5,idle_max=4,hearing=1,walk_speed=.72,chase_multiplier=1.2,wake=3;
+        double close_notice=.2,sleep_notice=.4,sleep_range=2.5,wake_speed=1.65,provoked_speed=1.8,sleeper_speed=2.2;
     };
     struct Agent {
         int64_t id=0;uint32_t random=1;State state=IDLE;
         godot::Vector3 home,goal,last_seen;
         double remaining=1,unseen=0,blocked=0,ignore=0,confidence=0,interest=0,wake_elapsed=0;
-        bool visible=false,provoked=false;int revision=0,sleep_pose=0;
+        bool visible=false,provoked=false,ambusher=false,close_visible=false;int revision=0,sleep_pose=0;
         Profile profile;
     };
     std::vector<Agent> agents_;
@@ -44,7 +45,7 @@ public:
     void remove_agent(int64_t id);
     void clear();
     bool wants_sight(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &forward,const godot::Vector3 &player);
-    void observe(int64_t id,const godot::Vector3 &player,bool visible);
+    void observe(int64_t id,const godot::Vector3 &player,bool visible,double distance=-1);
     void provoke(int64_t id,const godot::Vector3 &player);
     bool hear(int64_t id,const godot::Vector3 &feet,const godot::Vector3 &source,double radius);
     bool accept_roam(int64_t id,const godot::Vector3 &supported);

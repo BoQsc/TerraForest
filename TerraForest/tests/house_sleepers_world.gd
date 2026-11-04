@@ -58,6 +58,7 @@ func run()->void:
 		await finish();return
 	if not check(matches.size()==1,"normal residency admits exactly one authored inhabitant"):await finish();return
 	var actor:CharacterBody3D=matches[0]
+	check(game.zombies.awareness.status(actor.get_instance_id()).ambusher,"authored resident retains sleeper temperament across actual-world admission/reload")
 	if admission:
 		game.zombies._retire(game.zombies.residents.find(actor));await process_frame
 		game.camera.look_at(selected.position+Vector3.UP*.5)

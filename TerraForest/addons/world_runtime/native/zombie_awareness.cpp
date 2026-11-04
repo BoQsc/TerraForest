@@ -17,7 +17,7 @@ void NativeZombieAwareness::_bind_methods(){
     ClassDB::bind_method(D_METHOD("remove_agent","id"),&NativeZombieAwareness::remove_agent);
     ClassDB::bind_method(D_METHOD("clear"),&NativeZombieAwareness::clear);
     ClassDB::bind_method(D_METHOD("wants_sight","id","feet","forward","player"),&NativeZombieAwareness::wants_sight);
-    ClassDB::bind_method(D_METHOD("observe","id","player","visible"),&NativeZombieAwareness::observe);
+    ClassDB::bind_method(D_METHOD("observe","id","player","visible","distance"),&NativeZombieAwareness::observe,DEFVAL(-1.0));
     ClassDB::bind_method(D_METHOD("provoke","id","player"),&NativeZombieAwareness::provoke);
     ClassDB::bind_method(D_METHOD("hear","id","feet","source","radius"),&NativeZombieAwareness::hear);
     ClassDB::bind_method(D_METHOD("accept_roam","id","supported"),&NativeZombieAwareness::accept_roam);
@@ -33,13 +33,15 @@ void NativeZombieAwareness::roam(Agent &a,const Vector3 &feet,bool search){
     a.goal=origin+Vector3(real_t(std::sin(angle)*radius),0,real_t(std::cos(angle)*radius));
     // Stay in the local neighbourhood instead of drifting indefinitely.
     if(!search&&a.goal.distance_to(a.home)>24)a.goal=feet.lerp(a.home,real_t(.5));
-    a.state=search?SEARCH:WANDER;a.remaining=search?a.profile.search:28;a.blocked=0;++a.revision;
+    a.state=search?SEARCH:WANDER;a.remaining=search?std::min(15.0,a.profile.search*(a.ambusher?1.5:1)):28;a.blocked=0;++a.revision;
 }
 Dictionary NativeZombieAwareness::describe(const Agent &a){
     static const char *names[]={"idle","wander","chase","investigate","search","suspicious","sleeping","waking"};
     Dictionary out;out["state"]=names[a.state];out["goal"]=a.goal;out["revision"]=a.revision;
     out["moving"]=a.state==WANDER||a.state==CHASE||a.state==INVESTIGATE||a.state==SEARCH;out["combat"]=a.state==CHASE;out["visible"]=a.visible;
-    out["profile"]=a.profile.name;out["walk_speed"]=a.profile.walk_speed;out["chase_speed_multiplier"]=a.profile.chase_multiplier;
+    out["profile"]=a.profile.name;out["walk_speed"]=a.profile.walk_speed;
+    out["chase_speed_multiplier"]=std::max(a.profile.chase_multiplier,a.ambusher?a.profile.sleeper_speed:(a.provoked||a.close_visible)?a.profile.provoked_speed:1.0);
+    out["wake_speed"]=a.profile.wake_speed;out["ambusher"]=a.ambusher;out["provoked"]=a.provoked;
     out["notice_seconds"]=a.confidence;out["interest_seconds"]=a.interest;out["sleep_pose"]=a.sleep_pose;
     out["wake_elapsed"]=a.wake_elapsed;out["wake_ready"]=a.state==WAKING&&a.wake_elapsed>=a.profile.wake;
     out["unseen_seconds"]=a.unseen;out["remaining_seconds"]=a.remaining;out["ignore_seconds"]=a.ignore;return out;
@@ -52,7 +54,7 @@ bool NativeZombieAwareness::add_agent(int64_t id,const Vector3 &feet){
 }
 bool NativeZombieAwareness::set_profile(int64_t id,const Dictionary &values){
     auto *agent=find(id);if(!agent||(agent->state!=IDLE&&agent->state!=WANDER)||!values.has("id")||values["id"].get_type()!=Variant::STRING)return false;
-    Profile profile;profile.name=values["id"];
+    Profile profile;profile.name=values["id"];bool ambusher=false;
     if(profile.name.is_empty()||profile.name.length()>64)return false;
     struct Field {const char *key;double Profile::*member;double minimum,maximum;};
     const Field fields[]={
@@ -62,11 +64,18 @@ bool NativeZombieAwareness::set_profile(int64_t id,const Dictionary &values){
         {"roam_min",&Profile::roam_min,1,12},{"roam_max",&Profile::roam_max,1,16},
         {"idle_min",&Profile::idle_min,.2,10},{"idle_max",&Profile::idle_max,.2,20},
         {"hearing_scale",&Profile::hearing,.1,1.5},{"walk_speed",&Profile::walk_speed,.3,1.3},
-        {"chase_speed_multiplier",&Profile::chase_multiplier,1,3},{"wake_seconds",&Profile::wake,.5,8}
+        {"chase_speed_multiplier",&Profile::chase_multiplier,1,3},{"wake_seconds",&Profile::wake,.5,8},
+        {"close_notice_seconds",&Profile::close_notice,0,1},{"sleeper_notice_seconds",&Profile::sleep_notice,.1,2},
+        {"sleeper_sense_range",&Profile::sleep_range,.5,3},{"wake_speed",&Profile::wake_speed,1,2},
+        {"provoked_chase_multiplier",&Profile::provoked_speed,1,3},{"sleeper_chase_multiplier",&Profile::sleeper_speed,1,3}
     };
     for(const Variant &key:values.keys()){
         if(key.get_type()!=Variant::STRING)return false;
         if(String(key)=="id")continue;
+        if(String(key)=="ambusher"){
+            if(values[key].get_type()!=Variant::BOOL)return false;
+            ambusher=values[key];continue;
+        }
         bool known=false;
         for(const auto &field:fields)if(String(key)==field.key){
             Variant value=values[key];if(value.get_type()!=Variant::INT&&value.get_type()!=Variant::FLOAT)return false;
@@ -76,11 +85,11 @@ bool NativeZombieAwareness::set_profile(int64_t id,const Dictionary &values){
         if(!known)return false;
     }
     if(profile.tracking<profile.sight||profile.near_sense>profile.sight||profile.roam_min>profile.roam_max||profile.idle_min>profile.idle_max)return false;
-    agent->profile=profile;return true;
+    agent->profile=profile;agent->ambusher=ambusher;return true;
 }
 bool NativeZombieAwareness::set_sleeping(int64_t id,int pose){
     auto *agent=find(id);if(!agent||pose<1||pose>2||(agent->state!=IDLE&&agent->state!=WANDER))return false;
-    agent->state=SLEEPING;agent->sleep_pose=pose;agent->visible=false;agent->confidence=0;agent->interest=0;agent->ignore=0;agent->wake_elapsed=0;++agent->revision;return true;
+    agent->state=SLEEPING;agent->ambusher=true;agent->sleep_pose=pose;agent->visible=false;agent->confidence=0;agent->interest=0;agent->ignore=0;agent->wake_elapsed=0;++agent->revision;return true;
 }
 void NativeZombieAwareness::wake(Agent &agent,const Vector3 &source,bool provoked){
     if(agent.state!=WAKING){agent.state=WAKING;agent.wake_elapsed=0;++agent.revision;}
@@ -89,7 +98,7 @@ void NativeZombieAwareness::wake(Agent &agent,const Vector3 &source,bool provoke
 }
 bool NativeZombieAwareness::finish_waking(int64_t id){
     auto *agent=find(id);if(!agent||agent->state!=WAKING||agent->wake_elapsed<agent->profile.wake)return false;
-    agent->state=INVESTIGATE;agent->remaining=agent->profile.forget;agent->unseen=0;agent->sleep_pose=0;++agent->revision;return true;
+    agent->state=agent->visible?CHASE:INVESTIGATE;agent->remaining=agent->profile.forget;agent->unseen=0;agent->sleep_pose=0;++agent->revision;return true;
 }
 PackedByteArray NativeZombieAwareness::capture_sleep(int64_t id){
     PackedByteArray bytes;const auto *agent=find(id);if(!agent||(agent->state!=SLEEPING&&agent->state!=WAKING))return bytes;
@@ -99,6 +108,7 @@ PackedByteArray NativeZombieAwareness::capture_sleep(int64_t id){
 bool NativeZombieAwareness::restore_sleep(int64_t id,const PackedByteArray &bytes){
     auto *agent=find(id);if(!agent||agent->state!=IDLE||!valid_sleep_intent(bytes))return false;
     agent->sleep_pose=bytes.decode_u32(0);agent->state=bytes.decode_u32(4)==1?SLEEPING:WAKING;
+    agent->ambusher=true;
     agent->wake_elapsed=std::min(agent->profile.wake,double(bytes.decode_float(8)));agent->provoked=bytes.decode_u32(24)!=0;
     for(int axis=0;axis<3;++axis)agent->goal[axis]=bytes.decode_float(12+axis*4);
     agent->last_seen=agent->goal;agent->visible=false;agent->confidence=agent->ignore=agent->unseen=0;
@@ -107,15 +117,31 @@ bool NativeZombieAwareness::restore_sleep(int64_t id,const PackedByteArray &byte
 void NativeZombieAwareness::remove_agent(int64_t id){agents_.erase(std::remove_if(agents_.begin(),agents_.end(),[&](const Agent &a){return a.id==id;}),agents_.end());}
 void NativeZombieAwareness::clear(){agents_.clear();}
 bool NativeZombieAwareness::wants_sight(int64_t id,const Vector3 &feet,const Vector3 &forward,const Vector3 &player){
-    auto *a=find(id);if(!a||a->ignore>0||a->state==SLEEPING||a->state==WAKING||!feet.is_finite()||!forward.is_finite()||!player.is_finite())return false;
-    double range=(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH)?a->profile.tracking:a->profile.sight;
+    auto *a=find(id);if(!a||!feet.is_finite()||!forward.is_finite()||!player.is_finite())return false;
+    const double distance=feet.distance_squared_to(player);
+    if(a->state==SLEEPING)return distance<=a->profile.sleep_range*a->profile.sleep_range;
+    // A nearby visible threat may break disinterest, but walls still require a host ray.
+    if(a->ignore>0&&distance>a->profile.near_sense*a->profile.near_sense)return false;
+    double range=(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH||a->state==WAKING)?a->profile.tracking:a->profile.sight;
     Vector3 offset=player-feet;if(offset.length_squared()>range*range)return false;
     if(offset.length_squared()<=a->profile.near_sense*a->profile.near_sense)return true;
     offset.y=0;Vector3 facing=forward;facing.y=0;
-    return a->state==CHASE||offset.normalized().dot(facing.normalized())>=.342;
+    return a->state==CHASE||a->state==WAKING||a->provoked||offset.normalized().dot(facing.normalized())>=.342;
 }
-void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visible){
-    auto *a=find(id);if(!a||!player.is_finite()||a->state==SLEEPING||a->state==WAKING)return;
+void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visible,double distance){
+    auto *a=find(id);if(!a||!player.is_finite()||!std::isfinite(distance))return;
+    a->close_visible=visible&&distance>=0&&distance<=a->profile.near_sense;
+    if(a->state==SLEEPING){
+        a->visible=visible&&distance>=0&&distance<=a->profile.sleep_range;
+        if(a->visible)a->last_seen=player;else a->confidence=0;
+        return;
+    }
+    if(a->state==WAKING){
+        a->visible=visible;
+        if(visible)a->last_seen=a->goal=player;
+        return;
+    }
+    if(a->close_visible)a->ignore=0;
     a->visible=visible&&a->ignore<=0;
     if(a->visible){
         a->last_seen=player;a->goal=player;a->unseen=0;
@@ -124,6 +150,9 @@ void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visibl
             a->interest=a->profile.pursuit;
         }
         a->state=CHASE;
+        // Close threats and established ambush/retaliation keep interest while seen.
+        // Distant, unprovoked encounters retain their original finite pursuit budget.
+        if(a->close_visible||a->provoked||a->ambusher)a->interest=std::max(a->interest,a->profile.pursuit);
     }
     else if(a->state==SUSPICIOUS){a->confidence=0;rest(*a);}
     else if(a->state==CHASE){a->state=INVESTIGATE;a->goal=a->last_seen;a->unseen=0;}
@@ -131,7 +160,7 @@ void NativeZombieAwareness::observe(int64_t id,const Vector3 &player,bool visibl
 void NativeZombieAwareness::provoke(int64_t id,const Vector3 &player){
     auto *a=find(id);if(!a||!player.is_finite())return;
     if(a->state==SLEEPING||a->state==WAKING){wake(*a,player,true);return;}
-    a->ignore=0;a->last_seen=a->goal=player;a->unseen=0;a->remaining=a->profile.forget;a->state=INVESTIGATE;a->provoked=true;a->interest=a->profile.pursuit*1.5;
+    a->ignore=0;a->last_seen=a->goal=player;a->unseen=0;a->remaining=a->profile.forget;a->state=a->visible?CHASE:INVESTIGATE;a->provoked=true;a->interest=a->profile.pursuit*1.5;
 }
 bool NativeZombieAwareness::hear(int64_t id,const Vector3 &feet,const Vector3 &source,double radius){
     auto *a=find(id);
@@ -147,12 +176,15 @@ bool NativeZombieAwareness::accept_roam(int64_t id,const Vector3 &supported){
 Dictionary NativeZombieAwareness::advance(int64_t id,const Vector3 &feet,double delta,bool active,const String &route_state){
     auto *a=find(id);if(!a||!feet.is_finite()||!std::isfinite(delta)||delta<=0||delta>.1)return {};
     if(!active){auto out=describe(*a);out["suspended"]=true;return out;}
-    if(a->state==SLEEPING)return describe(*a);
+    if(a->state==SLEEPING){
+        if(a->visible){a->confidence+=delta;if(a->confidence>=a->profile.sleep_notice)wake(*a,a->last_seen,false);}
+        return describe(*a);
+    }
     if(a->state==WAKING){a->wake_elapsed=std::min(a->profile.wake,a->wake_elapsed+delta);return describe(*a);}
     a->ignore=std::max(0.0,a->ignore-delta);a->remaining-=delta;
     if(a->state==SUSPICIOUS){
         a->confidence+=delta;
-        if(a->confidence>=a->profile.notice){a->state=CHASE;a->interest=a->profile.pursuit;a->unseen=0;}
+        if(a->confidence>=std::min(a->profile.notice,a->close_visible?a->profile.close_notice:a->profile.notice)){a->state=CHASE;a->interest=a->profile.pursuit;a->unseen=0;}
         return describe(*a);
     }
     if(a->state==CHASE||a->state==INVESTIGATE||a->state==SEARCH){
@@ -164,11 +196,11 @@ Dictionary NativeZombieAwareness::advance(int64_t id,const Vector3 &feet,double 
         if(feet.distance_to(a->last_seen)>64||a->blocked>6){a->ignore=a->profile.ignore;rest(*a);}
     }else if(a->state==INVESTIGATE){
         a->unseen+=delta;
-        if(a->unseen>=a->profile.forget||a->blocked>4){a->ignore=3;rest(*a);}
+        if(a->unseen>=std::min(30.0,a->profile.forget*(a->ambusher?1.35:1))||a->blocked>4){a->ignore=3;rest(*a);}
         else if(feet.distance_to(a->goal)<.8)roam(*a,feet,true);
     }else if(a->state==SEARCH){
         a->unseen+=delta;
-        if(a->remaining<=0||a->unseen>=a->profile.forget||a->blocked>2){a->ignore=3;rest(*a);}
+        if(a->remaining<=0||a->unseen>=std::min(30.0,a->profile.forget*(a->ambusher?1.35:1))||a->blocked>2){a->ignore=3;rest(*a);}
     }else if(a->state==WANDER){
         if(feet.distance_to(a->goal)<.65||a->remaining<=0||a->blocked>2)rest(*a);
     }else if(a->remaining<=0)roam(*a,feet,false);

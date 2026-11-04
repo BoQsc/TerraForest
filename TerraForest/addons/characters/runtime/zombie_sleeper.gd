@@ -12,6 +12,7 @@ var crawling:=false
 var reversing:=false
 var blocked:=false
 var retry:=0.0
+var wake_speed:=1.65
 var envelope:=AABB()
 var coverage:=AABB()
 var exit_shape:CapsuleShape3D
@@ -83,7 +84,9 @@ func advance_wake(delta:float)->void:
 	retry=maxf(0.,retry-delta)
 	if retry>0:return
 	var duration:=LIBRARY.get_animation(clip).length
-	var next:=clampf(cursor+(-delta if reversing else delta),0.,duration)
+	# Stay within the existing clearance sampling step at lower physics rates.
+	var pose_step:=minf(delta*wake_speed,.05)
+	var next:=clampf(cursor+(-pose_step if reversing else pose_step),0.,duration)
 	var bounds:=bounds_at(clip,cursor).merge(bounds_at(clip,next))
 	if not guard.apply_bounds(actor,actor.capsule,bounds):
 		blocked=true;retry=.1;actor.state="wake_blocked";return
