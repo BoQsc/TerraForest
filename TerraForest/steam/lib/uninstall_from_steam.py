@@ -68,13 +68,8 @@ def desktop_tool():
 
 def log_tool():
     """Import install_log.py, which owns the run log."""
-    path = ROOT/'steam'/'lib'/'install_log.py'
-    spec = importlib.util.spec_from_file_location('install_log', path)
-    if spec is None or spec.loader is None:
-        raise SystemExit(f'{path}: cannot be imported')
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    import install_log
+    return install_log
 
 
 def confirm_tool():
@@ -153,8 +148,9 @@ def main():
     if confirm.should_confirm(args):
         tool.CONFIRM = lambda detail: confirm.ask(detail)
     with log_tool().run('uninstall_from_steam', sys.argv[1:], args.log,
-                        enabled=not args.no_log):
-        return deploy(args, tool, parser)
+                        enabled=not args.no_log) as run:
+        run.code = deploy(args, tool, parser)
+        return run.code
 
 
 def deploy(args, tool, parser):
@@ -162,15 +158,7 @@ def deploy(args, tool, parser):
     steam = args.steam or next((p for p in tool.steam_roots() if (p/'userdata').is_dir()), None)
     if steam is None:
         parser.error('Steam install not found; pass --steam PATH')
-    if args.account:
-        shortcut = steam/'userdata'/args.account/'config'/'shortcuts.vdf'
-        if not shortcut.is_file():
-            parser.error(f'no shortcuts.vdf for account {args.account}')
-    else:
-        accounts = tool.accounts(steam)
-        if not accounts:
-            parser.error(f'{steam}: no account with a shortcuts.vdf')
-        shortcut = accounts[0]
+    shortcut = tool.select_shortcut(steam, args.account)
 
     if args.list:
         _, _, entries = tool.load(shortcut)

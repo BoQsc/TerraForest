@@ -1,31 +1,40 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
-## Steam executable discovery - 2026-11-04
+## Steam installation consistency - 2026-11-04
 
-Source-checkout installer discovery now covers both Steam Windows executable
-names, registry/standard/explicit Steam roots, modern and legacy library metadata,
-manifest installation directories, `GODOT_EXE` and native PATH executables.
-First-copy dry runs inspect the source rather than requiring the unwritten target;
-the GUI retains the underlying failure reason. Original AI-assisted tooling and
-regression code is 0BSD; no third-party code, assets or dependencies were imported.
+[Installation issue](../issues/steam-installation/README.md): the first discovery
+fix (`cb73d62b`) was too narrow. Last World/artwork remained optional, desktop
+creation rediscovered Steam/account and could silently fall back to the executable,
+and diagnostics were split across three files. The default now installs both Steam
+entries/artwork/Steam-routed desktop links, as one verified transaction. Account
+selection is shared; first-time non-Steam accounts are supported. Re-reading after
+shutdown preserves Steam's final changes to unrelated entries. Native desktop
+launch requires an explicit option; failed registration cannot report success.
 
-Verification: 46 Python tests pass (18 new Steam regressions). A live read-only
-dry run with `GODOT_EXE` removed found the installed direct Steam engine, planned
-both entries, artwork and desktop links with a missing temporary target, and left
-the live shortcuts file's SHA-256 unchanged. A separate temporary copy passed icon
-stamping/resource verification and ran `--headless --version`, reporting
-`4.7.2.stable.steam.ed1daf0bf` with exit 0. No live Steam restart was performed.
+All diagnostics now share `steam/logs/install.log`, including bootstrap/import
+failures, both output streams, traceback, actual exit code and installer hash.
+Legacy GUI/history logs are preserved inside it then removed. The window's Copy
+log action provides the current/latest run for pasting. Original AI-assisted tool
+and regression changes use the repository's 0BSD code policy; no third-party code,
+assets or dependencies were imported.
 
-Remaining: exported-build discovery retains the inherited executable-only copy;
-deployment of separate PCK/native companion files is not implemented or validated.
-Accounts with no existing `shortcuts.vdf`, non-Windows installation and a full
-second-machine restart/install are also unverified/unsupported in this scope.
-These require additional deployment/account handling and an end-to-end test on a
-fresh copied checkout before claiming universal installation. Return when adding
-packaged distribution or onboarding a fresh Steam account; close with companion
-file completeness checks, successful launch of both entries, preserved unrelated
-shortcuts and a verified Steam restart. Use the installed editor route meanwhile.
-See [installer behavior and prerequisites](../steam/README.md).
+Verification: Windows regression fixtures write/read actual VDF, artwork and Shell
+links, cover first install, repair, active/recent account selection, no-space paths,
+shutdown-time merge, one restart, idempotence and complete logs. A real default
+installer run here verified both live Steam entries and both desktop Steam URLs;
+its existing registration needed no restart. A separate real shutdown/write/restart
+then verified that both entries and both desktop URLs survived Steam's reload
+(exit 0). The actual Tk widgets build with Copy log and preserve failure details.
+All **62 Python tests pass**, including **34 Steam regressions**. The log folder
+contains one file; precise remaining scope is retained in the issue.
+
+Remaining: exported-build discovery still retains the inherited executable-only
+copy; separate PCK/native companion deployment is not implemented or validated.
+Non-Windows installation and full execution on the user's second computer remain
+unverified. Return for packaged distribution or the next second-machine run;
+close with complete companion deployment/successful launch of both entries, and
+second-machine evidence from the single log. The installed editor route is the
+verified source-checkout path. See [installer instructions](../steam/README.md).
 
 ## Held-item G drop standard - 2026-11-04
 

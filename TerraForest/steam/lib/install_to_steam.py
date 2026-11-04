@@ -42,7 +42,7 @@ def load(name, path):
 app_icon = load('set_app_icon', ROOT/'steam'/'app_icon'/'set_app_icon.py')
 # The importable modules live in steam/lib/; the entry points stay in steam/.
 steam_tool = load('steam_shortcuts', ROOT/'steam'/'lib'/'steam_shortcuts.py')
-log_tool = load('install_log', ROOT/'steam'/'lib'/'install_log.py')
+import install_log as log_tool
 confirm_tool = load('steam_confirm', ROOT/'steam'/'lib'/'steam_confirm.py')
 source_tool = load('exe_source', ROOT/'steam'/'lib'/'exe_source.py')
 
@@ -102,18 +102,18 @@ def stamp(dry_run, executable=None):
     return True
 
 
-def register(dry_run, name, restart, force, steam, account, last_world=False):
-    """Add the shortcut through the Steam tool; it owns the restart and the backup."""
-    shortcut = shortcut_file(steam, account)
+def wanted_entries(name, last_world=True):
     tags = tuple(json.loads(MANIFEST.read_text('utf-8')).get('tags', ()))
-    icon = str(ICON)
-    code = steam_tool.add(shortcut, name, TARGET.resolve(), dry_run, restart, force,
-                          launch_options(), icon, tags)
-    if code == 0 and last_world:
-        # A second entry, because one Steam entry cannot express two command lines.
-        code = steam_tool.add(shortcut, f'{name} Last World', TARGET.resolve(), dry_run,
-                              restart, force, launch_options('--continue-last'), icon, tags)
-    return code
+    names = [(name, '')] + ([(f'{name} Last World', '--continue-last')] if last_world else [])
+    return [steam_tool.shortcut_fields(entry_name, TARGET.resolve(), launch_options(suffix),
+                                       str(ICON), tags) for entry_name, suffix in names]
+
+
+def register(dry_run, name, restart, force, steam, account, last_world=True, shortcut=None):
+    """Add the shortcut through the Steam tool; it owns the restart and the backup."""
+    shortcut = shortcut or shortcut_file(steam, account)
+    return steam_tool.upsert_all(shortcut, wanted_entries(name, last_world),
+                                 dry_run, restart, force)
 
 
 def shortcut_file(steam, account):
@@ -121,12 +121,7 @@ def shortcut_file(steam, account):
     root = steam or next((p for p in steam_tool.steam_roots() if (p/'userdata').is_dir()), None)
     if root is None:
         raise SystemExit('Steam install not found; pass --steam PATH')
-    if account:
-        shortcut = root/'userdata'/account/'config'/'shortcuts.vdf'
-        if not shortcut.is_file():
-            raise SystemExit(f'no shortcuts.vdf for account {account}')
-        return shortcut
-    return steam_tool.accounts(root)[0]
+    return steam_tool.select_shortcut(root, account)
 
 
 def install_artwork(shortcut, names, dry_run):
@@ -155,30 +150,6 @@ def install_artwork(shortcut, names, dry_run):
     return 0
 
 
-def repair_missing(shortcut, names, dry_run):
-    """Steam can rewrite shortcuts.vdf and drop an entry; put it back and say so."""
-    _, _, entries = steam_tool.load(shortcut)
-    present = {(fields.get('AppName') or '').strip() for fields in entries.values()}
-    missing = [name for name in names if name not in present]
-    if not missing:
-        print(f'checked  : {", ".join(names)} present in shortcuts.vdf')
-        return 0
-    if dry_run:
-        print(f'repair   : would re-add {", ".join(missing)} (dry run)')
-        log_tool.warn(f'Steam dropped {", ".join(missing)} (dry run: not re-added)')
-        return 0
-    print(f'repair   : Steam dropped {", ".join(missing)}; re-adding')
-    log_tool.warn(f'Steam dropped {", ".join(missing)}; re-added')
-    tags = tuple(json.loads(MANIFEST.read_text('utf-8')).get('tags', ()))
-    for name in missing:
-        options = launch_options() if name == names[0] else launch_options('--continue-last')
-        code = steam_tool.add(shortcut, name, TARGET.resolve(), False, True, False,
-                              options, str(ICON), tags)
-        if code != 0:
-            return code
-    return 0
-
-
 def launch_options(suffix=''):
     """The editor binary needs --path; a user flag must follow `--` to reach the game."""
     line = f'--path "{ROOT}"'
@@ -199,10 +170,10 @@ def main():
     parser.add_argument('--force', action='store_true', help='re-copy over TerraForest.exe')
     parser.add_argument('--dry-run', action='store_true', help='report without changing anything')
     parser.add_argument('--no-restart', action='store_true', help='leave Steam stopped')
-    parser.add_argument('--last-world', action='store_true',
-                        help='also register the "Last World" entry (--continue-last)')
-    parser.add_argument('--artwork', action='store_true',
-                        help="copy steam/artwork into Steam's grid folder for each entry")
+    parser.add_argument('--last-world', action=argparse.BooleanOptionalAction, default=True,
+                        help='register the "Last World" entry (default: yes)')
+    parser.add_argument('--artwork', action=argparse.BooleanOptionalAction, default=True,
+                        help="install Steam library artwork for both entries (default: yes)")
     parser.add_argument('--steam', type=Path, help='Steam install directory')
     parser.add_argument('--account', help='Steam account id under userdata')
     parser.add_argument('--progress', choices=('auto', 'bar', 'plain', 'off'), default='auto',
@@ -225,14 +196,16 @@ def main():
     steam_tool.PROGRESS_MODE = args.progress
     if confirm_tool.should_confirm(args):
         steam_tool.CONFIRM = lambda detail: confirm_tool.ask(detail)
-    with log_tool.run('install_to_steam', sys.argv[1:], args.log, enabled=not args.no_log):
-        return deploy(args)
+    with log_tool.run('install_to_steam', sys.argv[1:], args.log, enabled=not args.no_log) as run:
+        run.code = deploy(args)
+        return run.code
 
 
 def deploy(args):
     """The actual install, run inside the log context."""
     source = args.source or next(iter(godot_sources(args.steam)), None)
     print(f'source   : {source or "<none found>"}')
+    print(f'project  : {ROOT}')
     prepare(source, args.force, args.dry_run)
     if not args.dry_run and not TARGET.is_file():
         raise SystemExit(f'{TARGET.name}: nothing to stamp; no source was copied')
@@ -241,15 +214,24 @@ def deploy(args):
         raise SystemExit('icon stamping failed; the shortcut was not touched')
     names = [args.name] + ([f'{args.name} Last World'] if args.last_world else [])
     shortcut = shortcut_file(args.steam, args.account)
+    print(f'account  : {shortcut.parents[1].name}')
+    print(f'steam    : {shortcut.parents[3]}')
+    print(f'file     : {shortcut}')
+    if args.artwork:
+        # Check every artwork input before changing Steam.
+        missing = [ARTWORK/role for role in json.loads(MANIFEST.read_text('utf-8'))['artwork']
+                   if not (ARTWORK/role).is_file()]
+        if missing:
+            raise SystemExit(f'{missing[0]}: artwork missing; Steam has not been changed')
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
-                    args.steam, args.account, args.last_world)
-    if code == 0:
-        code = repair_missing(shortcut, names, args.dry_run)
+                    args.steam, args.account, args.last_world, shortcut=shortcut)
     if code == 0 and args.artwork:
         code = install_artwork(shortcut, names, args.dry_run)
     if code == 0 and args.desktop:
         desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
-        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, exe=TARGET)
+        code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, launch='steam',
+                    exe=TARGET, name=args.name, shortcut=shortcut, last_world=args.last_world,
+                    entries=wanted_entries(args.name, args.last_world) if args.dry_run else None)
     if code == 0:
         print('done     : dry run complete; nothing changed' if args.dry_run
               else 'done     : TerraForest is prepared and registered')

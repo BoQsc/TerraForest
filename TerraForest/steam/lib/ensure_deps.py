@@ -10,7 +10,7 @@ it an install stops and asks someone who only double-clicked a file to run pip.
 `bootstrap()` checks the table below and, when an import is missing, installs it with the
 interpreter already running the launcher - into the user site first, then into
 `steam/vendor` for interpreters that refuse `--user` (Store Python, managed virtualenvs) -
-so one double-click is still all it takes. Notes go to `steam/logs/gui.log`; the check
+so one double-click is still all it takes. Notes go to `steam/logs/install.log`; the check
 never raises and never blocks the install it is preparing.
 
 `tkinter` is checked too but is not a pip package: it ships with the Windows Python
@@ -23,7 +23,6 @@ import subprocess
 import sys
 
 STEAM = Path(__file__).resolve().parent.parent
-LOG = STEAM/'logs'/'gui.log'
 VENDOR = STEAM/'vendor'
 
 # module name -> distribution spec installed when that import is missing
@@ -87,7 +86,7 @@ def ensure(packages=None, sink=None):
     """Check the dependencies, install what is missing, report what is still absent.
 
     Returns the module names that could not be imported afterwards (empty is healthy).
-    `sink` receives a list of log lines; the default writes them to `steam/logs/gui.log`.
+    `sink` receives a list of log lines; the default writes them to `steam/logs/install.log`.
     """
     table = dict(PACKAGES if packages is None else packages)
     notes = []
@@ -129,9 +128,12 @@ def _report(notes, sink=None):
             sink(line)
             continue
         try:
-            LOG.parent.mkdir(parents=True, exist_ok=True)
-            with LOG.open('a', encoding='utf-8') as handle:
-                handle.write(f'deps     : {line}\n')
+            import install_log
+            if install_log.CURRENT is not None:
+                print(f'deps     : {line}')
+            else:
+                with install_log.run('dependency_check', []) as run:
+                    print(f'deps     : {line}')
         except OSError:
             pass
 

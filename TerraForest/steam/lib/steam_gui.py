@@ -7,41 +7,25 @@ a non-Steam game and that Steam must be restarted, then shows the progress bar t
 console build draws: same stage weights, same measured drift, 99 before 100.
 
 When Tk is unavailable the launcher falls back to the headless tool, whose output goes to
-steam/logs/gui.log.
+steam/logs/install.log.
 """
 from pathlib import Path
 import importlib.util
 import queue
 import sys
 import threading
+import argparse
+import traceback
+import install_log
 
 STEAM = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import steam_progress  # noqa: E402
 import steam_confirm  # noqa: E402
 
-LOG = STEAM/'logs'/'gui.log'
+LOG = install_log.DEFAULT_LOG
 TITLES = {'install_to_steam': 'Installing TerraForest into Steam',
           'uninstall_from_steam': 'Removing TerraForest from Steam'}
-
-
-class Sink:
-    """Stand-in for stdout under pythonw, where sys.stdout is None."""
-
-    def __init__(self, path=LOG):
-        self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.handle = self.path.open('a', encoding='utf-8', buffering=1)
-
-    def write(self, text):
-        self.handle.write(text)
-        return len(text)
-
-    def flush(self):
-        self.handle.flush()
-
-    def isatty(self):
-        return False
 
 
 class GuiProgress:
@@ -117,6 +101,7 @@ class App:
         self.note.grid(row=5, column=0, sticky='w')
         buttons = ttk.Frame(frame)
         buttons.grid(row=6, column=0, pady=(14, 0), sticky='e')
+        ttk.Button(buttons, text='Copy log', command=self.copy_log).grid(row=0, column=2, padx=(8, 0))
         self.cancel_button = ttk.Button(buttons, text='Cancel', command=self.cancel)
         self.cancel_button.grid(row=0, column=0, padx=(0, 8))
         self.go_button = ttk.Button(buttons, text='Restart Steam and continue',
@@ -130,6 +115,15 @@ class App:
         return root
 
     # -- actions --------------------------------------------------------
+    def copy_log(self):
+        try:
+            text = install_log.latest_text()
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
+            self.note.configure(text='Log copied. Paste it into the chat.')
+        except OSError as exc:
+            self.note.configure(text=f'Could not read the log: {exc}')
+
     def cancel(self):
         self.code = 3
         self.root.destroy()
@@ -157,10 +151,13 @@ class App:
         except SystemExit as exc:
             code = exc.code if isinstance(exc.code, int) else 1
             if not isinstance(exc.code, (int, type(None))):
+                print(f'error    : {exc.code}', file=sys.stderr)
                 self.queue.put(('error', str(exc.code)))
         except Exception as exc:  # noqa: BLE001 - reported in the window
+            traceback.print_exc()
             self.queue.put(('error', f'{type(exc).__name__}: {exc}'))
             code = 2
+        print(f'result   : {self.module.__name__} code={code}')
         self.queue.put(('exit', code))
 
     # -- rendering ------------------------------------------------------
@@ -246,20 +243,27 @@ def engine_of(module):
 def launch(tool_name, argv=None):
     """Run a tool in the window; without Tk, fall back to the headless tool."""
     argv = list(sys.argv[1:] if argv is None else argv)
-    if sys.stdout is None or sys.stderr is None:
-        sink = Sink()
-        sys.stdout = sys.stdout or sink
-        sys.stderr = sys.stderr or sink
-    module = load_tool(tool_name)
-    title = TITLES.get(tool_name, 'TerraForest')
-    try:
-        return App(module, argv, title).start()
-    except Exception:  # noqa: BLE001 - no display: run headless, output in the log
-        sys.argv = [tool_name] + argv
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--log', type=Path)
+    parser.add_argument('--no-log', action='store_true')
+    settings, _ = parser.parse_known_args(argv)
+    with install_log.run(tool_name, argv, settings.log, enabled=not settings.no_log) as run:
+        if tool_name == 'install_to_steam':
+            import ensure_deps
+            ensure_deps.bootstrap()
+        module = load_tool(tool_name)
+        title = TITLES.get(tool_name, 'TerraForest')
         try:
-            return module.main()
-        except SystemExit as exc:
-            return exc.code if isinstance(exc.code, int) else 1
+            app = App(module, argv, title)
+            app.build()
+        except Exception as exc:  # no display: run the same tool headless
+            print(f'window   : unavailable ({exc}); continuing without the window')
+            sys.argv = [tool_name] + argv
+            run.code = module.main()
+        else:
+            app.root.mainloop()
+            run.code = app.code
+        return run.code
 
 
 if __name__ == '__main__':

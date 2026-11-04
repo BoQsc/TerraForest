@@ -1,31 +1,35 @@
 #!/usr/bin/env python3
-"""Run log for the Steam install and uninstall tools.
+"""One diagnostic log for dependencies, console/windowed runs and their results.
 
-Every run appends a header, everything the tool prints, a summary with the exit code,
-duration and a count of warnings, and one compact row in history.tsv. Anything that
-counts as "unstable" - an entry Steam dropped and we re-added, a missing desktop link,
-a refused write - is logged as WARN, so a bad run is visible without reading all output.
-
-Usage (from the tools themselves):
-    with install_log.run('install_to_steam', sys.argv[1:]) as run:
-        ...
-        install_log.warn('Steam dropped the entry; re-added')
+Original AI-assisted maintenance for TerraForest. Existing log history is retained;
+legacy gui.log/history.tsv content is absorbed into install.log once.
 """
+from contextlib import nullcontext
 from pathlib import Path
 import datetime
+import hashlib
 import sys
 import time
+import traceback
 
-# This module lives in steam/lib/; the logs sit beside it in steam/logs/.
 LOG_DIR = Path(__file__).resolve().parent.parent/'logs'
 DEFAULT_LOG = LOG_DIR/'install.log'
-HISTORY = LOG_DIR/'history.tsv'
-# Set by run(); the module level helpers below write through it.
+MARKER = '=== TerraForest Steam run ==='
 CURRENT = None
 
 
+class NullStream:
+    def write(self, text):
+        return len(text)
+
+    def flush(self):
+        pass
+
+    def isatty(self):
+        return False
+
+
 def warn(message):
-    """Record something that should not normally happen; makes the run unstable."""
     if CURRENT is not None:
         CURRENT.warn(message)
 
@@ -35,24 +39,28 @@ def note(message):
         CURRENT.note(message)
 
 
-class Tee:
-    """Mirror whatever the tool prints into the log file."""
+def latest_text(path=None):
+    if CURRENT is not None and not CURRENT.enabled:
+        raise OSError('Logging is disabled for this run')
+    path = Path(path) if path else (CURRENT.path if CURRENT is not None else DEFAULT_LOG)
+    text = path.read_text('utf-8', errors='replace')
+    return MARKER + text.rsplit(MARKER, 1)[1] if MARKER in text else text
 
+
+class Tee:
     def __init__(self, stream, handle):
-        self.stream = stream
+        self.stream = stream or NullStream()
         self.handle = handle
 
     def write(self, text):
         self.stream.write(text)
-        if self.handle is not None:
-            self.handle.write(text)
-            self.handle.flush()
+        self.handle.write(text)
+        self.handle.flush()
         return len(text)
 
     def flush(self):
         self.stream.flush()
-        if self.handle is not None:
-            self.handle.flush()
+        self.handle.flush()
 
     def isatty(self):
         return bool(getattr(self.stream, 'isatty', lambda: False)())
@@ -64,21 +72,19 @@ class Run:
         self.argv = list(argv)
         self.path = Path(path) if path else DEFAULT_LOG
         self.enabled = enabled
-        self.stream = stream if stream is not None else sys.stdout
+        self.stream = stream
         self.clock = clock
         self.started = self.clock()
         self.warnings = 0
+        self.code = 0
         self.handle = None
-        self._tee = None
         self._saved = None
 
-    # -- logging --------------------------------------------------------
     def _line(self, level, message):
-        if self.handle is None:
-            return
-        stamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.handle.write(f'{stamp}  {level:5}  {message}\n')
-        self.handle.flush()
+        if self.handle is not None:
+            stamp = datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+            self.handle.write(f'{stamp}  {level:5}  {message}\n')
+            self.handle.flush()
 
     def warn(self, message):
         self.warnings += 1
@@ -87,43 +93,76 @@ class Run:
     def note(self, message):
         self._line('INFO', message)
 
-    # -- lifecycle ------------------------------------------------------
+    def _absorb_legacy(self):
+        if self.path != DEFAULT_LOG:
+            return
+        for name in ('gui.log', 'history.tsv'):
+            legacy = self.path.parent/name
+            if legacy.is_file():
+                self.handle.write(f'\n--- Preserved legacy {name} ---\n')
+                self.handle.write(legacy.read_text('utf-8', errors='replace'))
+                self.handle.write('\n--- End legacy log ---\n')
+                self.handle.flush()
+                try:
+                    legacy.unlink()
+                except OSError as exc:
+                    self.warn(f'Legacy content preserved, but could not remove {legacy}: {exc}')
+
     def __enter__(self):
         global CURRENT
+        self._saved = sys.stdout, sys.stderr
         if self.enabled:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             self.handle = self.path.open('a', encoding='utf-8')
+            self._absorb_legacy()
+            self.handle.write('\n' + MARKER + '\n')
             self._line('START', f'{self.tool} {" ".join(self.argv)}'.strip())
-            self._saved = sys.stdout
-            self._tee = Tee(self.stream, self.handle)
-            sys.stdout = self._tee
+            self._line('INFO', f'Python {sys.version.split()[0]} | {sys.executable}')
+            self._line('INFO', f'Working directory: {Path.cwd()}')
+            installer = Path(__file__).with_name('install_to_steam.py')
+            if installer.is_file():
+                self._line('INFO', f'Installer SHA256: {hashlib.sha256(installer.read_bytes()).hexdigest()}')
+            sys.stdout = Tee(self.stream if self.stream is not None else sys.stdout, self.handle)
+            sys.stderr = Tee(sys.stderr, self.handle)
+            CURRENT = self
+            print(f'log      : {self.path.resolve()}')
+        else:
+            sys.stdout = sys.stdout or NullStream()
+            sys.stderr = sys.stderr or NullStream()
             CURRENT = self
         return self
 
-    def __exit__(self, exc_type, exc, traceback):
+    def __exit__(self, exc_type, exc, tb):
         global CURRENT
         if not self.enabled:
+            sys.stdout, sys.stderr = self._saved
+            CURRENT = None
             return False
-        seconds = round(self.clock() - self.started, 1)
-        if exc is not None:
-            code = 1
-            self._line('ERROR', f'{exc_type.__name__}: {exc}')
-        else:
-            code = 0
-        state = 'UNSTABLE' if self.warnings or exc is not None else 'clean'
-        self._line('END', f'{self.tool} code={code} seconds={seconds} '
-                          f'warnings={self.warnings} result={state}')
-        with HISTORY.open('a', encoding='utf-8') as history:
-            if history.tell() == 0:
-                history.write('when\ttool\tcode\tseconds\twarnings\tresult\targs\n')
-            history.write(f'{datetime.datetime.now():%Y-%m-%d %H:%M:%S}\t{self.tool}\t{code}\t'
-                          f'{seconds}\t{self.warnings}\t{state}\t{" ".join(self.argv)}\n')
-        sys.stdout = self._saved
-        self.handle.close()
-        self.handle = None
-        CURRENT = None
+        try:
+            if exc is not None:
+                if isinstance(exc, SystemExit):
+                    self.code = exc.code if isinstance(exc.code, int) else (0 if exc.code is None else 1)
+                else:
+                    self.code = 1
+                if self.code:
+                    self._line('ERROR', f'{exc_type.__name__}: {exc}')
+                    if not isinstance(exc, SystemExit):
+                        traceback.print_exception(exc_type, exc, tb, file=self.handle)
+            seconds = round(self.clock() - self.started, 1)
+            state = 'incomplete' if self.code else ('warnings' if self.warnings else 'success')
+            self._line('END', f'{self.tool} code={self.code} seconds={seconds} '
+                             f'warnings={self.warnings} result={state}')
+        finally:
+            sys.stdout, sys.stderr = self._saved
+            CURRENT = None
+            self.handle.close()
+            self.handle = None
         return False
 
 
 def run(tool, argv, path=None, enabled=True):
+    # Windowed launch owns the outer session so bootstrap/import failures and the
+    # worker share the same stream and summary; do not tee the same output twice.
+    if CURRENT is not None:
+        return nullcontext(CURRENT)
     return Run(tool, argv, path, enabled)

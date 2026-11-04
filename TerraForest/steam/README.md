@@ -1,278 +1,127 @@
-# Steam installation resources
+# Steam installation
 
-Everything that decides how TerraForest appears in Steam lives here, so the choices are
-visible and reviewable before anything touches `shortcuts.vdf` or the Steam grid folder.
+Double-click **`steam/install_to_steam.pyw`**. The normal install creates or repairs
+all of these together:
 
-The three tools live here too, next to the resources they apply. The installer reads
-`manifest.json` for tags and artwork mappings; `--artwork` installs the images.
-The placeholders are real images at Steam's exact sizes, so replacing them is a drop-in.
+- **TerraForest** and **TerraForest Last World** in the selected Steam account.
+- Library artwork for both entries.
+- Both desktop shortcuts, launching through the corresponding Steam entry.
 
-`artwork/` is generated from `brand/brand.json` (`python steam/brand/make_brand_artwork.py`);
-edit the brand, not the PNGs.
+Last World resolves the newest saved world when it launches. No saved world needs
+to exist during installation. Re-running the installer repairs an older partial
+installation; no extra flags are needed. A desktop shortcut is read back and its
+Steam launch URL verified before installation reports success. Missing or invalid
+Steam registration is an error, with no silent direct-executable fallback.
 
-## Tools
+## One log to share
 
-| Script | What it does |
-|---|---|
-| `steam/lib/install_to_steam.py` | copy the build, stamp the icon, register in Steam, then repair/recreate everything else: `--last-world` adds the second entry, `--artwork` installs the images, and the two desktop shortcuts are (re)created by default (`--no-desktop` skips them) |
-| `steam/lib/uninstall_from_steam.py` | remove both Steam entries, the desktop shortcuts and (with `--artwork`) the grid images in one pass, with backup and restart (`--list`, `--dry-run`, `--name`, `--no-desktop` keeps the .lnk files, `--desktop-folder` for a redirected desktop) |
-| `steam/add_desktop_shortcuts.py` | create or refresh the two desktop shortcuts, preferring the Steam launch when an entry matches |
+**`steam/logs/install.log`** contains dependency checks, console/windowed output,
+stderr, exceptions, selected paths/account, entry names and app IDs, launch options,
+verified desktop targets, and the actual result code. The installer hash identifies
+which script ran on the other computer.
 
-All three are run from the project root, e.g. `python steam/lib/install_to_steam.py --dry-run`.
-The shared `shortcuts.vdf` engine stays in `steam/lib/steam_shortcuts.py`.
+Use **Copy log** in the installer window to copy only the current/latest run for
+pasting into a chat. The file retains earlier runs. Existing `gui.log` and
+`history.tsv` are absorbed into this file once, preserving their contents, and
+removed after successful copying. New runs do not create those separate files.
+`--log PATH` redirects the whole run, including windowed dependency checks;
+`--no-log` disables file logging.
 
-### Finding Godot on another computer
+## What is required
 
-The installer requires an existing local executable. It does not download Godot or
-export the project. For running from project source, install **Godot Engine** in
-Steam; export templates are not needed for this route.
+Use Windows with Python 3 and an existing Godot executable. Install **Godot Engine**
+in any Steam library, or set `GODOT_EXE` / pass `--source PATH` for a standalone
+installation. Export templates are unnecessary when running from project source.
+Godot itself is not downloaded by this installer.
 
-An existing project-root `TerraForest.exe` is kept unless `--force` is passed.
-When a copy is needed, `--source PATH` selects it explicitly. Automatic discovery
-checks, in order:
+The installer keeps a project-root `TerraForest.exe` unless `--force` is passed.
+When a copy is needed, automatic discovery checks `dist/TerraForest.exe`, then
+`GODOT_EXE`, then Steam libraries, then native `godot.exe` / `godot4.exe` on PATH.
+Command wrappers are not copied. Steam discovery covers:
 
-1. `dist/TerraForest.exe` (the existing exported-build fallback).
-2. `GODOT_EXE`, including a quoted path or environment variables in the path.
-3. The `--steam PATH` root, registry Steam roots and standard Program Files Steam
-   folders, including their `steamapps/libraryfolders.vdf` libraries.
-4. Native `godot.exe` / `godot4.exe` found on PATH. Command wrappers are not copied.
+- `--steam PATH`, registry roots, and standard Program Files Steam folders.
+- Modern and legacy `libraryfolders.vdf`, escaped paths, spaces and Unicode.
+- The Godot app manifest's installation directory.
+- `godot.windows.opt.tools.64.exe`, `Godot Engine.exe`, and versioned
+  `Godot*_win64*.exe` names, preferring the direct engine over its launcher.
 
-Steam discovery handles both modern and legacy library files, escaped paths,
-spaces, and the Godot app manifest's installation directory. It recognizes
-`godot.windows.opt.tools.64.exe`, `Godot Engine.exe`, and versioned
-`Godot*_win64*.exe` files; the direct engine is preferred over the Steam launcher.
-Invalid or absent automatic candidates fall through to the next location.
+The account is selected once, preferring Steam's active account, then the most
+recent login, then local session timestamps. An account that has never added a
+non-Steam game is supported: `shortcuts.vdf` is created as part of installation.
+Sign into Steam once first if no account directory exists. `--account ID` selects
+an existing account explicitly. Desktop creation uses this same account/file;
+it does not search a second time or choose a different account.
 
-For a standalone Godot installation:
+The pair is merged in one write and at most one Steam restart. After shutdown,
+the installer re-reads Steam's final saved file before merging, preserving other
+games added during shutdown. Existing files are backed up beside `shortcuts.vdf`.
+After restarting, both requested entries and their launch settings are verified.
+An active game session blocks the restart until the game is finished.
+
+## Console and optional controls
+
+Run from the project root:
 
 ```powershell
-$env:GODOT_EXE = 'C:\Tools\Godot\Godot_v4.7-stable_win64.exe'
+python steam/lib/install_to_steam.py
 python steam/lib/install_to_steam.py --dry-run --no-log
-# Or select the executable for this run only:
 python steam/lib/install_to_steam.py --source 'C:\Tools\Godot\Godot_v4.7-stable_win64.exe'
 ```
 
-A dry run works before the first copy exists: it inspects the selected source's
-icon and plans the Steam, artwork and desktop changes without writing them. Add
-`--no-log` to suppress the run log too. A source icon mismatch means stamping is
-planned; it does not by itself fail the dry run. Dry runs do not verify that a
-future write or Steam restart will succeed. Missing-source errors explain the
-Godot installation, environment and explicit-source options in both the console
-and the double-click window.
+A dry run works before `TerraForest.exe` exists. It inspects the source icon and
+plans both Steam entries, artwork and desktop links without writing them. An icon
+mismatch indicates that stamping is planned. It does not verify future write
+permissions or the outcome of a real Steam restart.
 
-The exported-build fallback still copies only the executable; it does not deploy
-separate PCK files or native libraries. Use an installed Godot editor for this
-source-checkout installer until exported companion-file deployment is implemented
-and tested. This tooling targets Windows; a Steam account must already have a
-`shortcuts.vdf` file.
+| Option | Effect |
+| --- | --- |
+| `--no-last-world` | Explicitly skip installing the second entry/link |
+| `--no-artwork` | Skip library artwork |
+| `--no-desktop` | Skip desktop links |
+| `--desktop-folder PATH` | Use a chosen desktop folder |
+| `--steam PATH`, `--account ID` | Select the Steam installation/account |
+| `--force` | Re-copy the engine; also permits restarting with a game session |
+| `--no-restart` | Leave Steam closed after writing |
+| `--progress auto\|bar\|plain\|off` | Select the console progress display |
+| `--yes`, `--silent` | Unattended restart approval; silent also disables progress |
 
-Regression suite (temporary fixtures; no Steam restart):
+The window explains and approves the Steam restart. Console restart approval is
+shown when interactive; `--confirm` forces it and `--yes` suppresses it. Cancellation
+and failure are reported in the same log. Without Tk, the launcher runs the console
+installer and records its output there. Missing Pillow, needed only for rebuilding
+icon artwork, is handled by `steam/lib/ensure_deps.py` in the windowed launch.
+
+## Other tools and resources
+
+| Path | Role |
+| --- | --- |
+| `steam/uninstall_from_steam.pyw` | Remove both Steam entries and desktop links |
+| `steam/lib/uninstall_from_steam.py` | Console removal; `--artwork` also removes images |
+| `steam/add_desktop_shortcuts.py` | Repair both desktop links using existing Steam entries; Steam is the default route, `--launch native` is an explicit alternative |
+| `steam/lib/steam_shortcuts.py` | Binary VDF handling, batch registration, backups and restart |
+| `steam/lib/exe_source.py` | Local executable/library discovery |
+| `steam/lib/install_log.py` | The single run log and latest-run copy text |
+| `steam/lib/steam_gui.py` | Approval, progress, failure details and Copy log |
+| `steam/manifest.json` | Tags and artwork mappings |
+| `steam/brand/brand.json` | Editable artwork source; regenerate with `python steam/brand/make_brand_artwork.py` |
+| `steam/artwork/` | Portrait, wide capsule, hero, logo and icon images |
+| `steam/steam_trace.py` | Optional developer measurement of Steam startup |
+
+The installer uses Steam's local non-Steam shortcut format. Artwork names are
+computed from each actual entry's app ID; no machine-specific ID is hardcoded.
+
+## Verification and remaining scope
 
 ```text
 python -u -B -m unittest discover -s tests -t tests -p "test_*.py"
 ```
 
-### Layout
+The regressions include real Windows Shell-link and VDF writes in temporary
+folders, default options, first-time accounts, multi-account selection, one-restart
+repair, shutdown-time data preservation, idempotence and unified failure logging.
+Only Steam process control is simulated in these fixture tests.
 
-`steam/` holds the entry points and the data they use; the importable modules live in
-`steam/lib/`:
-
-| Path | Role |
-|---|---|
-| `steam/lib/steam_shortcuts.py` | reads/writes `shortcuts.vdf`, stops and starts Steam, waits for its window |
-| `steam/lib/steam_progress.py` | the restart bar: measured weights, drift, progress modes |
-| `steam/lib/install_log.py` | the run log in `steam/logs/`, which flags repairs and refusals as WARN |
-| `steam/steam_trace.py` | measures the phases into `steam/traces/steam-boot.json` |
-| `steam/lib/steam_confirm.py` | the restart approval dialog (non-Steam shortcut, Steam restart) |
-| `steam/lib/ensure_deps.py` | the dependency pass the launchers run before their window |
-| `steam/lib/steam_gui.py` | the windowed front end: approval and the same bar, no console |
-| `steam/lib/install_to_steam.py` | the install entry point (also behind `install_to_steam.pyw`) |
-| `steam/lib/uninstall_from_steam.py` | the uninstall entry point (also behind `uninstall_from_steam.pyw`) |
-
-### Windowed launchers
-
-`install_to_steam.pyw` and `uninstall_from_steam.pyw` are the double-click entry points.
-`.pyw` runs under `pythonw`, so no command prompt appears; their output is appended to
-`steam/logs/gui.log` instead.
-
-Before the window, `install_to_steam.pyw` runs `steam/lib/ensure_deps.py`, which installs
-anything missing (see [Dependencies](#dependencies)); one double-click is still the whole
-procedure.
-
-One Tk window does both jobs: it explains the non-Steam shortcut and the Steam restart,
-then draws the same bar the console build draws - identical weights, the measured drift
-through the 24 s window wait, 99 before 100 - with the stage line and the live note under
-it. Cancel writes nothing; when the run ends the button becomes Close and the window
-reports `Finished.` or the exit code, retaining the actual failure reason below it.
-
-Flags still work, e.g. `pythonw steam/install_to_steam.pyw --last-world --artwork`.
-Without a display the launcher falls back to the headless tool.
-
-### Dependencies
-
-Godot and Python must already be installed. The install chain imports only the standard library
-(`ctypes`, `winreg`, `subprocess`, `zlib`, `queue`, `threading`, ...) plus `tkinter` for the
-window and Pillow for the icon tool, and `ensure_deps.py` covers the last one:
-
-| Need | Source |
-|---|---|
-| Python 3 with Tcl/Tk (`tkinter`) | the python.org Windows installer; without it the launcher runs headless |
-| Pillow (`PIL`) | installed automatically when `steam/app_icon/make_app_icon.py` has to rebuild `terraforest.ico` |
-| everything else | standard library of the running interpreter |
-
-An install goes to the user site first; an interpreter that refuses `--user` (Store
-Python, managed virtualenvs) gets it under `steam/vendor/`, which is added to `sys.path`
-for that run. The check appends one `deps     :` line per action to `steam/logs/gui.log`
-and never blocks the install it prepares. Check it by hand with
-`python steam/lib/ensure_deps.py` (status) or `--check` (install what is missing).
-
-### Restart approval
-
-Before Steam is stopped, a small Tk window asks once:
-
-- TerraForest is added as a **non-Steam game** shortcut (not a real Steam app);
-- Steam keeps those in `shortcuts.vdf` and only reads it while closed, so it has to be
-  closed and reopened now;
-- nothing else in the library changes, and Steam needs about 25 s to come back.
-
-`Restart Steam and continue` approves; `Cancel` (or Esc) aborts before anything is
-written: the run exits with code 3, writes no backup, and records
-`WARN cancelled: Steam restart not approved` in the log. The dialog appears only when
-someone can answer - an interactive console with Tk available. Piped runs skip it, and
-so do `--yes` / `--no-confirm`; `--confirm` forces it.
-
-Preview it without touching Steam: `python steam/lib/steam_confirm.py --demo`.
-
-Unattended runs stay silent: pipe the output (the dialog and the bar both switch
-themselves off), or ask explicitly with `--silent`, which is `--yes --progress off`.
-Steam itself is still launched with `-silent`, so it returns to the tray either way.
-
-## Progress during a Steam restart
-
-Writes need Steam stopped, so every add/update/remove stops it, writes, and starts it
-again. While that happens `steam/lib/steam_progress.py` draws one updating line:
-
-```
-[#########---------------]  38%  Stopping Steam · 2 process(es) left: steam.exe, steamwebhelper.exe
-[############------------]  50%  Writing shortcuts.vdf · file written
-[#####################---]  90%  Starting Steam · waiting for steam.exe
-[########################] 100%  Verifying the file · 2 entr(ies) intact
-```
-
-The percentages come from the process list, not a timer: the stop stage polls how many
-Steam processes are still alive, the start stage polls for `steam.exe` to return, and the
-verify stage re-reads `shortcuts.vdf`. It draws only on a terminal and stays silent when
-output is piped, so scripts and tests keep their plain lines.
-Preview the stages without touching Steam: `python steam/lib/steam_progress.py --demo`.
-
-Stage weights follow the measured durations (check 5%, stop 15%, write 5%, start 70%,
-verify 5%), because the wait for Steam's window is ~24 s of a ~29 s run. Inside the start
-stage the window wait sweeps 20% → 90% linearly against that measured 24 s, so the bar
-keeps moving at the pace the wait actually takes; only the real window event completes
-it. The bar never goes backwards, big jumps are walked a few points at a time, and 99%
-is drawn before 100%.
-
-Every tool takes `--progress auto|bar|plain|off`:
-
-- `auto` (default) — the animated single line on a terminal, silent when piped;
-- `bar` — force that animated line even when the output is captured;
-- `plain` — one line per 10%, so logs and captured output show the stages too;
-- `off` — no progress output at all.
-
-### Measured phases
-
-`python steam/steam_trace.py --restart --json steam/traces/steam-boot.json` samples the
-process set every 100 ms across a real restart and records what actually happens. The
-last run (`steam/traces/steam-boot.json`):
-
-| Side | Observed sequence | Time |
-|---|---|---|
-| shutdown | helpers leave first | 1.32 s |
-| shutdown | `steam.exe` alone, exiting | 0.33 s |
-| shutdown | nothing left | 2.07 s |
-| boot | `steam.exe` alone | 0.11 s |
-| boot | `steam.exe` + `steamwebhelper.exe` | 2.08 s (settle window) |
-
-Totals on that run: stop 3.75 s, boot 2.21 s. The bar's stop stage therefore reports
-"helpers closed, client exiting" before the client goes, and the start stage reports
-"client process up" → "helpers up (library loading)" → "process set settled". Those
-labels are these measurements, not invented stages.
-
-### When the tool considers Steam "back"
-
-The client process is not the signal: measured here, `steam.exe` appears 0.02 s after
-launch and its helpers 0.26 s later, but Steam's main window - title `Steam`, class
-`SDL_app`, 1280x744, kept **hidden in the tray** - only exists after about 25 s. Waiting
-on the process alone is what made the tool exit before Steam (and its tray notification)
-was back.
-
-So the wait is: client process → helpers → main window exists (hidden counts, because
-Steam lives in the tray) → held for 2 s of grace. A live run reports:
-
-```
-+ 0.02s  client process up
-+ 0.28s  helpers up (library loading)
-+24.85s  Steam UI ready (window 1280x744, in the tray)
-+27.01s  Steam is up: window and tray are back
-```
-
-If no window appears within 20 s the tool says so and continues rather than hanging.
-
-### Entries Steam drops
-
-Steam rewrites `shortcuts.vdf` on its own schedule and has been seen dropping the second
-entry ("… Last World") while keeping the first, which left a library with one shortcut
-after a while. Restart-loop measurement (three full shutdown/boot cycles with a freshly
-added entry) kept both entries every time, so the loss is not a plain restart: it has only
-been observed after an in-place update of an existing entry.
-
-Because the cause is Steam's own rewrite, install defends against it: after registering it
-re-reads the file and reports
-
-```
-checked  : TerraForest, TerraForest Last World present in shortcuts.vdf
-```
-
-or, when something is missing, re-adds it and says so
-(`repair   : Steam dropped …, re-adding`). A dry run reports `would re-add` instead.
-
-## Files
-
-| File | What it decides |
-|---|---|
-| `manifest.json` | library name, launch options, icon, sort name, tags, overlay/desktop/hidden flags, artwork mapping |
-| `artwork/portrait.png` | library portrait capsule, 600×900 → `<appid>.png` |
-| `artwork/wide.png` | library wide capsule, 920×430 → `<appid>p.png` |
-| `artwork/hero.png` | library hero banner, 1920×620 → `<appid>_hero.png` |
-| `artwork/logo.png` | transparent logo, 1000×300 → `<appid>_logo.png` |
-| `artwork/icon.png` | shortcut icon, 256×256 → `<appid>_icon.png` |
-
-## Where each one goes
-
-- **Entry metadata** → `<Steam>/userdata/<account>/config/shortcuts.vdf`, one entry per
-  shortcut. Field mapping is in `manifest.json` (`name`, `launch_options`, `icon`,
-  `sortas`, `tags`, `overlay`, `desktop_config`, `hidden`).
-- **Artwork** → `<Steam>/userdata/<account>/config/grid/`, renamed by the entry's app id.
-
-`<appid>` is the id Steam computes for a non-Steam shortcut from its executable and name
-(`steam/lib/steam_shortcuts.py`, `shortcut_appid`). It is **machine specific**, which is why the
-files here are named by role and renamed on install. On this machine the two entries are:
-
-| Entry | App id | Artwork names |
-|---|---|---|
-| TerraForest | 3801998348 | `3801998348.png`, `3801998348p.png`, `3801998348_hero.png`, … |
-| TerraForest Last World | 3967375980 | `3967375980.png`, `3967375980p.png`, `3967375980_hero.png`, … |
-
-`config/grid/` does not exist until artwork is first set; Steam creates it on demand.
-
-## Replacing the placeholders
-
-Drop your own PNG in place, keeping the file name and the size in `artwork_sizes`. The
-portrait capsule is the one that dominates the library grid; the hero and logo are what the
-game page shows at the top.
-
-## Caveats
-
-- Artwork file names are a client convention, not a documented API.
-- Artwork appears after Steam refreshes the library (sometimes a restart is needed).
-- Metadata edits need the same stop-Steam → write → start cycle `commit()` already performs.
+The exported-build fallback still copies only its executable. Separate PCK/native
+companion deployment remains outside this source-checkout installer; use the Godot
+editor route until that packaging path is implemented and verified. Non-Windows
+installation and the user's second computer have not been exercised here.

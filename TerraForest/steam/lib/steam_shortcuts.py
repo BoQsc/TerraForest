@@ -44,6 +44,7 @@ if str(TOOL_DIR) not in sys.path:
     sys.path.insert(0, str(TOOL_DIR))
 import steam_progress  # noqa: E402
 import install_log  # noqa: E402
+from exe_source import read_vdf  # noqa: E402
 
 # Lives in steam/lib/; the play build is two levels up next to project.godot.
 ROOT = Path(__file__).resolve().parents[2]
@@ -310,19 +311,43 @@ def start_steam(steam, silent=True, timeout=STEAM_START_TIMEOUT, progress=None,
 
 
 def accounts(steam):
-    """Account directories that carry a shortcuts file, newest session first."""
+    """Logged-in/most-recent account first, including first non-Steam installs."""
     userdata = steam/'userdata'
     if not userdata.is_dir():
         raise SystemExit(f'{userdata}: no Steam userdata; is Steam installed here?')
+    active = None
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Valve\Steam\ActiveProcess') as key:
+            active = str(winreg.QueryValueEx(key, 'ActiveUser')[0])
+    except OSError:
+        pass
+    users = read_vdf(steam/'config'/'loginusers.vdf').get('users', {})
+    recent = {}
+    if isinstance(users, dict):
+        for steamid, fields in users.items():
+            if steamid.isdigit() and isinstance(fields, dict):
+                account_id = str(int(steamid) & 0xFFFFFFFF)
+                recent[account_id] = (fields.get('mostrecent') == '1',
+                                      int(fields.get('timestamp', '0'))
+                                      if str(fields.get('timestamp', '0')).isdigit() else 0)
     found = []
     for account in userdata.iterdir():
         shortcut = account/'config'/'shortcuts.vdf'
         local = account/'config'/'localconfig.vdf'
-        if shortcut.is_file():
-            found.append((local.stat().st_mtime if local.is_file() else 0, account.name, shortcut))
+        if account.is_dir() and account.name.isdigit() and account.name != '0':
+            found.append((account.name == active, *recent.get(account.name, (False, 0)),
+                          local.stat().st_mtime if local.is_file() else 0, account.name, shortcut))
     if not found:
-        raise SystemExit(f'{userdata}: no account has a shortcuts.vdf')
-    return [item[2] for item in sorted(found, reverse=True)]
+        raise SystemExit(f'{userdata}: no Steam account found; sign into Steam once first')
+    return [item[-1] for item in sorted(found, reverse=True)]
+
+
+def select_shortcut(steam, account=None):
+    if account is None:
+        return accounts(steam)[0]
+    if not account.isdigit() or account == '0' or not (steam/'userdata'/account).is_dir():
+        raise SystemExit(f'{steam}: Steam account {account!r} not found; sign in first')
+    return steam/'userdata'/account/'config'/'shortcuts.vdf'
 
 
 def read_dict(data, pos, target):
@@ -436,8 +461,15 @@ def matches(fields, name, exe):
     "continue last world" launch), so the name has to take part in the identity;
     matching on the executable alone silently rewrote the other entry.
     """
-    stored = (fields.get('Exe') or '').strip('"').replace('/', '\\').lower()
-    if stored != str(exe).replace('/', '\\').lower():
+    def normalized(value):
+        value = str(value).strip().strip('"')
+        try:
+            value = str(Path(value).resolve())
+        except (OSError, ValueError):
+            pass
+        return value.replace('/', '\\').lower()
+
+    if normalized(fields.get('Exe') or '') != normalized(exe):
         return False
     wanted = (name or '').strip().lower()
     return not wanted or (fields.get('AppName') or '').strip().lower() == wanted
@@ -453,6 +485,8 @@ def load(path):
     error = None
     for _ in range(10):
         try:
+            if not path.exists():
+                return b'', 'shortcuts', {}
             data = path.read_bytes()
             root, entries = parse_shortcuts(data)
             break
@@ -470,6 +504,7 @@ def load(path):
 def write_bytes(path, payload):
     """Write with retries: Steam releases the file a moment after it exits."""
     error = None
+    path.parent.mkdir(parents=True, exist_ok=True)
     for _ in range(40):
         try:
             temporary = path.with_name(path.name + '.tmp')
@@ -483,7 +518,7 @@ def write_bytes(path, payload):
 
 
 def commit(shortcut, original, candidate, label, restart, force, progress=None,
-           after_write=None):
+           after_write=None, rebuild=None):
     """Stop Steam if needed, replace the file, verify, and restart Steam."""
     steam = shortcut.parents[3]
     running = steam_running()
@@ -520,18 +555,29 @@ def commit(shortcut, original, candidate, label, restart, force, progress=None,
         bar.stage('stop', 'Steam was not running')
         bar.tick(1.0)
 
-    stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-    backup = shortcut.with_name(shortcut.name + f'.bak-{stamp}')
-    bar.stage('write')
-    backup.write_bytes(original)
-    write_bytes(shortcut, candidate)
-    print(f'backup   : {backup}')
-    print(label)
-    bar.tick(1.0, 'file written')
-    # The entry is gone from the file at this point, so anything else that depends
-    # on it (desktop links) can be cleaned before the long wait for Steam to boot.
-    if after_write is not None:
-        after_write()
+    # Steam can save additional shortcuts during shutdown. Installer batches must
+    # merge against that final file, never overwrite it with the pre-shutdown read.
+    try:
+        if rebuild is not None:
+            original, candidate = rebuild()
+        stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+        backup = shortcut.with_name(shortcut.name + f'.bak-{stamp}')
+        bar.stage('write')
+        shortcut.parent.mkdir(parents=True, exist_ok=True)
+        if shortcut.exists():
+            backup.write_bytes(original)
+        write_bytes(shortcut, candidate)
+        print(f'backup   : {backup}' if original
+              else 'backup   : first shortcuts file; no previous file')
+        print(label)
+        bar.tick(1.0, 'file written')
+        if after_write is not None:
+            after_write()
+    except BaseException:
+        if running and restart:
+            print('recovery : restarting Steam after the failed write', file=sys.stderr)
+            start_steam(steam, progress=bar)
+        raise
 
     status = 0
     if not running:
@@ -667,6 +713,75 @@ def add(shortcut, name, exe, dry_run, restart=True, force=False, launch_options=
                   f'added    : entry {index} of {len(check_entries)}', restart, force)
 
 
+def merge_entries(entries, wanted):
+    """Upsert an installer batch, preserving unrelated entries and custom fields."""
+    updated = {index: dict(fields) for index, fields in entries.items()}
+    for fields in wanted:
+        matches_here = find_entry(updated, fields['AppName'], Path(fields['Exe'].strip('"')))
+        if matches_here:
+            index = next(iter(matches_here))
+            for key in ('appid', 'AppName', 'Exe', 'StartDir', 'icon', 'LaunchOptions',
+                        'tags', 'IsHidden', 'AllowDesktopConfig', 'AllowOverlay'):
+                updated[index][key] = fields[key]
+            for duplicate in list(matches_here)[1:]:
+                del updated[duplicate]
+        else:
+            index = str(max((int(key) for key in updated), default=-1) + 1)
+            updated[index] = dict(fields)
+    return updated
+
+
+def verify_entries(shortcut, wanted):
+    _, _, entries = load(shortcut)
+    for fields in wanted:
+        found = find_entry(entries, fields['AppName'], Path(fields['Exe'].strip('"')))
+        if len(found) != 1:
+            raise SystemExit(f'{shortcut}: expected one {fields["AppName"]} Steam entry, '
+                             f'found {len(found)}; installation is incomplete')
+        actual = next(iter(found.values()))
+        for key in ('appid', 'StartDir', 'LaunchOptions', 'icon', 'tags'):
+            if actual.get(key) != fields[key]:
+                raise SystemExit(f'{fields["AppName"]}: Steam entry has incorrect {key}; '
+                                 'installation is incomplete')
+        print(f'verified : {fields["AppName"]} appid={actual["appid"] & 0xFFFFFFFF} '
+              f'options={actual["LaunchOptions"]}')
+    return entries
+
+
+def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False):
+    """Install the whole pair with a single shutdown/write/restart transaction."""
+    data, root, entries = load(shortcut)
+
+    def candidate_for(current_root, current):
+        updated = merge_entries(current, wanted)
+        candidate = serialize_shortcuts(current_root, updated)
+        check_root, check_entries = parse_shortcuts(candidate)
+        if check_root != current_root or check_entries != updated:
+            raise SystemExit('Steam entry batch failed its round-trip check; nothing written')
+        return candidate
+
+    candidate = candidate_for(root, entries)
+    for fields in wanted:
+        print(f'entry    : {fields["AppName"]} -> {fields["Exe"]} '
+              f'appid={fields["appid"] & 0xFFFFFFFF} options={fields["LaunchOptions"]}')
+    if dry_run:
+        print(f'dry run  : {len(wanted)} requested Steam entries planned; nothing written')
+        return 0
+    if candidate == data:
+        verify_entries(shortcut, wanted)
+        return 0
+
+    def rebuild():
+        latest, latest_root, latest_entries = load(shortcut)
+        return latest, candidate_for(latest_root, latest_entries)
+
+    code = commit(shortcut, data, candidate, f'installed: {len(wanted)} Steam entries',
+                  restart, force, rebuild=rebuild)
+    if code == 0:
+        verify_entries(shortcut, wanted)
+    return code
+
+
 def remove(shortcut, name, exe, dry_run, restart=True, force=False):
     data, root, entries = load(shortcut)
     victim = find_entry(entries, name, exe)
@@ -738,12 +853,7 @@ def main():
     steam = args.steam or next((p for p in steam_roots() if (p/'userdata').is_dir()), None)
     if steam is None:
         parser.error('Steam install not found; pass --steam PATH')
-    if args.account:
-        shortcut = steam/'userdata'/args.account/'config'/'shortcuts.vdf'
-        if not shortcut.is_file():
-            parser.error(f'no shortcuts.vdf for account {args.account}')
-    else:
-        shortcut = accounts(steam)[0]
+    shortcut = select_shortcut(steam, args.account)
 
     if args.list:
         _, _, entries = load(shortcut)

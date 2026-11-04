@@ -6,11 +6,10 @@ Both shortcuts start the play build the same way the game starts itself
 world one `res://demo/worlds.tscn -- --continue-last`, which lets the game pick
 the world itself instead of naming a slot in the shortcut.
 
-If Steam already has an entry whose launch options match a shortcut's arguments
-(`steam/steam_shortcuts.py`), that shortcut launches through Steam
-(`steam://rungameid/<id>`) so the overlay and playtime apply, and only falls back
-to the executable when no entry carries that exact argument string. `--launch
-steam` or `--launch native` force either route.
+Desktop links launch through Steam by default. Missing entries or incorrect launch
+options stop with a repair message. The installer passes its selected account's
+entries directly. `--launch native` deliberately selects executable launch;
+`--launch auto` retains the optional fallback behavior for development use.
 
 *TerraForest* opens the world list. *TerraForest Last World* continues the newest
 world, chosen by the game itself (it orders saves by last played). Re-running the
@@ -111,17 +110,26 @@ def remove_shortcuts(folder=None, dry_run=False):
     return 0
 
 
-def create_shortcuts(folder=None, dry_run=False, launch='auto', exe=None):
+def create_shortcuts(folder=None, dry_run=False, launch='steam', exe=None, name=None,
+                     shortcut=None, entries=None, last_world=True):
     """Write both .lnk files with the same plan main() uses; for other tools to call."""
     executable = exe or PROJECT/f'{project_name()}.exe'
     if not dry_run and not executable.is_file():
         raise SystemExit(f'{executable}: missing; run install_to_steam.py first')
     target = folder or desktop_folder()
-    name = project_name()
-    plain_file, plain_fields = steam_entry(executable, name)
-    world_file, world_fields = steam_entry(executable, f'{name} Last World')
-    for item in plan(target, newest_world(worlds_dir()), name, executable,
-                     plain_fields, world_fields, launch):
+    name = name or project_name()
+    if entries is None and shortcut is not None:
+        _, _, stored = steam().load(shortcut)
+        entries = list(stored.values())
+    if entries is not None:
+        plain_fields = next((entry for entry in entries if steam().matches(entry, name, executable)), None)
+        world_fields = next((entry for entry in entries if steam().matches(entry, f'{name} Last World', executable)), None)
+    else:
+        _, plain_fields = steam_entry(executable, name)
+        _, world_fields = steam_entry(executable, f'{name} Last World') if last_world else (None, None)
+    if not dry_run:
+        target.mkdir(parents=True, exist_ok=True)
+    for item in plan(target, None, name, executable, plain_fields, world_fields, launch, last_world):
         link = item['link']
         action = 'update' if link.exists() else 'create'
         if dry_run:
@@ -129,7 +137,11 @@ def create_shortcuts(folder=None, dry_run=False, launch='auto', exe=None):
             continue
         write_shortcut(link, item['target'], command_line(item['arguments']), PROJECT,
                        item['description'], executable)
-        print(f'{action}d  : {link.name} [{item["mode"]}]')
+        actual_target, actual_arguments = read_shortcut(link)
+        expected_arguments = command_line(item['arguments'])
+        if Path(actual_target).resolve() != item['target'].resolve() or actual_arguments != expected_arguments:
+            raise SystemExit(f'{link}: shortcut read-back failed; installation is incomplete')
+        print(f'verified : {link} [{item["mode"]}] -> {actual_target} {actual_arguments}')
     return 0
 
 
@@ -291,20 +303,47 @@ def steam_command(appid):
     return RUNDLL, ['url.dll,FileProtocolHandler', f'steam://rungameid/{long_app_id(appid)}']
 
 
+def argument_values(line):
+    """Compare Windows arguments, allowing equivalent path quoting."""
+    count = ctypes.c_int()
+    shell32.CommandLineToArgvW.argtypes = [w.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+    shell32.CommandLineToArgvW.restype = ctypes.POINTER(w.LPWSTR)
+    values = shell32.CommandLineToArgvW('TerraForest ' + line, ctypes.byref(count))
+    if not values:
+        raise SystemExit('Could not parse Steam launch options')
+    try:
+        return tuple(values[index] for index in range(1, count.value))
+    finally:
+        kernel32 = ctypes.WinDLL('kernel32')
+        kernel32.LocalFree.argtypes = [ctypes.c_void_p]
+        kernel32.LocalFree.restype = ctypes.c_void_p
+        kernel32.LocalFree(ctypes.cast(values, ctypes.c_void_p))
+
+
 def steam_route(entry, required, mode):
     """The Steam command for an entry, or None when it cannot launch what we ask."""
-    if mode == 'native' or not entry:
+    if mode == 'native':
+        return None
+    if not entry and mode == 'steam':
+        raise SystemExit('Steam entry is missing; run steam/install_to_steam.pyw to repair '
+                         'both entries. No direct-executable fallback was created.')
+    if not entry:
         return None
     appid = entry.get('appid')
     if not isinstance(appid, int):
+        if mode == 'steam':
+            raise SystemExit('Steam entry has no app id; run steam/install_to_steam.pyw to repair it')
         return None
-    if mode == 'steam' or (entry.get('LaunchOptions') or '') == required:
+    if argument_values(entry.get('LaunchOptions') or '') == argument_values(required):
         return steam_command(appid)
+    if mode == 'steam':
+        raise SystemExit(f'{entry.get("AppName", "Steam entry")}: launch options need repair; '
+                         'run steam/install_to_steam.pyw. No direct-executable fallback was created.')
     return None
 
 
 def plan(folder, slot=None, name=None, exe=None, plain_entry=None, world_entry=None,
-         mode='auto'):
+         mode='steam', last_world=True):
     """Shortcuts to write: Steam when its entry launches what we ask, else native."""
     name = name or project_name()
     exe = exe or PROJECT/f'{name}.exe'
@@ -318,6 +357,8 @@ def plan(folder, slot=None, name=None, exe=None, plain_entry=None, world_entry=N
         target, arguments, state = exe, launch_arguments(None), 'native'
     entries.append({'link': folder/f'{name}.lnk', 'target': target,
                     'arguments': arguments, 'description': f'Play {name}', 'mode': state})
+    if not last_world:
+        return entries
 
     # The last-world shortcut carries no slot: --continue-last lets the game decide,
     # which is what makes a fixed Steam command line able to express it.
@@ -341,8 +382,8 @@ def main():
                         help='executable the shortcuts start')
     parser.add_argument('--worlds-dir', type=Path, help='override the user://worlds folder')
 
-    parser.add_argument('--launch', choices=('auto', 'steam', 'native'), default='auto',
-                        help='launch through Steam when it has the game (default: auto)')
+    parser.add_argument('--launch', choices=('auto', 'steam', 'native'), default='steam',
+                        help='launch through Steam (default); native/auto are explicit alternatives')
     parser.add_argument('--dry-run', action='store_true', help='report without writing')
     args = parser.parse_args()
 
@@ -370,6 +411,8 @@ def main():
     print(f'world    : {slot or "<no saves yet>"} (resolved by the game at launch)')
 
     status = 0
+    if not args.dry_run:
+        folder.mkdir(parents=True, exist_ok=True)
     for item in plan(folder, slot, name, args.exe, plain_fields, world_fields, args.launch):
         link = item['link']
         action = 'update' if link.exists() else 'create'
@@ -381,7 +424,7 @@ def main():
                        item['description'], args.exe)
         target, stored = read_shortcut(link)
         print(f'{action}d  : {link.name} [{item["mode"]}] -> {target}\n           {stored}')
-        if Path(target).resolve() != item['target'].resolve() or not stored:
+        if Path(target).resolve() != item['target'].resolve() or stored != command_line(item['arguments']):
             print(f'warning  : {link.name} did not read back as expected', file=sys.stderr)
             status = 1
 
