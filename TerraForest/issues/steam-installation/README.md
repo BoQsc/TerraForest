@@ -1,14 +1,15 @@
 # Steam installation consistency
 
-- Status: Installation verified on the second computer; game launch/reopen still unreported.
+- Status: Artwork filename/timing correction installed; engineering checks pass, visible appearance pending. Entry/link checks pass; game launch/reopen unreported.
 - Updated: 2026-11-04. Initial discovery-only fix: `cb73d62b`; complete default/logging fix: `39a4c1d7`.
-- User review: 2026-11-04: "Seems alright", with a successful second-computer installer log. Earlier defaults/routing/logging behavior was rejected.
+- User review: 2026-11-04: initially "Seems alright" with a second-computer log, then reported missing artwork in Steam. User scoped this follow-up to artwork; metadata work is excluded for now.
 - Symptom: The same copied checkout produced different installation results on another Windows computer.
 
 ## Images
 
-No screenshot supplied or generated. This issue is verified through actual stored
-Steam fields and Windows Shell-link read-back, not a visual acceptance claim.
+No screenshot supplied or generated. Stored-file/Shell-link checks did not establish
+Steam artwork visibility. The user's report supersedes the earlier broad installation
+conclusion; visible artwork acceptance is pending.
 
 ## Changes and verification
 
@@ -55,15 +56,55 @@ verified both afterward (three total shortcuts), copied all ten artwork files an
 read back both desktop links as `steam://rungameid` URLs. The run reports
 `install_to_steam code=0`. Installer SHA-256:
 `1bb5b29ac0f12a7df1f9881d7ab0976747519547109e4f54aa72aae0d0ed0a27`.
-This closes the previously pending second-computer installation check. The log
-does not report launching gameplay or reopening the last world.
+This verifies the second-computer entries/desktop routing and records artwork
+copies, but does not close artwork appearance. The subsequent user report rejects
+that visible result. The log also does not report game launch or last-world reopen.
+
+### Artwork timing/filename correction - 2026-11-04
+
+Confirmed defects: the old log shows `started : Steam` before all artwork copy
+lines. The client could therefore reload an empty/stale grid before those files
+arrived. Both the manifest and brand also reversed capsule filenames: a portrait
+was written to `<appid>.png` and a wide image to `<appid>p.png`.
+
+The correction uses portrait `<appid>p.png` (600×900), wide `<appid>.png` (920×430),
+and the existing hero/logo/icon suffixes. All ten files are installed and read back
+inside the closed-Steam transaction, before restart. An artwork-only repair forces
+one cache reload even if shortcut fields are unchanged. Exact-slot conflicting
+JPG/JPEG images are preserved as backups; unrelated artwork is untouched. The log
+records post-restart bytes, dimensions and hashes without claiming UI visibility.
+
+Convention evidence (research only; no implementation or assets imported):
+[SteamGridDB's horizontal-grid FAQ](https://www.steamgriddb.com/faq) and
+[NonSteamLaunchers' artwork filename implementation](https://github.com/moraroy/NonSteamLaunchers-On-Steam-Deck/blob/main/NSLGameScanner.py).
+Changes/tests are original AI-assisted maintenance under the existing code policy.
+The generated artwork itself is unchanged. Metadata changes were explicitly deferred
+by the user in favor of artwork-only work.
+
+Verification: **70 Python tests pass**, including **42 Steam regressions**. New
+checks independently assert each actual filename and PNG dimensions, require all
+ten images before startup, repair the old swapped layout with unchanged shortcut
+bytes, refresh an existing cache, preserve conflicting/unrelated artwork, keep dry
+runs read-only and reject missing artwork after restart. Generator `--check` passes:
+the five source PNGs are byte-for-byte unchanged.
+
+A live artwork-only repair here exited 0: four capsule files were corrected before
+`started : Steam`, both entries survived reload, and all ten files passed the
+post-restart byte/dimension/hash checks. Both desktop Steam URLs verified afterward.
+The initial automated probe waited on the interactive restart dialog and was stopped
+before any Steam write; the unattended `--yes` rerun above completed. Both attempts
+remain in the existing single log. No Steam UI screenshot or second-computer visual
+review has been obtained; these checks do not establish visible artwork acceptance.
 
 ## Remaining / resume here
 
 Successful game launch and Last World reopen on the second computer remain
 unreported. Return on launch feedback; close that remaining functional check with
 successful launch from both Steam/desktop entries and a confirmed last-world
-reopen. Installation itself is verified by the supplied log above.
+reopen. Artwork appearance also remains open: update to the artwork repair, rerun
+the normal installer and inspect each entry's portrait, recent-game wide image,
+hero and logo after the restart. Close only with user/actual UI confirmation;
+successful copies alone are insufficient. See the correction above.
 
 Exported builds with separate PCK/native companions still need complete deployment;
 automatic discovery alone does not deploy them. Return when shipping that package,

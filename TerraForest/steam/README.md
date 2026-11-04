@@ -54,9 +54,21 @@ it does not search a second time or choose a different account.
 
 The pair is merged in one write and at most one Steam restart. After shutdown,
 the installer re-reads Steam's final saved file before merging, preserving other
-games added during shutdown. Existing files are backed up beside `shortcuts.vdf`.
-After restarting, both requested entries and their launch settings are verified.
+games added during shutdown. Artwork is copied and verified while Steam is still
+closed, before it reloads the library. Existing files are backed up beside
+`shortcuts.vdf`. After restarting, both entries, launch settings and actual artwork
+bytes/dimensions are checked. These file checks do not prove that the client UI
+displayed the images; visual review is separate.
 An active game session blocks the restart until the game is finished.
+
+Portraits use `<appid>p.png` (600×900); wide capsules use `<appid>.png` (920×430).
+Hero, logo and icon use `<appid>_hero.png`, `<appid>_logo.png` and
+`<appid>_icon.png`. The earlier installer reversed the two capsule names and
+copied artwork after Steam reopened. Re-running the corrected installer repairs
+that layout. With artwork enabled, it also refreshes Steam once even if the
+entries/images already exist, so an old in-memory artwork cache is reloaded.
+Conflicting JPG/JPEG files for these exact slots are preserved as timestamped
+backups before installing the PNGs; unrelated artwork is left alone.
 
 ## Console and optional controls
 

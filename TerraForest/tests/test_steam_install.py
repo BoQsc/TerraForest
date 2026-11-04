@@ -2,9 +2,11 @@
 """Original AI-assisted regressions for local Steam/Godot discovery and install."""
 import contextlib
 import io
+import json
 import os
 from pathlib import Path
 import sys
+import struct
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -274,6 +276,21 @@ class CompleteInstallTests(unittest.TestCase):
             self.assertEqual(args, 'url.dll,FileProtocolHandler steam://rungameid/'
                              + str(self.desktop.long_app_id(fields['appid'])))
 
+    def assert_artwork_slots(self):
+        # Independent expected Steam suffixes/dimensions, not copied from the manifest.
+        expected = [('p.png', 'portrait.png', (600, 900)),
+                    ('.png', 'wide.png', (920, 430)),
+                    ('_hero.png', 'hero.png', (1920, 620)),
+                    ('_logo.png', 'logo.png', (1000, 300)),
+                    ('_icon.png', 'icon.png', (256, 256))]
+        for name in ('TerraForest', 'TerraForest Last World'):
+            appid = self.tool.shortcut_appid(str(self.target), name)
+            for suffix, source, size in expected:
+                target = self.shortcut.parent/'grid'/f'{appid}{suffix}'
+                payload = target.read_bytes()
+                self.assertEqual(payload, (self.install.ARTWORK/source).read_bytes())
+                self.assertEqual(struct.unpack('>II', payload[16:24]), size)
+
     def test_fresh_account_full_install_real_shell_links_artwork_and_idempotence(self):
         # Only the Steam process boundary is mocked; VDF/artwork/.lnk writes are real.
         self.assertFalse(self.shortcut.exists())
@@ -288,12 +305,123 @@ class CompleteInstallTests(unittest.TestCase):
             world = next(entry for entry in entries.values() if entry['AppName'].endswith('Last World'))
             self.assertTrue(world['LaunchOptions'].endswith(' -- --continue-last'))
             self.assertEqual(len(list((self.shortcut.parent/'grid').iterdir())), 10)
+            self.assert_artwork_slots()
             original = self.shortcut.read_bytes()
             self.assertEqual(self.install.deploy(self.args), 0)
             self.assertEqual(self.shortcut.read_bytes(), original)
             self.assert_desktop_routes(self.stored())
             stop.assert_not_called()
             start.assert_not_called()
+
+    def test_artwork_is_present_under_correct_names_before_steam_restarts(self):
+        order = []
+
+        def shutdown(*args, **kwargs):
+            order.append('stopped')
+            self.assertFalse((self.shortcut.parent/'grid').exists())
+            return True
+
+        def startup(*args, **kwargs):
+            order.append('starting')
+            self.assert_artwork_slots()
+            self.assertEqual(len(self.stored()), 2)
+            return True
+
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam', side_effect=shutdown), \
+                patch.object(self.tool, 'start_steam', side_effect=startup) as start:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            start.assert_called_once()
+        self.assertEqual(order, ['stopped', 'starting'])
+
+    def test_artwork_only_repair_reloads_steam_even_with_unchanged_entries(self):
+        with patch.object(self.tool, 'steam_running', return_value=[]):
+            self.assertEqual(self.install.deploy(self.args), 0)
+        original = self.shortcut.read_bytes()
+        # Model the old install's swapped portrait/wide names.
+        for fields in self.stored().values():
+            appid = fields['appid'] & 0xFFFFFFFF
+            grid = self.shortcut.parent/'grid'
+            file(grid/f'{appid}.png', (self.install.ARTWORK/'portrait.png').read_bytes())
+            file(grid/f'{appid}p.png', (self.install.ARTWORK/'wide.png').read_bytes())
+
+        def startup(*args, **kwargs):
+            self.assert_artwork_slots()
+            return True
+
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam', return_value=True) as stop, \
+                patch.object(self.tool, 'start_steam', side_effect=startup) as start:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            stop.assert_called_once()
+            start.assert_called_once()
+        self.assertEqual(self.shortcut.read_bytes(), original)
+
+    def test_existing_correct_files_still_refresh_steam_artwork_cache(self):
+        with patch.object(self.tool, 'steam_running', return_value=[]):
+            self.assertEqual(self.install.deploy(self.args), 0)
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam', return_value=True) as stop, \
+                patch.object(self.tool, 'start_steam', return_value=True) as start:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            stop.assert_called_once()
+            start.assert_called_once()
+
+    def test_post_restart_artwork_loss_is_incomplete_installation(self):
+        def startup(*args, **kwargs):
+            appid = self.tool.shortcut_appid(str(self.target), 'TerraForest')
+            (self.shortcut.parent/'grid'/f'{appid}_hero.png').unlink()
+            return True
+
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam', return_value=True), \
+                patch.object(self.tool, 'start_steam', side_effect=startup):
+            with self.assertRaisesRegex(SystemExit, 'artwork is missing or changed'):
+                self.install.deploy(self.args)
+        self.assertFalse(self.args.desktop_folder.exists())
+
+    def test_conflicting_jpg_is_backed_up_and_unrelated_art_is_preserved(self):
+        appid = self.tool.shortcut_appid(str(self.target), 'TerraForest')
+        grid = self.shortcut.parent/'grid'
+        conflict = file(grid/f'{appid}p.jpg', b'custom user artwork')
+        unrelated = file(grid/'12345p.jpg', b'unrelated artwork')
+        with patch.object(self.tool, 'steam_running', return_value=[]):
+            self.assertEqual(self.install.deploy(self.args), 0)
+        self.assertFalse(conflict.exists())
+        backup, = grid.glob(f'{appid}p.jpg.bak-*')
+        self.assertEqual(backup.read_bytes(), b'custom user artwork')
+        self.assertEqual(unrelated.read_bytes(), b'unrelated artwork')
+        self.assert_artwork_slots()
+
+    def test_dry_run_preserves_conflicts_and_creates_no_grid_or_shortcuts(self):
+        appid = self.tool.shortcut_appid(str(self.target), 'TerraForest')
+        conflict = file(self.shortcut.parent/'grid'/f'{appid}.jpg', b'user artwork')
+        self.args.dry_run = True
+        with patch.object(self.tool, 'commit') as commit:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            commit.assert_not_called()
+        self.assertEqual(list(conflict.parent.iterdir()), [conflict])
+        self.assertEqual(conflict.read_bytes(), b'user artwork')
+        self.assertFalse(self.shortcut.exists())
+        self.assertFalse(self.target.exists())
+
+    def test_no_artwork_skips_cache_restart_for_unchanged_entries(self):
+        with patch.object(self.tool, 'steam_running', return_value=[]):
+            self.assertEqual(self.install.deploy(self.args), 0)
+        self.args.artwork = False
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam') as stop, \
+                patch.object(self.tool, 'start_steam') as start:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            stop.assert_not_called()
+            start.assert_not_called()
+
+    def test_brand_and_manifest_agree_on_exact_steam_artwork_slots(self):
+        manifest = json.loads(self.install.MANIFEST.read_text('utf-8'))
+        brand = json.loads((LIB.parent/'brand'/'brand.json').read_text('utf-8'))
+        self.assertEqual(manifest['artwork'], brand['steam']['artwork'])
+        self.assertEqual(manifest['artwork']['portrait.png'], '{appid}p.png')
+        self.assertEqual(manifest['artwork']['wide.png'], '{appid}.png')
 
     def test_repair_pair_one_restart_preserves_shutdown_writes_and_replaces_native_links(self):
         existing = self.tool.shortcut_fields('TerraForest', self.target, '--old-options')

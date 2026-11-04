@@ -15,9 +15,12 @@ Usage:
 """
 from pathlib import Path
 import argparse
+import datetime
+import hashlib
 import importlib.util
 import json
 import shutil
+import struct
 import sys
 
 # This file lives in steam/lib/; the play build is two levels up.
@@ -109,11 +112,20 @@ def wanted_entries(name, last_world=True):
                                        str(ICON), tags) for entry_name, suffix in names]
 
 
-def register(dry_run, name, restart, force, steam, account, last_world=True, shortcut=None):
+def register(dry_run, name, restart, force, steam, account, last_world=True, shortcut=None,
+             artwork=False):
     """Add the shortcut through the Steam tool; it owns the restart and the backup."""
     shortcut = shortcut or shortcut_file(steam, account)
-    return steam_tool.upsert_all(shortcut, wanted_entries(name, last_world),
-                                 dry_run, restart, force)
+    wanted = wanted_entries(name, last_world)
+    apply_artwork = (lambda: install_artwork(shortcut, [entry['AppName'] for entry in wanted],
+                                             dry_run)) if artwork else None
+    # Steam caches custom images. Even an artwork-only repair must reopen Steam
+    # after the files are installed, including an already-present but stale grid.
+    code = steam_tool.upsert_all(shortcut, wanted, dry_run, restart, force,
+                                 after_write=apply_artwork, refresh=artwork)
+    if code == 0 and artwork and dry_run:
+        install_artwork(shortcut, [entry['AppName'] for entry in wanted], True)
+    return code
 
 
 def shortcut_file(steam, account):
@@ -124,30 +136,69 @@ def shortcut_file(steam, account):
     return steam_tool.select_shortcut(root, account)
 
 
-def install_artwork(shortcut, names, dry_run):
-    """Copy the brand artwork into Steam's grid folder, named by each entry's app id."""
+def artwork_plan(shortcut, names):
+    """Validate sources before shutdown and resolve Steam's exact grid slots."""
     manifest = json.loads(MANIFEST.read_text('utf-8'))
     mapping = manifest['artwork']
     grid = shortcut.parent/'grid'
     executable = str(TARGET.resolve())
-    written = 0
+    planned = []
     for name in names:
         appid = steam_tool.shortcut_appid(executable, name)
         for role, pattern in mapping.items():
             source = ARTWORK/role
             if not source.is_file():
                 raise SystemExit(f'{source}: missing; run python steam/brand/make_brand_artwork.py')
+            payload = source.read_bytes()
+            if len(payload) < 24 or payload[:8] != b'\x89PNG\r\n\x1a\n' or payload[12:16] != b'IHDR':
+                raise SystemExit(f'{source}: invalid PNG artwork')
+            size = struct.unpack('>II', payload[16:24])
+            if size != tuple(manifest['artwork_sizes'][role]):
+                raise SystemExit(f'{source}: artwork size {size} differs from manifest')
             target = grid/pattern.replace('{appid}', str(appid))
-            fresh = target.is_file() and target.read_bytes() == source.read_bytes()
-            print(f'artwork  : {role:14} -> {target.name} ({"up to date" if fresh else "copy"})')
-            if dry_run or fresh:
-                continue
-            grid.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(source.read_bytes())
+            planned.append((role, target, payload, size))
+    return planned
+
+
+def install_artwork(shortcut, names, dry_run):
+    """Install and verify images while Steam is closed, before its cache reload."""
+    written = 0
+    for role, target, payload, size in artwork_plan(shortcut, names):
+        fresh = target.is_file() and target.read_bytes() == payload
+        print(f'artwork  : {role:14} -> {target.name} ({"up to date" if fresh else "copy"})')
+        # A hand-set JPG/JPEG in the same slot can take precedence over PNG.
+        # Preserve it next to the file, outside Steam's recognized extensions.
+        for extension in ('.jpg', '.jpeg'):
+            alternate = target.with_suffix(extension)
+            if alternate.is_file():
+                print(f'artwork  : {"would back up" if dry_run else "back up"} {alternate.name}')
+                if not dry_run:
+                    stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+                    alternate.replace(alternate.with_name(alternate.name + f'.bak-{stamp}'))
+        if dry_run:
+            continue
+        if not fresh:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(payload)
             written += 1
+        if target.read_bytes() != payload:
+            raise SystemExit(f'{target}: artwork write verification failed')
+    grid = shortcut.parent/'grid'
     print(f'artwork  : {grid} (dry run, nothing written)' if dry_run
           else f'artwork  : {written} file(s) written to {grid}')
     return 0
+
+
+def verify_artwork(shortcut, names):
+    """Check the actual files after Steam has reopened; do not claim UI visibility."""
+    for role, target, payload, size in artwork_plan(shortcut, names):
+        if not target.is_file() or target.read_bytes() != payload:
+            raise SystemExit(f'{target}: artwork is missing or changed after installation')
+        if any(target.with_suffix(extension).is_file() for extension in ('.jpg', '.jpeg')):
+            raise SystemExit(f'{target}: conflicting artwork returned after installation')
+        print(f'art checked: {target.name} {size[0]}x{size[1]} '
+              f'sha256={hashlib.sha256(payload).hexdigest()}')
+    print('artwork  : installed files verified; Steam display still requires visual confirmation')
 
 
 def launch_options(suffix=''):
@@ -218,15 +269,12 @@ def deploy(args):
     print(f'steam    : {shortcut.parents[3]}')
     print(f'file     : {shortcut}')
     if args.artwork:
-        # Check every artwork input before changing Steam.
-        missing = [ARTWORK/role for role in json.loads(MANIFEST.read_text('utf-8'))['artwork']
-                   if not (ARTWORK/role).is_file()]
-        if missing:
-            raise SystemExit(f'{missing[0]}: artwork missing; Steam has not been changed')
+        artwork_plan(shortcut, names)
     code = register(args.dry_run, args.name, not args.no_restart, args.force,
-                    args.steam, args.account, args.last_world, shortcut=shortcut)
-    if code == 0 and args.artwork:
-        code = install_artwork(shortcut, names, args.dry_run)
+                    args.steam, args.account, args.last_world, shortcut=shortcut,
+                    artwork=args.artwork)
+    if code == 0 and args.artwork and not args.dry_run:
+        verify_artwork(shortcut, names)
     if code == 0 and args.desktop:
         desktop = load('add_desktop_shortcuts', ROOT/'steam'/'add_desktop_shortcuts.py')
         code = desktop.create_shortcuts(args.desktop_folder, args.dry_run, launch='steam',

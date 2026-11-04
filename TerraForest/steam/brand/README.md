@@ -44,6 +44,11 @@ launch options, icon, sort name, tags, overlay flags). The brand is authoritativ
 values they share: name, tags and artwork sizes. The test suite compares the two files, so
 they cannot drift apart silently.
 
+Artwork target conventions: portrait → `{appid}p.png`, wide → `{appid}.png`,
+hero/logo/icon → `{appid}_hero.png` / `{appid}_logo.png` / `{appid}_icon.png`.
+The installer applies these while Steam is closed and verifies their bytes and
+dimensions after restart; appearance in the Steam UI remains a separate check.
+
 ## Not done yet
 
 - The artwork placeholders are drawn from code, not an art pass.

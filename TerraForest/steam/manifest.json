@@ -12,8 +12,8 @@
   "desktop_config": true,
   "hidden": false,
   "artwork": {
-    "portrait.png": "{appid}.png",
-    "wide.png": "{appid}p.png",
+    "portrait.png": "{appid}p.png",
+    "wide.png": "{appid}.png",
     "hero.png": "{appid}_hero.png",
     "logo.png": "{appid}_logo.png",
     "icon.png": "{appid}_icon.png"

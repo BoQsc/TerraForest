@@ -748,7 +748,8 @@ def verify_entries(shortcut, wanted):
     return entries
 
 
-def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False):
+def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False,
+               after_write=None, refresh=False):
     """Install the whole pair with a single shutdown/write/restart transaction."""
     data, root, entries = load(shortcut)
 
@@ -767,7 +768,7 @@ def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False):
     if dry_run:
         print(f'dry run  : {len(wanted)} requested Steam entries planned; nothing written')
         return 0
-    if candidate == data:
+    if candidate == data and not refresh:
         verify_entries(shortcut, wanted)
         return 0
 
@@ -776,7 +777,7 @@ def upsert_all(shortcut, wanted, dry_run=False, restart=True, force=False):
         return latest, candidate_for(latest_root, latest_entries)
 
     code = commit(shortcut, data, candidate, f'installed: {len(wanted)} Steam entries',
-                  restart, force, rebuild=rebuild)
+                  restart, force, rebuild=rebuild, after_write=after_write)
     if code == 0:
         verify_entries(shortcut, wanted)
     return code

@@ -28,16 +28,28 @@ then verified that both entries and both desktop URLs survived Steam's reload
 All **62 Python tests pass**, including **34 Steam regressions**. The log folder
 contains one file; precise remaining scope is retained in the issue.
 
-Second-computer installation is now verified: the user's 2026-11-04 no-argument
+Second-computer entry/link installation is verified: the user's 2026-11-04 no-argument
 windowed run discovered standard-folder Godot from a system32 working directory,
 installed/verified both entries after one Steam restart, copied ten artwork files
 and verified both desktop Steam URLs, with result code 0. User response: "Seems
 alright". The issue records the supplied installer hash and scope of this evidence.
 
+Artwork visibility is reopened by the user's subsequent report: the successful
+copy log did not show actual Steam appearance. User limited the follow-up to
+artwork. Confirmed bugs were swapped portrait/wide filenames and copying images
+after Steam restarted. The correction applies the proper `p.png`/`.png` slots
+inside the closed-Steam transaction, refreshes artwork even with unchanged
+shortcuts, and checks bytes/dimensions after restart. Original artwork is unchanged;
+metadata work is excluded. Regression and live evidence are retained in the issue.
+The updated suite passes **70 tests / 42 Steam regressions**, source artwork
+freshness passes, and a real repair/restart checks all ten corrected files after
+reload. This is stored-file/startup-order evidence, not Steam UI acceptance.
+
 Remaining: exported-build discovery still retains the inherited executable-only
 copy; separate PCK/native companion deployment is not implemented or validated.
-Non-Windows installation and game launch/Last World reopen on the user's second
-computer remain unverified. Return for packaged distribution or launch feedback;
+Steam artwork appearance, non-Windows installation and game launch/Last World
+reopen on the user's second computer remain unverified. Return on the artwork
+repair/user visual review, packaged distribution or launch feedback;
 close with complete companion deployment/successful launch of both entries, and
 confirmed Last World reopen. The installed editor route is the
 verified source-checkout path. See [installer instructions](../steam/README.md).
