@@ -50,6 +50,16 @@ a byte-verified runtime update bundle was prepared. Reinstalling the old files d
 not apply the fix. Confirm the updated runtime/hash before further appearance
 diagnosis; details and both source hashes are retained in the installation issue.
 
+Browse Local Files was subsequently reported to do nothing. The installer's
+quote-wrapped StartDir differed from the installed Steam client's own directory
+picker representation; both local target folders exist. StartDir now uses a plain
+directory path, with repair/exists/log checks and regressions. Actual Windows
+Steam menu behavior remains unverified; record the field/client build if it still
+fails. See the installation issue for the local client-code inspection and limits.
+Validation passes **73 Python tests / 45 Steam regressions** and a real repair/
+restart retaining plain Start In fields for both entries. Both folders, artwork
+files and desktop URLs verify after reload; the Steam menu action remains open.
+
 Remaining: exported-build discovery still retains the inherited executable-only
 copy; separate PCK/native companion deployment is not implemented or validated.
 Steam artwork appearance, non-Windows installation and game launch/Last World

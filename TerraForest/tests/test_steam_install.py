@@ -423,6 +423,42 @@ class CompleteInstallTests(unittest.TestCase):
         self.assertEqual(manifest['artwork']['portrait.png'], '{appid}p.png')
         self.assertEqual(manifest['artwork']['wide.png'], '{appid}.png')
 
+    def test_repair_quoted_start_in_matches_native_directory_field(self):
+        wanted = self.install.wanted_entries('TerraForest')
+        old = {str(index): dict(fields, StartDir=f'"{self.project}"')
+               for index, fields in enumerate(wanted)}
+        file(self.shortcut, self.tool.serialize_shortcuts('shortcuts', old))
+        self.args.artwork = False
+
+        def startup(*args, **kwargs):
+            for entry in self.stored().values():
+                self.assertEqual(entry['StartDir'], str(self.project))
+                self.assertTrue(Path(entry['StartDir']).is_dir())
+            return True
+
+        with patch.object(self.tool, 'steam_running', return_value=['steam.exe']), \
+                patch.object(self.tool, 'stop_steam', return_value=True), \
+                patch.object(self.tool, 'start_steam', side_effect=startup) as start:
+            self.assertEqual(self.install.deploy(self.args), 0)
+            start.assert_called_once()
+        self.assert_desktop_routes(self.stored())
+
+    def test_start_in_directory_with_spaces_and_unicode_is_a_raw_path(self):
+        directory = self.root/'Project with spaces é'
+        directory.mkdir()
+        exe = directory/'TerraForest.exe'
+        fields = self.tool.shortcut_fields('TerraForest', exe)
+        self.assertEqual(fields['StartDir'], str(directory))
+        self.assertTrue(Path(fields['StartDir']).is_dir())
+        self.assertEqual(fields['Exe'], f'"{exe}"')
+
+    def test_missing_start_in_directory_cannot_pass_verification(self):
+        folder = self.root/'missing'
+        wanted = [self.tool.shortcut_fields('TerraForest', folder/'TerraForest.exe')]
+        file(self.shortcut, self.tool.serialize_shortcuts('shortcuts', {'0': wanted[0]}))
+        with self.assertRaisesRegex(SystemExit, 'Start In directory does not exist'):
+            self.tool.verify_entries(self.shortcut, wanted)
+
     def test_repair_pair_one_restart_preserves_shutdown_writes_and_replaces_native_links(self):
         existing = self.tool.shortcut_fields('TerraForest', self.target, '--old-options')
         existing['LastPlayTime'] = 12345

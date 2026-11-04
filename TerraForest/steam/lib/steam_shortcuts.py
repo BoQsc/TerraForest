@@ -424,7 +424,10 @@ def shortcut_fields(name, exe, launch_options='', icon='', tags=()):
         'appid': signed32(shortcut_appid(exe, name)),
         'AppName': name,
         'Exe': f'"{exe}"',
-        'StartDir': f'"{exe.parent}"',
+        # This is a directory field, not command-line text. Steam's folder picker
+        # stores it unquoted and Browse Local Files forwards it directly to the
+        # system directory API. Keep executable/launch-argument quoting separate.
+        'StartDir': str(exe.parent),
         'icon': str(icon),
         'ShortcutPath': '',
         'LaunchOptions': launch_options,
@@ -745,6 +748,10 @@ def verify_entries(shortcut, wanted):
                                  'installation is incomplete')
         print(f'verified : {fields["AppName"]} appid={actual["appid"] & 0xFFFFFFFF} '
               f'options={actual["LaunchOptions"]}')
+        directory = Path(actual['StartDir'])
+        if not directory.is_dir():
+            raise SystemExit(f'{fields["AppName"]}: Start In directory does not exist: {directory}')
+        print(f'directory: {fields["AppName"]} Start In={directory} (exists)')
     return entries
 
 

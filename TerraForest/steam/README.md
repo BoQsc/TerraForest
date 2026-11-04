@@ -52,6 +52,14 @@ Sign into Steam once first if no account directory exists. `--account ID` select
 an existing account explicitly. Desktop creation uses this same account/file;
 it does not search a second time or choose a different account.
 
+`Start In` is the project directory as a plain path, matching Steam's own directory
+picker. It is separate from executable/command-line quoting. The installer repairs
+older quote-wrapped values and checks/logs that the directory exists after Steam
+reloads. If Browse Local Files does nothing, check **Properties → Shortcut → Start
+In** first; it should point at the folder containing `project.godot` and
+`TerraForest.exe`, without enclosing quotes. Actual Steam menu behavior is a
+separate UI check from verifying that stored directory.
+
 The pair is merged in one write and at most one Steam restart. After shutdown,
 the installer re-reads Steam's final saved file before merging, preserving other
 games added during shutdown. Artwork is copied and verified while Steam is still

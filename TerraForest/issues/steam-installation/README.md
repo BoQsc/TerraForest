@@ -109,6 +109,32 @@ folder instructions, hashes and the existing code license. The `.pyw` wrapper is
 unchanged; updating only that file does not update `steam/lib` implementations.
 Next evidence must first establish that the corrected runtime was actually loaded.
 
+### Browse Local Files - 2026-11-04
+
+User reports that Steam's Browse Local Files command does nothing. The exact
+second-computer Start In value has not been supplied. Locally, both entries pointed
+at the existing project directory, but stored enclosing quotes. Read-only inspection
+of the installed Steam client's `steamui/sp.js` found that Browse Local Files
+forwards `strShortcutStartDir` directly to its directory-opening API, while the
+native folder-picker handler stores a plain directory path. No client code was
+copied into the project. An external shell-opening probe accepted a quoted path;
+that probe does not reproduce or validate Steam's own internal API behavior.
+
+The installer now matches the native folder-picker representation: plain StartDir,
+quoted executable/launch arguments separately. It repairs old quoted StartDir
+fields, verifies directory existence and logs both resolved directories after
+reload. Regressions cover repairing real stored entries, spaces/Unicode, retained
+desktop routing and rejecting a nonexistent directory. This addresses an identified
+format mismatch; it does not establish that the user's Steam menu action is fixed.
+Verification: **73 Python tests / 45 Steam regressions pass**. A real repair/restart
+exited 0 and retained both plain Start In fields; both existing project directories,
+all ten artwork files and both desktop Steam URLs were verified after reload.
+The Browse Local Files menu itself was not exercised by that stored-field check.
+
+[Valve's related non-Steam Browse Local Files report](https://github.com/ValveSoftware/steam-for-linux/issues/10082)
+was closed after a client fix in 2025; that Linux report alone does not diagnose
+the user's Windows client. Menu reproduction/user confirmation remains required.
+
 ## Remaining / resume here
 
 Successful game launch and Last World reopen on the second computer remain
@@ -118,6 +144,10 @@ reopen. Artwork appearance also remains open: update to the artwork repair, reru
 the normal installer and inspect each entry's portrait, recent-game wide image,
 hero and logo after the restart. Close only with user/actual UI confirmation;
 successful copies alone are insufficient. See the correction above.
+Browse Local Files also remains pending actual UI confirmation. Return after the
+plain Start In update or direct edit in Steam Properties; close with the menu
+opening the actual project directory for both entries. If it still does nothing,
+retain the actual field value and Steam client build for the next investigation.
 
 Exported builds with separate PCK/native companions still need complete deployment;
 automatic discovery alone does not deploy them. Return when shipping that package,
