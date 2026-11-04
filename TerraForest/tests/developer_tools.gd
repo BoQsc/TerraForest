@@ -32,6 +32,10 @@ func run()->void:
 	game.set_physics_process(false);game._clear_motion();game.app_focused=true;game.needs_floor_spawn=false
 	var menu=game.session_menu;var bag=menu.dev_bag;var inventory:RefCounted=game.player_hud.inventory
 	var original:PackedByteArray=inventory.capture_storage_snapshot()
+	for title in ["Dev Bag","Dev Shapes","Dev Spawner"]:
+		var page:Control=menu.developer_pages.get(title)
+		var padding:Control=page.get_node_or_null("DeveloperPagePadding") if page!=null else null
+		check(padding is MarginContainer and padding.get_theme_constant("margin_left")==18 and padding.get_theme_constant("margin_right")==18 and padding.get_theme_constant("margin_top")==14 and padding.get_theme_constant("margin_bottom")==18,title+" content has the requested inset")
 	check(menu.navigation.keys()==["Session","Player","Graphics","Dev Bag","Dev Shapes","Dev Spawner","Developer","World"],"items, shapes, entities and serious diagnostics have separate navigation")
 	check(menu.spawner.entries.keys()==["zombie","vehicle"] and bag.entries.has(501),"live vehicle spawn belongs in Dev Spawner while carried vehicle items stay in Dev Bag")
 	menu.show_page("Dev Bag");bag.search.grab_focus()
@@ -42,6 +46,7 @@ func run()->void:
 	bag.search.text="501";bag.filter_items();bag.category.select(1);bag.filter_items()
 	check(bag.empty.visible,"category and text filters combine with a clear empty state")
 	bag.category.select(0);bag.search.clear();bag.filter_items();await capture("dev_bag")
+	menu.show_page("Dev Shapes");await capture("dev_shapes");menu.show_page("Dev Bag")
 	var empty_state:Dictionary=inventory.snapshot()
 	for row:Dictionary in empty_state.slots:row.item=0;row.count=0;row.wear=0;row.water_ml=0
 	var all_granted:=true;var all_icons:=true

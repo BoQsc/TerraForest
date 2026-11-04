@@ -58,6 +58,15 @@ func label(parent: Node,text: String) -> Label:
 	var out:=Label.new();out.text=text;out.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;parent.add_child(out);return out
 func page(title: String) -> VBoxContainer:
 	var out:=VBoxContainer.new();out.add_theme_constant_override("separation",12);content.add_child(out);pages[title]=out;out.hide();return out
+func padded_developer_page(page: VBoxContainer) -> VBoxContainer:
+	var margin:=MarginContainer.new();margin.name="DeveloperPagePadding"
+	margin.add_theme_constant_override("margin_left",18)
+	margin.add_theme_constant_override("margin_right",18)
+	margin.add_theme_constant_override("margin_top",14)
+	margin.add_theme_constant_override("margin_bottom",18)
+	page.add_child(margin)
+	var body:=VBoxContainer.new();body.name="DeveloperPageBody";body.add_theme_constant_override("separation",12);body.size_flags_horizontal=Control.SIZE_EXPAND_FILL;margin.add_child(body)
+	return body
 func _ready() -> void:
 	layer=40;developer=not game.construction_inventory.gameplay;game.help.hide()
 	panel=PanelContainer.new();panel.position=Vector2(380,100);panel.size=Vector2(1160,800);panel.hide();add_child(panel)
@@ -158,11 +167,11 @@ func _ready() -> void:
 		breakup_toggle.toggled.connect(game.impact_effects.set_breakup_enabled);developer_page.add_child(breakup_toggle)
 		game.impact_effects.settings_changed.connect(refresh_effects);refresh_effects()
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	var dev_bag_page:=page("Dev Bag");dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,dev_bag_page);developer_pages["Dev Bag"]=dev_bag_page
+	var dev_bag_page:=page("Dev Bag");var dev_bag_body:=padded_developer_page(dev_bag_page);dev_bag=preload("res://addons/player_runtime/developer_bag.gd").new();dev_bag.build(game,self,dev_bag_body);developer_pages["Dev Bag"]=dev_bag_page
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	var dev_shapes_page:=page("Dev Shapes");dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,dev_shapes_page);developer_pages["Dev Shapes"]=dev_shapes_page
+	var dev_shapes_page:=page("Dev Shapes");var dev_shapes_body:=padded_developer_page(dev_shapes_page);dev_shapes=preload("res://addons/player_runtime/developer_shapes.gd").new();dev_shapes.build(game,self,dev_shapes_body);developer_pages["Dev Shapes"]=dev_shapes_page
 	if game.get("startup_cooperative")==true:await get_tree().process_frame
-	var dev_spawner_page:=page("Dev Spawner");spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,dev_spawner_page);developer_pages["Dev Spawner"]=dev_spawner_page
+	var dev_spawner_page:=page("Dev Spawner");var dev_spawner_body:=padded_developer_page(dev_spawner_page);spawner=preload("res://addons/player_runtime/developer_spawn.gd").new();spawner.build(game,self,dev_spawner_body);developer_pages["Dev Spawner"]=dev_spawner_page
 	for page_title in developer_pages:
 		var nav:Variant=navigation.get(page_title);if nav!=null:nav.queue_free();navigation.erase(page_title)
 		pages.erase(page_title)
