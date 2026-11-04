@@ -6,6 +6,10 @@ const LOCK="res://reports/item_icon_refresh/lock"
 var lock_owned:=false
 func _initialize()->void:run.call_deferred()
 func finish(code:int=0)->void:
+	if code==0:
+		DirAccess.make_dir_recursive_absolute("res://reports/item_icon_refresh")
+		if not lock_owned and not await acquire_lock():quit(1);return
+		code=invoke(["--headless","--path",ProjectSettings.globalize_path("res://"),"--script","res://tools/bake_tool_drops.gd"],"res://reports/item_icon_refresh/drops.log")
 	if lock_owned:
 		DirAccess.remove_absolute(LOCK.path_join("pid"));DirAccess.remove_absolute(LOCK)
 	quit(code)
@@ -33,7 +37,7 @@ func invoke(args:PackedStringArray,log_path:String)->int:
 func run()->void:
 	var plan:=Cache.plan(Cache.snapshot())
 	var shapes_current:=Shapes.current(Shapes.snapshot())
-	if plan.ids.is_empty() and shapes_current:print("ITEM_ICONS and SHAPE_ICONS current; bake skipped");quit();return
+	if plan.ids.is_empty() and shapes_current:print("ITEM_ICONS and SHAPE_ICONS current; bake skipped");finish();return
 	if "--check-only" in OS.get_cmdline_user_args():print("ITEM_ICONS stale ",plan.ids," SHAPE_ICONS stale=",not shapes_current);quit(2);return
 	if not plan.ids.is_empty():print("ITEM_ICONS refreshing ",plan.ids," (",plan.reason,")")
 	if not shapes_current:print("SHAPE_ICONS refreshing native geometry atlas")

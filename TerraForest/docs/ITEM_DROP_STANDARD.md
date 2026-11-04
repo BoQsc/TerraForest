@@ -14,6 +14,13 @@ Required behavior, 2026-11-04:
   share that schema. A host with an extended native schema passes it to
   `material_pickups.prepare(persistence, inventory_schema)` before loading saves.
 - Existing item-specific pickup batches retain their save-section identities.
+  Their visuals must follow the current held-item model, not an obsolete proxy.
+  Pickaxe/hatchet are rebuilt by `tools/bake_tool_drops.gd` from current R11 tool
+  geometry/materials. Launch/export preflight verifies model/import/recipe and
+  output hashes independently of icon freshness. Run `tests/current_drop_models.gd`
+  when changing their models or bake path; it compares every current tool triangle
+  with the actual native pickup renderer. A generic fallback remains permitted
+  when an item has no dedicated world model.
   Other items use the shared `pickups_0` / `pickup_stacks_0` batch and an original
   code-built parcel mesh. Custom ground art is optional. New item definitions do
   not add save providers, render batches, ticking nodes or per-type physics pools.

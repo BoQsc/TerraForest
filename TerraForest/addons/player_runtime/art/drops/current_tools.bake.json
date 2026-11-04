@@ -1,0 +1,20 @@
+{
+  "outputs": {
+    "res://addons/player_runtime/art/drops/1.res": "67af9d5a4c50a771874f0af703a44a3def673e58be2faaaffec0789a91c85bbd",
+    "res://addons/player_runtime/art/drops/2.res": "f60c125b656b47b2ae00b30c1c3de42d4b1504790acd37c540c57d5f8e26aa89"
+  },
+  "schema": 1,
+  "sources": {
+    "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
+    "res://addons/characters/runtime/assets/Human.r11.glb.import": "25bb9993391ba7a4afb8225ea88a425c0f2b4d21cc01bb3c40df5193a5975439",
+    "res://addons/characters/runtime/human_view.gd": "142d29bdafd6a2bf828a89c9fafe41480e004aa67a2c4fea65c2a0381b91f1f9",
+    "res://addons/player_runtime/art/drops/current_tool.gdshader": "0a0f4928e2803f493944c2acdbe3db1eb4da351270ee67034d886eaf2b556dad",
+    "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
+    "res://tools/bake_tool_drops.gd": "5b3c2291e1c7cce66601e38fd6a4d6553d2a634c64b8c33fb2ff3dc090564dd7",
+    "res://tools/tool_drop_bake.gd": "588615838bc2b3967071ef38bb8bde9741e57a368101fd61a42877ca070ce740"
+  },
+  "triangles": {
+    "1": 376,
+    "2": 380
+  }
+}

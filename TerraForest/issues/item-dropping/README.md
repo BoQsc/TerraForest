@@ -8,6 +8,58 @@
 
 ## Required behavior and changes
 
+### Current pickaxe/hatchet models — 2026-11-04 follow-up
+
+The user reported that drops still showed initial placeholder tool shapes.
+Confirmed: `tests/bake_item_icons.gd --current-models` deliberately updated icons
+without writing pickaxe/hatchet pickup meshes. The old `1.res` / `2.res` remained
+10 KB / 5 KB primitive representatives. Drop/physics conservation tests did not
+compare them to current tool art, so the visual mismatch was missed.
+
+Both assets now use the exact current held R11 tool triangles: pickaxe 376,
+hatchet 380. One-surface batching, 35 cm normalization, item IDs and existing saves
+are retained. The shared shader preserves wood texture/normal detail and distinct
+wood/metal color, metallic and roughness parameters. No player rig is baked into
+the drop. Existing hammer, shovel and torch triangle counts already match their
+current standalone models (10,544 / 17,096 / 40,032); that count audit does not
+claim a complete visual/material comparison of every other item.
+
+`tools/bake_tool_drops.gd` is a separate headless authoring pass. Its receipt tracks
+model/import, equipment selector, recipe/shader and output SHA-256 values. Normal
+launch/export preflight checks it even when icon textures are already current.
+A forced stale-output receipt was repaired successfully in
+[the preflight log](../../reports/current_drop_refresh.log), with a passing
+[freshness recheck](../../reports/current_drop_freshness_check.log). Restart an
+already running game to replace cached meshes.
+
+Source and actual-executable/PCK geometry/material/render comparisons each pass
+15 checks: [source](../../reports/checks/20261104T024006957193Z/run.json),
+[package](../../reports/current_drop_models/packed/20261104T024348221455Z/current_drop_models/run.json).
+The same package passes [26 real G/physics-option checks](../../reports/current_drop_models/packed/20261104T024348221455Z/drop_key_standard/run.json);
+[77 physical](../../reports/checks/20261104T024249024210Z/run.json) and
+[440 universal item checks](../../reports/checks/20261104T024249022299Z/run.json)
+also pass. Export gates pass in [the export log](../../reports/current_drop_export.log).
+Installed PCK SHA-256:
+`6f7a673085ea8fe064227a6c192276a7b5adda2a733a0e8aef479f360e6bc1f5`,
+14 matching native libraries. No native rebuild or save migration.
+
+![Previous drops, current held source, and refreshed native world pickups](images/current-model-comparison.png)
+
+Actual executable/PCK, controlled studio, 1920×1080 viewport. Left: previous
+committed drop assets; centre: current held model detached from the rig; right:
+new geometry in real native pickup batches. All columns use the same normalized
+size and lighting. Camera angle creates small screen-position differences.
+Agent inspected the final comparison; player visual approval remains pending.
+
+The [initial conversion check](../../reports/checks/20261104T023809210770Z/run.json)
+is retained: forcing bundled shader resources caused broken external texture
+references. Keeping the shader as a normal resource dependency and embedding
+only copied texture images fixed it. sRGB material colors are converted to linear
+vertex data to retain the current dark leather/steel appearance.
+Asset/source hashes and inherited license qualifications are retained in
+`addons/player_runtime/art/drops/CURRENT_TOOLS_PROVENANCE.md`; no external model,
+texture or code was imported. New recipe/test/shader code is original 0BSD.
+
 ### Optional physical dropping, enabled by default
 
 **ESC → Player → Physical item drops** now persists an optional default-on global

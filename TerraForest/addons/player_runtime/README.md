@@ -65,6 +65,11 @@ Definitions live in `item_catalog.gd`, shared by inventory and pickup containers
 Legacy drops retain their save sections; the shared universal batch uses a small
 parcel for items without dedicated ground art. See the
 [required item-drop standard](../../docs/ITEM_DROP_STANDARD.md).
+Pickaxe/hatchet world meshes now follow the current held R11 tools, including
+wood/metal material detail. `tools/bake_tool_drops.gd` owns their separate
+headless bake and freshness receipt; normal launch/export preflight repairs stale
+drop outputs even when inventory icons are current. No icon atlas is rebuilt
+solely to refresh these meshes. Restart a running game to replace cached meshes.
 The editor uses the same paid inventory drop action; its separate free
 supply authoring tool remains available.
 

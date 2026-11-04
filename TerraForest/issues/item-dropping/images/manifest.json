@@ -19,5 +19,12 @@
     "sha256": "b7913c10061a452bd692b8715ef8cc0e69d4d73ccb1f1fd32ee5146f6f7836df",
     "caption": "Actual executable with physical-drop PCK b4bf1931; temporary seed-1703 woodland, 1920x1080 viewport. ESC Player shows Physical item drops enabled. Real G falling and disabled static placement were checked before this capture. Agent inspected; user appearance review pending.",
     "provenance": "Original repository runtime capture; inherited project code/asset notices remain applicable. No external image imported."
+  },
+  {
+    "file": "current-model-comparison.png",
+    "source": "reports/current_drop_models/packed/20261104T024348221455Z/current_drop_models/comparison.png",
+    "sha256": "03043ebc5c3720e1654219b48baf6fb2b967c93f82223427f1c7872f4ccf3140",
+    "caption": "Actual executable/PCK 6f7a6730, 1920x1080 controlled studio. Left: previous committed pickup assets; centre: current held R11 equipment detached from the rig and normalized; right: refreshed assets rendered by the real native pickup batches. Current tool triangles, wood/metal properties and normal detail are retained. Agent inspected; user visual approval pending.",
+    "provenance": "Original repository runtime capture using retained project assets; inherited R11 notices/qualifications remain applicable. No external image imported."
   }
 ]

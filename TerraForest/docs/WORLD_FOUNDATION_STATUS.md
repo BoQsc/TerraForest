@@ -2,6 +2,17 @@ Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
 ## Held-item G drop standard - 2026-11-04
 
+Current-model correction installed: old separate pickaxe/hatchet drop assets
+survived an icon-only refresh. They now preserve the current held tool geometry,
+wood/metal material properties and normal detail, still in one surface and the
+existing 35 cm size. Separate headless drop-bake receipts are checked at launch
+and export even when icons are current; a stale-output repair is verified.
+Source/package model comparisons each pass 15 checks; actual executable G/option
+checks 26, physical checks 77 and universal item checks 440 pass. PCK `6f7a6730`,
+14 matching native libraries. Agent inspected the old/current-held/new-world
+comparison in the [item-drop issue](../issues/item-dropping/README.md). User visual
+approval remains pending; a running game must restart to replace cached meshes.
+
 Physical-drop follow-up installed: **ESC → Player → Physical item drops** is
 optional and enabled by default. One native 64-proxy engine pool adds gravity,
 forward impulse, collision, bounce and sleeping; off preserves static placement
