@@ -1,11 +1,54 @@
 # Passive zombies and sleeper ambushes
 
-- Status: Improved / scoped checks pass; gameplay balance review pending.
+- Status: Reopened by playtest; indoor floor-selection fix verified / exact mine stall still unconfirmed.
 - Updated: 2026-11-04. Fix: native awareness, guarded waking and encounter tuning.
-- User review: Not yet playtested by the user.
+- User review: Follow-up reports awake sleepers still mostly standing inside houses/mine. Earlier response/wake changes did not establish complete behavior acceptance.
 - Symptom: Sleepers ignored a silent nearby player, rose slowly and failed to commit; ordinary zombies could disregard attacks or an obvious close threat.
 
 ## Changes
+
+### Repeated standing after waking — 2026-11-04 follow-up
+
+The normal-host wander/search path reused the outdoor admission floor probe:
+collision mask 1 (terrain), with a start four metres above the requested point.
+In both actual furnished house prefabs, every one of 17 valid room destinations
+was rejected even though collision was ready and the resident-floor probe found
+support. Accepting an unsupported goal returns native awareness to idle. This
+was missed by earlier wake-only interior checks and clear-floor pursuit fixtures.
+
+Wander/search now use a separate selector with static support mask 7 and a
+30 cm probe start above the expected floor. It recognizes building floors,
+stays below ceilings and uses the standing/crawling slope policy. The complete
+probe/body bounds, dry-floor and occupancy gates remain mandatory; native routes
+still prove reachability before movement. Ordinary outdoor admission retains
+its original terrain-only probe. All 17 room destinations now resolve to their
+occupied storey; normal-host furnished-house pursuit/contact also passes.
+
+The actual mine has a separate global gate in `demo/world.gd`: Fly mode passes
+`pursue=false` to the entire zombie host. This freezes awareness/behavior even
+after provocation. In the read-only mine fixture, all ten authored sleepers
+advanced and all ten landed attacks on foot; enabling Fly froze their bodies and
+intent, and disabling it restored attacks. That existing Fly policy was not
+changed. The user is unsure whether Fly was enabled, so it cannot yet be claimed
+as the cause of every reported mine stall.
+
+[Follow-up evidence](interior-evidence.json): furnished-floor/pursuit checks,
+normal full-world mine update and Fly transition, and the existing behavior
+regression. The first mine diagnostic teleported to the surface because it did
+not supply a fixed underground height; corrected before the mine acceptance run.
+That setup run remains in `reports/checks/20261104T211844244808Z/` and is not mine
+pursuit evidence.
+
+![Cottage interior pursuit/contact](images/interior-cottage.png)
+
+![Upper-floor house pursuit/contact](images/interior-house-c1.png)
+
+Current rendered source fixtures, actual furnished prefabs, fixed nearby target,
+Forward+ 1920×1080. Inspected current contact poses, not an AI before/after
+comparison or broad navigation approval. Trace assertions establish actual
+movement and damage. Provenance is appended to the existing image manifest.
+
+### Earlier response and waking work
 
 Sleepers check a stationary player within 2.5 m using a ray from their actual
 posed head. About 0.4 seconds of uninterrupted, ready, unobstructed sight triggers
@@ -76,6 +119,14 @@ production admission and fixture selection are unchanged. Original failed phase:
 `reports/house_sleepers/20261104T141821378613Z/admission/`.
 
 ## Remaining / resume here
+
+The exact reported mine stall remains open unless it is established to be the
+Fly pause. Return trigger: a resident standing idle during on-foot, closed-menu,
+focused play. Capture availability gates, awareness state/goal, native route and
+motion rejection, actor identity and geometry; replay that position in the
+read-only mine fixture. Moving-player, doorway/chokepoint crowding and all-world
+performance remain unqualified. Do not treat the stationary ten-body fixture or
+the floor-selector fix as universal resolution.
 
 Player review of outdoor encounters, house surprises and the ten-zombie coal-mine
 station is needed to judge difficulty and persistence. Return on feedback that

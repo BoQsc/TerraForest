@@ -12,6 +12,16 @@ Terrain foot IK, dense mine crowding and animation art approval remain separate.
 
 ## Zombie close threats and sleeper ambushes — 2026-11-04
 
+Playtest follow-up reopened standing behavior. Wander/search had reused the
+terrain-only outdoor floor probe, rejecting 17/17 valid furnished-room goals.
+The separate room-floor selector now resolves those points below ceilings;
+ordinary outdoor admission retains its original policy. Source/executable room
+checks and a real ten-sleeper mine/Fly diagnostic are linked in the issue.
+Mine residents pursued and attacked on foot; Fly was confirmed to globally
+suspend behavior. The user is unsure whether Fly was active, so the exact mine
+stall remains open. On the next on-foot reproduction, retain gate/intent/route/
+motion-rejection traces and replay that position read-only before claiming it fixed.
+
 Sleepers cautiously recognize a nearby unobstructed player, rise faster through
 their existing clearance guards, then pursue a visible target immediately.
 Ordinary zombies retain distant temperament but react promptly to close threats

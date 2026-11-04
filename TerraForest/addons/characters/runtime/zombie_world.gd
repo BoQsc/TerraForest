@@ -177,7 +177,7 @@ func _update_navigation(delta: float, available: bool) -> void:
 			if intent.is_empty():continue
 			if active and intent.state in ["wander","search"] and _roam_revision.get(id,-1)!=intent.revision:
 				_roam_revision[id]=intent.revision
-				awareness.accept_roam(id,supported_point(intent.goal))
+				awareness.accept_roam(id,supported_roam_point(intent.goal,not zombie._crawling))
 				intent=awareness.status(id)
 		if active and zombie.sleeper_active() and intent.state=="sleeping" and zombie.sleeper.phase!="sleeping":
 			awareness.provoke(id,zombie.global_position);intent=awareness.status(id)
@@ -286,15 +286,24 @@ func _retire(index: int,keep_corpse:bool=false) -> void:
 	if not keep_corpse:zombie.queue_free()
 
 func supported_point(around: Vector3,standing:bool=true) -> Vector3:
+	# Ordinary world admission still selects terrain from the original broad probe.
+	return _supported_point(around,standing,4.0,1,.85)
+
+func supported_roam_point(around:Vector3,standing:bool=true)->Vector3:
+	# Stay below a room's ceiling and recognize its actual walking floor. The
+	# native route still proves reachability, support and permitted step/slope limits.
+	return _supported_point(around,standing,.3,7,.7072 if standing else .85)
+
+func _supported_point(around:Vector3,standing:bool,probe_height:float,support_mask:int,minimum_normal:float)->Vector3:
 	if not around.is_finite() or not readiness.is_valid():
 		return Vector3.INF
-	var bounds := AABB(around - Vector3(0.6, 4, 0.6), Vector3(1.2, 9, 1.2))
+	var bounds := AABB(around - Vector3(0.6, 4, 0.6), Vector3(1.2, 4+maxf(2.,probe_height+1.), 1.2))
 	if not readiness.call(bounds):
 		return Vector3.INF
 	var space := get_world_3d().direct_space_state
-	var ray := PhysicsRayQueryParameters3D.create(around + Vector3.UP * 4, around - Vector3.UP * 4, 1)
+	var ray := PhysicsRayQueryParameters3D.create(around + Vector3.UP * probe_height, around - Vector3.UP * 4, support_mask)
 	var hit := space.intersect_ray(ray)
-	if hit.is_empty() or hit.normal.y < 0.85:
+	if hit.is_empty() or hit.normal.y < minimum_normal:
 		return Vector3.INF
 	var point: Vector3 = hit.position + Vector3.UP * 0.06
 	if water_depth.is_valid() and float(water_depth.call(point + Vector3.UP * 0.5)) > 0.0:

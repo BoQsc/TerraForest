@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-04",
+  "scope": "Room-floor selection correction; mine Fly pause confirmed but unchanged. Exact reported on-foot mine stall remains unconfirmed.",
+  "checks": {
+    "room_floor_baseline": {
+      "report": "reports/checks/20261104T212325314991Z",
+      "summary": [],
+      "runner_passed": true,
+      "driver_sha256": "7cdbad5085d0792afb4d774036af06f3dc646fd7d93a8799d9faca2fb5f6a1fd",
+      "meaning": "Diagnostic-only run, not an assertion gate: all 17 supported room destinations returned INF from the terrain-only selector while readiness was true; terrain-only rays had no floor hit."
+    },
+    "room_floor_fixed": {
+      "report": "reports/checks/20261104T212559841898Z",
+      "summary": [
+        "ZOMBIE_INTERIOR_PURSUIT done checks=19 failures=0"
+      ],
+      "runner_passed": true,
+      "driver_sha256": "ff48c2c8703137c9595b8556d98f7e0e06298eec8610995f810e7a067a8d15f6"
+    },
+    "normal_host_behavior": {
+      "report": "reports/checks/20261104T212601532790Z",
+      "summary": [
+        "ZOMBIE_BEHAVIOR checks=18 failures=0"
+      ],
+      "runner_passed": true,
+      "driver_sha256": "f532970ad1cd809d209f9753d7fc45d54da95421a47f4727de7a5c911329f742"
+    },
+    "source_furnished_rooms": {
+      "report": "reports/zombie_interior_pursuit/20261104T212756238445Z",
+      "summary": [
+        "ZOMBIE_INTERIOR_PURSUIT done checks=21 failures=0"
+      ],
+      "runner_passed": true,
+      "driver_sha256": "0560e1f743a8bd0ef8782714c2dce970730ea05923268781089ba74f255a299e"
+    },
+    "executable_furnished_rooms": {
+      "report": "reports/zombie_interior_pursuit/20261104T213032907873Z",
+      "summary": [
+        "ZOMBIE_INTERIOR_PURSUIT done checks=21 failures=0"
+      ],
+      "runner_passed": true,
+      "driver_sha256": "0560e1f743a8bd0ef8782714c2dce970730ea05923268781089ba74f255a299e",
+      "pack_sha256": "113e4c6f7e52c3ba8171a54516c01b36a45fd58bf7a90375f8d133b60a58e8b7"
+    },
+    "actual_mine_on_foot_and_fly": {
+      "report": "reports/checks/20261104T212736679551Z",
+      "summary": [
+        "ZOMBIE_MINE_PURSUIT done checks=6 failures=0"
+      ],
+      "runner_passed": true,
+      "driver_sha256": "c20472874e38d75551f223e27786d3108c7051e9c4e5a9187a82db97397fab39"
+    }
+  },
+  "mine_result": {
+    "checks": 6,
+    "failures": 0,
+    "moved": 10,
+    "attackers": 10,
+    "damage": 651.6,
+    "source_unchanged": true
+  },
+  "files": {
+    "addons/characters/runtime/zombie_world.gd": "eed0d7a432374bc08b4141e5b96b5bf3b209314410c5b7b31f531b9850b4daeb",
+    "tests/zombie_interior_pursuit.gd": "ab3381c4e04e2791d3da1161a3f55018e2ed2fd9fe18d3b1eaaf4cb71468c7ce",
+    "tests/zombie_mine_pursuit.gd": "c20472874e38d75551f223e27786d3108c7051e9c4e5a9187a82db97397fab39",
+    "tools/check_zombie_interiors.py": "70cd2338ee643f57a26bb6cb1ee13049f7722998a899133b507c5770f331417e",
+    "addons/world_runtime/startup_index.json": "5ea19203cfff43434b6d29099f9b1156aa87196f4432f0afe933e8b18ac26a84",
+    "dist/TerraForest.pck": "113e4c6f7e52c3ba8171a54516c01b36a45fd58bf7a90375f8d133b60a58e8b7"
+  },
+  "export": "Succeeded after refreshing a pre-existing stale startup dependency index for the current runtime. Existing unused Kaino WAV source temporarily excluded as before; current audition selection is empty, originals retained and marker removed.",
+  "verification_limit": "Actual mine uses an owned CoalMine_ fixture opened snapshot-readonly, ephemeral ten authored station bodies, unchanged real geometry and normal game update. Stationary solid player uses a damage-counting adapter to prevent death ending observation. It is not a moving-player/endurance or exact-user-save reproduction."
+}

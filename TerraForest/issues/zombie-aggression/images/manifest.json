@@ -26,5 +26,31 @@
     ],
     "status": "current scoped evidence; user review pending",
     "provenance": "Diagnostic capture of TerraForest; inherited character/environment asset terms preserved."
+  },
+  {
+    "file": "interior-cottage.png",
+    "source": "reports/zombie_interior_pursuit/20261104T212756238445Z/cottage_a2_awake.png",
+    "sha256": "9db362c67bb5f10bae62abb03fb301b01ce4265d197276661e88ed2b2d7e868a",
+    "build": "2026-11-04 source floor-selector fix",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "status": "current furnished-prefab evidence; different cases, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; inherited asset terms preserved."
+  },
+  {
+    "file": "interior-house-c1.png",
+    "source": "reports/zombie_interior_pursuit/20261104T212756238445Z/house_c1_awake.png",
+    "sha256": "797c468ae00c282cd59ce59279753840a84b52aed184c3cc7008df392d0cad0e",
+    "build": "2026-11-04 source floor-selector fix",
+    "renderer": "Forward+",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "status": "current furnished-prefab evidence; different cases, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; inherited asset terms preserved."
   }
 ]
