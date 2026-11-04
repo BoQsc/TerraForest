@@ -1,0 +1,31 @@
+TerraForest torch attack candidate — 2026-11-04
+SPDX-License-Identifier: CC0-1.0
+
+To the extent possible under law, the contributors dedicate the new original
+FP_Torch_Swing motion to the public domain under CC0-1.0:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Affected asset paths (relative to this directory):
+  Human.torch_attack.blend
+  Human.torch_attack.glb
+  Human.torch_attack.res
+  Human.torch_attack.json
+Review images/video/animation in docs/evidence/torch_attack depict the same work.
+
+Creator: OpenAI Codex / TerraForest contributors, original AI-assisted motion
+authored at the maintainer's request: "author new animation: simple attack
+animation using torch, when you author show me so I can accept if it's good."
+No external animation pack, motion capture, model or texture was imported.
+Editable source and generation parameters: tools/author_torch_attack.py and
+Human.torch_attack.blend. Exact parent file hash and external Blender version
+are recorded in Human.torch_attack.json. Godot converts the existing rig's
+named bone tracks; existing external FFmpeg encodes the review frames.
+
+The source is the repository's existing Human.torch.blend: its R11 rig, mesh,
+carry endpoint, finger grip, torch geometry and textures are reused within
+their existing scope. These inherited portions retain their original grants
+and provenance in addons/characters/LICENSE.txt, docs/LICENSE_INVENTORY.md and
+authoring/WOODEN_TORCH.md; they are not relicensed by the new-motion dedication.
+The .blend/.glb include the inherited rig/body for editing/conversion, while
+the .res contains animation tracks only. New generation/conversion/test code
+is separately marked 0BSD. No external tool or tool runtime is distributed.

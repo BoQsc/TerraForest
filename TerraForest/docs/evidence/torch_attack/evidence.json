@@ -1,0 +1,25 @@
+{
+  "approval": "Player visual review pending; no gameplay integration",
+  "capture": "Godot 4.7.2 Forward+; NVIDIA RTX 4050; controlled review stage; no world/save",
+  "timing": "234 deterministic frames at 30 fps: two 1x swings, then 0.5x swing",
+  "first_person": "75 degree FOV, 16:9 viewport, existing runtime Human and torch attachment",
+  "limits": "No target response, damage, fire spread, audio or gameplay acceptance; inherited body/clothing retained",
+  "sha256": {
+    "addons/characters/authoring/Human.torch_attack.blend": "6c6435cd63d9509bfbb5c03e1dd0c1a7ef2c207405fb6363858eabc920e5ae47",
+    "addons/characters/authoring/Human.torch_attack.glb": "3fdcd7314f56cd79126977db70d70c4b328d806e7a2c4c8477a56f88384577dc",
+    "addons/characters/authoring/Human.torch_attack.json": "4a9c3a29185da2ec7afd2672c9386e9c84b7bc99ef44a4da42d6f78974bec6c0",
+    "addons/characters/authoring/Human.torch_attack.LICENSE.txt": "083735c0e974343b09bcdbfd01aeda9cbe352fa6c5871616d9dd3bcf17eae504",
+    "addons/characters/authoring/Human.torch_attack.res": "6acf6ea005622eae1b25a54ada447f93dc3fcf6636a6b3a53d8a6819b330cb5b",
+    "docs/evidence/torch_attack/checks.json": "fc46ea8ef905f2bd63a74ad8f85176018d64054a0c1eb6e575bb268383d2f506",
+    "docs/evidence/torch_attack/follow-through.png": "be9ae59bd1c397203ca2fc675ee216bfd68922c811f8c7cf7dddba4ac068f995",
+    "docs/evidence/torch_attack/pullback.png": "6f38909e4e61c06eb6a5aa2fc3198bdb245f0004389f9a6007b0b7b69b947b45",
+    "docs/evidence/torch_attack/ready.png": "bf61cc70336e9cb38f4b1aed499985ada92b0238a70c0c29deeabb11b95b3820",
+    "docs/evidence/torch_attack/strike.png": "81c286277f52f5f20eda3d7bdddf3dab4d3f9fb360927d15115f64e75dd14c9f",
+    "docs/evidence/torch_attack/Torch-attack.preview.gif": "3cbe2a3ffda06252071a2f7a4f7695728d18ab8e9a7653709fb17a74b1bfc5dd",
+    "docs/evidence/torch_attack/Torch-attack.preview.mp4": "6c65f658ed25cab31d574551b6c05a8e628e19dede3fb394805f3ccb8b8a5dad",
+    "tests/torch_attack_candidate.gd": "03356cd656738ba31d706b5dc03e1f603ffa7cde9186d1343cc35b3d0b250d22",
+    "tools/author_torch_attack.py": "9efbaa41455a2bcafe794ae39a46f487543cd61f3af3e2a4c2df1ba42cd11e22",
+    "tools/import_torch_attack.gd": "2bc04a5da256782c3bb87287d5fbba31bad78d6ecaaca2572ea402dca96419c8",
+    "tools/preview_torch_attack.gd": "40aa75c16d916f4ea9a01a03435c46776a6183d2bf61d1c08efcb4a4b1b41508"
+  }
+}

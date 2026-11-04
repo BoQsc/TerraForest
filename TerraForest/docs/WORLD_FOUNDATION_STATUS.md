@@ -6793,3 +6793,13 @@ acoustics and representative large-world performance remain open there.
 The [footstep onset correction](../issues/footstep-delay/README.md) reduces the
 initial travel threshold and removes the terrain-worker playback wait; player
 listening acceptance remains pending.
+
+## Torch attack candidate — 2026-11-04
+
+A separate 1.10-second torch strike is authored for player review, with an
+editable Blender source and first-person/side preview. The 11 scoped checks
+cover 133 key/half-key poses, grip deformation, continuous joints and carry
+endpoints. [Preview, provenance and remaining review](evidence/torch_attack/README.md).
+Player visual acceptance is pending; return on acceptance or requested changes.
+Gameplay dispatch/contact integration and its runtime checks follow acceptance
+and remain unimplemented. Existing carry-hand review also remains open.
