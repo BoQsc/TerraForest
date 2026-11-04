@@ -1,8 +1,8 @@
 # Steam installation consistency
 
-- Status: Fixed for reproduced defaults/routing/logging failures; second-machine review pending.
-- Updated: 2026-11-04. Initial discovery-only fix: `cb73d62b`; follow-up is the commit introducing this record.
-- User review: Earlier behavior rejected: direct desktop launch, missing Last World in Steam, three separate logs.
+- Status: Installation verified on the second computer; game launch/reopen still unreported.
+- Updated: 2026-11-04. Initial discovery-only fix: `cb73d62b`; complete default/logging fix: `39a4c1d7`.
+- User review: 2026-11-04: "Seems alright", with a successful second-computer installer log. Earlier defaults/routing/logging behavior was rejected.
 - Symptom: The same copied checkout produced different installation results on another Windows computer.
 
 ## Images
@@ -48,12 +48,22 @@ The real Tk widgets also build with Copy log and retain the failure reason.
 Latest output stays in [the existing log](../../steam/logs/install.log); it is local
 diagnostic output, not a versioned artifact. The full Python suite passes **62 tests**, including **34 Steam regressions**.
 
+Second-computer evidence supplied by the user on 2026-11-04: a no-argument
+`pythonw` launch from `C:\WINDOWS\system32` found the direct engine in the standard
+Steam folder, selected the local account, installed two entries in one restart,
+verified both afterward (three total shortcuts), copied all ten artwork files and
+read back both desktop links as `steam://rungameid` URLs. The run reports
+`install_to_steam code=0`. Installer SHA-256:
+`1bb5b29ac0f12a7df1f9881d7ab0976747519547109e4f54aa72aae0d0ed0a27`.
+This closes the previously pending second-computer installation check. The log
+does not report launching gameplay or reopening the last world.
+
 ## Remaining / resume here
 
-The user's other computer is not accessible here. Update that checkout to the
-follow-up revision, rerun `steam/install_to_steam.pyw` with no flags, and use Copy
-log if it fails. Close second-machine qualification with both library entries,
-both desktop URLs and successful Last World launch/reopen on that computer.
+Successful game launch and Last World reopen on the second computer remain
+unreported. Return on launch feedback; close that remaining functional check with
+successful launch from both Steam/desktop entries and a confirmed last-world
+reopen. Installation itself is verified by the supplied log above.
 
 Exported builds with separate PCK/native companions still need complete deployment;
 automatic discovery alone does not deploy them. Return when shipping that package,

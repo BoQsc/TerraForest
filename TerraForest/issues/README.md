@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Steam installation consistency](steam-installation/README.md) | Defaults/routing/logging corrected; second-machine review pending | Both entries/artwork/Steam desktop links by default, one transaction/account, fresh-account support and one log with Copy log; real Shell-link/VDF fixtures and live installed-link read-back |
+| [Steam installation consistency](steam-installation/README.md) | Installation verified on second computer; launch/reopen unreported | User's no-argument run verifies both entries after restart, ten artwork files, both desktop Steam URLs and code 0; one log; user says "Seems alright" |
 | [G and universal item dropping](item-dropping/README.md) | Installed / functional checks pass; timing open | Default-on original-size tool option aligns rendering, physics, placement and pickup; compact option retained. Package 28 size / 32 input / 15 model checks, source 77 physics / 440 universal pass. Targeting p95 goal fails; visual/motion review pending |
 | [Windowed mode across stages](windowed-mode/README.md) | Installed / scoped checks pass | Persistent host/global F11; 22 source + 22 executable transition checks. Follow-up loads mode before splash: source/package windowed, fullscreen and default startup pass with zero mismatches. User desktop review pending |
 | [Footstep onset delay](footstep-delay/README.md) | Improved-partial / listening review pending | Short 0.15 m first-step trigger, 60 Hz sampling and material lookup outside playback; cadence and actual-floor checks |

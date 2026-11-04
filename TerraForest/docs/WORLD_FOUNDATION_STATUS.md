@@ -28,12 +28,18 @@ then verified that both entries and both desktop URLs survived Steam's reload
 All **62 Python tests pass**, including **34 Steam regressions**. The log folder
 contains one file; precise remaining scope is retained in the issue.
 
+Second-computer installation is now verified: the user's 2026-11-04 no-argument
+windowed run discovered standard-folder Godot from a system32 working directory,
+installed/verified both entries after one Steam restart, copied ten artwork files
+and verified both desktop Steam URLs, with result code 0. User response: "Seems
+alright". The issue records the supplied installer hash and scope of this evidence.
+
 Remaining: exported-build discovery still retains the inherited executable-only
 copy; separate PCK/native companion deployment is not implemented or validated.
-Non-Windows installation and full execution on the user's second computer remain
-unverified. Return for packaged distribution or the next second-machine run;
+Non-Windows installation and game launch/Last World reopen on the user's second
+computer remain unverified. Return for packaged distribution or launch feedback;
 close with complete companion deployment/successful launch of both entries, and
-second-machine evidence from the single log. The installed editor route is the
+confirmed Last World reopen. The installed editor route is the
 verified source-checkout path. See [installer instructions](../steam/README.md).
 
 ## Held-item G drop standard - 2026-11-04
