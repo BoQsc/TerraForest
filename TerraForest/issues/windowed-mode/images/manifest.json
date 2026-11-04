@@ -19,5 +19,19 @@
     "sha256": "c053da98e03bcba64d2d877fa89061c230bfefe0e95de354459bc5afd236353f",
     "caption": "Actual executable/PCK, isolated woodland seed 1703, ESC Graphics off after F11 and UI round trips; render viewport only. Agent inspected.",
     "provenance": "Original runtime capture of this repository; inherited project code/asset notices remain applicable. No external image imported."
+  },
+  {
+    "file": "direct-windowed-start.png",
+    "source": "reports/window_boot/20261104T012305300154Z/windowed.png",
+    "sha256": "36cad9027169417a698ba14222c382b0623a796fb2adb6e5b1d6a247ce1253d1",
+    "caption": "Actual executable with new PCK, saved windowed mode, no CLI mode flag, empty isolated catalog. Starts decorated; no wrong-mode native samples. Agent inspected.",
+    "provenance": "Original runtime capture of this repository; inherited project notices apply."
+  },
+  {
+    "file": "direct-fullscreen-start.png",
+    "source": "reports/window_boot/20261104T012305300154Z/fullscreen.png",
+    "sha256": "67f5cd88e51a4a23d8d5b6332ad3fb1b1217750963d17cec99b972cb8a59e1d5",
+    "caption": "Same executable/PCK and isolated catalog, saved fullscreen mode, no CLI mode flag. Starts fullscreen; no wrong-mode native samples. Agent inspected.",
+    "provenance": "Original runtime capture of this repository; inherited project notices apply."
   }
 ]

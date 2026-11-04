@@ -35,7 +35,14 @@ func run()->void:
 	var persisted:=settings.load(path)==OK and not bool(settings.get_value("graphics","fullscreen",true)) and DisplayServer.window_get_mode() in [DisplayServer.WINDOW_MODE_WINDOWED,DisplayServer.WINDOW_MODE_MAXIMIZED]
 	print("PASS " if persisted else "FAIL ","windowed preference survives startup policy without touching player settings")
 	if not persisted:failures+=1
+	var boot_ok:bool=settings.get_value("display","window/size/mode",-1)==Window.MODE_WINDOWED and settings.get_value("display","window/size/window_width_override",0)==1280 and settings.get_value("display","window/size/window_height_override",0)==720
+	print("PASS " if boot_ok else "FAIL ","windowed preference saves native boot mode and dimensions together")
+	if not boot_ok:failures+=1
 	Policy.set_fullscreen(root,true,true);Policy.apply(root)
 	if DisplayServer.window_get_mode()!=DisplayServer.WINDOW_MODE_FULLSCREEN:failures+=1
+	settings.load(path)
+	boot_ok=settings.get_value("display","window/size/mode",-1)==Window.MODE_FULLSCREEN and settings.get_value("display","window/size/window_width_override",0)==1920 and settings.get_value("display","window/size/window_height_override",0)==1080
+	print("PASS " if boot_ok else "FAIL ","fullscreen preference saves native boot mode and dimensions together")
+	if not boot_ok:failures+=1
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	print("WINDOW_MODES failures=",failures);quit(1 if failures else 0)

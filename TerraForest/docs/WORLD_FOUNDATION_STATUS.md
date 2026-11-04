@@ -10,6 +10,16 @@ violations across 1,515/1,464 observed frames; repeated mode cycles and ten laun
 checks pass. Source/pack fresh starts have 241/239 decorated native-window samples
 and zero undecorated samples. Export gates pass; installed PCK `b2cf4535`, 14
 matching DLLs. Agent image inspection passes; user desktop review remains.
+Follow-up: the user rejected always-windowed boot before entering fullscreen.
+Godot now reads the saved display mode before native window/splash creation,
+using `user://graphics.cfg` as its project-settings override. Native boot keys
+and runtime preference share one save; absent settings default to fullscreen.
+Source startup checks pass in windowed/fullscreen/default cases with zero
+mismatches across 576/451/414 native samples; six migration checks and graphical
+mode cycles pass. Packaged startup also passes with 598/436/400 native samples,
+zero wrong-mode samples, installed PCK `48751295` and 14 matching DLLs. Both modes
+are inspected; user desktop review remains separate. Legacy files
+migrate once; the browser launcher's headless check runs before its visible window.
 The retained first run also exposed the existing derived-cache `include_hidden`
 API error; the focused presentation fixture disables caching, leaving that
 compatibility issue open for a normal cached reproduction and correction.

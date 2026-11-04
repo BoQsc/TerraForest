@@ -18,6 +18,31 @@ static func launch_arguments()->PackedStringArray:
 static func toggle(window:Window)->void:
 	set_fullscreen(window,not fullscreen_enabled())
 
+static func _boot_values(enabled:bool)->Dictionary:
+	return {"window/size/mode":Window.MODE_FULLSCREEN if enabled else Window.MODE_WINDOWED,
+		"window/size/window_width_override":1920 if enabled else 1280,
+		"window/size/window_height_override":1080 if enabled else 720}
+
+static func save_fullscreen_preference(enabled:bool)->Error:
+	if settings_path().is_empty():return OK
+	var settings:=ConfigFile.new();settings.load(settings_path())
+	settings.set_value("graphics","fullscreen",enabled)
+	var values:=_boot_values(enabled)
+	for key:String in values:settings.set_value("display",key,values[key])
+	# Godot reads these display keys before creating the native window/splash.
+	# Keep them in the same file/write as the runtime preference.
+	return settings.save(settings_path())
+
+static func migrate_boot_settings()->Error:
+	if settings_path().is_empty():return OK
+	var settings:=ConfigFile.new()
+	if settings.load(settings_path())!=OK:return OK
+	var enabled:=bool(settings.get_value("graphics","fullscreen",true))
+	var values:=_boot_values(enabled)
+	for key:String in values:
+		if settings.get_value("display",key,-1)!=values[key]:return save_fullscreen_preference(enabled)
+	return OK
+
 static func apply(window: Window) -> void:
 	window.content_scale_size = RESOLUTION
 	window.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
@@ -51,8 +76,7 @@ static func set_fullscreen(window:Window,enabled:bool,persist:bool=true)->void:
 				window.position=usable.position+(usable.size-window.size)/2
 	restore_vsync()
 	if persist and not settings_path().is_empty():
-		var settings:=ConfigFile.new();settings.load(settings_path())
-		settings.set_value("graphics","fullscreen",enabled);settings.save(settings_path())
+		save_fullscreen_preference(enabled)
 
 static func restore_vsync() -> void:
 	# Focus returns from embedded dialogs too. Reapplying an unchanged mode can

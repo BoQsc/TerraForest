@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Windowed mode across stages](windowed-mode/README.md) | Installed / scoped checks pass | Persistent window host, global F11 and neutral boot/launch paths; 22 source + 22 actual-executable assertions, zero mode violations across 2,979 transition frames, decorated fresh starts. User desktop review pending |
+| [Windowed mode across stages](windowed-mode/README.md) | Installed / scoped checks pass | Persistent host/global F11; 22 source + 22 executable transition checks. Follow-up loads mode before splash: source/package windowed, fullscreen and default startup pass with zero mismatches. User desktop review pending |
 | [Footstep onset delay](footstep-delay/README.md) | Improved-partial / listening review pending | Short 0.15 m first-step trigger, 60 Hz sampling and material lookup outside playback; cadence and actual-floor checks |
 | [Breakable room-light objects](house-lights/README.md) | Installed / scoped checks | Three GLB props, GPU flames, native four-light pool and 203 room placements; packaged salvage/destruction/reload and old-save compatibility pass. Art acceptance and broader route/performance coverage remain |
 | [Vehicles in garages and warehouses](building-parking/README.md) | Installed / scoped checks | Native admission, player aisle/entry/exit, drive-out and packaged generation/fresh reopening pass; broader street/NPC/endurance and visual review remain |

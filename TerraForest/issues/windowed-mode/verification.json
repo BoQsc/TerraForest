@@ -186,5 +186,286 @@
   "source_checks": 22,
   "package_samples": 1464,
   "package_checks": 22,
-  "user_review": "Pending"
+  "user_review": "Pending",
+  "direct_mode_startup_followup": {
+    "runs": [
+      {
+        "pack": false,
+        "results": [
+          {
+            "label": "windowed",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012025479140Z\\windowed.log"
+            ],
+            "samples": 576,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.3914,
+              "caption": true,
+              "rect": [
+                311,
+                117,
+                1609,
+                884
+              ]
+            },
+            "last_observation": {
+              "seconds": 3.9889,
+              "caption": true,
+              "rect": [
+                311,
+                117,
+                1609,
+                884
+              ]
+            }
+          },
+          {
+            "label": "fullscreen",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012025479140Z\\fullscreen.log"
+            ],
+            "samples": 451,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.3862,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            },
+            "last_observation": {
+              "seconds": 3.2192,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            }
+          },
+          {
+            "label": "default",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012025479140Z\\default.log"
+            ],
+            "samples": 414,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.3177,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            },
+            "last_observation": {
+              "seconds": 3.1277,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            }
+          }
+        ],
+        "appdata": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012025479140Z\\appdata",
+        "exe_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+        "detailed_report": "reports/window_boot/20261104T012025479140Z/run.json"
+      },
+      {
+        "pack": true,
+        "results": [
+          {
+            "label": "windowed",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--main-pack",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012305300154Z\\windowed.log"
+            ],
+            "samples": 598,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.456,
+              "caption": true,
+              "rect": [
+                311,
+                117,
+                1609,
+                884
+              ]
+            },
+            "last_observation": {
+              "seconds": 4.3127,
+              "caption": true,
+              "rect": [
+                311,
+                117,
+                1609,
+                884
+              ]
+            }
+          },
+          {
+            "label": "fullscreen",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--main-pack",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012305300154Z\\fullscreen.log"
+            ],
+            "samples": 436,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.4085,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            },
+            "last_observation": {
+              "seconds": 3.1526,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            }
+          },
+          {
+            "label": "default",
+            "command": [
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\TerraForest.exe",
+              "--path",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+              "--main-pack",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\dist\\TerraForest.pck",
+              "--max-fps",
+              "60",
+              "--quit-after",
+              "120",
+              "--log-file",
+              "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012305300154Z\\default.log"
+            ],
+            "samples": 400,
+            "mismatches": 0,
+            "passed": true,
+            "errors": [],
+            "exit_code": 0,
+            "first_observation": {
+              "seconds": 0.3652,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            },
+            "last_observation": {
+              "seconds": 3.0764,
+              "caption": false,
+              "rect": [
+                0,
+                0,
+                1920,
+                1082
+              ]
+            }
+          }
+        ],
+        "appdata": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest\\reports\\window_boot\\20261104T012305300154Z\\appdata",
+        "exe_sha256": "981c1a194797a3ebb3153b5e5ece7bcfc6573e874f4cd6250ed120d309b511a5",
+        "pack_sha256": "487512951ea5989cfa9838722f8409da0630d278307a8396992449e05e84d369",
+        "detailed_report": "reports/window_boot/20261104T012305300154Z/run.json"
+      }
+    ],
+    "migration_checks": "BOOT_SETTINGS checks=6 failures=0",
+    "cycles": "WINDOW_MODES failures=0; both saved boot modes/dimensions checked",
+    "pack_sha256": "487512951ea5989cfa9838722f8409da0630d278307a8396992449e05e84d369",
+    "supersedes": "Always-windowed boot of c69f93ff; earlier evidence retained",
+    "native_sha256": {
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_debug.x86_64.dll": "ab8193d5921a0fd9ca784ae5a686df93247ffc3b8d31aac8ec59fa2ee02d6931",
+      "addons\\player_runtime\\bin\\player_runtime.windows.template_release.x86_64.dll": "eaf11c13b70762f76fedb594f0b79f546e546e3c0228f774cd732bd81b827672",
+      "addons\\structures\\bin\\structures.windows.template_debug.x86_64.dll": "2c67bca4be463346457e5bc7ed5bcb71edcf86dd565a5966cd21bf2f086f9c54",
+      "addons\\structures\\bin\\structures.windows.template_release.x86_64.dll": "184e9a14ae9efb49c53282af43b4c9b41563ce57d7f47cf85226e3df1953e39e",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_debug.x86_64.dll": "d03874ab5eba4dabd547896fc5aea58bab919e8e03829ae4ec8d3dc5909ad40b",
+      "addons\\vegetation_runtime\\bin\\vegetation_runtime.windows.template_release.x86_64.dll": "fa17879ba50dfa6748aac5ce7d983ef0692d8054b78cfb7bc458fc6e8f9d1fb4",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_debug.x86_64.dll": "2f225ca521c5f37ac380b11e305a7ede25498d7b47eee5385bba44ced94dfd7f",
+      "addons\\vehicle_runtime\\bin\\vehicle_runtime.windows.template_release.x86_64.dll": "a9b2e381711e833d6b501d0132d810f21d7f8326bf2c4ed2cb7ee4374821e5db",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.template_release.x86_64.dll": "03a07793225c1789a748e2e5f8864e77d55b92cb378023c9e4d9ba33174db65a",
+      "addons\\volumetric_terrain\\bin\\terrain_core.windows.x86_64.dll": "7e2f26c2bf2fcabbddcba236192203ce3e8a6da794b1cf06b17d76685da2a1ee",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_debug.x86_64.dll": "15f500003213a9daedd6c608aad36166e0d4c386ceddac1458ee4258b13a969b",
+      "addons\\volumetric_water\\bin\\volumetric_water.windows.template_release.x86_64.dll": "a6fda6ae09382280c687e2a20a9856e49477399f08e6ebc9d74c6068cf9fcbb1",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_debug.x86_64.dll": "335a2623649f714f2884760b775883e34a9be0bd31d0aa497fbff7702c8cb4b6",
+      "addons\\world_runtime\\bin\\world_runtime.windows.template_release.x86_64.dll": "d6140f83f6aaf6002011a392297181a42b43fab7ebccea9acd9b33e97c294da9"
+    }
+  }
 }

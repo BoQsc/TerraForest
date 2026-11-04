@@ -11,6 +11,7 @@ var last_error:=""
 var stage_timings:Dictionary={}
 func _enter_tree()->void:
 	# The host exists before browser, loading, generation and gameplay scenes.
+	Presentation.migrate_boot_settings()
 	Presentation.apply(get_window())
 func _ready()->void:
 	get_tree().scene_changed.connect(_restore_presentation)

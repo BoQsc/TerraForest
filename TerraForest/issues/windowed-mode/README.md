@@ -10,11 +10,35 @@ The persistent `WorldSession` host now applies the shared preference before the
 initial scene, after scene changes and on focus return. It handles F11 before
 scene input, including generation/loading and embedded dialogs. Graphics choices
 persist even in temporary worlds; explicitly non-persisted API choices survive
-scene changes for the current process. The boot window is decorated 1280x720,
-so saved windowed launches do not begin with a fullscreen splash. Browser, normal
+scene changes for the current process. Godot now reads saved display keys from
+`user://graphics.cfg` before window/splash creation: fullscreen 1920x1080 or
+decorated windowed 1280x720. No preference defaults to fullscreen. Browser, normal
 Python/desktop launchers and world/photograph/generation command construction no
 longer unconditionally force fullscreen. Fullscreen still defaults on when no
 preference exists. Already-windowed geometry and minimized windows are preserved.
+
+The first fix (`c69f93ff`) always started the splash windowed and applied
+fullscreen afterwards. The user rejected that intermediate transition on
+2026-11-04. The follow-up uses Godot's supported early project-settings override,
+saving native boot keys and the runtime choice in one file/write. Direct EXE
+and Steam launches therefore need no wrapper. Older graphics-only files acquire
+the boot keys once; the browser launcher's headless check migrates before the
+visible window. A direct legacy-file launch can correct once during migration.
+The current installation has been migrated without changing the selected mode.
+
+Fresh source startup checks pass for windowed (576 native samples), fullscreen
+(451) and no preference (414), with zero mismatches. Settings migration and
+preservation pass six headless assertions; repeated graphical mode checks pass
+including native boot dimensions. Source evidence:
+[startup run](../../reports/window_boot/20261104T012025479140Z/run.json).
+The rebuilt package also passes windowed/fullscreen/default startup with
+598/436/400 native samples and zero mismatches. Tests use isolated APPDATA and
+save preferences through the real policy, leaving player settings untouched.
+[Packaged startup run](../../reports/window_boot/20261104T012305300154Z/run.json).
+Installed PCK: `487512951ea5989cfa9838722f8409da0630d278307a8396992449e05e84d369`;
+all 14 native DLLs match. Required export gates pass. New code and test tools are
+original AI-assisted work for this follow-up, under 0BSD, with no external imports.
+The source/package stage-transition baseline below remains historical evidence.
 
 - `tests/window_modes.gd`: repeated fullscreen/windowed cycles, same native handle,
   saved and session-only choices, and idempotent application pass.
@@ -43,6 +67,17 @@ preference exists. Already-windowed geometry and minimized windows are preserved
   code is 0BSD. No external source, dependency or asset was imported.
 
 ## Images
+
+![Direct windowed start](images/direct-windowed-start.png)
+
+![Direct fullscreen start](images/direct-fullscreen-start.png)
+
+Follow-up, actual executable with rebuilt PCK and isolated empty save catalog.
+Both start in the chosen mode without CLI mode flags. Captures are taken after
+1.5 seconds of visible native-window sampling; all earlier samples also match.
+The windowed image is still an early black surface with native controls; the
+fullscreen image has drawn the browser. These are different rendering stages,
+and qualify the window mode only. Agent inspected; user desktop review pending.
 
 ![Fresh packaged launch with native window controls](images/packaged-browser-native.png)
 
@@ -81,6 +116,10 @@ Turn Fullscreen off in ESC > Graphics, then save/return, open another world,
 generate/cancel, or restart via `Worlds.cmd`/the main executable. The browser,
 loading screens and gameplay must remain decorated/windowed. F11 must switch once
 per press on each stage, and the next launch must retain the selection.
+
+Also turn Fullscreen on and restart: its first window/splash must already be
+fullscreen. `python tools/check_window_boot.py` and the `--pack` variant check
+both settings and the no-preference default with isolated APPDATA.
 
 For isolated checks run `python tools/run_godot_check.py windowed_stages --timeout
 240 --require "WINDOWED_STAGES checks=22 failures=0"`. The test uses a unique
