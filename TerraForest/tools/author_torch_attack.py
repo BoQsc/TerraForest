@@ -25,8 +25,8 @@ if idle.slots:
 scene.frame_set(0)
 bpy.context.view_layer.update()
 ready = {b.name: b.matrix_basis.copy() for b in rig.pose.bones}
+ready_global = {b.name: b.matrix.copy() for b in rig.pose.bones}
 grip = rig.pose.bones['Weapon_Axe'].matrix.inverted() @ rig.pose.bones['RightHand'].matrix
-left = rig.pose.bones['LeftHand'].matrix.copy()
 for obj in bpy.data.objects:
     obj.animation_data_clear()
     if obj.type == 'MESH' and obj.data.shape_keys:
@@ -39,71 +39,74 @@ for action in list(bpy.data.actions):
 for bone in rig.pose.bones:
     bone.matrix_basis = Matrix.Identity(4)
 bpy.context.view_layer.update()
-rest = {b.name: b.matrix.copy() for b in rig.pose.bones}
-previous_pole = None
-
-
-def orient(name, head, direction, reference):
-    q = reference.to_quaternion()
+def aim_from_ready(name, head, direction, body_delta):
+    # Preserve the fitted carry's bone roll. The rejected solver replaced the
+    # upper-arm X axis with its elbow hinge and twisted the sleeve at impact.
+    q = (body_delta @ ready_global[name]).to_quaternion()
     q = (q @ Vector((0, 1, 0))).rotation_difference(direction.normalized()) @ q
     rig.pose.bones[name].matrix = Matrix.LocRotScale(head, q, Vector((1, 1, 1)))
     bpy.context.view_layer.update()
+    return q
 
 
-def arm(side, target):
-    global previous_pole
-    sign = 1 if side == 'Left' else -1
-    shoulder = rig.pose.bones[side + 'Shoulder']
-    orient(side + 'Shoulder', shoulder.head.copy(), Vector((sign * .14, -.05, -.005)), rest[side + 'Shoulder'])
-    origin = rig.pose.bones[side + 'Arm'].head.copy()
-    delta = target.translation - origin
+def arm(target, body_delta, flex, pole_drop):
+    origin = rig.pose.bones['RightArm'].head.copy()
+    delta = target - origin
     distance = delta.length
-    a, b = [rig.data.bones[side + part].length for part in ['Arm', 'ForeArm']]
+    a, b = [rig.data.bones['Right' + part].length for part in ['Arm', 'ForeArm']]
     assert abs(a - b) + .001 < distance < a + b - .001, (scene.frame_current, distance, a + b)
     axis = delta.normalized()
     along = (a * a - b * b + distance * distance) / (2 * distance)
-    preferred = target.translation - (target.to_quaternion() @ Vector((0, 1, 0))) * b
-    pole = Vector((sign * .42, -.05, 1.23)).lerp(preferred, .90) - origin
+    # A low, outward elbow target is independent of the torch orientation.
+    # Orient the wrist from the resulting forearm, instead of lifting the elbow
+    # to satisfy an independently specified rigid tool angle.
+    preferred = ready_global['RightForeArm'].translation + Vector((-.015 * pole_drop, -.015 * pole_drop, -.06 * pole_drop))
+    pole = body_delta @ preferred - origin
     pole = (pole - axis * pole.dot(axis)).normalized()
-    # Near a straight wrist, its preferred elbow plane can turn rapidly.
-    # Transport the preceding bend plane and bound its orbit; bone lengths,
-    # hand target and fitted grip remain exact at every authored key.
-    if previous_pole is not None:
-        carried = (previous_pole - axis * previous_pole.dot(axis)).normalized()
-        turn = carried.angle(pole)
-        if turn > .20:
-            pole = carried.slerp(pole, .20 / turn).normalized()
-    previous_pole = pole.copy()
     elbow = origin + axis * along + pole * math.sqrt(max(0, a * a - along * along))
-    width = target.to_quaternion() @ Vector((1, 0, 0))
-    hinge = (elbow - origin).cross(target.translation - elbow).normalized()
-    if side == 'Left':
-        hinge = -hinge
-    for name, head, direction in [(side + 'Arm', origin, elbow - origin), (side + 'ForeArm', elbow, target.translation - elbow)]:
-        axis = direction.normalized()
-        across = (width - axis * width.dot(axis)).normalized()
-        if name == side + 'Arm':
-            across = hinge
-        q = Matrix((across, axis, across.cross(axis))).transposed().to_quaternion()
-        rig.pose.bones[name].matrix = Matrix.LocRotScale(head, q, Vector((1, 1, 1)))
-        bpy.context.view_layer.update()
-    rig.pose.bones[side + 'Hand'].matrix = target
+    aim_from_ready('RightArm', origin, elbow - origin, body_delta)
+    forearm_q = aim_from_ready('RightForeArm', elbow, target - elbow, body_delta)
+    hand_relative = ready_global['RightForeArm'].to_quaternion().inverted() @ ready_global['RightHand'].to_quaternion()
+    hand_q = forearm_q @ hand_relative @ Quaternion((0, 0, 1), -math.radians(flex))
+    hand = Matrix.LocRotScale(target, hand_q, Vector((1, 1, 1)))
+    rig.pose.bones['RightHand'].matrix = hand
+    bpy.context.view_layer.update()
+    tool = hand @ grip.inverted()
+    rig.pose.bones['Weapon_Axe'].matrix = tool
     bpy.context.view_layer.update()
     return {'reach_fraction': distance / (a + b),
-            'wrist_bend': math.degrees((target.translation - elbow).angle(target.to_quaternion() @ Vector((0, 1, 0))))}
+            'wrist_bend': math.degrees((target - elbow).angle(hand_q @ Vector((0, 1, 0)))),
+            'elbow': list(elbow), 'shoulder': list(origin)}, tool
 
 
 # Armature space: -X is player right, -Y is forward, +Z is up.
+# Offsets from the fitted carry wrist, flex, torso yaw/pitch and elbow drop.
+# Continuous Hermite tangents carry velocity through the contact pose.
 # Frame 26 is a proposed visual contact pose, not a gameplay damage event.
 keys = [
-    (0, (-.29, -.43, 1.37), 9, -7),
-    (8, (-.31, -.39, 1.39), -2, -9),
-    (15, (-.32, -.37, 1.42), -12, -10),
-    (26, (-.15, -.49, 1.40), 22, 20),
-    (32, (-.10, -.46, 1.36), 35, 25),
-    (42, (-.21, -.42, 1.36), 15, 5),
-    (66, (-.29, -.43, 1.37), 9, -7),
+    (0, (0, 0, 0), 0, 0, 0, 0),
+    (12, (.045, .015, .008), -5, -3, -.5, .1),
+    (18, (.095, .005, .02), -8, -5, -1, .15),
+    (26, (.14, -.075, -.065), 18, 4, 1.5, .8),
+    (33, (.18, -.045, -.105), 24, 6, 2, 1),
+    (46, (.07, -.005, -.02), 8, 2, .5, .4),
+    (66, (0, 0, 0), 0, 0, 0, 0),
 ]
+
+
+def trajectory(frame):
+    values = [(*row[1], *row[2:]) for row in keys]
+    i = next(i for i in range(len(keys) - 1) if keys[i][0] <= frame <= keys[i + 1][0])
+    a, b = keys[i][0], keys[i + 1][0]
+    def tangent(j):
+        if j in [0, len(keys) - 1]:
+            return [0] * len(values[j])
+        return [(b-a) / (keys[j + 1][0] - keys[j - 1][0]) for a,b in zip(values[j-1],values[j+1])]
+    t = (frame - a) / (b - a)
+    before, after = tangent(i), tangent(i+1)
+    return [(2*t**3 - 3*t*t + 1)*x + (t**3 - 2*t*t + t)*(b-a)*dx
+            + (-2*t**3 + 3*t*t)*y + (t**3 - t*t)*(b-a)*dy
+            for x,y,dx,dy in zip(values[i],values[i+1],before,after)]
 action = bpy.data.actions.new('FP_Torch_Swing')
 action.use_fake_user = True
 rig.animation_data_create()
@@ -116,18 +119,20 @@ for frame in range(67):
         bone.rotation_mode = 'QUATERNION'
         bone.matrix_basis = ready[bone.name]
     bpy.context.view_layer.update()
-    start, end = next((a, b) for a, b in zip(keys, keys[1:]) if a[0] <= frame <= b[0])
-    t = (frame - start[0]) / (end[0] - start[0])
-    t = t * t * (3 - 2 * t)
-    at = Vector(start[1]).lerp(Vector(end[1]), t)
-    pitch, roll = [math.radians(start[i] + (end[i] - start[i]) * t) for i in [2, 3]]
-    q = Quaternion((0, 1, 0), roll) @ Quaternion((1, 0, 0), pitch)
-    tool = Matrix.LocRotScale(at, q, Vector((1, 1, 1)))
-    rig.pose.bones['Weapon_Axe'].matrix = tool
+    value = trajectory(frame)
+    at = Vector(value[:3]);flex, yaw, pitch, drop = value[3:]
+    for name, weight in [('Spine1', .4), ('Spine2', .6)]:
+        bone = rig.pose.bones[name];matrix = bone.matrix.copy()
+        turn = Quaternion((0, 0, 1), math.radians(yaw*weight)) @ Quaternion((1, 0, 0), math.radians(pitch*weight))
+        bone.matrix = Matrix.LocRotScale(matrix.translation, turn @ matrix.to_quaternion(), Vector((1, 1, 1)))
+        bpy.context.view_layer.update()
+    body_delta = rig.pose.bones['RightShoulder'].matrix @ ready_global['RightShoulder'].inverted()
+    # A small free-arm counter movement follows the torso and returns to carry.
+    rig.pose.bones['LeftArm'].rotation_quaternion = ready['LeftArm'].to_quaternion() @ Quaternion((1, 0, 0), math.radians(-yaw*.45))
     bpy.context.view_layer.update()
-    right = arm('Right', tool @ grip)
-    # The free hand stays in its existing relaxed carry pose.
-    samples.append({'frame': frame, 'Right': right, 'tool_origin': list(at),
+    target = body_delta @ (ready_global['RightHand'].translation + at)
+    right, tool = arm(target, body_delta, flex, drop)
+    samples.append({'frame': frame, 'Right': right, 'tool_origin': list(tool.translation),
                     'crown': list(tool @ Vector((0, 0, .47)))})
     for bone in rig.pose.bones:
         if bone.name in previous and bone.rotation_quaternion.dot(previous[bone.name]) < 0:
@@ -159,11 +164,12 @@ bpy.ops.export_scene.gltf(filepath=str(OUT / 'Human.torch_attack.glb'), export_f
 bpy.context.preferences.filepaths.save_version = 0
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT / 'Human.torch_attack.blend'), compress=True)
 metadata = {'status': 'Candidate; player visual review required before gameplay integration',
+            'revision': 2,
             'creator': 'TerraForest original AI-assisted motion authoring with OpenAI Codex',
             'license': 'CC0-1.0 for new motion; inherited R11 rig/mesh and existing torch notices retained',
             'source': source.relative_to(ROOT).as_posix(), 'source_sha256': source_hash,
             'tool': 'Blender ' + bpy.app.version_string,
-            'prompt': 'Author a simple torch attack animation and show it for acceptance.',
+            'prompt': 'Fix rejected torch attack: shoulder/elbow deformation, first-person bulge, weak strike, frozen body and stop-start timing. Show revision for acceptance.',
             'external_motion': None, 'clip': action.name, 'fps': 60, 'frames': [0, 66],
             'seconds': 1.1, 'proposed_contact_frame': 26,
             'files': ['Human.torch_attack.blend', 'Human.torch_attack.glb', 'Human.torch_attack.json', 'Human.torch_attack.res'],

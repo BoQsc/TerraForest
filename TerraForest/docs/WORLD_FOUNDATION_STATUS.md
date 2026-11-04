@@ -6807,9 +6807,12 @@ listening acceptance remains pending.
 ## Torch attack candidate — 2026-11-04
 
 A separate 1.10-second torch strike is authored for player review, with an
-editable Blender source and first-person/side preview. The 11 scoped checks
-cover 133 key/half-key poses, grip deformation, continuous joints and carry
-endpoints. [Preview, provenance and remaining review](evidence/torch_attack/README.md).
+editable Blender source and first-person/side preview. Candidate 01 was rejected
+for arm deformation and weak motion. Revision 02 keeps the elbow low, preserves
+arm roll, and adds continuous strike timing and torso/free-arm support. All 15
+scoped checks pass across 133 poses, including actual shoulder/sleeve skin; the
+rejected baseline fails four expanded checks. [Revised preview and evidence](evidence/torch_attack/revision02/README.md);
+[issue, comparison and remaining review](../issues/torch-attack-motion/README.md).
 Player visual acceptance is pending; return on acceptance or requested changes.
 Gameplay dispatch/contact integration and its runtime checks follow acceptance
 and remain unimplemented. Existing carry-hand review also remains open.

@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Torch attack arm deformation and motion](torch-attack-motion/README.md) | Improved-partial / revision 02 review pending | Lower elbow, preserved arm roll, torso support and continuous strike timing; 15 checks pass including actual shoulder skin, rejected first preview preserved |
 | [Zombie walking resets](zombie-gait-continuity/README.md) | Fixed for reproduced cases / player review pending | Shared walk/alert foot phase and brief waypoint-pause pose retention; fast pursuit, skin planting and combat checks recorded |
 | [Passive zombies and sleeper ambushes](zombie-aggression/README.md) | Improved / gameplay review pending | Occluded close caution, faster guarded rise, immediate visible targeting and stronger retaliation; source, physical wake and generated-house checks recorded |
 | [Steam installation consistency](steam-installation/README.md) | Artwork and Browse Local Files UI checks pending; entry/link checks pass | Latest remote artwork log still runs old code; fix delivery identified. Browse Local Files does nothing: plain StartDir repair now matches Steam's folder picker; actual menu confirmation pending |

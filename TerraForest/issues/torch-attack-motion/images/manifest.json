@@ -1,0 +1,43 @@
+{
+  "caption": "Rejected 01 left, revision 02 right; rows 0.233s pullback, 0.433s contact, 0.533s follow-through. Same controlled Godot stage/cameras; each source includes first-person and side/front views. No world/save. Composed without changing source pixels except uniform resize.",
+  "sources": [
+    {
+      "path": "docs/evidence/torch_attack/pullback.png",
+      "sha256": "6f38909e4e61c06eb6a5aa2fc3198bdb245f0004389f9a6007b0b7b69b947b45",
+      "column": "Rejected 01",
+      "row": 1
+    },
+    {
+      "path": "docs/evidence/torch_attack/revision02/pullback.png",
+      "sha256": "819862d52a2ea26549fbf4835cb1611fcdd66ed3efa930f5b92bbf214f179ec9",
+      "column": "Revision 02",
+      "row": 1
+    },
+    {
+      "path": "docs/evidence/torch_attack/strike.png",
+      "sha256": "81c286277f52f5f20eda3d7bdddf3dab4d3f9fb360927d15115f64e75dd14c9f",
+      "column": "Rejected 01",
+      "row": 2
+    },
+    {
+      "path": "docs/evidence/torch_attack/revision02/strike.png",
+      "sha256": "62e7eec268cf473a782af2669dc982b7dcd513bc04ece6d2811afa109570714f",
+      "column": "Revision 02",
+      "row": 2
+    },
+    {
+      "path": "docs/evidence/torch_attack/follow-through.png",
+      "sha256": "be9ae59bd1c397203ca2fc675ee216bfd68922c811f8c7cf7dddba4ac068f995",
+      "column": "Rejected 01",
+      "row": 3
+    },
+    {
+      "path": "docs/evidence/torch_attack/revision02/follow-through.png",
+      "sha256": "7a7537e6372f5cd687149b0de894f9023f1533cb683a2a6b0a759e7c08f75756",
+      "column": "Revision 02",
+      "row": 3
+    }
+  ],
+  "output_sha256": "89cacc379c667c98862b7da2da96d5860a9cb6ff613820ebfb3ed270a3517258",
+  "license": "CC0-1.0 for new review composition; existing character/torch provenance retained in authoring/Human.torch_attack.LICENSE.txt"
+}

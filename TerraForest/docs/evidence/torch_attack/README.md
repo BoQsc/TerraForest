@@ -1,7 +1,11 @@
-# Torch attack candidate — 2026-11-04
+# Torch attack candidate 01 — rejected, 2026-11-04
 
-Status: authored and checked; player visual review pending. Gameplay integration
-waits for acceptance of this specific preview. This is a simple 1.10-second
+Status: rejected after player review. This first preview and its original scoped
+check results are preserved; they missed the shoulder deformation and motion
+quality problems. See [revision 02](revision02/README.md) and the
+[motion issue](../../../issues/torch-attack-motion/README.md) for the current work.
+The exact candidate source is retained in commit `b7acbe0c`; the authoring files
+at the working paths now contain the revision. This first draft is a 1.10-second
 right-hand diagonal strike: pullback to 0.25 s, strike to 0.433 s, follow-through
 to 0.533 s, then recovery to the existing carry pose. Frame 26 is a proposed
 visual contact pose, with no embedded gameplay event.
@@ -42,8 +46,8 @@ the scoped evidence. Early local drafts were adjusted after first-person
 cropping, a high elbow and a rapid elbow-plane turn were observed. Bounding
 the bend-plane orbit resolved the turn while retaining the fitted grip.
 
-Required next step: player acceptance or requested visual changes to this
-preview. After acceptance, separately integrate attack dispatch/contact timing
+Required next step: review the revised preview. After acceptance, separately
+integrate attack dispatch/contact timing
 and verify cancellation, equipment changes and gameplay behavior. Those checks
 are not claimed here. No player save, native library or game package is changed.
 

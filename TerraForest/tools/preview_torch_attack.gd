@@ -19,7 +19,7 @@ func run()->void:
 	side.camera.position=Vector3(1.55,1.65,-1.75);side.camera.fov=40;side.camera.look_at(Vector3(.10,1.43,-.30))
 	var canvas:=SubViewport.new();canvas.size=Vector2i(1600,640);canvas.render_target_update_mode=SubViewport.UPDATE_ALWAYS;root.add_child(canvas)
 	var bg:=ColorRect.new();bg.size=canvas.size;bg.color=Color("1e272d");canvas.add_child(bg)
-	label(canvas,"TORCH ATTACK / CANDIDATE 01",Vector2(24,12),26,Color("edc798"))
+	label(canvas,"TORCH ATTACK / REVISION 02",Vector2(24,12),26,Color("edc798"))
 	label(canvas,"First person",Vector2(690,19),20)
 	label(canvas,"Body mechanics",Vector2(1010,19),20)
 	var note:=label(canvas,"",Vector2(24,599),21)
