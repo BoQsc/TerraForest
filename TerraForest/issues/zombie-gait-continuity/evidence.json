@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-04",
+  "checks": {
+    "baseline": {
+      "report": "reports/checks/20261104T143345394276Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=10 failures=3"
+      ],
+      "passed": false,
+      "driver_sha256": "4e0e6ae4317a4e336f4f4f68d51db0a939836628243ba74e44c5c14001d78634"
+    },
+    "initial_fix": {
+      "report": "reports/checks/20261104T143445013385Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=10 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "4e0e6ae4317a4e336f4f4f68d51db0a939836628243ba74e44c5c14001d78634"
+    },
+    "fast_extended_headless": {
+      "report": "reports/checks/20261104T143554786014Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=15 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "316a81e2a95ff9b455b25090afa5b021c6613718faf34c229abfb6cc2d387c64"
+    },
+    "rendered_initial_long_stop_assertion": {
+      "report": "reports/zombie_gait_continuity/20261104T143644492990Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=15 failures=1"
+      ],
+      "passed": false,
+      "driver_sha256": "316a81e2a95ff9b455b25090afa5b021c6613718faf34c229abfb6cc2d387c64"
+    },
+    "source_rendered": {
+      "report": "reports/zombie_gait_continuity/20261104T143743781024Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=15 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "3a286361d587bb44608668d178e112811385ef278b514be9064f06af4b2609fc"
+    },
+    "executable_rendered": {
+      "report": "reports/zombie_gait_continuity/20261104T144009256420Z",
+      "summary": [
+        "ZOMBIE_GAIT_CONTINUITY checks=15 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "3a286361d587bb44608668d178e112811385ef278b514be9064f06af4b2609fc",
+      "pack_sha256": "f2002ee90156fca18205bc1af63e6c5d11d4c8d0e3ca7aa242f8a2fd5ccbdccd"
+    },
+    "existing_gait_regression": {
+      "report": "reports/checks/20261104T143655263932Z",
+      "summary": [
+        "ZOMBIE_DRAG_WALK checks=24 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "8f3417e5678b069fe88ba09f50a9c7b92ddb831c325347d83d46f5580a353584"
+    },
+    "aggression_regression": {
+      "report": "reports/zombie_aggression/20261104T143754444228Z",
+      "summary": [
+        "ZOMBIE_AGGRESSION checks=43 failures=0"
+      ],
+      "passed": true,
+      "driver_sha256": "5794db5b2d68d7f4f64bf94813c31057404b6d243168e0b16a8c448c37aa0b54"
+    }
+  },
+  "file_sha256": {
+    "addons/characters/runtime/zombie.gd": "64f1857bd326307fbbc268d8436fd768fae0f1e643b0af3661a035ccb1ae30b8",
+    "tests/zombie_gait_continuity.gd": "3a286361d587bb44608668d178e112811385ef278b514be9064f06af4b2609fc",
+    "tools/check_zombie_gait.py": "becddc6a102840436917c402babc8040346053fafce1dad1ccd5a409215a242d",
+    "tests/zombie_drag_walk.gd": "8f3417e5678b069fe88ba09f50a9c7b92ddb831c325347d83d46f5580a353584",
+    "dist/TerraForest.pck": "f2002ee90156fca18205bc1af63e6c5d11d4c8d0e3ca7aa242f8a2fd5ccbdccd"
+  },
+  "change": "Playback phase and brief route-stop handling only; animation assets, AI tuning and native libraries unchanged.",
+  "baseline": "Asset loop seam errors: relaxed 0.00000016924466, alert 0.00000011926748. Same-clip playback passed; bidirectional walk/alert phase changes failed. Real moving-target pursuit recorded two walk-to-idle resets.",
+  "remaining": "Player review in reported world; dense crowding/terrain foot IK and animation aesthetic acceptance remain unqualified. Rendered initial assertion was corrected to allow the intentional long initial planning stop while still rejecting idle during short waypoint handoffs.",
+  "export": "Existing unused Kaino audio source excluded with temporary .gdignore during export; marker removed afterward. Unreviewed torch candidate remains outside runtime integration."
+}

@@ -50,7 +50,7 @@ func run()->void:
 	if zombie==null:stage.free();quit(1);return
 	zombie.set_physics_process(false);zombie.set_behavior(false)
 	var key:String=zombie._animation_key("Zombie_Walk_Drag_Right")
-	check(not key.is_empty() and zombie.animation_player.get_animation_list().size()==16,"all 15 original actions coexist with the new dragging walk")
+	check(not key.is_empty() and zombie.animation_player.get_animation_list().size()==17,"all 15 original actions coexist with relaxed and alert dragging walks")
 	var animation:Animation=zombie.animation_player.get_animation(key)
 	check(is_equal_approx(animation.length,2.0) and animation.loop_mode==Animation.LOOP_LINEAR,"dragging walk is a looping two-second action")
 	check(is_equal_approx(zombie.walk_speed,.72) and is_equal_approx(zombie._standing_walk_reference_speed(),.45),"faster body travel retains the authored gait reference for synchronized playback")
@@ -120,7 +120,7 @@ func run()->void:
 	var observed:=false;var peak_work:=0
 	for frame in 360:
 		await physics_frame
-		observed=observed or String(zombie._current_clip).ends_with("Zombie_Walk_Drag_Right")
+		observed=observed or String(zombie._current_clip).ends_with("Zombie_Alert_Walk")
 		peak_work=maxi(peak_work,int(encounters.navigation_status.get("route_work",0)))
 	check(observed and zombie.position.z>1.5,"actual native navigation and body motor use the dragging walk while pursuing")
 	check(absf(zombie.animation_player.speed_scale-zombie.walk_speed*zombie.chase_speed_multiplier/zombie._standing_walk_reference_speed())<.05,"healthy pursuit cadence matches the faster actual body travel")

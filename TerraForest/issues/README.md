@@ -5,6 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
+| [Zombie walking resets](zombie-gait-continuity/README.md) | Fixed for reproduced cases / player review pending | Shared walk/alert foot phase and brief waypoint-pause pose retention; fast pursuit, skin planting and combat checks recorded |
 | [Passive zombies and sleeper ambushes](zombie-aggression/README.md) | Improved / gameplay review pending | Occluded close caution, faster guarded rise, immediate visible targeting and stronger retaliation; source, physical wake and generated-house checks recorded |
 | [Steam installation consistency](steam-installation/README.md) | Artwork and Browse Local Files UI checks pending; entry/link checks pass | Latest remote artwork log still runs old code; fix delivery identified. Browse Local Files does nothing: plain StartDir repair now matches Steam's folder picker; actual menu confirmation pending |
 | [G and universal item dropping](item-dropping/README.md) | Installed / functional checks pass; timing open | Default-on original-size tool option aligns rendering, physics, placement and pickup; compact option retained. Package 28 size / 32 input / 15 model checks, source 77 physics / 440 universal pass. Targeting p95 goal fails; visual/motion review pending |

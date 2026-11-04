@@ -107,6 +107,7 @@ var _attack_timer := 0.0
 var _attack_sent := false
 var _hit_timer := 0.0
 var _current_clip := ""
+var _route_gait_pause := 0.0
 var _manual_clip := ""
 var _death_velocity := Vector3.ZERO
 var behavior_contract: Dictionary = {}
@@ -934,10 +935,17 @@ func _tick_navigation(delta:float,goal:Vector3,stop_distance:float)->void:
 		if is_instance_valid(navigator):
 			if not navigation_target.is_finite() or global_position.distance_to(navigation_target)<0.025:
 				velocity.x=0;velocity.z=0;state="crawl_idle" if _crawling else "idle"
-				_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
+				_route_gait_pause += delta
+				# Waypoint handoffs and short replans stop the body, not the gait
+				# phase. Longer waits still relax into idle instead of holding a foot up.
+				if not _crawling and _is_shared_standing_gait(_current_clip) and _route_gait_pause <= 0.25:
+					animation_player.speed_scale = 0.0
+				else:
+					_play_animation("Zombie_Crawl_Idle" if _crawling else "Zombie_Idle")
 				return
 			direction=navigation_target-global_position
 		direction.y = 0.0
+		_route_gait_pause = 0.0
 		# The bounded host crowd supplies separation and a route past a peer.
 		# Turn into that route so locomotion keeps following the facing pose.
 		direction = (direction.normalized() + crowd_steering).normalized()
@@ -1488,6 +1496,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+func _is_shared_standing_gait(clip: String) -> bool:
+	return clip.get_file() in ["Zombie_Walk_Drag_Right", "Zombie_Alert_Walk"]
+
+
 func _play_animation(clip_name: String, restart: bool = false) -> void:
 	if animation_player == null:
 		return
@@ -1503,12 +1515,20 @@ func _play_animation(clip_name: String, restart: bool = false) -> void:
 		animation_player.get_animation(key).loop_mode = Animation.LOOP_LINEAR
 	if key == _current_clip and not restart and animation_player.is_playing():
 		return
+	var gait_phase := -1.0
+	if not restart and _is_shared_standing_gait(key) and _is_shared_standing_gait(_current_clip) and _animation_cursor_valid:
+		# These clips share identical hips/legs. Change upper-body intent without
+		# restarting the step that currently supports the body.
+		var previous: Animation = animation_player.get_animation(_current_clip)
+		gait_phase = fposmod(animation_player.current_animation_position / previous.length, 1.0)
 	if restart:
 		# A same-name play resumes its old cursor, even when paused. Reset
 		# playback while retaining the evaluated pose until play is processed.
 		animation_player.stop(true)
 	animation_player.speed_scale = 1.0
 	animation_player.play(key, 0.16 if not restart else 0.0)
+	if gait_phase >= 0.0:
+		animation_player.seek(gait_phase * animation_player.get_animation(key).length, true)
 	_animation_cursor_valid = true
 	_current_clip = key
 

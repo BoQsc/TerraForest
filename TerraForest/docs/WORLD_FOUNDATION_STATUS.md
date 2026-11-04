@@ -1,5 +1,15 @@
 Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
+## Zombie gait continuity — 2026-11-04
+
+Relaxed/alert walk changes now retain their shared foot phase. Short native
+waypoint handoffs stop motion while retaining the gait pose; waits longer than
+0.25 seconds return to idle. Authored loop seams were already continuous.
+[Reproduction, verification and remaining player review](../issues/zombie-gait-continuity/README.md).
+Revisit if the reported world still shows resets: capture clip/cursor, awareness
+and route transitions around the event, then extend the real-body regression.
+Terrain foot IK, dense mine crowding and animation art approval remain separate.
+
 ## Zombie close threats and sleeper ambushes — 2026-11-04
 
 Sleepers cautiously recognize a nearby unobstructed player, rise faster through

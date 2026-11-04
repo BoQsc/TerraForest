@@ -1,0 +1,16 @@
+[
+  {
+    "file": "stride-120.png",
+    "source": "reports/zombie_gait_continuity/20261104T143743781024Z/stride_120.png",
+    "sha256": "84dc4ebf0db7c59ad8716e43e66368d840ede9f36c520388fe4835534b296813",
+    "scope": "2026-11-04 source fixture; Forward+, 1920x1080, following camera, isolated native fast-pursuit floor; current different gait phases, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; inherited character and animation terms preserved."
+  },
+  {
+    "file": "stride-126.png",
+    "source": "reports/zombie_gait_continuity/20261104T143743781024Z/stride_126.png",
+    "sha256": "a9c0c4b1ac182893856029b430c278bfcbe65a22f48e75fa113ca56838038b0e",
+    "scope": "2026-11-04 source fixture; Forward+, 1920x1080, following camera, isolated native fast-pursuit floor; current different gait phases, not before/after",
+    "provenance": "Diagnostic capture of TerraForest; inherited character and animation terms preserved."
+  }
+]
