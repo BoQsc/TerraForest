@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 # Presentation only. Stack rules and mutations live in NativePlayerInventory.
 extends CanvasLayer
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 signal tool_requested(item: int)
 signal developer_tool_requested(slot: int)
@@ -582,6 +583,7 @@ func set_open(value: bool) -> void:
 func _input(event: InputEvent) -> void:
 	if drag_layer_raised and event is InputEventMouseButton and not event.pressed:restore_drag_layer()
 	if not enabled: return
+	if event is InputEventKey and not event.echo and event.physical_keycode!=KEY_ESCAPE and TextInputFocus.owns(get_viewport()):return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode==KEY_ESCAPE and item_context.visible:
 			item_context.hide();get_viewport().set_input_as_handled();return

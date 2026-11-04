@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
 const Trade = preload("res://addons/player_runtime/trader_inventory.gd")
+const TextInputFocus = preload("res://addons/player_runtime/text_input_focus.gd")
 const Icons = preload("res://addons/player_runtime/item_icons.gd")
 const WindowNav = preload("res://addons/player_runtime/window_navigation.gd")
 signal closed
@@ -116,7 +117,7 @@ func _ready() -> void:
 	trade_panel=VBoxContainer.new();column.add_child(trade_panel);column=trade_panel
 	column.add_theme_constant_override("separation",8)
 	var welcome:=_label("Drag across to buy or sell. Quantity applies to each trade; stock and coin are finite.",12,MUTED);welcome.visible=false;column.add_child(welcome)
-	search=LineEdit.new();search.placeholder_text="Search supplies, food, salvage…";search.text_changed.connect(func(_value:String):refresh())
+	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search supplies, food, salvage…";search.text_changed.connect(func(_value:String):refresh())
 	_style_line_edit(search);search.visible=false;column.add_child(search)
 	var listings:=HBoxContainer.new();listings.add_theme_constant_override("separation",20);column.add_child(listings)
 	for side:String in ["merchant","player"]:

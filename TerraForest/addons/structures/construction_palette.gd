@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
 const ShapeCatalog = preload("res://addons/structures/shape_catalog.gd")
+const TextInputFocus = preload("res://addons/player_runtime/text_input_focus.gd")
 signal selection_requested(field: String,value: int)
 signal history_requested(forward: bool)
 signal capture_requested(action: String,title: String)
@@ -64,7 +65,7 @@ func _ready() -> void:
 	panel.add_child(margin)
 	var column:=VBoxContainer.new();column.add_theme_constant_override("separation",10);margin.add_child(column)
 	var title:=Label.new();title.text="CONSTRUCTION";title.add_theme_font_size_override("font_size",22);column.add_child(title)
-	search=LineEdit.new();search.placeholder_text="Search shape name or ID";search.clear_button_enabled=true;column.add_child(search)
+	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search shape name or ID";search.clear_button_enabled=true;column.add_child(search)
 	family=OptionButton.new();family.focus_mode=Control.FOCUS_NONE
 	for name: String in ShapeCatalog.FAMILIES: family.add_item(name)
 	column.add_child(family)
@@ -104,7 +105,7 @@ func _ready() -> void:
 		button.pressed.connect(func(): capture_requested.emit(action,""));corners.add_child(button)
 	var clear:=Button.new();clear.text="Clear";clear.focus_mode=Control.FOCUS_NONE;clear.pressed.connect(func(): capture_requested.emit("clear",""));corners.add_child(clear)
 	capture_status=Label.new();capture_status.text="Aim at a block, then mark each corner.";capture_status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;column.add_child(capture_status)
-	capture_name=LineEdit.new();capture_name.placeholder_text="Prefab name";capture_name.max_length=48;column.add_child(capture_name)
+	capture_name=LineEdit.new();TextInputFocus.configure(capture_name);capture_name.placeholder_text="Prefab name";capture_name.max_length=48;column.add_child(capture_name)
 	capture_name.text_submitted.connect(func(_text: String): capture_name.release_focus())
 	var save:=Button.new();save.text="Capture and save prefab";save.focus_mode=Control.FOCUS_NONE
 	save.pressed.connect(func(): capture_requested.emit("save",capture_name.text));column.add_child(save)
@@ -115,7 +116,7 @@ func _ready() -> void:
 	frontage_button=Button.new();frontage_button.text="Create streets / settlement from prefabs";frontage_button.focus_mode=Control.FOCUS_NONE;column.add_child(frontage_button)
 	frontage_dialog=AcceptDialog.new();frontage_dialog.title="Street and settlement layout";frontage_dialog.ok_button_text="Create and save layout";frontage_dialog.dialog_hide_on_ok=false;add_child(frontage_dialog)
 	var frontage_fields:=VBoxContainer.new();frontage_dialog.add_child(frontage_fields)
-	frontage_name=LineEdit.new();frontage_name.placeholder_text="Settlement name";frontage_name.max_length=48;frontage_fields.add_child(frontage_name)
+	frontage_name=LineEdit.new();TextInputFocus.configure(frontage_name);frontage_name.placeholder_text="Settlement name";frontage_name.max_length=48;frontage_fields.add_child(frontage_name)
 	var presets:=HBoxContainer.new();frontage_fields.add_child(presets)
 	for mixed in [false,true]:
 		var button:=Button.new();button.text="Mixed neighborhood" if mixed else "Cottage neighborhood";button.focus_mode=Control.FOCUS_NONE

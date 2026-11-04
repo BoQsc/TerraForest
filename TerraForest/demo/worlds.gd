@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: 0BSD
 extends Control
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const Launch=preload("res://demo/world_launch.gd")
 const CreditsDialog=preload("res://demo/credits_dialog.gd")
 const WorldLibrary=preload("res://demo/world_library.gd")
@@ -102,7 +103,7 @@ func _ready() -> void:
 	sort_order=OptionButton.new();sort_order.add_item("Last played · newest first");sort_order.add_item("Created · newest first");sort_order.add_item("Name");sort_order.item_selected.connect(func(_index:int):refresh());saved.add_child(sort_order)
 	sort_order.tooltip_text="Older worlds without recorded dates fall back to their last save time."
 	var filters:=HBoxContainer.new();saved.add_child(filters)
-	filter_field=LineEdit.new();filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
+	filter_field=LineEdit.new();TextInputFocus.configure(filter_field);filter_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filter_field.placeholder_text="Filter saved worlds";filter_field.text_changed.connect(func(_text: String):filter_list());filters.add_child(filter_field)
 	show_preparation=CheckBox.new();show_preparation.text="Generation drafts (developer, read-only)";show_preparation.visible="--developer-worlds" in OS.get_cmdline_user_args();show_preparation.toggled.connect(func(_on:bool):refresh());filters.add_child(show_preparation)
 	var library_row:=HBoxContainer.new();library_row.add_theme_constant_override("separation",28);library_row.size_flags_vertical=Control.SIZE_EXPAND_FILL;saved.add_child(library_row)
 	worlds=ItemList.new();worlds.size_flags_vertical=Control.SIZE_EXPAND_FILL;worlds.size_flags_horizontal=Control.SIZE_EXPAND_FILL;worlds.custom_minimum_size=Vector2(300,250);library_row.add_child(worlds)
@@ -270,7 +271,7 @@ func show_recovery()->void:
 	var dialog:=ConfirmationDialog.new();dialog.title="Recover interrupted publication";dialog.ok_button_text="Recover";dialog.min_size=Vector2i(580,220)
 	var content:=VBoxContainer.new();dialog.add_child(content)
 	var label:=Label.new();label.text="Enter the original world name. Recovery verifies existing staged data;\nit does not generate a different world or replace a published save.";content.add_child(label)
-	var field:=LineEdit.new();field.placeholder_text="Original world name";content.add_child(field)
+	var field:=LineEdit.new();TextInputFocus.configure(field);field.placeholder_text="Original world name";content.add_child(field)
 	dialog.confirmed.connect(func():
 		var slot:=field.text.strip_edges();var result:=Launch.recovery_command(slot)
 		if result.ok:start_preparation(result,slot)

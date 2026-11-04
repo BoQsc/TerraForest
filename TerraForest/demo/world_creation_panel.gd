@@ -1,4 +1,5 @@
 extends RefCounted
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const INK:=Color("e6eee7")
 const MUTED:=Color("9bafad")
 const ACCENT:=Color("91d5b4")
@@ -86,7 +87,7 @@ static func build(host:Control,tabs:TabContainer)->void:
  var settings:=category(categories,"World")
  settings.add_child(recipe_panel)
  section(settings,"","Name & seed")
- host.name_field=LineEdit.new();host.name_field.placeholder_text="World name · or leave blank";host.name_field.max_length=48;host.name_field.custom_minimum_size.y=42;settings.add_child(host.name_field)
+ host.name_field=LineEdit.new();TextInputFocus.configure(host.name_field);host.name_field.placeholder_text="World name · or leave blank";host.name_field.max_length=48;host.name_field.custom_minimum_size.y=42;settings.add_child(host.name_field)
  var seed_row:=HBoxContainer.new();settings.add_child(seed_row)
  host.seed_field=SpinBox.new();host.seed_field.min_value=0;host.seed_field.max_value=2147483647;host.seed_field.step=1;host.seed_field.value=1703;host.seed_field.prefix="Seed ";host.seed_field.size_flags_horizontal=Control.SIZE_EXPAND_FILL;seed_row.add_child(host.seed_field)
  host.shuffle_button=Button.new();host.shuffle_button.text="Shuffle";host.shuffle_button.tooltip_text="Choose a new seed without changing your recipe.";seed_row.add_child(host.shuffle_button);host.shuffle_button.pressed.connect(func():host.seed_field.value=randi_range(0,2147483647))

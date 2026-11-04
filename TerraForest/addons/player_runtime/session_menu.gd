@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends CanvasLayer
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const Mouse=preload("res://addons/world_runtime/mouse_ownership.gd")
 # Session/global actions and input focus. Tool controls live in tool_workspace.gd.
 # Optional host-owned destination; standalone addons do not depend on demo scenes.
@@ -370,14 +371,12 @@ func developer_command(key:int)->void:
 	if not developer:message.text="Enter development mode above to use world diagnostics.";return
 	run_command(key)
 func _input(event: InputEvent) -> void:
-	if (opened or workspace) and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_TAB:
-		set_open(false);get_viewport().set_input_as_handled();return
 	if event is InputEventKey and event.physical_keycode==KEY_ESCAPE:
 		if event.pressed and not event.echo and not leaving_world:preload("res://addons/player_runtime/escape_policy.gd").close_or_pause(self)
 		get_viewport().set_input_as_handled();return
-	if opened and event is InputEventKey and event.physical_keycode!=KEY_ESCAPE:
-		var focused:=get_viewport().gui_get_focus_owner()
-		if focused is LineEdit or focused is TextEdit:return
+	if event is InputEventKey and not event.echo and event.physical_keycode!=KEY_ESCAPE and TextInputFocus.owns(get_viewport()):return
+	if (opened or workspace) and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode==KEY_TAB:
+		set_open(false);get_viewport().set_input_as_handled();return
 	if game.vehicle_radial.consume(event):get_viewport().set_input_as_handled();return
 	if player_actions!=null and player_actions.consume(event):get_viewport().set_input_as_handled();return
 	if world_map!=null and world_map.opened:

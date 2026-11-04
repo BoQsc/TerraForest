@@ -20,6 +20,12 @@ func type_key(code:int,unicode_value:int)->void:
 	for pressed:bool in [true,false]:
 		var event:=InputEventKey.new();event.physical_keycode=code;event.keycode=code;event.unicode=unicode_value;event.pressed=pressed
 		Input.parse_input_event(event);Input.flush_buffered_events()
+func click(control:Control)->void:
+	var point:=control.get_global_rect().get_center()
+	for pressed:bool in [true,false]:
+		var event:=InputEventMouseButton.new();event.button_index=MOUSE_BUTTON_LEFT;event.position=point;event.global_position=point;event.pressed=pressed
+		Input.parse_input_event(event);Input.flush_buffered_events()
+	await process_frame
 func amount(inventory:RefCounted,item:int)->int:
 	var total:=0
 	for row:Dictionary in inventory.snapshot().slots:
@@ -38,9 +44,11 @@ func run()->void:
 		check(padding is MarginContainer and padding.get_theme_constant("margin_left")==18 and padding.get_theme_constant("margin_right")==18 and padding.get_theme_constant("margin_top")==14 and padding.get_theme_constant("margin_bottom")==18,title+" content has the requested inset")
 	check(menu.navigation.keys()==["Session","Player","Graphics","Dev Bag","Dev Shapes","Dev Spawner","Developer","World"],"items, shapes, entities and serious diagnostics have separate navigation")
 	check(menu.spawner.entries.keys()==["zombie","vehicle"] and bag.entries.has(501),"live vehicle spawn belongs in Dev Spawner while carried vehicle items stay in Dev Bag")
-	menu.show_page("Dev Bag");bag.search.grab_focus()
+	menu.show_page("Dev Bag");await process_frame;await click(bag.search)
+	check(root.gui_get_focus_owner()==bag.search,"Dev Bag search owns keyboard focus")
+	var developer_before:bool=menu.developer
 	type_key(KEY_M,109);type_key(KEY_QUOTELEFT,96);await process_frame
-	check(bag.search.text=="m`" and not game.world_map.opened and not menu.developer and menu.current_page=="Dev Bag","typing map and developer hotkeys stays inside search")
+	check(bag.search.text=="m`" and root.gui_get_focus_owner()==bag.search and not game.world_map.opened and menu.developer==developer_before,"typing map and developer hotkeys stays inside search")
 	bag.search.text="  TOPSOIL ";bag.filter_items()
 	check(bag.entries[211].visible and not bag.entries[501].visible and not bag.empty.visible,"case-insensitive trimmed name search filters actual item tiles")
 	bag.search.text="501";bag.filter_items();bag.category.select(1);bag.filter_items()

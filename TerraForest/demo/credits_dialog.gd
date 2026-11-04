@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: 0BSD
 extends AcceptDialog
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 
 const NOTICE_PATH := "res://assets/credits/notices.json"
 const SOURCE_URL := "https://github.com/BoQsc/TerraForest"
@@ -40,6 +41,7 @@ func _ready() -> void:
 	intro.add_theme_color_override("font_color", ACCENT)
 	panel.add_child(intro)
 	filter_field = LineEdit.new()
+	TextInputFocus.configure(filter_field)
 	filter_field.placeholder_text = "Find a component or license"
 	filter_field.custom_minimum_size.y = 42
 	filter_field.text_changed.connect(_filter)

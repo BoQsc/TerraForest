@@ -2,6 +2,7 @@ extends RefCounted
 
 const Catalog=preload("res://addons/structures/shape_catalog.gd")
 const Icons=preload("res://addons/player_runtime/shape_icons.gd")
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 const MATERIALS=["Brick","Wood","Concrete","Metal"]
 var game:Node
 var menu:CanvasLayer
@@ -19,7 +20,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	menu.label(parent,"Dev Shapes").add_theme_font_size_override("font_size",24)
 	menu.label(parent,"Click a native block shape to get free materials and equip it for placement. Works in gameplay and development.")
 	var filters:=HBoxContainer.new();parent.add_child(filters)
-	search=LineEdit.new();search.placeholder_text="Search shapes by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filters.add_child(search)
+	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search shapes by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;filters.add_child(search)
 	category=OptionButton.new()
 	for title:String in Catalog.FAMILIES:category.add_item(title)
 	filters.add_child(category)

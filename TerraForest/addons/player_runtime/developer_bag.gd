@@ -1,5 +1,6 @@
 extends RefCounted
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
+const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
 var game:Node
 var menu:CanvasLayer
 var search:LineEdit
@@ -14,7 +15,7 @@ func build(host:Node,session:CanvasLayer,parent:VBoxContainer)->void:
 	menu.label(parent,"Dev Bag").add_theme_font_size_override("font_size",24)
 	menu.label(parent,"Click an item to add the chosen quantity. Hold Shift while clicking for one full stack, including ammunition. These are free developer grants, even in gameplay mode. Carried vehicle items stay here; live vehicles and creatures belong in Dev Spawner.")
 	var row:=HBoxContainer.new();parent.add_child(row)
-	search=LineEdit.new();search.placeholder_text="Search items by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
+	search=LineEdit.new();TextInputFocus.configure(search);search.placeholder_text="Search items by name or ID…";search.clear_button_enabled=true;search.size_flags_horizontal=Control.SIZE_EXPAND_FILL;row.add_child(search)
 	category=OptionButton.new()
 	for title:String in ["All items","Tools","Building materials","Resources & plants","Clothing","Water containers","Vehicles"]:category.add_item(title)
 	row.add_child(category)
