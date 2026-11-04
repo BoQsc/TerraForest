@@ -3,6 +3,7 @@ extends Node3D
 ## Single-player presentation adapter. Timer work is independent of world size.
 const Runtime = preload("res://addons/audio_runtime/audio_runtime.gd")
 const Cadence = preload("res://addons/audio_runtime/footstep_cadence.gd")
+const KainoMap = preload("res://addons/audio_runtime/kaino_audition_map.gd")
 const HELD_TORCH_GAIN_DB := -6.0
 var cadence := Cadence.new()
 var game: Node
@@ -38,6 +39,7 @@ func initialize() -> void:
 		push_warning("Audio packs rejected: " + str(audio.catalog.diagnostics))
 		var builtin := "res://addons/audio_runtime/packs/nox/pack.audio.module.json"
 		audio.prepare(PackedStringArray([builtin]) if FileAccess.file_exists(builtin) else PackedStringArray())
+	KainoMap.apply(audio.catalog)
 	persist_settings = not game.temporary_world and not ProjectSettings.get_setting("terraforest/offscreen_session", false)
 	if persist_settings: settings.load("user://audio_preferences.cfg")
 	audio.set_enabled(bool(settings.get_value("audio", "enabled", true)))

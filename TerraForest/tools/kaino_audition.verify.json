@@ -1,0 +1,31 @@
+{
+  "inputs": [
+    "TerraForest/tools/kaino_audition.gd",
+    "TerraForest/tools/kaino_audition.tscn",
+    "TerraForest/addons/audio_runtime/kaino_audition_map.gd",
+    "TerraForest/addons/audio_runtime/wav_decoder.gd",
+    "TerraForest/addons/audio_runtime/catalog.gd",
+    "TerraForest/tests/kaino_audition.gd"
+  ],
+  "steps": [
+    {
+      "kind": "interaction",
+      "command": {
+        "program": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Godot Engine\\Godot Engine.exe",
+        "args": [
+          "--path",
+          "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+          "--windowed",
+          "--resolution",
+          "1920x1080",
+          "--max-fps",
+          "60",
+          "--script",
+          "res://tests/kaino_audition.gd"
+        ],
+        "workdir": "C:\\Users\\windows10\\Documents\\ChatGPT\\Godot Terrain\\TerraForest",
+        "timeout": 120000
+      }
+    }
+  ]
+}
