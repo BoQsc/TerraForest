@@ -96,6 +96,19 @@ before any Steam write; the unattended `--yes` rerun above completed. Both attem
 remain in the existing single log. No Steam UI screenshot or second-computer visual
 review has been obtained; these checks do not establish visible artwork acceptance.
 
+Latest second-computer report: uninstall/reinstall through `.pyw` did not restart
+Steam and artwork remained absent. Its supplied 10:17:46 log still has installer
+hash `1bb5b29ac0f12a7df1f9881d7ab0976747519547109e4f54aa72aae0d0ed0a27`
+and writes portrait to `<appid>.png`, wide to `<appid>p.png`. This identifies the
+pre-artwork-fix runtime, whose unchanged-entry path skips the restart; it is not
+evidence of running `ed48a69e`. The current Windows source hash is
+`75c94353be2fd088a629528e2930d36784e2cfcd52a69c67e2b755270635bba9`.
+Read-only remote verification found `origin`'s published `master` at `ed48a69e`.
+Prepared and ZIP/byte-verified a four-file runtime update for delivery, with project
+folder instructions, hashes and the existing code license. The `.pyw` wrapper is
+unchanged; updating only that file does not update `steam/lib` implementations.
+Next evidence must first establish that the corrected runtime was actually loaded.
+
 ## Remaining / resume here
 
 Successful game launch and Last World reopen on the second computer remain

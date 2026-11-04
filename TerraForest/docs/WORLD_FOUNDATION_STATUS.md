@@ -44,6 +44,11 @@ metadata work is excluded. Regression and live evidence are retained in the issu
 The updated suite passes **70 tests / 42 Steam regressions**, source artwork
 freshness passes, and a real repair/restart checks all ten corrected files after
 reload. This is stored-file/startup-order evidence, not Steam UI acceptance.
+The subsequent second-computer no-restart log still identifies the older installer
+hash and reversed capsule names. Published `master` was checked at `ed48a69e`;
+a byte-verified runtime update bundle was prepared. Reinstalling the old files does
+not apply the fix. Confirm the updated runtime/hash before further appearance
+diagnosis; details and both source hashes are retained in the installation issue.
 
 Remaining: exported-build discovery still retains the inherited executable-only
 copy; separate PCK/native companion deployment is not implemented or validated.
