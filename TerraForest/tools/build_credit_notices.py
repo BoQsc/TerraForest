@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets/credits/notices.json"
 NOTICES = [
     ("item_hold", "Original generic held-item motion", "CC0 1.0 motion / 0BSD code", "addons/characters/runtime/assets/Human.item_hold.LICENSE.txt",
-     "Original held-item baseline, mount data and neutral fallback geometry. Existing character, consumable meshes and locomotion retain their separate provenance; a more articulated art revision remains under review."),
+     "Original held-item baseline, mount data and neutral fallback geometry. Existing character, consumable meshes and locomotion retain their separate provenance; the first version remains selected after comparison with revision 02."),
     ("torch_attack", "Original torch strike animation", "CC0 1.0 motion / 0BSD code", "addons/characters/runtime/assets/Human.torch_attack.LICENSE.txt",
      "Original torch strike motion with retained inherited rig/carry provenance. First-person integration accepted; third-person presentation remains unfinished."),
     ("nox_audio", "NOX Essentials sound recordings", "CC0 1.0", "addons/audio_runtime/packs/nox/NOTICE.txt",

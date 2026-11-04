@@ -1,8 +1,9 @@
 # Generic held-item hand posing
 
-- Status: Baseline integrated; articulated revision 02 authored, player review pending.
+- Status: First version selected and active; revision 02 rejected; further tuning deferred.
 - Updated: 2026-11-04. Original baseline source/preview: `bc5de4ae`.
 - User review: Idea is great, but the arm/hand looks like a static stick. Requested committing/integrating that baseline and trying to improve it.
+- Follow-up review: The first version was better as an animation; keep using it. Revision 02 remains an archived comparison.
 - Symptom: Almost-fixed fingers and an exactly neutral wrist make the palm-up lift read as a rigid platform.
 
 ## Images
@@ -34,10 +35,12 @@ and the failed logs are preserved. [Revised preview, exact checks and limits](..
 
 Same neutral stage/camera arrangement as the baseline; this is the revised
 candidate's use pose with the free hand approaching beneath the closed book.
-Obtain player review of hand readability, finger/wrist motion and timing before
-promotion, then rerun live-world checks. Passing geometric checks does not
-resolve the reported rigid appearance. Dedicated eating/page-turning and broad
-third-person art acceptance remain separate. Reopen here on feedback.
+The user reviewed revision 02 and preferred the first version. Keep the exact
+integrated candidate 01 active; no promotion or further tuning is requested.
+The original stiffness remains a known limitation, not a resolved defect.
+Reopen on new animation feedback; any future replacement needs a comparative
+preview, explicit player acceptance and live-world checks. Dedicated
+eating/page-turning and broad third-person art acceptance remain separate.
 
 ## Reproduce / history
 

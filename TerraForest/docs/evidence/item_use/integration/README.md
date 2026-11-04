@@ -44,7 +44,8 @@ attempt also exposed the old tool-only ID filter, which passed ordinary objects
 as empty hands. The filter was removed; the subsequent real-world run passed.
 
 Remaining art: [stiff hand issue](../../../../issues/generic-item-hand-pose/README.md).
-The separate revised asset must be inspected and reviewed before replacing this
-runtime library. No native rebuild, package export/install or player save change
+The user reviewed the separate revision 02 and preferred this first version;
+the unchanged baseline remains active. Further tuning awaits new feedback.
+No native rebuild, package export/install or player save change
 is claimed. Godot identity import uses the existing temporary raw Kaino audio
 exclusion, removed immediately afterward; unrelated WAVs are not qualified here.

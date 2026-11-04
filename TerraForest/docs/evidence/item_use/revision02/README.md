@@ -1,9 +1,14 @@
-# Generic item motion — revision 02, awaiting review
+# Generic item motion — revision 02, first version preferred
+
+Review decision, 2026-11-04: the user found the first version better as an
+animation and requested keeping it active. Revision 02 is not selected for
+integration. Its sources, preview and checks are preserved as a comparison;
+capture metadata below retains its original pre-review status.
 
 The requested baseline is integrated in `26f332e1`; the original authoring and
 preview remain unchanged. This revision is stored separately in
 `addons/characters/authoring/Human.item_use_v2.*`. Runtime still loads the exact
-candidate 01 bytes. This is a proposed art improvement, not player acceptance.
+candidate 01 bytes, as selected by the user.
 
 ![Articulated book, bread and object motion](Generic-item.preview.gif)
 
@@ -50,10 +55,11 @@ threshold was relaxed. [Exact inputs and hashes](evidence.json).
 The assisting hand approaches rather than forming a fitted grip on every mesh;
 it retains a small gap. The book remains closed and the food remains whole.
 This generic gesture does not author page turning, biting or object-specific
-finger closure. First-person hand readability, timing and third-person art still
-need player review in the [hand-pose issue](../../../../issues/generic-item-hand-pose/README.md).
-Return there on feedback; promote a reviewed revision explicitly and rerun live
-item-use checks before replacing the baseline. No package export is claimed.
+finger closure. Passing these checks did not establish animation preference:
+the user selected candidate 01. Further tuning is deferred until new feedback
+in the [hand-pose issue](../../../../issues/generic-item-hand-pose/README.md).
+Any future replacement needs explicit review and live item-use verification.
+No package export is claimed.
 
 New motion/data and review derivatives use CC0, with inherited body/rig and
 existing consumable provenance retained in `Human.item_use_v2.LICENSE.txt`.

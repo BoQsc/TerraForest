@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [Generic held-item hand posing](generic-item-hand-pose/README.md) | Baseline integrated / revision 02 awaiting review | Baseline meshes/native use verified; revised fingers, wrist and free-hand approach authored with 28 scoped checks; player art review remains open |
+| [Generic held-item hand posing](generic-item-hand-pose/README.md) | First version selected / further tuning deferred | User preferred the integrated first animation; revision 02 retained as a rejected comparison; baseline stiffness remains a known limitation |
 | [Torch attack arm deformation and motion](torch-attack-motion/README.md) | First-person integrated / third-person art deferred | User requested revision 02 integration; frame-26 melee contact, full recovery and cancellation verified in actual world; rejected first preview preserved; third-person presentation still needs a dedicated art pass |
 | [Zombie walking resets](zombie-gait-continuity/README.md) | Fixed for reproduced cases / player review pending | Shared walk/alert foot phase and brief waypoint-pause pose retention; fast pursuit, skin planting and combat checks recorded |
 | [Passive zombies and sleeper ambushes](zombie-aggression/README.md) | Improved / gameplay review pending | Occluded close caution, faster guarded rise, immediate visible targeting and stronger retaliation; source, physical wake and generated-house checks recorded |

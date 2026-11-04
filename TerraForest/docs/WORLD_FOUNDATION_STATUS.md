@@ -6837,7 +6837,9 @@ completion, cancellation and original inventory/drop ownership are implemented.
 The [articulated revision 02 preview](evidence/item_use/revision02/README.md)
 is authored separately: subtle finger readjustments, wrist flex/roll and a free-hand
 approach. Its 28 scoped checks pass across 555 poses; earlier contact failures are
-retained. It remains outside runtime pending player review; return on feedback
-about hand readability, timing and body motion, then rerun live checks before
-promotion. Closed-book/whole-food
+retained. After review the user preferred the first animation and explicitly
+requested keeping it active. Revision 02 remains an archived rejected comparison.
+Baseline stiffness remains known; further tuning is deferred until new feedback.
+Any future replacement needs comparative visual acceptance and live checks.
+Closed-book/whole-food
 presentation is still the simple scope; page turning/biting are not claimed.
