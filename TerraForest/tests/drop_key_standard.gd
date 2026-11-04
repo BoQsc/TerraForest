@@ -31,6 +31,7 @@ func run()->void:
 	await physics_frame;await physics_frame
 	var hud=game.player_hud
 	check(game.pickups.physics_enabled and game.session_menu.drop_physics_toggle.button_pressed,"Player physical-drop option defaults enabled")
+	check(game.pickups.full_size_enabled and game.session_menu.drop_size_toggle.button_pressed,"Player original-size drop option defaults enabled")
 	# Keep the existing belt, place a newly supported firearm in an empty slot.
 	check(hud.inventory.grant(8,1,hud.inventory.snapshot().revision).ok,"rifle enters native inventory")
 	var slot:=-1
@@ -58,6 +59,18 @@ func run()->void:
 	check(falling.y<launched.y and falling.distance_to(launched)>.05,"real G launch falls through actual-world native physics")
 	var collected:Dictionary=game.pickups.collect_near(game.player.global_position,hud.inventory,game._pickup_reachable)
 	check(collected.ok and collected.item==8,"rifle recollects through actual-world reach checks")
+	hud.equip_inventory(0);tap()
+	check(hud.inventory.snapshot().slots[0].count==0 and game.pickups.physics.statistics().active==1,"real gameplay G admits the authored-size pickaxe with matching clearance")
+	var picked:Dictionary=game.pickups.collect_near(game.player.global_position,hud.inventory,game._pickup_reachable)
+	check(picked.ok and picked.item==1 and hud.inventory.snapshot().slots[0].count==1,"authored-size dropped tool remains reachable for recovery")
+	game.session_menu.drop_physics_toggle.set_pressed(false);hud.equip_inventory(0);tap()
+	check(hud.inventory.snapshot().slots[0].count==0 and game.pickups.physics.statistics().active==0 and game.pickups.full_size_enabled,"original-size tools also use valid full bounds with physics disabled")
+	picked=game.pickups.collect_near(game.player.global_position,hud.inventory,game._pickup_reachable)
+	check(picked.ok and picked.item==1,"static original-size tool recovery remains reachable")
+	game.session_menu.drop_physics_toggle.set_pressed(true)
+	game.session_menu.drop_size_toggle.set_pressed(false)
+	check(not game.pickups.full_size_enabled,"Player original-size checkbox restores compact mode")
+	game.session_menu.drop_size_toggle.set_pressed(true)
 	# Inventory selections must never become G-drop targets.
 	check(hud.inventory.grant(601,3,hud.inventory.snapshot().revision).ok,"coins enter inventory")
 	var coins:=-1

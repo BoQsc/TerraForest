@@ -1,17 +1,27 @@
 {
   "outputs": {
-    "res://addons/player_runtime/art/drops/1.res": "67af9d5a4c50a771874f0af703a44a3def673e58be2faaaffec0789a91c85bbd",
-    "res://addons/player_runtime/art/drops/2.res": "f60c125b656b47b2ae00b30c1c3de42d4b1504790acd37c540c57d5f8e26aa89"
+    "res://addons/player_runtime/art/drops/1.res": "d97fb9de82ea3441dc554d09b9c290e3064a406e1b602f82d4f89860a756a5ca",
+    "res://addons/player_runtime/art/drops/2.res": "c4d78f55d1fd35ab1b4f12552c8f9f2f73cf817aafd3fb021c14296023d48237",
+    "res://addons/player_runtime/art/drops/3.res": "d82f90f005018bdf873a0a7016f7d32fc666af0b121891d2e3903c4c06b0a8c5",
+    "res://addons/player_runtime/art/drops/4.res": "185d5c075ab8589578d27de4f83e58bc0473fee00dbaadc9ce20be696a9919df",
+    "res://addons/player_runtime/art/drops/5.res": "7bd5c679cf91cfe943e540701ae06172d107f0550a2c6daadd7aac6aca30b6d6",
+    "res://addons/player_runtime/art/drops/6.res": "2f6d9ff47943452389dea0854cbd16ce71a1dafd4a1344ec426de6ba127b3a9c"
   },
   "schema": 1,
   "sources": {
+    "res://addons/characters/runtime/assets/Hammer.glb": "4f38b696f22e495a77df2119ca97d7ec3c829fe5374d333674779710b77c1d54",
+    "res://addons/characters/runtime/assets/Hammer.glb.import": "1c2063fe42b26e43ed3c6983e10a9bc9e490cd13060b578e39d42d196beeef3c",
     "res://addons/characters/runtime/assets/Human.r11.glb": "0dc8fdbcfac451f61b6eee5c914b1e79f5ec450f5e98e4c896e8b46370bf35c8",
     "res://addons/characters/runtime/assets/Human.r11.glb.import": "25bb9993391ba7a4afb8225ea88a425c0f2b4d21cc01bb3c40df5193a5975439",
+    "res://addons/characters/runtime/assets/Shovel.glb": "4b0c07aaa9a466d75c133b4a6cd64e75a2b85bf596ea1ccc8efbec05dfccc9d7",
+    "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
+    "res://addons/characters/runtime/assets/Torch.glb": "b1346e6731614c7b727dd41f54bdc455f3c8c4f0e152535fe10b08e4aadf2ff6",
+    "res://addons/characters/runtime/assets/Torch.glb.import": "eb942c7e6d02667b523ed66e1c215b08596bed4e1ce6bba5671cc28a75c1e106",
     "res://addons/characters/runtime/human_view.gd": "142d29bdafd6a2bf828a89c9fafe41480e004aa67a2c4fea65c2a0381b91f1f9",
     "res://addons/player_runtime/art/drops/current_tool.gdshader": "0a0f4928e2803f493944c2acdbe3db1eb4da351270ee67034d886eaf2b556dad",
     "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
-    "res://tools/bake_tool_drops.gd": "5b3c2291e1c7cce66601e38fd6a4d6553d2a634c64b8c33fb2ff3dc090564dd7",
-    "res://tools/tool_drop_bake.gd": "588615838bc2b3967071ef38bb8bde9741e57a368101fd61a42877ca070ce740"
+    "res://tools/bake_tool_drops.gd": "abd05f1ecfd8e076e2115f91f962fa1f2d298fe1d6202b6c9c7b89114b643a4a",
+    "res://tools/tool_drop_bake.gd": "874df2a6df2617c053aeb74134b124ff31eb1c5245b09915d4027c30b3e11ae9"
   },
   "triangles": {
     "1": 376,

@@ -11,6 +11,7 @@ using namespace godot;
 void NativePickupPhysics::_bind_methods(){
     ClassDB::bind_method(D_METHOD("configure","space","exclude","transform"),&NativePickupPhysics::configure);
     ClassDB::bind_method(D_METHOD("bind_store","batch","store"),&NativePickupPhysics::bind_store);
+    ClassDB::bind_method(D_METHOD("set_layout","batch","half_extents","offset"),&NativePickupPhysics::set_layout);
     ClassDB::bind_method(D_METHOD("can_launch"),&NativePickupPhysics::can_launch);
     ClassDB::bind_method(D_METHOD("launch","batch","handle","velocity"),&NativePickupPhysics::launch);
     ClassDB::bind_method(D_METHOD("forget","batch","identity"),&NativePickupPhysics::forget);
@@ -22,7 +23,33 @@ void NativePickupPhysics::_bind_methods(){
     ClassDB::bind_method(D_METHOD("restore_storage_snapshot","bytes"),&NativePickupPhysics::restore_storage_snapshot);
 }
 NativePickupPhysics::~NativePickupPhysics(){
-    reset();if(shape.is_valid()&&PhysicsServer3D::get_singleton())PhysicsServer3D::get_singleton()->free_rid(shape);
+    reset();auto *server=PhysicsServer3D::get_singleton();
+    if(server){if(shape.is_valid())server->free_rid(shape);for(const auto &entry:layouts)if(entry.second.shape.is_valid())server->free_rid(entry.second.shape);}
+}
+NativePickupPhysics::Layout NativePickupPhysics::layout_for(int batch)const{
+    auto found=layouts.find(batch);return found==layouts.end()?Layout():found->second;
+}
+bool NativePickupPhysics::set_layout(int batch,const Vector3 &half,const Vector3 &offset){
+    if(!stores.count(batch)||!half.is_finite()||!offset.is_finite()||half.x<.01||half.y<.01||half.z<.01||half.x>16||half.y>16||half.z>16)return false;
+    const Layout old=layout_for(batch);if(old.half==half&&old.offset==offset)return true;
+    auto *server=PhysicsServer3D::get_singleton();Layout next;next.half=half;next.offset=offset;
+    next.shape=server->box_shape_create();if(!next.shape.is_valid())return false;
+    server->shape_set_data(next.shape,half);
+    for(auto &motion:records)if(motion.identity&&motion.batch==batch&&motion.body.is_valid()){
+        auto store=stores.at(batch);
+        if(!motion.suspended){
+            Transform3D pose=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_TRANSFORM);
+            store->set_position(motion.handle,world.affine_inverse().xform(pose.origin)-old.offset);
+            Vector3 velocity=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_LINEAR_VELOCITY);
+            motion.sleeping=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_SLEEPING);
+            motion.velocity=motion.sleeping?Vector3():velocity.limit_length(64);store->set_velocity(motion.handle,motion.velocity);
+        }
+        server->body_set_mode(motion.body,PhysicsServer3D::BODY_MODE_STATIC);motion.suspended=true;
+        motion.sleeping=false; // A resized body must recheck contacts when resumed.
+        server->body_set_shape(motion.body,0,next.shape);
+        server->body_set_state(motion.body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.xform(store->get_position(motion.handle)+offset)));
+    }
+    layouts[batch]=next;if(old.shape.is_valid())server->free_rid(old.shape);return true;
 }
 bool NativePickupPhysics::configure(RID physics_space,RID exclude,const Transform3D &transform){
     if(space.is_valid()||!physics_space.is_valid()||!transform.is_finite()||std::abs(transform.basis.determinant())<.001)return false;
@@ -53,7 +80,8 @@ bool NativePickupPhysics::create_body(Motion &motion){
     auto *server=PhysicsServer3D::get_singleton();motion.body=server->body_create();
     if(!motion.body.is_valid())return false;
     server->body_set_mode(motion.body,PhysicsServer3D::BODY_MODE_STATIC);
-    server->body_add_shape(motion.body,shape);
+    const Layout layout=layout_for(motion.batch);
+    server->body_add_shape(motion.body,layout.shape.is_valid()?layout.shape:shape);
     server->body_set_collision_layer(motion.body,1u<<21);
     server->body_set_collision_mask(motion.body,7|(1u<<21));
     server->body_set_param(motion.body,PhysicsServer3D::BODY_PARAM_MASS,.25);
@@ -62,7 +90,7 @@ bool NativePickupPhysics::create_body(Motion &motion){
     server->body_set_param(motion.body,PhysicsServer3D::BODY_PARAM_LINEAR_DAMP,.4);
     server->body_set_enable_continuous_collision_detection(motion.body,true);
     if(excluded.is_valid())server->body_add_collision_exception(motion.body,excluded);
-    server->body_set_state(motion.body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.xform(store->get_position(motion.handle))));
+    server->body_set_state(motion.body,PhysicsServer3D::BODY_STATE_TRANSFORM,Transform3D(Basis(),world.xform(store->get_position(motion.handle)+layout.offset)));
     server->body_set_space(motion.body,space);motion.suspended=true;return true;
 }
 bool NativePickupPhysics::launch(int batch,int64_t handle,const Vector3 &velocity){
@@ -84,12 +112,13 @@ Dictionary NativePickupPhysics::step(double delta,bool run,const Callable &ready
     for(auto &motion:records){
         if(!motion.identity)continue;
         auto store=stores.at(motion.batch);
+        const Layout layout=layout_for(motion.batch);
         if(!store->resolve_identity(motion.identity)){release(motion);changed=true;continue;}
         if(!motion.body.is_valid()&&!create_body(motion)){release(motion);changed=true;continue;}
         Vector3 position=store->get_position(motion.handle);
         if(!motion.suspended){
             Transform3D pose=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_TRANSFORM);
-            Vector3 next=world.affine_inverse().xform(pose.origin);
+            Vector3 next=world.affine_inverse().xform(pose.origin)-layout.offset;
             Vector3 velocity=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_LINEAR_VELOCITY);
             bool sleeping=server->body_get_state(motion.body,PhysicsServer3D::BODY_STATE_SLEEPING);
             if(next.is_finite()&&velocity.is_finite()){
@@ -100,9 +129,9 @@ Dictionary NativePickupPhysics::step(double delta,bool run,const Callable &ready
                 store->set_position(motion.handle,position);store->set_velocity(motion.handle,motion.velocity);
             }
         }
-        Vector3 origin=world.xform(position);
+        Vector3 origin=world.xform(position+layout.offset);
         Vector3 end=origin+motion.velocity*real_t(delta)+Vector3(0,-20*delta*delta,0);
-        const Vector3 extent(.4,.4,.4);
+        const Vector3 extent=layout.half+Vector3(.23,.23,.23);
         AABB bounds(origin.min(end)-extent,origin.max(end)-origin.min(end)+extent*2);
         bool allowed=run&&bool(ready.call(bounds));
         if(!allowed){

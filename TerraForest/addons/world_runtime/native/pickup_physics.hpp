@@ -19,6 +19,9 @@ class NativePickupPhysics : public godot::RefCounted {
     };
     std::array<Motion,LIMIT> records{};
     std::map<int,godot::Ref<NativeEntityStore>> stores;
+    struct Layout {godot::Vector3 half=godot::Vector3(.17,.17,.17),offset;godot::RID shape;};
+    std::map<int,Layout> layouts;
+    Layout layout_for(int batch)const;
     godot::RID space,shape,excluded;
     godot::Transform3D world;
     int available() const;
@@ -30,6 +33,7 @@ public:
     ~NativePickupPhysics();
     bool configure(godot::RID physics_space,godot::RID exclude,const godot::Transform3D &transform);
     bool bind_store(int batch,const godot::Ref<NativeEntityStore> &store);
+    bool set_layout(int batch,const godot::Vector3 &half,const godot::Vector3 &offset);
     bool can_launch() const;
     bool launch(int batch,int64_t handle,const godot::Vector3 &velocity);
     void forget(int batch,int64_t identity);

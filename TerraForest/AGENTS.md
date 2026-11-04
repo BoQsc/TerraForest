@@ -85,6 +85,11 @@ inventory item must support drop, recollection and save/reload without a per-ite
 permission flag or required custom drop art. Register items in the shared catalog;
 retain the universal pickup fallback and metadata-preserving native transactions.
 Run the universal-item, physical-item and G-input regressions when changing these paths.
+New dedicated drop bakes should retain authored dimensions in `authored_scale`
+and `authored_size` metadata for the default-on original-size preference. Keep
+rendered size, physics bounds, placement readiness and pickup targeting aligned;
+preserve the compact fallback and canonical save coordinates. Run the
+original-size regression when changing that layout.
 
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.

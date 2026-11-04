@@ -15,6 +15,11 @@ compound saves; do not also call the entity store's kinematic `step`. Menu,
 loading and unavailable swept collision coverage suspend them as registered
 static bodies. Sleeping proxies can retire when the pool is full, leaving saved
 ordinary pickups. This grants no actor navigation or interaction permissions.
+The default-on original-size preference uses per-batch authored dimensions.
+Rendering, physics, swept readiness and picking share its bottom-preserving
+offset; canonical saved coordinates remain the compact reference anchor.
+Resizing a live proxy replaces its native shape and wakes contact validation,
+while the engine remains its sole integrator.
 
 Use the native `ActorRoute` core in `addons/world_runtime/native/actor_route.*` for
 local supported walking routes. Existing settlement actors execute it through

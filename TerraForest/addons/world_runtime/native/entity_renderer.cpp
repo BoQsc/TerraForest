@@ -6,11 +6,16 @@
 using namespace godot;
 namespace terraforest {
 void NativeEntityRenderer::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("set_instance_layout","scale","offset"),&NativeEntityRenderer::set_instance_layout);
     ClassDB::bind_method(D_METHOD("set_selection_marker", "marker", "identity"), &NativeEntityRenderer::set_selection_marker);
     ClassDB::bind_method(D_METHOD("refresh_positions"), &NativeEntityRenderer::refresh_positions);
     ClassDB::bind_method(D_METHOD("configure", "store", "mesh", "capacity", "animated"), &NativeEntityRenderer::configure, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("refresh_animated_positions","delta"), &NativeEntityRenderer::refresh_animated_positions);
     ClassDB::bind_method(D_METHOD("refresh", "center", "radius", "candidate_budget"), &NativeEntityRenderer::refresh, DEFVAL(4096));
+}
+bool NativeEntityRenderer::set_instance_layout(double scale,const Vector3 &offset){
+    if(!std::isfinite(scale)||scale<=0||scale>64||!offset.is_finite())return false;
+    instance_scale_=scale;instance_offset_=offset;refresh_positions();return true;
 }
 void NativeEntityRenderer::set_selection_marker(Node3D *marker, int64_t identity) {
     auto *old=Object::cast_to<Node3D>(ObjectDB::get_instance(marker_id_));
@@ -96,13 +101,14 @@ Dictionary NativeEntityRenderer::publish(Dictionary result){
     const float *current = buffer_.ptr();
     float *out = nullptr;
     for (int64_t i = 0; i < ids.size(); ++i) {
-        const Vector3 p = store_->get_position(ids[i]);
+        const Vector3 p = store_->get_position(ids[i])+instance_offset_;
         if(marker && marker->is_inside_tree() && is_inside_tree() && store_->persistent_id(ids[i])==highlighted_identity_) {
             marker->set_global_position(get_global_transform().xform(p)+Vector3(0,1.08,0));
             marker->show();
         }
         const int stride=animated_?16:12;
-        float next[16]={1,0,0,p.x,0,1,0,p.y,0,0,1,p.z,0,0,0,0};
+        const float scale=float(instance_scale_);
+        float next[16]={scale,0,0,p.x,0,scale,0,p.y,0,0,scale,p.z,0,0,0,0};
         if(animated_){
             auto inserted=gait_.try_emplace(ids[i],Gait{p});auto &g=inserted.first->second;
             if(animation_delta_>0){
@@ -114,7 +120,7 @@ Dictionary NativeEntityRenderer::publish(Dictionary result){
                 g.position=p;
             }
             const float c=std::cos(g.yaw),sn=std::sin(g.yaw);
-            next[0]=c;next[2]=sn;next[8]=-sn;next[10]=c;
+            next[0]=c*scale;next[2]=sn*scale;next[8]=-sn*scale;next[10]=c*scale;
             next[12]=g.phase;next[13]=g.amplitude;
         }
         const float *old=current+i*stride;bool changed=false;

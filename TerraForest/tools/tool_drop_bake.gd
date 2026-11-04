@@ -3,20 +3,43 @@ extends RefCounted
 ## Build-only extraction of the same visible equipment used by the held tools.
 const Human=preload("res://addons/characters/runtime/human_view.gd")
 const IDS=[1,2]
+const SIZED_IDS=[1,2,3,4,5,6]
 const RECEIPT="res://addons/player_runtime/art/drops/current_tools.bake.json"
 const SHADER=preload("res://addons/player_runtime/art/drops/current_tool.gdshader")
 static func snapshot()->Dictionary:
 	var result:Dictionary={}
 	for path:String in [Human.MODEL.resource_path,Human.MODEL.resource_path+".import","res://addons/characters/runtime/human_view.gd","res://addons/player_runtime/tool_view.gd","res://tools/tool_drop_bake.gd","res://tools/bake_tool_drops.gd",SHADER.resource_path]:
 		result[path]=FileAccess.get_sha256(path)
+	for scene:PackedScene in Human.EQUIPMENT.values():
+		result[scene.resource_path]=FileAccess.get_sha256(scene.resource_path)
+		result[scene.resource_path+".import"]=FileAccess.get_sha256(scene.resource_path+".import")
 	return result
 static func current(state:Dictionary)->bool:
 	if not FileAccess.file_exists(RECEIPT):return false
 	var receipt:Variant=JSON.parse_string(FileAccess.get_file_as_string(RECEIPT))
 	if not receipt is Dictionary or receipt.get("sources")!=state:return false
-	for item:int in IDS:
+	for item:int in SIZED_IDS:
 		var path:="res://addons/player_runtime/art/drops/%d.res"%item
 		if receipt.get("outputs",{}).get(path)!=FileAccess.get_sha256(path):return false
+	return true
+static func source_bounds(node:Node3D)->AABB:
+	var box:=AABB();var first:=true
+	for child in node.find_children("*","MeshInstance3D",true,false):
+		var bounds:AABB=node.global_transform.affine_inverse()*child.global_transform*child.mesh.get_aabb()
+		box=bounds if first else box.merge(bounds);first=false
+	return box
+static func annotate(view:Node,item:int,mesh:Mesh)->bool:
+	var source:Node3D
+	if item==4:source=view.tools[4]
+	else:
+		source=Human.EQUIPMENT[item].instantiate();view.add_child(source)
+	var bounds:=source_bounds(source)
+	if item!=4:source.free()
+	var compact:Vector3=mesh.get_aabb().size
+	var largest:=maxf(compact.x,maxf(compact.y,compact.z))
+	if largest<=0 or bounds.size.length_squared()<.000001:return false
+	mesh.set_meta("authored_scale",maxf(bounds.size.x,maxf(bounds.size.y,bounds.size.z))/largest)
+	mesh.set_meta("authored_size",bounds.size)
 	return true
 static func parts(view:Node,item:int)->Array[MeshInstance3D]:
 	view.human.equip(item)
@@ -67,4 +90,5 @@ static func build(view:Node,item:int)->ArrayMesh:
 	output.set_meta("source_model",Human.MODEL.resource_path)
 	output.set_meta("source_model_sha256",FileAccess.get_sha256(Human.MODEL.resource_path))
 	output.set_meta("source_item",item);output.set_meta("source_triangles",triangle_count)
+	output.set_meta("authored_scale",1.0/factor);output.set_meta("authored_size",bounds.size)
 	return output

@@ -2,6 +2,26 @@ Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
 ## Held-item G drop standard - 2026-11-04
 
+Original-size option installed: **ESC → Player → Original-size dropped items**
+defaults on and persists globally. Six tool drops retain authored held dimensions;
+off restores compact size, including existing drops. Native render transforms,
+physics boxes, placement/readiness and targeting share the same layout; canonical
+save coordinates and metadata remain intact. Final actual-executable/PCK checks
+pass 28 size/save/physics, 32 input/option and 15 model assertions; source 77
+physical and 440 universal checks pass. Both native builds and export gates pass,
+PCK `8a8f3b69`, 14 matching libraries. Evidence and inspected package captures are
+in the [item-drop issue](../issues/item-dropping/README.md).
+
+Targeting timing remains **open**, superseding the historical pressure pass below.
+Latest size-aware p95 values are 1,012 / 1,018 / 940 / 210 microseconds against
+the unchanged 500-microsecond goal. Correctness, invalidation, occlusion and native
+work bounds pass; a bounded query cache has not closed the timing gate. Further
+optimization is deferred from the size option; return before claiming performance
+qualification or when profiling/feedback identifies pickup overhead. Closing
+requires all pressure cases below the existing threshold plus moving-ray world
+checks. Failed runs, precise limits and reproduction are retained in the issue.
+User visual acceptance and wider upright-body endurance remain pending.
+
 Current-model correction installed: old separate pickaxe/hatchet drop assets
 survived an icon-only refresh. They now preserve the current held tool geometry,
 wood/metal material properties and normal detail, still in one surface and the

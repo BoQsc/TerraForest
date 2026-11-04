@@ -236,6 +236,13 @@ continue to settle. Motion pauses during menus, loading or unavailable collision
 position and motion state save with the item. Simulation uses upright collision
 proxies, so the item artwork does not tumble.
 
+**ESC → Player → Original-size dropped items** is also enabled by default. The
+pickaxe, hatchet, repair hammer, assembly tool, shovel and torch now drop at their
+authored held-model sizes. Turn it off to restore compact 35 cm representatives.
+The setting also resizes existing drops while keeping their bottom anchor, and
+physics/placement checks and pickup targeting follow their visible size. Items
+without authored-size metadata retain their current representation.
+
 Items without dedicated ground art use a small parcel with their actual item name
 in the E pickup prompt. Quantity, tool wear and exact bucket contents survive
 drop/recollection and saving. [Required item-drop standard](ITEM_DROP_STANDARD.md).

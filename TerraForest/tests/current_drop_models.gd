@@ -19,6 +19,7 @@ func run()->void:
 	var view=preload("res://addons/player_runtime/tool_view.gd").new();scene.add_child(view)
 	var pickups=preload("res://addons/world_runtime/material_pickups.gd").new();scene.add_child(pickups)
 	check(pickups.prepare(preload("res://addons/world_runtime/world_persistence.gd").new()),"actual native world-drop renderer initializes")
+	pickups.set_full_size_enabled(false) # This historical comparison uses compact art.
 	for item:int in [1,2]:
 		view.human.equip(item)
 		var parts:Array[MeshInstance3D]=[];var bounds:=AABB();var first:=true

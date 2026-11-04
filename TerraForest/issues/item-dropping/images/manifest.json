@@ -26,5 +26,19 @@
     "sha256": "03043ebc5c3720e1654219b48baf6fb2b967c93f82223427f1c7872f4ccf3140",
     "caption": "Actual executable/PCK 6f7a6730, 1920x1080 controlled studio. Left: previous committed pickup assets; centre: current held R11 equipment detached from the rig and normalized; right: refreshed assets rendered by the real native pickup batches. Current tool triangles, wood/metal properties and normal detail are retained. Agent inspected; user visual approval pending.",
     "provenance": "Original repository runtime capture using retained project assets; inherited R11 notices/qualifications remain applicable. No external image imported."
+  },
+  {
+    "file": "original-size-comparison.png",
+    "source": "reports/original_size_drops/packed/20261104T033819909022Z/original_size_drops/comparison.png",
+    "sha256": "37e23a9297b14ffbd96f7b297ec3fe52b1a2bc3ba5465851a529c811fe8a4ef8",
+    "caption": "Actual executable/PCK 8a8f3b69, controlled studio, 1920x1080. Upper row: authored-size pickaxe, hatchet and shovel in native pickup batches; lower row: compact 35 cm meshes. Agent inspected; user visual approval pending.",
+    "provenance": "Original repository runtime capture using retained project assets; inherited notices and provenance qualifications remain applicable. No external image imported."
+  },
+  {
+    "file": "original-size-setting.png",
+    "source": "reports/original_size_drops/packed/20261104T033819909022Z/drop_key_standard/player_settings.png",
+    "sha256": "118b70f8fb8c6ae5ccf6e7d9ecb3c15552171d88a28d30fe9314351bafb2002d",
+    "caption": "Actual executable/PCK 8a8f3b69, temporary seed-1703 woodland with support fixture, 1920x1080. Player shows original-size and physical drops enabled. Real G and recovery were checked with full-size tools and physics on/off. Agent inspected; user visual approval pending.",
+    "provenance": "Original repository runtime capture using retained project assets; inherited notices and provenance qualifications remain applicable. No external image imported."
   }
 ]

@@ -26,3 +26,14 @@ excluded. The existing 35 cm normalization and item/save identities are retained
 Exact input/output hashes and source triangle counts are recorded in
 `current_tools.bake.json`. Launch/export preflight checks and rebuilds these
 assets even when icon textures are already current.
+
+Original-size follow-up, 2026-11-04: `authored_scale` and `authored_size` metadata
+retain pre-normalization dimensions. The same preflight annotates existing
+`3.res`, `4.res`, `5.res`, `6.res` without changing their geometry/materials:
+hammer/shovel/torch dimensions come from their already-used `Hammer.glb`,
+`Shovel.glb`, `Torch.glb` equipment scenes; assembly-tool dimensions come from the
+existing `tool_view.gd` procedural preview. Exact source/import/output hashes are
+in the receipt. These assets keep their existing source notices and terms. The
+default-on original-size runtime option scales native instance transforms and
+matching physics bounds; compact geometry remains available without duplicate
+vertex buffers, per-item scene nodes or a save-format change.

@@ -77,8 +77,15 @@ Drops reuse the native bounded pickup stores and batched renderer. **ESC → Pla
 → Physical item drops** defaults on and persists between normal sessions. Drops
 fall with a small forward impulse, collide, bounce and sleep. Off keeps new drops
 at their validated ground position; existing physical drops continue normally.
+**Original-size dropped items** is a separate default-on Player preference. Six
+current tools use their authored model dimensions (pickaxe 0.841 m, hatchet
+0.688 m, shovel 1.147 m tall); off keeps the compact 35 cm bake. Instance bases
+are scaled natively without scaling world coordinates. A shared offset anchors
+the bottom and keeps render, targeting and physics consistent across size changes
+and old saves. Items without authored-size metadata keep their current size.
 The engine owns at most 64 resident native physics proxies, without per-item
-scene nodes. Proxies are upright 34 cm boxes; item art stays in its existing
+scene nodes. Proxies enclose original-size tool bounds, or use the compact 34 cm
+box for other drops; item art stays in its existing
 batched orientation. Sleeping proxies can retire when the pool is full, leaving
 their ordinary saved pickups. If all 64 are moving, a further drop is refused
 without consuming the item. Pause, loading and unavailable collision suspend

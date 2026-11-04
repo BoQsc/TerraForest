@@ -14,6 +14,12 @@ func run()->void:
 		var path:="res://addons/player_runtime/art/drops/%d.res"%item
 		if ResourceSaver.save(mesh,path,ResourceSaver.FLAG_COMPRESS)!=OK:view.free();quit(1);return
 		outputs[path]=FileAccess.get_sha256(path);triangles[str(item)]=mesh.get_meta("source_triangles")
+	for item:int in Bake.SIZED_IDS:
+		if item in Bake.IDS:continue
+		var path:="res://addons/player_runtime/art/drops/%d.res"%item
+		var mesh:Mesh=load(path)
+		if not Bake.annotate(view,item,mesh) or ResourceSaver.save(mesh,path,ResourceSaver.FLAG_COMPRESS)!=OK:view.free();quit(1);return
+		outputs[path]=FileAccess.get_sha256(path)
 	if state!=Bake.snapshot():push_error("Tool inputs changed during bake");view.free();quit(1);return
 	var file:=FileAccess.open(Bake.RECEIPT,FileAccess.WRITE)
 	if file==null:view.free();quit(1);return

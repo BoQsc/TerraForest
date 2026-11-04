@@ -34,12 +34,27 @@ Required behavior, 2026-11-04:
 - Dragging outside inventory panels/belt drops the whole stack; Shift-drag drops
   half. Worn clothing can first be moved into carried storage through Character.
 
+**ESC → Player → Original-size dropped items** is optional and enabled by
+default. Tools with `authored_scale` / `authored_size` mesh metadata use their
+held-model dimensions; the six current tools carry that metadata. Off retains
+the compact 35 cm bake. Items without size metadata keep their existing size.
+The native renderer scales instance bases, never world positions, and lifts the
+model to preserve its bottom anchor. Physics boxes, ground/obstacle clearance,
+collision-readiness bounds and pickup targeting use the same dimensions/offset.
+Existing drops resize too; preference changes do not rewrite inventory or pickup
+identities. Canonical coordinates and the existing motion snapshot format remain
+unchanged, so both old saves and size-preference changes can reopen without a
+position migration. Size is a saved global preference, not a per-save refill.
+`tests/original_size_drops.gd` compares authored dimensions, actual native instance
+transforms, floor contact, switching modes, preference reload and worn recovery.
+
 Physical dropping, added 2026-11-04, is an optional global preference under
 **ESC → Player → Physical item drops**, enabled by default. It applies to new
 drops; disabling it leaves the existing static ground-placement path available.
 Existing physical drops keep their simulation. The engine integrates gravity,
 linear impulse, collision and bounce through a maximum of 64 native physics
-proxies. The 34 cm upright box proxy does not rotate item art. Sleeping proxies
+proxies. Original-size tools use boxes enclosing their visible dimensions;
+compact/fallback drops retain 34 cm boxes. Proxies do not rotate item art. Sleeping proxies
 may be retired for new drops; if all proxies are moving, reject the new drop
 before debiting inventory. Pickup identity, stack metadata, position, velocity
 and sleeping state survive saves. Pause/readiness suspension freezes integration

@@ -1818,7 +1818,10 @@ func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 	if (player_hud.inventory_open or Input.mouse_mode==Input.MOUSE_MODE_CAPTURED) and app_focused and not player_life.dead and not player_view.entry.blocks_actions() and not session_menu.visible_ui() and not fly and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not world_vehicle.driving:
 		var forward := -player.global_basis.z
 		forward.y=0;forward=forward.normalized()
-		for offset: float in [0.0,0.55,-0.55,1.1,-1.1]:
+		var layout:Dictionary=pickups.carried_layout(player_hud.inventory,slot)
+		var half:Vector3=layout.half;var lift:Vector3=layout.offset
+		var spacing:=maxf(.55,half.x*2+.05)
+		for offset: float in [0.0,spacing,-spacing,spacing*2,-spacing*2]:
 			var start := player.global_position+forward*1.2+Vector3.UP*1.5+player.global_basis.x*offset
 			var query := PhysicsRayQueryParameters3D.create(start,start-Vector3.UP*3.0,3,[player.get_rid()])
 			var hit := get_world_3d().direct_space_state.intersect_ray(query)
@@ -1826,14 +1829,21 @@ func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 			if not hit.is_empty() and Vector3(hit.normal).y>=0.7:
 				var simulate:bool=pickups.physics_enabled
 				var point: Vector3=hit.position+Vector3.UP*(0.85 if simulate else 0.2)
-				var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
-				if terrain.player_region_ready(point) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and _pickup_reachable(point):
-					var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
-					var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7|(1<<21)
+				var center:=point+lift
+				var bounds:=AABB(center-half,half*2)
+				if terrain.player_region_ready(point) and _actor_collision_ready(bounds) and _pickup_reachable(center):
+					var shape:=BoxShape3D.new();shape.size=half*2
+					var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,center);overlap.collision_mask=7|(1<<21)
 					var clear:=get_world_3d().direct_space_state.intersect_shape(overlap,1).is_empty()
-					for store: RefCounted in pickups.stores.values():
-						var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
-						clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
+					for batch:int in pickups.stores:
+						var store:RefCounted=pickups.stores[batch]
+						var other_half:Vector3=pickups.collision_half(batch)
+						var other_offset:Vector3=pickups.visual_offset(batch)
+						var nearby:Dictionary=store.query_sphere(pickups.to_local(center)-other_offset,half.length()+other_half.length()+.02,16,64)
+						clear=clear and nearby.ok and nearby.complete
+						for handle:int in nearby.ids:
+							var other_center:Vector3=pickups.to_global(store.get_position(handle)+other_offset)
+							if bounds.grow(.01).intersects(AABB(other_center-other_half,other_half*2)):clear=false
 					if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count,simulate,forward*0.8+Vector3.UP*0.25)
 			if result.ok:break
 	player_hud.message.text=result.reason

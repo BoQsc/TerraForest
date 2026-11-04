@@ -17,6 +17,7 @@ void NativeEntityStore::_bind_methods() {
     ClassDB::bind_method(D_METHOD("persistent_id", "handle"), &NativeEntityStore::persistent_id);
     ClassDB::bind_method(D_METHOD("resolve_identity", "identity"), &NativeEntityStore::resolve_identity);
     ClassDB::bind_method(D_METHOD("get_position", "id"), &NativeEntityStore::get_position);
+    ClassDB::bind_method(D_METHOD("get_spatial_revision"), &NativeEntityStore::spatial_revision);
     ClassDB::bind_method(D_METHOD("set_position", "id", "position"), &NativeEntityStore::set_position);
     ClassDB::bind_method(D_METHOD("set_velocity", "id", "velocity"), &NativeEntityStore::set_velocity);
     ClassDB::bind_method(D_METHOD("step", "seconds"), &NativeEntityStore::step);

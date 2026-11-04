@@ -25,6 +25,7 @@ var message:Label:
 var mode_button: Button
 var entry_fly_in_toggle:CheckButton
 var drop_physics_toggle:CheckButton
+var drop_size_toggle:CheckButton
 var third_person_toggle:CheckButton
 var overview_toggle:CheckButton
 var first_person_toggle:CheckButton
@@ -90,6 +91,10 @@ func _ready() -> void:
 	drop_physics_toggle.tooltip_text="Dropped items fall, bounce and settle. Applies to new drops; existing physical drops keep simulating. Off places new drops directly on clear ground."
 	drop_physics_toggle.button_pressed=game.pickups.physics_enabled
 	drop_physics_toggle.toggled.connect(game.pickups.set_physics_enabled);player.add_child(drop_physics_toggle)
+	drop_size_toggle=CheckButton.new();drop_size_toggle.text="Original-size dropped items"
+	drop_size_toggle.tooltip_text="Use the tool models' authored dimensions, including existing drops. Off keeps compact 35 cm representatives. Items without authored size metadata keep their current size."
+	drop_size_toggle.button_pressed=game.pickups.full_size_enabled
+	drop_size_toggle.toggled.connect(game.pickups.set_full_size_enabled);player.add_child(drop_size_toggle)
 	var graphics:=page("Graphics")
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"

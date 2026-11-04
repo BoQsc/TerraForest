@@ -1,12 +1,68 @@
 # G drops the held gameplay item
 
-- Status: Implemented / installed, scoped checks pass.
+- Status: Implemented / installed; functional checks pass, targeting timing open.
 - Updated: 2026-11-04. Base fix: `436d3022`; physical-drop follow-up below.
 - User visual review: Pending. Agent inspected the final packaged capture.
 - Symptom: New inventory IDs were missing from a separate pickup whitelist,
   preventing guns, coal, ammunition, barrels and coins from being dropped.
 
 ## Required behavior and changes
+
+### Original-size dropped tools — 2026-11-04 follow-up
+
+The small tools came from a shared bake that normalized every drop to 35 cm.
+**ESC → Player → Original-size dropped items** is now optional, enabled by
+default and saved globally. Pickaxe, hatchet, repair hammer, assembly tool,
+shovel and torch use their authored held-model dimensions (approximately
+84 / 69 / 59 / 49 / 115 / 60 cm tall). Turning it off restores compact drops.
+Existing drops resize immediately; items without authored-size metadata keep
+their existing representation. All registered items remain droppable.
+
+The native instance basis scales the shared mesh, with matching per-batch
+upright physics boxes, readiness/placement bounds and pickup targeting. A bottom
+offset preserves canonical pickup coordinates, identities and the existing motion
+snapshot format, so compact and existing saves need no migration. The bake receipt
+now verifies sizing metadata against the retained tool sources. No new external
+assets or license exception was introduced.
+
+Actual executable with the final installed PCK passes
+[28 size/physics/preference/save assertions](../../reports/original_size_drops/packed/20261104T033819909022Z/original_size_drops/run.json),
+[32 gameplay G and option assertions](../../reports/original_size_drops/packed/20261104T033819909022Z/drop_key_standard/run.json), and
+[15 current-model assertions](../../reports/original_size_drops/packed/20261104T033819909022Z/current_drop_models/run.json).
+Source [77 physical](../../reports/checks/20261104T033308210472Z/run.json) and
+[440 universal assertions](../../reports/checks/20261104T033308205060Z/run.json)
+pass. Both native configurations build and [export gates pass](../../reports/drop_size_export_final.log).
+PCK SHA-256: `8a8f3b69c474e5630fe9d695b0a59442ab162499b152383642522c2ecb2415d4`;
+all 14 external native libraries match source.
+
+![Original-size and compact dropped tools](images/original-size-comparison.png)
+
+Actual executable/PCK, controlled studio, 1920×1080. Upper row: authored-size
+pickaxe, hatchet and shovel rendered by the native pickup batches. Lower row:
+the same compact meshes. Agent inspected; user appearance acceptance remains open.
+
+![Default-on original-size and physical-drop options](images/original-size-setting.png)
+
+Actual executable/PCK, temporary seed-1703 woodland with support fixture,
+1920×1080. Player settings show both drop options enabled; real full-size G
+drop/recovery was checked with physics on and off before capture.
+
+**Open performance check:** size-aware targeting correctness and the 1,024-candidate
+limit pass, including movement, changed ray, live occlusion, resize and removal
+cache invalidation. The unchanged 500-microsecond p95 goal does **not** pass:
+[latest pressure run](../../reports/checks/20261104T033114619491Z/run.json) reports
+1,012 / 1,018 / 940 / 210 microseconds for local / universal / full distant /
+dense refusal. A bounded per-batch spatial cache reduces repeated native work but
+does not qualify timing. Earlier failures remain at
+[initial size-aware query](../../reports/checks/20261104T032539382414Z/run.json),
+[precomputed layout](../../reports/checks/20261104T032645032091Z/run.json), and
+[first cache run](../../reports/checks/20261104T032949344860Z/run.json).
+Further targeting optimization and frame-pacing qualification are deferred from
+this sizing change. Return before claiming the targeting performance gate closed,
+or when profiling/feedback identifies pickup overhead; close only with the same
+pressure fixture below 500 microseconds in all cases plus moving-ray world checks.
+Upright conservative boxes do not tumble; broader endurance and user visual
+approval remain unqualified. The earlier pressure pass below is historical.
 
 ### Current pickaxe/hatchet models — 2026-11-04 follow-up
 
@@ -75,7 +131,8 @@ retaining collision registration, and collection retires its body after the
 inventory transfer succeeds. Sleeping proxies may retire for new drops; a full
 awake pool rejects new drops without debiting inventory.
 
-Current scope: upright 34 cm box proxies, so artwork does not tumble. Long-range
+At this checkpoint: upright 34 cm box proxies, so artwork does not tumble. The
+original-size follow-up above replaces these with per-batch boxes. Long-range
 physics residency is bounded; retired sleeping pickups remain ordinary static
 pickups. Exact per-model collision, tumbling and large-population frame pacing
 are not qualified. These are explicit limits, not claims of a complete loose-body

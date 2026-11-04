@@ -30,10 +30,20 @@ func run() -> void:
 	var persistence=preload("res://addons/world_runtime/world_persistence.gd").new()
 	if not pickups.prepare(persistence):quit(1);return
 	var local:int=pickups.stores[1].spawn(Vector3(1,0,0),Vector3.ZERO)
-	await sample(pickups,"one_local",true,1)
+	await sample(pickups,"one_local",true,0)
+	pickups.stores[1].set_position(local,Vector3(1,0,2))
+	check(not pickups.aimed(Vector3.ZERO,Vector3(2,0,0),reachable).ok,"moving a pickup invalidates the cached ray winner")
+	pickups.stores[1].set_position(local,Vector3(1,0,0))
+	check(not pickups.aimed(Vector3(0,0,4),Vector3(2,0,4),reachable).ok,"a changed aiming ray never reuses a stale target")
+	check(pickups.aimed(Vector3.ZERO,Vector3(2,0,0),reachable).ok and not pickups.aimed(Vector3.ZERO,Vector3(2,0,0),func(_p:Vector3):return false).ok,"cached spatial selection still checks live world occlusion")
+	var full:Dictionary=pickups.aimed(Vector3(0,.4,0),Vector3(2,.4,0),reachable)
+	pickups.set_full_size_enabled(false)
+	check(full.ok and not pickups.aimed(Vector3(0,.4,0),Vector3(2,.4,0),reachable).ok,"resizing invalidates cached ray geometry")
+	pickups.set_full_size_enabled(true)
 	pickups.stores[1].despawn(local)
+	check(not pickups.aimed(Vector3.ZERO,Vector3(2,0,0),reachable).ok,"removing a pickup invalidates cached handles")
 	var universal:int=pickups.spawn(601,Vector3(1,0,0))
-	await sample(pickups,"one_universal",true,1)
+	await sample(pickups,"one_universal",true,0)
 	pickups.stores[0].despawn(pickups.stores[0].resolve_identity(universal))
 	pickups.stores[1].spawn(Vector3(1,0,0),Vector3.ZERO)
 	var count:=1
@@ -41,7 +51,7 @@ func run() -> void:
 		var amount: int=4095 if item==1 else 4096
 		count+=pickups.stores[item].spawn_grid(amount,Vector3(1000,0,1000),1,Vector3.ZERO).size()
 	check(count==pickups.stores.size()*4096,"every legacy and universal store filled with distant population")
-	await sample(pickups,"full_distant_population",true,1)
+	await sample(pickups,"full_distant_population",true,0)
 	# Move enough distant records into the ray's cell to exhaust the global budget.
 	var store: RefCounted=pickups.stores[1]
 	var distant: Dictionary=store.query_sphere(Vector3(1008,8,1008),32,4096,4096)

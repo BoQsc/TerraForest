@@ -23,6 +23,9 @@ var _aimed_batch:=0
 var _aimed_carried:=0
 var physics:RefCounted
 var physics_enabled:=true
+var full_size_enabled:=true
+var size_layouts:Dictionary={}
+var _ray_cache:Dictionary={}
 var physics_settings_path:="user://item_drops.cfg"
 var persist_physics_settings:=false
 
@@ -30,7 +33,10 @@ func configure_physics(excluded:RID,persist_settings:bool)->bool:
 	persist_physics_settings=persist_settings
 	if persist_settings and not physics_settings_path.is_empty():
 		var config:=ConfigFile.new()
-		if config.load(physics_settings_path)==OK:physics_enabled=bool(config.get_value("items","physical_drops",true))
+		if config.load(physics_settings_path)==OK:
+			physics_enabled=bool(config.get_value("items","physical_drops",true))
+			full_size_enabled=bool(config.get_value("items","original_size",true))
+	_apply_size_layout(false)
 	return physics!=null and physics.configure(get_world_3d().space,excluded,global_transform)
 
 func set_physics_enabled(value:bool)->void:
@@ -38,6 +44,41 @@ func set_physics_enabled(value:bool)->void:
 	if persist_physics_settings and not physics_settings_path.is_empty():
 		var config:=ConfigFile.new();config.load(physics_settings_path)
 		config.set_value("items","physical_drops",value);config.save(physics_settings_path)
+
+func set_full_size_enabled(value:bool)->void:
+	if full_size_enabled==value:return
+	full_size_enabled=value;_apply_size_layout(true)
+	if persist_physics_settings and not physics_settings_path.is_empty():
+		var config:=ConfigFile.new();config.load(physics_settings_path)
+		config.set_value("items","original_size",value);config.save(physics_settings_path)
+
+func _apply_size_layout(notify:bool)->void:
+	_ray_cache.clear()
+	for batch:int in renderers:
+		var mesh:Mesh=renderers[batch].multimesh.mesh
+		var scale:float=float(mesh.get_meta("authored_scale",1.0)) if full_size_enabled else 1.0
+		if not is_finite(scale) or scale<=0 or scale>64:scale=1.0
+		var half:=Vector3.ONE*.17;var offset:=Vector3.ZERO
+		if full_size_enabled and mesh.has_meta("authored_scale"):
+			half=(mesh.get_aabb().size*scale*.5+Vector3.ONE*.005).max(Vector3.ONE*.025)
+			offset.y=half.y-.17
+		size_layouts[batch]={"scale":scale,"half":half,"offset":offset,"radius":minf(1.0,maxf(.32,half.length()))}
+		renderers[batch].set_instance_layout(scale,offset)
+		physics.set_layout(batch,half,offset)
+	_dirty=true
+	if notify:changed.emit()
+
+func collision_half(batch:int)->Vector3:
+	return size_layouts.get(batch,{}).get("half",Vector3.ONE*.17)
+
+func visual_offset(batch:int)->Vector3:
+	return size_layouts.get(batch,{}).get("offset",Vector3.ZERO)
+
+func carried_layout(inventory:RefCounted,slot:int)->Dictionary:
+	var state:Dictionary=inventory.snapshot()
+	if slot<0 or slot>=state.slots.size():return {"half":Vector3.ONE*.17,"offset":Vector3.ZERO}
+	var batch:=store_item(int(state.slots[slot].item))
+	return {"half":collision_half(batch),"offset":visual_offset(batch)}
 
 func step_physics(delta:float,run:bool,ready:Callable)->Dictionary:
 	var result:Dictionary=physics.step(delta,run,ready)
@@ -135,6 +176,7 @@ func prepare(persistence: RefCounted, inventory_schema:RefCounted=null) -> bool:
 	physics=next_physics
 	stores=next_stores;stacks=next_stacks;renderers=next_renderers
 	for renderer:Node in renderers.values():add_child(renderer)
+	_apply_size_layout(false)
 	return true
 
 func _generic_mesh()->ArrayMesh:
@@ -185,17 +227,28 @@ func update_view(delta: float, focus: Vector3, enabled: bool) -> void:
 func aimed(from: Vector3,to: Vector3,reachable: Callable) -> Dictionary:
 	if _transferring or not from.is_finite() or not to.is_finite() or not reachable.is_valid():return {"ok":false,"reason":"Pickup unavailable"}
 	var budget:=1024;var visited:=0;var queries:=0;var best:=1.0;var selected: Dictionary={"ok":false,"reason":"No aimed pickup"}
+	var local_from:=to_local(from);var local_to:=to_local(to)
 	# Fixed legacy batches plus one universal batch; native spatial queries.
 	for item: int in stores:
 		if budget<=0:return {"ok":false,"reason":"Pickup area is too crowded","visited":visited,"queries":queries}
-		var query: Dictionary=stores[item].query_segment(to_local(from),to_local(to),0.32,budget)
-		queries+=1;visited+=int(query.visited)
+		var layout:Dictionary=size_layouts[item]
+		var offset:Vector3=layout.offset
+		var start:Vector3=local_from-offset;var end:Vector3=local_to-offset
+		var revision:int=stores[item].get_spatial_revision()
+		var cached:Dictionary=_ray_cache.get(item,{})
+		var query:Dictionary
+		if cached.get("revision",-1)==revision and cached.start==start and cached.end==end and cached.radius==layout.radius and cached.budget==budget:
+			query=cached.result.duplicate();query.visited=0
+		else:
+			query=stores[item].query_segment(start,end,layout.radius,budget);queries+=1
+			if query.ok and query.complete:_ray_cache[item]={"revision":revision,"start":start,"end":end,"radius":layout.radius,"budget":budget,"result":query.duplicate()}
+		visited+=int(query.visited)
 		if not query.ok or not query.complete:return {"ok":false,"reason":"Pickup area is too crowded","visited":visited,"queries":queries}
 		budget-=int(query.visited)
 		if query.handle>0 and (not selected.ok or query.fraction<best):
 			best=query.fraction;selected={"ok":true,"item":item,"store_item":item,"handle":query.handle,"position":from.lerp(to,best)}
 	if selected.ok:
-		var center: Vector3=to_global(stores[selected.store_item].get_position(selected.handle))
+		var center: Vector3=to_global(stores[selected.store_item].get_position(selected.handle)+visual_offset(selected.store_item))
 		if not reachable.call(center):return {"ok":false,"reason":"Pickup obstructed","visited":visited,"queries":queries}
 		selected.item=_carried_item(selected.store_item,selected.handle)
 	selected.visited=visited;selected.queries=queries
@@ -209,11 +262,12 @@ func collect_aimed(from: Vector3,to: Vector3,inventory: RefCounted,reachable: Ca
 func collect_near(point: Vector3, inventory: RefCounted, reachable: Callable) -> Dictionary:
 	# Explicit keypress only; at most ITEMS.size() x 64 candidates. Never a per-frame scan.
 	var best_item := 0; var best_handle := 0; var best_distance := INF
+	var local_point:=to_local(point)
 	for item: int in stores:
-		var query: Dictionary = stores[item].query_sphere(to_local(point), 2.5, 64, 256)
+		var query: Dictionary = stores[item].query_sphere(local_point-visual_offset(item), 2.5, 64, 256)
 		if not query.ok or not query.complete: return {"ok": false, "reason": "Pickup area is too crowded"}
 		for handle: int in query.ids:
-			var position: Vector3 = to_global(stores[item].get_position(handle))
+			var position: Vector3 = to_global(stores[item].get_position(handle)+visual_offset(item))
 			var distance := point.distance_squared_to(position)
 			if distance < best_distance and reachable.call(position):
 				best_item = item; best_handle = handle; best_distance = distance

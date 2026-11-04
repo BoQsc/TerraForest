@@ -5,7 +5,7 @@ and a practical place to resume. Detailed evidence stays at its existing locatio
 
 | Issue | Status | Latest review / next investigation |
 | --- | --- | --- |
-| [G and universal item dropping](item-dropping/README.md) | Installed / scoped checks pass | Current held-model pickaxe/hatchet drops replace stale primitive assets; independent bake freshness and 15 source/package comparisons pass. Gameplay-only G and optional native physics retain 77 physics / 26 input / 440 universal checks; visual/motion review pending |
+| [G and universal item dropping](item-dropping/README.md) | Installed / functional checks pass; timing open | Default-on original-size tool option aligns rendering, physics, placement and pickup; compact option retained. Package 28 size / 32 input / 15 model checks, source 77 physics / 440 universal pass. Targeting p95 goal fails; visual/motion review pending |
 | [Windowed mode across stages](windowed-mode/README.md) | Installed / scoped checks pass | Persistent host/global F11; 22 source + 22 executable transition checks. Follow-up loads mode before splash: source/package windowed, fullscreen and default startup pass with zero mismatches. User desktop review pending |
 | [Footstep onset delay](footstep-delay/README.md) | Improved-partial / listening review pending | Short 0.15 m first-step trigger, 60 Hz sampling and material lookup outside playback; cadence and actual-floor checks |
 | [Breakable room-light objects](house-lights/README.md) | Installed / scoped checks | Three GLB props, GPU flames, native four-light pool and 203 room placements; packaged salvage/destruction/reload and old-save compatibility pass. Art acceptance and broader route/performance coverage remain |
