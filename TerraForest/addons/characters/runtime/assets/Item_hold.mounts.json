@@ -1,0 +1,24 @@
+{
+  "animation_sha256": "83e0a9008d4661a97809874f8d72b82617e6eedada52485d8d53ef583efb1c15",
+  "creator": "TerraForest original AI-assisted authoring",
+  "heights": {
+    "214": 0.0695071386396885,
+    "215": 0.043507137870416,
+    "216": 0.0695071386396885,
+    "217": 0.116507140755653,
+    "218": 0.0907993190700966,
+    "219": 0.0605071390271187,
+    "fallback": 0.0812778750658035
+  },
+  "license": "CC0-1.0 new mount data; retained existing mesh/rig provenance",
+  "schema": 1,
+  "sources": {
+    "res://addons/player_runtime/art/consumables/214.res": "d002874a6ab4ad22362aaec551eac064d97cc11a962b2fd69d8c6eb86c088d97",
+    "res://addons/player_runtime/art/consumables/215.res": "4b34f73a5c25519b39521da768efed4635fc844b1f3f196b686bafa630b91a36",
+    "res://addons/player_runtime/art/consumables/216.res": "d57d76cbb1417f20d727d5dc4df187694499f60c71865830834c5d106c5c55d1",
+    "res://addons/player_runtime/art/consumables/217.res": "a856d0a19d563bc9e62e76331209424789bc36c04b1a8bcf29b7db2139de0257",
+    "res://addons/player_runtime/art/consumables/218.res": "4173d63efeefe3470cbfbf5d96c8f0a0cb0f73a30eebe489589323d70206489d",
+    "res://addons/player_runtime/art/consumables/219.res": "62b521c4dd2b11b0cdb8a58532e0ada87bf5156af96d7fe9557814487a27c821"
+  },
+  "support_center_hand_y": 0.055
+}

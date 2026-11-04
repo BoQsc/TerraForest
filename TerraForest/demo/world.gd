@@ -59,6 +59,7 @@ var vehicle_radial=preload("res://addons/vehicle_runtime/vehicle_radial.gd").new
 var construction_inventory=preload("res://addons/player_runtime/construction_inventory.gd").new()
 var combat=preload("res://addons/player_runtime/combat_world.gd").new()
 var world_attack=preload("res://addons/player_runtime/world_attack.gd").new()
+var world_item_use=preload("res://addons/player_runtime/world_item_use.gd").new()
 var impact_effects:Node3D
 var equipped_tool:=0
 var editor_tool_active:=false
@@ -238,6 +239,7 @@ func _ready() -> void:
 		return
 	if not world_attack.prepare(self):
 		push_error("World durability initialization failed");_abort_startup(2);return
+	world_item_use.prepare(self)
 	add_child(combat)
 	if not combat.prepare(self):
 		push_error("Combat initialization failed");_abort_startup(2);return
@@ -837,6 +839,7 @@ func _setup_hud() -> void:
 
 func _cancel_edit_input()->void:
 	world_attack.cancel()
+	world_item_use.cancel()
 	combat.cancel_reload()
 	terrain_placement.cancel()
 	super._cancel_edit_input()
@@ -855,7 +858,7 @@ func _equip_player_tool(item: int) -> void:
 	var bucket_water_ml:=-1
 	if item>=401 and item<=411 and player_hud.active_slot>=0:
 		bucket_water_ml=int(player_hud.inventory.snapshot().slots[player_hud.active_slot].water_ml)
-	tool_view.equip(item if item in player_hud.CATALOG or (item>=401 and item<=411) else 0,bucket_water_ml)
+	tool_view.equip(item,bucket_water_ml)
 	player_hud.show_active_tool(item)
 	if session_menu.developer_hud!=null:session_menu.developer_hud.refresh()
 	_show_lake_notice(session_menu.DESCRIPTIONS.get(item,"Empty hands - left mouse punches, E interacts" if item==0 else "Holding "+player_hud.MATERIALS.get(item,player_hud.RESOURCES.get(item,"item"))))
@@ -1076,7 +1079,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not session_menu.developer and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and Input.mouse_mode==Input.MOUSE_MODE_CAPTURED:
 		if player_hud.Consumables.ITEMS.has(equipped_tool):
 			if event.pressed and _model_edit_available():
-				player_hud.use_item(player_hud.active_slot,player_hud.inventory.snapshot().revision);_show_lake_notice(player_hud.message.text.get_slice("\n",0))
+				world_item_use.begin()
 			return
 		if event.pressed:world_attack.attack()
 		return

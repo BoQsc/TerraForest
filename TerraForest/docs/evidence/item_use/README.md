@@ -1,8 +1,11 @@
 # Generic-item hold/use candidate 01 — 2026-11-04
 
-Status: authored and checked; player visual approval pending. Gameplay remains
-unchanged. The new actions are deliberately kept in the excluded authoring
-folder and loaded only by preview/validation tools.
+Status: committed and integrated as the requested baseline on 2026-11-04.
+User feedback: the idea is good but the hand looks like a static stick. The
+user requested retaining/integrating this baseline while trying to improve it.
+Original source/preview commit: `bc5de4ae`. The runtime copy preserves these exact
+animation bytes. [Integration evidence and remaining art work](integration/README.md).
+This page retains the original candidate preview/checks from before integration.
 
 ![Book, bread and neutral object preview](Generic-item.preview.gif)
 
@@ -60,13 +63,13 @@ approval or establish universal anatomical/third-person quality.
 
 ## Remaining / resume here
 
-Player review of hand appearance, item position and the simple lift/use is the
-next requirement. Return on approval or requested changes. After approval,
-separately connect inventory/catalog item presentation and the existing native
-use/consumption/reading events, with cancellation, item ownership and transition
-checks. Retain the universal drop/persistence behavior and actual item metadata.
-No item schema, game input, consumption behavior or runtime library has changed
-in this candidate. Dedicated open-book/eating behavior needs its own decision.
+The baseline is now integrated with visible consumable meshes, a generic visual
+fallback and existing native use/consumption/reading transactions. Completion
+commits one native transaction after the gesture; cancellation keeps the item.
+Inventory-dialog use retains its existing immediate native behavior. Native
+save schema/rewards and universal drops are unchanged. The stiff hand is still
+an explicit art limitation. A separate articulated revision must be reviewed
+before replacing the baseline. Dedicated page turning/biting remains separate.
 
 ## Reproduce
 

@@ -4,6 +4,7 @@ extends Node3D
 signal attack_contact(identity:int)
 signal attack_finished(identity:int,cancelled:bool)
 var attack_allowed:Callable
+var item_use_allowed:Callable
 var attack_identity:=0
 var contact_identity:=0
 var tools: Dictionary={}
@@ -60,6 +61,8 @@ func cancel_attack()->void:
 	if tools.has(current):tools[current].rotation.x=-0.2
 	attack_finished.emit(identity,true)
 func swing() -> bool:return _swing(0)
+func begin_item_use(identity:int)->bool:
+	cancel_attack();return human.begin_item_use(identity)
 func contact_ready(identity:int)->bool:
 	if identity<=0 or identity!=attack_identity or identity!=contact_identity:return false
 	return current not in human.AUTHORED_TOOLS or (human.swing_identity==identity and human.contact_sent and human.animation_player.current_animation_position+0.00001>=human.contact_seconds)
@@ -86,5 +89,6 @@ func place() -> bool:
 	return true
 
 func _process(_delta:float)->void:
+	if human.item_use_identity>0 and (not is_visible_in_tree() or (item_use_allowed.is_valid() and not item_use_allowed.call())):human.cancel_item_use()
 	if attack_identity>0 and (not is_visible_in_tree() or (attack_allowed.is_valid() and not attack_allowed.call())):cancel_attack()
 	if tools.has(current):tools[current].visible=not human.placement_active

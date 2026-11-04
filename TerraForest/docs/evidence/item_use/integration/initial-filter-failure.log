@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.351 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 4050 Laptop GPU
+
+PASS temporary world and player entry ready
+PASS real native inventory receives book and food fixture
+FAIL ordinary belt selection displays the actual book in the hand
+FAIL left mouse starts the held book gesture
+PASS gesture cannot restart or grant an early read
+PASS book stays owned while the visible use is playing
+FAIL one completed gesture performs one existing native reading transaction
+FAIL remaining book stays visibly held after native stack refresh
+FAIL second click reads exactly the last book
+FAIL consuming the last book restores the empty hand
+PASS native fixture fills food before full-food refusal
+PASS full-food refusal keeps the ration and skips the gesture
+FAIL food gesture starts without an early native consumption
+FAIL one completed food gesture consumes one ration and restores food
+FAIL cancellable native item-use starts: equipment
+PASS cancelled gesture changes no food/reading state: equipment
+FAIL cancellable native item-use starts: inventory
+PASS cancelled gesture changes no food/reading state: inventory
+FAIL cancellable native item-use starts: focus
+PASS cancelled gesture changes no food/reading state: focus
+FAIL cancellable native item-use starts: ownership
+PASS native slot ownership changes during use
+PASS cancelled gesture changes no food/reading state: ownership
+[TerrainRewrite] Temporary test world: save skipped
+PASS temporary native world shuts down without writing user saves
+ITEM_HOLD_WORLD checks=24 failures=12

@@ -17,9 +17,9 @@
     "res://addons/characters/runtime/assets/Shovel.glb.import": "66921214f3c5694ec1e2766365ed494adb40e3dd94199ba39287912be2a2b75f",
     "res://addons/characters/runtime/assets/Torch.glb": "b1346e6731614c7b727dd41f54bdc455f3c8c4f0e152535fe10b08e4aadf2ff6",
     "res://addons/characters/runtime/assets/Torch.glb.import": "eb942c7e6d02667b523ed66e1c215b08596bed4e1ce6bba5671cc28a75c1e106",
-    "res://addons/characters/runtime/human_view.gd": "c0249c57c52056cf34be4ee162d0b2584378f50ea35f21193437165e89829ad9",
+    "res://addons/characters/runtime/human_view.gd": "0f2bb29e48b65bc2e8e06c9a8eac430b22797f42e9c93158502065bf6d41a1f8",
     "res://addons/player_runtime/art/drops/current_tool.gdshader": "0a0f4928e2803f493944c2acdbe3db1eb4da351270ee67034d886eaf2b556dad",
-    "res://addons/player_runtime/tool_view.gd": "260970d2178648149a7d5bf9fee9c0739a0de8c0c00795890089644240f32700",
+    "res://addons/player_runtime/tool_view.gd": "b39c5c0ab9d16d1ac0f3846c9c473d6f4e99cca040cbe2b3c6ddd275a531c195",
     "res://tools/bake_tool_drops.gd": "abd05f1ecfd8e076e2115f91f962fa1f2d298fe1d6202b6c9c7b89114b643a4a",
     "res://tools/tool_drop_bake.gd": "874df2a6df2617c053aeb74134b124ff31eb1c5245b09915d4027c30b3e11ae9"
   },

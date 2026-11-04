@@ -1,0 +1,71 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS owned/future item 214 appears during its keyed equip
+PASS generic item 214 uses repaired hands without becoming a weapon
+PASS item 214 cannot use before equip finishes
+PASS item 214 holds and starts one use gesture
+PASS item 214 cannot restart its active gesture
+PASS item 214 stays in the hand during use
+PASS item 214 emits one completed gesture
+PASS owned/future item 215 appears during its keyed equip
+PASS generic item 215 uses repaired hands without becoming a weapon
+PASS item 215 cannot use before equip finishes
+PASS item 215 holds and starts one use gesture
+PASS item 215 cannot restart its active gesture
+PASS item 215 stays in the hand during use
+PASS item 215 emits one completed gesture
+PASS owned/future item 216 appears during its keyed equip
+PASS generic item 216 uses repaired hands without becoming a weapon
+PASS item 216 cannot use before equip finishes
+PASS item 216 holds and starts one use gesture
+PASS item 216 cannot restart its active gesture
+PASS item 216 stays in the hand during use
+PASS item 216 emits one completed gesture
+PASS owned/future item 217 appears during its keyed equip
+PASS generic item 217 uses repaired hands without becoming a weapon
+PASS item 217 cannot use before equip finishes
+PASS item 217 holds and starts one use gesture
+PASS item 217 cannot restart its active gesture
+PASS item 217 stays in the hand during use
+PASS item 217 emits one completed gesture
+PASS owned/future item 218 appears during its keyed equip
+PASS generic item 218 uses repaired hands without becoming a weapon
+PASS item 218 cannot use before equip finishes
+PASS item 218 holds and starts one use gesture
+PASS item 218 cannot restart its active gesture
+PASS item 218 stays in the hand during use
+PASS item 218 emits one completed gesture
+PASS owned/future item 219 appears during its keyed equip
+PASS generic item 219 uses repaired hands without becoming a weapon
+PASS item 219 cannot use before equip finishes
+PASS item 219 holds and starts one use gesture
+PASS item 219 cannot restart its active gesture
+PASS item 219 stays in the hand during use
+PASS item 219 emits one completed gesture
+PASS owned/future item 102 appears during its keyed equip
+PASS generic item 102 uses repaired hands without becoming a weapon
+PASS item 102 cannot use before equip finishes
+PASS item 102 holds and starts one use gesture
+PASS item 102 cannot restart its active gesture
+PASS item 102 stays in the hand during use
+PASS item 102 emits one completed gesture
+PASS owned/future item 601 appears during its keyed equip
+PASS generic item 601 uses repaired hands without becoming a weapon
+PASS item 601 cannot use before equip finishes
+PASS item 601 holds and starts one use gesture
+PASS item 601 cannot restart its active gesture
+PASS item 601 stays in the hand during use
+PASS item 601 emits one completed gesture
+PASS owned/future item 9001 appears during its keyed equip
+PASS generic item 9001 uses repaired hands without becoming a weapon
+PASS item 9001 cannot use before equip finishes
+PASS item 9001 holds and starts one use gesture
+PASS item 9001 cannot restart its active gesture
+PASS item 9001 stays in the hand during use
+PASS item 9001 emits one completed gesture
+PASS cancellable item-use begins
+PASS switch to torch cancels generic use and hides its object
+PASS empty hand has no fallback object
+PASS third-person item carry preserves existing leg locomotion
+PASS third-person crouch retains the held object
+ITEM_HOLD_INTEGRATION checks=68 failures=0

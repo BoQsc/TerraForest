@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS double-click uses one carried book through native transaction
+PASS right click exposes Use only for a usable carried item
+PASS context Use consumes letter and grants its mild experience
+PASS stale context action cannot consume a replacement stack
+PASS held-slot use shares the same native reading/effect transaction
+PASS read entries appear in persistent Journal UI
+PASS actual food use restores food and applies native damage buff
+PASS full-food refusal leaves the ration intact
+PASS inactive/paused player time does not drain food or buffs
+PASS one-second active tick updates bounded condition UI
+PASS use and active-time changes mark compound state dirty
+PASS item 214 has a baked 3D icon and world drop
+PASS item 215 has a baked 3D icon and world drop
+PASS item 216 has a baked 3D icon and world drop
+PASS item 217 has a baked 3D icon and world drop
+PASS item 218 has a baked 3D icon and world drop
+PASS item 219 has a baked 3D icon and world drop
+PASS backpack still excludes belt slots
+PASS food trader UI opens against actual native stock
+FAIL buying lower-list food keeps the selected offer visible after refresh
+PLAYER_SURVIVAL_UI {"checks":20,"failures":1}

@@ -12,7 +12,7 @@ func difference(a:Transform3D,b:Transform3D)->float:
 	return result
 func run()->void:
 	var production:=preload("res://addons/characters/runtime/human_view.gd").new();root.add_child(production)
-	check(not production.clips.has("FP_Item_Hold") and not production.clips.has("FP_Item_Use"),"new item actions remain outside gameplay until player review")
+	check(production.clips.has("FP_Item_Hold") and FileAccess.get_sha256("res://addons/characters/runtime/assets/Human.item_hold.res")==FileAccess.get_sha256(CANDIDATE),"integrated baseline retains the reviewed animation data unchanged")
 	production.free()
 	item_library=load(CANDIDATE)
 	var source:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://addons/characters/authoring/Human.item_use.json"));hand_samples=source.support_samples_hand

@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS invalid or unknown effect catalogs reject without mutation
+PASS consumable and effect schemas configure once
+PASS new character has full food and a 24-byte condition snapshot
+PASS full character cannot accidentally waste food
+PASS stale inventory and non-consumables cannot be used
+PASS journal atomically consumes one, teaches and adds Focused
+PASS duplicate use cannot consume or teach twice
+PASS Focused modifies learning only
+PASS active learning modifier affects an actual readable award
+PASS elapsed gameplay time drains food and buffs together
+PASS food clamps at fullness and starts its actual damage buff
+PASS Well fed changes action damage
+PASS same buff refreshes duration without stacking its strength
+PASS fresh native instance preserves food, simultaneous buffs and reading history exactly
+PASS malformed and truncated condition data never partially mutates live state
+PASS new consumable identities preserve existing reading and effect records
+PASS invalid elapsed times are rejected
+PASS Focused expires on the precise elapsed boundary
+PASS low food is a bounded ten-percent damage penalty after buffs expire
+PASS starvation clamps to zero with bounded penalty and no idle dirty revisions
+PASS bread can be eaten to recover from zero food
+PASS berries lift food out of the low-food penalty
+PASS legacy missing-section default does not leak another world's history or buffs
+PASS merchant migration schema validates atomically and configures once
+PASS legacy merchant gains newly introduced foods without refilling original stock or money
+PASS sold-out migrated food never refills after save/reload
+PASS legacy-present new goods keep their remaining quantity instead of receiving duplicates
+PASS full legacy stock preserves all goods and queues bounded additions
+PASS queued migration survives exact save/reopen without loss
+PASS freeing one merchant slot admits exactly one pending food type
+PASS invalid pending migration fails without mutating merchant inventory
+PLAYER_SURVIVAL {"active_snapshot_bytes":56,"checks":31,"failures":0}

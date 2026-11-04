@@ -1,0 +1,443 @@
+Godot Engine v4.7.2.stable.steam.ed1daf0bf - https://godotengine.org
+
+PASS pickup containers inherit the exact inventory schema
+PASS catalog item 1 can enter inventory
+PASS item 1 has wear before dropping
+PASS item 1 drops without any per-item opt-in
+PASS item 1 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 1
+PASS catalog item 2 can enter inventory
+PASS item 2 has wear before dropping
+PASS item 2 drops without any per-item opt-in
+PASS item 2 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 2
+PASS catalog item 3 can enter inventory
+PASS item 3 has wear before dropping
+PASS item 3 drops without any per-item opt-in
+PASS item 3 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 3
+PASS catalog item 4 can enter inventory
+PASS item 4 has wear before dropping
+PASS item 4 drops without any per-item opt-in
+PASS item 4 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 4
+PASS catalog item 5 can enter inventory
+PASS item 5 has wear before dropping
+PASS item 5 drops without any per-item opt-in
+PASS item 5 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 5
+PASS catalog item 6 can enter inventory
+PASS item 6 drops without any per-item opt-in
+PASS item 6 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 6
+PASS catalog item 7 can enter inventory
+PASS item 7 drops without any per-item opt-in
+PASS item 7 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 7
+PASS catalog item 8 can enter inventory
+PASS item 8 drops without any per-item opt-in
+PASS item 8 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 8
+PASS catalog item 101 can enter inventory
+PASS item 101 drops without any per-item opt-in
+PASS item 101 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 101
+PASS catalog item 102 can enter inventory
+PASS item 102 drops without any per-item opt-in
+PASS item 102 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 102
+PASS catalog item 103 can enter inventory
+PASS item 103 drops without any per-item opt-in
+PASS item 103 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 103
+PASS catalog item 104 can enter inventory
+PASS item 104 drops without any per-item opt-in
+PASS item 104 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 104
+PASS catalog item 201 can enter inventory
+PASS item 201 drops without any per-item opt-in
+PASS item 201 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 201
+PASS catalog item 202 can enter inventory
+PASS item 202 drops without any per-item opt-in
+PASS item 202 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 202
+PASS catalog item 203 can enter inventory
+PASS item 203 drops without any per-item opt-in
+PASS item 203 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 203
+PASS catalog item 204 can enter inventory
+PASS item 204 drops without any per-item opt-in
+PASS item 204 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 204
+PASS catalog item 205 can enter inventory
+PASS item 205 drops without any per-item opt-in
+PASS item 205 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 205
+PASS catalog item 206 can enter inventory
+PASS item 206 drops without any per-item opt-in
+PASS item 206 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 206
+PASS catalog item 207 can enter inventory
+PASS item 207 drops without any per-item opt-in
+PASS item 207 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 207
+PASS catalog item 208 can enter inventory
+PASS item 208 drops without any per-item opt-in
+PASS item 208 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 208
+PASS catalog item 209 can enter inventory
+PASS item 209 drops without any per-item opt-in
+PASS item 209 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 209
+PASS catalog item 210 can enter inventory
+PASS item 210 drops without any per-item opt-in
+PASS item 210 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 210
+PASS catalog item 211 can enter inventory
+PASS item 211 drops without any per-item opt-in
+PASS item 211 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 211
+PASS catalog item 212 can enter inventory
+PASS item 212 drops without any per-item opt-in
+PASS item 212 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 212
+PASS catalog item 213 can enter inventory
+PASS item 213 drops without any per-item opt-in
+PASS item 213 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 213
+PASS catalog item 214 can enter inventory
+PASS item 214 drops without any per-item opt-in
+PASS item 214 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 214
+PASS catalog item 215 can enter inventory
+PASS item 215 drops without any per-item opt-in
+PASS item 215 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 215
+PASS catalog item 216 can enter inventory
+PASS item 216 drops without any per-item opt-in
+PASS item 216 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 216
+PASS catalog item 217 can enter inventory
+PASS item 217 drops without any per-item opt-in
+PASS item 217 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 217
+PASS catalog item 218 can enter inventory
+PASS item 218 drops without any per-item opt-in
+PASS item 218 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 218
+PASS catalog item 219 can enter inventory
+PASS item 219 drops without any per-item opt-in
+PASS item 219 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 219
+PASS catalog item 220 can enter inventory
+PASS item 220 drops without any per-item opt-in
+PASS item 220 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 220
+PASS catalog item 221 can enter inventory
+PASS item 221 drops without any per-item opt-in
+PASS item 221 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 221
+PASS catalog item 222 can enter inventory
+PASS item 222 drops without any per-item opt-in
+PASS item 222 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 222
+PASS catalog item 223 can enter inventory
+PASS item 223 drops without any per-item opt-in
+PASS item 223 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 223
+PASS catalog item 224 can enter inventory
+PASS item 224 drops without any per-item opt-in
+PASS item 224 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 224
+PASS catalog item 225 can enter inventory
+PASS item 225 drops without any per-item opt-in
+PASS item 225 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 225
+PASS catalog item 226 can enter inventory
+PASS item 226 drops without any per-item opt-in
+PASS item 226 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 226
+PASS catalog item 227 can enter inventory
+PASS item 227 drops without any per-item opt-in
+PASS item 227 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 227
+PASS catalog item 301 can enter inventory
+PASS item 301 drops without any per-item opt-in
+PASS item 301 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 301
+PASS catalog item 302 can enter inventory
+PASS item 302 drops without any per-item opt-in
+PASS item 302 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 302
+PASS catalog item 303 can enter inventory
+PASS item 303 drops without any per-item opt-in
+PASS item 303 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 303
+PASS catalog item 304 can enter inventory
+PASS item 304 drops without any per-item opt-in
+PASS item 304 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 304
+PASS catalog item 305 can enter inventory
+PASS item 305 drops without any per-item opt-in
+PASS item 305 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 305
+PASS catalog item 306 can enter inventory
+PASS item 306 drops without any per-item opt-in
+PASS item 306 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 306
+PASS catalog item 401 can enter inventory
+PASS bucket has exact partial water metadata
+PASS item 401 drops without any per-item opt-in
+PASS item 401 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 401
+PASS catalog item 402 can enter inventory
+PASS item 402 drops without any per-item opt-in
+PASS item 402 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 402
+PASS catalog item 403 can enter inventory
+PASS item 403 drops without any per-item opt-in
+PASS item 403 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 403
+PASS catalog item 404 can enter inventory
+PASS item 404 drops without any per-item opt-in
+PASS item 404 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 404
+PASS catalog item 405 can enter inventory
+PASS item 405 drops without any per-item opt-in
+PASS item 405 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 405
+PASS catalog item 406 can enter inventory
+PASS item 406 drops without any per-item opt-in
+PASS item 406 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 406
+PASS catalog item 407 can enter inventory
+PASS item 407 drops without any per-item opt-in
+PASS item 407 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 407
+PASS catalog item 408 can enter inventory
+PASS item 408 drops without any per-item opt-in
+PASS item 408 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 408
+PASS catalog item 409 can enter inventory
+PASS item 409 drops without any per-item opt-in
+PASS item 409 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 409
+PASS catalog item 410 can enter inventory
+PASS item 410 drops without any per-item opt-in
+PASS item 410 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 410
+PASS catalog item 411 can enter inventory
+PASS item 411 drops without any per-item opt-in
+PASS item 411 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 411
+PASS catalog item 501 can enter inventory
+PASS item 501 has wear before dropping
+PASS item 501 drops without any per-item opt-in
+PASS item 501 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 501
+PASS catalog item 601 can enter inventory
+PASS item 601 drops without any per-item opt-in
+PASS item 601 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 601
+PASS catalog item 9001 can enter inventory
+PASS item 9001 drops without any per-item opt-in
+PASS item 9001 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 9001
+PASS catalog item 9002 can enter inventory
+PASS item 9002 has wear before dropping
+PASS item 9002 drops without any per-item opt-in
+PASS item 9002 retains its aimed pickup identity and name
+PASS stale drop cannot duplicate item 9002
+PASS future items share fixed save sections including bounded physical state
+PASS fresh pickup providers initialize with the same future schema
+PASS compound restore accepts all dropped item metadata
+PASS item 1 retains persistent identity and position
+PASS item 1 recollects exact quantity, wear and water after reload
+PASS item 1 cannot be collected twice
+PASS item 2 retains persistent identity and position
+PASS item 2 recollects exact quantity, wear and water after reload
+PASS item 2 cannot be collected twice
+PASS item 3 retains persistent identity and position
+PASS item 3 recollects exact quantity, wear and water after reload
+PASS item 3 cannot be collected twice
+PASS item 4 retains persistent identity and position
+PASS item 4 recollects exact quantity, wear and water after reload
+PASS item 4 cannot be collected twice
+PASS item 5 retains persistent identity and position
+PASS item 5 recollects exact quantity, wear and water after reload
+PASS item 5 cannot be collected twice
+PASS item 6 retains persistent identity and position
+PASS item 6 recollects exact quantity, wear and water after reload
+PASS item 6 cannot be collected twice
+PASS item 7 retains persistent identity and position
+PASS item 7 recollects exact quantity, wear and water after reload
+PASS item 7 cannot be collected twice
+PASS item 8 retains persistent identity and position
+PASS item 8 recollects exact quantity, wear and water after reload
+PASS item 8 cannot be collected twice
+PASS item 101 retains persistent identity and position
+PASS item 101 recollects exact quantity, wear and water after reload
+PASS item 101 cannot be collected twice
+PASS item 102 retains persistent identity and position
+PASS item 102 recollects exact quantity, wear and water after reload
+PASS item 102 cannot be collected twice
+PASS item 103 retains persistent identity and position
+PASS item 103 recollects exact quantity, wear and water after reload
+PASS item 103 cannot be collected twice
+PASS item 104 retains persistent identity and position
+PASS item 104 recollects exact quantity, wear and water after reload
+PASS item 104 cannot be collected twice
+PASS item 201 retains persistent identity and position
+PASS item 201 recollects exact quantity, wear and water after reload
+PASS item 201 cannot be collected twice
+PASS item 202 retains persistent identity and position
+PASS item 202 recollects exact quantity, wear and water after reload
+PASS item 202 cannot be collected twice
+PASS item 203 retains persistent identity and position
+PASS item 203 recollects exact quantity, wear and water after reload
+PASS item 203 cannot be collected twice
+PASS item 204 retains persistent identity and position
+PASS item 204 recollects exact quantity, wear and water after reload
+PASS item 204 cannot be collected twice
+PASS item 205 retains persistent identity and position
+PASS item 205 recollects exact quantity, wear and water after reload
+PASS item 205 cannot be collected twice
+PASS item 206 retains persistent identity and position
+PASS item 206 recollects exact quantity, wear and water after reload
+PASS item 206 cannot be collected twice
+PASS item 207 retains persistent identity and position
+PASS item 207 recollects exact quantity, wear and water after reload
+PASS item 207 cannot be collected twice
+PASS item 208 retains persistent identity and position
+PASS item 208 recollects exact quantity, wear and water after reload
+PASS item 208 cannot be collected twice
+PASS item 209 retains persistent identity and position
+PASS item 209 recollects exact quantity, wear and water after reload
+PASS item 209 cannot be collected twice
+PASS item 210 retains persistent identity and position
+PASS item 210 recollects exact quantity, wear and water after reload
+PASS item 210 cannot be collected twice
+PASS item 211 retains persistent identity and position
+PASS item 211 recollects exact quantity, wear and water after reload
+PASS item 211 cannot be collected twice
+PASS item 212 retains persistent identity and position
+PASS item 212 recollects exact quantity, wear and water after reload
+PASS item 212 cannot be collected twice
+PASS item 213 retains persistent identity and position
+PASS item 213 recollects exact quantity, wear and water after reload
+PASS item 213 cannot be collected twice
+PASS item 214 retains persistent identity and position
+PASS item 214 recollects exact quantity, wear and water after reload
+PASS item 214 cannot be collected twice
+PASS item 215 retains persistent identity and position
+PASS item 215 recollects exact quantity, wear and water after reload
+PASS item 215 cannot be collected twice
+PASS item 216 retains persistent identity and position
+PASS item 216 recollects exact quantity, wear and water after reload
+PASS item 216 cannot be collected twice
+PASS item 217 retains persistent identity and position
+PASS item 217 recollects exact quantity, wear and water after reload
+PASS item 217 cannot be collected twice
+PASS item 218 retains persistent identity and position
+PASS item 218 recollects exact quantity, wear and water after reload
+PASS item 218 cannot be collected twice
+PASS item 219 retains persistent identity and position
+PASS item 219 recollects exact quantity, wear and water after reload
+PASS item 219 cannot be collected twice
+PASS item 220 retains persistent identity and position
+PASS item 220 recollects exact quantity, wear and water after reload
+PASS item 220 cannot be collected twice
+PASS item 221 retains persistent identity and position
+PASS item 221 recollects exact quantity, wear and water after reload
+PASS item 221 cannot be collected twice
+PASS item 222 retains persistent identity and position
+PASS item 222 recollects exact quantity, wear and water after reload
+PASS item 222 cannot be collected twice
+PASS item 223 retains persistent identity and position
+PASS item 223 recollects exact quantity, wear and water after reload
+PASS item 223 cannot be collected twice
+PASS item 224 retains persistent identity and position
+PASS item 224 recollects exact quantity, wear and water after reload
+PASS item 224 cannot be collected twice
+PASS item 225 retains persistent identity and position
+PASS item 225 recollects exact quantity, wear and water after reload
+PASS item 225 cannot be collected twice
+PASS item 226 retains persistent identity and position
+PASS item 226 recollects exact quantity, wear and water after reload
+PASS item 226 cannot be collected twice
+PASS item 227 retains persistent identity and position
+PASS item 227 recollects exact quantity, wear and water after reload
+PASS item 227 cannot be collected twice
+PASS item 301 retains persistent identity and position
+PASS item 301 recollects exact quantity, wear and water after reload
+PASS item 301 cannot be collected twice
+PASS item 302 retains persistent identity and position
+PASS item 302 recollects exact quantity, wear and water after reload
+PASS item 302 cannot be collected twice
+PASS item 303 retains persistent identity and position
+PASS item 303 recollects exact quantity, wear and water after reload
+PASS item 303 cannot be collected twice
+PASS item 304 retains persistent identity and position
+PASS item 304 recollects exact quantity, wear and water after reload
+PASS item 304 cannot be collected twice
+PASS item 305 retains persistent identity and position
+PASS item 305 recollects exact quantity, wear and water after reload
+PASS item 305 cannot be collected twice
+PASS item 306 retains persistent identity and position
+PASS item 306 recollects exact quantity, wear and water after reload
+PASS item 306 cannot be collected twice
+PASS item 401 retains persistent identity and position
+PASS item 401 recollects exact quantity, wear and water after reload
+PASS item 401 cannot be collected twice
+PASS item 402 retains persistent identity and position
+PASS item 402 recollects exact quantity, wear and water after reload
+PASS item 402 cannot be collected twice
+PASS item 403 retains persistent identity and position
+PASS item 403 recollects exact quantity, wear and water after reload
+PASS item 403 cannot be collected twice
+PASS item 404 retains persistent identity and position
+PASS item 404 recollects exact quantity, wear and water after reload
+PASS item 404 cannot be collected twice
+PASS item 405 retains persistent identity and position
+PASS item 405 recollects exact quantity, wear and water after reload
+PASS item 405 cannot be collected twice
+PASS item 406 retains persistent identity and position
+PASS item 406 recollects exact quantity, wear and water after reload
+PASS item 406 cannot be collected twice
+PASS item 407 retains persistent identity and position
+PASS item 407 recollects exact quantity, wear and water after reload
+PASS item 407 cannot be collected twice
+PASS item 408 retains persistent identity and position
+PASS item 408 recollects exact quantity, wear and water after reload
+PASS item 408 cannot be collected twice
+PASS item 409 retains persistent identity and position
+PASS item 409 recollects exact quantity, wear and water after reload
+PASS item 409 cannot be collected twice
+PASS item 410 retains persistent identity and position
+PASS item 410 recollects exact quantity, wear and water after reload
+PASS item 410 cannot be collected twice
+PASS item 411 retains persistent identity and position
+PASS item 411 recollects exact quantity, wear and water after reload
+PASS item 411 cannot be collected twice
+PASS item 501 retains persistent identity and position
+PASS item 501 recollects exact quantity, wear and water after reload
+PASS item 501 cannot be collected twice
+PASS item 601 retains persistent identity and position
+PASS item 601 recollects exact quantity, wear and water after reload
+PASS item 601 cannot be collected twice
+PASS item 9001 retains persistent identity and position
+PASS item 9001 recollects exact quantity, wear and water after reload
+PASS item 9001 cannot be collected twice
+PASS item 9002 retains persistent identity and position
+PASS item 9002 recollects exact quantity, wear and water after reload
+PASS item 9002 cannot be collected twice
+PASS future authored items inherit the same native schema
+PASS future authored item recollects its real identity
+PASS future item obeys its custom stack limit
+PASS universal pickup transfers a requested stack quantity
+PASS schema rejection preserves the entire world stack
+PASS stack recollection conserves every unit
+PASS full universal store preserves inventory contents and revision
+PASS old saves without universal drops restore empty defaults
+UNIVERSAL_ITEM_DROP checks=440 failures=0

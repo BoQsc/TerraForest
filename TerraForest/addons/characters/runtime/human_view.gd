@@ -2,6 +2,7 @@
 extends Node3D
 ## Camera-local presentation. The existing native motor remains the player owner.
 signal rifle_reload_finished
+signal item_use_finished(identity:int,cancelled:bool)
 var rifle_aiming:=false
 var rifle_holster_item:=-1
 var rifle_holster_water:=-1
@@ -22,6 +23,8 @@ const HAMMER = preload("res://addons/characters/runtime/assets/Human.hammer.res"
 const SHOVEL = preload("res://addons/characters/runtime/assets/Human.shovel.res")
 const TORCH = preload("res://addons/characters/runtime/assets/Human.torch.res")
 const TORCH_ATTACK = preload("res://addons/characters/runtime/assets/Human.torch_attack.res")
+const ITEM_HOLD = preload("res://addons/characters/runtime/assets/Human.item_hold.res")
+const HeldItem = preload("res://addons/characters/runtime/held_item.gd")
 const BUCKET = preload("res://addons/characters/runtime/assets/Human.bucket.res")
 const BUCKET_MODEL = preload("res://addons/volumetric_water/bucket_model.gd")
 const EQUIPMENT = {6:preload("res://addons/characters/runtime/assets/Torch.glb"),3:preload("res://addons/characters/runtime/assets/Hammer.glb"),5:preload("res://addons/characters/runtime/assets/Shovel.glb")}
@@ -52,6 +55,8 @@ var bucket_previous_fill:=0.0
 var bucket_display_fill:=0.0
 var torch_effects:Node3D
 var bucket_water:MeshInstance3D
+var held_item:MeshInstance3D
+var item_use_identity:=0
 var face_surfaces:Array=[]
 var face_meshes:Dictionary={}
 var clothing=preload("res://addons/characters/wearables/clothing.gd").new()
@@ -66,6 +71,8 @@ func _ready() -> void:
 	add_child(model)
 	# Rigid tools share the existing weapon bones and the same skinned hands.
 	var skeleton:=model.find_children("*","Skeleton3D",true,false)[0] as Skeleton3D
+	var item_attachment:=BoneAttachment3D.new();item_attachment.bone_name="RightHand";skeleton.add_child(item_attachment)
+	held_item=HeldItem.new();item_attachment.add_child(held_item)
 	for part:Dictionary in [{"bone":"Weapon_Carbine","scene":preload("res://addons/characters/runtime/assets/Ranger.body.glb")},{"bone":"Weapon_Magazine","scene":preload("res://addons/characters/runtime/assets/Ranger.magazine.glb")}]:
 		var attachment:=BoneAttachment3D.new();attachment.bone_name=part.bone;skeleton.add_child(attachment)
 		var equipment:Node3D=part.scene.instantiate();equipment.set_meta("first_person_equipment",true);attachment.add_child(equipment)
@@ -117,9 +124,11 @@ func _ready() -> void:
 	animation_player.add_animation_library("bucket", BUCKET)
 	animation_player.add_animation_library("torch", TORCH)
 	animation_player.add_animation_library("torch_attack", TORCH_ATTACK)
+	animation_player.add_animation_library("item_hold", ITEM_HOLD)
 	animation_player.add_animation_library("crouch",CROUCH)
 	for clip in animation_player.get_animation_list():
 		clips[String(clip).get_slice("/", String(clip).get_slice_count("/") - 1)] = clip
+	_prepare_item_locomotion()
 	# Retimed recoil keeps both hands and the weapon together at automatic cadence.
 	# All carry/equip/reload/holster actions retain their existing authored timing.
 	var automatic:=AnimationLibrary.new()
@@ -132,6 +141,27 @@ func _ready() -> void:
 		var name:=source.replace("Rifle","Ranger");automatic.add_animation(name,recoil);clips[name]="ranger/"+name
 	animation_player.add_animation_library("ranger",automatic)
 	equip(current)
+
+func _prepare_item_locomotion()->void:
+	# Keep existing feet/hips locomotion under the baseline's upper-body hold.
+	# This is a presentation composition; the native motor still owns movement.
+	var library:=AnimationLibrary.new();var hold:=ITEM_HOLD.get_animation("FP_Item_Hold")
+	for suffix:String in ["Walk","Run","Jump","Crouch"]:
+		var source:String="Player_Crouch" if suffix=="Crouch" else suffix
+		if not clips.has(source):continue
+		var animation:Animation=animation_player.get_animation(clips[source]).duplicate(true)
+		var upper:Array[int]=[];var replaced:={}
+		for track in hold.get_track_count():
+			var path:=hold.track_get_path(track);var bone:=String(path.get_subname(0)) if path.get_subname_count()==1 else ""
+			if bone in ["Root","Hips"] or "Leg" in bone or "Foot" in bone or "Toe" in bone:continue
+			upper.append(track);replaced[str(path)+":"+str(hold.track_get_type(track))]=true
+		for track in range(animation.get_track_count()-1,-1,-1):
+			if replaced.has(str(animation.track_get_path(track))+":"+str(animation.track_get_type(track))):animation.remove_track(track)
+		for track in upper:
+			hold.copy_track(track,animation);var added:=animation.get_track_count()-1
+			for key in animation.track_get_key_count(added):animation.track_set_key_time(added,key,animation.track_get_key_time(added,key)*animation.length/hold.length)
+		var name:="FP_Item_"+suffix;library.add_animation(name,animation);clips[name]="item_motion/"+name
+	animation_player.add_animation_library("item_motion",library)
 
 func _collect(node: Node) -> void:
 	if node is AnimationPlayer:
@@ -165,6 +195,7 @@ func set_third_person(value:bool)->void:
 	_sync_equipment()
 
 func equip(item: int, water_ml:int=-1) -> void:
+	cancel_item_use()
 	if current in [7,8] and item!=current and model!=null and rifle_holster_item<0:
 		cancel_rifle_reload();rifle_holster_item=item;rifle_holster_water=water_ml
 		_play("FP_Rifle_Holster",true,0.04);return
@@ -184,18 +215,20 @@ func equip(item: int, water_ml:int=-1) -> void:
 	_sync_equipment()
 	if current in [7,8] and previous_item!=current:
 		_play("FP_Rifle_Equip",true,0.0);animation_player.advance(0)
+	elif HeldItem.supports(current) and previous_item!=current:
+		_play("FP_Item_Equip",true,0.0);animation_player.advance(0)
 	elif current==6 and previous_item!=6:
 		# The torch has its own keyed raise. Blending another tool's hand and
 		# weapon transforms independently can fold the wrist during equip.
 		_play("FP_Torch_Equip",true,0.0)
 		animation_player.advance(0)
 	else:
-		_play(_motion_clip("Idle"),false,0.0 if previous_item==6 else .10)
-		if previous_item==6:animation_player.advance(0)
+		_play(_motion_clip("Idle"),false,0.0 if previous_item==6 or HeldItem.supports(previous_item) else .10)
+		if previous_item==6 or HeldItem.supports(previous_item):animation_player.advance(0)
 
 func _sync_equipment() -> void:
 	if body_mesh!=null:
-		var selected:Mesh=unarmed_body_mesh if current in [0,6,401] else original_body_mesh
+		var selected:Mesh=unarmed_body_mesh if current in [0,6,401] or HeldItem.supports(current) else original_body_mesh
 		if body_mesh.mesh!=selected:body_mesh.mesh=selected
 	for mesh in meshes:
 		var label := String(mesh.name).to_lower().replace("_", ".")
@@ -206,6 +239,7 @@ func _sync_equipment() -> void:
 	_sync_bucket_water()
 	clothing.set_third_person(third_person)
 	if torch_effects!=null:torch_effects.set_burning(current==6 and not placement_active)
+	if held_item!=null:held_item.configure(current,not placement_active)
 
 func _sync_bucket_water()->void:
 	if bucket_water==null:return
@@ -232,6 +266,7 @@ func cancel_rifle_reload()->void:
 	if current in [7,8] and active_clip in ["FP_Rifle_Reload","Rifle_Reload"]:
 		action_remaining=0;_play(_motion_clip("Idle"),false,0.05)
 func _motion_clip(action: String) -> String:
+	if HeldItem.supports(current):return "FP_Item_"+action if clips.has("FP_Item_"+action) else "FP_Item_Hold"
 	if current in [7,8]:
 		var name:String=("Rifle_" if third_person else "FP_Rifle_")+("Aim" if rifle_aiming else action)
 		return name if clips.has(name) else ("Rifle_Idle" if third_person else "FP_Rifle_Idle")
@@ -289,6 +324,15 @@ func place() -> bool:
 	_play("FP_Place_Relaxed", true)
 	return true
 
+func begin_item_use(identity:int)->bool:
+	if identity<=0 or item_use_identity!=0 or action_remaining>0 or not HeldItem.supports(current) or not is_visible_in_tree():return false
+	item_use_identity=identity;_play("FP_Item_Use",true,.08);return true
+func cancel_item_use()->void:
+	if item_use_identity==0:return
+	var identity:=item_use_identity;item_use_identity=0;action_remaining=0
+	if animation_player!=null:_play(_motion_clip("Idle"),false,0)
+	item_use_finished.emit(identity,true)
+
 func bucket_use(pouring:bool)->bool:
 	if current!=401 or action_remaining>0 or not is_visible_in_tree():return false
 	# Presentation follows the existing confirmed transfer; no attack/contact
@@ -308,6 +352,7 @@ func _process(delta: float) -> void:
 	animation_player.active = is_visible_in_tree()
 	if not animation_player.active:
 		cancel_swing()
+		cancel_item_use()
 		return
 	if action_remaining > 0.0:
 		if not swing_clip.is_empty() and animation_player.assigned_animation!=clips[swing_clip]:cancel_swing();return
@@ -335,6 +380,9 @@ func _process(delta: float) -> void:
 		if not swing_clip.is_empty():
 			var identity:=swing_identity;swing_identity=0;swing_clip=""
 			swing_finished.emit(identity,false)
+		if item_use_identity>0:
+			var identity:=item_use_identity;item_use_identity=0
+			item_use_finished.emit(identity,false)
 	if placement_active:
 		placement_active = false
 		_sync_equipment()
@@ -349,7 +397,7 @@ func _process(delta: float) -> void:
 		elif speed > 0.15:
 			# Native ground speeds are 5.5 walking / 9.9 sprinting. Preserve the
 			# other tools' cadence while selecting pickaxe/bucket walks correctly.
-			var run_speed:=6.5 if current in [6,401] or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
+			var run_speed:=6.5 if current in [6,401] or HeldItem.supports(current) or (current==1 and diagonal_pickaxe and pickaxe_swing=="fresh") else 5.0
 			motion = "Run" if speed > run_speed else "Walk"
 	if third_person and crouched:motion="Crouch"
 	_play(_motion_clip(motion))

@@ -6828,8 +6828,12 @@ A review-only palm-up hold, equip and lift/use is authored on the existing R11
 rig. The preview shows the existing book and bread plus a neutral object in the
 hand; actual underside fitting and 24 scoped checks cover attachment/contact,
 453 key/half-key poses and endpoint continuity. [Preview, provenance and review contract](evidence/item_use/README.md).
-Player approval is pending; return on acceptance or visual changes. Inventory
-presentation, native use/consumption/reading-event hookup, cancellation and
-ownership/transition verification follow acceptance and remain unimplemented.
-Closed-book inspection and a whole-food lift are the current simple gesture;
-page turning and biting are not claimed. Runtime gameplay remains unchanged.
+User requested retaining/integrating the committed baseline `bc5de4ae` despite
+its stiff hand, then improving it separately. The unchanged baseline is now
+loaded by runtime: visible existing meshes/fallback, one native use at gesture
+completion, cancellation and original inventory/drop ownership are implemented.
+[Integration checks and the separate trader-UI check limit](evidence/item_use/integration/README.md).
+[Hand-pose issue / required next review](../issues/generic-item-hand-pose/README.md).
+The articulated revision remains outside runtime pending player review; return
+on review of fingers, wrist and support-hand movement. Closed-book/whole-food
+presentation is still the simple scope; page turning/biting are not claimed.
