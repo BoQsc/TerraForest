@@ -6821,3 +6821,15 @@ covers real block/zombie damage, cancellation and held input. Third-person uses
 the shared functional clip but remains unapproved art: resume on a requested
 third-person art pass, retain first-person/contact behavior, and obtain
 multi-angle playback acceptance. Existing carry-hand review also remains open.
+
+## Generic-item hold/use candidate — 2026-11-04
+
+A review-only palm-up hold, equip and lift/use is authored on the existing R11
+rig. The preview shows the existing book and bread plus a neutral object in the
+hand; actual underside fitting and 24 scoped checks cover attachment/contact,
+453 key/half-key poses and endpoint continuity. [Preview, provenance and review contract](evidence/item_use/README.md).
+Player approval is pending; return on acceptance or visual changes. Inventory
+presentation, native use/consumption/reading-event hookup, cancellation and
+ownership/transition verification follow acceptance and remain unimplemented.
+Closed-book inspection and a whole-food lift are the current simple gesture;
+page turning and biting are not claimed. Runtime gameplay remains unchanged.

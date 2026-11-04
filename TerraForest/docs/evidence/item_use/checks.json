@@ -1,0 +1,60 @@
+{
+  "approval": "Candidate 01; player visual approval pending; review-only",
+  "checks": 24,
+  "clips": {
+    "Equip": {
+      "body_error": 0.0,
+      "finger_error": 0.00000113682517621783,
+      "max_joint_half_key_degrees": 2.31409925353841,
+      "max_wrist_degrees": 0.0000499993373701046,
+      "minimum_elbow_drop_m": 0.139540672302246,
+      "samples": 55
+    },
+    "Hold": {
+      "body_error": 0.0,
+      "finger_error": 0.0,
+      "max_joint_half_key_degrees": 0.0559529096807445,
+      "max_wrist_degrees": 0.0000282523829769068,
+      "minimum_elbow_drop_m": 0.138979911804199,
+      "samples": 241
+    },
+    "Use": {
+      "body_error": 0.0,
+      "finger_error": 0.0,
+      "max_joint_half_key_degrees": 0.494164239811275,
+      "max_wrist_degrees": 0.0000263346866150465,
+      "minimum_elbow_drop_m": 0.0970425605773926,
+      "samples": 157
+    }
+  },
+  "failures": 0,
+  "maximum_seam_error": 0.0,
+  "objects": [
+    {
+      "attachment_drift": 0.000000146948423207505,
+      "compared_vertices": 2943,
+      "item": 0,
+      "maximum_nearest_contact_m": 0.00101995095610619,
+      "minimum_clearance_m": 0.00101685151457787,
+      "mount_height_m": 0.0695071386396885
+    },
+    {
+      "attachment_drift": 0.000000126440539816031,
+      "compared_vertices": 2076,
+      "item": 1,
+      "maximum_nearest_contact_m": 0.000999960080354328,
+      "minimum_clearance_m": 0.000999839863180321,
+      "mount_height_m": 0.0907993190700966
+    },
+    {
+      "attachment_drift": 0.000000150678673094262,
+      "compared_vertices": 1242,
+      "item": 2,
+      "maximum_nearest_contact_m": 0.00100000947713852,
+      "minimum_clearance_m": 0.000999771058559418,
+      "mount_height_m": 0.0812778750658035
+    }
+  ],
+  "runtime_hand_vertices": 1091,
+  "sampled_poses": 453
+}
