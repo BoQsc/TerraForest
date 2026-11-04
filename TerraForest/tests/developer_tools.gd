@@ -54,6 +54,13 @@ func run()->void:
 	bag.search.text="501";bag.filter_items();bag.category.select(1);bag.filter_items()
 	check(bag.empty.visible,"category and text filters combine with a clear empty state")
 	bag.category.select(0);bag.search.clear();bag.filter_items();await capture("dev_bag")
+	bag.search.text="ammo";bag.filter_items()
+	check(bag.entries[221].visible and bag.entries[223].visible,"ammo keyword finds both cartridge types")
+	bag.search.text="food";bag.filter_items()
+	check(bag.entries[217].visible and bag.entries[218].visible and bag.entries[219].visible,"food keyword finds consumables")
+	bag.search.text="book";bag.filter_items()
+	check(bag.entries[214].visible and bag.entries[216].visible,"book keyword finds documents")
+	bag.search.clear();bag.filter_items()
 	menu.show_page("Dev Shapes");await capture("dev_shapes");menu.show_page("Dev Bag")
 	var empty_state:Dictionary=inventory.snapshot()
 	for row:Dictionary in empty_state.slots:row.item=0;row.count=0;row.wear=0;row.water_ml=0

@@ -1,6 +1,7 @@
 extends RefCounted
 const Icons=preload("res://addons/player_runtime/item_icons.gd")
 const TextInputFocus=preload("res://addons/player_runtime/text_input_focus.gd")
+const ItemCatalog=preload("res://addons/player_runtime/item_catalog.gd")
 var game:Node
 var menu:CanvasLayer
 var search:LineEdit
@@ -41,7 +42,7 @@ func item_category(item:int)->int:
 func filter_items()->void:
 	var query:=search.text.strip_edges().to_lower();var matches:=0
 	for item:int in entries:
-		var found:bool=(category.selected==0 or category.selected==item_category(item)) and (query.is_empty() or query in str(catalog[item]).to_lower() or query in str(item))
+		var found:bool=(category.selected==0 or category.selected==item_category(item)) and ItemCatalog.matches(item,query)
 		entries[item].visible=found
 		if found:matches+=1
 	empty.visible=matches==0;summary.text="%d / %d items · Shift-click: full stack · Full inventories are left unchanged"%[matches,catalog.size()]

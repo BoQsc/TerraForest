@@ -2,6 +2,7 @@
 extends CanvasLayer
 const Trade = preload("res://addons/player_runtime/trader_inventory.gd")
 const TextInputFocus = preload("res://addons/player_runtime/text_input_focus.gd")
+const ItemCatalog = preload("res://addons/player_runtime/item_catalog.gd")
 const Icons = preload("res://addons/player_runtime/item_icons.gd")
 const WindowNav = preload("res://addons/player_runtime/window_navigation.gd")
 signal closed
@@ -252,7 +253,7 @@ func refresh(preserve_scroll:=false) -> void:
 	var filter:=search.text.strip_edges().to_lower()
 	for id: int in Trade.GOODS:
 		var offer: Array = Trade.GOODS[id]
-		if not filter.is_empty() and not str(offer[0]).to_lower().contains(filter):continue
+		if not filter.is_empty() and not ItemCatalog.matches(id,filter):continue
 		var available:int=Trade.count(trader.stock,id);var owned:int=int(owned_counts.get(id,0))
 		var icon:Texture2D=preload("res://addons/player_runtime/item_icons.gd").texture(id)
 		rows.add_item(str(offer[0]),icon,_item_detail(id),"%d coins"%offer[1],"STOCK %d"%available)
