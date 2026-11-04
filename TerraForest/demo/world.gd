@@ -302,6 +302,8 @@ func _ready() -> void:
 	pending_spawn = _initial_generation_spawn
 	terrain.focus = pending_spawn
 	super._ready()
+	if not pickups.configure_physics(player.get_rid(),not temporary_world and not ProjectSettings.get_setting("terraforest/offscreen_session",false)):
+		push_error("Pickup physics initialization failed");_abort_startup(2);return
 	await _startup_step("Preparing first-person character")
 	movement.configure_ladders(ladder.collection)
 	camera.add_child(headlamp)
@@ -1645,6 +1647,8 @@ func _zombie_obstacle_target(zombie: CharacterBody3D) -> Node3D:
 	return obstacle
 
 func _physics_process(delta: float) -> void:
+	if pickups.physics!=null:
+		pickups.step_physics(delta,not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and app_focused and not session_menu.pauses_world() and not player_hud.inventory_open and not player_view.entry.active,_actor_collision_ready)
 	player_life.step(delta)
 	var measured_begin:=Time.get_ticks_usec()
 	zombies.update(delta,player.global_position,not player_life.dead and not player_view.entry.active and not loading_active and not shutdown_requested and terrain.world_ready and not terrain.pending_edit and not session_menu.pauses_world() and not player_hud.inventory_open and not world_vehicle.driving and app_focused,not fly)
@@ -1820,16 +1824,17 @@ func _drop_inventory_supply(slot: int, revision: int, count: int=1) -> void:
 			var hit := get_world_3d().direct_space_state.intersect_ray(query)
 			result.reason="No reachable clear ground in front of the player"
 			if not hit.is_empty() and Vector3(hit.normal).y>=0.7:
-				var point: Vector3=hit.position+Vector3.UP*0.2
+				var simulate:bool=pickups.physics_enabled
+				var point: Vector3=hit.position+Vector3.UP*(0.85 if simulate else 0.2)
 				var bounds:=AABB(point-Vector3.ONE*0.2,Vector3.ONE*0.4)
 				if terrain.player_region_ready(point) and structures.is_collision_region_ready(bounds) and vegetation.is_collision_region_ready(bounds) and _pickup_reachable(point):
 					var shape:=BoxShape3D.new();shape.size=Vector3.ONE*0.35
-					var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7
+					var overlap:=PhysicsShapeQueryParameters3D.new();overlap.shape=shape;overlap.transform=Transform3D(Basis.IDENTITY,point);overlap.collision_mask=7|(1<<21)
 					var clear:=get_world_3d().direct_space_state.intersect_shape(overlap,1).is_empty()
 					for store: RefCounted in pickups.stores.values():
 						var nearby: Dictionary=store.query_sphere(pickups.to_local(point),0.5,1,64)
 						clear=clear and nearby.ok and nearby.complete and nearby.ids.is_empty()
-					if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count)
+					if clear: result=pickups.drop_stack(player_hud.inventory,slot,revision,pickups.to_local(point),count,simulate,forward*0.8+Vector3.UP*0.25)
 			if result.ok:break
 	player_hud.message.text=result.reason
 	_show_lake_notice(result.reason)

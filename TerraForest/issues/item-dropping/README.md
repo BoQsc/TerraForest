@@ -1,12 +1,60 @@
 # G drops the held gameplay item
 
 - Status: Implemented / installed, scoped checks pass.
-- Updated: 2026-11-04. Fix: focused item-dropping commit.
+- Updated: 2026-11-04. Base fix: `436d3022`; physical-drop follow-up below.
 - User visual review: Pending. Agent inspected the final packaged capture.
 - Symptom: New inventory IDs were missing from a separate pickup whitelist,
   preventing guns, coal, ammunition, barrels and coins from being dropped.
 
 ## Required behavior and changes
+
+### Optional physical dropping, enabled by default
+
+**ESC → Player → Physical item drops** now persists an optional default-on global
+preference. New drops receive gravity, a slight forward impulse, collision,
+bounce and sleep. Off keeps the previous static placement for new drops; existing
+physical drops continue. The gameplay-only G rule is unchanged.
+
+The engine owns up to 64 native linear rigid proxies with continuous collision;
+there are no per-pickup scene nodes. Pickup IDs, stack metadata and batched art
+are retained. Motion and sleep state save in one bounded `pickup_physics` section;
+old worlds receive its empty default. Pause/readiness freezes integration while
+retaining collision registration, and collection retires its body after the
+inventory transfer succeeds. Sleeping proxies may retire for new drops; a full
+awake pool rejects new drops without debiting inventory.
+
+Current scope: upright 34 cm box proxies, so artwork does not tumble. Long-range
+physics residency is bounded; retired sleeping pickups remain ordinary static
+pickups. Exact per-model collision, tumbling and large-population frame pacing
+are not qualified. These are explicit limits, not claims of a complete loose-body
+world simulation.
+
+Passing follow-up evidence:
+
+| Check | Evidence |
+| --- | --- |
+| Defaults/preference reload, gravity, bounce, floor CCD, pause/readiness, in-flight restore, metadata, every item plus a future item, pool/corruption rejection: 77 assertions | [Source](../../reports/checks/20261104T022327752202Z/run.json), [actual executable/PCK](../../reports/physical_item_drops/packed/20261104T022459733983Z/physical_item_drops/run.json) |
+| Real gameplay G falls; checkbox off restores static placement; inventory/menu/developer exclusions remain: 26 assertions | [Source](../../reports/checks/20261104T021916842233Z/run.json), [actual executable/PCK](../../reports/physical_item_drops/packed/20261104T022459733983Z/drop_key_standard/run.json) |
+| Physical state through two disk autosaves / three provider lifetimes: 15 assertions | [Disk](../../reports/checks/20261104T021954921230Z/run.json) |
+| Existing universal items: 440 assertions; atomic setup / failed-drop conservation | [Universal](../../reports/checks/20261104T022327750382Z/run.json), [setup](../../reports/checks/20261104T022152040872Z/run.json), [drops](../../reports/checks/20261104T022152068310Z/run.json) |
+
+Both native debug and release builds pass in
+[the build log](../../reports/drop_physics_builds_final.log); export gates, smoke
+startup and packaged house-light gate pass in [the export log](../../reports/drop_physics_export.log).
+Installed PCK `b4bf193145beadba5a12f92412ade66bcb946ae242295299936cd337e8498ea9`,
+14 matching native libraries. The first physical fixture
+[failed by retaining stale native handles after restore](../../reports/checks/20261104T021728702445Z/run.json);
+resolving the persistent identity again fixes the harness. Final runs have no
+script errors, leaks or assertion failures. New native code is original
+AI-assisted 0BSD; existing engine/binding notices remain unchanged.
+
+![Physical item drop setting](images/physical-drop-setting.png)
+
+Actual executable/PCK, temporary seed-1703 woodland, 1920×1080 viewport. Player
+settings show the option on after real G / on-off checks. Agent inspected;
+user visual/motion acceptance remains pending. Provenance is in the image manifest.
+
+### Original universal-drop implementation
 
 **G drops one held item only during active gameplay.** Inventory selections,
 menus, text entry and developer tools never invoke this shortcut. G never toggles

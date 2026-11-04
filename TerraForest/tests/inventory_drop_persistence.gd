@@ -8,6 +8,7 @@ var checks:=0
 var failures:=0
 var saved:=false
 var item:=102
+var simulate:=false
 var slot:="drop_disk_%d_%d"%[OS.get_process_id(),Time.get_ticks_usec()]
 func check(ok: bool,label: String) -> void:
 	checks+=1
@@ -26,6 +27,7 @@ func open_world() -> bool:
 	pickups=load("res://addons/world_runtime/material_pickups.gd").new()
 	root.add_child(pickups)
 	if not pickups.prepare(persistence) or not persistence.register_component("player_loadout",inventory.capture_storage_snapshot,inventory.restore_storage_snapshot,inventory,inventory.capture_storage_snapshot()) or persistence.attach(terrain)!=OK: return false
+	if simulate and not pickups.configure_physics(RID(),false):return false
 	pickups.changed.connect(func(): terrain.changed_since_save=true)
 	terrain.message_changed.connect(func(message: String):
 		if message.begins_with("World saved and verified"): saved=true)
@@ -48,6 +50,7 @@ func close_world() -> void:
 func run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--drop-item="): item=int(argument.get_slice("=",1))
+		if argument=="--physical-drops":simulate=true
 	Engine.max_fps=60
 	for addon in ["player_runtime","world_runtime"]:
 		GDExtensionManager.load_extension("res://addons/%s/%s.gdextension"%[addon,addon])
@@ -59,7 +62,7 @@ func run() -> void:
 	var point:=Vector3(800,100,1300)
 	if opened:
 		inventory.grant(item,5,inventory.snapshot().revision)
-		var dropped: Dictionary=pickups.drop_one(inventory,0,inventory.snapshot().revision,point)
+		var dropped: Dictionary=pickups.drop_stack(inventory,0,inventory.snapshot().revision,point,1,simulate,Vector3(.8,.25,0))
 		identity=dropped.get("id",0)
 		check(dropped.ok and terrain.changed_since_save,"drop marks compound world dirty")
 		expected_inventory=inventory.capture_storage_snapshot()
@@ -74,9 +77,11 @@ func run() -> void:
 		check(store.capture_storage_snapshot()==expected_pickup and store.statistics().active==1,"reopened world contains exactly the dropped supply")
 		var handle: int=store.resolve_identity(identity)
 		check(handle>0 and store.get_position(handle)==point,"disk round trip preserves pickup identity and location")
+		if simulate:check(pickups.physics.statistics().active==1,"disk round trip retains a pending physical body and its velocity")
 		var collected: Dictionary=pickups.collect_near(point,inventory,func(_point: Vector3): return true)
 		check(collected.ok and inventory.snapshot().slots[0].count==5 and store.statistics().active==0,"recollection after fresh load conserves all five units")
 		check(not pickups.collect_near(point,inventory,func(_point: Vector3): return true).ok and inventory.snapshot().slots[0].count==5,"repeated collection cannot duplicate supply")
+		if simulate:check(pickups.physics.statistics().active==0,"recollection retires restored physical state")
 		expected_inventory=inventory.capture_storage_snapshot()
 		check(await autosave(),"recollection reaches verified disk archive before shutdown")
 	close_world()

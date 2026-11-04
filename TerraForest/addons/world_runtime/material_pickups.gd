@@ -2,7 +2,7 @@
 extends Node3D
 signal changed
 ## Scene orchestration only: native stores, spatial queries and batched rendering.
-## Static authored supplies; no per-pickup nodes or active rigid bodies.
+## Authored supplies stay static; player drops may use bounded native physics.
 const ITEMS := {1:"Pickaxe",2:"Hatchet",3:"Repair hammer",4:"Assembly tool",5:"Shovel",6:"Wooden torch",101:"Brick",102:"Wood",103:"Concrete",104:"Metal",201:"Stone",202:"Iron ore",203:"Copper ore",204:"Plant",205:"Grass clump",206:"White wildflower",207:"Golden wildflower",208:"Violet wildflower",209:"Low bush",210:"Dry twigs",211:"Topsoil",301:"Woven hood",302:"Woven vest",303:"Woven footwraps",304:"Trail hat",305:"Trail jerkin",306:"Trail boots",401:"Water bucket",212:"Woody bush",213:"Lockpick",214:"Field manual",215:"Unsent letter",216:"Survey journal",217:"Tinned beans",218:"Trail bread",219:"Dried berries",224:"Metal offcuts",225:"Cloth scraps",226:"Copper wire",227:"Loose fasteners",501:"Vehicle"}
 const COLORS := {101: Color("b57052"), 102: Color("b99563"), 103: Color("b4bec4"), 104: Color("729da9"), 201: Color("7f858c"), 202: Color("965e43"), 203: Color("bc7950"), 204: Color("557538"), 205: Color("677e3e")}
 const ItemCatalog=preload("res://addons/player_runtime/item_catalog.gd")
@@ -21,6 +21,28 @@ var _schema: RefCounted
 var _aimed_identity:=0
 var _aimed_batch:=0
 var _aimed_carried:=0
+var physics:RefCounted
+var physics_enabled:=true
+var physics_settings_path:="user://item_drops.cfg"
+var persist_physics_settings:=false
+
+func configure_physics(excluded:RID,persist_settings:bool)->bool:
+	persist_physics_settings=persist_settings
+	if persist_settings and not physics_settings_path.is_empty():
+		var config:=ConfigFile.new()
+		if config.load(physics_settings_path)==OK:physics_enabled=bool(config.get_value("items","physical_drops",true))
+	return physics!=null and physics.configure(get_world_3d().space,excluded,global_transform)
+
+func set_physics_enabled(value:bool)->void:
+	physics_enabled=value
+	if persist_physics_settings and not physics_settings_path.is_empty():
+		var config:=ConfigFile.new();config.load(physics_settings_path)
+		config.set_value("items","physical_drops",value);config.save(physics_settings_path)
+
+func step_physics(delta:float,run:bool,ready:Callable)->Dictionary:
+	var result:Dictionary=physics.step(delta,run,ready)
+	if result.get("changed",false):_dirty=true;changed.emit()
+	return result
 
 func item_name(item:int)->String:
 	return ItemCatalog.item_name(item)
@@ -43,7 +65,7 @@ func _carried_item(batch:int,handle:int)->int:
 func drop_one(inventory: RefCounted, slot: int, revision: int, point: Vector3) -> Dictionary:
 	return drop_stack(inventory,slot,revision,point,1)
 
-func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3, count: int) -> Dictionary:
+func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3, count: int, simulate:bool=false, velocity:Vector3=Vector3.ZERO) -> Dictionary:
 	if _transferring or inventory == null or not point.is_finite():
 		return {"ok":false,"reason":"Supply drop unavailable"}
 	var state: Dictionary = inventory.snapshot()
@@ -53,6 +75,7 @@ func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3,
 	var item:=store_item(carried)
 	if carried<=0 or not stores.has(item) or count<1 or state.slots[slot].count < count:
 		return {"ok":false,"reason":"Select a carried item to drop"}
+	if simulate and (physics==null or not physics.can_launch()):return {"ok":false,"reason":"Too many moving drops; wait for them to settle"}
 	# Native calls emit no callbacks. Reserve the world record before debiting;
 	# capacity failure therefore leaves inventory contents AND revision intact.
 	_transferring = true
@@ -61,8 +84,12 @@ func drop_stack(inventory: RefCounted, slot: int, revision: int, point: Vector3,
 		_transferring = false
 		return {"ok":false,"reason":"Supply capacity reached"}
 	var id: int = stores[item].persistent_id(handle)
+	if simulate and not physics.launch(item,handle,velocity):
+		stores[item].despawn(handle);_transferring=false
+		return {"ok":false,"reason":"Physical drop unavailable; item retained"}
 	var consumed: Dictionary = stacks[item].deposit(id,inventory,slot,count,revision,stacks[item].snapshot(id).store_revision)
 	if not consumed.ok:
+		if simulate:physics.forget(item,id)
 		stores[item].despawn(handle)
 		_transferring = false
 		return {"ok":false,"reason":"Inventory changed; drop cancelled"}
@@ -81,6 +108,7 @@ func prepare(persistence: RefCounted, inventory_schema:RefCounted=null) -> bool:
 	var schema:RefCounted=ItemCatalog.create_inventory() if inventory_schema==null else inventory_schema
 	if schema==null:return false
 	var next_stacks:Dictionary={};var next_stores:Dictionary={};var next_renderers:Dictionary={}
+	var next_physics:RefCounted=ClassDB.instantiate("NativePickupPhysics")
 	var components:Array[Dictionary]=[]
 	var batches:Array=ITEMS.keys();batches.append(GENERIC_ITEM)
 	for item: int in batches:
@@ -91,6 +119,7 @@ func prepare(persistence: RefCounted, inventory_schema:RefCounted=null) -> bool:
 		var store: RefCounted = ClassDB.instantiate("NativeEntityStore")
 		if not store.configure(4096): _discard_renderers(next_renderers);return false
 		next_stores[item] = store
+		if not next_physics.bind_store(item,store):_discard_renderers(next_renderers);return false
 		components.append({"name":"pickups_%d"%item,"capture":store.capture_storage_snapshot,"restore":_restore.bind(item),"validator":store,"empty":store.capture_storage_snapshot()})
 		var mesh: Mesh=_generic_mesh() if item==GENERIC_ITEM else preload("res://addons/player_runtime/salvage_mesh.gd").mesh(item) if item in [224,225,226,227] else preload("res://addons/volumetric_water/bucket_model.gd").mesh() if item==401 else (preload("res://addons/vehicle_runtime/vehicle_item.gd").mesh() if item==501 else load("res://addons/player_runtime/art/drops/%d.res"%item))
 		if mesh==null:_discard_renderers(next_renderers);return false
@@ -99,9 +128,11 @@ func prepare(persistence: RefCounted, inventory_schema:RefCounted=null) -> bool:
 			renderer.free(); _discard_renderers(next_renderers);return false
 		renderer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		next_renderers[item] = renderer
+	components.append({"name":"pickup_physics","capture":next_physics.capture_storage_snapshot,"restore":next_physics.restore_storage_snapshot,"validator":next_physics,"empty":next_physics.capture_storage_snapshot()})
 	if not persistence.register_components(components):_discard_renderers(next_renderers);return false
 	_persistence=persistence
 	_schema=schema
+	physics=next_physics
 	stores=next_stores;stacks=next_stacks;renderers=next_renderers
 	for renderer:Node in renderers.values():add_child(renderer)
 	return true
@@ -118,6 +149,7 @@ func _discard_renderers(pending:Dictionary)->void:
 	for renderer:Node in pending.values():renderer.free()
 
 func _restore(data: PackedByteArray, item: int) -> bool:
+	if physics!=null:physics.reset()
 	if not stores[item].restore_storage_snapshot(data): return false
 	_aimed_identity=0
 	_dirty = true
@@ -202,6 +234,7 @@ func _collect(best_item: int,best_handle: int,inventory: RefCounted) -> Dictiona
 	if not result.ok:
 		_transferring=false;return {"ok": false, "reason": "Inventory full or unavailable"}
 	# Single main-thread transaction: grant emits no callbacks; this handle is live.
+	if physics!=null:physics.forget(best_item,id)
 	stores[best_item].despawn(best_handle); _dirty = true
 	# Emit after both halves commit so observers capture a consistent world.
 	changed.emit()

@@ -2,6 +2,17 @@ Visual summaries and comparison images: [issue tracker](../issues/README.md).
 
 ## Held-item G drop standard - 2026-11-04
 
+Physical-drop follow-up installed: **ESC → Player → Physical item drops** is
+optional and enabled by default. One native 64-proxy engine pool adds gravity,
+forward impulse, collision, bounce and sleeping; off preserves static placement
+for new drops. Position/motion and metadata save together; pause/unready areas
+freeze integration, collection retires bodies, and old saves use empty motion
+state. Source and actual-executable/PCK checks each pass 77 physics / 26 input
+assertions; disk state passes 15 and universal items 440. Both native builds and
+export gates pass. PCK `b4bf1931`, 14 matching libraries. Upright 34 cm proxies do
+not tumble; sleeping-proxy retirement and unqualified large-population costs are
+explicit in the linked issue. Player visual/motion acceptance remains pending.
+
 [Item-dropping issue](../issues/item-dropping/README.md): G drops one held item
 only during active gameplay. Inventory selections, menus, text entry and developer
 tools cannot invoke it. Every current/future registered inventory item inherits

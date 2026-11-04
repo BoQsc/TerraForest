@@ -49,7 +49,7 @@ func run()->void:
 		var saved:PackedByteArray=inventory.capture_storage_snapshot()
 		check(not pickups.drop_one(inventory,0,before.revision,Vector3.ZERO).ok and inventory.capture_storage_snapshot()==saved,"stale drop cannot duplicate item %d"%item)
 	var sections:Dictionary=persistence._capture().sections
-	check(sections.size()==(Pickups.ITEMS.size()+1)*2,"future items use two fixed save sections instead of growing provider count")
+	check(sections.size()==(Pickups.ITEMS.size()+1)*2+1,"future items share fixed save sections including bounded physical state")
 	var restored:=Pickups.new();root.add_child(restored)
 	var restored_provider:=Persistence.new()
 	check(restored.prepare(restored_provider,schema()),"fresh pickup providers initialize with the same future schema")

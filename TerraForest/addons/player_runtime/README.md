@@ -68,8 +68,17 @@ parcel for items without dedicated ground art. See the
 The editor uses the same paid inventory drop action; its separate free
 supply authoring tool remains available.
 
-Drops reuse the native bounded pickup stores and batched static renderer: no
-per-item node or active rigid body is created. The synchronous coordinator
+Drops reuse the native bounded pickup stores and batched renderer. **ESC → Player
+→ Physical item drops** defaults on and persists between normal sessions. Drops
+fall with a small forward impulse, collide, bounce and sleep. Off keeps new drops
+at their validated ground position; existing physical drops continue normally.
+The engine owns at most 64 resident native physics proxies, without per-item
+scene nodes. Proxies are upright 34 cm boxes; item art stays in its existing
+batched orientation. Sleeping proxies can retire when the pool is full, leaving
+their ordinary saved pickups. If all 64 are moving, a further drop is refused
+without consuming the item. Pause, loading and unavailable collision suspend
+motion. Native position, velocity and sleeping state save with the world, and
+collection removes the proxy atomically. The synchronous coordinator
 reserves a native pickup before consuming the selected inventory slot with its
 revision check; rejection retires that reservation. Change signals run only
 after both sides commit, marking the compound world for autosave. E recollects

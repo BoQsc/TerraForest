@@ -7,6 +7,15 @@ chase are insufficient navigation acceptance.
 
 ## Ownership
 
+Player-dropped pickups use a separate fixed 64-proxy `NativePickupPhysics` pool,
+with the engine as their sole integrator. Upright linear rigid proxies use layer
+`1 << 21`, mask `1 | 2 | 4 | (1 << 21)` and an explicit player-RID exception.
+They mirror canonical pickup positions/velocities for batching, targeting and
+compound saves; do not also call the entity store's kinematic `step`. Menu,
+loading and unavailable swept collision coverage suspend them as registered
+static bodies. Sleeping proxies can retire when the pool is full, leaving saved
+ordinary pickups. This grants no actor navigation or interaction permissions.
+
 Use the native `ActorRoute` core in `addons/world_runtime/native/actor_route.*` for
 local supported walking routes. Existing settlement actors execute it through
 `NativeEntityActivation`; external character bodies use `NativeActorNavigator`.

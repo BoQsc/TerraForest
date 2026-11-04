@@ -30,6 +30,7 @@ func run()->void:
 	floor_body.add_child(collider);game.add_child(floor_body);floor_body.global_position=game.player.global_position-Vector3.UP*.2
 	await physics_frame;await physics_frame
 	var hud=game.player_hud
+	check(game.pickups.physics_enabled and game.session_menu.drop_physics_toggle.button_pressed,"Player physical-drop option defaults enabled")
 	# Keep the existing belt, place a newly supported firearm in an empty slot.
 	check(hud.inventory.grant(8,1,hud.inventory.snapshot().revision).ok,"rifle enters native inventory")
 	var slot:=-1
@@ -49,6 +50,12 @@ func run()->void:
 	check(hud.inventory.snapshot().slots[slot].count==0 and game.pickups.stores[0].statistics().active==1 and not game.fly,"real G drops the rifle exactly once and never toggles flight")
 	game.pickups.update_view(0,game.player.global_position,true)
 	check(game.pickups.render_status[0].rendered==1 and game.pickups.renderers[0].multimesh.mesh.get_surface_count()==1,"universal drop renders in one native batched mesh")
+	var handles:PackedInt64Array=game.pickups.stores[0].query_sphere(game.pickups.to_local(game.player.global_position),4,4,64).ids
+	var launched:Vector3=game.pickups.stores[0].get_position(handles[0])
+	for i in 12:
+		game.pickups.step_physics(1.0/60,true,game._actor_collision_ready);await physics_frame
+	var falling:Vector3=game.pickups.stores[0].get_position(handles[0])
+	check(falling.y<launched.y and falling.distance_to(launched)>.05,"real G launch falls through actual-world native physics")
 	var collected:Dictionary=game.pickups.collect_near(game.player.global_position,hud.inventory,game._pickup_reachable)
 	check(collected.ok and collected.item==8,"rifle recollects through actual-world reach checks")
 	# Inventory selections must never become G-drop targets.
@@ -69,8 +76,12 @@ func run()->void:
 	hud.set_open(false);tap()
 	check(hud.capture_snapshot()==before and not game.fly,"G on the developer toolbelt does not drop or toggle flight")
 	game.session_menu.toggle_developer();hud.equip_inventory(20)
+	game.session_menu.drop_physics_toggle.set_pressed(false)
+	check(not game.pickups.physics_enabled,"Player checkbox disables physics for new drops")
 	var held:int=hud.active_slot;tap()
 	check(hud.inventory.snapshot().slots[held].item==601 and hud.inventory.snapshot().slots[held].count==2,"gameplay G drops exactly one held coin after equipping it")
+	check(game.pickups.physics.statistics().active==0,"disabled option uses the original static ground pickup")
+	game.session_menu.drop_physics_toggle.set_pressed(true)
 	hud.set_open(true);hud.select_slot(held)
 	if DisplayServer.get_name()!="headless":
 		var capture_directory:="res://reports/universal_item_drop"
@@ -79,6 +90,10 @@ func run()->void:
 		DirAccess.make_dir_recursive_absolute(capture_directory)
 		for i in 3:await RenderingServer.frame_post_draw
 		check(root.get_texture().get_image().save_png(capture_directory.path_join("backpack.png"))==OK,"drop evidence image saves outside packaged resources")
+		hud.set_open(false);game.session_menu.set_open(true);game.session_menu.show_page("Player")
+		for i in 3:await RenderingServer.frame_post_draw
+		check(root.get_texture().get_image().save_png(capture_directory.path_join("player_settings.png"))==OK,"physical-drop setting capture saves")
+		game.session_menu.set_open(false)
 	hud.set_open(false)
 	game.shutdown_requested=true;check(await game.terrain.shutdown_after_edits(),"world shuts down cleanly")
 	game.free();await process_frame;await process_frame

@@ -16,7 +16,7 @@ Required behavior, 2026-11-04:
 - Existing item-specific pickup batches retain their save-section identities.
   Other items use the shared `pickups_0` / `pickup_stacks_0` batch and an original
   code-built parcel mesh. Custom ground art is optional. New item definitions do
-  not add save providers, render batches, ticking nodes or rigid bodies.
+  not add save providers, render batches, ticking nodes or per-type physics pools.
 - Dropping and recollection transfer the complete native stack record, including
   exact quantity, wear and water volume. Labels identify the real contained item.
   E recollects the stack; an unsuccessful transfer leaves it intact.
@@ -26,6 +26,26 @@ Required behavior, 2026-11-04:
   field and Ctrl/Alt/Meta+G must not invoke dropping.
 - Dragging outside inventory panels/belt drops the whole stack; Shift-drag drops
   half. Worn clothing can first be moved into carried storage through Character.
+
+Physical dropping, added 2026-11-04, is an optional global preference under
+**ESC → Player → Physical item drops**, enabled by default. It applies to new
+drops; disabling it leaves the existing static ground-placement path available.
+Existing physical drops keep their simulation. The engine integrates gravity,
+linear impulse, collision and bounce through a maximum of 64 native physics
+proxies. The 34 cm upright box proxy does not rotate item art. Sleeping proxies
+may be retired for new drops; if all proxies are moving, reject the new drop
+before debiting inventory. Pickup identity, stack metadata, position, velocity
+and sleeping state survive saves. Pause/readiness suspension freezes integration
+while retaining collision registration. A missing `pickup_physics` section in
+an older save restores empty physical state. Recollection removes a proxy only
+after the native inventory transfer succeeds. This is a bounded drop simulation,
+not unlimited persistent rigid-body residency for every loose world object.
+
+Use the shared `NativePickupPhysics` pool and
+[engine PhysicsServer3D](https://docs.godotengine.org/en/stable/classes/class_physicsserver3d.html),
+never one script or active scene body per world pickup. `tests/physical_item_drops.gd`
+checks defaults, preference reload, gravity, bounce, floor contact, pause/readiness,
+mid-flight restore, metadata recovery, all item types and pool exhaustion.
 
 Required regressions: `tests/universal_item_drop.gd` exercises every registered
 definition and two future definitions without dedicated art, including metadata,

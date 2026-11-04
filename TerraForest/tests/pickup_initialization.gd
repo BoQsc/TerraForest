@@ -20,7 +20,7 @@ func run()->void:
   check(provider._capture().sections==before,"failed prepare preserves existing host registry exactly")
  var clean=Persistence.new()
  check(pickups.prepare(clean),"same adapter can retry against valid host")
- check(clean._providers.size()==(Pickups.ITEMS.size()+1)*2 and pickups.get_child_count()==Pickups.ITEMS.size()+1,"legacy and universal stores publish together")
+ check(clean._providers.size()==(Pickups.ITEMS.size()+1)*2+1 and pickups.get_child_count()==Pickups.ITEMS.size()+1,"legacy, universal and physical state publish together")
  check(pickups.prepare(clean) and pickups.get_child_count()==Pickups.ITEMS.size()+1,"same-host preparation is idempotent")
  check(not pickups.prepare(provider),"initialized adapter cannot pretend to register with another host")
  var entry:Dictionary={"name":"extra","capture":store.capture_storage_snapshot,"restore":store.restore_storage_snapshot,"validator":store,"empty":store.capture_storage_snapshot()}

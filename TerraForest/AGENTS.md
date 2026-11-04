@@ -84,7 +84,7 @@ inventory selections, menus, text entry or developer tools. Every current and fu
 inventory item must support drop, recollection and save/reload without a per-item
 permission flag or required custom drop art. Register items in the shared catalog;
 retain the universal pickup fallback and metadata-preserving native transactions.
-Run the universal-item and G-input regressions when changing these paths.
+Run the universal-item, physical-item and G-input regressions when changing these paths.
 
 For world generation, settlement, road, POI or landscape changes, read
 `docs/WORLD_BUILDING_STANDARD.md` before choosing the implementation.

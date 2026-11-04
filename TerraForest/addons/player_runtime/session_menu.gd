@@ -24,6 +24,7 @@ var message:Label:
 	get:return tool_workspace.message if workspace and tool_workspace!=null else session_message
 var mode_button: Button
 var entry_fly_in_toggle:CheckButton
+var drop_physics_toggle:CheckButton
 var third_person_toggle:CheckButton
 var overview_toggle:CheckButton
 var first_person_toggle:CheckButton
@@ -85,6 +86,10 @@ func _ready() -> void:
 	var player:=page("Player")
 	label(player,"Player").add_theme_font_size_override("font_size",22)
 	game.combat.add_controls(self,player)
+	drop_physics_toggle=CheckButton.new();drop_physics_toggle.text="Physical item drops"
+	drop_physics_toggle.tooltip_text="Dropped items fall, bounce and settle. Applies to new drops; existing physical drops keep simulating. Off places new drops directly on clear ground."
+	drop_physics_toggle.button_pressed=game.pickups.physics_enabled
+	drop_physics_toggle.toggled.connect(game.pickups.set_physics_enabled);player.add_child(drop_physics_toggle)
 	var graphics:=page("Graphics")
 	label(graphics,"Graphics").add_theme_font_size_override("font_size",22)
 	fullscreen_toggle=CheckButton.new();fullscreen_toggle.text="Fullscreen (off: windowed)"

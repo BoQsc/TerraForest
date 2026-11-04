@@ -12,5 +12,12 @@
     "sha256": "7434b97c9683568491201d27a9de416214dceabc8d4cdbf5ff5928e2757ce39b",
     "caption": "Final gameplay-only scope. Actual executable/PCK, temporary seed-1703 woodland and elevated support fixture, 1920x1080. Three coins were equipped and G pressed during gameplay; inventory opened afterward shows the held stack reduced to two. G in inventory and developer tools was separately checked to preserve contents. Agent inspected; user visual review pending.",
     "provenance": "Original repository runtime capture; inherited project code/asset notices remain applicable. No external image imported."
+  },
+  {
+    "file": "physical-drop-setting.png",
+    "source": "reports/physical_item_drops/packed/20261104T022459733983Z/drop_key_standard/player_settings.png",
+    "sha256": "b7913c10061a452bd692b8715ef8cc0e69d4d73ccb1f1fd32ee5146f6f7836df",
+    "caption": "Actual executable with physical-drop PCK b4bf1931; temporary seed-1703 woodland, 1920x1080 viewport. ESC Player shows Physical item drops enabled. Real G falling and disabled static placement were checked before this capture. Agent inspected; user appearance review pending.",
+    "provenance": "Original repository runtime capture; inherited project code/asset notices remain applicable. No external image imported."
   }
 ]
